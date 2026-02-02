@@ -1,10 +1,22 @@
 # @fragments-sdk/ui
 
+## 0.4.0
+
+### Minor Changes
+
+- [`d462050`](https://github.com/ConanMcN/fragments/commit/d4620501ccfd8362b4db166be27f1d630a5e04c8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Initial public release of Fragments UI
+
+  - 40+ accessible, themeable React components
+  - Full HTML prop passthrough on all components
+  - Improved accessibility with aria-hidden on decorative icons
+  - Production-ready with comprehensive documentation
+
 ## 0.3.0
 
 ### Minor Changes
 
 - [`17046a1`](https://github.com/ConanMcN/fragments/commit/17046a1e214c651fc9626f5bcea31a092eb8ccaf) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(Sidebar): Add shadcn-inspired patterns for improved flexibility and DX
+
   - Add `SidebarProvider` component for wrapping app layouts with shared state
   - Add `useSidebar` hook for accessing sidebar state from any child component
   - Add Cmd/Ctrl+B keyboard shortcut to toggle sidebar (configurable)
