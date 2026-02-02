@@ -1,0 +1,209 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Caption for accessibility
+.caption {
+  padding: var(--fui-space-3, $fui-space-3) 0;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-align: left;
+  caption-side: top;
+}
+
+// Visually hidden caption (screen readers only)
+.captionHidden {
+  @include visually-hidden;
+}
+
+// Size variants
+.sm {
+  .th,
+  .td {
+    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  }
+}
+
+.md {
+  .th,
+  .td {
+    padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  }
+}
+
+// Header
+.thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+.headerRow {
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+}
+
+.th {
+  text-align: left;
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+
+  &:first-child {
+    border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
+  }
+
+  &:last-child {
+    border-top-right-radius: var(--fui-radius-md, $fui-radius-md);
+  }
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+// Sortable header cell (for focus styles)
+.thSortable {
+  cursor: pointer;
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: -2px;
+  }
+}
+
+.sortable {
+  cursor: pointer;
+  transition: color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.sortIndicator {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  flex-shrink: 0;
+
+  .sortable:hover & {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+}
+
+// Body
+.tbody {
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+}
+
+.row {
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.selected {
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  background-color: rgba($fui-color-accent, 0.08);
+
+  &:hover {
+    background-color: rgba($fui-color-accent, 0.12);
+  }
+}
+
+.td {
+  color: var(--fui-text-primary, $fui-text-primary);
+  vertical-align: middle;
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Empty state
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fui-space-12, $fui-space-12) var(--fui-space-6, $fui-space-6);
+}
+
+.emptyMessage {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// Responsive: allow horizontal scroll on small screens
+@media (max-width: 640px) {
+  .wrapper {
+    margin-left: calc(-1 * var(--fui-space-4, $fui-space-4));
+    margin-right: calc(-1 * var(--fui-space-4, $fui-space-4));
+    padding-left: var(--fui-space-4, $fui-space-4);
+    padding-right: var(--fui-space-4, $fui-space-4);
+  }
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .headerRow {
+    border-bottom-width: 2px;
+  }
+
+  .row {
+    border-bottom-width: 2px;
+  }
+
+  .thSortable:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+
+  .sortable {
+    transition: none;
+  }
+}

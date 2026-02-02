@@ -1,0 +1,152 @@
+// ============================================
+// @fragments/ui Shared Mixins
+// ============================================
+
+@use 'variables' as *;
+
+// Focus ring for keyboard accessibility
+@mixin focus-ring {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) var(--fui-bg-primary, #{$fui-bg-primary}),
+    0 0 0 calc(var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) + var(--fui-focus-ring-width, #{$fui-focus-ring-width})) var(--fui-focus-ring-color, #{$fui-focus-ring-color});
+}
+
+// Reset button styles
+@mixin button-reset {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// Base interactive element
+@mixin interactive-base {
+  transition:
+    background-color var(--fui-transition-fast, #{$fui-transition-fast}),
+    border-color var(--fui-transition-fast, #{$fui-transition-fast}),
+    box-shadow var(--fui-transition-fast, #{$fui-transition-fast}),
+    opacity var(--fui-transition-fast, #{$fui-transition-fast});
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// Typography base
+@mixin text-base {
+  font-family: var(--fui-font-sans, #{$fui-font-sans});
+  font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
+  line-height: var(--fui-line-height-normal, #{$fui-line-height-normal});
+  color: var(--fui-text-primary, #{$fui-text-primary});
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Label text
+@mixin label-text {
+  font-family: var(--fui-font-sans, #{$fui-font-sans});
+  font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
+  font-weight: var(--fui-font-weight-medium, #{$fui-font-weight-medium});
+  color: var(--fui-text-primary, #{$fui-text-primary});
+}
+
+// Helper/caption text
+@mixin helper-text {
+  font-family: var(--fui-font-sans, #{$fui-font-sans});
+  font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
+  color: var(--fui-text-secondary, #{$fui-text-secondary});
+}
+
+// Card surface
+@mixin surface-elevated {
+  background-color: var(--fui-bg-elevated, #{$fui-bg-elevated});
+  border: 1px solid var(--fui-border, #{$fui-border});
+  border-radius: var(--fui-radius-lg, #{$fui-radius-lg});
+}
+
+// Responsive breakpoint mixins (mobile-first, min-width)
+@mixin breakpoint-sm { @media (min-width: $fui-breakpoint-sm) { @content; } }
+@mixin breakpoint-md { @media (min-width: $fui-breakpoint-md) { @content; } }
+@mixin breakpoint-lg { @media (min-width: $fui-breakpoint-lg) { @content; } }
+@mixin breakpoint-xl { @media (min-width: $fui-breakpoint-xl) { @content; } }
+
+// Responsive breakpoint mixins (desktop-first, max-width)
+// Use for hiding/changing elements below a breakpoint
+@mixin below-sm { @media (max-width: #{$fui-breakpoint-sm - 1px}) { @content; } }
+@mixin below-md { @media (max-width: #{$fui-breakpoint-md - 1px}) { @content; } }
+@mixin below-lg { @media (max-width: #{$fui-breakpoint-lg - 1px}) { @content; } }
+@mixin below-xl { @media (max-width: #{$fui-breakpoint-xl - 1px}) { @content; } }
+
+// Visually hidden (for screen readers)
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ============================================
+// Accessibility Mixins
+// ============================================
+
+// Reduced motion preference - respects user's system setting
+@mixin prefers-reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// High contrast mode support - for users who need more visual contrast
+@mixin prefers-contrast {
+  @media (prefers-contrast: more) {
+    @content;
+  }
+}
+
+// Safe transition - respects reduced motion preference
+// Usage: @include safe-transition(background-color 150ms ease, border-color 150ms ease);
+@mixin safe-transition($transitions...) {
+  transition: $transitions;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Safe animation - respects reduced motion preference
+// Usage: @include safe-animation(fadeIn 200ms ease);
+@mixin safe-animation($animation) {
+  animation: $animation;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Focus ring for error states (e.g., invalid form fields)
+@mixin focus-ring-error {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) var(--fui-bg-primary, #{$fui-bg-primary}),
+    0 0 0 calc(var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) + var(--fui-focus-ring-width, #{$fui-focus-ring-width})) var(--fui-color-danger, #{$fui-color-danger});
+}

@@ -1,0 +1,120 @@
+@use '../../tokens/variables' as *;
+
+.stack {
+  display: flex;
+}
+
+// Direction
+.row {
+  flex-direction: row;
+}
+
+.column {
+  flex-direction: column;
+}
+
+// Responsive direction
+.directionResponsive {
+  flex-direction: var(--fui-stack-direction, column);
+
+  @media (min-width: 640px) {
+    flex-direction: var(--fui-stack-direction-sm, var(--fui-stack-direction, column));
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: var(--fui-stack-direction-md, var(--fui-stack-direction-sm, var(--fui-stack-direction, column)));
+  }
+
+  @media (min-width: 1024px) {
+    flex-direction: var(--fui-stack-direction-lg, var(--fui-stack-direction-md, var(--fui-stack-direction-sm, var(--fui-stack-direction, column))));
+  }
+
+  @media (min-width: 1280px) {
+    flex-direction: var(--fui-stack-direction-xl, var(--fui-stack-direction-lg, var(--fui-stack-direction-md, var(--fui-stack-direction-sm, var(--fui-stack-direction, column)))));
+  }
+}
+
+// Gap sizes
+.gap-xs {
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+.gap-sm {
+  gap: var(--fui-space-2, $fui-space-2);
+}
+
+.gap-md {
+  gap: var(--fui-space-3, $fui-space-3);
+}
+
+.gap-lg {
+  gap: var(--fui-space-4, $fui-space-4);
+}
+
+.gap-xl {
+  gap: var(--fui-space-6, $fui-space-6);
+}
+
+// Responsive gap
+.gapResponsive {
+  gap: var(--fui-stack-gap, 0);
+
+  @media (min-width: 640px) {
+    gap: var(--fui-stack-gap-sm, var(--fui-stack-gap, 0));
+  }
+
+  @media (min-width: 768px) {
+    gap: var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)));
+  }
+
+  @media (min-width: 1024px) {
+    gap: var(--fui-stack-gap-lg, var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0))));
+  }
+
+  @media (min-width: 1280px) {
+    gap: var(--fui-stack-gap-xl, var(--fui-stack-gap-lg, var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))));
+  }
+}
+
+// Align (cross-axis)
+.align-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+.align-baseline {
+  align-items: baseline;
+}
+
+// Justify (main-axis)
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+// Wrap
+.wrap {
+  flex-wrap: wrap;
+}

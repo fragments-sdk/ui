@@ -1,0 +1,224 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// External title label (above the code block)
+.title {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--fui-space-1, $fui-space-1);
+}
+
+// Code blocks always use dark theme styling (same in light and dark mode)
+.wrapper {
+  position: relative;
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  overflow: hidden;
+  background-color: var(--fui-code-bg, $fui-code-bg);
+  border: 1px solid var(--fui-code-border, $fui-code-border);
+}
+
+// ============================================
+// Header bar with filename
+// ============================================
+.hasHeader {
+  // No additional styles needed
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
+  background-color: var(--fui-code-header-bg, $fui-code-header-bg);
+  border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
+}
+
+.filename {
+  font-family: var(--fui-font-mono, $fui-font-mono);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+  color: var(--fui-code-text-muted, $fui-code-text-muted);
+}
+
+// Copy button - always dark theme styling
+.copyButton {
+  @include button-reset;
+  position: absolute;
+  top: var(--fui-space-2, $fui-space-2);
+  right: var(--fui-space-2, $fui-space-2);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  background: transparent;
+  border: none;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  opacity: 0;
+  cursor: pointer;
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    background var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
+
+  // Show on wrapper hover
+  .wrapper:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
+    background: var(--fui-code-copy-bg, $fui-code-copy-bg);
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  &.copied {
+    color: var(--fui-color-success, $fui-color-success);
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.loading {
+  pre {
+    margin: 0;
+    padding: var(--fui-space-4, $fui-space-4);
+    padding-right: var(--fui-space-10, $fui-space-10);
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-family: var(--fui-font-mono, $fui-font-mono);
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+    line-height: 1.7;
+    color: var(--fui-code-text, $fui-code-text);
+    overflow-x: auto;
+  }
+
+  code {
+    background: none !important;
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+  }
+}
+
+.codeContainer {
+  // Shiki output styling - always dark theme
+  :global(.shiki) {
+    margin: 0;
+    padding: var(--fui-space-4, $fui-space-4);
+    padding-right: var(--fui-space-10, $fui-space-10);
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-family: var(--fui-font-mono, $fui-font-mono);
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+    line-height: 1.7;
+    overflow-x: auto;
+    tab-size: 2;
+
+    code {
+      background: none !important;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      font-family: inherit;
+      font-size: inherit;
+      counter-reset: line;
+    }
+  }
+
+  // Line styles
+  :global(.line) {
+    display: inline-block;
+    width: 100%;
+    min-height: 1.6em;
+
+    &:global(.highlighted) {
+      background-color: var(--fui-code-highlight-bg, $fui-code-highlight-bg);
+      margin: 0 calc(-1 * var(--fui-space-3, $fui-space-3));
+      padding: 0 var(--fui-space-3, $fui-space-3);
+      border-left: 3px solid var(--fui-color-info, $fui-color-info);
+    }
+  }
+
+  // Line numbers
+  :global(.line-number) {
+    display: inline-block;
+    width: 2.5em;
+    padding-right: 1em;
+    text-align: right;
+    color: var(--fui-code-text-muted, $fui-code-text-muted);
+    user-select: none;
+  }
+
+  // Custom selection highlight for better visibility
+  *::selection {
+    background: var(--fui-code-selection-bg, $fui-code-selection-bg);
+    color: white;
+  }
+
+  // Custom scrollbar for code blocks
+  :global(.shiki)::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  :global(.shiki)::-webkit-scrollbar-track {
+    background: var(--fui-code-scrollbar-track, $fui-code-scrollbar-track);
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  }
+
+  :global(.shiki)::-webkit-scrollbar-thumb {
+    background: var(--fui-code-scrollbar-thumb, $fui-code-scrollbar-thumb);
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+
+    &:hover {
+      background: var(--fui-code-scrollbar-thumb-hover, $fui-code-scrollbar-thumb-hover);
+    }
+  }
+}
+
+// Line numbers variant
+.withLineNumbers {
+  .codeContainer :global(.shiki) {
+    padding-left: var(--fui-space-2, $fui-space-2);
+  }
+}
+
+// Responsive
+@media (max-width: $fui-breakpoint-md) {
+  .codeContainer :global(.shiki) {
+    font-size: 0.75rem;
+    padding: var(--fui-space-2, $fui-space-2);
+    padding-right: var(--fui-space-8, $fui-space-8);
+  }
+
+  .copyButton {
+    opacity: 0.8; // Always visible on mobile (no hover)
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
+  }
+}
+
+// ============================================
+// Tabbed Code Block
+// ============================================
+
+.tabbedPanel {
+  margin-top: var(--fui-space-2, $fui-space-2);
+}

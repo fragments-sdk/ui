@@ -1,0 +1,142 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Grid Container
+// ============================================
+
+.grid {
+  display: grid;
+  width: 100%;
+}
+
+// ============================================
+// Fixed column counts (1-12)
+// ============================================
+
+.columns1  { grid-template-columns: repeat(1, 1fr); }
+.columns2  { grid-template-columns: repeat(2, 1fr); }
+.columns3  { grid-template-columns: repeat(3, 1fr); }
+.columns4  { grid-template-columns: repeat(4, 1fr); }
+.columns5  { grid-template-columns: repeat(5, 1fr); }
+.columns6  { grid-template-columns: repeat(6, 1fr); }
+.columns7  { grid-template-columns: repeat(7, 1fr); }
+.columns8  { grid-template-columns: repeat(8, 1fr); }
+.columns9  { grid-template-columns: repeat(9, 1fr); }
+.columns10 { grid-template-columns: repeat(10, 1fr); }
+.columns11 { grid-template-columns: repeat(11, 1fr); }
+.columns12 { grid-template-columns: repeat(12, 1fr); }
+
+// ============================================
+// Auto-fill (responsive without media queries)
+// ============================================
+
+.columnsAuto {
+  grid-template-columns: repeat(auto-fill, minmax(var(--fui-grid-min-child-width, 16rem), 1fr));
+}
+
+// ============================================
+// Responsive columns via CSS custom properties
+//
+// Usage: set --fui-grid-cols (base) and
+//        --fui-grid-cols-{sm,md,lg,xl} via inline style.
+//        Each breakpoint inherits from the previous
+//        if not explicitly set.
+// ============================================
+
+.columnsResponsive {
+  --_cols: var(--fui-grid-cols, 1);
+
+  grid-template-columns: repeat(var(--_cols), 1fr);
+
+  @include breakpoint-sm {
+    --_cols: var(--fui-grid-cols-sm, var(--fui-grid-cols, 1));
+  }
+
+  @include breakpoint-md {
+    --_cols: var(--fui-grid-cols-md, var(--fui-grid-cols-sm, var(--fui-grid-cols, 1)));
+  }
+
+  @include breakpoint-lg {
+    --_cols: var(--fui-grid-cols-lg, var(--fui-grid-cols-md, var(--fui-grid-cols-sm, var(--fui-grid-cols, 1))));
+  }
+
+  @include breakpoint-xl {
+    --_cols: var(--fui-grid-cols-xl, var(--fui-grid-cols-lg, var(--fui-grid-cols-md, var(--fui-grid-cols-sm, var(--fui-grid-cols, 1)))));
+  }
+}
+
+// ============================================
+// Gap
+// ============================================
+
+.gapNone { gap: 0; }
+.gapXs   { gap: var(--fui-space-1, $fui-space-1); }
+.gapSm   { gap: var(--fui-space-2, $fui-space-2); }
+.gapMd   { gap: var(--fui-space-4, $fui-space-4); }
+.gapLg   { gap: var(--fui-space-6, $fui-space-6); }
+.gapXl   { gap: var(--fui-space-8, $fui-space-8); }
+
+// ============================================
+// Padding
+// ============================================
+
+.paddingNone { padding: 0; }
+.paddingSm   { padding: var(--fui-space-3, $fui-space-3); }
+.paddingMd   { padding: var(--fui-space-4, $fui-space-4); }
+.paddingLg   { padding: var(--fui-space-6, $fui-space-6); }
+
+// ============================================
+// Align items (cross-axis within cells)
+// ============================================
+
+.alignStart   { align-items: start; }
+.alignCenter  { align-items: center; }
+.alignEnd     { align-items: end; }
+.alignStretch { align-items: stretch; }
+
+// ============================================
+// Justify items (main-axis within cells)
+// ============================================
+
+.justifyStart   { justify-items: start; }
+.justifyCenter  { justify-items: center; }
+.justifyEnd     { justify-items: end; }
+.justifyStretch { justify-items: stretch; }
+
+// ============================================
+// Grid Item
+// ============================================
+
+.item {
+  min-width: 0; // Prevent overflow from children
+}
+
+// Column spans
+.colSpan1    { grid-column: span 1; }
+.colSpan2    { grid-column: span 2; }
+.colSpan3    { grid-column: span 3; }
+.colSpan4    { grid-column: span 4; }
+.colSpan5    { grid-column: span 5; }
+.colSpan6    { grid-column: span 6; }
+.colSpan7    { grid-column: span 7; }
+.colSpan8    { grid-column: span 8; }
+.colSpan9    { grid-column: span 9; }
+.colSpan10   { grid-column: span 10; }
+.colSpan11   { grid-column: span 11; }
+.colSpan12   { grid-column: span 12; }
+.colSpanFull { grid-column: 1 / -1; }
+
+// Row spans
+.rowSpan1 { grid-row: span 1; }
+.rowSpan2 { grid-row: span 2; }
+.rowSpan3 { grid-row: span 3; }
+.rowSpan4 { grid-row: span 4; }
+.rowSpan5 { grid-row: span 5; }
+.rowSpan6 { grid-row: span 6; }
+
+// Self alignment overrides
+.selfAlignStart   { align-self: start; }
+.selfAlignCenter  { align-self: center; }
+.selfAlignEnd     { align-self: end; }
+.selfAlignStretch { align-self: stretch; }

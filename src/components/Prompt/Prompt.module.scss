@@ -1,0 +1,243 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Prompt Root
+// ============================================
+
+.prompt {
+  @include surface-elevated;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--fui-radius-xl, $fui-radius-xl);
+  overflow: hidden;
+
+  &[data-disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// Fixed variant - for viewport-fixed prompts (centered to page)
+.fixed {
+  position: fixed;
+  bottom: var(--fui-space-4, $fui-space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - var(--fui-space-8, $fui-space-8));
+  max-width: 800px;
+  z-index: 100;
+  box-shadow:
+    0 -4px 16px rgba(0, 0, 0, 0.08),
+    0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+// Sticky variant - for content-area fixed prompts (accounts for sidebar)
+// Use --fui-prompt-inset-left CSS variable to offset from sidebar
+.sticky {
+  position: fixed;
+  bottom: var(--fui-space-4, $fui-space-4);
+  left: var(--fui-prompt-inset-left, 0);
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: calc(100% - var(--fui-prompt-inset-left, 0px) - var(--fui-space-8, $fui-space-8));
+  max-width: 800px;
+  z-index: 100;
+  box-shadow:
+    0 -4px 16px rgba(0, 0, 0, 0.08),
+    0 4px 24px rgba(0, 0, 0, 0.12);
+
+  // Center within the available space (after sidebar)
+  left: calc(var(--fui-prompt-inset-left, 0px) + ((100% - var(--fui-prompt-inset-left, 0px)) / 2));
+  transform: translateX(-50%);
+}
+
+// ============================================
+// Textarea
+// ============================================
+
+.textarea {
+  @include button-reset;
+  @include text-base;
+
+  display: block;
+  width: 100%;
+  min-height: 2.857rem; // ~40px
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  background: transparent;
+  border: none;
+  resize: none;
+  overflow-y: auto;
+  line-height: $fui-line-height-normal;
+
+  &::placeholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// Toolbar
+// ============================================
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border-top: 1px solid var(--fui-border, $fui-border);
+}
+
+// ============================================
+// Actions & Info
+// ============================================
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+}
+
+// ============================================
+// Action Button (circular, e.g. "+")
+// ============================================
+
+.actionButton {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// ============================================
+// Mode Button (text button, e.g. "Auto")
+// ============================================
+
+.modeButton {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  background-color: transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.modeButtonActive {
+  color: var(--fui-text-primary, $fui-text-primary);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+}
+
+// ============================================
+// Usage indicator
+// ============================================
+
+.usage {
+  @include helper-text;
+  white-space: nowrap;
+}
+
+// ============================================
+// Submit Button
+// ============================================
+
+.submit {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-color-accent-active, $fui-color-accent-active);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.submitLoading {
+  position: relative;
+
+  svg {
+    animation: pulse 1s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

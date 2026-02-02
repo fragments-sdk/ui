@@ -1,0 +1,134 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Group Container
+// ============================================
+
+.group {
+  display: inline-flex;
+  align-items: center;
+}
+
+// Gap variants
+.gap-xs {
+  gap: 2px;
+}
+
+.gap-sm {
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+// ============================================
+// Default variant (connected buttons)
+// ============================================
+
+.default {
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  padding: 2px;
+  gap: 2px;
+
+  .item {
+    background-color: transparent;
+    border: none;
+    border-radius: calc(var(--fui-radius-md, $fui-radius-md) - 2px);
+
+    &.selected {
+      background-color: var(--fui-bg-primary, $fui-bg-primary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+  }
+}
+
+// ============================================
+// Pills variant (separate pill buttons)
+// ============================================
+
+.pills {
+  .item {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    }
+
+    &.selected {
+      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+      border-color: var(--fui-border, $fui-border);
+    }
+  }
+}
+
+// ============================================
+// Outline variant (bordered buttons)
+// ============================================
+
+.outline {
+  .item {
+    background-color: transparent;
+    border: 1px solid var(--fui-border, $fui-border);
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    }
+
+    &.selected {
+      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+      border-color: var(--fui-color-accent, $fui-color-accent);
+      color: var(--fui-color-accent, $fui-color-accent);
+    }
+  }
+}
+
+// ============================================
+// Item base styles
+// ============================================
+
+.item {
+  @include button-reset;
+  @include interactive-base;
+  @include text-base;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  white-space: nowrap;
+  user-select: none;
+  transition: all 150ms ease;
+
+  &.selected {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// Size variants
+// ============================================
+
+.size-sm {
+  .item {
+    min-height: 28px;
+    padding: 0 var(--fui-space-2, $fui-space-2);
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  }
+}
+
+.size-md {
+  .item {
+    min-height: 32px;
+    padding: 0 var(--fui-space-3, $fui-space-3);
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  }
+}

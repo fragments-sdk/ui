@@ -1,0 +1,22 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-4, $fui-space-4);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  padding: var(--fui-space-6, $fui-space-6);
+  margin: 0;
+
+  &[data-disabled] {
+    opacity: 0.6;
+  }
+}
+
+.legend {
+  @include label-text;
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  padding: 0;
+}

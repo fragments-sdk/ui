@@ -1,0 +1,155 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Container wrapper
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-2, $fui-space-2);
+}
+
+.groupLabel {
+  @include label-text;
+}
+
+// Radio group
+.group {
+  display: flex;
+  gap: var(--fui-space-3, $fui-space-3);
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+// Individual item wrapper
+.itemWrapper {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--fui-space-2, $fui-space-2);
+  cursor: pointer;
+  font-family: var(--fui-font-sans, $fui-font-sans);
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// The radio circle
+.radio {
+  @include interactive-base;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: var(--fui-space-0-5, $fui-space-0-5);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  cursor: inherit;
+
+  &:hover:not([data-disabled]) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &[data-checked] {
+    background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &[data-checked]:hover:not([data-disabled]) {
+    border-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+
+  &[data-invalid] {
+    border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+// Size variants
+.radioSm {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: var(--fui-space-0-75, $fui-space-0-75);
+}
+
+.radioLg {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0;
+}
+
+// The indicator dot
+.indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  [data-checked] > & {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.radioSm .indicator {
+  width: 0.375rem;
+  height: 0.375rem;
+}
+
+.radioLg .indicator {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+// Label content
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-0-5, $fui-space-0-5);
+}
+
+.label {
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+  user-select: none;
+}
+
+.labelSm {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.labelLg {
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.description {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Error message
+.error {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-color-danger, $fui-color-danger);
+}

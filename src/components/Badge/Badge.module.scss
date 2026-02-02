@@ -1,0 +1,93 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+// Sizes
+.sm {
+  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+}
+
+.md {
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+// Variants
+.default {
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}
+
+.success {
+  background-color: var(--fui-color-success-bg, $fui-color-success-bg);
+  color: var(--fui-color-success, $fui-color-success);
+}
+
+.warning {
+  background-color: var(--fui-color-warning-bg, $fui-color-warning-bg);
+  color: var(--fui-color-warning, $fui-color-warning);
+}
+
+.error {
+  background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+.info {
+  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+  color: var(--fui-color-info, $fui-color-info);
+}
+
+.outline {
+  background-color: transparent;
+  color: var(--fui-text-primary, $fui-text-primary);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+}
+
+.dot {
+  width: $fui-badge-dot-md;
+  height: $fui-badge-dot-md;
+  border-radius: 50%;
+  background-color: currentColor;
+
+  .sm & {
+    width: $fui-badge-dot-sm;
+    height: $fui-badge-dot-sm;
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.remove {
+  @include button-reset;
+  @include interactive-base;
+
+  padding: 0 var(--fui-space-0-5, $fui-space-0-5);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: inherit;
+  opacity: 0.6;
+  line-height: 1;
+  border-radius: var(--fui-space-0-5, $fui-space-0-5);
+
+  .sm & {
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}

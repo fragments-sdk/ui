@@ -1,0 +1,77 @@
+@use '../../tokens/variables' as *;
+
+.imageContainer {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s ease;
+}
+
+// Object fit variants
+.fit-cover {
+  object-fit: cover;
+}
+
+.fit-contain {
+  object-fit: contain;
+}
+
+.fit-fill {
+  object-fit: fill;
+}
+
+.fit-none {
+  object-fit: none;
+}
+
+// Aspect ratio variants
+.aspect-1-1 {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-21-9 {
+  aspect-ratio: 21 / 9;
+}
+
+// Border radius variants
+.rounded-sm {
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+}
+
+.rounded-md {
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+}
+
+.rounded-full {
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+}
+
+// Fallback
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}

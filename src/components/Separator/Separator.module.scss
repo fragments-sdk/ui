@@ -1,0 +1,92 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.separator {
+  flex-shrink: 0;
+  background-color: var(--fui-border, $fui-border);
+}
+
+// Horizontal (default)
+.horizontal {
+  width: 100%;
+  height: 1px;
+}
+
+// Vertical
+.vertical {
+  width: 1px;
+  height: auto;
+  align-self: stretch;
+}
+
+// With label
+.withLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-3, $fui-space-3);
+  background-color: transparent;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--fui-border, $fui-border);
+  }
+}
+
+.label {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+// Spacing variants
+.spacingNone {
+  margin: 0;
+}
+
+.spacingSm {
+  &.horizontal {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+  }
+
+  &.vertical {
+    margin: 0 var(--fui-space-2, $fui-space-2);
+  }
+}
+
+.spacingMd {
+  &.horizontal {
+    margin: var(--fui-space-4, $fui-space-4) 0;
+  }
+
+  &.vertical {
+    margin: 0 var(--fui-space-4, $fui-space-4);
+  }
+}
+
+.spacingLg {
+  &.horizontal {
+    margin: var(--fui-space-6, $fui-space-6) 0;
+  }
+
+  &.vertical {
+    margin: 0 var(--fui-space-6, $fui-space-6);
+  }
+}
+
+// Soft variant (lighter color)
+.soft {
+  background-color: var(--fui-border, $fui-border);
+  opacity: 0.5;
+
+  &.withLabel::before,
+  &.withLabel::after {
+    opacity: 0.5;
+  }
+}

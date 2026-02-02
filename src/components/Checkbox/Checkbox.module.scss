@@ -1,0 +1,144 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Wrapper for checkbox + label
+.wrapper {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--fui-space-2, $fui-space-2);
+  cursor: pointer;
+  font-family: var(--fui-font-sans, $fui-font-sans);
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// The checkbox box itself
+.checkbox {
+  @include interactive-base;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: var(--fui-space-0-5, $fui-space-0-5); // Align with text baseline
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  cursor: inherit;
+
+  &:hover:not([data-disabled]) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &[data-checked],
+  &[data-indeterminate] {
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &[data-checked]:hover:not([data-disabled]),
+  &[data-indeterminate]:hover:not([data-disabled]) {
+    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    border-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+
+  &[data-invalid] {
+    border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+
+  &[data-invalid][data-checked],
+  &[data-invalid][data-indeterminate] {
+    background-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+// Size variants
+.sm {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: var(--fui-space-0-75, $fui-space-0-75);
+  margin-top: var(--fui-space-0-75, $fui-space-0-75);
+}
+
+.md {
+  // Default size
+}
+
+.lg {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0;
+}
+
+// Indicator (checkmark or dash)
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fui-text-inverse, $fui-text-inverse);
+
+  svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  [data-checked] > &,
+  [data-indeterminate] > & {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Size variant indicators
+.sm .indicator svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.lg .indicator svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+// Label content
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-0-5, $fui-space-0-5);
+}
+
+.label {
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+  user-select: none;
+}
+
+.labelSm {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.labelLg {
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.description {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}

@@ -1,0 +1,177 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Backdrop overlay
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--fui-backdrop, $fui-backdrop);
+  z-index: 50;
+
+  // Animation
+  opacity: 0;
+  transition: opacity var(--fui-transition-normal, $fui-transition-normal);
+
+  &[data-open] {
+    opacity: 1;
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+// Positioner centers the popup
+.positioner {
+  position: fixed;
+  inset: 0;
+  z-index: 51;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fui-space-4, $fui-space-4);
+  overflow-y: auto;
+}
+
+// The popup container
+.popup {
+  @include surface-elevated;
+  @include text-base;
+
+  position: relative;
+  width: 100%;
+  max-width: 28rem; // 448px
+  max-height: calc(100vh - var(--fui-space-8, $fui-space-8));
+  overflow-y: auto;
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95) translateY(-$fui-anim-offset-md);
+  transition:
+    opacity var(--fui-transition-normal, $fui-transition-normal),
+    transform var(--fui-transition-normal, $fui-transition-normal);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  &[data-starting-style] {
+    opacity: 0;
+    transform: scale(0.95) translateY(-$fui-anim-offset-md);
+  }
+
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95) translateY($fui-anim-offset-md);
+  }
+}
+
+// Size variants
+.sm {
+  max-width: 24rem; // 384px
+}
+
+.md {
+  max-width: 28rem; // 448px - default
+}
+
+.lg {
+  max-width: 36rem; // 576px
+}
+
+.xl {
+  max-width: 48rem; // 768px
+}
+
+.full {
+  max-width: calc(100vw - var(--fui-space-8, $fui-space-8));
+}
+
+// Header area
+.header {
+  padding: var(--fui-padding-container-md, $fui-padding-container-md) var(--fui-padding-container-lg, $fui-padding-container-lg);
+}
+
+// Title
+.title {
+  margin: 0;
+  font-size: var(--fui-font-size-lg, $fui-font-size-lg);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  color: var(--fui-text-primary, $fui-text-primary);
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+}
+
+// Description
+.description {
+  margin: var(--fui-space-1, $fui-space-1) 0 0;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Body content
+.body {
+  padding: 0 var(--fui-padding-container-lg, $fui-padding-container-lg) var(--fui-padding-container-md, $fui-padding-container-md);
+}
+
+// Footer for actions
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-padding-container-sm, $fui-padding-container-sm) var(--fui-padding-container-lg, $fui-padding-container-lg);
+  border-top: 1px solid var(--fui-border, $fui-border);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border-radius: 0 0 var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg);
+}
+
+// Close button (X in corner)
+.close {
+  @include button-reset;
+  @include interactive-base;
+
+  position: absolute;
+  top: var(--fui-space-3, $fui-space-3);
+  right: var(--fui-space-3, $fui-space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop {
+    transition: none;
+  }
+
+  .popup {
+    transition: none;
+    transform: none;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
+  }
+}

@@ -1,0 +1,109 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  @include label-text;
+  margin-bottom: var(--fui-space-1, $fui-space-1);
+}
+
+.inputWrapper {
+  display: flex;
+  gap: var(--fui-space-2, $fui-space-2);
+  align-items: center;
+}
+
+.swatch {
+  @include button-reset;
+  @include interactive-base;
+  width: 40px;
+  height: 36px;
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    border-color: var(--fui-border-strong, $fui-border-strong);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.input {
+  @include text-base;
+  @include interactive-base;
+  flex: 1;
+  height: 36px;
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  font-family: var(--fui-font-mono, $fui-font-mono);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus {
+    @include focus-ring;
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &:disabled {
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+.positioner {
+  z-index: 100;
+  outline: none;
+}
+
+.popup {
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+  padding: var(--fui-space-2, $fui-space-2);
+
+  // react-colorful styling overrides
+  :global(.react-colorful) {
+    width: 200px;
+    height: 200px;
+  }
+
+  :global(.react-colorful__saturation) {
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+    margin-bottom: var(--fui-space-2, $fui-space-2);
+  }
+
+  :global(.react-colorful__hue) {
+    height: 12px;
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  }
+
+  :global(.react-colorful__pointer) {
+    width: 16px;
+    height: 16px;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.description {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+}

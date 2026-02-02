@@ -1,0 +1,87 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fui-space-2, $fui-space-2);
+}
+
+.label {
+  @include label-text;
+}
+
+.value {
+  font-family: var(--fui-font-mono, $fui-font-mono);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  min-width: 60px;
+  text-align: right;
+}
+
+.root {
+  width: 100%;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.track {
+  position: relative;
+  height: $fui-slider-track-height;
+  width: 100%;
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  cursor: pointer;
+
+  &[data-disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.indicator {
+  position: absolute;
+  height: 100%;
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+}
+
+.thumb {
+  width: $fui-slider-thumb-size;
+  height: $fui-slider-thumb-size;
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  border: $fui-slider-thumb-border solid var(--fui-color-accent, $fui-color-accent);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  cursor: grab;
+  transition:
+    transform var(--fui-transition-fast, $fui-transition-fast),
+    box-shadow var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

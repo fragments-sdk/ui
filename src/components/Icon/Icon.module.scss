@@ -1,0 +1,38 @@
+@use '../../tokens/variables' as *;
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  line-height: 1;
+}
+
+// Color variants (matching Badge/Alert pattern)
+.primary {
+  color: var(--fui-text-primary, $fui-text-primary);
+}
+
+.secondary {
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}
+
+.tertiary {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+.accent {
+  color: var(--fui-color-accent, $fui-color-accent);
+}
+
+.success {
+  color: var(--fui-color-success, $fui-color-success);
+}
+
+.warning {
+  color: var(--fui-color-warning, $fui-color-warning);
+}
+
+.error {
+  color: var(--fui-color-danger, $fui-color-danger);
+}

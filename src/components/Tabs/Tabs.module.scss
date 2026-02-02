@@ -1,0 +1,157 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Root container
+.root {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--fui-font-sans, $fui-font-sans);
+
+  &[data-orientation='vertical'] {
+    flex-direction: row;
+  }
+}
+
+// Tab list container
+.list {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+  padding: 0 var(--fui-space-1, $fui-space-1);
+
+  &[data-orientation='vertical'] {
+    flex-direction: column;
+    align-items: stretch;
+    border-bottom: none;
+    border-right: 1px solid var(--fui-border, $fui-border);
+    padding: var(--fui-space-1, $fui-space-1) 0;
+  }
+}
+
+// Variant: pills (shadcn-style with background container)
+.listPills {
+  border-bottom: none;
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  padding: 4px;
+  gap: 4px;
+  width: fit-content;
+}
+
+// Variant: underline (default, with indicator line)
+.listUnderline {
+  // Default styles already applied to .list
+}
+
+// Individual tab button
+.tab {
+  @include button-reset;
+  @include interactive-base;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-md, $fui-padding-item-md);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  white-space: nowrap;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+
+  &:hover:not([data-disabled]) {
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &[data-active] {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+// Tab in underline variant
+.tabUnderline {
+  border-radius: 0;
+  margin-bottom: -1px;
+  padding-bottom: calc(var(--fui-padding-item-sm, $fui-padding-item-sm) + 1px);
+
+  &:hover:not([data-disabled]) {
+    background-color: transparent;
+  }
+}
+
+// Tab in pills variant (shadcn-style)
+.tabPills {
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  transition: all 0.15s ease;
+  padding: var(--fui-space-1-5, 6px) var(--fui-space-3, $fui-space-3);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+
+  &:hover:not([data-disabled]):not([data-active]) {
+    background-color: transparent;
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &[data-active] {
+    background-color: var(--fui-bg-primary, $fui-bg-primary);
+    color: var(--fui-text-primary, $fui-text-primary);
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Animated indicator (underline variant)
+.indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+
+  // Use CSS variables from Base UI for position
+  width: var(--active-tab-width);
+  transform: translateX(var(--active-tab-left));
+  transition:
+    width var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  [data-orientation='vertical'] & {
+    bottom: auto;
+    left: auto;
+    right: 0;
+    top: 0;
+    width: 2px;
+    height: var(--active-tab-height);
+    transform: translateY(var(--active-tab-top));
+  }
+}
+
+// Tab panel content
+.panel {
+  padding: var(--fui-padding-item-lg, $fui-padding-item-lg) 0;
+  outline: none;
+
+  &[data-hidden] {
+    display: none;
+  }
+
+  // Focus visible for keyboard navigation
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+  }
+}
+
+// Panel with no padding (for custom layouts)
+.panelFlush {
+  padding: 0;
+}

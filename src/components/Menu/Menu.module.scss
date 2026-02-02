@@ -1,0 +1,206 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Positioner
+.positioner {
+  z-index: 50;
+  outline: none;
+}
+
+// Popup container
+.popup {
+  @include surface-elevated;
+
+  min-width: 12rem;
+  padding: var(--fui-space-1, $fui-space-1);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+// Menu item (shared base)
+.item {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  width: 100%;
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-padding-item-md, $fui-padding-item-md);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  cursor: pointer;
+  outline: none;
+
+  &[data-highlighted] {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+// Danger variant for destructive actions
+.itemDanger {
+  color: var(--fui-color-danger, $fui-color-danger);
+
+  &[data-highlighted] {
+    background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  }
+}
+
+// Item with icon
+.itemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  .itemDanger & {
+    color: var(--fui-color-danger, $fui-color-danger);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// Item label (main text)
+.itemLabel {
+  flex: 1;
+}
+
+// Item shortcut (keyboard shortcut hint)
+.itemShortcut {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  margin-left: auto;
+}
+
+// Checkbox/Radio indicator
+.itemIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+
+  svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+}
+
+// Checkbox item states
+.checkboxItem {
+  &[data-checked] .itemIndicator {
+    color: var(--fui-color-accent, $fui-color-accent);
+  }
+}
+
+// Radio item states
+.radioItem {
+  &[data-checked] .itemIndicator {
+    color: var(--fui-color-accent, $fui-color-accent);
+  }
+}
+
+// Separator
+.separator {
+  height: 1px;
+  margin: var(--fui-space-1, $fui-space-1) 0;
+  background-color: var(--fui-border, $fui-border);
+}
+
+// Group container
+.group {
+  // No specific styles needed
+}
+
+// Group label
+.groupLabel {
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// Arrow
+.arrow {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border, $fui-border);
+
+  &[data-side='top'] {
+    border-top: none;
+    border-left: none;
+  }
+
+  &[data-side='bottom'] {
+    border-bottom: none;
+    border-right: none;
+  }
+
+  &[data-side='left'] {
+    border-left: none;
+    border-bottom: none;
+  }
+
+  &[data-side='right'] {
+    border-right: none;
+    border-top: none;
+  }
+}
+
+// Submenu trigger (has arrow on right)
+.submenuTrigger {
+  &::after {
+    content: '';
+    margin-left: auto;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4px 0 4px 6px;
+    border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .popup {
+    transition: none;
+    transform: none;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
+  }
+}

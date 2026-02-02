@@ -1,0 +1,49 @@
+{
+  "name": "@fragments-sdk/ui",
+  "version": "0.3.0",
+  "description": "Customizable UI components built on Base UI headless primitives",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "fragments": "fragments.json",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles": "./src/styles/globals.scss",
+    "./tokens": "./src/tokens/_variables.scss",
+    "./mixins": "./src/tokens/_mixins.scss",
+    "./brand": "./src/brand.ts",
+    "./fragments.json": "./fragments.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "fragments dev",
+    "build": "fragments build",
+    "validate": "fragments validate"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.0.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@tanstack/react-table": "^8.21.3",
+    "react-colorful": "^5.6.1",
+    "shiki": "^3.0.0"
+  },
+  "devDependencies": {
+    "@fragments-sdk/cli": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sass": "^1.83.0",
+    "typescript": "^5.7.0"
+  },
+  "files": [
+    "src",
+    "fragments.json"
+  ]
+}

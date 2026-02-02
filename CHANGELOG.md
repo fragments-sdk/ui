@@ -1,0 +1,59 @@
+# @fragments-sdk/ui
+
+## 0.3.0
+
+### Minor Changes
+
+- [`17046a1`](https://github.com/ConanMcN/fragments/commit/17046a1e214c651fc9626f5bcea31a092eb8ccaf) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(Sidebar): Add shadcn-inspired patterns for improved flexibility and DX
+  - Add `SidebarProvider` component for wrapping app layouts with shared state
+  - Add `useSidebar` hook for accessing sidebar state from any child component
+  - Add Cmd/Ctrl+B keyboard shortcut to toggle sidebar (configurable)
+  - Add `asChild` prop to `Sidebar.Item` for polymorphic rendering (Next.js Link, React Router NavLink, etc.)
+  - Add `Sidebar.SectionAction` for action buttons in section headers (e.g., "Add Project")
+  - Add `Sidebar.MenuSkeleton` for loading states
+  - Add `Sidebar.Rail` for edge-based toggle control
+  - Add `collapsible` prop with modes: 'icon' (default), 'offcanvas', 'none'
+  - Deprecate `useSidebarContext` in favor of `useSidebar` (backwards compatible)
+
+  All changes are additive and fully backwards compatible.
+
+## 0.2.3
+
+### Patch Changes
+
+- [`8866838`](https://github.com/ConanMcN/fragments/commit/88668385fb14d1fcb01c232dcc160eac21c1631f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add README documentation for MCP and UI packages
+
+## 0.2.2
+
+### Patch Changes
+
+- [`4ec7522`](https://github.com/ConanMcN/fragments/commit/4ec75225be222eec116d211dc0e5c1707e414409) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add README documentation for MCP and UI packages
+
+## 0.2.1
+
+### Patch Changes
+
+- [`f657820`](https://github.com/ConanMcN/fragments/commit/f65782058dfa773088325eef18488dd47220fa72) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Improve fragments.json discovery and optimize build output
+
+  MCP server now discovers fragments.json via the "fragments" field in
+  package.json dependencies instead of brute-force scanning node_modules.
+  Supports merging multiple fragment libraries. Build output is minified
+  (117KB → 87KB) with null/empty fields stripped.
+
+## 0.2.0
+
+### Minor Changes
+
+- [`58bbb8b`](https://github.com/ConanMcN/fragments/commit/58bbb8bb8bb6d0be1de2b1e4505d81a392a3f378) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add composition recipes system and responsive Grid component
+  - New `defineRecipe()` / `compileRecipe()` API for composition patterns
+  - New `fragments_recipe` MCP tool for searching recipes by name, tag, or component
+  - Recipes included in `fragments_context` output
+  - New Grid component with responsive columns: `{ base: 1, md: 2, lg: 3 }`
+  - Breakpoint tokens and mobile-first breakpoint mixins added to design system
+  - Six example recipes: Login Form, Confirm Dialog, Card Grid, Form Layout, Dashboard Layout, Settings Page
+
+## 0.1.1
+
+### Patch Changes
+
+- [`8fa7a32`](https://github.com/ConanMcN/fragments/commit/8fa7a32f8f34cc39407fc25a291f7580e070fede) Thanks [@ConanMcN](https://github.com/ConanMcN)! - pipeline setup

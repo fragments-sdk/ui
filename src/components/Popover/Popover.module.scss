@@ -1,0 +1,188 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Positioner
+.positioner {
+  z-index: 50;
+  outline: none;
+}
+
+// Popup container
+.popup {
+  @include surface-elevated;
+  @include text-base;
+
+  min-width: 12rem;
+  max-width: 24rem;
+  padding: var(--fui-padding-container-md, $fui-padding-container-md);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95) translateY(-$fui-anim-offset-sm);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  &[data-starting-style] {
+    opacity: 0;
+    transform: scale(0.95) translateY(-$fui-anim-offset-sm);
+  }
+
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95) translateY($fui-anim-offset-sm);
+  }
+
+  // Adjust animation direction based on side
+  &[data-side='top'] {
+    &[data-starting-style] {
+      transform: scale(0.95) translateY($fui-anim-offset-sm);
+    }
+
+    &[data-ending-style] {
+      transform: scale(0.95) translateY(-$fui-anim-offset-sm);
+    }
+  }
+
+  &[data-side='left'],
+  &[data-side='right'] {
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: scale(0.95) translateY(0);
+    }
+  }
+}
+
+// Size variants
+.sm {
+  padding: var(--fui-padding-container-sm, $fui-padding-container-sm);
+  max-width: 16rem;
+}
+
+.md {
+  // Default styles
+}
+
+.lg {
+  padding: var(--fui-padding-container-lg, $fui-padding-container-lg);
+  max-width: 32rem;
+}
+
+// Title
+.title {
+  margin: 0 0 var(--fui-space-1, $fui-space-1);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  color: var(--fui-text-primary, $fui-text-primary);
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+}
+
+// Description
+.description {
+  margin: 0;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Close button
+.close {
+  @include button-reset;
+  @include interactive-base;
+
+  position: absolute;
+  top: var(--fui-space-2, $fui-space-2);
+  right: var(--fui-space-2, $fui-space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+// Arrow
+.arrow {
+  width: $fui-arrow-size;
+  height: $fui-arrow-size;
+  transform: rotate(45deg);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border, $fui-border);
+
+  &[data-side='top'] {
+    border-top: none;
+    border-left: none;
+  }
+
+  &[data-side='bottom'] {
+    border-bottom: none;
+    border-right: none;
+  }
+
+  &[data-side='left'] {
+    border-left: none;
+    border-bottom: none;
+  }
+
+  &[data-side='right'] {
+    border-right: none;
+    border-top: none;
+  }
+}
+
+// Body content area
+.body {
+  margin-top: var(--fui-space-3, $fui-space-3);
+}
+
+// Footer for actions
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fui-space-2, $fui-space-2);
+  margin-top: var(--fui-space-4, $fui-space-4);
+  padding-top: var(--fui-space-3, $fui-space-3);
+  border-top: 1px solid var(--fui-border, $fui-border);
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .popup {
+    transition: none;
+    transform: none;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
+
+    &[data-side='top'] {
+      &[data-starting-style],
+      &[data-ending-style] {
+        transform: none;
+      }
+    }
+  }
+}

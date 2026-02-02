@@ -1,0 +1,37 @@
+@use '../../tokens/variables' as *;
+
+.group {
+  display: flex;
+  flex-direction: row;
+}
+
+// Gap sizes
+.gap-xs {
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+.gap-sm {
+  gap: var(--fui-space-2, $fui-space-2);
+}
+
+.gap-md {
+  gap: var(--fui-space-3, $fui-space-3);
+}
+
+// Wrap
+.wrap {
+  flex-wrap: wrap;
+}
+
+// Alignment
+.align-start {
+  justify-content: flex-start;
+}
+
+.align-center {
+  justify-content: center;
+}
+
+.align-end {
+  justify-content: flex-end;
+}

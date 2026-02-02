@@ -1,0 +1,137 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  @include label-text;
+  margin-bottom: var(--fui-space-1, $fui-space-1);
+}
+
+.input {
+  @include text-base;
+  @include interactive-base;
+
+  display: block;
+  width: 100%;
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+
+  &::placeholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus {
+    @include focus-ring;
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+// Size variants
+.sm {
+  height: var(--fui-button-height-sm, $fui-button-height-sm);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.md {
+  height: var(--fui-input-height, $fui-input-height);
+  padding: 0 var(--fui-space-3, $fui-space-3);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+}
+
+.lg {
+  height: var(--fui-button-height-lg, $fui-button-height-lg);
+  padding: 0 var(--fui-space-4, $fui-space-4);
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.labelSm {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.error {
+  border-color: var(--fui-color-danger, $fui-color-danger);
+
+  &:focus {
+    border-color: var(--fui-color-danger, $fui-color-danger);
+    box-shadow:
+      0 0 0 var(--fui-focus-ring-offset, $fui-focus-ring-offset) var(--fui-bg-primary, $fui-bg-primary),
+      0 0 0 calc(var(--fui-focus-ring-offset, $fui-focus-ring-offset) + var(--fui-focus-ring-width, $fui-focus-ring-width)) var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+.helper {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+}
+
+.helperError {
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+// ============================================
+// Input with shortcut indicator
+// ============================================
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.hasShortcut {
+  padding-right: var(--fui-space-12, 3rem);
+}
+
+.shortcut {
+  position: absolute;
+  right: var(--fui-space-2, 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  font-size: var(--fui-font-size-xs, 0.75rem);
+  font-family: var(--fui-font-mono, ui-monospace, monospace);
+  color: var(--fui-text-tertiary);
+  background: var(--fui-bg-subtle);
+  border: 1px solid var(--fui-border-default);
+  border-radius: var(--fui-radius-sm, 0.25rem);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .input {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &:focus {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+  }
+
+  .error {
+    border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+}

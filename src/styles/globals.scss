@@ -1,0 +1,48 @@
+// ============================================
+// @fragments/ui Global Styles
+// ============================================
+// Import this file once in your app to set up CSS custom properties
+// for theming. This enables automatic dark mode support.
+//
+// Usage in your app:
+//   import '@fragments/ui/styles/globals.scss';
+//
+// Or in SCSS:
+//   @use '@fragments/ui/styles/globals';
+// ============================================
+
+@use '../tokens/variables' as *;
+
+// Output all CSS custom properties
+@include fui-css-variables;
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+// Respects user's system preference for reduced motion.
+// Disables animations and transitions globally when enabled.
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// ============================================
+// Accessibility: Focus Visible
+// ============================================
+// Ensures focus indicators are only shown for keyboard navigation
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: var(--fui-focus-ring-width, 2px) solid var(--fui-focus-ring-color, #18181b);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}

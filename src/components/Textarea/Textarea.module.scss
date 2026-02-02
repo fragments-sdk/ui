@@ -1,0 +1,89 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  @include label-text;
+  margin-bottom: var(--fui-space-1, $fui-space-1);
+}
+
+.required {
+  color: var(--fui-color-danger, $fui-color-danger);
+  margin-left: 2px;
+}
+
+.textarea {
+  @include text-base;
+  @include interactive-base;
+
+  display: block;
+  width: 100%;
+  min-height: var(--fui-input-height, $fui-input-height);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  line-height: $fui-line-height-normal;
+  font-family: inherit;
+
+  &::placeholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus {
+    @include focus-ring;
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+// Resize variants
+.resize-none {
+  resize: none;
+}
+
+.resize-vertical {
+  resize: vertical;
+}
+
+.resize-horizontal {
+  resize: horizontal;
+}
+
+.resize-both {
+  resize: both;
+}
+
+// Error state
+.error {
+  border-color: var(--fui-color-danger, $fui-color-danger);
+
+  &:focus {
+    border-color: var(--fui-color-danger, $fui-color-danger);
+    box-shadow:
+      0 0 0 var(--fui-focus-ring-offset, $fui-focus-ring-offset) var(--fui-bg-primary, $fui-bg-primary),
+      0 0 0 calc(var(--fui-focus-ring-offset, $fui-focus-ring-offset) + var(--fui-focus-ring-width, $fui-focus-ring-width)) var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+.helper {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+}
+
+.helperError {
+  color: var(--fui-color-danger, $fui-color-danger);
+}

@@ -1,0 +1,177 @@
+@use '../../tokens/variables' as *;
+
+// ============================================
+// Skeleton Component Styles
+// ============================================
+
+// Animation
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Base skeleton
+.skeleton {
+  display: block;
+  background-color: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: var(--fui-radius-md, #{$fui-radius-md});
+}
+
+// Static (no animation)
+.static {
+  animation: none;
+}
+
+// Fill parent
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+// ============================================
+// Semantic Variants
+// ============================================
+
+// Text - single line of body text
+.text {
+  height: 1em;
+  width: 100%;
+  border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
+}
+
+// Heading - taller for headings
+.heading {
+  height: 1.5em;
+  width: 100%;
+  border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
+}
+
+// Avatar - circular profile placeholder
+.avatar {
+  border-radius: var(--fui-radius-full, #{$fui-radius-full});
+}
+
+// Avatar sizes
+.avatar-sm {
+  width: 2rem;   // 32px
+  height: 2rem;
+}
+
+.avatar-md {
+  width: 2.5rem; // 40px
+  height: 2.5rem;
+}
+
+.avatar-lg {
+  width: 3rem;   // 48px
+  height: 3rem;
+}
+
+// Button - matches button heights
+.button {
+  border-radius: var(--fui-radius-md, #{$fui-radius-md});
+}
+
+.button-sm {
+  height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+  width: 5rem;  // 80px default width
+}
+
+.button-md {
+  height: var(--fui-button-height-md, #{$fui-button-height-md});
+  width: 6rem;  // 96px default width
+}
+
+.button-lg {
+  height: var(--fui-button-height-lg, #{$fui-button-height-lg});
+  width: 7rem;  // 112px default width
+}
+
+// Input - matches input field height
+.input {
+  height: var(--fui-input-height, #{$fui-input-height});
+  width: 100%;
+  border-radius: var(--fui-radius-md, #{$fui-radius-md});
+}
+
+// Rect - generic rectangle (no preset dimensions)
+.rect {
+  // Uses explicit width/height from props or fill
+}
+
+// ============================================
+// Border Radius Overrides
+// ============================================
+
+.radius-none {
+  border-radius: 0;
+}
+
+.radius-sm {
+  border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
+}
+
+.radius-md {
+  border-radius: var(--fui-radius-md, #{$fui-radius-md});
+}
+
+.radius-lg {
+  border-radius: var(--fui-radius-lg, #{$fui-radius-lg});
+}
+
+.radius-full {
+  border-radius: var(--fui-radius-full, #{$fui-radius-full});
+}
+
+// ============================================
+// Skeleton.Text - Multi-line text container
+// ============================================
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.gap-sm {
+  gap: var(--fui-space-2, #{$fui-space-2}); // 8px
+}
+
+.gap-md {
+  gap: var(--fui-space-3, #{$fui-space-3}); // 12px
+}
+
+.textLine {
+  height: 1em;
+  width: 100%;
+  background-color: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
+}
+
+// ============================================
+// Dark mode adjustments
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+  .skeleton,
+  .textLine {
+    background-color: var(--fui-bg-tertiary, #{$fui-dark-bg-tertiary});
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .textLine {
+    animation: none;
+  }
+}

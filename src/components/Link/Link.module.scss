@@ -1,0 +1,67 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.link {
+  @include interactive-base;
+
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// Variants
+.default {
+  color: var(--fui-color-accent, $fui-color-accent);
+
+  &:hover {
+    color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+}
+
+.subtle {
+  color: var(--fui-text-primary, $fui-text-primary);
+
+  &:hover {
+    color: var(--fui-color-accent, $fui-color-accent);
+  }
+}
+
+.muted {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+
+  &:hover {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+}
+
+// Underline styles
+.underline-always {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.underline-hover {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.underline-none {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

@@ -1,0 +1,82 @@
+@use '../../tokens/variables' as *;
+
+.text {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  margin: 0;
+}
+
+// Font sizes
+.size-2xs {
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+}
+
+.size-xs {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.size-sm {
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+}
+
+.size-base {
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.size-lg {
+  font-size: var(--fui-font-size-lg, $fui-font-size-lg);
+}
+
+.size-xl {
+  font-size: var(--fui-font-size-xl, $fui-font-size-xl);
+}
+
+.size-2xl {
+  font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
+}
+
+// Font weights
+.weight-normal {
+  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+}
+
+.weight-medium {
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+}
+
+.weight-semibold {
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+}
+
+// Text colors
+.color-primary {
+  color: var(--fui-text-primary, $fui-text-primary);
+}
+
+.color-secondary {
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}
+
+.color-tertiary {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// Font family
+.mono {
+  font-family: var(--fui-font-mono, $fui-font-mono);
+}
+
+// Truncation
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Line clamp (multi-line truncation)
+.lineClamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--fui-line-clamp, 2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

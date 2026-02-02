@@ -1,0 +1,209 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Header Root
+// ============================================
+
+.header {
+  display: flex;
+  align-items: center;
+  height: var(--header-height, 56px);
+  min-height: var(--header-height, 56px);
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  padding: 0 var(--fui-space-4, $fui-space-4);
+  z-index: var(--fui-header-z-index, 40);
+}
+
+.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-4, $fui-space-4);
+  width: 100%;
+  max-width: 100%;
+}
+
+// ============================================
+// Brand
+// ============================================
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  text-decoration: none;
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  img,
+  svg {
+    height: 32px;
+    width: auto;
+  }
+}
+
+// ============================================
+// Navigation
+// ============================================
+
+.nav {
+  display: none;
+
+  @include breakpoint-md {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  @include button-reset;
+  @include interactive-base;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 36px;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:active {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.navItemActive {
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  background-color: var(--fui-bg-hover, $fui-bg-hover);
+}
+
+// ============================================
+// Search
+// ============================================
+
+.search {
+  display: none;
+
+  @include breakpoint-md {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.searchExpandable {
+  display: flex;
+}
+
+// ============================================
+// Actions
+// ============================================
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  margin-left: auto;
+}
+
+// ============================================
+// Trigger (Mobile menu button)
+// ============================================
+
+.trigger {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-primary, $fui-text-primary);
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// ============================================
+// Spacer
+// ============================================
+
+.spacer {
+  flex: 1;
+}
+
+// ============================================
+// Skip Link (Accessibility)
+// ============================================
+
+.skipLink {
+  @include visually-hidden;
+
+  position: absolute;
+  top: var(--fui-space-2, $fui-space-2);
+  left: var(--fui-space-2, $fui-space-2);
+  z-index: 100;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  color: var(--fui-text-primary, $fui-text-primary);
+  border: 2px solid var(--fui-color-accent, $fui-color-accent);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  text-decoration: none;
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+
+  &:focus {
+    position: absolute;
+    width: auto;
+    height: auto;
+    clip: auto;
+    white-space: normal;
+    margin: 0;
+    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
+    overflow: visible;
+
+    @include focus-ring;
+  }
+}

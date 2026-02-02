@@ -1,0 +1,649 @@
+// ============================================
+// @fragments/ui Design Tokens
+// ============================================
+//
+// Override these variables in your own SCSS before importing components.
+// Example:
+//   $fui-color-accent: #0066ff;
+//   @use '@fragments/ui/tokens';
+//
+// Or use CSS custom properties for runtime theming.
+// ============================================
+
+// --------------------------------------------
+// Base Configuration
+// --------------------------------------------
+// Base font size: 14px (change to 16px for larger UI)
+// Base unit: 7px (change to 8px for standard 8pt grid)
+// All spacing and sizing derives from these values.
+
+$fui-base-font-size: 14px !default;
+$fui-base-unit: 7px !default;
+
+// Helper function to convert base units to rem
+// Usage: fui-unit(2) = 2 * 7px = 14px = 1rem (when base is 14px)
+@function fui-unit($multiplier) {
+  @return calc(#{$multiplier} * #{$fui-base-unit} / #{$fui-base-font-size} * 1rem);
+}
+
+// --------------------------------------------
+// Typography
+// --------------------------------------------
+$fui-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
+$fui-font-mono: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace !default;
+
+// Font sizes (rem based on 14px root)
+$fui-font-size-2xs: 0.714rem !default;  // 10px
+$fui-font-size-xs: 0.857rem !default;   // 12px
+$fui-font-size-sm: 1rem !default;       // 14px (base)
+$fui-font-size-base: 1.143rem !default; // 16px
+$fui-font-size-lg: 1.286rem !default;   // 18px
+$fui-font-size-xl: 1.714rem !default;   // 24px
+$fui-font-size-2xl: 2.143rem !default;  // 30px
+
+$fui-font-weight-normal: 400 !default;
+$fui-font-weight-medium: 500 !default;
+$fui-font-weight-semibold: 600 !default;
+
+$fui-line-height-tight: 1.25 !default;
+$fui-line-height-normal: 1.5 !default;
+
+// --------------------------------------------
+// Spacing (7px base unit)
+// --------------------------------------------
+// Micro-spacing for small internal alignments (margins, thumb offsets)
+$fui-space-px: 1px !default;      // 1px (pixel-precise)
+$fui-space-0-5: 0.143rem !default; // ~2px (micro alignment)
+$fui-space-0-75: 0.214rem !default; // ~3px (micro alignment)
+
+// 7px grid: 7, 14, 21, 28, 35, 42, 56, 70, 84
+$fui-space-1: 0.5rem !default;    // 7px  (1 unit)
+$fui-space-2: 1rem !default;      // 14px (2 units)
+$fui-space-3: 1.5rem !default;    // 21px (3 units)
+$fui-space-4: 2rem !default;      // 28px (4 units)
+$fui-space-5: 2.5rem !default;    // 35px (5 units)
+$fui-space-6: 3rem !default;      // 42px (6 units)
+$fui-space-8: 4rem !default;      // 56px (8 units)
+$fui-space-10: 5rem !default;     // 70px (10 units)
+$fui-space-12: 6rem !default;     // 84px (12 units)
+
+// --------------------------------------------
+// Density Padding (7px base unit)
+// --------------------------------------------
+// Container padding: Cards, Dialogs, Popovers
+$fui-padding-container-sm: 1.5rem !default;  // 21px (3 units)
+$fui-padding-container-md: 2rem !default;    // 28px (4 units)
+$fui-padding-container-lg: 3rem !default;    // 42px (6 units)
+
+// Inline padding: Alerts, Toasts
+$fui-padding-inline-sm: 1rem !default;       // 14px (2 units)
+$fui-padding-inline-md: 1.5rem !default;     // 21px (3 units)
+$fui-padding-inline-lg: 2rem !default;       // 28px (4 units)
+
+// Item padding: Accordion, Tabs, Menu items
+$fui-padding-item-sm: 1rem !default;         // 14px (2 units)
+$fui-padding-item-md: 1.5rem !default;       // 21px (3 units)
+$fui-padding-item-lg: 2rem !default;         // 28px (4 units)
+
+// --------------------------------------------
+// Border Radius
+// --------------------------------------------
+$fui-radius-sm: 0.25rem !default;  // 3.5px
+$fui-radius-md: 0.429rem !default; // 6px
+$fui-radius-lg: 0.571rem !default; // 8px
+$fui-radius-xl: 0.857rem !default; // 12px
+$fui-radius-full: 9999px !default;
+
+// --------------------------------------------
+// Transitions
+// --------------------------------------------
+$fui-transition-fast: 150ms ease !default;
+$fui-transition-normal: 200ms ease !default;
+
+// --------------------------------------------
+// Colors - Light Mode (Grayscale Default)
+// --------------------------------------------
+// Accent colors (dark on light background)
+$fui-color-accent: #18181b !default;
+$fui-color-accent-hover: #27272a !default;
+$fui-color-accent-active: #3f3f46 !default;
+
+// Semantic colors
+$fui-color-danger: #ef4444 !default;
+$fui-color-danger-hover: #dc2626 !default;
+$fui-color-success: #22c55e !default;
+$fui-color-warning: #f59e0b !default;
+$fui-color-info: #3b82f6 !default;
+
+// Semantic backgrounds (light)
+$fui-color-danger-bg: rgba(239, 68, 68, 0.1) !default;
+$fui-color-success-bg: rgba(34, 197, 94, 0.1) !default;
+$fui-color-warning-bg: rgba(245, 158, 11, 0.1) !default;
+$fui-color-info-bg: rgba(59, 130, 246, 0.1) !default;
+
+// Surface colors (light) - neutral grayscale
+$fui-bg-primary: #ffffff !default;
+$fui-bg-secondary: #f2f2f2 !default;
+$fui-bg-tertiary: #f4f4f5 !default;
+$fui-bg-elevated: #ffffff !default;
+$fui-bg-subtle: #fafafa !default;
+$fui-bg-hover: rgba(0, 0, 0, 0.04) !default;
+$fui-bg-active: rgba(0, 0, 0, 0.06) !default;
+
+// Text colors (light) - neutral grayscale
+$fui-text-primary: #18181b !default;
+$fui-text-secondary: #52525b !default;
+$fui-text-tertiary: #71717a !default;
+$fui-text-inverse: #f2f2f2 !default;
+
+// Border colors (light) - neutral grayscale
+$fui-border: #e4e4e7 !default;
+$fui-border-default: #e4e4e7 !default; // Alias for compatibility
+$fui-border-strong: #d4d4d8 !default;
+
+// Shadows (light)
+$fui-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$fui-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !default;
+$fui-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !default;
+
+// Focus ring
+$fui-focus-ring-color: #18181b !default;
+$fui-focus-ring-offset: 2px !default;
+$fui-focus-ring-width: 2px !default;
+
+// Scrollbar (light mode)
+$fui-scrollbar-width: 8px !default;
+$fui-scrollbar-track: #f4f4f5 !default;
+$fui-scrollbar-thumb: #d4d4d8 !default;
+$fui-scrollbar-thumb-hover: #a1a1aa !default;
+
+// --------------------------------------------
+// Colors - Dark Mode (Inverted Grayscale)
+// --------------------------------------------
+// Accent colors (light on dark background)
+$fui-dark-color-accent: #f2f2f2 !default;
+$fui-dark-color-accent-hover: #f4f4f5 !default;
+$fui-dark-color-accent-active: #e4e4e7 !default;
+
+// Surface colors (dark) - neutral grayscale
+$fui-dark-bg-primary: #09090b !default;
+$fui-dark-bg-secondary: #18181b !default;
+$fui-dark-bg-tertiary: #27272a !default;
+$fui-dark-bg-elevated: #18181b !default;
+$fui-dark-bg-subtle: #0f0f11 !default;
+$fui-dark-bg-hover: rgba(255, 255, 255, 0.06) !default;
+$fui-dark-bg-active: rgba(255, 255, 255, 0.08) !default;
+
+// Text colors (dark) - neutral grayscale
+$fui-dark-text-primary: #f2f2f2 !default;
+$fui-dark-text-secondary: #a1a1aa !default;
+$fui-dark-text-tertiary: #71717a !default;
+$fui-dark-text-inverse: #18181b !default;
+
+// Border colors (dark) - neutral grayscale
+$fui-dark-border: #27272a !default;
+$fui-dark-border-default: #27272a !default; // Alias for compatibility
+$fui-dark-border-strong: #3f3f46 !default;
+
+// Shadows (dark)
+$fui-dark-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !default;
+$fui-dark-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3) !default;
+$fui-dark-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4) !default;
+
+// Semantic backgrounds (dark) - increased opacity for visibility
+$fui-dark-color-danger-bg: rgba(239, 68, 68, 0.15) !default;
+$fui-dark-color-success-bg: rgba(34, 197, 94, 0.15) !default;
+$fui-dark-color-warning-bg: rgba(245, 158, 11, 0.15) !default;
+$fui-dark-color-info-bg: rgba(59, 130, 246, 0.15) !default;
+
+// Dark mode focus ring
+$fui-dark-focus-ring-color: #f2f2f2 !default;
+
+// Scrollbar (dark mode)
+$fui-dark-scrollbar-track: #27272a !default;
+$fui-dark-scrollbar-thumb: #52525b !default;
+$fui-dark-scrollbar-thumb-hover: #71717a !default;
+
+// Overlay/backdrop
+$fui-backdrop: rgba(0, 0, 0, 0.5) !default;
+$fui-dark-backdrop: rgba(0, 0, 0, 0.8) !default;
+
+// --------------------------------------------
+// Breakpoints
+// --------------------------------------------
+$fui-breakpoint-sm: 640px !default;
+$fui-breakpoint-md: 768px !default;
+$fui-breakpoint-lg: 1024px !default;
+$fui-breakpoint-xl: 1280px !default;
+
+// --------------------------------------------
+// Component-specific tokens
+// --------------------------------------------
+
+// Button heights (based on 7px grid)
+$fui-button-height-sm: 2.25rem !default;      // 28px (4 units)
+$fui-button-height-md: 2.571rem !default;  // 36px (~5 units)
+$fui-button-height-lg: 3.143rem !default;  // 44px (~6 units)
+
+// Input height
+$fui-input-height: 2.857rem !default;      // 40px (~6 units)
+
+// Toggle/Switch
+$fui-toggle-width-sm: 2.286rem !default;   // 32px
+$fui-toggle-width-md: 2.857rem !default;   // 40px
+$fui-toggle-height-sm: 1.286rem !default;  // 18px
+$fui-toggle-height-md: 1.571rem !default;  // 22px
+$fui-toggle-thumb-sm: 1rem !default;       // 14px
+$fui-toggle-thumb-md: 1.286rem !default;   // 18px
+$fui-toggle-thumb-offset: 2px !default;    // Thumb inset from track edge
+
+// Badge
+$fui-badge-dot-sm: 5px !default;
+$fui-badge-dot-md: 6px !default;
+
+// Icon sizes (standard conventions)
+$fui-icon-sm: 1rem !default;        // 14px (2 units)
+$fui-icon-md: 1.143rem !default;    // 16px (standard small icon)
+$fui-icon-lg: 1.429rem !default;    // 20px (standard medium icon)
+$fui-icon-xl: 1.714rem !default;    // 24px (standard large icon)
+
+// Interactive element sizes (touch targets)
+$fui-touch-sm: 1.714rem !default;   // 24px (minimum touch target)
+$fui-touch-md: 2.286rem !default;   // 32px (comfortable touch target)
+$fui-touch-lg: 3.143rem !default;   // 44px (large touch target, WCAG)
+
+// Animation offsets
+$fui-anim-offset-sm: 4px !default;  // Small slide animation
+$fui-anim-offset-md: 8px !default;  // Medium slide animation
+
+// Popover/Tooltip arrow
+$fui-arrow-size: 10px !default;
+
+// Sidebar-specific
+$fui-sidebar-item-height: 2.5rem !default;    // 35px (5 units)
+$fui-sidebar-subitem-height: 2.571rem !default; // 36px
+$fui-sidebar-indicator-width: 2px !default;
+$fui-sidebar-indicator-height: 1.143rem !default; // 16px
+$fui-sidebar-rail-width: 1.143rem !default;   // 16px
+$fui-sidebar-rail-indicator-width: 4px !default;
+$fui-sidebar-rail-indicator-height: 2.857rem !default; // 40px
+$fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
+
+// Slider
+$fui-slider-track-height: 4px !default;
+$fui-slider-thumb-size: $fui-icon-md !default; // 16px
+$fui-slider-thumb-border: 2px !default;
+
+// EmptyState content max-widths
+$fui-emptystate-width-sm: 240px !default;
+$fui-emptystate-width-md: 320px !default;
+$fui-emptystate-width-lg: 400px !default;
+
+// EmptyState icon sizes
+$fui-emptystate-icon-sm: $fui-icon-xl !default;  // 24px
+$fui-emptystate-icon-md: 2.286rem !default;      // 32px
+$fui-emptystate-icon-lg: 2.857rem !default;      // 40px
+
+// ColorChip/ColorPicker
+$fui-colorpicker-size: 180px !default;
+$fui-colorpicker-hue-height: 10px !default;
+$fui-colorpicker-pointer-size: 1rem !default;   // 14px
+$fui-colorpicker-pointer-border: 2px !default;
+
+// AppShell Layout
+$fui-appshell-header-height: 56px !default;
+$fui-appshell-sidebar-width: 240px !default;
+$fui-appshell-sidebar-collapsed-width: 64px !default;
+$fui-appshell-aside-width: 280px !default;
+$fui-header-z-index: 40 !default;
+
+// CodeBlock (light mode)
+$fui-code-bg: #1e1e1e !default;
+$fui-code-header-bg: #252526 !default;
+$fui-code-text: #d4d4d4 !default;
+$fui-code-text-muted: #6b7280 !default;
+$fui-code-border: rgba(255, 255, 255, 0.1) !default;
+$fui-code-tab-bg: rgba(255, 255, 255, 0.03) !default;
+$fui-code-tab-border: rgba(255, 255, 255, 0.08) !default;
+$fui-code-tab-text: #9ca3af !default;
+$fui-code-tab-text-active: #e5e7eb !default;
+$fui-code-copy-bg: rgba(255, 255, 255, 0.1) !default;
+$fui-code-copy-bg-hover: rgba(255, 255, 255, 0.15) !default;
+$fui-code-highlight-bg: rgba(255, 255, 255, 0.08) !default;
+$fui-code-selection-bg: rgba(59, 130, 246, 0.4) !default;
+$fui-code-scrollbar-track: rgba(255, 255, 255, 0.05) !default;
+$fui-code-scrollbar-thumb: rgba(255, 255, 255, 0.15) !default;
+$fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25) !default;
+
+// Tooltip (always dark bg with light text)
+$fui-tooltip-bg: #1e293b !default;
+$fui-tooltip-text: #f8fafc !default;
+$fui-tooltip-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
+
+// Hero/Marketing gradient accent
+$fui-hero-gradient-color: rgba(120, 119, 198, 0.15) !default;
+
+// CodeBlock (dark mode) - same as light, code blocks stay dark
+$fui-dark-code-bg: #1e1e1e !default;
+$fui-dark-code-header-bg: #252526 !default;
+$fui-dark-code-text: #d4d4d4 !default;
+$fui-dark-code-text-muted: #6b7280 !default;
+$fui-dark-code-border: rgba(255, 255, 255, 0.1) !default;
+$fui-dark-code-tab-bg: rgba(255, 255, 255, 0.03) !default;
+$fui-dark-code-tab-border: rgba(255, 255, 255, 0.08) !default;
+$fui-dark-code-tab-text: #9ca3af !default;
+$fui-dark-code-tab-text-active: #e5e7eb !default;
+$fui-dark-code-copy-bg: rgba(255, 255, 255, 0.1) !default;
+$fui-dark-code-copy-bg-hover: rgba(255, 255, 255, 0.15) !default;
+$fui-dark-code-highlight-bg: rgba(255, 255, 255, 0.08) !default;
+$fui-dark-code-selection-bg: rgba(59, 130, 246, 0.4) !default;
+$fui-dark-code-scrollbar-track: rgba(255, 255, 255, 0.05) !default;
+$fui-dark-code-scrollbar-thumb: rgba(255, 255, 255, 0.15) !default;
+$fui-dark-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25) !default;
+
+// Tooltip (dark mode) - same as light, tooltips stay dark
+$fui-dark-tooltip-bg: #1e293b !default;
+$fui-dark-tooltip-text: #f8fafc !default;
+$fui-dark-tooltip-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.25) !default;
+
+// Hero/Marketing gradient accent (dark mode)
+$fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
+
+// --------------------------------------------
+// CSS Custom Properties Export
+// --------------------------------------------
+// This mixin outputs CSS custom properties for runtime theming.
+// Call it in your root styles: @include fui-css-variables;
+
+@mixin fui-css-variables {
+  :root {
+    // Base configuration
+    font-size: #{$fui-base-font-size};
+    --fui-base-unit: #{$fui-base-unit};
+
+    // Typography
+    --fui-font-sans: #{$fui-font-sans};
+    --fui-font-mono: #{$fui-font-mono};
+    --fui-font-size-2xs: #{$fui-font-size-2xs};
+    --fui-font-size-xs: #{$fui-font-size-xs};
+    --fui-font-size-sm: #{$fui-font-size-sm};
+    --fui-font-size-base: #{$fui-font-size-base};
+    --fui-font-size-lg: #{$fui-font-size-lg};
+    --fui-font-size-xl: #{$fui-font-size-xl};
+    --fui-font-size-2xl: #{$fui-font-size-2xl};
+    --fui-font-weight-normal: #{$fui-font-weight-normal};
+    --fui-font-weight-medium: #{$fui-font-weight-medium};
+    --fui-font-weight-semibold: #{$fui-font-weight-semibold};
+    --fui-line-height-tight: #{$fui-line-height-tight};
+    --fui-line-height-normal: #{$fui-line-height-normal};
+
+    // Spacing (micro)
+    --fui-space-px: #{$fui-space-px};
+    --fui-space-0-5: #{$fui-space-0-5};
+    --fui-space-0-75: #{$fui-space-0-75};
+
+    // Spacing
+    --fui-space-1: #{$fui-space-1};
+    --fui-space-2: #{$fui-space-2};
+    --fui-space-3: #{$fui-space-3};
+    --fui-space-4: #{$fui-space-4};
+    --fui-space-5: #{$fui-space-5};
+    --fui-space-6: #{$fui-space-6};
+    --fui-space-8: #{$fui-space-8};
+    --fui-space-10: #{$fui-space-10};
+    --fui-space-12: #{$fui-space-12};
+
+    // Density padding
+    --fui-padding-container-sm: #{$fui-padding-container-sm};
+    --fui-padding-container-md: #{$fui-padding-container-md};
+    --fui-padding-container-lg: #{$fui-padding-container-lg};
+    --fui-padding-inline-sm: #{$fui-padding-inline-sm};
+    --fui-padding-inline-md: #{$fui-padding-inline-md};
+    --fui-padding-inline-lg: #{$fui-padding-inline-lg};
+    --fui-padding-item-sm: #{$fui-padding-item-sm};
+    --fui-padding-item-md: #{$fui-padding-item-md};
+    --fui-padding-item-lg: #{$fui-padding-item-lg};
+
+    // Border radius
+    --fui-radius-sm: #{$fui-radius-sm};
+    --fui-radius-md: #{$fui-radius-md};
+    --fui-radius-lg: #{$fui-radius-lg};
+    --fui-radius-xl: #{$fui-radius-xl};
+    --fui-radius-full: #{$fui-radius-full};
+
+    // Transitions
+    --fui-transition-fast: #{$fui-transition-fast};
+    --fui-transition-normal: #{$fui-transition-normal};
+
+    // Colors
+    --fui-color-accent: #{$fui-color-accent};
+    --fui-color-accent-hover: #{$fui-color-accent-hover};
+    --fui-color-accent-active: #{$fui-color-accent-active};
+    --fui-color-danger: #{$fui-color-danger};
+    --fui-color-danger-hover: #{$fui-color-danger-hover};
+    --fui-color-success: #{$fui-color-success};
+    --fui-color-warning: #{$fui-color-warning};
+    --fui-color-info: #{$fui-color-info};
+    --fui-color-danger-bg: #{$fui-color-danger-bg};
+    --fui-color-success-bg: #{$fui-color-success-bg};
+    --fui-color-warning-bg: #{$fui-color-warning-bg};
+    --fui-color-info-bg: #{$fui-color-info-bg};
+    --fui-backdrop: #{$fui-backdrop};
+
+    // Surfaces
+    --fui-bg-primary: #{$fui-bg-primary};
+    --fui-bg-secondary: #{$fui-bg-secondary};
+    --fui-bg-tertiary: #{$fui-bg-tertiary};
+    --fui-bg-elevated: #{$fui-bg-elevated};
+    --fui-bg-subtle: #{$fui-bg-subtle};
+    --fui-bg-hover: #{$fui-bg-hover};
+    --fui-bg-active: #{$fui-bg-active};
+
+    // Text
+    --fui-text-primary: #{$fui-text-primary};
+    --fui-text-secondary: #{$fui-text-secondary};
+    --fui-text-tertiary: #{$fui-text-tertiary};
+    --fui-text-inverse: #{$fui-text-inverse};
+
+    // Borders
+    --fui-border: #{$fui-border};
+    --fui-border-default: #{$fui-border-default};
+    --fui-border-strong: #{$fui-border-strong};
+
+    // Shadows
+    --fui-shadow-sm: #{$fui-shadow-sm};
+    --fui-shadow-md: #{$fui-shadow-md};
+    --fui-shadow-lg: #{$fui-shadow-lg};
+
+    // Focus
+    --fui-focus-ring-color: #{$fui-focus-ring-color};
+    --fui-focus-ring-offset: #{$fui-focus-ring-offset};
+    --fui-focus-ring-width: #{$fui-focus-ring-width};
+
+    // Scrollbar
+    --fui-scrollbar-width: #{$fui-scrollbar-width};
+    --fui-scrollbar-track: #{$fui-scrollbar-track};
+    --fui-scrollbar-thumb: #{$fui-scrollbar-thumb};
+    --fui-scrollbar-thumb-hover: #{$fui-scrollbar-thumb-hover};
+
+    // AppShell Layout
+    --fui-appshell-header-height: #{$fui-appshell-header-height};
+    --fui-appshell-sidebar-width: #{$fui-appshell-sidebar-width};
+    --fui-appshell-sidebar-collapsed-width: #{$fui-appshell-sidebar-collapsed-width};
+    --fui-appshell-aside-width: #{$fui-appshell-aside-width};
+    --fui-header-z-index: #{$fui-header-z-index};
+
+    // CodeBlock
+    --fui-code-bg: #{$fui-code-bg};
+    --fui-code-header-bg: #{$fui-code-header-bg};
+    --fui-code-text: #{$fui-code-text};
+    --fui-code-text-muted: #{$fui-code-text-muted};
+    --fui-code-border: #{$fui-code-border};
+    --fui-code-tab-bg: #{$fui-code-tab-bg};
+    --fui-code-tab-border: #{$fui-code-tab-border};
+    --fui-code-tab-text: #{$fui-code-tab-text};
+    --fui-code-tab-text-active: #{$fui-code-tab-text-active};
+    --fui-code-copy-bg: #{$fui-code-copy-bg};
+    --fui-code-copy-bg-hover: #{$fui-code-copy-bg-hover};
+    --fui-code-highlight-bg: #{$fui-code-highlight-bg};
+    --fui-code-selection-bg: #{$fui-code-selection-bg};
+    --fui-code-scrollbar-track: #{$fui-code-scrollbar-track};
+    --fui-code-scrollbar-thumb: #{$fui-code-scrollbar-thumb};
+    --fui-code-scrollbar-thumb-hover: #{$fui-code-scrollbar-thumb-hover};
+
+    // Tooltip
+    --fui-tooltip-bg: #{$fui-tooltip-bg};
+    --fui-tooltip-text: #{$fui-tooltip-text};
+    --fui-tooltip-shadow: #{$fui-tooltip-shadow};
+
+    // Hero/Marketing gradient
+    --fui-hero-gradient-color: #{$fui-hero-gradient-color};
+  }
+
+  // Dark mode via data-theme attribute (manual toggle)
+  :root[data-theme="dark"] {
+    @include _fui-dark-tokens;
+  }
+
+  // Dark mode via .dark class on html
+  :root.dark {
+    @include _fui-dark-tokens;
+  }
+
+  // High contrast mode via system preference
+  @media (prefers-contrast: more) {
+    :root {
+      @include _fui-high-contrast-tokens;
+    }
+
+    :root[data-theme="dark"],
+    :root.dark {
+      --fui-bg-hover: rgba(255, 255, 255, 0.15);
+      --fui-bg-active: rgba(255, 255, 255, 0.22);
+    }
+  }
+
+  // High contrast mode via data attribute (manual toggle)
+  :root[data-high-contrast="true"] {
+    @include _fui-high-contrast-tokens;
+  }
+
+  // Global scrollbar styling
+  * {
+    // Firefox
+    scrollbar-width: thin;
+    scrollbar-color: var(--fui-scrollbar-thumb) var(--fui-scrollbar-track);
+  }
+
+  // Webkit browsers (Chrome, Safari, Edge)
+  *::-webkit-scrollbar {
+    width: var(--fui-scrollbar-width);
+    height: var(--fui-scrollbar-width);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--fui-scrollbar-track);
+    border-radius: calc(var(--fui-scrollbar-width) / 2);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--fui-scrollbar-thumb);
+    border-radius: calc(var(--fui-scrollbar-width) / 2);
+
+    &:hover {
+      background: var(--fui-scrollbar-thumb-hover);
+    }
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: var(--fui-scrollbar-track);
+  }
+}
+
+// High contrast mode support
+@mixin _fui-high-contrast-tokens {
+  // Increase focus ring visibility
+  --fui-focus-ring-width: 3px;
+
+  // Stronger borders for better visibility
+  --fui-border: var(--fui-text-primary);
+  --fui-border-strong: var(--fui-text-primary);
+
+  // Ensure minimum contrast on interactive elements
+  --fui-bg-hover: rgba(0, 0, 0, 0.12);
+  --fui-bg-active: rgba(0, 0, 0, 0.18);
+}
+
+// Private mixin for dark mode token values
+@mixin _fui-dark-tokens {
+  // Accent colors invert for dark mode (light on dark)
+  --fui-color-accent: #{$fui-dark-color-accent};
+  --fui-color-accent-hover: #{$fui-dark-color-accent-hover};
+  --fui-color-accent-active: #{$fui-dark-color-accent-active};
+
+  // Surfaces
+  --fui-bg-primary: #{$fui-dark-bg-primary};
+  --fui-bg-secondary: #{$fui-dark-bg-secondary};
+  --fui-bg-tertiary: #{$fui-dark-bg-tertiary};
+  --fui-bg-elevated: #{$fui-dark-bg-elevated};
+  --fui-bg-subtle: #{$fui-dark-bg-subtle};
+  --fui-bg-hover: #{$fui-dark-bg-hover};
+  --fui-bg-active: #{$fui-dark-bg-active};
+
+  // Text
+  --fui-text-primary: #{$fui-dark-text-primary};
+  --fui-text-secondary: #{$fui-dark-text-secondary};
+  --fui-text-tertiary: #{$fui-dark-text-tertiary};
+  --fui-text-inverse: #{$fui-dark-text-inverse};
+
+  // Borders
+  --fui-border: #{$fui-dark-border};
+  --fui-border-default: #{$fui-dark-border-default};
+  --fui-border-strong: #{$fui-dark-border-strong};
+
+  // Shadows
+  --fui-shadow-sm: #{$fui-dark-shadow-sm};
+  --fui-shadow-md: #{$fui-dark-shadow-md};
+  --fui-shadow-lg: #{$fui-dark-shadow-lg};
+
+  // Semantic backgrounds
+  --fui-color-danger-bg: #{$fui-dark-color-danger-bg};
+  --fui-color-success-bg: #{$fui-dark-color-success-bg};
+  --fui-color-warning-bg: #{$fui-dark-color-warning-bg};
+  --fui-color-info-bg: #{$fui-dark-color-info-bg};
+
+  // Focus & backdrop
+  --fui-focus-ring-color: #{$fui-dark-focus-ring-color};
+  --fui-backdrop: #{$fui-dark-backdrop};
+
+  // Scrollbar
+  --fui-scrollbar-track: #{$fui-dark-scrollbar-track};
+  --fui-scrollbar-thumb: #{$fui-dark-scrollbar-thumb};
+  --fui-scrollbar-thumb-hover: #{$fui-dark-scrollbar-thumb-hover};
+
+  // CodeBlock
+  --fui-code-bg: #{$fui-dark-code-bg};
+  --fui-code-header-bg: #{$fui-dark-code-header-bg};
+  --fui-code-text: #{$fui-dark-code-text};
+  --fui-code-text-muted: #{$fui-dark-code-text-muted};
+  --fui-code-border: #{$fui-dark-code-border};
+  --fui-code-tab-bg: #{$fui-dark-code-tab-bg};
+  --fui-code-tab-border: #{$fui-dark-code-tab-border};
+  --fui-code-tab-text: #{$fui-dark-code-tab-text};
+  --fui-code-tab-text-active: #{$fui-dark-code-tab-text-active};
+  --fui-code-copy-bg: #{$fui-dark-code-copy-bg};
+  --fui-code-copy-bg-hover: #{$fui-dark-code-copy-bg-hover};
+  --fui-code-highlight-bg: #{$fui-dark-code-highlight-bg};
+  --fui-code-selection-bg: #{$fui-dark-code-selection-bg};
+  --fui-code-scrollbar-track: #{$fui-dark-code-scrollbar-track};
+  --fui-code-scrollbar-thumb: #{$fui-dark-code-scrollbar-thumb};
+  --fui-code-scrollbar-thumb-hover: #{$fui-dark-code-scrollbar-thumb-hover};
+
+  // Tooltip
+  --fui-tooltip-bg: #{$fui-dark-tooltip-bg};
+  --fui-tooltip-text: #{$fui-dark-tooltip-text};
+  --fui-tooltip-shadow: #{$fui-dark-tooltip-shadow};
+
+  // Hero/Marketing gradient
+  --fui-hero-gradient-color: #{$fui-dark-hero-gradient-color};
+}

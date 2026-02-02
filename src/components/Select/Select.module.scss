@@ -1,0 +1,187 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Trigger button
+.trigger {
+  @include button-reset;
+  @include interactive-base;
+  @include text-base;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-space-2, $fui-space-2);
+  width: 100%;
+  min-width: 10rem;
+  height: var(--fui-input-height, $fui-input-height);
+  padding: 0 var(--fui-space-3, $fui-space-3);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  text-align: left;
+
+  &:hover:not([data-disabled]) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &[data-popup-open] {
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &[data-disabled] {
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+// Value display
+.value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &[data-placeholder] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+// Chevron icon
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  transition: transform var(--fui-transition-fast, $fui-transition-fast);
+
+  [data-popup-open] > & {
+    transform: rotate(180deg);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// Positioner
+.positioner {
+  z-index: 50;
+  outline: none;
+}
+
+// Popup container
+.popup {
+  @include surface-elevated;
+
+  min-width: var(--anchor-width);
+  max-height: 20rem;
+  overflow-y: auto;
+  padding: var(--fui-space-1, $fui-space-1);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+// Individual option
+.item {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  width: 100%;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  cursor: pointer;
+  outline: none;
+
+  &[data-highlighted] {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &[data-selected] {
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-text-inverse, $fui-text-inverse);
+
+    &[data-highlighted] {
+      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    }
+  }
+
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+// Selection indicator (checkmark)
+.itemIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin-left: auto;
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+// Group container
+.group {
+  &:not(:first-child) {
+    margin-top: var(--fui-space-1, $fui-space-1);
+    padding-top: var(--fui-space-1, $fui-space-1);
+    border-top: 1px solid var(--fui-border, $fui-border);
+  }
+}
+
+// Group label
+.groupLabel {
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// Arrow
+.arrow {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border, $fui-border);
+
+  &[data-side='top'] {
+    border-top: none;
+    border-left: none;
+  }
+
+  &[data-side='bottom'] {
+    border-bottom: none;
+    border-right: none;
+  }
+}

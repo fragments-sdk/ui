@@ -1,0 +1,126 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-padding-inline-sm, $fui-padding-inline-sm) var(--fui-padding-inline-md, $fui-padding-inline-md);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Severity variants
+.info {
+  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+  border: 1px solid var(--fui-color-info, $fui-color-info);
+  color: var(--fui-color-info, $fui-color-info);
+}
+
+.success {
+  background-color: var(--fui-color-success-bg, $fui-color-success-bg);
+  border: 1px solid var(--fui-color-success, $fui-color-success);
+  color: var(--fui-color-success, $fui-color-success);
+}
+
+.warning {
+  background-color: var(--fui-color-warning-bg, $fui-color-warning-bg);
+  border: 1px solid var(--fui-color-warning, $fui-color-warning);
+  color: var(--fui-color-warning, $fui-color-warning);
+}
+
+.error {
+  background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  border: 1px solid var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $fui-icon-lg;
+  height: $fui-icon-lg;
+  border-radius: 50%;
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  flex-shrink: 0;
+  margin-top: var(--fui-space-px, $fui-space-px);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+}
+
+.info .icon {
+  background-color: var(--fui-color-info, $fui-color-info);
+}
+
+.success .icon {
+  background-color: var(--fui-color-success, $fui-color-success);
+}
+
+.warning .icon {
+  background-color: var(--fui-color-warning, $fui-color-warning);
+}
+
+.error .icon {
+  background-color: var(--fui-color-danger, $fui-color-danger);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  margin-bottom: var(--fui-space-0-5, $fui-space-0-5);
+}
+
+.content {
+  opacity: 0.9;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-3, $fui-space-3);
+  margin-top: var(--fui-space-2, $fui-space-2);
+}
+
+.close {
+  @include button-reset;
+  @include interactive-base;
+
+  padding: 0 var(--fui-space-1, $fui-space-1);
+  font-size: var(--fui-font-size-lg, $fui-font-size-lg);
+  color: inherit;
+  opacity: 0.6;
+  line-height: 1;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  margin-left: auto;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.action {
+  @include button-reset;
+
+  margin-top: var(--fui-space-2, $fui-space-2);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: inherit;
+  text-decoration: underline;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+

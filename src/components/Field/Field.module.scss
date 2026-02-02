@@ -1,0 +1,31 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  @include label-text;
+  margin-bottom: var(--fui-space-1, $fui-space-1);
+
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+.control {
+  // Minimal styles — users bring styled controls via render prop
+}
+
+.description {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+}
+
+.error {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+  color: var(--fui-color-danger, $fui-color-danger);
+}

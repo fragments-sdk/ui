@@ -1,0 +1,136 @@
+@use '../../tokens/variables' as *;
+
+// ============================================
+// Avatar Component Styles
+// ============================================
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  user-select: none;
+}
+
+// Shape variant
+.square {
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+}
+
+// ============================================
+// Size Variants
+// ============================================
+
+.xs {
+  width: 1.5rem;   // 24px
+  height: 1.5rem;
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+}
+
+.sm {
+  width: 2rem;     // 32px
+  height: 2rem;
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.md {
+  width: 2.5rem;   // 40px
+  height: 2.5rem;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+}
+
+.lg {
+  width: 3rem;     // 48px
+  height: 3rem;
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.xl {
+  width: 4rem;     // 64px
+  height: 4rem;
+  font-size: var(--fui-font-size-lg, $fui-font-size-lg);
+}
+
+// ============================================
+// Image
+// ============================================
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// ============================================
+// Initials / Fallback
+// ============================================
+
+.initials {
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.fallbackIcon {
+  width: 60%;
+  height: 60%;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// ============================================
+// Avatar Group
+// ============================================
+
+.group {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.groupItem {
+  margin-left: -0.5rem;
+  border: 2px solid var(--fui-bg-primary, $fui-bg-primary);
+
+  &:last-child {
+    margin-left: 0;
+  }
+}
+
+// Adjust overlap for different sizes
+.group .xs.groupItem {
+  margin-left: -0.375rem;
+}
+
+.group .sm.groupItem {
+  margin-left: -0.5rem;
+}
+
+.group .md.groupItem {
+  margin-left: -0.625rem;
+}
+
+.group .lg.groupItem {
+  margin-left: -0.75rem;
+}
+
+.group .xl.groupItem {
+  margin-left: -1rem;
+}
+
+// Overflow count indicator
+.overflow {
+  margin-left: -0.625rem;
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  border: 2px solid var(--fui-bg-primary, $fui-bg-primary);
+
+  .initials {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+}

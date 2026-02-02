@@ -1,0 +1,111 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.accordion {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  width: 100%;
+}
+
+.item {
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+
+  &:first-child {
+    border-top: 1px solid var(--fui-border, $fui-border);
+  }
+
+  &[data-disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// Reset heading styles (semantic wrapper for trigger)
+.heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.trigger {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--fui-padding-item-md, $fui-padding-item-md) 0;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  }
+}
+
+.triggerContent {
+  flex: 1;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  transition: transform var(--fui-transition-normal, $fui-transition-normal);
+
+  [data-state='open'] & {
+    transform: rotate(180deg);
+  }
+}
+
+.content {
+  overflow: hidden;
+
+  // Base UI Collapsible handles height animation via CSS
+  // We need to handle the collapsed state
+  &[data-state='closed'] {
+    height: 0;
+  }
+
+  &[data-state='open'] {
+    height: auto;
+  }
+
+  // Smooth animation using Base UI's built-in transition
+  &[data-starting-style],
+  &[data-ending-style] {
+    transition:
+      height var(--fui-transition-normal, $fui-transition-normal),
+      padding var(--fui-transition-normal, $fui-transition-normal);
+  }
+}
+
+.contentInner {
+  padding-bottom: var(--fui-padding-item-md, $fui-padding-item-md);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+
+  .content {
+    &[data-starting-style],
+    &[data-ending-style] {
+      transition: none;
+    }
+  }
+}

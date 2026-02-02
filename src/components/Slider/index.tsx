@@ -1,0 +1,88 @@
+import * as React from 'react';
+import { Field } from '@base-ui/react/field';
+import { Slider as BaseSlider } from '@base-ui/react/slider';
+import styles from './Slider.module.scss';
+import '../../styles/globals.scss';
+
+export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  label?: string;
+  value?: number;
+  defaultValue?: number;
+  onChange?: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  showValue?: boolean;
+  valueSuffix?: string;
+  disabled?: boolean;
+  name?: string;
+}
+
+export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
+  function Slider(
+    {
+      label,
+      value,
+      defaultValue,
+      onChange,
+      min = 0,
+      max = 100,
+      step = 1,
+      showValue = false,
+      valueSuffix = '',
+      disabled = false,
+      className,
+      name,
+      id,
+      ...htmlProps
+    },
+    ref
+  ) {
+    // For controlled component, use value; otherwise track internal state for display
+    const [internalValue, setInternalValue] = React.useState(defaultValue ?? min);
+    const displayValue = value !== undefined ? value : internalValue;
+
+    const handleChange = (newValue: number | number[]) => {
+      const val = Array.isArray(newValue) ? newValue[0] : newValue;
+      setInternalValue(val);
+      onChange?.(val);
+    };
+
+    const sliderValue = value !== undefined ? [value] : (defaultValue !== undefined ? [defaultValue] : undefined);
+
+    return (
+      <Field.Root {...htmlProps} disabled={disabled} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
+        {(label || showValue) && (
+          <div className={styles.header}>
+            {label && <Field.Label className={styles.label}>{label}</Field.Label>}
+            {showValue && (
+              <span className={styles.value}>
+                {displayValue}{valueSuffix}
+              </span>
+            )}
+          </div>
+        )}
+        <BaseSlider.Root
+          ref={ref}
+          value={sliderValue}
+          defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
+          onValueChange={handleChange}
+          min={min}
+          max={max}
+          step={step}
+          disabled={disabled}
+          name={name}
+          id={id}
+          className={styles.root}
+        >
+          <BaseSlider.Control className={styles.control}>
+            <BaseSlider.Track className={styles.track}>
+              <BaseSlider.Indicator className={styles.indicator} />
+              <BaseSlider.Thumb className={styles.thumb} />
+            </BaseSlider.Track>
+          </BaseSlider.Control>
+        </BaseSlider.Root>
+      </Field.Root>
+    );
+  }
+);

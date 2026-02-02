@@ -1,0 +1,185 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Root container
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  font-family: var(--fui-font-sans, $fui-font-sans);
+}
+
+// Header with label and value
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-space-2, $fui-space-2);
+}
+
+// Label text
+.label {
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+}
+
+// Value display
+.value {
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+// Track (background bar)
+.track {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+}
+
+// Size variants for track (using closest 7px grid values)
+.trackSm {
+  height: calc(var(--fui-space-1, $fui-space-1) / 2); // ~3.5px
+}
+
+.trackMd {
+  height: var(--fui-space-1, $fui-space-1); // 7px
+}
+
+.trackLg {
+  height: var(--fui-space-2, $fui-space-2); // 14px
+}
+
+// Indicator (filled portion)
+.indicator {
+  height: 100%;
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  transition: width var(--fui-transition-normal, $fui-transition-normal);
+}
+
+// Color variants
+.indicatorSuccess {
+  background-color: var(--fui-color-success, $fui-color-success);
+}
+
+.indicatorWarning {
+  background-color: var(--fui-color-warning, $fui-color-warning);
+}
+
+.indicatorDanger {
+  background-color: var(--fui-color-danger, $fui-color-danger);
+}
+
+// Indeterminate animation
+.indicatorIndeterminate {
+  width: 50% !important;
+  animation: indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+// Complete state
+.root[data-complete] .indicator {
+  background-color: var(--fui-color-success, $fui-color-success);
+}
+
+// Circular progress variant
+.circular {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circularSvg {
+  transform: rotate(-90deg);
+}
+
+.circularTrack {
+  stroke: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  fill: none;
+}
+
+.circularIndicator {
+  stroke: var(--fui-color-accent, $fui-color-accent);
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--fui-transition-normal, $fui-transition-normal);
+}
+
+.circularIndicatorSuccess {
+  stroke: var(--fui-color-success, $fui-color-success);
+}
+
+.circularIndicatorWarning {
+  stroke: var(--fui-color-warning, $fui-color-warning);
+}
+
+.circularIndicatorDanger {
+  stroke: var(--fui-color-danger, $fui-color-danger);
+}
+
+.circularIndicatorIndeterminate {
+  animation: circularIndeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes circularIndeterminate {
+  0% {
+    stroke-dashoffset: 280;
+    transform: rotate(0deg);
+  }
+  50% {
+    stroke-dashoffset: 70;
+  }
+  100% {
+    stroke-dashoffset: 280;
+    transform: rotate(360deg);
+  }
+}
+
+.circularValue {
+  position: absolute;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+// Size variants for circular (using closest 7px grid values)
+.circularSm {
+  width: var(--fui-space-4, $fui-space-4); // 28px
+  height: var(--fui-space-4, $fui-space-4);
+
+  .circularValue {
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  }
+}
+
+.circularMd {
+  width: var(--fui-space-6, $fui-space-6); // 42px
+  height: var(--fui-space-6, $fui-space-6);
+}
+
+.circularLg {
+  width: var(--fui-space-8, $fui-space-8); // 56px
+  height: var(--fui-space-8, $fui-space-8);
+
+  .circularValue {
+    font-size: var(--fui-font-size-base, $fui-font-size-base);
+  }
+}

@@ -1,0 +1,82 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Positioner (handles placement)
+.positioner {
+  z-index: 60;
+  pointer-events: none;
+}
+
+// The tooltip popup
+.popup {
+  @include text-base;
+
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+  // Tooltips use inverted colors - always dark bg with light text
+  color: var(--fui-tooltip-text, $fui-tooltip-text);
+  background-color: var(--fui-tooltip-bg, $fui-tooltip-bg);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  box-shadow: var(--fui-tooltip-shadow, $fui-tooltip-shadow);
+  max-width: 20rem; // 320px
+  word-wrap: break-word;
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &[data-starting-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  // Instant transitions (when moving between tooltips)
+  &[data-instant] {
+    transition-duration: 0ms;
+  }
+}
+
+// Arrow element
+.arrow {
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background-color: var(--fui-tooltip-bg, $fui-tooltip-bg);
+
+  // Position based on side
+  &[data-side='top'] {
+    bottom: -4px;
+  }
+
+  &[data-side='bottom'] {
+    top: -4px;
+  }
+
+  &[data-side='left'] {
+    right: -4px;
+  }
+
+  &[data-side='right'] {
+    left: -4px;
+  }
+}
+
+// Trigger wrapper (when using asChild)
+.trigger {
+  display: inline-flex;
+}
