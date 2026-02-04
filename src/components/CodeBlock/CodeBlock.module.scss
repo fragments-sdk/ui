@@ -24,7 +24,10 @@
 // Header bar with filename
 // ============================================
 .hasHeader {
-  // No additional styles needed
+  // Adjust copy button position when header is present
+  .copyButton {
+    top: calc(var(--fui-space-2, $fui-space-2) + 36px); // Account for header height
+  }
 }
 
 .header {
@@ -56,7 +59,8 @@
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   font-family: var(--fui-font-sans, $fui-font-sans);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  // Use code-specific tokens for consistent dark theme styling
+  color: var(--fui-code-text-muted, $fui-code-text-muted);
   background: transparent;
   border: none;
   border-radius: var(--fui-radius-md, $fui-radius-md);
@@ -200,6 +204,90 @@
   }
 }
 
+// Diff styling
+.withDiff {
+  :global(.diff-marker) {
+    display: inline-block;
+    width: 1.5em;
+    text-align: center;
+    user-select: none;
+    color: var(--fui-code-text-muted, $fui-code-text-muted);
+  }
+
+  :global(.diff-added) {
+    background-color: var(--fui-color-success-bg, $fui-color-success-bg);
+    margin: 0 calc(-1 * var(--fui-space-3, $fui-space-3));
+    padding: 0 var(--fui-space-3, $fui-space-3);
+
+    :global(.diff-marker) {
+      color: var(--fui-color-success, $fui-color-success);
+    }
+  }
+
+  :global(.diff-removed) {
+    background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+    margin: 0 calc(-1 * var(--fui-space-3, $fui-space-3));
+    padding: 0 var(--fui-space-3, $fui-space-3);
+
+    :global(.diff-marker) {
+      color: var(--fui-color-danger, $fui-color-danger);
+    }
+  }
+}
+
+// Word wrap
+.wordWrap {
+  .codeContainer :global(.shiki),
+  .loading pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  :global(.line) {
+    display: block;
+    width: auto;
+  }
+}
+
+// Caption below code block
+.caption {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  margin-top: var(--fui-space-2, $fui-space-2);
+  font-style: italic;
+}
+
+// Collapse/expand button
+.collapseButton {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  padding: var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  color: var(--fui-code-text-muted, $fui-code-text-muted);
+  background: var(--fui-code-header-bg, $fui-code-header-bg);
+  border-top: 1px solid var(--fui-code-border, $fui-code-border);
+  cursor: pointer;
+  transition:
+    background var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    background: var(--fui-code-copy-bg, $fui-code-copy-bg);
+    color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: -2px;
+  }
+}
+
 // Responsive
 @media (max-width: $fui-breakpoint-md) {
   .codeContainer :global(.shiki) {
@@ -220,5 +308,5 @@
 // ============================================
 
 .tabbedPanel {
-  margin-top: var(--fui-space-2, $fui-space-2);
+  margin-top: 0;
 }
