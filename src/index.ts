@@ -57,6 +57,19 @@ export {
   type AccordionValue,
 } from './components/Accordion';
 
+// Collapsible
+export {
+  Collapsible,
+  CollapsibleRoot,
+  CollapsibleTrigger,
+  CollapsibleContent,
+  useCollapsibleContext,
+  type CollapsibleProps,
+  type CollapsibleRootProps,
+  type CollapsibleTriggerProps,
+  type CollapsibleContentProps,
+} from './components/Collapsible';
+
 // Dialog
 export {
   Dialog,
@@ -164,6 +177,19 @@ export {
   type SkeletonVariant,
   type SkeletonSize,
 } from './components/Skeleton';
+
+// Loading
+export {
+  Loading,
+  LoadingRoot,
+  LoadingInline,
+  LoadingScreen,
+  type LoadingProps,
+  type LoadingSize,
+  type LoadingVariant,
+  type LoadingInlineProps,
+  type LoadingScreenProps,
+} from './components/Loading';
 
 // Table
 export {
@@ -378,6 +404,52 @@ export { VisuallyHidden, type VisuallyHiddenProps } from './components/VisuallyH
 
 // Brand
 export { BRAND, type Brand } from './brand';
+
+// Message (AI Chat)
+export {
+  Message,
+  MessageRoot,
+  MessageContent,
+  MessageActions,
+  MessageTimestamp,
+  MessageAvatar,
+  useMessageContext,
+  type MessageProps,
+  type MessageRole,
+  type MessageStatus,
+  type MessageContentProps,
+  type MessageActionsProps,
+  type MessageTimestampProps,
+  type MessageAvatarProps,
+} from './components/Message';
+
+// ConversationList (AI Chat)
+export {
+  ConversationList,
+  ConversationListRoot,
+  DateSeparator,
+  TypingIndicator,
+  useConversationList,
+  type ConversationListProps,
+  type AutoScrollBehavior,
+  type DateSeparatorProps,
+  type TypingIndicatorProps,
+} from './components/ConversationList';
+
+// ThinkingIndicator (AI Chat)
+export {
+  ThinkingIndicator,
+  ThinkingIndicatorRoot,
+  ThinkingSteps,
+  ThinkingStep,
+  useThinkingIndicatorContext,
+  type ThinkingIndicatorProps,
+  type ThinkingVariant,
+  type ThinkingStep as ThinkingStepType,
+  type StepStatus,
+  type ThinkingStepsProps,
+  type ThinkingStepProps,
+} from './components/ThinkingIndicator';
 
 // Accessibility Utilities
 export {

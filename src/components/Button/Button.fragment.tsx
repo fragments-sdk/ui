@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Button',
     description: 'Interactive element for user actions and form submissions',
-    category: 'actions',
+    category: 'inputs',
     status: 'stable',
     tags: ['action', 'button', 'form', 'interactive'],
   },

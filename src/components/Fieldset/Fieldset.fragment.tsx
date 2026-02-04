@@ -14,7 +14,7 @@ export default defineSegment({
   meta: {
     name: 'Fieldset',
     description: 'Groups related form fields with an accessible legend. Use to organize forms into logical sections.',
-    category: 'forms',
+    category: 'form',
     status: 'stable',
     tags: ['form', 'fieldset', 'group', 'legend', 'accessible'],
     since: '0.4.0',

@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Avatar',
     description: 'Visual representation of a user or entity',
-    category: 'data-display',
+    category: 'display',
     status: 'stable',
     tags: ['user', 'profile', 'image', 'identity'],
   },

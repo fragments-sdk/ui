@@ -18,7 +18,7 @@ export default defineSegment({
   meta: {
     name: 'Form',
     description: 'Form wrapper that handles server-side error distribution to Field components. Pairs with Field for complete form validation.',
-    category: 'forms',
+    category: 'form',
     status: 'stable',
     tags: ['form', 'validation', 'errors', 'submit', 'server'],
     since: '0.4.0',

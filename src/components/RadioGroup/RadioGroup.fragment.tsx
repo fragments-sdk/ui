@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'RadioGroup',
     description: 'Single selection from a list of mutually exclusive options',
-    category: 'forms',
+    category: 'inputs',
     status: 'stable',
     tags: ['form', 'radio', 'selection', 'options'],
   },

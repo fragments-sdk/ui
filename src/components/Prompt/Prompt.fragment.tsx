@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Prompt',
     description: 'Multi-line input with toolbar for AI/chat interfaces',
-    category: 'forms',
+    category: 'ai',
     status: 'stable',
     tags: ['prompt', 'chat', 'ai', 'input', 'textarea', 'form'],
   },

@@ -43,7 +43,7 @@ export default defineSegment({
   meta: {
     name: 'Table',
     description: 'Data table with sorting and row selection. Use for displaying structured data that needs to be scanned, compared, or acted upon.',
-    category: 'data-display',
+    category: 'display',
     status: 'stable',
     tags: ['table', 'data', 'grid', 'list', 'sorting'],
     since: '0.1.0',

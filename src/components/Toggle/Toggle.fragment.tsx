@@ -14,7 +14,7 @@ export default defineSegment({
   meta: {
     name: 'Toggle',
     description: 'Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly.',
-    category: 'forms',
+    category: 'inputs',
     status: 'stable',
     tags: ['switch', 'toggle', 'boolean', 'settings', 'preference'],
     since: '0.1.0',

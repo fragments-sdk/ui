@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Badge',
     description: 'Compact label for status, counts, or categorization. Draws attention to metadata without dominating the layout.',
-    category: 'feedback',
+    category: 'display',
     status: 'stable',
     tags: ['status', 'label', 'tag', 'count', 'chip'],
     since: '0.1.0',

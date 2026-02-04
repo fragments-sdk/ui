@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Listbox',
     description: 'Controlled listbox for search results, autocomplete dropdowns, and command menus. Provides Menu-like styling without requiring a trigger.',
-    category: 'forms',
+    category: 'form',
     status: 'stable',
     tags: ['listbox', 'search', 'autocomplete', 'combobox', 'command', 'dropdown'],
     since: '0.3.0',

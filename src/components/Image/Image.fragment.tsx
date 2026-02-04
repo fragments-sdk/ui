@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Image',
     description: 'Responsive image component with aspect ratio control, loading states, and error fallbacks. Handles image display with consistent styling.',
-    category: 'data-display',
+    category: 'display',
     status: 'stable',
     tags: ['image', 'media', 'photo', 'picture', 'visual'],
     since: '0.1.0',

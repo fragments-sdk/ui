@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Card',
     description: 'Container for grouping related content',
-    category: 'layout',
+    category: 'surfaces',
     status: 'stable',
     tags: ['container', 'layout', 'surface'],
   },

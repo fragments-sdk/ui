@@ -1,0 +1,224 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Message Root
+// ============================================
+
+.message {
+  display: flex;
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-2, $fui-space-2);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    .actions {
+      opacity: 1;
+    }
+  }
+}
+
+// Role-based styles
+.user {
+  flex-direction: row-reverse;
+  margin-left: auto;
+  max-width: 85%;
+
+  .body {
+    align-items: flex-end;
+  }
+
+  .content {
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-text-inverse, $fui-text-inverse);
+  }
+}
+
+.assistant {
+  max-width: 85%;
+
+  .content {
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.system {
+  max-width: 100%;
+  justify-content: center;
+
+  .content {
+    background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+    text-align: center;
+  }
+
+  .avatar {
+    display: none;
+  }
+}
+
+// Status styles
+.error {
+  .content {
+    background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+    border: 1px solid var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+.sending {
+  opacity: 0.7;
+}
+
+// ============================================
+// Avatar
+// ============================================
+
+.avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.avatarUser {
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+}
+
+.avatarAssistant {
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  color: var(--fui-text-primary, $fui-text-primary);
+}
+
+.avatarSystem {
+  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+  color: var(--fui-color-info, $fui-color-info);
+}
+
+// ============================================
+// Body (content container)
+// ============================================
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-1, $fui-space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+// ============================================
+// Content
+// ============================================
+
+.content {
+  @include text-base;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  // Prose styling for markdown content
+  p {
+    margin: 0;
+
+    & + p {
+      margin-top: var(--fui-space-2, $fui-space-2);
+    }
+  }
+
+  code {
+    font-family: var(--fui-font-mono, $fui-font-mono);
+    font-size: 0.9em;
+    padding: 0.125em 0.375em;
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  pre {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    padding: var(--fui-space-2, $fui-space-2);
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+    background-color: rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: none;
+    }
+  }
+
+  ul,
+  ol {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    padding-left: var(--fui-space-4, $fui-space-4);
+  }
+}
+
+.streaming {
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    margin-left: 2px;
+    background-color: currentColor;
+    animation: blink 1s step-end infinite;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+// ============================================
+// Actions
+// ============================================
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  opacity: 0;
+  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
+}
+
+// ============================================
+// Timestamp
+// ============================================
+
+.timestamp {
+  @include helper-text;
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// ============================================
+// Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .streaming::after {
+    animation: none;
+  }
+}

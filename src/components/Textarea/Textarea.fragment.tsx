@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Textarea',
     description: 'Multi-line text input for longer form content',
-    category: 'forms',
+    category: 'inputs',
     status: 'stable',
     tags: ['input', 'text', 'form', 'multiline'],
   },

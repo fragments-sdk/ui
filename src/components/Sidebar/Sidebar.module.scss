@@ -159,6 +159,25 @@
   padding: 0;
 }
 
+// Collapsible section styles (using Collapsible component)
+.sectionCollapsible {
+  // Override Collapsible trigger styles for sidebar context
+  :global(.collapsible-trigger),
+  button[aria-expanded] {
+    background: transparent;
+    justify-content: space-between;
+    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+
+    &:hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+  }
+}
+
+.sectionContent {
+  // Content container - no extra padding needed
+}
+
 // ============================================
 // Item
 // ============================================

@@ -22,7 +22,7 @@ export default defineSegment({
   meta: {
     name: 'Select',
     description: 'Dropdown for choosing from a list of options. Use when there are more than 4-5 choices that would clutter the UI.',
-    category: 'forms',
+    category: 'inputs',
     status: 'stable',
     tags: ['select', 'dropdown', 'form', 'options', 'picker'],
     since: '0.1.0',

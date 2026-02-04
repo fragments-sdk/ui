@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Input',
     description: 'Text input field for single-line user data entry',
-    category: 'forms',
+    category: 'inputs',
     status: 'stable',
     tags: ['form', 'input', 'text'],
   },

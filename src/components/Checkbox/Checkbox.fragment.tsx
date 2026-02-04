@@ -14,7 +14,7 @@ export default defineSegment({
   meta: {
     name: 'Checkbox',
     description: 'Binary toggle for form fields. Use for options that require explicit submission, unlike Toggle which takes effect immediately.',
-    category: 'forms',
+    category: 'inputs',
     status: 'stable',
     tags: ['checkbox', 'form', 'boolean', 'selection', 'input'],
     since: '0.1.0',

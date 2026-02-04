@@ -10,7 +10,7 @@ export default defineSegment({
   meta: {
     name: 'Field',
     description: 'Compositional form field wrapper providing validation, labels, descriptions, and error messages. Use for advanced form needs beyond baked-in Input/Textarea props.',
-    category: 'forms',
+    category: 'form',
     status: 'stable',
     tags: ['form', 'field', 'validation', 'label', 'error', 'input', 'accessible'],
     since: '0.4.0',

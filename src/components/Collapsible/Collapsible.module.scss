@@ -1,0 +1,117 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.root {
+  width: 100%;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--fui-space-2, $fui-space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  gap: var(--fui-space-2, $fui-space-2);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.triggerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  transition: transform 0.2s ease-out;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.content {
+  overflow: hidden;
+  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.contentOpen {
+  max-height: 2000px; // Large enough for most content
+  opacity: 1;
+}
+
+.contentClosed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.contentInner {
+  padding-top: var(--fui-space-1, $fui-space-1);
+}
+
+.disabled {
+  .trigger {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Animation variant using CSS animation instead of max-height
+// Can be used with forceMount for smoother animations
+.root[data-animated='true'] {
+  .content {
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+  }
+
+  .contentOpen {
+    animation-name: collapsibleSlideDown;
+  }
+
+  .contentClosed {
+    animation-name: collapsibleSlideUp;
+  }
+}
+
+@keyframes collapsibleSlideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: var(--collapsible-content-height, 2000px);
+    opacity: 1;
+  }
+}
+
+@keyframes collapsibleSlideUp {
+  from {
+    max-height: var(--collapsible-content-height, 2000px);
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}

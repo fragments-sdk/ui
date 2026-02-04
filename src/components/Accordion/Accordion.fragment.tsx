@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Accordion',
     description: 'Vertically stacked, collapsible content sections. Use for organizing related content that can be progressively disclosed.',
-    category: 'layout',
+    category: 'surfaces',
     status: 'stable',
     tags: ['accordion', 'collapse', 'expand', 'disclosure', 'faq'],
     since: '0.2.0',

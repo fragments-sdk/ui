@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'CodeBlock',
     description: 'Syntax-highlighted code display with copy functionality, theming, diff view, and collapsible sections',
-    category: 'content',
+    category: 'display',
     status: 'stable',
     tags: ['code', 'syntax', 'highlighting', 'documentation', 'developer', 'diff'],
   },

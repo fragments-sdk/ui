@@ -9,7 +9,7 @@ export default defineSegment({
   meta: {
     name: 'Icon',
     description: 'Wrapper for Phosphor icons with consistent sizing and semantic colors. Provides standardized icon rendering across the design system.',
-    category: 'data-display',
+    category: 'display',
     status: 'stable',
     tags: ['icon', 'phosphor', 'visual', 'symbol', 'graphic'],
     since: '0.1.0',

@@ -2,6 +2,7 @@ import * as React from 'react';
 import styles from './Sidebar.module.scss';
 import { Tooltip } from '../Tooltip';
 import { Skeleton } from '../Skeleton';
+import { Collapsible } from '../Collapsible';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
 
@@ -82,6 +83,10 @@ export interface SidebarSectionProps {
   label?: string;
   /** Action element to display in the section header (e.g., "Add" button) */
   action?: React.ReactNode;
+  /** Enable collapsible behavior */
+  collapsible?: boolean;
+  /** Default expanded state (only applies when collapsible is true) */
+  defaultOpen?: boolean;
   className?: string;
 }
 
@@ -618,23 +623,59 @@ function SidebarNav({ children, 'aria-label': ariaLabel = 'Main navigation', cla
   );
 }
 
-function SidebarSection({ children, label, action, className }: SidebarSectionProps) {
+function SidebarSection({
+  children,
+  label,
+  action,
+  collapsible: isCollapsibleProp = false,
+  defaultOpen = true,
+  className
+}: SidebarSectionProps) {
   const { collapsed, isMobile } = useSidebarContext();
-  const classes = [styles.section, className].filter(Boolean).join(' ');
+
+  const classes = [
+    styles.section,
+    className
+  ].filter(Boolean).join(' ');
+
   const showLabel = label && (!collapsed || isMobile);
   const showAction = action && (!collapsed || isMobile);
+  const isCollapsible = isCollapsibleProp && showLabel;
 
+  // Non-collapsible section
+  if (!isCollapsible) {
+    return (
+      <div className={classes} role="group" aria-label={label}>
+        {(showLabel || showAction) && (
+          <div className={styles.sectionHeader}>
+            {showLabel && <div className={styles.sectionLabel}>{label}</div>}
+            {showAction && <div className={styles.sectionActionWrapper}>{action}</div>}
+          </div>
+        )}
+        <ul className={styles.sectionList}>
+          {children}
+        </ul>
+      </div>
+    );
+  }
+
+  // Collapsible section using Collapsible component
   return (
     <div className={classes} role="group" aria-label={label}>
-      {(showLabel || showAction) && (
-        <div className={styles.sectionHeader}>
-          {showLabel && <div className={styles.sectionLabel}>{label}</div>}
-          {showAction && <div className={styles.sectionActionWrapper}>{action}</div>}
-        </div>
-      )}
-      <ul className={styles.sectionList}>
-        {children}
-      </ul>
+      <Collapsible defaultOpen={defaultOpen} className={styles.sectionCollapsible}>
+        <Collapsible.Trigger
+          className={styles.sectionHeader}
+          chevronPosition="end"
+        >
+          <span className={styles.sectionLabel}>{label}</span>
+          {showAction && <span className={styles.sectionActionWrapper} onClick={(e) => e.stopPropagation()}>{action}</span>}
+        </Collapsible.Trigger>
+        <Collapsible.Content className={styles.sectionContent}>
+          <ul className={styles.sectionList}>
+            {children}
+          </ul>
+        </Collapsible.Content>
+      </Collapsible>
     </div>
   );
 }

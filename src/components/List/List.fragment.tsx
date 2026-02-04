@@ -9,7 +9,7 @@ export default defineSegment({
   meta: {
     name: 'List',
     description: 'Compound component for rendering ordered or unordered lists with consistent styling. Supports bullet, numbered, and icon-prefixed items.',
-    category: 'layout',
+    category: 'display',
     status: 'stable',
     tags: ['list', 'items', 'bullet', 'ordered', 'unordered'],
     since: '0.1.0',

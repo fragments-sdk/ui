@@ -20,7 +20,7 @@ export default defineSegment({
   meta: {
     name: 'Theme',
     description: 'Theme management system with provider, toggle, and hook pattern. Supports light, dark, and system modes with localStorage persistence.',
-    category: 'layout',
+    category: 'utilities',
     status: 'stable',
     tags: ['theme', 'dark-mode', 'light-mode', 'provider', 'toggle'],
     since: '0.5.0',
