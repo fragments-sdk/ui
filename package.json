@@ -1,6 +1,6 @@
 {
   "name": "@fragments-sdk/ui",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Customizable UI components built on Base UI headless primitives",
   "type": "module",
   "main": "src/index.ts",

@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- [`dbd8978`](https://github.com/ConanMcN/fragments/commit/dbd897818e14b798f8b4070798b1ec49c84480d3) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add Chart component (ChartContainer, ChartTooltip, ChartLegend) as thin recharts wrapper with design token integration. Add compact and persistentCopy props to CodeBlock.
+
 ## 0.4.0
 
 ### Minor Changes
