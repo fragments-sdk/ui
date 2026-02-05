@@ -9,7 +9,7 @@ export default defineSegment({
   meta: {
     name: 'ButtonGroup',
     description: 'Groups related buttons together with consistent spacing and alignment. Useful for action bars, toolbars, and related button sets.',
-    category: 'layout',
+    category: 'forms',
     status: 'stable',
     tags: ['button', 'group', 'toolbar', 'actions', 'layout'],
     since: '0.2.0',
