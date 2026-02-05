@@ -27,7 +27,8 @@
 
   .hexInput {
     font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-    width: 60px;
+    min-width: 72px;
+    width: auto;
   }
 
   .lockButton {
@@ -53,7 +54,8 @@
 
   .hexInput {
     font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-    width: 70px;
+    min-width: 72px;
+    width: auto;
   }
 }
 
