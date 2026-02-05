@@ -89,23 +89,26 @@
   margin-top: 0;
 }
 
-// The indicator dot
+// The indicator dot - use absolute positioning for perfect centering
 .indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 0.5rem;
   height: 0.5rem;
   background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 
-  // Animation
+  // Animation - use translate for centering combined with scale
   opacity: 0;
-  transform: scale(0);
+  transform: translate(-50%, -50%) scale(0);
   transition:
     opacity var(--fui-transition-fast, $fui-transition-fast),
     transform var(--fui-transition-fast, $fui-transition-fast);
 
   [data-checked] > & {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
