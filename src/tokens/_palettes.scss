@@ -1,0 +1,185 @@
+// ============================================
+// @fragments/ui Elemental Palettes
+// ============================================
+//
+// Defines 5 elemental palettes with 11 shades (50-950).
+// Each palette has a distinct tonal character.
+//
+// ============================================
+
+@use 'sass:color';
+@use 'sass:map';
+@use 'sass:math';
+
+// --------------------------------------------
+// Wind - Muted cool neutrals (Default)
+// Subtle, balanced feel - matches current zinc-like palette
+// --------------------------------------------
+$palette-wind: (
+  50:  #fafafa,
+  100: #f4f4f5,
+  200: #e4e4e7,
+  300: #d4d4d8,
+  400: #a1a1aa,
+  500: #71717a,
+  600: #52525b,
+  700: #3f3f46,
+  800: #27272a,
+  900: #18181b,
+  950: #09090b
+);
+
+// --------------------------------------------
+// Ice - Cool blue tones
+// Professional, tech feel
+// --------------------------------------------
+$palette-ice: (
+  50:  #f0f9ff,
+  100: #e0f2fe,
+  200: #bae6fd,
+  300: #7dd3fc,
+  400: #38bdf8,
+  500: #0ea5e9,
+  600: #0284c7,
+  700: #0369a1,
+  800: #075985,
+  900: #0c4a6e,
+  950: #082f49
+);
+
+// --------------------------------------------
+// Sand - Warm brown/terracotta tones
+// Organic, earthy feel
+// --------------------------------------------
+$palette-sand: (
+  50:  #fdf8f3,
+  100: #f5ebe0,
+  200: #e8d5c4,
+  300: #d4b89c,
+  400: #c19a6b,
+  500: #a67c52,
+  600: #8b5e34,
+  700: #6f4518,
+  800: #553311,
+  900: #3d240c,
+  950: #261607
+);
+
+// --------------------------------------------
+// Earth - Green/olive tones
+// Natural, growth feel
+// --------------------------------------------
+$palette-earth: (
+  50:  #f5f7f2,
+  100: #e8ede3,
+  200: #d1dbc6,
+  300: #b3c4a0,
+  400: #8fa872,
+  500: #6b8c4e,
+  600: #517035,
+  700: #3d5527,
+  800: #2b3d1c,
+  900: #1c2912,
+  950: #0f170a
+);
+
+// --------------------------------------------
+// Fire - Warm red/orange tones
+// Energy, passion feel
+// --------------------------------------------
+$palette-fire: (
+  50:  #fff7ed,
+  100: #ffedd5,
+  200: #fed7aa,
+  300: #fdba74,
+  400: #fb923c,
+  500: #f97316,
+  600: #ea580c,
+  700: #c2410c,
+  800: #9a3412,
+  900: #7c2d12,
+  950: #431407
+);
+
+// --------------------------------------------
+// Palette Map for Dynamic Access
+// --------------------------------------------
+$palettes: (
+  "wind": $palette-wind,
+  "ice": $palette-ice,
+  "sand": $palette-sand,
+  "earth": $palette-earth,
+  "fire": $palette-fire
+);
+
+// --------------------------------------------
+// Helper Functions
+// --------------------------------------------
+
+/// Get a palette map by name
+/// @param {String} $name - Palette name (wind, ice, sand, earth, fire)
+/// @return {Map} The palette map with shades 50-950
+@function get-palette($name) {
+  @if not map.has-key($palettes, $name) {
+    @warn "Unknown palette '#{$name}'. Using 'wind' as fallback.";
+    @return $palette-wind;
+  }
+  @return map.get($palettes, $name);
+}
+
+/// Get a specific shade from a palette
+/// @param {Map} $palette - A palette map
+/// @param {Number} $level - Shade level (50, 100, 200, ..., 950)
+/// @return {Color} The color at that shade level
+@function get-shade($palette, $level) {
+  @if not map.has-key($palette, $level) {
+    @warn "Unknown shade level '#{$level}'. Using 500 as fallback.";
+    @return map.get($palette, 500);
+  }
+  @return map.get($palette, $level);
+}
+
+/// Interpolate between two shade levels for half-steps (e.g., 925)
+/// @param {Map} $palette - A palette map
+/// @param {Number} $level - Target shade level (can be non-standard like 925)
+/// @return {Color} The interpolated color
+@function interpolate-shade($palette, $level) {
+  // Handle standard levels
+  @if map.has-key($palette, $level) {
+    @return map.get($palette, $level);
+  }
+
+  // Find surrounding levels for interpolation
+  $levels: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
+  $lower: null;
+  $upper: null;
+
+  @each $l in $levels {
+    @if $l < $level {
+      $lower: $l;
+    }
+    @if $l > $level and $upper == null {
+      $upper: $l;
+    }
+  }
+
+  @if $lower == null or $upper == null {
+    @warn "Cannot interpolate shade '#{$level}'. Using 500 as fallback.";
+    @return map.get($palette, 500);
+  }
+
+  $lower-color: map.get($palette, $lower);
+  $upper-color: map.get($palette, $upper);
+  $ratio: math.div($level - $lower, $upper - $lower);
+
+  @return color.mix($upper-color, $lower-color, $ratio * 100%);
+}
+
+/// Get a palette by name and return a specific shade
+/// @param {String} $name - Palette name
+/// @param {Number} $level - Shade level
+/// @return {Color} The color
+@function palette-shade($name, $level) {
+  $palette: get-palette($name);
+  @return get-shade($palette, $level);
+}
