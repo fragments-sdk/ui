@@ -108,10 +108,15 @@ interface SelectContextValue {
   placeholder?: string;
   value?: SelectValue | null;
   itemsRef: React.MutableRefObject<Map<SelectValue, React.ReactNode>>;
+  // Version counter to trigger re-renders when items register
+  itemsVersion: number;
+  incrementItemsVersion: () => void;
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
   itemsRef: { current: new Map() },
+  itemsVersion: 0,
+  incrementItemsVersion: () => {},
 });
 
 // ============================================
@@ -139,6 +144,12 @@ function SelectRoot({
   // Registry for item children - allows trigger to render selected item's content
   const itemsRef = React.useRef<Map<SelectValue, React.ReactNode>>(new Map());
 
+  // Version counter to trigger trigger re-render when items register
+  const [itemsVersion, setItemsVersion] = React.useState(0);
+  const incrementItemsVersion = React.useCallback(() => {
+    setItemsVersion((v) => v + 1);
+  }, []);
+
   // Sync internal value with controlled value
   React.useEffect(() => {
     if (value !== undefined) {
@@ -162,8 +173,10 @@ function SelectRoot({
       placeholder,
       value: value !== undefined ? value : internalValue,
       itemsRef,
+      itemsVersion,
+      incrementItemsVersion,
     }),
-    [placeholder, value, internalValue]
+    [placeholder, value, internalValue, itemsVersion, incrementItemsVersion]
   );
 
   return (
@@ -192,11 +205,14 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
 
   // Get the selected item's children from the registry
+  // Note: itemsVersion in context ensures we re-render when items register
   const selectedContent = context.value != null
     ? context.itemsRef.current.get(context.value)
     : null;
 
   // Determine what to show in the value area
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _version = context.itemsVersion; // Force dependency on itemsVersion for re-render
   const displayContent = selectedContent ?? (
     placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null
   );
@@ -246,10 +262,12 @@ function SelectItem({ children, value, disabled, className }: SelectItemProps) {
   // Register this item's children in the registry so the trigger can display them
   React.useEffect(() => {
     context.itemsRef.current.set(value, children);
+    // Trigger re-render of trigger to show the registered content
+    context.incrementItemsVersion();
     return () => {
       context.itemsRef.current.delete(value);
     };
-  }, [context.itemsRef, value, children]);
+  }, [context, value, children]);
 
   return (
     <BaseSelect.Item value={value} disabled={disabled} className={classes}>
