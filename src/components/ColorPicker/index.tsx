@@ -2,16 +2,27 @@ import * as React from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Field } from '@base-ui/react/field';
+import { Input } from '../Input';
 import styles from './ColorPicker.module.scss';
 import '../../styles/globals.scss';
 
 export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  /** Label text above the picker */
   label?: string;
+  /** Controlled color value in hex format (#RRGGBB) */
   value?: string;
+  /** Default color for uncontrolled usage */
   defaultValue?: string;
+  /** Called with new color value when changed */
   onChange?: (color: string) => void;
+  /** Helper text below the picker */
   description?: string;
+  /** Disable the color picker */
   disabled?: boolean;
+  /** Size variant */
+  size?: 'sm' | 'md';
+  /** Show the hex input field */
+  showInput?: boolean;
 }
 
 export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
@@ -23,6 +34,8 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       onChange,
       description,
       disabled = false,
+      size = 'md',
+      showInput = true,
       className,
       ...htmlProps
     },
@@ -45,8 +58,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       onChange?.(color);
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
+    const handleInputChange = (newValue: string) => {
       setInputValue(newValue);
 
       // Only update if it's a valid hex color
@@ -63,12 +75,18 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       }
     };
 
+    const wrapperClasses = [
+      styles.wrapper,
+      styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}`],
+      className,
+    ].filter(Boolean).join(' ');
+
     return (
       <Field.Root
         ref={ref}
         {...htmlProps}
         disabled={disabled}
-        className={[styles.wrapper, className].filter(Boolean).join(' ')}
+        className={wrapperClasses}
       >
         {label && <Field.Label className={styles.label}>{label}</Field.Label>}
         <div className={styles.inputWrapper}>
@@ -77,6 +95,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
               className={styles.swatch}
               style={{ backgroundColor: displayValue }}
               disabled={disabled}
+              aria-label={label ? `Edit ${label} color` : 'Edit color'}
             />
             <BasePopover.Portal>
               <BasePopover.Positioner side="bottom" align="start" sideOffset={4} className={styles.positioner}>
@@ -86,15 +105,18 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
               </BasePopover.Positioner>
             </BasePopover.Portal>
           </BasePopover.Root>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            disabled={disabled}
-            className={styles.input}
-            spellCheck={false}
-          />
+          {showInput && (
+            <Input
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              disabled={disabled}
+              size={size}
+              className={styles.hexInput}
+              inputClassName={styles.hexInputField}
+              aria-label={label ? `${label} hex value` : 'Hex value'}
+            />
+          )}
         </div>
         {description && (
           <Field.Description className={styles.description}>

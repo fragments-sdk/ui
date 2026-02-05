@@ -2,13 +2,32 @@
 // @fragments/ui Design Tokens
 // ============================================
 //
-// Override these variables in your own SCSS before importing components.
-// Example:
-//   $fui-color-accent: #0066ff;
-//   @use '@fragments/ui/tokens';
+// SEED-BASED DESIGN SYSTEM
+// ========================
+// This token system supports two configuration approaches:
+//
+// 1. SEED-BASED (Recommended for new projects):
+//    Configure ~5-10 seed values and everything derives automatically.
+//    See _seeds.scss for available seeds.
+//
+//    Example:
+//      $fui-brand: #0066ff;
+//      $fui-neutral: "steel";
+//      $fui-density: "compact";
+//      @use '@fragments-sdk/ui/globals';
+//
+// 2. INDIVIDUAL OVERRIDES (Backward compatible):
+//    Override any variable directly before importing.
+//
+//    Example:
+//      $fui-color-accent: #0066ff;
+//      @use '@fragments/ui/tokens';
 //
 // Or use CSS custom properties for runtime theming.
 // ============================================
+
+// Import computed values from seed system
+@use 'computed' as computed;
 
 // --------------------------------------------
 // Base Configuration
@@ -17,8 +36,8 @@
 // Base unit: 7px (change to 8px for standard 8pt grid)
 // All spacing and sizing derives from these values.
 
-$fui-base-font-size: 14px !default;
-$fui-base-unit: 7px !default;
+$fui-base-font-size: computed.$computed-base-font-size !default;
+$fui-base-unit: computed.$computed-base-unit !default;
 
 // Helper function to convert base units to rem
 // Usage: fui-unit(2) = 2 * 7px = 14px = 1rem (when base is 14px)
@@ -49,50 +68,50 @@ $fui-line-height-tight: 1.25 !default;
 $fui-line-height-normal: 1.5 !default;
 
 // --------------------------------------------
-// Spacing (7px base unit)
+// Spacing (derived from density seed)
 // --------------------------------------------
 // Micro-spacing for small internal alignments (margins, thumb offsets)
-$fui-space-px: 1px !default;      // 1px (pixel-precise)
-$fui-space-0-5: 0.143rem !default; // ~2px (micro alignment)
-$fui-space-0-75: 0.214rem !default; // ~3px (micro alignment)
+$fui-space-px: computed.$computed-space-px !default;
+$fui-space-0-5: computed.$computed-space-0-5 !default;
+$fui-space-0-75: computed.$computed-space-0-75 !default;
 
-// 7px grid: 7, 14, 21, 28, 35, 42, 56, 70, 84
-$fui-space-1: 0.5rem !default;    // 7px  (1 unit)
-$fui-space-2: 1rem !default;      // 14px (2 units)
-$fui-space-3: 1.5rem !default;    // 21px (3 units)
-$fui-space-4: 2rem !default;      // 28px (4 units)
-$fui-space-5: 2.5rem !default;    // 35px (5 units)
-$fui-space-6: 3rem !default;      // 42px (6 units)
-$fui-space-8: 4rem !default;      // 56px (8 units)
-$fui-space-10: 5rem !default;     // 70px (10 units)
-$fui-space-12: 6rem !default;     // 84px (12 units)
+// Base unit grid spacing
+$fui-space-1: computed.$computed-space-1 !default;
+$fui-space-2: computed.$computed-space-2 !default;
+$fui-space-3: computed.$computed-space-3 !default;
+$fui-space-4: computed.$computed-space-4 !default;
+$fui-space-5: computed.$computed-space-5 !default;
+$fui-space-6: computed.$computed-space-6 !default;
+$fui-space-8: computed.$computed-space-8 !default;
+$fui-space-10: computed.$computed-space-10 !default;
+$fui-space-12: computed.$computed-space-12 !default;
 
 // --------------------------------------------
-// Density Padding (7px base unit)
+// Density Padding (derived from density seed)
 // --------------------------------------------
 // Container padding: Cards, Dialogs, Popovers
-$fui-padding-container-sm: 1.5rem !default;  // 21px (3 units)
-$fui-padding-container-md: 2rem !default;    // 28px (4 units)
-$fui-padding-container-lg: 3rem !default;    // 42px (6 units)
+$fui-padding-container-sm: computed.$computed-padding-container-sm !default;
+$fui-padding-container-md: computed.$computed-padding-container-md !default;
+$fui-padding-container-lg: computed.$computed-padding-container-lg !default;
 
 // Inline padding: Alerts, Toasts
-$fui-padding-inline-sm: 1rem !default;       // 14px (2 units)
-$fui-padding-inline-md: 1.5rem !default;     // 21px (3 units)
-$fui-padding-inline-lg: 2rem !default;       // 28px (4 units)
+$fui-padding-inline-sm: computed.$computed-padding-inline-sm !default;
+$fui-padding-inline-md: computed.$computed-padding-inline-md !default;
+$fui-padding-inline-lg: computed.$computed-padding-inline-lg !default;
 
 // Item padding: Accordion, Tabs, Menu items
-$fui-padding-item-sm: 1rem !default;         // 14px (2 units)
-$fui-padding-item-md: 1.5rem !default;       // 21px (3 units)
-$fui-padding-item-lg: 2rem !default;         // 28px (4 units)
+$fui-padding-item-sm: computed.$computed-padding-item-sm !default;
+$fui-padding-item-md: computed.$computed-padding-item-md !default;
+$fui-padding-item-lg: computed.$computed-padding-item-lg !default;
 
 // --------------------------------------------
-// Border Radius
+// Border Radius (derived from radius-style seed)
 // --------------------------------------------
-$fui-radius-sm: 0.25rem !default;  // 3.5px
-$fui-radius-md: 0.429rem !default; // 6px
-$fui-radius-lg: 0.571rem !default; // 8px
-$fui-radius-xl: 0.857rem !default; // 12px
-$fui-radius-full: 9999px !default;
+$fui-radius-sm: computed.$computed-radius-sm !default;
+$fui-radius-md: computed.$computed-radius-md !default;
+$fui-radius-lg: computed.$computed-radius-lg !default;
+$fui-radius-xl: computed.$computed-radius-xl !default;
+$fui-radius-full: computed.$computed-radius-full !default;
 
 // --------------------------------------------
 // Transitions
@@ -101,112 +120,112 @@ $fui-transition-fast: 150ms ease !default;
 $fui-transition-normal: 200ms ease !default;
 
 // --------------------------------------------
-// Colors - Light Mode (Grayscale Default)
+// Colors - Light Mode (derived from brand/neutral seeds)
 // --------------------------------------------
-// Accent colors (dark on light background)
-$fui-color-accent: #18181b !default;
-$fui-color-accent-hover: #27272a !default;
-$fui-color-accent-active: #3f3f46 !default;
+// Accent colors (derived from $fui-brand seed)
+$fui-color-accent: computed.$computed-color-accent !default;
+$fui-color-accent-hover: computed.$computed-color-accent-hover !default;
+$fui-color-accent-active: computed.$computed-color-accent-active !default;
 
-// Semantic colors
-$fui-color-danger: #ef4444 !default;
-$fui-color-danger-hover: #dc2626 !default;
-$fui-color-success: #22c55e !default;
-$fui-color-warning: #f59e0b !default;
-$fui-color-info: #3b82f6 !default;
+// Semantic colors (from seeds or defaults)
+$fui-color-danger: computed.$computed-color-danger !default;
+$fui-color-danger-hover: computed.$computed-color-danger-hover !default;
+$fui-color-success: computed.$computed-color-success !default;
+$fui-color-warning: computed.$computed-color-warning !default;
+$fui-color-info: computed.$computed-color-info !default;
 
 // Semantic backgrounds (light)
-$fui-color-danger-bg: rgba(239, 68, 68, 0.1) !default;
-$fui-color-success-bg: rgba(34, 197, 94, 0.1) !default;
-$fui-color-warning-bg: rgba(245, 158, 11, 0.1) !default;
-$fui-color-info-bg: rgba(59, 130, 246, 0.1) !default;
+$fui-color-danger-bg: computed.$computed-color-danger-bg !default;
+$fui-color-success-bg: computed.$computed-color-success-bg !default;
+$fui-color-warning-bg: computed.$computed-color-warning-bg !default;
+$fui-color-info-bg: computed.$computed-color-info-bg !default;
 
-// Surface colors (light) - neutral grayscale
-$fui-bg-primary: #ffffff !default;
-$fui-bg-secondary: #f2f2f2 !default;
-$fui-bg-tertiary: #f4f4f5 !default;
-$fui-bg-elevated: #ffffff !default;
-$fui-bg-subtle: #fafafa !default;
-$fui-bg-hover: rgba(0, 0, 0, 0.04) !default;
-$fui-bg-active: rgba(0, 0, 0, 0.06) !default;
+// Surface colors (derived from $fui-neutral palette)
+$fui-bg-primary: computed.$computed-bg-primary !default;
+$fui-bg-secondary: computed.$computed-bg-secondary !default;
+$fui-bg-tertiary: computed.$computed-bg-tertiary !default;
+$fui-bg-elevated: computed.$computed-bg-elevated !default;
+$fui-bg-subtle: computed.$computed-bg-subtle !default;
+$fui-bg-hover: computed.$computed-bg-hover !default;
+$fui-bg-active: computed.$computed-bg-active !default;
 
-// Text colors (light) - neutral grayscale
-$fui-text-primary: #18181b !default;
-$fui-text-secondary: #52525b !default;
-$fui-text-tertiary: #71717a !default;
-$fui-text-inverse: #f2f2f2 !default;
+// Text colors (derived from $fui-neutral palette)
+$fui-text-primary: computed.$computed-text-primary !default;
+$fui-text-secondary: computed.$computed-text-secondary !default;
+$fui-text-tertiary: computed.$computed-text-tertiary !default;
+$fui-text-inverse: computed.$computed-text-inverse !default;
 
-// Border colors (light) - neutral grayscale
-$fui-border: #e4e4e7 !default;
-$fui-border-default: #e4e4e7 !default; // Alias for compatibility
-$fui-border-strong: #d4d4d8 !default;
+// Border colors (derived from $fui-neutral palette)
+$fui-border: computed.$computed-border !default;
+$fui-border-default: computed.$computed-border-default !default;
+$fui-border-strong: computed.$computed-border-strong !default;
 
 // Shadows (light)
-$fui-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
-$fui-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !default;
-$fui-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !default;
+$fui-shadow-sm: computed.$computed-shadow-sm !default;
+$fui-shadow-md: computed.$computed-shadow-md !default;
+$fui-shadow-lg: computed.$computed-shadow-lg !default;
 
-// Focus ring
-$fui-focus-ring-color: #18181b !default;
+// Focus ring (derived from $fui-brand)
+$fui-focus-ring-color: computed.$computed-focus-ring-color !default;
 $fui-focus-ring-offset: 2px !default;
 $fui-focus-ring-width: 2px !default;
 
-// Scrollbar (light mode)
+// Scrollbar (derived from $fui-neutral palette)
 $fui-scrollbar-width: 8px !default;
-$fui-scrollbar-track: #f4f4f5 !default;
-$fui-scrollbar-thumb: #d4d4d8 !default;
-$fui-scrollbar-thumb-hover: #a1a1aa !default;
+$fui-scrollbar-track: computed.$computed-scrollbar-track !default;
+$fui-scrollbar-thumb: computed.$computed-scrollbar-thumb !default;
+$fui-scrollbar-thumb-hover: computed.$computed-scrollbar-thumb-hover !default;
 
 // --------------------------------------------
-// Colors - Dark Mode (Inverted Grayscale)
+// Colors - Dark Mode (derived from seeds)
 // --------------------------------------------
 // Accent colors (light on dark background)
-$fui-dark-color-accent: #f2f2f2 !default;
-$fui-dark-color-accent-hover: #f4f4f5 !default;
-$fui-dark-color-accent-active: #e4e4e7 !default;
+$fui-dark-color-accent: computed.$computed-dark-color-accent !default;
+$fui-dark-color-accent-hover: computed.$computed-dark-color-accent-hover !default;
+$fui-dark-color-accent-active: computed.$computed-dark-color-accent-active !default;
 
-// Surface colors (dark) - neutral grayscale
-$fui-dark-bg-primary: #09090b !default;
-$fui-dark-bg-secondary: #18181b !default;
-$fui-dark-bg-tertiary: #27272a !default;
-$fui-dark-bg-elevated: #18181b !default;
-$fui-dark-bg-subtle: #0f0f11 !default;
-$fui-dark-bg-hover: rgba(255, 255, 255, 0.06) !default;
-$fui-dark-bg-active: rgba(255, 255, 255, 0.08) !default;
+// Surface colors (dark) - derived from $fui-neutral palette
+$fui-dark-bg-primary: computed.$computed-dark-bg-primary !default;
+$fui-dark-bg-secondary: computed.$computed-dark-bg-secondary !default;
+$fui-dark-bg-tertiary: computed.$computed-dark-bg-tertiary !default;
+$fui-dark-bg-elevated: computed.$computed-dark-bg-elevated !default;
+$fui-dark-bg-subtle: computed.$computed-dark-bg-subtle !default;
+$fui-dark-bg-hover: computed.$computed-dark-bg-hover !default;
+$fui-dark-bg-active: computed.$computed-dark-bg-active !default;
 
-// Text colors (dark) - neutral grayscale
-$fui-dark-text-primary: #f2f2f2 !default;
-$fui-dark-text-secondary: #a1a1aa !default;
-$fui-dark-text-tertiary: #71717a !default;
-$fui-dark-text-inverse: #18181b !default;
+// Text colors (dark) - derived from $fui-neutral palette
+$fui-dark-text-primary: computed.$computed-dark-text-primary !default;
+$fui-dark-text-secondary: computed.$computed-dark-text-secondary !default;
+$fui-dark-text-tertiary: computed.$computed-dark-text-tertiary !default;
+$fui-dark-text-inverse: computed.$computed-dark-text-inverse !default;
 
-// Border colors (dark) - neutral grayscale
-$fui-dark-border: #27272a !default;
-$fui-dark-border-default: #27272a !default; // Alias for compatibility
-$fui-dark-border-strong: #3f3f46 !default;
+// Border colors (dark) - derived from $fui-neutral palette
+$fui-dark-border: computed.$computed-dark-border !default;
+$fui-dark-border-default: computed.$computed-dark-border-default !default;
+$fui-dark-border-strong: computed.$computed-dark-border-strong !default;
 
 // Shadows (dark)
-$fui-dark-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !default;
-$fui-dark-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3) !default;
-$fui-dark-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4) !default;
+$fui-dark-shadow-sm: computed.$computed-dark-shadow-sm !default;
+$fui-dark-shadow-md: computed.$computed-dark-shadow-md !default;
+$fui-dark-shadow-lg: computed.$computed-dark-shadow-lg !default;
 
 // Semantic backgrounds (dark) - increased opacity for visibility
-$fui-dark-color-danger-bg: rgba(239, 68, 68, 0.15) !default;
-$fui-dark-color-success-bg: rgba(34, 197, 94, 0.15) !default;
-$fui-dark-color-warning-bg: rgba(245, 158, 11, 0.15) !default;
-$fui-dark-color-info-bg: rgba(59, 130, 246, 0.15) !default;
+$fui-dark-color-danger-bg: computed.$computed-dark-color-danger-bg !default;
+$fui-dark-color-success-bg: computed.$computed-dark-color-success-bg !default;
+$fui-dark-color-warning-bg: computed.$computed-dark-color-warning-bg !default;
+$fui-dark-color-info-bg: computed.$computed-dark-color-info-bg !default;
 
 // Dark mode focus ring
-$fui-dark-focus-ring-color: #f2f2f2 !default;
+$fui-dark-focus-ring-color: computed.$computed-dark-focus-ring-color !default;
 
 // Scrollbar (dark mode)
-$fui-dark-scrollbar-track: #27272a !default;
-$fui-dark-scrollbar-thumb: #52525b !default;
-$fui-dark-scrollbar-thumb-hover: #71717a !default;
+$fui-dark-scrollbar-track: computed.$computed-dark-scrollbar-track !default;
+$fui-dark-scrollbar-thumb: computed.$computed-dark-scrollbar-thumb !default;
+$fui-dark-scrollbar-thumb-hover: computed.$computed-dark-scrollbar-thumb-hover !default;
 
 // Overlay/backdrop
-$fui-backdrop: rgba(0, 0, 0, 0.5) !default;
-$fui-dark-backdrop: rgba(0, 0, 0, 0.8) !default;
+$fui-backdrop: computed.$computed-backdrop !default;
+$fui-dark-backdrop: computed.$computed-dark-backdrop !default;
 
 // --------------------------------------------
 // Breakpoints
@@ -220,13 +239,21 @@ $fui-breakpoint-xl: 1280px !default;
 // Component-specific tokens
 // --------------------------------------------
 
-// Button heights (based on 7px grid)
-$fui-button-height-sm: 2.25rem !default;      // 28px (4 units)
-$fui-button-height-md: 2.571rem !default;  // 36px (~5 units)
-$fui-button-height-lg: 3.143rem !default;  // 44px (~6 units)
+// Button heights (derived from density seed)
+$fui-button-height-sm: computed.$computed-button-height-sm !default;
+$fui-button-height-md: computed.$computed-button-height-md !default;
+$fui-button-height-lg: computed.$computed-button-height-lg !default;
 
-// Input height
-$fui-input-height: 2.857rem !default;      // 40px (~6 units)
+// Input heights (derived from density seed)
+// Note: These are dedicated input tokens, not reusing button heights
+$fui-input-height: computed.$computed-input-height !default;
+$fui-input-height-sm: computed.$computed-input-height-sm !default;
+$fui-input-height-lg: computed.$computed-input-height-lg !default;
+
+// Touch targets (derived from density seed)
+$fui-touch-sm: computed.$computed-touch-sm !default;
+$fui-touch-md: computed.$computed-touch-md !default;
+$fui-touch-lg: computed.$computed-touch-lg !default;
 
 // Toggle/Switch
 $fui-toggle-width-sm: 2.286rem !default;   // 32px
@@ -246,11 +273,6 @@ $fui-icon-sm: 1rem !default;        // 14px (2 units)
 $fui-icon-md: 1.143rem !default;    // 16px (standard small icon)
 $fui-icon-lg: 1.429rem !default;    // 20px (standard medium icon)
 $fui-icon-xl: 1.714rem !default;    // 24px (standard large icon)
-
-// Interactive element sizes (touch targets)
-$fui-touch-sm: 1.714rem !default;   // 24px (minimum touch target)
-$fui-touch-md: 2.286rem !default;   // 32px (comfortable touch target)
-$fui-touch-lg: 3.143rem !default;   // 44px (large touch target, WCAG)
 
 // Animation offsets
 $fui-anim-offset-sm: 4px !default;  // Small slide animation
@@ -296,6 +318,17 @@ $fui-appshell-sidebar-width: 240px !default;
 $fui-appshell-sidebar-collapsed-width: 64px !default;
 $fui-appshell-aside-width: 280px !default;
 $fui-header-z-index: 40 !default;
+
+// ThemeToggle sizes (derived from density)
+$fui-theme-toggle-sm-width: 26px !default;
+$fui-theme-toggle-sm-height: 22px !default;
+$fui-theme-toggle-sm-icon: 12px !default;
+$fui-theme-toggle-md-width: 32px !default;
+$fui-theme-toggle-md-height: 28px !default;
+$fui-theme-toggle-md-icon: 14px !default;
+$fui-theme-toggle-lg-width: 40px !default;
+$fui-theme-toggle-lg-height: 34px !default;
+$fui-theme-toggle-lg-icon: 18px !default;
 
 // CodeBlock (light mode)
 $fui-code-bg: #1e1e1e !default;
@@ -465,6 +498,14 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-scrollbar-track: #{$fui-scrollbar-track};
     --fui-scrollbar-thumb: #{$fui-scrollbar-thumb};
     --fui-scrollbar-thumb-hover: #{$fui-scrollbar-thumb-hover};
+
+    // Component heights
+    --fui-button-height-sm: #{$fui-button-height-sm};
+    --fui-button-height-md: #{$fui-button-height-md};
+    --fui-button-height-lg: #{$fui-button-height-lg};
+    --fui-input-height: #{$fui-input-height};
+    --fui-input-height-sm: #{$fui-input-height-sm};
+    --fui-input-height-lg: #{$fui-input-height-lg};
 
     // AppShell Layout
     --fui-appshell-header-height: #{$fui-appshell-header-height};

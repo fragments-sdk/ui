@@ -336,9 +336,6 @@ export { Slider, type SliderProps } from './components/Slider';
 // ColorPicker
 export { ColorPicker, type ColorPickerProps } from './components/ColorPicker';
 
-// ColorChip
-export { ColorChip, type ColorChipProps } from './components/ColorChip';
-
 // Prompt
 export {
   Prompt,

@@ -8,11 +8,11 @@
 .header {
   display: flex;
   align-items: center;
-  height: var(--header-height, 56px);
-  min-height: var(--header-height, 56px);
+  height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
+  min-height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   padding: 0 var(--fui-space-4, $fui-space-4);
-  z-index: var(--fui-header-z-index, 40);
+  z-index: var(--fui-header-z-index, $fui-header-z-index);
 }
 
 .fixed {
@@ -93,7 +93,7 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
   white-space: nowrap;
-  min-height: 36px;
+  min-height: var(--fui-button-height-md, $fui-button-height-md);
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -150,8 +150,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: var(--fui-touch-lg, $fui-touch-lg);
+  height: var(--fui-touch-lg, $fui-touch-lg);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-primary, $fui-text-primary);
   flex-shrink: 0;
@@ -161,8 +161,8 @@
   }
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: var(--fui-icon-xl, $fui-icon-xl);
+    height: var(--fui-icon-xl, $fui-icon-xl);
   }
 }
 

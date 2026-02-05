@@ -1,0 +1,212 @@
+// ============================================
+// @fragments/ui Computed Tokens
+// ============================================
+//
+// This module imports seed values and derivation functions,
+// then computes all token values. These computed values are
+// used as fallbacks in _variables.scss for backward compatibility.
+//
+// ============================================
+
+@use 'sass:map';
+@use 'seeds' as seeds;
+@use 'palettes' as palettes;
+@use 'density' as density;
+@use 'radius' as radius;
+@use 'derive' as derive;
+
+// --------------------------------------------
+// Resolve Seed Values
+// --------------------------------------------
+
+// Get the selected configurations
+$_palette: palettes.get-palette(seeds.$fui-neutral);
+$_density: density.get-density(seeds.$fui-density);
+$_radius: radius.get-radius-style(seeds.$fui-radius-style);
+
+// Derive spacing and padding from density
+$_spacing: density.derive-spacing($_density);
+$_padding: density.derive-padding($_density);
+
+// --------------------------------------------
+// Computed: Base Configuration
+// --------------------------------------------
+
+$computed-base-font-size: map.get($_density, base-font-size);
+$computed-base-unit: map.get($_density, base-unit);
+
+// --------------------------------------------
+// Computed: Spacing
+// --------------------------------------------
+
+$computed-space-px: map.get($_spacing, px);
+$computed-space-0-5: map.get($_spacing, 0-5);
+$computed-space-0-75: map.get($_spacing, 0-75);
+$computed-space-1: map.get($_spacing, 1);
+$computed-space-2: map.get($_spacing, 2);
+$computed-space-3: map.get($_spacing, 3);
+$computed-space-4: map.get($_spacing, 4);
+$computed-space-5: map.get($_spacing, 5);
+$computed-space-6: map.get($_spacing, 6);
+$computed-space-8: map.get($_spacing, 8);
+$computed-space-10: map.get($_spacing, 10);
+$computed-space-12: map.get($_spacing, 12);
+
+// --------------------------------------------
+// Computed: Density Padding
+// --------------------------------------------
+
+$computed-padding-container-sm: map.get($_padding, container-sm);
+$computed-padding-container-md: map.get($_padding, container-md);
+$computed-padding-container-lg: map.get($_padding, container-lg);
+$computed-padding-inline-sm: map.get($_padding, inline-sm);
+$computed-padding-inline-md: map.get($_padding, inline-md);
+$computed-padding-inline-lg: map.get($_padding, inline-lg);
+$computed-padding-item-sm: map.get($_padding, item-sm);
+$computed-padding-item-md: map.get($_padding, item-md);
+$computed-padding-item-lg: map.get($_padding, item-lg);
+
+// --------------------------------------------
+// Computed: Border Radius
+// --------------------------------------------
+
+$computed-radius-sm: radius.radius-value($_radius, sm);
+$computed-radius-md: radius.radius-value($_radius, md);
+$computed-radius-lg: radius.radius-value($_radius, lg);
+$computed-radius-xl: radius.radius-value($_radius, xl);
+$computed-radius-full: radius.radius-full();
+
+// --------------------------------------------
+// Computed: Component Heights (from density)
+// --------------------------------------------
+
+$computed-button-height-sm: density.px-to-rem($_density, map.get($_density, button-height-sm));
+$computed-button-height-md: density.px-to-rem($_density, map.get($_density, button-height-md));
+$computed-button-height-lg: density.px-to-rem($_density, map.get($_density, button-height-lg));
+
+$computed-input-height: density.px-to-rem($_density, map.get($_density, input-height));
+$computed-input-height-sm: density.px-to-rem($_density, map.get($_density, input-height-sm));
+$computed-input-height-lg: density.px-to-rem($_density, map.get($_density, input-height-lg));
+
+$computed-touch-sm: density.px-to-rem($_density, map.get($_density, touch-sm));
+$computed-touch-md: density.px-to-rem($_density, map.get($_density, touch-md));
+$computed-touch-lg: density.px-to-rem($_density, map.get($_density, touch-lg));
+
+// --------------------------------------------
+// Computed: Colors - Light Mode
+// --------------------------------------------
+
+// Accent colors (from brand seed)
+$computed-color-accent: seeds.$fui-brand;
+$computed-color-accent-hover: derive.derive-accent-hover(seeds.$fui-brand, false);
+$computed-color-accent-active: derive.derive-accent-active(seeds.$fui-brand, false);
+
+// Semantic colors (from seeds or defaults)
+$computed-color-danger: seeds.$fui-danger;
+$computed-color-danger-hover: derive.derive-semantic-hover(seeds.$fui-danger);
+$computed-color-success: seeds.$fui-success;
+$computed-color-warning: seeds.$fui-warning;
+$computed-color-info: seeds.$fui-info;
+
+// Semantic backgrounds
+$computed-color-danger-bg: derive.derive-semantic-bg(seeds.$fui-danger, false);
+$computed-color-success-bg: derive.derive-semantic-bg(seeds.$fui-success, false);
+$computed-color-warning-bg: derive.derive-semantic-bg(seeds.$fui-warning, false);
+$computed-color-info-bg: derive.derive-semantic-bg(seeds.$fui-info, false);
+
+// Surfaces (from neutral palette)
+$_surfaces-light: derive.derive-surfaces($_palette, false);
+$computed-bg-primary: map.get($_surfaces-light, primary);
+$computed-bg-secondary: map.get($_surfaces-light, secondary);
+$computed-bg-tertiary: map.get($_surfaces-light, tertiary);
+$computed-bg-elevated: map.get($_surfaces-light, elevated);
+$computed-bg-subtle: map.get($_surfaces-light, subtle);
+$computed-bg-hover: map.get($_surfaces-light, hover);
+$computed-bg-active: map.get($_surfaces-light, active);
+
+// Text (from neutral palette)
+$_text-light: derive.derive-text($_palette, false);
+$computed-text-primary: map.get($_text-light, primary);
+$computed-text-secondary: map.get($_text-light, secondary);
+$computed-text-tertiary: map.get($_text-light, tertiary);
+$computed-text-inverse: map.get($_text-light, inverse);
+
+// Borders (from neutral palette)
+$_borders-light: derive.derive-borders($_palette, false);
+$computed-border: map.get($_borders-light, default);
+$computed-border-default: map.get($_borders-light, default);
+$computed-border-strong: map.get($_borders-light, strong);
+
+// Shadows
+$_shadows-light: derive.derive-shadows(false);
+$computed-shadow-sm: map.get($_shadows-light, sm);
+$computed-shadow-md: map.get($_shadows-light, md);
+$computed-shadow-lg: map.get($_shadows-light, lg);
+
+// Focus ring
+$computed-focus-ring-color: derive.derive-focus-ring(seeds.$fui-brand, false);
+
+// Scrollbar
+$_scrollbar-light: derive.derive-scrollbar($_palette, false);
+$computed-scrollbar-track: map.get($_scrollbar-light, track);
+$computed-scrollbar-thumb: map.get($_scrollbar-light, thumb);
+$computed-scrollbar-thumb-hover: map.get($_scrollbar-light, thumb-hover);
+
+// Backdrop
+$computed-backdrop: derive.derive-backdrop(false);
+
+// --------------------------------------------
+// Computed: Colors - Dark Mode
+// --------------------------------------------
+
+// Accent colors (derive light version for dark mode)
+$computed-dark-color-accent: derive.derive-dark-accent(seeds.$fui-brand);
+$computed-dark-color-accent-hover: derive.derive-accent-hover($computed-dark-color-accent, true);
+$computed-dark-color-accent-active: derive.derive-accent-active($computed-dark-color-accent, true);
+
+// Semantic backgrounds (dark mode)
+$computed-dark-color-danger-bg: derive.derive-semantic-bg(seeds.$fui-danger, true);
+$computed-dark-color-success-bg: derive.derive-semantic-bg(seeds.$fui-success, true);
+$computed-dark-color-warning-bg: derive.derive-semantic-bg(seeds.$fui-warning, true);
+$computed-dark-color-info-bg: derive.derive-semantic-bg(seeds.$fui-info, true);
+
+// Surfaces (dark mode)
+$_surfaces-dark: derive.derive-surfaces($_palette, true);
+$computed-dark-bg-primary: map.get($_surfaces-dark, primary);
+$computed-dark-bg-secondary: map.get($_surfaces-dark, secondary);
+$computed-dark-bg-tertiary: map.get($_surfaces-dark, tertiary);
+$computed-dark-bg-elevated: map.get($_surfaces-dark, elevated);
+$computed-dark-bg-subtle: map.get($_surfaces-dark, subtle);
+$computed-dark-bg-hover: map.get($_surfaces-dark, hover);
+$computed-dark-bg-active: map.get($_surfaces-dark, active);
+
+// Text (dark mode)
+$_text-dark: derive.derive-text($_palette, true);
+$computed-dark-text-primary: map.get($_text-dark, primary);
+$computed-dark-text-secondary: map.get($_text-dark, secondary);
+$computed-dark-text-tertiary: map.get($_text-dark, tertiary);
+$computed-dark-text-inverse: map.get($_text-dark, inverse);
+
+// Borders (dark mode)
+$_borders-dark: derive.derive-borders($_palette, true);
+$computed-dark-border: map.get($_borders-dark, default);
+$computed-dark-border-default: map.get($_borders-dark, default);
+$computed-dark-border-strong: map.get($_borders-dark, strong);
+
+// Shadows (dark mode)
+$_shadows-dark: derive.derive-shadows(true);
+$computed-dark-shadow-sm: map.get($_shadows-dark, sm);
+$computed-dark-shadow-md: map.get($_shadows-dark, md);
+$computed-dark-shadow-lg: map.get($_shadows-dark, lg);
+
+// Focus ring (dark mode)
+$computed-dark-focus-ring-color: derive.derive-focus-ring(seeds.$fui-brand, true);
+
+// Scrollbar (dark mode)
+$_scrollbar-dark: derive.derive-scrollbar($_palette, true);
+$computed-dark-scrollbar-track: map.get($_scrollbar-dark, track);
+$computed-dark-scrollbar-thumb: map.get($_scrollbar-dark, thumb);
+$computed-dark-scrollbar-thumb-hover: map.get($_scrollbar-dark, thumb-hover);
+
+// Backdrop (dark mode)
+$computed-dark-backdrop: derive.derive-backdrop(true);

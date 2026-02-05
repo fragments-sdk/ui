@@ -71,13 +71,82 @@ function App() {
 
 ## Design Tokens
 
-Access SCSS variables and mixins for custom styling:
+### Seed-Based Configuration (Recommended)
+
+Configure ~5-10 seeds and everything derives automatically. Set seed variables in your SCSS before importing:
+
+```scss
+// styles/globals.scss
+
+// Minimal setup - just your brand color
+$fui-brand: #0066ff;
+@use '@fragments-sdk/ui/globals';
+```
+
+```scss
+// Full customization
+$fui-brand: #0066ff;             // Primary brand color
+$fui-neutral: "steel";           // Palette: "steel" | "sand" | "smoke" | "ash" | "silver"
+$fui-density: "compact";         // Spacing: "compact" | "default" | "relaxed"
+$fui-radius-style: "rounded";    // Corners: "sharp" | "subtle" | "default" | "rounded" | "pill"
+
+// Optional semantic color overrides
+$fui-danger: #dc2626;
+$fui-success: #16a34a;
+
+@use '@fragments-sdk/ui/globals';
+```
+
+#### Available Seeds
+
+| Seed | Type | Default | Description |
+|------|------|---------|-------------|
+| `$fui-brand` | Color | `#18181b` | Primary brand color - derives accent, focus rings, etc. |
+| `$fui-neutral` | String | `"ash"` | Neutral palette for surfaces, text, borders |
+| `$fui-density` | String | `"default"` | Spacing density scale |
+| `$fui-radius-style` | String | `"default"` | Corner radius style |
+| `$fui-danger` | Color | `#ef4444` | Error/danger semantic color |
+| `$fui-success` | Color | `#22c55e` | Success semantic color |
+| `$fui-warning` | Color | `#f59e0b` | Warning semantic color |
+| `$fui-info` | Color | `#3b82f6` | Info semantic color |
+
+#### Neutral Palettes
+
+| Name | Description |
+|------|-------------|
+| `steel` | Cool blue-tinted grays (professional, tech) |
+| `sand` | Warm brown-tinted grays (organic, approachable) |
+| `smoke` | Pure true grays (minimal, neutral) |
+| `ash` | Muted cool neutrals (subtle, balanced) - default |
+| `silver` | Bright clean grays (light, modern) |
+
+#### Density Presets
+
+| Name | Base Unit | Feel |
+|------|-----------|------|
+| `compact` | 6px | Tighter spacing, smaller elements |
+| `default` | 7px | Balanced, current visual appearance |
+| `relaxed` | 8px | More spacious layout |
+
+#### Radius Styles
+
+| Name | Feel |
+|------|------|
+| `sharp` | No rounding (technical, precise) |
+| `subtle` | Minimal rounding (modern minimal) |
+| `default` | Balanced rounding (current) |
+| `rounded` | More prominent (friendly) |
+| `pill` | Maximum rounding (playful, soft) |
+
+### Individual Token Overrides (Backward Compatible)
+
+You can still override individual tokens directly:
 
 ```scss
 @use '@fragments-sdk/ui/tokens' as *;
 
 .custom {
-  padding: $fui-spacing-4;
+  padding: $fui-space-4;
   border-radius: $fui-radius-md;
   color: var(--fui-text-primary);
 }
@@ -104,6 +173,33 @@ Access SCSS variables and mixins for custom styling:
 | `$fui-breakpoint-md` | 768px |
 | `$fui-breakpoint-lg` | 1024px |
 | `$fui-breakpoint-xl` | 1280px |
+
+### Migration Guide
+
+**Existing code continues to work.** The seed system is fully backward compatible:
+
+- Existing `@use '@fragments/ui/tokens'` imports work unchanged
+- Individual variable overrides (`$fui-color-accent: #blue`) still work
+- CSS variable usage (`var(--fui-color-accent)`) works
+- Component APIs remain the same
+- Visual appearance is unchanged with default seeds
+
+**To migrate to seeds (optional):**
+
+1. Instead of overriding many individual tokens, set seed values:
+   ```scss
+   // Before: many individual overrides
+   $fui-color-accent: #0066ff;
+   $fui-color-accent-hover: #0052cc;
+   $fui-bg-secondary: #f1f5f9;
+   // ...many more
+
+   // After: just seeds
+   $fui-brand: #0066ff;
+   $fui-neutral: "steel";
+   ```
+
+2. Dark mode, hover states, and derived colors are computed automatically
 
 ## AI Agent Support
 

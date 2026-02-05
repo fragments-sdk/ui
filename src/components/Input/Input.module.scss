@@ -43,7 +43,7 @@
 
 // Size variants
 .sm {
-  height: var(--fui-button-height-sm, $fui-button-height-sm);
+  height: var(--fui-input-height-sm, $fui-input-height-sm);
   padding: 0 var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
 }
@@ -55,7 +55,7 @@
 }
 
 .lg {
-  height: var(--fui-button-height-lg, $fui-button-height-lg);
+  height: var(--fui-input-height-lg, $fui-input-height-lg);
   padding: 0 var(--fui-space-4, $fui-space-4);
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }

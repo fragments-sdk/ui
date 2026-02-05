@@ -6,6 +6,31 @@
   flex-direction: column;
 }
 
+// Size variants
+.sizeSm {
+  .inputWrapper {
+    gap: var(--fui-space-1, $fui-space-1);
+  }
+
+  .swatch {
+    width: $fui-touch-sm;
+    height: $fui-touch-sm;
+  }
+
+  .hexInput {
+    min-width: 80px;
+    flex: 0 0 auto;
+  }
+
+  .label {
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  }
+}
+
+.sizeMd {
+  // Default size - no overrides needed
+}
+
 .label {
   @include label-text;
   margin-bottom: var(--fui-space-1, $fui-space-1);
@@ -40,31 +65,16 @@
   }
 }
 
-.input {
-  @include text-base;
-  @include interactive-base;
+// Hex input wrapper (using Input component)
+.hexInput {
   flex: 1;
-  height: 36px;
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  min-width: 0;
+}
 
-  &:hover:not(:disabled):not(:focus) {
-    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
-
-  &:focus {
-    @include focus-ring;
-    border-color: var(--fui-color-accent, $fui-color-accent);
-  }
-
-  &:disabled {
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
+// Style the actual input field inside Input component
+.hexInputField {
+  font-family: var(--fui-font-mono, $fui-font-mono) !important;
+  text-transform: lowercase;
 }
 
 .positioner {

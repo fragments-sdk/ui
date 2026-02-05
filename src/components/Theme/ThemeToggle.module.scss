@@ -8,7 +8,7 @@
 .toggleGroup {
   display: inline-flex;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: 2px;
+  padding: var(--fui-space-0-5, $fui-space-0-5);
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   border-radius: var(--fui-radius-md, $fui-radius-md);
 }
@@ -47,36 +47,36 @@
 // Size variants
 .sizeSm {
   .toggleButton {
-    width: 26px;
-    height: 22px;
+    width: var(--fui-theme-toggle-sm-width, $fui-theme-toggle-sm-width);
+    height: var(--fui-theme-toggle-sm-height, $fui-theme-toggle-sm-height);
 
     svg {
-      width: 12px;
-      height: 12px;
+      width: var(--fui-theme-toggle-sm-icon, $fui-theme-toggle-sm-icon);
+      height: var(--fui-theme-toggle-sm-icon, $fui-theme-toggle-sm-icon);
     }
   }
 }
 
 .sizeMd {
   .toggleButton {
-    width: 32px;
-    height: 28px;
+    width: var(--fui-theme-toggle-md-width, $fui-theme-toggle-md-width);
+    height: var(--fui-theme-toggle-md-height, $fui-theme-toggle-md-height);
 
     svg {
-      width: 14px;
-      height: 14px;
+      width: var(--fui-theme-toggle-md-icon, $fui-theme-toggle-md-icon);
+      height: var(--fui-theme-toggle-md-icon, $fui-theme-toggle-md-icon);
     }
   }
 }
 
 .sizeLg {
   .toggleButton {
-    width: 40px;
-    height: 34px;
+    width: var(--fui-theme-toggle-lg-width, $fui-theme-toggle-lg-width);
+    height: var(--fui-theme-toggle-lg-height, $fui-theme-toggle-lg-height);
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: var(--fui-theme-toggle-lg-icon, $fui-theme-toggle-lg-icon);
+      height: var(--fui-theme-toggle-lg-icon, $fui-theme-toggle-lg-icon);
     }
   }
 }

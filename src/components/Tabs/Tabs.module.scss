@@ -35,8 +35,8 @@
   border-bottom: none;
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  padding: 4px;
-  gap: 4px;
+  padding: var(--fui-space-0-75, $fui-space-0-75);
+  gap: var(--fui-space-0-75, $fui-space-0-75);
   width: fit-content;
 }
 

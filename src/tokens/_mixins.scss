@@ -150,3 +150,44 @@
     0 0 0 var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) var(--fui-bg-primary, #{$fui-bg-primary}),
     0 0 0 calc(var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) + var(--fui-focus-ring-width, #{$fui-focus-ring-width})) var(--fui-color-danger, #{$fui-color-danger});
 }
+
+// ============================================
+// Size Variant Mixins
+// ============================================
+
+/// Control size mixin for standardized sizing across buttons, inputs, selects
+/// @param {String} $size - Size variant: 'sm', 'md', or 'lg'
+/// @param {String} $component - Component type: 'button', 'input', or 'select'
+@mixin control-size($size, $component: 'button') {
+  @if $size == 'sm' {
+    @if $component == 'input' {
+      height: var(--fui-input-height-sm, #{$fui-input-height-sm});
+      padding: 0 var(--fui-space-2, #{$fui-space-2});
+      font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
+    } @else {
+      height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+      padding: 0 var(--fui-space-2, #{$fui-space-2});
+      font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
+    }
+  } @else if $size == 'md' {
+    @if $component == 'input' {
+      height: var(--fui-input-height, #{$fui-input-height});
+      padding: 0 var(--fui-space-3, #{$fui-space-3});
+      font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
+    } @else {
+      height: var(--fui-button-height-md, #{$fui-button-height-md});
+      padding: 0 var(--fui-space-4, #{$fui-space-4});
+      font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
+    }
+  } @else if $size == 'lg' {
+    @if $component == 'input' {
+      height: var(--fui-input-height-lg, #{$fui-input-height-lg});
+      padding: 0 var(--fui-space-4, #{$fui-space-4});
+      font-size: var(--fui-font-size-base, #{$fui-font-size-base});
+    } @else {
+      height: var(--fui-button-height-lg, #{$fui-button-height-lg});
+      padding: 0 var(--fui-space-5, #{$fui-space-5});
+      font-size: var(--fui-font-size-base, #{$fui-font-size-base});
+    }
+  }
+}
