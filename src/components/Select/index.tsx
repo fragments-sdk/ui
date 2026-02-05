@@ -101,10 +101,18 @@ function CheckIcon() {
 }
 
 // ============================================
-// Context for placeholder
+// Context for Select state
 // ============================================
 
-const SelectContext = React.createContext<{ placeholder?: string }>({});
+interface SelectContextValue {
+  placeholder?: string;
+  value?: SelectValue | null;
+  itemsRef: React.MutableRefObject<Map<SelectValue, React.ReactNode>>;
+}
+
+const SelectContext = React.createContext<SelectContextValue>({
+  itemsRef: { current: new Map() },
+});
 
 // ============================================
 // Components
@@ -123,12 +131,47 @@ function SelectRoot({
   name,
   placeholder,
 }: SelectProps) {
+  // Track current value for controlled and uncontrolled modes
+  const [internalValue, setInternalValue] = React.useState<SelectValue | null | undefined>(
+    value ?? defaultValue ?? null
+  );
+
+  // Registry for item children - allows trigger to render selected item's content
+  const itemsRef = React.useRef<Map<SelectValue, React.ReactNode>>(new Map());
+
+  // Sync internal value with controlled value
+  React.useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value);
+    }
+  }, [value]);
+
+  const handleValueChange = React.useCallback(
+    (newValue: SelectValue | null) => {
+      if (value === undefined) {
+        // Uncontrolled mode
+        setInternalValue(newValue);
+      }
+      onValueChange?.(newValue);
+    },
+    [value, onValueChange]
+  );
+
+  const contextValue = React.useMemo(
+    () => ({
+      placeholder,
+      value: value !== undefined ? value : internalValue,
+      itemsRef,
+    }),
+    [placeholder, value, internalValue]
+  );
+
   return (
-    <SelectContext.Provider value={{ placeholder }}>
+    <SelectContext.Provider value={contextValue}>
       <BaseSelect.Root
         value={value}
         defaultValue={defaultValue}
-        onValueChange={onValueChange}
+        onValueChange={handleValueChange}
         open={open}
         defaultOpen={defaultOpen}
         onOpenChange={onOpenChange}
@@ -148,11 +191,21 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
 
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
 
+  // Get the selected item's children from the registry
+  const selectedContent = context.value != null
+    ? context.itemsRef.current.get(context.value)
+    : null;
+
+  // Determine what to show in the value area
+  const displayContent = selectedContent ?? (
+    placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null
+  );
+
   return (
     <BaseSelect.Trigger {...htmlProps} className={classes}>
       {children ?? (
         <>
-          <BaseSelect.Value placeholder={placeholderText} className={styles.value} />
+          <span className={styles.value}>{displayContent}</span>
           <BaseSelect.Icon className={styles.icon}>
             <ChevronDownIcon />
           </BaseSelect.Icon>
@@ -187,7 +240,16 @@ function SelectContent({
 }
 
 function SelectItem({ children, value, disabled, className }: SelectItemProps) {
+  const context = React.useContext(SelectContext);
   const classes = [styles.item, className].filter(Boolean).join(' ');
+
+  // Register this item's children in the registry so the trigger can display them
+  React.useEffect(() => {
+    context.itemsRef.current.set(value, children);
+    return () => {
+      context.itemsRef.current.delete(value);
+    };
+  }, [context.itemsRef, value, children]);
 
   return (
     <BaseSelect.Item value={value} disabled={disabled} className={classes}>

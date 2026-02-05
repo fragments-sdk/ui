@@ -37,13 +37,21 @@
 // Value display
 .value {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 
   &[data-placeholder] {
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
+}
+
+// Placeholder text
+.placeholder {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
 // Chevron icon
