@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Input } from './index.js';
+import { Input } from '.';
 
 export default defineSegment({
   component: Input,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Input',
     description: 'Text input field for single-line user data entry',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['form', 'input', 'text'],
   },

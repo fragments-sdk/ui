@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { ConversationList } from './index.js';
-import { Message } from '../Message/index.js';
+import { ConversationList } from '.';
+import { Message } from '../Message';
 
 export default defineSegment({
   component: ConversationList,

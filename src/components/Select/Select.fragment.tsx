@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { defineSegment } from '@fragments/core';
-import { Select } from './index.js';
+import { Select } from '.';
 
 // Stateful wrapper for interactive demos
 function StatefulSelect(props: React.ComponentProps<typeof Select> & {
@@ -22,7 +22,7 @@ export default defineSegment({
   meta: {
     name: 'Select',
     description: 'Dropdown for choosing from a list of options. Use when there are more than 4-5 choices that would clutter the UI.',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['select', 'dropdown', 'form', 'options', 'picker'],
     since: '0.1.0',

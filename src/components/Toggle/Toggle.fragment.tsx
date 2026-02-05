@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { defineSegment } from '@fragments/core';
-import { Toggle } from './index.js';
+import { Toggle } from '.';
 
 // Stateful wrapper for interactive demos
 function StatefulToggle(props: React.ComponentProps<typeof Toggle>) {
@@ -14,7 +14,7 @@ export default defineSegment({
   meta: {
     name: 'Toggle',
     description: 'Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly.',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['switch', 'toggle', 'boolean', 'settings', 'preference'],
     since: '0.1.0',

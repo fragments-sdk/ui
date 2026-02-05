@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { ColorPicker } from './index.js';
+import { ColorPicker } from '.';
 
 export default defineSegment({
   component: ColorPicker,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'ColorPicker',
     description: 'Color selection control with hex input and visual picker. Displays a swatch that opens a full color picker on click.',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['color', 'picker', 'input', 'hex', 'swatch', 'theme'],
     since: '0.2.0',

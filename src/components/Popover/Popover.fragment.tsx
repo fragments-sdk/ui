@@ -1,8 +1,8 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Popover } from './index.js';
-import { Button } from '../Button/index.js';
-import { Input } from '../Input/index.js';
+import { Popover } from '.';
+import { Button } from '../Button';
+import { Input } from '../Input';
 
 export default defineSegment({
   component: Popover,
@@ -10,7 +10,7 @@ export default defineSegment({
   meta: {
     name: 'Popover',
     description: 'Rich content overlay anchored to a trigger element. Use for forms, detailed information, or interactive content that should stay in context.',
-    category: 'overlays',
+    category: 'feedback',
     status: 'stable',
     tags: ['popover', 'overlay', 'dropdown', 'floating', 'contextual'],
     since: '0.1.0',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { ToggleGroup } from './index.js';
+import { ToggleGroup } from '.';
 
 export default defineSegment({
   component: ToggleGroup,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'ToggleGroup',
     description: 'A group of toggle buttons where only one can be selected at a time. Useful for switching between views, modes, or options.',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['toggle', 'group', 'segmented', 'control', 'tabs', 'switch'],
     since: '0.2.0',

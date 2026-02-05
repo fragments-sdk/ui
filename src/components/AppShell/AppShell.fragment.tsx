@@ -1,9 +1,9 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { AppShell } from './index.js';
-import { Header } from '../Header/index.js';
-import { Sidebar } from '../Sidebar/index.js';
-import { ThemeToggle } from '../Theme/index.js';
+import { AppShell } from '.';
+import { Header } from '../Header';
+import { Sidebar } from '../Sidebar';
+import { ThemeToggle } from '../Theme';
 
 // Demo icons
 function HomeIcon() {

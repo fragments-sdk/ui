@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Image } from './index.js';
+import { Image } from '.';
 
 export default defineSegment({
   component: Image,

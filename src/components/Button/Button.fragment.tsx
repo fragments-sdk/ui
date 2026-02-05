@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Button } from './index.js';
+import { Button } from '.';
 
 export default defineSegment({
   component: Button,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Button',
     description: 'Interactive element for user actions and form submissions',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['action', 'button', 'form', 'interactive'],
   },

@@ -1,9 +1,9 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Header } from './index.js';
-import { ThemeToggle, ThemeProvider } from '../Theme/index.js';
-import { Button } from '../Button/index.js';
-import { Input } from '../Input/index.js';
+import { Header } from '.';
+import { ThemeToggle, ThemeProvider } from '../Theme';
+import { Button } from '../Button';
+import { Input } from '../Input';
 
 function SearchIcon() {
   return (

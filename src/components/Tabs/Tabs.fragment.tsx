@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Tabs } from './index.js';
+import { Tabs } from '.';
 
 export default defineSegment({
   component: Tabs,

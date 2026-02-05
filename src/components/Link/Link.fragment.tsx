@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Link } from './index.js';
+import { Link } from '.';
 
 export default defineSegment({
   component: Link,

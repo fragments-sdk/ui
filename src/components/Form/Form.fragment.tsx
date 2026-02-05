@@ -1,16 +1,16 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Form } from './index.js';
-import { Field } from '../Field/index.js';
-import { Fieldset } from '../Fieldset/index.js';
-import { Input } from '../Input/index.js';
-import { Textarea } from '../Textarea/index.js';
-import { Select } from '../Select/index.js';
-import { Checkbox } from '../Checkbox/index.js';
-import { RadioGroup } from '../RadioGroup/index.js';
-import { Toggle } from '../Toggle/index.js';
-import { Button } from '../Button/index.js';
-import { Grid } from '../Grid/index.js';
+import { Form } from '.';
+import { Field } from '../Field';
+import { Fieldset } from '../Fieldset';
+import { Input } from '../Input';
+import { Textarea } from '../Textarea';
+import { Select } from '../Select';
+import { Checkbox } from '../Checkbox';
+import { RadioGroup } from '../RadioGroup';
+import { Toggle } from '../Toggle';
+import { Button } from '../Button';
+import { Grid } from '../Grid';
 
 export default defineSegment({
   component: Form,
@@ -18,7 +18,7 @@ export default defineSegment({
   meta: {
     name: 'Form',
     description: 'Form wrapper that handles server-side error distribution to Field components. Pairs with Field for complete form validation.',
-    category: 'form',
+    category: 'forms',
     status: 'stable',
     tags: ['form', 'validation', 'errors', 'submit', 'server'],
     since: '0.4.0',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Card } from './index.js';
+import { Card } from '.';
 
 export default defineSegment({
   component: Card,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Card',
     description: 'Container for grouping related content',
-    category: 'surfaces',
+    category: 'layout',
     status: 'stable',
     tags: ['container', 'layout', 'surface'],
   },

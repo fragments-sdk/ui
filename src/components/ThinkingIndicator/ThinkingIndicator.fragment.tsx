@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { ThinkingIndicator } from './index.js';
+import { ThinkingIndicator } from '.';
 
 export default defineSegment({
   component: ThinkingIndicator,

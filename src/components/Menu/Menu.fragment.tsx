@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Menu } from './index.js';
-import { Button } from '../Button/index.js';
+import { Menu } from '.';
+import { Button } from '../Button';
 
 export default defineSegment({
   component: Menu,
@@ -9,7 +9,7 @@ export default defineSegment({
   meta: {
     name: 'Menu',
     description: 'Dropdown menu for actions and commands. Use for contextual actions, overflow menus, or grouped commands.',
-    category: 'overlays',
+    category: 'feedback',
     status: 'stable',
     tags: ['menu', 'dropdown', 'actions', 'context-menu', 'commands'],
     since: '0.1.0',

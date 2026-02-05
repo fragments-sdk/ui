@@ -1,12 +1,12 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Fieldset } from './index.js';
-import { Field } from '../Field/index.js';
-import { Input } from '../Input/index.js';
-import { Textarea } from '../Textarea/index.js';
-import { Select } from '../Select/index.js';
-import { Checkbox } from '../Checkbox/index.js';
-import { Grid } from '../Grid/index.js';
+import { Fieldset } from '.';
+import { Field } from '../Field';
+import { Input } from '../Input';
+import { Textarea } from '../Textarea';
+import { Select } from '../Select';
+import { Checkbox } from '../Checkbox';
+import { Grid } from '../Grid';
 
 export default defineSegment({
   component: Fieldset,
@@ -14,7 +14,7 @@ export default defineSegment({
   meta: {
     name: 'Fieldset',
     description: 'Groups related form fields with an accessible legend. Use to organize forms into logical sections.',
-    category: 'form',
+    category: 'forms',
     status: 'stable',
     tags: ['form', 'fieldset', 'group', 'legend', 'accessible'],
     since: '0.4.0',

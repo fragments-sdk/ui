@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { CodeBlock } from './index.js';
+import { CodeBlock } from '.';
 
 export default defineSegment({
   component: CodeBlock,

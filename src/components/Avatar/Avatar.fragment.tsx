@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Avatar } from './index.js';
+import { Avatar } from '.';
 
 export default defineSegment({
   component: Avatar,

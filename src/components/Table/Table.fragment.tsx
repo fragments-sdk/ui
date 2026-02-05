@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Table, createColumns } from './index.js';
-import { Badge } from '../Badge/index.js';
+import { Table, createColumns } from '.';
+import { Badge } from '../Badge';
 
 // Sample data types
 interface User {

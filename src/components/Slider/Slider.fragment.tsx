@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Slider } from './index.js';
+import { Slider } from '.';
 
 export default defineSegment({
   component: Slider,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Slider',
     description: 'Range input control for selecting a numeric value within a defined range. Supports labels, value display, and custom step intervals.',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['slider', 'range', 'input', 'number', 'control'],
     since: '0.2.0',

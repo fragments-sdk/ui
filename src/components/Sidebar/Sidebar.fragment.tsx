@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { defineSegment } from '@fragments/core';
-import { Sidebar, SidebarProvider, useSidebar } from './index.js';
-import { Button } from '../Button/index.js';
+import { Sidebar, SidebarProvider, useSidebar } from '.';
+import { Button } from '../Button';
 
 // Example icons (inline SVGs for demo)
 const HomeIcon = () => (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Separator } from './index.js';
+import { Separator } from '.';
 
 export default defineSegment({
   component: Separator,

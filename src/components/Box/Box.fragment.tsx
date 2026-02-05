@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Box } from './index.js';
+import { Box } from '.';
 
 export default defineSegment({
   component: Box,

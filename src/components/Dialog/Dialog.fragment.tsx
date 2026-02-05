@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Dialog } from './index.js';
-import { Button } from '../Button/index.js';
+import { Dialog } from '.';
+import { Button } from '../Button';
 
 export default defineSegment({
   component: Dialog,
@@ -9,7 +9,7 @@ export default defineSegment({
   meta: {
     name: 'Dialog',
     description: 'Modal overlay for focused user interactions. Use for confirmations, forms, or content requiring full attention.',
-    category: 'overlays',
+    category: 'feedback',
     status: 'stable',
     tags: ['modal', 'dialog', 'overlay', 'popup', 'confirmation'],
     since: '0.1.0',

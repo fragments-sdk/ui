@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { VisuallyHidden } from './index.js';
+import { VisuallyHidden } from '.';
 
 export default defineSegment({
   component: VisuallyHidden,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'VisuallyHidden',
     description: 'Hides content visually while keeping it accessible to screen readers. Essential for accessible icon-only buttons and supplementary text.',
-    category: 'utilities',
+    category: 'navigation',
     status: 'stable',
     tags: ['accessibility', 'a11y', 'screen-reader', 'hidden', 'sr-only'],
     since: '0.1.0',

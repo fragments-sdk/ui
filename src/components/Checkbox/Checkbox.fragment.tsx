@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { defineSegment } from '@fragments/core';
-import { Checkbox } from './index.js';
+import { Checkbox } from '.';
 
 // Stateful wrapper for interactive demos
 function StatefulCheckbox(props: React.ComponentProps<typeof Checkbox>) {
@@ -14,7 +14,7 @@ export default defineSegment({
   meta: {
     name: 'Checkbox',
     description: 'Binary toggle for form fields. Use for options that require explicit submission, unlike Toggle which takes effect immediately.',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['checkbox', 'form', 'boolean', 'selection', 'input'],
     since: '0.1.0',

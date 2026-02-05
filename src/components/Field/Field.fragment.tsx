@@ -1,8 +1,8 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Field } from './index.js';
-import { Input } from '../Input/index.js';
-import { Grid } from '../Grid/index.js';
+import { Field } from '.';
+import { Input } from '../Input';
+import { Grid } from '../Grid';
 
 export default defineSegment({
   component: Field,
@@ -10,7 +10,7 @@ export default defineSegment({
   meta: {
     name: 'Field',
     description: 'Compositional form field wrapper providing validation, labels, descriptions, and error messages. Use for advanced form needs beyond baked-in Input/Textarea props.',
-    category: 'form',
+    category: 'forms',
     status: 'stable',
     tags: ['form', 'field', 'validation', 'label', 'error', 'input', 'accessible'],
     since: '0.4.0',

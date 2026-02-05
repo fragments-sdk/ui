@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Toast, ToastProvider, useToast } from './index.js';
+import { Toast, ToastProvider, useToast } from '.';
 
 // Demo component that triggers toasts
 function ToastDemo() {

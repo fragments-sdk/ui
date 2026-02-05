@@ -1,8 +1,8 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Stack } from './index.js';
-import { Button } from '../Button/index.js';
-import { Badge } from '../Badge/index.js';
+import { Stack } from '.';
+import { Button } from '../Button';
+import { Badge } from '../Badge';
 
 export default defineSegment({
   component: Stack,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Alert } from './index.js';
+import { Alert } from '.';
 
 export default defineSegment({
   component: Alert,

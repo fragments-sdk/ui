@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Skeleton } from './index.js';
+import { Skeleton } from '.';
 
 export default defineSegment({
   component: Skeleton,

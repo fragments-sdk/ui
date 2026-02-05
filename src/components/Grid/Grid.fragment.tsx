@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Grid } from './index.js';
+import { Grid } from '.';
 
 export default defineSegment({
   component: Grid,

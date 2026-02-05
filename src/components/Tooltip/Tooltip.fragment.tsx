@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Tooltip, TooltipProvider } from './index.js';
-import { Button } from '../Button/index.js';
+import { Tooltip, TooltipProvider } from '.';
+import { Button } from '../Button';
 
 export default defineSegment({
   component: Tooltip,
@@ -9,7 +9,7 @@ export default defineSegment({
   meta: {
     name: 'Tooltip',
     description: 'Contextual help text that appears on hover or focus. Perfect for explaining icons, truncated text, or providing additional context.',
-    category: 'overlays',
+    category: 'feedback',
     status: 'stable',
     tags: ['tooltip', 'hint', 'help', 'hover', 'contextual'],
     since: '0.1.0',

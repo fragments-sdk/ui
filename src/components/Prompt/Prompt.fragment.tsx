@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Prompt } from './index.js';
+import { Prompt } from '.';
 
 export default defineSegment({
   component: Prompt,

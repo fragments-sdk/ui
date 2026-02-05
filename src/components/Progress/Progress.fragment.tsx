@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Progress, CircularProgress } from './index.js';
+import { Progress, CircularProgress } from '.';
 
 export default defineSegment({
   component: Progress,

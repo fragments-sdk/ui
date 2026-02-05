@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Badge } from './index.js';
+import { Badge } from '.';
 
 export default defineSegment({
   component: Badge,

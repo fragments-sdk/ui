@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { List } from './index.js';
+import { List } from '.';
 import { Check, Star, ArrowRight } from '@phosphor-icons/react';
 
 export default defineSegment({

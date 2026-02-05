@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Textarea } from './index.js';
+import { Textarea } from '.';
 
 export default defineSegment({
   component: Textarea,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Textarea',
     description: 'Multi-line text input for longer form content',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['input', 'text', 'form', 'multiline'],
   },

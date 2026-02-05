@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { RadioGroup } from './index.js';
+import { RadioGroup } from '.';
 
 export default defineSegment({
   component: RadioGroup,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'RadioGroup',
     description: 'Single selection from a list of mutually exclusive options',
-    category: 'inputs',
+    category: 'forms',
     status: 'stable',
     tags: ['form', 'radio', 'selection', 'options'],
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Listbox } from './index.js';
+import { Listbox } from '.';
 
 export default defineSegment({
   component: Listbox,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Listbox',
     description: 'Controlled listbox for search results, autocomplete dropdowns, and command menus. Provides Menu-like styling without requiring a trigger.',
-    category: 'form',
+    category: 'forms',
     status: 'stable',
     tags: ['listbox', 'search', 'autocomplete', 'combobox', 'command', 'dropdown'],
     since: '0.3.0',

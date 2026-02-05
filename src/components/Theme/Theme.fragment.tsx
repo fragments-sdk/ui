@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { ThemeProvider, ThemeToggle, useTheme } from './index.js';
+import { ThemeProvider, ThemeToggle, useTheme } from '.';
 
 // Demo component to show hook usage
 function ThemeDemo() {
@@ -20,7 +20,7 @@ export default defineSegment({
   meta: {
     name: 'Theme',
     description: 'Theme management system with provider, toggle, and hook pattern. Supports light, dark, and system modes with localStorage persistence.',
-    category: 'utilities',
+    category: 'navigation',
     status: 'stable',
     tags: ['theme', 'dark-mode', 'light-mode', 'provider', 'toggle'],
     since: '0.5.0',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Text } from './index.js';
+import { Text } from '.';
 
 export default defineSegment({
   component: Text,

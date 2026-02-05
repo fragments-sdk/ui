@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Loading } from './index.js';
+import { Loading } from '.';
 
 export default defineSegment({
   component: Loading,

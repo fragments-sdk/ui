@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Collapsible } from './index.js';
+import { Collapsible } from '.';
 
 export default defineSegment({
   component: Collapsible,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Collapsible',
     description: 'An interactive component that expands/collapses to show or hide content',
-    category: 'surfaces',
+    category: 'layout',
     status: 'stable',
     tags: ['collapsible', 'expandable', 'accordion', 'disclosure', 'toggle'],
   },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { ButtonGroup } from './index.js';
-import { Button } from '../Button/index.js';
+import { ButtonGroup } from '.';
+import { Button } from '../Button';
 
 export default defineSegment({
   component: ButtonGroup,

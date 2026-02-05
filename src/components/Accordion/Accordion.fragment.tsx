@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Accordion } from './index.js';
+import { Accordion } from '.';
 
 export default defineSegment({
   component: Accordion,
@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Accordion',
     description: 'Vertically stacked, collapsible content sections. Use for organizing related content that can be progressively disclosed.',
-    category: 'surfaces',
+    category: 'layout',
     status: 'stable',
     tags: ['accordion', 'collapse', 'expand', 'disclosure', 'faq'],
     since: '0.2.0',

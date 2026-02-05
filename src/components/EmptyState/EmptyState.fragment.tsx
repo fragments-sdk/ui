@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { EmptyState } from './index.js';
-import { Button } from '../Button/index.js';
+import { EmptyState } from '.';
+import { Button } from '../Button';
 
 // Simple placeholder icon
 const FolderIcon = () => (
