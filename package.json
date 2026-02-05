@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "fragments dev",
-    "build": "fragments build",
+    "build": "node ../../packages/cli/dist/bin.js build",
     "validate": "fragments validate"
   },
   "peerDependencies": {
