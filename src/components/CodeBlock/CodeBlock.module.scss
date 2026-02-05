@@ -96,6 +96,28 @@
   flex-shrink: 0;
 }
 
+// Persistent copy — wrapper becomes flex row, button sits beside code
+.persistentCopyWrapper {
+  display: flex;
+  align-items: center;
+
+  .codeContainer,
+  .loading {
+    flex: 1;
+    min-width: 0;
+
+    :global(.shiki),
+    pre {
+      padding-right: var(--fui-space-3, $fui-space-3);
+    }
+  }
+}
+
+.persistentCopy {
+  flex-shrink: 0;
+  padding-right: var(--fui-space-2, $fui-space-2);
+}
+
 .loading {
   pre {
     margin: 0;
@@ -231,6 +253,34 @@
 
     :global(.diff-marker) {
       color: var(--fui-color-danger, $fui-color-danger);
+    }
+  }
+}
+
+// Compact variant — reduced padding, vertically centred copy button
+.compact {
+  .wrapper {
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+  }
+
+  .codeContainer :global(.shiki),
+  .loading pre {
+    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+    padding-right: var(--fui-space-8, $fui-space-8);
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+    line-height: 1.5;
+  }
+
+  .copyButton {
+    top: 50%;
+    transform: translateY(-50%);
+    right: var(--fui-space-1, $fui-space-1);
+    padding: var(--fui-space-1, $fui-space-1);
+    font-size: 0;
+    gap: 0;
+
+    span {
+      display: none;
     }
   }
 }

@@ -1,0 +1,123 @@
+@use '../../tokens/variables' as *;
+
+// Container
+.container {
+  width: 100%;
+  height: 100%;
+  font-family: var(--fui-font-sans, $fui-font-sans);
+
+  // Override recharts defaults to use FUI tokens
+  :global(.recharts-text) {
+    fill: var(--fui-text-secondary, $fui-text-secondary);
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  }
+
+  :global(.recharts-cartesian-grid) line {
+    stroke: var(--fui-border, $fui-border);
+  }
+
+  :global(.recharts-cartesian-axis-line),
+  :global(.recharts-cartesian-axis-tick-line) {
+    stroke: var(--fui-border, $fui-border);
+  }
+
+  :global(.recharts-curve.recharts-tooltip-cursor) {
+    stroke: var(--fui-border, $fui-border);
+  }
+
+  :global(.recharts-rectangle.recharts-tooltip-cursor) {
+    fill: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+// Tooltip
+.tooltip {
+  background: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  font-family: var(--fui-font-sans, $fui-font-sans);
+}
+
+.tooltipLabel {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  margin-bottom: var(--fui-space-1, $fui-space-1);
+}
+
+.tooltipItems {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltipItem {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  justify-content: space-between;
+  min-width: 100px;
+}
+
+.tooltipIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.tooltipIndicatorLine {
+    width: 12px;
+    height: 2px;
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+  }
+
+  &.tooltipIndicatorDashed {
+    width: 12px;
+    height: 0;
+    border-top: 2px dashed;
+    border-radius: 0;
+  }
+}
+
+.tooltipItemLabel {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}
+
+.tooltipItemValue {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+
+// Legend
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fui-space-3, $fui-space-3);
+  padding-top: var(--fui-space-2, $fui-space-2);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}

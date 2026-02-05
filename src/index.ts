@@ -448,6 +448,20 @@ export {
   type ThinkingStepProps,
 } from './components/ThinkingIndicator';
 
+// Chart
+export {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  useChartConfig,
+  type ChartConfig,
+  type ChartContainerProps,
+  type ChartTooltipContentProps,
+  type ChartLegendContentProps,
+} from './components/Chart';
+
 // Accessibility Utilities
 export {
   useId,

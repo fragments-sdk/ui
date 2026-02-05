@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { codeToHtml, BundledTheme } from 'shiki';
 import { TabsRoot, TabsList, Tab, TabsPanel } from '../Tabs';
+import { Button } from '../Button';
 import styles from './CodeBlock.module.scss';
 import '../../styles/globals.scss';
 
@@ -90,6 +91,10 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultCollapsed?: boolean;
   /** Number of lines to show when collapsed */
   collapsedLines?: number;
+  /** Compact mode with reduced padding */
+  compact?: boolean;
+  /** Show a persistent copy button (always visible, uses Button component) */
+  persistentCopy?: boolean;
 }
 
 function CopyIcon({ className }: { className?: string }) {
@@ -324,6 +329,8 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       collapsible = false,
       defaultCollapsed = false,
       collapsedLines = 5,
+      compact = false,
+      persistentCopy = false,
       className,
       ...htmlProps
     },
@@ -411,6 +418,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       showLineNumbers && styles.withLineNumbers,
       hasDiff && styles.withDiff,
       wordWrap && styles.wordWrap,
+      compact && styles.compact,
       className,
     ]
       .filter(Boolean)
@@ -419,6 +427,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     const wrapperClasses = [
       styles.wrapper,
       filename && styles.hasHeader,
+      persistentCopy && styles.persistentCopyWrapper,
     ].filter(Boolean).join(' ');
 
     const codeContainerStyle: React.CSSProperties = maxHeight
@@ -434,7 +443,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
               <span className={styles.filename}>{filename}</span>
             </div>
           )}
-          {showCopy && (
+          {showCopy && !persistentCopy && (
             <button
               type="button"
               onClick={handleCopy}
@@ -466,6 +475,18 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
               style={codeContainerStyle}
               dangerouslySetInnerHTML={{ __html: highlightedHtml }}
             />
+          )}
+          {persistentCopy && (
+            <div className={styles.persistentCopy}>
+              <Button
+                size="sm"
+                onClick={handleCopy}
+                aria-label={copied ? 'Copied!' : 'Copy code'}
+                icon={copied ? true : false}
+              >
+                {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
+              </Button>
+            </div>
           )}
           {shouldShowCollapse && (
             <button
