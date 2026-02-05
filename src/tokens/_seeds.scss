@@ -1,0 +1,59 @@
+// ============================================
+// @fragments/ui Design Token Seeds
+// ============================================
+//
+// User-configurable seed tokens for the design system.
+// Override these before importing to customize your theme.
+//
+// Example:
+//   $fui-brand: #0066ff;
+//   $fui-neutral: "steel";
+//   $fui-density: "compact";
+//   @use '@fragments-sdk/ui/globals';
+//
+// ============================================
+
+// --------------------------------------------
+// Core Seeds
+// --------------------------------------------
+
+/// Primary brand color - derives accent colors, focus rings, etc.
+/// @type Color
+$fui-brand: #18181b !default;
+
+/// Neutral palette name for surfaces, text, and borders
+/// Options: "wind" | "ice" | "earth" | "sand" | "fire"
+/// @type String
+$fui-neutral: "wind" !default;
+
+/// Density preset controlling spacing scale
+/// Options: "compact" | "default" | "relaxed"
+/// @type String
+$fui-density: "default" !default;
+
+/// Radius style for borders and corners
+/// Options: "sharp" | "subtle" | "default" | "rounded" | "pill"
+/// @type String
+$fui-radius-style: "default" !default;
+
+// --------------------------------------------
+// Semantic Color Overrides (Optional)
+// --------------------------------------------
+// Override these to customize semantic colors.
+// If not overridden, they use sensible defaults.
+
+/// Danger/error color (defaults to red-500)
+/// @type Color
+$fui-danger: #ef4444 !default;
+
+/// Success color (defaults to green-500)
+/// @type Color
+$fui-success: #22c55e !default;
+
+/// Warning color (defaults to amber-500)
+/// @type Color
+$fui-warning: #f59e0b !default;
+
+/// Info color (defaults to blue-500)
+/// @type Color
+$fui-info: #3b82f6 !default;
