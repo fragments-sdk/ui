@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "fragments dev",
     "build": "node ../../packages/cli/dist/bin.js build",
+    "lint": "eslint src",
     "validate": "fragments validate"
   },
   "peerDependencies": {

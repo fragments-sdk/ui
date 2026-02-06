@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineSegment } from '@fragments/core';
-import { Tooltip, TooltipProvider } from '.';
+import { Tooltip } from '.';
 import { Button } from '../Button';
 
 export default defineSegment({

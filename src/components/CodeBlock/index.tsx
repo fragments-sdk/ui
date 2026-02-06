@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { codeToHtml, BundledTheme } from 'shiki';
 import { TabsRoot, TabsList, Tab, TabsPanel } from '../Tabs';
 import { Button } from '../Button';
@@ -242,11 +242,6 @@ function parseLineSpec(spec?: (number | string)[]): Set<number> {
   return lines;
 }
 
-/** Backwards compatibility alias */
-function parseHighlightLines(highlightLines?: (number | string)[]): Set<number> {
-  return parseLineSpec(highlightLines);
-}
-
 interface ProcessOptions {
   showLineNumbers: boolean;
   startLineNumber: number;
@@ -351,9 +346,9 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       ? codeLines.slice(0, collapsedLines).join('\n')
       : trimmedCode;
 
-    const highlightSet = parseLineSpec(highlightLines);
-    const addedSet = parseLineSpec(addedLines);
-    const removedSet = parseLineSpec(removedLines);
+    const highlightSet = useMemo(() => parseLineSpec(highlightLines), [highlightLines]);
+    const addedSet = useMemo(() => parseLineSpec(addedLines), [addedLines]);
+    const removedSet = useMemo(() => parseLineSpec(removedLines), [removedLines]);
     const hasDiff = addedSet.size > 0 || removedSet.size > 0;
 
     // Apply syntax highlighting
@@ -394,7 +389,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       return () => {
         cancelled = true;
       };
-    }, [visibleCode, language, theme, showLineNumbers, startLineNumber, highlightSet.size, addedSet.size, removedSet.size]);
+    }, [visibleCode, language, theme, showLineNumbers, startLineNumber, highlightSet, addedSet, removedSet]);
 
     const handleCopy = useCallback(async () => {
       try {

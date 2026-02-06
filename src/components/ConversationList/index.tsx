@@ -202,7 +202,7 @@ function ConversationListRoot({
     if (autoScroll) {
       scrollToBottom('instant');
     }
-  }, []);
+  }, [autoScroll, scrollToBottom]);
 
   const contextValue: ConversationListContextValue = {
     scrollToBottom,

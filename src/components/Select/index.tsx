@@ -211,7 +211,7 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
     : null;
 
   // Determine what to show in the value area
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const _version = context.itemsVersion; // Force dependency on itemsVersion for re-render
   const displayContent = selectedContent ?? (
     placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null

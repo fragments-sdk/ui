@@ -192,7 +192,7 @@ export function ChartTooltip({
   ...props
 }: ChartTooltipProps) {
   const defaultContent = React.useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (tooltipProps: any) => (
       <ChartTooltipContent
         {...tooltipProps}
@@ -255,7 +255,7 @@ type ChartLegendProps = Omit<RechartsLegendProps, 'content'> & {
 };
 
 export function ChartLegend({ content, ...props }: ChartLegendProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const defaultContent = (legendProps: any) => <ChartLegendContent {...legendProps} />;
 
   return (

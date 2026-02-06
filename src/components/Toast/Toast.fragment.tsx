@@ -4,7 +4,7 @@ import { Toast, ToastProvider, useToast } from '.';
 
 // Demo component that triggers toasts
 function ToastDemo() {
-  const { success, error, warning, info, toast } = useToast();
+  const { success, error, warning, info } = useToast();
 
   return (
     <div style={{ display: 'flex', gap: 'var(--fui-space-1)', flexWrap: 'wrap' }}>

@@ -337,10 +337,11 @@ function ComboboxItem({ children, value, disabled, className }: ComboboxItemProp
   // Register this item's label in the registry so the input can display it
   const label = typeof children === 'string' ? children : String(children);
   React.useEffect(() => {
-    itemsRef.current.set(value, label);
+    const items = itemsRef.current;
+    items.set(value, label);
     incrementItemsVersion();
     return () => {
-      itemsRef.current.delete(value);
+      items.delete(value);
     };
     // itemsRef is a stable ref, incrementItemsVersion is a stable callback
   }, [itemsRef, incrementItemsVersion, value, label]);
