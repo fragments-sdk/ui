@@ -1,0 +1,268 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// Multi-select container — stacks input and chips vertically
+.multiContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+// Input + trigger wrapper
+.inputWrapper {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  min-width: 10rem;
+  min-height: var(--fui-input-height, $fui-input-height);
+  padding: var(--fui-space-1, $fui-space-1);
+  padding-right: 0;
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  transition:
+    border-color var(--fui-transition-fast, $fui-transition-fast),
+    box-shadow var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover:not(:has([data-disabled])) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus-within {
+    @include focus-ring;
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &:has([data-disabled]) {
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+// Text input
+.input {
+  @include text-base;
+
+  flex: 1;
+  min-width: 4rem;
+  height: calc(var(--fui-input-height, $fui-input-height) - var(--fui-space-2, $fui-space-2));
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  outline: none;
+
+  &::placeholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+// Chips container (multi-select) — rendered below the input wrapper
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  padding-top: var(--fui-space-1, $fui-space-1);
+}
+
+// Individual chip (multi-select)
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: 2px var(--fui-space-2, $fui-space-2);
+  background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  line-height: 1.4;
+  white-space: nowrap;
+  max-width: 12rem;
+}
+
+.chipLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Chip remove button
+.chipRemove {
+  @include button-reset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--fui-radius-xs, 2px);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  cursor: pointer;
+  transition: color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+// Chevron trigger button
+.trigger {
+  @include button-reset;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 2rem;
+  margin-left: auto;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  cursor: pointer;
+  border-radius: 0 var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0;
+  transition: color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--fui-transition-fast, $fui-transition-fast);
+  }
+
+  &[data-popup-open] svg {
+    transform: rotate(180deg);
+  }
+}
+
+// Positioner
+.positioner {
+  z-index: 50;
+  outline: none;
+}
+
+// Popup container
+.popup {
+  @include surface-elevated;
+
+  min-width: var(--anchor-width);
+  max-height: 20rem;
+  overflow-y: auto;
+  padding: var(--fui-space-1, $fui-space-1);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+// Individual option
+.item {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  width: 100%;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  cursor: pointer;
+  outline: none;
+
+  &[data-highlighted] {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &[data-selected] {
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-text-inverse, $fui-text-inverse);
+
+    &[data-highlighted] {
+      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    }
+  }
+
+  &[data-disabled] {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+// Selection indicator (checkmark)
+.itemIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin-left: auto;
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+// Empty state
+.empty {
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fui-space-4, $fui-space-4) var(--fui-space-3, $fui-space-3);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+}
+
+// Group container
+.group {
+  &:not(:first-child) {
+    margin-top: var(--fui-space-1, $fui-space-1);
+    padding-top: var(--fui-space-1, $fui-space-1);
+    border-top: 1px solid var(--fui-border, $fui-border);
+  }
+}
+
+// Group label
+.groupLabel {
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

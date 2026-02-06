@@ -156,6 +156,19 @@ export {
 // Checkbox
 export { Checkbox, type CheckboxProps } from './components/Checkbox';
 
+// Combobox
+export {
+  Combobox,
+  type ComboboxProps,
+  type ComboboxInputProps,
+  type ComboboxTriggerProps,
+  type ComboboxContentProps,
+  type ComboboxItemProps,
+  type ComboboxEmptyProps,
+  type ComboboxGroupProps,
+  type ComboboxGroupLabelProps,
+} from './components/Combobox';
+
 // RadioGroup
 export {
   RadioGroup,
