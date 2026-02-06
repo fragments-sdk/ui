@@ -1,5 +1,24 @@
 # @fragments-sdk/ui
 
+## 0.6.4
+
+### Patch Changes
+
+- [`6273fc6`](https://github.com/ConanMcN/fragments/commit/6273fc6a0bd7545f2514c65006f5d560790be254) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): overlay z-index, Select/Combobox maxVisibleItems, SelectItem render loop
+
+  - Fix Select, Combobox, Popover, Menu z-index (50→52) to render above Dialog (51)
+  - Add maxVisibleItems prop to Select.Content and Combobox.Content with half-peek scroll hint
+  - Fix SelectItem infinite render loop by destructuring stable refs from context
+  - Override Base UI inline max-height with !important
+  - Add Scrollable List and Custom Max Visible Items fragment variants and previews
+  - Fix AppShell.Aside overflow containment (overflow: hidden) to prevent children bleeding out
+
+  fix(cli): MCP variant fuzzy matching and per-segment package name resolution
+
+  - Variant matching now uses exact → prefix → contains fallback ("Dots" matches "Dots (Default)")
+  - Track per-segment package names when merging multiple fragments.json files
+  - Fixes import paths showing consumer project name instead of library package name
+
 ## 0.6.3
 
 ### Patch Changes
