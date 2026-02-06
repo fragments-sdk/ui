@@ -1,5 +1,12 @@
 # @fragments-sdk/ui
 
+## 0.6.3
+
+### Patch Changes
+
+- [`6c6ae31`](https://github.com/ConanMcN/fragments/commit/6c6ae3143ed2f648de904d08ead2b9ea0ab99335) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): default Text component color to themed token for dark mode support
+  fix(cli): use Node.js module resolution for fragments.json discovery
+
 ## 0.6.2
 
 ### Patch Changes
