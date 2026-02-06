@@ -1,5 +1,15 @@
 # @fragments-sdk/ui
 
+## 0.6.1
+
+### Patch Changes
+
+- [`3380e86`](https://github.com/ConanMcN/fragments/commit/3380e86e9b575e23412a6b609fa36644007933a5) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix: mobile layout bugs - horizontal scrollbar, missing nav links, aside visibility
+
+  - Fix horizontal scrollbar on mobile when AppShell uses inset layout by removing margin and using width: 100%
+  - Add header navigation links (Docs, Components, Blocks, Themes, Accessibility) to mobile sidebar menu
+  - Stack AppShell.Aside below main content on mobile instead of hiding it
+
 ## 0.6.0
 
 ### Minor Changes
