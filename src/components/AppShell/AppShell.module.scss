@@ -35,11 +35,13 @@
   @include below-md {
     grid-template-areas:
       'header'
-      'main';
+      'main'
+      'aside';
     grid-template-columns: 1fr;
     grid-template-rows:
       var(--appshell-header-height, 56px)
-      1fr;
+      1fr
+      auto;
     transition: none; // No column transition on mobile
   }
 }
@@ -55,7 +57,8 @@
   @include below-md {
     grid-template-areas:
       'header'
-      'main';
+      'main'
+      'aside';
     grid-template-columns: 1fr;
   }
 }
@@ -165,8 +168,8 @@
   overflow: hidden;
 
   @include below-md {
-    margin: var(--fui-space-2, $fui-space-2);
     border-radius: var(--fui-radius-md, $fui-radius-md);
+    width: 100%;
   }
 }
 
@@ -206,8 +209,11 @@
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   overflow-y: auto;
 
-  // Hide on mobile (grid area doesn't exist)
+  // Stack below main on mobile
   @include below-md {
-    display: none;
+    position: static;
+    width: 100%;
+    height: auto;
+    border-top: 1px solid var(--fui-border, $fui-border);
   }
 }

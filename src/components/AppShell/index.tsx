@@ -356,10 +356,7 @@ function AppShellAside({
   style: styleProp,
   ...htmlProps
 }: AppShellAsideProps) {
-  const isMobile = useIsMobile();
-
-  // Hide aside on mobile
-  if (isMobile || !visible) {
+  if (!visible) {
     return null;
   }
 
