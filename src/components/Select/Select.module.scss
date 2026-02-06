@@ -72,9 +72,9 @@
   }
 }
 
-// Positioner
+// Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
-  z-index: 50;
+  z-index: 52;
   outline: none;
 }
 
@@ -82,9 +82,20 @@
 .popup {
   @include surface-elevated;
 
+  // Item height derived from text-base font + vertical padding
+  --_item-h: calc(
+    var(--fui-font-size-sm, #{$fui-font-size-sm}) * var(--fui-line-height-normal, #{$fui-line-height-normal}) +
+    var(--fui-space-2, #{$fui-space-2}) * 2
+  );
+
   min-width: var(--anchor-width);
-  max-height: 20rem;
-  overflow-y: auto;
+  // Show N items + half-peek scroll hint (default 4.5 items)
+  // !important needed to override Base UI's inline max-height: 100%
+  max-height: calc(
+    var(--_item-h) * var(--fui-select-max-items, 4.5) +
+    var(--fui-space-1, #{$fui-space-1}) * 2
+  ) !important;
+  overflow-y: auto !important;
   padding: var(--fui-space-1, $fui-space-1);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 

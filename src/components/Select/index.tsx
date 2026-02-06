@@ -39,6 +39,8 @@ export interface SelectContentProps extends React.HTMLAttributes<HTMLDivElement>
   children: React.ReactNode;
   sideOffset?: number;
   align?: 'start' | 'center' | 'end';
+  /** Maximum number of visible options before scrolling. Shows half of the next item as a scroll hint. @default 4 */
+  maxVisibleItems?: number;
 }
 
 export interface SelectItemProps {
@@ -236,9 +238,14 @@ function SelectContent({
   className,
   sideOffset = 4,
   align = 'start',
+  maxVisibleItems,
   ...htmlProps
 }: SelectContentProps) {
   const popupClasses = [styles.popup, className].filter(Boolean).join(' ');
+
+  const popupStyle = maxVisibleItems != null
+    ? { '--fui-select-max-items': maxVisibleItems + 0.5, ...htmlProps.style } as React.CSSProperties
+    : htmlProps.style;
 
   return (
     <BaseSelect.Portal>
@@ -247,7 +254,7 @@ function SelectContent({
         align={align}
         className={styles.positioner}
       >
-        <BaseSelect.Popup {...htmlProps} className={popupClasses}>
+        <BaseSelect.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
           {children}
         </BaseSelect.Popup>
       </BaseSelect.Positioner>
@@ -256,18 +263,18 @@ function SelectContent({
 }
 
 function SelectItem({ children, value, disabled, className }: SelectItemProps) {
-  const context = React.useContext(SelectContext);
+  const { itemsRef, incrementItemsVersion } = React.useContext(SelectContext);
   const classes = [styles.item, className].filter(Boolean).join(' ');
 
   // Register this item's children in the registry so the trigger can display them
   React.useEffect(() => {
-    context.itemsRef.current.set(value, children);
+    itemsRef.current.set(value, children);
     // Trigger re-render of trigger to show the registered content
-    context.incrementItemsVersion();
+    incrementItemsVersion();
     return () => {
-      context.itemsRef.current.delete(value);
+      itemsRef.current.delete(value);
     };
-  }, [context, value, children]);
+  }, [itemsRef, incrementItemsVersion, value, children]);
 
   return (
     <BaseSelect.Item value={value} disabled={disabled} className={classes}>

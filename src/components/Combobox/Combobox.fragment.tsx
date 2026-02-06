@@ -95,6 +95,11 @@ export default defineSegment({
       description: 'Auto-highlight first matching item while filtering',
       default: 'true',
     },
+    maxVisibleItems: {
+      type: 'number',
+      description: 'Maximum visible options before scrolling. Shows half of the next item as a scroll hint.',
+      default: '4',
+    },
   },
 
   relations: [
@@ -111,6 +116,7 @@ export default defineSegment({
       'placeholder: string - input placeholder text',
       'disabled: boolean - disable combobox',
       'autoHighlight: boolean - auto-highlight first match',
+      'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
     scenarioTags: [
       'form.combobox',
@@ -200,6 +206,50 @@ export default defineSegment({
             <Combobox.Item value="py">Python</Combobox.Item>
             <Combobox.Item value="rs">Rust</Combobox.Item>
             <Combobox.Item value="go">Go</Combobox.Item>
+          </Combobox.Content>
+        </StatefulCombobox>
+      ),
+    },
+    {
+      name: 'Scrollable List',
+      description: 'Long list with scroll hint — shows 4 items with half-peek of the 5th',
+      render: () => (
+        <StatefulCombobox placeholder="Search languages...">
+          <Combobox.Input />
+          <Combobox.Content>
+            <Combobox.Empty>No results found</Combobox.Empty>
+            <Combobox.Item value="js">JavaScript</Combobox.Item>
+            <Combobox.Item value="ts">TypeScript</Combobox.Item>
+            <Combobox.Item value="py">Python</Combobox.Item>
+            <Combobox.Item value="rs">Rust</Combobox.Item>
+            <Combobox.Item value="go">Go</Combobox.Item>
+            <Combobox.Item value="rb">Ruby</Combobox.Item>
+            <Combobox.Item value="java">Java</Combobox.Item>
+            <Combobox.Item value="swift">Swift</Combobox.Item>
+            <Combobox.Item value="kt">Kotlin</Combobox.Item>
+            <Combobox.Item value="cpp">C++</Combobox.Item>
+          </Combobox.Content>
+        </StatefulCombobox>
+      ),
+    },
+    {
+      name: 'Custom Max Visible Items',
+      description: 'Show 6 items before scrolling with half-peek scroll hint',
+      render: () => (
+        <StatefulCombobox placeholder="Search cities...">
+          <Combobox.Input />
+          <Combobox.Content maxVisibleItems={6}>
+            <Combobox.Empty>No results found</Combobox.Empty>
+            <Combobox.Item value="nyc">New York</Combobox.Item>
+            <Combobox.Item value="lon">London</Combobox.Item>
+            <Combobox.Item value="tok">Tokyo</Combobox.Item>
+            <Combobox.Item value="par">Paris</Combobox.Item>
+            <Combobox.Item value="syd">Sydney</Combobox.Item>
+            <Combobox.Item value="ber">Berlin</Combobox.Item>
+            <Combobox.Item value="tor">Toronto</Combobox.Item>
+            <Combobox.Item value="sin">Singapore</Combobox.Item>
+            <Combobox.Item value="dub">Dubai</Combobox.Item>
+            <Combobox.Item value="sao">São Paulo</Combobox.Item>
           </Combobox.Content>
         </StatefulCombobox>
       ),

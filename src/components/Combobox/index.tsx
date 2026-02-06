@@ -42,6 +42,8 @@ export interface ComboboxContentProps extends React.HTMLAttributes<HTMLDivElemen
   children: React.ReactNode;
   sideOffset?: number;
   align?: 'start' | 'center' | 'end';
+  /** Maximum number of visible options before scrolling. Shows half of the next item as a scroll hint. @default 4 */
+  maxVisibleItems?: number;
 }
 
 export interface ComboboxItemProps {
@@ -310,9 +312,14 @@ function ComboboxContent({
   className,
   sideOffset = 4,
   align = 'start',
+  maxVisibleItems,
   ...htmlProps
 }: ComboboxContentProps) {
   const popupClasses = [styles.popup, className].filter(Boolean).join(' ');
+
+  const popupStyle = maxVisibleItems != null
+    ? { '--fui-select-max-items': maxVisibleItems + 0.5, ...htmlProps.style } as React.CSSProperties
+    : htmlProps.style;
 
   return (
     <BaseCombobox.Portal>
@@ -322,7 +329,7 @@ function ComboboxContent({
         align={align}
         className={styles.positioner}
       >
-        <BaseCombobox.Popup {...htmlProps} className={popupClasses}>
+        <BaseCombobox.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
           {children}
         </BaseCombobox.Popup>
       </BaseCombobox.Positioner>

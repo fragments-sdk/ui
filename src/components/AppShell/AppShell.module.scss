@@ -205,9 +205,10 @@
   height: calc(100vh - var(--appshell-header-height, 56px));
   height: calc(100dvh - var(--appshell-header-height, 56px));
   width: var(--aside-width, 280px);
+  min-height: 0; // Allow shrinking in grid
   z-index: 30;
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  overflow-y: auto;
+  overflow: hidden;
 
   // Stack below main on mobile
   @include below-md {

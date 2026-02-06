@@ -1,9 +1,9 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
-// Positioner
+// Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
-  z-index: 50;
+  z-index: 52;
   outline: none;
 }
 

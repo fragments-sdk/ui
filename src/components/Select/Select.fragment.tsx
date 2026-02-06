@@ -81,6 +81,11 @@ export default defineSegment({
       description: 'Disable the select',
       default: 'false',
     },
+    maxVisibleItems: {
+      type: 'number',
+      description: 'Maximum visible options before scrolling. Shows half of the next item as a scroll hint.',
+      default: '4',
+    },
   },
 
   relations: [
@@ -95,6 +100,7 @@ export default defineSegment({
       'onValueChange: (value) => void - selection handler',
       'placeholder: string - placeholder text',
       'disabled: boolean - disable select',
+      'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
     scenarioTags: [
       'form.select',
@@ -162,6 +168,48 @@ export default defineSegment({
             <Select.Item value="free">Free</Select.Item>
             <Select.Item value="pro">Pro</Select.Item>
             <Select.Item value="enterprise" disabled>Enterprise (Contact Sales)</Select.Item>
+          </Select.Content>
+        </StatefulSelect>
+      ),
+    },
+    {
+      name: 'Scrollable List',
+      description: 'Long list with scroll hint — shows 4 items with half-peek of the 5th to indicate more',
+      render: () => (
+        <StatefulSelect placeholder="Select a timezone">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="utc-8">Pacific Time (UTC-8)</Select.Item>
+            <Select.Item value="utc-7">Mountain Time (UTC-7)</Select.Item>
+            <Select.Item value="utc-6">Central Time (UTC-6)</Select.Item>
+            <Select.Item value="utc-5">Eastern Time (UTC-5)</Select.Item>
+            <Select.Item value="utc-4">Atlantic Time (UTC-4)</Select.Item>
+            <Select.Item value="utc+0">GMT (UTC+0)</Select.Item>
+            <Select.Item value="utc+1">Central European (UTC+1)</Select.Item>
+            <Select.Item value="utc+5.5">India Standard (UTC+5:30)</Select.Item>
+            <Select.Item value="utc+8">China Standard (UTC+8)</Select.Item>
+            <Select.Item value="utc+9">Japan Standard (UTC+9)</Select.Item>
+          </Select.Content>
+        </StatefulSelect>
+      ),
+    },
+    {
+      name: 'Custom Max Visible Items',
+      description: 'Show 6 items before scrolling with half-peek scroll hint',
+      render: () => (
+        <StatefulSelect placeholder="Select a color">
+          <Select.Trigger />
+          <Select.Content maxVisibleItems={6}>
+            <Select.Item value="red">Red</Select.Item>
+            <Select.Item value="orange">Orange</Select.Item>
+            <Select.Item value="yellow">Yellow</Select.Item>
+            <Select.Item value="green">Green</Select.Item>
+            <Select.Item value="blue">Blue</Select.Item>
+            <Select.Item value="indigo">Indigo</Select.Item>
+            <Select.Item value="violet">Violet</Select.Item>
+            <Select.Item value="pink">Pink</Select.Item>
+            <Select.Item value="teal">Teal</Select.Item>
+            <Select.Item value="cyan">Cyan</Select.Item>
           </Select.Content>
         </StatefulSelect>
       ),
