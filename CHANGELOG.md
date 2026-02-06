@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.6.2
+
+### Patch Changes
+
+- [`1397be2`](https://github.com/ConanMcN/fragments/commit/1397be23a24a2236a4664e764b9c5f9117b7cd48) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Stabilize linting and warning handling across the monorepo, including stricter package lint targets and cleanup of lint-triggering code paths.
+
 ## 0.6.1
 
 ### Patch Changes
