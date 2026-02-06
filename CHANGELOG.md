@@ -1,5 +1,19 @@
 # @fragments-sdk/ui
 
+## 0.6.0
+
+### Minor Changes
+
+- [`5fde1d0`](https://github.com/ConanMcN/fragments/commit/5fde1d0127ef554eb6f7879cb6ff71a99466a1ca) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: add Combobox component with single and multi-select support
+
+  New searchable select component built on Base UI's combobox primitive. Supports:
+
+  - Type-ahead filtering of options
+  - Single and multiple selection (with chip display)
+  - Grouped options with labels
+  - Empty state messaging
+  - Full keyboard navigation and ARIA combobox roles
+
 ## 0.5.0
 
 ### Minor Changes
