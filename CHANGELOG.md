@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.7.1
+
+### Patch Changes
+
+- [`9ffb7fe`](https://github.com/ConanMcN/fragments/commit/9ffb7fe3b91b6bf8926564f69ffa5f0e3815a3a6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Polish Table component: reduce row padding, strengthen header background, add striped and bordered props, fix selected style bug, replace hardcoded media query with breakpoint mixin
+
 ## 0.7.0
 
 ### Minor Changes
