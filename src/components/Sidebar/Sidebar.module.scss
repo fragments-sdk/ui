@@ -15,6 +15,14 @@
   transition: width var(--fui-transition-normal, $fui-transition-normal);
   overflow: hidden;
   flex-shrink: 0;
+
+  // Hide sidebar on mobile before JS hydrates to prevent flash
+  @include below-md {
+    &:not(.mobile) {
+      position: fixed;
+      transform: translateX(-100%);
+    }
+  }
 }
 
 // Desktop collapsed state
