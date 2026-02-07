@@ -45,6 +45,10 @@ export interface TableProps<T> extends Omit<React.HTMLAttributes<HTMLTableElemen
   caption?: string;
   /** Hide the caption visually but keep it for screen readers */
   captionHidden?: boolean;
+  /** Show alternating row backgrounds */
+  striped?: boolean;
+  /** Wrap table in a bordered container */
+  bordered?: boolean;
 }
 
 export function Table<T>({
@@ -63,6 +67,8 @@ export function Table<T>({
   className,
   caption,
   captionHidden = false,
+  striped = false,
+  bordered = false,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
   ...htmlProps
@@ -95,7 +101,7 @@ export function Table<T>({
 
   const isEmpty = data.length === 0;
 
-  const rootClasses = [styles.table, styles[size], className]
+  const rootClasses = [styles.table, styles[size], striped && styles.striped, className]
     .filter(Boolean)
     .join(' ');
 
@@ -119,7 +125,7 @@ export function Table<T>({
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={[styles.wrapper, bordered && styles.bordered].filter(Boolean).join(' ')}>
       <table
         {...htmlProps}
         className={rootClasses}

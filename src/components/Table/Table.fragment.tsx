@@ -111,6 +111,16 @@ export default defineSegment({
       values: ['sm', 'md'],
       default: 'md',
     },
+    striped: {
+      type: 'boolean',
+      description: 'Show alternating row backgrounds',
+      default: 'false',
+    },
+    bordered: {
+      type: 'boolean',
+      description: 'Wrap table in a bordered container',
+      default: 'false',
+    },
   },
 
   relations: [
@@ -125,6 +135,8 @@ export default defineSegment({
       'sortable: boolean - enable sorting',
       'selectable: boolean - enable row selection',
       'size: sm|md - table density',
+      'striped: boolean - alternating row backgrounds',
+      'bordered: boolean - bordered container',
     ],
     scenarioTags: [
       'data.table',
@@ -182,6 +194,28 @@ export default defineSegment({
           columns={columns}
           data={sampleUsers}
           size="sm"
+        />
+      ),
+    },
+    {
+      name: 'Striped',
+      description: 'Table with alternating row backgrounds',
+      render: () => (
+        <Table
+          columns={columns}
+          data={sampleUsers}
+          striped
+        />
+      ),
+    },
+    {
+      name: 'Bordered',
+      description: 'Table with bordered container',
+      render: () => (
+        <Table
+          columns={columns}
+          data={sampleUsers}
+          bordered
         />
       ),
     },
