@@ -3,6 +3,7 @@
 import * as React from 'react';
 import styles from './Message.module.scss';
 import '../../styles/globals.scss';
+import { Markdown } from '../Markdown';
 
 // ============================================
 // Types
@@ -28,6 +29,8 @@ export interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export interface MessageContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** When true, renders string children as markdown */
+  markdown?: boolean;
 }
 
 export interface MessageActionsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -140,7 +143,7 @@ function SystemIcon() {
 // Sub-components
 // ============================================
 
-function MessageContent({ children, className, ...htmlProps }: MessageContentProps) {
+function MessageContent({ children, markdown, className, ...htmlProps }: MessageContentProps) {
   const { status } = useMessageContext();
 
   const classes = [
@@ -149,9 +152,13 @@ function MessageContent({ children, className, ...htmlProps }: MessageContentPro
     className,
   ].filter(Boolean).join(' ');
 
+  const content = markdown && typeof children === 'string'
+    ? <Markdown content={children} />
+    : children;
+
   return (
     <div {...htmlProps} className={classes}>
-      {children}
+      {content}
     </div>
   );
 }

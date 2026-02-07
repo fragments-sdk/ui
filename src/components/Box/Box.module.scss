@@ -74,6 +74,39 @@
   border: 1px solid var(--fui-border, $fui-border);
 }
 
+// Directional borders
+.borderTop {
+  border-top: 1px solid var(--fui-border, $fui-border);
+}
+.borderBottom {
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+}
+.borderLeft {
+  border-left: 1px solid var(--fui-border, $fui-border);
+}
+.borderRight {
+  border-right: 1px solid var(--fui-border, $fui-border);
+}
+
+// Shadow
+.shadow-sm { box-shadow: var(--fui-shadow-sm, $fui-shadow-sm); }
+.shadow-md { box-shadow: var(--fui-shadow-md, $fui-shadow-md); }
+.shadow-lg { box-shadow: var(--fui-shadow-lg, $fui-shadow-lg); }
+.shadow-none { box-shadow: none; }
+
+// Overflow
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-scroll { overflow: scroll; }
+.overflow-visible { overflow: visible; }
+
+// Text color
+.color-primary { color: var(--fui-text-primary, $fui-text-primary); }
+.color-secondary { color: var(--fui-text-secondary, $fui-text-secondary); }
+.color-tertiary { color: var(--fui-text-tertiary, $fui-text-tertiary); }
+.color-accent { color: var(--fui-color-accent, $fui-color-accent); }
+.color-inverse { color: var(--fui-text-inverse, $fui-text-inverse); }
+
 // Display
 .display-block { display: block; }
 .display-inline { display: inline; }

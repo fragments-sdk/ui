@@ -24,6 +24,20 @@ export interface BoxProps {
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full';
   /** Border */
   border?: boolean;
+  /** Top border */
+  borderTop?: boolean;
+  /** Bottom border */
+  borderBottom?: boolean;
+  /** Left border */
+  borderLeft?: boolean;
+  /** Right border */
+  borderRight?: boolean;
+  /** Box shadow */
+  shadow?: 'sm' | 'md' | 'lg' | 'none';
+  /** Overflow behavior */
+  overflow?: 'hidden' | 'auto' | 'scroll' | 'visible';
+  /** Text color */
+  color?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'inverse';
   /** Display type */
   display?: 'block' | 'inline' | 'inline-block' | 'flex' | 'inline-flex' | 'grid' | 'none';
   /** Additional class name */
@@ -46,6 +60,13 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
       background,
       rounded,
       border,
+      borderTop,
+      borderBottom,
+      borderLeft,
+      borderRight,
+      shadow,
+      overflow,
+      color,
       display,
       className,
       style,
@@ -63,6 +84,13 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
       background && styles[`bg-${background}`],
       rounded && styles[`rounded-${rounded}`],
       border && styles.border,
+      borderTop && styles.borderTop,
+      borderBottom && styles.borderBottom,
+      borderLeft && styles.borderLeft,
+      borderRight && styles.borderRight,
+      shadow && styles[`shadow-${shadow}`],
+      overflow && styles[`overflow-${overflow}`],
+      color && styles[`color-${color}`],
       display && styles[`display-${display}`],
       className,
     ]

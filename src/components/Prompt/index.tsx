@@ -50,7 +50,7 @@ export interface PromptToolbarProps {
 }
 
 export interface PromptActionsProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -313,6 +313,7 @@ function PromptToolbar({ children, className }: PromptToolbarProps) {
 }
 
 function PromptActions({ children, className }: PromptActionsProps) {
+  if (!children) return null;
   const classes = [styles.actions, className].filter(Boolean).join(' ');
   return <div className={classes}>{children}</div>;
 }

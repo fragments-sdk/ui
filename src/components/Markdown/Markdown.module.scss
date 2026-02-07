@@ -1,0 +1,219 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Markdown Prose Container
+// ============================================
+
+.markdown {
+  @include text-base;
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  word-wrap: break-word;
+  color: var(--fui-text-primary, $fui-text-primary);
+
+  // ----------------------------------------
+  // Headings
+  // ----------------------------------------
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: var(--fui-space-4, $fui-space-4);
+    margin-bottom: var(--fui-space-2, $fui-space-2);
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+    color: var(--fui-text-primary, $fui-text-primary);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h1 {
+    font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
+  }
+
+  h2 {
+    font-size: var(--fui-font-size-xl, $fui-font-size-xl);
+  }
+
+  h3 {
+    font-size: var(--fui-font-size-lg, $fui-font-size-lg);
+  }
+
+  h4 {
+    font-size: var(--fui-font-size-base, $fui-font-size-base);
+  }
+
+  h5,
+  h6 {
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  }
+
+  // ----------------------------------------
+  // Paragraphs
+  // ----------------------------------------
+
+  p {
+    margin: 0;
+
+    & + p {
+      margin-top: var(--fui-space-2, $fui-space-2);
+    }
+  }
+
+  // ----------------------------------------
+  // Links
+  // ----------------------------------------
+
+  a {
+    color: var(--fui-color-accent, $fui-color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  // ----------------------------------------
+  // Lists
+  // ----------------------------------------
+
+  ul,
+  ol {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    padding-left: var(--fui-space-4, $fui-space-4);
+  }
+
+  li {
+    margin-bottom: var(--fui-space-1, $fui-space-1);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Nested lists
+  li > ul,
+  li > ol {
+    margin-top: var(--fui-space-1, $fui-space-1);
+    margin-bottom: 0;
+  }
+
+  // ----------------------------------------
+  // Inline Code
+  // ----------------------------------------
+
+  code {
+    font-family: var(--fui-font-mono, $fui-font-mono);
+    font-size: 0.9em;
+    padding: 0.125em 0.375em;
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  }
+
+  // ----------------------------------------
+  // Code Blocks
+  // ----------------------------------------
+
+  pre {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    padding: var(--fui-space-2, $fui-space-2);
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+    background-color: var(--fui-code-bg, $fui-code-bg);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: none;
+      font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+    }
+  }
+
+  // ----------------------------------------
+  // Blockquotes
+  // ----------------------------------------
+
+  blockquote {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+    border-left: 3px solid var(--fui-border, $fui-border);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  // ----------------------------------------
+  // Horizontal Rule
+  // ----------------------------------------
+
+  hr {
+    margin: var(--fui-space-4, $fui-space-4) 0;
+    border: none;
+    border-top: 1px solid var(--fui-border, $fui-border);
+  }
+
+  // ----------------------------------------
+  // Tables (GFM)
+  // ----------------------------------------
+
+  table {
+    width: 100%;
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    border-collapse: collapse;
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  }
+
+  th,
+  td {
+    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+    border: 1px solid var(--fui-border, $fui-border);
+    text-align: left;
+  }
+
+  th {
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  }
+
+  // ----------------------------------------
+  // Images
+  // ----------------------------------------
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+  }
+
+  // ----------------------------------------
+  // Task Lists (GFM)
+  // ----------------------------------------
+
+  input[type='checkbox'] {
+    margin-right: var(--fui-space-1, $fui-space-1);
+  }
+
+  // ----------------------------------------
+  // Strong & Emphasis
+  // ----------------------------------------
+
+  strong {
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  }
+
+  // Remove top margin from first child and bottom margin from last child
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}

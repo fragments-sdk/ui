@@ -1,0 +1,120 @@
+@use '../../tokens/variables' as *;
+
+// Root nav wrapper
+.root {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Ordered list container
+.list {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--fui-space-1, $fui-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// Individual breadcrumb item (li)
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  min-width: 0;
+}
+
+// Link styling
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-1, $fui-space-1);
+  margin: calc(-1 * var(--fui-space-0-5, $fui-space-0-5)) calc(-1 * var(--fui-space-1, $fui-space-1));
+  transition: color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+  }
+}
+
+// Current page (not a link)
+.current {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+// Separator between items
+.separator {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+// Ellipsis button for collapsed items
+.ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  cursor: pointer;
+  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
+  font-family: inherit;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  line-height: 1;
+  transition: color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+  }
+}
+
+// Icon within an item
+.icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: var(--fui-icon-md, $fui-icon-md);
+  height: var(--fui-icon-md, $fui-icon-md);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}

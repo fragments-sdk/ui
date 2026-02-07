@@ -406,14 +406,31 @@ export {
   type ListboxEmptyProps,
 } from './components/Listbox';
 
+// Breadcrumbs
+export {
+  Breadcrumbs,
+  BreadcrumbsRoot,
+  BreadcrumbsItem,
+  BreadcrumbsSeparator,
+  type BreadcrumbsProps,
+  type BreadcrumbsItemProps,
+  type BreadcrumbsSeparatorProps,
+} from './components/Breadcrumbs';
+
 // Box
 export { Box, type BoxProps } from './components/Box';
+
+// Chip
+export { Chip, type ChipProps, type ChipGroupProps } from './components/Chip';
 
 // VisuallyHidden
 export { VisuallyHidden, type VisuallyHiddenProps } from './components/VisuallyHidden';
 
 // Brand
 export { BRAND, type Brand } from './brand';
+
+// Markdown (AI Chat)
+export { Markdown, type MarkdownProps } from './components/Markdown';
 
 // Message (AI Chat)
 export {

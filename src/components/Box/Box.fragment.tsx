@@ -96,6 +96,41 @@ export default defineSegment({
       description: 'Show border',
       default: 'false',
     },
+    borderTop: {
+      type: 'boolean',
+      description: 'Show top border only',
+      default: 'false',
+    },
+    borderBottom: {
+      type: 'boolean',
+      description: 'Show bottom border only',
+      default: 'false',
+    },
+    borderLeft: {
+      type: 'boolean',
+      description: 'Show left border only',
+      default: 'false',
+    },
+    borderRight: {
+      type: 'boolean',
+      description: 'Show right border only',
+      default: 'false',
+    },
+    shadow: {
+      type: 'enum',
+      description: 'Box shadow',
+      values: ['sm', 'md', 'lg', 'none'],
+    },
+    overflow: {
+      type: 'enum',
+      description: 'Overflow behavior',
+      values: ['hidden', 'auto', 'scroll', 'visible'],
+    },
+    color: {
+      type: 'enum',
+      description: 'Text color',
+      values: ['primary', 'secondary', 'tertiary', 'accent', 'inverse'],
+    },
     display: {
       type: 'enum',
       description: 'Display type',
@@ -118,6 +153,10 @@ export default defineSegment({
       'background: none|primary|secondary|tertiary|elevated',
       'rounded: none|sm|md|lg|full - border radius',
       'border: boolean - show border',
+      'borderTop/borderBottom/borderLeft/borderRight: boolean - directional borders',
+      'shadow: sm|md|lg|none - box shadow',
+      'overflow: hidden|auto|scroll|visible - overflow behavior',
+      'color: primary|secondary|tertiary|accent|inverse - text color',
     ],
     scenarioTags: [
       'layout.container',
@@ -161,6 +200,45 @@ export default defineSegment({
       render: () => (
         <Box padding="md" marginX="auto" background="elevated" rounded="lg" style={{ maxWidth: '300px' }}>
           Centered content
+        </Box>
+      ),
+    },
+    {
+      name: 'Directional Borders',
+      description: 'Individual border sides',
+      render: () => (
+        <Box padding="md" borderTop borderBottom>
+          Top and bottom borders only
+        </Box>
+      ),
+    },
+    {
+      name: 'With Shadow',
+      description: 'Box with shadow elevation',
+      render: () => (
+        <Box padding="lg" rounded="md" shadow="md" background="primary">
+          Elevated content with shadow
+        </Box>
+      ),
+    },
+    {
+      name: 'Overflow Hidden',
+      description: 'Content overflow clipped',
+      render: () => (
+        <Box padding="md" overflow="hidden" border rounded="md" style={{ maxHeight: '60px' }}>
+          This box clips overflowing content. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </Box>
+      ),
+    },
+    {
+      name: 'Text Colors',
+      description: 'Text color variants',
+      render: () => (
+        <Box padding="md" display="flex" style={{ gap: '16px' }}>
+          <Box color="primary">Primary</Box>
+          <Box color="secondary">Secondary</Box>
+          <Box color="tertiary">Tertiary</Box>
+          <Box color="accent">Accent</Box>
         </Box>
       ),
     },

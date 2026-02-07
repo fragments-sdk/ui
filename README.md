@@ -228,9 +228,9 @@ npm install @fragments-sdk/ui @fragments-sdk/mcp
 
 The MCP server automatically discovers `fragments.json` from the installed `@fragments-sdk/ui` package. No configuration needed.
 
-## Composition Recipes
+## Composition Blocks
 
-The library includes composition recipes — named patterns showing how components wire together for common use cases:
+The library includes composition blocks — named patterns showing how components wire together for common use cases:
 
 - **Login Form** — Email/password authentication form
 - **Confirm Dialog** — Destructive action confirmation
@@ -239,7 +239,7 @@ The library includes composition recipes — named patterns showing how componen
 - **Dashboard Layout** — Featured card with metrics grid
 - **Settings Page** — Settings sections with cards and controls
 
-Access recipes via the MCP server's `fragments_recipe` tool or `fragments_context`.
+Access blocks via the MCP server's `fragments_blocks` tool or `fragments_context`.
 
 ## License
 
