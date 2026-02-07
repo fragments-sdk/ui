@@ -23,7 +23,6 @@
 .user {
   flex-direction: row-reverse;
   margin-left: auto;
-  max-width: 85%;
 
   .body {
     align-items: flex-end;
@@ -36,8 +35,6 @@
 }
 
 .assistant {
-  max-width: 85%;
-
   .content {
     background-color: var(--fui-bg-secondary, $fui-bg-secondary);
     color: var(--fui-text-primary, $fui-text-primary);
@@ -129,7 +126,6 @@
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-  white-space: pre-wrap;
   word-wrap: break-word;
 
   // Prose styling for markdown content
