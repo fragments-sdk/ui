@@ -1,5 +1,15 @@
 # @fragments-sdk/ui
 
+## 0.7.2
+
+### Patch Changes
+
+- [`10cb616`](https://github.com/ConanMcN/fragments/commit/10cb616002699a7f49ae9fe77ef036804ad252f0) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Consolidate shared types, context generation, and citations into @fragments-sdk/context
+  - Add `types`, `generate`, and `citations` subpath exports to @fragments-sdk/context
+  - New citations module: `buildCitationDocuments()` and `resolveCitations()` for Anthropic-compatible RAG citation workflows
+  - MCP and CLI now import compiled types and context generation from @fragments-sdk/context instead of maintaining local copies
+  - Fix Sidebar mobile FOUC with pre-hydration transform
+
 ## 0.7.1
 
 ### Patch Changes
@@ -11,7 +21,6 @@
 ### Minor Changes
 
 - [`eadecc6`](https://github.com/ConanMcN/fragments/commit/eadecc6696074bb8c1e90deeba92f8588d1e5a54) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(docs,cli): fix component categories, add preview tabs, render markdown
-
   - Move Chip to "forms" and Markdown to "display" categories
   - Add preview tabs for Chip, Markdown, and Breadcrumbs components
   - Install react-markdown and remark-gfm for proper markdown rendering in docs
@@ -23,7 +32,6 @@
 ### Patch Changes
 
 - [`35e1df9`](https://github.com/ConanMcN/fragments/commit/35e1df98fb850897d7bb1e350b41b82a46b51e75) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): Message component CSS tweaks
-
   - Remove max-width constraint from user and assistant messages
   - Remove white-space: pre-wrap from message content to allow natural text flow
 
@@ -32,7 +40,6 @@
 ### Patch Changes
 
 - [`6273fc6`](https://github.com/ConanMcN/fragments/commit/6273fc6a0bd7545f2514c65006f5d560790be254) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): overlay z-index, Select/Combobox maxVisibleItems, SelectItem render loop
-
   - Fix Select, Combobox, Popover, Menu z-index (50→52) to render above Dialog (51)
   - Add maxVisibleItems prop to Select.Content and Combobox.Content with half-peek scroll hint
   - Fix SelectItem infinite render loop by destructuring stable refs from context
@@ -41,7 +48,6 @@
   - Fix AppShell.Aside overflow containment (overflow: hidden) to prevent children bleeding out
 
   fix(cli): MCP variant fuzzy matching and per-segment package name resolution
-
   - Variant matching now uses exact → prefix → contains fallback ("Dots" matches "Dots (Default)")
   - Track per-segment package names when merging multiple fragments.json files
   - Fixes import paths showing consumer project name instead of library package name
@@ -64,7 +70,6 @@
 ### Patch Changes
 
 - [`3380e86`](https://github.com/ConanMcN/fragments/commit/3380e86e9b575e23412a6b609fa36644007933a5) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix: mobile layout bugs - horizontal scrollbar, missing nav links, aside visibility
-
   - Fix horizontal scrollbar on mobile when AppShell uses inset layout by removing margin and using width: 100%
   - Add header navigation links (Docs, Components, Blocks, Themes, Accessibility) to mobile sidebar menu
   - Stack AppShell.Aside below main content on mobile instead of hiding it
@@ -76,7 +81,6 @@
 - [`5fde1d0`](https://github.com/ConanMcN/fragments/commit/5fde1d0127ef554eb6f7879cb6ff71a99466a1ca) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: add Combobox component with single and multi-select support
 
   New searchable select component built on Base UI's combobox primitive. Supports:
-
   - Type-ahead filtering of options
   - Single and multiple selection (with chip display)
   - Grouped options with labels
@@ -94,7 +98,6 @@
 ### Minor Changes
 
 - [`d462050`](https://github.com/ConanMcN/fragments/commit/d4620501ccfd8362b4db166be27f1d630a5e04c8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Initial public release of Fragments UI
-
   - 40+ accessible, themeable React components
   - Full HTML prop passthrough on all components
   - Improved accessibility with aria-hidden on decorative icons
@@ -105,7 +108,6 @@
 ### Minor Changes
 
 - [`17046a1`](https://github.com/ConanMcN/fragments/commit/17046a1e214c651fc9626f5bcea31a092eb8ccaf) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(Sidebar): Add shadcn-inspired patterns for improved flexibility and DX
-
   - Add `SidebarProvider` component for wrapping app layouts with shared state
   - Add `useSidebar` hook for accessing sidebar state from any child component
   - Add Cmd/Ctrl+B keyboard shortcut to toggle sidebar (configurable)
