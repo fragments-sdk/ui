@@ -1,5 +1,14 @@
 # @fragments-sdk/ui
 
+## 0.6.5
+
+### Patch Changes
+
+- [`35e1df9`](https://github.com/ConanMcN/fragments/commit/35e1df98fb850897d7bb1e350b41b82a46b51e75) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): Message component CSS tweaks
+
+  - Remove max-width constraint from user and assistant messages
+  - Remove white-space: pre-wrap from message content to allow natural text flow
+
 ## 0.6.4
 
 ### Patch Changes
