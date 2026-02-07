@@ -118,3 +118,19 @@
 .wrap {
   flex-wrap: wrap;
 }
+
+// Separator
+.separator {
+  flex-shrink: 0;
+  background-color: var(--fui-border, $fui-border);
+
+  &[data-orientation="horizontal"] {
+    height: 1px;
+    width: 100%;
+  }
+
+  &[data-orientation="vertical"] {
+    width: 1px;
+    align-self: stretch;
+  }
+}

@@ -116,6 +116,11 @@ export default defineSegment({
       description: 'Show right border only',
       default: 'false',
     },
+    borderColor: {
+      type: 'enum',
+      description: 'Border color variant (requires border or directional border)',
+      values: ['default', 'strong', 'accent', 'danger'],
+    },
     shadow: {
       type: 'enum',
       description: 'Box shadow',
@@ -136,6 +141,30 @@ export default defineSegment({
       description: 'Display type',
       values: ['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'none'],
     },
+    width: {
+      type: 'custom',
+      description: 'Width (CSS value, e.g. "100%", "300px", or number for px)',
+    },
+    minWidth: {
+      type: 'custom',
+      description: 'Min width',
+    },
+    maxWidth: {
+      type: 'custom',
+      description: 'Max width',
+    },
+    height: {
+      type: 'custom',
+      description: 'Height (CSS value)',
+    },
+    minHeight: {
+      type: 'custom',
+      description: 'Min height',
+    },
+    maxHeight: {
+      type: 'custom',
+      description: 'Max height',
+    },
   },
 
   relations: [
@@ -154,9 +183,12 @@ export default defineSegment({
       'rounded: none|sm|md|lg|full - border radius',
       'border: boolean - show border',
       'borderTop/borderBottom/borderLeft/borderRight: boolean - directional borders',
+      'borderColor: default|strong|accent|danger - border color variant',
       'shadow: sm|md|lg|none - box shadow',
       'overflow: hidden|auto|scroll|visible - overflow behavior',
       'color: primary|secondary|tertiary|accent|inverse - text color',
+      'width/minWidth/maxWidth: string|number - sizing',
+      'height/minHeight/maxHeight: string|number - sizing',
     ],
     scenarioTags: [
       'layout.container',

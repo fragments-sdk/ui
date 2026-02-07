@@ -88,6 +88,12 @@
   border-right: 1px solid var(--fui-border, $fui-border);
 }
 
+// Border color
+.borderColor-default { border-color: var(--fui-border-default, $fui-border-default); }
+.borderColor-strong { border-color: var(--fui-border-strong, $fui-border-strong); }
+.borderColor-accent { border-color: var(--fui-color-accent, $fui-color-accent); }
+.borderColor-danger { border-color: var(--fui-color-danger, $fui-color-danger); }
+
 // Shadow
 .shadow-sm { box-shadow: var(--fui-shadow-sm, $fui-shadow-sm); }
 .shadow-md { box-shadow: var(--fui-shadow-md, $fui-shadow-md); }

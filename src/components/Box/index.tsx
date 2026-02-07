@@ -32,6 +32,8 @@ export interface BoxProps {
   borderLeft?: boolean;
   /** Right border */
   borderRight?: boolean;
+  /** Border color variant */
+  borderColor?: 'default' | 'strong' | 'accent' | 'danger';
   /** Box shadow */
   shadow?: 'sm' | 'md' | 'lg' | 'none';
   /** Overflow behavior */
@@ -40,10 +42,27 @@ export interface BoxProps {
   color?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'inverse';
   /** Display type */
   display?: 'block' | 'inline' | 'inline-block' | 'flex' | 'inline-flex' | 'grid' | 'none';
+  /** Width (CSS value, e.g. "100%", "300px", 200) */
+  width?: string | number;
+  /** Min width */
+  minWidth?: string | number;
+  /** Max width */
+  maxWidth?: string | number;
+  /** Height (CSS value, e.g. "100%", "300px", 200) */
+  height?: string | number;
+  /** Min height */
+  minHeight?: string | number;
+  /** Max height */
+  maxHeight?: string | number;
   /** Additional class name */
   className?: string;
   /** Inline styles */
   style?: React.CSSProperties;
+}
+
+/** Convert string | number to CSS value */
+function toCss(value: string | number): string {
+  return typeof value === 'number' ? `${value}px` : value;
 }
 
 export const Box = React.forwardRef<HTMLElement, BoxProps>(
@@ -64,10 +83,17 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
       borderBottom,
       borderLeft,
       borderRight,
+      borderColor,
       shadow,
       overflow,
       color,
       display,
+      width,
+      minWidth,
+      maxWidth,
+      height,
+      minHeight,
+      maxHeight,
       className,
       style,
     },
@@ -88,6 +114,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
       borderBottom && styles.borderBottom,
       borderLeft && styles.borderLeft,
       borderRight && styles.borderRight,
+      borderColor && styles[`borderColor-${borderColor}`],
       shadow && styles[`shadow-${shadow}`],
       overflow && styles[`overflow-${overflow}`],
       color && styles[`color-${color}`],
@@ -97,8 +124,20 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
       .filter(Boolean)
       .join(' ');
 
+    // Build sizing styles only when props are provided
+    const sizingStyle: React.CSSProperties = {};
+    if (width != null) sizingStyle.width = toCss(width);
+    if (minWidth != null) sizingStyle.minWidth = toCss(minWidth);
+    if (maxWidth != null) sizingStyle.maxWidth = toCss(maxWidth);
+    if (height != null) sizingStyle.height = toCss(height);
+    if (minHeight != null) sizingStyle.minHeight = toCss(minHeight);
+    if (maxHeight != null) sizingStyle.maxHeight = toCss(maxHeight);
+
+    const hasSizing = Object.keys(sizingStyle).length > 0;
+    const mergedStyle = hasSizing ? { ...sizingStyle, ...style } : style;
+
     return (
-      <Component ref={ref as React.Ref<never>} className={classes} style={style}>
+      <Component ref={ref as React.Ref<never>} className={classes} style={mergedStyle}>
         {children}
       </Component>
     );

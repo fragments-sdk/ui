@@ -72,6 +72,10 @@ export default defineSegment({
       description: 'Allow items to wrap',
       default: 'false',
     },
+    separator: {
+      type: 'custom',
+      description: 'Render a separator between children. true = default 1px line, or pass a ReactNode for custom separators.',
+    },
     as: {
       type: 'enum',
       description: 'HTML element to render',
@@ -93,6 +97,7 @@ export default defineSegment({
       'align: start|center|end|stretch|baseline - cross-axis',
       'justify: start|center|end|between - main-axis',
       'wrap: boolean - allow wrapping',
+      'separator: boolean|ReactNode - divider between children',
       'as: string - HTML element',
     ],
     scenarioTags: [
@@ -176,6 +181,17 @@ export default defineSegment({
           <Button variant="secondary">First</Button>
           <Button variant="secondary">Second</Button>
           <Button variant="secondary">Third</Button>
+        </Stack>
+      ),
+    },
+    {
+      name: 'With Separator',
+      description: 'Default line separator between items',
+      render: () => (
+        <Stack gap="md" separator>
+          <div>Section One</div>
+          <div>Section Two</div>
+          <div>Section Three</div>
         </Stack>
       ),
     },

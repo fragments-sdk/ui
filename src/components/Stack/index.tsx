@@ -50,6 +50,12 @@ export interface StackProps {
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
   justify?: 'start' | 'center' | 'end' | 'between';
   wrap?: boolean;
+  /**
+   * Render a separator between each child.
+   * - `true` renders a default 1px border line
+   * - A ReactNode renders custom content between children
+   */
+  separator?: boolean | React.ReactNode;
   as?: 'div' | 'section' | 'nav' | 'article' | 'aside' | 'header' | 'footer' | 'main' | 'ul' | 'ol';
   className?: string;
   style?: React.CSSProperties;
@@ -74,6 +80,7 @@ export const Stack = React.forwardRef<HTMLElement, StackProps>(
       align,
       justify,
       wrap = false,
+      separator,
       as: Component = 'div',
       className,
       style,
@@ -126,9 +133,36 @@ export const Stack = React.forwardRef<HTMLElement, StackProps>(
 
     const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
 
+    // Interleave separator between children when provided
+    let content: React.ReactNode = children;
+    if (separator) {
+      const validChildren = React.Children.toArray(children).filter(Boolean);
+      if (validChildren.length > 1) {
+        const resolvedDir = isResponsiveDirection(direction) ? (direction.base ?? 'column') : direction;
+        const separatorEl = separator === true ? (
+          <div
+            className={styles.separator}
+            data-orientation={resolvedDir === 'row' ? 'vertical' : 'horizontal'}
+            role="separator"
+          />
+        ) : separator;
+
+        const items: React.ReactNode[] = [];
+        validChildren.forEach((child, i) => {
+          items.push(child);
+          if (i < validChildren.length - 1) {
+            items.push(
+              <React.Fragment key={`sep-${i}`}>{separatorEl}</React.Fragment>
+            );
+          }
+        });
+        content = items;
+      }
+    }
+
     return (
       <Component ref={ref as React.Ref<never>} className={classes} style={mergedStyle}>
-        {children}
+        {content}
       </Component>
     );
   }
