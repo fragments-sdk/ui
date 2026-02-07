@@ -8,7 +8,7 @@ export default defineSegment({
   meta: {
     name: 'Chip',
     description: 'Interactive pill-shaped element for filtering, selecting, and tagging. Supports single and multi-select via Chip.Group.',
-    category: 'actions',
+    category: 'forms',
     status: 'stable',
     tags: ['chip', 'tag', 'filter', 'selection', 'multi-select', 'action'],
     since: '0.7.0',

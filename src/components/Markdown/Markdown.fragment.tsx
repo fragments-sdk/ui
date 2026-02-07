@@ -81,7 +81,7 @@ export default defineSegment({
   meta: {
     name: 'Markdown',
     description: 'Renders markdown strings as styled prose using react-markdown and remark-gfm. Supports headings, lists, tables, code blocks, blockquotes, and more.',
-    category: 'content',
+    category: 'display',
     status: 'stable',
     tags: ['markdown', 'prose', 'content', 'text', 'ai', 'chat'],
     since: '0.7.0',
@@ -153,21 +153,73 @@ export default defineSegment({
     {
       name: 'Default',
       description: 'Basic markdown with headings, paragraphs, inline code, lists, and blockquote',
+      code: `<Markdown content={\`# Hello World
+
+This is a paragraph with **bold text** and *italic text*.
+
+Here is some \\\`inline code\\\` within a sentence.
+
+- First item
+- Second item
+- Third item
+
+> A blockquote for emphasis.
+\`} />`,
       render: () => <Markdown content={defaultContent} />,
     },
     {
       name: 'GFM Table',
       description: 'GitHub Flavored Markdown with tables and task lists',
+      code: `<Markdown content={\`## Data Overview
+
+| Feature    | Status    | Priority |
+|------------|-----------|----------|
+| Markdown   | Done      | High     |
+| Tables     | Done      | Medium   |
+| Task Lists | Planned   | Low      |
+
+Notes:
+- [x] Support GFM tables
+- [x] Support task lists
+- [ ] Syntax highlighting
+\`} />`,
       render: () => <Markdown content={gfmTableContent} />,
     },
     {
       name: 'Code Block',
       description: 'Markdown with fenced code blocks and inline code',
+      code: '<Markdown content={`## Code Example\\n\\nHere is a JavaScript function:\\n\\n```js\\nfunction greet(name) {\\n  return \\`Hello, ${name}!\\`;\\n}\\n```\\n\\nAnd some inline code: \\`const x = 42;\\``} />',
       render: () => <Markdown content={codeBlockContent} />,
     },
     {
       name: 'Mixed Content',
       description: 'Complex markdown mixing headings, lists, tables, blockquotes, and task lists',
+      code: `<Markdown content={\`# Project Update
+
+## Summary
+
+The project is progressing well. Here are the **key highlights**:
+
+1. Completed the *design system* components
+2. Added markdown rendering support
+3. Integrated with the documentation site
+
+### Performance Metrics
+
+| Metric      | Before | After |
+|-------------|--------|-------|
+| Bundle Size | 142kb  | 98kb  |
+| Load Time   | 1.2s   | 0.8s  |
+| Lighthouse  | 72     | 95    |
+
+> These improvements were achieved through tree-shaking and code splitting.
+
+### Next Steps
+
+- [ ] Add syntax highlighting
+- [ ] Support custom themes
+- [x] GFM table support
+\`} />`,
       render: () => <Markdown content={mixedContent} />,
     },
   ],
