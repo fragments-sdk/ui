@@ -1,5 +1,17 @@
 # @fragments-sdk/ui
 
+## 0.7.0
+
+### Minor Changes
+
+- [`eadecc6`](https://github.com/ConanMcN/fragments/commit/eadecc6696074bb8c1e90deeba92f8588d1e5a54) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(docs,cli): fix component categories, add preview tabs, render markdown
+
+  - Move Chip to "forms" and Markdown to "display" categories
+  - Add preview tabs for Chip, Markdown, and Breadcrumbs components
+  - Install react-markdown and remark-gfm for proper markdown rendering in docs
+  - Add explicit code snippets to Markdown fragment variants
+  - Fix CLI parser to support template literals in variant code property
+
 ## 0.6.5
 
 ### Patch Changes
