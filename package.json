@@ -12,7 +12,8 @@
     "./tokens": "./src/tokens/_variables.scss",
     "./mixins": "./src/tokens/_mixins.scss",
     "./brand": "./src/brand.ts",
-    "./fragments.json": "./fragments.json"
+    "./fragments.json": "./fragments.json",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public"
