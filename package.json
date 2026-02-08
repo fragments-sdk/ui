@@ -26,7 +26,8 @@
     "dev": "fragments dev",
     "build": "node ../../packages/cli/dist/bin.js build",
     "lint": "eslint src",
-    "validate": "fragments validate"
+    "validate": "fragments validate",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -55,12 +56,18 @@
   },
   "devDependencies": {
     "@fragments-sdk/cli": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "jsdom": "^25.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sass": "^1.83.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.8",
+    "vitest-axe": "^0.1.0"
   },
   "files": [
     "src",
