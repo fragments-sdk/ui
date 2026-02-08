@@ -268,11 +268,12 @@ function SelectItem({ children, value, disabled, className }: SelectItemProps) {
 
   // Register this item's children in the registry so the trigger can display them
   React.useEffect(() => {
-    itemsRef.current.set(value, children);
+    const items = itemsRef.current;
+    items.set(value, children);
     // Trigger re-render of trigger to show the registered content
     incrementItemsVersion();
     return () => {
-      itemsRef.current.delete(value);
+      items.delete(value);
     };
   }, [itemsRef, incrementItemsVersion, value, children]);
 
