@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.7.4
+
+### Patch Changes
+
+- [#1](https://github.com/ConanMcN/fragments/pull/1) [`bd42d13`](https://github.com/ConanMcN/fragments/commit/bd42d13045df88e37ae10ca0db69ac3bf90b4a1d) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix P0/P1/P2 accessibility issues across core UI components, including dialog focus/escape behavior, listbox keyboard model, table/togglegroup semantics, labeling pathways, and related a11y interaction improvements.
+
 ## 0.7.3
 
 ### Patch Changes
