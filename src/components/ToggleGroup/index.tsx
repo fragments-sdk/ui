@@ -39,6 +39,8 @@ interface ToggleGroupContextValue {
   onChange: (value: string) => void;
   variant: 'default' | 'pills' | 'outline';
   size: 'sm' | 'md';
+  hasFocusableSelection: boolean;
+  firstEnabledValue: string | null;
 }
 
 const ToggleGroupContext = React.createContext<ToggleGroupContextValue | null>(
@@ -77,11 +79,22 @@ function ToggleGroupRoot({
     .filter(Boolean)
     .join(' ');
 
+  const childItems = React.Children.toArray(children).filter(
+    (child): child is React.ReactElement<ToggleGroupItemProps> =>
+      React.isValidElement<ToggleGroupItemProps>(child)
+  );
+  const firstEnabledValue = childItems.find((item) => !item.props.disabled)?.props.value ?? null;
+  const hasFocusableSelection = childItems.some(
+    (item) => !item.props.disabled && item.props.value === value
+  );
+
   const contextValue: ToggleGroupContextValue = {
     value,
     onChange,
     variant,
     size,
+    hasFocusableSelection,
+    firstEnabledValue,
   };
 
   return (
@@ -103,6 +116,8 @@ function ToggleGroupItem({
 }: ToggleGroupItemProps) {
   const context = useToggleGroupContext();
   const isSelected = context.value === value;
+  const isTabbableSelected = isSelected && !disabled;
+  const isFirstFallback = !context.hasFocusableSelection && !disabled && context.firstEnabledValue === value;
 
   const classes = [
     styles.item,
@@ -163,7 +178,7 @@ function ToggleGroupItem({
 
     const target = radios[nextIndex];
     const nextValue = target.dataset.value;
-    if (nextValue) {
+    if (nextValue != null) {
       context.onChange(nextValue);
     }
     target.focus();
@@ -176,7 +191,7 @@ function ToggleGroupItem({
       data-value={value}
       role="radio"
       aria-checked={isSelected}
-      tabIndex={isSelected ? 0 : -1}
+      tabIndex={isTabbableSelected || isFirstFallback ? 0 : -1}
       disabled={disabled}
       onClick={handleClick}
       onKeyDown={handleKeyDown}

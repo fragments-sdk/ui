@@ -166,7 +166,7 @@
   border-bottom-right-radius: var(--fui-radius-full, $fui-radius-full);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  background-color: transparent;
   border: 1px solid transparent;
   border-left-color: var(--fui-border, $fui-border);
 
@@ -176,6 +176,59 @@
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+// Match remove button visuals to chip variant/state so the compound control
+// remains visually coherent across seeds/themes.
+.filled + .remove {
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.outlined + .remove {
+  background-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.soft + .remove {
+  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+  color: var(--fui-color-info, $fui-color-info);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.selected + .remove {
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+  border-left-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-color-accent-active, $fui-color-accent-active);
   }
 }
 

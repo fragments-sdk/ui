@@ -82,16 +82,39 @@ function ListboxRoot({
       const currentIndex = activeId
         ? options.findIndex((option) => option.id === activeId)
         : -1;
-      const startIndex = currentIndex === -1 ? 0 : currentIndex;
 
       if (direction === 'next') {
-        setActiveId(options[(startIndex + 1) % options.length].id);
+        const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % options.length;
+        setActiveId(options[nextIndex].id);
       } else {
-        setActiveId(options[(startIndex - 1 + options.length) % options.length].id);
+        const prevIndex = currentIndex < 0
+          ? options.length - 1
+          : (currentIndex - 1 + options.length) % options.length;
+        setActiveId(options[prevIndex].id);
       }
     },
     [activeId, getEnabledOptions]
   );
+
+  React.useEffect(() => {
+    if (!activeId) return;
+    const listbox = listboxRef.current;
+    if (!listbox) return;
+
+    const escapedId = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+      ? CSS.escape(activeId)
+      : activeId.replace(/["\\]/g, '\\$&');
+    const activeOption = listbox.querySelector<HTMLElement>(`#${escapedId}`);
+    if (!activeOption) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      activeOption.scrollIntoView({ block: 'nearest' });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
+  }, [activeId]);
 
   const selectActiveItem = React.useCallback(() => {
     if (!activeId) return;

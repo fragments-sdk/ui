@@ -201,7 +201,13 @@ function ToastItem({
       aria-labelledby={titleId}
       aria-describedby={descId}
       onMouseEnter={onPause}
-      onMouseLeave={onResume}
+      onMouseLeave={() => {
+        requestAnimationFrame(() => {
+          if (!toastRef.current?.contains(document.activeElement)) {
+            onResume?.();
+          }
+        });
+      }}
       onFocusCapture={onPause}
       onBlurCapture={() => {
         requestAnimationFrame(() => {
@@ -268,7 +274,7 @@ function ToastContainer({
   // Always render the container for screen reader live region to work properly
   // The live region must exist before announcements are made
   return (
-    <div className={containerClasses} aria-label="Notifications">
+    <div className={containerClasses} role="region" aria-label="Notifications">
       {toasts.map((toast) => (
         <ToastItem
           key={toast.id}
@@ -380,7 +386,9 @@ export function ToastProvider({
   }, [scheduleRemoval]);
 
   const clearToasts = React.useCallback(() => {
-    timeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+    timeoutRef.current.forEach((timeout) => {
+      clearTimeout(timeout);
+    });
     timeoutRef.current.clear();
     remainingRef.current.clear();
     startTimeRef.current.clear();
@@ -389,7 +397,9 @@ export function ToastProvider({
 
   React.useEffect(
     () => () => {
-      timeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+      timeoutRef.current.forEach((timeout) => {
+        clearTimeout(timeout);
+      });
       timeoutRef.current.clear();
       remainingRef.current.clear();
       startTimeRef.current.clear();
