@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, userEvent, waitFor } from '../../test/utils';
-import { axe } from 'vitest-axe';
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
 import { Popover } from './index';
 
 function renderPopover(props: Partial<React.ComponentProps<typeof Popover>> = {}) {
@@ -98,14 +97,9 @@ describe('Popover', () => {
       expect(screen.getByText('Popover Title')).toBeInTheDocument();
     });
 
-    const results = await axe(container, {
-      rules: {
-        'page-has-heading-one': { enabled: false },
-        region: { enabled: false },
-        // Base UI focus guard spans have role="button" without labels
-        'aria-command-name': { enabled: false },
-      },
+    await expectNoA11yViolations(container, {
+      // Base UI focus guard spans have role="button" without labels.
+      disabledRules: ['aria-command-name'],
     });
-    expect(results).toHaveNoViolations();
   });
 });

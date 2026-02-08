@@ -102,13 +102,101 @@ describe('Combobox', () => {
     // The internal Base UI trigger button lacks aria-label by design (it's a
     // decorative chevron next to the labeled input). Disable button-name for
     // this component-level test.
-    const results = await (await import('vitest-axe')).axe(container, {
-      rules: {
-        'page-has-heading-one': { enabled: false },
-        region: { enabled: false },
-        'button-name': { enabled: false },
-      },
+    await expectNoA11yViolations(container, {
+      disabledRules: ['button-name'],
     });
-    expect(results).toHaveNoViolations();
+  });
+
+  describe('keyboard & focus', () => {
+    it('ArrowDown opens the dropdown from input', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      const input = screen.getByRole('combobox');
+      await user.click(input);
+      // Close it first, then reopen with keyboard
+      await user.keyboard('{Escape}');
+      await user.keyboard('{ArrowDown}');
+      expect(await screen.findByRole('option', { name: 'React' })).toBeInTheDocument();
+    });
+
+    it('options are rendered in listbox when open', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      await user.click(screen.getByRole('combobox'));
+      expect(await screen.findByRole('option', { name: 'React' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Vue' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Angular' })).toBeInTheDocument();
+    });
+
+    it('input has aria-expanded when dropdown is open', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      const input = screen.getByRole('combobox');
+      await user.click(input);
+      await screen.findByRole('option', { name: 'React' });
+      expect(input).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('clicking an option selects it', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      renderCombobox({ onValueChange: onChange });
+
+      await user.click(screen.getByRole('combobox'));
+      const option = await screen.findByRole('option', { name: 'Vue' });
+      await user.click(option);
+      expect(onChange).toHaveBeenCalledWith('vue');
+    });
+
+    it('Escape closes the dropdown', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      await user.click(screen.getByRole('combobox'));
+      await screen.findByRole('option', { name: 'React' });
+
+      await user.keyboard('{Escape}');
+      expect(screen.queryByRole('option')).not.toBeInTheDocument();
+    });
+
+    it('focus stays on input after Escape', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      const input = screen.getByRole('combobox');
+      await user.click(input);
+      await screen.findByRole('option', { name: 'React' });
+
+      await user.keyboard('{Escape}');
+      expect(input).toHaveFocus();
+    });
+
+    it('typing filters results to show matching option', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      const input = screen.getByRole('combobox');
+      await user.click(input);
+      await user.type(input, 'rea');
+
+      // React should be visible after filtering
+      expect(await screen.findByRole('option', { name: 'React' })).toBeInTheDocument();
+    });
+
+    it('Escape after filtering closes the dropdown', async () => {
+      const user = userEvent.setup();
+      renderCombobox();
+
+      const input = screen.getByRole('combobox');
+      await user.click(input);
+      await user.type(input, 'vue');
+      await screen.findByRole('option', { name: 'Vue' });
+
+      await user.keyboard('{Escape}');
+      expect(screen.queryByRole('option')).not.toBeInTheDocument();
+    });
   });
 });

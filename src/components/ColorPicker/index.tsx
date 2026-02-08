@@ -99,7 +99,10 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
             />
             <BasePopover.Portal>
               <BasePopover.Positioner side="bottom" align="start" sideOffset={4} className={styles.positioner}>
-                <BasePopover.Popup className={styles.popup}>
+                <BasePopover.Popup
+                  className={styles.popup}
+                  aria-label={label ? `${label} color picker` : 'Color picker'}
+                >
                   <HexColorPicker color={displayValue} onChange={handleChange} />
                 </BasePopover.Popup>
               </BasePopover.Positioner>

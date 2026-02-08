@@ -2,6 +2,96 @@ import React from 'react';
 import { defineSegment } from '@fragments/core';
 import { ToggleGroup } from '.';
 
+function DefaultExample() {
+  const [value, setValue] = React.useState('left');
+
+  return (
+    <ToggleGroup value={value} onChange={setValue}>
+      <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+      <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+      <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
+    </ToggleGroup>
+  );
+}
+
+function PillsExample() {
+  const [value, setValue] = React.useState('all');
+
+  return (
+    <ToggleGroup value={value} onChange={setValue} variant="pills">
+      <ToggleGroup.Item value="all">All</ToggleGroup.Item>
+      <ToggleGroup.Item value="active">Active</ToggleGroup.Item>
+      <ToggleGroup.Item value="completed">Completed</ToggleGroup.Item>
+    </ToggleGroup>
+  );
+}
+
+function OutlineExample() {
+  const [value, setValue] = React.useState('day');
+
+  return (
+    <ToggleGroup value={value} onChange={setValue} variant="outline">
+      <ToggleGroup.Item value="day">Day</ToggleGroup.Item>
+      <ToggleGroup.Item value="week">Week</ToggleGroup.Item>
+      <ToggleGroup.Item value="month">Month</ToggleGroup.Item>
+    </ToggleGroup>
+  );
+}
+
+function SizesExample() {
+  const [value1, setValue1] = React.useState('a');
+  const [value2, setValue2] = React.useState('a');
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <ToggleGroup value={value1} onChange={setValue1} size="sm">
+        <ToggleGroup.Item value="a">Small</ToggleGroup.Item>
+        <ToggleGroup.Item value="b">Size</ToggleGroup.Item>
+      </ToggleGroup>
+      <ToggleGroup value={value2} onChange={setValue2} size="md">
+        <ToggleGroup.Item value="a">Medium</ToggleGroup.Item>
+        <ToggleGroup.Item value="b">Size</ToggleGroup.Item>
+      </ToggleGroup>
+    </div>
+  );
+}
+
+function ViewSwitcherExample() {
+  const [view, setView] = React.useState('grid');
+
+  return (
+    <ToggleGroup value={view} onChange={setView} size="sm">
+      <ToggleGroup.Item value="grid">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+        </svg>
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="list">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </ToggleGroup.Item>
+    </ToggleGroup>
+  );
+}
+
+function DisabledItemExample() {
+  const [value, setValue] = React.useState('basic');
+
+  return (
+    <ToggleGroup value={value} onChange={setValue}>
+      <ToggleGroup.Item value="basic">Basic</ToggleGroup.Item>
+      <ToggleGroup.Item value="pro">Pro</ToggleGroup.Item>
+      <ToggleGroup.Item value="enterprise" disabled>Enterprise</ToggleGroup.Item>
+    </ToggleGroup>
+  );
+}
+
 export default defineSegment({
   component: ToggleGroup,
 
@@ -104,104 +194,32 @@ export default defineSegment({
     {
       name: 'Default',
       description: 'Basic toggle group',
-      render: () => {
-        const [value, setValue] = React.useState('left');
-        return (
-          <ToggleGroup value={value} onChange={setValue}>
-            <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
-            <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
-            <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
-          </ToggleGroup>
-        );
-      },
+      render: () => <DefaultExample />,
     },
     {
       name: 'Pills Variant',
       description: 'Pill-shaped toggle buttons',
-      render: () => {
-        const [value, setValue] = React.useState('all');
-        return (
-          <ToggleGroup value={value} onChange={setValue} variant="pills">
-            <ToggleGroup.Item value="all">All</ToggleGroup.Item>
-            <ToggleGroup.Item value="active">Active</ToggleGroup.Item>
-            <ToggleGroup.Item value="completed">Completed</ToggleGroup.Item>
-          </ToggleGroup>
-        );
-      },
+      render: () => <PillsExample />,
     },
     {
       name: 'Outline Variant',
       description: 'Outlined toggle buttons',
-      render: () => {
-        const [value, setValue] = React.useState('day');
-        return (
-          <ToggleGroup value={value} onChange={setValue} variant="outline">
-            <ToggleGroup.Item value="day">Day</ToggleGroup.Item>
-            <ToggleGroup.Item value="week">Week</ToggleGroup.Item>
-            <ToggleGroup.Item value="month">Month</ToggleGroup.Item>
-          </ToggleGroup>
-        );
-      },
+      render: () => <OutlineExample />,
     },
     {
       name: 'Sizes',
       description: 'Different size variants',
-      render: () => {
-        const [value1, setValue1] = React.useState('a');
-        const [value2, setValue2] = React.useState('a');
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <ToggleGroup value={value1} onChange={setValue1} size="sm">
-              <ToggleGroup.Item value="a">Small</ToggleGroup.Item>
-              <ToggleGroup.Item value="b">Size</ToggleGroup.Item>
-            </ToggleGroup>
-            <ToggleGroup value={value2} onChange={setValue2} size="md">
-              <ToggleGroup.Item value="a">Medium</ToggleGroup.Item>
-              <ToggleGroup.Item value="b">Size</ToggleGroup.Item>
-            </ToggleGroup>
-          </div>
-        );
-      },
+      render: () => <SizesExample />,
     },
     {
       name: 'View Switcher',
       description: 'Common pattern for switching between views',
-      render: () => {
-        const [view, setView] = React.useState('grid');
-        return (
-          <ToggleGroup value={view} onChange={setView} size="sm">
-            <ToggleGroup.Item value="grid">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="list">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </ToggleGroup.Item>
-          </ToggleGroup>
-        );
-      },
+      render: () => <ViewSwitcherExample />,
     },
     {
       name: 'With Disabled Item',
       description: 'Toggle group with a disabled option',
-      render: () => {
-        const [value, setValue] = React.useState('basic');
-        return (
-          <ToggleGroup value={value} onChange={setValue}>
-            <ToggleGroup.Item value="basic">Basic</ToggleGroup.Item>
-            <ToggleGroup.Item value="pro">Pro</ToggleGroup.Item>
-            <ToggleGroup.Item value="enterprise" disabled>Enterprise</ToggleGroup.Item>
-          </ToggleGroup>
-        );
-      },
+      render: () => <DisabledItemExample />,
     },
   ],
 });

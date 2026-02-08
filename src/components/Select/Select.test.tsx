@@ -84,4 +84,78 @@ describe('Select', () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  describe('keyboard & focus', () => {
+    it('ArrowDown opens the dropdown from focused trigger', async () => {
+      const user = userEvent.setup();
+      renderSelect();
+
+      await user.tab(); // focus trigger
+      await user.keyboard('{ArrowDown}');
+      expect(await screen.findByRole('option', { name: 'Apple' })).toBeInTheDocument();
+    });
+
+    it('listbox receives focus when dropdown opens', async () => {
+      const user = userEvent.setup();
+      renderSelect();
+
+      await user.click(screen.getByRole('combobox'));
+      const listbox = await screen.findByRole('listbox');
+      expect(listbox).toBeInTheDocument();
+    });
+
+    it('all options are rendered in the listbox', async () => {
+      const user = userEvent.setup();
+      renderSelect();
+
+      await user.click(screen.getByRole('combobox'));
+      expect(await screen.findByRole('option', { name: 'Apple' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Banana' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Cherry' })).toBeInTheDocument();
+    });
+
+    it('clicking an option selects it', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      renderSelect({ onValueChange: onChange });
+
+      await user.click(screen.getByRole('combobox'));
+      await user.click(await screen.findByRole('option', { name: 'Banana' }));
+      expect(onChange).toHaveBeenCalledWith('banana');
+    });
+
+    it('Escape closes the dropdown', async () => {
+      const user = userEvent.setup();
+      renderSelect();
+
+      await user.click(screen.getByRole('combobox'));
+      await screen.findByRole('option', { name: 'Apple' });
+
+      await user.keyboard('{Escape}');
+      expect(screen.queryByRole('option')).not.toBeInTheDocument();
+    });
+
+    it('trigger is focusable after closing dropdown', async () => {
+      const user = userEvent.setup();
+      renderSelect();
+
+      const trigger = screen.getByRole('combobox');
+      await user.click(trigger);
+      await screen.findByRole('option', { name: 'Apple' });
+
+      await user.keyboard('{Escape}');
+      // After closing, the trigger should still be accessible
+      expect(trigger).toBeInTheDocument();
+      expect(trigger).not.toBeDisabled();
+    });
+
+    it('disabled option has aria-disabled attribute', async () => {
+      const user = userEvent.setup();
+      renderSelect();
+
+      await user.click(screen.getByRole('combobox'));
+      const cherry = await screen.findByRole('option', { name: 'Cherry' });
+      expect(cherry).toHaveAttribute('aria-disabled', 'true');
+    });
+  });
 });

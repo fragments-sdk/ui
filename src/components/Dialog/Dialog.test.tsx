@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, userEvent, waitFor } from '../../test/utils';
-import { axe } from 'vitest-axe';
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
 import { Dialog } from './index';
 
 function renderDialog(props: Partial<React.ComponentProps<typeof Dialog>> = {}) {
@@ -111,14 +110,168 @@ describe('Dialog', () => {
       expect(screen.getByText('Dialog Title')).toBeInTheDocument();
     });
 
-    const results = await axe(container, {
-      rules: {
-        'page-has-heading-one': { enabled: false },
-        region: { enabled: false },
-        // Base UI focus guard spans have role="button" without labels
-        'aria-command-name': { enabled: false },
-      },
+    await expectNoA11yViolations(container, {
+      // Base UI focus guard spans have role="button" without labels.
+      disabledRules: ['aria-command-name'],
     });
-    expect(results).toHaveNoViolations();
+  });
+
+  describe('keyboard & focus', () => {
+    it('Escape closes dialog (WCAG 2.1.1)', async () => {
+      const user = userEvent.setup();
+      renderDialog({ defaultOpen: true });
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      await user.keyboard('{Escape}');
+
+      await waitFor(() => {
+        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+      });
+    });
+
+    it('focus moves into dialog on open (WCAG 2.4.3)', async () => {
+      const user = userEvent.setup();
+      renderDialog();
+
+      await user.click(screen.getByRole('button', { name: /open dialog/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        const dialog = screen.getByRole('dialog');
+        expect(dialog.contains(document.activeElement)).toBe(true);
+      });
+    });
+
+    it('focus returns to trigger on Escape (WCAG 2.4.3)', async () => {
+      const user = userEvent.setup();
+      renderDialog();
+
+      const trigger = screen.getByRole('button', { name: /open dialog/i });
+      await user.click(trigger);
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      await user.keyboard('{Escape}');
+
+      await waitFor(() => {
+        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        expect(trigger).toHaveFocus();
+      });
+    });
+
+    it('focus returns to trigger on Close button click (WCAG 2.4.3)', async () => {
+      const user = userEvent.setup();
+      renderDialog();
+
+      const trigger = screen.getByRole('button', { name: /open dialog/i });
+      await user.click(trigger);
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByRole('button', { name: /close dialog/i });
+      await user.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        expect(trigger).toHaveFocus();
+      });
+    });
+
+    it('Tab cycles within dialog (focus trap) (WCAG 2.1.2)', async () => {
+      const user = userEvent.setup();
+      renderDialog({ defaultOpen: true });
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      const dialog = screen.getByRole('dialog');
+      const closeButton = screen.getByRole('button', { name: /close dialog/i });
+      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+
+      // Tab through focusable elements — focus should stay inside dialog
+      await user.tab();
+      await user.tab();
+      await user.tab();
+
+      await waitFor(() => {
+        expect(dialog.contains(document.activeElement)).toBe(true);
+      });
+
+      // Verify that close and cancel buttons are reachable
+      // Focus one of them directly and confirm containment
+      closeButton.focus();
+      expect(dialog.contains(document.activeElement)).toBe(true);
+
+      cancelButton.focus();
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    });
+
+    it('Shift+Tab cycles backward (WCAG 2.1.2)', async () => {
+      const user = userEvent.setup();
+      renderDialog({ defaultOpen: true });
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      const dialog = screen.getByRole('dialog');
+
+      // Shift+Tab backward multiple times — focus should remain trapped
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+
+      await waitFor(() => {
+        expect(dialog.contains(document.activeElement)).toBe(true);
+      });
+    });
+
+    it('role="dialog" is present when open (WCAG 4.1.2)', async () => {
+      renderDialog({ defaultOpen: true });
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('Cancel button closes dialog and returns focus (WCAG 2.4.3)', async () => {
+      const user = userEvent.setup();
+      renderDialog();
+
+      const trigger = screen.getByRole('button', { name: /open dialog/i });
+      await user.click(trigger);
+
+      await waitFor(() => {
+        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      });
+
+      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+      await user.click(cancelButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        expect(trigger).toHaveFocus();
+      });
+    });
   });
 });

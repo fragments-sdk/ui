@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent } from '../../test/utils';
-import { axe } from 'vitest-axe';
+import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
 import { Accordion } from './index';
 
 function renderAccordion(props: Partial<React.ComponentProps<typeof Accordion>> = {}) {
@@ -164,14 +163,9 @@ describe('Accordion', () => {
 
   it('has no accessibility violations', async () => {
     const { container } = renderAccordion({ defaultValue: 'one' });
-    const results = await axe(container, {
-      rules: {
-        'page-has-heading-one': { enabled: false },
-        region: { enabled: false },
-        // Accordion root role="region" + content panel role="region" triggers this
-        'landmark-unique': { enabled: false },
-      },
+    await expectNoA11yViolations(container, {
+      // Accordion root role="region" + content panel role="region" triggers this.
+      disabledRules: ['landmark-unique'],
     });
-    expect(results).toHaveNoViolations();
   });
 });

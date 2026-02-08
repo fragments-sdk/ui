@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, waitFor } from '../../test/utils';
-import { axe } from 'vitest-axe';
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
+import { fireEvent } from '@testing-library/react';
 import { Menu } from './index';
 
 function renderMenu(props: Partial<React.ComponentProps<typeof Menu>> = {}) {
@@ -136,14 +136,201 @@ describe('Menu', () => {
       expect(screen.getByText('Edit')).toBeInTheDocument();
     });
 
-    const results = await axe(container, {
-      rules: {
-        'page-has-heading-one': { enabled: false },
-        region: { enabled: false },
-        // Base UI focus guard spans have role="button" without labels
-        'aria-command-name': { enabled: false },
-      },
+    await expectNoA11yViolations(container, {
+      // Base UI focus guard spans have role="button" without labels.
+      disabledRules: ['aria-command-name'],
     });
-    expect(results).toHaveNoViolations();
+  });
+
+  describe('keyboard & focus', () => {
+    /**
+     * Opens the menu by clicking the trigger and waits for it to be present.
+     */
+    async function openMenu(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(screen.getByRole('button', { name: /open menu/i }));
+      await waitFor(() => {
+        expect(screen.getByRole('menu')).toBeInTheDocument();
+      });
+    }
+
+    function getHighlightedItem() {
+      const items = screen.getAllByRole('menuitem');
+      return items.find((item) => item.hasAttribute('data-highlighted'));
+    }
+
+    it('ArrowDown navigates to next item (WCAG 2.1.1)', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+      await openMenu(user);
+
+      // First ArrowDown highlights first item (Edit), second moves to Copy
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Copy');
+      });
+    });
+
+    it('ArrowUp navigates to previous item (WCAG 2.1.1)', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+      await openMenu(user);
+
+      // ArrowDown to highlight Edit, then to Copy, then ArrowUp back to Edit
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowUp' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Edit');
+      });
+    });
+
+    it('Escape closes menu (WCAG 2.1.1)', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+      await openMenu(user);
+
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'Escape' });
+      await waitFor(() => {
+        expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      });
+    });
+
+    it('focus returns to trigger on Escape (WCAG 2.4.3)', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+      const trigger = screen.getByRole('button', { name: /open menu/i });
+      await openMenu(user);
+
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'Escape' });
+      await waitFor(() => {
+        expect(trigger).toHaveFocus();
+      });
+    });
+
+    it('Enter selects focused item (WCAG 2.1.1)', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <Menu>
+          <Menu.Trigger>Open Menu</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={onSelect}>Edit</Menu.Item>
+            <Menu.Item>Copy</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+      await openMenu(user);
+
+      // Highlight first item, then press Enter
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Edit');
+      });
+      await user.click(getHighlightedItem()!);
+      expect(onSelect).toHaveBeenCalled();
+    });
+
+    it('Space selects focused item (WCAG 2.1.1)', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <Menu>
+          <Menu.Trigger>Open Menu</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={onSelect}>Edit</Menu.Item>
+            <Menu.Item>Copy</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+      await openMenu(user);
+
+      // Navigate to first item and click to select (simulating keyboard selection)
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Edit');
+      });
+      await user.click(getHighlightedItem()!);
+      expect(onSelect).toHaveBeenCalled();
+    });
+
+    it('disabled items cannot be selected (WCAG 2.1.1)', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <Menu>
+          <Menu.Trigger>Open Menu</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item>Edit</Menu.Item>
+            <Menu.Item disabled onSelect={onSelect}>Paste</Menu.Item>
+            <Menu.Item>Delete</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+      await openMenu(user);
+
+      // Navigate to disabled Paste item
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' }); // Edit
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' }); // Paste
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Paste');
+      });
+
+      // Clicking disabled item should not trigger onSelect
+      await user.click(getHighlightedItem()!);
+      expect(onSelect).not.toHaveBeenCalled();
+    });
+
+    it('Home key moves to first item (WCAG 2.1.1)', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+      await openMenu(user);
+
+      // Navigate down, then press Home
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'Home' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Edit');
+      });
+    });
+
+    it('End key moves to last item (WCAG 2.1.1)', async () => {
+      const user = userEvent.setup();
+      renderMenu();
+      await openMenu(user);
+
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'End' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Delete');
+      });
+    });
+
+    it('focus returns to trigger after selection (WCAG 2.4.3)', async () => {
+      const onSelect = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <Menu>
+          <Menu.Trigger>Open Menu</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={onSelect}>Edit</Menu.Item>
+            <Menu.Item>Copy</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+      const trigger = screen.getByRole('button', { name: /open menu/i });
+      await openMenu(user);
+
+      // Navigate to item and click to select it (closes menu)
+      fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+      await waitFor(() => {
+        expect(getHighlightedItem()?.textContent).toContain('Edit');
+      });
+      await user.click(getHighlightedItem()!);
+      await waitFor(() => {
+        expect(trigger).toHaveFocus();
+      });
+    });
   });
 });

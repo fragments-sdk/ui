@@ -89,4 +89,92 @@ describe('Tabs', () => {
     const { container } = renderTabs();
     await expectNoA11yViolations(container);
   });
+
+  describe('keyboard & focus', () => {
+    it('ArrowRight moves focus to the next tab', async () => {
+      const user = userEvent.setup();
+      renderTabs();
+
+      await user.tab(); // focus enters the tablist on the active tab
+      expect(screen.getByRole('tab', { name: /tab one/i })).toHaveFocus();
+
+      await user.keyboard('{ArrowRight}');
+      expect(screen.getByRole('tab', { name: /tab two/i })).toHaveFocus();
+    });
+
+    it('ArrowLeft moves focus to the previous tab', async () => {
+      const user = userEvent.setup();
+      renderTabs({ defaultValue: 'tab2' });
+
+      await user.tab();
+      expect(screen.getByRole('tab', { name: /tab two/i })).toHaveFocus();
+
+      await user.keyboard('{ArrowLeft}');
+      expect(screen.getByRole('tab', { name: /tab one/i })).toHaveFocus();
+    });
+
+    it('disabled tab receives focus but cannot be activated', async () => {
+      const user = userEvent.setup();
+      renderTabs({ defaultValue: 'tab2' });
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}'); // moves to disabled Tab Three
+      expect(screen.getByRole('tab', { name: /tab three/i })).toHaveFocus();
+      // Pressing Enter/Space on a disabled tab should not activate it
+      await user.keyboard('{Enter}');
+      expect(screen.getByRole('tab', { name: /tab three/i })).toHaveAttribute('aria-selected', 'false');
+    });
+
+    it('wraps from last tab to first', async () => {
+      const user = userEvent.setup();
+      renderTabs();
+
+      await user.tab();
+      // Navigate: Tab One -> Tab Two -> Tab Three -> wraps to Tab One
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      expect(screen.getByRole('tab', { name: /tab one/i })).toHaveFocus();
+    });
+
+    it('Home key moves focus to the first tab', async () => {
+      const user = userEvent.setup();
+      renderTabs({ defaultValue: 'tab2' });
+
+      await user.tab();
+      await user.keyboard('{Home}');
+      expect(screen.getByRole('tab', { name: /tab one/i })).toHaveFocus();
+    });
+
+    it('End key moves focus to the last tab', async () => {
+      const user = userEvent.setup();
+      renderTabs();
+
+      await user.tab();
+      await user.keyboard('{End}');
+      expect(screen.getByRole('tab', { name: /tab three/i })).toHaveFocus();
+    });
+
+    it('ArrowDown navigates tabs in vertical orientation', async () => {
+      const user = userEvent.setup();
+      renderTabs({ orientation: 'vertical' });
+
+      await user.tab();
+      expect(screen.getByRole('tab', { name: /tab one/i })).toHaveFocus();
+
+      await user.keyboard('{ArrowDown}');
+      expect(screen.getByRole('tab', { name: /tab two/i })).toHaveFocus();
+    });
+
+    it('ArrowUp navigates tabs backward in vertical orientation', async () => {
+      const user = userEvent.setup();
+      renderTabs({ orientation: 'vertical', defaultValue: 'tab2' });
+
+      await user.tab();
+      expect(screen.getByRole('tab', { name: /tab two/i })).toHaveFocus();
+
+      await user.keyboard('{ArrowUp}');
+      expect(screen.getByRole('tab', { name: /tab one/i })).toHaveFocus();
+    });
+  });
 });
