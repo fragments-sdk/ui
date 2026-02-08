@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.7.3
+
+### Patch Changes
+
+- [`4ca9bdd`](https://github.com/ConanMcN/fragments/commit/4ca9bddf2ce5c8f34d76d8eaf423012922b0a61a) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Standardize interactive item heights to consistent 35px ceiling using item-xs vertical padding across Tabs, Select, Combobox, Listbox, Accordion, Table, Collapsible, and Dialog components
+
 ## 0.7.2
 
 ### Patch Changes
