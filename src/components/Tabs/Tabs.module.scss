@@ -55,7 +55,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-secondary, $fui-text-secondary);
@@ -80,7 +80,7 @@
 .tabUnderline {
   border-radius: 0;
   margin-bottom: -1px;
-  padding-bottom: calc(var(--fui-padding-item-sm, $fui-padding-item-sm) + 1px);
+  padding-bottom: calc(var(--fui-padding-item-xs, $fui-padding-item-xs) + 1px);
 
   &:hover:not([data-disabled]) {
     background-color: transparent;
@@ -91,8 +91,6 @@
 .tabPills {
   border-radius: var(--fui-radius-md, $fui-radius-md);
   transition: all 0.15s ease;
-  padding: var(--fui-space-1-5, 6px) var(--fui-space-3, $fui-space-3);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 
   &:hover:not([data-disabled]):not([data-active]) {
     background-color: transparent;

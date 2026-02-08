@@ -92,7 +92,7 @@
 
 // Header area
 .header {
-  padding: var(--fui-padding-container-md, $fui-padding-container-md) var(--fui-padding-container-lg, $fui-padding-container-lg);
+  padding: var(--fui-padding-container-sm, $fui-padding-container-sm) var(--fui-padding-container-md, $fui-padding-container-md);
 }
 
 // Title
@@ -114,7 +114,7 @@
 
 // Body content
 .body {
-  padding: 0 var(--fui-padding-container-lg, $fui-padding-container-lg) var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: 0 var(--fui-padding-container-md, $fui-padding-container-md) var(--fui-padding-container-sm, $fui-padding-container-sm);
 }
 
 // Footer for actions
@@ -122,8 +122,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-container-sm, $fui-padding-container-sm) var(--fui-padding-container-lg, $fui-padding-container-lg);
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-padding-inline-sm, $fui-padding-inline-sm) var(--fui-padding-container-md, $fui-padding-container-md);
   border-top: 1px solid var(--fui-border, $fui-border);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-radius: 0 0 var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg);

@@ -8,7 +8,7 @@
   @include surface-elevated;
 
   min-width: 12rem;
-  padding: var(--fui-space-1, 0.25rem);
+  padding: var(--fui-padding-item-xs, 0.25rem);
   box-shadow: var(--fui-shadow-lg);
   max-height: 320px;
   overflow-y: auto;
@@ -26,7 +26,7 @@
   align-items: center;
   gap: var(--fui-space-2, 0.5rem);
   width: 100%;
-  padding: var(--fui-space-2, 0.5rem) var(--fui-space-3, 0.75rem);
+  padding: var(--fui-padding-item-xs, 0.25rem) var(--fui-padding-item-md, 0.75rem);
   border-radius: var(--fui-radius-sm, 0.25rem);
   cursor: pointer;
   outline: none;
@@ -64,7 +64,7 @@
 }
 
 .groupLabel {
-  padding: var(--fui-space-1, 0.25rem) var(--fui-space-3, 0.75rem);
+  padding: var(--fui-padding-item-xs, 0.25rem) var(--fui-padding-item-md, 0.75rem);
   font-size: var(--fui-font-size-xs, 0.75rem);
   font-weight: var(--fui-font-weight-medium, 500);
   color: var(--fui-text-tertiary);
@@ -75,7 +75,7 @@
 // ============================================
 
 .empty {
-  padding: var(--fui-space-3, 0.75rem);
+  padding: var(--fui-padding-item-md, 0.75rem);
   font-size: var(--fui-font-size-sm, 0.875rem);
   color: var(--fui-text-secondary);
   text-align: center;

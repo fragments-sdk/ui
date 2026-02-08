@@ -4,15 +4,19 @@
 .accordion {
   font-family: var(--fui-font-sans, $fui-font-sans);
   width: 100%;
+
+  // Borders target direct children (BaseCollapsible.Root wrappers)
+  // so :first-child/:last-child selectors work correctly
+  > * {
+    border-bottom: 1px solid var(--fui-border, $fui-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
 }
 
 .item {
-  border-bottom: 1px solid var(--fui-border, $fui-border);
-
-  &:first-child {
-    border-top: 1px solid var(--fui-border, $fui-border);
-  }
-
   &[data-disabled] {
     opacity: 0.5;
     pointer-events: none;
@@ -34,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--fui-padding-item-md, $fui-padding-item-md) 0;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) 0;
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
@@ -87,7 +91,7 @@
 }
 
 .contentInner {
-  padding-bottom: var(--fui-padding-item-md, $fui-padding-item-md);
+  padding-bottom: var(--fui-padding-item-xs, $fui-padding-item-xs);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
