@@ -1,5 +1,15 @@
 # @fragments-sdk/ui
 
+## 0.7.5
+
+### Patch Changes
+
+- [`160bc1d`](https://github.com/ConanMcN/fragments/commit/160bc1d98a3a67ded3f96833be70baec421c4bf3) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Improve accessibility quality and audit coverage for the UI library.
+  - Add an accessible name to the `ColorPicker` popup dialog.
+  - Stabilize `ToggleGroup` fragment variants by moving hook state into React components.
+  - Expand and modularize accessibility testing with reusable Playwright auditor modules and stronger keyboard-flow coverage.
+  - Improve shared UI test accessibility helpers for portal-aware and reusable axe assertions.
+
 ## 0.7.4
 
 ### Patch Changes
