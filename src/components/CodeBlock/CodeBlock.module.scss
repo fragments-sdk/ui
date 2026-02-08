@@ -33,7 +33,7 @@
 .header {
   display: flex;
   align-items: center;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
+  padding: var(--fui-padding-inline-sm) var(--fui-padding-container-md);
   background-color: var(--fui-code-header-bg, $fui-code-header-bg);
   border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
 }
@@ -55,7 +55,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-xs) var(--fui-padding-item-sm);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   font-family: var(--fui-font-sans, $fui-font-sans);
@@ -121,7 +121,7 @@
 .loading {
   pre {
     margin: 0;
-    padding: var(--fui-space-4, $fui-space-4);
+    padding: var(--fui-padding-container-md);
     padding-right: var(--fui-space-10, $fui-space-10);
     background-color: transparent !important;
     border: none !important;
@@ -147,7 +147,7 @@
   // Shiki output styling - always dark theme
   :global(.shiki) {
     margin: 0;
-    padding: var(--fui-space-4, $fui-space-4);
+    padding: var(--fui-padding-container-md);
     padding-right: var(--fui-space-10, $fui-space-10);
     background-color: transparent !important;
     border: none !important;
@@ -265,7 +265,7 @@
 
   .codeContainer :global(.shiki),
   .loading pre {
-    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+    padding: var(--fui-padding-inline-sm) var(--fui-padding-container-sm);
     padding-right: var(--fui-space-8, $fui-space-8);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
     line-height: 1.5;
@@ -315,7 +315,7 @@
   justify-content: center;
   gap: var(--fui-space-1, $fui-space-1);
   width: 100%;
-  padding: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-inline-sm);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   font-family: var(--fui-font-sans, $fui-font-sans);

@@ -82,9 +82,9 @@
 // ============================================
 
 .paddingNone { padding: 0; }
-.paddingSm   { padding: var(--fui-space-3, $fui-space-3); }
-.paddingMd   { padding: var(--fui-space-4, $fui-space-4); }
-.paddingLg   { padding: var(--fui-space-6, $fui-space-6); }
+.paddingSm   { padding: var(--fui-padding-container-sm); }
+.paddingMd   { padding: var(--fui-padding-container-md); }
+.paddingLg   { padding: var(--fui-padding-container-lg); }
 
 // ============================================
 // Align items (cross-axis within cells)

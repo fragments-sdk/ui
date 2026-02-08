@@ -11,7 +11,7 @@
 .popup {
   @include text-base;
 
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-xs) var(--fui-padding-item-sm);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   // Tooltips use inverted colors - always dark bg with light text

@@ -8,7 +8,7 @@
 .message {
   display: flex;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-inline-sm);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
@@ -123,7 +123,7 @@
 
 .content {
   @include text-base;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-padding-inline-sm) var(--fui-padding-inline-md);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   word-wrap: break-word;
@@ -147,7 +147,7 @@
 
   pre {
     margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-space-2, $fui-space-2);
+    padding: var(--fui-padding-inline-sm);
     border-radius: var(--fui-radius-md, $fui-radius-md);
     background-color: rgba(0, 0, 0, 0.1);
     overflow-x: auto;

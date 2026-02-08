@@ -64,7 +64,7 @@
   display: block;
   width: 100%;
   min-height: 2.857rem; // ~40px
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-padding-inline-sm) var(--fui-padding-inline-md);
   background: transparent;
   border: none;
   resize: none;
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-xs) var(--fui-padding-item-sm);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-top: 1px solid var(--fui-border, $fui-border);
 }
@@ -157,7 +157,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-xs) var(--fui-padding-item-sm);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);

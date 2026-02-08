@@ -12,7 +12,7 @@
   @include surface-elevated;
 
   min-width: 12rem;
-  padding: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
@@ -44,7 +44,7 @@
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   cursor: pointer;
   outline: none;
@@ -141,7 +141,7 @@
 
 // Group label
 .groupLabel {
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);

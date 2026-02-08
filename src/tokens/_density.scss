@@ -154,7 +154,11 @@ $densities: (
     inline-md: $unit-rem * 3,      // 3 units
     inline-lg: $unit-rem * 4,      // 4 units
 
+    // Container padding (extended)
+    container-xl: $unit-rem * 8,   // 8 units
+
     // Item padding: Accordion, Tabs, Menu items
+    item-xs: $unit-rem * 1,        // 1 unit
     item-sm: $unit-rem * 2,        // 2 units
     item-md: $unit-rem * 3,        // 3 units
     item-lg: $unit-rem * 4         // 4 units

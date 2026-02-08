@@ -19,19 +19,19 @@
 // Sizes
 .sm {
   min-height: var(--fui-button-height-sm, $fui-button-height-sm);
-  padding: 0 var(--fui-space-3, $fui-space-3);
+  padding: 0 var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
 }
 
 .md {
   min-height: var(--fui-button-height-md, $fui-button-height-md);
-  padding: 0 var(--fui-space-4, $fui-space-4);
+  padding: 0 var(--fui-space-3, $fui-space-3);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
 .lg {
   min-height: var(--fui-button-height-lg, $fui-button-height-lg);
-  padding: 0 var(--fui-space-6, $fui-space-6);
+  padding: 0 var(--fui-space-4, $fui-space-4);
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 

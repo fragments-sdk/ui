@@ -48,8 +48,8 @@ $fui-base-unit: computed.$computed-base-unit !default;
 // --------------------------------------------
 // Typography
 // --------------------------------------------
-$fui-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
-$fui-font-mono: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace !default;
+$fui-font-sans: 'Geist Sans', 'Geist', Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
+$fui-font-mono: 'Geist Mono', 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace !default;
 
 // Font sizes (rem based on 14px root)
 $fui-font-size-2xs: 0.714rem !default;  // 10px
@@ -66,6 +66,7 @@ $fui-font-weight-semibold: 600 !default;
 
 $fui-line-height-tight: 1.25 !default;
 $fui-line-height-normal: 1.5 !default;
+$fui-line-height-relaxed: 1.625 !default;
 
 // --------------------------------------------
 // Spacing (derived from density seed)
@@ -93,6 +94,7 @@ $fui-space-12: computed.$computed-space-12 !default;
 $fui-padding-container-sm: computed.$computed-padding-container-sm !default;
 $fui-padding-container-md: computed.$computed-padding-container-md !default;
 $fui-padding-container-lg: computed.$computed-padding-container-lg !default;
+$fui-padding-container-xl: computed.$computed-padding-container-xl !default;
 
 // Inline padding: Alerts, Toasts
 $fui-padding-inline-sm: computed.$computed-padding-inline-sm !default;
@@ -100,6 +102,7 @@ $fui-padding-inline-md: computed.$computed-padding-inline-md !default;
 $fui-padding-inline-lg: computed.$computed-padding-inline-lg !default;
 
 // Item padding: Accordion, Tabs, Menu items
+$fui-padding-item-xs: computed.$computed-padding-item-xs !default;
 $fui-padding-item-sm: computed.$computed-padding-item-sm !default;
 $fui-padding-item-md: computed.$computed-padding-item-md !default;
 $fui-padding-item-lg: computed.$computed-padding-item-lg !default;
@@ -409,6 +412,7 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-font-weight-semibold: #{$fui-font-weight-semibold};
     --fui-line-height-tight: #{$fui-line-height-tight};
     --fui-line-height-normal: #{$fui-line-height-normal};
+    --fui-line-height-relaxed: #{$fui-line-height-relaxed};
 
     // Spacing (micro)
     --fui-space-px: #{$fui-space-px};
@@ -430,9 +434,11 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-padding-container-sm: #{$fui-padding-container-sm};
     --fui-padding-container-md: #{$fui-padding-container-md};
     --fui-padding-container-lg: #{$fui-padding-container-lg};
+    --fui-padding-container-xl: #{$fui-padding-container-xl};
     --fui-padding-inline-sm: #{$fui-padding-inline-sm};
     --fui-padding-inline-md: #{$fui-padding-inline-md};
     --fui-padding-inline-lg: #{$fui-padding-inline-lg};
+    --fui-padding-item-xs: #{$fui-padding-item-xs};
     --fui-padding-item-sm: #{$fui-padding-item-sm};
     --fui-padding-item-md: #{$fui-padding-item-md};
     --fui-padding-item-lg: #{$fui-padding-item-lg};

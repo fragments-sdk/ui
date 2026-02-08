@@ -535,6 +535,8 @@ export interface TabbedCodeBlockProps {
   showLineNumbers?: boolean;
   /** Syntax highlighting theme (applies to all tabs) */
   theme?: CodeBlockTheme;
+  /** Tab list visual style */
+  tabsVariant?: 'underline' | 'pills';
   /** Enable word wrapping for long lines */
   wordWrap?: boolean;
   /** Maximum height in pixels (enables scrolling) */
@@ -549,6 +551,7 @@ function TabbedCodeBlock({
   showCopy = true,
   showLineNumbers = false,
   theme,
+  tabsVariant = 'pills',
   wordWrap,
   maxHeight,
   className,
@@ -558,7 +561,7 @@ function TabbedCodeBlock({
   return (
     <div className={className}>
       <TabsRoot defaultValue={defaultValue}>
-        <TabsList variant="pills">
+        <TabsList variant={tabsVariant}>
           {tabs.map((tab) => (
             <Tab key={tab.label} value={tab.label}>
               {tab.label}
