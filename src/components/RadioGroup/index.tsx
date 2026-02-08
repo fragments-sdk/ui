@@ -41,8 +41,19 @@ export interface RadioItemProps {
   description?: string;
   /** Whether this item is disabled */
   disabled?: boolean;
+  /** Accessible name for icon-only mode */
+  'aria-label'?: string;
+  /** Accessible labelled-by relationship */
+  'aria-labelledby'?: string;
+  /** Accessible described-by relationship */
+  'aria-describedby'?: string;
   /** Additional class name */
   className?: string;
+}
+
+function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
+  const merged = ids.filter(Boolean).join(' ').trim();
+  return merged.length > 0 ? merged : undefined;
 }
 
 // ============================================
@@ -60,9 +71,15 @@ function RadioItem({
   label,
   description,
   disabled = false,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
   className,
 }: RadioItemProps) {
   const size = React.useContext(RadioSizeContext);
+  const id = React.useId();
+  const labelId = label ? `radio-label-${id}` : undefined;
+  const descriptionId = description ? `radio-desc-${id}` : undefined;
 
   const radioClasses = [
     styles.radio,
@@ -84,6 +101,9 @@ function RadioItem({
       <BaseRadio.Root
         value={value}
         disabled={disabled}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
         className={[radioClasses, className].filter(Boolean).join(' ')}
       >
         <BaseRadio.Indicator className={styles.indicator} />
@@ -96,14 +116,17 @@ function RadioItem({
       <BaseRadio.Root
         value={value}
         disabled={disabled}
+        aria-label={ariaLabel}
+        aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+        aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
         className={radioClasses}
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
       <div className={styles.content}>
-        <span className={labelClasses}>{label}</span>
+        <span id={labelId} className={labelClasses}>{label}</span>
         {description && (
-          <span className={styles.description}>{description}</span>
+          <span id={descriptionId} className={styles.description}>{description}</span>
         )}
       </div>
     </label>
@@ -126,8 +149,15 @@ function RadioGroupRoot({
   size = 'md',
   children,
   className,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
   ...htmlProps
 }: RadioGroupProps) {
+  const groupId = React.useId();
+  const labelId = label ? `radio-group-label-${groupId}` : undefined;
+  const errorId = error ? `radio-group-error-${groupId}` : undefined;
+
   const groupClasses = [
     styles.group,
     styles[orientation],
@@ -137,18 +167,21 @@ function RadioGroupRoot({
   return (
     <RadioSizeContext.Provider value={size}>
       <div {...htmlProps} className={styles.wrapper}>
-        {label && <span className={styles.groupLabel}>{label}</span>}
+        {label && <span id={labelId} className={styles.groupLabel}>{label}</span>}
         <BaseRadioGroup
           value={value}
           defaultValue={defaultValue}
           onValueChange={onValueChange}
           disabled={disabled}
           name={name}
+          aria-label={ariaLabel}
+          aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+          aria-describedby={mergeAriaIds(ariaDescribedBy, errorId)}
           className={groupClasses}
         >
           {children}
         </BaseRadioGroup>
-        {error && <span className={styles.error}>{error}</span>}
+        {error && <span id={errorId} className={styles.error}>{error}</span>}
       </div>
     </RadioSizeContext.Provider>
   );

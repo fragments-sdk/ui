@@ -135,11 +135,11 @@ function DialogContent({
   return (
     <BaseDialog.Portal>
       <BaseDialog.Backdrop className={styles.backdrop} />
-      <div className={styles.positioner}>
-        <BaseDialog.Popup {...htmlProps} className={popupClasses}>
+      <BaseDialog.Viewport className={styles.positioner}>
+        <BaseDialog.Popup initialFocus {...htmlProps} className={popupClasses}>
           {children}
         </BaseDialog.Popup>
-      </div>
+      </BaseDialog.Viewport>
     </BaseDialog.Portal>
   );
 }
@@ -177,7 +177,11 @@ function DialogClose({ children, asChild, className }: DialogCloseProps) {
   // If no children, render the default X close button
   if (!children) {
     return (
-      <BaseDialog.Close className={[styles.close, className].filter(Boolean).join(' ')}>
+      <BaseDialog.Close
+        data-dialog-close
+        aria-label="Close dialog"
+        className={[styles.close, className].filter(Boolean).join(' ')}
+      >
         <CloseIcon />
       </BaseDialog.Close>
     );
@@ -185,14 +189,18 @@ function DialogClose({ children, asChild, className }: DialogCloseProps) {
 
   if (asChild) {
     return (
-      <BaseDialog.Close className={className} render={children as React.ReactElement}>
+      <BaseDialog.Close
+        data-dialog-close
+        className={className}
+        render={children as React.ReactElement}
+      >
         {null}
       </BaseDialog.Close>
     );
   }
 
   return (
-    <BaseDialog.Close className={className}>
+    <BaseDialog.Close data-dialog-close className={className}>
       {children}
     </BaseDialog.Close>
   );

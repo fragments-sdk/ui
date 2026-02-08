@@ -1,4 +1,5 @@
 @use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
 
 // Container
 .container {
@@ -28,6 +29,10 @@
   :global(.recharts-rectangle.recharts-tooltip-cursor) {
     fill: var(--fui-bg-hover, $fui-bg-hover);
   }
+}
+
+.srOnly {
+  @include visually-hidden;
 }
 
 // Tooltip

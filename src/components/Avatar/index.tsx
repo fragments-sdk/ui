@@ -87,6 +87,8 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
     const showFallback = !src || imageError;
     const displayInitials = initials || (name ? getInitials(name) : '');
     const fallbackColor = color || (name ? stringToColor(name) : undefined);
+    const fallbackLabel = alt || name;
+    const hasFallbackLabel = showFallback && Boolean(fallbackLabel && fallbackLabel.trim().length > 0);
 
     const avatarClasses = [
       styles.avatar,
@@ -101,7 +103,15 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
     }
 
     return (
-      <div ref={ref} {...htmlProps} className={avatarClasses} style={style}>
+      <div
+        ref={ref}
+        {...htmlProps}
+        className={avatarClasses}
+        style={style}
+        role={hasFallbackLabel ? 'img' : undefined}
+        aria-label={hasFallbackLabel ? fallbackLabel : undefined}
+        aria-hidden={showFallback && !hasFallbackLabel ? true : undefined}
+      >
         {!showFallback && (
           <img
             src={src}

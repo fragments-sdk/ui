@@ -86,7 +86,7 @@ function ToggleGroupRoot({
 
   return (
     <ToggleGroupContext.Provider value={contextValue}>
-      <div {...htmlProps} role="group" className={classes}>
+      <div {...htmlProps} role="radiogroup" className={classes}>
         {children}
       </div>
     </ToggleGroupContext.Provider>
@@ -98,6 +98,7 @@ function ToggleGroupItem({
   children,
   disabled = false,
   className,
+  onKeyDown,
   ...htmlProps
 }: ToggleGroupItemProps) {
   const context = useToggleGroupContext();
@@ -118,14 +119,67 @@ function ToggleGroupItem({
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+
+    if (disabled) return;
+
+    const key = event.key;
+    const supportsRoving =
+      key === 'ArrowRight' ||
+      key === 'ArrowDown' ||
+      key === 'ArrowLeft' ||
+      key === 'ArrowUp' ||
+      key === 'Home' ||
+      key === 'End';
+
+    if (!supportsRoving) return;
+
+    event.preventDefault();
+
+    const group = event.currentTarget.closest('[role="radiogroup"]');
+    if (!group) return;
+
+    const radios = Array.from(
+      group.querySelectorAll<HTMLButtonElement>('[role="radio"]:not(:disabled)')
+    );
+
+    if (radios.length === 0) return;
+
+    const currentIndex = radios.indexOf(event.currentTarget);
+    const fallbackIndex = currentIndex >= 0 ? currentIndex : 0;
+    let nextIndex = fallbackIndex;
+
+    if (key === 'ArrowRight' || key === 'ArrowDown') {
+      nextIndex = (fallbackIndex + 1) % radios.length;
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      nextIndex = (fallbackIndex - 1 + radios.length) % radios.length;
+    } else if (key === 'Home') {
+      nextIndex = 0;
+    } else if (key === 'End') {
+      nextIndex = radios.length - 1;
+    }
+
+    const target = radios[nextIndex];
+    const nextValue = target.dataset.value;
+    if (nextValue) {
+      context.onChange(nextValue);
+    }
+    target.focus();
+  };
+
   return (
     <button
       {...htmlProps}
       type="button"
+      data-value={value}
       role="radio"
       aria-checked={isSelected}
+      tabIndex={isSelected ? 0 : -1}
       disabled={disabled}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       className={classes}
     >
       {children}

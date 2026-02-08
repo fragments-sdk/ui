@@ -16,6 +16,11 @@
   user-select: none;
 }
 
+.withRemove {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 // Sizes
 .sm {
   height: var(--fui-button-height-sm, $fui-button-height-sm);
@@ -141,6 +146,11 @@
 }
 
 // Remove button
+.removableChip {
+  display: inline-flex;
+  align-items: stretch;
+}
+
 .remove {
   @include button-reset;
   @include interactive-base;
@@ -148,20 +158,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: calc(-1 * var(--fui-space-1, $fui-space-1));
-  padding: var(--fui-space-0-5, $fui-space-0-5);
+  padding: 0 var(--fui-space-1, $fui-space-1);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  color: inherit;
-  opacity: 0.6;
+  color: var(--fui-text-secondary, $fui-text-secondary);
   line-height: 1;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
+  border-top-right-radius: var(--fui-radius-full, $fui-radius-full);
+  border-bottom-right-radius: var(--fui-radius-full, $fui-radius-full);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  border: 1px solid transparent;
+  border-left-color: var(--fui-border, $fui-border);
 
   .sm & {
     font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   }
 
-  &:hover {
-    opacity: 1;
+  &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
   }
 }

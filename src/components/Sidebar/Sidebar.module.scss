@@ -121,13 +121,19 @@
 .sectionHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--fui-space-2, $fui-space-2);
   padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+}
+
+.sectionTrigger {
+  flex: 1;
 }
 
 .sectionLabel {
   @include helper-text;
 
+  flex: 1;
+  min-width: 0;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -170,11 +176,14 @@
 // Collapsible section styles (using Collapsible component)
 .sectionCollapsible {
   // Override Collapsible trigger styles for sidebar context
-  :global(.collapsible-trigger),
-  button[aria-expanded] {
+  .sectionTrigger {
     background: transparent;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
+    width: 100%;
     padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+    border-radius: var(--fui-radius-md, $fui-radius-md);
 
     &:hover {
       background-color: var(--fui-bg-hover, $fui-bg-hover);

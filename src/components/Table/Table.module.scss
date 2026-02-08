@@ -82,16 +82,21 @@
 
 // Sortable header cell (for focus styles)
 .thSortable {
-  cursor: pointer;
-
-  &:focus-visible {
-    @include focus-ring;
-    outline-offset: -2px;
-  }
+  padding: 0;
 }
 
-.sortable {
-  cursor: pointer;
+.sortButton {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  color: inherit;
+  text-align: left;
   transition: color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
@@ -105,7 +110,7 @@
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   flex-shrink: 0;
 
-  .sortable:hover & {
+  .sortButton:hover & {
     color: var(--fui-text-secondary, $fui-text-secondary);
   }
 }
@@ -131,6 +136,10 @@
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
   }
 
   &:active {
@@ -220,7 +229,7 @@
     border-bottom-width: 2px;
   }
 
-  .thSortable:focus-visible {
+  .sortButton:focus-visible {
     outline-width: 3px;
   }
 }
@@ -234,7 +243,7 @@
     transition: none;
   }
 
-  .sortable {
+  .sortButton {
     transition: none;
   }
 }

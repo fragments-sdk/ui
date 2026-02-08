@@ -25,6 +25,10 @@ export type ChartConfig = Record<
 export interface ChartContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   config: ChartConfig;
   children: React.ReactElement;
+  /** Non-visual summary announced to assistive technology users */
+  summary?: string;
+  /** Optional accessible data table or textual fallback */
+  dataTable?: React.ReactNode;
 }
 
 export interface ChartTooltipContentProps {
@@ -52,6 +56,11 @@ export interface ChartLegendContentProps {
   }[];
 }
 
+function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
+  const merged = ids.filter(Boolean).join(' ').trim();
+  return merged.length > 0 ? merged : undefined;
+}
+
 // ============================================
 // Context
 // ============================================
@@ -75,8 +84,16 @@ export function ChartContainer({
   children,
   className,
   style,
+  summary,
+  dataTable,
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
   ...htmlProps
 }: ChartContainerProps) {
+  const chartId = React.useId();
+  const summaryId = summary ? `chart-summary-${chartId}` : undefined;
+  const dataTableId = dataTable ? `chart-data-${chartId}` : undefined;
+
   // Build CSS custom properties from config (--chart-<key>)
   const cssVars = React.useMemo(() => {
     const vars: Record<string, string> = {};
@@ -101,8 +118,25 @@ export function ChartContainer({
         {...htmlProps}
         className={rootClasses}
         style={{ ...cssVars, ...style }}
+        role="img"
+        aria-label={ariaLabel || 'Chart'}
+        aria-describedby={mergeAriaIds(
+          ariaDescribedBy,
+          summaryId,
+          dataTableId
+        )}
       >
         {chartChild}
+        {summaryId && (
+          <span id={summaryId} className={styles.srOnly}>
+            {summary}
+          </span>
+        )}
+        {dataTableId && (
+          <div id={dataTableId} className={styles.srOnly}>
+            {dataTable}
+          </div>
+        )}
       </div>
     </ChartConfigContext.Provider>
   );

@@ -75,8 +75,9 @@
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: var(--fui-radius-md, $fui-radius-md);
   }
 
   &:disabled {

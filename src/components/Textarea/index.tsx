@@ -36,6 +36,17 @@ export interface TextareaProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   maxLength?: number;
   /** Required field */
   required?: boolean;
+  /** Accessible label for no-visible-label usage */
+  'aria-label'?: string;
+  /** Accessible labelled-by relationship */
+  'aria-labelledby'?: string;
+  /** Accessible described-by relationship */
+  'aria-describedby'?: string;
+}
+
+function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
+  const merged = ids.filter(Boolean).join(' ').trim();
+  return merged.length > 0 ? merged : undefined;
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -59,12 +70,16 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       id,
       maxLength,
       required = false,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
       ...htmlProps
     },
     ref
   ) {
     const generatedId = React.useId();
     const textareaId = id || generatedId;
+    const labelId = label ? `${textareaId}-label` : undefined;
     const helperId = `${textareaId}-helper`;
 
     const textareaClasses = [
@@ -91,7 +106,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div {...htmlProps} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
         {label && (
-          <label htmlFor={textareaId} className={styles.label}>
+          <label id={labelId} htmlFor={textareaId} className={styles.label}>
             {label}
             {required && <span className={styles.required}>*</span>}
           </label>
@@ -107,8 +122,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           maxLength={maxLength}
           disabled={disabled}
           required={required}
+          aria-label={ariaLabel}
+          aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
           aria-invalid={error || undefined}
-          aria-describedby={helperText ? helperId : undefined}
+          aria-describedby={mergeAriaIds(
+            ariaDescribedBy,
+            helperText ? helperId : undefined
+          )}
           onChange={(e) => onChange?.(e.target.value)}
           onBlur={onBlur}
           className={textareaClasses}

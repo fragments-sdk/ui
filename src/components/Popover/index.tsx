@@ -179,7 +179,10 @@ function PopoverClose({ children, asChild, className }: PopoverCloseProps) {
   // Default close button (X icon)
   if (!children) {
     return (
-      <BasePopover.Close className={[styles.close, className].filter(Boolean).join(' ')}>
+      <BasePopover.Close
+        aria-label="Close popover"
+        className={[styles.close, className].filter(Boolean).join(' ')}
+      >
         <CloseIcon />
       </BasePopover.Close>
     );

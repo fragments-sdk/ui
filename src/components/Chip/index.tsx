@@ -54,17 +54,24 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
       styles[size],
       styles[variant],
       selected && styles.selected,
+      onRemove && styles.withRemove,
       className,
     ]
       .filter(Boolean)
       .join(' ');
 
-    return (
+    const handleRemoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      onRemove?.();
+    };
+
+    const removeAriaLabel = `Remove ${typeof children === 'string' ? children : 'chip'}`;
+
+    const chipButton = (
       <button
         ref={ref}
         type="button"
-        role="option"
-        aria-selected={selected}
+        aria-pressed={selected}
         disabled={disabled}
         className={classes}
         onClick={onClick}
@@ -81,28 +88,26 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
           </span>
         )}
         <span>{children}</span>
-        {onRemove && (
-          <span
-            role="button"
-            tabIndex={0}
-            aria-label={`Remove ${typeof children === 'string' ? children : 'chip'}`}
-            className={styles.remove}
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                onRemove();
-              }
-            }}
-          >
-            &times;
-          </span>
-        )}
       </button>
+    );
+
+    if (!onRemove) {
+      return chipButton;
+    }
+
+    return (
+      <span className={styles.removableChip} data-disabled={disabled || undefined}>
+        {chipButton}
+        <button
+          type="button"
+          className={styles.remove}
+          onClick={handleRemoveClick}
+          aria-label={removeAriaLabel}
+          disabled={disabled}
+        >
+          &times;
+        </button>
+      </span>
     );
   }
 );
@@ -132,13 +137,18 @@ function ChipGroupInner(
   const classes = [styles.group, className].filter(Boolean).join(' ');
 
   return (
-    <div ref={ref} role="listbox" aria-multiselectable="true" className={classes}>
+    <div ref={ref} className={classes}>
       {React.Children.map(children, (child) => {
         if (!React.isValidElement<ChipProps>(child)) return child;
         const chipValue = child.props.value ?? (typeof child.props.children === 'string' ? child.props.children : '');
         return React.cloneElement(child, {
           selected: currentValue.includes(chipValue),
-          onClick: () => toggle(chipValue),
+          onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+            child.props.onClick?.(e);
+            if (!e.defaultPrevented) {
+              toggle(chipValue);
+            }
+          },
         } as Partial<ChipProps>);
       })}
     </div>

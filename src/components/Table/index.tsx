@@ -113,15 +113,17 @@ export function Table<T>({
     );
   }
 
-  // Keyboard handler for sortable headers
-  const handleHeaderKeyDown = (
-    event: React.KeyboardEvent<HTMLTableCellElement>,
-    toggleSorting: ((event: unknown) => void) | undefined
+  const isInteractiveTarget = (
+    target: EventTarget | null,
+    currentTarget: HTMLTableRowElement
   ) => {
-    if (toggleSorting && (event.key === 'Enter' || event.key === ' ')) {
-      event.preventDefault();
-      toggleSorting(event);
-    }
+    if (!(target instanceof Element)) return false;
+
+    const interactiveElement = target.closest(
+      'button, a, input, select, textarea, [role="button"], [role="link"], [role="checkbox"], [role="switch"]'
+    );
+
+    return Boolean(interactiveElement && currentTarget.contains(interactiveElement));
   };
 
   return (
@@ -153,10 +155,6 @@ export function Table<T>({
                       width: header.getSize() !== 150 ? header.getSize() : undefined,
                     }}
                     scope="col"
-                    tabIndex={canSort ? 0 : undefined}
-                    role={canSort ? 'columnheader' : undefined}
-                    onClick={toggleSorting}
-                    onKeyDown={canSort ? (e) => handleHeaderKeyDown(e, toggleSorting) : undefined}
                     aria-sort={
                       sortDirection
                         ? sortDirection === 'asc'
@@ -167,21 +165,20 @@ export function Table<T>({
                         : undefined
                     }
                   >
-                    <div
-                      className={[
-                        styles.headerContent,
-                        canSort && styles.sortable,
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      {canSort && (
+                    {canSort ? (
+                      <button
+                        type="button"
+                        className={styles.sortButton}
+                        onClick={toggleSorting}
+                      >
+                        <span className={styles.headerContent}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </span>
                         <span className={styles.sortIndicator} aria-hidden="true">
                           {sortDirection === 'asc' ? (
                             <SortAscIcon />
@@ -191,8 +188,17 @@ export function Table<T>({
                             <SortIcon />
                           )}
                         </span>
-                      )}
-                    </div>
+                      </button>
+                    ) : (
+                      <div className={styles.headerContent}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </div>
+                    )}
                   </th>
                 );
               })}
@@ -203,6 +209,20 @@ export function Table<T>({
           {table.getRowModel().rows.map((row) => {
             const isClickable = !!onRowClick;
             const isSelected = selectable ? row.getIsSelected() : false;
+            const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
+              if (!onRowClick) return;
+              if (isInteractiveTarget(event.target, event.currentTarget)) return;
+              onRowClick(row.original);
+            };
+
+            const handleRowKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+              if (!onRowClick) return;
+              if (isInteractiveTarget(event.target, event.currentTarget)) return;
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onRowClick(row.original);
+              }
+            };
 
             return (
               <tr
@@ -214,7 +234,9 @@ export function Table<T>({
                 ]
                   .filter(Boolean)
                   .join(' ')}
-                onClick={isClickable ? () => onRowClick(row.original) : undefined}
+                onClick={isClickable ? handleRowClick : undefined}
+                onKeyDown={isClickable ? handleRowKeyDown : undefined}
+                tabIndex={isClickable ? 0 : undefined}
                 data-selected={isSelected || undefined}
               >
                 {row.getVisibleCells().map((cell) => (

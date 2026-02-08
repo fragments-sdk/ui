@@ -33,6 +33,17 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   value?: string;
   /** ID for the checkbox input */
   id?: string;
+  /** Accessible label for icon-only mode */
+  'aria-label'?: string;
+  /** Accessible labelled-by relationship for icon-only mode */
+  'aria-labelledby'?: string;
+  /** Accessible described-by relationship */
+  'aria-describedby'?: string;
+}
+
+function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
+  const merged = ids.filter(Boolean).join(' ').trim();
+  return merged.length > 0 ? merged : undefined;
 }
 
 // ============================================
@@ -93,10 +104,18 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       value,
       className,
       id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
       ...htmlProps
     },
     ref
   ) {
+    const generatedId = React.useId();
+    const checkboxId = id ?? `checkbox-${generatedId}`;
+    const labelId = label ? `${checkboxId}-label` : undefined;
+    const descriptionId = description ? `${checkboxId}-description` : undefined;
+
     const checkboxClasses = [
       styles.checkbox,
       size === 'sm' && styles.sm,
@@ -124,7 +143,10 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           required={required}
           name={name}
           value={value}
-          id={id}
+          id={checkboxId}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
           className={[checkboxClasses, className].filter(Boolean).join(' ')}
         >
           <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
@@ -146,7 +168,10 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           required={required}
           name={name}
           value={value}
-          id={id}
+          id={checkboxId}
+          aria-label={ariaLabel}
+          aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+          aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
           className={checkboxClasses}
         >
           <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
@@ -154,9 +179,9 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           </BaseCheckbox.Indicator>
         </BaseCheckbox.Root>
         <div className={styles.content}>
-          <span className={labelClasses}>{label}</span>
+          <span id={labelId} className={labelClasses}>{label}</span>
           {description && (
-            <span className={styles.description}>{description}</span>
+            <span id={descriptionId} className={styles.description}>{description}</span>
           )}
         </div>
       </label>

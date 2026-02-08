@@ -17,6 +17,12 @@
       opacity: 1;
     }
   }
+
+  &:focus-within {
+    .actions {
+      opacity: 1;
+    }
+  }
 }
 
 // Role-based styles

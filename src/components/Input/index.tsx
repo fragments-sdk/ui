@@ -28,6 +28,11 @@ export interface InputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   name?: string;
 }
 
+function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
+  const merged = ids.filter(Boolean).join(' ').trim();
+  return merged.length > 0 ? merged : undefined;
+}
+
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   function Input(
     {
@@ -51,10 +56,16 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       inputClassName,
       name,
       id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
       ...htmlProps
     },
     ref
   ) {
+    const generatedId = React.useId();
+    const helperId = helperText ? `input-helper-${generatedId}` : undefined;
+
     const inputClasses = [
       styles.input,
       styles[size],
@@ -87,6 +98,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onBlur={onBlur}
         onFocus={onFocus}
         onKeyDown={onKeyDown}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
         className={inputClasses}
         style={inputStyle}
         render={<input />}
@@ -105,7 +119,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           inputElement
         )}
         {helperText && (
-          <Field.Description className={helperClasses}>
+          <Field.Description id={helperId} className={helperClasses}>
             {helperText}
           </Field.Description>
         )}

@@ -16,6 +16,12 @@ export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   valueSuffix?: string;
   disabled?: boolean;
   name?: string;
+  /** Accessible label when visible label is omitted */
+  'aria-label'?: string;
+  /** Accessible labelled-by relationship */
+  'aria-labelledby'?: string;
+  /** Accessible described-by relationship */
+  'aria-describedby'?: string;
 }
 
 export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
@@ -34,6 +40,9 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       className,
       name,
       id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
       ...htmlProps
     },
     ref
@@ -47,8 +56,6 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       setInternalValue(val);
       onChange?.(val);
     };
-
-    const sliderValue = value !== undefined ? [value] : (defaultValue !== undefined ? [defaultValue] : undefined);
 
     return (
       <Field.Root {...htmlProps} disabled={disabled} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
@@ -64,7 +71,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
         )}
         <BaseSlider.Root
           ref={ref}
-          value={sliderValue}
+          value={value !== undefined ? [value] : undefined}
           defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
           onValueChange={handleChange}
           min={min}
@@ -73,6 +80,9 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
           disabled={disabled}
           name={name}
           id={id}
+          aria-label={ariaLabel || (label ? undefined : 'Slider')}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
           className={styles.root}
         >
           <BaseSlider.Control className={styles.control}>

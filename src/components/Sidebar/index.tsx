@@ -3,6 +3,7 @@ import styles from './Sidebar.module.scss';
 import { Tooltip } from '../Tooltip';
 import { Skeleton } from '../Skeleton';
 import { Collapsible } from '../Collapsible';
+import { useFocusTrap } from '../../utils/a11y';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
 
@@ -271,6 +272,7 @@ interface SidebarContextValue {
   collapsedWidth: string;
   collapsible: SidebarCollapsible;
   toggleSidebar: () => void;
+  sidebarId: string;
 }
 
 const SidebarContext = React.createContext<SidebarContextValue | null>(null);
@@ -294,6 +296,7 @@ function useSidebar() {
       collapsedWidth: '64px',
       collapsible: 'icon' as SidebarCollapsible,
       toggleSidebar: () => {},
+      sidebarId: 'sidebar',
       state: 'expanded' as 'expanded' | 'collapsed' | 'open' | 'closed',
     };
   }
@@ -379,6 +382,7 @@ function SidebarProvider({
   enableKeyboardShortcut = true,
 }: SidebarProviderProps) {
   const isMobile = useIsMobile();
+  const sidebarId = React.useId();
 
   const [collapsed, setCollapsed] = useControllableState(
     controlledCollapsed,
@@ -456,6 +460,7 @@ function SidebarProvider({
     collapsedWidth,
     collapsible,
     toggleSidebar,
+    sidebarId,
   };
 
   return (
@@ -479,6 +484,7 @@ function SidebarRoot({
   collapsible = 'icon',
   className,
   style: styleProp,
+  'aria-label': ariaLabel,
   ...htmlProps
 }: SidebarProps) {
   // Check if we're inside a SidebarProvider
@@ -506,6 +512,11 @@ function SidebarRoot({
   const resolvedWidth = existingContext ? existingContext.width : width;
   const resolvedCollapsedWidth = existingContext ? existingContext.collapsedWidth : collapsedWidth;
   const resolvedCollapsible = existingContext ? existingContext.collapsible : collapsible;
+  const sidebarId = React.useId();
+  const resolvedSidebarId = existingContext ? existingContext.sidebarId : sidebarId;
+  const sidebarRef = React.useRef<HTMLElement>(null);
+
+  useFocusTrap(sidebarRef, isMobile && open);
 
   const toggleSidebar = React.useCallback(() => {
     if (resolvedCollapsible === 'none') return;
@@ -558,6 +569,7 @@ function SidebarRoot({
     collapsedWidth: resolvedCollapsedWidth,
     collapsible: resolvedCollapsible,
     toggleSidebar,
+    sidebarId: resolvedSidebarId,
   };
 
   const isCollapsedForStyle = resolvedCollapsible === 'icon' && collapsed;
@@ -580,9 +592,15 @@ function SidebarRoot({
 
   const content = (
     <aside
+      ref={sidebarRef}
+      id={resolvedSidebarId}
       {...htmlProps}
       className={classes}
       style={style}
+      role={isMobile ? 'dialog' : undefined}
+      aria-modal={isMobile && open ? true : undefined}
+      aria-hidden={isMobile && !open ? true : undefined}
+      aria-label={isMobile ? (ariaLabel || 'Sidebar navigation') : ariaLabel}
       data-state={isMobile ? (open ? 'open' : 'closed') : (collapsed ? 'collapsed' : 'expanded')}
       data-position={resolvedPosition}
       data-collapsible={resolvedCollapsible}
@@ -663,13 +681,15 @@ function SidebarSection({
   return (
     <div className={classes} role="group" aria-label={label}>
       <Collapsible defaultOpen={defaultOpen} className={styles.sectionCollapsible}>
-        <Collapsible.Trigger
-          className={styles.sectionHeader}
-          chevronPosition="end"
-        >
-          <span className={styles.sectionLabel}>{label}</span>
-          {showAction && <span className={styles.sectionActionWrapper} onClick={(e) => e.stopPropagation()}>{action}</span>}
-        </Collapsible.Trigger>
+        <div className={styles.sectionHeader}>
+          <Collapsible.Trigger
+            className={styles.sectionTrigger}
+            chevronPosition="end"
+          >
+            <span className={styles.sectionLabel}>{label}</span>
+          </Collapsible.Trigger>
+          {showAction && <div className={styles.sectionActionWrapper}>{action}</div>}
+        </div>
         <Collapsible.Content className={styles.sectionContent}>
           <ul className={styles.sectionList}>
             {children}
@@ -887,7 +907,7 @@ function SidebarFooter({ children, className }: SidebarFooterProps) {
 }
 
 function SidebarTrigger({ children, 'aria-label': ariaLabel = 'Toggle navigation', className }: SidebarTriggerProps) {
-  const { open, setOpen, isMobile } = useSidebarContext();
+  const { open, setOpen, isMobile, sidebarId } = useSidebarContext();
 
   // Only render trigger on mobile
   if (!isMobile) {
@@ -903,6 +923,7 @@ function SidebarTrigger({ children, 'aria-label': ariaLabel = 'Toggle navigation
       onClick={() => setOpen(!open)}
       aria-label={ariaLabel}
       aria-expanded={open}
+      aria-controls={sidebarId}
     >
       {children || (open ? <CloseIcon /> : <MenuIcon />)}
     </button>
@@ -989,6 +1010,7 @@ function SidebarMenuSkeleton({
   const isCollapsed = collapsed && !isMobile;
 
   const classes = [styles.menuSkeleton, className].filter(Boolean).join(' ');
+  const labelWidths = ['64%', '72%', '68%', '79%', '74%', '66%', '83%', '70%'];
 
   return (
     <div className={classes} aria-hidden="true">
@@ -999,7 +1021,7 @@ function SidebarMenuSkeleton({
             <Skeleton
               variant="text"
               className={styles.skeletonLabel}
-              width={`${60 + Math.random() * 30}%`}
+              width={labelWidths[i % labelWidths.length]}
             />
           )}
         </div>

@@ -169,13 +169,21 @@ function ToastItem({
   variant = 'default',
   action,
   onDismiss,
+  onPause,
+  onResume,
   className,
   ...htmlProps
-}: ToastProps & { id?: string }) {
+}: ToastProps & {
+  id?: string;
+  onPause?: () => void;
+  onResume?: () => void;
+}) {
   const Icon = variantIcons[variant];
   const uniqueId = React.useId();
+  const toastRef = React.useRef<HTMLDivElement>(null);
   const titleId = title ? `toast-title-${id || uniqueId}` : undefined;
   const descId = description ? `toast-desc-${id || uniqueId}` : undefined;
+  const liveRole = variant === 'error' || variant === 'warning' ? 'alert' : 'status';
 
   const toastClasses = [
     styles.toast,
@@ -185,11 +193,23 @@ function ToastItem({
 
   return (
     <div
+      ref={toastRef}
       {...htmlProps}
       className={toastClasses}
-      role="alert"
+      role={liveRole}
+      aria-atomic="true"
       aria-labelledby={titleId}
       aria-describedby={descId}
+      onMouseEnter={onPause}
+      onMouseLeave={onResume}
+      onFocusCapture={onPause}
+      onBlurCapture={() => {
+        requestAnimationFrame(() => {
+          if (!toastRef.current?.contains(document.activeElement)) {
+            onResume?.();
+          }
+        });
+      }}
     >
       {Icon && (
         <span className={styles.icon}>
@@ -231,10 +251,14 @@ function ToastContainer({
   toasts,
   position,
   onDismiss,
+  onPause,
+  onResume,
 }: {
   toasts: ToastData[];
   position: ToastPosition;
   onDismiss: (id: string) => void;
+  onPause: (id: string) => void;
+  onResume: (id: string) => void;
 }) {
   const containerClasses = [
     styles.container,
@@ -244,19 +268,14 @@ function ToastContainer({
   // Always render the container for screen reader live region to work properly
   // The live region must exist before announcements are made
   return (
-    <div
-      className={containerClasses}
-      role="region"
-      aria-label="Notifications"
-      aria-live="polite"
-      aria-atomic="false"
-      aria-relevant="additions"
-    >
+    <div className={containerClasses} aria-label="Notifications">
       {toasts.map((toast) => (
         <ToastItem
           key={toast.id}
           {...toast}
           onDismiss={() => onDismiss(toast.id)}
+          onPause={() => onPause(toast.id)}
+          onResume={() => onResume(toast.id)}
         />
       ))}
     </div>
@@ -271,39 +290,112 @@ let toastCounter = 0;
 
 export function ToastProvider({
   position = 'bottom-right',
-  duration = 5000,
+  duration = 8000,
   max = 5,
   children,
 }: ToastProviderProps) {
   const [toasts, setToasts] = React.useState<ToastData[]>([]);
+  const timeoutRef = React.useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const remainingRef = React.useRef(new Map<string, number>());
+  const startTimeRef = React.useRef(new Map<string, number>());
+
+  const clearRemovalTimer = React.useCallback((id: string) => {
+    const timeout = timeoutRef.current.get(id);
+    if (timeout) {
+      clearTimeout(timeout);
+      timeoutRef.current.delete(id);
+    }
+  }, []);
+
+  const scheduleRemoval = React.useCallback(
+    (id: string, delay: number) => {
+      if (delay <= 0) return;
+      clearRemovalTimer(id);
+      remainingRef.current.set(id, delay);
+      startTimeRef.current.set(id, Date.now());
+
+      const timeout = setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+        clearRemovalTimer(id);
+        remainingRef.current.delete(id);
+        startTimeRef.current.delete(id);
+      }, delay);
+
+      timeoutRef.current.set(id, timeout);
+    },
+    [clearRemovalTimer]
+  );
 
   const addToast = React.useCallback((toast: Omit<ToastData, 'id'>) => {
     const id = `toast-${++toastCounter}`;
-    const toastDuration = toast.duration ?? duration;
+    const toastDuration = toast.duration ?? (toast.action ? 0 : duration);
 
     setToasts((prev) => {
-      const newToasts = [...prev, { ...toast, id }];
-      // Limit to max toasts
-      return newToasts.slice(-max);
+      const nextToasts = [...prev, { ...toast, id }];
+      const overflowCount = Math.max(0, nextToasts.length - max);
+
+      if (overflowCount > 0) {
+        const removedToasts = nextToasts.slice(0, overflowCount);
+        removedToasts.forEach((removedToast) => {
+          clearRemovalTimer(removedToast.id);
+          remainingRef.current.delete(removedToast.id);
+          startTimeRef.current.delete(removedToast.id);
+        });
+      }
+
+      return overflowCount > 0 ? nextToasts.slice(overflowCount) : nextToasts;
     });
 
     // Auto-dismiss
     if (toastDuration > 0) {
-      setTimeout(() => {
-        setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, toastDuration);
+      scheduleRemoval(id, toastDuration);
     }
 
     return id;
-  }, [duration, max]);
+  }, [clearRemovalTimer, duration, max, scheduleRemoval]);
 
   const removeToast = React.useCallback((id: string) => {
+    clearRemovalTimer(id);
+    remainingRef.current.delete(id);
+    startTimeRef.current.delete(id);
     setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
+  }, [clearRemovalTimer]);
+
+  const pauseToast = React.useCallback((id: string) => {
+    const remaining = remainingRef.current.get(id);
+    if (remaining === undefined) return;
+
+    const startedAt = startTimeRef.current.get(id);
+    if (startedAt) {
+      const elapsed = Date.now() - startedAt;
+      remainingRef.current.set(id, Math.max(remaining - elapsed, 0));
+    }
+    clearRemovalTimer(id);
+  }, [clearRemovalTimer]);
+
+  const resumeToast = React.useCallback((id: string) => {
+    const remaining = remainingRef.current.get(id);
+    if (remaining === undefined || remaining <= 0) return;
+    scheduleRemoval(id, remaining);
+  }, [scheduleRemoval]);
 
   const clearToasts = React.useCallback(() => {
+    timeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+    timeoutRef.current.clear();
+    remainingRef.current.clear();
+    startTimeRef.current.clear();
     setToasts([]);
   }, []);
+
+  React.useEffect(
+    () => () => {
+      timeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+      timeoutRef.current.clear();
+      remainingRef.current.clear();
+      startTimeRef.current.clear();
+    },
+    []
+  );
 
   const value = React.useMemo(
     () => ({ toasts, addToast, removeToast, clearToasts }),
@@ -317,6 +409,8 @@ export function ToastProvider({
         toasts={toasts}
         position={position}
         onDismiss={removeToast}
+        onPause={pauseToast}
+        onResume={resumeToast}
       />
     </ToastContext.Provider>
   );
