@@ -23,10 +23,10 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "fragments dev",
+    "dev": "node ../../packages/cli/dist/bin.js dev",
     "build": "node ../../packages/cli/dist/bin.js build",
     "lint": "eslint src",
-    "validate": "fragments validate",
+    "validate": "node ../../packages/cli/dist/bin.js validate",
     "test": "vitest run"
   },
   "peerDependencies": {
