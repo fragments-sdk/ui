@@ -44,6 +44,16 @@ export default defineSegment({
       type: 'number',
       description: 'Current progress value (0-100). Null for indeterminate.',
     },
+    min: {
+      type: 'number',
+      description: 'Minimum value',
+      default: '0',
+    },
+    max: {
+      type: 'number',
+      description: 'Maximum value',
+      default: '100',
+    },
     size: {
       type: 'enum',
       description: 'Size of the progress bar',
@@ -64,6 +74,10 @@ export default defineSegment({
       type: 'boolean',
       description: 'Show percentage value',
       default: 'false',
+    },
+    formatValue: {
+      type: 'function',
+      description: 'Custom formatter for displayed progress value',
     },
   },
 

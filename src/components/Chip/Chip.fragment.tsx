@@ -64,11 +64,6 @@ export default defineSegment({
       description: 'Whether the chip is in a selected state',
       default: 'false',
     },
-    disabled: {
-      type: 'boolean',
-      description: 'Disables the chip',
-      default: 'false',
-    },
     icon: {
       type: 'node',
       description: 'Icon element rendered before the label',

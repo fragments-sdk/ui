@@ -459,11 +459,6 @@ export default defineSegment({
       values: ['icon', 'offcanvas', 'none'],
       default: 'icon',
     },
-    asChild: {
-      type: 'boolean',
-      description: '(Sidebar.Item) Render as child element for polymorphic composition',
-      default: false,
-    },
   },
 
   relations: [

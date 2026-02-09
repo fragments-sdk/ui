@@ -37,6 +37,11 @@ export default defineSegment({
   },
 
   props: {
+    children: {
+      type: 'node',
+      description: 'Prompt composition using Prompt sub-components',
+      required: true,
+    },
     value: {
       type: 'string',
       description: 'Controlled input value',
@@ -87,6 +92,12 @@ export default defineSegment({
       type: 'boolean',
       default: 'true',
       description: 'Submit on Enter (Shift+Enter for newline)',
+    },
+    variant: {
+      type: 'enum',
+      values: ['default', 'fixed', 'sticky'],
+      default: 'default',
+      description: 'Visual/positioning variant',
     },
   },
 

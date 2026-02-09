@@ -43,13 +43,14 @@ export default defineSegment({
   },
 
   props: {
+    children: {
+      type: 'node',
+      description: 'Fieldset content including Fieldset.Legend and form fields',
+      required: true,
+    },
     disabled: {
       type: 'boolean',
       description: 'Disables all fields within the fieldset',
-    },
-    className: {
-      type: 'string',
-      description: 'Additional CSS class',
     },
   },
 

@@ -47,18 +47,6 @@ export default defineSegment({
       description: 'Listbox.Item, Listbox.Group, or Listbox.Empty components',
       required: true,
     },
-    'aria-label': {
-      type: 'string',
-      description: 'Accessible label for the listbox',
-    },
-    className: {
-      type: 'string',
-      description: 'Additional CSS class',
-    },
-    style: {
-      type: 'object',
-      description: 'Inline styles',
-    },
   },
 
   relations: [

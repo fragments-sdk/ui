@@ -57,20 +57,21 @@ export default defineSegment({
       default: 'md',
       description: 'Button size',
     },
-    disabled: {
-      type: 'boolean',
-      default: false,
-      description: 'Whether the button is disabled',
-    },
-    onClick: {
-      type: 'function',
-      description: 'Click handler',
-    },
-    type: {
+    as: {
       type: 'enum',
-      values: ['button', 'submit', 'reset'],
+      values: ['button', 'a'],
       default: 'button',
-      description: 'HTML button type attribute',
+      description: 'Render as a native button or anchor element',
+    },
+    icon: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Render as icon-only button (square aspect ratio)',
+    },
+    fullWidth: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Make button full width of container',
     },
   },
 

@@ -74,6 +74,11 @@ export default defineSegment({
       description: 'Delay before showing (ms)',
       default: '400',
     },
+    closeDelay: {
+      type: 'number',
+      description: 'Delay before hiding (ms)',
+      default: '0',
+    },
     arrow: {
       type: 'boolean',
       description: 'Show arrow pointing to trigger',
@@ -83,6 +88,19 @@ export default defineSegment({
       type: 'boolean',
       description: 'Disable the tooltip',
       default: 'false',
+    },
+    open: {
+      type: 'boolean',
+      description: 'Controlled open state',
+    },
+    defaultOpen: {
+      type: 'boolean',
+      description: 'Default open state',
+      default: 'false',
+    },
+    onOpenChange: {
+      type: 'function',
+      description: 'Callback when open state changes',
     },
   },
 

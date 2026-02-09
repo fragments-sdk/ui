@@ -65,11 +65,11 @@ export default defineSegment({
       required: true,
     },
     value: {
-      type: 'string',
+      type: 'union',
       description: 'Controlled selected value (string for single, string[] for multiple)',
     },
     defaultValue: {
-      type: 'string',
+      type: 'union',
       description: 'Default selected value (uncontrolled)',
     },
     onValueChange: {
@@ -80,6 +80,19 @@ export default defineSegment({
       type: 'boolean',
       description: 'Allow multiple selections with chips',
       default: 'false',
+    },
+    open: {
+      type: 'boolean',
+      description: 'Controlled open state of the dropdown',
+    },
+    defaultOpen: {
+      type: 'boolean',
+      description: 'Initial open state for uncontrolled usage',
+      default: 'false',
+    },
+    onOpenChange: {
+      type: 'function',
+      description: 'Called when dropdown open state changes',
     },
     placeholder: {
       type: 'string',
@@ -94,11 +107,6 @@ export default defineSegment({
       type: 'boolean',
       description: 'Auto-highlight first matching item while filtering',
       default: 'true',
-    },
-    maxVisibleItems: {
-      type: 'number',
-      description: 'Maximum visible options before scrolling. Shows half of the next item as a scroll hint.',
-      default: '4',
     },
   },
 

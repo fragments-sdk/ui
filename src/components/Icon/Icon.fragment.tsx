@@ -66,6 +66,11 @@ export default defineSegment({
       values: ['default', 'primary', 'secondary', 'tertiary', 'accent', 'success', 'warning', 'error'],
       default: 'default',
     },
+    color: {
+      type: 'enum',
+      description: 'Deprecated alias for variant',
+      values: ['primary', 'secondary', 'tertiary', 'accent', 'success', 'warning', 'error'],
+    },
   },
 
   relations: [

@@ -86,6 +86,14 @@ export default defineSegment({
       type: 'element',
       description: 'A recharts chart component (LineChart, BarChart, etc.)',
     },
+    summary: {
+      type: 'string',
+      description: 'Non-visual summary announced to assistive technology users',
+    },
+    dataTable: {
+      type: 'node',
+      description: 'Optional accessible data table or textual fallback',
+    },
   },
 
   relations: [

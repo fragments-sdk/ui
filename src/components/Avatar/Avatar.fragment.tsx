@@ -67,6 +67,10 @@ export default defineSegment({
       default: 'circle',
       description: 'Shape variant',
     },
+    color: {
+      type: 'string',
+      description: 'Custom background color for fallback avatar',
+    },
   },
 
   relations: [

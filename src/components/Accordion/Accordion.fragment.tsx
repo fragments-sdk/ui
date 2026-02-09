@@ -71,6 +71,12 @@ export default defineSegment({
       description: 'Whether all items can be closed (single mode only)',
       default: 'false',
     },
+    headingLevel: {
+      type: 'enum',
+      description: 'Semantic heading level for accordion triggers',
+      values: ['2', '3', '4', '5', '6'],
+      default: '3',
+    },
   },
 
   relations: [

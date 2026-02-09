@@ -108,6 +108,18 @@ export default defineSegment({
       type: 'object',
       description: 'Optional action button { label, onClick }',
     },
+    onDismiss: {
+      type: 'function',
+      description: 'Callback when toast should be dismissed',
+    },
+    onPause: {
+      type: 'function',
+      description: 'Callback when auto-dismiss timer should pause',
+    },
+    onResume: {
+      type: 'function',
+      description: 'Callback when auto-dismiss timer should resume',
+    },
   },
 
   relations: [

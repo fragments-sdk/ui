@@ -48,6 +48,11 @@ export default defineSegment({
   },
 
   props: {
+    children: {
+      type: 'node',
+      description: 'Form content',
+      required: true,
+    },
     errors: {
       type: 'object',
       description: 'Server-side errors keyed by field name',
@@ -60,9 +65,10 @@ export default defineSegment({
       type: 'function',
       description: 'Called with field name when errors should be cleared',
     },
-    className: {
-      type: 'string',
-      description: 'Additional CSS class',
+    validationMode: {
+      type: 'enum',
+      description: 'When field validation should run',
+      values: ['onSubmit', 'onBlur', 'onChange'],
     },
   },
 

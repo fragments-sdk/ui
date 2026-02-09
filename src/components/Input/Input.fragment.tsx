@@ -55,6 +55,12 @@ export default defineSegment({
       default: 'text',
       description: 'HTML input type for validation and keyboard',
     },
+    size: {
+      type: 'enum',
+      values: ['sm', 'md', 'lg'],
+      default: 'md',
+      description: 'Size variant',
+    },
     disabled: {
       type: 'boolean',
       default: false,
@@ -73,9 +79,21 @@ export default defineSegment({
       type: 'string',
       description: 'Helper or error message below input',
     },
+    shortcut: {
+      type: 'string',
+      description: 'Keyboard shortcut hint displayed inside the input',
+    },
     onChange: {
       type: 'function',
       description: 'Called with new value on change',
+    },
+    inputStyle: {
+      type: 'object',
+      description: 'Inline styles applied directly to the input element',
+    },
+    inputClassName: {
+      type: 'string',
+      description: 'Class name applied directly to the input element',
     },
   },
 

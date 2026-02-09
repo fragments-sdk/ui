@@ -40,6 +40,11 @@ export default defineSegment({
   },
 
   props: {
+    children: {
+      type: 'node',
+      description: 'RadioGroup.Item elements',
+      required: true,
+    },
     value: {
       type: 'string',
       description: 'Controlled selected value',

@@ -39,6 +39,10 @@ export default defineSegment({
   },
 
   props: {
+    children: {
+      type: 'node',
+      description: 'Grid items and content',
+    },
     columns: {
       type: 'union',
       description: 'Number of columns: a number (1-12), a responsive object { base, sm, md, lg, xl }, or "auto" for auto-fill',

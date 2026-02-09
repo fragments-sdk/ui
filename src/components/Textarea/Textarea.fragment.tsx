@@ -52,6 +52,14 @@ export default defineSegment({
       default: 3,
       description: 'Number of visible text rows',
     },
+    minRows: {
+      type: 'number',
+      description: 'Minimum number of rows when auto-resizing',
+    },
+    maxRows: {
+      type: 'number',
+      description: 'Maximum number of rows when auto-resizing',
+    },
     label: {
       type: 'string',
       description: 'Label text above the textarea',

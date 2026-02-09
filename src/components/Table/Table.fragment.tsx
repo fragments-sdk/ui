@@ -86,15 +86,35 @@ export default defineSegment({
       description: 'Data rows to display',
       required: true,
     },
+    getRowId: {
+      type: 'function',
+      description: 'Unique key extractor for each row',
+    },
     sortable: {
       type: 'boolean',
       description: 'Enable column sorting',
       default: 'false',
     },
+    sorting: {
+      type: 'object',
+      description: 'Controlled sorting state',
+    },
+    onSortingChange: {
+      type: 'function',
+      description: 'Sorting change handler',
+    },
     selectable: {
       type: 'boolean',
       description: 'Enable row selection',
       default: 'false',
+    },
+    rowSelection: {
+      type: 'object',
+      description: 'Controlled row selection state',
+    },
+    onRowSelectionChange: {
+      type: 'function',
+      description: 'Row selection change handler',
     },
     onRowClick: {
       type: 'function',
@@ -110,6 +130,15 @@ export default defineSegment({
       description: 'Table density',
       values: ['sm', 'md'],
       default: 'md',
+    },
+    caption: {
+      type: 'string',
+      description: 'Visible caption for the table',
+    },
+    captionHidden: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Hide caption visually but keep it for screen readers',
     },
     striped: {
       type: 'boolean',

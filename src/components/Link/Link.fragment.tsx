@@ -47,10 +47,6 @@ export default defineSegment({
       description: 'Link text content',
       required: true,
     },
-    href: {
-      type: 'string',
-      description: 'URL destination',
-    },
     variant: {
       type: 'enum',
       description: 'Visual style variant',

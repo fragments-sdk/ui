@@ -42,6 +42,11 @@ export default defineSegment({
   },
 
   props: {
+    children: {
+      type: 'node',
+      description: 'Field content (Label, Control, Description, Error)',
+      required: true,
+    },
     name: {
       type: 'string',
       description: 'Field name, used for error distribution from Form',
@@ -66,10 +71,6 @@ export default defineSegment({
     validationDebounceTime: {
       type: 'number',
       description: 'Debounce time in ms for onChange validation',
-    },
-    className: {
-      type: 'string',
-      description: 'Additional CSS class',
     },
   },
 

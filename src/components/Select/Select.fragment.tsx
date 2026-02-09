@@ -72,6 +72,19 @@ export default defineSegment({
       type: 'function',
       description: 'Called when selection changes',
     },
+    open: {
+      type: 'boolean',
+      description: 'Controlled open state of the dropdown',
+    },
+    defaultOpen: {
+      type: 'boolean',
+      description: 'Initial open state for uncontrolled usage',
+      default: 'false',
+    },
+    onOpenChange: {
+      type: 'function',
+      description: 'Called when dropdown open state changes',
+    },
     placeholder: {
       type: 'string',
       description: 'Placeholder text when no value selected',
@@ -80,11 +93,6 @@ export default defineSegment({
       type: 'boolean',
       description: 'Disable the select',
       default: 'false',
-    },
-    maxVisibleItems: {
-      type: 'number',
-      description: 'Maximum visible options before scrolling. Shows half of the next item as a scroll hint.',
-      default: '4',
     },
   },
 

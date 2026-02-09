@@ -69,6 +69,11 @@ export default defineSegment({
       values: ['none', 'sm', 'md', 'lg', 'full'],
       description: 'Border radius override',
     },
+    static: {
+      type: 'boolean',
+      default: false,
+      description: 'Disable skeleton animation',
+    },
   },
 
   relations: [

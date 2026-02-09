@@ -138,9 +138,15 @@ export default defineSegment({
       default: 5,
       description: 'Number of lines to show when collapsed',
     },
-    className: {
-      type: 'string',
-      description: 'Additional CSS class name',
+    compact: {
+      type: 'boolean',
+      default: false,
+      description: 'Compact mode with reduced padding',
+    },
+    persistentCopy: {
+      type: 'boolean',
+      default: false,
+      description: 'Show a persistent copy button that is always visible',
     },
   },
 
