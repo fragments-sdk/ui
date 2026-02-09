@@ -420,6 +420,9 @@ export {
 // Box
 export { Box, type BoxProps } from './components/Box';
 
+// ScrollArea
+export { ScrollArea, type ScrollAreaProps } from './components/ScrollArea';
+
 // Chip
 export { Chip, type ChipProps, type ChipGroupProps } from './components/Chip';
 

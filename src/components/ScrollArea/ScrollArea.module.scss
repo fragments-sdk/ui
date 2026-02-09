@@ -1,0 +1,136 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// ScrollArea Root
+// ============================================
+
+.root {
+  position: relative;
+  overflow: hidden;
+}
+
+// ============================================
+// Fade masks — applied to the viewport via CSS mask-image.
+// This fades out the actual content at the edges, which is
+// far more visible than overlaying a gradient pseudo-element.
+// ============================================
+
+.fadeMaskEnd {
+  &.horizontal {
+    mask-image: linear-gradient(to right, black calc(100% - 48px), transparent 100%);
+  }
+
+  &.vertical {
+    mask-image: linear-gradient(to bottom, black calc(100% - 32px), transparent 100%);
+  }
+
+  &.both {
+    mask-image: linear-gradient(to right, black calc(100% - 48px), transparent 100%);
+  }
+}
+
+.fadeMaskStart {
+  &.horizontal {
+    mask-image: linear-gradient(to left, black calc(100% - 48px), transparent 100%);
+  }
+
+  &.vertical {
+    mask-image: linear-gradient(to top, black calc(100% - 32px), transparent 100%);
+  }
+
+  &.both {
+    mask-image: linear-gradient(to left, black calc(100% - 48px), transparent 100%);
+  }
+}
+
+.fadeMaskBoth {
+  &.horizontal {
+    mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent 100%);
+  }
+
+  &.vertical {
+    mask-image: linear-gradient(to bottom, transparent, black 32px, black calc(100% - 32px), transparent 100%);
+  }
+
+  &.both {
+    mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent 100%);
+  }
+}
+
+// ============================================
+// Viewport (scrollable area)
+// ============================================
+
+.viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fui-border-strong, $fui-border-strong) transparent;
+
+  // Webkit custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--fui-border-strong, $fui-border-strong);
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+
+    &:hover {
+      background-color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+  }
+}
+
+// Orientation variants
+.horizontal {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.vertical {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.both {
+  overflow: auto;
+}
+
+// ============================================
+// Scrollbar visibility modes
+// ============================================
+
+// Always show scrollbar
+.scrollbarAlways {
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--fui-border-strong, $fui-border-strong);
+  }
+}
+
+// Only show scrollbar on hover
+.scrollbarHover {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  &:hover {
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+  }
+}
+

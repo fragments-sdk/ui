@@ -27,11 +27,15 @@
 
 // Desktop collapsed state
 .collapsed {
-  width: var(--sidebar-collapsed-width);
+  width: var(--sidebar-effective-collapsed-width, var(--sidebar-collapsed-width));
 
   .header {
     justify-content: center;
-    padding: var(--fui-padding-container-sm, $fui-padding-container-sm);
+    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+  }
+
+  .nav {
+    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
   }
 
   .sectionLabel {
@@ -46,7 +50,8 @@
 
   .item {
     justify-content: center;
-    padding: var(--fui-padding-container-sm, $fui-padding-container-sm);
+    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+    min-height: $fui-touch-md;
   }
 
   .itemIcon {
@@ -55,11 +60,27 @@
 
   .footer {
     justify-content: center;
-    padding: var(--fui-padding-container-sm, $fui-padding-container-sm);
+    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
   }
 
   .collapseToggle {
     margin: 0 auto;
+  }
+}
+
+.collapsedNoIcons {
+  overflow: visible;
+
+  .header,
+  .nav,
+  .footer {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .collapseToggleFloating {
+    visibility: visible;
+    pointer-events: auto;
   }
 }
 
@@ -485,16 +506,41 @@
   }
 }
 
-// ============================================
-// Offcanvas Mode (slides completely off-screen)
-// ============================================
-
-.offcanvas {
-  transform: translateX(-100%);
+.collapseToggleFloating {
   position: absolute;
+  top: var(--fui-space-3, $fui-space-3);
+  left: calc(100% + var(--fui-space-2, $fui-space-2));
+  z-index: 20;
+  margin: 0;
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  border: 1px solid var(--fui-border, $fui-border);
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
 
-  &.positionRight {
-    transform: translateX(100%);
+  .positionRight & {
+    left: auto;
+    right: calc(100% + var(--fui-space-2, $fui-space-2));
+  }
+}
+
+// ============================================
+// Offcanvas Mode (collapses to zero width with floating toggle)
+// ============================================
+
+.offcanvasCollapsed {
+  width: 0;
+  overflow: visible;
+
+  .header,
+  .nav,
+  .footer,
+  .rail {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .collapseToggleFloating {
+    visibility: visible;
+    pointer-events: auto;
   }
 }
 

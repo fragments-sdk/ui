@@ -212,7 +212,7 @@ function CloseIcon() {
   );
 }
 
-function CollapseLeftIcon() {
+function CollapsePanelIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -222,22 +222,7 @@ function CollapseLeftIcon() {
       fill="currentColor"
       aria-hidden="true"
     >
-      <path d="M141.66,181.66a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,0-11.32l48-48a8,8,0,0,1,11.32,11.32L99.31,128l42.35,42.34A8,8,0,0,1,141.66,181.66Zm40-96L139.31,128l42.35,42.34a8,8,0,0,1-11.32,11.32l-48-48a8,8,0,0,1,0-11.32l48-48a8,8,0,0,1,11.32,11.32Z" />
-    </svg>
-  );
-}
-
-function CollapseRightIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M141.66,133.66l-48,48a8,8,0,0,1-11.32-11.32L124.69,128,82.34,85.66a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,141.66,133.66Zm40-11.32-48-48a8,8,0,0,0-11.32,11.32L164.69,128l-42.35,42.34a8,8,0,0,0,11.32,11.32l48-48A8,8,0,0,0,181.66,122.34Z" />
+      <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM40,56H80V200H40ZM216,200H96V56H216V200Z" />
     </svg>
   );
 }
@@ -271,6 +256,7 @@ interface SidebarContextValue {
   width: string;
   collapsedWidth: string;
   collapsible: SidebarCollapsible;
+  hasIcons: boolean;
   toggleSidebar: () => void;
   sidebarId: string;
 }
@@ -293,8 +279,9 @@ function useSidebar() {
       isMobile: false,
       position: 'left' as const,
       width: '240px',
-      collapsedWidth: '64px',
+      collapsedWidth: '56px',
       collapsible: 'icon' as SidebarCollapsible,
+      hasIcons: true,
       toggleSidebar: () => {},
       sidebarId: 'sidebar',
       state: 'expanded' as 'expanded' | 'collapsed' | 'open' | 'closed',
@@ -359,6 +346,32 @@ function useControllableState<T>(
   return [value, setValue];
 }
 
+function hasSidebarItemIcons(children: React.ReactNode): boolean {
+  let found = false;
+
+  const visit = (nodes: React.ReactNode) => {
+    React.Children.forEach(nodes, child => {
+      if (found || !React.isValidElement(child)) return;
+
+      if (child.type === SidebarItem) {
+        const props = child.props as SidebarItemProps;
+        if (props.icon) {
+          found = true;
+          return;
+        }
+      }
+
+      const childProps = child.props as { children?: React.ReactNode };
+      if (childProps?.children) {
+        visit(childProps.children);
+      }
+    });
+  };
+
+  visit(children);
+  return found;
+}
+
 // ============================================
 // Components
 // ============================================
@@ -376,7 +389,7 @@ function SidebarProvider({
   defaultOpen = false,
   onOpenChange,
   width = '240px',
-  collapsedWidth = '64px',
+  collapsedWidth = '56px',
   position = 'left',
   collapsible = 'icon',
   enableKeyboardShortcut = true,
@@ -459,6 +472,7 @@ function SidebarProvider({
     width,
     collapsedWidth,
     collapsible,
+    hasIcons: true,
     toggleSidebar,
     sidebarId,
   };
@@ -479,7 +493,7 @@ function SidebarRoot({
   defaultOpen = false,
   onOpenChange,
   width = '240px',
-  collapsedWidth = '64px',
+  collapsedWidth = '56px',
   position = 'left',
   collapsible = 'icon',
   className,
@@ -512,6 +526,10 @@ function SidebarRoot({
   const resolvedWidth = existingContext ? existingContext.width : width;
   const resolvedCollapsedWidth = existingContext ? existingContext.collapsedWidth : collapsedWidth;
   const resolvedCollapsible = existingContext ? existingContext.collapsible : collapsible;
+  const hasIcons = React.useMemo(() => hasSidebarItemIcons(children), [children]);
+  const shouldCollapseToZero = !isMobile && resolvedCollapsible === 'icon' && collapsed && !hasIcons;
+  const isOffcanvasCollapsed = !isMobile && resolvedCollapsible === 'offcanvas' && collapsed;
+  const effectiveCollapsedWidth = (shouldCollapseToZero || isOffcanvasCollapsed) ? '0px' : resolvedCollapsedWidth;
   const sidebarId = React.useId();
   const resolvedSidebarId = existingContext ? existingContext.sidebarId : sidebarId;
   const sidebarRef = React.useRef<HTMLElement>(null);
@@ -558,28 +576,32 @@ function SidebarRoot({
     };
   }, [existingContext, isMobile, open]);
 
-  const contextValue: SidebarContextValue = existingContext || {
-    collapsed,
-    setCollapsed,
-    open,
-    setOpen,
-    isMobile,
-    position: resolvedPosition,
-    width: resolvedWidth,
-    collapsedWidth: resolvedCollapsedWidth,
-    collapsible: resolvedCollapsible,
-    toggleSidebar,
-    sidebarId: resolvedSidebarId,
+  const contextValue: SidebarContextValue = {
+    ...(existingContext || {
+      collapsed,
+      setCollapsed,
+      open,
+      setOpen,
+      isMobile,
+      position: resolvedPosition,
+      width: resolvedWidth,
+      collapsedWidth: resolvedCollapsedWidth,
+      collapsible: resolvedCollapsible,
+      hasIcons,
+      toggleSidebar,
+      sidebarId: resolvedSidebarId,
+    }),
+    hasIcons,
   };
 
   const isCollapsedForStyle = resolvedCollapsible === 'icon' && collapsed;
-  const isOffcanvas = resolvedCollapsible === 'offcanvas' && collapsed;
 
   const classes = [
     styles.root,
     isMobile && styles.mobile,
     !isMobile && isCollapsedForStyle && styles.collapsed,
-    !isMobile && isOffcanvas && styles.offcanvas,
+    !isMobile && isCollapsedForStyle && shouldCollapseToZero && styles.collapsedNoIcons,
+    isOffcanvasCollapsed && styles.offcanvasCollapsed,
     resolvedPosition === 'right' && styles.positionRight,
     className,
   ].filter(Boolean).join(' ');
@@ -587,6 +609,7 @@ function SidebarRoot({
   const style: React.CSSProperties = {
     '--sidebar-width': resolvedWidth,
     '--sidebar-collapsed-width': resolvedCollapsedWidth,
+    '--sidebar-effective-collapsed-width': effectiveCollapsedWidth,
     ...styleProp,
   } as React.CSSProperties;
 
@@ -604,15 +627,11 @@ function SidebarRoot({
       data-state={isMobile ? (open ? 'open' : 'closed') : (collapsed ? 'collapsed' : 'expanded')}
       data-position={resolvedPosition}
       data-collapsible={resolvedCollapsible}
+      data-icon-collapse={resolvedCollapsible === 'icon' ? (hasIcons ? 'icons' : 'none') : undefined}
     >
       {children}
     </aside>
   );
-
-  // If already inside a provider, don't wrap with another provider
-  if (existingContext) {
-    return content;
-  }
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -951,18 +970,23 @@ function SidebarOverlay({ className }: SidebarOverlayProps) {
 }
 
 function SidebarCollapseToggle({ 'aria-label': ariaLabel, className }: SidebarCollapseToggleProps) {
-  const { collapsed, setCollapsed, isMobile, position, collapsible } = useSidebarContext();
+  const { collapsed, setCollapsed, isMobile, collapsible, hasIcons } = useSidebarContext();
 
   // Don't show on mobile or when collapsing is disabled
   if (isMobile || collapsible === 'none') {
     return null;
   }
 
-  const classes = [styles.collapseToggle, className].filter(Boolean).join(' ');
+  const shouldFloat = collapsed && (
+    (collapsible === 'icon' && !hasIcons) ||
+    collapsible === 'offcanvas'
+  );
+  const classes = [
+    styles.collapseToggle,
+    shouldFloat && styles.collapseToggleFloating,
+    className,
+  ].filter(Boolean).join(' ');
   const label = ariaLabel || (collapsed ? 'Expand sidebar' : 'Collapse sidebar');
-
-  // Determine which icon to show based on position and state
-  const showExpandIcon = position === 'left' ? collapsed : !collapsed;
 
   return (
     <button
@@ -971,7 +995,7 @@ function SidebarCollapseToggle({ 'aria-label': ariaLabel, className }: SidebarCo
       onClick={() => setCollapsed(!collapsed)}
       aria-label={label}
     >
-      {showExpandIcon ? <CollapseRightIcon /> : <CollapseLeftIcon />}
+      <CollapsePanelIcon />
     </button>
   );
 }

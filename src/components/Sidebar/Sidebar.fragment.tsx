@@ -182,11 +182,12 @@ function ExternalTriggerContent() {
 function ProviderDemo() {
   return (
     <div style={demoContainerStyle}>
-      <SidebarProvider defaultCollapsed={false}>
+      <SidebarProvider>
         <Sidebar>
           <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
             <LogoIcon size={32} />
             <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
+            <Sidebar.CollapseToggle />
           </Sidebar.Header>
           <Sidebar.Nav>
             <Sidebar.Section>
@@ -195,9 +196,6 @@ function ProviderDemo() {
               <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>
             </Sidebar.Section>
           </Sidebar.Nav>
-          <Sidebar.Footer>
-            <Sidebar.CollapseToggle />
-          </Sidebar.Footer>
         </Sidebar>
         <ExternalTriggerContent />
       </SidebarProvider>
@@ -317,6 +315,35 @@ function SkeletonDemo() {
             {loading ? 'Show Content' : 'Show Skeleton'}
           </Button>
         </div>
+      </main>
+    </div>
+  );
+}
+
+// Demo for offcanvas collapsed state
+function OffcanvasDemo() {
+  const [collapsed, setCollapsed] = useState(true);
+  return (
+    <div style={demoContainerStyle}>
+      <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} collapsible="offcanvas">
+        <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
+          <LogoIcon size={32} />
+          <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
+        </Sidebar.Header>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
+            <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
+            <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>
+            <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+        <Sidebar.Footer>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Footer>
+      </Sidebar>
+      <main style={mainContentStyle}>
+        Offcanvas mode hides sidebar completely. Toggle stays visible to re-open.
       </main>
     </div>
   );
@@ -685,9 +712,14 @@ export default defineSegment({
       description: 'SidebarProvider enables external triggers and keyboard shortcuts (Cmd/Ctrl+B).',
       code: `function App() {
   return (
-    <SidebarProvider defaultCollapsed={false}>
+    <SidebarProvider>
       <Sidebar>
-        {/* sidebar content */}
+        <Sidebar.Header>
+          <Logo />
+          <span>Acme App</span>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Header>
+        {/* sidebar nav */}
       </Sidebar>
       <MainContent />
     </SidebarProvider>
@@ -773,6 +805,32 @@ function MainContent() {
   <Sidebar.Rail />
 </Sidebar>`,
       render: () => <RailDemo />,
+    },
+    {
+      name: 'Offcanvas Collapsed',
+      description: 'Offcanvas mode hides the sidebar completely when collapsed, but the toggle button remains visible as a floating button so the user can always re-expand.',
+      code: `function App() {
+  const [collapsed, setCollapsed] = useState(true);
+
+  return (
+    <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} collapsible="offcanvas">
+      <Sidebar.Header collapsedContent={<Logo />}>
+        <Logo />
+        <span>Acme App</span>
+      </Sidebar.Header>
+      <Sidebar.Nav>
+        <Sidebar.Section>
+          <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
+          <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
+        </Sidebar.Section>
+      </Sidebar.Nav>
+      <Sidebar.Footer>
+        <Sidebar.CollapseToggle />
+      </Sidebar.Footer>
+    </Sidebar>
+  );
+}`,
+      render: () => <OffcanvasDemo />,
     },
   ],
 });

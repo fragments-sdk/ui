@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { render, screen, expectNoA11yViolations } from '../../test/utils';
 import { Sidebar } from './index';
 
 // Mock matchMedia for jsdom
@@ -76,6 +76,35 @@ describe('Sidebar', () => {
     renderSidebar();
     const aside = document.querySelector('aside');
     expect(aside).toHaveAttribute('data-state');
+  });
+
+  it('uses icon collapse width when collapsed with icons', () => {
+    renderSidebar({ collapsed: true });
+    const aside = document.querySelector('aside');
+    expect(aside).toHaveStyle('--sidebar-effective-collapsed-width: 56px');
+    expect(aside).toHaveAttribute('data-icon-collapse', 'icons');
+  });
+
+  it('collapses fully when collapsed with no item icons and keeps toggle visible', () => {
+    render(
+      <Sidebar collapsed aria-label="Text-only sidebar">
+        <Sidebar.Header>
+          Header Content
+          <Sidebar.CollapseToggle />
+        </Sidebar.Header>
+        <Sidebar.Nav aria-label="Main">
+          <Sidebar.Section label="Section One">
+            <Sidebar.Item>Dashboard</Sidebar.Item>
+            <Sidebar.Item active>Settings</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+
+    const aside = document.querySelector('aside');
+    expect(aside).toHaveStyle('--sidebar-effective-collapsed-width: 0px');
+    expect(aside).toHaveAttribute('data-icon-collapse', 'none');
+    expect(screen.getByRole('button', { name: /expand sidebar/i })).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {
