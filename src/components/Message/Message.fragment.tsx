@@ -41,30 +41,32 @@ export default defineSegment({
 
   props: {
     role: {
-      type: '"user" | "assistant" | "system"',
+      type: 'enum',
+      values: ['user', 'assistant', 'system'],
       description: 'Message role determines styling and alignment',
       required: true,
     },
     children: {
-      type: 'ReactNode',
+      type: 'node',
       description: 'Message content',
       required: true,
     },
     status: {
-      type: '"sending" | "streaming" | "complete" | "error"',
+      type: 'enum',
+      values: ['sending', 'streaming', 'complete', 'error'],
       default: '"complete"',
       description: 'Message state',
     },
     timestamp: {
-      type: 'Date',
+      type: 'custom',
       description: 'When the message was sent',
     },
     avatar: {
-      type: 'ReactNode',
+      type: 'node',
       description: 'Custom avatar override (null to hide)',
     },
     actions: {
-      type: 'ReactNode',
+      type: 'node',
       description: 'Hover actions (copy, regenerate)',
     },
   },

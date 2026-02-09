@@ -73,7 +73,7 @@
 
 .initials {
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  color: var(--avatar-initials-color, var(--fui-text-inverse, $fui-text-inverse));
   text-transform: uppercase;
   line-height: 1;
 }

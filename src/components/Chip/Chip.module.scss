@@ -94,7 +94,7 @@
 
 .soft {
   background-color: var(--fui-color-info-bg, $fui-color-info-bg);
-  color: var(--fui-color-info, $fui-color-info);
+  color: var(--fui-color-info-text, $fui-color-info-text);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -207,7 +207,7 @@
 
 .soft + .remove {
   background-color: var(--fui-color-info-bg, $fui-color-info-bg);
-  color: var(--fui-color-info, $fui-color-info);
+  color: var(--fui-color-info-text, $fui-color-info-text);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);

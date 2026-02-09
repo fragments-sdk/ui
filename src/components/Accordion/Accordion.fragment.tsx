@@ -55,11 +55,11 @@ export default defineSegment({
       default: 'single',
     },
     value: {
-      type: 'string | string[]',
+      type: 'union',
       description: 'Controlled open item(s)',
     },
     defaultValue: {
-      type: 'string | string[]',
+      type: 'union',
       description: 'Initially open item(s) for uncontrolled usage',
     },
     onValueChange: {

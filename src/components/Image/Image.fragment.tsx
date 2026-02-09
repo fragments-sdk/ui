@@ -65,11 +65,11 @@ export default defineSegment({
       default: 'cover',
     },
     width: {
-      type: 'string | number',
+      type: 'union',
       description: 'Width of the image container',
     },
     height: {
-      type: 'string | number',
+      type: 'union',
       description: 'Height of the image container',
     },
     rounded: {

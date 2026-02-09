@@ -42,12 +42,12 @@ export default defineSegment({
 
   props: {
     children: {
-      type: 'ReactNode',
+      type: 'node',
       description: 'Message components',
       required: true,
     },
     autoScroll: {
-      type: 'boolean | "smart"',
+      type: 'union',
       default: '"smart"',
       description: 'Auto-scroll behavior: true (always), false (never), or "smart" (only when near bottom)',
     },
@@ -61,7 +61,7 @@ export default defineSegment({
       description: 'Show loading spinner at top when loading history',
     },
     emptyState: {
-      type: 'ReactNode',
+      type: 'node',
       description: 'Content to show when conversation is empty',
     },
     scrollTopThreshold: {

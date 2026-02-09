@@ -83,7 +83,7 @@ export default defineSegment({
       description: 'ChartConfig mapping data keys to labels and colors',
     },
     children: {
-      type: 'ReactElement',
+      type: 'element',
       description: 'A recharts chart component (LineChart, BarChart, etc.)',
     },
   },

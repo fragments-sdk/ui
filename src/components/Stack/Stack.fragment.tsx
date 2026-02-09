@@ -48,12 +48,12 @@ export default defineSegment({
       required: true,
     },
     direction: {
-      type: 'string | object',
+      type: 'union',
       description: 'Stack direction: "row", "column", or responsive object',
       default: 'column',
     },
     gap: {
-      type: 'string | object',
+      type: 'union',
       description: 'Spacing between items: "none", "xs", "sm", "md", "lg", "xl", or responsive object',
       default: 'md',
     },

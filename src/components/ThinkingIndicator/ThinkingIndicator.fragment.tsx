@@ -51,7 +51,8 @@ export default defineSegment({
       description: 'Status text',
     },
     variant: {
-      type: '"dots" | "pulse" | "spinner"',
+      type: 'enum',
+      values: ['dots', 'pulse', 'spinner'],
       default: '"dots"',
       description: 'Animation style',
     },
@@ -61,7 +62,7 @@ export default defineSegment({
       description: 'Show elapsed time',
     },
     steps: {
-      type: 'ThinkingStep[]',
+      type: 'array',
       description: 'Multi-step progress array',
     },
   },

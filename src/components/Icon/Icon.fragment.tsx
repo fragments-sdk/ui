@@ -44,7 +44,7 @@ export default defineSegment({
 
   props: {
     icon: {
-      type: 'component',
+      type: 'custom',
       description: 'Phosphor icon component to render',
       required: true,
     },

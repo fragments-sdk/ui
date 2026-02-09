@@ -285,3 +285,74 @@
     @return rgba(0, 0, 0, 0.5);
   }
 }
+
+// --------------------------------------------
+// WCAG 2.1 Contrast Utilities
+// --------------------------------------------
+
+/// Linearize an sRGB channel (0-255) per WCAG 2.1
+/// @param {Number} $channel-8bit - Channel value 0-255
+/// @return {Number} Linear value 0-1
+@function _srgb-linearize($channel-8bit) {
+  $srgb: math.div($channel-8bit, 255);
+  @if $srgb <= 0.04045 {
+    @return math.div($srgb, 12.92);
+  } @else {
+    @return math.pow(math.div($srgb + 0.055, 1.055), 2.4);
+  }
+}
+
+/// WCAG 2.1 relative luminance
+/// @param {Color} $color - Color to measure
+/// @return {Number} Relative luminance 0-1
+@function _wcag-luminance($color) {
+  $r: _srgb-linearize(color.channel($color, 'red', $space: rgb));
+  $g: _srgb-linearize(color.channel($color, 'green', $space: rgb));
+  $b: _srgb-linearize(color.channel($color, 'blue', $space: rgb));
+  @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+/// WCAG 2.1 contrast ratio between two colors
+/// @param {Color} $fg - Foreground color
+/// @param {Color} $bg - Background color
+/// @return {Number} Contrast ratio >= 1
+@function wcag-contrast($fg, $bg) {
+  $l1: _wcag-luminance($fg);
+  $l2: _wcag-luminance($bg);
+  $lighter: math.max($l1, $l2);
+  $darker: math.min($l1, $l2);
+  @return math.div($lighter + 0.05, $darker + 0.05);
+}
+
+// --------------------------------------------
+// Semantic Text Color Derivation
+// --------------------------------------------
+
+/// Derive a WCAG AA contrast-safe text color from a semantic color.
+/// Darkens (light mode) or lightens (dark mode) until 6:1 is met
+/// against ~white (light) or ~black (dark) page background.
+/// Target is 6:1 (above AA 4.5:1) to provide headroom for composited
+/// semantic backgrounds (rgba overlays) on tinted palette surfaces.
+/// @param {Color} $color - Base semantic color (e.g. danger, success)
+/// @param {Boolean} $is-dark - Whether in dark mode
+/// @return {Color} Adjusted color meeting 5.0:1 contrast on page bg
+@function derive-semantic-text($color, $is-dark: false) {
+  $target: 6;
+  $bg: #ffffff;
+  @if $is-dark {
+    $bg: #0a0a0a;
+  }
+  $adjusted: $color;
+
+  @for $i from 1 through 40 {
+    @if wcag-contrast($adjusted, $bg) < $target {
+      @if $is-dark {
+        $adjusted: color.adjust($adjusted, $lightness: 2%);
+      } @else {
+        $adjusted: color.adjust($adjusted, $lightness: -2%);
+      }
+    }
+  }
+
+  @return $adjusted;
+}

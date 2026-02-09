@@ -116,6 +116,12 @@ $computed-color-success-bg: derive.derive-semantic-bg(seeds.$fui-success, false)
 $computed-color-warning-bg: derive.derive-semantic-bg(seeds.$fui-warning, false);
 $computed-color-info-bg: derive.derive-semantic-bg(seeds.$fui-info, false);
 
+// Semantic text colors (WCAG AA contrast-safe for text on semantic backgrounds)
+$computed-color-danger-text: derive.derive-semantic-text(seeds.$fui-danger, false);
+$computed-color-success-text: derive.derive-semantic-text(seeds.$fui-success, false);
+$computed-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, false);
+$computed-color-info-text: derive.derive-semantic-text(seeds.$fui-info, false);
+
 // Surfaces (from neutral palette)
 $_surfaces-light: derive.derive-surfaces($_palette, false);
 $computed-bg-primary: map.get($_surfaces-light, primary);
@@ -171,6 +177,12 @@ $computed-dark-color-danger-bg: derive.derive-semantic-bg(seeds.$fui-danger, tru
 $computed-dark-color-success-bg: derive.derive-semantic-bg(seeds.$fui-success, true);
 $computed-dark-color-warning-bg: derive.derive-semantic-bg(seeds.$fui-warning, true);
 $computed-dark-color-info-bg: derive.derive-semantic-bg(seeds.$fui-info, true);
+
+// Semantic text colors (dark mode, WCAG AA contrast-safe)
+$computed-dark-color-danger-text: derive.derive-semantic-text(seeds.$fui-danger, true);
+$computed-dark-color-success-text: derive.derive-semantic-text(seeds.$fui-success, true);
+$computed-dark-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, true);
+$computed-dark-color-info-text: derive.derive-semantic-text(seeds.$fui-info, true);
 
 // Surfaces (dark mode)
 $_surfaces-dark: derive.derive-surfaces($_palette, true);

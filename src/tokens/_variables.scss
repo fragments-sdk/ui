@@ -143,6 +143,12 @@ $fui-color-success-bg: computed.$computed-color-success-bg !default;
 $fui-color-warning-bg: computed.$computed-color-warning-bg !default;
 $fui-color-info-bg: computed.$computed-color-info-bg !default;
 
+// Semantic text colors (WCAG AA contrast-safe on semantic backgrounds)
+$fui-color-danger-text: computed.$computed-color-danger-text !default;
+$fui-color-success-text: computed.$computed-color-success-text !default;
+$fui-color-warning-text: computed.$computed-color-warning-text !default;
+$fui-color-info-text: computed.$computed-color-info-text !default;
+
 // Surface colors (derived from $fui-neutral palette)
 $fui-bg-primary: computed.$computed-bg-primary !default;
 $fui-bg-secondary: computed.$computed-bg-secondary !default;
@@ -217,6 +223,12 @@ $fui-dark-color-danger-bg: computed.$computed-dark-color-danger-bg !default;
 $fui-dark-color-success-bg: computed.$computed-dark-color-success-bg !default;
 $fui-dark-color-warning-bg: computed.$computed-dark-color-warning-bg !default;
 $fui-dark-color-info-bg: computed.$computed-dark-color-info-bg !default;
+
+// Semantic text colors (dark, WCAG AA contrast-safe)
+$fui-dark-color-danger-text: computed.$computed-dark-color-danger-text !default;
+$fui-dark-color-success-text: computed.$computed-dark-color-success-text !default;
+$fui-dark-color-warning-text: computed.$computed-dark-color-warning-text !default;
+$fui-dark-color-info-text: computed.$computed-dark-color-info-text !default;
 
 // Dark mode focus ring
 $fui-dark-focus-ring-color: computed.$computed-dark-focus-ring-color !default;
@@ -467,6 +479,10 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-color-success-bg: #{$fui-color-success-bg};
     --fui-color-warning-bg: #{$fui-color-warning-bg};
     --fui-color-info-bg: #{$fui-color-info-bg};
+    --fui-color-danger-text: #{$fui-color-danger-text};
+    --fui-color-success-text: #{$fui-color-success-text};
+    --fui-color-warning-text: #{$fui-color-warning-text};
+    --fui-color-info-text: #{$fui-color-info-text};
     --fui-backdrop: #{$fui-backdrop};
 
     // Surfaces
@@ -658,6 +674,12 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
   --fui-color-success-bg: #{$fui-dark-color-success-bg};
   --fui-color-warning-bg: #{$fui-dark-color-warning-bg};
   --fui-color-info-bg: #{$fui-dark-color-info-bg};
+
+  // Semantic text colors (WCAG AA contrast-safe)
+  --fui-color-danger-text: #{$fui-dark-color-danger-text};
+  --fui-color-success-text: #{$fui-dark-color-success-text};
+  --fui-color-warning-text: #{$fui-dark-color-warning-text};
+  --fui-color-info-text: #{$fui-dark-color-info-text};
 
   // Focus & backdrop
   --fui-focus-ring-color: #{$fui-dark-focus-ring-color};

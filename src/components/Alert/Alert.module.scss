@@ -16,25 +16,25 @@
 .info {
   background-color: var(--fui-color-info-bg, $fui-color-info-bg);
   border: 1px solid var(--fui-color-info, $fui-color-info);
-  color: var(--fui-color-info, $fui-color-info);
+  color: var(--fui-color-info-text, $fui-color-info-text);
 }
 
 .success {
   background-color: var(--fui-color-success-bg, $fui-color-success-bg);
   border: 1px solid var(--fui-color-success, $fui-color-success);
-  color: var(--fui-color-success, $fui-color-success);
+  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .warning {
   background-color: var(--fui-color-warning-bg, $fui-color-warning-bg);
   border: 1px solid var(--fui-color-warning, $fui-color-warning);
-  color: var(--fui-color-warning, $fui-color-warning);
+  color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .error {
   background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
   border: 1px solid var(--fui-color-danger, $fui-color-danger);
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 .icon {
