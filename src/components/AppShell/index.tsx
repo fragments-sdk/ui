@@ -290,6 +290,7 @@ function AppShellSidebar({
   collapsible = 'icon',
   position = 'left',
   defaultCollapsed = false,
+  'aria-label': ariaLabel,
   className,
   ...htmlProps
 }: AppShellSidebarProps) {
@@ -311,6 +312,7 @@ function AppShellSidebar({
         position={position}
         collapsible={collapsible}
         defaultCollapsed={defaultCollapsed}
+        aria-label={ariaLabel}
       >
         {children}
       </Sidebar>

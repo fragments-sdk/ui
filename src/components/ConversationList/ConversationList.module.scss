@@ -78,7 +78,7 @@
 .dateSeparatorText {
   @include helper-text;
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.05em;
