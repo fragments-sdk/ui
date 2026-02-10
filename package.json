@@ -1,6 +1,7 @@
 {
   "name": "@fragments-sdk/ui",
   "version": "0.8.1",
+  "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "repository": {
     "type": "git",
@@ -19,6 +20,19 @@
     "./fragments.json": "./fragments.json",
     "./package.json": "./package.json"
   },
+  "keywords": [
+    "react",
+    "components",
+    "ui-library",
+    "design-system",
+    "typescript",
+    "accessible",
+    "base-ui",
+    "theming",
+    "design-tokens",
+    "headless-ui",
+    "react-components"
+  ],
   "publishConfig": {
     "access": "public"
   },
