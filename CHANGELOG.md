@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.0
+
+### Minor Changes
+
+- [`1f07312`](https://github.com/ConanMcN/fragments/commit/1f07312b3d2e1a9410164d49a1c1434b9d536421) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add component graph intelligence layer with structural relationship analysis, auto-detection of compound component metadata, and graph-augmented hybrid search. New `fragments graph` CLI command and `fragments_graph` MCP tool enable dependency, impact, composition, and alternatives queries. Add DatePicker and TableOfContents components. Add blog system to docs site.
+
 ## 0.7.5
 
 ### Patch Changes
