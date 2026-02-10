@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.1
+
+### Patch Changes
+
+- [`06bbba0`](https://github.com/ConanMcN/fragments/commit/06bbba0dad17f19ba69518f671b2f2a320bab61f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Rename defineSegment to defineFragment across codebase, improve docs pages (Getting Started, CLI, MCP) for new users, and fix CodeBlock header rendering
+
 ## 0.8.0
 
 ### Minor Changes
