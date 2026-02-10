@@ -22,7 +22,7 @@ export default defineSegment({
     ],
     whenNot: [
       'Simple navigation (use Link)',
-      'Toggling state (use Switch or Checkbox)',
+      'Toggling state (use Toggle or Checkbox)',
       'Selecting from options (use Select or RadioGroup)',
     ],
     guidelines: [
@@ -82,9 +82,9 @@ export default defineSegment({
       note: 'Use Link for navigation without action context',
     },
     {
-      component: 'IconButton',
-      relationship: 'alternative',
-      note: 'Use IconButton for icon-only actions',
+      component: 'Icon',
+      relationship: 'complementary',
+      note: 'Use Icon inside Button for icon-leading/trailing or icon-only actions',
     },
     {
       component: 'ButtonGroup',

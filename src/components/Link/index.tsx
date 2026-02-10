@@ -16,7 +16,7 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
   style?: React.CSSProperties;
 }
 
-export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
+const LinkRoot = React.forwardRef<HTMLAnchorElement, LinkProps>(
   function Link(
     {
       children,
@@ -55,3 +55,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     );
   }
 );
+
+export const Link = Object.assign(LinkRoot, {
+  Root: LinkRoot,
+});

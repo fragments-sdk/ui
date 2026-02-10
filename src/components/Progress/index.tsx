@@ -44,7 +44,7 @@ export interface CircularProgressProps extends React.HTMLAttributes<HTMLDivEleme
 // Linear Progress
 // ============================================
 
-export function Progress({
+function ProgressRoot({
   value = null,
   min = 0,
   max = 100,
@@ -130,7 +130,7 @@ const CIRCLE_SIZES = {
   lg: { size: 64, strokeWidth: 5 },
 };
 
-export function CircularProgress({
+function CircularProgressRoot({
   value = null,
   size = 'md',
   variant = 'default',
@@ -221,3 +221,10 @@ export function CircularProgress({
     </BaseProgress.Root>
   );
 }
+
+export const CircularProgress = CircularProgressRoot;
+
+export const Progress = Object.assign(ProgressRoot, {
+  Root: ProgressRoot,
+  Circular: CircularProgressRoot,
+});

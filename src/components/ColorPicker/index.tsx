@@ -25,7 +25,7 @@ export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   showInput?: boolean;
 }
 
-export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
+const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
   function ColorPicker(
     {
       label,
@@ -130,3 +130,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
     );
   }
 );
+
+export const ColorPicker = Object.assign(ColorPickerRoot, {
+  Root: ColorPickerRoot,
+});

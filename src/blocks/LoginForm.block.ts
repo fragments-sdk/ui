@@ -4,15 +4,22 @@ export default defineBlock({
   name: 'Login Form',
   description: 'Email/password authentication form with validation states',
   category: 'forms',
-  components: ['FormField', 'Input', 'Button', 'Alert'],
+  components: ['Input', 'Button', 'Alert'],
   tags: ['auth', 'login', 'form'],
   code: `
-<FormField label="Email" error={errors.email}>
-  <Input type="email" placeholder="you@example.com" />
-</FormField>
-<FormField label="Password" error={errors.password}>
-  <Input type="password" />
-</FormField>
+<Input
+  label="Email"
+  type="email"
+  placeholder="you@example.com"
+  error={Boolean(errors.email)}
+  helperText={errors.email}
+/>
+<Input
+  label="Password"
+  type="password"
+  error={Boolean(errors.password)}
+  helperText={errors.password}
+/>
 <Button type="submit" variant="primary">Sign in</Button>
 {error && (
   <Alert severity="error">

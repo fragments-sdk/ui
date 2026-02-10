@@ -51,7 +51,7 @@ export interface TableProps<T> extends Omit<React.HTMLAttributes<HTMLTableElemen
   bordered?: boolean;
 }
 
-export function Table<T>({
+function TableRoot<T>({
   columns,
   data,
   getRowId,
@@ -330,3 +330,8 @@ export function createColumns<T>(
 
 // Re-export useful types
 export type { ColumnDef, SortingState, RowSelectionState };
+
+export const Table = Object.assign(TableRoot, {
+  Root: TableRoot,
+  Columns: createColumns,
+});

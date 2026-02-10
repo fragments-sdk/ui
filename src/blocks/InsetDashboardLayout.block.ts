@@ -4,7 +4,7 @@ export default defineBlock({
   name: 'Inset Dashboard Layout',
   description: 'Modern shadcn-style layout with rounded main content and visual separation',
   category: 'dashboard',
-  components: ['AppShell', 'Header', 'Sidebar', 'Stack', 'Grid', 'Card', 'Text', 'Badge', 'Input', 'ThemeToggle', 'Avatar'],
+  components: ['AppShell', 'Header', 'Sidebar', 'Stack', 'Grid', 'Card', 'Text', 'Badge', 'Input', 'Theme', 'Avatar'],
   tags: ['dashboard', 'layout', 'inset', 'sidebar', 'app-shell'],
   code: `
 const navItems = [

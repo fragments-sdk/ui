@@ -70,7 +70,7 @@ function FallbackRenderer({ content, className }: { content: string; className?:
 // Component
 // ============================================
 
-export const Markdown = React.forwardRef<HTMLDivElement, MarkdownProps>(
+const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(
   function Markdown({ content, components: componentOverrides, className }, ref) {
     loadDeps();
 
@@ -104,3 +104,7 @@ export const Markdown = React.forwardRef<HTMLDivElement, MarkdownProps>(
     );
   }
 );
+
+export const Markdown = Object.assign(MarkdownRoot, {
+  Root: MarkdownRoot,
+});

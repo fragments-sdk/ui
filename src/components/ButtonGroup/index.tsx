@@ -10,7 +10,7 @@ export interface ButtonGroupProps {
   className?: string;
 }
 
-export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
+const ButtonGroupRoot = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
   function ButtonGroup(
     {
       children,
@@ -38,3 +38,7 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
     );
   }
 );
+
+export const ButtonGroup = Object.assign(ButtonGroupRoot, {
+  Root: ButtonGroupRoot,
+});

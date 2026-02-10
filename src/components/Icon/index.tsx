@@ -24,7 +24,7 @@ const sizeMap: Record<NonNullable<IconProps['size']>, number> = {
   xl: 32,
 };
 
-export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(
+const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(
   function Icon(
     {
       icon: IconComponent,
@@ -56,3 +56,7 @@ export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(
     );
   }
 );
+
+export const Icon = Object.assign(IconRoot, {
+  Root: IconRoot,
+});

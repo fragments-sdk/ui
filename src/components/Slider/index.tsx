@@ -24,7 +24,7 @@ export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   'aria-describedby'?: string;
 }
 
-export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
+const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
   function Slider(
     {
       label,
@@ -96,3 +96,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
     );
   }
 );
+
+export const Slider = Object.assign(SliderRoot, {
+  Root: SliderRoot,
+});

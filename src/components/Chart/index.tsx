@@ -105,12 +105,22 @@ export function ChartContainer({
 
   const rootClasses = [styles.container, className].filter(Boolean).join(' ');
 
-  // Inject responsive + width/height into the chart child (recharts v3 API)
-  const chartChild = React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
-    responsive: true,
+  // Inject sizing props into the chart child (recharts API).
+  // Only pass `responsive` for custom component types to avoid leaking the
+  // prop to intrinsic DOM nodes in test/demo usage.
+  const chartChildProps: Record<string, unknown> = {
     width: '100%',
     height: '100%',
-  });
+  };
+
+  if (typeof children.type !== 'string') {
+    chartChildProps.responsive = true;
+  }
+
+  const chartChild = React.cloneElement(
+    children as React.ReactElement<Record<string, unknown>>,
+    chartChildProps
+  );
 
   return (
     <ChartConfigContext.Provider value={config}>
@@ -299,3 +309,11 @@ export function ChartLegend({ content, ...props }: ChartLegendProps) {
     />
   );
 }
+
+export const Chart = Object.assign(ChartContainer, {
+  Root: ChartContainer,
+  Tooltip: ChartTooltip,
+  TooltipContent: ChartTooltipContent,
+  Legend: ChartLegend,
+  LegendContent: ChartLegendContent,
+});

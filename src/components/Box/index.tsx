@@ -65,7 +65,7 @@ function toCss(value: string | number): string {
   return typeof value === 'number' ? `${value}px` : value;
 }
 
-export const Box = React.forwardRef<HTMLElement, BoxProps>(
+const BoxRoot = React.forwardRef<HTMLElement, BoxProps>(
   function Box(
     {
       children,
@@ -143,3 +143,7 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
     );
   }
 );
+
+export const Box = Object.assign(BoxRoot, {
+  Root: BoxRoot,
+});

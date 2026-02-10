@@ -33,7 +33,7 @@ function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
   return merged.length > 0 ? merged : undefined;
 }
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
   function Input(
     {
       value,
@@ -127,3 +127,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
+
+export const Input = Object.assign(InputRoot, {
+  Root: InputRoot,
+});

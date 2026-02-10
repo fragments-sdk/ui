@@ -349,6 +349,23 @@ export { Slider, type SliderProps } from './components/Slider';
 // ColorPicker
 export { ColorPicker, type ColorPickerProps } from './components/ColorPicker';
 
+// DatePicker
+export {
+  DatePicker,
+  DatePickerRoot,
+  DatePickerTrigger,
+  DatePickerContent,
+  DatePickerCalendar,
+  DatePickerPreset,
+  type DatePickerProps,
+  type DatePickerTriggerProps,
+  type DatePickerContentProps,
+  type DatePickerCalendarProps,
+  type DatePickerPresetProps,
+  type DateRange,
+  type Matcher,
+} from './components/DatePicker';
+
 // Prompt
 export {
   Prompt,
@@ -416,6 +433,15 @@ export {
   type BreadcrumbsItemProps,
   type BreadcrumbsSeparatorProps,
 } from './components/Breadcrumbs';
+
+// TableOfContents
+export {
+  TableOfContents,
+  TableOfContentsRoot,
+  TableOfContentsItem,
+  type TableOfContentsProps,
+  type TableOfContentsItemProps,
+} from './components/TableOfContents';
 
 // Box
 export { Box, type BoxProps } from './components/Box';

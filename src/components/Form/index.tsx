@@ -19,7 +19,7 @@ export interface FormProps extends Omit<React.HTMLAttributes<HTMLFormElement>, '
 // Component
 // ============================================
 
-export function Form({
+function FormRoot({
   children,
   errors,
   onFormSubmit,
@@ -51,3 +51,7 @@ export function Form({
     </BaseForm>
   );
 }
+
+export const Form = Object.assign(FormRoot, {
+  Root: FormRoot,
+});

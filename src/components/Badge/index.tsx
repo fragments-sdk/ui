@@ -13,7 +13,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   onRemove?: () => void;
 }
 
-export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(
   function Badge(
     {
       children,
@@ -67,3 +67,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     );
   }
 );
+
+export const Badge = Object.assign(BadgeRoot, {
+  Root: BadgeRoot,
+});

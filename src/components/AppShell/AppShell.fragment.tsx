@@ -93,7 +93,7 @@ export default defineSegment({
   },
 
   relations: [
-    { component: 'ThemeProvider', relationship: 'parent', note: 'AppShell should be wrapped in ThemeProvider' },
+    { component: 'Theme', relationship: 'parent', note: 'AppShell should be wrapped in ThemeProvider' },
     { component: 'Header', relationship: 'child', note: 'Header is placed inside AppShell.Header' },
     { component: 'Sidebar', relationship: 'child', note: 'Sidebar content goes inside AppShell.Sidebar' },
   ],

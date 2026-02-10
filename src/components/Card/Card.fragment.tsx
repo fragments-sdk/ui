@@ -23,7 +23,7 @@ export default defineSegment({
     whenNot: [
       'Simple text content that does not need grouping',
       'Modal or dialog content (use Dialog component)',
-      'Navigation items (use NavItem or similar)',
+      'Navigation items (use List or Sidebar patterns)',
     ],
     guidelines: [
       'Use consistent card variants within the same context',
@@ -63,14 +63,14 @@ export default defineSegment({
 
   relations: [
     {
-      component: 'CardGrid',
+      component: 'Grid',
       relationship: 'parent',
-      note: 'Use CardGrid for responsive card layouts',
+      note: 'Use Grid + Card for responsive card layouts',
     },
     {
-      component: 'ListItem',
+      component: 'List',
       relationship: 'alternative',
-      note: 'Use ListItem for linear list layouts',
+      note: 'Use List for linear, text-first layouts',
     },
   ],
 

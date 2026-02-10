@@ -88,7 +88,7 @@ function MinusIcon() {
 // Component
 // ============================================
 
-export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
+const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   function Checkbox(
     {
       checked,
@@ -188,3 +188,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     );
   }
 );
+
+export const Checkbox = Object.assign(CheckboxRoot, {
+  Root: CheckboxRoot,
+});

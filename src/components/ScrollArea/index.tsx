@@ -116,4 +116,6 @@ function ScrollAreaRoot({
 // Export
 // ============================================
 
-export const ScrollArea = ScrollAreaRoot;
+export const ScrollArea = Object.assign(ScrollAreaRoot, {
+  Root: ScrollAreaRoot,
+});

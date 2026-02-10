@@ -71,7 +71,7 @@ function isResponsiveGap(gap: StackProps['gap']): gap is ResponsiveGap {
   return typeof gap === 'object' && gap !== null;
 }
 
-export const Stack = React.forwardRef<HTMLElement, StackProps>(
+const StackRoot = React.forwardRef<HTMLElement, StackProps>(
   function Stack(
     {
       children,
@@ -180,3 +180,7 @@ function gapToSpace(gap: Gap): string {
   };
   return map[gap];
 }
+
+export const Stack = Object.assign(StackRoot, {
+  Root: StackRoot,
+});

@@ -4,13 +4,13 @@ export default defineBlock({
   name: 'App Shell',
   description: 'Full application layout with sidebar, header, and main content. Supports two layout modes: stacked (header full-width) and sidebar-inset (sidebar full-height).',
   category: 'layout',
-  components: ['AppShell', 'Header', 'Sidebar', 'ThemeToggle'],
+  components: ['AppShell', 'Header', 'Sidebar', 'Theme'],
   tags: ['layout', 'app-shell', 'sidebar', 'navigation', 'dashboard'],
   code: `
 // App Shell - Stacked Layout (header spans full width)
 // Best for apps where the brand should be prominent in the header
 
-import { AppShell, Header, Sidebar, ThemeToggle } from '@fragments/ui';
+import { AppShell, Header, Input, Sidebar, ThemeToggle } from '@fragments-sdk/ui';
 
 function StackedLayout({ children }) {
   return (

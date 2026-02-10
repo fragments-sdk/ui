@@ -34,7 +34,9 @@
     "react-dom": "^18.0.0 || ^19.0.0",
     "react-markdown": ">=9.0.0",
     "recharts": ">=2.0.0 || >=3.0.0",
-    "remark-gfm": ">=4.0.0"
+    "remark-gfm": ">=4.0.0",
+    "react-day-picker": ">=9.0.0",
+    "date-fns": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "react-markdown": {
@@ -44,6 +46,12 @@
       "optional": true
     },
     "remark-gfm": {
+      "optional": true
+    },
+    "react-day-picker": {
+      "optional": true
+    },
+    "date-fns": {
       "optional": true
     }
   },
@@ -66,6 +74,8 @@
     "react-dom": "^19.0.0",
     "sass": "^1.83.0",
     "typescript": "^5.7.0",
+    "react-day-picker": "^9.0.0",
+    "date-fns": "^4.0.0",
     "vitest": "^2.1.8",
     "vitest-axe": "^0.1.0"
   },

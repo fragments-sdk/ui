@@ -23,7 +23,7 @@ export default defineSegment({
     whenNot: [
       'Multi-line text (use Textarea)',
       'Selecting from predefined options (use Select)',
-      'Boolean input (use Checkbox or Switch)',
+      'Boolean input (use Checkbox or Toggle)',
       'Date/time input (use DatePicker)',
     ],
     guidelines: [
@@ -109,9 +109,9 @@ export default defineSegment({
       note: 'Use Select when choosing from predefined options',
     },
     {
-      component: 'FormField',
+      component: 'Field',
       relationship: 'parent',
-      note: 'Wrap in FormField for consistent form layout',
+      note: 'Use Field for advanced form composition and custom controls',
     },
   ],
 

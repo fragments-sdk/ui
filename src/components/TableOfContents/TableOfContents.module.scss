@@ -1,0 +1,71 @@
+@use '../../tokens/variables' as *;
+
+// Root nav wrapper
+.root {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// Title text ("On This Page")
+.title {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding: 0 0 var(--fui-space-2, $fui-space-2) 0;
+}
+
+// List container
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// Individual item
+.item {
+  display: block;
+}
+
+// Link styling shared by all items
+.link {
+  display: block;
+  padding: var(--fui-space-1, $fui-space-1) 0 var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  border-left: 2px solid transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  text-decoration: none;
+  transition: color var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:focus-visible {
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  }
+}
+
+// Indent for depth > 2 (h3s)
+.indent {
+  padding-left: var(--fui-space-6, $fui-space-6);
+}
+
+// Active state
+.active {
+  border-left-color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-color-accent, $fui-color-accent);
+
+  &:hover {
+    color: var(--fui-color-accent, $fui-color-accent);
+  }
+}

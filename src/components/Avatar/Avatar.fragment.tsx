@@ -75,7 +75,7 @@ export default defineSegment({
 
   relations: [
     {
-      component: 'AvatarGroup',
+      component: 'Avatar',
       relationship: 'parent',
       note: 'Use Avatar.Group for stacked avatar displays',
     },

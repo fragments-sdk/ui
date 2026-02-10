@@ -15,7 +15,7 @@ export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'colo
   lineClamp?: number;
 }
 
-export const Text = React.forwardRef<HTMLElement, TextProps>(
+const TextRoot = React.forwardRef<HTMLElement, TextProps>(
   function Text(
     {
       children,
@@ -56,3 +56,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
     );
   }
 );
+
+export const Text = Object.assign(TextRoot, {
+  Root: TextRoot,
+});

@@ -20,7 +20,7 @@ export interface ToggleProps {
   'aria-describedby'?: string;
 }
 
-export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
+const ToggleRoot = React.forwardRef<HTMLButtonElement, ToggleProps>(
   function Toggle(
     {
       checked,
@@ -90,3 +90,7 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
     );
   }
 );
+
+export const Toggle = Object.assign(ToggleRoot, {
+  Root: ToggleRoot,
+});

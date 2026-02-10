@@ -27,7 +27,7 @@ export interface ImageProps {
   style?: React.CSSProperties;
 }
 
-export const Image = React.forwardRef<HTMLDivElement, ImageProps>(
+const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
   function Image(
     {
       src,
@@ -93,3 +93,7 @@ export const Image = React.forwardRef<HTMLDivElement, ImageProps>(
     );
   }
 );
+
+export const Image = Object.assign(ImageRoot, {
+  Root: ImageRoot,
+});

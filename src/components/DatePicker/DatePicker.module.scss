@@ -1,0 +1,394 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Trigger
+// ============================================
+
+.trigger {
+  @include button-reset;
+  @include interactive-base;
+  @include text-base;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  width: 100%;
+  min-width: 10rem;
+  height: var(--fui-input-height, $fui-input-height);
+  padding: 0 var(--fui-space-3, $fui-space-3);
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  text-align: left;
+
+  &:hover:not([data-disabled]) {
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &[data-popup-open] {
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &[data-disabled] {
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+}
+
+.triggerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.triggerValue {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.triggerPlaceholder {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// ============================================
+// Positioner & Popup
+// ============================================
+
+.positioner {
+  z-index: 52;
+  outline: none;
+}
+
+.popup {
+  @include surface-elevated;
+
+  padding: var(--fui-space-3, $fui-space-3);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  // Animation
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+// ============================================
+// Calendar
+// ============================================
+
+.calendar {
+  @include text-base;
+}
+
+.months {
+  display: flex;
+  gap: var(--fui-space-4, $fui-space-4);
+}
+
+.month {
+  // Individual month container
+}
+
+.monthCaption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: var(--fui-space-2, $fui-space-2);
+}
+
+.captionLabel {
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+}
+
+// ============================================
+// Navigation
+// ============================================
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0;
+}
+
+.navButton {
+  @include button-reset;
+  @include interactive-base;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fui-button-height-sm, $fui-button-height-sm);
+  height: var(--fui-button-height-sm, $fui-button-height-sm);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.chevron {
+  display: none; // We use custom chevron icons
+}
+
+// ============================================
+// Grid
+// ============================================
+
+.monthGrid {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.weekdays {
+  // Weekday header row
+}
+
+.weekday {
+  @include text-base;
+
+  width: 2.286rem;
+  height: 2.286rem;
+  padding: 0;
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.weeks {
+  // Weeks container
+}
+
+.week {
+  // Week row
+}
+
+// ============================================
+// Day cells
+// ============================================
+
+.day {
+  width: 2.286rem;
+  height: 2.286rem;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  position: relative;
+}
+
+.dayButton {
+  @include button-reset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.286rem;
+  height: 2.286rem;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-primary, $fui-text-primary);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ============================================
+// Day states
+// ============================================
+
+.today > .dayButton {
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+}
+
+.selected > .dayButton {
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+
+  &:hover {
+    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+}
+
+.outside > .dayButton {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  opacity: 0.5;
+}
+
+.disabled > .dayButton {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.focused > .dayButton {
+  @include focus-ring;
+}
+
+// ============================================
+// Range highlights
+// ============================================
+
+.rangeStart,
+.rangeEnd,
+.rangeMiddle {
+  position: relative;
+}
+
+.rangeMiddle {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 2px 0;
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    z-index: 0;
+  }
+
+  > .dayButton {
+    position: relative;
+    z-index: 1;
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: transparent;
+  }
+}
+
+.rangeStart {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 2px 0 2px 50%;
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    z-index: 0;
+  }
+
+  > .dayButton {
+    position: relative;
+    z-index: 1;
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-text-inverse, $fui-text-inverse);
+
+    &:hover {
+      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    }
+  }
+
+  // When start equals end, no range band
+  &.rangeEnd::before {
+    display: none;
+  }
+}
+
+.rangeEnd {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 2px 50% 2px 0;
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    z-index: 0;
+  }
+
+  > .dayButton {
+    position: relative;
+    z-index: 1;
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-text-inverse, $fui-text-inverse);
+
+    &:hover {
+      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    }
+  }
+}
+
+// ============================================
+// Preset buttons
+// ============================================
+
+.preset {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-primary, $fui-text-primary);
+  white-space: nowrap;
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ============================================
+// Reduced motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .popup {
+    transition: none;
+  }
+
+  .dayButton {
+    transition: none;
+  }
+
+  .preset {
+    transition: none;
+  }
+}

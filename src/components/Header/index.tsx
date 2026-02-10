@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { Menu as BaseMenu } from '@base-ui/react/menu';
+import { CaretDown, List, X } from '@phosphor-icons/react';
 import styles from './Header.module.scss';
 import { useSidebar } from '../Sidebar';
 // Import globals to ensure CSS variables are defined
@@ -71,38 +73,26 @@ export interface HeaderTriggerProps {
   className?: string;
 }
 
-// ============================================
-// Icons
-// ============================================
-
-function MenuIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z" />
-    </svg>
-  );
+export interface HeaderNavMenuProps {
+  /** Trigger label text */
+  label: string;
+  /** Whether any child in the group is active */
+  active?: boolean;
+  /** Additional class name */
+  className?: string;
+  children: React.ReactNode;
 }
 
-function CloseIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z" />
-    </svg>
-  );
+export interface HeaderNavMenuItemProps {
+  children: React.ReactNode;
+  /** Link destination */
+  href?: string;
+  /** Whether this item is active/current */
+  active?: boolean;
+  /** Render as child element (polymorphic) */
+  asChild?: boolean;
+  /** Additional class name */
+  className?: string;
 }
 
 // ============================================
@@ -302,7 +292,7 @@ function HeaderTrigger({
       aria-label={ariaLabel}
       aria-expanded={open}
     >
-      {children || (open ? <CloseIcon /> : <MenuIcon />)}
+      {children || (open ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
     </button>
   );
 }
@@ -313,6 +303,81 @@ function HeaderTrigger({
 function HeaderSpacer({ className }: { className?: string }) {
   const classes = [styles.spacer, className].filter(Boolean).join(' ');
   return <div className={classes} />;
+}
+
+/**
+ * Header.NavMenu - Dropdown navigation group
+ */
+function HeaderNavMenu({
+  label,
+  active = false,
+  className,
+  children,
+}: HeaderNavMenuProps) {
+  const triggerClasses = [
+    styles.navItem,
+    styles.navMenuTrigger,
+    active && styles.navItemActive,
+    className,
+  ].filter(Boolean).join(' ');
+
+  return (
+    <li>
+      <BaseMenu.Root modal={false}>
+        <BaseMenu.Trigger className={triggerClasses}>
+          {label}
+          <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />
+        </BaseMenu.Trigger>
+        <BaseMenu.Portal>
+          <BaseMenu.Positioner side="bottom" align="start" sideOffset={4} className={styles.navMenuPositioner}>
+            <BaseMenu.Popup className={styles.navMenuPopup}>
+              {children}
+            </BaseMenu.Popup>
+          </BaseMenu.Positioner>
+        </BaseMenu.Portal>
+      </BaseMenu.Root>
+    </li>
+  );
+}
+
+/**
+ * Header.NavMenuItem - Item inside a NavMenu dropdown
+ */
+function HeaderNavMenuItem({
+  children,
+  href,
+  active = false,
+  asChild = false,
+  className,
+}: HeaderNavMenuItemProps) {
+  const classes = [
+    styles.navMenuItem,
+    active && styles.navMenuItemActive,
+    className,
+  ].filter(Boolean).join(' ');
+
+  if (asChild && React.isValidElement(children)) {
+    return (
+      <BaseMenu.Item
+        className={classes}
+        render={children as React.ReactElement}
+      />
+    );
+  }
+
+  if (href) {
+    return (
+      <BaseMenu.Item className={classes} render={<a href={href} />}>
+        {children}
+      </BaseMenu.Item>
+    );
+  }
+
+  return (
+    <BaseMenu.Item className={classes}>
+      {children}
+    </BaseMenu.Item>
+  );
 }
 
 /**
@@ -343,6 +408,8 @@ export const Header = Object.assign(HeaderRoot, {
   Brand: HeaderBrand,
   Nav: HeaderNav,
   NavItem: HeaderNavItem,
+  NavMenu: HeaderNavMenu,
+  NavMenuItem: HeaderNavMenuItem,
   Search: HeaderSearch,
   Actions: HeaderActions,
   Trigger: HeaderTrigger,
@@ -355,6 +422,8 @@ export {
   HeaderBrand,
   HeaderNav,
   HeaderNavItem,
+  HeaderNavMenu,
+  HeaderNavMenuItem,
   HeaderSearch,
   HeaderActions,
   HeaderTrigger,

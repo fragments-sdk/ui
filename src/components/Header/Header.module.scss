@@ -106,9 +106,122 @@
 }
 
 .navItemActive {
+  // Match sidebar active state: secondary surface + primary text
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-bg-hover, $fui-bg-hover);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+
+  &:hover {
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary) !important;
+    color: var(--fui-text-primary, $fui-text-primary) !important;
+  }
+
+  &:active {
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary) !important;
+    color: var(--fui-text-primary, $fui-text-primary) !important;
+  }
+}
+
+// ============================================
+// NavMenu (dropdown trigger)
+// ============================================
+
+.navMenuTrigger {
+  gap: var(--fui-space-1, $fui-space-1);
+  cursor: pointer;
+}
+
+.navMenuChevron {
+  transition: transform var(--fui-transition-fast, $fui-transition-fast);
+  flex-shrink: 0;
+
+  [data-popup-open] > & {
+    transform: rotate(180deg);
+  }
+}
+
+// ============================================
+// NavMenu Popup (dropdown content)
+// ============================================
+
+.navMenuPositioner {
+  z-index: 52;
+  outline: none;
+}
+
+.navMenuPopup {
+  @include surface-elevated;
+
+  min-width: 10rem;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.navMenuItem {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+
+  &[data-highlighted] {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.navMenuItemActive {
+  // Match active nav item treatment in both light and dark themes
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+
+  &[data-highlighted] {
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navMenuPopup {
+    transition: none;
+    transform: none;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
+  }
+
+  .navMenuChevron {
+    transition: none;
+  }
 }
 
 // ============================================

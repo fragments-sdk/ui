@@ -7,9 +7,11 @@
 
 .markdown {
   @include text-base;
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  font-size: 1.25rem;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
   word-wrap: break-word;
-  color: var(--fui-text-primary, $fui-text-primary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
 
   // ----------------------------------------
   // Headings
@@ -38,6 +40,7 @@
 
   h2 {
     font-size: var(--fui-font-size-xl, $fui-font-size-xl);
+    margin-top: var(--fui-space-8, $fui-space-8);
   }
 
   h3 {
@@ -61,7 +64,7 @@
     margin: 0;
 
     & + p {
-      margin-top: var(--fui-space-2, $fui-space-2);
+      margin-top: 1.5rem;
     }
   }
 

@@ -30,7 +30,7 @@ export interface ButtonAsAnchorProps
 
 export type ButtonProps = ButtonAsButtonProps | ButtonAsAnchorProps;
 
-export const Button = React.forwardRef<
+const ButtonRoot = React.forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
   ButtonProps
 >(function Button(props, ref) {
@@ -82,4 +82,8 @@ export const Button = React.forwardRef<
       {children}
     </BaseButton>
   );
+});
+
+export const Button = Object.assign(ButtonRoot, {
+  Root: ButtonRoot,
 });

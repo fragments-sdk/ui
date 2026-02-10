@@ -24,8 +24,8 @@ export default defineSegment({
     whenNot: [
       'Conveying critical errors (use Alert instead)',
       'Long-form status messages (use Alert)',
-      'Interactive filtering (use chip/toggle group)',
-      'Navigation labels (use tabs or links)',
+      'Interactive filtering (use Chip/ToggleGroup)',
+      'Navigation labels (use Tabs or links)',
     ],
     guidelines: [
       'Keep badge text under 20 characters',
@@ -75,7 +75,7 @@ export default defineSegment({
 
   relations: [
     { component: 'Alert', relationship: 'alternative', note: 'Use Alert for prominent, longer messages with actions' },
-    { component: 'Tag', relationship: 'sibling', note: 'Tag is interactive (clickable/filterable); Badge is display-only' },
+    { component: 'Chip', relationship: 'sibling', note: 'Chip is interactive (clickable/filterable); Badge is display-only' },
   ],
 
   contract: {

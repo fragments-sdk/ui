@@ -34,7 +34,7 @@ const spacingClasses = {
 // Component
 // ============================================
 
-export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
+const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(
   function Separator(
     {
       orientation = 'horizontal',
@@ -91,3 +91,7 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
     );
   }
 );
+
+export const Separator = Object.assign(SeparatorRoot, {
+  Root: SeparatorRoot,
+});

@@ -62,7 +62,7 @@ export interface TooltipProviderProps {
  * </Tooltip>
  * ```
  */
-export function Tooltip({
+function TooltipRoot({
   children,
   content,
   side = 'top',
@@ -135,3 +135,8 @@ export function TooltipProvider({
     </BaseTooltip.Provider>
   );
 }
+
+export const Tooltip = Object.assign(TooltipRoot, {
+  Root: TooltipRoot,
+  Provider: TooltipProvider,
+});

@@ -18,7 +18,7 @@ export interface VisuallyHiddenProps {
  *   <VisuallyHidden>Search</VisuallyHidden>
  * </Button>
  */
-export const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
+const VisuallyHiddenRoot = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
   function VisuallyHidden({ children, as: Component = 'span' }, ref) {
     return (
       <Component ref={ref as React.Ref<never>} className={styles.visuallyHidden}>
@@ -27,3 +27,7 @@ export const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>
     );
   }
 );
+
+export const VisuallyHidden = Object.assign(VisuallyHiddenRoot, {
+  Root: VisuallyHiddenRoot,
+});

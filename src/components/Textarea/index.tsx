@@ -49,7 +49,7 @@ function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
   return merged.length > 0 ? merged : undefined;
 }
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
     {
       value,
@@ -143,3 +143,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     );
   }
 );
+
+export const Textarea = Object.assign(TextareaRoot, {
+  Root: TextareaRoot,
+});

@@ -340,4 +340,11 @@ function ThemeToggle({
 // Exports
 // ============================================
 
+export const Theme = Object.assign(ThemeProvider, {
+  Root: ThemeProvider,
+  Provider: ThemeProvider,
+  Toggle: ThemeToggle,
+  useTheme,
+});
+
 export { ThemeProvider, ThemeToggle, useTheme };

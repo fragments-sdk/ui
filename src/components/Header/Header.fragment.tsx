@@ -4,24 +4,17 @@ import { Header } from '.';
 import { ThemeToggle, ThemeProvider } from '../Theme';
 import { Button } from '../Button';
 import { Input } from '../Input';
-
-function SearchIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor">
-      <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
-    </svg>
-  );
-}
+import { MagnifyingGlass } from '@phosphor-icons/react';
 
 export default defineSegment({
   component: Header,
 
   meta: {
     name: 'Header',
-    description: 'Composable header with slots for brand, navigation, search, and actions. Designed for use within AppShell with responsive mobile support.',
+    description: 'Composable header with slots for brand, navigation, search, and actions. Supports dropdown nav groups via Header.NavMenu. Designed for use within AppShell with responsive mobile support.',
     category: 'navigation',
     status: 'stable',
-    tags: ['header', 'navigation', 'navbar', 'brand', 'layout'],
+    tags: ['header', 'navigation', 'navbar', 'brand', 'layout', 'dropdown'],
     since: '0.5.0',
   },
 
@@ -31,6 +24,7 @@ export default defineSegment({
       'Navigation bar with branding (stacked layout)',
       'Search and actions bar (sidebar-inset layout)',
       'Header with responsive mobile menu trigger',
+      'Grouping related nav items under a dropdown menu',
     ],
     whenNot: [
       'Simple page titles (use heading elements)',
@@ -44,12 +38,15 @@ export default defineSegment({
       'Header.Trigger integrates with SidebarProvider for mobile menus',
       'Header.Nav is hidden on mobile; use sidebar for mobile navigation',
       'Use Header.Spacer to push items apart',
+      'Use Header.NavMenu to group related nav items under a dropdown',
+      'Use Header.NavMenuItem inside Header.NavMenu for dropdown items',
     ],
     accessibility: [
       'Include Header.SkipLink for keyboard users',
       'Navigation has aria-label for screen readers',
       'Active nav items use aria-current="page"',
       'Mobile trigger has aria-expanded state',
+      'NavMenu dropdown opens with click and is keyboard navigable',
     ],
   },
 
@@ -75,14 +72,15 @@ export default defineSegment({
   relations: [
     { component: 'AppShell', relationship: 'parent', note: 'Header is typically used inside AppShell.Header' },
     { component: 'Sidebar', relationship: 'sibling', note: 'Header.Trigger toggles Sidebar on mobile' },
-    { component: 'ThemeToggle', relationship: 'child', note: 'ThemeToggle is commonly placed in Header.Actions' },
+    { component: 'Theme', relationship: 'child', note: 'ThemeToggle is commonly placed in Header.Actions' },
   ],
 
   ai: {
     compositionPattern: 'compound',
-    subComponents: ['SkipLink', 'Trigger', 'Brand', 'Nav', 'NavItem', 'Search', 'Spacer', 'Actions'],
+    subComponents: ['SkipLink', 'Trigger', 'Brand', 'Nav', 'NavItem', 'NavMenu', 'NavMenuItem', 'Search', 'Spacer', 'Actions'],
     commonPatterns: [
       '<Header><Header.Brand href="/">{appName}</Header.Brand><Header.Nav><Header.NavItem href="/home" active>Home</Header.NavItem></Header.Nav><Header.Spacer /><Header.Actions>{actions}</Header.Actions></Header>',
+      '<Header><Header.Nav><Header.NavItem href="/home">Home</Header.NavItem><Header.NavMenu label="Docs" active><Header.NavMenuItem href="/cli">CLI</Header.NavMenuItem><Header.NavMenuItem href="/mcp">MCP</Header.NavMenuItem></Header.NavMenu></Header.Nav></Header>',
     ],
   },
 
@@ -105,6 +103,31 @@ export default defineSegment({
             <Header.Actions>
               <ThemeToggle size="md" />
               <Button variant="secondary" size="sm">Sign In</Button>
+            </Header.Actions>
+          </Header>
+        </ThemeProvider>
+      ),
+    },
+    {
+      name: 'With Dropdown Nav',
+      description: 'Header with a dropdown menu grouping related navigation links.',
+      render: () => (
+        <ThemeProvider defaultMode="light">
+          <Header>
+            <Header.Brand href="/">MyApp</Header.Brand>
+            <Header.Nav>
+              <Header.NavItem href="/components" active>Components</Header.NavItem>
+              <Header.NavItem href="/blocks">Blocks</Header.NavItem>
+              <Header.NavMenu label="Docs">
+                <Header.NavMenuItem href="/getting-started">Getting Started</Header.NavMenuItem>
+                <Header.NavMenuItem href="/cli">CLI Reference</Header.NavMenuItem>
+                <Header.NavMenuItem href="/mcp">MCP Tools</Header.NavMenuItem>
+              </Header.NavMenu>
+              <Header.NavItem href="/blog">Blog</Header.NavItem>
+            </Header.Nav>
+            <Header.Spacer />
+            <Header.Actions>
+              <ThemeToggle size="md" />
             </Header.Actions>
           </Header>
         </ThemeProvider>
@@ -163,7 +186,7 @@ export default defineSegment({
                 fontSize: '14px',
                 width: '280px'
               }}>
-                <SearchIcon /> Search documentation...
+                <MagnifyingGlass size={16} /> Search documentation...
               </div>
             </Header.Search>
             <Header.Spacer />

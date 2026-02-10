@@ -229,7 +229,7 @@
   @include interactive-base;
   @include text-base;
 
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
   padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
@@ -250,13 +250,19 @@
 }
 
 .itemActive {
-  // Use accent-hover for active state to ensure WCAG AA contrast (4.5:1 minimum)
-  background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  // Use secondary surface + primary text so active state adapts in light and dark themes
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-primary, $fui-text-primary);
 
   &:hover {
-    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover) !important;
-    color: var(--fui-text-inverse, $fui-text-inverse) !important;
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary) !important;
+    color: var(--fui-text-primary, $fui-text-primary) !important;
+    text-decoration: none;
+  }
+
+  &:active {
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary) !important;
+    color: var(--fui-text-primary, $fui-text-primary) !important;
     text-decoration: none;
   }
 
