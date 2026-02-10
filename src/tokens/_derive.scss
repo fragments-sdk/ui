@@ -46,30 +46,54 @@
 // --------------------------------------------
 
 /// Derive hover state for accent color
+/// Handles extreme lightness values (near-black/near-white) by reversing
+/// the adjustment direction to ensure a visible hover state.
 /// @param {Color} $base - Base accent color
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Color} Hover state color
 @function derive-accent-hover($base, $is-dark: false) {
+  $l: color.lightness($base);
+
   @if $is-dark {
-    // In dark mode, lighten for hover
-    @return color.scale($base, $lightness: 5%);
+    @if $l > 85% {
+      // Very light accent on dark bg: darken for visible hover
+      @return color.scale($base, $lightness: -10%);
+    }
+    // Standard dark mode: lighten for hover
+    @return color.scale($base, $lightness: 8%);
   } @else {
-    // In light mode, darken for hover
-    @return color.scale($base, $lightness: -8%);
+    @if $l < 15% {
+      // Very dark accent on light bg: lighten for visible hover
+      @return color.scale($base, $lightness: 18%);
+    }
+    // Standard light mode: darken for hover
+    @return color.scale($base, $lightness: -10%);
   }
 }
 
 /// Derive active state for accent color
+/// Handles extreme lightness values (near-black/near-white) by reversing
+/// the adjustment direction to ensure a visible active/pressed state.
 /// @param {Color} $base - Base accent color
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Color} Active state color
 @function derive-accent-active($base, $is-dark: false) {
+  $l: color.lightness($base);
+
   @if $is-dark {
-    // In dark mode, lighten more for active
-    @return color.scale($base, $lightness: 10%);
+    @if $l > 85% {
+      // Very light accent on dark bg: darken more for active
+      @return color.scale($base, $lightness: -16%);
+    }
+    // Standard dark mode: lighten more for active
+    @return color.scale($base, $lightness: 14%);
   } @else {
-    // In light mode, darken more for active
-    @return color.scale($base, $lightness: -15%);
+    @if $l < 15% {
+      // Very dark accent on light bg: lighten more for active
+      @return color.scale($base, $lightness: 28%);
+    }
+    // Standard light mode: darken more for active
+    @return color.scale($base, $lightness: -18%);
   }
 }
 
