@@ -21,21 +21,16 @@
 }
 
 // ============================================
-// Header bar with filename
+// Header bar (always rendered, contains filename + copy icon)
 // ============================================
-.hasHeader {
-  // Adjust copy button position when header is present
-  .copyButton {
-    top: calc(var(--fui-space-2, $fui-space-2) + 36px); // Account for header height
-  }
-}
-
 .header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: var(--fui-padding-inline-sm) var(--fui-padding-container-md);
   background-color: var(--fui-code-header-bg, $fui-code-header-bg);
   border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
+  min-height: 36px;
 }
 
 .filename {
@@ -45,36 +40,21 @@
   color: var(--fui-code-text, $fui-code-text);
 }
 
-// Copy button - always dark theme styling
+// Copy button - icon-only, always visible in header
 .copyButton {
   @include button-reset;
-  position: absolute;
-  top: var(--fui-space-2, $fui-space-2);
-  right: var(--fui-space-2, $fui-space-2);
-  z-index: 10;
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-padding-item-xs) var(--fui-padding-item-sm);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  // Use code-specific tokens for consistent dark theme styling
+  justify-content: center;
+  padding: var(--fui-space-1, $fui-space-1);
   color: var(--fui-code-text-muted, $fui-code-text-muted);
   background: transparent;
   border: none;
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  opacity: 0;
   cursor: pointer;
   transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
     background var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
-
-  // Show on wrapper hover
-  .wrapper:hover & {
-    opacity: 1;
-  }
 
   &:hover {
     color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
@@ -82,7 +62,6 @@
   }
 
   &:focus-visible {
-    opacity: 1;
     outline: 2px solid rgba(255, 255, 255, 0.5);
     outline-offset: 2px;
   }
@@ -122,7 +101,7 @@
   pre {
     margin: 0;
     padding: var(--fui-padding-container-md);
-    padding-right: var(--fui-space-10, $fui-space-10);
+    padding-right: var(--fui-padding-container-md);
     background-color: transparent !important;
     border: none !important;
     border-radius: 0 !important;
@@ -146,10 +125,10 @@
 .codeContainer {
   // Shiki output styling - always dark theme
   :global(.shiki) {
+    background-color: transparent !important;
     margin: 0;
     padding: var(--fui-padding-container-md);
-    padding-right: var(--fui-space-10, $fui-space-10);
-    background-color: transparent !important;
+    padding-right: var(--fui-padding-container-md);
     border: none !important;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
@@ -257,7 +236,7 @@
   }
 }
 
-// Compact variant — reduced padding, vertically centred copy button
+// Compact variant — reduced padding
 .compact {
   .wrapper {
     border-radius: var(--fui-radius-md, $fui-radius-md);
@@ -266,22 +245,8 @@
   .codeContainer :global(.shiki),
   .loading pre {
     padding: var(--fui-padding-inline-sm) var(--fui-padding-container-sm);
-    padding-right: var(--fui-space-8, $fui-space-8);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
     line-height: 1.5;
-  }
-
-  .copyButton {
-    top: 50%;
-    transform: translateY(-50%);
-    right: var(--fui-space-1, $fui-space-1);
-    padding: var(--fui-space-1, $fui-space-1);
-    font-size: 0;
-    gap: 0;
-
-    span {
-      display: none;
-    }
   }
 }
 
@@ -343,13 +308,6 @@
   .codeContainer :global(.shiki) {
     font-size: 0.75rem;
     padding: var(--fui-space-2, $fui-space-2);
-    padding-right: var(--fui-space-8, $fui-space-8);
-  }
-
-  .copyButton {
-    opacity: 0.8; // Always visible on mobile (no hover)
-    padding: 0.25rem 0.5rem;
-    font-size: 0.6875rem;
   }
 }
 

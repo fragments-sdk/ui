@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import styles from './TableOfContents.module.scss';
+import { Text } from '../Text';
 import '../../styles/globals.scss';
 
 // ============================================
@@ -44,7 +45,11 @@ function TableOfContentsRoot({
 
   return (
     <nav aria-label={label} className={classes} {...htmlProps}>
-      {!hideTitle && <p className={styles.title}>{title}</p>}
+      {!hideTitle && (
+        <Text as="p" variant="section-label" className={styles.title}>
+          {title}
+        </Text>
+      )}
       <ul className={styles.list}>
         {children}
       </ul>

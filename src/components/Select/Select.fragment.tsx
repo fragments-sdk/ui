@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Select } from '.';
 
 // Stateful wrapper for interactive demos
@@ -16,7 +16,7 @@ function StatefulSelect(props: React.ComponentProps<typeof Select> & {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: Select,
 
   meta: {

@@ -72,6 +72,15 @@
   color: var(--fui-text-secondary, #{$fui-text-secondary});
 }
 
+// Section label text (e.g. sidebar headings, TOC label)
+@mixin section-label-text {
+  @include helper-text;
+  font-size: var(--fui-font-size-2xs, #{$fui-font-size-2xs});
+  font-weight: var(--fui-font-weight-medium, #{$fui-font-weight-medium});
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 // Card surface
 @mixin surface-elevated {
   background-color: var(--fui-bg-elevated, #{$fui-bg-elevated});

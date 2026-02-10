@@ -22,6 +22,11 @@ describe('Text', () => {
     expect(el).toHaveClass('color-secondary');
   });
 
+  it('applies section-label variant class', () => {
+    render(<Text variant="section-label">Label</Text>);
+    expect(screen.getByText('Label')).toHaveClass('variant-section-label');
+  });
+
   it('applies truncate class', () => {
     render(<Text truncate>Long text that should truncate</Text>);
     expect(screen.getByText('Long text that should truncate')).toHaveClass('truncate');

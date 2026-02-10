@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Toggle } from '.';
 
 // Stateful wrapper for interactive demos
@@ -8,7 +8,7 @@ function StatefulToggle(props: React.ComponentProps<typeof Toggle>) {
   return <Toggle {...props} checked={checked} onChange={setChecked} />;
 }
 
-export default defineSegment({
+export default defineFragment({
   component: Toggle,
 
   meta: {

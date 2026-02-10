@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { ToggleGroup } from '.';
 
 function DefaultExample() {
@@ -92,7 +92,7 @@ function DisabledItemExample() {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: ToggleGroup,
 
   meta: {
@@ -100,7 +100,7 @@ export default defineSegment({
     description: 'A group of toggle buttons where only one can be selected at a time. Useful for switching between views, modes, or options.',
     category: 'forms',
     status: 'stable',
-    tags: ['toggle', 'group', 'segmented', 'control', 'tabs', 'switch'],
+    tags: ['toggle', 'group', 'fragmented', 'control', 'tabs', 'switch'],
     since: '0.2.0',
   },
 
@@ -108,7 +108,7 @@ export default defineSegment({
     when: [
       'Switching between mutually exclusive views or modes',
       'Selecting one option from a small set (2-5 options)',
-      'Segmented controls like view switchers',
+      'Fragmented controls like view switchers',
       'Filter or sort options',
     ],
     whenNot: [
@@ -185,7 +185,7 @@ export default defineSegment({
     scenarioTags: [
       'forms.selection',
       'input.toggle',
-      'control.segmented',
+      'control.fragmented',
     ],
     a11yRules: ['A11Y_GROUP_ROLE', 'A11Y_KEYBOARD_ACCESSIBLE'],
   },

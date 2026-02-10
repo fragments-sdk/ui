@@ -309,7 +309,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     {
       code,
       language = 'tsx',
-      theme = 'synthwave-84',
+      theme = 'one-dark-pro',
       showCopy = true,
       title,
       filename,
@@ -421,7 +421,6 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
 
     const wrapperClasses = [
       styles.wrapper,
-      filename && styles.hasHeader,
       persistentCopy && styles.persistentCopyWrapper,
     ].filter(Boolean).join(' ');
 
@@ -433,30 +432,20 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       <div ref={ref} {...htmlProps} className={classNames}>
         {title && <div className={styles.title}>{title}</div>}
         <div className={wrapperClasses}>
-          {filename && (
+          {(filename || (showCopy && !persistentCopy)) && (
             <div className={styles.header}>
-              <span className={styles.filename}>{filename}</span>
-            </div>
-          )}
-          {showCopy && !persistentCopy && (
-            <button
-              type="button"
-              onClick={handleCopy}
-              className={`${styles.copyButton} ${copied ? styles.copied : ''}`}
-              aria-label={copied ? 'Copied!' : 'Copy code'}
-            >
-              {copied ? (
-                <>
-                  <CheckIcon className={styles.icon} />
-                  <span>Copied!</span>
-                </>
-              ) : (
-                <>
-                  <CopyIcon className={styles.icon} />
-                  <span>Copy</span>
-                </>
+              <span className={styles.filename}>{filename ?? ''}</span>
+              {showCopy && !persistentCopy && (
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className={`${styles.copyButton} ${copied ? styles.copied : ''}`}
+                  aria-label={copied ? 'Copied!' : 'Copy code'}
+                >
+                  {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
+                </button>
               )}
-            </button>
+            </div>
           )}
           {isLoading ? (
             <div className={styles.loading} style={codeContainerStyle}>

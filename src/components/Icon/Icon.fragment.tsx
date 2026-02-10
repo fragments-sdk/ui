@@ -1,9 +1,9 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Icon } from '.';
 import { Heart, Star, Check, Warning, Info } from '@phosphor-icons/react';
 
-export default defineSegment({
+export default defineFragment({
   component: Icon,
 
   meta: {

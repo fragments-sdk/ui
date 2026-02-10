@@ -9,11 +9,6 @@
 
 // Title text ("On This Page")
 .title {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   margin: 0;
   padding: 0 0 var(--fui-space-2, $fui-space-2) 0;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Checkbox } from '.';
 
 // Stateful wrapper for interactive demos
@@ -8,7 +8,7 @@ function StatefulCheckbox(props: React.ComponentProps<typeof Checkbox>) {
   return <Checkbox {...props} checked={checked} onCheckedChange={setChecked} />;
 }
 
-export default defineSegment({
+export default defineFragment({
   component: Checkbox,
 
   meta: {

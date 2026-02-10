@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { AppShell } from '.';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
@@ -38,7 +38,7 @@ function SearchIcon() {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: AppShell,
 
   meta: {

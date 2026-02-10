@@ -5,6 +5,7 @@ import '../../styles/globals.scss';
 export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children: React.ReactNode;
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'label' | 'div' | 'strong' | 'em' | 'small' | 'mark' | 'del' | 'ins' | 'sub' | 'sup' | 'time' | 'address' | 'blockquote' | 'cite' | 'code' | 'abbr';
+  variant?: 'section-label';
   size?: '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
   weight?: 'normal' | 'medium' | 'semibold';
   color?: 'primary' | 'secondary' | 'tertiary';
@@ -20,6 +21,7 @@ const TextRoot = React.forwardRef<HTMLElement, TextProps>(
     {
       children,
       as: Component = 'span',
+      variant,
       size,
       weight,
       color,
@@ -34,6 +36,7 @@ const TextRoot = React.forwardRef<HTMLElement, TextProps>(
   ) {
     const classes = [
       styles.text,
+      variant && styles[`variant-${variant}`],
       size && styles[`size-${size}`],
       weight && styles[`weight-${weight}`],
       color && styles[`color-${color}`],

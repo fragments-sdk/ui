@@ -1,9 +1,15 @@
 @use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
 
 .text {
   font-family: var(--fui-font-sans, $fui-font-sans);
   color: var(--fui-text-primary, $fui-text-primary);
   margin: 0;
+}
+
+// Variants
+.variant-section-label {
+  @include section-label-text;
 }
 
 // Font sizes

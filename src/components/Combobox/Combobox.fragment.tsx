@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Combobox } from '.';
 
 // Stateful wrapper for interactive demos
@@ -16,7 +16,7 @@ function StatefulCombobox(props: React.ComponentProps<typeof Combobox> & {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: Combobox,
 
   meta: {

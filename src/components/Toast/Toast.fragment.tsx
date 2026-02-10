@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Toast, ToastProvider, useToast } from '.';
 
 // Demo component that triggers toasts
@@ -45,7 +45,7 @@ function ToastDemoWrapper() {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: Toast,
 
   meta: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Table, createColumns } from '.';
 import { Badge } from '../Badge';
 
@@ -37,7 +37,7 @@ const columns = createColumns<User>([
   { key: 'role', header: 'Role' },
 ]);
 
-export default defineSegment({
+export default defineFragment({
   component: Table,
 
   meta: {

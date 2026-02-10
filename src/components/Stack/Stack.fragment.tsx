@@ -1,10 +1,10 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Stack } from '.';
 import { Button } from '../Button';
 import { Badge } from '../Badge';
 
-export default defineSegment({
+export default defineFragment({
   component: Stack,
 
   meta: {

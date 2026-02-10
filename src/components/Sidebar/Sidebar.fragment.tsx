@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Sidebar, SidebarProvider, useSidebar } from '.';
 import { Button } from '../Button';
 
@@ -383,7 +383,7 @@ function RailDemo() {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: Sidebar,
 
   meta: {

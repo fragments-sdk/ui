@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { EmptyState } from '.';
 import { Button } from '../Button';
 
@@ -54,7 +54,7 @@ const InboxIcon = () => (
   </svg>
 );
 
-export default defineSegment({
+export default defineFragment({
   component: EmptyState,
 
   meta: {

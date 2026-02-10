@@ -1,8 +1,8 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Button } from '.';
 
-export default defineSegment({
+export default defineFragment({
   component: Button,
 
   meta: {

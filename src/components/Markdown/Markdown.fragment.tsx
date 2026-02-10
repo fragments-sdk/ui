@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Markdown } from '.';
 
 const defaultContent = `# Hello World
@@ -75,7 +75,7 @@ The project is progressing well. Here are the **key highlights**:
 For more details, see the [documentation](#).
 `;
 
-export default defineSegment({
+export default defineFragment({
   component: Markdown,
 
   meta: {

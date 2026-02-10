@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { ThemeProvider, ThemeToggle, useTheme } from '.';
 
 // Demo component to show hook usage
@@ -14,7 +14,7 @@ function ThemeDemo() {
   );
 }
 
-export default defineSegment({
+export default defineFragment({
   component: ThemeProvider,
 
   meta: {

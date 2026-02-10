@@ -1,10 +1,10 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Field } from '.';
 import { Input } from '../Input';
 import { Grid } from '../Grid';
 
-export default defineSegment({
+export default defineFragment({
   component: Field,
 
   meta: {

@@ -254,7 +254,7 @@ function ThemeProvider({
 }
 
 /**
- * ThemeToggle - Segmented button group to toggle between light and dark themes
+ * ThemeToggle - Fragmented button group to toggle between light and dark themes
  *
  * Can be used in two modes:
  * 1. Uncontrolled (default): Uses ThemeProvider context to get/set theme

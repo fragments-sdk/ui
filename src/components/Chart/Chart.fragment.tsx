@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import {
   LineChart,
   Line,
@@ -40,7 +40,7 @@ const browserData = [
   { name: 'Edge', value: 10, color: 'var(--fui-color-warning)' },
 ];
 
-export default defineSegment({
+export default defineFragment({
   component: ChartContainer,
 
   meta: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Fieldset } from '.';
 import { Field } from '../Field';
 import { Input } from '../Input';
@@ -8,7 +8,7 @@ import { Select } from '../Select';
 import { Checkbox } from '../Checkbox';
 import { Grid } from '../Grid';
 
-export default defineSegment({
+export default defineFragment({
   component: Fieldset,
 
   meta: {

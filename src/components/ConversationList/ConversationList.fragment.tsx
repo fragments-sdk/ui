@@ -1,9 +1,9 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { ConversationList } from '.';
 import { Message } from '../Message';
 
-export default defineSegment({
+export default defineFragment({
   component: ConversationList,
 
   meta: {

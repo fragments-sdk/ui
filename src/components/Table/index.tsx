@@ -101,9 +101,47 @@ function TableRoot<T>({
 
   const isEmpty = data.length === 0;
 
-  const rootClasses = [styles.table, styles[size], striped && styles.striped, className]
+  const hasExplicitColumnSizing = React.useMemo(
+    () =>
+      columns.some((column) =>
+        column.size !== undefined ||
+        column.minSize !== undefined ||
+        column.maxSize !== undefined
+      ),
+    [columns]
+  );
+
+  const rootClasses = [
+    styles.table,
+    hasExplicitColumnSizing && styles.fixedLayout,
+    styles[size],
+    striped && styles.striped,
+    className,
+  ]
     .filter(Boolean)
     .join(' ');
+
+  const getColumnSizeStyle = (
+    column: {
+      getSize: () => number;
+      columnDef: { size?: number; minSize?: number; maxSize?: number };
+    }
+  ): React.CSSProperties | undefined => {
+    const { size, minSize, maxSize } = column.columnDef;
+    const hasExplicitSize = size !== undefined || minSize !== undefined || maxSize !== undefined;
+
+    if (!hasExplicitSize) {
+      return undefined;
+    }
+
+    const resolvedSize = column.getSize();
+
+    return {
+      width: resolvedSize,
+      minWidth: minSize ?? resolvedSize,
+      maxWidth: maxSize ?? resolvedSize,
+    };
+  };
 
   if (isEmpty) {
     return (
@@ -151,9 +189,7 @@ function TableRoot<T>({
                   <th
                     key={header.id}
                     className={[styles.th, canSort && styles.thSortable].filter(Boolean).join(' ')}
-                    style={{
-                      width: header.getSize() !== 150 ? header.getSize() : undefined,
-                    }}
+                    style={getColumnSizeStyle(header.column)}
                     scope="col"
                     aria-sort={
                       sortDirection
@@ -240,7 +276,7 @@ function TableRoot<T>({
                 data-selected={isSelected || undefined}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className={styles.td}>
+                  <td key={cell.id} className={styles.td} style={getColumnSizeStyle(cell.column)}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -322,6 +358,8 @@ export function createColumns<T>(
     accessorKey: col.key,
     header: col.header,
     size: col.width,
+    minSize: col.width,
+    maxSize: col.width,
     cell: col.cell
       ? ({ row }) => col.cell!(row.original)
       : ({ getValue }) => getValue() ?? '--',

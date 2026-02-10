@@ -1,12 +1,12 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Header } from '.';
 import { ThemeToggle, ThemeProvider } from '../Theme';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 
-export default defineSegment({
+export default defineFragment({
   component: Header,
 
   meta: {

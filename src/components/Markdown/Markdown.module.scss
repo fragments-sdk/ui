@@ -137,6 +137,11 @@
     }
   }
 
+  // Only target the immediate parent wrapper of a <pre> block
+  div:has(> div > div > pre) {
+    margin: 1.5rem 0;
+  }
+
   // ----------------------------------------
   // Blockquotes
   // ----------------------------------------

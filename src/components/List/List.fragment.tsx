@@ -1,9 +1,9 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { List } from '.';
 import { Check } from '@phosphor-icons/react';
 
-export default defineSegment({
+export default defineFragment({
   component: List,
 
   meta: {

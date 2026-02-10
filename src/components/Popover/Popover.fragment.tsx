@@ -1,10 +1,10 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Popover } from '.';
 import { Button } from '../Button';
 import { Input } from '../Input';
 
-export default defineSegment({
+export default defineFragment({
   component: Popover,
 
   meta: {

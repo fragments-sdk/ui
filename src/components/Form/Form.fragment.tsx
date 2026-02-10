@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineSegment } from '@fragments/core';
+import { defineFragment } from '@fragments/core';
 import { Form } from '.';
 import { Field } from '../Field';
 import { Fieldset } from '../Fieldset';
@@ -12,7 +12,7 @@ import { Toggle } from '../Toggle';
 import { Button } from '../Button';
 import { Grid } from '../Grid';
 
-export default defineSegment({
+export default defineFragment({
   component: Form,
 
   meta: {
