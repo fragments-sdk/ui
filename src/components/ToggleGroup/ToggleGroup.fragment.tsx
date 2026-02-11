@@ -194,31 +194,63 @@ export default defineFragment({
     {
       name: 'Default',
       description: 'Basic toggle group',
+      code: `<ToggleGroup value={value} onChange={setValue}>
+  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
+</ToggleGroup>`,
       render: () => <DefaultExample />,
     },
     {
       name: 'Pills Variant',
       description: 'Pill-shaped toggle buttons',
+      code: `<ToggleGroup value={value} onChange={setValue} variant="pills">
+  <ToggleGroup.Item value="all">All</ToggleGroup.Item>
+  <ToggleGroup.Item value="active">Active</ToggleGroup.Item>
+  <ToggleGroup.Item value="completed">Completed</ToggleGroup.Item>
+</ToggleGroup>`,
       render: () => <PillsExample />,
     },
     {
       name: 'Outline Variant',
       description: 'Outlined toggle buttons',
+      code: `<ToggleGroup value={value} onChange={setValue} variant="outline">
+  <ToggleGroup.Item value="day">Day</ToggleGroup.Item>
+  <ToggleGroup.Item value="week">Week</ToggleGroup.Item>
+  <ToggleGroup.Item value="month">Month</ToggleGroup.Item>
+</ToggleGroup>`,
       render: () => <OutlineExample />,
     },
     {
       name: 'Sizes',
       description: 'Different size variants',
+      code: `<ToggleGroup value={value} onChange={setValue} size="sm">
+  <ToggleGroup.Item value="a">Small</ToggleGroup.Item>
+  <ToggleGroup.Item value="b">Size</ToggleGroup.Item>
+</ToggleGroup>
+<ToggleGroup value={value} onChange={setValue} size="md">
+  <ToggleGroup.Item value="a">Medium</ToggleGroup.Item>
+  <ToggleGroup.Item value="b">Size</ToggleGroup.Item>
+</ToggleGroup>`,
       render: () => <SizesExample />,
     },
     {
       name: 'View Switcher',
       description: 'Common pattern for switching between views',
+      code: `<ToggleGroup value={view} onChange={setView} size="sm">
+  <ToggleGroup.Item value="grid"><GridIcon /></ToggleGroup.Item>
+  <ToggleGroup.Item value="list"><ListIcon /></ToggleGroup.Item>
+</ToggleGroup>`,
       render: () => <ViewSwitcherExample />,
     },
     {
       name: 'With Disabled Item',
       description: 'Toggle group with a disabled option',
+      code: `<ToggleGroup value={value} onChange={setValue}>
+  <ToggleGroup.Item value="basic">Basic</ToggleGroup.Item>
+  <ToggleGroup.Item value="pro">Pro</ToggleGroup.Item>
+  <ToggleGroup.Item value="enterprise" disabled>Enterprise</ToggleGroup.Item>
+</ToggleGroup>`,
       render: () => <DisabledItemExample />,
     },
   ],

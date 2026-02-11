@@ -21,8 +21,8 @@ const items = [
   </Card.Header>
   <Card.Body>
     <Stack gap="md">
-      {items.map((item, index) => (
-        <Stack key={index} direction="row" gap="md" align="center">
+      {items.map((item) => (
+        <Stack key={item.name} direction="row" gap="md" align="center">
           <Image src={item.image} alt={item.name} width={64} height={64} rounded="md" />
           <Stack gap="xs" style={{ flex: 1 }}>
             <Text weight="semibold">{item.name}</Text>

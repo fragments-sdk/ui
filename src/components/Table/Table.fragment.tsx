@@ -58,7 +58,7 @@ export default defineFragment({
     ],
     whenNot: [
       'Simple lists (use List component)',
-      'Card-based layouts (use CardGrid)',
+      'Card-based layouts (use Grid with Cards)',
       'Heavily interactive data (consider DataGrid)',
       'Small screens (consider card or list view)',
     ],

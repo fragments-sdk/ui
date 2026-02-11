@@ -2,72 +2,91 @@ import { defineBlock } from '@fragments/core';
 
 export default defineBlock({
   name: 'Dashboard Layout',
-  description: 'Dashboard grid with a featured full-width card and smaller metric cards below',
-  category: 'layout',
-  components: ['Grid', 'Card', 'Badge', 'Separator'],
-  tags: ['dashboard', 'layout', 'metrics', 'widgets', 'overview'],
+  description:
+    'Full application shell with sidebar navigation, header, and metrics grid',
+  category: 'dashboard',
+  components: [
+    'AppShell',
+    'Header',
+    'Sidebar',
+    'Stack',
+    'Grid',
+    'Card',
+    'Text',
+    'Badge',
+    'Input',
+    'ThemeToggle',
+    'Avatar',
+  ],
+  tags: ['dashboard', 'layout', 'sidebar', 'app-shell', 'navigation'],
   code: `
-<Grid columns={4} gap="lg">
-  <Grid.Item colSpan="full">
-    <Card>
-      <Card.Header>
-        <Card.Title>Overview</Card.Title>
-        <Card.Description>Key metrics for this period</Card.Description>
-      </Card.Header>
-      <Card.Body>{summaryContent}</Card.Body>
-    </Card>
-  </Grid.Item>
-  <Card variant="outlined">
-    <Card.Header>
-      <Card.Title>Users</Card.Title>
-    </Card.Header>
-    <Card.Body>
-      <Badge variant="success">{stats.users}</Badge>
-    </Card.Body>
-  </Card>
-  <Card variant="outlined">
-    <Card.Header>
-      <Card.Title>Revenue</Card.Title>
-    </Card.Header>
-    <Card.Body>
-      <Badge variant="info">{stats.revenue}</Badge>
-    </Card.Body>
-  </Card>
-  <Card variant="outlined">
-    <Card.Header>
-      <Card.Title>Orders</Card.Title>
-    </Card.Header>
-    <Card.Body>
-      <Badge variant="warning">{stats.orders}</Badge>
-    </Card.Body>
-  </Card>
-  <Card variant="outlined">
-    <Card.Header>
-      <Card.Title>Errors</Card.Title>
-    </Card.Header>
-    <Card.Body>
-      <Badge variant="danger">{stats.errors}</Badge>
-    </Card.Body>
-  </Card>
-  <Grid.Item colSpan="full">
-    <Separator spacing="md" />
-  </Grid.Item>
-  <Grid.Item colSpan={2}>
-    <Card>
-      <Card.Header>
-        <Card.Title>Recent Activity</Card.Title>
-      </Card.Header>
-      <Card.Body>{activityList}</Card.Body>
-    </Card>
-  </Grid.Item>
-  <Grid.Item colSpan={2}>
-    <Card>
-      <Card.Header>
-        <Card.Title>Notifications</Card.Title>
-      </Card.Header>
-      <Card.Body>{notificationList}</Card.Body>
-    </Card>
-  </Grid.Item>
-</Grid>
+const navItems = [
+  { label: 'Dashboard', active: true },
+  { label: 'Analytics', active: false },
+  { label: 'Projects', active: false },
+  { label: 'Settings', active: false },
+];
+
+const metrics = [
+  { label: 'Total Users', value: '12,847', change: '+12%' },
+  { label: 'Revenue', value: '$48,352', change: '+8%' },
+  { label: 'Active Projects', value: '23', change: '+3' },
+];
+
+<AppShell layout="inset">
+  <AppShell.Header>
+    <Header>
+      <Header.Trigger />
+      <Header.Search>
+        <Input placeholder="Search..." style={{ width: '240px' }} />
+      </Header.Search>
+      <Header.Spacer />
+      <Header.Actions>
+        <ThemeToggle size="sm" />
+        <Avatar size="sm" initials="JD" />
+      </Header.Actions>
+    </Header>
+  </AppShell.Header>
+  <AppShell.Sidebar width="220px" collapsible="offcanvas">
+    <Sidebar.Header>
+      <Text weight="semibold" size="lg">Acme Inc</Text>
+    </Sidebar.Header>
+    <Sidebar.Nav>
+      <Sidebar.Section label="Main">
+        {navItems.map((item) => (
+          <Sidebar.Item key={item.label} active={item.active}>
+            {item.label}
+          </Sidebar.Item>
+        ))}
+      </Sidebar.Section>
+    </Sidebar.Nav>
+    <Sidebar.Footer>
+      <Text size="sm" color="tertiary">v2.0.0</Text>
+    </Sidebar.Footer>
+  </AppShell.Sidebar>
+  <AppShell.Main padding="lg">
+    <Stack gap="lg">
+      <Stack gap="xs">
+        <Text size="xl" weight="semibold">Dashboard</Text>
+        <Text color="tertiary">Welcome back! Here's an overview of your metrics.</Text>
+      </Stack>
+      <Grid columns={{ base: 1, md: 3 }} gap="md">
+        {metrics.map((metric) => (
+          <Card key={metric.label}>
+            <Card.Body>
+              <Stack gap="sm">
+                <Text size="sm" color="tertiary">{metric.label}</Text>
+                <Stack direction="row" justify="between" align="baseline">
+                  <Text size="2xl" weight="semibold">{metric.value}</Text>
+                  <Badge variant="success">{metric.change}</Badge>
+                </Stack>
+              </Stack>
+            </Card.Body>
+          </Card>
+        ))}
+      </Grid>
+    </Stack>
+  </AppShell.Main>
+</AppShell>
 `.trim(),
 });

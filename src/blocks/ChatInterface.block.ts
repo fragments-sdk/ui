@@ -2,86 +2,42 @@ import { defineBlock } from '@fragments/core';
 
 export default defineBlock({
   name: 'Chat Interface',
-  description: 'AI chat interface with message history and prompt input',
-  category: 'layout',
-  components: ['Prompt', 'Card', 'Avatar', 'Stack'],
-  tags: ['chat', 'ai', 'assistant', 'conversation'],
+  description: 'Full AI chat with conversation list, messages, and prompt input',
+  category: 'ai',
+  components: ['Stack', 'ConversationList', 'Message', 'Prompt'],
+  tags: ['chat', 'ai', 'assistant', 'conversation', 'prompt'],
   code: `
-import { useState } from 'react';
-import { Prompt, Card, Avatar, Stack } from '@fragments-sdk/ui';
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (value: string) => {
-    // Add user message
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: value,
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Add assistant response
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: 'This is a simulated response. Replace with your AI API call.',
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <Stack gap="4" style={{ height: '100vh', padding: '1rem' }}>
-      {/* Messages */}
-      <Stack gap="3" style={{ flex: 1, overflow: 'auto' }}>
-        {messages.map((msg) => (
-          <Card key={msg.id} padding="md">
-            <Card.Body>
-              <Stack direction="row" gap="3" align="start">
-                <Avatar size="sm">
-                  {msg.role === 'user' ? 'U' : 'AI'}
-                </Avatar>
-                <div style={{ flex: 1 }}>{msg.content}</div>
-              </Stack>
-            </Card.Body>
-          </Card>
-        ))}
-      </Stack>
-
-      {/* Prompt */}
-      <Prompt onSubmit={handleSubmit} loading={isLoading}>
-        <Prompt.Textarea placeholder="Ask anything..." />
-        <Prompt.Toolbar>
-          <Prompt.Actions>
-            <Prompt.ActionButton aria-label="Attach file">
-              +
-            </Prompt.ActionButton>
-            <Prompt.ModeButton>Auto</Prompt.ModeButton>
-          </Prompt.Actions>
-          <Prompt.Info>
-            <Prompt.Usage>52% used</Prompt.Usage>
-            <Prompt.Submit />
-          </Prompt.Info>
-        </Prompt.Toolbar>
-      </Prompt>
-    </Stack>
-  );
-}
+<Stack style={{ height: '500px', border: '1px solid var(--fui-border)', borderRadius: 'var(--fui-radius-lg)', overflow: 'hidden' }}>
+  <ConversationList autoScroll="smart" style={{ flex: 1 }}>
+    <Message role="system">
+      <Message.Content>
+        Conversation started with Claude
+      </Message.Content>
+    </Message>
+    <Message role="user">
+      <Message.Content>
+        Hello! What can you help me with today?
+      </Message.Content>
+    </Message>
+    <Message role="assistant">
+      <Message.Content>
+        Hi! I'm here to help with coding questions, writing, analysis, and more. What would you like to explore?
+      </Message.Content>
+    </Message>
+  </ConversationList>
+  <div style={{ borderTop: '1px solid var(--fui-border)' }}>
+    <Prompt placeholder="Message Claude..." onSubmit={(value) => console.log(value)}>
+      <Prompt.Textarea />
+      <Prompt.Toolbar>
+        <Prompt.Actions>
+          <Prompt.ActionButton aria-label="Attach file">+</Prompt.ActionButton>
+        </Prompt.Actions>
+        <Prompt.Info>
+          <Prompt.Submit />
+        </Prompt.Info>
+      </Prompt.Toolbar>
+    </Prompt>
+  </div>
+</Stack>
 `.trim(),
 });

@@ -52,7 +52,7 @@
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Color} Hover state color
 @function derive-accent-hover($base, $is-dark: false) {
-  $l: color.lightness($base);
+  $l: color.channel($base, 'lightness', $space: hsl);
 
   @if $is-dark {
     @if $l > 85% {
@@ -78,7 +78,7 @@
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Color} Active state color
 @function derive-accent-active($base, $is-dark: false) {
-  $l: color.lightness($base);
+  $l: color.channel($base, 'lightness', $space: hsl);
 
   @if $is-dark {
     @if $l > 85% {

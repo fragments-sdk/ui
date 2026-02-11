@@ -36,7 +36,7 @@ export default defineBlock({
       <Tabs.Panel value="billing">
         <Stack gap="md">
           <Text>Current Plan: <Text weight="semibold">Pro</Text></Text>
-          <Text size="sm" color="tertiary">Your next billing date is January 1, 2025</Text>
+          <Text size="sm" color="tertiary">Your next billing date will appear here</Text>
           <Button variant="secondary">Manage Subscription</Button>
         </Stack>
       </Tabs.Panel>

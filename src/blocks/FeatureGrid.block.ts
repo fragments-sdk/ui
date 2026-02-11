@@ -19,7 +19,7 @@ const features = [
     <Card key={feature.title}>
       <Card.Body>
         <Stack gap="md">
-          <Icon icon={feature.icon} size="lg" color="accent" />
+          <Icon icon={feature.icon} size="lg" variant="accent" />
           <Stack gap="xs">
             <Text weight="semibold">{feature.title}</Text>
             <Text size="sm" color="tertiary">{feature.description}</Text>

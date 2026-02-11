@@ -13,7 +13,7 @@ const tiers = [
   { name: 'Enterprise', price: '$99', period: '/month', description: 'For large organizations', features: ['Everything in Pro', 'Custom integrations', 'Dedicated support', 'SLA guarantee'], ctaText: 'Contact Sales' },
 ];
 
-<Grid columns={3} gap="lg">
+<Grid columns={{ base: 1, lg: 3 }} gap="lg">
   {tiers.map((tier) => (
     <Card key={tier.name}>
       <Card.Header>
