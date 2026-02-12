@@ -521,6 +521,9 @@ export {
   type ChartLegendContentProps,
 } from './components/Chart';
 
+// Assets
+export { FragmentsLogo, type FragmentsLogoProps } from './assets/fragments-logo';
+
 // Accessibility Utilities
 export {
   useId,

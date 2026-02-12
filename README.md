@@ -277,3 +277,5 @@ Access blocks via the MCP server's `fragments_blocks` tool or `fragments_context
 ## License
 
 MIT
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=a02beb71-df11-498d-8e1f-39de2e64ce5b" />

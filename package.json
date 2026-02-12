@@ -18,6 +18,7 @@
     "./mixins": "./src/tokens/_mixins.scss",
     "./brand": "./src/brand.ts",
     "./fragments.json": "./fragments.json",
+    "./assets/*": "./src/assets/*",
     "./package.json": "./package.json"
   },
   "keywords": [
@@ -69,7 +70,11 @@
       "optional": true
     }
   },
+  "scarfSettings": {
+    "defaultOptIn": true
+  },
   "dependencies": {
+    "@scarf/scarf": "^1.4.0",
     "@base-ui/react": "^1.0.0",
     "@phosphor-icons/react": "^2.1.10",
     "@tanstack/react-table": "^8.21.3",

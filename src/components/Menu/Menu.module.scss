@@ -11,6 +11,8 @@
 .popup {
   @include surface-elevated;
 
+  list-style: none;
+  margin: 0;
   min-width: 12rem;
   padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);

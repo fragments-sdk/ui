@@ -65,6 +65,41 @@ describe('Input', () => {
     expect(handleChange).toHaveBeenCalledWith('a');
   });
 
+  it('focuses the input when shortcut key is pressed', () => {
+    render(<Input aria-label="Search" shortcut="⌘K" />);
+    const input = screen.getByRole('textbox');
+    expect(document.activeElement).not.toBe(input);
+
+    // Simulate pressing ⌘K (Meta+K)
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })
+    );
+
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('focuses the input when Ctrl+K is pressed (Windows/Linux)', () => {
+    render(<Input aria-label="Search" shortcut="⌘K" />);
+    const input = screen.getByRole('textbox');
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true })
+    );
+
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('does not focus when wrong key is pressed', () => {
+    render(<Input aria-label="Search" shortcut="⌘K" />);
+    const input = screen.getByRole('textbox');
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'j', metaKey: true, bubbles: true })
+    );
+
+    expect(document.activeElement).not.toBe(input);
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Input label="Accessible input" />);
     await expectNoA11yViolations(container);
