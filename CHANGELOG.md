@@ -1,5 +1,15 @@
 # @fragments-sdk/ui
 
+## 0.8.2
+
+### Patch Changes
+
+- [`52348b2`](https://github.com/ConanMcN/fragments/commit/52348b28ec1b3471b9d6f31e807e8d0f0d9fd7a8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix Menu bullet points, add shared FragmentsLogo component, flatten viewer sidebar, and make Input shortcut prop functional
+  - **Menu**: Add `list-style: none` and `margin: 0` to `.popup` to fix bullet points and overflow in dropdown menus
+  - **FragmentsLogo**: New shared logo component exported from `@fragments-sdk/ui`, used by the viewer sidebar
+  - **Sidebar**: Remove category grouping — render all components as a flat alphabetical list matching docs pattern
+  - **Input**: `shortcut` prop now registers a global keydown listener that focuses the input when the shortcut key combo is pressed (e.g., ⌘K)
+
 ## 0.8.1
 
 ### Patch Changes
