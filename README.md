@@ -46,7 +46,7 @@ function App() {
 |-----------|----------|-------------|
 | Accordion | Layout | Vertically stacked, collapsible content sections. Use for organizing related content that can be progressively disclosed. |
 | Alert | Feedback | Contextual feedback messages for user actions or system status. Supports multiple severity levels with optional actions and dismissibility. |
-| AppShell | Layout | Full layout wrapper integrating sidebar, header, main content, and optional aside panel. Supports two layout modes: stacked (header on top) and sidebar-inset (sidebar full height). |
+| AppShell | Layout | Full layout wrapper integrating sidebar, header, main content, and optional aside panel. Supports three layout modes: default (header on top), sidebar (sidebar full height), and sidebar-floating (rounded main content). |
 | Avatar | Display | Visual representation of a user or entity |
 | Badge | Display | Compact label for status, counts, or categorization. Draws attention to metadata without dominating the layout. |
 | Box | Layout | Primitive layout component for applying spacing, backgrounds, and borders. A flexible container for building custom layouts. |

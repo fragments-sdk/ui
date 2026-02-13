@@ -21,8 +21,8 @@ export default defineFragment({
   usage: {
     when: [
       'Primary site or app header inside AppShell',
-      'Navigation bar with branding (stacked layout)',
-      'Search and actions bar (sidebar-inset layout)',
+      'Navigation bar with branding (default layout)',
+      'Search and actions bar (sidebar layout)',
       'Header with responsive mobile menu trigger',
       'Grouping related nav items under a dropdown menu',
     ],
@@ -33,8 +33,8 @@ export default defineFragment({
     ],
     guidelines: [
       'Use Header.SkipLink for accessibility (skip to main content)',
-      'In stacked layout: include Header.Brand for logo',
-      'In sidebar-inset layout: omit Header.Brand (logo in sidebar)',
+      'In default layout: include Header.Brand for logo',
+      'In sidebar layout: omit Header.Brand (logo in sidebar)',
       'Header.Trigger integrates with SidebarProvider for mobile menus',
       'Header.Nav is hidden on mobile; use sidebar for mobile navigation',
       'Use Header.Spacer to push items apart',
@@ -86,8 +86,8 @@ export default defineFragment({
 
   variants: [
     {
-      name: 'For Stacked Layout',
-      description: 'Header with brand, nav, and actions. Use with AppShell layout="stacked".',
+      name: 'For Default Layout',
+      description: 'Header with brand, nav, and actions. Use with AppShell layout="default".',
       render: () => (
         <ThemeProvider defaultMode="light">
           <Header>
@@ -134,8 +134,8 @@ export default defineFragment({
       ),
     },
     {
-      name: 'For Sidebar Inset Layout',
-      description: 'Header without brand (logo is in sidebar). Use with AppShell layout="sidebar-inset".',
+      name: 'For Sidebar Layout',
+      description: 'Header without brand (logo is in sidebar). Use with AppShell layout="sidebar" or "sidebar-floating".',
       render: () => (
         <ThemeProvider defaultMode="light">
           <Header>

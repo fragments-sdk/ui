@@ -5,8 +5,10 @@
 // AppShell Root - CSS Grid Layout
 // ============================================
 // Grid areas: header, sidebar, main, aside
-// Stacked:       header spans full width, sidebar below header
-// Sidebar-inset: sidebar spans full height
+//
+// 'default':           header spans full width, sidebar below
+// 'sidebar':           sidebar spans full height, header beside it
+// 'sidebar-floating':  like sidebar, but main floats with rounded corners
 
 .root {
   display: grid;
@@ -14,7 +16,7 @@
   min-height: 100dvh;
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 
-  // Stacked layout (default):
+  // Default layout:
   // header  header  header
   // sidebar main    aside
   grid-template-areas:
@@ -46,10 +48,10 @@
   }
 }
 
-// Sidebar-inset layout: sidebar spans full height
+// Sidebar layout: sidebar spans full height
 // sidebar header header
 // sidebar main   aside
-.sidebarInset {
+.sidebarLayout {
   grid-template-areas:
     'sidebar header header'
     'sidebar main aside';
@@ -63,9 +65,8 @@
   }
 }
 
-// Inset layout: shadcn-style with rounded main content
-// Root uses primary (darker in dark mode) as the shell background
-.insetLayout {
+// Sidebar-floating layout: shell background frames the floating main area
+.sidebarFloatingLayout {
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 }
 
@@ -82,9 +83,8 @@
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 }
 
-// Header in inset layout (rounded style)
-// Uses primary bg to match the shell
-.headerInsetRounded {
+// Header in sidebar-floating layout — matches shell bg
+.headerFloating {
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 }
 
@@ -129,7 +129,7 @@
   }
 }
 
-// Sidebar in sidebar-inset layout: full height
+// Sidebar in sidebar/sidebar-floating layouts: full height
 .sidebarFullHeight {
   top: 0;
   height: 100vh;
@@ -141,8 +141,8 @@
   }
 }
 
-// Sidebar in inset layout: no borders, primary background (matches shell)
-.sidebarInsetRounded {
+// Sidebar in sidebar-floating layout: no borders, primary bg (matches shell)
+.sidebarFloating {
   :global(.root) {
     background-color: var(--fui-bg-primary, $fui-bg-primary);
   }
@@ -160,15 +160,14 @@
   overflow-x: hidden;
 }
 
-// Main content in inset layout (shadcn-style rounded)
-// Uses secondary bg (lighter in dark mode) to create elevated card effect
-.mainInset {
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+// Main content in sidebar-floating layout — elevated card effect
+.mainFloating {
+  border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   overflow: hidden;
 
   @include below-md {
-    border-radius: var(--fui-radius-md, $fui-radius-md);
+    border-radius: var(--fui-radius-lg, $fui-radius-lg);
     width: 100%;
   }
 }

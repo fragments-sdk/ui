@@ -15,14 +15,39 @@ import '../../styles/globals.scss';
 // Types
 // ============================================
 
-export type AppShellLayout = 'stacked' | 'sidebar-inset' | 'inset';
+/**
+ * ```
+ * 'default'           'sidebar'          'sidebar-floating'
+ * ┌──────────────┐    ┌────┬─────────┐   ┌────┬─────────┐
+ * │    Header    │    │    │ Header  │   │    │ Header  │
+ * ├────┬─────────┤    │Side├─────────┤   │Side├╌╌╌╌╌╌╌╌╌┤
+ * │    │         │    │bar │         │   │bar │┌───────┐│
+ * │Side│  Main   │    │    │  Main   │   │    ││ Main  ││
+ * │bar │         │    │    │         │   │    │└───────┘│
+ * └────┴─────────┘    └────┴─────────┘   └────┴─────────┘
+ * ```
+ */
+export type AppShellLayout = 'default' | 'sidebar' | 'sidebar-floating';
 
 export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /**
    * Layout mode:
-   * - 'stacked': Header spans full width above sidebar (default)
-   * - 'sidebar-inset': Sidebar is full height, header sits next to it
+   *
+   * ```
+   * 'default'           'sidebar'          'sidebar-floating'
+   * ┌──────────────┐    ┌────┬─────────┐   ┌────┬─────────┐
+   * │    Header    │    │    │ Header  │   │    │ Header  │
+   * ├────┬─────────┤    │Side├─────────┤   │Side├╌╌╌╌╌╌╌╌╌┤
+   * │    │         │    │bar │         │   │bar │┌───────┐│
+   * │Side│  Main   │    │    │  Main   │   │    ││ Main  ││
+   * │bar │         │    │    │         │   │    │└───────┘│
+   * └────┴─────────┘    └────┴─────────┘   └────┴─────────┘
+   * ```
+   *
+   * - `'default'`: Header spans full width, sidebar below (default)
+   * - `'sidebar'`: Sidebar is full height, header sits beside it
+   * - `'sidebar-floating'`: Like `sidebar` but main content floats with rounded corners and a distinct background
    */
   layout?: AppShellLayout;
 }
@@ -75,7 +100,7 @@ interface AppShellContextValue {
 }
 
 const AppShellContext = React.createContext<AppShellContextValue>({
-  layout: 'stacked',
+  layout: 'default',
   headerHeight: '56px',
   sidebarWidth: '240px',
   sidebarCollapsedWidth: '64px',
@@ -178,8 +203,8 @@ function AppShellInner({
 
   const classes = [
     styles.root,
-    (layout === 'sidebar-inset' || layout === 'inset') && styles.sidebarInset,
-    layout === 'inset' && styles.insetLayout,
+    (layout === 'sidebar' || layout === 'sidebar-floating') && styles.sidebarLayout,
+    layout === 'sidebar-floating' && styles.sidebarFloatingLayout,
     className,
   ].filter(Boolean).join(' ');
 
@@ -217,7 +242,7 @@ function AppShellInner({
  */
 function AppShellRoot({
   children,
-  layout = 'stacked',
+  layout = 'default',
   className,
   ...htmlProps
 }: AppShellProps) {
@@ -263,8 +288,8 @@ function AppShellHeader({
 
   const classes = [
     styles.header,
-    (layout === 'sidebar-inset' || layout === 'inset') && styles.headerInset,
-    layout === 'inset' && styles.headerInsetRounded,
+    (layout === 'sidebar' || layout === 'sidebar-floating') && styles.headerSidebar,
+    layout === 'sidebar-floating' && styles.headerFloating,
     className,
   ].filter(Boolean).join(' ');
 
@@ -299,8 +324,8 @@ function AppShellSidebar({
 
   const classes = [
     styles.sidebar,
-    (layout === 'sidebar-inset' || layout === 'inset') && styles.sidebarFullHeight,
-    layout === 'inset' && styles.sidebarInsetRounded,
+    (layout === 'sidebar' || layout === 'sidebar-floating') && styles.sidebarFullHeight,
+    layout === 'sidebar-floating' && styles.sidebarFloating,
     className,
   ].filter(Boolean).join(' ');
 
@@ -336,7 +361,7 @@ function AppShellMain({
   const classes = [
     styles.main,
     padding !== 'none' && styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}`],
-    layout === 'inset' && styles.mainInset,
+    layout === 'sidebar-floating' && styles.mainFloating,
     className,
   ].filter(Boolean).join(' ');
 

@@ -15,7 +15,7 @@ export default defineFragment({
 
   meta: {
     name: 'AppShell',
-    description: 'Full layout wrapper integrating sidebar, header, main content, and optional aside panel. Supports two layout modes: stacked (header on top) and sidebar-inset (sidebar full height).',
+    description: 'Full layout wrapper integrating sidebar, header, main content, and optional aside panel. Supports three layout modes: default (header on top), sidebar (sidebar full height), and sidebar-floating (sidebar + rounded main content).',
     category: 'layout',
     status: 'stable',
     tags: ['layout', 'shell', 'scaffold', 'dashboard', 'app-layout'],
@@ -35,8 +35,9 @@ export default defineFragment({
       'Single-page apps with minimal UI (use minimal layout)',
     ],
     guidelines: [
-      'Use layout="stacked" when header should span full width (logo in header)',
-      'Use layout="sidebar-inset" when sidebar should be full height (logo in sidebar)',
+      'Use layout="default" when header should span full width (logo in header)',
+      'Use layout="sidebar" when sidebar should be full height (logo in sidebar)',
+      'Use layout="sidebar-floating" for a modern look with rounded, elevated main content',
       'AppShell automatically wraps with SidebarProvider',
       'Use AppShell.Sidebar to configure sidebar width and collapse behavior',
       'Main content responds to sidebar collapsed state',
@@ -59,8 +60,8 @@ export default defineFragment({
     layout: {
       type: 'enum',
       description: 'Layout mode for header/sidebar positioning',
-      values: ['stacked', 'sidebar-inset', 'inset'],
-      default: 'stacked',
+      values: ['default', 'sidebar', 'sidebar-floating'],
+      default: 'default',
     },
   },
 
@@ -72,7 +73,7 @@ export default defineFragment({
 
   variants: [
     {
-      name: 'Stacked Layout',
+      name: 'Default Layout',
       description: 'Header spans full width above sidebar (default). Best when brand/logo should be prominent in header.',
       code: `import { ChartBar, Gear, House } from '@phosphor-icons/react';
 import { AppShell } from '@/components/AppShell';
@@ -85,7 +86,7 @@ import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
 <Box height="400px" overflow="hidden" border rounded="md">
-  <AppShell layout="stacked">
+  <AppShell layout="default">
     <AppShell.Header>
       <Header>
         <Header.Trigger />
@@ -113,7 +114,7 @@ import { ThemeToggle } from '@/components/Theme';
 
     <AppShell.Main padding="md">
       <Stack gap="xs">
-        <Text as="h2" size="xl" weight="semibold">Stacked Layout</Text>
+        <Text as="h2" size="xl" weight="semibold">Default Layout</Text>
         <Text as="p" color="secondary">
           Header spans full width. Logo is in the header.
         </Text>
@@ -123,7 +124,7 @@ import { ThemeToggle } from '@/components/Theme';
 </Box>`,
       render: () => (
         <Box height="400px" overflow="hidden" border rounded="md">
-          <AppShell layout="stacked">
+          <AppShell layout="default">
             <AppShell.Header>
               <Header>
                 <Header.Trigger />
@@ -151,7 +152,7 @@ import { ThemeToggle } from '@/components/Theme';
 
             <AppShell.Main padding="md">
               <Stack gap="xs">
-                <Text as="h2" size="xl" weight="semibold">Stacked Layout</Text>
+                <Text as="h2" size="xl" weight="semibold">Default Layout</Text>
                 <Text as="p" color="secondary">
                   Header spans full width. Logo is in the header.
                 </Text>
@@ -162,7 +163,7 @@ import { ThemeToggle } from '@/components/Theme';
       ),
     },
     {
-      name: 'Sidebar Inset Layout',
+      name: 'Sidebar Layout',
       description: 'Sidebar is full height, header sits next to it. Best for documentation sites or when sidebar branding is preferred.',
       code: `import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';
 import { AppShell } from '@/components/AppShell';
@@ -175,7 +176,7 @@ import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
 <Box height="400px" overflow="hidden" border rounded="md">
-  <AppShell layout="sidebar-inset">
+  <AppShell layout="sidebar">
     <AppShell.Header>
       <Header>
         <Header.Trigger />
@@ -210,7 +211,7 @@ import { ThemeToggle } from '@/components/Theme';
 
     <AppShell.Main padding="md">
       <Stack gap="xs">
-        <Text as="h2" size="xl" weight="semibold">Sidebar Inset Layout</Text>
+        <Text as="h2" size="xl" weight="semibold">Sidebar Layout</Text>
         <Text as="p" color="secondary">
           Sidebar is full height. Logo is in the sidebar header.
         </Text>
@@ -220,7 +221,7 @@ import { ThemeToggle } from '@/components/Theme';
 </Box>`,
       render: () => (
         <Box height="400px" overflow="hidden" border rounded="md">
-          <AppShell layout="sidebar-inset">
+          <AppShell layout="sidebar">
             <AppShell.Header>
               <Header>
                 <Header.Trigger />
@@ -255,7 +256,7 @@ import { ThemeToggle } from '@/components/Theme';
 
             <AppShell.Main padding="md">
               <Stack gap="xs">
-                <Text as="h2" size="xl" weight="semibold">Sidebar Inset Layout</Text>
+                <Text as="h2" size="xl" weight="semibold">Sidebar Layout</Text>
                 <Text as="p" color="secondary">
                   Sidebar is full height. Logo is in the sidebar header.
                 </Text>
@@ -279,7 +280,7 @@ import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
 <Box height="400px" overflow="hidden" border rounded="md">
-  <AppShell layout="stacked">
+  <AppShell layout="default">
     <AppShell.Header>
       <Header>
         <Header.Brand>App</Header.Brand>
@@ -320,7 +321,7 @@ import { ThemeToggle } from '@/components/Theme';
 </Box>`,
       render: () => (
         <Box height="400px" overflow="hidden" border rounded="md">
-          <AppShell layout="stacked">
+          <AppShell layout="default">
             <AppShell.Header>
               <Header>
                 <Header.Brand>App</Header.Brand>
@@ -374,7 +375,7 @@ import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
 <Box height="400px" overflow="hidden" border rounded="md">
-  <AppShell layout="sidebar-inset">
+  <AppShell layout="sidebar">
     <AppShell.Header>
       <Header>
         <Header.Trigger />
@@ -410,7 +411,7 @@ import { ThemeToggle } from '@/components/Theme';
 </Box>`,
       render: () => (
         <Box height="400px" overflow="hidden" border rounded="md">
-          <AppShell layout="sidebar-inset">
+          <AppShell layout="sidebar">
             <AppShell.Header>
               <Header>
                 <Header.Trigger />
@@ -447,8 +448,8 @@ import { ThemeToggle } from '@/components/Theme';
       ),
     },
     {
-      name: 'Inset Layout',
-      description: 'Modern shadcn-style layout with rounded main content area and visual separation from sidebar.',
+      name: 'Sidebar Floating Layout',
+      description: 'Modern layout with rounded main content area and visual separation from sidebar. Main content floats with a distinct background.',
       code: `import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';
 import { AppShell } from '@/components/AppShell';
 import { Box } from '@/components/Box';
@@ -460,7 +461,7 @@ import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
 <Box height="400px" overflow="hidden" border rounded="md">
-  <AppShell layout="inset">
+  <AppShell layout="sidebar-floating">
     <AppShell.Header>
       <Header>
         <Header.Trigger />
@@ -495,7 +496,7 @@ import { ThemeToggle } from '@/components/Theme';
 
     <AppShell.Main padding="md">
       <Stack gap="xs">
-        <Text as="h2" size="xl" weight="semibold">Inset Layout</Text>
+        <Text as="h2" size="xl" weight="semibold">Sidebar Floating Layout</Text>
         <Text as="p" color="secondary">
           Main content has rounded corners and visual separation from the sidebar.
         </Text>
@@ -505,7 +506,7 @@ import { ThemeToggle } from '@/components/Theme';
 </Box>`,
       render: () => (
         <Box height="400px" overflow="hidden" border rounded="md">
-          <AppShell layout="inset">
+          <AppShell layout="sidebar-floating">
             <AppShell.Header>
               <Header>
                 <Header.Trigger />
@@ -540,7 +541,7 @@ import { ThemeToggle } from '@/components/Theme';
 
             <AppShell.Main padding="md">
               <Stack gap="xs">
-                <Text as="h2" size="xl" weight="semibold">Inset Layout</Text>
+                <Text as="h2" size="xl" weight="semibold">Sidebar Floating Layout</Text>
                 <Text as="p" color="secondary">
                   Main content has rounded corners and visual separation from the sidebar.
                 </Text>
