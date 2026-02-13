@@ -11,6 +11,9 @@ export default defineFragment({
     category: 'display',
     status: 'stable',
     tags: ['code', 'syntax', 'highlighting', 'documentation', 'developer', 'diff'],
+    dependencies: [
+      { name: 'shiki', version: '>=1.0.0', reason: 'Syntax highlighting engine' },
+    ],
   },
 
   usage: {

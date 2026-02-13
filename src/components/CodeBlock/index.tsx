@@ -2,7 +2,25 @@
 
 import * as React from 'react';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { codeToHtml, BundledTheme } from 'shiki';
+// ============================================
+// Lazy-loaded dependency (shiki)
+// ============================================
+
+let _codeToHtml: ((code: string, options: { lang: string; theme: string }) => Promise<string>) | null = null;
+let _shikiLoaded = false;
+let _shikiFailed = false;
+
+function loadShikiDeps() {
+  if (_shikiLoaded) return;
+  _shikiLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const shiki = require('shiki');
+    _codeToHtml = shiki.codeToHtml;
+  } catch {
+    _shikiFailed = true;
+  }
+}
 import { TabsRoot, TabsList, Tab, TabsPanel } from '../Tabs';
 import { Button } from '../Button';
 import styles from './CodeBlock.module.scss';
@@ -559,9 +577,26 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       let cancelled = false;
       setIsLoading(true);
 
-      codeToHtml(visibleCode, {
+      loadShikiDeps();
+
+      if (_shikiFailed || !_codeToHtml) {
+        if (_shikiFailed && process.env.NODE_ENV === 'development') {
+          console.warn(
+            '[@fragments-sdk/ui] CodeBlock: shiki is not installed. ' +
+            'Install it with: npm install shiki'
+          );
+        }
+        // Fallback to plain text without syntax highlighting
+        setHighlightedHtml(
+          `<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      _codeToHtml(visibleCode, {
         lang: language,
-        theme: theme as BundledTheme,
+        theme,
       })
         .then((html) => {
           if (!cancelled) {

@@ -1,0 +1,516 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Root
+// ============================================
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rootVertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+// ============================================
+// List
+// ============================================
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  // Hide on mobile — hamburger replaces it
+  @include below-md {
+    display: none;
+  }
+}
+
+.listVertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+// ============================================
+// Trigger
+// ============================================
+
+.trigger {
+  @include button-reset;
+  @include interactive-base;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  white-space: nowrap;
+  min-height: var(--fui-button-height-md, $fui-button-height-md);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:active {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+
+  &[data-state='open'] {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.triggerChevron {
+  transition: transform var(--fui-transition-fast, $fui-transition-fast);
+  flex-shrink: 0;
+
+  [data-state='open'] > & {
+    transform: rotate(180deg);
+  }
+}
+
+// ============================================
+// Content
+// ============================================
+
+.content {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: auto;
+
+  // Motion direction for directional slide
+  &[data-motion='from-start'] {
+    animation: slideFromStart var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+  }
+  &[data-motion='from-end'] {
+    animation: slideFromEnd var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+  }
+  &[data-motion='to-start'] {
+    animation: slideToStart var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+  }
+  &[data-motion='to-end'] {
+    animation: slideToEnd var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+  }
+}
+
+@keyframes slideFromStart {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * #{$fui-anim-offset-md}));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromEnd {
+  from {
+    opacity: 0;
+    transform: translateX($fui-anim-offset-md);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideToStart {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(-1 * #{$fui-anim-offset-md}));
+  }
+}
+
+@keyframes slideToEnd {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX($fui-anim-offset-md);
+  }
+}
+
+// ============================================
+// Link
+// ============================================
+
+.link {
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: var(--fui-button-height-md, $fui-button-height-md);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.linkActive {
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+
+  &:hover {
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+// Structured link (title + description + icon) inside content panels
+.linkStructured {
+  display: flex;
+  gap: var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-md, $fui-padding-item-md);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  white-space: normal;
+  min-height: auto;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+.linkIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--fui-icon-xl, $fui-icon-xl);
+  height: var(--fui-icon-xl, $fui-icon-xl);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  margin-top: var(--fui-space-0-5, $fui-space-0-5);
+}
+
+.linkBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fui-space-0-5, $fui-space-0-5);
+  min-width: 0;
+}
+
+.linkTitle {
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+}
+
+.linkDescription {
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+.linkFeatured {
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border: 1px solid var(--fui-border, $fui-border);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    border-color: var(--fui-border-strong, $fui-border-strong);
+  }
+}
+
+// ============================================
+// Indicator
+// ============================================
+
+.indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--fui-color-accent, $fui-color-accent);
+  border-radius: 1px;
+  transition:
+    left var(--fui-transition-normal, $fui-transition-normal),
+    width var(--fui-transition-normal, $fui-transition-normal);
+  pointer-events: none;
+}
+
+// ============================================
+// Viewport
+// ============================================
+
+.viewport {
+  @include surface-elevated;
+
+  position: absolute;
+  top: 100%;
+  left: var(--fui-navmenu-viewport-left, 0);
+  overflow: hidden;
+  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
+  z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 1);
+
+  width: var(--fui-navmenu-viewport-width);
+  height: var(--fui-navmenu-viewport-height);
+  transition:
+    left var(--fui-transition-fast, $fui-transition-fast),
+    opacity var(--fui-transition-fast, $fui-transition-fast);
+
+  // Hidden when no item is open
+  &[data-state='closed'] {
+    opacity: 0;
+    pointer-events: none;
+    // Collapse to avoid layout space
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  &[data-state='open'] {
+    opacity: 1;
+  }
+
+  // Hide on mobile
+  @include below-md {
+    display: none;
+  }
+}
+
+// ============================================
+// Hamburger (mobile trigger)
+// ============================================
+
+.hamburger {
+  @include button-reset;
+  @include interactive-base;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--fui-touch-lg, $fui-touch-lg);
+  height: var(--fui-touch-lg, $fui-touch-lg);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-primary, $fui-text-primary);
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  svg {
+    width: var(--fui-icon-xl, $fui-icon-xl);
+    height: var(--fui-icon-xl, $fui-icon-xl);
+  }
+
+  @include below-md {
+    display: flex;
+  }
+}
+
+// ============================================
+// Mobile Drawer
+// ============================================
+
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--fui-backdrop, $fui-backdrop);
+  z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 10);
+  animation: fadeIn var(--fui-transition-normal, $fui-transition-normal) ease;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(320px, 85vw);
+  max-width: 380px;
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 11);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  animation: slideInLeft var(--fui-transition-normal, $fui-transition-normal) ease;
+
+  @media (min-width: 480px) {
+    width: min(380px, 85vw);
+  }
+}
+
+.drawerRight {
+  left: auto;
+  right: 0;
+  animation: slideInRight var(--fui-transition-normal, $fui-transition-normal) ease;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-padding-container-md, $fui-padding-container-md);
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+  min-height: var(--fui-appshell-header-height, $fui-appshell-header-height);
+}
+
+.drawerClose {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fui-touch-md, $fui-touch-md);
+  height: var(--fui-touch-md, $fui-touch-md);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.drawerBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--fui-space-2, $fui-space-2) 0;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerLink {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-container-md, $fui-padding-container-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-decoration: none;
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.drawerSectionLabel {
+  @include section-label-text;
+
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-padding-container-md, $fui-padding-container-md)
+    var(--fui-space-1, $fui-space-1);
+}
+
+.drawerCollapsibleTrigger {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-container-md, $fui-padding-container-md);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+.drawerCollapsibleChevron {
+  transition: transform var(--fui-transition-fast, $fui-transition-fast);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  flex-shrink: 0;
+
+  &[data-open='true'] {
+    transform: rotate(90deg);
+  }
+}
+
+.drawerCollapsibleContent {
+  padding-left: var(--fui-space-3, $fui-space-3);
+}
+
+// ============================================
+// Animations
+// ============================================
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+// ============================================
+// Reduced Motion
+// ============================================
+
+@include prefers-reduced-motion {
+  .content {
+    animation: none;
+  }
+
+  .viewport {
+    transition: none;
+  }
+
+  .triggerChevron {
+    transition: none;
+  }
+
+  .indicator {
+    transition: none;
+  }
+
+  .drawer,
+  .drawerBackdrop {
+    animation: none;
+  }
+
+  .drawerCollapsibleChevron {
+    transition: none;
+  }
+}

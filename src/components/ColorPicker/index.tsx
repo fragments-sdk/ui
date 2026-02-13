@@ -1,6 +1,25 @@
 import * as React from 'react';
-import { HexColorPicker } from 'react-colorful';
 import { Popover as BasePopover } from '@base-ui/react/popover';
+
+// ============================================
+// Lazy-loaded dependency (react-colorful)
+// ============================================
+
+let _HexColorPicker: any = null;
+let _colorfulLoaded = false;
+let _colorfulFailed = false;
+
+function loadColorfulDeps() {
+  if (_colorfulLoaded) return;
+  _colorfulLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const rc = require('react-colorful');
+    _HexColorPicker = rc.HexColorPicker;
+  } catch {
+    _colorfulFailed = true;
+  }
+}
 import { Field } from '@base-ui/react/field';
 import { Input } from '../Input';
 import styles from './ColorPicker.module.scss';
@@ -41,6 +60,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
     },
     ref
   ) {
+    loadColorfulDeps();
     const [internalValue, setInternalValue] = React.useState(defaultValue);
     const [inputValue, setInputValue] = React.useState(value ?? defaultValue);
     const displayValue = value !== undefined ? value : internalValue;
@@ -103,7 +123,9 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                   className={styles.popup}
                   aria-label={label ? `${label} color picker` : 'Color picker'}
                 >
-                  <HexColorPicker color={displayValue} onChange={handleChange} />
+                  {_HexColorPicker && (
+                    <_HexColorPicker color={displayValue} onChange={handleChange} />
+                  )}
                 </BasePopover.Popup>
               </BasePopover.Positioner>
             </BasePopover.Portal>

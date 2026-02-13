@@ -12,6 +12,9 @@ export default defineFragment({
     status: 'stable',
     tags: ['color', 'picker', 'input', 'hex', 'swatch', 'theme'],
     since: '0.2.0',
+    dependencies: [
+      { name: 'react-colorful', version: '>=5.0.0', reason: 'Color picker widget' },
+    ],
   },
 
   usage: {

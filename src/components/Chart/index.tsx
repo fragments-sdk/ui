@@ -1,16 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Tooltip as RechartsTooltip,
-  Legend as RechartsLegend,
-} from 'recharts';
-import type { Props as RechartsLegendProps } from 'recharts/types/component/Legend';
 import styles from './Chart.module.scss';
 import '../../styles/globals.scss';
 
 // ============================================
-// Types
+// Types (self-owned — no external dependency for types)
 // ============================================
 
 export type ChartConfig = Record<
@@ -54,6 +49,31 @@ export interface ChartLegendContentProps {
     dataKey?: string | number;
     color?: string;
   }[];
+}
+
+// Internal-only type for recharts Legend props
+type RechartsLegendProps = Record<string, unknown>;
+
+// ============================================
+// Lazy-loaded dependencies (recharts)
+// ============================================
+
+let _RechartsTooltip: any = null;
+let _RechartsLegend: any = null;
+let _chartLoaded = false;
+let _chartFailed = false;
+
+function loadChartDeps() {
+  if (_chartLoaded) return;
+  _chartLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const rc = require('recharts');
+    _RechartsTooltip = rc.Tooltip;
+    _RechartsLegend = rc.Legend;
+  } catch {
+    _chartFailed = true;
+  }
 }
 
 function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
@@ -217,13 +237,14 @@ export function ChartTooltipContent({
 // ChartTooltip (thin wrapper)
 // ============================================
 
-type ChartTooltipProps = Omit<React.ComponentProps<typeof RechartsTooltip>, 'content'> & {
+type ChartTooltipProps = {
   indicator?: 'dot' | 'line' | 'dashed';
   hideLabel?: boolean;
   hideIndicator?: boolean;
   labelFormatter?: ChartTooltipContentProps['labelFormatter'];
   valueFormatter?: ChartTooltipContentProps['valueFormatter'];
-  content?: React.ComponentProps<typeof RechartsTooltip>['content'];
+  content?: any;
+  [key: string]: unknown;
 };
 
 export function ChartTooltip({
@@ -235,8 +256,10 @@ export function ChartTooltip({
   content,
   ...props
 }: ChartTooltipProps) {
+  loadChartDeps();
+
   const defaultContent = React.useCallback(
-     
+
     (tooltipProps: any) => (
       <ChartTooltipContent
         {...tooltipProps}
@@ -250,8 +273,20 @@ export function ChartTooltip({
     [indicator, hideLabel, hideIndicator, labelFormatter, valueFormatter],
   );
 
+  if (_chartFailed || !_RechartsTooltip) {
+    if (_chartFailed && process.env.NODE_ENV === 'development') {
+      console.warn(
+        '[@fragments-sdk/ui] Chart: recharts is not installed. ' +
+        'Install it with: npm install recharts'
+      );
+    }
+    return null;
+  }
+
+  const RechartsTooltipComponent = _RechartsTooltip;
+
   return (
-    <RechartsTooltip
+    <RechartsTooltipComponent
       cursor={{ stroke: 'var(--fui-border)' }}
       content={content ?? defaultContent}
       {...props}
@@ -294,16 +329,29 @@ export function ChartLegendContent({ payload }: ChartLegendContentProps) {
 // ChartLegend (thin wrapper)
 // ============================================
 
-type ChartLegendProps = Omit<RechartsLegendProps, 'content'> & {
-  content?: RechartsLegendProps['content'];
+type ChartLegendProps = RechartsLegendProps & {
+  content?: any;
 };
 
 export function ChartLegend({ content, ...props }: ChartLegendProps) {
-   
+  loadChartDeps();
+
   const defaultContent = (legendProps: any) => <ChartLegendContent {...legendProps} />;
 
+  if (_chartFailed || !_RechartsLegend) {
+    if (_chartFailed && process.env.NODE_ENV === 'development') {
+      console.warn(
+        '[@fragments-sdk/ui] Chart: recharts is not installed. ' +
+        'Install it with: npm install recharts'
+      );
+    }
+    return null;
+  }
+
+  const RechartsLegendComponent = _RechartsLegend;
+
   return (
-    <RechartsLegend
+    <RechartsLegendComponent
       content={content ?? defaultContent}
       {...props}
     />

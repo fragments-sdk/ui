@@ -511,7 +511,7 @@ export default defineFragment({
 
   ai: {
     compositionPattern: 'compound',
-    subComponents: ['Header', 'Nav', 'Section', 'Item', 'SubItem', 'Submenu', 'Footer', 'CollapseToggle', 'Rail', 'MenuSkeleton', 'SectionAction'],
+    subComponents: ['Header', 'Nav', 'Section', 'SectionAction', 'Item', 'SubItem', 'Submenu', 'Footer', 'Trigger', 'Overlay', 'CollapseToggle', 'Rail', 'MenuSkeleton'],
     requiredChildren: ['Nav'],
     commonPatterns: [
       '<Sidebar><Sidebar.Header>{logo}</Sidebar.Header><Sidebar.Nav><Sidebar.Section><Sidebar.Item icon={icon} active>{label}</Sidebar.Item></Sidebar.Section></Sidebar.Nav><Sidebar.Footer><Sidebar.CollapseToggle /></Sidebar.Footer></Sidebar>',

@@ -1,20 +1,57 @@
 import * as React from 'react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  type ColumnDef,
-  type SortingState,
-  type RowSelectionState,
-  type OnChangeFn,
-} from '@tanstack/react-table';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
 import styles from './Table.module.scss';
 
-// Column definition helper type
+// ============================================
+// Types (self-owned — no external dependency for types)
+// ============================================
+
+/** Column definition compatible with @tanstack/react-table */
+export type ColumnDef<TData = unknown, TValue = unknown> = {
+  id?: string;
+  accessorKey?: string;
+  accessorFn?: (row: TData) => TValue;
+  header?: string | ((context: any) => React.ReactNode);
+  cell?: string | ((context: any) => React.ReactNode);
+  size?: number;
+  minSize?: number;
+  maxSize?: number;
+  enableSorting?: boolean;
+  [key: string]: unknown;
+};
+
+export type SortingState = Array<{ id: string; desc: boolean }>;
+export type RowSelectionState = Record<string, boolean>;
+type OnChangeFn<T> = ((updaterOrValue: T | ((prev: T) => T)) => void);
+
 export type TableColumn<T> = ColumnDef<T, unknown>;
+
+// ============================================
+// Lazy-loaded dependency (@tanstack/react-table)
+// ============================================
+
+let _useReactTable: any = null;
+let _getCoreRowModel: any = null;
+let _getSortedRowModel: any = null;
+let _flexRender: any = null;
+let _tableLoaded = false;
+let _tableFailed = false;
+
+function loadTableDeps() {
+  if (_tableLoaded) return;
+  _tableLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const rt = require('@tanstack/react-table');
+    _useReactTable = rt.useReactTable;
+    _getCoreRowModel = rt.getCoreRowModel;
+    _getSortedRowModel = rt.getSortedRowModel;
+    _flexRender = rt.flexRender;
+  } catch {
+    _tableFailed = true;
+  }
+}
 
 export interface TableProps<T> extends Omit<React.HTMLAttributes<HTMLTableElement>, 'onClick'> {
   /** Column definitions */
@@ -73,6 +110,8 @@ function TableRoot<T>({
   'aria-describedby': ariaDescribedBy,
   ...htmlProps
 }: TableProps<T>) {
+  loadTableDeps();
+
   // Internal sorting state when uncontrolled
   const [internalSorting, setInternalSorting] = React.useState<SortingState>([]);
   const sorting = controlledSorting ?? internalSorting;
@@ -83,12 +122,22 @@ function TableRoot<T>({
   const rowSelection = controlledRowSelection ?? internalRowSelection;
   const handleRowSelectionChange = onRowSelectionChange ?? setInternalRowSelection;
 
-  const table = useReactTable({
+  if (_tableFailed || !_useReactTable) {
+    if (_tableFailed && process.env.NODE_ENV === 'development') {
+      console.warn(
+        '[@fragments-sdk/ui] Table: @tanstack/react-table is not installed. ' +
+        'Install it with: npm install @tanstack/react-table'
+      );
+    }
+    return null;
+  }
+
+  const table = _useReactTable({
     data,
     columns,
     getRowId,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: sortable ? getSortedRowModel() : undefined,
+    getCoreRowModel: _getCoreRowModel(),
+    getSortedRowModel: sortable ? _getSortedRowModel() : undefined,
     state: {
       sorting: sortable ? sorting : undefined,
       rowSelection: selectable ? rowSelection : undefined,
@@ -178,9 +227,9 @@ function TableRoot<T>({
           </caption>
         )}
         <thead className={styles.thead}>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map((headerGroup: any) => (
             <tr key={headerGroup.id} className={styles.headerRow}>
-              {headerGroup.headers.map((header) => {
+              {headerGroup.headers.map((header: any) => {
                 const canSort = sortable && header.column.getCanSort();
                 const sortDirection = header.column.getIsSorted();
                 const toggleSorting = canSort ? header.column.getToggleSortingHandler() : undefined;
@@ -210,7 +259,7 @@ function TableRoot<T>({
                         <span className={styles.headerContent}>
                           {header.isPlaceholder
                             ? null
-                            : flexRender(
+                            : _flexRender(
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
@@ -229,7 +278,7 @@ function TableRoot<T>({
                       <div className={styles.headerContent}>
                         {header.isPlaceholder
                           ? null
-                          : flexRender(
+                          : _flexRender(
                               header.column.columnDef.header,
                               header.getContext()
                             )}
@@ -242,7 +291,7 @@ function TableRoot<T>({
           ))}
         </thead>
         <tbody className={styles.tbody}>
-          {table.getRowModel().rows.map((row) => {
+          {table.getRowModel().rows.map((row: any) => {
             const isClickable = !!onRowClick;
             const isSelected = selectable ? row.getIsSelected() : false;
             const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
@@ -275,9 +324,9 @@ function TableRoot<T>({
                 tabIndex={isClickable ? 0 : undefined}
                 data-selected={isSelected || undefined}
               >
-                {row.getVisibleCells().map((cell) => (
+                {row.getVisibleCells().map((cell: any) => (
                   <td key={cell.id} className={styles.td} style={getColumnSizeStyle(cell.column)}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {_flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
@@ -365,9 +414,6 @@ export function createColumns<T>(
       : ({ getValue }) => getValue() ?? '--',
   }));
 }
-
-// Re-export useful types
-export type { ColumnDef, SortingState, RowSelectionState };
 
 export const Table = Object.assign(TableRoot, {
   Root: TableRoot,

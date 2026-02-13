@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineFragment } from '@fragments/core';
 import { Header } from '.';
+import { NavigationMenu } from '../NavigationMenu';
 import { ThemeToggle, ThemeProvider } from '../Theme';
 import { Button } from '../Button';
 import { Input } from '../Input';
@@ -40,6 +41,8 @@ export default defineFragment({
       'Use Header.Spacer to push items apart',
       'Use Header.NavMenu to group related nav items under a dropdown',
       'Use Header.NavMenuItem inside Header.NavMenu for dropdown items',
+      'For rich dropdown content (titles, descriptions, icons), use NavigationMenu instead of Header.Nav',
+      'NavigationMenu also provides an automatic mobile drawer, replacing Header.Trigger + Sidebar for mobile nav',
     ],
     accessibility: [
       'Include Header.SkipLink for keyboard users',
@@ -73,6 +76,7 @@ export default defineFragment({
     { component: 'AppShell', relationship: 'parent', note: 'Header is typically used inside AppShell.Header' },
     { component: 'Sidebar', relationship: 'sibling', note: 'Header.Trigger toggles Sidebar on mobile' },
     { component: 'Theme', relationship: 'child', note: 'ThemeToggle is commonly placed in Header.Actions' },
+    { component: 'NavigationMenu', relationship: 'child', note: 'Use NavigationMenu inside Header for rich dropdown nav with auto mobile drawer' },
   ],
 
   ai: {
@@ -209,6 +213,39 @@ export default defineFragment({
             <Header.NavItem href="/about">About</Header.NavItem>
           </Header.Nav>
         </Header>
+      ),
+    },
+    {
+      name: 'With NavigationMenu',
+      description: 'Header using NavigationMenu for rich dropdown content panels with titles, descriptions, and automatic mobile drawer.',
+      render: () => (
+        <ThemeProvider defaultMode="light">
+          <Header>
+            <Header.Brand href="/">MyApp</Header.Brand>
+            <NavigationMenu aria-label="Site navigation">
+              <NavigationMenu.List>
+                <NavigationMenu.Item value="products">
+                  <NavigationMenu.Trigger>Products</NavigationMenu.Trigger>
+                  <NavigationMenu.Content>
+                    <div style={{ display: 'flex', flexDirection: 'column', padding: '4px', minWidth: '200px' }}>
+                      <NavigationMenu.Link href="/analytics" title="Analytics" description="Track your metrics." />
+                      <NavigationMenu.Link href="/automation" title="Automation" description="Automate workflows." />
+                    </div>
+                  </NavigationMenu.Content>
+                </NavigationMenu.Item>
+                <NavigationMenu.Item>
+                  <NavigationMenu.Link href="/pricing">Pricing</NavigationMenu.Link>
+                </NavigationMenu.Item>
+              </NavigationMenu.List>
+              <NavigationMenu.Viewport />
+            </NavigationMenu>
+            <Header.Spacer />
+            <Header.Actions>
+              <ThemeToggle size="md" />
+              <Button variant="primary" size="sm">Sign Up</Button>
+            </Header.Actions>
+          </Header>
+        </ThemeProvider>
       ),
     },
   ],

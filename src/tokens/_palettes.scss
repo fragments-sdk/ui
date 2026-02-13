@@ -12,10 +12,10 @@
 @use 'sass:math';
 
 // --------------------------------------------
-// Wind - Muted cool neutrals (Default)
+// Stone - Muted cool neutrals (Default)
 // Subtle, balanced feel - matches current zinc-like palette
 // --------------------------------------------
-$palette-wind: (
+$palette-stone: (
   50:  #fafafa,
   100: #f4f4f5,
   200: #e4e4e7,
@@ -105,11 +105,12 @@ $palette-fire: (
 // Palette Map for Dynamic Access
 // --------------------------------------------
 $palettes: (
-  "wind": $palette-wind,
+  "stone": $palette-stone,
   "ice": $palette-ice,
   "sand": $palette-sand,
   "earth": $palette-earth,
-  "fire": $palette-fire
+  "fire": $palette-fire,
+  "wind": $palette-stone  // Legacy alias — "wind" was renamed to "stone"
 );
 
 // --------------------------------------------
@@ -117,12 +118,12 @@ $palettes: (
 // --------------------------------------------
 
 /// Get a palette map by name
-/// @param {String} $name - Palette name (wind, ice, sand, earth, fire)
+/// @param {String} $name - Palette name (stone, ice, sand, earth, fire)
 /// @return {Map} The palette map with shades 50-950
 @function get-palette($name) {
   @if not map.has-key($palettes, $name) {
-    @warn "Unknown palette '#{$name}'. Using 'wind' as fallback.";
-    @return $palette-wind;
+    @warn "Unknown palette '#{$name}'. Using 'stone' as fallback.";
+    @return $palette-stone;
   }
   @return map.get($palettes, $name);
 }

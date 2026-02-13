@@ -13,8 +13,15 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "fragments": "fragments.json",
+  "sideEffects": ["*.scss", "*.css"],
   "exports": {
     ".": "./src/index.ts",
+    "./datepicker": "./src/components/DatePicker/index.tsx",
+    "./chart": "./src/components/Chart/index.tsx",
+    "./markdown": "./src/components/Markdown/index.tsx",
+    "./codeblock": "./src/components/CodeBlock/index.tsx",
+    "./colorpicker": "./src/components/ColorPicker/index.tsx",
+    "./table": "./src/components/Table/index.tsx",
     "./styles": "./src/styles/globals.scss",
     "./tokens": "./src/tokens/_variables.scss",
     "./mixins": "./src/tokens/_mixins.scss",
@@ -53,7 +60,10 @@
     "recharts": ">=2.0.0 || >=3.0.0",
     "remark-gfm": ">=4.0.0",
     "react-day-picker": ">=9.0.0",
-    "date-fns": ">=3.0.0"
+    "date-fns": ">=3.0.0",
+    "shiki": ">=1.0.0",
+    "react-colorful": ">=5.0.0",
+    "@tanstack/react-table": ">=8.0.0"
   },
   "peerDependenciesMeta": {
     "react-markdown": {
@@ -70,6 +80,15 @@
     },
     "date-fns": {
       "optional": true
+    },
+    "shiki": {
+      "optional": true
+    },
+    "react-colorful": {
+      "optional": true
+    },
+    "@tanstack/react-table": {
+      "optional": true
     }
   },
   "scarfSettings": {
@@ -78,10 +97,7 @@
   "dependencies": {
     "@scarf/scarf": "^1.4.0",
     "@base-ui/react": "^1.0.0",
-    "@phosphor-icons/react": "^2.1.10",
-    "@tanstack/react-table": "^8.21.3",
-    "react-colorful": "^5.6.1",
-    "shiki": "^3.0.0"
+    "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
     "@fragments-sdk/cli": "workspace:*",
@@ -97,6 +113,9 @@
     "typescript": "^5.7.0",
     "react-day-picker": "^9.0.0",
     "date-fns": "^4.0.0",
+    "shiki": "^3.0.0",
+    "react-colorful": "^5.6.1",
+    "@tanstack/react-table": "^8.21.3",
     "vitest": "^2.1.8",
     "vitest-axe": "^0.1.0"
   },

@@ -3,10 +3,7 @@ import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../.
 import { CodeBlock } from './index';
 import styles from './CodeBlock.module.scss';
 
-// Mock shiki to avoid loading real syntax highlighting in tests
-vi.mock('shiki', () => ({
-  codeToHtml: vi.fn(() => Promise.resolve('<pre class="shiki"><code>highlighted code</code></pre>')),
-}));
+// shiki is loaded dynamically via require() — no mock needed since it's in devDependencies
 
 describe('CodeBlock', () => {
   it('renders pre and code elements', async () => {
@@ -33,9 +30,12 @@ describe('CodeBlock', () => {
   });
 
   it('shows language-highlighted content after shiki resolves', async () => {
-    render(<CodeBlock code="const x = 1;" language="typescript" />);
+    const { container } = render(<CodeBlock code="const x = 1;" language="typescript" />);
     await waitFor(() => {
-      expect(screen.getByText('highlighted code')).toBeInTheDocument();
+      // shiki wraps output in a pre.shiki element with syntax-highlighted spans
+      const shikiPre = container.querySelector('pre.shiki');
+      expect(shikiPre).toBeInTheDocument();
+      expect(shikiPre?.querySelector('code')).toBeInTheDocument();
     });
   });
 

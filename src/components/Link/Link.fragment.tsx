@@ -64,6 +64,11 @@ export default defineFragment({
       description: 'Opens in new tab with noopener noreferrer',
       default: 'false',
     },
+    asChild: {
+      type: 'boolean',
+      description: 'Render as child element (polymorphic). Merges link props onto the single child. Useful for rendering as Next.js Link for client-side navigation.',
+      default: 'false',
+    },
   },
 
   relations: [
@@ -78,6 +83,7 @@ export default defineFragment({
       'variant: default|subtle|muted - visual style',
       'underline: always|hover|none - underline behavior',
       'external: boolean - opens in new tab',
+      'asChild: boolean - render as child element for polymorphic usage (e.g. Next.js Link)',
     ],
     scenarioTags: [
       'navigation.link',
@@ -121,6 +127,17 @@ export default defineFragment({
       render: () => (
         <Link href="https://example.com" external>
           View documentation ↗
+        </Link>
+      ),
+    },
+    {
+      name: 'As Child (Polymorphic)',
+      description: 'Renders as a custom element while applying Link styles. Useful with Next.js Link for client-side navigation.',
+      render: () => (
+        <Link asChild variant="subtle">
+          <button type="button" onClick={() => alert('Navigated!')}>
+            Polymorphic link as button
+          </button>
         </Link>
       ),
     },

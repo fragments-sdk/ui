@@ -48,6 +48,10 @@ export default defineFragment({
     status: 'stable',
     tags: ['date', 'picker', 'calendar', 'range', 'form', 'input'],
     since: '0.8.0',
+    dependencies: [
+      { name: 'react-day-picker', version: '>=9.0.0', reason: 'Calendar rendering' },
+      { name: 'date-fns', version: '>=3.0.0', reason: 'Date formatting' },
+    ],
   },
 
   usage: {

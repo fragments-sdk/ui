@@ -50,6 +50,9 @@ export default defineFragment({
     status: 'stable',
     tags: ['chart', 'graph', 'data-visualization', 'recharts'],
     since: '0.3.0',
+    dependencies: [
+      { name: 'recharts', version: '>=2.0.0', reason: 'Chart rendering engine' },
+    ],
   },
 
   usage: {

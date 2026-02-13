@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
-import { DayPicker, UI, SelectionState, DayFlag } from 'react-day-picker';
-import { format } from 'date-fns';
 import styles from './DatePicker.module.scss';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
 
 // ============================================
-// Types
+// Types (self-owned — no external dependency for types)
 // ============================================
 
-export type { DateRange, Matcher } from 'react-day-picker';
-import type { DateRange, Matcher, Locale } from 'react-day-picker';
+export type DateRange = { from: Date | undefined; to?: Date | undefined };
+export type Matcher = Date | DateRange | ((date: Date) => boolean) | Date[];
+type Locale = { [key: string]: unknown };
 
 export interface DatePickerProps {
   children: React.ReactNode;
@@ -73,6 +72,39 @@ export interface DatePickerPresetProps {
   /** Range to select (range mode) */
   range?: DateRange;
   className?: string;
+}
+
+// ============================================
+// Lazy-loaded dependencies (react-day-picker + date-fns)
+// ============================================
+
+let _DayPicker: any = null;
+let _dpUI: any = null;
+let _SelectionState: any = null;
+let _DayFlag: any = null;
+let _formatDate: ((date: Date, fmt: string) => string) | null = null;
+let _dpLoaded = false;
+let _dpFailed = false;
+
+function loadDatePickerDeps() {
+  if (_dpLoaded) return;
+  _dpLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const rdp = require('react-day-picker');
+    _DayPicker = rdp.DayPicker;
+    _dpUI = rdp.UI;
+    _SelectionState = rdp.SelectionState;
+    _DayFlag = rdp.DayFlag;
+  } catch {
+    _dpFailed = true;
+  }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    _formatDate = require('date-fns').format;
+  } catch {
+    _dpFailed = true;
+  }
 }
 
 // ============================================
@@ -178,45 +210,53 @@ function useDatePickerContext() {
 // ============================================
 
 function defaultFormatDate(date: Date): string {
-  return format(date, 'PPP');
+  if (_formatDate) return _formatDate(date, 'PPP');
+  return date.toLocaleDateString();
 }
 
 function defaultFormatRange(range: DateRange): string {
   if (!range.from) return '';
-  if (!range.to) return format(range.from, 'LLL dd, y');
-  return `${format(range.from, 'LLL dd, y')} - ${format(range.to, 'LLL dd, y')}`;
+  if (_formatDate) {
+    if (!range.to) return _formatDate(range.from, 'LLL dd, y');
+    return `${_formatDate(range.from, 'LLL dd, y')} - ${_formatDate(range.to, 'LLL dd, y')}`;
+  }
+  if (!range.to) return range.from.toLocaleDateString();
+  return `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`;
 }
 
 // ============================================
-// ClassNames mapping
+// ClassNames mapping (built lazily)
 // ============================================
 
-const calendarClassNames = {
-  [UI.Root]: styles.calendar,
-  [UI.Months]: styles.months,
-  [UI.Month]: styles.month,
-  [UI.MonthCaption]: styles.monthCaption,
-  [UI.CaptionLabel]: styles.captionLabel,
-  [UI.Nav]: styles.nav,
-  [UI.PreviousMonthButton]: styles.navButton,
-  [UI.NextMonthButton]: styles.navButton,
-  [UI.MonthGrid]: styles.monthGrid,
-  [UI.Weekdays]: styles.weekdays,
-  [UI.Weekday]: styles.weekday,
-  [UI.Weeks]: styles.weeks,
-  [UI.Week]: styles.week,
-  [UI.Day]: styles.day,
-  [UI.DayButton]: styles.dayButton,
-  [UI.Chevron]: styles.chevron,
-  [SelectionState.selected]: styles.selected,
-  [SelectionState.range_start]: styles.rangeStart,
-  [SelectionState.range_middle]: styles.rangeMiddle,
-  [SelectionState.range_end]: styles.rangeEnd,
-  [DayFlag.today]: styles.today,
-  [DayFlag.outside]: styles.outside,
-  [DayFlag.disabled]: styles.disabled,
-  [DayFlag.focused]: styles.focused,
-};
+function getCalendarClassNames() {
+  if (!_dpUI || !_SelectionState || !_DayFlag) return {};
+  return {
+    [_dpUI.Root]: styles.calendar,
+    [_dpUI.Months]: styles.months,
+    [_dpUI.Month]: styles.month,
+    [_dpUI.MonthCaption]: styles.monthCaption,
+    [_dpUI.CaptionLabel]: styles.captionLabel,
+    [_dpUI.Nav]: styles.nav,
+    [_dpUI.PreviousMonthButton]: styles.navButton,
+    [_dpUI.NextMonthButton]: styles.navButton,
+    [_dpUI.MonthGrid]: styles.monthGrid,
+    [_dpUI.Weekdays]: styles.weekdays,
+    [_dpUI.Weekday]: styles.weekday,
+    [_dpUI.Weeks]: styles.weeks,
+    [_dpUI.Week]: styles.week,
+    [_dpUI.Day]: styles.day,
+    [_dpUI.DayButton]: styles.dayButton,
+    [_dpUI.Chevron]: styles.chevron,
+    [_SelectionState.selected]: styles.selected,
+    [_SelectionState.range_start]: styles.rangeStart,
+    [_SelectionState.range_middle]: styles.rangeMiddle,
+    [_SelectionState.range_end]: styles.rangeEnd,
+    [_DayFlag.today]: styles.today,
+    [_DayFlag.outside]: styles.outside,
+    [_DayFlag.disabled]: styles.disabled,
+    [_DayFlag.focused]: styles.focused,
+  };
+}
 
 // ============================================
 // Components
@@ -241,6 +281,8 @@ function DatePickerRoot({
   onOpenChange,
   name,
 }: DatePickerProps) {
+  // Load deps eagerly so date formatters are available in the trigger
+  loadDatePickerDeps();
   const [internalSelected, setInternalSelected] = React.useState<Date | null>(
     selectedProp ?? null
   );
@@ -439,12 +481,10 @@ function DatePickerContent({
 }
 
 function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: DatePickerCalendarProps) {
+  loadDatePickerDeps();
+
   const ctx = useDatePickerContext();
   const monthCount = numberOfMonthsProp ?? ctx.numberOfMonths;
-
-  const calendarClasses = className
-    ? { ...calendarClassNames, [UI.Root]: [styles.calendar, className].join(' ') }
-    : calendarClassNames;
 
   const components = React.useMemo(
     () => ({
@@ -454,16 +494,34 @@ function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: D
     []
   );
 
+  if (_dpFailed || !_DayPicker) {
+    if (_dpFailed && process.env.NODE_ENV === 'development') {
+      console.warn(
+        '[@fragments-sdk/ui] DatePicker: react-day-picker and date-fns are not installed. ' +
+        'Install them with: npm install react-day-picker date-fns'
+      );
+    }
+    return null;
+  }
+
+  const calendarClassNames = getCalendarClassNames();
+
+  const calendarClasses = className
+    ? { ...calendarClassNames, [_dpUI.Root]: [styles.calendar, className].join(' ') }
+    : calendarClassNames;
+
+  const DayPickerComponent = _DayPicker;
+
   if (ctx.mode === 'range') {
     const rangeSelected = ctx.selectedRange
       ? { from: ctx.selectedRange.from ?? undefined, to: ctx.selectedRange.to ?? undefined }
       : undefined;
 
     return (
-      <DayPicker
+      <DayPickerComponent
         mode="range"
         selected={rangeSelected}
-        onSelect={(range) => {
+        onSelect={(range: any) => {
           ctx.setSelectedRange(range ? { from: range.from ?? undefined, to: range.to ?? undefined } : null);
         }}
         numberOfMonths={monthCount}
@@ -478,10 +536,10 @@ function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: D
   }
 
   return (
-    <DayPicker
+    <DayPickerComponent
       mode="single"
       selected={ctx.selected ?? undefined}
-      onSelect={(date) => {
+      onSelect={(date: any) => {
         ctx.setSelected(date ?? null);
       }}
       numberOfMonths={monthCount}

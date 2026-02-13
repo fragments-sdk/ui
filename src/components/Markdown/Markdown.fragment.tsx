@@ -85,6 +85,10 @@ export default defineFragment({
     status: 'stable',
     tags: ['markdown', 'prose', 'content', 'text', 'ai', 'chat'],
     since: '0.7.0',
+    dependencies: [
+      { name: 'react-markdown', version: '>=9.0.0', reason: 'Markdown parsing and rendering' },
+      { name: 'remark-gfm', version: '>=4.0.0', reason: 'GitHub Flavored Markdown support (optional)' },
+    ],
   },
 
   usage: {

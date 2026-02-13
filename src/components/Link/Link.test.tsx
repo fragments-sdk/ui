@@ -30,6 +30,29 @@ describe('Link', () => {
     expect(ref).toHaveBeenCalled();
   });
 
+  it('renders as child element when asChild is true', () => {
+    render(
+      <Link asChild variant="subtle">
+        <button type="button">Click me</button>
+      </Link>
+    );
+    const btn = screen.getByRole('button', { name: 'Click me' });
+    expect(btn.tagName).toBe('BUTTON');
+    expect(btn).toHaveClass('link');
+    expect(btn).toHaveClass('subtle');
+  });
+
+  it('merges classNames when asChild is true', () => {
+    render(
+      <Link asChild variant="default">
+        <a href="/test" className="custom-class">Test</a>
+      </Link>
+    );
+    const link = screen.getByRole('link', { name: 'Test' });
+    expect(link).toHaveClass('link');
+    expect(link).toHaveClass('custom-class');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Link href="/page">Accessible link</Link>);
     await expectNoA11yViolations(container);

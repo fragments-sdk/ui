@@ -47,6 +47,9 @@ export default defineFragment({
     status: 'stable',
     tags: ['table', 'data', 'grid', 'list', 'sorting'],
     since: '0.1.0',
+    dependencies: [
+      { name: '@tanstack/react-table', version: '>=8.0.0', reason: 'Table state management and rendering' },
+    ],
   },
 
   usage: {

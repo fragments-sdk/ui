@@ -529,6 +529,31 @@ export {
 // Assets
 export { FragmentsLogo, type FragmentsLogoProps } from './assets/fragments-logo';
 
+// NavigationMenu
+export {
+  NavigationMenu,
+  NavigationMenuRoot,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
+  NavigationMenuMobileContent,
+  NavigationMenuMobileSection,
+  type NavigationMenuProps,
+  type NavigationMenuListProps,
+  type NavigationMenuItemProps,
+  type NavigationMenuTriggerProps,
+  type NavigationMenuContentProps,
+  type NavigationMenuLinkProps,
+  type NavigationMenuIndicatorProps,
+  type NavigationMenuViewportProps,
+  type NavigationMenuMobileContentProps,
+  type NavigationMenuMobileSectionProps,
+} from './components/NavigationMenu';
+
 // Accessibility Utilities
 export {
   useId,
