@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.3
+
+### Patch Changes
+
+- [`66d9ea1`](https://github.com/ConanMcN/fragments/commit/66d9ea1d1f37722936d13deab007d20c2dadbb74) Thanks [@ConanMcN](https://github.com/ConanMcN)! - SCSS token compliance: replace hardcoded CSS values with design tokens, add per-package LICENSE files and author metadata
+
 ## 0.8.2
 
 ### Patch Changes
