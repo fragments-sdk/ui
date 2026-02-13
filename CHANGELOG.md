@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.6
+
+### Patch Changes
+
+- [`8dea512`](https://github.com/ConanMcN/fragments/commit/8dea5128a36f6f1c32475e639960883a818593b6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix SSR/hydration issues: add missing 'use client' directives to 13 components (Avatar, Chip, ColorPicker, Combobox, DatePicker, Input, Listbox, ScrollArea, Select, Sidebar, Slider, Table, Toast). Fix Avatar onError not firing for cached images. Fix Image onLoad not firing for cached images during hydration. Fix usePrefersReducedMotion and usePrefersContrast hydration mismatch. Add SSR guard to NavigationMenu createPortal. Fix Listbox CSS.escape fallback consistency. Fix PageAside hydration mismatch with window.location.href.
+
 ## 0.8.5
 
 ### Patch Changes
