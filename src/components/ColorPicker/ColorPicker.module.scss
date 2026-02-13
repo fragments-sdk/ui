@@ -45,8 +45,9 @@
 .swatch {
   @include button-reset;
   @include interactive-base;
-  width: 40px;
-  height: 36px;
+  @include min-target-size;
+  width: var(--fui-target-size-comfortable, $fui-target-size-comfortable);
+  height: var(--fui-input-height, $fui-input-height);
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   flex-shrink: 0;
@@ -101,15 +102,15 @@
   }
 
   :global(.react-colorful__hue) {
-    height: 12px;
+    height: var(--fui-colorpicker-hue-height, #{$fui-colorpicker-hue-height});
     border-radius: var(--fui-radius-sm, $fui-radius-sm);
   }
 
   :global(.react-colorful__pointer) {
-    width: 16px;
-    height: 16px;
-    border: 2px solid white;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    width: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
+    height: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
+    border: $fui-colorpicker-pointer-border solid var(--fui-text-inverse, $fui-text-inverse);
+    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   }
 }
 

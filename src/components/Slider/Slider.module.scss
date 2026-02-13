@@ -57,6 +57,8 @@
 }
 
 .thumb {
+  @include min-target-size;
+
   width: $fui-slider-thumb-size;
   height: $fui-slider-thumb-size;
   background-color: var(--fui-bg-primary, $fui-bg-primary);

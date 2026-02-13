@@ -56,6 +56,8 @@ export type CodeBlockTheme =
   | 'min-dark'
   | 'min-light';
 
+export type CodeBlockCopyPlacement = 'auto' | 'header' | 'overlay';
+
 export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Code string to display */
   code: string;
@@ -95,6 +97,8 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   compact?: boolean;
   /** Show a persistent copy button (always visible, uses Button component) */
   persistentCopy?: boolean;
+  /** Placement of copy button when not using persistent copy */
+  copyPlacement?: CodeBlockCopyPlacement;
 }
 
 function CopyIcon({ className }: { className?: string }) {
@@ -212,6 +216,198 @@ function dedent(str: string): string {
 }
 
 /**
+ * Normalize indentation while handling JSX where first line is already at column 0.
+ */
+function normalizeIndentation(str: string): string {
+  const lines = str.split('\n');
+  if (lines.length <= 1) return str;
+
+  let minIndent = Infinity;
+  const firstLineIndent = lines[0].match(/^(\s*)/)?.[1].length ?? 0;
+
+  for (let i = 1; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line.trim().length === 0) continue;
+    const indent = line.match(/^(\s*)/)?.[1].length ?? 0;
+    minIndent = Math.min(minIndent, indent);
+  }
+
+  if (firstLineIndent > 0) {
+    minIndent = Math.min(minIndent, firstLineIndent);
+  }
+
+  if (minIndent === Infinity || minIndent === 0) return str;
+
+  return lines
+    .map((line) => line.slice(Math.min(minIndent, line.match(/^(\s*)/)?.[1].length ?? 0)))
+    .join('\n');
+}
+
+function trimTrailingWhitespace(str: string): string {
+  return str
+    .split('\n')
+    .map((line) => line.replace(/[ \t]+$/g, ''))
+    .join('\n');
+}
+
+function findTagEnd(line: string): number {
+  let quote: '"' | '\'' | '`' | null = null;
+  let escaped = false;
+  let braceDepth = 0;
+  let bracketDepth = 0;
+  let parenDepth = 0;
+
+  for (let i = 1; i < line.length; i += 1) {
+    const char = line[i];
+
+    if (quote) {
+      if (char === '\\' && !escaped) {
+        escaped = true;
+        continue;
+      }
+      if (char === quote && !escaped) {
+        quote = null;
+      }
+      escaped = false;
+      continue;
+    }
+
+    if (char === '"' || char === '\'' || char === '`') {
+      quote = char;
+      continue;
+    }
+
+    if (char === '{') braceDepth += 1;
+    else if (char === '}') braceDepth = Math.max(0, braceDepth - 1);
+    else if (char === '[') bracketDepth += 1;
+    else if (char === ']') bracketDepth = Math.max(0, bracketDepth - 1);
+    else if (char === '(') parenDepth += 1;
+    else if (char === ')') parenDepth = Math.max(0, parenDepth - 1);
+    else if (char === '>' && braceDepth === 0 && bracketDepth === 0 && parenDepth === 0) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+function splitJsxAttributes(attrs: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+  let quote: '"' | '\'' | '`' | null = null;
+  let escaped = false;
+  let braceDepth = 0;
+  let bracketDepth = 0;
+  let parenDepth = 0;
+
+  for (const char of attrs) {
+    if (quote) {
+      current += char;
+      if (char === '\\' && !escaped) {
+        escaped = true;
+        continue;
+      }
+      if (char === quote && !escaped) {
+        quote = null;
+      }
+      escaped = false;
+      continue;
+    }
+
+    if (char === '"' || char === '\'' || char === '`') {
+      quote = char;
+      current += char;
+      continue;
+    }
+
+    if (char === '{') braceDepth += 1;
+    else if (char === '}') braceDepth = Math.max(0, braceDepth - 1);
+    else if (char === '[') bracketDepth += 1;
+    else if (char === ']') bracketDepth = Math.max(0, bracketDepth - 1);
+    else if (char === '(') parenDepth += 1;
+    else if (char === ')') parenDepth = Math.max(0, parenDepth - 1);
+
+    if (/\s/.test(char) && braceDepth === 0 && bracketDepth === 0 && parenDepth === 0) {
+      if (current.trim().length > 0) {
+        parts.push(current.trim());
+        current = '';
+      }
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current.trim().length > 0) {
+    parts.push(current.trim());
+  }
+
+  return parts;
+}
+
+function formatLongJsxTagLine(line: string): string {
+  const maxInlineLength = 110;
+  if (line.length <= maxInlineLength) return line;
+
+  const indent = line.match(/^(\s*)/)?.[1] ?? '';
+  const trimmed = line.trimStart();
+
+  if (
+    !trimmed.startsWith('<')
+    || trimmed.startsWith('</')
+    || trimmed.startsWith('<!')
+    || trimmed.startsWith('<?')
+  ) {
+    return line;
+  }
+
+  const tagEnd = findTagEnd(trimmed);
+  if (tagEnd === -1) return line;
+  if (trimmed.slice(tagEnd + 1).trim().length > 0) return line;
+
+  const rawTagBody = trimmed.slice(1, tagEnd).trim();
+  const isSelfClosing = rawTagBody.endsWith('/');
+  const tagBody = isSelfClosing ? rawTagBody.slice(0, -1).trimEnd() : rawTagBody;
+  const firstSpace = tagBody.search(/\s/);
+  if (firstSpace === -1) return line;
+
+  const tagName = tagBody.slice(0, firstSpace);
+  if (!/^[A-Za-z][\w.:-]*$/.test(tagName)) return line;
+
+  const attrsSource = tagBody.slice(firstSpace).trim();
+  if (!attrsSource.includes('=') && !attrsSource.includes('{...')) return line;
+
+  const attrs = splitJsxAttributes(attrsSource);
+  if (attrs.length === 0) return line;
+
+  const attrIndent = `${indent}  `;
+  const close = isSelfClosing ? '/>' : '>';
+
+  return [
+    `${indent}<${tagName}`,
+    ...attrs.map((attr) => `${attrIndent}${attr}`),
+    `${indent}${close}`,
+  ].join('\n');
+}
+
+function formatLongJsxTags(code: string): string {
+  return code
+    .split('\n')
+    .flatMap((line) => formatLongJsxTagLine(line).split('\n'))
+    .join('\n');
+}
+
+function normalizeCode(code: string): string {
+  const trimmed = code.trim();
+  if (trimmed.length === 0) return '';
+
+  const normalized = normalizeIndentation(trimmed);
+  const dedented = dedent(normalized);
+  const withoutTrailingWhitespace = trimTrailingWhitespace(dedented);
+  return formatLongJsxTags(withoutTrailingWhitespace);
+}
+
+/**
  * Parse line specification into a Set of line numbers.
  * Supports: [1, 3, '5-7'] -> Set {1, 3, 5, 6, 7}
  */
@@ -326,6 +522,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       collapsedLines = 5,
       compact = false,
       persistentCopy = false,
+      copyPlacement = 'auto',
       className,
       ...htmlProps
     },
@@ -336,7 +533,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     const [isLoading, setIsLoading] = useState(true);
     const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
-    const trimmedCode = dedent(code.trim());
+    const trimmedCode = useMemo(() => normalizeCode(code), [code]);
     const codeLines = trimmedCode.split('\n');
     const totalLines = codeLines.length;
     const shouldShowCollapse = collapsible && totalLines > collapsedLines;
@@ -350,6 +547,12 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     const addedSet = useMemo(() => parseLineSpec(addedLines), [addedLines]);
     const removedSet = useMemo(() => parseLineSpec(removedLines), [removedLines]);
     const hasDiff = addedSet.size > 0 || removedSet.size > 0;
+    const resolvedCopyPlacement = copyPlacement === 'auto'
+      ? (filename ? 'header' : 'overlay')
+      : copyPlacement;
+    const shouldShowHeaderCopy = showCopy && !persistentCopy && resolvedCopyPlacement === 'header';
+    const shouldShowOverlayCopy = showCopy && !persistentCopy && resolvedCopyPlacement === 'overlay';
+    const shouldRenderHeader = Boolean(filename) || shouldShowHeaderCopy;
 
     // Apply syntax highlighting
     useEffect(() => {
@@ -422,6 +625,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     const wrapperClasses = [
       styles.wrapper,
       persistentCopy && styles.persistentCopyWrapper,
+      shouldShowOverlayCopy && styles.withCopyOverlay,
     ].filter(Boolean).join(' ');
 
     const codeContainerStyle: React.CSSProperties = maxHeight
@@ -432,10 +636,10 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       <div ref={ref} {...htmlProps} className={classNames}>
         {title && <div className={styles.title}>{title}</div>}
         <div className={wrapperClasses}>
-          {(filename || (showCopy && !persistentCopy)) && (
+          {shouldRenderHeader && (
             <div className={styles.header}>
               <span className={styles.filename}>{filename ?? ''}</span>
-              {showCopy && !persistentCopy && (
+              {shouldShowHeaderCopy && (
                 <button
                   type="button"
                   onClick={handleCopy}
@@ -446,6 +650,16 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
                 </button>
               )}
             </div>
+          )}
+          {shouldShowOverlayCopy && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className={`${styles.copyButton} ${styles.copyOverlay} ${copied ? styles.copied : ''}`}
+              aria-label={copied ? 'Copied!' : 'Copy code'}
+            >
+              {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
+            </button>
           )}
           {isLoading ? (
             <div className={styles.loading} style={codeContainerStyle}>
@@ -520,6 +734,8 @@ export interface TabbedCodeBlockProps {
   defaultTab?: string;
   /** Show copy button */
   showCopy?: boolean;
+  /** Placement of copy button when not using persistent copy */
+  copyPlacement?: CodeBlockCopyPlacement;
   /** Show line numbers */
   showLineNumbers?: boolean;
   /** Syntax highlighting theme (applies to all tabs) */
@@ -538,6 +754,7 @@ function TabbedCodeBlock({
   tabs,
   defaultTab,
   showCopy = true,
+  copyPlacement = 'auto',
   showLineNumbers = false,
   theme,
   tabsVariant = 'pills',
@@ -564,6 +781,7 @@ function TabbedCodeBlock({
               language={tab.language}
               theme={theme}
               showCopy={showCopy}
+              copyPlacement={copyPlacement}
               showLineNumbers={showLineNumbers}
               wordWrap={wordWrap}
               maxHeight={maxHeight}

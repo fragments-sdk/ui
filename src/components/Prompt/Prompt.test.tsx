@@ -7,6 +7,7 @@ function renderPrompt(props: {
   placeholder?: string;
   disabled?: boolean;
   defaultValue?: string;
+  loading?: boolean;
 } = {}) {
   return render(
     <Prompt
@@ -14,6 +15,7 @@ function renderPrompt(props: {
       onSubmit={props.onSubmit}
       disabled={props.disabled}
       defaultValue={props.defaultValue}
+      loading={props.loading}
     >
       <Prompt.Textarea />
       <Prompt.Toolbar>
@@ -80,6 +82,12 @@ describe('Prompt', () => {
     expect(screen.getByPlaceholderText('Ask something...')).toBeDisabled();
     expect(screen.getByRole('button', { name: /attach file/i })).toBeDisabled();
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
+
+  it('shows loading spinner icon in submit button when loading', () => {
+    renderPrompt({ loading: true, defaultValue: 'Submitting...' });
+    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+    expect(screen.getByRole('status', { name: /submitting/i })).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

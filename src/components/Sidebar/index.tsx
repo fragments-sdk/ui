@@ -3,6 +3,7 @@ import styles from './Sidebar.module.scss';
 import { Tooltip } from '../Tooltip';
 import { Skeleton } from '../Skeleton';
 import { Collapsible } from '../Collapsible';
+import { ScrollArea } from '../ScrollArea';
 import { useFocusTrap } from '../../utils/a11y';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
@@ -655,7 +656,9 @@ function SidebarNav({ children, 'aria-label': ariaLabel = 'Main navigation', cla
   const classes = [styles.nav, className].filter(Boolean).join(' ');
   return (
     <nav className={classes} aria-label={ariaLabel}>
-      {children}
+      <ScrollArea orientation="vertical" showFades className={styles.navScrollArea}>
+        {children}
+      </ScrollArea>
     </nav>
   );
 }

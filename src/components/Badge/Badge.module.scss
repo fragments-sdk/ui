@@ -75,6 +75,7 @@
 .remove {
   @include button-reset;
   @include interactive-base;
+  @include touch-target;
 
   padding: 0 var(--fui-space-0-5, $fui-space-0-5);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);

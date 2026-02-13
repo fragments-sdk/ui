@@ -55,6 +55,12 @@ describe('Sidebar', () => {
     expect(screen.getByRole('navigation', { name: /main/i })).toBeInTheDocument();
   });
 
+  it('uses ScrollArea with fade indicators in nav content', () => {
+    renderSidebar();
+    const scrollAreaRoot = screen.getByRole('navigation', { name: /main/i }).querySelector('[data-orientation="vertical"]');
+    expect(scrollAreaRoot).toBeInTheDocument();
+  });
+
   it('renders section with label', () => {
     renderSidebar();
     expect(screen.getByText('Section One')).toBeInTheDocument();

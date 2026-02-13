@@ -87,7 +87,7 @@ function FieldLabel({ children, className }: FieldLabelProps) {
  * Wraps the child with Base UI's Field.Control via the `render` prop,
  * which merges aria attributes and field state onto the child element.
  *
- * Works with Input, Textarea, Checkbox, Toggle, Select, or any element.
+ * Works with Input, Textarea, Checkbox, Switch, Select, or any element.
  */
 function FieldControl({ children, className }: FieldControlProps) {
   const classes = [styles.control, className].filter(Boolean).join(' ');

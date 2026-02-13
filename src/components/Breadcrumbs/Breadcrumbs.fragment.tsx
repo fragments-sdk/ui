@@ -74,7 +74,7 @@ export default defineFragment({
       'navigation.hierarchy',
       'wayfinding.location',
     ],
-    a11yRules: ['A11Y_NAV_LANDMARK', 'A11Y_ARIA_CURRENT'],
+    a11yRules: ['A11Y_NAV_LANDMARK', 'A11Y_ARIA_CURRENT', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   ai: {

@@ -27,9 +27,7 @@
   width: calc(100% - var(--fui-space-8, $fui-space-8));
   max-width: 800px;
   z-index: 100;
-  box-shadow:
-    0 -4px 16px rgba(0, 0, 0, 0.08),
-    0 4px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
 }
 
 // Sticky variant - for content-area fixed prompts (accounts for sidebar)
@@ -44,9 +42,7 @@
   width: calc(100% - var(--fui-prompt-inset-left, 0px) - var(--fui-space-8, $fui-space-8));
   max-width: 800px;
   z-index: 100;
-  box-shadow:
-    0 -4px 16px rgba(0, 0, 0, 0.08),
-    0 4px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
 
   // Center within the available space (after sidebar)
   left: calc(var(--fui-prompt-inset-left, 0px) + ((100% - var(--fui-prompt-inset-left, 0px)) / 2));
@@ -113,6 +109,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
+  margin-left: auto;
 }
 
 // ============================================
@@ -226,19 +223,9 @@
 }
 
 .submitLoading {
-  position: relative;
-
-  svg {
-    animation: pulse 1s ease-in-out infinite;
-  }
+  pointer-events: none;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.submitSpinner {
+  line-height: 0;
 }

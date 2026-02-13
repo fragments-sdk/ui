@@ -23,7 +23,7 @@ export default defineFragment({
     whenNot: [
       'Multi-line text (use Textarea)',
       'Selecting from predefined options (use Select)',
-      'Boolean input (use Checkbox or Toggle)',
+      'Boolean input (use Checkbox or Switch)',
       'Date/time input (use DatePicker)',
     ],
     guidelines: [

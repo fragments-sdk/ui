@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineFragment } from '@fragments/core';
 import { Badge } from '.';
+import { Stack } from '../Stack';
 
 export default defineFragment({
   component: Badge,
@@ -92,59 +93,96 @@ export default defineFragment({
       'display.count',
       'content.tag',
     ],
-    a11yRules: ['A11Y_BADGE_CONTRAST', 'A11Y_BADGE_DISMISS'],
+    a11yRules: ['A11Y_BADGE_CONTRAST', 'A11Y_BADGE_DISMISS', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   variants: [
     {
       name: 'Default',
       description: 'Neutral badge for general labels',
+      code: `import { Badge } from '@/components/Badge';
+
+<Badge>Default</Badge>`,
       render: () => <Badge>Default</Badge>,
     },
     {
       name: 'Status Variants',
       description: 'All severity variants for different contexts',
+      code: `import { Badge } from '@/components/Badge';
+import { Stack } from '@/components/Stack';
+
+<Stack direction="row" gap="sm" wrap>
+  <Badge variant="default">Default</Badge>
+  <Badge variant="success">Active</Badge>
+  <Badge variant="warning">Pending</Badge>
+  <Badge variant="error">Failed</Badge>
+  <Badge variant="info">New</Badge>
+</Stack>`,
       render: () => (
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <Stack direction="row" gap="sm" wrap>
           <Badge variant="default">Default</Badge>
           <Badge variant="success">Active</Badge>
           <Badge variant="warning">Pending</Badge>
           <Badge variant="error">Failed</Badge>
           <Badge variant="info">New</Badge>
-        </div>
+        </Stack>
       ),
     },
     {
       name: 'With Dot',
       description: 'Live status indicators using dot prefix',
+      code: `import { Badge } from '@/components/Badge';
+import { Stack } from '@/components/Stack';
+
+<Stack direction="row" gap="sm" wrap>
+  <Badge variant="success" dot>Online</Badge>
+  <Badge variant="warning" dot>Away</Badge>
+  <Badge variant="error" dot>Offline</Badge>
+</Stack>`,
       render: () => (
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <Stack direction="row" gap="sm" wrap>
           <Badge variant="success" dot>Online</Badge>
           <Badge variant="warning" dot>Away</Badge>
           <Badge variant="error" dot>Offline</Badge>
-        </div>
+        </Stack>
       ),
     },
     {
       name: 'Small Size',
       description: 'Compact badges for dense UIs',
+      code: `import { Badge } from '@/components/Badge';
+import { Stack } from '@/components/Stack';
+
+<Stack direction="row" gap="sm" align="center" wrap>
+  <Badge size="sm" variant="info">v2.1</Badge>
+  <Badge size="sm" variant="success">Stable</Badge>
+  <Badge size="md" variant="info">Standard</Badge>
+</Stack>`,
       render: () => (
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <Stack direction="row" gap="sm" align="center" wrap>
           <Badge size="sm" variant="info">v2.1</Badge>
           <Badge size="sm" variant="success">Stable</Badge>
           <Badge size="md" variant="info">Standard</Badge>
-        </div>
+        </Stack>
       ),
     },
     {
       name: 'Removable',
       description: 'User-created tags that can be dismissed',
+      code: `import { Badge } from '@/components/Badge';
+import { Stack } from '@/components/Stack';
+
+<Stack direction="row" gap="sm" wrap>
+  <Badge variant="info" onRemove={() => {}}>React</Badge>
+  <Badge variant="info" onRemove={() => {}}>TypeScript</Badge>
+  <Badge variant="info" onRemove={() => {}}>CSS</Badge>
+</Stack>`,
       render: () => (
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <Stack direction="row" gap="sm" wrap>
           <Badge variant="info" onRemove={() => {}}>React</Badge>
           <Badge variant="info" onRemove={() => {}}>TypeScript</Badge>
           <Badge variant="info" onRemove={() => {}}>CSS</Badge>
-        </div>
+        </Stack>
       ),
     },
   ],

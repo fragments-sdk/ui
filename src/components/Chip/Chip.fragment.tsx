@@ -24,7 +24,7 @@ export default defineFragment({
     whenNot: [
       'Display-only status labels (use Badge)',
       'Navigation between views (use Tabs)',
-      'Binary on/off state (use Toggle)',
+      'Binary on/off state (use Switch)',
       'Primary call-to-action (use Button)',
     ],
     guidelines: [

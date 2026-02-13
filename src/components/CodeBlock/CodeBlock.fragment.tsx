@@ -30,6 +30,7 @@ export default defineFragment({
     guidelines: [
       'Always specify the correct language for accurate highlighting',
       'Use filename prop to show source file name in header bar',
+      'Use copyPlacement="auto" to render copy in overlay mode when no filename is provided',
       'Use title prop for external labels above the code block',
       'Enable line numbers for longer code samples',
       'Use highlightLines to draw attention to key lines',
@@ -72,13 +73,19 @@ export default defineFragment({
         'dracula', 'nord', 'monokai', 'vitesse-dark', 'vitesse-light',
         'min-dark', 'min-light',
       ],
-      default: 'synthwave-84',
+      default: 'one-dark-pro',
       description: 'Syntax highlighting theme',
     },
     showCopy: {
       type: 'boolean',
       default: true,
       description: 'Whether to show the copy button',
+    },
+    copyPlacement: {
+      type: 'enum',
+      values: ['auto', 'header', 'overlay'],
+      default: 'auto',
+      description: 'Where to place the copy button when not using persistentCopy',
     },
     title: {
       type: 'string',
@@ -167,8 +174,9 @@ export default defineFragment({
     propsSummary: [
       'code: string - required code content',
       'language: tsx|typescript|javascript|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext',
-      'theme: synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light',
+      'theme: synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: one-dark-pro)',
       'showCopy: boolean (default: true)',
+      'copyPlacement: auto|header|overlay (default: auto)',
       'title: string - optional external label',
       'filename: string - optional filename in header bar',
       'caption: string - optional footer caption',

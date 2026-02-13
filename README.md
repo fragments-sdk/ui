@@ -55,7 +55,7 @@ function App() {
 | ButtonGroup | Forms | Groups related buttons together with consistent spacing and alignment. Useful for action bars, toolbars, and related button sets. |
 | Card | Layout | Container for grouping related content |
 | Chart | Display | Composable chart wrapper for recharts with theme-aware tooltips, legends, and color integration. |
-| Checkbox | Forms | Binary toggle for form fields. Use for options that require explicit submission, unlike Toggle which takes effect immediately. |
+| Checkbox | Forms | Binary toggle for form fields. Use for options that require explicit submission, unlike Switch which takes effect immediately. |
 | Chip | Forms | Interactive pill-shaped element for filtering, selecting, and tagging. Supports single and multi-select via Chip.Group. |
 | CodeBlock | Display | Syntax-highlighted code display with copy functionality, theming, diff view, and collapsible sections |
 | Collapsible | Layout | An interactive component that expands/collapses to show or hide content |
@@ -97,10 +97,20 @@ function App() {
 | Theme | Navigation | Theme management system with provider, toggle, and hook pattern. Supports light, dark, and system modes with localStorage persistence. |
 | ThinkingIndicator | Ai | Animated indicator showing AI is processing |
 | Toast | Feedback | Brief, non-blocking notification messages |
-| Toggle | Forms | Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly. |
+| Switch | Forms | Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly. |
 | ToggleGroup | Forms | A group of toggle buttons where only one can be selected at a time. Useful for switching between views, modes, or options. |
 | Tooltip | Feedback | Contextual help text that appears on hover or focus. Perfect for explaining icons, truncated text, or providing additional context. |
 | VisuallyHidden | Navigation | Hides content visually while keeping it accessible to screen readers. Essential for accessible icon-only buttons and supplementary text. |
+
+## Fragment Snippet Authoring
+
+All fragment and block previews are authored source snippets, not runtime-serialized JSX.
+
+- Add explicit `variant.code` (or block `code`) for every example.
+- Keep snippets as full examples: include imports + renderable JSX.
+- Use Fragments primitives for layout wrappers (`Box`, `Stack`, `Text`) instead of raw HTML wrappers (`div`, `span`, `p`, headings).
+- Do not use inline `style={...}` in snippets or example renders.
+- Do not use alias drift tags (`*Root`, `*2`) in snippet code.
 
 ## Design Tokens
 

@@ -270,11 +270,15 @@ $fui-touch-sm: computed.$computed-touch-sm !default;
 $fui-touch-md: computed.$computed-touch-md !default;
 $fui-touch-lg: computed.$computed-touch-lg !default;
 
+// Minimum interactive target sizes (WCAG 2.2 SC 2.5.8)
+$fui-target-size-min: 1.714rem !default; // 24px
+$fui-target-size-comfortable: $fui-touch-md !default;
+
 // Toggle/Switch
 $fui-toggle-width-sm: 2.286rem !default;   // 32px
 $fui-toggle-width-md: 2.857rem !default;   // 40px
-$fui-toggle-height-sm: 1.286rem !default;  // 18px
-$fui-toggle-height-md: 1.571rem !default;  // 22px
+$fui-toggle-height-sm: $fui-target-size-min !default; // 24px
+$fui-toggle-height-md: 2rem !default;      // 28px
 $fui-toggle-thumb-sm: 1rem !default;       // 14px
 $fui-toggle-thumb-md: 1.286rem !default;   // 18px
 $fui-toggle-thumb-offset: 2px !default;    // Thumb inset from track edge
@@ -308,7 +312,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
 // Slider
 $fui-slider-track-height: 4px !default;
-$fui-slider-thumb-size: $fui-icon-md !default; // 16px
+$fui-slider-thumb-size: $fui-target-size-min !default;
 $fui-slider-thumb-border: 2px !default;
 
 // EmptyState content max-widths
@@ -323,8 +327,8 @@ $fui-emptystate-icon-lg: 2.857rem !default;      // 40px
 
 // ColorChip/ColorPicker
 $fui-colorpicker-size: 180px !default;
-$fui-colorpicker-hue-height: 10px !default;
-$fui-colorpicker-pointer-size: 1rem !default;   // 14px
+$fui-colorpicker-hue-height: $fui-target-size-min !default;
+$fui-colorpicker-pointer-size: $fui-target-size-min !default;
 $fui-colorpicker-pointer-border: 2px !default;
 
 // AppShell Layout
@@ -336,7 +340,7 @@ $fui-header-z-index: 40 !default;
 
 // ThemeToggle sizes (derived from density)
 $fui-theme-toggle-sm-width: 26px !default;
-$fui-theme-toggle-sm-height: 22px !default;
+$fui-theme-toggle-sm-height: 24px !default;
 $fui-theme-toggle-sm-icon: 12px !default;
 $fui-theme-toggle-md-width: 32px !default;
 $fui-theme-toggle-md-height: 28px !default;
@@ -528,6 +532,8 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-input-height: #{$fui-input-height};
     --fui-input-height-sm: #{$fui-input-height-sm};
     --fui-input-height-lg: #{$fui-input-height-lg};
+    --fui-target-size-min: #{$fui-target-size-min};
+    --fui-target-size-comfortable: #{$fui-target-size-comfortable};
 
     // AppShell Layout
     --fui-appshell-header-height: #{$fui-appshell-header-height};

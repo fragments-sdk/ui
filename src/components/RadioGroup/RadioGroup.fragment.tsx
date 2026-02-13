@@ -23,7 +23,7 @@ export default defineFragment({
     whenNot: [
       'Multiple selections allowed (use Checkbox group)',
       'Many options (use Select)',
-      'Binary on/off choice (use Toggle/Switch)',
+      'Binary on/off choice (use Switch)',
       'Options need to be searchable (use Combobox)',
     ],
     guidelines: [
@@ -96,9 +96,9 @@ export default defineFragment({
       note: 'Use Select for many options or limited space',
     },
     {
-      component: 'Toggle',
+      component: 'Switch',
       relationship: 'alternative',
-      note: 'Use Toggle for binary on/off choices',
+      note: 'Use Switch for binary on/off choices',
     },
   ],
 
@@ -118,6 +118,7 @@ export default defineFragment({
     a11yRules: [
       'A11Y_RADIO_GROUP',
       'A11Y_LABEL_REQUIRED',
+      'A11Y_TARGET_SIZE_MIN',
     ],
     bans: [],
   },

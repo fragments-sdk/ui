@@ -74,7 +74,7 @@ export default defineFragment({
       'feedback.warning',
       'content.notification',
     ],
-    a11yRules: ['A11Y_ALERT_ROLE', 'A11Y_ALERT_DISMISS', 'A11Y_ALERT_CONTRAST'],
+    a11yRules: ['A11Y_ALERT_ROLE', 'A11Y_ALERT_DISMISS', 'A11Y_ALERT_CONTRAST', 'A11Y_TARGET_SIZE_MIN'],
     validationBans: [
       { pattern: 'severity="error"(?!.*Alert.Content)', reason: 'Error alerts must include helpful message text' },
     ],
@@ -95,6 +95,16 @@ export default defineFragment({
     {
       name: 'Info',
       description: 'Informational context for the user',
+      code: `import { Alert } from '@/components/Alert';
+
+<Alert severity="info">
+  <Alert.Icon />
+  <Alert.Body>
+    <Alert.Content>
+      Your session will expire in 15 minutes. Save your work to avoid losing changes.
+    </Alert.Content>
+  </Alert.Body>
+</Alert>`,
       render: () => (
         <Alert severity="info">
           <Alert.Icon />
@@ -109,6 +119,17 @@ export default defineFragment({
     {
       name: 'Success',
       description: 'Positive confirmation of completed action',
+      code: `import { Alert } from '@/components/Alert';
+
+<Alert severity="success">
+  <Alert.Icon />
+  <Alert.Body>
+    <Alert.Title>Payment processed</Alert.Title>
+    <Alert.Content>
+      Your order #12345 has been confirmed. You will receive a confirmation email shortly.
+    </Alert.Content>
+  </Alert.Body>
+</Alert>`,
       render: () => (
         <Alert severity="success">
           <Alert.Icon />
@@ -124,6 +145,17 @@ export default defineFragment({
     {
       name: 'Warning',
       description: 'Caution about potential issues',
+      code: `import { Alert } from '@/components/Alert';
+
+<Alert severity="warning">
+  <Alert.Icon />
+  <Alert.Body>
+    <Alert.Title>Storage almost full</Alert.Title>
+    <Alert.Content>
+      You have used 90% of your storage quota. Consider deleting unused files.
+    </Alert.Content>
+  </Alert.Body>
+</Alert>`,
       render: () => (
         <Alert severity="warning">
           <Alert.Icon />
@@ -139,6 +171,17 @@ export default defineFragment({
     {
       name: 'Error',
       description: 'Error state requiring user attention',
+      code: `import { Alert } from '@/components/Alert';
+
+<Alert severity="error">
+  <Alert.Icon />
+  <Alert.Body>
+    <Alert.Title>Upload failed</Alert.Title>
+    <Alert.Content>
+      The file could not be uploaded. Check your connection and try again.
+    </Alert.Content>
+  </Alert.Body>
+</Alert>`,
       render: () => (
         <Alert severity="error">
           <Alert.Icon />
@@ -154,6 +197,20 @@ export default defineFragment({
     {
       name: 'With Action',
       description: 'Alert with an actionable button',
+      code: `import { Alert } from '@/components/Alert';
+
+<Alert severity="warning">
+  <Alert.Icon />
+  <Alert.Body>
+    <Alert.Title>Update available</Alert.Title>
+    <Alert.Content>
+      A new version is available with important security fixes.
+    </Alert.Content>
+    <Alert.Actions>
+      <Alert.Action onClick={() => {}}>Update now</Alert.Action>
+    </Alert.Actions>
+  </Alert.Body>
+</Alert>`,
       render: () => (
         <Alert severity="warning">
           <Alert.Icon />
@@ -172,6 +229,17 @@ export default defineFragment({
     {
       name: 'Dismissible',
       description: 'Alert that can be closed by the user',
+      code: `import { Alert } from '@/components/Alert';
+
+<Alert severity="info">
+  <Alert.Icon />
+  <Alert.Body>
+    <Alert.Content>
+      You can customize your notification preferences in Settings.
+    </Alert.Content>
+  </Alert.Body>
+  <Alert.Close />
+</Alert>`,
       render: () => (
         <Alert severity="info">
           <Alert.Icon />

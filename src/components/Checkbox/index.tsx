@@ -157,7 +157,12 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     }
 
     return (
-      <label {...htmlProps} className={wrapperClasses} data-disabled={disabled || undefined}>
+      <label
+        {...htmlProps}
+        className={wrapperClasses}
+        data-disabled={disabled || undefined}
+        data-has-description={description ? true : undefined}
+      >
         <BaseCheckbox.Root
           ref={ref}
           checked={checked}

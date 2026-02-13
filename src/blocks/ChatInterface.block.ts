@@ -4,7 +4,7 @@ export default defineBlock({
   name: 'Chat Interface',
   description: 'Full AI chat with conversation list, messages, and prompt input',
   category: 'ai',
-  components: ['Stack', 'ConversationList', 'Message', 'Prompt'],
+  components: ['Stack', 'Box', 'ConversationList', 'Message', 'Prompt'],
   tags: ['chat', 'ai', 'assistant', 'conversation', 'prompt'],
   code: `
 <Stack style={{ height: '500px', border: '1px solid var(--fui-border)', borderRadius: 'var(--fui-radius-lg)', overflow: 'hidden' }}>
@@ -25,7 +25,7 @@ export default defineBlock({
       </Message.Content>
     </Message>
   </ConversationList>
-  <div style={{ borderTop: '1px solid var(--fui-border)' }}>
+  <Box borderTop>
     <Prompt placeholder="Message Claude..." onSubmit={(value) => console.log(value)}>
       <Prompt.Textarea />
       <Prompt.Toolbar>
@@ -37,7 +37,7 @@ export default defineBlock({
         </Prompt.Info>
       </Prompt.Toolbar>
     </Prompt>
-  </div>
+  </Box>
 </Stack>
 `.trim(),
 });

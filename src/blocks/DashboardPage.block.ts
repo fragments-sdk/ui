@@ -12,6 +12,7 @@ export default defineBlock({
     'Grid',
     'Card',
     'Stack',
+    'Box',
     'Text',
     'Badge',
     'Icon',
@@ -138,7 +139,7 @@ const activities = [
 
 // ── Layout ──────────────────────────────────────────────────
 
-<AppShell layout="sidebar-inset">
+<AppShell>
   <AppShell.Header>
     <Header>
       <Header.Trigger />
@@ -227,7 +228,7 @@ const activities = [
               </Stack>
             </Card.Header>
             <Card.Body>
-              <div style={{ height: 220 }}>
+              <Box style={{ height: 220 }}>
                 <ChartContainer config={chartConfig}>
                   <AreaChart data={revenueData} margin={{ top: 5, right: 5, bottom: 0, left: -20 }}>
                     <XAxis dataKey="month" tickLine={false} axisLine={false} />
@@ -242,7 +243,7 @@ const activities = [
                     <ChartTooltip />
                   </AreaChart>
                 </ChartContainer>
-              </div>
+              </Box>
             </Card.Body>
           </Card>
         </Grid.Item>

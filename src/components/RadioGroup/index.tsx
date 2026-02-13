@@ -112,7 +112,11 @@ function RadioItem({
   }
 
   return (
-    <label className={wrapperClasses} data-disabled={disabled || undefined}>
+    <label
+      className={wrapperClasses}
+      data-disabled={disabled || undefined}
+      data-has-description={description ? true : undefined}
+    >
       <BaseRadio.Root
         value={value}
         disabled={disabled}

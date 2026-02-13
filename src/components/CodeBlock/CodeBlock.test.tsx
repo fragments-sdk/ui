@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
 import { CodeBlock } from './index';
+import styles from './CodeBlock.module.scss';
 
 // Mock shiki to avoid loading real syntax highlighting in tests
 vi.mock('shiki', () => ({
@@ -18,6 +19,12 @@ describe('CodeBlock', () => {
   it('renders a copy button by default', () => {
     render(<CodeBlock code="const x = 1;" />);
     expect(screen.getByRole('button', { name: /copy code/i })).toBeInTheDocument();
+  });
+
+  it('uses overlay copy placement by default when filename is not provided', () => {
+    const { container } = render(<CodeBlock code="const x = 1;" />);
+    expect(container.querySelector(`.${styles.header}`)).not.toBeInTheDocument();
+    expect(container.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
   });
 
   it('hides copy button when showCopy is false', () => {
@@ -39,8 +46,24 @@ describe('CodeBlock', () => {
   });
 
   it('renders filename in header', () => {
-    render(<CodeBlock code="x = 1" filename="app.ts" />);
+    const { container } = render(<CodeBlock code="x = 1" filename="app.ts" />);
     expect(screen.getByText('app.ts')).toBeInTheDocument();
+    expect(container.querySelector(`.${styles.header}`)).toBeInTheDocument();
+    expect(container.querySelector(`.${styles.copyOverlay}`)).not.toBeInTheDocument();
+  });
+
+  it('supports explicit copy placement variants', () => {
+    const { container: headerContainer } = render(
+      <CodeBlock code="const x = 1;" copyPlacement="header" />
+    );
+    expect(headerContainer.querySelector(`.${styles.header}`)).toBeInTheDocument();
+    expect(headerContainer.querySelector(`.${styles.copyOverlay}`)).not.toBeInTheDocument();
+
+    const { container: overlayContainer } = render(
+      <CodeBlock code="const x = 1;" copyPlacement="overlay" filename="app.tsx" />
+    );
+    expect(overlayContainer.querySelector(`.${styles.header}`)).toBeInTheDocument();
+    expect(overlayContainer.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
   });
 
   it('copies code to clipboard on copy button click', async () => {
@@ -55,6 +78,33 @@ describe('CodeBlock', () => {
     render(<CodeBlock code="const x = 1;" />);
     await user.click(screen.getByRole('button', { name: /copy code/i }));
     expect(writeText).toHaveBeenCalledWith('const x = 1;');
+  });
+
+  it('normalizes indentation and wraps long JSX tags before copying', async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <CodeBlock
+        code={`
+<Chart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }} dataKey="users" type="monotone" stroke="var(--fui-color-info)" />
+        `}
+      />
+    );
+    await user.click(screen.getByRole('button', { name: /copy code/i }));
+
+    expect(writeText).toHaveBeenCalledWith(`<Chart
+  data={data}
+  margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+  dataKey="users"
+  type="monotone"
+  stroke="var(--fui-color-info)"
+/>`);
   });
 
   it('supports collapsible mode', async () => {

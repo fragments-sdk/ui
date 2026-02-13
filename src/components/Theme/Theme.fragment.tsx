@@ -89,6 +89,22 @@ export default defineFragment({
     { component: 'AppShell', relationship: 'sibling', note: 'ThemeProvider typically wraps AppShell' },
   ],
 
+  contract: {
+    propsSummary: [
+      'defaultMode: light|dark|system - initial theme mode',
+      'mode: light|dark|system - controlled mode',
+      'onModeChange: (mode) => void - change handler',
+      'attribute: data-theme|class - DOM theme attribute',
+      'ThemeToggle size: sm|md|lg - toggle button size',
+    ],
+    scenarioTags: [
+      'navigation.theme',
+      'settings.appearance',
+      'ui.mode-toggle',
+    ],
+    a11yRules: ['A11Y_TARGET_SIZE_MIN'],
+  },
+
   variants: [
     {
       name: 'Default',

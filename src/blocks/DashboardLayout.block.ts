@@ -33,7 +33,7 @@ const metrics = [
   { label: 'Active Projects', value: '23', change: '+3' },
 ];
 
-<AppShell layout="inset">
+<AppShell>
   <AppShell.Header>
     <Header>
       <Header.Trigger />

@@ -115,7 +115,7 @@ export default defineFragment({
       'Multiple selections allowed (use Checkbox group)',
       'Many options (use Select or RadioGroup)',
       'Navigation between pages (use Tabs)',
-      'On/off toggle (use Toggle component)',
+      'On/off toggle (use Switch component)',
     ],
     guidelines: [
       'Keep options to 2-5 items for clarity',
@@ -170,7 +170,7 @@ export default defineFragment({
   relations: [
     { component: 'RadioGroup', relationship: 'alternative', note: 'RadioGroup for form-style single selection' },
     { component: 'Tabs', relationship: 'alternative', note: 'Tabs for content panel switching' },
-    { component: 'Toggle', relationship: 'sibling', note: 'Toggle for single on/off control' },
+    { component: 'Switch', relationship: 'sibling', note: 'Switch for single on/off control' },
   ],
 
   contract: {

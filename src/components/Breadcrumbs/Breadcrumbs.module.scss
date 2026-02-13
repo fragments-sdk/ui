@@ -1,4 +1,5 @@
 @use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
 
 // Root nav wrapper
 .root {
@@ -79,6 +80,8 @@
 
 // Ellipsis button for collapsed items
 .ellipsis {
+  @include touch-target;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;

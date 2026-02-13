@@ -85,13 +85,16 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
-  margin-top: var(--fui-space-2, $fui-space-2);
 }
 
 .close {
   @include button-reset;
   @include interactive-base;
+  @include min-target-size;
 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 var(--fui-space-1, $fui-space-1);
   font-size: var(--fui-font-size-lg, $fui-font-size-lg);
   color: inherit;
@@ -108,8 +111,10 @@
 
 .action {
   @include button-reset;
+  @include min-target-size;
 
-  margin-top: var(--fui-space-2, $fui-space-2);
+  display: inline-flex;
+  align-items: center;
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: inherit;
@@ -123,4 +128,3 @@
     @include focus-ring;
   }
 }
-

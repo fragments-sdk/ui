@@ -3,6 +3,8 @@
   "version": "0.8.2",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
+  "author": "Conan McNicholl",
+  "homepage": "https://usefragments.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/ConanMcN/fragments"

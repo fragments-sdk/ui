@@ -23,7 +23,12 @@ export {
   type CardBodyProps,
   type CardFooterProps,
 } from './components/Card';
-export { Toggle, type ToggleProps } from './components/Toggle';
+export {
+  Switch,
+  type SwitchProps,
+  Switch as Toggle,
+  type SwitchProps as ToggleProps,
+} from './components/Switch';
 export {
   Alert,
   AlertRoot,

@@ -150,6 +150,7 @@ export default defineFragment({
     ],
     a11yRules: [
       'A11Y_ALERT_ROLE',
+      'A11Y_TARGET_SIZE_MIN',
     ],
     bans: [],
   },

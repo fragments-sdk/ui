@@ -24,7 +24,7 @@ export default defineFragment({
     whenNot: [
       'Precise numeric input (use Input type="number")',
       'Discrete options (use RadioGroup or Select)',
-      'Yes/no choices (use Toggle)',
+      'Yes/no choices (use Switch)',
     ],
     guidelines: [
       'Always provide a label describing what the slider controls',
@@ -109,7 +109,7 @@ export default defineFragment({
       'input.numeric',
       'control.slider',
     ],
-    a11yRules: ['A11Y_LABEL_REQUIRED', 'A11Y_KEYBOARD_ACCESSIBLE'],
+    a11yRules: ['A11Y_LABEL_REQUIRED', 'A11Y_KEYBOARD_ACCESSIBLE', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   variants: [

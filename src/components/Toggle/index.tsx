@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Switch } from '@base-ui/react/switch';
+import { Switch as BaseSwitch } from '@base-ui/react/switch';
 import styles from './Toggle.module.scss';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
 
-export interface ToggleProps {
+export interface SwitchProps {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
@@ -20,8 +20,10 @@ export interface ToggleProps {
   'aria-describedby'?: string;
 }
 
-const ToggleRoot = React.forwardRef<HTMLButtonElement, ToggleProps>(
-  function Toggle(
+export type ToggleProps = SwitchProps;
+
+const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
+  function Switch(
     {
       checked,
       defaultChecked,
@@ -44,10 +46,7 @@ const ToggleRoot = React.forwardRef<HTMLButtonElement, ToggleProps>(
       size === 'sm' ? styles.trackSm : styles.trackMd,
     ].join(' ');
 
-    const thumbClasses = [
-      styles.thumb,
-      size === 'sm' ? styles.thumbSm : styles.thumbMd,
-    ].join(' ');
+    const thumbClasses = styles.thumb;
 
     const labelClasses = [styles.label, size === 'sm' && styles.labelSm]
       .filter(Boolean)
@@ -60,10 +59,16 @@ const ToggleRoot = React.forwardRef<HTMLButtonElement, ToggleProps>(
       .filter(Boolean)
       .join(' ');
 
-    const rootClasses = [styles.root, className].filter(Boolean).join(' ');
+    const rootClasses = [
+      styles.root,
+      description && styles.rootWithDescription,
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return (
-      <Switch.Root
+      <BaseSwitch.Root
         ref={ref}
         id={id}
         checked={checked}
@@ -76,9 +81,9 @@ const ToggleRoot = React.forwardRef<HTMLButtonElement, ToggleProps>(
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
       >
-        <Switch.Thumb className={trackClasses}>
+        <BaseSwitch.Thumb className={trackClasses}>
           <span className={thumbClasses} aria-hidden="true" />
-        </Switch.Thumb>
+        </BaseSwitch.Thumb>
 
         {(label || description) && (
           <div className={styles.content}>
@@ -86,11 +91,14 @@ const ToggleRoot = React.forwardRef<HTMLButtonElement, ToggleProps>(
             {description && <span className={descClasses}>{description}</span>}
           </div>
         )}
-      </Switch.Root>
+      </BaseSwitch.Root>
     );
   }
 );
 
-export const Toggle = Object.assign(ToggleRoot, {
-  Root: ToggleRoot,
+export const Switch = Object.assign(SwitchRoot, {
+  Root: SwitchRoot,
 });
+
+/** @deprecated Use `Switch` instead. */
+export const Toggle = Switch;

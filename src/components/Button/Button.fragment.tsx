@@ -22,7 +22,7 @@ export default defineFragment({
     ],
     whenNot: [
       'Simple navigation (use Link)',
-      'Toggling state (use Toggle or Checkbox)',
+      'Toggling state (use Switch or Checkbox)',
       'Selecting from options (use Select or RadioGroup)',
     ],
     guidelines: [

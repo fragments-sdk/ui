@@ -13,7 +13,7 @@ export default defineFragment({
 
   meta: {
     name: 'Checkbox',
-    description: 'Binary toggle for form fields. Use for options that require explicit submission, unlike Toggle which takes effect immediately.',
+    description: 'Binary toggle for form fields. Use for options that require explicit submission, unlike Switch which takes effect immediately.',
     category: 'forms',
     status: 'stable',
     tags: ['checkbox', 'form', 'boolean', 'selection', 'input'],
@@ -28,7 +28,7 @@ export default defineFragment({
       'Filter or preference checklists',
     ],
     whenNot: [
-      'Immediate effect settings (use Toggle)',
+      'Immediate effect settings (use Switch)',
       'Single selection from options (use RadioGroup)',
       'Selecting from many options (use Select)',
     ],
@@ -86,7 +86,7 @@ export default defineFragment({
   },
 
   relations: [
-    { component: 'Toggle', relationship: 'alternative', note: 'Use Toggle for immediate-effect settings' },
+    { component: 'Switch', relationship: 'alternative', note: 'Use Switch for immediate-effect settings' },
     { component: 'Input', relationship: 'sibling', note: 'Checkbox handles boolean; Input handles text' },
   ],
 
@@ -103,7 +103,7 @@ export default defineFragment({
       'form.boolean',
       'selection.multi',
     ],
-    a11yRules: ['A11Y_CHECKBOX_LABEL', 'A11Y_CHECKBOX_FOCUS'],
+    a11yRules: ['A11Y_CHECKBOX_LABEL', 'A11Y_CHECKBOX_FOCUS', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   variants: [

@@ -16,6 +16,7 @@
 .toggleButton {
   @include button-reset;
   @include interactive-base;
+  @include min-target-size;
 
   display: flex;
   align-items: center;
@@ -29,8 +30,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--fui-color-accent, $fui-color-accent);
-    outline-offset: 1px;
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
   }
 
   svg {
@@ -41,7 +42,7 @@
 .toggleButtonActive {
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   color: var(--fui-text-primary, $fui-text-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
 }
 
 // Size variants

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import styles from './Prompt.module.scss';
 import '../../styles/globals.scss';
+import { Loading } from '../Loading';
 
 // ============================================
 // Types
@@ -404,7 +405,17 @@ function PromptSubmit({
       disabled={isDisabled}
       aria-label={ariaLabel}
     >
-      {children ?? <ArrowUpIcon />}
+      {loading ? (
+        <Loading
+          size="sm"
+          variant="spinner"
+          color="current"
+          label="Submitting"
+          className={styles.submitSpinner}
+        />
+      ) : (
+        children ?? <ArrowUpIcon />
+      )}
     </button>
   );
 }

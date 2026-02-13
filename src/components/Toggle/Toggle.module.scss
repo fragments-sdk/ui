@@ -3,7 +3,7 @@
 
 .root {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
   cursor: pointer;
   font-family: var(--fui-font-sans, $fui-font-sans);
@@ -14,21 +14,30 @@
   }
 }
 
+.rootWithDescription {
+  align-items: flex-start;
+
+  .track {
+    margin-top: var(--fui-space-0-5, $fui-space-0-5);
+  }
+}
+
 .track {
   @include button-reset;
   @include interactive-base;
+  @include min-target-size;
 
   position: relative;
   flex-shrink: 0;
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  margin-top: var(--fui-space-0-5, $fui-space-0-5);
   background-color: var(--fui-border-strong, $fui-border-strong);
+  transition: background-color var(--fui-transition-normal, $fui-transition-normal);
 
-  &[data-checked] {
+  .root[data-checked] & {
     background-color: var(--fui-color-accent, $fui-color-accent);
   }
 
-  &:hover:not(:disabled) {
+  .root:not([data-disabled]) &:hover {
     opacity: 0.9;
   }
 }
@@ -36,43 +45,41 @@
 .trackSm {
   width: var(--fui-toggle-width-sm, $fui-toggle-width-sm);
   height: var(--fui-toggle-height-sm, $fui-toggle-height-sm);
+  --_toggle-thumb-size: calc(var(--fui-toggle-height-sm, #{$fui-toggle-height-sm}) - 0.5rem);
+  --_toggle-inset: calc((var(--fui-toggle-height-sm, #{$fui-toggle-height-sm}) - var(--_toggle-thumb-size)) / 2);
+  --_toggle-translate: calc(
+    var(--fui-toggle-width-sm, #{$fui-toggle-width-sm}) -
+    var(--_toggle-thumb-size) -
+    (var(--_toggle-inset) * 2)
+  );
 }
 
 .trackMd {
   width: var(--fui-toggle-width-md, $fui-toggle-width-md);
   height: var(--fui-toggle-height-md, $fui-toggle-height-md);
+  --_toggle-thumb-size: calc(var(--fui-toggle-height-md, #{$fui-toggle-height-md}) - 0.5rem);
+  --_toggle-inset: calc((var(--fui-toggle-height-md, #{$fui-toggle-height-md}) - var(--_toggle-thumb-size)) / 2);
+  --_toggle-translate: calc(
+    var(--fui-toggle-width-md, #{$fui-toggle-width-md}) -
+    var(--_toggle-thumb-size) -
+    (var(--_toggle-inset) * 2)
+  );
 }
 
 .thumb {
   position: absolute;
-  top: $fui-toggle-thumb-offset;
-  left: $fui-toggle-thumb-offset;
+  top: var(--_toggle-inset, $fui-toggle-thumb-offset);
+  left: var(--_toggle-inset, $fui-toggle-thumb-offset);
+  width: var(--_toggle-thumb-size, $fui-toggle-thumb-md);
+  height: var(--_toggle-thumb-size, $fui-toggle-thumb-md);
   border-radius: 50%;
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
   transition: transform var(--fui-transition-normal, $fui-transition-normal);
 
-  [data-checked] > & {
+  .root[data-checked] & {
     // Move thumb to the right when checked
-    transform: translateX(calc(100%));
-  }
-}
-
-.thumbSm {
-  width: $fui-toggle-thumb-sm;
-  height: $fui-toggle-thumb-sm;
-
-  [data-checked] > & {
-    transform: translateX($fui-toggle-thumb-sm);
-  }
-}
-
-.thumbMd {
-  width: $fui-toggle-thumb-md;
-  height: $fui-toggle-thumb-md;
-
-  [data-checked] > & {
-    transform: translateX($fui-toggle-thumb-md);
+    transform: translateX(var(--_toggle-translate, 0));
   }
 }
 

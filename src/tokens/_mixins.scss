@@ -47,6 +47,20 @@
   }
 }
 
+// Enforce minimum pointer target dimensions for interactive controls.
+@mixin min-target-size($size: var(--fui-target-size-min, #{$fui-target-size-min})) {
+  min-width: $size;
+  min-height: $size;
+}
+
+// Centered interactive hit area with minimum dimensions.
+@mixin touch-target($size: var(--fui-target-size-min, #{$fui-target-size-min})) {
+  @include min-target-size($size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // Typography base
 @mixin text-base {
   font-family: var(--fui-font-sans, #{$fui-font-sans});

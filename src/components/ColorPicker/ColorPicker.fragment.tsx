@@ -102,7 +102,7 @@ export default defineFragment({
       'input.specialized',
       'theme.customization',
     ],
-    a11yRules: ['A11Y_LABEL_REQUIRED', 'A11Y_FOCUS_VISIBLE'],
+    a11yRules: ['A11Y_LABEL_REQUIRED', 'A11Y_FOCUS_VISIBLE', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   variants: [

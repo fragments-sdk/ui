@@ -132,7 +132,7 @@ export default defineFragment({
       'form.multiselect',
       'input.search',
     ],
-    a11yRules: ['A11Y_COMBOBOX_KEYBOARD', 'A11Y_COMBOBOX_LABEL'],
+    a11yRules: ['A11Y_COMBOBOX_KEYBOARD', 'A11Y_COMBOBOX_LABEL', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   ai: {

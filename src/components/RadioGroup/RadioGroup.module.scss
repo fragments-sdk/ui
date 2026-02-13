@@ -30,10 +30,14 @@
 // Individual item wrapper
 .itemWrapper {
   display: inline-flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   cursor: pointer;
   font-family: var(--fui-font-sans, $fui-font-sans);
+
+  &[data-has-description] {
+    align-items: flex-start;
+  }
 
   &[data-disabled] {
     cursor: not-allowed;
@@ -44,15 +48,13 @@
 // The radio circle
 .radio {
   @include interactive-base;
+  @include touch-target;
 
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
   width: 1rem;
   height: 1rem;
-  margin-top: var(--fui-space-0-5, $fui-space-0-5);
+  margin-top: 0;
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border: 1px solid var(--fui-border-strong, $fui-border-strong);
   border-radius: var(--fui-radius-full, $fui-radius-full);
@@ -80,13 +82,11 @@
 .radioSm {
   width: 0.875rem;
   height: 0.875rem;
-  margin-top: var(--fui-space-0-75, $fui-space-0-75);
 }
 
 .radioLg {
   width: 1.25rem;
   height: 1.25rem;
-  margin-top: 0;
 }
 
 // The indicator dot - use absolute positioning for perfect centering
@@ -94,8 +94,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
   background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 

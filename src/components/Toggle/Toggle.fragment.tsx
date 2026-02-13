@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { defineFragment } from '@fragments/core';
-import { Toggle } from '.';
+import { Switch } from '.';
 
 // Stateful wrapper for interactive demos
-function StatefulToggle(props: React.ComponentProps<typeof Toggle>) {
+function StatefulSwitch(props: React.ComponentProps<typeof Switch>) {
   const [checked, setChecked] = useState(props.checked ?? false);
-  return <Toggle {...props} checked={checked} onChange={setChecked} />;
+  return <Switch {...props} checked={checked} onChange={setChecked} />;
 }
 
 export default defineFragment({
-  component: Toggle,
+  component: Switch,
 
   meta: {
-    name: 'Toggle',
+    name: 'Switch',
     description: 'Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly.',
     category: 'forms',
     status: 'stable',
@@ -34,11 +34,11 @@ export default defineFragment({
       'Complex multi-state options (use select or radio)',
     ],
     guidelines: [
-      'Toggle should always have a visible label explaining what it controls',
+      'Switch should always have a visible label explaining what it controls',
       'The "on" state should be the positive/enabling action',
       'Changes should take effect immediately - no save button needed',
-      'Include a description for toggles whose effect isn\'t obvious from the label',
-      'Group related toggles visually in settings panels',
+      'Include a description for switches whose effect isn\'t obvious from the label',
+      'Group related switches visually in settings panels',
     ],
     accessibility: [
       'Uses role="switch" with aria-checked for proper semantics',
@@ -51,7 +51,7 @@ export default defineFragment({
   props: {
     checked: {
       type: 'boolean',
-      description: 'Whether the toggle is in the on state',
+      description: 'Whether the switch is in the on state',
       default: 'false',
     },
     onChange: {
@@ -68,19 +68,19 @@ export default defineFragment({
     },
     disabled: {
       type: 'boolean',
-      description: 'Whether the toggle is non-interactive',
+      description: 'Whether the switch is non-interactive',
       default: 'false',
     },
     size: {
       type: 'enum',
-      description: 'Toggle track size',
+      description: 'Switch track size',
       values: ['sm', 'md'],
       default: 'md',
     },
   },
 
   relations: [
-    { component: 'Input', relationship: 'sibling', note: 'Input handles text/number entry; Toggle handles boolean state' },
+    { component: 'Input', relationship: 'sibling', note: 'Input handles text/number entry; Switch handles boolean state' },
     { component: 'Checkbox', relationship: 'alternative', note: 'Use Checkbox when change requires form submission' },
   ],
 
@@ -91,35 +91,35 @@ export default defineFragment({
       'label: string - visible label text',
       'description: string - helper text below label',
       'disabled: boolean - non-interactive state',
-      'size: sm|md - toggle size',
+      'size: sm|md - switch size',
     ],
     scenarioTags: [
       'form.boolean',
-      'settings.toggle',
+      'settings.switch',
       'settings.preference',
       'form.switch',
     ],
-    a11yRules: ['A11Y_SWITCH_ROLE', 'A11Y_SWITCH_LABEL', 'A11Y_SWITCH_FOCUS'],
+    a11yRules: ['A11Y_SWITCH_ROLE', 'A11Y_SWITCH_LABEL', 'A11Y_SWITCH_FOCUS', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   variants: [
     {
       name: 'Default Off',
-      description: 'Toggle in the off state',
-      render: () => <StatefulToggle label="Email notifications" />,
+      description: 'Switch in the off state',
+      render: () => <StatefulSwitch label="Email notifications" />,
       args: { label: 'Email notifications' },
     },
     {
       name: 'Checked',
-      description: 'Toggle in the on state',
-      render: () => <StatefulToggle checked label="Dark mode" />,
+      description: 'Switch in the on state',
+      render: () => <StatefulSwitch checked label="Dark mode" />,
       args: { checked: true, label: 'Dark mode' },
     },
     {
       name: 'With Description',
-      description: 'Toggle with explanatory helper text',
+      description: 'Switch with explanatory helper text',
       render: () => (
-        <StatefulToggle
+        <StatefulSwitch
           checked
           label="Auto-save"
           description="Automatically save changes as you type"
@@ -129,41 +129,41 @@ export default defineFragment({
     },
     {
       name: 'Small Size',
-      description: 'Compact toggle for dense settings panels',
+      description: 'Compact switch for dense settings panels',
       render: () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <StatefulToggle size="sm" checked label="Show line numbers" />
-          <StatefulToggle size="sm" label="Word wrap" />
-          <StatefulToggle size="sm" checked label="Minimap" />
+          <StatefulSwitch size="sm" checked label="Show line numbers" />
+          <StatefulSwitch size="sm" label="Word wrap" />
+          <StatefulSwitch size="sm" checked label="Minimap" />
         </div>
       ),
     },
     {
       name: 'Disabled States',
-      description: 'Non-interactive toggles showing both states',
+      description: 'Non-interactive switches showing both states',
       render: () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <Toggle disabled label="Premium feature (upgrade required)" />
-          <Toggle disabled checked label="System managed (read-only)" />
+          <Switch disabled label="Premium feature (upgrade required)" />
+          <Switch disabled checked label="System managed (read-only)" />
         </div>
       ),
     },
     {
       name: 'Settings Panel',
-      description: 'Multiple toggles in a realistic settings layout',
+      description: 'Multiple switches in a realistic settings layout',
       render: () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '320px' }}>
-          <StatefulToggle
+          <StatefulSwitch
             checked
             label="Push notifications"
             description="Receive push notifications on your device"
           />
-          <StatefulToggle
+          <StatefulSwitch
             checked
             label="Email digest"
             description="Weekly summary of your activity"
           />
-          <StatefulToggle
+          <StatefulSwitch
             label="Marketing emails"
             description="Product updates and promotional offers"
           />

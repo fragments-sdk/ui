@@ -2,10 +2,10 @@ import { defineBlock } from '@fragments/core';
 
 export default defineBlock({
   name: 'Settings Panel',
-  description: 'Settings panel with toggles and descriptions',
+  description: 'Settings panel with switches and descriptions',
   category: 'settings',
-  components: ['Card', 'Stack', 'Text', 'Toggle'],
-  tags: ['settings', 'toggles', 'preferences', 'panel'],
+  components: ['Card', 'Stack', 'Text', 'Switch'],
+  tags: ['settings', 'switches', 'preferences', 'panel'],
   code: `
 const settings = [
   { label: 'Email Notifications', description: 'Receive updates via email', defaultChecked: true },
@@ -25,7 +25,7 @@ const settings = [
             <Text weight="medium">{setting.label}</Text>
             <Text size="sm" color="tertiary">{setting.description}</Text>
           </Stack>
-          <Toggle defaultChecked={setting.defaultChecked} />
+          <Switch defaultChecked={setting.defaultChecked} />
         </Stack>
       ))}
     </Stack>

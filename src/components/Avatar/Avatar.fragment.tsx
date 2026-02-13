@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineFragment } from '@fragments/core';
 import { Avatar } from '.';
+import { Stack } from '../Stack';
 
 export default defineFragment({
   component: Avatar,
@@ -103,6 +104,13 @@ export default defineFragment({
     {
       name: 'Default',
       description: 'Avatar with image',
+      code: `import { Avatar } from '@/components/Avatar';
+
+<Avatar
+  src="https://i.pravatar.cc/150?u=jane"
+  alt="Jane Doe"
+  name="Jane Doe"
+/>`,
       render: () => (
         <Avatar
           src="https://i.pravatar.cc/150?u=jane"
@@ -114,29 +122,54 @@ export default defineFragment({
     {
       name: 'With Initials',
       description: 'Fallback when no image is provided',
+      code: `import { Avatar } from '@/components/Avatar';
+
+<Avatar name="John Smith" />`,
       render: () => <Avatar name="John Smith" />,
     },
     {
       name: 'Sizes',
       description: 'Available size options',
+      code: `import { Avatar } from '@/components/Avatar';
+import { Stack } from '@/components/Stack';
+
+<Stack direction="row" gap="sm" align="center" wrap>
+  <Avatar name="XS" size="xs" />
+  <Avatar name="SM" size="sm" />
+  <Avatar name="MD" size="md" />
+  <Avatar name="LG" size="lg" />
+  <Avatar name="XL" size="xl" />
+</Stack>`,
       render: () => (
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <Stack direction="row" gap="sm" align="center" wrap>
           <Avatar name="XS" size="xs" />
           <Avatar name="SM" size="sm" />
           <Avatar name="MD" size="md" />
           <Avatar name="LG" size="lg" />
           <Avatar name="XL" size="xl" />
-        </div>
+        </Stack>
       ),
     },
     {
       name: 'Square Shape',
       description: 'Square variant for app icons or brands',
+      code: `import { Avatar } from '@/components/Avatar';
+
+<Avatar name="App" shape="square" />`,
       render: () => <Avatar name="App" shape="square" />,
     },
     {
       name: 'Group',
       description: 'Multiple avatars stacked together',
+      code: `import { Avatar } from '@/components/Avatar';
+
+<Avatar.Group max={3} size="md">
+  <Avatar name="Alice Johnson" />
+  <Avatar name="Bob Smith" />
+  <Avatar name="Carol Williams" />
+  <Avatar name="David Brown" />
+  <Avatar name="Eve Davis" />
+</Avatar.Group>`,
       render: () => (
         <Avatar.Group max={3} size="md">
           <Avatar name="Alice Johnson" />

@@ -1,6 +1,10 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+.container {
+  width: 100%;
+}
+
 // External title label (above the code block)
 .title {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
@@ -21,7 +25,7 @@
 }
 
 // ============================================
-// Header bar (always rendered, contains filename + copy icon)
+// Header bar (filename and optional copy icon)
 // ============================================
 .header {
   display: flex;
@@ -30,7 +34,7 @@
   padding: var(--fui-padding-inline-sm) var(--fui-padding-container-md);
   background-color: var(--fui-code-header-bg, $fui-code-header-bg);
   border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
-  min-height: 36px;
+  min-height: var(--fui-input-height, $fui-input-height);
 }
 
 .filename {
@@ -40,10 +44,11 @@
   color: var(--fui-code-text, $fui-code-text);
 }
 
-// Copy button - icon-only, always visible in header
+// Copy button - icon-only for header or overlay placements
 .copyButton {
   @include button-reset;
-  display: flex;
+  @include touch-target;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--fui-space-1, $fui-space-1);
@@ -58,16 +63,37 @@
 
   &:hover {
     color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
-    background: var(--fui-code-copy-bg, $fui-code-copy-bg);
+    background: var(--fui-code-copy-bg-hover, $fui-code-copy-bg-hover);
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
+    @include focus-ring;
   }
 
   &.copied {
     color: var(--fui-color-success, $fui-color-success);
+  }
+}
+
+.copyOverlay {
+  position: absolute;
+  top: var(--fui-space-2, $fui-space-2);
+  right: var(--fui-space-2, $fui-space-2);
+  z-index: 2;
+  background: var(--fui-code-copy-bg, $fui-code-copy-bg);
+  border: 1px solid var(--fui-code-border, $fui-code-border);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+}
+
+.withCopyOverlay {
+  .codeContainer :global(.shiki),
+  .loading pre {
+    padding-right: calc(
+      var(--fui-padding-container-md, #{$fui-padding-container-md})
+      + var(--fui-target-size-min, #{$fui-target-size-min})
+      + var(--fui-space-3, #{$fui-space-3})
+    );
   }
 }
 
@@ -175,7 +201,7 @@
   // Custom selection highlight for better visibility
   *::selection {
     background: var(--fui-code-selection-bg, $fui-code-selection-bg);
-    color: white;
+    color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
   }
 
   // Custom scrollbar for code blocks
@@ -248,6 +274,17 @@
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
     line-height: 1.5;
   }
+
+  .withCopyOverlay {
+    .codeContainer :global(.shiki),
+    .loading pre {
+      padding-right: calc(
+        var(--fui-padding-container-sm, #{$fui-padding-container-sm})
+        + var(--fui-target-size-min, #{$fui-target-size-min})
+        + var(--fui-space-3, #{$fui-space-3})
+      );
+    }
+  }
 }
 
 // Word wrap
@@ -298,15 +335,15 @@
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: -2px;
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline-offset: calc(-1 * var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}));
   }
 }
 
 // Responsive
 @media (max-width: $fui-breakpoint-md) {
   .codeContainer :global(.shiki) {
-    font-size: 0.75rem;
+    font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
     padding: var(--fui-space-2, $fui-space-2);
   }
 }

@@ -8,7 +8,7 @@ import { Textarea } from '../Textarea';
 import { Select } from '../Select';
 import { Checkbox } from '../Checkbox';
 import { RadioGroup } from '../RadioGroup';
-import { Toggle } from '../Toggle';
+import { Switch } from '../Switch';
 import { Button } from '../Button';
 import { Grid } from '../Grid';
 
@@ -141,7 +141,7 @@ export default defineFragment({
     },
     {
       name: 'Profile settings',
-      description: 'Multi-section form with Fieldsets, toggles, and radio group',
+      description: 'Multi-section form with Fieldsets, switches, and radio group',
       render: () => (
         <Form onFormSubmit={(e) => { e.preventDefault(); }}>
           <Fieldset>
@@ -182,12 +182,12 @@ export default defineFragment({
             <Fieldset.Legend>Notifications</Fieldset.Legend>
             <Field name="emailNotifs">
               <Field.Control>
-                <Toggle label="Email notifications" />
+                <Switch label="Email notifications" />
               </Field.Control>
             </Field>
             <Field name="marketingEmails">
               <Field.Control>
-                <Toggle label="Marketing emails" />
+                <Switch label="Marketing emails" />
               </Field.Control>
             </Field>
             <Field name="frequency">

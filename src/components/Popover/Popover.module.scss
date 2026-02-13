@@ -96,13 +96,11 @@
 .close {
   @include button-reset;
   @include interactive-base;
+  @include touch-target;
 
   position: absolute;
   top: var(--fui-space-2, $fui-space-2);
   right: var(--fui-space-2, $fui-space-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);

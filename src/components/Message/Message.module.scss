@@ -36,7 +36,7 @@
 
   .content {
     background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
 
@@ -148,14 +148,14 @@
     font-size: 0.9em;
     padding: 0.125em 0.375em;
     border-radius: var(--fui-radius-sm, $fui-radius-sm);
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--fui-bg-subtle, $fui-bg-subtle);
   }
 
   pre {
     margin: var(--fui-space-2, $fui-space-2) 0;
     padding: var(--fui-padding-inline-sm);
     border-radius: var(--fui-radius-md, $fui-radius-md);
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--fui-bg-subtle, $fui-bg-subtle);
     overflow-x: auto;
 
     code {

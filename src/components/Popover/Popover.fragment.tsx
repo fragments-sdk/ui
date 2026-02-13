@@ -87,7 +87,7 @@ export default defineFragment({
       'form.inline',
       'content.preview',
     ],
-    a11yRules: ['A11Y_POPOVER_FOCUS', 'A11Y_POPOVER_ESCAPE'],
+    a11yRules: ['A11Y_POPOVER_FOCUS', 'A11Y_POPOVER_ESCAPE', 'A11Y_TARGET_SIZE_MIN'],
   },
 
   ai: {
