@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import styles from './Combobox.module.scss';

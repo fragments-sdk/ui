@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import styles from './ScrollArea.module.scss';
 import '../../styles/globals.scss';

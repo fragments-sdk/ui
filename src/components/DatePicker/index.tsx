@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import styles from './DatePicker.module.scss';

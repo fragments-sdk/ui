@@ -794,6 +794,7 @@ function MobileDrawer() {
     </>
   );
 
+  if (typeof document === 'undefined') return null;
   return createPortal(drawerContent, document.body);
 }
 

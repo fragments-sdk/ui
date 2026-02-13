@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import styles from './Toast.module.scss';
 // Import globals to ensure CSS variables are defined

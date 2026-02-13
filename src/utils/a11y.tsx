@@ -143,11 +143,7 @@ export function useAnnounce(): {
  * ```
  */
 export function usePrefersReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(() => {
-    // SSR-safe default
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  });
+  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -184,11 +180,7 @@ export function usePrefersReducedMotion(): boolean {
  * ```
  */
 export function usePrefersContrast(): boolean {
-  const [prefersContrast, setPrefersContrast] = React.useState(() => {
-    // SSR-safe default
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(prefers-contrast: more)').matches;
-  });
+  const [prefersContrast, setPrefersContrast] = React.useState(false);
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-contrast: more)');

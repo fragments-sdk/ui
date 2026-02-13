@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import styles from './Avatar.module.scss';
 // Import globals to ensure CSS variables are defined
@@ -109,11 +111,16 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
     },
     ref
   ) {
+    const imgRef = React.useRef<HTMLImageElement>(null);
     const [imageError, setImageError] = React.useState(false);
 
-    // Reset error state when src changes
+    // Reset error state when src changes; check if already-loaded image failed
     React.useEffect(() => {
       setImageError(false);
+      const img = imgRef.current;
+      if (img && img.complete && img.naturalWidth === 0) {
+        setImageError(true);
+      }
     }, [src]);
 
     const showFallback = !src || imageError;
@@ -150,6 +157,7 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
       >
         {!showFallback && (
           <img
+            ref={imgRef}
             src={src}
             alt={alt}
             className={styles.image}

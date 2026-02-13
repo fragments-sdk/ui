@@ -43,7 +43,16 @@ const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
     },
     ref
   ) {
+    const imgRef = React.useRef<HTMLImageElement>(null);
     const [status, setStatus] = React.useState<'loading' | 'loaded' | 'error'>('loading');
+
+    // Handle images that are already cached/loaded before hydration
+    React.useEffect(() => {
+      const img = imgRef.current;
+      if (img && img.complete) {
+        setStatus(img.naturalWidth > 0 ? 'loaded' : 'error');
+      }
+    }, [src]);
 
     const handleLoad = () => setStatus('loaded');
     const handleError = () => setStatus('error');
@@ -80,6 +89,7 @@ const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
               <div className={styles.fallback}>{fallback}</div>
             )}
             <img
+              ref={imgRef}
               src={src}
               alt={alt}
               className={imgClasses}

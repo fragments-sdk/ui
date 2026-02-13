@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import styles from './Sidebar.module.scss';
 import { Tooltip } from '../Tooltip';

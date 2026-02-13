@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import styles from './Listbox.module.scss';
 import '../../styles/globals.scss';
@@ -121,7 +123,10 @@ function ListboxRoot({
     const listbox = listboxRef.current;
     if (!listbox) return;
 
-    const activeOption = listbox.querySelector<HTMLElement>(`#${CSS.escape(activeId)}`);
+    const escapedId = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+      ? CSS.escape(activeId)
+      : activeId.replace(/["\\]/g, '\\$&');
+    const activeOption = listbox.querySelector<HTMLElement>(`#${escapedId}`);
     if (activeOption && activeOption.getAttribute('aria-disabled') !== 'true') {
       activeOption.click();
     }
