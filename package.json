@@ -1,6 +1,6 @@
 {
   "name": "@fragments-sdk/ui",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
@@ -13,7 +13,10 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "fragments": "fragments.json",
-  "sideEffects": ["*.scss", "*.css"],
+  "sideEffects": [
+    "*.scss",
+    "*.css"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./datepicker": "./src/components/DatePicker/index.tsx",

@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.5
+
+### Patch Changes
+
+- [`1fe960d`](https://github.com/ConanMcN/fragments/commit/1fe960d7361aabf295e2d2a411c9fa4259a4bd9e) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add NavigationMenu component and NavigationHeader block. Enhance Chart, CodeBlock, ColorPicker, DatePicker, Header, Link, Table components with improved props and fragment metadata. Update docs site header, layout, theme builder, and blog posts. Update CLI viewer, parser, schema types, and build config.
+
 ## 0.8.4
 
 ### Patch Changes
