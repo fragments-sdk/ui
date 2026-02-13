@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.4
+
+### Patch Changes
+
+- [`979ab44`](https://github.com/ConanMcN/fragments/commit/979ab44b642bb52bdbac29e6020907a3172dc5ed) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Launch week blog posts, OG image fix, and AppShell layout updates
+
 ## 0.8.3
 
 ### Patch Changes
