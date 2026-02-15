@@ -1,0 +1,153 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Command container
+// ============================================
+
+.command {
+  @include surface-elevated;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--fui-shadow-md);
+}
+
+// ============================================
+// Input area
+// ============================================
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, 0.5rem);
+  padding: var(--fui-padding-item-sm, 0.5rem) var(--fui-padding-container-md, 1rem);
+  border-bottom: 1px solid var(--fui-border);
+
+  svg {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    color: var(--fui-text-secondary);
+  }
+}
+
+.input {
+  @include text-base;
+
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: var(--fui-font-size-sm, 0.875rem);
+  color: var(--fui-text-primary);
+  padding: var(--fui-space-1, 0.25rem) 0;
+
+  &::placeholder {
+    color: var(--fui-text-tertiary);
+  }
+}
+
+// ============================================
+// List area
+// ============================================
+
+.list {
+  overflow-y: auto;
+  max-height: 300px;
+  padding: var(--fui-padding-item-xs, 0.25rem);
+}
+
+// ============================================
+// Item
+// ============================================
+
+.item {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, 0.5rem);
+  width: 100%;
+  padding: var(--fui-padding-item-xs, 0.25rem) var(--fui-padding-item-md, 0.75rem);
+  border-radius: var(--fui-radius-sm, 0.25rem);
+  cursor: pointer;
+  text-align: left;
+  color: var(--fui-text-primary);
+  background: transparent;
+  border: none;
+  font-size: var(--fui-font-size-sm, 0.875rem);
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: var(--fui-bg-hover);
+  }
+}
+
+.itemActive {
+  background-color: var(--fui-bg-hover);
+}
+
+.itemDisabled {
+  color: var(--fui-text-tertiary);
+  cursor: not-allowed;
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+// ============================================
+// Group
+// ============================================
+
+.group {
+  &:not(:first-child) {
+    margin-top: var(--fui-space-1, 0.25rem);
+  }
+}
+
+.groupHeading {
+  padding: var(--fui-padding-item-xs, 0.25rem) var(--fui-padding-item-md, 0.75rem);
+  font-size: var(--fui-font-size-xs, 0.75rem);
+  font-weight: var(--fui-font-weight-medium, 500);
+  color: var(--fui-text-tertiary);
+}
+
+// ============================================
+// Empty state
+// ============================================
+
+.empty {
+  padding: var(--fui-padding-item-md, 0.75rem);
+  font-size: var(--fui-font-size-sm, 0.875rem);
+  color: var(--fui-text-secondary);
+  text-align: center;
+}
+
+// ============================================
+// Separator
+// ============================================
+
+.separator {
+  height: 1px;
+  margin: var(--fui-space-1, 0.25rem) 0;
+  background-color: var(--fui-border);
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .command {
+    border-width: 2px;
+  }
+
+  .itemActive {
+    outline: 2px solid var(--fui-color-accent);
+    outline-offset: -2px;
+  }
+}

@@ -527,7 +527,7 @@ export {
 } from './components/Chart';
 
 // Assets
-export { FragmentsLogo, type FragmentsLogoProps } from './assets/fragments-logo';
+export { FragmentsLogo, fragmentsLogoSvg, type FragmentsLogoProps } from './assets/fragments-logo';
 
 // NavigationMenu
 export {
@@ -553,6 +553,39 @@ export {
   type NavigationMenuMobileContentProps,
   type NavigationMenuMobileSectionProps,
 } from './components/NavigationMenu';
+
+// Drawer
+export {
+  Drawer,
+  type DrawerProps,
+  type DrawerContentProps,
+  type DrawerTriggerProps,
+  type DrawerHeaderProps,
+  type DrawerTitleProps,
+  type DrawerDescriptionProps,
+  type DrawerBodyProps,
+  type DrawerFooterProps,
+  type DrawerCloseProps,
+} from './components/Drawer';
+
+// Pagination
+export {
+  Pagination,
+  type PaginationProps,
+  type PaginationItemProps,
+} from './components/Pagination';
+
+// Command
+export {
+  Command,
+  type CommandProps,
+  type CommandInputProps,
+  type CommandListProps,
+  type CommandItemProps,
+  type CommandGroupProps,
+  type CommandEmptyProps,
+  type CommandSeparatorProps,
+} from './components/Command';
 
 // Accessibility Utilities
 export {
