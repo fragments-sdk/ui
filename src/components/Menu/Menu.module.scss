@@ -101,13 +101,30 @@
   margin-left: auto;
 }
 
-// Checkbox/Radio indicator
-.itemIndicator {
+// Check indicator (checkmark icon for checked items)
+.checkIndicator {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 1rem;
   height: 1rem;
+  flex-shrink: 0;
+  color: var(--fui-color-accent, $fui-color-accent);
+}
+
+// Checkbox item
+.checkboxItem {
+  // Uses .checkIndicator for checked state visual
+}
+
+// Radio indicator (still uses icon)
+.radioIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  visibility: hidden;
 
   svg {
     width: 0.75rem;
@@ -115,16 +132,10 @@
   }
 }
 
-// Checkbox item states
-.checkboxItem {
-  &[data-checked] .itemIndicator {
-    color: var(--fui-color-accent, $fui-color-accent);
-  }
-}
-
 // Radio item states
 .radioItem {
-  &[data-checked] .itemIndicator {
+  &[data-checked] .radioIndicator {
+    visibility: visible;
     color: var(--fui-color-accent, $fui-color-accent);
   }
 }

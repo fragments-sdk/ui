@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { Form } from '.';
 import { Field } from '../Field';
 import { Fieldset } from '../Fieldset';

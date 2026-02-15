@@ -1,4 +1,4 @@
-import { defineBlock } from '@fragments/core';
+import { defineBlock } from '@fragments-sdk/cli/core';
 
 export default defineBlock({
   name: 'Login Form',

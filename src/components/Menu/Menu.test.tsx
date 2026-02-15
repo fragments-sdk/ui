@@ -73,15 +73,17 @@ describe('Menu', () => {
     });
   });
 
-  it('renders checkbox items', async () => {
+  it('renders checkbox items with check icon', async () => {
     const onCheckedChange = vi.fn();
-    const user = userEvent.setup();
     render(
       <Menu defaultOpen>
         <Menu.Trigger>Open</Menu.Trigger>
         <Menu.Content>
-          <Menu.CheckboxItem checked={false} onCheckedChange={onCheckedChange}>
+          <Menu.CheckboxItem checked={true} onCheckedChange={onCheckedChange}>
             Show toolbar
+          </Menu.CheckboxItem>
+          <Menu.CheckboxItem checked={false}>
+            Show sidebar
           </Menu.CheckboxItem>
         </Menu.Content>
       </Menu>
@@ -89,7 +91,12 @@ describe('Menu', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Show toolbar')).toBeInTheDocument();
+      expect(screen.getByText('Show sidebar')).toBeInTheDocument();
     });
+
+    // Checked item should have a checkmark SVG
+    const checkedItem = screen.getByText('Show toolbar').closest('[role="menuitemcheckbox"]');
+    expect(checkedItem?.querySelector('svg')).toBeInTheDocument();
   });
 
   it('renders radio group items', async () => {
@@ -139,6 +146,122 @@ describe('Menu', () => {
     await expectNoA11yViolations(container, {
       // Base UI focus guard spans have role="button" without labels.
       disabledRules: ['aria-command-name'],
+    });
+  });
+
+  describe('checked items', () => {
+    it('renders check indicator when checked={true}', async () => {
+      render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item checked={true} onSelect={() => {}}>Grid</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Grid')).toBeInTheDocument();
+      });
+
+      const item = screen.getByText('Grid').closest('[role="menuitem"]');
+      expect(item?.querySelector('svg')).toBeInTheDocument();
+    });
+
+    it('reserves space but shows no icon when checked={false}', async () => {
+      render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item checked={false} onSelect={() => {}}>List</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('List')).toBeInTheDocument();
+      });
+
+      const item = screen.getByText('List').closest('[role="menuitem"]');
+      // Should not have a checkmark SVG
+      expect(item?.querySelector('svg')).not.toBeInTheDocument();
+    });
+
+    it('does not render check indicator when checked is omitted', async () => {
+      const { container } = render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={() => {}}>Normal Item</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Normal Item')).toBeInTheDocument();
+      });
+
+      const item = screen.getByText('Normal Item').closest('[role="menuitem"]');
+      // Should not have any SVG or check indicator
+      expect(item?.querySelector('svg')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('submenu', () => {
+    function renderSubmenu(props: Partial<React.ComponentProps<typeof Menu>> = {}) {
+      return render(
+        <Menu {...props}>
+          <Menu.Trigger>Open Menu</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={() => {}}>New File</Menu.Item>
+            <Menu.Submenu>
+              <Menu.SubmenuTrigger>Export As</Menu.SubmenuTrigger>
+              <Menu.Content side="right" align="start">
+                <Menu.Item onSelect={() => {}}>PNG</Menu.Item>
+                <Menu.Item onSelect={() => {}}>SVG</Menu.Item>
+              </Menu.Content>
+            </Menu.Submenu>
+          </Menu.Content>
+        </Menu>
+      );
+    }
+
+    it('renders submenu trigger', async () => {
+      const user = userEvent.setup();
+      renderSubmenu();
+
+      await user.click(screen.getByRole('button', { name: /open menu/i }));
+      await waitFor(() => {
+        expect(screen.getByText('Export As')).toBeInTheDocument();
+      });
+    });
+
+    it('opens submenu on click', async () => {
+      const user = userEvent.setup();
+      renderSubmenu();
+
+      await user.click(screen.getByRole('button', { name: /open menu/i }));
+      await waitFor(() => {
+        expect(screen.getByText('Export As')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText('Export As'));
+      await waitFor(() => {
+        expect(screen.getByText('PNG')).toBeInTheDocument();
+        expect(screen.getByText('SVG')).toBeInTheDocument();
+      });
+    });
+
+    it('has no accessibility violations', async () => {
+      const { container } = renderSubmenu({ defaultOpen: true });
+
+      await waitFor(() => {
+        expect(screen.getByText('Export As')).toBeInTheDocument();
+      });
+
+      await expectNoA11yViolations(container, {
+        disabledRules: ['aria-command-name'],
+      });
     });
   });
 

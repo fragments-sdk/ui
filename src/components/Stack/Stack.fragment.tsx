@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { Stack } from '.';
 import { Button } from '../Button';
 import { Badge } from '../Badge';

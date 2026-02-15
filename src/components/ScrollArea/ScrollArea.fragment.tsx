@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { ScrollArea } from '.';
 
 const tags = ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5', 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9', 'Tag 10', 'Tag 11', 'Tag 12', 'Tag 13', 'Tag 14', 'Tag 15'];

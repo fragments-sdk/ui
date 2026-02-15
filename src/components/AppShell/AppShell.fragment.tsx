@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { AppShell } from '.';
 import { Box } from '../Box';
 import { Header } from '../Header';
@@ -85,7 +85,7 @@ import { Stack } from '@/components/Stack';
 import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
-<Box height="400px" overflow="hidden" border rounded="md">
+<Box minHeight="100vh" overflow="hidden" border rounded="md">
   <AppShell layout="default">
     <AppShell.Header>
       <Header>
@@ -123,7 +123,7 @@ import { ThemeToggle } from '@/components/Theme';
   </AppShell>
 </Box>`,
       render: () => (
-        <Box height="400px" overflow="hidden" border rounded="md">
+        <Box minHeight="100vh" overflow="hidden" border rounded="md">
           <AppShell layout="default">
             <AppShell.Header>
               <Header>
@@ -175,7 +175,7 @@ import { Stack } from '@/components/Stack';
 import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
-<Box height="400px" overflow="hidden" border rounded="md">
+<Box minHeight="100vh" overflow="hidden" border rounded="md">
   <AppShell layout="sidebar">
     <AppShell.Header>
       <Header>
@@ -220,7 +220,7 @@ import { ThemeToggle } from '@/components/Theme';
   </AppShell>
 </Box>`,
       render: () => (
-        <Box height="400px" overflow="hidden" border rounded="md">
+        <Box minHeight="100vh" overflow="hidden" border rounded="md">
           <AppShell layout="sidebar">
             <AppShell.Header>
               <Header>
@@ -279,7 +279,7 @@ import { Stack } from '@/components/Stack';
 import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
-<Box height="400px" overflow="hidden" border rounded="md">
+<Box minHeight="100vh" overflow="hidden" border rounded="md">
   <AppShell layout="default">
     <AppShell.Header>
       <Header>
@@ -320,7 +320,7 @@ import { ThemeToggle } from '@/components/Theme';
   </AppShell>
 </Box>`,
       render: () => (
-        <Box height="400px" overflow="hidden" border rounded="md">
+        <Box minHeight="100vh" overflow="hidden" border rounded="md">
           <AppShell layout="default">
             <AppShell.Header>
               <Header>
@@ -374,7 +374,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
-<Box height="400px" overflow="hidden" border rounded="md">
+<Box minHeight="100vh" overflow="hidden" border rounded="md">
   <AppShell layout="sidebar">
     <AppShell.Header>
       <Header>
@@ -410,7 +410,7 @@ import { ThemeToggle } from '@/components/Theme';
   </AppShell>
 </Box>`,
       render: () => (
-        <Box height="400px" overflow="hidden" border rounded="md">
+        <Box minHeight="100vh" overflow="hidden" border rounded="md">
           <AppShell layout="sidebar">
             <AppShell.Header>
               <Header>
@@ -460,7 +460,7 @@ import { Stack } from '@/components/Stack';
 import { Text } from '@/components/Text';
 import { ThemeToggle } from '@/components/Theme';
 
-<Box height="400px" overflow="hidden" border rounded="md">
+<Box minHeight="100vh" overflow="hidden" border rounded="md">
   <AppShell layout="sidebar-floating">
     <AppShell.Header>
       <Header>
@@ -505,7 +505,7 @@ import { ThemeToggle } from '@/components/Theme';
   </AppShell>
 </Box>`,
       render: () => (
-        <Box height="400px" overflow="hidden" border rounded="md">
+        <Box minHeight="100vh" overflow="hidden" border rounded="md">
           <AppShell layout="sidebar-floating">
             <AppShell.Header>
               <Header>

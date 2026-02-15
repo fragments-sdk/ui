@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { Menu } from '.';
 import { Button } from '../Button';
 
@@ -8,10 +8,10 @@ export default defineFragment({
 
   meta: {
     name: 'Menu',
-    description: 'Dropdown menu for actions and commands. Use for contextual actions, overflow menus, or grouped commands.',
+    description: 'Dropdown menu for actions and commands. Supports submenus, check items, radio groups, and keyboard shortcuts.',
     category: 'feedback',
     status: 'stable',
-    tags: ['menu', 'dropdown', 'actions', 'context-menu', 'commands'],
+    tags: ['menu', 'dropdown', 'actions', 'context-menu', 'commands', 'submenu'],
     since: '0.1.0',
   },
 
@@ -21,6 +21,7 @@ export default defineFragment({
       'Context menus (right-click)',
       'User account menus',
       'Grouped actions with separators',
+      'Nested menus with submenus',
     ],
     whenNot: [
       'Selecting from options (use Select)',
@@ -33,12 +34,15 @@ export default defineFragment({
       'Include keyboard shortcuts where applicable',
       'Use danger variant for destructive actions',
       'Keep menu items under 10-12 for usability',
+      'Use checked prop on Menu.Item for simple selection state',
+      'Use Menu.Submenu for nested secondary options',
     ],
     accessibility: [
       'Full keyboard navigation with arrow keys',
       'Type-ahead search for items',
       'Focus returns to trigger on close',
       'Proper ARIA menu roles',
+      'ArrowRight opens submenus, ArrowLeft closes them',
     ],
   },
 
@@ -79,6 +83,7 @@ export default defineFragment({
       'onOpenChange: (open) => void - state handler',
       'Menu.Item danger: boolean - destructive styling',
       'Menu.Item shortcut: string - keyboard shortcut text',
+      'Menu.Item checked: boolean - check indicator for selection state',
     ],
     scenarioTags: [
       'action.menu',
@@ -90,7 +95,7 @@ export default defineFragment({
 
   ai: {
     compositionPattern: 'compound',
-    subComponents: ['Trigger', 'Content', 'Item', 'CheckboxItem', 'RadioGroup', 'RadioItem', 'Group', 'GroupLabel', 'Separator'],
+    subComponents: ['Trigger', 'Content', 'Item', 'CheckboxItem', 'RadioGroup', 'RadioItem', 'Group', 'GroupLabel', 'Separator', 'Submenu', 'SubmenuTrigger'],
     requiredChildren: ['Trigger', 'Content'],
     commonPatterns: [
       '<Menu><Menu.Trigger asChild><Button>Actions</Button></Menu.Trigger><Menu.Content><Menu.Item>{action1}</Menu.Item><Menu.Separator /><Menu.Item danger>{delete}</Menu.Item></Menu.Content></Menu>',
@@ -159,7 +164,7 @@ export default defineFragment({
     },
     {
       name: 'With Checkboxes',
-      description: 'Menu with toggleable options',
+      description: 'Menu with toggleable checkbox options',
       render: () => (
         <Menu>
           <Menu.Trigger asChild>
@@ -169,6 +174,51 @@ export default defineFragment({
             <Menu.CheckboxItem defaultChecked>Show Grid</Menu.CheckboxItem>
             <Menu.CheckboxItem defaultChecked>Show Rulers</Menu.CheckboxItem>
             <Menu.CheckboxItem>Show Guides</Menu.CheckboxItem>
+          </Menu.Content>
+        </Menu>
+      ),
+    },
+    {
+      name: 'With Checked Items',
+      description: 'Filter menu with check marks indicating active selections',
+      render: () => {
+        const [view, setView] = React.useState('grid');
+        return (
+          <Menu>
+            <Menu.Trigger asChild>
+              <Button variant="secondary">View</Button>
+            </Menu.Trigger>
+            <Menu.Content>
+              <Menu.Item checked={view === 'grid'} onSelect={() => setView('grid')}>Grid</Menu.Item>
+              <Menu.Item checked={view === 'list'} onSelect={() => setView('list')}>List</Menu.Item>
+              <Menu.Item checked={view === 'board'} onSelect={() => setView('board')}>Board</Menu.Item>
+            </Menu.Content>
+          </Menu>
+        );
+      },
+    },
+    {
+      name: 'With Submenu',
+      description: 'Menu with nested submenu for grouped secondary options',
+      render: () => (
+        <Menu>
+          <Menu.Trigger asChild>
+            <Button variant="secondary">File</Button>
+          </Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={() => {}}>New File</Menu.Item>
+            <Menu.Item onSelect={() => {}}>Open</Menu.Item>
+            <Menu.Separator />
+            <Menu.Submenu>
+              <Menu.SubmenuTrigger>Export As</Menu.SubmenuTrigger>
+              <Menu.Content side="right" align="start">
+                <Menu.Item onSelect={() => {}}>PNG</Menu.Item>
+                <Menu.Item onSelect={() => {}}>SVG</Menu.Item>
+                <Menu.Item onSelect={() => {}}>PDF</Menu.Item>
+              </Menu.Content>
+            </Menu.Submenu>
+            <Menu.Separator />
+            <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>
           </Menu.Content>
         </Menu>
       ),

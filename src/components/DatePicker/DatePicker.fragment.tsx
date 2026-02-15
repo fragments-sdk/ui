@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { DatePicker } from '.';
 import type { DateRange } from '.';
 import { subDays } from 'date-fns';
@@ -87,17 +87,18 @@ export default defineFragment({
       required: true,
     },
     mode: {
-      type: "'single' | 'range'",
+      type: 'enum',
+      values: ['single', 'range'],
       description: 'Selection mode',
       default: "'single'",
     },
     selected: {
-      type: 'Date | null',
-      description: 'Controlled date (single mode)',
+      type: 'custom',
+      description: 'Controlled date (single mode). Type: Date | null',
     },
     selectedRange: {
-      type: 'DateRange | null',
-      description: 'Controlled range (range mode)',
+      type: 'custom',
+      description: 'Controlled range (range mode). Type: DateRange | null',
     },
     onSelect: {
       type: 'function',
@@ -118,8 +119,8 @@ export default defineFragment({
       default: 'false',
     },
     disabledDates: {
-      type: 'Matcher | Matcher[]',
-      description: 'Dates to disable (react-day-picker Matcher)',
+      type: 'custom',
+      description: 'Dates to disable (react-day-picker Matcher | Matcher[])',
     },
     placeholder: {
       type: 'string',
@@ -130,7 +131,7 @@ export default defineFragment({
   relations: [
     { component: 'Select', relationship: 'alternative', note: 'Use Select for choosing from a list of options' },
     { component: 'Input', relationship: 'sibling', note: 'Use Input for free-form text date entry' },
-    { component: 'Popover', relationship: 'uses', note: 'DatePicker uses Popover for the calendar dropdown' },
+    { component: 'Popover', relationship: 'composition', note: 'DatePicker uses Popover for the calendar dropdown' },
   ],
 
   contract: {

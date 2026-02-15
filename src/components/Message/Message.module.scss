@@ -36,7 +36,7 @@
 
   .content {
     background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
+    color: var(--fui-text-inverse, $fui-text-inverse);
   }
 }
 
@@ -68,6 +68,7 @@
   .content {
     background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
     border: 1px solid var(--fui-color-danger, $fui-color-danger);
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { Icon } from '.';
 import { Heart, Star, Check, Warning, Info } from '@phosphor-icons/react';
 

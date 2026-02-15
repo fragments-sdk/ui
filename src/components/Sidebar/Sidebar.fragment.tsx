@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments/core';
+import { defineFragment } from '@fragments-sdk/cli/core';
 import { Sidebar, SidebarProvider, useSidebar } from '.';
 import { Button } from '../Button';
 
@@ -81,7 +81,7 @@ const mainContentStyle: React.CSSProperties = {
 };
 
 const demoContainerStyle: React.CSSProperties = {
-  height: '400px',
+  minHeight: '100vh',
   display: 'flex',
   width: '100%',
 };

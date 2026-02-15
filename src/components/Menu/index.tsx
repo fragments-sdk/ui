@@ -37,6 +37,8 @@ export interface MenuItemProps {
   className?: string;
   icon?: React.ReactNode;
   shortcut?: string;
+  /** When passed, renders a check indicator. `true` shows a checkmark, `false` reserves space. */
+  checked?: boolean;
 }
 
 export interface MenuCheckboxItemProps {
@@ -76,25 +78,39 @@ export interface MenuSeparatorProps {
   className?: string;
 }
 
+export interface MenuSubmenuProps {
+  children: React.ReactNode;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export interface MenuSubmenuTriggerProps {
+  children: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
+  icon?: React.ReactNode;
+}
+
 // ============================================
 // Icons
 // ============================================
 
-function CheckIcon() {
+function CheckmarkIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
+      width="14"
+      height="14"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="3"
+      strokeWidth={3}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <polyline points="20 6 9 17 4 12" />
+      <path d="M5 13l4 4L19 7" />
     </svg>
   );
 }
@@ -187,7 +203,9 @@ function MenuItem({
   className,
   icon,
   shortcut,
+  checked,
 }: MenuItemProps) {
+  const hasChecked = checked !== undefined;
   const classes = [
     styles.item,
     danger && styles.itemDanger,
@@ -200,6 +218,11 @@ function MenuItem({
       onClick={onSelect}
       className={classes}
     >
+      {hasChecked && (
+        <span className={styles.checkIndicator}>
+          {checked ? <CheckmarkIcon /> : null}
+        </span>
+      )}
       {icon && <span className={styles.itemIcon}>{icon}</span>}
       <span className={styles.itemLabel}>{children}</span>
       {shortcut && <span className={styles.itemShortcut}>{shortcut}</span>}
@@ -209,26 +232,38 @@ function MenuItem({
 
 function MenuCheckboxItem({
   children,
-  checked,
+  checked: checkedProp,
   defaultChecked,
   onCheckedChange,
   disabled,
   className,
 }: MenuCheckboxItemProps) {
+  const isControlled = checkedProp !== undefined;
+  const [internalChecked, setInternalChecked] = React.useState(defaultChecked ?? false);
+  const visualChecked = isControlled ? checkedProp : internalChecked;
+
+  const handleCheckedChange = React.useCallback(
+    (value: boolean) => {
+      if (!isControlled) setInternalChecked(value);
+      onCheckedChange?.(value);
+    },
+    [isControlled, onCheckedChange],
+  );
+
   const classes = [styles.item, styles.checkboxItem, className]
     .filter(Boolean)
     .join(' ');
 
   return (
     <BaseMenu.CheckboxItem
-      checked={checked}
+      checked={checkedProp}
       defaultChecked={defaultChecked}
-      onCheckedChange={onCheckedChange}
+      onCheckedChange={handleCheckedChange}
       disabled={disabled}
       className={classes}
     >
-      <span className={styles.itemIndicator}>
-        <CheckIcon />
+      <span className={styles.checkIndicator}>
+        {visualChecked ? <CheckmarkIcon /> : null}
       </span>
       <span className={styles.itemLabel}>{children}</span>
     </BaseMenu.CheckboxItem>
@@ -264,7 +299,7 @@ function MenuRadioItem({
 
   return (
     <BaseMenu.RadioItem value={value} disabled={disabled} className={classes}>
-      <span className={styles.itemIndicator}>
+      <span className={styles.radioIndicator}>
         <DotIcon />
       </span>
       <span className={styles.itemLabel}>{children}</span>
@@ -287,6 +322,41 @@ function MenuSeparator({ className }: MenuSeparatorProps) {
   return <BaseMenu.Separator className={classes} />;
 }
 
+function MenuSubmenu({
+  children,
+  open,
+  defaultOpen,
+  onOpenChange,
+}: MenuSubmenuProps) {
+  return (
+    <BaseMenu.SubmenuRoot
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange as any}
+    >
+      {children}
+    </BaseMenu.SubmenuRoot>
+  );
+}
+
+function MenuSubmenuTrigger({
+  children,
+  disabled,
+  className,
+  icon,
+}: MenuSubmenuTriggerProps) {
+  const classes = [styles.item, styles.submenuTrigger, className]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <BaseMenu.SubmenuTrigger disabled={disabled} className={classes}>
+      {icon && <span className={styles.itemIcon}>{icon}</span>}
+      <span className={styles.itemLabel}>{children}</span>
+    </BaseMenu.SubmenuTrigger>
+  );
+}
+
 // ============================================
 // Export compound component
 // ============================================
@@ -301,6 +371,8 @@ export const Menu = Object.assign(MenuRoot, {
   Group: MenuGroup,
   GroupLabel: MenuGroupLabel,
   Separator: MenuSeparator,
+  Submenu: MenuSubmenu,
+  SubmenuTrigger: MenuSubmenuTrigger,
 });
 
 // Re-export individual components
@@ -315,4 +387,6 @@ export {
   MenuGroup,
   MenuGroupLabel,
   MenuSeparator,
+  MenuSubmenu,
+  MenuSubmenuTrigger,
 };
