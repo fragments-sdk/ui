@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.8
+
+### Patch Changes
+
+- [`04e5019`](https://github.com/ConanMcN/fragments/commit/04e5019d628bcced01a2cbbd067d3be7b7a39d99) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add Command, Drawer, and Pagination components plus docs/viewer updates.
+
 ## 0.8.7
 
 ### Patch Changes
