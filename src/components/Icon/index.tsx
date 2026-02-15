@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import type { IconProps as PhosphorIconProps } from '@phosphor-icons/react';
 import styles from './Icon.module.scss';
