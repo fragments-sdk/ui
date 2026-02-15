@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.8.9
+
+### Patch Changes
+
+- [`30ffa79`](https://github.com/ConanMcN/fragments/commit/30ffa7928ed84cc700382d8a4f757c4ff052cf43) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add per-component `'use client'` directives for RSC compatibility. Moves the directive from the barrel export to 22 individual component files that need it, keeping 10 layout primitives (Box, Stack, Grid, Text, etc.) server-safe. Converts homepage, /components, and /getting-started doc pages to server components. Removes playground feature.
+
 ## 0.8.8
 
 ### Patch Changes
