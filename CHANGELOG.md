@@ -1,5 +1,17 @@
 # @fragments-sdk/ui
 
+## 0.8.7
+
+### Patch Changes
+
+- [`b61b8d5`](https://github.com/ConanMcN/fragments/commit/b61b8d5bb28a66620542a437c0ffbdebf1aec815) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add Menu submenu support, consolidate viewer toolbar, and center component previews
+  - Menu: Add `checked` prop to `Menu.Item` for lightweight check indicators
+  - Menu: Add `Menu.Submenu` and `Menu.SubmenuTrigger` for nested menu support
+  - Menu: Fix `CheckboxItem` to use check icon instead of embedded Checkbox component
+  - CLI viewer: Consolidate toolbar into single Storybook-style Options menu with submenus
+  - CLI viewer: Add keyboard shortcuts for component/variant navigation (⌘↑/↓, ⌘←/→) and view modes (m, v)
+  - CLI viewer: Center component previews vertically in preview frame
+
 ## 0.8.6
 
 ### Patch Changes
