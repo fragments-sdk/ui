@@ -78,6 +78,30 @@ function TooltipRoot({
   className,
   ...htmlProps
 }: TooltipProps) {
+  const renderTrigger = React.useCallback(
+    (triggerProps: React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> }) => {
+      const childProps = children.props as Record<string, unknown>;
+      const mergedProps: Record<string, unknown> = { ...childProps, ...triggerProps };
+
+      for (const [key, triggerHandler] of Object.entries(triggerProps)) {
+        const childHandler = childProps[key];
+        if (
+          key.startsWith('on') &&
+          typeof triggerHandler === 'function' &&
+          typeof childHandler === 'function'
+        ) {
+          mergedProps[key] = (...args: unknown[]) => {
+            (childHandler as (...event: unknown[]) => void)(...args);
+            (triggerHandler as (...event: unknown[]) => void)(...args);
+          };
+        }
+      }
+
+      return React.cloneElement(children, mergedProps);
+    },
+    [children],
+  );
+
   if (disabled) {
     return children;
   }
@@ -89,7 +113,7 @@ function TooltipRoot({
         defaultOpen={defaultOpen}
         onOpenChange={onOpenChange}
       >
-        <BaseTooltip.Trigger render={(props) => React.cloneElement(children, props)} />
+        <BaseTooltip.Trigger render={renderTrigger} />
         <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             side={side}
