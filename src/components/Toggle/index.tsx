@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Switch as BaseSwitch } from '@base-ui/react/switch';
 import styles from './Toggle.module.scss';

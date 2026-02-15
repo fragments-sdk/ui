@@ -1,5 +1,3 @@
-'use client';
-
 // Import CSS variables and base styles
 // This ensures --fui-* variables are available when using any component
 import './styles/globals.scss';
