@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.9.0
+
+### Minor Changes
+
+- [`2487cb2`](https://github.com/ConanMcN/fragments/commit/2487cb215bb659d2f32ca59adc1d72a23b1ce201) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add BentoGrid component, enhance Avatar with customSize/imageStyle props, add NavigationMenu MobileBrand slot. Update docs landing page with AI-native positioning, redesign blog listing, and improve CLI viewer stability.
+
 ## 0.8.9
 
 ### Patch Changes
