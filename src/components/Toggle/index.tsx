@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Switch as BaseSwitch } from '@base-ui/react/switch';
 import styles from './Toggle.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 export interface SwitchProps {
   checked?: boolean;

@@ -3,7 +3,6 @@
 import * as React from 'react';
 import type { IconProps as PhosphorIconProps } from '@phosphor-icons/react';
 import styles from './Icon.module.scss';
-import '../../styles/globals.scss';
 
 export interface IconProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'> {
   /** The Phosphor icon component to render */

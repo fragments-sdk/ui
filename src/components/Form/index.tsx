@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Form as BaseForm } from '@base-ui/react/form';
 import styles from './Form.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

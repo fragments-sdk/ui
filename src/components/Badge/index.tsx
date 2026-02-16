@@ -3,13 +3,11 @@
 import * as React from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import styles from './Badge.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
   variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline';
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   dot?: boolean;
   icon?: React.ReactNode;
   onRemove?: () => void;

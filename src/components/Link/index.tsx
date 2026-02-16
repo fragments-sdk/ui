@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styles from './Link.module.scss';
-import '../../styles/globals.scss';
 
 export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   children: React.ReactNode;

@@ -96,6 +96,21 @@
   }
 }
 
+.outlined {
+  background-color: transparent;
+  color: var(--fui-text-primary, $fui-text-primary);
+  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled),
+  &[data-pressed] {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
 // Icon-only button (square aspect ratio)
 .icon {
   aspect-ratio: 1;
@@ -125,6 +140,11 @@
 
 @media (prefers-contrast: more) {
   .secondary {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  .outlined {
     border-width: 2px;
     border-color: var(--fui-text-primary, $fui-text-primary);
   }

@@ -4,12 +4,48 @@
 // Import this file once in your app to set up CSS custom properties
 // for theming, plus base element resets for consistent rendering.
 //
-// Usage in your app:
-//   import '@fragments-sdk/ui/styles/globals.scss';
+// Usage in SCSS (recommended):
+//   @use '@fragments-sdk/ui/styles' with (
+//     $fui-brand: #6366f1,
+//     $fui-neutral: "earth",
+//     $fui-radius-style: "rounded"
+//   );
 //
-// Or in SCSS:
-//   @use '@fragments-sdk/ui/styles/globals';
+// Or without customization:
+//   @use '@fragments-sdk/ui/styles';
+//
+// Or as a plain import (no seed customization):
+//   import '@fragments-sdk/ui/styles/globals.scss';
 // ============================================
+
+// --------------------------------------------
+// Configurable Seed Variables
+// --------------------------------------------
+// Consumers set these via @use ... with().
+// Values are forwarded to the seed/token chain below.
+
+$fui-brand: #18181b !default;
+$fui-neutral: "stone" !default;
+$fui-density: "default" !default;
+$fui-radius-style: "default" !default;
+$fui-danger: #ef4444 !default;
+$fui-success: #22c55e !default;
+$fui-warning: #f59e0b !default;
+$fui-info: #3b82f6 !default;
+
+// Configure seeds BEFORE loading variables.
+// Sass module singleton: once configured here, every subsequent
+// @use 'seeds' (in _computed.scss, etc.) gets this instance.
+@use '../tokens/seeds' with (
+  $fui-brand: $fui-brand,
+  $fui-neutral: $fui-neutral,
+  $fui-density: $fui-density,
+  $fui-radius-style: $fui-radius-style,
+  $fui-danger: $fui-danger,
+  $fui-success: $fui-success,
+  $fui-warning: $fui-warning,
+  $fui-info: $fui-info
+);
 
 @use '../tokens/variables' as *;
 

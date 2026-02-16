@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import styles from './Command.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

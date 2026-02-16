@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Field } from '@base-ui/react/field';
 import { Slider as BaseSlider } from '@base-ui/react/slider';
 import styles from './Slider.module.scss';
-import '../../styles/globals.scss';
 
 export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   label?: string;

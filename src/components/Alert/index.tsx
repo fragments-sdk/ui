@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import styles from './Alert.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

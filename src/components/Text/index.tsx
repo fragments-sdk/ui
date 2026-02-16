@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styles from './Text.module.scss';
-import '../../styles/globals.scss';
 
 export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children: React.ReactNode;

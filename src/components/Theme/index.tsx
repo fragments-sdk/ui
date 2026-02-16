@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 import styles from './ThemeToggle.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types
@@ -15,6 +13,8 @@ export interface ThemeProviderProps {
   children: React.ReactNode;
   /** Default theme mode for uncontrolled usage */
   defaultMode?: ThemeMode;
+  /** Alias for defaultMode (more intuitive naming) */
+  defaultTheme?: ThemeMode;
   /** Controlled theme mode */
   mode?: ThemeMode;
   /** Callback when mode changes */
@@ -174,7 +174,8 @@ function MonitorIcon({ size = 20 }: { size?: number }) {
  */
 function ThemeProvider({
   children,
-  defaultMode = 'system',
+  defaultMode,
+  defaultTheme,
   mode: controlledMode,
   onModeChange,
   storageKey = 'fui-theme',
@@ -182,8 +183,11 @@ function ThemeProvider({
 }: ThemeProviderProps) {
   const systemPreference = useSystemPreference();
 
-  // Initialize with defaultMode, then hydrate from localStorage in useEffect
-  const [internalMode, setInternalMode] = React.useState<ThemeMode>(defaultMode);
+  // Resolve default: defaultMode takes precedence, then defaultTheme, then 'system'
+  const resolvedDefault = defaultMode ?? defaultTheme ?? 'system';
+
+  // Initialize with resolvedDefault, then hydrate from localStorage in useEffect
+  const [internalMode, setInternalMode] = React.useState<ThemeMode>(resolvedDefault);
   const [mounted, setMounted] = React.useState(false);
 
   // Determine if controlled

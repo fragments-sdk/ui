@@ -7,8 +7,6 @@ import { Skeleton } from '../Skeleton';
 import { Collapsible } from '../Collapsible';
 import { ScrollArea } from '../ScrollArea';
 import { useFocusTrap } from '../../utils/a11y';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

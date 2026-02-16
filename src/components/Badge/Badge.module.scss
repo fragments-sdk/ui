@@ -4,6 +4,7 @@
 .badge {
   display: inline-flex;
   align-items: center;
+  width: max-content;
   gap: var(--fui-space-1, $fui-space-1);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   font-family: var(--fui-font-sans, $fui-font-sans);
@@ -21,6 +22,11 @@
 .md {
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.lg {
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
 // Variants

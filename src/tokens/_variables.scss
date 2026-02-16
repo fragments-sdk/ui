@@ -11,19 +11,14 @@
 //    See _seeds.scss for available seeds.
 //
 //    Example:
-//      $fui-brand: #0066ff;
-//      $fui-neutral: "steel";
-//      $fui-density: "compact";
-//      @use '@fragments-sdk/ui/globals';
+//      @use '@fragments-sdk/ui/styles' with (
+//        $fui-brand: #0066ff,
+//        $fui-neutral: "ice",
+//        $fui-density: "compact"
+//      );
 //
-// 2. INDIVIDUAL OVERRIDES (Backward compatible):
-//    Override any variable directly before importing.
-//
-//    Example:
-//      $fui-color-accent: #0066ff;
-//      @use '@fragments-sdk/ui/tokens';
-//
-// Or use CSS custom properties for runtime theming.
+// 2. CSS CUSTOM PROPERTIES (Runtime theming):
+//    Override CSS custom properties at runtime for dynamic theming.
 // ============================================
 
 // Import computed values from seed system
@@ -351,7 +346,7 @@ $fui-theme-toggle-lg-icon: 18px !default;
 
 // CodeBlock (light mode)
 $fui-code-bg: #1e1e1e !default;
-$fui-code-header-bg: var(--fui-bg-elevated) !default;
+$fui-code-header-bg: $fui-code-bg !default;
 $fui-code-text: #d4d4d4 !default;
 $fui-code-text-muted: #6b7280 !default;
 $fui-code-border: rgba(255, 255, 255, 0.1) !default;

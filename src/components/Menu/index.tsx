@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import styles from './Menu.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

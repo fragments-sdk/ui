@@ -47,26 +47,117 @@
     "react-components"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        },
+        "require": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.cjs"
+        }
+      },
+      "./datepicker": {
+        "import": {
+          "types": "./dist/components/DatePicker/index.d.ts",
+          "default": "./dist/datepicker.js"
+        },
+        "require": {
+          "types": "./dist/components/DatePicker/index.d.ts",
+          "default": "./dist/datepicker.cjs"
+        }
+      },
+      "./chart": {
+        "import": {
+          "types": "./dist/components/Chart/index.d.ts",
+          "default": "./dist/chart.js"
+        },
+        "require": {
+          "types": "./dist/components/Chart/index.d.ts",
+          "default": "./dist/chart.cjs"
+        }
+      },
+      "./markdown": {
+        "import": {
+          "types": "./dist/components/Markdown/index.d.ts",
+          "default": "./dist/markdown.js"
+        },
+        "require": {
+          "types": "./dist/components/Markdown/index.d.ts",
+          "default": "./dist/markdown.cjs"
+        }
+      },
+      "./codeblock": {
+        "import": {
+          "types": "./dist/components/CodeBlock/index.d.ts",
+          "default": "./dist/codeblock.js"
+        },
+        "require": {
+          "types": "./dist/components/CodeBlock/index.d.ts",
+          "default": "./dist/codeblock.cjs"
+        }
+      },
+      "./colorpicker": {
+        "import": {
+          "types": "./dist/components/ColorPicker/index.d.ts",
+          "default": "./dist/colorpicker.js"
+        },
+        "require": {
+          "types": "./dist/components/ColorPicker/index.d.ts",
+          "default": "./dist/colorpicker.cjs"
+        }
+      },
+      "./table": {
+        "import": {
+          "types": "./dist/components/Table/index.d.ts",
+          "default": "./dist/table.js"
+        },
+        "require": {
+          "types": "./dist/components/Table/index.d.ts",
+          "default": "./dist/table.cjs"
+        }
+      },
+      "./styles": "./src/styles/globals.scss",
+      "./tokens": "./src/tokens/_variables.scss",
+      "./mixins": "./src/tokens/_mixins.scss",
+      "./brand": {
+        "import": {
+          "types": "./dist/brand.d.ts",
+          "default": "./dist/brand.js"
+        },
+        "require": {
+          "types": "./dist/brand.d.ts",
+          "default": "./dist/brand.cjs"
+        }
+      },
+      "./fragments.json": "./fragments.json",
+      "./assets/*": "./src/assets/*",
+      "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "dev": "node ../../packages/cli/dist/bin.js dev",
-    "build": "node ../../packages/cli/dist/bin.js build",
+    "build": "node ../../packages/cli/dist/bin.js build && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint src",
     "validate": "node ../../packages/cli/dist/bin.js validate",
     "test": "vitest run"
   },
   "peerDependencies": {
+    "@tanstack/react-table": ">=8.0.0",
+    "date-fns": ">=3.0.0",
     "react": "^18.0.0 || ^19.0.0",
+    "react-colorful": ">=5.0.0",
+    "react-day-picker": ">=9.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "react-markdown": ">=9.0.0",
     "recharts": ">=2.0.0 || >=3.0.0",
     "remark-gfm": ">=4.0.0",
-    "react-day-picker": ">=9.0.0",
-    "date-fns": ">=3.0.0",
-    "shiki": ">=1.0.0",
-    "react-colorful": ">=5.0.0",
-    "@tanstack/react-table": ">=8.0.0"
+    "shiki": ">=1.0.0"
   },
   "peerDependenciesMeta": {
     "react-markdown": {
@@ -98,32 +189,36 @@
     "defaultOptIn": true
   },
   "dependencies": {
-    "@scarf/scarf": "^1.4.0",
     "@base-ui/react": "^1.0.0",
-    "@phosphor-icons/react": "^2.1.10"
+    "@phosphor-icons/react": "^2.1.10",
+    "@scarf/scarf": "^1.4.0"
   },
   "devDependencies": {
     "@fragments-sdk/cli": "workspace:*",
+    "@tanstack/react-table": "^8.21.3",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.0",
+    "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "date-fns": "^4.0.0",
     "jsdom": "^25.0.0",
     "react": "^19.0.0",
+    "react-colorful": "^5.6.1",
+    "react-day-picker": "^9.0.0",
     "react-dom": "^19.0.0",
     "sass": "^1.83.0",
-    "typescript": "^5.7.0",
-    "react-day-picker": "^9.0.0",
-    "date-fns": "^4.0.0",
     "shiki": "^3.0.0",
-    "react-colorful": "^5.6.1",
-    "@tanstack/react-table": "^8.21.3",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
     "vitest": "^2.1.8",
     "vitest-axe": "^0.1.0"
   },
   "files": [
     "src",
+    "dist",
     "fragments.json"
   ]
 }

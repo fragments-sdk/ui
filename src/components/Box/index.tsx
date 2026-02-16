@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styles from './Box.module.scss';
-import '../../styles/globals.scss';
 
 export interface BoxProps {
   children?: React.ReactNode;

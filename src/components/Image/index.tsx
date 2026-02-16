@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import styles from './Image.module.scss';
-import '../../styles/globals.scss';
 
 export interface ImageProps {
   /** Image source URL */

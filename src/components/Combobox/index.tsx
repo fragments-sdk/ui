@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import styles from './Combobox.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Field } from '@base-ui/react/field';
 import styles from './Input.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 export interface InputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onBlur' | 'onFocus' | 'onKeyDown' | 'defaultValue'> {
   value?: string;

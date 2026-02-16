@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import styles from './ConversationList.module.scss';
-import '../../styles/globals.scss';
 import { Loading } from '../Loading';
 
 // ============================================

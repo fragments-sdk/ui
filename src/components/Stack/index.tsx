@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styles from './Stack.module.scss';
-import '../../styles/globals.scss';
 
 type Direction = 'row' | 'column';
 type Gap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';

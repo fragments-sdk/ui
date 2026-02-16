@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import styles from './Select.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

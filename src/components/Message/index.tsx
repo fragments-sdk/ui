@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import styles from './Message.module.scss';
-import '../../styles/globals.scss';
 import { Markdown } from '../Markdown';
 
 // ============================================

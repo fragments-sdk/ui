@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import styles from './ToggleGroup.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types
@@ -18,7 +17,7 @@ export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Visual variant */
   variant?: 'default' | 'pills' | 'outline';
   /** Size */
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   /** Gap between items (for pills/outline variants) */
   gap?: 'none' | 'xs' | 'sm';
 }
@@ -40,7 +39,7 @@ interface ToggleGroupContextValue {
   value: string;
   onChange: (value: string) => void;
   variant: 'default' | 'pills' | 'outline';
-  size: 'sm' | 'md';
+  size: 'sm' | 'md' | 'lg';
   hasFocusableSelection: boolean;
   firstEnabledValue: string | null;
 }

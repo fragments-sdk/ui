@@ -132,3 +132,11 @@
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   }
 }
+
+.size-lg {
+  .item {
+    min-height: 40px;
+    padding: 0 var(--fui-space-4, $fui-space-4);
+    font-size: var(--fui-font-size-base, $fui-font-size-base);
+  }
+}

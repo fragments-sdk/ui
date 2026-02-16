@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Collapsible as BaseCollapsible } from '@base-ui/react/collapsible';
 import styles from './Accordion.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

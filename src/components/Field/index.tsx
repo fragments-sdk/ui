@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Field as BaseField, type FieldValidityState } from '@base-ui/react/field';
 import styles from './Field.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

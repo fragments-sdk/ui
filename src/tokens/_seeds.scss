@@ -3,13 +3,15 @@
 // ============================================
 //
 // User-configurable seed tokens for the design system.
-// Override these before importing to customize your theme.
+// Configure via @use ... with() on the styles entry point:
 //
 // Example:
-//   $fui-brand: #0066ff;
-//   $fui-neutral: "steel";
-//   $fui-density: "compact";
-//   @use '@fragments-sdk/ui/globals';
+//   @use '@fragments-sdk/ui/styles' with (
+//     $fui-brand: #0066ff,
+//     $fui-neutral: "ice",
+//     $fui-density: "compact",
+//     $fui-radius-style: "rounded"
+//   );
 //
 // ============================================
 

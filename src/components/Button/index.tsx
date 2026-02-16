@@ -3,12 +3,10 @@
 import * as React from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import styles from './Button.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 type ButtonBaseProps = {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined';
   size?: 'sm' | 'md' | 'lg';
   /** Render as icon-only button (square aspect ratio) */
   icon?: boolean;

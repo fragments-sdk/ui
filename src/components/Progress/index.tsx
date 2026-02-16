@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { Progress as BaseProgress } from '@base-ui/react/progress';
 import styles from './Progress.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

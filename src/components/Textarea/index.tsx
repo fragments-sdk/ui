@@ -1,7 +1,5 @@
 import * as React from 'react';
 import styles from './Textarea.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 export interface TextareaProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onBlur' | 'defaultValue'> {
   /** Controlled value */

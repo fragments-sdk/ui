@@ -5,8 +5,6 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { CaretDown, List, X } from '@phosphor-icons/react';
 import styles from './Header.module.scss';
 import { useSidebar } from '../Sidebar';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

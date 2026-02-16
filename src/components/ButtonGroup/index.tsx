@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styles from './ButtonGroup.module.scss';
-import '../../styles/globals.scss';
 
 export interface ButtonGroupProps {
   children: React.ReactNode;

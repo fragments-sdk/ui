@@ -41,7 +41,7 @@ export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Disable the color picker */
   disabled?: boolean;
   /** Size variant */
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   /** Show the hex input field */
   showInput?: boolean;
 }

@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import styles from './Loading.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

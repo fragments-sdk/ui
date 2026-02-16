@@ -8,8 +8,6 @@ import {
   useSidebar,
   type SidebarCollapsible,
 } from '../Sidebar';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

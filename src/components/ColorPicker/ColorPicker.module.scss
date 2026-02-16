@@ -31,6 +31,25 @@
   // Default size - no overrides needed
 }
 
+.sizeLg {
+  .inputWrapper {
+    gap: var(--fui-space-3, $fui-space-3);
+  }
+
+  .swatch {
+    width: 48px;
+    height: var(--fui-input-height-lg, $fui-input-height-lg);
+  }
+
+  .hexInput {
+    min-width: 120px;
+  }
+
+  .label {
+    font-size: var(--fui-font-size-base, $fui-font-size-base);
+  }
+}
+
 .label {
   @include label-text;
   margin-bottom: var(--fui-space-1, $fui-space-1);

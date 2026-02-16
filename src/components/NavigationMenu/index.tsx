@@ -15,8 +15,6 @@ import {
 } from './NavigationMenuContext';
 import { useNavigationMenu } from './useNavigationMenu';
 import styles from './NavigationMenu.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

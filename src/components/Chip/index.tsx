@@ -2,14 +2,13 @@
 
 import * as React from 'react';
 import styles from './Chip.module.scss';
-import '../../styles/globals.scss';
 
 export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   children: React.ReactNode;
   /** Visual style variant */
   variant?: 'filled' | 'outlined' | 'soft';
   /** Size of the chip */
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   /** Whether the chip is selected */
   selected?: boolean;
   /** Icon element rendered before the label */

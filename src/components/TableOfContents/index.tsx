@@ -3,7 +3,6 @@
 import * as React from 'react';
 import styles from './TableOfContents.module.scss';
 import { Text } from '../Text';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types

@@ -34,6 +34,12 @@
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
+.lg {
+  height: var(--fui-button-height-lg, $fui-button-height-lg);
+  padding: 0 var(--fui-space-4, $fui-space-4);
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
 // Variants
 .filled {
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
