@@ -283,7 +283,7 @@ describe('Command', () => {
     const user = userEvent.setup();
     const onSearchChange = vi.fn();
 
-    const { rerender } = render(
+    render(
       <Command search="open" onSearchChange={onSearchChange}>
         <Command.Input placeholder="Search..." />
         <Command.List>

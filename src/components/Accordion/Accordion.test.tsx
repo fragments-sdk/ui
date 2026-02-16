@@ -71,7 +71,6 @@ describe('Accordion', () => {
   });
 
   it('links trigger aria-controls to content id', async () => {
-    const user = userEvent.setup();
     renderAccordion({ defaultValue: 'one' });
 
     const trigger = screen.getByRole('button', { name: /item one/i });
@@ -110,7 +109,7 @@ describe('Accordion', () => {
 
   it('supports controlled value prop', async () => {
     const onValueChange = vi.fn();
-    const { rerender } = render(
+    render(
       <Accordion value="one" onValueChange={onValueChange}>
         <Accordion.Item value="one">
           <Accordion.Trigger>Item One</Accordion.Trigger>

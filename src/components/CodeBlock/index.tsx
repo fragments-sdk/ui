@@ -668,7 +668,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       : {};
 
     return (
-      <div ref={ref} {...htmlProps} className={classNames}>
+      <div ref={ref} {...htmlProps} className={classNames} data-theme="dark">
         {title && <div className={styles.title}>{title}</div>}
         <div className={wrapperClasses}>
           {shouldRenderHeader && (

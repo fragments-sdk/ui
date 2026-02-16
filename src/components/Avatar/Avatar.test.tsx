@@ -33,6 +33,24 @@ describe('Avatar', () => {
     expect(screen.getByText('+2')).toBeInTheDocument();
   });
 
+  it('applies a custom avatar size when customSize is provided', () => {
+    render(<Avatar name="Jane Doe" customSize={36} data-testid="avatar" />);
+    const avatar = screen.getByTestId('avatar');
+    expect(avatar).toHaveStyle({ width: '36px', height: '36px' });
+  });
+
+  it('applies imageStyle to the avatar image element', () => {
+    render(
+      <Avatar
+        src="https://example.com/photo.jpg"
+        alt="Jane Doe"
+        imageStyle={{ objectPosition: 'center 24%', transform: 'scale(1.4)' }}
+      />
+    );
+    const img = screen.getByRole('img');
+    expect(img).toHaveStyle({ objectPosition: 'center 24%', transform: 'scale(1.4)' });
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Avatar name="Jane Doe" />);
     await expectNoA11yViolations(container);

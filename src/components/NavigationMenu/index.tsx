@@ -89,6 +89,10 @@ export interface NavigationMenuMobileContentProps {
   children: React.ReactNode;
 }
 
+export interface NavigationMenuMobileBrandProps {
+  children: React.ReactNode;
+}
+
 export interface NavigationMenuMobileSectionProps {
   children: React.ReactNode;
   /** Section heading label */
@@ -665,6 +669,22 @@ function NavigationMenuMobileContent({ children }: NavigationMenuMobileContentPr
 }
 
 // ============================================
+// MobileBrand (slot for brand in mobile drawer header)
+// ============================================
+
+function NavigationMenuMobileBrand({ children }: NavigationMenuMobileBrandProps) {
+  const ctx = useNavigationMenuContext();
+
+  React.useEffect(() => {
+    ctx.setMobileBrandChildren(children);
+    return () => ctx.setMobileBrandChildren(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [children]);
+
+  return null;
+}
+
+// ============================================
 // MobileSection
 // ============================================
 
@@ -755,7 +775,7 @@ function MobileDrawer() {
         aria-label="Navigation"
       >
         <div className={styles.drawerHeader}>
-          <span />
+          {ctx.mobileBrandChildren ?? <span />}
           <button
             type="button"
             className={styles.drawerClose}
@@ -766,29 +786,34 @@ function MobileDrawer() {
           </button>
         </div>
         <ScrollArea orientation="vertical" className={styles.drawerBody}>
-          <div className={styles.drawerNav}>
-            {autoItems.map((item) =>
-              item.contentChildren ? (
-                <MobileCollapsibleSection
-                  key={item.value}
-                  label={item.triggerLabel}
-                  onLinkClick={handleLinkClick}
-                >
-                  {item.contentChildren}
-                </MobileCollapsibleSection>
-              ) : item.linkHref ? (
-                <a
-                  key={item.value}
-                  className={styles.drawerLink}
-                  href={item.linkHref}
-                  onClick={handleLinkClick}
-                >
-                  {item.triggerLabel}
-                </a>
-              ) : null
-            )}
-          </div>
-          {ctx.mobileContentChildren}
+          {/* When MobileContent is provided, it takes full control of the drawer nav.
+              Otherwise, auto-convert registered Trigger+Content items. */}
+          {ctx.mobileContentChildren ? (
+            ctx.mobileContentChildren
+          ) : (
+            <div className={styles.drawerNav}>
+              {autoItems.map((item) =>
+                item.contentChildren ? (
+                  <MobileCollapsibleSection
+                    key={item.value}
+                    label={item.triggerLabel}
+                    onLinkClick={handleLinkClick}
+                  >
+                    {item.contentChildren}
+                  </MobileCollapsibleSection>
+                ) : item.linkHref ? (
+                  <a
+                    key={item.value}
+                    className={styles.drawerLink}
+                    href={item.linkHref}
+                    onClick={handleLinkClick}
+                  >
+                    {item.triggerLabel}
+                  </a>
+                ) : null
+              )}
+            </div>
+          )}
         </ScrollArea>
       </div>
     </>
@@ -837,6 +862,7 @@ export const NavigationMenu = Object.assign(NavigationMenuRoot, {
   Link: NavigationMenuLink,
   Indicator: NavigationMenuIndicator,
   Viewport: NavigationMenuViewport,
+  MobileBrand: NavigationMenuMobileBrand,
   MobileContent: NavigationMenuMobileContent,
   MobileSection: NavigationMenuMobileSection,
 });
@@ -850,6 +876,7 @@ export {
   NavigationMenuLink,
   NavigationMenuIndicator,
   NavigationMenuViewport,
+  NavigationMenuMobileBrand,
   NavigationMenuMobileContent,
   NavigationMenuMobileSection,
 };

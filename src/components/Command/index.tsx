@@ -53,7 +53,7 @@ export interface CommandEmptyProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface CommandSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type CommandSeparatorProps = React.HTMLAttributes<HTMLDivElement>;
 
 // ============================================
 // Default filter

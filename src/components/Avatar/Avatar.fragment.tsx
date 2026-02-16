@@ -62,6 +62,10 @@ export default defineFragment({
       default: 'md',
       description: 'Size variant',
     },
+    customSize: {
+      type: 'string',
+      description: 'Custom avatar size (number in px or CSS size string like "2.25rem"), overrides size width/height',
+    },
     shape: {
       type: 'enum',
       values: ['circle', 'square'],
@@ -71,6 +75,10 @@ export default defineFragment({
     color: {
       type: 'string',
       description: 'Custom background color for fallback avatar',
+    },
+    imageStyle: {
+      type: 'string',
+      description: 'Inline style object applied to the underlying image element',
     },
   },
 
@@ -87,6 +95,8 @@ export default defineFragment({
       'src: string - image URL',
       'name: string - used for initials fallback',
       'size: xs|sm|md|lg|xl (default: md)',
+      'customSize: number|string - custom size override',
+      'imageStyle: CSSProperties - inline image styling',
       'shape: circle|square (default: circle)',
     ],
     scenarioTags: [
@@ -149,6 +159,14 @@ import { Stack } from '@/components/Stack';
           <Avatar name="XL" size="xl" />
         </Stack>
       ),
+    },
+    {
+      name: 'Custom Size',
+      description: 'Set an exact avatar size',
+      code: `import { Avatar } from '@/components/Avatar';
+
+<Avatar name="Conan McNicholl" customSize={36} />`,
+      render: () => <Avatar name="Conan McNicholl" customSize={36} />,
     },
     {
       name: 'Square Shape',

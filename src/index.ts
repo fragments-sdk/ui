@@ -182,6 +182,9 @@ export {
 // Grid
 export { Grid, type GridProps, type GridItemProps, type ResponsiveColumns } from './components/Grid';
 
+// BentoGrid
+export { BentoGrid, type BentoGridProps, type BentoGridItemProps, type ResponsiveSpan } from './components/BentoGrid';
+
 // Separator
 export { Separator, type SeparatorProps } from './components/Separator';
 

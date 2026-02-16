@@ -33,6 +33,10 @@
   gap: var(--fui-space-4, $fui-space-4);
   width: 100%;
   max-width: 100%;
+
+  @include below-md {
+    gap: var(--fui-space-1, $fui-space-1);
+  }
 }
 
 // ============================================

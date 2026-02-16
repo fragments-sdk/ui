@@ -53,6 +53,8 @@ export interface NavigationMenuContextValue {
   setMobileOpen: (open: boolean) => void;
   mobileContentChildren: React.ReactNode;
   setMobileContentChildren: (children: React.ReactNode) => void;
+  mobileBrandChildren: React.ReactNode;
+  setMobileBrandChildren: (children: React.ReactNode) => void;
 
   // Root nav id
   rootId: string;

@@ -44,6 +44,11 @@ body {
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
+// Global link reset
+a {
+  text-decoration: none;
+}
+
 *::selection {
   background-color: var(--fui-color-success-bg, rgba(16, 163, 127, 0.1));
   color: var(--fui-text-primary, #171717);

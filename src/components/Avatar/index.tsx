@@ -22,10 +22,14 @@ export interface AvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   name?: string;
   /** Size variant */
   size?: AvatarSize;
+  /** Custom avatar size (overrides size width/height) */
+  customSize?: number | string;
   /** Shape variant */
   shape?: 'circle' | 'square';
   /** Custom background color for fallback */
   color?: string;
+  /** Inline style for the underlying image element */
+  imageStyle?: React.CSSProperties;
 }
 
 export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -103,8 +107,10 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
       initials,
       name,
       size = 'md',
+      customSize,
       shape = 'circle',
       color,
+      imageStyle,
       className,
       style: styleProp,
       ...htmlProps
@@ -137,6 +143,15 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
     ].filter(Boolean).join(' ');
 
     const style: React.CSSProperties = { ...styleProp };
+    if (customSize !== undefined) {
+      const resolvedSize = typeof customSize === 'number' ? `${customSize}px` : customSize;
+      style.width = resolvedSize;
+      style.height = resolvedSize;
+      if (style.fontSize === undefined) {
+        style.fontSize = `calc(${resolvedSize} * 0.4)`;
+      }
+    }
+
     if (showFallback && fallbackColor) {
       style.backgroundColor = fallbackColor;
       const textColor = getContrastTextColor(fallbackColor);
@@ -162,6 +177,7 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
             alt={alt}
             className={styles.image}
             onError={() => setImageError(true)}
+            style={{ ...imageStyle }}
           />
         )}
         {showFallback && displayInitials && (

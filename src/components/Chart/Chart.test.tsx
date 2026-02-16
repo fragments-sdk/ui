@@ -11,8 +11,8 @@ import {
 
 // Mock recharts to avoid SVG rendering issues in jsdom
 vi.mock('recharts', () => ({
-  Tooltip: ({ content, ...props }: any) => <div data-testid="recharts-tooltip" {...props} />,
-  Legend: ({ content, ...props }: any) => <div data-testid="recharts-legend" {...props} />,
+  Tooltip: ({ content: _content, ...props }: any) => <div data-testid="recharts-tooltip" {...props} />,
+  Legend: ({ content: _content, ...props }: any) => <div data-testid="recharts-legend" {...props} />,
 }));
 
 const config: ChartConfig = {

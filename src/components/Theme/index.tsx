@@ -206,9 +206,10 @@ function ThemeProvider({
     setMounted(true);
   }, [isControlled, storageKey]);
 
-  // Apply theme to DOM
+  // Apply theme to DOM — skip until mounted so we don't overwrite
+  // the inline script that prevents flash on initial page load
   React.useEffect(() => {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined' || !mounted) return;
 
     const root = document.documentElement;
 
@@ -218,7 +219,7 @@ function ThemeProvider({
       root.classList.remove('light', 'dark');
       root.classList.add(resolvedMode);
     }
-  }, [resolvedMode, attribute]);
+  }, [resolvedMode, attribute, mounted]);
 
   // Persist to localStorage when mode changes
   React.useEffect(() => {

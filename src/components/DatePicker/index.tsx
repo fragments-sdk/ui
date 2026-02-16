@@ -350,7 +350,7 @@ function DatePickerRoot({
       // matches shadcn behavior and avoids premature close on first
       // click or preset selection.
     },
-    [selectedRangeProp, onRangeSelect, isControlledOpen, onOpenChange]
+    [selectedRangeProp, onRangeSelect]
   );
 
   const defaultPlaceholder = mode === 'range' ? 'Select date range' : 'Pick a date';

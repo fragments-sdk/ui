@@ -277,7 +277,6 @@
   width: var(--fui-navmenu-viewport-width);
   height: var(--fui-navmenu-viewport-height);
   transition:
-    left var(--fui-transition-fast, $fui-transition-fast),
     opacity var(--fui-transition-fast, $fui-transition-fast);
 
   // Hidden when no item is open
@@ -372,7 +371,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: 0 var(--fui-padding-container-md, $fui-padding-container-md);
   border-bottom: 1px solid var(--fui-border, $fui-border);
   min-height: var(--fui-appshell-header-height, $fui-appshell-header-height);
 }

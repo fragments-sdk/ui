@@ -57,6 +57,7 @@ export function useNavigationMenu({
   // Mobile state
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [mobileContentChildren, setMobileContentChildren] = React.useState<React.ReactNode>(null);
+  const [mobileBrandChildren, setMobileBrandChildren] = React.useState<React.ReactNode>(null);
 
   // Clean up timers on unmount
   React.useEffect(() => {
@@ -87,5 +88,7 @@ export function useNavigationMenu({
     setMobileOpen,
     mobileContentChildren,
     setMobileContentChildren,
+    mobileBrandChildren,
+    setMobileBrandChildren,
   };
 }

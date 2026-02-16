@@ -1,0 +1,123 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// BentoGrid Container
+// ============================================
+
+.grid {
+  display: grid;
+  width: 100%;
+  grid-auto-flow: dense;
+}
+
+// ============================================
+// Column counts
+// ============================================
+
+.columns2 { grid-template-columns: repeat(2, 1fr); }
+.columns3 { grid-template-columns: repeat(3, 1fr); }
+.columns4 { grid-template-columns: repeat(4, 1fr); }
+
+// ============================================
+// Responsive collapse
+// ============================================
+
+@include below-lg {
+  .columns3,
+  .columns4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include below-sm {
+  .columns2,
+  .columns3,
+  .columns4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================
+// Gap
+// ============================================
+
+.gapNone { gap: 0; }
+.gapXs   { gap: var(--fui-space-1, $fui-space-1); }
+.gapSm   { gap: var(--fui-space-2, $fui-space-2); }
+.gapMd   { gap: var(--fui-space-4, $fui-space-4); }
+.gapLg   { gap: var(--fui-space-6, $fui-space-6); }
+.gapXl   { gap: var(--fui-space-8, $fui-space-8); }
+
+// ============================================
+// BentoGrid Item
+// ============================================
+
+.item {
+  @include surface-elevated;
+
+  min-width: 0;
+  padding: var(--fui-padding-container-md, $fui-padding-container-md);
+  transition:
+    box-shadow var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    border-color: var(--fui-border-strong, $fui-border-strong);
+    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  // ---- Responsive span cascade ----
+  --_col-span: var(--bento-col-span, 1);
+  --_row-span: var(--bento-row-span, 1);
+
+  grid-column: span var(--_col-span);
+  grid-row: span var(--_row-span);
+
+  @include breakpoint-sm {
+    --_col-span: var(--bento-col-span-sm, var(--bento-col-span, 1));
+    --_row-span: var(--bento-row-span-sm, var(--bento-row-span, 1));
+  }
+
+  @include breakpoint-md {
+    --_col-span: var(--bento-col-span-md, var(--bento-col-span-sm, var(--bento-col-span, 1)));
+    --_row-span: var(--bento-row-span-md, var(--bento-row-span-sm, var(--bento-row-span, 1)));
+  }
+
+  @include breakpoint-lg {
+    --_col-span: var(--bento-col-span-lg, var(--bento-col-span-md, var(--bento-col-span-sm, var(--bento-col-span, 1))));
+    --_row-span: var(--bento-row-span-lg, var(--bento-row-span-md, var(--bento-row-span-sm, var(--bento-row-span, 1))));
+  }
+
+  @include breakpoint-xl {
+    --_col-span: var(--bento-col-span-xl, var(--bento-col-span-lg, var(--bento-col-span-md, var(--bento-col-span-sm, var(--bento-col-span, 1)))));
+    --_row-span: var(--bento-row-span-xl, var(--bento-row-span-lg, var(--bento-row-span-md, var(--bento-row-span-sm, var(--bento-row-span, 1)))));
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .item {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
