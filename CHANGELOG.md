@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.9.2
+
+### Patch Changes
+
+- [`e87cdc1`](https://github.com/ConanMcN/fragments/commit/e87cdc1ff55b202716614eb96d002ed0ff185777) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix Loading.Screen and Sidebar component previews breaking the docs app: contain fixed-position Loading.Screen within its preview container, and isolate Sidebar preview state from the docs app's SidebarProvider
+
 ## 0.9.1
 
 ### Patch Changes
