@@ -86,44 +86,56 @@ const demoContainerStyle: React.CSSProperties = {
   width: '100%',
 };
 
+// Isolate preview sidebar state from any parent SidebarProvider (e.g., docs app's AppShell)
+function PreviewIsolation({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider enableKeyboardShortcut={false}>
+      {children}
+    </SidebarProvider>
+  );
+}
+
 // Stateful demo for collapsed state
 function CollapsedDemo() {
   const [collapsed, setCollapsed] = useState(true);
   return (
-    <div style={demoContainerStyle}>
-      <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed}>
-        <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
-          <LogoIcon size={32} />
-          <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
-        </Sidebar.Header>
-        <Sidebar.Nav>
-          <Sidebar.Section>
-            <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
-            <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
-            <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>
-            <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
-          </Sidebar.Section>
-          <Sidebar.Section label="Settings">
-            <Sidebar.Item icon={<GearIcon />}>Preferences</Sidebar.Item>
-            <Sidebar.Item icon={<HelpIcon />}>Help</Sidebar.Item>
-          </Sidebar.Section>
-        </Sidebar.Nav>
-        <Sidebar.Footer>
-          <Sidebar.CollapseToggle />
-        </Sidebar.Footer>
-      </Sidebar>
-      <main style={mainContentStyle}>
-        Hover over icons to see tooltips. Click toggle to expand.
-      </main>
-    </div>
+    <SidebarProvider collapsed={collapsed} onCollapsedChange={setCollapsed} enableKeyboardShortcut={false}>
+      <div style={demoContainerStyle}>
+        <Sidebar>
+          <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
+            <LogoIcon size={32} />
+            <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
+          </Sidebar.Header>
+          <Sidebar.Nav>
+            <Sidebar.Section>
+              <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
+              <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
+              <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>
+              <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
+            </Sidebar.Section>
+            <Sidebar.Section label="Settings">
+              <Sidebar.Item icon={<GearIcon />}>Preferences</Sidebar.Item>
+              <Sidebar.Item icon={<HelpIcon />}>Help</Sidebar.Item>
+            </Sidebar.Section>
+          </Sidebar.Nav>
+          <Sidebar.Footer>
+            <Sidebar.CollapseToggle />
+          </Sidebar.Footer>
+        </Sidebar>
+        <main style={mainContentStyle}>
+          Hover over icons to see tooltips. Click toggle to expand.
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
 
 // Demo for submenu expansion using uncontrolled defaultExpanded
 function SubmenuDemo() {
   return (
-    <div style={demoContainerStyle}>
-      <Sidebar>
+    <PreviewIsolation>
+      <div style={demoContainerStyle}>
+        <Sidebar>
         <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
           <LogoIcon size={32} />
           <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
@@ -156,6 +168,7 @@ function SubmenuDemo() {
         Click on "Projects" or "Team" to toggle their submenus
       </main>
     </div>
+    </PreviewIsolation>
   );
 }
 
@@ -182,7 +195,7 @@ function ExternalTriggerContent() {
 function ProviderDemo() {
   return (
     <div style={demoContainerStyle}>
-      <SidebarProvider>
+      <SidebarProvider enableKeyboardShortcut={false}>
         <Sidebar>
           <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
             <LogoIcon size={32} />
@@ -206,8 +219,9 @@ function ProviderDemo() {
 // Demo for asChild pattern with mock Link
 function AsChildDemo() {
   return (
-    <div style={demoContainerStyle}>
-      <Sidebar>
+    <PreviewIsolation>
+      <div style={demoContainerStyle}>
+        <Sidebar>
         <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
           <LogoIcon size={32} />
           <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
@@ -236,14 +250,16 @@ function AsChildDemo() {
         Items rendered as Link components using asChild pattern
       </main>
     </div>
+    </PreviewIsolation>
   );
 }
 
 // Demo for section with action button
 function SectionActionDemo() {
   return (
-    <div style={demoContainerStyle}>
-      <Sidebar>
+    <PreviewIsolation>
+      <div style={demoContainerStyle}>
+        <Sidebar>
         <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
           <LogoIcon size={32} />
           <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
@@ -274,6 +290,7 @@ function SectionActionDemo() {
         Section header has an "Add" action button
       </main>
     </div>
+    </PreviewIsolation>
   );
 }
 
@@ -282,8 +299,9 @@ function SkeletonDemo() {
   const [loading, setLoading] = useState(true);
 
   return (
-    <div style={demoContainerStyle}>
-      <Sidebar>
+    <PreviewIsolation>
+      <div style={demoContainerStyle}>
+        <Sidebar>
         <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
           <LogoIcon size={32} />
           <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
@@ -317,6 +335,7 @@ function SkeletonDemo() {
         </div>
       </main>
     </div>
+    </PreviewIsolation>
   );
 }
 
@@ -324,8 +343,9 @@ function SkeletonDemo() {
 function OffcanvasDemo() {
   const [collapsed, setCollapsed] = useState(true);
   return (
-    <div style={demoContainerStyle}>
-      <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} collapsible="offcanvas">
+    <SidebarProvider collapsed={collapsed} onCollapsedChange={setCollapsed} collapsible="offcanvas" enableKeyboardShortcut={false}>
+      <div style={demoContainerStyle}>
+        <Sidebar>
         <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
           <LogoIcon size={32} />
           <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
@@ -346,6 +366,7 @@ function OffcanvasDemo() {
         Offcanvas mode hides sidebar completely. Toggle stays visible to re-open.
       </main>
     </div>
+    </SidebarProvider>
   );
 }
 
@@ -354,8 +375,9 @@ function RailDemo() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div style={{ ...demoContainerStyle, position: 'relative' }}>
-      <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed}>
+    <SidebarProvider collapsed={collapsed} onCollapsedChange={setCollapsed} enableKeyboardShortcut={false}>
+      <div style={{ ...demoContainerStyle, position: 'relative' }}>
+        <Sidebar>
         <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
           <LogoIcon size={32} />
           <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
@@ -380,6 +402,7 @@ function RailDemo() {
         </div>
       </main>
     </div>
+    </SidebarProvider>
   );
 }
 
@@ -544,32 +567,34 @@ export default defineFragment({
   </Sidebar.Footer>
 </Sidebar>`,
       render: () => (
-        <div style={demoContainerStyle}>
-          <Sidebar>
-            <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
-              <LogoIcon size={32} />
-              <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
-            </Sidebar.Header>
-            <Sidebar.Nav>
-              <Sidebar.Section>
-                <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
-                <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
-                <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>
-                <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
-              </Sidebar.Section>
-              <Sidebar.Section label="Settings">
-                <Sidebar.Item icon={<GearIcon />}>Preferences</Sidebar.Item>
-                <Sidebar.Item icon={<HelpIcon />}>Help</Sidebar.Item>
-              </Sidebar.Section>
-            </Sidebar.Nav>
-            <Sidebar.Footer>
-              <Sidebar.CollapseToggle />
-            </Sidebar.Footer>
-          </Sidebar>
-          <main style={mainContentStyle}>
-            Dashboard content goes here
-          </main>
-        </div>
+        <PreviewIsolation>
+          <div style={demoContainerStyle}>
+            <Sidebar>
+              <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
+                <LogoIcon size={32} />
+                <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
+              </Sidebar.Header>
+              <Sidebar.Nav>
+                <Sidebar.Section>
+                  <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
+                  <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
+                  <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>
+                  <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
+                </Sidebar.Section>
+                <Sidebar.Section label="Settings">
+                  <Sidebar.Item icon={<GearIcon />}>Preferences</Sidebar.Item>
+                  <Sidebar.Item icon={<HelpIcon />}>Help</Sidebar.Item>
+                </Sidebar.Section>
+              </Sidebar.Nav>
+              <Sidebar.Footer>
+                <Sidebar.CollapseToggle />
+              </Sidebar.Footer>
+            </Sidebar>
+            <main style={mainContentStyle}>
+              Dashboard content goes here
+            </main>
+          </div>
+        </PreviewIsolation>
       ),
     },
     {
@@ -612,28 +637,30 @@ export default defineFragment({
   </Sidebar.Nav>
 </Sidebar>`,
       render: () => (
-        <div style={demoContainerStyle}>
-          <Sidebar>
-            <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
-              <LogoIcon size={32} />
-              <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
-            </Sidebar.Header>
-            <Sidebar.Nav>
-              <Sidebar.Section>
-                <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
-                <Sidebar.Item icon={<ChartIcon />} badge="3">Analytics</Sidebar.Item>
-                <Sidebar.Item icon={<UsersIcon />} badge="12">Team</Sidebar.Item>
-                <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
-              </Sidebar.Section>
-            </Sidebar.Nav>
-            <Sidebar.Footer>
-              <Sidebar.CollapseToggle />
-            </Sidebar.Footer>
-          </Sidebar>
-          <main style={mainContentStyle}>
-            Badges indicate unread items or notifications
-          </main>
-        </div>
+        <PreviewIsolation>
+          <div style={demoContainerStyle}>
+            <Sidebar>
+              <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
+                <LogoIcon size={32} />
+                <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
+              </Sidebar.Header>
+              <Sidebar.Nav>
+                <Sidebar.Section>
+                  <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
+                  <Sidebar.Item icon={<ChartIcon />} badge="3">Analytics</Sidebar.Item>
+                  <Sidebar.Item icon={<UsersIcon />} badge="12">Team</Sidebar.Item>
+                  <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>
+                </Sidebar.Section>
+              </Sidebar.Nav>
+              <Sidebar.Footer>
+                <Sidebar.CollapseToggle />
+              </Sidebar.Footer>
+            </Sidebar>
+            <main style={mainContentStyle}>
+              Badges indicate unread items or notifications
+            </main>
+          </div>
+        </PreviewIsolation>
       ),
     },
     {
@@ -683,28 +710,30 @@ export default defineFragment({
   </Sidebar.Nav>
 </Sidebar>`,
       render: () => (
-        <div style={demoContainerStyle}>
-          <Sidebar>
-            <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
-              <LogoIcon size={32} />
-              <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
-            </Sidebar.Header>
-            <Sidebar.Nav>
-              <Sidebar.Section>
-                <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
-                <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
-                <Sidebar.Item icon={<UsersIcon />} disabled>Team (Coming Soon)</Sidebar.Item>
-                <Sidebar.Item icon={<FolderIcon />} disabled>Projects (Upgrade)</Sidebar.Item>
-              </Sidebar.Section>
-            </Sidebar.Nav>
-            <Sidebar.Footer>
-              <Sidebar.CollapseToggle />
-            </Sidebar.Footer>
-          </Sidebar>
-          <main style={mainContentStyle}>
-            Disabled items cannot be clicked
-          </main>
-        </div>
+        <PreviewIsolation>
+          <div style={demoContainerStyle}>
+            <Sidebar>
+              <Sidebar.Header collapsedContent={<LogoIcon size={32} />}>
+                <LogoIcon size={32} />
+                <span style={{ fontWeight: 600, fontSize: '16px' }}>Acme App</span>
+              </Sidebar.Header>
+              <Sidebar.Nav>
+                <Sidebar.Section>
+                  <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>
+                  <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>
+                  <Sidebar.Item icon={<UsersIcon />} disabled>Team (Coming Soon)</Sidebar.Item>
+                  <Sidebar.Item icon={<FolderIcon />} disabled>Projects (Upgrade)</Sidebar.Item>
+                </Sidebar.Section>
+              </Sidebar.Nav>
+              <Sidebar.Footer>
+                <Sidebar.CollapseToggle />
+              </Sidebar.Footer>
+            </Sidebar>
+            <main style={mainContentStyle}>
+              Disabled items cannot be clicked
+            </main>
+          </div>
+        </PreviewIsolation>
       ),
     },
     {

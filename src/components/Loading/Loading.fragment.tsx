@@ -144,7 +144,7 @@ export default defineFragment({
       name: 'Screen',
       description: 'Full-screen loading state with optional label',
       render: () => (
-        <div style={{ position: 'relative', width: '300px', height: '200px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', width: '300px', height: '200px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', transform: 'scale(1)' }}>
           <Loading.Screen size="lg" label="Loading application..." showLabel />
         </div>
       ),
