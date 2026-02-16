@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.9.1
+
+### Patch Changes
+
+- [`c99d41c`](https://github.com/ConanMcN/fragments/commit/c99d41cbb6542ab022166f352ab1167558f4a0a7) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add light mode colored card headers to landing page feature grid, add Vite build pipeline for UI dist output, and update publishConfig for npm publishing
+
 ## 0.9.0
 
 ### Minor Changes
