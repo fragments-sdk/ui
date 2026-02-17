@@ -1,6 +1,6 @@
 {
   "name": "@fragments-sdk/ui",
-  "version": "0.9.2",
+  "version": "0.9.4",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
@@ -14,8 +14,8 @@
   "types": "src/index.ts",
   "fragments": "fragments.json",
   "sideEffects": [
-    "*.scss",
-    "*.css"
+    "**/*.scss",
+    "**/*.css"
   ],
   "exports": {
     ".": "./src/index.ts",
@@ -122,7 +122,10 @@
           "default": "./dist/table.cjs"
         }
       },
-      "./styles": "./src/styles/globals.scss",
+      "./styles": {
+        "sass": "./src/styles/globals.scss",
+        "default": "./dist/assets/ui.css"
+      },
       "./tokens": "./src/tokens/_variables.scss",
       "./mixins": "./src/tokens/_mixins.scss",
       "./brand": {

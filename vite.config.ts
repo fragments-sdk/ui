@@ -16,6 +16,7 @@ export default defineConfig({
         table: resolve(__dirname, 'src/components/Table/index.tsx'),
       },
       formats: ['es', 'cjs'],
+      cssFileName: 'ui',
     },
     rollupOptions: {
       external: [
@@ -55,14 +56,14 @@ export default defineConfig({
         assetFileNames: 'assets/[name][extname]',
       },
     },
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     sourcemap: true,
     minify: false,
     outDir: 'dist',
   },
   css: {
     modules: {
-      localsConvention: 'camelCaseOnly',
+      localsConvention: 'camelCase',
     },
     preprocessorOptions: {
       scss: {
