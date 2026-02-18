@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Multi-select container — stacks input and chips vertically
 .multiContainer {
@@ -129,6 +129,7 @@
   cursor: pointer;
   border-radius: 0 var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0;
   transition: color var(--fui-transition-fast, $fui-transition-fast);
+  margin-inline-end: 0.5rem;
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);
@@ -162,16 +163,16 @@
 
   // Item height derived from text-base font + vertical padding
   --_item-h: calc(
-    var(--fui-font-size-sm, #{$fui-font-size-sm}) * var(--fui-line-height-normal, #{$fui-line-height-normal}) +
-    var(--fui-space-2, #{$fui-space-2}) * 2
+    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
+      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
+      var(--fui-space-2, #{$fui-space-2}) * 2
   );
 
   min-width: var(--anchor-width);
   // Show N items + half-peek scroll hint (default 4.5 items)
   // !important needed to override Base UI's inline max-height: 100%
   max-height: calc(
-    var(--_item-h) * var(--fui-select-max-items, 4.5) +
-    var(--fui-space-1, #{$fui-space-1}) * 2
+    var(--_item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) * 2
   ) !important;
   overflow-y: auto !important;
   padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
@@ -206,7 +207,8 @@
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   width: 100%;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs)
+    var(--fui-padding-item-md, $fui-padding-item-md);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   cursor: pointer;
   outline: none;
@@ -252,7 +254,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--fui-padding-item-lg, $fui-padding-item-lg) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-padding-item-lg, $fui-padding-item-lg)
+    var(--fui-padding-item-md, $fui-padding-item-md);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
@@ -268,7 +271,8 @@
 
 // Group label
 .groupLabel {
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs)
+    var(--fui-padding-item-md, $fui-padding-item-md);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);

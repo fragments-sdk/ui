@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .container {
   width: 100%;
@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--fui-padding-inline-sm) var(--fui-padding-container-md);
+  padding: 0 var(--fui-padding-container-sm);
   background-color: var(--fui-code-header-bg, $fui-code-header-bg);
   border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
   min-height: var(--fui-input-height, $fui-input-height);
@@ -90,9 +90,8 @@
   .codeContainer :global(.shiki),
   .loading pre {
     padding-right: calc(
-      var(--fui-padding-container-md, #{$fui-padding-container-md})
-      + var(--fui-target-size-min, #{$fui-target-size-min})
-      + var(--fui-space-3, #{$fui-space-3})
+      var(--fui-padding-container-md, #{$fui-padding-container-md}) +
+        var(--fui-target-size-min, #{$fui-target-size-min}) + var(--fui-space-3, #{$fui-space-3})
     );
   }
 }
@@ -101,33 +100,16 @@
   flex-shrink: 0;
 }
 
-// Persistent copy — wrapper becomes flex row, button sits beside code
-.persistentCopyWrapper {
-  display: flex;
-  align-items: center;
-
-  .codeContainer,
-  .loading {
-    flex: 1;
-    min-width: 0;
-
-    :global(.shiki),
-    pre {
-      padding-right: var(--fui-space-3, $fui-space-3);
-    }
-  }
-}
-
 .persistentCopy {
-  flex-shrink: 0;
-  padding-right: var(--fui-space-2, $fui-space-2);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .loading {
   pre {
     margin: 0;
-    padding: var(--fui-padding-container-md);
-    padding-right: var(--fui-padding-container-md);
+    padding: var(--fui-padding-container-sm);
+    padding-right: var(--fui-padding-container-sm);
     background-color: transparent !important;
     border: none !important;
     border-radius: 0 !important;
@@ -153,8 +135,8 @@
   :global(.shiki) {
     background-color: transparent !important;
     margin: 0;
-    padding: var(--fui-padding-container-md);
-    padding-right: var(--fui-padding-container-md);
+    padding: var(--fui-padding-container-sm);
+    padding-right: var(--fui-padding-container-sm);
     border: none !important;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
@@ -279,9 +261,8 @@
     .codeContainer :global(.shiki),
     .loading pre {
       padding-right: calc(
-        var(--fui-padding-container-sm, #{$fui-padding-container-sm})
-        + var(--fui-target-size-min, #{$fui-target-size-min})
-        + var(--fui-space-3, #{$fui-space-3})
+        var(--fui-padding-container-sm, #{$fui-padding-container-sm}) +
+          var(--fui-target-size-min, #{$fui-target-size-min}) + var(--fui-space-3, #{$fui-space-3})
       );
     }
   }
@@ -317,7 +298,7 @@
   justify-content: center;
   gap: var(--fui-space-1, $fui-space-1);
   width: 100%;
-  padding: var(--fui-padding-inline-sm);
+  padding: 0 var(--fui-padding-inline-sm);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   font-family: var(--fui-font-sans, $fui-font-sans);
@@ -335,7 +316,8 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
+      var(--fui-focus-ring-color, $fui-focus-ring-color);
     outline-offset: calc(-1 * var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}));
   }
 }

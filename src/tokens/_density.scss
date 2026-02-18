@@ -7,8 +7,8 @@
 //
 // ============================================
 
-@use 'sass:math';
-@use 'sass:map';
+@use "sass:math";
+@use "sass:map";
 
 // --------------------------------------------
 // Density Definitions
@@ -21,51 +21,69 @@ $density-compact: (
   base-unit: 6px,
   base-font-size: 14px,
   // Button heights (more compact)
-  button-height-sm: 24px,   // ~4 units
-  button-height-md: 30px,   // 5 units
-  button-height-lg: 36px,   // 6 units
+  button-height-sm: 24px,
+  // ~4 units
+  button-height-md: 30px,
+  // 5 units
+  button-height-lg: 36px,
+  // 6 units
   // Input height
-  input-height: 32px,       // ~5.3 units
-  input-height-sm: 24px,    // 4 units
-  input-height-lg: 36px,    // 6 units
+  input-height: 32px,
+  // ~5.3 units
+  input-height-sm: 24px,
+  // 4 units
+  input-height-lg: 36px,
+  // 6 units
   // Touch targets (minimum for accessibility)
   touch-sm: 24px,
   touch-md: 30px,
-  touch-lg: 36px
+  touch-lg: 36px,
 );
 
 $density-default: (
   base-unit: 7px,
   base-font-size: 14px,
   // Button heights (current values)
-  button-height-sm: 28px,   // 4 units
-  button-height-md: 36px,   // ~5 units
-  button-height-lg: 44px,   // ~6 units
+  button-height-sm: 28px,
+  // 4 units
+  button-height-md: 36px,
+  // ~5 units
+  button-height-lg: 44px,
+  // ~6 units
   // Input height
-  input-height: 40px,       // ~6 units
-  input-height-sm: 28px,    // 4 units
-  input-height-lg: 44px,    // ~6 units
+  input-height: 40px,
+  // ~6 units
+  input-height-sm: 28px,
+  // 4 units
+  input-height-lg: 44px,
+  // ~6 units
   // Touch targets
   touch-sm: 24px,
   touch-md: 32px,
-  touch-lg: 44px
+  touch-lg: 44px,
 );
 
 $density-relaxed: (
   base-unit: 8px,
   base-font-size: 14px,
   // Button heights (more spacious)
-  button-height-sm: 32px,   // 4 units
-  button-height-md: 40px,   // 5 units
-  button-height-lg: 48px,   // 6 units
+  button-height-sm: 32px,
+  // 4 units
+  button-height-md: 40px,
+  // 5 units
+  button-height-lg: 48px,
+  // 6 units
   // Input height
-  input-height: 44px,       // ~5.5 units
-  input-height-sm: 32px,    // 4 units
-  input-height-lg: 48px,    // 6 units
+  input-height: 44px,
+  // ~5.5 units
+  input-height-sm: 32px,
+  // 4 units
+  input-height-lg: 48px,
+  // 6 units
   // Touch targets
   touch-sm: 32px,
   touch-md: 40px,
-  touch-lg: 48px
+  touch-lg: 48px,
 );
 
 // --------------------------------------------
@@ -74,7 +92,7 @@ $density-relaxed: (
 $densities: (
   "compact": $density-compact,
   "default": $density-default,
-  "relaxed": $density-relaxed
+  "relaxed": $density-relaxed,
 );
 
 // --------------------------------------------
@@ -119,19 +137,29 @@ $densities: (
   @return (
     // Micro spacing (pixel-precise for tiny alignments)
     px: 1px,
-    0-5: $unit-rem * 0.3,     // ~2px for 7px base
-    0-75: $unit-rem * 0.43,   // ~3px for 7px base
+    0-5: $unit-rem * 0.3,
+    // ~2px for 7px base
+    0-75: $unit-rem * 0.43,
 
+    // ~3px for 7px base
     // Standard spacing scale
-    1: $unit-rem,             // 1 unit
-    2: $unit-rem * 2,         // 2 units
-    3: $unit-rem * 3,         // 3 units
-    4: $unit-rem * 4,         // 4 units
-    5: $unit-rem * 5,         // 5 units
-    6: $unit-rem * 6,         // 6 units
-    8: $unit-rem * 8,         // 8 units
-    10: $unit-rem * 10,       // 10 units
-    12: $unit-rem * 12        // 12 units
+    1: $unit-rem,
+    // 1 unit
+    2: $unit-rem * 2,
+    // 2 units
+    3: $unit-rem * 3,
+    // 3 units
+    4: $unit-rem * 4,
+    // 4 units
+    5: $unit-rem * 5,
+    // 5 units
+    6: $unit-rem * 6,
+    // 6 units
+    8: $unit-rem * 8,
+    // 8 units
+    10: $unit-rem * 10,
+    // 10 units
+    12: $unit-rem * 12 // 12 units
   );
 }
 
@@ -145,23 +173,35 @@ $densities: (
 
   @return (
     // Container padding: Cards, Dialogs, Popovers
-    container-sm: $unit-rem * 3,   // 3 units
-    container-md: $unit-rem * 4,   // 4 units
-    container-lg: $unit-rem * 6,   // 6 units
+    container-sm: $unit-rem * 3,
+    // 3 units
+    container-md: $unit-rem * 4,
+    // 4 units
+    container-lg: $unit-rem * 6,
 
+    // 6 units
     // Inline padding: Alerts, Toasts
-    inline-sm: $unit-rem * 2,      // 2 units
-    inline-md: $unit-rem * 3,      // 3 units
-    inline-lg: $unit-rem * 4,      // 4 units
+    inline-xs: $unit-rem * 1,
+    // 1 unit
+    inline-sm: $unit-rem * 2,
+    // 2 units
+    inline-md: $unit-rem * 3,
+    // 3 units
+    inline-lg: $unit-rem * 4,
 
+    // 4 units
     // Container padding (extended)
-    container-xl: $unit-rem * 8,   // 8 units
+    container-xl: $unit-rem * 8,
 
+    // 8 units
     // Item padding: Accordion, Tabs, Menu items
-    item-xs: $unit-rem * 1,        // 1 unit
-    item-sm: $unit-rem * 2,        // 2 units
-    item-md: $unit-rem * 3,        // 3 units
-    item-lg: $unit-rem * 4         // 4 units
+    item-xs: $unit-rem * 1,
+    // 1 unit
+    item-sm: $unit-rem * 2,
+    // 2 units
+    item-md: $unit-rem * 3,
+    // 3 units
+    item-lg: $unit-rem * 4 // 4 units
   );
 }
 

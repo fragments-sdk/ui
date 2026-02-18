@@ -22,7 +22,7 @@
 // ============================================
 
 // Import computed values from seed system
-@use 'computed' as computed;
+@use "computed" as computed;
 
 // --------------------------------------------
 // Base Configuration
@@ -43,17 +43,27 @@ $fui-base-unit: computed.$computed-base-unit !default;
 // --------------------------------------------
 // Typography
 // --------------------------------------------
-$fui-font-sans: 'Geist Sans', 'Geist', Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
-$fui-font-mono: 'Geist Mono', 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace !default;
+$fui-font-sans:
+  "Geist Sans",
+  "Geist",
+  Inter,
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  sans-serif !default;
+$fui-font-mono:
+  "Geist Mono", "SF Mono", SFMono-Regular, ui-monospace, "Cascadia Code", Menlo, monospace !default;
 
 // Font sizes (rem based on 14px root)
-$fui-font-size-2xs: 0.714rem !default;  // 10px
-$fui-font-size-xs: 0.857rem !default;   // 12px
-$fui-font-size-sm: 1rem !default;       // 14px (base)
+$fui-font-size-2xs: 0.714rem !default; // 10px
+$fui-font-size-xs: 0.857rem !default; // 12px
+$fui-font-size-sm: 1rem !default; // 14px (base)
 $fui-font-size-base: 1.143rem !default; // 16px
-$fui-font-size-lg: 1.286rem !default;   // 18px
-$fui-font-size-xl: 1.714rem !default;   // 24px
-$fui-font-size-2xl: 2.143rem !default;  // 30px
+$fui-font-size-lg: 1.286rem !default; // 18px
+$fui-font-size-xl: 1.714rem !default; // 24px
+$fui-font-size-2xl: 2.143rem !default; // 30px
 
 $fui-font-weight-normal: 400 !default;
 $fui-font-weight-medium: 500 !default;
@@ -92,6 +102,7 @@ $fui-padding-container-lg: computed.$computed-padding-container-lg !default;
 $fui-padding-container-xl: computed.$computed-padding-container-xl !default;
 
 // Inline padding: Alerts, Toasts
+$fui-padding-inline-xs: computed.$computed-padding-inline-xs !default;
 $fui-padding-inline-sm: computed.$computed-padding-inline-sm !default;
 $fui-padding-inline-md: computed.$computed-padding-inline-md !default;
 $fui-padding-inline-lg: computed.$computed-padding-inline-lg !default;
@@ -270,37 +281,37 @@ $fui-target-size-min: 1.714rem !default; // 24px
 $fui-target-size-comfortable: $fui-touch-md !default;
 
 // Toggle/Switch
-$fui-toggle-width-sm: 2.286rem !default;   // 32px
-$fui-toggle-width-md: 2.857rem !default;   // 40px
+$fui-toggle-width-sm: 2.286rem !default; // 32px
+$fui-toggle-width-md: 2.857rem !default; // 40px
 $fui-toggle-height-sm: $fui-target-size-min !default; // 24px
-$fui-toggle-height-md: 2rem !default;      // 28px
-$fui-toggle-thumb-sm: 1rem !default;       // 14px
-$fui-toggle-thumb-md: 1.286rem !default;   // 18px
-$fui-toggle-thumb-offset: 2px !default;    // Thumb inset from track edge
+$fui-toggle-height-md: 2rem !default; // 28px
+$fui-toggle-thumb-sm: 1rem !default; // 14px
+$fui-toggle-thumb-md: 1.286rem !default; // 18px
+$fui-toggle-thumb-offset: 2px !default; // Thumb inset from track edge
 
 // Badge
 $fui-badge-dot-sm: 5px !default;
 $fui-badge-dot-md: 6px !default;
 
 // Icon sizes (standard conventions)
-$fui-icon-sm: 1rem !default;        // 14px (2 units)
-$fui-icon-md: 1.143rem !default;    // 16px (standard small icon)
-$fui-icon-lg: 1.429rem !default;    // 20px (standard medium icon)
-$fui-icon-xl: 1.714rem !default;    // 24px (standard large icon)
+$fui-icon-sm: 1rem !default; // 14px (2 units)
+$fui-icon-md: 1.143rem !default; // 16px (standard small icon)
+$fui-icon-lg: 1.429rem !default; // 20px (standard medium icon)
+$fui-icon-xl: 1.714rem !default; // 24px (standard large icon)
 
 // Animation offsets
-$fui-anim-offset-sm: 4px !default;  // Small slide animation
-$fui-anim-offset-md: 8px !default;  // Medium slide animation
+$fui-anim-offset-sm: 4px !default; // Small slide animation
+$fui-anim-offset-md: 8px !default; // Medium slide animation
 
 // Popover/Tooltip arrow
 $fui-arrow-size: 10px !default;
 
 // Sidebar-specific
-$fui-sidebar-item-height: 2.5rem !default;    // 35px (5 units)
+$fui-sidebar-item-height: 2.5rem !default; // 35px (5 units)
 $fui-sidebar-subitem-height: 2.571rem !default; // 36px
 $fui-sidebar-indicator-width: 2px !default;
 $fui-sidebar-indicator-height: 1.143rem !default; // 16px
-$fui-sidebar-rail-width: 1.143rem !default;   // 16px
+$fui-sidebar-rail-width: 1.143rem !default; // 16px
 $fui-sidebar-rail-indicator-width: 4px !default;
 $fui-sidebar-rail-indicator-height: 2.857rem !default; // 40px
 $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
@@ -316,9 +327,9 @@ $fui-emptystate-width-md: 320px !default;
 $fui-emptystate-width-lg: 400px !default;
 
 // EmptyState icon sizes
-$fui-emptystate-icon-sm: $fui-icon-xl !default;  // 24px
-$fui-emptystate-icon-md: 2.286rem !default;      // 32px
-$fui-emptystate-icon-lg: 2.857rem !default;      // 40px
+$fui-emptystate-icon-sm: $fui-icon-xl !default; // 24px
+$fui-emptystate-icon-md: 2.286rem !default; // 32px
+$fui-emptystate-icon-lg: 2.857rem !default; // 40px
 
 // ColorChip/ColorPicker
 $fui-colorpicker-size: 180px !default;
@@ -345,8 +356,8 @@ $fui-theme-toggle-lg-height: 34px !default;
 $fui-theme-toggle-lg-icon: 18px !default;
 
 // CodeBlock (light mode)
-$fui-code-bg: #1e1e1e !default;
-$fui-code-header-bg: $fui-code-bg !default;
+$fui-code-bg: #000000 !default;
+$fui-code-header-bg: #1c1c1f !default;
 $fui-code-text: #d4d4d4 !default;
 $fui-code-text-muted: #6b7280 !default;
 $fui-code-border: rgba(255, 255, 255, 0.1) !default;
@@ -365,13 +376,15 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25) !default;
 // Tooltip (always dark bg with light text)
 $fui-tooltip-bg: #1e293b !default;
 $fui-tooltip-text: #f8fafc !default;
-$fui-tooltip-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
+$fui-tooltip-shadow:
+  0 4px 6px -1px rgba(0, 0, 0, 0.2),
+  0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
 
 // Hero/Marketing gradient accent
 $fui-hero-gradient-color: rgba(120, 119, 198, 0.15) !default;
 
 // CodeBlock (dark mode) - same as light, code blocks stay dark
-$fui-dark-code-bg: var(--fui-bg-elevated) !default;
+$fui-dark-code-bg: #000000 !default;
 $fui-dark-code-header-bg: var(--fui-bg-elevated) !default;
 $fui-dark-code-text: #d4d4d4 !default;
 $fui-dark-code-text-muted: #6b7280 !default;
@@ -391,7 +404,9 @@ $fui-dark-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25) !default;
 // Tooltip (dark mode) - same as light, tooltips stay dark
 $fui-dark-tooltip-bg: #1e293b !default;
 $fui-dark-tooltip-text: #f8fafc !default;
-$fui-dark-tooltip-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.25) !default;
+$fui-dark-tooltip-shadow:
+  0 4px 6px -1px rgba(0, 0, 0, 0.3),
+  0 2px 4px -2px rgba(0, 0, 0, 0.25) !default;
 
 // Hero/Marketing gradient accent (dark mode)
 $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;

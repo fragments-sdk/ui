@@ -8,12 +8,12 @@
 //
 // ============================================
 
-@use 'sass:map';
-@use 'seeds' as seeds;
-@use 'palettes' as palettes;
-@use 'density' as density;
-@use 'radius' as radius;
-@use 'derive' as derive;
+@use "sass:map";
+@use "seeds" as seeds;
+@use "palettes" as palettes;
+@use "density" as density;
+@use "radius" as radius;
+@use "derive" as derive;
 
 // --------------------------------------------
 // Resolve Seed Values
@@ -60,6 +60,7 @@ $computed-padding-container-sm: map.get($_padding, container-sm);
 $computed-padding-container-md: map.get($_padding, container-md);
 $computed-padding-container-lg: map.get($_padding, container-lg);
 $computed-padding-container-xl: map.get($_padding, container-xl);
+$computed-padding-inline-xs: map.get($_padding, inline-xs);
 $computed-padding-inline-sm: map.get($_padding, inline-sm);
 $computed-padding-inline-md: map.get($_padding, inline-md);
 $computed-padding-inline-lg: map.get($_padding, inline-lg);

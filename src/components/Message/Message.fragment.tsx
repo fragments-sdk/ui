@@ -65,6 +65,14 @@ export default defineFragment({
       type: 'node',
       description: 'Custom avatar override (null to hide)',
     },
+    'Avatar.src': {
+      type: 'string',
+      description: 'Image URL for the avatar (on Message.Avatar sub-component)',
+    },
+    'Avatar.alt': {
+      type: 'string',
+      description: 'Alt text for image avatars (on Message.Avatar sub-component)',
+    },
     actions: {
       type: 'node',
       description: 'Hover actions (copy, regenerate)',
@@ -97,6 +105,8 @@ export default defineFragment({
       'timestamp: Date - when message was sent',
       'avatar: ReactNode - custom avatar (null to hide)',
       'actions: ReactNode - hover actions',
+      'Avatar.src: string - image URL for avatar',
+      'Avatar.alt: string - alt text for image avatar',
     ],
     scenarioTags: [
       'ui.chat',
@@ -177,6 +187,30 @@ export default defineFragment({
             This message failed to send.
           </Message.Content>
         </Message>
+      ),
+    },
+    {
+      name: 'Custom Avatars',
+      description: 'Messages with image-based avatars',
+      render: () => (
+        <>
+          <Message
+            role="user"
+            avatar={<Message.Avatar src="https://i.pravatar.cc/64?u=user" alt="Jane" />}
+          >
+            <Message.Content>
+              Can you help me understand this error?
+            </Message.Content>
+          </Message>
+          <Message
+            role="assistant"
+            avatar={<Message.Avatar src="https://i.pravatar.cc/64?u=bot" alt="AI Assistant" />}
+          >
+            <Message.Content>
+              Sure! Let me take a look at that for you.
+            </Message.Content>
+          </Message>
+        </>
       ),
     },
     {

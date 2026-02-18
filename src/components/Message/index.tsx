@@ -45,6 +45,10 @@ export interface MessageTimestampProps extends React.HTMLAttributes<HTMLSpanElem
 
 export interface MessageAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
+  /** Image URL for the avatar */
+  src?: string;
+  /** Alt text for image avatars */
+  alt?: string;
 }
 
 // ============================================
@@ -118,7 +122,7 @@ function AssistantIcon() {
       fill="currentColor"
       aria-hidden="true"
     >
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+      <path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z" />
     </svg>
   );
 }
@@ -194,12 +198,13 @@ function MessageTimestamp({
   );
 }
 
-function MessageAvatar({ children, className, ...htmlProps }: MessageAvatarProps) {
+function MessageAvatar({ children, src, alt, className, ...htmlProps }: MessageAvatarProps) {
   const { role } = useMessageContext();
 
   const classes = [
     styles.avatar,
     styles[`avatar${role.charAt(0).toUpperCase() + role.slice(1)}`],
+    src && styles.avatarImage,
     className,
   ].filter(Boolean).join(' ');
 
@@ -209,9 +214,13 @@ function MessageAvatar({ children, className, ...htmlProps }: MessageAvatarProps
       ? <AssistantIcon />
       : <SystemIcon />;
 
+  const content = children ?? (src
+    ? <img src={src} alt={alt ?? role} className={styles.avatarImg} />
+    : defaultIcon);
+
   return (
     <div {...htmlProps} className={classes}>
-      {children ?? defaultIcon}
+      {content}
     </div>
   );
 }
