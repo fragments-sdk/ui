@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.9.5
+
+### Patch Changes
+
+- [`fe18004`](https://github.com/ConanMcN/fragments/commit/fe18004a81b938064b84d86b5a235cca49394de0) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add DataTable component, improve Table, clean up dead code, and update viewer components
+
 ## 0.9.2
 
 ### Patch Changes
