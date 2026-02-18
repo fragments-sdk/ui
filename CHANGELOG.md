@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.9.7
+
+### Patch Changes
+
+- [`284ec11`](https://github.com/ConanMcN/fragments/commit/284ec113727cbda339c531abfecbea89b17beb5b) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Achieve 100/100 react-doctor score: fix conditional hooks, cascading setState, add keyboard handlers, extract helper functions, and configure false positive exclusions
+
 ## 0.9.6
 
 ### Patch Changes
