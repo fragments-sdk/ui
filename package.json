@@ -25,6 +25,7 @@
     "./codeblock": "./src/components/CodeBlock/index.tsx",
     "./colorpicker": "./src/components/ColorPicker/index.tsx",
     "./table": "./src/components/Table/index.tsx",
+    "./data-table": "./src/components/DataTable/index.tsx",
     "./styles": "./src/styles/globals.scss",
     "./tokens": "./src/tokens/_variables.scss",
     "./mixins": "./src/tokens/_mixins.scss",
@@ -120,6 +121,16 @@
         "require": {
           "types": "./dist/components/Table/index.d.ts",
           "default": "./dist/table.cjs"
+        }
+      },
+      "./data-table": {
+        "import": {
+          "types": "./dist/components/DataTable/index.d.ts",
+          "default": "./dist/data-table.js"
+        },
+        "require": {
+          "types": "./dist/components/DataTable/index.d.ts",
+          "default": "./dist/data-table.cjs"
         }
       },
       "./styles": {

@@ -51,10 +51,10 @@
   position: sticky;
   top: 0;
   z-index: 1;
+}
 
-  > tr {
-    border-bottom: 1px solid var(--fui-border, $fui-border);
-  }
+.headerRow {
+  border-bottom: 1px solid var(--fui-border, $fui-border);
 }
 
 .th {
@@ -63,6 +63,7 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
   vertical-align: middle;
+  user-select: none;
 
   &:first-child {
     border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
@@ -77,6 +78,41 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
+}
+
+// Sortable header cell (for focus styles)
+.thSortable {
+  padding: 0;
+}
+
+.sortButton {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  color: inherit;
+  text-align: left;
+  transition: color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.sortIndicator {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  flex-shrink: 0;
+
+  .sortButton:hover & {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
 }
 
 // Body
@@ -95,6 +131,22 @@
   }
 }
 
+.clickable {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:active {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
 .selected {
   background-color: rgba($fui-color-accent, 0.08);
 
@@ -109,20 +161,19 @@
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
-// Footer
-.tfoot {
-  border-top: 2px solid var(--fui-border, $fui-border);
-
-  .td,
-  .th {
-    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  }
-}
-
 // Striped rows
 .striped {
-  .tbody .row:nth-child(even) {
+  .row:nth-child(even) {
     background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+  }
+
+  // Hover and selected override stripe
+  .clickable:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  .clickable:active {
+    background-color: var(--fui-bg-active, $fui-bg-active);
   }
 
   .selected {
@@ -141,6 +192,71 @@
   overflow: hidden;
 }
 
+// Fixed layout for explicit column sizes
+.fixedLayout {
+  table-layout: fixed;
+}
+
+// Checkbox column
+.checkboxCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Expandable rows
+.expandCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+}
+
+.expandButton {
+  @include button-reset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  transition: color var(--fui-transition-fast, $fui-transition-fast),
+              background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.subRow {
+  background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+// Empty state
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fui-space-12, $fui-space-12) var(--fui-space-6, $fui-space-6);
+}
+
+.emptyMessage {
+  font-family: var(--fui-font-sans, $fui-font-sans);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
 // Responsive: allow horizontal scroll on small screens
 @include below-sm {
   .wrapper {
@@ -156,12 +272,16 @@
 // ============================================
 
 @media (prefers-contrast: more) {
-  .thead > tr {
+  .headerRow {
     border-bottom-width: 2px;
   }
 
   .row {
     border-bottom-width: 2px;
+  }
+
+  .sortButton:focus-visible {
+    outline-width: 3px;
   }
 }
 
@@ -171,6 +291,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .row {
+    transition: none;
+  }
+
+  .sortButton {
     transition: none;
   }
 }

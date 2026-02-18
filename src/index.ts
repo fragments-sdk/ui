@@ -210,16 +210,27 @@ export {
   type LoadingScreenProps,
 } from './components/Loading';
 
-// Table
+// Table (simple semantic HTML table)
 export {
   Table,
-  createColumns,
   type TableProps,
-  type TableColumn,
+  type TableRowProps,
+  type TableCellProps,
+  type TableHeaderCellProps,
+  type TableCaptionProps,
+} from './components/Table';
+
+// DataTable (TanStack-powered data table)
+export {
+  DataTable,
+  createColumns,
+  type DataTableProps,
+  type DataTableColumn,
   type ColumnDef,
   type SortingState,
   type RowSelectionState,
-} from './components/Table';
+  type ExpandedState,
+} from './components/DataTable';
 
 // EmptyState
 export {

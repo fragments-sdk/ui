@@ -117,6 +117,8 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   persistentCopy?: boolean;
   /** Placement of copy button when not using persistent copy */
   copyPlacement?: CodeBlockCopyPlacement;
+  /** Callback fired when the copy button is clicked and copy succeeds */
+  onCopy?: () => void;
 }
 
 function CopyIcon({ className }: { className?: string }) {
@@ -541,6 +543,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
       compact = false,
       persistentCopy = false,
       copyPlacement = 'auto',
+      onCopy,
       className,
       ...htmlProps
     },
@@ -635,12 +638,13 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(
         await navigator.clipboard.writeText(trimmedCode);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+        onCopy?.();
       } catch (err) {
         if (process.env.NODE_ENV !== 'production') {
           console.error('Failed to copy:', err);
         }
       }
-    }, [trimmedCode]);
+    }, [trimmedCode, onCopy]);
 
     const toggleCollapsed = useCallback(() => {
       setIsCollapsed((prev) => !prev);
@@ -783,6 +787,8 @@ export interface TabbedCodeBlockProps {
   maxHeight?: number;
   /** Additional class name */
   className?: string;
+  /** Callback fired when a tab's copy button is clicked. Receives the tab label. */
+  onCopy?: (tabLabel: string) => void;
 }
 
 function TabbedCodeBlock({
@@ -796,6 +802,7 @@ function TabbedCodeBlock({
   wordWrap,
   maxHeight,
   className,
+  onCopy,
 }: TabbedCodeBlockProps) {
   const defaultValue = defaultTab || tabs[0]?.label || '';
 
@@ -820,6 +827,7 @@ function TabbedCodeBlock({
               showLineNumbers={showLineNumbers}
               wordWrap={wordWrap}
               maxHeight={maxHeight}
+              onCopy={onCopy ? () => onCopy(tab.label) : undefined}
             />
           </TabsPanel>
         ))}

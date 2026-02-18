@@ -9,6 +9,3 @@ export type { ActivityFeedProps, ActivityFeedItem } from './ActivityFeed';
 
 export { DashboardLayout } from './DashboardLayout';
 export type { DashboardLayoutProps } from './DashboardLayout';
-
-export { DataTable } from './DataTable';
-export type { DataTableProps, DataTableColumn } from './DataTable';

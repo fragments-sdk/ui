@@ -1,129 +1,219 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Table, createColumns } from './index';
-
-type Person = { id: string; name: string; age: number };
-
-const columns = createColumns<Person>([
-  { key: 'name', header: 'Name' },
-  { key: 'age', header: 'Age' },
-]);
-
-const data: Person[] = [
-  { id: '1', name: 'Alice', age: 30 },
-  { id: '2', name: 'Bob', age: 25 },
-  { id: '3', name: 'Carol', age: 35 },
-];
+import { describe, it, expect } from 'vitest';
+import { render, screen, expectNoA11yViolations } from '../../test/utils';
+import { Table } from './index';
 
 describe('Table', () => {
-  it('renders a table element with column headers', () => {
-    render(<Table columns={columns} data={data} aria-label="People" />);
+  it('renders a table with semantic structure', () => {
+    render(
+      <Table aria-label="People">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Age</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Alice</Table.Cell>
+            <Table.Cell>30</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
     expect(screen.getByRole('table')).toBeInTheDocument();
-    const headers = screen.getAllByRole('columnheader');
-    expect(headers).toHaveLength(2);
-    expect(headers[0]).toHaveAttribute('scope', 'col');
-    expect(headers[0]).toHaveTextContent('Name');
-    expect(headers[1]).toHaveTextContent('Age');
-  });
-
-  it('renders data rows', () => {
-    render(<Table columns={columns} data={data} aria-label="People" />);
-    const rows = screen.getAllByRole('row');
-    // 1 header row + 3 data rows
-    expect(rows).toHaveLength(4);
+    expect(screen.getAllByRole('columnheader')).toHaveLength(2);
+    expect(screen.getAllByRole('row')).toHaveLength(2);
     expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('25')).toBeInTheDocument();
   });
 
-  it('renders caption when provided', () => {
-    render(<Table columns={columns} data={data} caption="People Table" aria-label="People" />);
-    expect(screen.getByText('People Table')).toBeInTheDocument();
-  });
+  it('adds scope="col" to header cells by default', () => {
+    render(
+      <Table aria-label="Test">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Col 1</Table.HeaderCell>
+            <Table.HeaderCell>Col 2</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>A</Table.Cell>
+            <Table.Cell>B</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
 
-  it('shows empty state message when data is empty', () => {
-    render(<Table columns={columns} data={[]} emptyMessage="Nothing here" aria-label="People" />);
-    expect(screen.getByText('Nothing here')).toBeInTheDocument();
-    expect(screen.queryByRole('table')).not.toBeInTheDocument();
-  });
-
-  it('defaults to "No data available" empty message', () => {
-    render(<Table columns={columns} data={[]} aria-label="People" />);
-    expect(screen.getByText('No data available')).toBeInTheDocument();
-  });
-
-  it('supports sortable columns with aria-sort', async () => {
-    const user = userEvent.setup();
-    render(<Table columns={columns} data={data} sortable aria-label="People" />);
     const headers = screen.getAllByRole('columnheader');
-    // Initially aria-sort="none" for sortable columns
-    expect(headers[0]).toHaveAttribute('aria-sort', 'none');
-
-    // Click the sort button inside the first header
-    const sortButton = headers[0].querySelector('button')!;
-    await user.click(sortButton);
-    expect(headers[0]).toHaveAttribute('aria-sort', 'ascending');
-
-    await user.click(sortButton);
-    expect(headers[0]).toHaveAttribute('aria-sort', 'descending');
+    expect(headers[0]).toHaveAttribute('scope', 'col');
+    expect(headers[1]).toHaveAttribute('scope', 'col');
   });
 
-  it('calls onRowClick when a row is clicked', async () => {
-    const user = userEvent.setup();
-    const handleClick = vi.fn();
-    render(<Table columns={columns} data={data} onRowClick={handleClick} aria-label="People" />);
-    const rows = screen.getAllByRole('row');
-    // rows[0] is header, rows[1] is first data row
-    await user.click(rows[1]);
-    expect(handleClick).toHaveBeenCalledWith(data[0]);
+  it('renders visible caption', () => {
+    render(
+      <Table aria-label="Test">
+        <Table.Caption>My Table</Table.Caption>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>A</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>1</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
+    expect(screen.getByText('My Table')).toBeInTheDocument();
   });
 
-  it('applies striped class when striped prop is true', () => {
-    const { container } = render(<Table columns={columns} data={data} striped aria-label="People" />);
+  it('renders visually hidden caption', () => {
+    render(
+      <Table aria-label="Test">
+        <Table.Caption hidden>Hidden Caption</Table.Caption>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>A</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>1</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
+    const caption = screen.getByText('Hidden Caption');
+    expect(caption).toBeInTheDocument();
+    expect(caption.className).toContain('captionHidden');
+  });
+
+  it('applies striped class', () => {
+    const { container } = render(
+      <Table striped aria-label="Test">
+        <Table.Body>
+          <Table.Row><Table.Cell>A</Table.Cell></Table.Row>
+          <Table.Row><Table.Cell>B</Table.Cell></Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
     expect(container.querySelector('.striped')).toBeInTheDocument();
   });
 
-  it('createColumns helper generates proper column defs', () => {
-    const cols = createColumns<Person>([
-      { key: 'name', header: 'Full Name', width: 200 },
-      { key: 'age', header: 'Years', cell: (row) => `${row.age} years` },
-    ]);
-    expect(cols).toHaveLength(2);
-    expect(cols[0].id).toBe('name');
-    expect(cols[0].header).toBe('Full Name');
-    expect(cols[0].size).toBe(200);
-    expect(cols[1].id).toBe('age');
-  });
-
-  it('supports row selection', () => {
-    render(
-      <Table
-        columns={columns}
-        data={data}
-        selectable
-        rowSelection={{ '1': true }}
-        getRowId={(row) => row.id}
-        aria-label="People"
-      />
+  it('applies bordered class', () => {
+    const { container } = render(
+      <Table bordered aria-label="Test">
+        <Table.Body>
+          <Table.Row><Table.Cell>A</Table.Cell></Table.Row>
+        </Table.Body>
+      </Table>
     );
-    const rows = screen.getAllByRole('row');
-    // First data row (id='1') should have data-selected
-    expect(rows[1]).toHaveAttribute('data-selected');
+
+    expect(container.querySelector('.bordered')).toBeInTheDocument();
   });
 
-  it('supports keyboard activation of clickable rows', async () => {
-    const user = userEvent.setup();
-    const handleClick = vi.fn();
-    render(<Table columns={columns} data={data} onRowClick={handleClick} aria-label="People" />);
-    const rows = screen.getAllByRole('row');
-    rows[1].focus();
-    await user.keyboard('{Enter}');
-    expect(handleClick).toHaveBeenCalledWith(data[0]);
+  it('applies sm size class', () => {
+    const { container } = render(
+      <Table size="sm" aria-label="Test">
+        <Table.Body>
+          <Table.Row><Table.Cell>A</Table.Cell></Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
+    expect(container.querySelector('.sm')).toBeInTheDocument();
+  });
+
+  it('applies selected state on Row', () => {
+    render(
+      <Table aria-label="Test">
+        <Table.Body>
+          <Table.Row selected><Table.Cell>Selected row</Table.Cell></Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
+    const row = screen.getByRole('row');
+    expect(row).toHaveAttribute('data-selected');
+    expect(row.className).toContain('selected');
+  });
+
+  it('forwards HTML attributes to sub-components', () => {
+    render(
+      <Table aria-label="Test" data-testid="root">
+        <Table.Head data-testid="head">
+          <Table.Row data-testid="header-row">
+            <Table.HeaderCell data-testid="header-cell">H</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body data-testid="body">
+          <Table.Row data-testid="body-row">
+            <Table.Cell data-testid="cell">C</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+        <Table.Footer data-testid="footer">
+          <Table.Row data-testid="footer-row">
+            <Table.Cell data-testid="footer-cell">F</Table.Cell>
+          </Table.Row>
+        </Table.Footer>
+      </Table>
+    );
+
+    expect(screen.getByTestId('root')).toBeInTheDocument();
+    expect(screen.getByTestId('head')).toBeInTheDocument();
+    expect(screen.getByTestId('body')).toBeInTheDocument();
+    expect(screen.getByTestId('footer')).toBeInTheDocument();
+    expect(screen.getByTestId('header-row')).toBeInTheDocument();
+    expect(screen.getByTestId('body-row')).toBeInTheDocument();
+    expect(screen.getByTestId('footer-row')).toBeInTheDocument();
+    expect(screen.getByTestId('header-cell')).toBeInTheDocument();
+    expect(screen.getByTestId('cell')).toBeInTheDocument();
+    expect(screen.getByTestId('footer-cell')).toBeInTheDocument();
+  });
+
+  it('renders tfoot element', () => {
+    const { container } = render(
+      <Table aria-label="Test">
+        <Table.Body>
+          <Table.Row><Table.Cell>A</Table.Cell></Table.Row>
+        </Table.Body>
+        <Table.Footer>
+          <Table.Row><Table.Cell>Total</Table.Cell></Table.Row>
+        </Table.Footer>
+      </Table>
+    );
+
+    expect(container.querySelector('tfoot')).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {
     const { container } = render(
-      <Table columns={columns} data={data} caption="People Table" aria-label="People" />
+      <Table aria-label="People">
+        <Table.Caption>Team Members</Table.Caption>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Role</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Alice</Table.Cell>
+            <Table.Cell>Engineer</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Bob</Table.Cell>
+            <Table.Cell>Designer</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
     );
+
     await expectNoA11yViolations(container);
   });
 });
