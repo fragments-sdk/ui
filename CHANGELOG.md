@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.9.6
+
+### Patch Changes
+
+- Add image avatar support to Message.Avatar (src/alt props), introduce inline-xs padding token, and refine CodeBlock and Combobox styling
+
 ## 0.9.5
 
 ### Patch Changes
