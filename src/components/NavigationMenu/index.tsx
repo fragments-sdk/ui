@@ -840,7 +840,12 @@ function MobileCollapsibleSection({
         {label}
       </Collapsible.Trigger>
       <Collapsible.Content>
-        <div className={styles.drawerCollapsibleContent} onClick={onLinkClick}>
+        <div
+          className={styles.drawerCollapsibleContent}
+          onClick={onLinkClick}
+          onKeyDown={(e) => { if (e.key === 'Enter') onLinkClick(); }}
+          role="group"
+        >
           {children}
         </div>
       </Collapsible.Content>

@@ -3,6 +3,22 @@ import { defineFragment } from '@fragments-sdk/cli/core';
 import { Menu } from '.';
 import { Button } from '../Button';
 
+function CheckedItemsMenuDemo() {
+  const [view, setView] = React.useState('grid');
+  return (
+    <Menu>
+      <Menu.Trigger asChild>
+        <Button variant="secondary">View</Button>
+      </Menu.Trigger>
+      <Menu.Content>
+        <Menu.Item checked={view === 'grid'} onSelect={() => setView('grid')}>Grid</Menu.Item>
+        <Menu.Item checked={view === 'list'} onSelect={() => setView('list')}>List</Menu.Item>
+        <Menu.Item checked={view === 'board'} onSelect={() => setView('board')}>Board</Menu.Item>
+      </Menu.Content>
+    </Menu>
+  );
+}
+
 export default defineFragment({
   component: Menu,
 
@@ -181,21 +197,7 @@ export default defineFragment({
     {
       name: 'With Checked Items',
       description: 'Filter menu with check marks indicating active selections',
-      render: () => {
-        const [view, setView] = React.useState('grid');
-        return (
-          <Menu>
-            <Menu.Trigger asChild>
-              <Button variant="secondary">View</Button>
-            </Menu.Trigger>
-            <Menu.Content>
-              <Menu.Item checked={view === 'grid'} onSelect={() => setView('grid')}>Grid</Menu.Item>
-              <Menu.Item checked={view === 'list'} onSelect={() => setView('list')}>List</Menu.Item>
-              <Menu.Item checked={view === 'board'} onSelect={() => setView('board')}>Board</Menu.Item>
-            </Menu.Content>
-          </Menu>
-        );
-      },
+      render: () => <CheckedItemsMenuDemo />,
     },
     {
       name: 'With Submenu',

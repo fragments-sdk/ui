@@ -113,8 +113,10 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
   }
 );
 
+const EMPTY_CHIP_GROUP: string[] = [];
+
 function ChipGroupInner(
-  { children, value: controlledValue, defaultValue = [], onChange, className }: ChipGroupProps,
+  { children, value: controlledValue, defaultValue = EMPTY_CHIP_GROUP, onChange, className }: ChipGroupProps,
   ref: React.Ref<HTMLDivElement>
 ) {
   const [internalValue, setInternalValue] = React.useState<string[]>(defaultValue);

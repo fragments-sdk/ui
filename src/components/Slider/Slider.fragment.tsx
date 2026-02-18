@@ -2,6 +2,24 @@ import React from 'react';
 import { defineFragment } from '@fragments-sdk/cli/core';
 import { Slider } from '.';
 
+function ControlledSliderDemo() {
+  const [value, setValue] = React.useState(50);
+  return (
+    <div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <Slider
+        label="Opacity"
+        value={value}
+        onChange={setValue}
+        showValue
+        valueSuffix="%"
+      />
+      <div style={{ fontSize: '14px', color: 'var(--fui-text-secondary)' }}>
+        Current value: {value}%
+      </div>
+    </div>
+  );
+}
+
 export default defineFragment({
   component: Slider,
 
@@ -165,23 +183,7 @@ export default defineFragment({
     {
       name: 'Controlled',
       description: 'Controlled slider with external state',
-      render: () => {
-        const [value, setValue] = React.useState(50);
-        return (
-          <div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <Slider
-              label="Opacity"
-              value={value}
-              onChange={setValue}
-              showValue
-              valueSuffix="%"
-            />
-            <div style={{ fontSize: '14px', color: 'var(--fui-text-secondary)' }}>
-              Current value: {value}%
-            </div>
-          </div>
-        );
-      },
+      render: () => <ControlledSliderDemo />,
     },
     {
       name: 'Disabled',

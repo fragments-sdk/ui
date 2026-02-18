@@ -2,6 +2,22 @@ import React from 'react';
 import { defineFragment } from '@fragments-sdk/cli/core';
 import { ColorPicker } from '.';
 
+function ControlledColorPickerDemo() {
+  const [color, setColor] = React.useState('#ef4444');
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <ColorPicker
+        label="Accent Color"
+        value={color}
+        onChange={setColor}
+      />
+      <div style={{ fontSize: '14px', color: 'var(--fui-text-secondary)' }}>
+        Selected: {color}
+      </div>
+    </div>
+  );
+}
+
 export default defineFragment({
   component: ColorPicker,
 
@@ -133,21 +149,7 @@ export default defineFragment({
     {
       name: 'Controlled',
       description: 'Controlled color picker that logs changes',
-      render: () => {
-        const [color, setColor] = React.useState('#ef4444');
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <ColorPicker
-              label="Accent Color"
-              value={color}
-              onChange={setColor}
-            />
-            <div style={{ fontSize: '14px', color: 'var(--fui-text-secondary)' }}>
-              Selected: {color}
-            </div>
-          </div>
-        );
-      },
+      render: () => <ControlledColorPickerDemo />,
     },
     {
       name: 'Multiple Pickers',

@@ -544,8 +544,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   ref
 ) {
   const [copied, setCopied] = useState(false);
-  const [highlightedHtml, setHighlightedHtml] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [highlight, setHighlight] = useState<{ html: string; loading: boolean }>({ html: '', loading: true });
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
   const trimmedCode = useMemo(() => normalizeCode(code), [code]);
@@ -570,50 +569,45 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   // Apply syntax highlighting
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    setHighlight((prev) => ({ ...prev, loading: true }));
 
-    loadShikiDeps();
+    const run = async () => {
+      loadShikiDeps();
 
-    if (_shikiFailed || !_codeToHtml) {
-      if (_shikiFailed && process.env.NODE_ENV === "development") {
-        console.warn(
-          "[@fragments-sdk/ui] CodeBlock: shiki is not installed. " +
-            "Install it with: npm install shiki"
-        );
-      }
-      // Fallback to plain text without syntax highlighting
-      setHighlightedHtml(`<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`);
-      setIsLoading(false);
-      return;
-    }
+      const fallbackHtml = `<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`;
 
-    _codeToHtml(visibleCode, {
-      lang: language,
-      theme,
-    })
-      .then((html) => {
-        if (!cancelled) {
-          const processed = processShikiHtml(html, {
-            showLineNumbers,
-            startLineNumber,
-            highlightLines: highlightSet,
-            addedLines: addedSet,
-            removedLines: removedSet,
-          });
-          setHighlightedHtml(processed);
-          setIsLoading(false);
+      if (_shikiFailed || !_codeToHtml) {
+        if (_shikiFailed && process.env.NODE_ENV === "development") {
+          console.warn(
+            "[@fragments-sdk/ui] CodeBlock: shiki is not installed. " +
+              "Install it with: npm install shiki"
+          );
         }
-      })
-      .catch((err) => {
+        return fallbackHtml;
+      }
+
+      try {
+        const html = await _codeToHtml(visibleCode, { lang: language, theme });
+        return processShikiHtml(html, {
+          showLineNumbers,
+          startLineNumber,
+          highlightLines: highlightSet,
+          addedLines: addedSet,
+          removedLines: removedSet,
+        });
+      } catch (err) {
         if (process.env.NODE_ENV !== "production") {
           console.error("Syntax highlighting failed:", err);
         }
-        if (!cancelled) {
-          // Fallback to plain text
-          setHighlightedHtml(`<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`);
-          setIsLoading(false);
-        }
-      });
+        return fallbackHtml;
+      }
+    };
+
+    run().then((html) => {
+      if (!cancelled) {
+        setHighlight({ html, loading: false });
+      }
+    });
 
     return () => {
       cancelled = true;
@@ -701,7 +695,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
             {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
           </button>
         )}
-        {isLoading ? (
+        {highlight.loading ? (
           <div className={styles.loading} style={codeContainerStyle}>
             <pre>
               <code>{visibleCode}</code>
@@ -711,7 +705,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
           <div
             className={styles.codeContainer}
             style={codeContainerStyle}
-            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+            dangerouslySetInnerHTML={{ __html: highlight.html }}
           />
         )}
         {persistentCopy && (

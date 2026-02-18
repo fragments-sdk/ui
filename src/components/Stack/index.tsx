@@ -147,11 +147,12 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(
         ) : separator;
 
         const items: React.ReactNode[] = [];
-        validChildren.forEach((child, i) => {
+        validChildren.forEach((child, idx) => {
           items.push(child);
-          if (i < validChildren.length - 1) {
+          if (idx < validChildren.length - 1) {
+            const childKey = React.isValidElement(child) && child.key != null ? child.key : `idx-${idx}`;
             items.push(
-              <React.Fragment key={`sep-${i}`}>{separatorEl}</React.Fragment>
+              <React.Fragment key={`sep-${childKey}`}>{separatorEl}</React.Fragment>
             );
           }
         });

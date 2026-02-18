@@ -400,6 +400,7 @@ function CommandItem({
       data-active={isActive || undefined}
       data-disabled={disabled || undefined}
       onClick={handleClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
       onMouseEnter={handleMouseEnter}
       className={[
         styles.item,

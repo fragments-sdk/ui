@@ -243,6 +243,7 @@ function ListboxItem({
       aria-disabled={disabled}
       data-active={context?.activeId === itemId || undefined}
       onClick={disabled ? undefined : onClick}
+      onKeyDown={disabled ? undefined : (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } }}
       onMouseEnter={handleMouseEnter}
       className={classes}
       style={style}

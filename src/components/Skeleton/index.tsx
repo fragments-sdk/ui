@@ -134,11 +134,11 @@ function SkeletonText({
 
   return (
     <div className={containerClasses} aria-hidden="true">
-      {Array.from({ length: lines }, (_, i) => {
-        const isLast = i === lines - 1;
+      {Array.from({ length: lines }, (_, lineIdx) => {
+        const isLast = lineIdx === lines - 1;
         return (
           <div
-            key={i}
+            key={`line-${lineIdx}`}
             className={styles.textLine}
             style={isLast && lines > 1 ? { width: `${lastLineWidth}%` } : undefined}
           />

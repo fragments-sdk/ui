@@ -59,8 +59,8 @@ function FallbackRenderer({ content, className }: { content: string; className?:
   const paragraphs = content.split(/\n{2,}/);
   return (
     <div className={className}>
-      {paragraphs.map((p, i) => (
-        <p key={i}>{p}</p>
+      {paragraphs.map((p) => (
+        <p key={p}>{p}</p>
       ))}
     </div>
   );

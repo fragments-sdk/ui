@@ -1,0 +1,18 @@
+{
+  "ignore": {
+    "rules": [
+      "knip/exports",
+      "knip/types",
+      "knip/files",
+      "knip/duplicates",
+      "react-doctor/no-barrel-import",
+      "react/no-danger",
+      "react-doctor/no-derived-useState",
+      "react-doctor/rerender-functional-setstate"
+    ],
+    "files": [
+      "src/**/*.fragment.tsx",
+      "src/**/*.test.tsx"
+    ]
+  }
+}

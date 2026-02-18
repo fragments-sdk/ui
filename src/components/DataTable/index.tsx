@@ -102,6 +102,41 @@ export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLTableEl
   bordered?: boolean;
 }
 
+function getColumnSizeStyle(
+  column: {
+    getSize: () => number;
+    columnDef: { size?: number; minSize?: number; maxSize?: number };
+  }
+): React.CSSProperties | undefined {
+  const { size, minSize, maxSize } = column.columnDef;
+  const hasExplicitSize = size !== undefined || minSize !== undefined || maxSize !== undefined;
+
+  if (!hasExplicitSize) {
+    return undefined;
+  }
+
+  const resolvedSize = column.getSize();
+
+  return {
+    width: resolvedSize,
+    minWidth: minSize ?? resolvedSize,
+    maxWidth: maxSize ?? resolvedSize,
+  };
+}
+
+function isInteractiveTarget(
+  target: EventTarget | null,
+  currentTarget: HTMLTableRowElement
+) {
+  if (!(target instanceof Element)) return false;
+
+  const interactiveElement = target.closest(
+    'button, a, input, select, textarea, [role="button"], [role="link"], [role="checkbox"], [role="switch"]'
+  );
+
+  return Boolean(interactiveElement && currentTarget.contains(interactiveElement));
+}
+
 function DataTableRoot<T>({
   columns: userColumns,
   data,
@@ -178,6 +213,16 @@ function DataTableRoot<T>({
     return [checkboxColumn, ...userColumns];
   }, [userColumns, showCheckbox, selectable]);
 
+  const hasExplicitColumnSizing = React.useMemo(
+    () =>
+      columns.some((column) =>
+        column.size !== undefined ||
+        column.minSize !== undefined ||
+        column.maxSize !== undefined
+      ),
+    [columns]
+  );
+
   if (_tableFailed || !_useReactTable) {
     if (_tableFailed && process.env.NODE_ENV === 'development') {
       console.warn(
@@ -213,16 +258,6 @@ function DataTableRoot<T>({
 
   const isEmpty = data.length === 0;
 
-  const hasExplicitColumnSizing = React.useMemo(
-    () =>
-      columns.some((column) =>
-        column.size !== undefined ||
-        column.minSize !== undefined ||
-        column.maxSize !== undefined
-      ),
-    [columns]
-  );
-
   const rootClasses = [
     styles.table,
     hasExplicitColumnSizing && styles.fixedLayout,
@@ -233,28 +268,6 @@ function DataTableRoot<T>({
     .filter(Boolean)
     .join(' ');
 
-  const getColumnSizeStyle = (
-    column: {
-      getSize: () => number;
-      columnDef: { size?: number; minSize?: number; maxSize?: number };
-    }
-  ): React.CSSProperties | undefined => {
-    const { size, minSize, maxSize } = column.columnDef;
-    const hasExplicitSize = size !== undefined || minSize !== undefined || maxSize !== undefined;
-
-    if (!hasExplicitSize) {
-      return undefined;
-    }
-
-    const resolvedSize = column.getSize();
-
-    return {
-      width: resolvedSize,
-      minWidth: minSize ?? resolvedSize,
-      maxWidth: maxSize ?? resolvedSize,
-    };
-  };
-
   if (isEmpty) {
     return (
       <div className={styles.emptyState}>
@@ -262,19 +275,6 @@ function DataTableRoot<T>({
       </div>
     );
   }
-
-  const isInteractiveTarget = (
-    target: EventTarget | null,
-    currentTarget: HTMLTableRowElement
-  ) => {
-    if (!(target instanceof Element)) return false;
-
-    const interactiveElement = target.closest(
-      'button, a, input, select, textarea, [role="button"], [role="link"], [role="checkbox"], [role="switch"]'
-    );
-
-    return Boolean(interactiveElement && currentTarget.contains(interactiveElement));
-  };
 
   return (
     <div className={[styles.wrapper, bordered && styles.bordered].filter(Boolean).join(' ')}>

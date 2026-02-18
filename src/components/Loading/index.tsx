@@ -118,17 +118,11 @@ const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(
       .filter(Boolean)
       .join(' ');
 
-    const renderAnimation = () => {
-      switch (variant) {
-        case 'dots':
-          return <DotsAnimation className={styles.dots} />;
-        case 'pulse':
-          return <PulseAnimation className={styles.pulse} />;
-        case 'spinner':
-        default:
-          return <SpinnerIcon className={styles.spinnerIcon} />;
-      }
-    };
+    const animation = variant === 'dots'
+      ? <DotsAnimation className={styles.dots} />
+      : variant === 'pulse'
+        ? <PulseAnimation className={styles.pulse} />
+        : <SpinnerIcon className={styles.spinnerIcon} />;
 
     const content = (
       <div
@@ -139,7 +133,7 @@ const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(
         aria-live="polite"
         {...htmlProps}
       >
-        {renderAnimation()}
+        {animation}
       </div>
     );
 
