@@ -16,10 +16,17 @@ npm install react react-dom
 
 ## Setup
 
-Import the global styles in your app entry point:
+**Quick start (no SCSS)** — import the prebuilt CSS in your app entry point. This loads component styles with default tokens:
 
 ```tsx
 import '@fragments-sdk/ui/styles';
+```
+
+**Custom theming (SCSS)** — create a `.scss` file with `@use '@fragments-sdk/ui/styles' with (...)` to set your seed values, then import both:
+
+```tsx
+import '@fragments-sdk/ui/styles';   // component styles (ui.css)
+import './styles/globals.scss';       // your seed overrides
 ```
 
 Then use components:
@@ -116,28 +123,27 @@ All fragment and block previews are authored source snippets, not runtime-serial
 
 ### Seed-Based Configuration (Recommended)
 
-Configure ~5-10 seeds and everything derives automatically. Set seed variables in your SCSS before importing:
+Configure ~5 seeds and everything derives automatically using the SCSS `@use ... with()` syntax:
 
 ```scss
 // styles/globals.scss
 
-// Minimal setup - just your brand color
-$fui-brand: #0066ff;
-@use '@fragments-sdk/ui/globals';
+// Minimal setup — just your brand color
+@use '@fragments-sdk/ui/styles' with (
+  $fui-brand: #0066ff
+);
 ```
 
 ```scss
 // Full customization
-$fui-brand: #0066ff;             // Primary brand color
-$fui-neutral: "steel";           // Palette: "steel" | "sand" | "smoke" | "ash" | "silver"
-$fui-density: "compact";         // Spacing: "compact" | "default" | "relaxed"
-$fui-radius-style: "rounded";    // Corners: "sharp" | "subtle" | "default" | "rounded" | "pill"
-
-// Optional semantic color overrides
-$fui-danger: #dc2626;
-$fui-success: #16a34a;
-
-@use '@fragments-sdk/ui/globals';
+@use '@fragments-sdk/ui/styles' with (
+  $fui-brand: #0066ff,
+  $fui-neutral: "ice",
+  $fui-density: "compact",
+  $fui-radius-style: "rounded",
+  $fui-danger: #dc2626,
+  $fui-success: #16a34a
+);
 ```
 
 #### Available Seeds
@@ -145,7 +151,7 @@ $fui-success: #16a34a;
 | Seed | Type | Default | Description |
 |------|------|---------|-------------|
 | `$fui-brand` | Color | `#18181b` | Primary brand color - derives accent, focus rings, etc. |
-| `$fui-neutral` | String | `"ash"` | Neutral palette for surfaces, text, borders |
+| `$fui-neutral` | String | `"stone"` | Neutral palette for surfaces, text, borders |
 | `$fui-density` | String | `"default"` | Spacing density scale |
 | `$fui-radius-style` | String | `"default"` | Corner radius style |
 | `$fui-danger` | Color | `#ef4444` | Error/danger semantic color |
@@ -157,11 +163,11 @@ $fui-success: #16a34a;
 
 | Name | Description |
 |------|-------------|
-| `steel` | Cool blue-tinted grays (professional, tech) |
-| `sand` | Warm brown-tinted grays (organic, approachable) |
-| `smoke` | Pure true grays (minimal, neutral) |
-| `ash` | Muted cool neutrals (subtle, balanced) - default |
-| `silver` | Bright clean grays (light, modern) |
+| `stone` | Cool gray neutrals (balanced, professional) — default |
+| `ice` | Cool blue-tinted grays (crisp, technical) |
+| `earth` | Warm brown-tinted grays (natural, grounded) |
+| `sand` | Warm tan-tinted grays (organic, approachable) |
+| `fire` | Warm red-tinted grays (bold, energetic) |
 
 #### Density Presets
 
@@ -198,7 +204,7 @@ You can still override individual tokens directly:
 ### Breakpoints
 
 ```scss
-@use '@fragments-sdk/ui/tokens' as *;
+@use '@fragments-sdk/ui/mixins' as *;
 
 .responsive {
   @include breakpoint-md {
@@ -238,8 +244,10 @@ You can still override individual tokens directly:
    // ...many more
 
    // After: just seeds
-   $fui-brand: #0066ff;
-   $fui-neutral: "steel";
+   @use '@fragments-sdk/ui/styles' with (
+     $fui-brand: #0066ff,
+     $fui-neutral: "ice"
+   );
    ```
 
 2. Dark mode, hover states, and derived colors are computed automatically

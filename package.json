@@ -27,6 +27,7 @@
     "./table": "./src/components/Table/index.tsx",
     "./data-table": "./src/components/DataTable/index.tsx",
     "./styles": "./src/styles/globals.scss",
+    "./globals": "./src/styles/globals.scss",
     "./tokens": "./src/tokens/_variables.scss",
     "./mixins": "./src/tokens/_mixins.scss",
     "./brand": "./src/brand.ts",
@@ -134,6 +135,10 @@
         }
       },
       "./styles": {
+        "sass": "./src/styles/globals.scss",
+        "default": "./dist/assets/ui.css"
+      },
+      "./globals": {
         "sass": "./src/styles/globals.scss",
         "default": "./dist/assets/ui.css"
       },

@@ -13,7 +13,9 @@ export interface ThemeProviderProps {
   children: React.ReactNode;
   /** Default theme mode for uncontrolled usage */
   defaultMode?: ThemeMode;
-  /** Alias for defaultMode (more intuitive naming) */
+  /**
+   * @deprecated Use `defaultMode` instead. This alias will be removed in v1.0.
+   */
   defaultTheme?: ThemeMode;
   /** Controlled theme mode */
   mode?: ThemeMode;
@@ -182,6 +184,14 @@ function ThemeProvider({
   attribute = 'data-theme',
 }: ThemeProviderProps) {
   const systemPreference = useSystemPreference();
+
+  // Warn on deprecated prop usage (dev only)
+  if (process.env.NODE_ENV !== 'production' && defaultTheme !== undefined) {
+    console.warn(
+      '[Fragments] ThemeProvider: `defaultTheme` is deprecated. Use `defaultMode` instead. ' +
+      '`defaultTheme` will be removed in v1.0.'
+    );
+  }
 
   // Resolve default: defaultMode takes precedence, then defaultTheme, then 'system'
   const resolvedDefault = defaultMode ?? defaultTheme ?? 'system';
@@ -353,3 +363,160 @@ export const Theme = Object.assign(ThemeProvider, {
 });
 
 export { ThemeProvider, ThemeToggle, useTheme };
+
+// ============================================
+// configureTheme — JS-only seed configuration
+// ============================================
+
+export type NeutralPalette = 'stone' | 'ice' | 'earth' | 'sand' | 'fire';
+export type DensityPreset = 'compact' | 'default' | 'relaxed';
+export type RadiusStyle = 'sharp' | 'subtle' | 'default' | 'rounded' | 'pill';
+
+export interface ConfigureThemeOptions {
+  /** Brand/accent color as hex */
+  brand?: string;
+  /** Neutral palette name */
+  neutral?: NeutralPalette;
+  /** Spacing density preset */
+  density?: DensityPreset;
+  /** Border radius style */
+  radiusStyle?: RadiusStyle;
+  /** Danger/error color as hex */
+  danger?: string;
+  /** Success color as hex */
+  success?: string;
+  /** Warning color as hex */
+  warning?: string;
+  /** Info color as hex */
+  info?: string;
+}
+
+// -- Radius presets (match _radius.scss) --
+
+const RADIUS_PRESETS: Record<RadiusStyle, Record<string, string>> = {
+  sharp:   { sm: '0',        md: '0',        lg: '0',        xl: '0' },
+  subtle:  { sm: '0.125rem', md: '0.25rem',  lg: '0.375rem', xl: '0.5rem' },
+  default: { sm: '0.25rem',  md: '0.429rem', lg: '0.571rem', xl: '0.857rem' },
+  rounded: { sm: '0.375rem', md: '0.5rem',   lg: '0.75rem',  xl: '1rem' },
+  pill:    { sm: '0.5rem',   md: '0.75rem',  lg: '1rem',     xl: '1.5rem' },
+};
+
+// -- Density presets (match _density.scss) --
+
+interface DensityConfig {
+  baseUnit: number;
+  baseFontSize: number;
+  buttonHeights: [number, number, number]; // sm, md, lg
+  inputHeights: [number, number, number]; // sm, default, lg
+}
+
+const DENSITY_CONFIGS: Record<DensityPreset, DensityConfig> = {
+  compact:  { baseUnit: 6,  baseFontSize: 14, buttonHeights: [24, 30, 36], inputHeights: [24, 32, 36] },
+  default:  { baseUnit: 7,  baseFontSize: 14, buttonHeights: [28, 36, 44], inputHeights: [28, 40, 44] },
+  relaxed:  { baseUnit: 8,  baseFontSize: 14, buttonHeights: [32, 40, 48], inputHeights: [32, 44, 48] },
+};
+
+function pxToRem(px: number, baseFontSize: number): string {
+  return `${px / baseFontSize}rem`;
+}
+
+function hexToRgb(hex: string): [number, number, number] | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return null;
+  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
+}
+
+function adjustLightness(hex: string, amount: number): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+  const [r, g, b] = rgb;
+  const adjust = (v: number) => Math.max(0, Math.min(255, Math.round(v + amount)));
+  return `#${adjust(r).toString(16).padStart(2, '0')}${adjust(g).toString(16).padStart(2, '0')}${adjust(b).toString(16).padStart(2, '0')}`;
+}
+
+function setVar(el: HTMLElement, name: string, value: string) {
+  el.style.setProperty(name, value);
+}
+
+/**
+ * Configure theme seeds at runtime via JS. Sets CSS custom properties on
+ * `:root` without requiring SCSS. Call this once at app startup.
+ *
+ * Note: For full control over all 120+ tokens, use the SCSS `@use...with()`
+ * approach. `configureTheme` covers the most commonly customized tokens.
+ *
+ * @example
+ * ```ts
+ * import { configureTheme } from '@fragments-sdk/ui';
+ *
+ * configureTheme({
+ *   brand: '#6366f1',
+ *   neutral: 'ice',
+ *   density: 'compact',
+ *   radiusStyle: 'rounded',
+ * });
+ * ```
+ */
+export function configureTheme(options: ConfigureThemeOptions): void {
+  if (typeof document === 'undefined') return;
+
+  const root = document.documentElement;
+
+  // -- Brand / Accent --
+  if (options.brand) {
+    setVar(root, '--fui-color-accent', options.brand);
+    setVar(root, '--fui-color-accent-hover', adjustLightness(options.brand, -20));
+    setVar(root, '--fui-color-accent-active', adjustLightness(options.brand, -40));
+    setVar(root, '--fui-focus-ring-color', `${options.brand}66`); // 40% alpha
+  }
+
+  // -- Semantic colors --
+  if (options.danger) {
+    setVar(root, '--fui-color-danger', options.danger);
+    setVar(root, '--fui-color-danger-hover', adjustLightness(options.danger, -20));
+  }
+  if (options.success) setVar(root, '--fui-color-success', options.success);
+  if (options.warning) setVar(root, '--fui-color-warning', options.warning);
+  if (options.info) setVar(root, '--fui-color-info', options.info);
+
+  // -- Radius --
+  if (options.radiusStyle) {
+    const r = RADIUS_PRESETS[options.radiusStyle];
+    if (r) {
+      setVar(root, '--fui-radius-sm', r.sm);
+      setVar(root, '--fui-radius-md', r.md);
+      setVar(root, '--fui-radius-lg', r.lg);
+      setVar(root, '--fui-radius-xl', r.xl);
+    }
+  }
+
+  // -- Density --
+  if (options.density) {
+    const d = DENSITY_CONFIGS[options.density];
+    if (d) {
+      const unitRem = d.baseUnit / d.baseFontSize;
+
+      // Spacing scale
+      setVar(root, '--fui-space-1', `${unitRem}rem`);
+      setVar(root, '--fui-space-2', `${unitRem * 2}rem`);
+      setVar(root, '--fui-space-3', `${unitRem * 3}rem`);
+      setVar(root, '--fui-space-4', `${unitRem * 4}rem`);
+      setVar(root, '--fui-space-5', `${unitRem * 5}rem`);
+      setVar(root, '--fui-space-6', `${unitRem * 6}rem`);
+      setVar(root, '--fui-space-8', `${unitRem * 8}rem`);
+      setVar(root, '--fui-space-10', `${unitRem * 10}rem`);
+      setVar(root, '--fui-space-12', `${unitRem * 12}rem`);
+
+      // Component heights
+      setVar(root, '--fui-button-height-sm', pxToRem(d.buttonHeights[0], d.baseFontSize));
+      setVar(root, '--fui-button-height-md', pxToRem(d.buttonHeights[1], d.baseFontSize));
+      setVar(root, '--fui-button-height-lg', pxToRem(d.buttonHeights[2], d.baseFontSize));
+      setVar(root, '--fui-input-height-sm', pxToRem(d.inputHeights[0], d.baseFontSize));
+      setVar(root, '--fui-input-height', pxToRem(d.inputHeights[1], d.baseFontSize));
+      setVar(root, '--fui-input-height-lg', pxToRem(d.inputHeights[2], d.baseFontSize));
+
+      // Base unit
+      setVar(root, '--fui-base-unit', `${d.baseUnit}px`);
+    }
+  }
+}

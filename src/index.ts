@@ -305,13 +305,19 @@ export {
 
 // Theme
 export {
+  Theme,
   ThemeProvider,
   ThemeToggle,
   useTheme,
+  configureTheme,
   type ThemeProviderProps,
   type ThemeToggleProps,
   type ThemeMode,
   type UseThemeReturn,
+  type ConfigureThemeOptions,
+  type NeutralPalette,
+  type DensityPreset,
+  type RadiusStyle,
 } from './components/Theme';
 
 // Header
