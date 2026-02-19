@@ -605,6 +605,32 @@ export {
   type CommandSeparatorProps,
 } from './components/Command';
 
+// Editor
+export {
+  Editor,
+  EditorRoot,
+  EditorToolbar,
+  EditorToolbarGroup,
+  EditorToolbarButton,
+  EditorSeparator,
+  EditorStatusIndicator,
+  EditorContentArea,
+  EditorStatusBar,
+  useEditorContext,
+  type EditorProps,
+  type EditorFormat,
+  type EditorSaveStatus,
+  type EditorMode,
+  type EditorSize,
+  type EditorToolbarProps,
+  type EditorToolbarGroupProps,
+  type EditorToolbarButtonProps,
+  type EditorSeparatorProps,
+  type EditorStatusIndicatorProps,
+  type EditorContentProps,
+  type EditorStatusBarProps,
+} from './components/Editor';
+
 // Accessibility Utilities
 export {
   useId,
@@ -616,3 +642,20 @@ export {
   VisuallyHidden as A11yVisuallyHidden,
   type VisuallyHiddenProps as A11yVisuallyHiddenProps,
 } from './utils/a11y';
+
+// Keyboard Shortcuts
+export {
+  KEYBOARD_SHORTCUTS,
+  matchesShortcut,
+  getShortcutLabel,
+  findConflicts,
+  getShortcuts,
+  isEditableElement,
+  configureShortcuts,
+  getResolvedShortcut,
+  resetShortcutOverrides,
+  useKeyboardShortcut,
+  type KeyboardShortcut,
+  type ShortcutName,
+  type UseKeyboardShortcutOptions,
+} from './utils/keyboard-shortcuts';

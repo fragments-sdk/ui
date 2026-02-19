@@ -7,6 +7,7 @@ import { Skeleton } from '../Skeleton';
 import { Collapsible } from '../Collapsible';
 import { ScrollArea } from '../ScrollArea';
 import { useFocusTrap } from '../../utils/a11y';
+import { useKeyboardShortcut } from '../../utils/keyboard-shortcuts';
 
 // ============================================
 // Types
@@ -419,20 +420,12 @@ function SidebarProvider({
     }
   }, [isMobile, open, collapsed, setOpen, setCollapsed, collapsible]);
 
-  // Handle Cmd/Ctrl+B keyboard shortcut
-  React.useEffect(() => {
-    if (!enableKeyboardShortcut || collapsible === 'none') return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
-        e.preventDefault();
-        toggleSidebar();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [enableKeyboardShortcut, toggleSidebar, collapsible]);
+  // Handle Cmd/Ctrl+B keyboard shortcut (skips editable elements like Editor)
+  useKeyboardShortcut({
+    name: 'SIDEBAR_TOGGLE',
+    handler: toggleSidebar,
+    enabled: enableKeyboardShortcut && collapsible !== 'none',
+  });
 
   // Handle escape key for mobile drawer
   React.useEffect(() => {

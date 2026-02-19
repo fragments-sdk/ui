@@ -1,0 +1,333 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+// ============================================
+// Editor Root
+// ============================================
+
+.editor {
+  @include surface-elevated;
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  overflow: hidden;
+
+  // Focus ring (Enhancement #7)
+  &:focus-within:not([data-disabled]) {
+    @include focus-ring;
+  }
+
+  &[data-disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &[data-readonly] {
+    .contentTextarea {
+      cursor: default;
+    }
+  }
+
+  // Size variants (Enhancement #2)
+  &[data-size='sm'] {
+    .content,
+    .contentTextarea,
+    :global(.tiptap) {
+      min-height: 120px;
+    }
+  }
+
+  &[data-size='md'] {
+    .content,
+    .contentTextarea,
+    :global(.tiptap) {
+      min-height: 200px;
+    }
+  }
+
+  &[data-size='lg'] {
+    .content,
+    .contentTextarea,
+    :global(.tiptap) {
+      min-height: 400px;
+    }
+  }
+}
+
+// ============================================
+// Toolbar
+// ============================================
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+// ============================================
+// Toolbar Group
+// ============================================
+
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-0-5, $fui-space-0-5);
+}
+
+// ============================================
+// Toolbar Button
+// ============================================
+
+.toolbarButton {
+  @include button-reset;
+  @include interactive-base;
+  @include touch-target;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  background-color: transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.toolbarButtonActive {
+  color: var(--fui-color-accent, $fui-color-accent);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+
+  &:hover:not(:disabled) {
+    color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+}
+
+// ============================================
+// Separator
+// ============================================
+
+.separator {
+  width: 1px;
+  height: 1rem;
+  background-color: var(--fui-border, $fui-border);
+  margin: 0 var(--fui-space-1, $fui-space-1);
+  flex-shrink: 0;
+}
+
+// ============================================
+// Status Indicator
+// ============================================
+
+.statusIndicator {
+  @include section-label-text;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  white-space: nowrap;
+  padding: 0 var(--fui-space-2, $fui-space-2);
+}
+
+.statusError {
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+// ============================================
+// Content
+// ============================================
+
+.content {
+  flex: 1;
+  min-height: 200px;
+  overflow-y: auto;
+}
+
+.contentRich {
+  // TipTap editor styling
+  :global(.tiptap) {
+    padding: var(--fui-padding-inline-md, $fui-padding-inline-md);
+    min-height: 200px;
+    outline: none;
+    @include text-base;
+    line-height: var(--fui-line-height-relaxed, $fui-line-height-relaxed);
+    font-size: var(--fui-font-size-base, $fui-font-size-base);
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    // Placeholder
+    p.is-editor-empty:first-child::before {
+      content: attr(data-placeholder);
+      float: left;
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+      pointer-events: none;
+      height: 0;
+    }
+
+    // Headings (Enhancement #4)
+    h1 {
+      font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+      line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+      margin: 0 0 var(--fui-space-3, $fui-space-3);
+    }
+
+    h2 {
+      font-size: var(--fui-font-size-xl, $fui-font-size-xl);
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+      line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+      margin: 0 0 var(--fui-space-2, $fui-space-2);
+    }
+
+    h3 {
+      font-size: var(--fui-font-size-lg, $fui-font-size-lg);
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+      line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+      margin: 0 0 var(--fui-space-2, $fui-space-2);
+    }
+
+    // Blockquote (Enhancement #5)
+    blockquote {
+      border-left: 3px solid var(--fui-color-accent, $fui-color-accent);
+      padding-left: var(--fui-space-4, $fui-space-4);
+      margin: 0 0 var(--fui-space-2, $fui-space-2);
+      color: var(--fui-text-secondary, $fui-text-secondary);
+      font-style: italic;
+    }
+
+    // Inline code
+    code {
+      background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+      border-radius: var(--fui-radius-sm, $fui-radius-sm);
+      padding: 0.15em 0.3em;
+      font-family: var(--fui-font-mono, $fui-font-mono);
+      font-size: 0.9em;
+    }
+
+    // Links
+    a {
+      color: var(--fui-color-accent, $fui-color-accent);
+      text-decoration: underline;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+      }
+    }
+
+    // Unordered lists
+    ul {
+      padding-left: var(--fui-space-5, $fui-space-5);
+      list-style-type: disc;
+    }
+
+    // Ordered lists (Enhancement #3)
+    ol {
+      padding-left: var(--fui-space-5, $fui-space-5);
+      list-style-type: decimal;
+    }
+
+    // Strikethrough
+    s {
+      text-decoration: line-through;
+    }
+
+    // Paragraphs
+    p {
+      margin: 0 0 var(--fui-space-2, $fui-space-2);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.contentTextarea {
+  @include button-reset;
+  @include text-base;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  padding: var(--fui-padding-inline-md, $fui-padding-inline-md);
+  background: transparent;
+  border: none;
+  resize: none;
+  overflow-y: auto;
+  line-height: var(--fui-line-height-relaxed, $fui-line-height-relaxed);
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+
+  &::placeholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// Status Bar
+// ============================================
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  border-top: 1px solid var(--fui-border, $fui-border);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+.statusBarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+}
+
+.statusBarRight {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  margin-left: auto;
+}
+
+.statusBarItem {
+  @include helper-text;
+  white-space: nowrap;
+}
+
+// maxLength indicator states (Enhancement #1)
+.statusBarItemWarning {
+  color: var(--fui-color-warning, $fui-color-warning);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+}
+
+.statusBarItemError {
+  color: var(--fui-color-danger, $fui-color-danger);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+}

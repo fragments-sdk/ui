@@ -26,6 +26,7 @@
     "./colorpicker": "./src/components/ColorPicker/index.tsx",
     "./table": "./src/components/Table/index.tsx",
     "./data-table": "./src/components/DataTable/index.tsx",
+    "./editor": "./src/components/Editor/index.tsx",
     "./styles": "./src/styles/globals.scss",
     "./globals": "./src/styles/globals.scss",
     "./tokens": "./src/tokens/_variables.scss",
@@ -134,6 +135,16 @@
           "default": "./dist/data-table.cjs"
         }
       },
+      "./editor": {
+        "import": {
+          "types": "./dist/components/Editor/index.d.ts",
+          "default": "./dist/editor.js"
+        },
+        "require": {
+          "types": "./dist/components/Editor/index.d.ts",
+          "default": "./dist/editor.cjs"
+        }
+      },
       "./styles": {
         "sass": "./src/styles/globals.scss",
         "default": "./dist/assets/ui.css"
@@ -176,7 +187,10 @@
     "react-markdown": ">=9.0.0",
     "recharts": ">=2.0.0 || >=3.0.0",
     "remark-gfm": ">=4.0.0",
-    "shiki": ">=1.0.0"
+    "shiki": ">=1.0.0",
+    "@tiptap/react": ">=2.0.0",
+    "@tiptap/starter-kit": ">=2.0.0",
+    "@tiptap/extension-link": ">=2.0.0"
   },
   "peerDependenciesMeta": {
     "react-markdown": {
@@ -202,6 +216,15 @@
     },
     "@tanstack/react-table": {
       "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "@tiptap/extension-link": {
+      "optional": true
     }
   },
   "scarfSettings": {
@@ -215,6 +238,9 @@
   "devDependencies": {
     "@fragments-sdk/cli": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
+    "@tiptap/extension-link": "^2.11.0",
+    "@tiptap/react": "^2.11.0",
+    "@tiptap/starter-kit": "^2.11.0",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.0",
