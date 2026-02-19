@@ -1,5 +1,32 @@
 # @fragments-sdk/ui
 
+## 0.10.0
+
+### Minor Changes
+
+- [`c5f0b0a`](https://github.com/ConanMcN/fragments/commit/c5f0b0a28e39c20c37f232e87bd873ab10a39359) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: DX improvements — configureTheme API, doctor command, seed validation, deprecate defaultTheme
+
+  **@fragments-sdk/ui**
+  - Add `configureTheme()` JS API for runtime theme seed configuration without SCSS
+  - Add `Theme` compound export (`Theme.Provider`, `Theme.Toggle`)
+  - Deprecate `defaultTheme` prop on ThemeProvider (use `defaultMode` instead, removed in v1.0)
+  - Add SCSS compile-time `@error` guards for invalid seed values (neutral, density, radius-style)
+  - Add deprecated `./globals` export alias pointing to `./styles`
+  - Fix wrong palette names in README (steel/smoke/ash/silver → stone/ice/earth/sand/fire)
+  - Fix wrong import paths in README (`/globals` → `/styles`, `/tokens` → `/mixins`)
+  - Fix `useTheme()` API in docs (`{ theme, setTheme }` → `{ mode, setMode }`)
+
+  **@fragments-sdk/cli**
+  - Add `fragments doctor` command — diagnoses project setup (styles import, ThemeProvider, seeds, peer deps, MCP config)
+  - Fix dist-aware alias resolution in CLI viewer for npm-installed packages
+  - Fix generated providers to use `defaultMode` instead of `defaultTheme`
+
+  **@fragments-sdk/context**
+  - Add `doctor` command to CLI command metadata
+
+  **@fragments-sdk/shared**
+  - Add `./docs-data` subpath export with canonical palette, setup, and MCP config data
+
 ## 0.9.7
 
 ### Patch Changes

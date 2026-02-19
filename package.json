@@ -1,6 +1,6 @@
 {
   "name": "@fragments-sdk/ui",
-  "version": "0.9.7",
+  "version": "0.10.0",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
