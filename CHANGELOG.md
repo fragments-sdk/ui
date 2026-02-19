@@ -1,5 +1,17 @@
 # @fragments-sdk/ui
 
+## 0.11.0
+
+### Minor Changes
+
+- [`db4f057`](https://github.com/ConanMcN/fragments/commit/db4f057954902c04c862cd9f3d3c5faf1c48bea9) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: Editor component and centralized keyboard shortcuts
+  - Editor compound component with TipTap rich text support (optional peer dep) and textarea fallback
+  - Centralized keyboard shortcuts registry with `matchesShortcut()`, `configureShortcuts()`, and `useKeyboardShortcut()` hook
+  - Global shortcuts (e.g. Ctrl+B sidebar toggle) automatically yield to editable elements
+  - Sidebar refactored to use `useKeyboardShortcut` hook
+  - Accessibility docs updated with keyboard shortcut customization section
+  - New `BlogEditor` composition block
+
 ## 0.10.0
 
 ### Minor Changes
