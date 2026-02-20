@@ -20,6 +20,8 @@ export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement>
   children: React.ReactNode;
   side?: 'left' | 'right' | 'top' | 'bottom';
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Whether to show the backdrop overlay (default: true). Set to false for non-modal bottom panels. */
+  backdrop?: boolean;
 }
 
 export interface DrawerTriggerProps {
@@ -127,6 +129,7 @@ function DrawerContent({
   children,
   side = 'right',
   size = 'md',
+  backdrop = true,
   className,
   ...htmlProps
 }: DrawerContentProps) {
@@ -141,7 +144,7 @@ function DrawerContent({
 
   return (
     <BaseDialog.Portal>
-      <BaseDialog.Backdrop className={styles.backdrop} />
+      {backdrop && <BaseDialog.Backdrop className={styles.backdrop} />}
       <BaseDialog.Popup initialFocus {...htmlProps} data-side={side} className={popupClasses}>
         {children}
       </BaseDialog.Popup>

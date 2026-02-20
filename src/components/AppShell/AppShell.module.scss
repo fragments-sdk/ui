@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // AppShell Root - CSS Grid Layout
@@ -20,8 +20,8 @@
   // header  header  header
   // sidebar main    aside
   grid-template-areas:
-    'header header header'
-    'sidebar main aside';
+    "header header header"
+    "sidebar main aside";
   grid-template-columns:
     var(--appshell-sidebar-width, 240px)
     1fr
@@ -36,9 +36,9 @@
   // Mobile: single column layout
   @include below-md {
     grid-template-areas:
-      'header'
-      'main'
-      'aside';
+      "header"
+      "main"
+      "aside";
     grid-template-columns: 1fr;
     grid-template-rows:
       var(--appshell-header-height, 56px)
@@ -53,14 +53,14 @@
 // sidebar main   aside
 .sidebarLayout {
   grid-template-areas:
-    'sidebar header header'
-    'sidebar main aside';
+    "sidebar header header"
+    "sidebar main aside";
 
   @include below-md {
     grid-template-areas:
-      'header'
-      'main'
-      'aside';
+      "header"
+      "main"
+      "aside";
     grid-template-columns: 1fr;
   }
 }
@@ -157,7 +157,6 @@
   min-height: 0; // Allow shrinking in grid
   min-width: 0; // Prevent overflow
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  overflow-x: hidden;
 }
 
 // Main content in sidebar-floating layout — elevated card effect

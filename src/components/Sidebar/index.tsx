@@ -102,7 +102,7 @@ export interface SidebarSectionActionProps {
   className?: string;
 }
 
-export interface SidebarItemProps {
+export interface SidebarItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onClick'> {
   children: React.ReactNode;
   /** Icon element (required for collapsed mode visibility) */
   icon?: React.ReactNode;
@@ -129,10 +129,9 @@ export interface SidebarItemProps {
    * and merges sidebar item props. Useful for rendering as Next.js Link, etc.
    */
   asChild?: boolean;
-  className?: string;
 }
 
-export interface SidebarSubItemProps {
+export interface SidebarSubItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onClick'> {
   children: React.ReactNode;
   /** Whether item is currently active/selected */
   active?: boolean;
@@ -142,7 +141,6 @@ export interface SidebarSubItemProps {
   href?: string;
   /** Click handler (renders as button) */
   onClick?: () => void;
-  className?: string;
 }
 
 export interface SidebarFooterProps {
@@ -749,6 +747,7 @@ function SidebarItem({
   onExpandedChange,
   asChild = false,
   className,
+  ...rest
 }: SidebarItemProps) {
   const { collapsed, isMobile } = useSidebarContext();
   const [expanded, setExpanded] = useControllableState(
@@ -820,19 +819,20 @@ function SidebarItem({
     // Clone the child element and merge props
     itemElement = React.cloneElement(children, {
       ...itemProps,
+      ...rest,
       // Merge classNames
       className: [classes, (children.props as { className?: string }).className].filter(Boolean).join(' '),
       children: itemContent,
     } as React.HTMLAttributes<HTMLElement>);
   } else if (href) {
     itemElement = (
-      <a {...itemProps} href={href}>
+      <a {...itemProps} {...rest} href={href}>
         {itemContent}
       </a>
     );
   } else {
     itemElement = (
-      <button {...itemProps} type="button">
+      <button {...itemProps} {...rest} type="button">
         {itemContent}
       </button>
     );
@@ -862,6 +862,7 @@ function SidebarSubItem({
   href,
   onClick,
   className,
+  ...rest
 }: SidebarSubItemProps) {
   const { collapsed, isMobile } = useSidebarContext();
 
@@ -894,11 +895,11 @@ function SidebarSubItem({
   };
 
   const itemElement = href ? (
-    <a {...itemProps} href={href}>
+    <a {...itemProps} {...rest} href={href}>
       {children}
     </a>
   ) : (
-    <button {...itemProps} type="button">
+    <button {...itemProps} {...rest} type="button">
       {children}
     </button>
   );

@@ -9,19 +9,23 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 let _codeToHtml:
   | ((code: string, options: { lang: string; theme: string }) => Promise<string>)
   | null = null;
-let _shikiLoaded = false;
+let _shikiLoadPromise: Promise<void> | null = null;
 let _shikiFailed = false;
 
-function loadShikiDeps() {
-  if (_shikiLoaded) return;
-  _shikiLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const shiki = require("shiki");
-    _codeToHtml = shiki.codeToHtml;
-  } catch {
-    _shikiFailed = true;
+async function loadShikiDeps() {
+  if (_codeToHtml) return;
+  if (_shikiFailed) return;
+  if (!_shikiLoadPromise) {
+    _shikiLoadPromise = (async () => {
+      try {
+        const shiki = await import("shiki");
+        _codeToHtml = shiki.codeToHtml;
+      } catch {
+        _shikiFailed = true;
+      }
+    })();
   }
+  await _shikiLoadPromise;
 }
 import { TabsRoot, TabsList, Tab, TabsPanel } from "../Tabs";
 import { Button } from "../Button";
@@ -572,7 +576,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     setHighlight((prev) => ({ ...prev, loading: true }));
 
     const run = async () => {
-      loadShikiDeps();
+      await loadShikiDeps();
 
       const fallbackHtml = `<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`;
 
