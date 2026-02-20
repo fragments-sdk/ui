@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.11.1
+
+### Patch Changes
+
+- Viewer refactor into composable components, mobile-friendly dashboard showcase, shared component docs layout, story filters, and AppShell/CodeBlock/Drawer/Sidebar updates
+
 ## 0.11.0
 
 ### Minor Changes
