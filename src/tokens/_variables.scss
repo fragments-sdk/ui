@@ -68,6 +68,7 @@ $fui-font-size-2xl: 2.143rem !default; // 30px
 $fui-font-weight-normal: 400 !default;
 $fui-font-weight-medium: 500 !default;
 $fui-font-weight-semibold: 600 !default;
+$fui-font-weight-bold: 700 !default;
 
 $fui-line-height-tight: 1.25 !default;
 $fui-line-height-normal: 1.5 !default;
@@ -436,6 +437,7 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-font-weight-normal: #{$fui-font-weight-normal};
     --fui-font-weight-medium: #{$fui-font-weight-medium};
     --fui-font-weight-semibold: #{$fui-font-weight-semibold};
+    --fui-font-weight-bold: #{$fui-font-weight-bold};
     --fui-line-height-tight: #{$fui-line-height-tight};
     --fui-line-height-normal: #{$fui-line-height-normal};
     --fui-line-height-relaxed: #{$fui-line-height-relaxed};

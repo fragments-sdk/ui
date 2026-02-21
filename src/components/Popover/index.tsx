@@ -8,11 +8,20 @@ import styles from './Popover.module.scss';
 // Types
 // ============================================
 
+/**
+ * Popover for floating content attached to a trigger element.
+ * @see https://usefragments.com/components/popover
+ */
 export interface PopoverProps {
   children: React.ReactNode;
+  /** Controlled open state */
   open?: boolean;
+  /** Default open state */
   defaultOpen?: boolean;
+  /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the popover blocks interaction with the rest of the page.
+   * @default false */
   modal?: boolean;
 }
 

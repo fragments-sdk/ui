@@ -46,6 +46,10 @@ export interface TooltipProviderProps {
   closeDelay?: number;
   /** Timeout for instant open when moving between tooltips (ms) */
   timeout?: number;
+  /** Alias for `delay` (Radix convention) */
+  delayDuration?: number;
+  /** Alias for `timeout` (Radix convention) */
+  skipDelayDuration?: number;
 }
 
 // ============================================
@@ -145,15 +149,21 @@ function TooltipRoot({
  */
 export function TooltipProvider({
   children,
-  delay = 400,
+  delay,
   closeDelay = 0,
-  timeout = 400,
+  timeout,
+  delayDuration,
+  skipDelayDuration,
 }: TooltipProviderProps) {
+  // Resolve Radix-compatible aliases
+  const resolvedDelay = delay ?? delayDuration ?? 400;
+  const resolvedTimeout = timeout ?? skipDelayDuration ?? 400;
+
   return (
     <BaseTooltip.Provider
-      delay={delay}
+      delay={resolvedDelay}
       closeDelay={closeDelay}
-      timeout={timeout}
+      timeout={resolvedTimeout}
     >
       {children}
     </BaseTooltip.Provider>

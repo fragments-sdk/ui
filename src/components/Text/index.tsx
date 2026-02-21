@@ -1,13 +1,28 @@
 import * as React from 'react';
 import styles from './Text.module.scss';
 
+/**
+ * Typography component for rendering text with consistent styling.
+ * @see https://usefragments.com/components/text
+ */
 export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children: React.ReactNode;
+  /** HTML element to render.
+   * @default "span" */
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'label' | 'div' | 'strong' | 'em' | 'small' | 'mark' | 'del' | 'ins' | 'sub' | 'sup' | 'time' | 'address' | 'blockquote' | 'cite' | 'code' | 'abbr';
+  /** Preset text variant */
   variant?: 'section-label';
-  size?: '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
-  weight?: 'normal' | 'medium' | 'semibold';
-  color?: 'primary' | 'secondary' | 'tertiary';
+  /** Font size. `"md"` is an alias for `"base"`.
+   * @see https://usefragments.com/components/text#sizes */
+  size?: '2xs' | 'xs' | 'sm' | 'base' | 'md' | 'lg' | 'xl' | '2xl';
+  /** Font weight.
+   * @default "normal" */
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  /** Text color. `"muted"` is an alias for `"tertiary"`.
+   * @default "primary" */
+  color?: 'primary' | 'secondary' | 'tertiary' | 'muted';
+  /** Font family.
+   * @default "sans" */
   font?: 'sans' | 'mono';
   /** Truncate text with ellipsis when it overflows */
   truncate?: boolean;

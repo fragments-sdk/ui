@@ -4,16 +4,30 @@ import * as React from 'react';
 import { Field } from '@base-ui/react/field';
 import styles from './Input.module.scss';
 
+/**
+ * Text input field with label, helper text, and validation.
+ * @see https://usefragments.com/components/input
+ */
 export interface InputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onBlur' | 'onFocus' | 'onKeyDown' | 'defaultValue'> {
+  /** Controlled input value */
   value?: string;
+  /** Default value for uncontrolled usage */
   defaultValue?: string;
+  /** Placeholder text shown when empty */
   placeholder?: string;
+  /** HTML input type */
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
-  /** Size variant */
+  /** Input size.
+   * @default "md"
+   * @see https://usefragments.com/components/input#sizes */
   size?: 'sm' | 'md' | 'lg';
+  /** Whether the input is non-interactive */
   disabled?: boolean;
+  /** Show error styling */
   error?: boolean;
+  /** Visible label text */
   label?: string;
+  /** Helper text shown below the input */
   helperText?: string;
   /** Keyboard shortcut hint displayed inside the input (e.g., "⌘K"). Also registers a global keydown listener that focuses the input when the shortcut is pressed. */
   shortcut?: string;

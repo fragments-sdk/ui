@@ -71,6 +71,10 @@ export default defineFragment({
       type: 'function',
       description: 'Called with new value when changed',
     },
+    onValueChange: {
+      type: 'function',
+      description: 'Alias for onChange (Radix convention): (value: number) => void',
+    },
     min: {
       type: 'number',
       description: 'Minimum value',
@@ -115,7 +119,7 @@ export default defineFragment({
     propsSummary: [
       'value: number - controlled value',
       'defaultValue: number - initial value',
-      'onChange: (value: number) => void - change handler',
+      'onChange: (value: number) => void - change handler (or onValueChange)',
       'min/max: number - range bounds',
       'step: number - increment size',
       'label: string - field label',

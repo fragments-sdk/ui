@@ -16,17 +16,31 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
+/**
+ * Select dropdown for choosing from a list of options.
+ * @see https://usefragments.com/components/select
+ */
 export interface SelectProps {
   children: React.ReactNode;
+  /** Controlled selected value */
   value?: SelectValue | null;
+  /** Default value for uncontrolled usage */
   defaultValue?: SelectValue;
+  /** Called when selection changes */
   onValueChange?: (value: SelectValue | null) => void;
+  /** Controlled open state */
   open?: boolean;
+  /** Default open state */
   defaultOpen?: boolean;
+  /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the select is non-interactive */
   disabled?: boolean;
+  /** Whether a selection is required */
   required?: boolean;
+  /** Form field name */
   name?: string;
+  /** Placeholder text when no value is selected */
   placeholder?: string;
 }
 

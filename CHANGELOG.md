@@ -1,5 +1,28 @@
 # @fragments-sdk/ui
 
+## 0.12.0
+
+### Minor Changes
+
+- DX improvements based on external developer feedback
+  - **Text**: Add `weight="bold"` (700), `color="muted"` (alias for tertiary), `size="md"` (alias for base)
+  - **Button, Card, Chip**: Accept `variant="outline"` as alias for `"outlined"` (Radix/Shadcn convention)
+  - **CodeBlock**: Accept language aliases `ts`, `js`, `text` (resolve to `typescript`, `javascript`, `plaintext`)
+  - **Tabs**: Narrow `TabValue` type from `string | number` to `string` for better type inference
+  - **TooltipProvider**: Add `delayDuration` and `skipDelayDuration` props (Radix-compatible aliases)
+  - **Runtime CSS check**: Warn in console when component styles aren't loaded
+  - **Sass fix**: Replace deprecated global `index()` with `list.index()` (eliminates 3 deprecation warnings)
+  - **Switch**: Add `onCheckedChange` alias for `onChange` (Radix convention)
+  - **Slider**: Add `onValueChange` alias for `onChange` (Radix convention)
+  - **ToggleGroup**: Add `onValueChange` alias for `onChange` (Radix convention)
+  - **Button**: Add `asChild` prop for composing with Next.js Link and other components
+  - **Stack, Grid**: Accept numeric `gap` values (1-8) mapping to the spacing scale (e.g. `gap={2}`)
+  - **Tokens**: Add `$fui-font-weight-bold` / `--fui-font-weight-bold` (700)
+  - **JSDoc**: Add doc links (`@see`) and `@default` annotations to 20+ component prop interfaces for IDE hover tooltips
+  - **CLI**: Add `fragments setup` command — auto-configures styles import, providers, and Next.js transpilePackages
+  - **README**: Add Next.js `transpilePackages` setup note
+  - **Getting Started docs**: Add `transpilePackages` requirement, `use client` metadata guidance
+
 ## 0.11.1
 
 ### Patch Changes

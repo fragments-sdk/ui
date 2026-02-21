@@ -43,6 +43,11 @@ describe('Chip', () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
+  it('resolves variant="outline" to "outlined"', () => {
+    render(<Chip variant="outline">Outline</Chip>);
+    expect(screen.getByRole('button', { name: 'Outline' })).toHaveClass('outlined');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Chip>Accessible chip</Chip>);
     await expectNoA11yViolations(container);

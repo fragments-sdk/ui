@@ -4,12 +4,24 @@ import * as React from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import styles from './Badge.module.scss';
 
+/**
+ * Badge for status indicators, labels, and counts.
+ * @see https://usefragments.com/components/badge
+ */
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
+  /** Visual style variant.
+   * @default "default"
+   * @see https://usefragments.com/components/badge#variants */
   variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline';
+  /** Badge size.
+   * @default "md" */
   size?: 'sm' | 'md' | 'lg';
+  /** Show a status dot before the label */
   dot?: boolean;
+  /** Icon element rendered before the label */
   icon?: React.ReactNode;
+  /** Makes the badge removable. Called when dismiss button is clicked. */
   onRemove?: () => void;
 }
 

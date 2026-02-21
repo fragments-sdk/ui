@@ -7,10 +7,20 @@ import styles from './Card.module.scss';
 // Types
 // ============================================
 
+/**
+ * Card container for grouping related content.
+ * @see https://usefragments.com/components/card
+ */
 export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'> {
   children: React.ReactNode;
-  variant?: 'default' | 'outlined' | 'elevated';
+  /** Visual style variant. `"outline"` is an alias for `"outlined"`.
+   * @default "default"
+   * @see https://usefragments.com/components/card#variants */
+  variant?: 'default' | 'outlined' | 'outline' | 'elevated';
+  /** Inner padding.
+   * @default "md" */
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Makes the card interactive (clickable) */
   onClick?: () => void;
 }
 
@@ -71,7 +81,7 @@ const paddingMap = {
 
 function CardRoot({
   children,
-  variant = 'default',
+  variant: variantProp = 'default',
   padding = 'md',
   onClick,
   className,
@@ -80,6 +90,9 @@ function CardRoot({
   'aria-describedby': ariaDescribedBy,
   ...htmlProps
 }: CardProps) {
+  // Resolve alias: "outline" → "outlined"
+  const variant = variantProp === 'outline' ? 'outlined' : variantProp;
+
   const isInteractive = !!onClick;
 
   const classes = [

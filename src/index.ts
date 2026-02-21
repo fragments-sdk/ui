@@ -2,6 +2,12 @@
 // This ensures --fui-* variables are available when using any component
 import './styles/globals.scss';
 
+// Runtime CSS detection — warns if component styles aren't loaded
+import { checkCssLoaded } from './utils/css-warning';
+if (typeof window !== 'undefined') {
+  checkCssLoaded();
+}
+
 // Core Components
 export { Button, type ButtonProps } from './components/Button';
 export { Input, type InputProps } from './components/Input';

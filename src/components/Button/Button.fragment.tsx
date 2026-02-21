@@ -46,7 +46,7 @@ export default defineFragment({
     },
     variant: {
       type: 'enum',
-      values: ['primary', 'secondary', 'ghost', 'danger'],
+      values: ['primary', 'secondary', 'ghost', 'danger', 'outlined', 'outline'],
       default: 'primary',
       description: 'Visual style variant',
       constraints: ['Only one primary button per context'],
@@ -62,6 +62,11 @@ export default defineFragment({
       values: ['button', 'a'],
       default: 'button',
       description: 'Render as a native button or anchor element',
+    },
+    asChild: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Merge button styling onto child element (e.g. Next.js Link)',
     },
     icon: {
       type: 'boolean',
@@ -95,7 +100,7 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      'variant: primary|secondary|ghost|danger (default: primary)',
+      'variant: primary|secondary|ghost|danger|outlined|outline (default: primary)',
       'size: sm|md|lg (default: md)',
       'disabled: boolean - disables interaction',
       'type: button|submit|reset (default: button)',
@@ -139,6 +144,11 @@ export default defineFragment({
       name: 'Danger',
       description: 'Destructive action requiring attention',
       render: () => <Button variant="danger">Delete Item</Button>,
+    },
+    {
+      name: 'Outline',
+      description: 'Bordered button with transparent background',
+      render: () => <Button variant="outline">View Details</Button>,
     },
     {
       name: 'Sizes',

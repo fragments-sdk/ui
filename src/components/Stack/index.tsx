@@ -2,7 +2,9 @@ import * as React from 'react';
 import styles from './Stack.module.scss';
 
 type Direction = 'row' | 'column';
-type Gap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type GapToken = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+/** Gap accepts string tokens or numbers (1-8) mapping to the spacing scale */
+type Gap = GapToken | number;
 
 /** Responsive value — either a single value or per-breakpoint overrides */
 export interface ResponsiveDirection {
@@ -21,17 +23,21 @@ export interface ResponsiveDirection {
 /** Responsive gap value */
 export interface ResponsiveGap {
   /** Default (mobile-first) */
-  base?: Gap;
+  base?: GapToken;
   /** ≥640px */
-  sm?: Gap;
+  sm?: GapToken;
   /** ≥768px */
-  md?: Gap;
+  md?: GapToken;
   /** ≥1024px */
-  lg?: Gap;
+  lg?: GapToken;
   /** ≥1280px */
-  xl?: Gap;
+  xl?: GapToken;
 }
 
+/**
+ * Flexbox layout component for vertical or horizontal stacking with consistent spacing.
+ * @see https://usefragments.com/components/stack
+ */
 export interface StackProps {
   children: React.ReactNode;
   /**
@@ -68,6 +74,10 @@ function isResponsiveDirection(
 
 function isResponsiveGap(gap: StackProps['gap']): gap is ResponsiveGap {
   return typeof gap === 'object' && gap !== null;
+}
+
+function isNumericGap(gap: StackProps['gap']): gap is number {
+  return typeof gap === 'number';
 }
 
 const StackRoot = React.forwardRef<HTMLElement, StackProps>(
@@ -114,6 +124,10 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(
       if (gap.lg && gap.lg !== 'none') gapVars['--fui-stack-gap-lg'] = `var(--fui-space-${gapToSpace(gap.lg)})`;
       if (gap.xl && gap.xl !== 'none') gapVars['--fui-stack-gap-xl'] = `var(--fui-space-${gapToSpace(gap.xl)})`;
       inlineStyle = { ...inlineStyle, ...gapVars } as React.CSSProperties;
+    } else if (isNumericGap(gap)) {
+      // Numeric gap: maps to space scale tokens (e.g. gap={2} → var(--fui-space-2))
+      gapClass = false;
+      inlineStyle = { ...inlineStyle, gap: `var(--fui-space-${gap})` } as React.CSSProperties;
     } else {
       gapClass = gap !== 'none' && styles[`gap-${gap}`];
     }

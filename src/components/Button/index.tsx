@@ -4,14 +4,27 @@ import * as React from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import styles from './Button.module.scss';
 
+/**
+ * Button props.
+ * @see https://usefragments.com/components/button
+ */
 type ButtonBaseProps = {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined';
+  /** Visual style variant. `"outline"` is an alias for `"outlined"`.
+   * @default "primary"
+   * @see https://usefragments.com/components/button#variants */
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined' | 'outline';
+  /** Button size.
+   * @default "md"
+   * @see https://usefragments.com/components/button#sizes */
   size?: 'sm' | 'md' | 'lg';
   /** Render as icon-only button (square aspect ratio) */
   icon?: boolean;
   /** Make button full width of container */
   fullWidth?: boolean;
+  /** Merge props onto child element instead of rendering a button. Useful for composition with Link components.
+   * @see https://usefragments.com/components/button#aschild */
+  asChild?: boolean;
 };
 
 // Button as native button element
@@ -36,13 +49,17 @@ const ButtonRoot = React.forwardRef<
 >(function Button(props, ref) {
   const {
     children,
-    variant = 'primary',
+    variant: variantProp = 'primary',
     size = 'md',
     icon = false,
     fullWidth = false,
+    asChild = false,
     className,
     ...rest
   } = props;
+
+  // Resolve alias: "outline" → "outlined"
+  const variant = variantProp === 'outline' ? 'outlined' : variantProp;
 
   const classNames = [
     styles.button,
@@ -54,6 +71,14 @@ const ButtonRoot = React.forwardRef<
   ]
     .filter(Boolean)
     .join(' ');
+
+  // asChild: merge button styling onto child element (e.g. Next.js Link)
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+      className: [classNames, (children.props as Record<string, unknown>).className].filter(Boolean).join(' '),
+      ref,
+    });
+  }
 
   // Render as anchor
   if (props.as === 'a') {

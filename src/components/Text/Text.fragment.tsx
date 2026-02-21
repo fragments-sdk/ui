@@ -53,18 +53,18 @@ export default defineFragment({
     },
     size: {
       type: 'enum',
-      description: 'Font size',
-      values: ['2xs', 'xs', 'sm', 'base', 'lg', 'xl', '2xl'],
+      description: 'Font size (md is an alias for base)',
+      values: ['2xs', 'xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl'],
     },
     weight: {
       type: 'enum',
       description: 'Font weight',
-      values: ['normal', 'medium', 'semibold'],
+      values: ['normal', 'medium', 'semibold', 'bold'],
     },
     color: {
       type: 'enum',
-      description: 'Text color',
-      values: ['primary', 'secondary', 'tertiary'],
+      description: 'Text color (muted is an alias for tertiary)',
+      values: ['primary', 'secondary', 'tertiary', 'muted'],
     },
     font: {
       type: 'enum',
@@ -91,9 +91,9 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'as: string - HTML element',
-      'size: 2xs|xs|sm|base|lg|xl|2xl - font size',
-      'weight: normal|medium|semibold - font weight',
-      'color: primary|secondary|tertiary - text color',
+      'size: 2xs|xs|sm|base|md|lg|xl|2xl - font size (md = base)',
+      'weight: normal|medium|semibold|bold - font weight',
+      'color: primary|secondary|tertiary|muted - text color (muted = tertiary)',
       'font: sans|mono - font family',
       'truncate: boolean - enable truncation',
       'lineClamp: number - max lines',
@@ -130,6 +130,7 @@ export default defineFragment({
           <Text weight="normal">Normal weight</Text>
           <Text weight="medium">Medium weight</Text>
           <Text weight="semibold">Semibold weight</Text>
+          <Text weight="bold">Bold weight</Text>
         </div>
       ),
     },
@@ -141,6 +142,7 @@ export default defineFragment({
           <Text color="primary">Primary color (default)</Text>
           <Text color="secondary">Secondary color</Text>
           <Text color="tertiary">Tertiary color</Text>
+          <Text color="muted">Muted color (alias for tertiary)</Text>
         </div>
       ),
     },

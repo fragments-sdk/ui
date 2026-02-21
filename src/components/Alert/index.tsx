@@ -10,8 +10,15 @@ import styles from './Alert.module.scss';
 
 export type AlertSeverity = 'info' | 'success' | 'warning' | 'error';
 
+/**
+ * Alert for contextual feedback messages (info, success, warning, error).
+ * @see https://usefragments.com/components/alert
+ */
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Alert severity level. Controls color and default icon.
+   * @default "info"
+   * @see https://usefragments.com/components/alert#variants */
   severity?: AlertSeverity;
 }
 

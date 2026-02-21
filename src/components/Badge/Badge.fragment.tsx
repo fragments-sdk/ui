@@ -50,7 +50,7 @@ export default defineFragment({
     variant: {
       type: 'enum',
       description: 'Visual style indicating severity or category',
-      values: ['default', 'success', 'warning', 'error', 'info'],
+      values: ['default', 'success', 'warning', 'error', 'info', 'outline'],
       default: 'default',
     },
     size: {
@@ -82,7 +82,7 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'children: ReactNode - badge label (required)',
-      'variant: default|success|warning|error|info - visual style',
+      'variant: default|success|warning|error|info|outline - visual style',
       'size: sm|md - badge size',
       'dot: boolean - show status dot indicator',
       'onRemove: () => void - makes badge removable',
@@ -146,6 +146,14 @@ import { Stack } from '@/components/Stack';
           <Badge variant="error" dot>Offline</Badge>
         </Stack>
       ),
+    },
+    {
+      name: 'Outline',
+      description: 'Minimal bordered badge for neutral emphasis',
+      code: `import { Badge } from '@/components/Badge';
+
+<Badge variant="outline">Outline</Badge>`,
+      render: () => <Badge variant="outline">Outline</Badge>,
     },
     {
       name: 'Small Size',

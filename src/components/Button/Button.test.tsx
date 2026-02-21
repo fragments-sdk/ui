@@ -46,6 +46,22 @@ describe('Button', () => {
     expect(ref).toHaveBeenCalled();
   });
 
+  it('resolves variant="outline" to "outlined"', () => {
+    render(<Button variant="outline">Outline</Button>);
+    expect(screen.getByRole('button')).toHaveClass('outlined');
+  });
+
+  it('renders as child element when asChild is true', () => {
+    render(
+      <Button asChild>
+        <a href="/test">Link Button</a>
+      </Button>
+    );
+    const link = screen.getByRole('link', { name: 'Link Button' });
+    expect(link).toHaveAttribute('href', '/test');
+    expect(link).toHaveClass('button');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Button>Accessible</Button>);
     await expectNoA11yViolations(container);

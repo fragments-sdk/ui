@@ -50,7 +50,7 @@ export default defineFragment({
     variant: {
       type: 'enum',
       description: 'Visual style variant',
-      values: ['filled', 'outlined', 'soft'],
+      values: ['filled', 'outlined', 'outline', 'soft'],
       default: 'filled',
     },
     size: {
@@ -91,7 +91,7 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'children: ReactNode - chip label (required)',
-      'variant: filled|outlined|soft - visual style',
+      'variant: filled|outlined|outline|soft - visual style',
       'size: sm|md - chip size',
       'selected: boolean - selection state',
       'icon/avatar: ReactNode - leading visual',
@@ -112,6 +112,16 @@ export default defineFragment({
       name: 'Default',
       description: 'Basic filled chip',
       render: () => <Chip>Default</Chip>,
+    },
+    {
+      name: 'Outline',
+      description: 'Chip with border using the "outline" alias for "outlined"',
+      render: () => (
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Chip variant="outline">Outline</Chip>
+          <Chip variant="outline" selected>Outline Selected</Chip>
+        </div>
+      ),
     },
     {
       name: 'Selected',

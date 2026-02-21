@@ -29,6 +29,15 @@ import '@fragments-sdk/ui/styles';   // component styles (ui.css)
 import './styles/globals.scss';       // your seed overrides
 ```
 
+**Next.js users** — add `transpilePackages` to your `next.config.js`:
+
+```js
+// next.config.js
+const nextConfig = {
+  transpilePackages: ['@fragments-sdk/ui'],
+};
+```
+
 Then use components:
 
 ```tsx
@@ -278,6 +287,12 @@ npm install @fragments-sdk/ui @fragments-sdk/mcp
 ```
 
 The MCP server automatically discovers `fragments.json` from the installed `@fragments-sdk/ui` package. No configuration needed.
+
+Or use the CLI to set up everything at once:
+
+```bash
+npx @fragments-sdk/cli setup --mcp
+```
 
 ## Composition Blocks
 

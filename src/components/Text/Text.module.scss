@@ -25,7 +25,8 @@
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
-.size-base {
+.size-base,
+.size-md {
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
@@ -54,6 +55,10 @@
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
 }
 
+.weight-bold {
+  font-weight: var(--fui-font-weight-bold, $fui-font-weight-bold);
+}
+
 // Text colors
 .color-primary {
   color: var(--fui-text-primary, $fui-text-primary);
@@ -63,7 +68,8 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
-.color-tertiary {
+.color-tertiary,
+.color-muted {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 

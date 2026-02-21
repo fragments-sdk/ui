@@ -35,7 +35,9 @@ import "../../styles/globals.scss";
 export type CodeBlockLanguage =
   | "tsx"
   | "typescript"
+  | "ts"
   | "javascript"
+  | "js"
   | "jsx"
   | "bash"
   | "shell"
@@ -64,7 +66,15 @@ export type CodeBlockLanguage =
   | "sql"
   | "graphql"
   | "diff"
-  | "plaintext";
+  | "plaintext"
+  | "text";
+
+/** Resolves language aliases to their canonical Shiki names */
+const LANGUAGE_ALIASES: Partial<Record<CodeBlockLanguage, string>> = {
+  ts: "typescript",
+  js: "javascript",
+  text: "plaintext",
+};
 
 /** Available syntax highlighting themes */
 export type CodeBlockTheme =
@@ -591,7 +601,8 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
       }
 
       try {
-        const html = await _codeToHtml(visibleCode, { lang: language, theme });
+        const resolvedLang = LANGUAGE_ALIASES[language] || language;
+        const html = await _codeToHtml(visibleCode, { lang: resolvedLang, theme });
         return processShikiHtml(html, {
           showLineNumbers,
           startLineNumber,

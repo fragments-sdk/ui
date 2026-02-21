@@ -9,6 +9,10 @@ import styles from './RadioGroup.module.scss';
 // Types
 // ============================================
 
+/**
+ * Radio group for selecting one option from a set.
+ * @see https://usefragments.com/components/radiogroup
+ */
 export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /** Current value (controlled) */
   value?: string;

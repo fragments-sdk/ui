@@ -8,17 +8,31 @@ import styles from './Drawer.module.scss';
 // Types
 // ============================================
 
+/**
+ * Slide-in panel for navigation, forms, or supplementary content.
+ * @see https://usefragments.com/components/drawer
+ */
 export interface DrawerProps {
   children: React.ReactNode;
+  /** Controlled open state */
   open?: boolean;
+  /** Default open state */
   defaultOpen?: boolean;
+  /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the drawer blocks interaction with the rest of the page.
+   * @default true */
   modal?: boolean;
 }
 
 export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Which edge the drawer slides from.
+   * @default "right" */
   side?: 'left' | 'right' | 'top' | 'bottom';
+  /** Drawer width (for left/right) or height (for top/bottom).
+   * @default "md"
+   * @see https://usefragments.com/components/drawer#sizes */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   /** Whether to show the backdrop overlay (default: true). Set to false for non-modal bottom panels. */
   backdrop?: boolean;

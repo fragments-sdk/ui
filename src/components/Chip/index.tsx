@@ -3,11 +3,18 @@
 import * as React from 'react';
 import styles from './Chip.module.scss';
 
+/**
+ * Chip for selections, filters, and tags. Use with Chip.Group for multi-select.
+ * @see https://usefragments.com/components/chip
+ */
 export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   children: React.ReactNode;
-  /** Visual style variant */
-  variant?: 'filled' | 'outlined' | 'soft';
-  /** Size of the chip */
+  /** Visual style variant. `"outline"` is an alias for `"outlined"`.
+   * @default "filled"
+   * @see https://usefragments.com/components/chip#variants */
+  variant?: 'filled' | 'outlined' | 'outline' | 'soft';
+  /** Chip size.
+   * @default "md" */
   size?: 'sm' | 'md' | 'lg';
   /** Whether the chip is selected */
   selected?: boolean;
@@ -36,7 +43,7 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
   function Chip(
     {
       children,
-      variant = 'filled',
+      variant: variantProp = 'filled',
       size = 'md',
       selected = false,
       disabled = false,
@@ -50,6 +57,9 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
     },
     ref
   ) {
+    // Resolve alias: "outline" → "outlined"
+    const variant = variantProp === 'outline' ? 'outlined' : variantProp;
+
     const classes = [
       styles.chip,
       styles[size],

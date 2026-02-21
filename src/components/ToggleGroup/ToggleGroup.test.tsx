@@ -83,6 +83,26 @@ describe('ToggleGroup', () => {
     expect(optionB).toHaveAttribute('tabindex', '-1');
   });
 
+  it('calls onValueChange alias when an item is clicked', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    renderToggleGroup({ onChange: undefined, onValueChange });
+
+    await user.click(screen.getByRole('radio', { name: /option b/i }));
+    expect(onValueChange).toHaveBeenCalledWith('b');
+  });
+
+  it('prefers onChange over onValueChange when both provided', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const onValueChange = vi.fn();
+    renderToggleGroup({ onChange, onValueChange });
+
+    await user.click(screen.getByRole('radio', { name: /option b/i }));
+    expect(onChange).toHaveBeenCalledWith('b');
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = renderToggleGroup();
     await expectNoA11yViolations(container);

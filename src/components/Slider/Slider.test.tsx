@@ -44,6 +44,12 @@ describe('Slider', () => {
     expect(screen.getByText('75')).toBeInTheDocument();
   });
 
+  it('accepts onValueChange alias for onChange', () => {
+    const handleChange = vi.fn();
+    render(<Slider aria-label="Volume" value={50} onValueChange={handleChange} />);
+    expect(screen.getByRole('slider')).toBeInTheDocument();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Slider label="Accessible slider" defaultValue={50} />);
     await expectNoA11yViolations(container);

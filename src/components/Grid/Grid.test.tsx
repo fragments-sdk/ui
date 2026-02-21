@@ -53,6 +53,12 @@ describe('Grid', () => {
     expect(container.querySelector('.colSpan2')).toBeInTheDocument();
   });
 
+  it('applies inline style for numeric gap values', () => {
+    const { container } = render(<Grid gap={3}>Content</Grid>);
+    const el = container.firstChild as HTMLElement;
+    expect(el.style.gap).toBe('var(--fui-space-3)');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <Grid columns={2}>

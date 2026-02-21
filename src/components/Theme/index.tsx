@@ -368,8 +368,20 @@ export { ThemeProvider, ThemeToggle, useTheme };
 // configureTheme — JS-only seed configuration
 // ============================================
 
+/**
+ * Neutral palette for surfaces, text, and borders.
+ * - `stone`: Cool gray (balanced, professional) — default
+ * - `ice`: Cool blue-tinted grays (crisp, technical)
+ * - `earth`: Warm brown-tinted grays (natural, grounded)
+ * - `sand`: Warm tan-tinted grays (organic, approachable)
+ * - `fire`: Warm red-tinted grays (bold, energetic)
+ *
+ * Preview palettes at https://usefragments.com/themes
+ */
 export type NeutralPalette = 'stone' | 'ice' | 'earth' | 'sand' | 'fire';
+/** Spacing density: `compact` (tight), `default` (balanced), `relaxed` (spacious) */
 export type DensityPreset = 'compact' | 'default' | 'relaxed';
+/** Border radius style: `sharp` (0), `subtle` (2px), `default` (4px), `rounded` (8px), `pill` (9999px) */
 export type RadiusStyle = 'sharp' | 'subtle' | 'default' | 'rounded' | 'pill';
 
 export interface ConfigureThemeOptions {

@@ -157,7 +157,10 @@ export default defineFragment({
     onChange: {
       type: "function",
       description: "Called with new value when selection changes",
-      required: true,
+    },
+    onValueChange: {
+      type: "function",
+      description: "Alias for onChange (Radix convention): (value: string) => void",
     },
     children: {
       type: "node",
@@ -197,7 +200,7 @@ export default defineFragment({
   contract: {
     propsSummary: [
       "value: string - selected value (required)",
-      "onChange: (value: string) => void - change handler (required)",
+      "onChange: (value: string) => void - change handler (or onValueChange)",
       "children: ToggleGroup.Item[] - toggle items",
       "variant: default|pills|outline - visual style",
       "size: sm|md - size variant",

@@ -8,16 +8,28 @@ import styles from './Dialog.module.scss';
 // Types
 // ============================================
 
+/**
+ * Modal dialog overlay for confirmations, forms, and focused tasks.
+ * @see https://usefragments.com/components/dialog
+ */
 export interface DialogProps {
   children: React.ReactNode;
+  /** Controlled open state */
   open?: boolean;
+  /** Default open state */
   defaultOpen?: boolean;
+  /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the dialog blocks interaction with the rest of the page.
+   * @default true */
   modal?: boolean;
 }
 
 export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Dialog width.
+   * @default "md"
+   * @see https://usefragments.com/components/dialog#sizes */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }
 

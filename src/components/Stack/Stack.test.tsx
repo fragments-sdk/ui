@@ -40,6 +40,12 @@ describe('Stack', () => {
     expect(ref).toHaveBeenCalled();
   });
 
+  it('applies inline style for numeric gap values', () => {
+    const { container } = render(<Stack gap={4}><span>A</span></Stack>);
+    const el = container.firstChild as HTMLElement;
+    expect(el.style.gap).toBe('var(--fui-space-4)');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Stack><span>A</span><span>B</span></Stack>);
     await expectNoA11yViolations(container);

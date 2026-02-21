@@ -58,8 +58,9 @@ export default defineFragment({
       constraints: ['Only applies when columns="auto"'],
     },
     gap: {
-      type: 'enum',
+      type: 'union',
       values: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Gap between items. Accepts string tokens or numbers (1-8) mapping to the spacing scale',
       default: 'md',
       description: 'Gap between grid items, mapped to spacing tokens',
     },
@@ -98,7 +99,7 @@ export default defineFragment({
     propsSummary: [
       'columns: 1-12 | { base, sm, md, lg, xl } | "auto" (default: 1)',
       'minChildWidth: string — min width for auto-fill (only with columns="auto")',
-      'gap: none|xs|sm|md|lg|xl (default: md)',
+      'gap: none|xs|sm|md|lg|xl|number (default: md, number maps to space scale)',
       'alignItems: start|center|end|stretch — vertical alignment',
       'justifyItems: start|center|end|stretch — horizontal alignment',
       'padding: none|sm|md|lg (default: none)',
@@ -145,6 +146,17 @@ export default defineFragment({
           <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 2</div>
           <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 3</div>
           <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 4</div>
+        </Grid>
+      ),
+    },
+    {
+      name: 'Numeric Gap',
+      description: 'Using number values (1-8) mapped to the spacing scale',
+      render: () => (
+        <Grid columns={3} gap={4}>
+          <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>
+          <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>
+          <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>
         </Grid>
       ),
     },

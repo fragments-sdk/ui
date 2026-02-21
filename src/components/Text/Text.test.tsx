@@ -22,6 +22,21 @@ describe('Text', () => {
     expect(el).toHaveClass('color-secondary');
   });
 
+  it('applies bold weight class', () => {
+    render(<Text weight="bold">Bold text</Text>);
+    expect(screen.getByText('Bold text')).toHaveClass('weight-bold');
+  });
+
+  it('applies muted color class (alias for tertiary)', () => {
+    render(<Text color="muted">Muted text</Text>);
+    expect(screen.getByText('Muted text')).toHaveClass('color-muted');
+  });
+
+  it('applies md size class (alias for base)', () => {
+    render(<Text size="md">Medium text</Text>);
+    expect(screen.getByText('Medium text')).toHaveClass('size-md');
+  });
+
   it('applies section-label variant class', () => {
     render(<Text variant="section-label">Label</Text>);
     expect(screen.getByText('Label')).toHaveClass('variant-section-label');

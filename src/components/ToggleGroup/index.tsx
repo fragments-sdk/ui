@@ -7,16 +7,25 @@ import styles from './ToggleGroup.module.scss';
 // Types
 // ============================================
 
+/**
+ * A group of toggle buttons where only one can be selected at a time.
+ * @see https://usefragments.com/components/togglegroup
+ */
 export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Current selected value */
   value: string;
   /** Callback when selection changes */
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  /** Alias for onChange (Radix convention) */
+  onValueChange?: (value: string) => void;
   /** Toggle items */
   children: React.ReactNode;
-  /** Visual variant */
+  /** Visual variant.
+   * @default "default"
+   * @see https://usefragments.com/components/togglegroup#variants */
   variant?: 'default' | 'pills' | 'outline';
-  /** Size */
+  /** Size.
+   * @default "md" */
   size?: 'sm' | 'md' | 'lg';
   /** Gap between items (for pills/outline variants) */
   gap?: 'none' | 'xs' | 'sm';
@@ -63,6 +72,7 @@ function useToggleGroupContext() {
 function ToggleGroupRoot({
   value,
   onChange,
+  onValueChange,
   children,
   variant = 'default',
   size = 'md',
@@ -70,6 +80,7 @@ function ToggleGroupRoot({
   className,
   ...htmlProps
 }: ToggleGroupProps) {
+  const resolvedOnChange = onChange ?? onValueChange ?? (() => {});
   const classes = [
     styles.group,
     styles[variant],
@@ -91,7 +102,7 @@ function ToggleGroupRoot({
 
   const contextValue: ToggleGroupContextValue = {
     value,
-    onChange,
+    onChange: resolvedOnChange,
     variant,
     size,
     hasFocusableSelection,

@@ -9,6 +9,10 @@ import styles from './Avatar.module.scss';
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
+/**
+ * Avatar for user photos, initials, or placeholder icons.
+ * @see https://usefragments.com/components/avatar
+ */
 export interface AvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'> {
   /** Image source URL */
   src?: string;

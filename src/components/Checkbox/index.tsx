@@ -8,6 +8,10 @@ import styles from './Checkbox.module.scss';
 // Types
 // ============================================
 
+/**
+ * Checkbox for boolean or indeterminate selections in forms.
+ * @see https://usefragments.com/components/checkbox
+ */
 export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElement>, 'onChange' | 'defaultChecked'> {
   /** Whether the checkbox is checked */
   checked?: boolean;
@@ -21,7 +25,8 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   disabled?: boolean;
   /** Whether the checkbox is required */
   required?: boolean;
-  /** Size variant */
+  /** Size variant.
+   * @default "md" */
   size?: 'sm' | 'md' | 'lg';
   /** Label text */
   label?: string;

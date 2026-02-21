@@ -44,7 +44,7 @@ export default defineFragment({
     },
     variant: {
       type: 'enum',
-      values: ['default', 'outlined', 'elevated'],
+      values: ['default', 'outlined', 'outline', 'elevated'],
       default: 'default',
       description: 'Visual style of the card surface',
       constraints: ['Use "elevated" sparingly to maintain visual hierarchy'],
@@ -76,7 +76,7 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      'variant: default|outlined|elevated (default: default)',
+      'variant: default|outlined|outline|elevated (default: default)',
       'padding: none|sm|md|lg (default: md)',
       'onClick: () => void - makes card interactive',
       'Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer',
@@ -127,6 +127,18 @@ export default defineFragment({
             <Card.Title>Outlined Card</Card.Title>
           </Card.Header>
           <Card.Body>Content with border.</Card.Body>
+        </Card>
+      ),
+    },
+    {
+      name: 'Outline',
+      description: 'Card with border, using the "outline" alias for "outlined"',
+      render: () => (
+        <Card variant="outline">
+          <Card.Header>
+            <Card.Title>Outline Card</Card.Title>
+          </Card.Header>
+          <Card.Body>Uses the Radix/Shadcn-style alias.</Card.Body>
         </Card>
       ),
     },

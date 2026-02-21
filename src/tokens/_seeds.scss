@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 // ============================================
 // @fragments-sdk/ui Design Token Seeds
 // ============================================
@@ -44,17 +46,17 @@ $fui-radius-style: "default" !default;
 // Fail fast at compile time if invalid seed values are provided.
 
 $_valid-neutrals: "stone", "ice", "earth", "sand", "fire";
-@if not index($_valid-neutrals, $fui-neutral) {
+@if not list.index($_valid-neutrals, $fui-neutral) {
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
 }
 
 $_valid-densities: "compact", "default", "relaxed";
-@if not index($_valid-densities, $fui-density) {
+@if not list.index($_valid-densities, $fui-density) {
   @error "Invalid $fui-density: '#{$fui-density}'. Must be one of: #{$_valid-densities}";
 }
 
 $_valid-radii: "sharp", "subtle", "default", "rounded", "pill";
-@if not index($_valid-radii, $fui-radius-style) {
+@if not list.index($_valid-radii, $fui-radius-style) {
   @error "Invalid $fui-radius-style: '#{$fui-radius-style}'. Must be one of: #{$_valid-radii}";
 }
 

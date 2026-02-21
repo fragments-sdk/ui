@@ -8,18 +8,30 @@ import styles from './Tabs.module.scss';
 // Types
 // ============================================
 
-export type TabValue = string | number;
+export type TabValue = string;
 
+/**
+ * Tabbed navigation for switching between content panels.
+ * @see https://usefragments.com/components/tabs
+ */
 export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
   children: React.ReactNode;
+  /** Default active tab value (uncontrolled) */
   defaultValue?: TabValue;
+  /** Controlled active tab value */
   value?: TabValue;
+  /** Called when the active tab changes */
   onValueChange?: (value: TabValue) => void;
+  /** Tab layout direction.
+   * @default "horizontal" */
   orientation?: 'horizontal' | 'vertical';
 }
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Tab list visual style.
+   * @default "underline"
+   * @see https://usefragments.com/components/tabs#variants */
   variant?: 'underline' | 'pills';
 }
 

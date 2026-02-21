@@ -58,6 +58,10 @@ export default defineFragment({
       type: 'function',
       description: 'Callback with new checked state: (checked: boolean) => void',
     },
+    onCheckedChange: {
+      type: 'function',
+      description: 'Alias for onChange (Radix convention): (checked: boolean) => void',
+    },
     label: {
       type: 'string',
       description: 'Visible label text',
@@ -87,7 +91,7 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'checked: boolean - on/off state',
-      'onChange: (checked) => void - state change handler',
+      'onChange: (checked) => void - state change handler (or onCheckedChange)',
       'label: string - visible label text',
       'description: string - helper text below label',
       'disabled: boolean - non-interactive state',

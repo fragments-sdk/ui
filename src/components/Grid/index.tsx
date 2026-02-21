@@ -21,6 +21,10 @@ export interface ResponsiveColumns {
   xl?: ColumnCount;
 }
 
+/**
+ * CSS Grid layout component with responsive columns.
+ * @see https://usefragments.com/components/grid
+ */
 export interface GridProps {
   children?: React.ReactNode;
   /**
@@ -32,8 +36,8 @@ export interface GridProps {
   columns?: ColumnCount | ResponsiveColumns | 'auto';
   /** Minimum width for auto-fill columns (only used with columns="auto") */
   minChildWidth?: string;
-  /** Gap between grid items */
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Gap between grid items. Accepts string tokens or numbers (1-8) mapping to the spacing scale */
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
   /** Vertical alignment of items within their cells */
   alignItems?: 'start' | 'center' | 'end' | 'stretch';
   /** Horizontal alignment of items within their cells */
@@ -125,10 +129,15 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
       columnsClass = styles[`columns${columns}`];
     }
 
+    // Handle numeric gap via inline style
+    if (typeof gap === 'number') {
+      inlineStyle = { ...inlineStyle, gap: `var(--fui-space-${gap})` } as React.CSSProperties;
+    }
+
     const classes = [
       styles.grid,
       columnsClass,
-      gapClasses[gap],
+      typeof gap === 'number' ? undefined : gapClasses[gap],
       paddingClasses[padding],
       alignItems && styles[`align${cap(alignItems)}`],
       justifyItems && styles[`justify${cap(justifyItems)}`],

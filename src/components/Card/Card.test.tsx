@@ -57,6 +57,11 @@ describe('Card', () => {
     expect(screen.getByRole('button')).toHaveClass('interactive');
   });
 
+  it('resolves variant="outline" to "outlined"', () => {
+    render(<Card variant="outline">Content</Card>);
+    expect(screen.getByRole('article')).toHaveClass('outlined');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <Card>

@@ -54,7 +54,7 @@ export default defineFragment({
     },
     gap: {
       type: 'union',
-      description: 'Spacing between items: "none", "xs", "sm", "md", "lg", "xl", or responsive object',
+      description: 'Spacing between items: "none"|"xs"|"sm"|"md"|"lg"|"xl", a number (1-8) for space scale, or responsive object',
       default: 'md',
     },
     align: {
@@ -93,7 +93,7 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'direction: row|column|{responsive} - stack direction',
-      'gap: none|xs|sm|md|lg|xl|{responsive} - spacing',
+      'gap: none|xs|sm|md|lg|xl|number|{responsive} - spacing (number maps to space scale)',
       'align: start|center|end|stretch|baseline - cross-axis',
       'justify: start|center|end|between - main-axis',
       'wrap: boolean - allow wrapping',
@@ -151,6 +151,26 @@ export default defineFragment({
           <Stack direction="row" gap="lg">
             <Badge variant="info">LG</Badge>
             <Badge variant="info">Gap</Badge>
+          </Stack>
+        </Stack>
+      ),
+    },
+    {
+      name: 'Numeric Gap',
+      description: 'Using number values (1-8) mapped to the spacing scale',
+      render: () => (
+        <Stack gap="lg">
+          <Stack direction="row" gap={2}>
+            <Badge variant="info">Gap 2</Badge>
+            <Badge variant="info">Gap 2</Badge>
+          </Stack>
+          <Stack direction="row" gap={4}>
+            <Badge variant="info">Gap 4</Badge>
+            <Badge variant="info">Gap 4</Badge>
+          </Stack>
+          <Stack direction="row" gap={6}>
+            <Badge variant="info">Gap 6</Badge>
+            <Badge variant="info">Gap 6</Badge>
           </Stack>
         </Stack>
       ),
