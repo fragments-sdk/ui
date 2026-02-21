@@ -4,6 +4,22 @@
 
 ### Minor Changes
 
+- [`5b6a7d7`](https://github.com/ConanMcN/fragments/commit/5b6a7d739733f16cc41586a427759c5bfe9f1ab8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - DX improvements from code review feedback:
+  - Add `variant="outline"` alias for Button, Card, Chip, and Badge (Radix/Shadcn convention)
+  - Add `asChild` prop for Button to compose with Next.js Link and other elements
+  - Add `onCheckedChange` alias for Switch, `onValueChange` alias for Slider and ToggleGroup
+  - Add numeric gap support for Stack and Grid (`gap={1-8}` maps to spacing scale)
+  - Add Text `truncate`, `lineClamp`, `gradient`, `keyboard`, and `mark` variants
+  - Add `configureTheme()` runtime API with density and radius seed tokens
+  - Add JSDoc with `@see` doc links on 20+ component interfaces
+  - Add `fragments setup` CLI command with framework detection, auto styles import, ThemeProvider wiring, SCSS seeds, and MCP config
+  - Add Outline and Numeric Gap fragment variant examples with preview registry
+  - Improve runtime CSS warning with actionable Next.js hints and setup command suggestion
+
+## 0.12.0
+
+### Minor Changes
+
 - DX improvements based on external developer feedback
   - **Text**: Add `weight="bold"` (700), `color="muted"` (alias for tertiary), `size="md"` (alias for base)
   - **Button, Card, Chip**: Accept `variant="outline"` as alias for `"outlined"` (Radix/Shadcn convention)
