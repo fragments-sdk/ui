@@ -1,5 +1,16 @@
 # @fragments-sdk/ui
 
+## 0.13.1
+
+### Patch Changes
+
+- e0c5ab2: Extract `@fragments-sdk/viewer` as public npm package from CLI viewer code.
+  - **New package**: `@fragments-sdk/viewer` (0.1.0) — Storybook-like React UI for previewing Fragments components. Ships source (TSX/SCSS) for Vite compilation. Subpath exports: `./shared`, `./app`, `./docs-data`, `./docs-layout.scss`.
+  - **CLI**: Viewer extraction reduces CLI viewer dir from 28 to 11 files. New `fragments snapshot` command for visual regression testing. New `fragments init` prompts for theme seeds (brand, neutral, density, radius) and snapshot toggle. CLI resolves viewer via monorepo path first, npm `@fragments-sdk/viewer` fallback.
+  - **Core**: New `ThemeSeeds` and `SnapshotConfig` types exported. `FragmentsConfig` extended with `theme` and `snapshots` fields.
+  - **UI**: Fragment file updates for component metadata.
+  - **Context/MCP**: Minor tool updates.
+
 ## 0.13.0
 
 ### Minor Changes
