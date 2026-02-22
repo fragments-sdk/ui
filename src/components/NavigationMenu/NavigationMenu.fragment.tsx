@@ -107,7 +107,7 @@ export default defineFragment({
 
   ai: {
     compositionPattern: 'compound',
-    subComponents: ['List', 'Item', 'Trigger', 'Content', 'Link', 'Indicator', 'Viewport', 'MobileContent', 'MobileSection'],
+    subComponents: ['List', 'Item', 'Trigger', 'Content', 'Link', 'Indicator', 'Viewport', 'MobileBrand', 'MobileContent', 'MobileSection'],
     requiredChildren: ['List'],
     commonPatterns: [
       '<NavigationMenu><NavigationMenu.List><NavigationMenu.Item value="docs"><NavigationMenu.Trigger>Docs</NavigationMenu.Trigger><NavigationMenu.Content><NavigationMenu.Link href="/guides" title="Guides" description="Learn the basics" /></NavigationMenu.Content></NavigationMenu.Item></NavigationMenu.List><NavigationMenu.Viewport /></NavigationMenu>',

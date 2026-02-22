@@ -270,8 +270,28 @@ function DataTableRoot<T>({
 
   if (isEmpty) {
     return (
-      <div className={styles.emptyState}>
-        <span className={styles.emptyMessage}>{emptyMessage}</span>
+      <div className={[styles.wrapper, bordered && styles.bordered].filter(Boolean).join(' ')}>
+        <table
+          {...htmlProps}
+          className={rootClasses}
+          aria-label={ariaLabel}
+          aria-describedby={ariaDescribedBy}
+        >
+          {caption && (
+            <caption className={captionHidden ? styles.captionHidden : styles.caption}>
+              {caption}
+            </caption>
+          )}
+          <tbody className={styles.tbody}>
+            <tr className={styles.row}>
+              <td className={styles.td} colSpan={Math.max(columns.length, 1)}>
+                <div className={styles.emptyState}>
+                  <span className={styles.emptyMessage}>{emptyMessage}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
   }

@@ -56,6 +56,8 @@ export interface TooltipProviderProps {
 // Components
 // ============================================
 
+const TooltipProviderContext = React.createContext(false);
+
 /**
  * Tooltip - Shows contextual information on hover/focus
  *
@@ -72,8 +74,8 @@ function TooltipRoot({
   side = 'top',
   align = 'center',
   sideOffset = 6,
-  delay = 400,
-  closeDelay = 0,
+  delay,
+  closeDelay,
   disabled = false,
   arrow = true,
   open,
@@ -82,6 +84,7 @@ function TooltipRoot({
   className,
   ...htmlProps
 }: TooltipProps) {
+  const hasExternalProvider = React.useContext(TooltipProviderContext);
   const renderTrigger = React.useCallback(
     (triggerProps: React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> }) => {
       const childProps = children.props as Record<string, unknown>;
@@ -110,30 +113,39 @@ function TooltipRoot({
     return children;
   }
 
-  return (
-    <BaseTooltip.Provider delay={delay} closeDelay={closeDelay}>
-      <BaseTooltip.Root
-        open={open}
-        defaultOpen={defaultOpen}
-        onOpenChange={onOpenChange}
-      >
-        <BaseTooltip.Trigger render={renderTrigger} />
-        <BaseTooltip.Portal>
-          <BaseTooltip.Positioner
-            side={side}
-            align={align}
-            sideOffset={sideOffset}
-            className={styles.positioner}
-          >
-            <BaseTooltip.Popup {...htmlProps} className={[styles.popup, className].filter(Boolean).join(' ')}>
-              {content}
-              {arrow && <BaseTooltip.Arrow className={styles.arrow} />}
-            </BaseTooltip.Popup>
-          </BaseTooltip.Positioner>
-        </BaseTooltip.Portal>
-      </BaseTooltip.Root>
-    </BaseTooltip.Provider>
+  const tooltipNode = (
+    <BaseTooltip.Root
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+    >
+      <BaseTooltip.Trigger render={renderTrigger} />
+      <BaseTooltip.Portal>
+        <BaseTooltip.Positioner
+          side={side}
+          align={align}
+          sideOffset={sideOffset}
+          className={styles.positioner}
+        >
+          <BaseTooltip.Popup {...htmlProps} className={[styles.popup, className].filter(Boolean).join(' ')}>
+            {content}
+            {arrow && <BaseTooltip.Arrow className={styles.arrow} />}
+          </BaseTooltip.Popup>
+        </BaseTooltip.Positioner>
+      </BaseTooltip.Portal>
+    </BaseTooltip.Root>
   );
+
+  // Only create a local provider when no shared provider exists, or when a local delay override is requested.
+  if (!hasExternalProvider || delay !== undefined || closeDelay !== undefined) {
+    return (
+      <BaseTooltip.Provider delay={delay ?? 400} closeDelay={closeDelay ?? 0}>
+        {tooltipNode}
+      </BaseTooltip.Provider>
+    );
+  }
+
+  return tooltipNode;
 }
 
 /**
@@ -160,13 +172,15 @@ export function TooltipProvider({
   const resolvedTimeout = timeout ?? skipDelayDuration ?? 400;
 
   return (
-    <BaseTooltip.Provider
-      delay={resolvedDelay}
-      closeDelay={closeDelay}
-      timeout={resolvedTimeout}
-    >
-      {children}
-    </BaseTooltip.Provider>
+    <TooltipProviderContext.Provider value={true}>
+      <BaseTooltip.Provider
+        delay={resolvedDelay}
+        closeDelay={closeDelay}
+        timeout={resolvedTimeout}
+      >
+        {children}
+      </BaseTooltip.Provider>
+    </TooltipProviderContext.Provider>
   );
 }
 

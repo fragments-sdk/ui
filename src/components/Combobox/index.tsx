@@ -46,26 +46,22 @@ export interface ComboboxContentProps extends React.HTMLAttributes<HTMLDivElemen
   maxVisibleItems?: number;
 }
 
-export interface ComboboxItemProps {
+export interface ComboboxItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
   value: string;
   disabled?: boolean;
-  className?: string;
 }
 
-export interface ComboboxEmptyProps {
+export interface ComboboxEmptyProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface ComboboxGroupProps {
+export interface ComboboxGroupProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface ComboboxGroupLabelProps {
+export interface ComboboxGroupLabelProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
 // ============================================
@@ -149,6 +145,15 @@ const ComboboxContext = React.createContext<ComboboxContextValue>({
   itemsVersion: 0,
   incrementItemsVersion: () => {},
 });
+
+function getNodeText(node: React.ReactNode): string {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(getNodeText).join('');
+  if (React.isValidElement(node))
+    return getNodeText((node.props as { children?: React.ReactNode }).children);
+  return '';
+}
 
 // ============================================
 // Components
@@ -337,24 +342,25 @@ function ComboboxContent({
   );
 }
 
-function ComboboxItem({ children, value, disabled, className }: ComboboxItemProps) {
+function ComboboxItem({ children, value, disabled, className, ...htmlProps }: ComboboxItemProps) {
   const { itemsRef, incrementItemsVersion } = React.useContext(ComboboxContext);
   const classes = [styles.item, className].filter(Boolean).join(' ');
 
   // Register this item's label in the registry so the input can display it
-  const label = typeof children === 'string' ? children : String(children);
+  const label = React.useMemo(() => getNodeText(children).trim() || value, [children, value]);
   React.useEffect(() => {
     const items = itemsRef.current;
     items.set(value, label);
     incrementItemsVersion();
     return () => {
       items.delete(value);
+      incrementItemsVersion();
     };
     // itemsRef is a stable ref, incrementItemsVersion is a stable callback
   }, [itemsRef, incrementItemsVersion, value, label]);
 
   return (
-    <BaseCombobox.Item value={value} disabled={disabled} className={classes}>
+    <BaseCombobox.Item {...htmlProps} value={value} disabled={disabled} className={classes}>
       {children}
       <BaseCombobox.ItemIndicator className={styles.itemIndicator}>
         <CheckIcon />
@@ -363,19 +369,19 @@ function ComboboxItem({ children, value, disabled, className }: ComboboxItemProp
   );
 }
 
-function ComboboxEmpty({ children, className }: ComboboxEmptyProps) {
+function ComboboxEmpty({ children, className, ...htmlProps }: ComboboxEmptyProps) {
   const classes = [styles.empty, className].filter(Boolean).join(' ');
-  return <BaseCombobox.Empty className={classes}>{children}</BaseCombobox.Empty>;
+  return <BaseCombobox.Empty {...htmlProps} className={classes}>{children}</BaseCombobox.Empty>;
 }
 
-function ComboboxGroup({ children, className }: ComboboxGroupProps) {
+function ComboboxGroup({ children, className, ...htmlProps }: ComboboxGroupProps) {
   const classes = [styles.group, className].filter(Boolean).join(' ');
-  return <BaseCombobox.Group className={classes}>{children}</BaseCombobox.Group>;
+  return <BaseCombobox.Group {...htmlProps} className={classes}>{children}</BaseCombobox.Group>;
 }
 
-function ComboboxGroupLabel({ children, className }: ComboboxGroupLabelProps) {
+function ComboboxGroupLabel({ children, className, ...htmlProps }: ComboboxGroupLabelProps) {
   const classes = [styles.groupLabel, className].filter(Boolean).join(' ');
-  return <BaseCombobox.GroupLabel className={classes}>{children}</BaseCombobox.GroupLabel>;
+  return <BaseCombobox.GroupLabel {...htmlProps} className={classes}>{children}</BaseCombobox.GroupLabel>;
 }
 
 // ============================================

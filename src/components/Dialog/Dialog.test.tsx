@@ -71,6 +71,29 @@ describe('Dialog', () => {
     });
   });
 
+  it('forwards html props to trigger, title, description, and close', async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <Dialog.Trigger id="dialog-trigger">Open</Dialog.Trigger>
+        <Dialog.Content>
+          <Dialog.Title id="dialog-title">Dialog Title</Dialog.Title>
+          <Dialog.Description id="dialog-description">Dialog Description</Dialog.Description>
+          <Dialog.Close data-testid="dialog-close" />
+        </Dialog.Content>
+      </Dialog>
+    );
+
+    expect(screen.getByRole('button', { name: /open/i })).toHaveAttribute('id', 'dialog-trigger');
+    await user.click(screen.getByRole('button', { name: /open/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Dialog Title')).toHaveAttribute('id', 'dialog-title');
+      expect(screen.getByText('Dialog Description')).toHaveAttribute('id', 'dialog-description');
+      expect(screen.getByTestId('dialog-close')).toBeInTheDocument();
+    });
+  });
+
   it('renders compound sub-components (Header, Body, Footer)', async () => {
     renderDialog({ defaultOpen: true });
 

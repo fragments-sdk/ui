@@ -41,9 +41,18 @@ describe('DataTable', () => {
   });
 
   it('shows empty state message when data is empty', () => {
-    render(<DataTable columns={columns} data={[]} emptyMessage="Nothing here" aria-label="People" />);
+    render(
+      <DataTable
+        columns={columns}
+        data={[]}
+        emptyMessage="Nothing here"
+        caption="People Table"
+        aria-label="People"
+      />
+    );
     expect(screen.getByText('Nothing here')).toBeInTheDocument();
-    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    expect(screen.getByRole('table', { name: /people/i })).toBeInTheDocument();
+    expect(screen.getByText('People Table')).toBeInTheDocument();
   });
 
   it('defaults to "No data available" empty message', () => {

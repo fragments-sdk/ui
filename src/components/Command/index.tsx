@@ -74,6 +74,16 @@ function defaultFilter(value: string, search: string, keywords?: string[]): numb
   return 0;
 }
 
+function getTextContent(node: React.ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(getTextContent).join(' ');
+  if (React.isValidElement(node)) {
+    const childProps = node.props as { children?: React.ReactNode };
+    return getTextContent(childProps.children);
+  }
+  return '';
+}
+
 // ============================================
 // Context
 // ============================================
@@ -95,6 +105,7 @@ interface CommandContextValue {
   loop: boolean;
   listRef: React.RefObject<HTMLDivElement | null>;
   visibleCount: number;
+  listId: string;
 }
 
 const CommandContext = React.createContext<CommandContextValue | null>(null);
@@ -150,6 +161,8 @@ function CommandRoot({
   const [items, setItems] = React.useState<Map<string, ItemRegistration>>(new Map());
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const listRef = React.useRef<HTMLDivElement | null>(null);
+  const generatedListId = React.useId();
+  const listId = `command-list-${generatedListId}`;
 
   const setSearch = React.useCallback(
     (value: string) => {
@@ -213,8 +226,9 @@ function CommandRoot({
       loop,
       listRef,
       visibleCount,
+      listId,
     }),
-    [search, setSearch, filter, scores, registerItem, unregisterItem, activeId, loop, visibleCount]
+    [search, setSearch, filter, scores, registerItem, unregisterItem, activeId, loop, visibleCount, listId]
   );
 
   return (
@@ -230,8 +244,13 @@ function CommandRoot({
   );
 }
 
-function CommandInput({ className, ...htmlProps }: CommandInputProps) {
-  const { search, setSearch, listRef, setActiveId, activeId, loop } = useCommandContext();
+function CommandInput({
+  className,
+  onChange,
+  onKeyDown,
+  ...htmlProps
+}: CommandInputProps) {
+  const { search, setSearch, listRef, setActiveId, activeId, loop, listId } = useCommandContext();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const getEnabledItems = React.useCallback(() => {
@@ -243,7 +262,7 @@ function CommandInput({ className, ...htmlProps }: CommandInputProps) {
   }, [listRef]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    htmlProps.onKeyDown?.(event);
+    onKeyDown?.(event);
     if (event.defaultPrevented) return;
 
     const items = getEnabledItems();
@@ -307,32 +326,36 @@ function CommandInput({ className, ...htmlProps }: CommandInputProps) {
         type="text"
         role="combobox"
         aria-expanded={true}
-        aria-controls="command-list"
+        aria-controls={listId}
         aria-autocomplete="list"
         aria-activedescendant={activeId ?? undefined}
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        {...htmlProps}
+        onChange={(e) => {
+          onChange?.(e);
+          if (e.defaultPrevented) return;
+          setSearch(e.target.value);
+        }}
         onKeyDown={handleKeyDown}
         className={[styles.input, className].filter(Boolean).join(' ')}
-        {...htmlProps}
       />
     </div>
   );
 }
 
 function CommandList({ children, className, ...htmlProps }: CommandListProps) {
-  const { listRef } = useCommandContext();
+  const { listRef, listId } = useCommandContext();
 
   return (
     <div
       ref={listRef}
-      id="command-list"
+      {...htmlProps}
+      id={listId}
       role="listbox"
       className={[styles.list, className].filter(Boolean).join(' ')}
-      {...htmlProps}
     >
       {children}
     </div>
@@ -346,6 +369,10 @@ function CommandItem({
   disabled = false,
   onItemSelect,
   className,
+  onClick,
+  onKeyDown,
+  onMouseEnter,
+  style,
   ...htmlProps
 }: CommandItemProps) {
   const { scores, registerItem, unregisterItem, activeId, setActiveId } = useCommandContext();
@@ -356,8 +383,7 @@ function CommandItem({
   // Extract text content for filtering if no value prop
   const textValue = React.useMemo(() => {
     if (valueProp) return valueProp;
-    if (typeof children === 'string') return children;
-    return '';
+    return getTextContent(children).trim();
   }, [valueProp, children]);
 
   // Register with context
@@ -377,12 +403,20 @@ function CommandItem({
     }
   }, [isActive]);
 
-  const handleClick = () => {
+  const activateItem = () => {
     if (disabled) return;
     onItemSelect?.();
   };
 
-  const handleMouseEnter = () => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) return;
+    activateItem();
+  };
+
+  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
+    onMouseEnter?.(event);
+    if (event.defaultPrevented) return;
     if (!disabled) {
       setActiveId(itemId);
     }
@@ -400,7 +434,14 @@ function CommandItem({
       data-active={isActive || undefined}
       data-disabled={disabled || undefined}
       onClick={handleClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
+      onKeyDown={(e) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activateItem();
+        }
+      }}
       onMouseEnter={handleMouseEnter}
       className={[
         styles.item,
@@ -410,7 +451,7 @@ function CommandItem({
       ]
         .filter(Boolean)
         .join(' ')}
-      style={{ display: isVisible ? undefined : 'none' }}
+      style={{ ...style, display: isVisible ? undefined : 'none' }}
     >
       {children}
     </div>
@@ -431,14 +472,16 @@ function CommandGroup({ children, heading, className, ...htmlProps }: CommandGro
     setHasVisibleChildren(anyVisible);
   }, [scores]);
 
+  const { style, ...restHtmlProps } = htmlProps;
+
   return (
     <div
       ref={groupRef}
-      {...htmlProps}
+      {...restHtmlProps}
       role="group"
       aria-labelledby={heading ? labelId : undefined}
       className={[styles.group, className].filter(Boolean).join(' ')}
-      style={{ display: hasVisibleChildren ? undefined : 'none' }}
+      style={{ ...style, display: hasVisibleChildren ? undefined : 'none' }}
     >
       {heading && (
         <div id={labelId} className={styles.groupHeading}>

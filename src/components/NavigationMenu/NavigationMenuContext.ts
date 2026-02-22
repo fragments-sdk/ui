@@ -34,6 +34,9 @@ export interface NavigationMenuContextValue {
   triggerRefs: React.MutableRefObject<Map<string, HTMLButtonElement>>;
   triggerOrder: React.MutableRefObject<string[]>;
 
+  // Full item order (includes items without triggers)
+  itemOrder: React.MutableRefObject<string[]>;
+
   // Item info registry (for mobile drawer)
   itemInfoMap: React.MutableRefObject<Map<string, NavigationMenuItemInfo>>;
 

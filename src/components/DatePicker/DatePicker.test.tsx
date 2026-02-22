@@ -175,6 +175,38 @@ describe('DatePicker', () => {
 
       expect(onSelect).toHaveBeenCalledWith(presetDate);
     });
+
+    it('preset forwards html props', async () => {
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+      const onPresetClick = vi.fn();
+      const presetDate = new Date(2025, 5, 2);
+
+      render(
+        <DatePicker onSelect={onSelect}>
+          <DatePicker.Trigger placeholder="Pick a date" />
+          <DatePicker.Content>
+            <DatePicker.Preset
+              id="preset-june-2"
+              data-testid="preset"
+              aria-label="Preset June 2"
+              onClick={onPresetClick}
+              date={presetDate}
+            >
+              June 2nd
+            </DatePicker.Preset>
+            <DatePicker.Calendar />
+          </DatePicker.Content>
+        </DatePicker>
+      );
+
+      await user.click(screen.getByRole('button', { name: /pick a date/i }));
+      await user.click(screen.getByTestId('preset'));
+
+      expect(screen.getByTestId('preset')).toHaveAttribute('id', 'preset-june-2');
+      expect(onPresetClick).toHaveBeenCalled();
+      expect(onSelect).toHaveBeenCalledWith(presetDate);
+    });
   });
 
   describe('keyboard', () => {
@@ -215,6 +247,53 @@ describe('DatePicker', () => {
       renderRangePicker({ selectedRange: range });
       expect(screen.getByRole('button')).toHaveTextContent('Apr 01, 2025');
       expect(screen.getByRole('button')).toHaveTextContent('Apr 07, 2025');
+    });
+
+    it('requests close after single selection when open is controlled', async () => {
+      const user = userEvent.setup();
+      const onOpenChange = vi.fn();
+      const onSelect = vi.fn();
+
+      render(
+        <DatePicker open onOpenChange={onOpenChange} onSelect={onSelect}>
+          <DatePicker.Trigger placeholder="Pick a date" />
+          <DatePicker.Content>
+            <DatePicker.Calendar />
+          </DatePicker.Content>
+        </DatePicker>
+      );
+
+      await screen.findByRole('grid');
+
+      const dayButtons = screen.getAllByRole('gridcell');
+      const day10 = dayButtons.find((cell) => {
+        const btn = cell.querySelector('button');
+        return btn?.textContent === '10';
+      });
+
+      await user.click(day10!.querySelector('button')!);
+
+      await waitFor(() => {
+        expect(onSelect).toHaveBeenCalledWith(expect.any(Date));
+        expect(onOpenChange).toHaveBeenCalledWith(false);
+      }, { timeout: 500 });
+    });
+  });
+
+  describe('forms', () => {
+    it('serializes selected date to a date-only hidden input value', () => {
+      render(
+        <DatePicker name="appointment" selected={new Date(2025, 0, 15)}>
+          <DatePicker.Trigger />
+          <DatePicker.Content>
+            <DatePicker.Calendar />
+          </DatePicker.Content>
+        </DatePicker>
+      );
+
+      const input = document.querySelector<HTMLInputElement>('input[type="hidden"][name="appointment"]');
+      expect(input).toBeTruthy();
+      expect(input?.value).toBe('2025-01-15');
     });
   });
 

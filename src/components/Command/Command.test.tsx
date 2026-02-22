@@ -355,6 +355,99 @@ describe('Command', () => {
     });
   });
 
+  it('uses unique list ids for multiple command instances', () => {
+    render(
+      <>
+        <Command>
+          <Command.Input placeholder="First search" />
+          <Command.List>
+            <Command.Item onItemSelect={() => {}}>One</Command.Item>
+          </Command.List>
+        </Command>
+        <Command>
+          <Command.Input placeholder="Second search" />
+          <Command.List>
+            <Command.Item onItemSelect={() => {}}>Two</Command.Item>
+          </Command.List>
+        </Command>
+      </>
+    );
+
+    const inputs = [
+      screen.getByPlaceholderText('First search'),
+      screen.getByPlaceholderText('Second search'),
+    ];
+    const listIds = inputs.map((input) => input.getAttribute('aria-controls'));
+
+    expect(listIds[0]).toBeTruthy();
+    expect(listIds[1]).toBeTruthy();
+    expect(listIds[0]).not.toBe(listIds[1]);
+    expect(document.getElementById(listIds[0]!)).toBeInTheDocument();
+    expect(document.getElementById(listIds[1]!)).toBeInTheDocument();
+  });
+
+  it('filters rich-label items using extracted text content', async () => {
+    const user = userEvent.setup();
+    render(
+      <Command>
+        <Command.Input placeholder="Search..." />
+        <Command.List>
+          <Command.Item onItemSelect={() => {}}>
+            <span>Open</span> File
+          </Command.Item>
+          <Command.Item onItemSelect={() => {}}>Save</Command.Item>
+        </Command.List>
+      </Command>
+    );
+
+    await user.type(screen.getByPlaceholderText('Search...'), 'open');
+
+    await waitFor(() => {
+      expect(screen.getByText('Save')).not.toBeVisible();
+      expect(screen.getByText('Open')).toBeVisible();
+    });
+  });
+
+  it('composes item and group html props without dropping handlers/styles', async () => {
+    const user = userEvent.setup();
+    const itemClick = vi.fn();
+    const itemKeyDown = vi.fn();
+    const itemMouseEnter = vi.fn();
+
+    render(
+      <Command>
+        <Command.Input placeholder="Search..." />
+        <Command.List>
+          <Command.Group heading="Files" data-testid="group" style={{ opacity: 0.5 }}>
+            <Command.Item
+              onItemSelect={() => {}}
+              data-testid="item"
+              onClick={itemClick}
+              onKeyDown={itemKeyDown}
+              onMouseEnter={itemMouseEnter}
+              tabIndex={0}
+              style={{ color: 'rgb(255, 0, 0)' }}
+            >
+              Open File
+            </Command.Item>
+          </Command.Group>
+        </Command.List>
+      </Command>
+    );
+
+    const item = screen.getByTestId('item');
+    await user.hover(item);
+    await user.click(item);
+    item.focus();
+    await user.keyboard('{Enter}');
+
+    expect(itemMouseEnter).toHaveBeenCalled();
+    expect(itemClick).toHaveBeenCalled();
+    expect(itemKeyDown).toHaveBeenCalled();
+    expect(item).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+    expect(screen.getByTestId('group')).toHaveStyle({ opacity: '0.5' });
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = renderCommand();
 

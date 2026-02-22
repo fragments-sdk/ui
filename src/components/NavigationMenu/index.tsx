@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { CaretDown, CaretRight, List, X } from '@phosphor-icons/react';
+import { CaretDown, List, X } from '@phosphor-icons/react';
 import { handleArrowNavigation, useFocusTrap } from '../../utils/a11y';
 import { Collapsible } from '../Collapsible';
 import { ScrollArea } from '../ScrollArea';
@@ -183,7 +183,9 @@ function NavigationMenuList({ children, className }: NavigationMenuListProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const order = triggerOrder.current;
-    const currentIdx = order.indexOf(value);
+    const focusedValue = (document.activeElement as HTMLElement | null)?.getAttribute('data-navmenu-value');
+    const currentValue = focusedValue || value;
+    const currentIdx = order.indexOf(currentValue);
 
     const newIdx = handleArrowNavigation(e, order, currentIdx >= 0 ? currentIdx : 0, {
       orientation: orientation === 'horizontal' ? 'horizontal' : 'vertical',
@@ -220,13 +222,32 @@ function NavigationMenuList({ children, className }: NavigationMenuListProps) {
 // Item
 // ============================================
 
-let itemCounter = 0;
-
 function NavigationMenuItem({ children, value: valueProp, className }: NavigationMenuItemProps) {
   const rootCtx = useNavigationMenuContext();
-  const [autoValue] = React.useState(() => valueProp || `navmenu-item-${++itemCounter}`);
+  const generatedValue = React.useId();
+  const autoValue = valueProp || `navmenu-item-${generatedValue}`;
   const triggerId = `${rootCtx.rootId}-trigger-${autoValue}`;
   const contentId = `${rootCtx.rootId}-content-${autoValue}`;
+
+  React.useEffect(() => {
+    if (!rootCtx.itemOrder.current.includes(autoValue)) {
+      rootCtx.itemOrder.current.push(autoValue);
+    }
+
+    const existing = rootCtx.itemInfoMap.current.get(autoValue);
+    if (!existing) {
+      rootCtx.itemInfoMap.current.set(autoValue, {
+        value: autoValue,
+        triggerLabel: '',
+        contentChildren: null,
+      });
+    }
+
+    return () => {
+      rootCtx.itemOrder.current = rootCtx.itemOrder.current.filter(v => v !== autoValue);
+      rootCtx.itemInfoMap.current.delete(autoValue);
+    };
+  }, [autoValue, rootCtx.itemInfoMap, rootCtx.itemOrder]);
 
   const itemCtx = React.useMemo(
     () => ({
@@ -335,6 +356,7 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
       type="button"
       id={itemCtx.triggerId}
       className={classes}
+      data-navmenu-value={itemCtx.value}
       aria-expanded={isOpen}
       aria-controls={itemCtx.contentId}
       data-state={isOpen ? 'open' : 'closed'}
@@ -472,7 +494,24 @@ function NavigationMenuLink({
   ...htmlProps
 }: NavigationMenuLinkProps) {
   const ctx = React.useContext(NavigationMenuContext);
+  const itemCtx = React.useContext(NavigationMenuItemContext);
   const isStructured = !!(title || description || icon);
+
+  React.useEffect(() => {
+    if (!ctx || !itemCtx) return;
+
+    const existing = ctx.itemInfoMap.current.get(itemCtx.value);
+    const fallbackLabel = typeof children === 'string' ? children : title || '';
+    const resolvedHref = typeof href === 'string' ? href : existing?.linkHref;
+
+    ctx.itemInfoMap.current.set(itemCtx.value, {
+      ...existing,
+      value: itemCtx.value,
+      triggerLabel: existing?.triggerLabel || fallbackLabel || '',
+      contentChildren: existing?.contentChildren ?? null,
+      linkHref: resolvedHref,
+    });
+  }, [ctx, itemCtx, children, title, href]);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
@@ -745,14 +784,11 @@ function MobileDrawer() {
   }, [ctx]);
 
   // Build auto-converted nav items from item info registry
-  const autoItems = React.useMemo(() => {
-    const items: NavigationMenuItemInfo[] = [];
-    for (const value of ctx.triggerOrder.current) {
-      const info = ctx.itemInfoMap.current.get(value);
-      if (info) items.push(info);
-    }
-    return items;
-  }, [ctx.triggerOrder, ctx.itemInfoMap]);
+  const autoItems: NavigationMenuItemInfo[] = [];
+  for (const value of ctx.itemOrder.current) {
+    const info = ctx.itemInfoMap.current.get(value);
+    if (info) autoItems.push(info);
+  }
 
   const handleLinkClick = () => {
     ctx.setMobileOpen(false);

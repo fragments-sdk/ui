@@ -96,6 +96,47 @@ describe('Collapsible', () => {
     expect(screen.queryByText('Collapsible content here')).not.toBeInTheDocument();
   });
 
+  it('composes child handlers when trigger uses asChild', async () => {
+    const user = userEvent.setup();
+    const childClick = vi.fn();
+    const childKeyDown = vi.fn();
+
+    render(
+      <Collapsible>
+        <Collapsible.Trigger asChild>
+          <button onClick={childClick} onKeyDown={childKeyDown}>Toggle</button>
+        </Collapsible.Trigger>
+        <Collapsible.Content>Collapsible content here</Collapsible.Content>
+      </Collapsible>
+    );
+
+    const trigger = screen.getByRole('button', { name: /toggle/i });
+    await user.click(trigger);
+    expect(childClick).toHaveBeenCalled();
+    expect(screen.getByText('Collapsible content here')).toBeInTheDocument();
+
+    await user.keyboard('{Enter}');
+    expect(childKeyDown).toHaveBeenCalled();
+  });
+
+  it('forwards html props to root, trigger, and content', async () => {
+    const user = userEvent.setup();
+    render(
+      <Collapsible data-testid="root" data-track="collapsible-root">
+        <Collapsible.Trigger data-testid="trigger" aria-label="Toggle section">Toggle</Collapsible.Trigger>
+        <Collapsible.Content data-testid="content" data-panel="details">
+          Collapsible content here
+        </Collapsible.Content>
+      </Collapsible>
+    );
+
+    await user.click(screen.getByTestId('trigger'));
+
+    expect(screen.getByTestId('root')).toHaveAttribute('data-track', 'collapsible-root');
+    expect(screen.getByTestId('trigger')).toHaveAttribute('aria-label', 'Toggle section');
+    expect(screen.getByTestId('content')).toHaveAttribute('data-panel', 'details');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = renderCollapsible({ defaultOpen: true });
     await expectNoA11yViolations(container);

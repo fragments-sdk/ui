@@ -73,6 +73,26 @@ describe('Select', () => {
     expect(await screen.findByText('Fruits')).toBeInTheDocument();
   });
 
+  it('forwards html props to item and group labels', async () => {
+    const user = userEvent.setup();
+    render(
+      <Select placeholder="Pick">
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Group id="fruit-group">
+            <Select.GroupLabel id="fruit-group-label">Fruits</Select.GroupLabel>
+            <Select.Item id="apple-option" value="apple">Apple</Select.Item>
+          </Select.Group>
+        </Select.Content>
+      </Select>
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    expect(await screen.findByRole('option', { name: 'Apple' })).toHaveAttribute('id', 'apple-option');
+    expect(screen.getByText('Fruits')).toHaveAttribute('id', 'fruit-group-label');
+    expect(screen.getByText('Fruits').closest('#fruit-group')).toBeInTheDocument();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <Select placeholder="Pick one">
@@ -157,5 +177,26 @@ describe('Select', () => {
       const cherry = await screen.findByRole('option', { name: 'Cherry' });
       expect(cherry).toHaveAttribute('aria-disabled', 'true');
     });
+  });
+
+  it('updates trigger label when selected option is removed', async () => {
+    const renderDemo = (showApple: boolean) => (
+      <Select value="apple" placeholder="Pick one" defaultOpen>
+        <Select.Trigger />
+        <Select.Content>
+          {showApple && <Select.Item value="apple">Apple</Select.Item>}
+          <Select.Item value="banana">Banana</Select.Item>
+        </Select.Content>
+      </Select>
+    );
+
+    const { rerender } = render(renderDemo(true));
+
+    await screen.findByRole('option', { name: 'Apple' });
+    expect(screen.getByRole('combobox')).toHaveTextContent('Apple');
+
+    rerender(renderDemo(false));
+
+    expect(await screen.findByRole('combobox')).toHaveTextContent('Pick one');
   });
 });

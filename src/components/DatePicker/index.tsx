@@ -67,13 +67,12 @@ export interface DatePickerCalendarProps {
   className?: string;
 }
 
-export interface DatePickerPresetProps {
+export interface DatePickerPresetProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   /** Date to select (single mode) */
   date?: Date;
   /** Range to select (range mode) */
   range?: DateRange;
-  className?: string;
 }
 
 // ============================================
@@ -226,6 +225,14 @@ function defaultFormatRange(range: DateRange): string {
   return `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`;
 }
 
+function formatDateForHiddenInput(date?: Date): string {
+  if (!date) return '';
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // ============================================
 // ClassNames mapping (built lazily)
 // ============================================
@@ -327,15 +334,14 @@ function DatePickerRoot({
       }
       onSelect?.(date);
 
-      // Auto-close after single selection (uncontrolled)
-      if (!isControlledOpen && date) {
+      // Auto-close after single selection (controlled and uncontrolled).
+      if (date) {
         setTimeout(() => {
-          setInternalOpen(false);
-          onOpenChange?.(false);
+          handleOpenChange(false);
         }, 150);
       }
     },
-    [selectedProp, onSelect, isControlledOpen, onOpenChange]
+    [selectedProp, onSelect, handleOpenChange]
   );
 
   const setSelectedRange = React.useCallback(
@@ -412,10 +418,10 @@ function DatePickerRoot({
           type="hidden"
           name={name}
           value={
-            mode === 'single'
-              ? (contextValue.selected?.toISOString() ?? '')
+              mode === 'single'
+              ? formatDateForHiddenInput(contextValue.selected ?? undefined)
               : contextValue.selectedRange
-                ? `${contextValue.selectedRange.from?.toISOString() ?? ''},${contextValue.selectedRange.to?.toISOString() ?? ''}`
+                ? `${formatDateForHiddenInput(contextValue.selectedRange.from)},${formatDateForHiddenInput(contextValue.selectedRange.to)}`
                 : ''
           }
         />
@@ -555,20 +561,29 @@ function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: D
   );
 }
 
-function DatePickerPreset({ children, date, range, className }: DatePickerPresetProps) {
+function DatePickerPreset({
+  children,
+  date,
+  range,
+  className,
+  onClick,
+  ...htmlProps
+}: DatePickerPresetProps) {
   const ctx = useDatePickerContext();
   const classes = [styles.preset, className].filter(Boolean).join(' ');
 
-  const handleClick = React.useCallback(() => {
+  const handleClick = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) return;
     if (ctx.mode === 'single' && date) {
       ctx.setSelected(date);
     } else if (ctx.mode === 'range' && range) {
       ctx.setSelectedRange(range);
     }
-  }, [ctx, date, range]);
+  }, [ctx, date, range, onClick]);
 
   return (
-    <button type="button" className={classes} onClick={handleClick}>
+    <button type="button" {...htmlProps} className={classes} onClick={handleClick}>
       {children}
     </button>
   );

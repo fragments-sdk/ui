@@ -44,6 +44,9 @@ export function useNavigationMenu({
   const triggerRefs = React.useRef<Map<string, HTMLButtonElement>>(new Map());
   const triggerOrder = React.useRef<string[]>([]);
 
+  // Full item order registry (includes link-only items)
+  const itemOrder = React.useRef<string[]>([]);
+
   // Item info registry for mobile drawer
   const itemInfoMap = React.useRef<Map<string, NavigationMenuItemInfo>>(new Map());
 
@@ -79,6 +82,7 @@ export function useNavigationMenu({
     skipDelayTimerRef,
     triggerRefs,
     triggerOrder,
+    itemOrder,
     itemInfoMap,
     viewportSize,
     setViewportSize,

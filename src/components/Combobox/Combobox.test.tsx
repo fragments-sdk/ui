@@ -79,6 +79,26 @@ describe('Combobox', () => {
     expect(await screen.findByText('Frameworks')).toBeInTheDocument();
   });
 
+  it('forwards html props to item and labels', async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox placeholder="Search">
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Group id="framework-group">
+            <Combobox.GroupLabel id="framework-group-label">Frameworks</Combobox.GroupLabel>
+            <Combobox.Item id="react-option" value="react">React</Combobox.Item>
+          </Combobox.Group>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    expect(await screen.findByRole('option', { name: 'React' })).toHaveAttribute('id', 'react-option');
+    expect(screen.getByText('Frameworks')).toHaveAttribute('id', 'framework-group-label');
+    expect(screen.getByText('Frameworks').closest('#framework-group')).toBeInTheDocument();
+  });
+
   it('supports multiple selection mode', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
@@ -88,6 +108,22 @@ describe('Combobox', () => {
     const option = await screen.findByRole('option', { name: 'React' });
     await user.click(option);
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it('uses text content for non-string item labels', async () => {
+    render(
+      <Combobox multiple value={['react']} defaultOpen>
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="react">
+            <span>React</span>
+          </Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    expect((await screen.findAllByText('React')).length).toBeGreaterThan(0);
+    expect(screen.queryByText('[object Object]')).not.toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {
@@ -198,5 +234,24 @@ describe('Combobox', () => {
       await user.keyboard('{Escape}');
       expect(screen.queryByRole('option')).not.toBeInTheDocument();
     });
+  });
+
+  it('updates chip label when selected option is removed', async () => {
+    const renderDemo = (showReact: boolean) => (
+      <Combobox multiple value={['react']} defaultOpen>
+        <Combobox.Input />
+        <Combobox.Content>
+          {showReact && <Combobox.Item value="react">React</Combobox.Item>}
+          <Combobox.Item value="vue">Vue</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    const { rerender } = render(renderDemo(true));
+
+    await screen.findAllByText('React');
+    rerender(renderDemo(false));
+
+    expect(await screen.findByText('react')).toBeInTheDocument();
   });
 });

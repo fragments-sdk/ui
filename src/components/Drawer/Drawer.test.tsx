@@ -66,6 +66,33 @@ describe('Drawer', () => {
     });
   });
 
+  it('forwards html props to trigger, title, description, and close', async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer>
+        <Drawer.Trigger id="drawer-trigger">Open</Drawer.Trigger>
+        <Drawer.Content>
+          <Drawer.Header>
+            <Drawer.Title id="drawer-title">Drawer Title</Drawer.Title>
+            <Drawer.Close data-testid="drawer-close" />
+          </Drawer.Header>
+          <Drawer.Body>
+            <Drawer.Description id="drawer-description">Drawer Description</Drawer.Description>
+          </Drawer.Body>
+        </Drawer.Content>
+      </Drawer>
+    );
+
+    expect(screen.getByRole('button', { name: /open/i })).toHaveAttribute('id', 'drawer-trigger');
+    await user.click(screen.getByRole('button', { name: /open/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Drawer Title')).toHaveAttribute('id', 'drawer-title');
+      expect(screen.getByText('Drawer Description')).toHaveAttribute('id', 'drawer-description');
+      expect(screen.getByTestId('drawer-close')).toBeInTheDocument();
+    });
+  });
+
   it('renders compound sub-components (Header, Body, Footer)', async () => {
     renderDrawer({ defaultOpen: true });
 

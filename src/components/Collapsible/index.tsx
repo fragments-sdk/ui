@@ -3,6 +3,17 @@
 import React, { useState, useCallback, useId, createContext, useContext } from 'react';
 import styles from './Collapsible.module.scss';
 
+function composeEventHandlers<E extends { defaultPrevented: boolean }>(
+  userHandler: ((event: E) => void) | undefined,
+  internalHandler: (event: E) => void
+) {
+  return (event: E) => {
+    userHandler?.(event);
+    if (event.defaultPrevented) return;
+    internalHandler(event);
+  };
+}
+
 // Context for sharing state between compound components
 interface CollapsibleContextValue {
   isOpen: boolean;
@@ -23,7 +34,7 @@ function useCollapsibleContext() {
 }
 
 // Root component
-export interface CollapsibleRootProps {
+export interface CollapsibleRootProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Whether the collapsible is initially open */
   defaultOpen?: boolean;
@@ -33,8 +44,6 @@ export interface CollapsibleRootProps {
   onOpenChange?: (open: boolean) => void;
   /** Whether the collapsible is disabled */
   disabled?: boolean;
-  /** Additional class name */
-  className?: string;
 }
 
 function CollapsibleRoot({
@@ -44,6 +53,7 @@ function CollapsibleRoot({
   onOpenChange,
   disabled = false,
   className,
+  ...htmlProps
 }: CollapsibleRootProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const isControlled = controlledOpen !== undefined;
@@ -78,6 +88,7 @@ function CollapsibleRoot({
   return (
     <CollapsibleContext.Provider value={contextValue}>
       <div
+        {...htmlProps}
         className={`${styles.root} ${isOpen ? styles.open : ''} ${disabled ? styles.disabled : ''} ${className || ''}`}
         data-state={isOpen ? 'open' : 'closed'}
         data-disabled={disabled || undefined}
@@ -89,10 +100,8 @@ function CollapsibleRoot({
 }
 
 // Trigger component
-export interface CollapsibleTriggerProps {
+export interface CollapsibleTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  /** Additional class name */
-  className?: string;
   /** Show chevron indicator */
   showChevron?: boolean;
   /** Chevron position */
@@ -107,6 +116,9 @@ function CollapsibleTrigger({
   showChevron = true,
   chevronPosition = 'end',
   asChild = false,
+  onClick,
+  onKeyDown,
+  ...htmlProps
 }: CollapsibleTriggerProps) {
   const { isOpen, toggle, contentId, triggerId, disabled } = useCollapsibleContext();
 
@@ -115,6 +127,10 @@ function CollapsibleTrigger({
       e.preventDefault();
       toggle();
     }
+  };
+
+  const handleClick = () => {
+    toggle();
   };
 
   const chevronIcon = showChevron && (
@@ -137,26 +153,47 @@ function CollapsibleTrigger({
   );
 
   if (asChild && React.isValidElement(children)) {
+    const childProps = children.props as {
+      className?: string;
+      onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+      onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
+    };
+
     return React.cloneElement(children as React.ReactElement<any>, {
-      id: triggerId,
+      ...htmlProps,
+      id: (htmlProps.id as string | undefined) ?? triggerId,
       'aria-expanded': isOpen,
       'aria-controls': contentId,
       'aria-disabled': disabled || undefined,
-      onClick: toggle,
-      onKeyDown: handleKeyDown,
+      onClick: composeEventHandlers(
+        (event: React.MouseEvent<HTMLElement>) => {
+          childProps.onClick?.(event);
+          onClick?.(event as unknown as React.MouseEvent<HTMLButtonElement>);
+        },
+        () => handleClick()
+      ),
+      onKeyDown: composeEventHandlers(
+        (event: React.KeyboardEvent<HTMLElement>) => {
+          childProps.onKeyDown?.(event);
+          onKeyDown?.(event as unknown as React.KeyboardEvent<HTMLButtonElement>);
+        },
+        (event) => handleKeyDown(event as unknown as React.KeyboardEvent)
+      ),
+      className: [className, childProps.className].filter(Boolean).join(' '),
     });
   }
 
   return (
     <button
+      {...htmlProps}
       type="button"
-      id={triggerId}
+      id={(htmlProps.id as string | undefined) ?? triggerId}
       className={`${styles.trigger} ${className || ''}`}
       aria-expanded={isOpen}
       aria-controls={contentId}
       aria-disabled={disabled || undefined}
-      onClick={toggle}
-      onKeyDown={handleKeyDown}
+      onClick={composeEventHandlers(onClick, handleClick)}
+      onKeyDown={composeEventHandlers(onKeyDown, handleKeyDown)}
       disabled={disabled}
     >
       {chevronPosition === 'start' && chevronIcon}
@@ -167,10 +204,8 @@ function CollapsibleTrigger({
 }
 
 // Content component
-export interface CollapsibleContentProps {
+export interface CollapsibleContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Additional class name */
-  className?: string;
   /** Force mount content even when closed (useful for animations) */
   forceMount?: boolean;
 }
@@ -179,6 +214,7 @@ function CollapsibleContent({
   children,
   className,
   forceMount = false,
+  ...htmlProps
 }: CollapsibleContentProps) {
   const { isOpen, contentId, triggerId } = useCollapsibleContext();
 
@@ -189,7 +225,8 @@ function CollapsibleContent({
 
   return (
     <div
-      id={contentId}
+      {...htmlProps}
+      id={(htmlProps.id as string | undefined) ?? contentId}
       role="region"
       aria-labelledby={triggerId}
       className={`${styles.content} ${isOpen ? styles.contentOpen : styles.contentClosed} ${className || ''}`}

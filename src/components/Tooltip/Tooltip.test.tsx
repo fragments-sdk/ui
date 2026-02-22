@@ -91,6 +91,23 @@ describe('Tooltip', () => {
     });
   });
 
+  it('respects shared Tooltip.Provider delay settings', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(
+      <Tooltip.Provider delay={0}>
+        <Tooltip content="Provider tooltip">
+          <button>Provider Trigger</button>
+        </Tooltip>
+      </Tooltip.Provider>
+    );
+
+    await user.hover(screen.getByRole('button', { name: /provider trigger/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Provider tooltip')).toBeInTheDocument();
+    });
+  });
+
   it('has no accessibility violations when open', async () => {
     const { container } = render(
       <Tooltip content="Accessible tooltip" open={true} delay={0}>

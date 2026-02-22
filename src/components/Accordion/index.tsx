@@ -19,7 +19,7 @@ export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement
   /** Default value for uncontrolled usage */
   defaultValue?: AccordionValue;
   /** Callback when value changes */
-  onValueChange?: (value: AccordionValue) => void;
+  onValueChange?: (value: AccordionValue | undefined) => void;
   /** Whether items can be fully collapsed (only for type="single") */
   collapsible?: boolean;
   /**
@@ -137,7 +137,7 @@ function AccordionRoot({
     }
 
     if (onValueChange) {
-      onValueChange(type === 'single' ? (newItems[0] ?? '') : newItems);
+      onValueChange(type === 'single' ? newItems[0] : newItems);
     }
   }, [type, currentOpenItems, collapsible, controlledOpenItems, onValueChange]);
 
@@ -186,11 +186,15 @@ function AccordionItem({
 function AccordionTrigger({
   children,
   className,
+  onClick,
+  ...htmlProps
 }: AccordionTriggerProps) {
   const { toggle, headingLevel } = useAccordionContext();
   const { value, isOpen, disabled, triggerId, contentId } = useAccordionItemContext();
 
-  const handleClick = () => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) return;
     if (!disabled) {
       toggle(value);
     }
@@ -204,6 +208,7 @@ function AccordionTrigger({
   return (
     <HeadingTag className={styles.heading}>
       <BaseCollapsible.Trigger
+        {...htmlProps}
         id={triggerId}
         className={classes}
         onClick={handleClick}
@@ -237,6 +242,7 @@ function AccordionTrigger({
 function AccordionContent({
   children,
   className,
+  ...htmlProps
 }: AccordionContentProps) {
   const { isOpen, triggerId, contentId } = useAccordionItemContext();
 
@@ -244,6 +250,7 @@ function AccordionContent({
 
   return (
     <BaseCollapsible.Panel
+      {...htmlProps}
       id={contentId}
       className={classes}
       data-state={isOpen ? 'open' : 'closed'}

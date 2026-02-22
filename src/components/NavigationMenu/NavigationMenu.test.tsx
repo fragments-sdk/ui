@@ -1,15 +1,14 @@
 import React from 'react';
 import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { fireEvent, act } from '@testing-library/react';
+import { fireEvent, act, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { NavigationMenu } from '.';
 
-// Mock matchMedia for jsdom
-beforeAll(() => {
+function setMatchMedia(matches: boolean) {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({
-      matches: false,
+      matches,
       media: query,
       onchange: null,
       addListener: vi.fn(),
@@ -19,6 +18,11 @@ beforeAll(() => {
       dispatchEvent: vi.fn(),
     })),
   });
+}
+
+// Mock matchMedia for jsdom
+beforeAll(() => {
+  setMatchMedia(false);
 });
 
 // ============================================
@@ -254,6 +258,17 @@ describe('NavigationMenu', () => {
       expect(document.activeElement).toBe(communityTrigger);
     });
 
+    it('navigates based on focused trigger even when another item is open', async () => {
+      renderBasicMenu();
+      const learnTrigger = screen.getByText('Learn');
+      const communityTrigger = screen.getByText('Community');
+
+      await userEvent.click(learnTrigger);
+      communityTrigger.focus();
+      fireEvent.keyDown(communityTrigger.closest('ul')!, { key: 'ArrowRight' });
+      expect(document.activeElement).toBe(learnTrigger);
+    });
+
     it('navigates to first trigger on Home', () => {
       renderBasicMenu();
       const communityTrigger = screen.getByText('Community');
@@ -452,6 +467,27 @@ describe('NavigationMenu', () => {
       // MobileContent renders nothing in the tree (it registers children in context)
       // On desktop, hamburger is hidden, drawer is not rendered
       expect(screen.queryByText('Extra')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Mobile drawer', () => {
+    beforeEach(() => {
+      setMatchMedia(true);
+    });
+
+    afterEach(() => {
+      setMatchMedia(false);
+    });
+
+    it('includes direct link items in auto-converted drawer navigation', async () => {
+      renderBasicMenu();
+
+      const toggle = await screen.findByLabelText('Toggle navigation');
+      await userEvent.click(toggle);
+
+      const drawer = await screen.findByRole('dialog', { name: 'Navigation' });
+      const blogLink = within(drawer).getByRole('link', { name: 'Blog' });
+      expect(blogLink).toHaveAttribute('href', '/blog');
     });
   });
 });

@@ -9,6 +9,17 @@ import { ScrollArea } from '../ScrollArea';
 import { useFocusTrap } from '../../utils/a11y';
 import { useKeyboardShortcut } from '../../utils/keyboard-shortcuts';
 
+function composeEventHandlers<E extends { defaultPrevented: boolean }>(
+  userHandler: ((event: E) => void) | undefined,
+  internalHandler: (event: E) => void
+) {
+  return (event: E) => {
+    userHandler?.(event);
+    if (event.defaultPrevented) return;
+    internalHandler(event);
+  };
+}
+
 // ============================================
 // Types
 // ============================================
@@ -66,21 +77,19 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   collapsible?: SidebarCollapsible;
 }
 
-export interface SidebarHeaderProps {
+export interface SidebarHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Content to show when sidebar is collapsed (e.g., just logo icon) */
   collapsedContent?: React.ReactNode;
-  className?: string;
 }
 
-export interface SidebarNavProps {
+export interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Accessible label for navigation */
   'aria-label'?: string;
-  className?: string;
 }
 
-export interface SidebarSectionProps {
+export interface SidebarSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Optional section label */
   label?: string;
@@ -90,16 +99,14 @@ export interface SidebarSectionProps {
   collapsible?: boolean;
   /** Default expanded state (only applies when collapsible is true) */
   defaultOpen?: boolean;
-  className?: string;
 }
 
-export interface SidebarSectionActionProps {
+export interface SidebarSectionActionProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   children: React.ReactNode;
   /** Click handler */
-  onClick?: () => void;
+  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
   /** Accessible label */
   'aria-label'?: string;
-  className?: string;
 }
 
 export interface SidebarItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onClick'> {
@@ -143,39 +150,31 @@ export interface SidebarSubItemProps extends Omit<React.HTMLAttributes<HTMLEleme
   onClick?: () => void;
 }
 
-export interface SidebarFooterProps {
+export interface SidebarFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface SidebarTriggerProps {
+export interface SidebarTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Custom trigger element (uses render prop pattern) */
   children?: React.ReactNode;
   /** Accessible label */
   'aria-label'?: string;
-  className?: string;
 }
 
-export interface SidebarOverlayProps {
-  className?: string;
-}
+export type SidebarOverlayProps = React.HTMLAttributes<HTMLDivElement>;
 
-export interface SidebarCollapseToggleProps {
+export interface SidebarCollapseToggleProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Accessible label */
   'aria-label'?: string;
-  className?: string;
 }
 
-export interface SidebarRailProps {
-  className?: string;
-}
+export type SidebarRailProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export interface SidebarMenuSkeletonProps {
+export interface SidebarMenuSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Number of skeleton items to render */
   count?: number;
   /** Show icons in skeleton items */
   showIcon?: boolean;
-  className?: string;
 }
 
 // ============================================
@@ -632,7 +631,12 @@ function SidebarRoot({
   );
 }
 
-function SidebarHeader({ children, collapsedContent, className }: SidebarHeaderProps) {
+function SidebarHeader({
+  children,
+  collapsedContent,
+  className,
+  ...htmlProps
+}: SidebarHeaderProps) {
   const { collapsed, isMobile } = useSidebarContext();
   const isCollapsed = collapsed && !isMobile;
   const classes = [styles.header, className].filter(Boolean).join(' ');
@@ -640,13 +644,18 @@ function SidebarHeader({ children, collapsedContent, className }: SidebarHeaderP
   // Show collapsed content when sidebar is collapsed (and we have it), otherwise show children
   const content = isCollapsed && collapsedContent ? collapsedContent : children;
 
-  return <div className={classes}>{content}</div>;
+  return <div {...htmlProps} className={classes}>{content}</div>;
 }
 
-function SidebarNav({ children, 'aria-label': ariaLabel = 'Main navigation', className }: SidebarNavProps) {
+function SidebarNav({
+  children,
+  'aria-label': ariaLabel = 'Main navigation',
+  className,
+  ...htmlProps
+}: SidebarNavProps) {
   const classes = [styles.nav, className].filter(Boolean).join(' ');
   return (
-    <nav className={classes} aria-label={ariaLabel}>
+    <nav {...htmlProps} className={classes} aria-label={ariaLabel}>
       <ScrollArea orientation="vertical" showFades className={styles.navScrollArea}>
         {children}
       </ScrollArea>
@@ -660,7 +669,8 @@ function SidebarSection({
   action,
   collapsible: isCollapsibleProp = false,
   defaultOpen = true,
-  className
+  className,
+  ...htmlProps
 }: SidebarSectionProps) {
   const { collapsed, isMobile } = useSidebarContext();
 
@@ -676,7 +686,7 @@ function SidebarSection({
   // Non-collapsible section
   if (!isCollapsible) {
     return (
-      <div className={classes} role="group" aria-label={label}>
+      <div {...htmlProps} className={classes} role="group" aria-label={label}>
         {(showLabel || showAction) && (
           <div className={styles.sectionHeader}>
             {showLabel && <div className={styles.sectionLabel}>{label}</div>}
@@ -692,7 +702,7 @@ function SidebarSection({
 
   // Collapsible section using Collapsible component
   return (
-    <div className={classes} role="group" aria-label={label}>
+    <div {...htmlProps} className={classes} role="group" aria-label={label}>
       <Collapsible defaultOpen={defaultOpen} className={styles.sectionCollapsible}>
         <div className={styles.sectionHeader}>
           <Collapsible.Trigger
@@ -718,14 +728,16 @@ function SidebarSectionAction({
   onClick,
   'aria-label': ariaLabel,
   className,
+  ...htmlProps
 }: SidebarSectionActionProps) {
   const classes = [styles.sectionAction, className].filter(Boolean).join(' ');
 
   return (
     <button
       type="button"
+      {...htmlProps}
       className={classes}
-      onClick={onClick}
+      onClick={(event) => onClick?.(event)}
       aria-label={ariaLabel}
     >
       {children}
@@ -817,11 +829,19 @@ function SidebarItem({
 
   if (asChild && React.isValidElement(children)) {
     // Clone the child element and merge props
+    const childProps = children.props as {
+      className?: string;
+      onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+    };
     itemElement = React.cloneElement(children, {
       ...itemProps,
       ...rest,
+      onClick: composeEventHandlers(
+        childProps.onClick,
+        (event: React.MouseEvent<HTMLElement>) => handleClick(event)
+      ),
       // Merge classNames
-      className: [classes, (children.props as { className?: string }).className].filter(Boolean).join(' '),
+      className: [classes, childProps.className].filter(Boolean).join(' '),
       children: itemContent,
     } as React.HTMLAttributes<HTMLElement>);
   } else if (href) {
@@ -917,12 +937,18 @@ function SidebarSubmenu({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SidebarFooter({ children, className }: SidebarFooterProps) {
+function SidebarFooter({ children, className, ...htmlProps }: SidebarFooterProps) {
   const classes = [styles.footer, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function SidebarTrigger({ children, 'aria-label': ariaLabel = 'Toggle navigation', className }: SidebarTriggerProps) {
+function SidebarTrigger({
+  children,
+  'aria-label': ariaLabel = 'Toggle navigation',
+  className,
+  onClick,
+  ...htmlProps
+}: SidebarTriggerProps) {
   const { open, setOpen, isMobile, sidebarId } = useSidebarContext();
 
   // Only render trigger on mobile
@@ -934,9 +960,10 @@ function SidebarTrigger({ children, 'aria-label': ariaLabel = 'Toggle navigation
 
   return (
     <button
+      {...htmlProps}
       type="button"
       className={classes}
-      onClick={() => setOpen(!open)}
+      onClick={composeEventHandlers(onClick, () => setOpen(!open))}
       aria-label={ariaLabel}
       aria-expanded={open}
       aria-controls={sidebarId}
@@ -946,7 +973,7 @@ function SidebarTrigger({ children, 'aria-label': ariaLabel = 'Toggle navigation
   );
 }
 
-function SidebarOverlay({ className }: SidebarOverlayProps) {
+function SidebarOverlay({ className, onClick, ...htmlProps }: SidebarOverlayProps) {
   const { open, setOpen, isMobile } = useSidebarContext();
 
   // Only render overlay on mobile when open
@@ -958,15 +985,21 @@ function SidebarOverlay({ className }: SidebarOverlayProps) {
 
   return (
     <div
+      {...htmlProps}
       className={classes}
-      onClick={() => setOpen(false)}
+      onClick={composeEventHandlers(onClick, () => setOpen(false))}
       aria-hidden="true"
       data-state={open ? 'open' : 'closed'}
     />
   );
 }
 
-function SidebarCollapseToggle({ 'aria-label': ariaLabel, className }: SidebarCollapseToggleProps) {
+function SidebarCollapseToggle({
+  'aria-label': ariaLabel,
+  className,
+  onClick,
+  ...htmlProps
+}: SidebarCollapseToggleProps) {
   const { collapsed, setCollapsed, isMobile, collapsible, hasIcons } = useSidebarContext();
 
   // Don't show on mobile or when collapsing is disabled
@@ -987,9 +1020,10 @@ function SidebarCollapseToggle({ 'aria-label': ariaLabel, className }: SidebarCo
 
   return (
     <button
+      {...htmlProps}
       type="button"
       className={classes}
-      onClick={() => setCollapsed(!collapsed)}
+      onClick={composeEventHandlers(onClick, () => setCollapsed(!collapsed))}
       aria-label={label}
     >
       <CollapsePanelIcon />
@@ -997,7 +1031,13 @@ function SidebarCollapseToggle({ 'aria-label': ariaLabel, className }: SidebarCo
   );
 }
 
-function SidebarRail({ className }: SidebarRailProps) {
+function SidebarRail({
+  className,
+  onClick,
+  title,
+  'aria-label': ariaLabel,
+  ...htmlProps
+}: SidebarRailProps) {
   const { collapsed, setCollapsed, isMobile, collapsible } = useSidebarContext();
 
   // Don't show on mobile or when collapsing is disabled
@@ -1013,11 +1053,12 @@ function SidebarRail({ className }: SidebarRailProps) {
 
   return (
     <button
+      {...htmlProps}
       type="button"
       className={classes}
-      onClick={() => setCollapsed(!collapsed)}
-      aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-      title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      onClick={composeEventHandlers(onClick, () => setCollapsed(!collapsed))}
+      aria-label={ariaLabel ?? (collapsed ? 'Expand sidebar' : 'Collapse sidebar')}
+      title={title ?? (collapsed ? 'Expand sidebar' : 'Collapse sidebar')}
     />
   );
 }
@@ -1026,6 +1067,7 @@ function SidebarMenuSkeleton({
   count = 5,
   showIcon = true,
   className,
+  ...htmlProps
 }: SidebarMenuSkeletonProps) {
   const { collapsed, isMobile } = useSidebarContext();
   const isCollapsed = collapsed && !isMobile;
@@ -1034,7 +1076,7 @@ function SidebarMenuSkeleton({
   const labelWidths = ['64%', '72%', '68%', '79%', '74%', '66%', '83%', '70%'];
 
   return (
-    <div className={classes} aria-hidden="true">
+    <div {...htmlProps} className={classes} aria-hidden="true">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className={styles.skeletonItem}>
           {showIcon && <Skeleton variant="avatar" size="sm" />}

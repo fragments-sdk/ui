@@ -33,14 +33,12 @@ export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement>
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }
 
-export interface DialogTitleProps {
+export interface DialogTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface DialogDescriptionProps {
+export interface DialogDescriptionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
 }
 
 export interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -55,16 +53,14 @@ export interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface DialogTriggerProps {
+export interface DialogTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
-export interface DialogCloseProps {
+export interface DialogCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
 // ============================================
@@ -118,17 +114,18 @@ function DialogTrigger({
   children,
   asChild,
   className,
+  ...htmlProps
 }: DialogTriggerProps) {
   if (asChild) {
     return (
-      <BaseDialog.Trigger className={className} render={children as React.ReactElement}>
+      <BaseDialog.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
       </BaseDialog.Trigger>
     );
   }
 
   return (
-    <BaseDialog.Trigger className={className}>
+    <BaseDialog.Trigger {...htmlProps} className={className}>
       {children}
     </BaseDialog.Trigger>
   );
@@ -161,15 +158,15 @@ function DialogHeader({ children, className, ...htmlProps }: DialogHeaderProps) 
   return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function DialogTitle({ children, className }: DialogTitleProps) {
+function DialogTitle({ children, className, ...htmlProps }: DialogTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BaseDialog.Title className={classes}>{children}</BaseDialog.Title>;
+  return <BaseDialog.Title {...htmlProps} className={classes}>{children}</BaseDialog.Title>;
 }
 
-function DialogDescription({ children, className }: DialogDescriptionProps) {
+function DialogDescription({ children, className, ...htmlProps }: DialogDescriptionProps) {
   const classes = [styles.description, className].filter(Boolean).join(' ');
   return (
-    <BaseDialog.Description className={classes}>
+    <BaseDialog.Description {...htmlProps} className={classes}>
       {children}
     </BaseDialog.Description>
   );
@@ -185,11 +182,12 @@ function DialogFooter({ children, className, ...htmlProps }: DialogFooterProps) 
   return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function DialogClose({ children, asChild, className }: DialogCloseProps) {
+function DialogClose({ children, asChild, className, ...htmlProps }: DialogCloseProps) {
   // If no children, render the default X close button
   if (!children) {
     return (
       <BaseDialog.Close
+        {...htmlProps}
         data-dialog-close
         aria-label="Close dialog"
         className={[styles.close, className].filter(Boolean).join(' ')}
@@ -202,6 +200,7 @@ function DialogClose({ children, asChild, className }: DialogCloseProps) {
   if (asChild) {
     return (
       <BaseDialog.Close
+        {...htmlProps}
         data-dialog-close
         className={className}
         render={children as React.ReactElement}
@@ -212,7 +211,7 @@ function DialogClose({ children, asChild, className }: DialogCloseProps) {
   }
 
   return (
-    <BaseDialog.Close data-dialog-close className={className}>
+    <BaseDialog.Close {...htmlProps} data-dialog-close className={className}>
       {children}
     </BaseDialog.Close>
   );

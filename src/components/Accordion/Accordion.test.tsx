@@ -148,6 +148,22 @@ describe('Accordion', () => {
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
   });
 
+  it('emits undefined when a single collapsible accordion fully closes', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    renderAccordion({
+      type: 'single',
+      collapsible: true,
+      defaultValue: 'one',
+      onValueChange,
+    });
+
+    await user.click(screen.getByRole('button', { name: /item one/i }));
+
+    expect(onValueChange).toHaveBeenCalledWith(undefined);
+  });
+
   it('non-collapsible single type prevents full collapse', async () => {
     const user = userEvent.setup();
     renderAccordion({ type: 'single', collapsible: false, defaultValue: 'one' });
@@ -158,6 +174,23 @@ describe('Accordion', () => {
     await user.click(trigger);
     // Should stay open because collapsible=false
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('forwards html props to trigger and content', async () => {
+    const user = userEvent.setup();
+    render(
+      <Accordion>
+        <Accordion.Item value="one">
+          <Accordion.Trigger data-testid="trigger" data-track="accordion-trigger">Item One</Accordion.Trigger>
+          <Accordion.Content data-testid="content" aria-label="Accordion panel">Content One</Accordion.Content>
+        </Accordion.Item>
+      </Accordion>
+    );
+
+    await user.click(screen.getByTestId('trigger'));
+
+    expect(screen.getByTestId('trigger')).toHaveAttribute('data-track', 'accordion-trigger');
+    expect(screen.getByTestId('content')).toHaveAttribute('aria-label', 'Accordion panel');
   });
 
   it('has no accessibility violations', async () => {

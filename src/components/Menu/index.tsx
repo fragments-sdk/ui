@@ -16,10 +16,9 @@ export interface MenuProps {
   modal?: boolean;
 }
 
-export interface MenuTriggerProps {
+export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
 export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -29,25 +28,23 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   sideOffset?: number;
 }
 
-export interface MenuItemProps {
+export interface MenuItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'onSelect'> {
   children: React.ReactNode;
   disabled?: boolean;
   danger?: boolean;
-  onSelect?: () => void;
-  className?: string;
+  onSelect?: (...args: any[]) => void;
   icon?: React.ReactNode;
   shortcut?: string;
   /** When passed, renders a check indicator. `true` shows a checkmark, `false` reserves space. */
   checked?: boolean;
 }
 
-export interface MenuCheckboxItemProps {
+export interface MenuCheckboxItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'onChange'> {
   children: React.ReactNode;
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   disabled?: boolean;
-  className?: string;
 }
 
 export interface MenuRadioGroupProps {
@@ -57,26 +54,21 @@ export interface MenuRadioGroupProps {
   onValueChange?: (value: string) => void;
 }
 
-export interface MenuRadioItemProps {
+export interface MenuRadioItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
   value: string;
   disabled?: boolean;
-  className?: string;
 }
 
-export interface MenuGroupProps {
+export interface MenuGroupProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface MenuGroupLabelProps {
+export interface MenuGroupLabelProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface MenuSeparatorProps {
-  className?: string;
-}
+export interface MenuSeparatorProps extends React.HTMLAttributes<HTMLElement> {}
 
 export interface MenuSubmenuProps {
   children: React.ReactNode;
@@ -85,10 +77,9 @@ export interface MenuSubmenuProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export interface MenuSubmenuTriggerProps {
+export interface MenuSubmenuTriggerProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   disabled?: boolean;
-  className?: string;
   icon?: React.ReactNode;
 }
 
@@ -153,17 +144,17 @@ function MenuRoot({
   );
 }
 
-function MenuTrigger({ children, asChild, className }: MenuTriggerProps) {
+function MenuTrigger({ children, asChild, className, ...htmlProps }: MenuTriggerProps) {
   if (asChild) {
     return (
-      <BaseMenu.Trigger className={className} render={children as React.ReactElement}>
+      <BaseMenu.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
       </BaseMenu.Trigger>
     );
   }
 
   return (
-    <BaseMenu.Trigger className={className}>
+    <BaseMenu.Trigger {...htmlProps} className={className}>
       {children}
     </BaseMenu.Trigger>
   );
@@ -204,7 +195,16 @@ function MenuItem({
   icon,
   shortcut,
   checked,
+  ...htmlProps
 }: MenuItemProps) {
+  const handleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      (htmlProps.onClick as React.MouseEventHandler<HTMLElement> | undefined)?.(event);
+      onSelect?.(event);
+    },
+    [htmlProps, onSelect],
+  );
+
   const hasChecked = checked !== undefined;
   const classes = [
     styles.item,
@@ -214,8 +214,9 @@ function MenuItem({
 
   return (
     <BaseMenu.Item
+      {...htmlProps}
       disabled={disabled}
-      onClick={onSelect}
+      onClick={handleClick as any}
       className={classes}
     >
       {hasChecked && (
@@ -237,6 +238,7 @@ function MenuCheckboxItem({
   onCheckedChange,
   disabled,
   className,
+  ...htmlProps
 }: MenuCheckboxItemProps) {
   const isControlled = checkedProp !== undefined;
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked ?? false);
@@ -256,6 +258,7 @@ function MenuCheckboxItem({
 
   return (
     <BaseMenu.CheckboxItem
+      {...htmlProps}
       checked={checkedProp}
       defaultChecked={defaultChecked}
       onCheckedChange={handleCheckedChange}
@@ -292,13 +295,14 @@ function MenuRadioItem({
   value,
   disabled,
   className,
+  ...htmlProps
 }: MenuRadioItemProps) {
   const classes = [styles.item, styles.radioItem, className]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <BaseMenu.RadioItem value={value} disabled={disabled} className={classes}>
+    <BaseMenu.RadioItem {...htmlProps} value={value} disabled={disabled} className={classes}>
       <span className={styles.radioIndicator}>
         <DotIcon />
       </span>
@@ -307,19 +311,19 @@ function MenuRadioItem({
   );
 }
 
-function MenuGroup({ children, className }: MenuGroupProps) {
+function MenuGroup({ children, className, ...htmlProps }: MenuGroupProps) {
   const classes = [styles.group, className].filter(Boolean).join(' ');
-  return <BaseMenu.Group className={classes}>{children}</BaseMenu.Group>;
+  return <BaseMenu.Group {...htmlProps} className={classes}>{children}</BaseMenu.Group>;
 }
 
-function MenuGroupLabel({ children, className }: MenuGroupLabelProps) {
+function MenuGroupLabel({ children, className, ...htmlProps }: MenuGroupLabelProps) {
   const classes = [styles.groupLabel, className].filter(Boolean).join(' ');
-  return <BaseMenu.GroupLabel className={classes}>{children}</BaseMenu.GroupLabel>;
+  return <BaseMenu.GroupLabel {...htmlProps} className={classes}>{children}</BaseMenu.GroupLabel>;
 }
 
-function MenuSeparator({ className }: MenuSeparatorProps) {
+function MenuSeparator({ className, ...htmlProps }: MenuSeparatorProps) {
   const classes = [styles.separator, className].filter(Boolean).join(' ');
-  return <BaseMenu.Separator className={classes} />;
+  return <BaseMenu.Separator {...htmlProps} className={classes} />;
 }
 
 function MenuSubmenu({
@@ -344,13 +348,14 @@ function MenuSubmenuTrigger({
   disabled,
   className,
   icon,
+  ...htmlProps
 }: MenuSubmenuTriggerProps) {
   const classes = [styles.item, styles.submenuTrigger, className]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <BaseMenu.SubmenuTrigger disabled={disabled} className={classes}>
+    <BaseMenu.SubmenuTrigger {...htmlProps} disabled={disabled} className={classes}>
       {icon && <span className={styles.itemIcon}>{icon}</span>}
       <span className={styles.itemLabel}>{children}</span>
     </BaseMenu.SubmenuTrigger>

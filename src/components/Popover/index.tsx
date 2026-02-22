@@ -25,10 +25,9 @@ export interface PopoverProps {
   modal?: boolean;
 }
 
-export interface PopoverTriggerProps {
+export interface PopoverTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
 export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -40,14 +39,12 @@ export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement
   arrow?: boolean;
 }
 
-export interface PopoverTitleProps {
+export interface PopoverTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface PopoverDescriptionProps {
+export interface PopoverDescriptionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
 }
 
 export interface PopoverBodyProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -58,10 +55,9 @@ export interface PopoverFooterProps extends React.HTMLAttributes<HTMLDivElement>
   children: React.ReactNode;
 }
 
-export interface PopoverCloseProps {
+export interface PopoverCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
 // ============================================
@@ -111,17 +107,17 @@ function PopoverRoot({
   );
 }
 
-function PopoverTrigger({ children, asChild, className }: PopoverTriggerProps) {
+function PopoverTrigger({ children, asChild, className, ...htmlProps }: PopoverTriggerProps) {
   if (asChild) {
     return (
-      <BasePopover.Trigger className={className} render={children as React.ReactElement}>
+      <BasePopover.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
       </BasePopover.Trigger>
     );
   }
 
   return (
-    <BasePopover.Trigger className={className}>
+    <BasePopover.Trigger {...htmlProps} className={className}>
       {children}
     </BasePopover.Trigger>
   );
@@ -160,15 +156,15 @@ function PopoverContent({
   );
 }
 
-function PopoverTitle({ children, className }: PopoverTitleProps) {
+function PopoverTitle({ children, className, ...htmlProps }: PopoverTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BasePopover.Title className={classes}>{children}</BasePopover.Title>;
+  return <BasePopover.Title {...htmlProps} className={classes}>{children}</BasePopover.Title>;
 }
 
-function PopoverDescription({ children, className }: PopoverDescriptionProps) {
+function PopoverDescription({ children, className, ...htmlProps }: PopoverDescriptionProps) {
   const classes = [styles.description, className].filter(Boolean).join(' ');
   return (
-    <BasePopover.Description className={classes}>
+    <BasePopover.Description {...htmlProps} className={classes}>
       {children}
     </BasePopover.Description>
   );
@@ -184,11 +180,12 @@ function PopoverFooter({ children, className, ...htmlProps }: PopoverFooterProps
   return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function PopoverClose({ children, asChild, className }: PopoverCloseProps) {
+function PopoverClose({ children, asChild, className, ...htmlProps }: PopoverCloseProps) {
   // Default close button (X icon)
   if (!children) {
     return (
       <BasePopover.Close
+        {...htmlProps}
         aria-label="Close popover"
         className={[styles.close, className].filter(Boolean).join(' ')}
       >
@@ -199,14 +196,14 @@ function PopoverClose({ children, asChild, className }: PopoverCloseProps) {
 
   if (asChild) {
     return (
-      <BasePopover.Close className={className} render={children as React.ReactElement}>
+      <BasePopover.Close {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
       </BasePopover.Close>
     );
   }
 
   return (
-    <BasePopover.Close className={className}>
+    <BasePopover.Close {...htmlProps} className={className}>
       {children}
     </BasePopover.Close>
   );

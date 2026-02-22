@@ -57,21 +57,18 @@ export interface SelectContentProps extends React.HTMLAttributes<HTMLDivElement>
   maxVisibleItems?: number;
 }
 
-export interface SelectItemProps {
+export interface SelectItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
   value: SelectValue;
   disabled?: boolean;
-  className?: string;
 }
 
-export interface SelectGroupProps {
+export interface SelectGroupProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface SelectGroupLabelProps {
+export interface SelectGroupLabelProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
 // ============================================
@@ -276,7 +273,7 @@ function SelectContent({
   );
 }
 
-function SelectItem({ children, value, disabled, className }: SelectItemProps) {
+function SelectItem({ children, value, disabled, className, ...htmlProps }: SelectItemProps) {
   const { itemsRef, incrementItemsVersion } = React.useContext(SelectContext);
   const classes = [styles.item, className].filter(Boolean).join(' ');
 
@@ -288,11 +285,12 @@ function SelectItem({ children, value, disabled, className }: SelectItemProps) {
     incrementItemsVersion();
     return () => {
       items.delete(value);
+      incrementItemsVersion();
     };
   }, [itemsRef, incrementItemsVersion, value, children]);
 
   return (
-    <BaseSelect.Item value={value} disabled={disabled} className={classes}>
+    <BaseSelect.Item {...htmlProps} value={value} disabled={disabled} className={classes}>
       <BaseSelect.ItemText>{children}</BaseSelect.ItemText>
       <BaseSelect.ItemIndicator className={styles.itemIndicator}>
         <CheckIcon />
@@ -301,14 +299,14 @@ function SelectItem({ children, value, disabled, className }: SelectItemProps) {
   );
 }
 
-function SelectGroup({ children, className }: SelectGroupProps) {
+function SelectGroup({ children, className, ...htmlProps }: SelectGroupProps) {
   const classes = [styles.group, className].filter(Boolean).join(' ');
-  return <BaseSelect.Group className={classes}>{children}</BaseSelect.Group>;
+  return <BaseSelect.Group {...htmlProps} className={classes}>{children}</BaseSelect.Group>;
 }
 
-function SelectGroupLabel({ children, className }: SelectGroupLabelProps) {
+function SelectGroupLabel({ children, className, ...htmlProps }: SelectGroupLabelProps) {
   const classes = [styles.groupLabel, className].filter(Boolean).join(' ');
-  return <BaseSelect.GroupLabel className={classes}>{children}</BaseSelect.GroupLabel>;
+  return <BaseSelect.GroupLabel {...htmlProps} className={classes}>{children}</BaseSelect.GroupLabel>;
 }
 
 // ============================================

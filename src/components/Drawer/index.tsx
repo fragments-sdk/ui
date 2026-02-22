@@ -38,24 +38,21 @@ export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement>
   backdrop?: boolean;
 }
 
-export interface DrawerTriggerProps {
+export interface DrawerTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
 export interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export interface DrawerTitleProps {
+export interface DrawerTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface DrawerDescriptionProps {
+export interface DrawerDescriptionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
 }
 
 export interface DrawerBodyProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -66,10 +63,9 @@ export interface DrawerFooterProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface DrawerCloseProps {
+export interface DrawerCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   asChild?: boolean;
-  className?: string;
 }
 
 // ============================================
@@ -123,17 +119,18 @@ function DrawerTrigger({
   children,
   asChild,
   className,
+  ...htmlProps
 }: DrawerTriggerProps) {
   if (asChild) {
     return (
-      <BaseDialog.Trigger className={className} render={children as React.ReactElement}>
+      <BaseDialog.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
       </BaseDialog.Trigger>
     );
   }
 
   return (
-    <BaseDialog.Trigger className={className}>
+    <BaseDialog.Trigger {...htmlProps} className={className}>
       {children}
     </BaseDialog.Trigger>
   );
@@ -171,15 +168,15 @@ function DrawerHeader({ children, className, ...htmlProps }: DrawerHeaderProps) 
   return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function DrawerTitle({ children, className }: DrawerTitleProps) {
+function DrawerTitle({ children, className, ...htmlProps }: DrawerTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BaseDialog.Title className={classes}>{children}</BaseDialog.Title>;
+  return <BaseDialog.Title {...htmlProps} className={classes}>{children}</BaseDialog.Title>;
 }
 
-function DrawerDescription({ children, className }: DrawerDescriptionProps) {
+function DrawerDescription({ children, className, ...htmlProps }: DrawerDescriptionProps) {
   const classes = [styles.description, className].filter(Boolean).join(' ');
   return (
-    <BaseDialog.Description className={classes}>
+    <BaseDialog.Description {...htmlProps} className={classes}>
       {children}
     </BaseDialog.Description>
   );
@@ -195,10 +192,11 @@ function DrawerFooter({ children, className, ...htmlProps }: DrawerFooterProps) 
   return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function DrawerClose({ children, asChild, className }: DrawerCloseProps) {
+function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerCloseProps) {
   if (!children) {
     return (
       <BaseDialog.Close
+        {...htmlProps}
         data-drawer-close
         aria-label="Close drawer"
         className={[styles.close, className].filter(Boolean).join(' ')}
@@ -211,6 +209,7 @@ function DrawerClose({ children, asChild, className }: DrawerCloseProps) {
   if (asChild) {
     return (
       <BaseDialog.Close
+        {...htmlProps}
         data-drawer-close
         className={className}
         render={children as React.ReactElement}
@@ -221,7 +220,7 @@ function DrawerClose({ children, asChild, className }: DrawerCloseProps) {
   }
 
   return (
-    <BaseDialog.Close data-drawer-close className={className}>
+    <BaseDialog.Close {...htmlProps} data-drawer-close className={className}>
       {children}
     </BaseDialog.Close>
   );

@@ -43,6 +43,29 @@ describe('Popover', () => {
     });
   });
 
+  it('forwards html props to trigger, title, description, and close', async () => {
+    const user = userEvent.setup();
+    render(
+      <Popover>
+        <Popover.Trigger id="popover-trigger">Open</Popover.Trigger>
+        <Popover.Content>
+          <Popover.Title id="popover-title">Popover Title</Popover.Title>
+          <Popover.Description id="popover-description">Popover Description</Popover.Description>
+          <Popover.Close data-testid="popover-close" />
+        </Popover.Content>
+      </Popover>
+    );
+
+    expect(screen.getByRole('button', { name: /open/i })).toHaveAttribute('id', 'popover-trigger');
+    await user.click(screen.getByRole('button', { name: /open/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Popover Title')).toHaveAttribute('id', 'popover-title');
+      expect(screen.getByText('Popover Description')).toHaveAttribute('id', 'popover-description');
+      expect(screen.getByTestId('popover-close')).toBeInTheDocument();
+    });
+  });
+
   it('has a close button with aria-label', async () => {
     const user = userEvent.setup();
     renderPopover();
