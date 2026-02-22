@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.13.0
+
+### Minor Changes
+
+- UI component DX improvements: better event forwarding (onClick passthrough on Accordion, Collapsible, Dialog, Drawer, Popover triggers), stricter callback types (onValueChange returns undefined for collapsed state), React 19 type fixes (Combobox getNodeText), and expanded test coverage across 15 components.
+
 ## 0.12.0
 
 ### Minor Changes
