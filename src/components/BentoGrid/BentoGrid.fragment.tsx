@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { BentoGrid } from '.';
 
 export default defineFragment({
@@ -30,6 +30,7 @@ export default defineFragment({
       'The hero item typically uses colSpan={2} rowSpan={2} at lg and above',
       'Items include built-in surface styling — no need to wrap children in Card',
       'Grid auto-collapses: 3→2 columns below lg, all→1 column below sm',
+      'Root and Item forward DOM props (aria-*, data-*, handlers), and Item style merges with span CSS vars',
     ],
     accessibility: [
       'Grid is purely visual — it does not affect reading order or semantics',
@@ -77,6 +78,7 @@ export default defineFragment({
       'gap: none|xs|sm|md|lg|xl (default: md)',
       'BentoGrid.Item colSpan: 1|2|3 | { base, sm, md, lg, xl }',
       'BentoGrid.Item rowSpan: 1|2|3 | { base, sm, md, lg, xl }',
+      'BentoGrid and BentoGrid.Item forward div DOM props; Item style is merged with generated span vars',
     ],
     scenarioTags: [
       'layout.bento',

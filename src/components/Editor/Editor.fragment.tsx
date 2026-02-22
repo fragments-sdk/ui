@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Editor } from '.';
 import { Button } from '../Button';
 
@@ -37,6 +37,7 @@ export default defineFragment({
       'Install @tiptap/react, @tiptap/starter-kit, and @tiptap/extension-link for rich text mode',
       'Falls back to a markdown-aware textarea when TipTap is not installed',
       'Use onAutoSave for periodic content persistence',
+      'onAutoSave may return a Promise; save status updates after the async save resolves/rejects',
       'Use size prop (sm/md/lg) to control editor height',
       'Use maxLength to show character limit with visual warning states',
       'New formats (headings, blockquote, orderedList, undo, redo) are opt-in via the formats prop',
@@ -97,7 +98,7 @@ export default defineFragment({
     },
     onAutoSave: {
       type: 'function',
-      description: 'Auto-save callback, called at autoSaveInterval',
+      description: 'Auto-save callback, called at autoSaveInterval (may be async)',
     },
     autoSaveInterval: {
       type: 'number',
@@ -143,7 +144,7 @@ export default defineFragment({
       'formats: EditorFormat[] - toolbar buttons (default: all 6)',
       'toolbar: boolean - show default toolbar (default: true)',
       'statusBar: boolean - show word/char counts (default: true)',
-      'onAutoSave: (value: string) => void - auto-save handler',
+      'onAutoSave: (value: string) => void | Promise<void> - auto-save handler',
       'size: "sm" | "md" | "lg" - editor height preset (default: "md")',
       'maxLength: number - character limit with visual indicator',
     ],

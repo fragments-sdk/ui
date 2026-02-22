@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Separator } from '.';
 
 export default defineFragment({

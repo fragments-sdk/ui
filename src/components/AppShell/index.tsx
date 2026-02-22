@@ -190,6 +190,7 @@ function AppShellInner({
   children,
   className,
   layout,
+  style: styleProp,
   ...htmlProps
 }: {
   children: React.ReactNode;
@@ -221,6 +222,7 @@ function AppShellInner({
     '--appshell-sidebar-expanded-width': appShell.sidebarWidth,
     '--appshell-sidebar-collapsed-width': appShell.sidebarCollapsedWidth,
     '--appshell-aside-width': appShell.asideVisible ? appShell.asideWidth : '0px',
+    ...styleProp,
   } as React.CSSProperties;
 
   return (

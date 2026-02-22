@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Sidebar, SidebarProvider, useSidebar } from '.';
 import { Button } from '../Button';
 
@@ -442,6 +442,7 @@ export default defineFragment({
       'Submenus are hidden when collapsed - use tooltips for navigation hints instead',
       'Use SidebarProvider to enable external triggers and keyboard shortcuts',
       'Use asChild with routing libraries (Next.js Link, React Router NavLink)',
+      'Sidebar.Item and Sidebar.SubItem onClick handlers receive the click event object',
       'Use Sidebar.MenuSkeleton while loading navigation data',
     ],
     accessibility: [
@@ -523,6 +524,7 @@ export default defineFragment({
       'width: string - expanded width (default: 240px)',
       'position: left|right - sidebar position',
       'active: boolean - set on Sidebar.Item to mark current page (app-controlled)',
+      'Sidebar.Item/SubItem onClick: (event) => void - click handler receives mouse event',
     ],
     scenarioTags: [
       'navigation.sidebar',

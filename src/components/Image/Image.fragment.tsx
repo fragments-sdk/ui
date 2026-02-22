@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Image } from '.';
 
 export default defineFragment({
@@ -32,6 +32,7 @@ export default defineFragment({
       'Use appropriate aspect ratios for consistent layouts',
       'Provide fallback content for failed loads',
       'Use objectFit="contain" for logos to preserve aspect ratio',
+      'Use imgProps / onImageLoad / onImageError when you need lower-level img control',
     ],
     accessibility: [
       'Alt text is required and must describe the image content',
@@ -82,6 +83,18 @@ export default defineFragment({
       type: 'node',
       description: 'Content to show while loading or on error',
     },
+    imgProps: {
+      type: 'object',
+      description: 'Additional props for the underlying img element (except src/alt/size/style/events)',
+    },
+    onImageLoad: {
+      type: 'function',
+      description: 'Called when the underlying img element loads',
+    },
+    onImageError: {
+      type: 'function',
+      description: 'Called when the underlying img element fails to load',
+    },
   },
 
   relations: [
@@ -97,6 +110,7 @@ export default defineFragment({
       'objectFit: cover|contain|fill|none - image fitting',
       'rounded: none|sm|md|lg|full - border radius',
       'fallback: ReactNode - loading/error content',
+      'imgProps/onImageLoad/onImageError - low-level img customization and events',
     ],
     scenarioTags: [
       'media.image',

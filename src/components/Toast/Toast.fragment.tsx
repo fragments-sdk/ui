@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Toast, ToastProvider, useToast } from '.';
 
 // Demo component that triggers toasts
@@ -9,7 +9,7 @@ function ToastDemo() {
   return (
     <div style={{ display: 'flex', gap: 'var(--fui-space-1)', flexWrap: 'wrap' }}>
       <button
-        onClick={() => success('Success!', 'Your changes have been saved.')}
+        onClick={() => success({ title: 'Success!', description: 'Your changes have been saved.', id: 'save-success' })}
         style={{ padding: 'var(--fui-space-1) var(--fui-space-2)', borderRadius: 'var(--fui-radius-md)', border: '1px solid var(--fui-color-success)', background: 'var(--fui-color-success-bg)', color: 'var(--fui-color-success)', cursor: 'pointer' }}
       >
         Success Toast
@@ -75,6 +75,7 @@ export default defineFragment({
       'Auto-dismiss after reasonable duration (3-5s)',
       'Allow manual dismissal for longer messages',
       'Limit number of simultaneous toasts',
+      'useToast() variant helpers accept either (title, description?) or an options object for action/duration/id',
     ],
     accessibility: [
       'Use role="alert" for important messages',
@@ -142,6 +143,8 @@ export default defineFragment({
       'variant: default|success|error|warning|info',
       'duration: number - ms before auto-dismiss',
       'action: { label, onClick } - optional action',
+      'ToastInput (useToast): optional id for deterministic creation/replacement flows',
+      'useToast().success/error/warning/info: (title, description?) or ({ title, description, action, duration, id })',
     ],
     scenarioTags: [
       'feedback.success',
@@ -158,7 +161,7 @@ export default defineFragment({
   variants: [
     {
       name: 'Default',
-      description: 'Interactive toast demo - click buttons to trigger toasts',
+      description: 'Interactive toast demo - click buttons to trigger toasts (includes helper object syntax example)',
       render: () => <ToastDemoWrapper />,
     },
     {

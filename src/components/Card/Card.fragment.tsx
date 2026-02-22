@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Card } from '.';
 
 export default defineFragment({
@@ -29,10 +29,10 @@ export default defineFragment({
       'Use consistent card variants within the same context',
       'Cards in a grid should have uniform sizing',
       'Use elevated variant sparingly for emphasis',
-      'Interactive cards should have clear hover states',
+      'If a card is clickable, provide clear hover/focus affordances and prefer explicit buttons/links inside the card',
     ],
     accessibility: [
-      'Interactive cards should use button or link semantics',
+      'Card is a semantic container (article/div/section); onClick does not automatically add button semantics',
       'Card titles should be appropriate heading levels',
     ],
   },
@@ -55,9 +55,11 @@ export default defineFragment({
       default: 'md',
       description: 'Internal padding size',
     },
-    onClick: {
-      type: 'function',
-      description: 'Click handler - makes card interactive',
+    as: {
+      type: 'enum',
+      values: ['article', 'div', 'section'],
+      default: 'article',
+      description: 'Semantic HTML element for the card root',
     },
   },
 
@@ -78,7 +80,8 @@ export default defineFragment({
     propsSummary: [
       'variant: default|outlined|outline|elevated (default: default)',
       'padding: none|sm|md|lg (default: md)',
-      'onClick: () => void - makes card interactive',
+      'as: article|div|section (default: article) - card root element',
+      'onClick: (event) => void - click handler on root (semantics unchanged)',
       'Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer',
     ],
     scenarioTags: [
@@ -156,14 +159,26 @@ export default defineFragment({
     },
     {
       name: 'Interactive',
-      description: 'Clickable card',
+      description: 'Clickable card surface (root stays a semantic container)',
       render: () => (
-        <Card onClick={() => alert('Card clicked!')}>
+        <Card as="section" onClick={() => alert('Card clicked!')}>
           <Card.Header>
             <Card.Title>Click Me</Card.Title>
             <Card.Description>This card is interactive</Card.Description>
           </Card.Header>
           <Card.Body>Click anywhere on this card.</Card.Body>
+        </Card>
+      ),
+    },
+    {
+      name: 'Section Root',
+      description: 'Use the as prop to match the surrounding document semantics',
+      render: () => (
+        <Card as="section" aria-labelledby="billing-card-title">
+          <Card.Header>
+            <Card.Title id="billing-card-title">Billing Summary</Card.Title>
+          </Card.Header>
+          <Card.Body>Section semantics can improve document structure for grouped content.</Card.Body>
         </Card>
       ),
     },

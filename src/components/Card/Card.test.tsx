@@ -8,10 +8,9 @@ describe('Card', () => {
     expect(screen.getByRole('article')).toBeInTheDocument();
   });
 
-  it('renders as <button> when onClick is provided', () => {
+  it('stays as <article> with interactive class when onClick is provided', () => {
     render(<Card onClick={() => {}}>Click me</Card>);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.queryByRole('article')).not.toBeInTheDocument();
+    expect(screen.getByRole('article')).toHaveClass('interactive');
   });
 
   it('applies variant classes', () => {
@@ -31,7 +30,7 @@ describe('Card', () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
     render(<Card onClick={handleClick}>Click me</Card>);
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('article'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
@@ -54,7 +53,7 @@ describe('Card', () => {
 
   it('adds interactive class when onClick is provided', () => {
     render(<Card onClick={() => {}}>Content</Card>);
-    expect(screen.getByRole('button')).toHaveClass('interactive');
+    expect(screen.getByRole('article')).toHaveClass('interactive');
   });
 
   it('resolves variant="outline" to "outlined"', () => {

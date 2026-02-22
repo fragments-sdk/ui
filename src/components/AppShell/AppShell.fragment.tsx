@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { AppShell } from '.';
 import { Box } from '../Box';
 import { Header } from '../Header';

@@ -43,6 +43,14 @@ describe('Progress', () => {
     const { container } = render(<Progress value={60} label="Loading" />);
     await expectNoA11yViolations(container);
   });
+
+  it('clamps displayed percentage and handles invalid ranges safely', () => {
+    const { rerender } = render(<Progress value={150} showValue />);
+    expect(screen.getByText('100%')).toBeInTheDocument();
+
+    rerender(<Progress value={50} min={100} max={100} showValue />);
+    expect(screen.getByText('0%')).toBeInTheDocument();
+  });
 });
 
 describe('CircularProgress', () => {

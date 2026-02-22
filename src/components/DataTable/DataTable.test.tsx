@@ -83,7 +83,9 @@ describe('DataTable', () => {
     const rows = screen.getAllByRole('row');
     // rows[0] is header, rows[1] is first data row
     await user.click(rows[1]);
-    expect(handleClick).toHaveBeenCalledWith(data[0]);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+    expect(handleClick.mock.calls[0][0]).toEqual(data[0]);
+    expect(handleClick.mock.calls[0][1]).toBeDefined();
   });
 
   it('applies striped class when striped prop is true', () => {
@@ -126,7 +128,26 @@ describe('DataTable', () => {
     const rows = screen.getAllByRole('row');
     rows[1].focus();
     await user.keyboard('{Enter}');
-    expect(handleClick).toHaveBeenCalledWith(data[0]);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+    expect(handleClick.mock.calls[0][0]).toEqual(data[0]);
+    expect(handleClick.mock.calls[0][1]).toBeDefined();
+  });
+
+  it('forwards wrapper props to the outer container', () => {
+    const { container } = render(
+      <DataTable
+        columns={columns}
+        data={data}
+        aria-label="People"
+        wrapperClassName="custom-wrapper"
+        wrapperProps={{ id: 'people-table-wrapper', 'data-testid': 'people-table-wrapper' }}
+      />
+    );
+
+    const wrapper = screen.getByTestId('people-table-wrapper');
+    expect(wrapper).toHaveAttribute('id', 'people-table-wrapper');
+    expect(wrapper).toHaveClass('custom-wrapper');
+    expect(container.querySelector('.custom-wrapper')).toBe(wrapper);
   });
 
   it('renders checkbox column when showCheckbox and selectable', async () => {

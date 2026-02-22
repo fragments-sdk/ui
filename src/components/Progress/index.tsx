@@ -59,7 +59,15 @@ function ProgressRoot({
   ...htmlProps
 }: ProgressProps) {
   const isIndeterminate = value === null;
-  const percentage = isIndeterminate ? 0 : Math.round(((value - min) / (max - min)) * 100);
+  const range = max - min;
+  const normalizedPercentage = isIndeterminate
+    ? 0
+    : range <= 0
+      ? 0
+      : ((value - min) / range) * 100;
+  const percentage = isIndeterminate
+    ? 0
+    : Math.round(Math.min(100, Math.max(0, normalizedPercentage)));
 
   const trackClasses = [
     styles.track,

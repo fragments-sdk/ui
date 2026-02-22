@@ -28,6 +28,9 @@ export type SortingState = Array<{ id: string; desc: boolean }>;
 export type RowSelectionState = Record<string, boolean>;
 export type ExpandedState = true | Record<string, boolean>;
 type OnChangeFn<T> = ((updaterOrValue: T | ((prev: T) => T)) => void);
+export type DataTableRowClickEvent =
+  | React.MouseEvent<HTMLTableRowElement>
+  | React.KeyboardEvent<HTMLTableRowElement>;
 
 export type DataTableColumn<T> = ColumnDef<T, unknown>;
 
@@ -81,7 +84,7 @@ export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLTableEl
   /** Selection change handler */
   onRowSelectionChange?: OnChangeFn<RowSelectionState>;
   /** Row click handler */
-  onRowClick?: (row: T) => void;
+  onRowClick?: (row: T, event: DataTableRowClickEvent) => void;
   /** Extract sub-rows from a row for expandable tree tables */
   getSubRows?: (row: T) => T[] | undefined;
   /** Controlled expanded state */
@@ -100,6 +103,10 @@ export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLTableEl
   striped?: boolean;
   /** Wrap table in a bordered container */
   bordered?: boolean;
+  /** Additional class name for the outer wrapper div */
+  wrapperClassName?: string;
+  /** Props forwarded to the outer wrapper div */
+  wrapperProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 function getColumnSizeStyle(
@@ -159,6 +166,8 @@ function DataTableRoot<T>({
   captionHidden = false,
   striped = false,
   bordered = false,
+  wrapperClassName,
+  wrapperProps,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
   ...htmlProps
@@ -267,10 +276,19 @@ function DataTableRoot<T>({
   ]
     .filter(Boolean)
     .join(' ');
+  const { className: wrapperPropsClassName, ...restWrapperProps } = wrapperProps ?? {};
+  const wrapperClasses = [
+    styles.wrapper,
+    bordered && styles.bordered,
+    wrapperClassName,
+    wrapperPropsClassName,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   if (isEmpty) {
     return (
-      <div className={[styles.wrapper, bordered && styles.bordered].filter(Boolean).join(' ')}>
+      <div {...restWrapperProps} className={wrapperClasses}>
         <table
           {...htmlProps}
           className={rootClasses}
@@ -297,7 +315,7 @@ function DataTableRoot<T>({
   }
 
   return (
-    <div className={[styles.wrapper, bordered && styles.bordered].filter(Boolean).join(' ')}>
+    <div {...restWrapperProps} className={wrapperClasses}>
       <table
         {...htmlProps}
         className={rootClasses}
@@ -382,7 +400,7 @@ function DataTableRoot<T>({
             const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
               if (!onRowClick) return;
               if (isInteractiveTarget(event.target, event.currentTarget)) return;
-              onRowClick(row.original);
+              onRowClick(row.original, event);
             };
 
             const handleRowKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
@@ -390,7 +408,7 @@ function DataTableRoot<T>({
               if (isInteractiveTarget(event.target, event.currentTarget)) return;
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                onRowClick(row.original);
+                onRowClick(row.original, event);
               }
             };
 

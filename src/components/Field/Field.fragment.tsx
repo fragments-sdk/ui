@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Field } from '.';
 import { Input } from '../Input';
 import { Grid } from '../Grid';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Tooltip } from '.';
 import { Button } from '../Button';
 
@@ -33,6 +33,7 @@ export default defineFragment({
       'Use sentence case, no period for single sentences',
       'Avoid duplicating visible label text',
       'Consider mobile users who cannot hover',
+      'Use contentProps for tooltip popup attributes/styling; top-level HTML attrs are applied to the popup for backward compatibility',
     ],
     accessibility: [
       'Accessible via focus as well as hover',
@@ -102,6 +103,10 @@ export default defineFragment({
       type: 'function',
       description: 'Callback when open state changes',
     },
+    contentProps: {
+      type: 'object',
+      description: 'Props forwarded to the tooltip popup element (preferred way to pass popup attrs/className/style)',
+    },
   },
 
   relations: [
@@ -115,6 +120,7 @@ export default defineFragment({
       'side: top|bottom|left|right - position',
       'delay: number - show delay in ms (default: 400)',
       'arrow: boolean - show arrow (default: true)',
+      'contentProps: HTMLAttributes<HTMLDivElement> - popup element props',
     ],
     scenarioTags: [
       'help.tooltip',
@@ -168,6 +174,15 @@ export default defineFragment({
       description: 'Tooltip without arrow',
       render: () => (
         <Tooltip content="Clean tooltip" arrow={false}>
+          <Button variant="secondary">Hover me</Button>
+        </Tooltip>
+      ),
+    },
+    {
+      name: 'With Content Props',
+      description: 'Pass popup attributes/styling using contentProps',
+      render: () => (
+        <Tooltip content="Custom popup attrs" contentProps={{ id: 'custom-tooltip-popup' }}>
           <Button variant="secondary">Hover me</Button>
         </Tooltip>
       ),

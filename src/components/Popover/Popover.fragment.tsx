@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Popover } from '.';
 import { Button } from '../Button';
 import { Input } from '../Input';
@@ -35,6 +35,7 @@ export default defineFragment({
       'Include a clear way to close (X button or action buttons)',
       'Position to avoid covering important content',
       'Use arrow to visually connect popover to trigger',
+      'Popover.Trigger and Popover.Close support asChild for links/router-link components (single valid element child required)',
     ],
     accessibility: [
       'Focus is moved to popover content on open',
@@ -80,6 +81,7 @@ export default defineFragment({
       'open: boolean - controlled open state',
       'onOpenChange: (open) => void - state handler',
       'modal: boolean - blocks page interaction (default: false)',
+      'Popover.Trigger / Popover.Close asChild support non-button children',
       'Popover.Content side: top|bottom|left|right - position',
     ],
     scenarioTags: [
@@ -96,6 +98,7 @@ export default defineFragment({
     requiredChildren: ['Trigger', 'Content'],
     commonPatterns: [
       '<Popover><Popover.Trigger asChild><Button>Open</Button></Popover.Trigger><Popover.Content><Popover.Close /><Popover.Title>{title}</Popover.Title><Popover.Description>{description}</Popover.Description></Popover.Content></Popover>',
+      '<Popover><Popover.Trigger asChild><a href="#help">Open help</a></Popover.Trigger><Popover.Content>...</Popover.Content></Popover>',
     ],
   },
 
@@ -181,6 +184,20 @@ export default defineFragment({
             </Popover.Content>
           </Popover>
         </div>
+      ),
+    },
+    {
+      name: 'Link Trigger',
+      description: 'Use asChild with a non-button trigger element',
+      render: () => (
+        <Popover>
+          <Popover.Trigger asChild>
+            <a href="#popover-help">Open help</a>
+          </Popover.Trigger>
+          <Popover.Content size="sm">
+            <Popover.Description>Popover trigger can be an anchor when using asChild.</Popover.Description>
+          </Popover.Content>
+        </Popover>
       ),
     },
   ],

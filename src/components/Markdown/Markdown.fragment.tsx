@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Markdown } from '.';
 
 const defaultContent = `# Hello World
@@ -108,6 +108,7 @@ export default defineFragment({
       'Use the components prop to override default element rendering',
       'Content is sanitized by react-markdown by default',
       'Falls back to plain text paragraphs if react-markdown is not installed',
+      'Standard div props (id, style, aria-*, data-*) are forwarded to the Markdown wrapper',
     ],
     accessibility: [
       'Rendered HTML follows semantic structure (headings, lists, tables)',
@@ -125,7 +126,7 @@ export default defineFragment({
     },
     components: {
       type: 'object',
-      description: 'Override map for markdown element components (e.g., { h1: MyHeading })',
+      description: 'Override map for markdown element components (e.g., { h1: MyHeading }). Accepts custom renderer component signatures used by react-markdown',
     },
     className: {
       type: 'string',
@@ -142,8 +143,9 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'content: string - Markdown string to render',
-      'components: object - Override map for element components',
+      'components: object - Override map for element components (react-markdown renderer components)',
       'className: string - Additional CSS class',
+      'Forwards standard HTML div attributes to the wrapper element',
     ],
     scenarioTags: [
       'content.markdown',

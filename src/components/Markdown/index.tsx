@@ -8,11 +8,14 @@ import '../../styles/globals.scss';
 // Types
 // ============================================
 
-export interface MarkdownProps {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MarkdownComponentMap = Record<string, React.ComponentType<any>>;
+
+export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Markdown string to render */
   content: string;
   /** Override map for markdown element components */
-  components?: Record<string, React.ComponentType<React.HTMLAttributes<HTMLElement>>>;
+  components?: MarkdownComponentMap;
   /** Additional class name */
   className?: string;
 }
@@ -24,7 +27,7 @@ export interface MarkdownProps {
 type ReactMarkdownType = React.ComponentType<{
   children: string;
   remarkPlugins?: unknown[];
-  components?: Record<string, React.ComponentType<unknown>>;
+  components?: MarkdownComponentMap;
 }>;
 
 let ReactMarkdown: ReactMarkdownType | null = null;
@@ -55,10 +58,10 @@ function loadDeps() {
 // Fallback renderer (plain text with paragraphs)
 // ============================================
 
-function FallbackRenderer({ content, className }: { content: string; className?: string }) {
+function FallbackRenderer({ content }: { content: string }) {
   const paragraphs = content.split(/\n{2,}/);
   return (
-    <div className={className}>
+    <div>
       {paragraphs.map((p) => (
         <p key={p}>{p}</p>
       ))}
@@ -71,7 +74,7 @@ function FallbackRenderer({ content, className }: { content: string; className?:
 // ============================================
 
 const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(
-  function Markdown({ content, components: componentOverrides, className }, ref) {
+  function Markdown({ content, components: componentOverrides, className, ...htmlProps }, ref) {
     loadDeps();
 
     const classes = [styles.markdown, className].filter(Boolean).join(' ');
@@ -84,7 +87,7 @@ const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(
         );
       }
       return (
-        <div ref={ref} className={classes}>
+        <div ref={ref} {...htmlProps} className={classes}>
           <FallbackRenderer content={content} />
         </div>
       );
@@ -93,10 +96,10 @@ const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(
     const plugins = remarkGfm ? [remarkGfm] : [];
 
     return (
-      <div ref={ref} className={classes}>
+      <div ref={ref} {...htmlProps} className={classes}>
         <ReactMarkdown
           remarkPlugins={plugins}
-          components={componentOverrides as Record<string, React.ComponentType<unknown>>}
+          components={componentOverrides}
         >
           {content}
         </ReactMarkdown>

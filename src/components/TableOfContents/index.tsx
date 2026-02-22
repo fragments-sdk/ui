@@ -38,12 +38,13 @@ function TableOfContentsRoot({
   title = 'On This Page',
   hideTitle = false,
   className,
+  'aria-label': ariaLabel,
   ...htmlProps
 }: TableOfContentsProps) {
   const classes = [styles.root, className].filter(Boolean).join(' ');
 
   return (
-    <nav aria-label={label} className={classes} {...htmlProps}>
+    <nav {...htmlProps} aria-label={ariaLabel ?? label} className={classes}>
       {!hideTitle && (
         <Text as="p" variant="section-label" className={styles.title}>
           {title}
@@ -63,6 +64,7 @@ function TableOfContentsItem({
   indent = false,
   className,
   onClick,
+  href: _href,
   ...htmlProps
 }: TableOfContentsItemProps) {
   const linkClasses = [
@@ -73,23 +75,25 @@ function TableOfContentsItem({
   ].filter(Boolean).join(' ');
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(e);
+    if (e.defaultPrevented) return;
+
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-      history.replaceState(null, '', `#${id}`);
+      window.history.replaceState(null, '', `#${id}`);
     }
-    onClick?.(e);
   };
 
   return (
     <li className={styles.item}>
       <a
+        {...htmlProps}
         href={`#${id}`}
         className={linkClasses}
         onClick={handleClick}
-        aria-current={active ? 'true' : undefined}
-        {...htmlProps}
+        aria-current={active ? 'location' : undefined}
       >
         {children}
       </a>

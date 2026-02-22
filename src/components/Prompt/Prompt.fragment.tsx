@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Prompt } from '.';
 
 export default defineFragment({
@@ -27,6 +27,8 @@ export default defineFragment({
     guidelines: [
       'Always provide an onSubmit handler',
       'Use loading state during API calls',
+      'Prompt.Textarea forwards native textarea props (autoComplete, inputMode, aria-*, data-*, handlers)',
+      'Prompt.Textarea composes your onChange/onKeyDown handlers with built-in submit and auto-resize behavior',
       'Consider showing usage/token limits for AI contexts',
     ],
     accessibility: [
@@ -123,6 +125,7 @@ export default defineFragment({
       'loading: boolean - shows loading state',
       'minRows/maxRows: number - row constraints (default: 1/8)',
       'submitOnEnter: boolean - Enter key behavior (default: true)',
+      'Prompt.Textarea accepts native textarea props and optional aria-label override',
     ],
     scenarioTags: [
       'form.prompt',

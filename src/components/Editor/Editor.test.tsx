@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
+import { render, screen, userEvent, expectNoA11yViolations, act } from '../../test/utils';
 import { Editor } from './index';
 import { Button } from '../Button';
 
@@ -165,6 +165,37 @@ describe('Editor', () => {
     const textarea = document.querySelector('textarea[placeholder="Auto layout"]');
     expect(wrapper || textarea).toBeTruthy();
     expect(screen.getByText('0 Words')).toBeInTheDocument();
+  });
+
+  it('supports async onAutoSave callbacks and updates status after resolution', async () => {
+    vi.useFakeTimers();
+    let resolveSave: (() => void) | undefined;
+    const onAutoSave = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSave = resolve;
+        })
+    );
+
+    render(
+      <Editor defaultValue="Hello world" onAutoSave={onAutoSave} autoSaveInterval={25}>
+        <Editor.Content />
+        <Editor.StatusIndicator />
+      </Editor>
+    );
+
+    await vi.advanceTimersByTimeAsync(25);
+    expect(onAutoSave).toHaveBeenCalledTimes(1);
+    expect(String(onAutoSave.mock.calls[0][0])).toContain('Hello world');
+    expect(screen.getByText('SAVING...')).toBeInTheDocument();
+
+    await act(async () => {
+      resolveSave?.();
+      await Promise.resolve();
+    });
+    expect(screen.getByText('AUTO-SAVED')).toBeInTheDocument();
+
+    vi.useRealTimers();
   });
 
   it('has no accessibility violations', async () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Accordion } from '.';
 
 export default defineFragment({
@@ -36,7 +36,6 @@ export default defineFragment({
     ],
     accessibility: [
       'Keyboard navigation with Enter/Space to toggle',
-      'Arrow keys navigate between accordion headers',
       'Uses proper ARIA expanded/controls attributes',
       'Focus is visible on accordion triggers',
     ],
@@ -56,15 +55,15 @@ export default defineFragment({
     },
     value: {
       type: 'union',
-      description: 'Controlled open item(s)',
+      description: 'Controlled open item(s): string in single mode, string[] in multiple mode',
     },
     defaultValue: {
       type: 'union',
-      description: 'Initially open item(s) for uncontrolled usage',
+      description: 'Initially open item(s): string in single mode, string[] in multiple mode',
     },
     onValueChange: {
       type: 'function',
-      description: 'Called when open items change',
+      description: 'Called when open items change (single: string | undefined, multiple: string[])',
     },
     collapsible: {
       type: 'boolean',
@@ -88,9 +87,10 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'type: single|multiple - controls how many items can be open',
-      'value: string|string[] - controlled open items',
-      'defaultValue: string|string[] - initial open items',
+      'value/defaultValue are type-discriminated (single -> string, multiple -> string[])',
+      'onValueChange is type-discriminated by mode (single -> string|undefined, multiple -> string[])',
       'collapsible: boolean - allow all closed in single mode',
+      'Accordion.Trigger forwards button props and defaults type="button"',
     ],
     scenarioTags: [
       'layout.disclosure',

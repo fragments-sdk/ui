@@ -13,7 +13,9 @@ import styles from './ToggleGroup.module.scss';
  */
 export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Current selected value */
-  value: string;
+  value?: string;
+  /** Default selected value (uncontrolled) */
+  defaultValue?: string;
   /** Callback when selection changes */
   onChange?: (value: string) => void;
   /** Alias for onChange (Radix convention) */
@@ -23,12 +25,15 @@ export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Visual variant.
    * @default "default"
    * @see https://usefragments.com/components/togglegroup#variants */
-  variant?: 'default' | 'pills' | 'outline';
+  variant?: 'default' | 'pills' | 'outline' | 'outlined';
   /** Size.
    * @default "md" */
   size?: 'sm' | 'md' | 'lg';
   /** Gap between items (for pills/outline variants) */
   gap?: 'none' | 'xs' | 'sm';
+  /** Selection mode for this control. Currently only single-select is supported.
+   * @default "single" */
+  selectionMode?: 'single';
 }
 
 export interface ToggleGroupItemProps extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'onClick'> {
@@ -71,19 +76,30 @@ function useToggleGroupContext() {
 
 function ToggleGroupRoot({
   value,
+  defaultValue,
   onChange,
   onValueChange,
   children,
   variant = 'default',
   size = 'md',
   gap = 'xs',
+  selectionMode = 'single',
   className,
   ...htmlProps
 }: ToggleGroupProps) {
-  const resolvedOnChange = onChange ?? onValueChange ?? (() => {});
+  const normalizedVariant = variant === 'outlined' ? 'outline' : variant;
+  const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value ?? '' : internalValue;
+  const emitChange = React.useCallback((nextValue: string) => {
+    if (!isControlled) {
+      setInternalValue(nextValue);
+    }
+    (onChange ?? onValueChange)?.(nextValue);
+  }, [isControlled, onChange, onValueChange]);
   const classes = [
     styles.group,
-    styles[variant],
+    styles[normalizedVariant],
     styles[`size-${size}`],
     gap !== 'none' && styles[`gap-${gap}`],
     className,
@@ -97,13 +113,13 @@ function ToggleGroupRoot({
   );
   const firstEnabledValue = childItems.find((item) => !item.props.disabled)?.props.value ?? null;
   const hasFocusableSelection = childItems.some(
-    (item) => !item.props.disabled && item.props.value === value
+    (item) => !item.props.disabled && item.props.value === currentValue
   );
 
   const contextValue: ToggleGroupContextValue = {
-    value,
-    onChange: resolvedOnChange,
-    variant,
+    value: currentValue,
+    onChange: emitChange,
+    variant: normalizedVariant,
     size,
     hasFocusableSelection,
     firstEnabledValue,
@@ -111,7 +127,11 @@ function ToggleGroupRoot({
 
   return (
     <ToggleGroupContext.Provider value={contextValue}>
-      <div {...htmlProps} role="radiogroup" className={classes}>
+      <div
+        {...htmlProps}
+        role={selectionMode === 'single' ? 'radiogroup' : 'radiogroup'}
+        className={classes}
+      >
         {children}
       </div>
     </ToggleGroupContext.Provider>

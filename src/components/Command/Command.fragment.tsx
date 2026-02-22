@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Command } from '.';
 import { Dialog } from '../Dialog';
 import { Button } from '../Button';
@@ -88,7 +88,7 @@ export default defineFragment({
       'loop: boolean - loop keyboard navigation (default: true)',
       'Command.Item value: string - filter match value',
       'Command.Item keywords: string[] - extra filter terms',
-      'Command.Item onItemSelect: () => void - selection handler',
+      'Command.Item onItemSelect: (value, event) => void - selection handler',
     ],
     subComponents: [
       {
@@ -105,7 +105,7 @@ export default defineFragment({
           'value: string - filter value',
           'keywords: string[] - extra keywords',
           'disabled: boolean',
-          'onItemSelect: () => void',
+          'onItemSelect: (value, event) => void',
         ],
       },
       {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { RadioGroup } from '.';
 
 export default defineFragment({
@@ -57,6 +57,10 @@ export default defineFragment({
       type: 'function',
       description: 'Callback when selection changes',
     },
+    onChange: {
+      type: 'function',
+      description: 'Alias for onValueChange',
+    },
     orientation: {
       type: 'enum',
       values: ['horizontal', 'vertical'],
@@ -82,6 +86,14 @@ export default defineFragment({
       type: 'string',
       description: 'Error message',
     },
+    wrapperClassName: {
+      type: 'string',
+      description: 'Class name for the outer wrapper element',
+    },
+    groupClassName: {
+      type: 'string',
+      description: 'Class name for the inner radio group element',
+    },
   },
 
   relations: [
@@ -106,9 +118,12 @@ export default defineFragment({
     propsSummary: [
       'value: string - selected value',
       'onValueChange: (value: string) => void',
+      'onChange: (value: string) => void - alias for onValueChange',
       'orientation: horizontal|vertical (default: vertical)',
       'size: sm|md|lg (default: md)',
       'disabled: boolean - disable all options',
+      'wrapperClassName/groupClassName - explicit styling targets for wrapper and group',
+      'RadioGroup.Item supports controlClassName/contentClassName for item-level styling',
     ],
     scenarioTags: [
       'form.selection',
@@ -187,6 +202,21 @@ export default defineFragment({
         <RadioGroup disabled defaultValue="locked" label="Locked selection">
           <RadioGroup.Item value="locked" label="This is locked" />
           <RadioGroup.Item value="other" label="Cannot select" />
+        </RadioGroup>
+      ),
+    },
+    {
+      name: 'Styling Targets',
+      description: 'Use explicit class names for wrapper/group/item styling hooks',
+      render: () => (
+        <RadioGroup
+          defaultValue="a"
+          label="Display mode"
+          wrapperClassName="demo-radio-wrapper"
+          groupClassName="demo-radio-group"
+        >
+          <RadioGroup.Item value="a" label="Compact" controlClassName="demo-radio-control" contentClassName="demo-radio-content" />
+          <RadioGroup.Item value="b" label="Comfortable" />
         </RadioGroup>
       ),
     },

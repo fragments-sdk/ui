@@ -7,7 +7,7 @@ import styles from './Pagination.module.scss';
 // Types
 // ============================================
 
-export interface PaginationProps {
+export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
   /** Total number of pages. Clamped to Math.max(0, totalPages). Renders nothing when 0. */
   totalPages: number;
@@ -21,7 +21,6 @@ export interface PaginationProps {
   edgeCount?: number;
   /** Number of pages shown around current: default 1 */
   siblingCount?: number;
-  className?: string;
 }
 
 export interface PaginationItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -172,6 +171,18 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
+function composeButtonClickHandlers(
+  internal: (event: React.MouseEvent<HTMLButtonElement>) => void,
+  external?: React.MouseEventHandler<HTMLButtonElement>,
+) {
+  return (event: React.MouseEvent<HTMLButtonElement>) => {
+    external?.(event);
+    if (!event.defaultPrevented) {
+      internal(event);
+    }
+  };
+}
+
 function PaginationRoot({
   children,
   totalPages: rawTotalPages,
@@ -181,6 +192,8 @@ function PaginationRoot({
   edgeCount = 1,
   siblingCount = 1,
   className,
+  'aria-label': ariaLabel,
+  ...htmlProps
 }: PaginationProps) {
   const totalPages = Math.max(0, Math.floor(rawTotalPages));
   const [uncontrolledPage, setUncontrolledPage] = React.useState(() =>
@@ -211,12 +224,22 @@ function PaginationRoot({
   );
 
   if (totalPages <= 0) {
-    return <nav aria-label="Pagination" className={className} />;
+    return (
+      <nav
+        {...htmlProps}
+        aria-label={ariaLabel ?? 'Pagination'}
+        className={[styles.pagination, className].filter(Boolean).join(' ')}
+      />
+    );
   }
 
   return (
     <PaginationContext.Provider value={contextValue}>
-      <nav aria-label="Pagination" className={[styles.pagination, className].filter(Boolean).join(' ')}>
+      <nav
+        {...htmlProps}
+        aria-label={ariaLabel ?? 'Pagination'}
+        className={[styles.pagination, className].filter(Boolean).join(' ')}
+      >
         <ul className={styles.list}>
           {children}
         </ul>
@@ -228,6 +251,7 @@ function PaginationRoot({
 function PaginationPrevious({ className, ...htmlProps }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const { currentPage, setPage } = usePaginationContext();
   const disabled = currentPage <= 1;
+  const { onClick, ...buttonProps } = htmlProps;
 
   return (
     <li>
@@ -235,9 +259,9 @@ function PaginationPrevious({ className, ...htmlProps }: React.ButtonHTMLAttribu
         type="button"
         aria-label="Go to previous page"
         disabled={disabled}
-        onClick={() => setPage(currentPage - 1)}
+        {...buttonProps}
+        onClick={composeButtonClickHandlers(() => setPage(currentPage - 1), onClick)}
         className={[styles.item, styles.navButton, disabled && styles.itemDisabled, className].filter(Boolean).join(' ')}
-        {...htmlProps}
       >
         <ChevronLeftIcon />
       </button>
@@ -248,6 +272,7 @@ function PaginationPrevious({ className, ...htmlProps }: React.ButtonHTMLAttribu
 function PaginationNext({ className, ...htmlProps }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const { currentPage, totalPages, setPage } = usePaginationContext();
   const disabled = currentPage >= totalPages;
+  const { onClick, ...buttonProps } = htmlProps;
 
   return (
     <li>
@@ -255,9 +280,9 @@ function PaginationNext({ className, ...htmlProps }: React.ButtonHTMLAttributes<
         type="button"
         aria-label="Go to next page"
         disabled={disabled}
-        onClick={() => setPage(currentPage + 1)}
+        {...buttonProps}
+        onClick={composeButtonClickHandlers(() => setPage(currentPage + 1), onClick)}
         className={[styles.item, styles.navButton, disabled && styles.itemDisabled, className].filter(Boolean).join(' ')}
-        {...htmlProps}
       >
         <ChevronRightIcon />
       </button>
@@ -312,6 +337,7 @@ function PaginationItem({
   const { currentPage, setPage } = usePaginationContext();
   const page = pageProp ?? 1;
   const isActive = page === currentPage;
+  const { onClick, ...buttonProps } = htmlProps;
 
   return (
     <li>
@@ -319,9 +345,9 @@ function PaginationItem({
         type="button"
         aria-label={`Go to page ${page}`}
         aria-current={isActive ? 'page' : undefined}
-        onClick={() => setPage(page)}
+        {...buttonProps}
+        onClick={composeButtonClickHandlers(() => setPage(page), onClick)}
         className={[styles.item, isActive && styles.itemActive, className].filter(Boolean).join(' ')}
-        {...htmlProps}
       >
         {children ?? page}
       </button>

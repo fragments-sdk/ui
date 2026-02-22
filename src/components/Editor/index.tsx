@@ -87,8 +87,8 @@ export interface EditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   toolbar?: boolean;
   /** Show default status bar */
   statusBar?: boolean;
-  /** Auto-save callback */
-  onAutoSave?: (value: string) => void;
+  /** Auto-save callback (sync or async) */
+  onAutoSave?: (value: string) => void | Promise<void>;
   /** Auto-save interval in ms */
   autoSaveInterval?: number;
   /** Editor size preset */
@@ -418,7 +418,7 @@ function EditorRoot({
             'aria-multiline': 'true',
           },
         },
-        content: defaultValue || controlledValue || '',
+        content: controlledValue !== undefined ? controlledValue : defaultValue,
         editable: !disabled && !readOnly,
         onUpdate: ({ editor: e }: { editor: { getHTML: () => string } }) => {
           const html = e.getHTML();
@@ -448,17 +448,32 @@ function EditorRoot({
   React.useEffect(() => {
     if (!onAutoSave || !value) return;
 
+    let cancelled = false;
     const timer = setTimeout(() => {
       setSaveStatus('saving');
       try {
-        onAutoSave(value);
-        setSaveStatus('saved');
+        Promise.resolve(onAutoSave(value))
+          .then(() => {
+            if (!cancelled) {
+              setSaveStatus('saved');
+            }
+          })
+          .catch(() => {
+            if (!cancelled) {
+              setSaveStatus('error');
+            }
+          });
       } catch {
-        setSaveStatus('error');
+        if (!cancelled) {
+          setSaveStatus('error');
+        }
       }
     }, autoSaveInterval);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [value, onAutoSave, autoSaveInterval]);
 
   const toggleFormat = React.useCallback(

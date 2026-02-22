@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './VisuallyHidden.module.scss';
 
-export interface VisuallyHiddenProps {
+export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** HTML element to render */
   as?: 'span' | 'div';
@@ -19,9 +19,13 @@ export interface VisuallyHiddenProps {
  * </Button>
  */
 const VisuallyHiddenRoot = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
-  function VisuallyHidden({ children, as: Component = 'span' }, ref) {
+  function VisuallyHidden({ children, as: Component = 'span', className, ...htmlProps }, ref) {
     return (
-      <Component ref={ref as React.Ref<never>} className={styles.visuallyHidden}>
+      <Component
+        ref={ref as React.Ref<never>}
+        {...htmlProps}
+        className={[styles.visuallyHidden, className].filter(Boolean).join(' ')}
+      >
         {children}
       </Component>
     );

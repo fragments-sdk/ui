@@ -20,6 +20,8 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   defaultValue?: string;
   /** Callback when value changes */
   onValueChange?: (value: string) => void;
+  /** Alias for onValueChange */
+  onChange?: (value: string) => void;
   /** Orientation of the radio group */
   orientation?: 'horizontal' | 'vertical';
   /** Whether the group is disabled */
@@ -32,6 +34,10 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   error?: string;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
+  /** Class applied to the outer wrapper (label + group + error) */
+  wrapperClassName?: string;
+  /** Class applied to the inner radio group container */
+  groupClassName?: string;
   /** Children (Radio.Item components) */
   children: React.ReactNode;
 }
@@ -53,6 +59,10 @@ export interface RadioItemProps {
   'aria-describedby'?: string;
   /** Additional class name */
   className?: string;
+  /** Class applied directly to the radio control */
+  controlClassName?: string;
+  /** Class applied to the item text content wrapper */
+  contentClassName?: string;
 }
 
 function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
@@ -79,6 +89,8 @@ function RadioItem({
   'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
   className,
+  controlClassName,
+  contentClassName,
 }: RadioItemProps) {
   const size = React.useContext(RadioSizeContext);
   const id = React.useId();
@@ -89,6 +101,7 @@ function RadioItem({
     styles.radio,
     size === 'sm' && styles.radioSm,
     size === 'lg' && styles.radioLg,
+    controlClassName,
   ].filter(Boolean).join(' ');
 
   const labelClasses = [
@@ -131,7 +144,7 @@ function RadioItem({
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
-      <div className={styles.content}>
+      <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
         <span id={labelId} className={labelClasses}>{label}</span>
         {description && (
           <span id={descriptionId} className={styles.description}>{description}</span>
@@ -149,12 +162,15 @@ function RadioGroupRoot({
   value,
   defaultValue,
   onValueChange,
+  onChange,
   orientation = 'vertical',
   disabled = false,
   name,
   label,
   error,
   size = 'md',
+  wrapperClassName,
+  groupClassName,
   children,
   className,
   'aria-label': ariaLabel,
@@ -170,16 +186,19 @@ function RadioGroupRoot({
     styles.group,
     styles[orientation],
     className,
+    groupClassName,
   ].filter(Boolean).join(' ');
+
+  const handleValueChange = onChange ?? onValueChange;
 
   return (
     <RadioSizeContext.Provider value={size}>
-      <div {...htmlProps} className={styles.wrapper}>
+      <div {...htmlProps} className={[styles.wrapper, wrapperClassName].filter(Boolean).join(' ')}>
         {label && <span id={labelId} className={styles.groupLabel}>{label}</span>}
         <BaseRadioGroup
           value={value}
           defaultValue={defaultValue}
-          onValueChange={onValueChange}
+          onValueChange={handleValueChange}
           disabled={disabled}
           name={name}
           aria-label={ariaLabel}

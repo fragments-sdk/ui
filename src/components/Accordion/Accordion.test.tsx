@@ -4,7 +4,7 @@ import { Accordion } from './index';
 
 function renderAccordion(props: Partial<React.ComponentProps<typeof Accordion>> = {}) {
   return render(
-    <Accordion {...props}>
+    <Accordion {...(props as any)}>
       <Accordion.Item value="one">
         <Accordion.Trigger>Item One</Accordion.Trigger>
         <Accordion.Content>Content One</Accordion.Content>
@@ -193,11 +193,14 @@ describe('Accordion', () => {
     expect(screen.getByTestId('content')).toHaveAttribute('aria-label', 'Accordion panel');
   });
 
+  it('uses type="button" for triggers by default to avoid form submission', () => {
+    renderAccordion();
+    const trigger = screen.getByRole('button', { name: /item one/i });
+    expect(trigger).toHaveAttribute('type', 'button');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = renderAccordion({ defaultValue: 'one' });
-    await expectNoA11yViolations(container, {
-      // Accordion root role="region" + content panel role="region" triggers this.
-      disabledRules: ['landmark-unique'],
-    });
+    await expectNoA11yViolations(container);
   });
 });

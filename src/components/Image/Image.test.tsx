@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act, expectNoA11yViolations } from '../../test/utils';
 import { Image } from './index';
 
@@ -35,5 +35,36 @@ describe('Image', () => {
   it('has no accessibility violations', async () => {
     const { container } = render(<Image src="/photo.jpg" alt="Accessible photo" />);
     await expectNoA11yViolations(container);
+  });
+
+  it('forwards root props and imgProps and fires image event callbacks', () => {
+    const onImageLoad = vi.fn();
+    const onImageError = vi.fn();
+
+    render(
+      <Image
+        src="/photo.jpg"
+        alt="Photo"
+        data-testid="container"
+        imgProps={{ loading: 'lazy', decoding: 'async', crossOrigin: 'anonymous' }}
+        onImageLoad={onImageLoad}
+        onImageError={onImageError}
+      />
+    );
+
+    const container = screen.getByTestId('container');
+    const img = screen.getByRole('img');
+    expect(container).toBeInTheDocument();
+    expect(img).toHaveAttribute('loading', 'lazy');
+    expect(img).toHaveAttribute('decoding', 'async');
+    expect(img).toHaveAttribute('crossorigin', 'anonymous');
+
+    act(() => {
+      img.dispatchEvent(new Event('load', { bubbles: false }));
+      img.dispatchEvent(new Event('error', { bubbles: false }));
+    });
+
+    expect(onImageLoad).toHaveBeenCalledTimes(1);
+    expect(onImageError).toHaveBeenCalledTimes(1);
   });
 });

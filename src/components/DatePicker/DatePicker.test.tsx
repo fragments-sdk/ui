@@ -53,6 +53,23 @@ describe('DatePicker', () => {
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
+    it('uses button semantics and forwards button props on Trigger', () => {
+      render(
+        <form>
+          <DatePicker>
+            <DatePicker.Trigger data-testid="trigger" type="button" name="date-trigger" />
+            <DatePicker.Content>
+              <DatePicker.Calendar />
+            </DatePicker.Content>
+          </DatePicker>
+        </form>
+      );
+
+      const trigger = screen.getByTestId('trigger');
+      expect(trigger).toHaveAttribute('type', 'button');
+      expect(trigger).toHaveAttribute('name', 'date-trigger');
+    });
+
     it('shows placeholder text when no value selected', () => {
       renderDatePicker({ placeholder: 'Choose date' });
       expect(screen.getByText('Choose date')).toBeInTheDocument();

@@ -39,7 +39,10 @@ export interface CommandItemProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Whether this item is disabled */
   disabled?: boolean;
   /** Called when item is selected (Enter or click) */
-  onItemSelect?: () => void;
+  onItemSelect?: (
+    value: string,
+    event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>
+  ) => void;
 }
 
 export interface CommandGroupProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -403,15 +406,15 @@ function CommandItem({
     }
   }, [isActive]);
 
-  const activateItem = () => {
+  const activateItem = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     if (disabled) return;
-    onItemSelect?.();
+    onItemSelect?.(textValue, event);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     onClick?.(event);
     if (event.defaultPrevented) return;
-    activateItem();
+    activateItem(event);
   };
 
   const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -439,7 +442,7 @@ function CommandItem({
         if (e.defaultPrevented) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          activateItem();
+          activateItem(e);
         }
       }}
       onMouseEnter={handleMouseEnter}

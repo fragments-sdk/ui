@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { CodeBlock } from '.';
 
 export default defineFragment({
@@ -42,6 +42,7 @@ export default defineFragment({
       'Use collapsible for code samples that users may want to skim',
       'Choose a theme that matches your documentation style',
       'Keep code examples concise and focused',
+      'Use CodeBlock.Tabbed for multi-language snippets; tabs support controlled value/onValueChange and explicit tab values',
     ],
     accessibility: [
       'Code is presented in a semantic pre/code structure',
@@ -193,6 +194,7 @@ export default defineFragment({
       'collapsible: boolean (default: false)',
       'defaultCollapsed: boolean (default: false)',
       'collapsedLines: number (default: 5)',
+      'CodeBlock.Tabbed: tabs[] plus optional defaultTab/value/onValueChange for multi-language snippets',
     ],
     scenarioTags: [
       'documentation.code',

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { DataTable, createColumns } from '.';
 import { Badge } from '../Badge';
 import { Avatar } from '../Avatar';
@@ -484,7 +484,7 @@ export default defineFragment({
     },
     onRowClick: {
       type: 'function',
-      description: 'Handler for row clicks',
+      description: 'Handler for row clicks/keyboard activation. Called as (row, event)',
     },
     getSubRows: {
       type: 'function',
@@ -528,6 +528,14 @@ export default defineFragment({
       description: 'Wrap table in a bordered container',
       default: 'false',
     },
+    wrapperClassName: {
+      type: 'string',
+      description: 'Additional class name for the outer wrapper div',
+    },
+    wrapperProps: {
+      type: 'object',
+      description: 'Props forwarded to the outer wrapper div (id, aria-*, data-*, handlers)',
+    },
   },
 
   relations: [
@@ -546,9 +554,11 @@ export default defineFragment({
       'selectable: boolean - enable row selection',
       'showCheckbox: boolean - add checkbox column',
       'getSubRows: (row) => T[] - enable expandable rows',
+      'onRowClick: (row, event) => void - row activation handler with event access',
       'size: sm|md - table density',
       'striped: boolean - alternating row backgrounds',
       'bordered: boolean - bordered container',
+      'wrapperClassName / wrapperProps - style and configure the outer wrapper div',
     ],
     scenarioTags: [
       'data.table',

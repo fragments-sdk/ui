@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { VisuallyHidden } from '.';
 
 export default defineFragment({
@@ -32,6 +32,7 @@ export default defineFragment({
       'Keep hidden text concise but descriptive',
       'Test with screen readers to verify announcements',
       'Don\'t overuse; visible text is often better',
+      'VisuallyHidden forwards DOM props and className to the rendered element',
     ],
     accessibility: [
       'Content is announced by screen readers',
@@ -64,6 +65,7 @@ export default defineFragment({
     propsSummary: [
       'children: ReactNode - hidden text (required)',
       'as: span|div - HTML element',
+      'Forwards standard DOM props (id, aria-*, data-*, className, handlers)',
     ],
     scenarioTags: [
       'accessibility.label',

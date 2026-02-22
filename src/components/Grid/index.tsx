@@ -6,6 +6,7 @@ import styles from './Grid.module.scss';
 // ============================================
 
 type ColumnCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+type GapScale = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 /** Responsive value — either a single value or per-breakpoint overrides */
 export interface ResponsiveColumns {
@@ -25,7 +26,7 @@ export interface ResponsiveColumns {
  * CSS Grid layout component with responsive columns.
  * @see https://usefragments.com/components/grid
  */
-export interface GridProps {
+export interface GridProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'style' | 'className'> {
   children?: React.ReactNode;
   /**
    * Number of columns.
@@ -37,7 +38,7 @@ export interface GridProps {
   /** Minimum width for auto-fill columns (only used with columns="auto") */
   minChildWidth?: string;
   /** Gap between grid items. Accepts string tokens or numbers (1-8) mapping to the spacing scale */
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | GapScale;
   /** Vertical alignment of items within their cells */
   alignItems?: 'start' | 'center' | 'end' | 'stretch';
   /** Horizontal alignment of items within their cells */
@@ -50,7 +51,7 @@ export interface GridProps {
   style?: React.CSSProperties;
 }
 
-export interface GridItemProps {
+export interface GridItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'className'> {
   children?: React.ReactNode;
   /** Number of columns this item spans */
   colSpan?: ColumnCount | 'full';
@@ -60,6 +61,7 @@ export interface GridItemProps {
   alignSelf?: 'start' | 'center' | 'end' | 'stretch';
   /** Additional class name */
   className?: string;
+  style?: React.CSSProperties;
 }
 
 // ============================================
@@ -72,7 +74,7 @@ function isResponsiveColumns(
   return typeof columns === 'object' && columns !== null;
 }
 
-const gapClasses: Record<NonNullable<GridProps['gap']>, string> = {
+const gapClasses: Record<Exclude<NonNullable<GridProps['gap']>, GapScale>, string> = {
   none: styles.gapNone,
   xs: styles.gapXs,
   sm: styles.gapSm,
@@ -104,6 +106,7 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
       padding = 'none',
       className,
       style,
+      ...htmlProps
     },
     ref
   ) {
@@ -149,7 +152,7 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
     const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
 
     return (
-      <div ref={ref} className={classes} style={mergedStyle}>
+      <div {...htmlProps} ref={ref} className={classes} style={mergedStyle}>
         {children}
       </div>
     );
@@ -168,6 +171,8 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
       rowSpan,
       alignSelf,
       className,
+      style,
+      ...htmlProps
     },
     ref
   ) {
@@ -182,7 +187,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
       .join(' ');
 
     return (
-      <div ref={ref} className={classes}>
+      <div {...htmlProps} ref={ref} className={classes} style={style}>
         {children}
       </div>
     );

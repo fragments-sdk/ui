@@ -32,6 +32,11 @@ export interface AvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   color?: string;
   /** Inline style for the underlying image element */
   imageStyle?: React.CSSProperties;
+  /** Additional props for the underlying img element */
+  imageProps?: Omit<
+    React.ImgHTMLAttributes<HTMLImageElement>,
+    'src' | 'alt' | 'className' | 'style'
+  >;
 }
 
 export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -113,6 +118,7 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
       shape = 'circle',
       color,
       imageStyle,
+      imageProps,
       className,
       style: styleProp,
       ...htmlProps
@@ -175,10 +181,16 @@ const AvatarBase = React.forwardRef<HTMLDivElement, AvatarProps>(
         {!showFallback && (
           <img
             ref={imgRef}
+            {...imageProps}
             src={src}
             alt={alt}
             className={styles.image}
-            onError={() => setImageError(true)}
+            onError={(event) => {
+              imageProps?.onError?.(event);
+              if (!event.defaultPrevented) {
+                setImageError(true);
+              }
+            }}
             style={{ ...imageStyle }}
           />
         )}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './Box.module.scss';
 
-export interface BoxProps {
+export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children?: React.ReactNode;
   /** HTML element to render */
   as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer' | 'nav' | 'span';
@@ -95,6 +95,7 @@ const BoxRoot = React.forwardRef<HTMLElement, BoxProps>(
       maxHeight,
       className,
       style,
+      ...htmlProps
     },
     ref
   ) {
@@ -136,7 +137,12 @@ const BoxRoot = React.forwardRef<HTMLElement, BoxProps>(
     const mergedStyle = hasSizing ? { ...sizingStyle, ...style } : style;
 
     return (
-      <Component ref={ref as React.Ref<never>} className={classes} style={mergedStyle}>
+      <Component
+        ref={ref as React.Ref<never>}
+        {...htmlProps}
+        className={classes}
+        style={mergedStyle}
+      >
         {children}
       </Component>
     );

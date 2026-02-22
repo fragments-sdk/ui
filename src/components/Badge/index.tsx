@@ -23,6 +23,9 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   icon?: React.ReactNode;
   /** Makes the badge removable. Called when dismiss button is clicked. */
   onRemove?: () => void;
+  /** Announce badge content as status to assistive tech (opt-in).
+   * @default false */
+  announce?: boolean;
 }
 
 const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(
@@ -34,8 +37,10 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(
       dot = false,
       icon,
       onRemove,
+      announce = false,
       className,
       'aria-label': ariaLabel,
+      role,
       ...htmlProps
     },
     ref
@@ -46,7 +51,7 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(
 
     // For status badges, include the status in the aria-label if not provided
     const effectiveAriaLabel = ariaLabel || (
-      variant !== 'default' && variant !== 'outline'
+      announce && variant !== 'default' && variant !== 'outline'
         ? `${variant}: ${typeof children === 'string' ? children : ''}`
         : undefined
     );
@@ -56,7 +61,7 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(
         ref={ref}
         {...htmlProps}
         className={classes}
-        role={effectiveAriaLabel ? 'status' : undefined}
+        role={role ?? (announce ? 'status' : undefined)}
         aria-label={effectiveAriaLabel}
       >
         {dot && <span className={styles.dot} aria-hidden="true" />}

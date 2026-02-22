@@ -21,13 +21,15 @@ export interface SelectOption {
  * @see https://usefragments.com/components/select
  */
 export interface SelectProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   /** Controlled selected value */
   value?: SelectValue | null;
   /** Default value for uncontrolled usage */
   defaultValue?: SelectValue;
   /** Called when selection changes */
   onValueChange?: (value: SelectValue | null) => void;
+  /** Alias for onValueChange */
+  onChange?: (value: SelectValue | null) => void;
   /** Controlled open state */
   open?: boolean;
   /** Default open state */
@@ -42,6 +44,8 @@ export interface SelectProps {
   name?: string;
   /** Placeholder text when no value is selected */
   placeholder?: string;
+  /** Convenience API for simple selects (renders Select.Item entries when children are omitted) */
+  options?: SelectOption[];
 }
 
 export interface SelectTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -120,16 +124,15 @@ function CheckIcon() {
 interface SelectContextValue {
   placeholder?: string;
   value?: SelectValue | null;
-  itemsRef: React.MutableRefObject<Map<SelectValue, React.ReactNode>>;
-  // Version counter to trigger re-renders when items register
-  itemsVersion: number;
-  incrementItemsVersion: () => void;
+  items: Map<SelectValue, React.ReactNode>;
+  registerItem: (value: SelectValue, content: React.ReactNode) => void;
+  unregisterItem: (value: SelectValue) => void;
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
-  itemsRef: { current: new Map() },
-  itemsVersion: 0,
-  incrementItemsVersion: () => {},
+  items: new Map(),
+  registerItem: () => {},
+  unregisterItem: () => {},
 });
 
 // ============================================
@@ -141,6 +144,7 @@ function SelectRoot({
   value,
   defaultValue,
   onValueChange,
+  onChange,
   open,
   defaultOpen,
   onOpenChange,
@@ -148,6 +152,7 @@ function SelectRoot({
   required,
   name,
   placeholder,
+  options,
 }: SelectProps) {
   // Track current value for controlled and uncontrolled modes
   const [internalValue, setInternalValue] = React.useState<SelectValue | null | undefined>(
@@ -155,12 +160,23 @@ function SelectRoot({
   );
 
   // Registry for item children - allows trigger to render selected item's content
-  const itemsRef = React.useRef<Map<SelectValue, React.ReactNode>>(new Map());
-
-  // Version counter to trigger trigger re-render when items register
-  const [itemsVersion, setItemsVersion] = React.useState(0);
-  const incrementItemsVersion = React.useCallback(() => {
-    setItemsVersion((v) => v + 1);
+  const [items, setItems] = React.useState<Map<SelectValue, React.ReactNode>>(
+    () => new Map()
+  );
+  const registerItem = React.useCallback((itemValue: SelectValue, content: React.ReactNode) => {
+    setItems((prev) => {
+      const next = new Map(prev);
+      next.set(itemValue, content);
+      return next;
+    });
+  }, []);
+  const unregisterItem = React.useCallback((itemValue: SelectValue) => {
+    setItems((prev) => {
+      if (!prev.has(itemValue)) return prev;
+      const next = new Map(prev);
+      next.delete(itemValue);
+      return next;
+    });
   }, []);
 
   // Sync internal value with controlled value
@@ -176,20 +192,20 @@ function SelectRoot({
         // Uncontrolled mode
         setInternalValue(newValue);
       }
-      onValueChange?.(newValue);
+      (onChange ?? onValueChange)?.(newValue);
     },
-    [value, onValueChange]
+    [value, onChange, onValueChange]
   );
 
   const contextValue = React.useMemo(
     () => ({
       placeholder,
       value: value !== undefined ? value : internalValue,
-      itemsRef,
-      itemsVersion,
-      incrementItemsVersion,
+      items,
+      registerItem,
+      unregisterItem,
     }),
-    [placeholder, value, internalValue, itemsVersion, incrementItemsVersion]
+    [placeholder, value, internalValue, items, registerItem, unregisterItem]
   );
 
   return (
@@ -205,7 +221,11 @@ function SelectRoot({
         required={required}
         name={name}
       >
-        {children}
+        {children ?? options?.map((option) => (
+          <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+            {option.label}
+          </SelectItem>
+        ))}
       </BaseSelect.Root>
     </SelectContext.Provider>
   );
@@ -218,14 +238,11 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
 
   // Get the selected item's children from the registry
-  // Note: itemsVersion in context ensures we re-render when items register
   const selectedContent = context.value != null
-    ? context.itemsRef.current.get(context.value)
+    ? context.items.get(context.value)
     : null;
 
   // Determine what to show in the value area
-   
-  const _version = context.itemsVersion; // Force dependency on itemsVersion for re-render
   const displayContent = selectedContent ?? (
     placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null
   );
@@ -274,20 +291,16 @@ function SelectContent({
 }
 
 function SelectItem({ children, value, disabled, className, ...htmlProps }: SelectItemProps) {
-  const { itemsRef, incrementItemsVersion } = React.useContext(SelectContext);
+  const { registerItem, unregisterItem } = React.useContext(SelectContext);
   const classes = [styles.item, className].filter(Boolean).join(' ');
 
   // Register this item's children in the registry so the trigger can display them
   React.useEffect(() => {
-    const items = itemsRef.current;
-    items.set(value, children);
-    // Trigger re-render of trigger to show the registered content
-    incrementItemsVersion();
+    registerItem(value, children);
     return () => {
-      items.delete(value);
-      incrementItemsVersion();
+      unregisterItem(value);
     };
-  }, [itemsRef, incrementItemsVersion, value, children]);
+  }, [registerItem, unregisterItem, value, children]);
 
   return (
     <BaseSelect.Item {...htmlProps} value={value} disabled={disabled} className={classes}>

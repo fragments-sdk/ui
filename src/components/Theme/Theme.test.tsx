@@ -103,6 +103,17 @@ describe('ThemeToggle', () => {
     expect(screen.getByRole('group', { name: 'Switch theme' })).toBeInTheDocument();
   });
 
+  it('forwards DOM props to the toggle group', () => {
+    render(
+      <ThemeProvider>
+        <ThemeToggle data-testid="theme-toggle" id="theme-toggle-group" />
+      </ThemeProvider>
+    );
+
+    const group = screen.getByTestId('theme-toggle');
+    expect(group).toHaveAttribute('id', 'theme-toggle-group');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <ThemeProvider>

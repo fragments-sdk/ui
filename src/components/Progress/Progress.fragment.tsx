@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Progress, CircularProgress } from '.';
 
 export default defineFragment({
@@ -31,6 +31,7 @@ export default defineFragment({
       'Use indeterminate for unknown durations',
       'Include a label for context when the purpose isnt obvious',
       'Use appropriate color variants for success/warning/danger states',
+      'Determinate values are clamped to the min/max range for display',
     ],
     accessibility: [
       'Uses role="progressbar" with aria-valuenow',
@@ -93,6 +94,7 @@ export default defineFragment({
       'variant: default|success|warning|danger - color',
       'label: string - descriptive label',
       'showValue: boolean - display percentage',
+      'Determinate display values are clamped (and invalid min/max ranges render as 0%)',
     ],
     scenarioTags: [
       'feedback.progress',

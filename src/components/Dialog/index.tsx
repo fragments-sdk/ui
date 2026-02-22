@@ -31,6 +31,9 @@ export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement>
    * @default "md"
    * @see https://usefragments.com/components/dialog#sizes */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Whether the dialog should autofocus content on open.
+   * @default true */
+  initialFocus?: boolean;
 }
 
 export interface DialogTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
@@ -53,15 +56,29 @@ export interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface DialogTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type DialogTriggerAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
-  asChild?: boolean;
-}
+  asChild?: false;
+};
 
-export interface DialogCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type DialogTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+  children: React.ReactElement;
+  asChild: true;
+};
+
+export type DialogTriggerProps = DialogTriggerAsButtonProps | DialogTriggerAsChildProps;
+
+type DialogCloseAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: React.ReactNode;
-  asChild?: boolean;
-}
+  asChild?: false;
+};
+
+type DialogCloseAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+  children: React.ReactElement;
+  asChild: true;
+};
+
+export type DialogCloseProps = DialogCloseAsButtonProps | DialogCloseAsChildProps;
 
 // ============================================
 // Close Icon
@@ -134,6 +151,7 @@ function DialogTrigger({
 function DialogContent({
   children,
   size = 'md',
+  initialFocus = true,
   className,
   ...htmlProps
 }: DialogContentProps) {
@@ -145,7 +163,7 @@ function DialogContent({
     <BaseDialog.Portal>
       <BaseDialog.Backdrop className={styles.backdrop} />
       <BaseDialog.Viewport className={styles.positioner}>
-        <BaseDialog.Popup initialFocus {...htmlProps} className={popupClasses}>
+        <BaseDialog.Popup initialFocus={initialFocus} {...htmlProps} className={popupClasses}>
           {children}
         </BaseDialog.Popup>
       </BaseDialog.Viewport>

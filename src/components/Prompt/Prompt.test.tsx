@@ -34,6 +34,25 @@ describe('Prompt', () => {
     expect(screen.getByPlaceholderText('Type here...')).toBeInTheDocument();
   });
 
+  it('forwards textarea props and composes textarea handlers', async () => {
+    const user = userEvent.setup();
+    const onKeyDown = vi.fn();
+    const onChange = vi.fn();
+
+    render(
+      <Prompt defaultValue="" onSubmit={() => {}}>
+        <Prompt.Textarea data-testid="prompt-textarea" onKeyDown={onKeyDown} onChange={onChange} />
+        <Prompt.Submit />
+      </Prompt>
+    );
+
+    const textarea = screen.getByTestId('prompt-textarea');
+    await user.type(textarea, 'Hi');
+    expect(onChange).toHaveBeenCalled();
+    await user.keyboard('{Enter}');
+    expect(onKeyDown).toHaveBeenCalled();
+  });
+
   it('renders compound sub-components (Toolbar, Actions)', () => {
     renderPrompt();
     expect(screen.getByRole('button', { name: /attach file/i })).toBeInTheDocument();

@@ -102,6 +102,31 @@ describe('Alert', () => {
     expect(handleAction).toHaveBeenCalledTimes(1);
   });
 
+  it('uses button semantics and forwards props for actions/close', async () => {
+    const user = userEvent.setup();
+    const handleCloseClick = vi.fn((event: MouseEvent) => event.preventDefault());
+
+    render(
+      <form>
+        <Alert>
+          <Alert.Title>Alert</Alert.Title>
+          <Alert.Actions data-testid="actions">
+            <Alert.Action data-testid="retry">Retry</Alert.Action>
+          </Alert.Actions>
+          <Alert.Close data-testid="close" onClick={handleCloseClick} />
+        </Alert>
+      </form>
+    );
+
+    expect(screen.getByTestId('retry')).toHaveAttribute('type', 'button');
+    expect(screen.getByTestId('close')).toHaveAttribute('type', 'button');
+    expect(screen.getByTestId('actions')).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('close'));
+    expect(handleCloseClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+  });
+
   it('defaults to info severity', () => {
     render(
       <Alert>

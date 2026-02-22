@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { EmptyState } from '.';
 import { Button } from '../Button';
 
@@ -83,6 +83,7 @@ export default defineFragment({
       'Provide a clear action to resolve the empty state',
       'Use appropriate icons to reinforce the message',
       'Keep messaging positive and actionable',
+      'EmptyState compound sub-components forward DOM props for ids, aria attributes, and handlers',
     ],
     accessibility: [
       'Empty state content is accessible to screen readers',
@@ -112,6 +113,7 @@ export default defineFragment({
     propsSummary: [
       'size: sm|md|lg (default: md)',
       'Sub-components: EmptyState.Icon, EmptyState.Title, EmptyState.Description, EmptyState.Actions',
+      'Compound sub-components forward DOM props to their rendered elements',
     ],
     scenarioTags: [
       'feedback.empty',

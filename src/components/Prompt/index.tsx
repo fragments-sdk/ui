@@ -38,10 +38,16 @@ export interface PromptProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   variant?: PromptVariant;
 }
 
-export interface PromptTextareaProps {
+export interface PromptTextareaProps extends Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  'value' | 'defaultValue' | 'onChange' | 'rows' | 'disabled' | 'children'
+> {
   /** Override placeholder from context */
   placeholder?: string;
-  className?: string;
+  /** Composed with internal state update logic */
+  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+  /** Composed with internal submit-on-enter logic */
+  onKeyDown?: React.KeyboardEventHandler<HTMLTextAreaElement>;
 }
 
 export interface PromptToolbarProps {
@@ -64,7 +70,7 @@ export interface PromptActionButtonProps {
   /** Accessible label for the button */
   'aria-label': string;
   /** Click handler */
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   /** Disabled state */
   disabled?: boolean;
   className?: string;
@@ -73,7 +79,7 @@ export interface PromptActionButtonProps {
 export interface PromptModeButtonProps {
   children: React.ReactNode;
   /** Click handler */
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   /** Whether this mode is currently active */
   active?: boolean;
   /** Disabled state */
@@ -239,7 +245,14 @@ function PromptRoot({
   );
 }
 
-function PromptTextarea({ placeholder: overridePlaceholder, className }: PromptTextareaProps) {
+function PromptTextarea({
+  placeholder: overridePlaceholder,
+  className,
+  onChange,
+  onKeyDown,
+  'aria-label': ariaLabel,
+  ...htmlProps
+}: PromptTextareaProps) {
   const {
     value,
     setValue,
@@ -280,10 +293,14 @@ function PromptTextarea({ placeholder: overridePlaceholder, className }: PromptT
   }, [value, adjustHeight]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(e);
+    if (e.defaultPrevented) return;
     setValue(e.target.value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    onKeyDown?.(e);
+    if (e.defaultPrevented) return;
     if (submitOnEnter && e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
@@ -295,6 +312,7 @@ function PromptTextarea({ placeholder: overridePlaceholder, className }: PromptT
   return (
     <textarea
       ref={textareaRef}
+      {...htmlProps}
       className={classes}
       value={value}
       onChange={handleChange}
@@ -302,7 +320,7 @@ function PromptTextarea({ placeholder: overridePlaceholder, className }: PromptT
       placeholder={overridePlaceholder ?? placeholder}
       disabled={disabled || loading}
       rows={minRows}
-      aria-label={overridePlaceholder ?? placeholder}
+      aria-label={ariaLabel ?? overridePlaceholder ?? placeholder}
     />
   );
 }

@@ -28,7 +28,7 @@ export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonEle
   value?: string;
 }
 
-export interface ChipGroupProps {
+export interface ChipGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
   children: React.ReactNode;
   /** Controlled selected values */
   value?: string[];
@@ -36,7 +36,6 @@ export interface ChipGroupProps {
   defaultValue?: string[];
   /** Called when selection changes */
   onChange?: (value: string[]) => void;
-  className?: string;
 }
 
 const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
@@ -126,7 +125,7 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
 const EMPTY_CHIP_GROUP: string[] = [];
 
 function ChipGroupInner(
-  { children, value: controlledValue, defaultValue = EMPTY_CHIP_GROUP, onChange, className }: ChipGroupProps,
+  { children, value: controlledValue, defaultValue = EMPTY_CHIP_GROUP, onChange, className, ...htmlProps }: ChipGroupProps,
   ref: React.Ref<HTMLDivElement>
 ) {
   const [internalValue, setInternalValue] = React.useState<string[]>(defaultValue);
@@ -150,10 +149,19 @@ function ChipGroupInner(
   const classes = [styles.group, className].filter(Boolean).join(' ');
 
   return (
-    <div ref={ref} className={classes}>
-      {React.Children.map(children, (child) => {
+    <div ref={ref} {...htmlProps} className={classes}>
+      {React.Children.map(children, (child, index) => {
         if (!React.isValidElement<ChipProps>(child)) return child;
-        const chipValue = child.props.value ?? (typeof child.props.children === 'string' ? child.props.children : '');
+        const chipValue = (() => {
+          if (child.props.value != null) return child.props.value;
+          if (typeof child.props.children === 'string') return child.props.children;
+          if (child.key != null) return String(child.key);
+          if (process.env.NODE_ENV !== 'production') {
+            // Non-string labels need an explicit value to avoid unstable group selection keys.
+            console.warn('Chip.Group: Chips with non-string children should provide a `value` prop.');
+          }
+          return `__chip-${index}`;
+        })();
         return React.cloneElement(child, {
           selected: currentValue.includes(chipValue),
           onClick: (e: React.MouseEvent<HTMLButtonElement>) => {

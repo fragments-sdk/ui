@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Listbox } from '.';
 
 export default defineFragment({
@@ -29,7 +29,7 @@ export default defineFragment({
     ],
     guidelines: [
       'Control open/close state externally based on input focus or query',
-      'Implement keyboard navigation (arrow keys, enter, escape) in parent',
+      'Listbox provides arrow/home/end + Enter/Space keyboard navigation when focused',
       'Use Listbox.Empty for no results state',
       'Group related items with Listbox.Group when appropriate',
     ],
@@ -70,7 +70,7 @@ export default defineFragment({
           'children: ReactNode - item content',
           'selected: boolean - highlight/selected state',
           'disabled: boolean - non-interactive',
-          'onClick: () => void - click handler',
+          'onClick: (event) => void - click handler',
           'onMouseEnter: () => void - hover handler',
         ],
       },

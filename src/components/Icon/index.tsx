@@ -15,6 +15,8 @@ export interface IconProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, '
   variant?: 'default' | 'primary' | 'secondary' | 'tertiary' | 'accent' | 'success' | 'warning' | 'error';
   /** @deprecated Use variant instead */
   color?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'success' | 'warning' | 'error';
+  /** Additional props forwarded to the underlying Phosphor icon component */
+  iconProps?: Partial<PhosphorIconProps>;
 }
 
 const sizeMap: Record<NonNullable<IconProps['size']>, number> = {
@@ -33,6 +35,7 @@ const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(
       weight = 'regular',
       variant,
       color,
+      iconProps,
       className,
       style,
       ...htmlProps
@@ -52,7 +55,7 @@ const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(
 
     return (
       <span ref={ref} {...htmlProps} className={classes} style={style}>
-        <IconComponent size={sizeMap[size]} weight={weight} />
+        <IconComponent {...iconProps} size={sizeMap[size]} weight={weight} />
       </span>
     );
   }

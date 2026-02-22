@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { render, expectNoA11yViolations } from '../../test/utils';
 import { Icon } from './index';
+import type { IconProps as PhosphorIconProps } from '@phosphor-icons/react';
 
 // Mock Phosphor icon component
-function MockIcon(props: { size?: number; weight?: string }) {
+function MockIcon(props: Partial<PhosphorIconProps>) {
   return <svg data-testid="mock-icon" data-size={props.size} data-weight={props.weight} />;
 }
 

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 import { render, screen, expectNoA11yViolations } from '../../test/utils';
 import { ConversationList } from './index';
 
@@ -65,6 +66,26 @@ describe('ConversationList', () => {
       </ConversationList>
     );
     expect(screen.getByText('Loading history...')).toBeInTheDocument();
+  });
+
+  it('composes root onScroll and passes event to onScrollTop', () => {
+    const onScroll = vi.fn();
+    const onScrollTop = vi.fn();
+    const { container } = render(
+      <ConversationList onScroll={onScroll} onScrollTop={onScrollTop}>
+        <div>Message</div>
+      </ConversationList>
+    );
+
+    const root = container.firstElementChild as HTMLDivElement;
+    Object.defineProperty(root, 'scrollTop', { value: 0, configurable: true });
+    Object.defineProperty(root, 'scrollHeight', { value: 1000, configurable: true });
+    Object.defineProperty(root, 'clientHeight', { value: 500, configurable: true });
+
+    fireEvent.scroll(root);
+    expect(onScroll).toHaveBeenCalled();
+    expect(onScrollTop).toHaveBeenCalled();
+    expect(onScrollTop.mock.calls[0][0]).toBeDefined();
   });
 
   it('has no accessibility violations', async () => {

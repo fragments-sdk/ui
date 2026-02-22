@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Stack } from '.';
 import { Button } from '../Button';
 import { Badge } from '../Badge';
@@ -33,6 +33,7 @@ export default defineFragment({
       'Leverage responsive props for mobile-first layouts',
       'Keep spacing consistent within related sections',
       'Consider alignment for visual balance',
+      'Pass DOM attributes (id, role, aria-*, data-*, event handlers) directly to Stack root when needed',
     ],
     accessibility: [
       'Use semantic elements (nav, section, etc.) via "as" prop',
@@ -99,6 +100,7 @@ export default defineFragment({
       'wrap: boolean - allow wrapping',
       'separator: boolean|ReactNode - divider between children',
       'as: string - HTML element',
+      'Pass-through DOM props supported on the root (id, role, aria-*, data-*, handlers)',
     ],
     scenarioTags: [
       'layout.flex',

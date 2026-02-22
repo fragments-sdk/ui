@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Switch } from '.';
 
 // Stateful wrapper for interactive demos

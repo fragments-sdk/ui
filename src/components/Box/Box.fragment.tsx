@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Box } from '.';
 
 export default defineFragment({
@@ -32,6 +32,7 @@ export default defineFragment({
       'Choose semantic HTML elements (section, article) where appropriate',
       'Combine with Stack or Grid for complex layouts',
       'Use background variants from the design system, not custom colors',
+      'Box forwards DOM props (id, role, aria-*, data-*, event handlers) to the rendered element',
     ],
     accessibility: [
       'Choose semantic as prop values for proper document structure',
@@ -189,6 +190,7 @@ export default defineFragment({
       'color: primary|secondary|tertiary|accent|inverse - text color',
       'width/minWidth/maxWidth: string|number - sizing',
       'height/minHeight/maxHeight: string|number - sizing',
+      'All standard HTMLElement props are forwarded to the rendered element',
     ],
     scenarioTags: [
       'layout.container',

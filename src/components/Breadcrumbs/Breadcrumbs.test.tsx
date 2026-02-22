@@ -13,6 +13,19 @@ describe('Breadcrumbs', () => {
     expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
   });
 
+  it('supports custom breadcrumb nav label and root props', () => {
+    render(
+      <Breadcrumbs label="Path" id="crumbs" data-testid="crumbs">
+        <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+      </Breadcrumbs>
+    );
+
+    const nav = screen.getByRole('navigation', { name: 'Path' });
+    expect(nav).toHaveAttribute('id', 'crumbs');
+    expect(nav).toHaveAttribute('data-testid', 'crumbs');
+  });
+
   it('marks current page with aria-current="page"', () => {
     render(
       <Breadcrumbs>

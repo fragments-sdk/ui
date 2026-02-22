@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Drawer } from '.';
 import { Button } from '../Button';
 import { Stack } from '../Stack';
@@ -36,6 +36,8 @@ export default defineFragment({
       'Use bottom for mobile-style action sheets',
       'Provide clear close affordance (X button or cancel)',
       'Keep drawer content focused on a single task',
+      'Drawer.Trigger and Drawer.Close with asChild require a single valid React element child',
+      'Set Drawer.Content initialFocus={false} when custom focus management is needed',
     ],
     accessibility: [
       'Automatically traps focus within the drawer',
@@ -84,6 +86,7 @@ export default defineFragment({
       'modal: boolean - blocks page interaction (default: true)',
       'Drawer.Content side: left|right|top|bottom - slide direction (default: right)',
       'Drawer.Content size: sm|md|lg|xl|full - panel size',
+      'Drawer.Content initialFocus: boolean - auto-focus popup on open (default: true)',
     ],
     scenarioTags: [
       'overlay.drawer',

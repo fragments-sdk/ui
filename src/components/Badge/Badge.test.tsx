@@ -44,8 +44,15 @@ describe('Badge', () => {
     expect(onRemove).toHaveBeenCalledOnce();
   });
 
-  it('sets role="status" and aria-label for status variants', () => {
+  it('does not implicitly announce status variants', () => {
     const { container } = render(<Badge variant="error">Failed</Badge>);
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).not.toHaveAttribute('role');
+    expect(badge).not.toHaveAttribute('aria-label', 'error: Failed');
+  });
+
+  it('announces badge content when announce is enabled', () => {
+    const { container } = render(<Badge variant="error" announce>Failed</Badge>);
     const badge = container.firstChild as HTMLElement;
     expect(badge).toHaveAttribute('role', 'status');
     expect(badge).toHaveAttribute('aria-label', 'error: Failed');

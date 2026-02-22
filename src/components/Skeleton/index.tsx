@@ -15,7 +15,7 @@ export type SkeletonVariant =
 
 export type SkeletonSize = 'sm' | 'md' | 'lg';
 
-export interface SkeletonProps {
+export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Semantic variant that auto-sizes based on design tokens.
    * @default 'rect'
@@ -48,11 +48,9 @@ export interface SkeletonProps {
    * @default false
    */
   static?: boolean;
-  /** Additional class name */
-  className?: string;
 }
 
-export interface SkeletonTextProps {
+export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Number of text lines to render */
   lines?: number;
   /**
@@ -63,8 +61,6 @@ export interface SkeletonTextProps {
   lastLineWidth?: number;
   /** Gap between lines. Uses spacing tokens. */
   gap?: 'sm' | 'md';
-  /** Additional class name */
-  className?: string;
 }
 
 // ============================================
@@ -82,6 +78,7 @@ const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(
       radius,
       static: isStatic = false,
       className,
+      ...htmlProps
     },
     ref
   ) {
@@ -108,6 +105,7 @@ const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(
     return (
       <div
         ref={ref}
+        {...htmlProps}
         className={classes}
         style={Object.keys(style).length > 0 ? style : undefined}
         aria-hidden="true"
@@ -125,6 +123,7 @@ function SkeletonText({
   lastLineWidth = 80,
   gap = 'sm',
   className,
+  ...htmlProps
 }: SkeletonTextProps) {
   const containerClasses = [
     styles.textContainer,
@@ -133,7 +132,7 @@ function SkeletonText({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={containerClasses} aria-hidden="true">
+    <div {...htmlProps} className={containerClasses} aria-hidden="true">
       {Array.from({ length: lines }, (_, lineIdx) => {
         const isLast = lineIdx === lines - 1;
         return (

@@ -30,8 +30,6 @@ export {
 export {
   Switch,
   type SwitchProps,
-  Switch as Toggle,
-  type SwitchProps as ToggleProps,
 } from './components/Switch';
 export {
   Alert,
@@ -665,3 +663,6 @@ export {
   type ShortcutName,
   type UseKeyboardShortcutOptions,
 } from './utils/keyboard-shortcuts';
+
+// Legacy aliases (deprecated)
+export { Switch as Toggle, type SwitchProps as ToggleProps } from './components/Switch';

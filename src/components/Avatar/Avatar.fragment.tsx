@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Avatar } from '.';
 import { Stack } from '../Stack';
 
@@ -31,6 +31,7 @@ export default defineFragment({
       'Use consistent sizes within the same context',
       'Provide fallback initials when image may not load',
       'Use Avatar.Group for multiple avatars in a row',
+      'Use imageProps for advanced img attributes (loading, decoding, referrerPolicy, etc.)',
     ],
     accessibility: [
       'Include meaningful alt text describing the user',
@@ -80,6 +81,10 @@ export default defineFragment({
       type: 'string',
       description: 'Inline style object applied to the underlying image element',
     },
+    imageProps: {
+      type: 'object',
+      description: 'Additional props for the underlying img element (except src/alt/className/style)',
+    },
   },
 
   relations: [
@@ -97,6 +102,7 @@ export default defineFragment({
       'size: xs|sm|md|lg|xl (default: md)',
       'customSize: number|string - custom size override',
       'imageStyle: CSSProperties - inline image styling',
+      'imageProps: ImgHTMLAttributes - advanced img attributes',
       'shape: circle|square (default: circle)',
     ],
     scenarioTags: [

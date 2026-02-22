@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Select } from '.';
 
 // Stateful wrapper for interactive demos
@@ -72,6 +72,10 @@ export default defineFragment({
       type: 'function',
       description: 'Called when selection changes',
     },
+    onChange: {
+      type: 'function',
+      description: 'Alias for onValueChange',
+    },
     open: {
       type: 'boolean',
       description: 'Controlled open state of the dropdown',
@@ -94,6 +98,10 @@ export default defineFragment({
       description: 'Disable the select',
       default: 'false',
     },
+    options: {
+      type: 'array',
+      description: 'Convenience options array for simple selects (alternative to compound Select.Item children)',
+    },
   },
 
   relations: [
@@ -104,10 +112,12 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      'value: string - controlled selected value',
-      'onValueChange: (value) => void - selection handler',
+      'value: string | null - controlled selected value',
+      'onValueChange: (value: string | null) => void - selection handler',
+      'onChange: (value: string | null) => void - alias for onValueChange',
       'placeholder: string - placeholder text',
       'disabled: boolean - disable select',
+      'options: SelectOption[] - convenience API for simple option lists',
       'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
     scenarioTags: [
@@ -232,6 +242,23 @@ export default defineFragment({
             <Select.Item value="1">Option 1</Select.Item>
           </Select.Content>
         </Select>
+      ),
+    },
+    {
+      name: 'Options Prop',
+      description: 'Convenience API for simple lists without manual Select.Item composition',
+      render: () => (
+        <StatefulSelect
+          placeholder="Select a team"
+          options={[
+            { value: 'eng', label: 'Engineering' },
+            { value: 'design', label: 'Design' },
+            { value: 'pm', label: 'Product' },
+          ]}
+        >
+          <Select.Trigger />
+          <Select.Content />
+        </StatefulSelect>
       ),
     },
   ],

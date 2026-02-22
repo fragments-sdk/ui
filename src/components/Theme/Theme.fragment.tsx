@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { ThemeProvider, ThemeToggle, useTheme } from '.';
 
 // Demo component to show hook usage
@@ -43,6 +43,7 @@ export default defineFragment({
       'ThemeToggle cycles through light → dark → system',
       'Use storageKey to customize localStorage key',
       'Set attribute="class" if your CSS uses .dark class instead of data-theme',
+      'ThemeToggle forwards DOM props (id, data-*, className, handlers) to the toggle group',
     ],
     accessibility: [
       'ThemeToggle button has accessible label indicating current mode',
@@ -96,6 +97,7 @@ export default defineFragment({
       'onModeChange: (mode) => void - change handler',
       'attribute: data-theme|class - DOM theme attribute',
       'ThemeToggle size: sm|md|lg - toggle button size',
+      'ThemeToggle forwards div DOM props to the button group root',
     ],
     scenarioTags: [
       'navigation.theme',

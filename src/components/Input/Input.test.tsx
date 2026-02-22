@@ -66,7 +66,7 @@ describe('Input', () => {
   });
 
   it('focuses the input when shortcut key is pressed', () => {
-    render(<Input aria-label="Search" shortcut="⌘K" />);
+    render(<Input aria-label="Search" shortcut="⌘K" shortcutBehavior="focus-input" />);
     const input = screen.getByRole('textbox');
     expect(document.activeElement).not.toBe(input);
 
@@ -79,7 +79,7 @@ describe('Input', () => {
   });
 
   it('focuses the input when Ctrl+K is pressed (Windows/Linux)', () => {
-    render(<Input aria-label="Search" shortcut="⌘K" />);
+    render(<Input aria-label="Search" shortcut="⌘K" shortcutBehavior="focus-input" />);
     const input = screen.getByRole('textbox');
 
     document.dispatchEvent(
@@ -90,7 +90,7 @@ describe('Input', () => {
   });
 
   it('does not focus when wrong key is pressed', () => {
-    render(<Input aria-label="Search" shortcut="⌘K" />);
+    render(<Input aria-label="Search" shortcut="⌘K" shortcutBehavior="focus-input" />);
     const input = screen.getByRole('textbox');
 
     document.dispatchEvent(

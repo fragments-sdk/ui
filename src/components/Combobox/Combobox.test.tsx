@@ -2,12 +2,33 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
 import { Combobox } from './index';
 
-function renderCombobox(props: { onValueChange?: (v: string | string[] | null) => void; multiple?: boolean; placeholder?: string } = {}) {
+type RenderComboboxProps =
+  | { onValueChange?: (v: string | null) => void; multiple?: false; placeholder?: string }
+  | { onValueChange?: (v: string[]) => void; multiple: true; placeholder?: string };
+
+function renderCombobox(props: RenderComboboxProps = {}) {
+  if (props.multiple) {
+    return render(
+      <Combobox
+        placeholder={props.placeholder ?? 'Search...'}
+        onValueChange={props.onValueChange}
+        multiple
+      >
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+          <Combobox.Item value="vue">Vue</Combobox.Item>
+          <Combobox.Item value="angular">Angular</Combobox.Item>
+          <Combobox.Empty>No results found</Combobox.Empty>
+        </Combobox.Content>
+      </Combobox>
+    );
+  }
+
   return render(
     <Combobox
       placeholder={props.placeholder ?? 'Search...'}
       onValueChange={props.onValueChange}
-      multiple={props.multiple}
     >
       <Combobox.Input />
       <Combobox.Content>
@@ -101,7 +122,7 @@ describe('Combobox', () => {
 
   it('supports multiple selection mode', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<(value: string[]) => void>();
     renderCombobox({ multiple: true, onValueChange: onChange });
 
     await user.click(screen.getByRole('combobox'));

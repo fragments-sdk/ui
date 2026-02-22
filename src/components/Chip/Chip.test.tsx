@@ -48,6 +48,34 @@ describe('Chip', () => {
     expect(screen.getByRole('button', { name: 'Outline' })).toHaveClass('outlined');
   });
 
+  it('Chip.Group supports non-string chip children without value collisions', async () => {
+    const user = userEvent.setup();
+    render(
+      <Chip.Group>
+        <Chip><span>Alpha</span></Chip>
+        <Chip><span>Beta</span></Chip>
+      </Chip.Group>
+    );
+
+    const alpha = screen.getByRole('button', { name: 'Alpha' });
+    const beta = screen.getByRole('button', { name: 'Beta' });
+
+    await user.click(alpha);
+    await user.click(beta);
+
+    expect(alpha).toHaveAttribute('aria-pressed', 'true');
+    expect(beta).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('Chip.Group forwards DOM props to the group root', () => {
+    render(
+      <Chip.Group data-testid="chip-group" aria-label="Filters">
+        <Chip value="one">One</Chip>
+      </Chip.Group>
+    );
+    expect(screen.getByTestId('chip-group')).toHaveAttribute('aria-label', 'Filters');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Chip>Accessible chip</Chip>);
     await expectNoA11yViolations(container);

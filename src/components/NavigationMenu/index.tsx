@@ -75,6 +75,17 @@ export interface NavigationMenuLinkProps extends React.AnchorHTMLAttributes<HTML
   asChild?: boolean;
 }
 
+function composeNavMenuClickHandlers(
+  childHandler: React.MouseEventHandler<HTMLElement> | undefined,
+  internalHandler: React.MouseEventHandler<HTMLAnchorElement>,
+): React.MouseEventHandler<HTMLElement> {
+  return (event) => {
+    childHandler?.(event);
+    if (event.defaultPrevented) return;
+    internalHandler(event as React.MouseEvent<HTMLAnchorElement>);
+  };
+}
+
 export interface NavigationMenuIndicatorProps {
   className?: string;
 }
@@ -515,6 +526,7 @@ function NavigationMenuLink({
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
+    if (e.defaultPrevented) return;
     // Close mobile drawer on link click
     if (ctx?.isMobile && ctx.mobileOpen) {
       ctx.setMobileOpen(false);
@@ -544,9 +556,14 @@ function NavigationMenuLink({
     };
 
     if (asChild && React.isValidElement(children)) {
+      const childProps = children.props as {
+        className?: string;
+        onClick?: React.MouseEventHandler<HTMLElement>;
+      };
       return React.cloneElement(children, {
         ...linkProps,
-        className: [classes, (children.props as { className?: string }).className].filter(Boolean).join(' '),
+        onClick: composeNavMenuClickHandlers(childProps.onClick, handleClick),
+        className: [classes, childProps.className].filter(Boolean).join(' '),
         children: (
           <>
             {icon && <span className={styles.linkIcon}>{icon}</span>}
@@ -586,9 +603,14 @@ function NavigationMenuLink({
   };
 
   if (asChild && React.isValidElement(children)) {
+    const childProps = children.props as {
+      className?: string;
+      onClick?: React.MouseEventHandler<HTMLElement>;
+    };
     return React.cloneElement(children, {
       ...linkProps,
-      className: [classes, (children.props as { className?: string }).className].filter(Boolean).join(' '),
+      onClick: composeNavMenuClickHandlers(childProps.onClick, handleClick),
+      className: [classes, childProps.className].filter(Boolean).join(' '),
     } as React.HTMLAttributes<HTMLElement>);
   }
 

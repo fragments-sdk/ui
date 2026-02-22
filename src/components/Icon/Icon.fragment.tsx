@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Icon } from '.';
 import { Heart, Star, Check, Warning, Info } from '@phosphor-icons/react';
 
@@ -33,6 +33,7 @@ export default defineFragment({
       'Pair icons with text labels for accessibility',
       'Match icon weight to surrounding text weight for visual consistency',
       'Use consistent sizes within the same context',
+      'Use iconProps for advanced Phosphor options not exposed directly on the wrapper',
     ],
     accessibility: [
       'Icons are decorative by default (aria-hidden)',
@@ -71,6 +72,10 @@ export default defineFragment({
       description: 'Deprecated alias for variant',
       values: ['primary', 'secondary', 'tertiary', 'accent', 'success', 'warning', 'error'],
     },
+    iconProps: {
+      type: 'object',
+      description: 'Additional props forwarded to the underlying Phosphor icon component',
+    },
   },
 
   relations: [
@@ -85,6 +90,7 @@ export default defineFragment({
       'size: xs|sm|md|lg|xl - icon size',
       'weight: thin|light|regular|bold|fill|duotone - stroke style',
       'variant: default|primary|secondary|tertiary|accent|success|warning|error - color',
+      'iconProps: Partial<PhosphorIconProps> - advanced props forwarded to the Phosphor icon',
     ],
     scenarioTags: [
       'display.icon',
@@ -137,6 +143,13 @@ export default defineFragment({
           <Icon icon={Heart} weight="fill" />
           <Icon icon={Heart} weight="duotone" />
         </div>
+      ),
+    },
+    {
+      name: 'Advanced Icon Props',
+      description: 'Forward extra Phosphor icon props through iconProps',
+      render: () => (
+        <Icon icon={Heart} iconProps={{ mirrored: true }} />
       ),
     },
   ],

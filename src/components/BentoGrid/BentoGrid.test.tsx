@@ -125,6 +125,26 @@ describe('BentoGrid', () => {
     expect(item).toBeInTheDocument();
   });
 
+  it('forwards DOM props on root and item and merges item style with span vars', () => {
+    const { container } = render(
+      <BentoGrid data-testid="grid" aria-label="Bento grid">
+        <BentoGrid.Item
+          data-testid="item"
+          colSpan={2}
+          style={{ backgroundColor: 'rgb(1, 2, 3)' }}
+        >
+          Content
+        </BentoGrid.Item>
+      </BentoGrid>
+    );
+
+    expect(screen.getByTestId('grid')).toHaveAttribute('aria-label', 'Bento grid');
+    const item = screen.getByTestId('item');
+    expect(item).toHaveStyle({ backgroundColor: 'rgb(1, 2, 3)' });
+    expect(item.style.getPropertyValue('--bento-col-span')).toBe('2');
+    expect(container.querySelector('[data-testid=\"item\"]')).toBe(item);
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <BentoGrid columns={3}>

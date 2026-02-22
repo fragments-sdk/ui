@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Fieldset } from '.';
 import { Field } from '../Field';
 import { Input } from '../Input';
@@ -34,6 +34,7 @@ export default defineFragment({
       'Always include a Fieldset.Legend for accessibility',
       'Use disabled prop to disable all fields within the group',
       'Use Grid inside Fieldset for multi-column layouts',
+      'Fieldset.Legend forwards DOM props for ids, aria attributes, and custom data hooks',
     ],
     accessibility: [
       'Renders semantic fieldset element',
@@ -64,6 +65,7 @@ export default defineFragment({
     propsSummary: [
       'disabled: boolean - disables all child fields',
       'Fieldset.Legend: accessible group label',
+      'Fieldset.Legend forwards DOM props',
     ],
     scenarioTags: ['form.group', 'form.fieldset'],
     a11yRules: ['A11Y_FIELDSET_LEGEND'],

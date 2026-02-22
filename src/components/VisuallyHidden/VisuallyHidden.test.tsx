@@ -28,4 +28,16 @@ describe('VisuallyHidden', () => {
     const { container } = render(<VisuallyHidden>Accessible hidden text</VisuallyHidden>);
     await expectNoA11yViolations(container);
   });
+
+  it('forwards DOM props and composes className', () => {
+    render(
+      <VisuallyHidden data-testid="vh" id="vh-id" className="extra">
+        Hidden
+      </VisuallyHidden>
+    );
+    const el = screen.getByTestId('vh');
+    expect(el).toHaveAttribute('id', 'vh-id');
+    expect(el).toHaveClass('visuallyHidden');
+    expect(el).toHaveClass('extra');
+  });
 });

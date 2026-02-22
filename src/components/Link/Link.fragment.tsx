@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Link } from '.';
 
 export default defineFragment({
@@ -25,13 +25,14 @@ export default defineFragment({
       'Primary call-to-action (use Button instead)',
       'Navigation tabs (use Tabs component)',
       'Menu items in dropdowns (use Menu component)',
-      'Cards that link to detail pages (use Card with onClick)',
+      'Cards that link to detail pages should still use real link semantics (Link or anchor inside Card)',
     ],
     guidelines: [
       'Link text should describe the destination, not "click here"',
       'Use external prop for links that open in new tabs',
       'Use subtle variant for secondary/contextual links',
       'Ensure links are distinguishable from regular text',
+      'When using asChild, Link composes event handlers with the child instead of overwriting them',
     ],
     accessibility: [
       'Link text must be descriptive of the destination',
@@ -66,7 +67,7 @@ export default defineFragment({
     },
     asChild: {
       type: 'boolean',
-      description: 'Render as child element (polymorphic). Merges link props onto the single child. Useful for rendering as Next.js Link for client-side navigation.',
+      description: 'Render as child element (polymorphic). Merges link props/classes and composes event handlers onto the single child (e.g. Next.js Link).',
       default: 'false',
     },
   },
@@ -83,7 +84,7 @@ export default defineFragment({
       'variant: default|subtle|muted - visual style',
       'underline: always|hover|none - underline behavior',
       'external: boolean - opens in new tab',
-      'asChild: boolean - render as child element for polymorphic usage (e.g. Next.js Link)',
+      'asChild: boolean - polymorphic child rendering with merged styles and composed event handlers',
     ],
     scenarioTags: [
       'navigation.link',
@@ -132,9 +133,9 @@ export default defineFragment({
     },
     {
       name: 'As Child (Polymorphic)',
-      description: 'Renders as a custom element while applying Link styles. Useful with Next.js Link for client-side navigation.',
+      description: 'Renders as a custom element while applying Link styles and composing handlers. Useful with Next.js Link for client-side navigation.',
       render: () => (
-        <Link asChild variant="subtle">
+        <Link asChild variant="subtle" onClick={() => {}}>
           <button type="button" onClick={() => alert('Navigated!')}>
             Polymorphic link as button
           </button>

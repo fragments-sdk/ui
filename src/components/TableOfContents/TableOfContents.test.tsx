@@ -67,7 +67,7 @@ describe('TableOfContents', () => {
         <TableOfContents.Item id="props">Props</TableOfContents.Item>
       </TableOfContents>
     );
-    expect(screen.getByRole('link', { name: 'Setup' })).toHaveAttribute('aria-current', 'true');
+    expect(screen.getByRole('link', { name: 'Setup' })).toHaveAttribute('aria-current', 'location');
     expect(screen.getByRole('link', { name: 'Props' })).not.toHaveAttribute('aria-current');
   });
 
@@ -91,6 +91,40 @@ describe('TableOfContents', () => {
     document.body.removeChild(heading);
   });
 
+  it('allows item onClick to prevent smooth-scroll behavior', async () => {
+    const scrollIntoViewMock = vi.fn();
+    const heading = document.createElement('h2');
+    heading.id = 'setup';
+    heading.scrollIntoView = scrollIntoViewMock;
+    document.body.appendChild(heading);
+
+    const user = userEvent.setup();
+    render(
+      <TableOfContents>
+        <TableOfContents.Item id="setup" onClick={(e) => e.preventDefault()}>
+          Setup
+        </TableOfContents.Item>
+      </TableOfContents>
+    );
+
+    await user.click(screen.getByRole('link', { name: 'Setup' }));
+    expect(scrollIntoViewMock).not.toHaveBeenCalled();
+
+    document.body.removeChild(heading);
+  });
+
+  it('forwards root DOM props and preserves merged className', () => {
+    const { container } = render(
+      <TableOfContents id="toc" data-testid="toc" className="custom-class">
+        <TableOfContents.Item id="a">A</TableOfContents.Item>
+      </TableOfContents>
+    );
+    const nav = screen.getByRole('navigation', { name: 'Table of contents' });
+    expect(nav).toHaveAttribute('id', 'toc');
+    expect(nav).toHaveAttribute('data-testid', 'toc');
+    expect(container.querySelector('.custom-class')).toBeInTheDocument();
+  });
+
   it('renders items in a list', () => {
     render(
       <TableOfContents>
@@ -101,15 +135,6 @@ describe('TableOfContents', () => {
     );
     expect(screen.getByRole('list')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
-  });
-
-  it('passes additional className to root', () => {
-    const { container } = render(
-      <TableOfContents className="custom-class">
-        <TableOfContents.Item id="a">A</TableOfContents.Item>
-      </TableOfContents>
-    );
-    expect(container.querySelector('.custom-class')).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

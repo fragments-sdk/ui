@@ -13,7 +13,7 @@ export type ChartConfig = Record<
   {
     label: string;
     color: string;
-    icon?: React.ComponentType;
+    icon?: React.ComponentType<Record<string, unknown>>;
   }
 >;
 
@@ -58,8 +58,8 @@ type RechartsLegendProps = Record<string, unknown>;
 // Lazy-loaded dependencies (recharts)
 // ============================================
 
-let _RechartsTooltip: any = null;
-let _RechartsLegend: any = null;
+let _RechartsTooltip: React.ComponentType<Record<string, unknown>> | null = null;
+let _RechartsLegend: React.ComponentType<Record<string, unknown>> | null = null;
 let _chartLoaded = false;
 let _chartFailed = false;
 
@@ -69,8 +69,8 @@ function loadChartDeps() {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const rc = require('recharts');
-    _RechartsTooltip = rc.Tooltip;
-    _RechartsLegend = rc.Legend;
+    _RechartsTooltip = rc.Tooltip as React.ComponentType<Record<string, unknown>>;
+    _RechartsLegend = rc.Legend as React.ComponentType<Record<string, unknown>>;
   } catch {
     _chartFailed = true;
   }
@@ -243,7 +243,7 @@ type ChartTooltipProps = {
   hideIndicator?: boolean;
   labelFormatter?: ChartTooltipContentProps['labelFormatter'];
   valueFormatter?: ChartTooltipContentProps['valueFormatter'];
-  content?: any;
+  content?: React.ReactNode | ((tooltipProps: Record<string, unknown>) => React.ReactNode);
   [key: string]: unknown;
 };
 
@@ -260,9 +260,9 @@ export function ChartTooltip({
 
   const defaultContent = React.useCallback(
 
-    (tooltipProps: any) => (
+    (tooltipProps: Record<string, unknown>) => (
       <ChartTooltipContent
-        {...tooltipProps}
+        {...(tooltipProps as ChartTooltipContentProps)}
         indicator={indicator}
         hideLabel={hideLabel}
         hideIndicator={hideIndicator}
@@ -330,13 +330,15 @@ export function ChartLegendContent({ payload }: ChartLegendContentProps) {
 // ============================================
 
 type ChartLegendProps = RechartsLegendProps & {
-  content?: any;
+  content?: React.ReactNode | ((legendProps: Record<string, unknown>) => React.ReactNode);
 };
 
 export function ChartLegend({ content, ...props }: ChartLegendProps) {
   loadChartDeps();
 
-  const defaultContent = (legendProps: any) => <ChartLegendContent {...legendProps} />;
+  const defaultContent = (legendProps: Record<string, unknown>) => (
+    <ChartLegendContent {...(legendProps as ChartLegendContentProps)} />
+  );
 
   if (_chartFailed || !_RechartsLegend) {
     if (_chartFailed && process.env.NODE_ENV === 'development') {

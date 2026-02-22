@@ -1,6 +1,18 @@
 import * as React from 'react';
 import styles from './Link.module.scss';
 
+function composeEventHandlers<T extends (...args: any[]) => void>(
+  childHandler: T | undefined,
+  parentHandler: T | undefined
+) {
+  if (!childHandler) return parentHandler;
+  if (!parentHandler) return childHandler;
+  return ((...args: Parameters<T>) => {
+    childHandler(...args);
+    parentHandler(...args);
+  }) as T;
+}
+
 export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   children: React.ReactNode;
   /** Visual variant */
@@ -64,6 +76,16 @@ const LinkRoot = React.forwardRef<HTMLAnchorElement, LinkProps>(
         ...externalProps,
         ...props,
       };
+
+      for (const [key, parentValue] of Object.entries({ ...externalProps, ...props })) {
+        if (!key.startsWith('on') || typeof parentValue !== 'function') continue;
+        const childValue = childProps[key];
+        if (typeof childValue !== 'function') continue;
+        mergedProps[key] = composeEventHandlers(
+          childValue as (...args: unknown[]) => void,
+          parentValue as (...args: unknown[]) => void
+        );
+      }
       return React.cloneElement(children, mergedProps);
     }
 

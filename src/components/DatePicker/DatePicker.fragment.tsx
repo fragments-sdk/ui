@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { DatePicker } from '.';
 import type { DateRange } from '.';
 import { subDays } from 'date-fns';
@@ -71,6 +71,7 @@ export default defineFragment({
       'Add presets for common ranges (Today, Last 7 days, Last 30 days)',
       'Use disabledDates to prevent selecting past dates or unavailable dates',
       'Provide a meaningful placeholder',
+      'DatePicker.Trigger forwards button props and defaults to type="button" (safe inside forms)',
     ],
     accessibility: [
       'Full keyboard navigation within the calendar grid',
@@ -144,6 +145,7 @@ export default defineFragment({
       'numberOfMonths: number - months visible (default 1)',
       'disabled: boolean - disable picker',
       'disabledDates: Matcher - dates to disable',
+      'DatePicker.Trigger: button props supported (type defaults to "button")',
     ],
     scenarioTags: [
       'form.date',

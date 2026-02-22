@@ -40,4 +40,18 @@ describe('Box', () => {
     const { container } = render(<Box>Accessible</Box>);
     await expectNoA11yViolations(container);
   });
+
+  it('forwards DOM props and event handlers', () => {
+    const onClick = vi.fn();
+    render(
+      <Box data-testid="box" id="box-id" aria-label="Box label" onClick={onClick}>
+        Content
+      </Box>
+    );
+    const el = screen.getByTestId('box');
+    el.click();
+    expect(el).toHaveAttribute('id', 'box-id');
+    expect(el).toHaveAttribute('aria-label', 'Box label');
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
 });

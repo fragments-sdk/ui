@@ -1,5 +1,5 @@
 import React from "react";
-import { defineFragment } from "@fragments-sdk/cli/core";
+import { defineFragment } from "@fragments-sdk/core";
 import { ConversationList } from ".";
 import { Message } from "../Message";
 
@@ -29,6 +29,7 @@ export default defineFragment({
     guidelines: [
       'Use autoScroll="smart" for best UX (only auto-scrolls when near bottom)',
       "Implement onScrollTop for loading older messages",
+      "ConversationList composes your onScroll handler with internal auto-scroll/history logic",
       "Provide an emptyState for new conversations",
       "Use DateSeparator between messages from different days",
     ],
@@ -54,7 +55,7 @@ export default defineFragment({
     },
     onScrollTop: {
       type: "function",
-      description: "Callback when user scrolls to top (for loading history)",
+      description: "Callback when user scrolls to top (for loading history). Receives the scroll event.",
     },
     loadingHistory: {
       type: "boolean",
@@ -99,7 +100,7 @@ export default defineFragment({
     propsSummary: [
       "children: ReactNode - Message components",
       'autoScroll: boolean | "smart" - scroll behavior (default: "smart")',
-      "onScrollTop: () => void - callback for loading history",
+      "onScrollTop: (event?) => void - callback for loading history (receives scroll event)",
       "loadingHistory: boolean - show history loading spinner",
       "emptyState: ReactNode - empty conversation content",
     ],

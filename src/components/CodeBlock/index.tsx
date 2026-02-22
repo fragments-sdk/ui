@@ -767,6 +767,8 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
 export interface CodeBlockTab {
   /** Label shown in the tab */
   label: string;
+  /** Stable tab value (defaults to label) */
+  value?: string;
   /** Code string to display */
   code: string;
   /** Programming language for syntax highlighting */
@@ -776,8 +778,12 @@ export interface CodeBlockTab {
 export interface TabbedCodeBlockProps {
   /** Array of code tabs */
   tabs: CodeBlockTab[];
-  /** Default selected tab (by label) */
+  /** Default selected tab (by tab value, or label when value is omitted) */
   defaultTab?: string;
+  /** Controlled selected tab value */
+  value?: string;
+  /** Called when the selected tab changes */
+  onValueChange?: (value: string) => void;
   /** Show copy button */
   showCopy?: boolean;
   /** Placement of copy button when not using persistent copy */
@@ -801,6 +807,8 @@ export interface TabbedCodeBlockProps {
 function TabbedCodeBlock({
   tabs,
   defaultTab,
+  value,
+  onValueChange,
   showCopy = true,
   copyPlacement = "auto",
   showLineNumbers = false,
@@ -811,20 +819,25 @@ function TabbedCodeBlock({
   className,
   onCopy,
 }: TabbedCodeBlockProps) {
-  const defaultValue = defaultTab || tabs[0]?.label || "";
+  const defaultValue = defaultTab || tabs[0]?.value || tabs[0]?.label || "";
 
   return (
     <div className={className}>
-      <TabsRoot defaultValue={defaultValue}>
+      <TabsRoot defaultValue={defaultValue} value={value} onValueChange={onValueChange}>
         <TabsList variant={tabsVariant}>
-          {tabs.map((tab) => (
-            <Tab key={tab.label} value={tab.label}>
+          {tabs.map((tab, index) => {
+            const tabValue = tab.value ?? tab.label;
+            return (
+            <Tab key={`${tabValue}-${index}`} value={tabValue}>
               {tab.label}
             </Tab>
-          ))}
+            );
+          })}
         </TabsList>
-        {tabs.map((tab) => (
-          <TabsPanel key={tab.label} value={tab.label} flush className={styles.tabbedPanel}>
+        {tabs.map((tab, index) => {
+          const tabValue = tab.value ?? tab.label;
+          return (
+          <TabsPanel key={`${tabValue}-panel-${index}`} value={tabValue} flush className={styles.tabbedPanel}>
             <CodeBlockBase
               code={tab.code}
               language={tab.language}
@@ -837,7 +850,8 @@ function TabbedCodeBlock({
               onCopy={onCopy ? () => onCopy(tab.label) : undefined}
             />
           </TabsPanel>
-        ))}
+          );
+        })}
       </TabsRoot>
     </div>
   );

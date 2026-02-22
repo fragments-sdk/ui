@@ -10,16 +10,8 @@ import styles from './Accordion.module.scss';
 
 export type AccordionValue = string | string[];
 
-export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
+interface AccordionSharedProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
   children: React.ReactNode;
-  /** Allow multiple items to be open at once */
-  type?: 'single' | 'multiple';
-  /** Controlled value - string for single, string[] for multiple */
-  value?: AccordionValue;
-  /** Default value for uncontrolled usage */
-  defaultValue?: AccordionValue;
-  /** Callback when value changes */
-  onValueChange?: (value: AccordionValue | undefined) => void;
   /** Whether items can be fully collapsed (only for type="single") */
   collapsible?: boolean;
   /**
@@ -30,6 +22,30 @@ export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement
   headingLevel?: 2 | 3 | 4 | 5 | 6;
 }
 
+export interface AccordionSingleProps extends AccordionSharedProps {
+  /** Allow multiple items to be open at once */
+  type?: 'single';
+  /** Controlled value for single mode */
+  value?: string;
+  /** Default value for uncontrolled usage */
+  defaultValue?: string;
+  /** Callback when value changes */
+  onValueChange?: (value: string | undefined) => void;
+}
+
+export interface AccordionMultipleProps extends AccordionSharedProps {
+  /** Allow multiple items to be open at once */
+  type: 'multiple';
+  /** Controlled values for multiple mode */
+  value?: string[];
+  /** Default values for uncontrolled usage */
+  defaultValue?: string[];
+  /** Callback when value changes */
+  onValueChange?: (value: string[]) => void;
+}
+
+export type AccordionProps = AccordionSingleProps | AccordionMultipleProps;
+
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Unique value for this item */
@@ -38,7 +54,7 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
   disabled?: boolean;
 }
 
-export interface AccordionTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
+export interface AccordionTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
@@ -136,8 +152,10 @@ function AccordionRoot({
       setOpenItems(newItems);
     }
 
-    if (onValueChange) {
-      onValueChange(type === 'single' ? newItems[0] : newItems);
+    if (type === 'single') {
+      (onValueChange as AccordionSingleProps['onValueChange'] | undefined)?.(newItems[0]);
+    } else {
+      (onValueChange as AccordionMultipleProps['onValueChange'] | undefined)?.(newItems);
     }
   }, [type, currentOpenItems, collapsible, controlledOpenItems, onValueChange]);
 
@@ -145,7 +163,7 @@ function AccordionRoot({
 
   return (
     <AccordionContext.Provider value={{ type, openItems: currentOpenItems, toggle, collapsible, headingLevel }}>
-      <div {...htmlProps} className={classes} data-orientation="vertical" role="region">
+      <div {...htmlProps} className={classes} data-orientation="vertical">
         {children}
       </div>
     </AccordionContext.Provider>
@@ -186,6 +204,7 @@ function AccordionItem({
 function AccordionTrigger({
   children,
   className,
+  type: buttonType,
   onClick,
   ...htmlProps
 }: AccordionTriggerProps) {
@@ -209,6 +228,7 @@ function AccordionTrigger({
     <HeadingTag className={styles.heading}>
       <BaseCollapsible.Trigger
         {...htmlProps}
+        type={buttonType ?? 'button'}
         id={triggerId}
         className={classes}
         onClick={handleClick}

@@ -104,7 +104,7 @@ export interface SidebarSectionProps extends React.HTMLAttributes<HTMLDivElement
 export interface SidebarSectionActionProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   children: React.ReactNode;
   /** Click handler */
-  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   /** Accessible label */
   'aria-label'?: string;
 }
@@ -122,7 +122,7 @@ export interface SidebarItemProps extends Omit<React.HTMLAttributes<HTMLElement>
   /** Renders as anchor if provided */
   href?: string;
   /** Click handler (renders as button) */
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   /** Whether this item has a submenu */
   hasSubmenu?: boolean;
   /** Whether submenu is expanded (controlled) */
@@ -147,7 +147,7 @@ export interface SidebarSubItemProps extends Omit<React.HTMLAttributes<HTMLEleme
   /** Renders as anchor if provided */
   href?: string;
   /** Click handler (renders as button) */
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
 export interface SidebarFooterProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -780,7 +780,7 @@ function SidebarItem({
     className,
   ].filter(Boolean).join(' ');
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (disabled) {
       e.preventDefault();
       return;
@@ -789,7 +789,7 @@ function SidebarItem({
       e.preventDefault();
       setExpanded(!expanded);
     }
-    onClick?.();
+    onClick?.(e);
   };
 
   // Extract text content from children for aria-label when collapsed
@@ -898,12 +898,12 @@ function SidebarSubItem({
     className,
   ].filter(Boolean).join(' ');
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (disabled) {
       e.preventDefault();
       return;
     }
-    onClick?.();
+    onClick?.(e);
   };
 
   const itemProps = {

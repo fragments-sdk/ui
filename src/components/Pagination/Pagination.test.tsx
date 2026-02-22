@@ -39,6 +39,14 @@ describe('Pagination', () => {
     expect(onPageChange).toHaveBeenCalledWith(3);
   });
 
+  it('forwards root DOM props to the nav element', () => {
+    renderPagination({ id: 'pager', 'data-testid': 'pager-nav', 'aria-label': 'Results pages' });
+
+    const nav = screen.getByRole('navigation', { name: 'Results pages' });
+    expect(nav).toHaveAttribute('id', 'pager');
+    expect(nav).toHaveAttribute('data-testid', 'pager-nav');
+  });
+
   it('Previous/Next buttons work', async () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
@@ -50,6 +58,37 @@ describe('Pagination', () => {
     await user.click(screen.getByLabelText('Go to next page'));
     // After clicking prev (now on 2), clicking next goes to 3
     expect(onPageChange).toHaveBeenCalledWith(3);
+  });
+
+  it('composes item onClick handlers without overriding page changes', async () => {
+    const user = userEvent.setup();
+    const itemClick = vi.fn();
+    const onPageChange = vi.fn();
+
+    render(
+      <Pagination totalPages={5} defaultPage={1} onPageChange={onPageChange}>
+        <Pagination.Item page={2} onClick={itemClick} />
+      </Pagination>
+    );
+
+    await user.click(screen.getByLabelText('Go to page 2'));
+    expect(itemClick).toHaveBeenCalled();
+    expect(onPageChange).toHaveBeenCalledWith(2);
+  });
+
+  it('lets item onClick prevent internal page changes', async () => {
+    const user = userEvent.setup();
+    const onPageChange = vi.fn();
+
+    render(
+      <Pagination totalPages={5} defaultPage={1} onPageChange={onPageChange}>
+        <Pagination.Item page={2} onClick={(e) => e.preventDefault()} />
+      </Pagination>
+    );
+
+    await user.click(screen.getByLabelText('Go to page 2'));
+    expect(onPageChange).not.toHaveBeenCalled();
+    expect(screen.getByLabelText('Go to page 2')).not.toHaveAttribute('aria-current', 'page');
   });
 
   it('Previous disabled on page 1', () => {

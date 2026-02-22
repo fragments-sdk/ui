@@ -236,7 +236,7 @@
     "@scarf/scarf": "^1.4.0"
   },
   "devDependencies": {
-    "@fragments-sdk/cli": "workspace:*",
+    "@fragments-sdk/core": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "@tiptap/extension-link": "^2.11.0",
     "@tiptap/react": "^2.11.0",

@@ -1,18 +1,49 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
-import { Combobox } from '.';
+import { defineFragment } from '@fragments-sdk/core';
+import { Combobox, type ComboboxMultipleProps, type ComboboxSingleProps } from '.';
 
 // Stateful wrapper for interactive demos
-function StatefulCombobox(props: React.ComponentProps<typeof Combobox> & {
-  children: React.ReactNode;
-  initialValue?: string | string[];
-}) {
+function StatefulCombobox(
+  props:
+    | (Omit<React.ComponentProps<typeof Combobox>, 'value' | 'onValueChange'> & {
+        children: React.ReactNode;
+        multiple: true;
+        initialValue?: string[];
+      })
+    | (Omit<React.ComponentProps<typeof Combobox>, 'value' | 'onValueChange'> & {
+        children: React.ReactNode;
+        multiple?: false;
+        initialValue?: string;
+      })
+) {
   const { initialValue, children, ...rest } = props;
-  const [value, setValue] = useState<string | string[] | null>(initialValue ?? (props.multiple ? [] : null));
+
+  if (props.multiple) {
+    const [value, setValue] = useState<string[]>(
+      Array.isArray(initialValue) ? initialValue : []
+    );
+    const multiProps = rest as Omit<React.ComponentProps<typeof Combobox>, 'value' | 'onValueChange'> & {
+      multiple: true;
+    };
+    const MultiCombobox = Combobox as unknown as (props: ComboboxMultipleProps) => React.JSX.Element;
+    return (
+      <MultiCombobox {...(multiProps as ComboboxMultipleProps)} multiple value={value} onValueChange={setValue}>
+        {children}
+      </MultiCombobox>
+    );
+  }
+
+  const [value, setValue] = useState<string | null>(
+    typeof initialValue === 'string' ? initialValue : null
+  );
+  const singleProps = rest as Omit<React.ComponentProps<typeof Combobox>, 'value' | 'onValueChange'> & {
+    multiple?: false;
+  };
+  const SingleCombobox = Combobox as unknown as (props: ComboboxSingleProps) => React.JSX.Element;
   return (
-    <Combobox {...rest} value={value} onValueChange={setValue}>
+    <SingleCombobox {...(singleProps as ComboboxSingleProps)} value={value} onValueChange={setValue}>
       {children}
-    </Combobox>
+    </SingleCombobox>
   );
 }
 
@@ -76,6 +107,10 @@ export default defineFragment({
       type: 'function',
       description: 'Called when selection changes',
     },
+    onChange: {
+      type: 'function',
+      description: 'Alias for onValueChange',
+    },
     multiple: {
       type: 'boolean',
       description: 'Allow multiple selections with chips',
@@ -120,10 +155,13 @@ export default defineFragment({
     propsSummary: [
       'value: string | string[] - controlled selected value',
       'onValueChange: (value) => void - selection handler',
+      'onChange: (value) => void - alias for onValueChange',
       'multiple: boolean - enable multi-select with chips',
+      'When multiple=true, value/defaultValue must be string[] (single mode uses string|null)',
       'placeholder: string - input placeholder text',
       'disabled: boolean - disable combobox',
       'autoHighlight: boolean - auto-highlight first match',
+      'Combobox.Input showTrigger: boolean - hide built-in trigger when using Combobox.Trigger explicitly',
       'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
     scenarioTags: [
@@ -142,6 +180,7 @@ export default defineFragment({
     commonPatterns: [
       '<Combobox placeholder="Search..."><Combobox.Input /><Combobox.Content><Combobox.Item value="opt1">{label1}</Combobox.Item><Combobox.Item value="opt2">{label2}</Combobox.Item></Combobox.Content></Combobox>',
       '<Combobox multiple placeholder="Select items..."><Combobox.Input /><Combobox.Content><Combobox.Item value="opt1">{label1}</Combobox.Item><Combobox.Item value="opt2">{label2}</Combobox.Item></Combobox.Content></Combobox>',
+      '<Combobox placeholder="Search..."><Combobox.Input showTrigger={false} /><Combobox.Trigger aria-label="Open" /><Combobox.Content>...</Combobox.Content></Combobox>',
     ],
   },
 
@@ -272,6 +311,21 @@ export default defineFragment({
             <Combobox.Item value="1">Option 1</Combobox.Item>
           </Combobox.Content>
         </Combobox>
+      ),
+    },
+    {
+      name: 'Explicit Trigger',
+      description: 'Hide the built-in input trigger when rendering a separate Combobox.Trigger',
+      render: () => (
+        <StatefulCombobox placeholder="Search assignees...">
+          <Combobox.Input showTrigger={false} />
+          <Combobox.Trigger aria-label="Open assignee list" />
+          <Combobox.Content>
+            <Combobox.Item value="alice">Alice</Combobox.Item>
+            <Combobox.Item value="bob">Bob</Combobox.Item>
+            <Combobox.Item value="carol">Carol</Combobox.Item>
+          </Combobox.Content>
+        </StatefulCombobox>
       ),
     },
   ],

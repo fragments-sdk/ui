@@ -4,7 +4,8 @@ import styles from './Stack.module.scss';
 type Direction = 'row' | 'column';
 type GapToken = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 /** Gap accepts string tokens or numbers (1-8) mapping to the spacing scale */
-type Gap = GapToken | number;
+type GapScale = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type Gap = GapToken | GapScale;
 
 /** Responsive value — either a single value or per-breakpoint overrides */
 export interface ResponsiveDirection {
@@ -38,7 +39,7 @@ export interface ResponsiveGap {
  * Flexbox layout component for vertical or horizontal stacking with consistent spacing.
  * @see https://usefragments.com/components/stack
  */
-export interface StackProps {
+export interface StackProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'style' | 'className'> {
   children: React.ReactNode;
   /**
    * Stack direction.
@@ -76,7 +77,7 @@ function isResponsiveGap(gap: StackProps['gap']): gap is ResponsiveGap {
   return typeof gap === 'object' && gap !== null;
 }
 
-function isNumericGap(gap: StackProps['gap']): gap is number {
+function isNumericGap(gap: StackProps['gap']): gap is GapScale {
   return typeof gap === 'number';
 }
 
@@ -93,6 +94,7 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(
       as: Component = 'div',
       className,
       style,
+      ...htmlProps
     },
     ref
   ) {
@@ -175,7 +177,12 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(
     }
 
     return (
-      <Component ref={ref as React.Ref<never>} className={classes} style={mergedStyle}>
+      <Component
+        {...htmlProps}
+        ref={ref as React.Ref<never>}
+        className={classes}
+        style={mergedStyle}
+      >
         {content}
       </Component>
     );
@@ -183,8 +190,8 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(
 );
 
 // Map gap prop values to space variable numbers
-function gapToSpace(gap: Gap): string {
-  const map: Record<Gap, string> = {
+function gapToSpace(gap: GapToken): string {
+  const map: Record<GapToken, string> = {
     none: '0',
     xs: '1',
     sm: '2',

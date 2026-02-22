@@ -77,4 +77,16 @@ describe('AppShell', () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  it('preserves root style props while applying internal CSS variables', () => {
+    const { container } = render(
+      <AppShell style={{ backgroundColor: 'rgb(1, 2, 3)' }}>
+        <AppShell.Main>Content</AppShell.Main>
+      </AppShell>
+    );
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.style.backgroundColor).toBe('rgb(1, 2, 3)');
+    expect(root.style.getPropertyValue('--appshell-header-height')).toBe('56px');
+  });
 });

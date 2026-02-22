@@ -19,6 +19,8 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   defaultChecked?: boolean;
   /** Callback when checked state changes */
   onCheckedChange?: (checked: boolean) => void;
+  /** Alias for onCheckedChange */
+  onChange?: (checked: boolean) => void;
   /** Whether the checkbox is in an indeterminate state */
   indeterminate?: boolean;
   /** Whether the checkbox is disabled */
@@ -38,6 +40,10 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   value?: string;
   /** ID for the checkbox input */
   id?: string;
+  /** Class applied directly to the checkbox control element */
+  controlClassName?: string;
+  /** Class applied to the label/description content wrapper */
+  contentClassName?: string;
   /** Accessible label for icon-only mode */
   'aria-label'?: string;
   /** Accessible labelled-by relationship for icon-only mode */
@@ -99,6 +105,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       checked,
       defaultChecked,
       onCheckedChange,
+      onChange,
       indeterminate = false,
       disabled = false,
       required = false,
@@ -108,6 +115,8 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       name,
       value,
       className,
+      controlClassName,
+      contentClassName,
       id,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
@@ -125,6 +134,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       styles.checkbox,
       size === 'sm' && styles.sm,
       size === 'lg' && styles.lg,
+      controlClassName,
     ].filter(Boolean).join(' ');
 
     const labelClasses = [
@@ -134,15 +144,18 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     ].filter(Boolean).join(' ');
 
     const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
+    const handleCheckedChange = onChange ?? onCheckedChange;
 
     // If no label/description, render just the checkbox
     if (!label && !description) {
+      const iconOnlyHtmlProps = htmlProps as unknown as Record<string, unknown>;
       return (
         <BaseCheckbox.Root
+          {...iconOnlyHtmlProps}
           ref={ref}
           checked={checked}
           defaultChecked={defaultChecked}
-          onCheckedChange={onCheckedChange}
+          onCheckedChange={handleCheckedChange}
           indeterminate={indeterminate}
           disabled={disabled}
           required={required}
@@ -172,7 +185,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           ref={ref}
           checked={checked}
           defaultChecked={defaultChecked}
-          onCheckedChange={onCheckedChange}
+          onCheckedChange={handleCheckedChange}
           indeterminate={indeterminate}
           disabled={disabled}
           required={required}
@@ -188,7 +201,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
             {indeterminate ? <MinusIcon /> : <CheckIcon />}
           </BaseCheckbox.Indicator>
         </BaseCheckbox.Root>
-        <div className={styles.content}>
+        <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
           <span id={labelId} className={labelClasses}>{label}</span>
           {description && (
             <span id={descriptionId} className={styles.description}>{description}</span>

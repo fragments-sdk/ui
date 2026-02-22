@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Button } from '.';
 
 export default defineFragment({
@@ -30,6 +30,7 @@ export default defineFragment({
       'Only one Primary button per section/form',
       'Use Danger variant for destructive actions',
       'Loading state should disable the button',
+      'When using asChild, pass interaction and accessibility props directly on Button (they are forwarded to the child element)',
     ],
     accessibility: [
       'Button text should describe the action',
@@ -104,7 +105,8 @@ export default defineFragment({
       'size: sm|md|lg (default: md)',
       'disabled: boolean - disables interaction',
       'type: button|submit|reset (default: button)',
-      'onClick: () => void - action handler',
+      'onClick: (event) => void - action handler',
+      'asChild: boolean - composes styles/props onto a child element (links/router links)',
     ],
     scenarioTags: [
       'form.submit',
@@ -165,6 +167,15 @@ export default defineFragment({
       name: 'Disabled',
       description: 'Non-interactive state',
       render: () => <Button disabled>Cannot Click</Button>,
+    },
+    {
+      name: 'As Child',
+      description: 'Compose button styles onto another interactive element while preserving forwarded props',
+      render: () => (
+        <Button asChild variant="outlined" aria-label="Open billing settings">
+          <a href="#billing-settings">Billing Settings</a>
+        </Button>
+      ),
     },
   ],
 });

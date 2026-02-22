@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { NavigationMenu } from '.';
 
 export default defineFragment({
@@ -33,6 +33,7 @@ export default defineFragment({
       'Use NavigationMenu.MobileContent to add extra sections to the mobile drawer',
       'Use structured links (title + description) for rich dropdown content',
       'Use simple NavigationMenu.Link for items without dropdown content',
+      'NavigationMenu.Link asChild composes click handlers and respects event.preventDefault()',
       'Triggers open on hover (desktop) with configurable delay',
     ],
     accessibility: [
@@ -94,6 +95,7 @@ export default defineFragment({
       'orientation: horizontal | vertical — layout direction',
       'delayDuration: number — hover open delay (default: 200ms)',
       'NavigationMenu.Link: title + description + icon for structured links, or children for simple links',
+      'NavigationMenu.Link asChild: composes child and menu click handlers (preventDefault keeps menu open)',
       'NavigationMenu.MobileContent: slot for extra mobile-only sections',
     ],
     scenarioTags: [

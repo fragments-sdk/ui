@@ -25,10 +25,15 @@ export interface PopoverProps {
   modal?: boolean;
 }
 
-export interface PopoverTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type PopoverTriggerAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
-  asChild?: boolean;
-}
+  asChild?: false;
+};
+type PopoverTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+  children: React.ReactElement;
+  asChild: true;
+};
+export type PopoverTriggerProps = PopoverTriggerAsButtonProps | PopoverTriggerAsChildProps;
 
 export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -55,10 +60,15 @@ export interface PopoverFooterProps extends React.HTMLAttributes<HTMLDivElement>
   children: React.ReactNode;
 }
 
-export interface PopoverCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type PopoverCloseAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: React.ReactNode;
-  asChild?: boolean;
-}
+  asChild?: false;
+};
+type PopoverCloseAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+  children: React.ReactElement;
+  asChild: true;
+};
+export type PopoverCloseProps = PopoverCloseAsButtonProps | PopoverCloseAsChildProps;
 
 // ============================================
 // Icons
@@ -109,6 +119,9 @@ function PopoverRoot({
 
 function PopoverTrigger({ children, asChild, className, ...htmlProps }: PopoverTriggerProps) {
   if (asChild) {
+    if (!React.isValidElement(children)) {
+      throw new Error('Popover.Trigger with asChild requires a single valid React element child.');
+    }
     return (
       <BasePopover.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
@@ -117,7 +130,11 @@ function PopoverTrigger({ children, asChild, className, ...htmlProps }: PopoverT
   }
 
   return (
-    <BasePopover.Trigger {...htmlProps} className={className}>
+    <BasePopover.Trigger
+      {...htmlProps}
+      type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
+      className={className}
+    >
       {children}
     </BasePopover.Trigger>
   );
@@ -186,6 +203,7 @@ function PopoverClose({ children, asChild, className, ...htmlProps }: PopoverClo
     return (
       <BasePopover.Close
         {...htmlProps}
+        type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
         aria-label="Close popover"
         className={[styles.close, className].filter(Boolean).join(' ')}
       >
@@ -195,6 +213,9 @@ function PopoverClose({ children, asChild, className, ...htmlProps }: PopoverClo
   }
 
   if (asChild) {
+    if (!React.isValidElement(children)) {
+      throw new Error('Popover.Close with asChild requires a single valid React element child.');
+    }
     return (
       <BasePopover.Close {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
@@ -203,7 +224,11 @@ function PopoverClose({ children, asChild, className, ...htmlProps }: PopoverClo
   }
 
   return (
-    <BasePopover.Close {...htmlProps} className={className}>
+    <BasePopover.Close
+      {...htmlProps}
+      type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
+      className={className}
+    >
       {children}
     </BasePopover.Close>
   );

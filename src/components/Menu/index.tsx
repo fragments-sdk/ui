@@ -16,10 +16,15 @@ export interface MenuProps {
   modal?: boolean;
 }
 
-export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type MenuTriggerAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
-  asChild?: boolean;
-}
+  asChild?: false;
+};
+type MenuTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+  children: React.ReactElement;
+  asChild: true;
+};
+export type MenuTriggerProps = MenuTriggerAsButtonProps | MenuTriggerAsChildProps;
 
 export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -32,7 +37,7 @@ export interface MenuItemProps extends Omit<React.HTMLAttributes<HTMLElement>, '
   children: React.ReactNode;
   disabled?: boolean;
   danger?: boolean;
-  onSelect?: (...args: any[]) => void;
+  onSelect?: (event: React.MouseEvent<HTMLElement>) => void;
   icon?: React.ReactNode;
   shortcut?: string;
   /** When passed, renders a check indicator. `true` shows a checkmark, `false` reserves space. */
@@ -146,6 +151,9 @@ function MenuRoot({
 
 function MenuTrigger({ children, asChild, className, ...htmlProps }: MenuTriggerProps) {
   if (asChild) {
+    if (!React.isValidElement(children)) {
+      throw new Error('Menu.Trigger with asChild requires a single valid React element child.');
+    }
     return (
       <BaseMenu.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
         {null}
@@ -154,7 +162,11 @@ function MenuTrigger({ children, asChild, className, ...htmlProps }: MenuTrigger
   }
 
   return (
-    <BaseMenu.Trigger {...htmlProps} className={className}>
+    <BaseMenu.Trigger
+      {...htmlProps}
+      type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
+      className={className}
+    >
       {children}
     </BaseMenu.Trigger>
   );
@@ -216,7 +228,7 @@ function MenuItem({
     <BaseMenu.Item
       {...htmlProps}
       disabled={disabled}
-      onClick={handleClick as any}
+      onClick={handleClick as React.MouseEventHandler<HTMLElement>}
       className={classes}
     >
       {hasChecked && (
@@ -336,7 +348,7 @@ function MenuSubmenu({
     <BaseMenu.SubmenuRoot
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange as any}
+      onOpenChange={onOpenChange}
     >
       {children}
     </BaseMenu.SubmenuRoot>

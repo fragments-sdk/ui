@@ -45,4 +45,18 @@ describe('Fieldset', () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  it('forwards DOM props to Fieldset.Legend', () => {
+    render(
+      <Fieldset>
+        <Fieldset.Legend data-testid="legend" id="legend-id" aria-live="polite">
+          Accessible legend
+        </Fieldset.Legend>
+      </Fieldset>
+    );
+
+    const legend = screen.getByTestId('legend');
+    expect(legend).toHaveAttribute('id', 'legend-id');
+    expect(legend).toHaveAttribute('aria-live', 'polite');
+  });
 });

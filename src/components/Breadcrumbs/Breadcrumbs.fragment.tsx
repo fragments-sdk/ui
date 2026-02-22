@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Breadcrumbs } from '.';
 
 export default defineFragment({
@@ -30,6 +30,7 @@ export default defineFragment({
       'Keep labels short and descriptive',
       'Use maxItems to collapse long paths, keeping first and last visible',
       'The separator defaults to "/" but can be customized',
+      'Use the label prop to customize the nav landmark name (defaults to "Breadcrumb")',
     ],
     accessibility: [
       'Uses <nav aria-label="Breadcrumb"> for landmark navigation',
@@ -54,6 +55,11 @@ export default defineFragment({
       type: 'number',
       description: 'Maximum visible items before collapsing middle items with ellipsis',
     },
+    label: {
+      type: 'string',
+      description: 'Custom aria-label for the breadcrumb nav landmark',
+      default: '"Breadcrumb"',
+    },
   },
 
   relations: [
@@ -65,6 +71,7 @@ export default defineFragment({
     propsSummary: [
       'separator: ReactNode - custom separator (default "/")',
       'maxItems: number - collapse middle items with ellipsis',
+      'label: string - nav landmark label (default "Breadcrumb")',
       'Breadcrumbs.Item href: string - makes item a link',
       'Breadcrumbs.Item current: boolean - marks current page',
       'Breadcrumbs.Item icon: ReactNode - icon before label',
@@ -155,6 +162,17 @@ export default defineFragment({
           <Breadcrumbs.Item href="#">Home</Breadcrumbs.Item>
           <Breadcrumbs.Item href="#">Settings</Breadcrumbs.Item>
           <Breadcrumbs.Item current>Profile</Breadcrumbs.Item>
+        </Breadcrumbs>
+      ),
+    },
+    {
+      name: 'Custom Landmark Label',
+      description: 'Override the nav landmark label for screen readers',
+      render: () => (
+        <Breadcrumbs label="Documentation breadcrumbs">
+          <Breadcrumbs.Item href="#">Docs</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="#">Components</Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Breadcrumbs</Breadcrumbs.Item>
         </Breadcrumbs>
       ),
     },

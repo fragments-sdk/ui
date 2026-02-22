@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Menu } from '.';
 import { Button } from '../Button';
 
@@ -52,6 +52,7 @@ export default defineFragment({
       'Keep menu items under 10-12 for usability',
       'Use checked prop on Menu.Item for simple selection state',
       'Use Menu.Submenu for nested secondary options',
+      'Menu.Trigger supports asChild for links/router-link components (single valid element child required)',
     ],
     accessibility: [
       'Full keyboard navigation with arrow keys',
@@ -97,6 +98,8 @@ export default defineFragment({
     propsSummary: [
       'open: boolean - controlled open state',
       'onOpenChange: (open) => void - state handler',
+      'Menu.Trigger asChild supports non-button trigger elements',
+      'Menu.Item onSelect: (event) => void - selection callback receives click event',
       'Menu.Item danger: boolean - destructive styling',
       'Menu.Item shortcut: string - keyboard shortcut text',
       'Menu.Item checked: boolean - check indicator for selection state',
@@ -221,6 +224,21 @@ export default defineFragment({
             </Menu.Submenu>
             <Menu.Separator />
             <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      ),
+    },
+    {
+      name: 'Link Trigger',
+      description: 'Use asChild with a non-button trigger element',
+      render: () => (
+        <Menu>
+          <Menu.Trigger asChild>
+            <a href="#menu-actions">Open menu</a>
+          </Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item onSelect={() => {}}>Inspect</Menu.Item>
+            <Menu.Item onSelect={() => {}}>Rename</Menu.Item>
           </Menu.Content>
         </Menu>
       ),

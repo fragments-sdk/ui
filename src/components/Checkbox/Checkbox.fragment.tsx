@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Checkbox } from '.';
 
 // Stateful wrapper for interactive demos
@@ -59,6 +59,10 @@ export default defineFragment({
       type: 'function',
       description: 'Called when checked state changes',
     },
+    onChange: {
+      type: 'function',
+      description: 'Alias for onCheckedChange: (checked: boolean) => void',
+    },
     indeterminate: {
       type: 'boolean',
       description: 'Indeterminate state (partial selection)',
@@ -83,6 +87,14 @@ export default defineFragment({
       values: ['sm', 'md', 'lg'],
       default: 'md',
     },
+    controlClassName: {
+      type: 'string',
+      description: 'Class name for the checkbox control element (stable styling target)',
+    },
+    contentClassName: {
+      type: 'string',
+      description: 'Class name for the label/description content wrapper',
+    },
   },
 
   relations: [
@@ -94,9 +106,11 @@ export default defineFragment({
     propsSummary: [
       'checked: boolean - controlled checked state',
       'onCheckedChange: (checked) => void - change handler',
+      'onChange: (checked) => void - alias for onCheckedChange',
       'indeterminate: boolean - partial selection state',
       'label: string - checkbox label',
       'description: string - helper text',
+      'controlClassName/contentClassName - explicit styling targets for control and content',
     ],
     scenarioTags: [
       'form.checkbox',
@@ -160,6 +174,18 @@ export default defineFragment({
           <Checkbox disabled label="Disabled unchecked" />
           <Checkbox disabled checked label="Disabled checked" />
         </div>
+      ),
+    },
+    {
+      name: 'Custom Styling Targets',
+      description: 'Use explicit class targets for control vs content styling',
+      render: () => (
+        <Checkbox
+          label="Styled checkbox"
+          description="Control and content wrappers can be targeted independently"
+          controlClassName="demo-checkbox-control"
+          contentClassName="demo-checkbox-content"
+        />
       ),
     },
   ],

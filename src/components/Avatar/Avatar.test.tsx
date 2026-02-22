@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, expectNoA11yViolations } from '../../test/utils';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, act, expectNoA11yViolations } from '../../test/utils';
 import { Avatar } from './index';
 
 describe('Avatar', () => {
@@ -49,6 +49,28 @@ describe('Avatar', () => {
     );
     const img = screen.getByRole('img');
     expect(img).toHaveStyle({ objectPosition: 'center 24%', transform: 'scale(1.4)' });
+  });
+
+  it('forwards imageProps to the underlying img and respects prevented onError', () => {
+    const onError = vi.fn((event: Event) => event.preventDefault());
+    render(
+      <Avatar
+        src="https://example.com/photo.jpg"
+        alt="Jane Doe"
+        imageProps={{ loading: 'lazy', referrerPolicy: 'no-referrer', onError }}
+      />
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('loading', 'lazy');
+    expect(img).toHaveAttribute('referrerpolicy', 'no-referrer');
+
+    act(() => {
+      img.dispatchEvent(new Event('error', { bubbles: false, cancelable: true }));
+    });
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText('JD')).not.toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

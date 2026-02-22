@@ -32,6 +32,16 @@ describe('ButtonGroup', () => {
     expect(container.firstElementChild).toHaveClass('wrap');
   });
 
+  it('forwards DOM props to the group root', () => {
+    render(
+      <ButtonGroup data-testid="group" role="group" aria-label="Actions">
+        <button>Save</button>
+      </ButtonGroup>
+    );
+    expect(screen.getByTestId('group')).toHaveAttribute('aria-label', 'Actions');
+    expect(screen.getByTestId('group')).toHaveAttribute('role', 'group');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <ButtonGroup>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Alert } from '.';
 
 export default defineFragment({
@@ -33,6 +33,9 @@ export default defineFragment({
       'Use Alert.Title for complex messages; skip titles for brief one-liners',
       'Limit to one action per alert to avoid decision paralysis',
       'Use Alert.Close only for non-critical information',
+      'Alert.Action and Alert.Close render buttons with type="button" by default (safe inside forms)',
+      'Alert.Close composes your onClick handler with built-in dismiss behavior and respects preventDefault()',
+      'Alert sub-components forward DOM props (aria-*, data-*, id, handlers) to their rendered elements',
     ],
     accessibility: [
       'Uses role="alert" for screen reader announcement',
@@ -66,6 +69,7 @@ export default defineFragment({
     propsSummary: [
       'severity: info|success|warning|error - visual severity',
       'Sub-components: Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Action, Alert.Close',
+      'Alert.Action / Alert.Close accept button props and default type="button"',
     ],
     scenarioTags: [
       'feedback.message',

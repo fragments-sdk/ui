@@ -13,6 +13,8 @@ export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
   separator?: React.ReactNode;
   /** Maximum visible items before collapsing middle items with ellipsis */
   maxItems?: number;
+  /** Accessible label for the breadcrumb nav landmark (default: "Breadcrumb") */
+  label?: string;
 }
 
 export interface BreadcrumbsItemProps extends React.HTMLAttributes<HTMLLIElement> {
@@ -44,7 +46,9 @@ function BreadcrumbsRoot({
   children,
   separator = '/',
   maxItems,
+  label = 'Breadcrumb',
   className,
+  'aria-label': ariaLabel,
   ...htmlProps
 }: BreadcrumbsProps) {
   const classes = [styles.root, className].filter(Boolean).join(' ');
@@ -64,7 +68,7 @@ function BreadcrumbsRoot({
 
   return (
     <BreadcrumbsSeparatorContext.Provider value={separator}>
-      <nav aria-label="Breadcrumb" className={classes} {...htmlProps}>
+      <nav {...htmlProps} aria-label={ariaLabel ?? label} className={classes}>
         <ol className={styles.list}>
           {items.map((item, index) => {
             const isFirst = index === 0;

@@ -18,23 +18,19 @@ export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   position?: 'static' | 'fixed' | 'sticky';
 }
 
-export interface HeaderBrandProps {
+export interface HeaderBrandProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Link destination */
   href?: string;
-  /** Additional class name */
-  className?: string;
 }
 
-export interface HeaderNavProps {
+export interface HeaderNavProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Accessible label for navigation */
   'aria-label'?: string;
-  /** Additional class name */
-  className?: string;
 }
 
-export interface HeaderNavItemProps {
+export interface HeaderNavItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onClick'> {
   children: React.ReactNode;
   /** Whether this item is active/current */
   active?: boolean;
@@ -43,45 +39,35 @@ export interface HeaderNavItemProps {
   /** Render as child element (polymorphic) */
   asChild?: boolean;
   /** Click handler */
-  onClick?: () => void;
-  /** Additional class name */
-  className?: string;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-export interface HeaderSearchProps {
+export interface HeaderSearchProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Whether search expands on mobile */
   expandable?: boolean;
-  /** Additional class name */
-  className?: string;
 }
 
-export interface HeaderActionsProps {
+export interface HeaderActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Additional class name */
-  className?: string;
 }
 
-export interface HeaderTriggerProps {
+export interface HeaderTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Custom trigger content */
   children?: React.ReactNode;
   /** Accessible label */
   'aria-label'?: string;
-  /** Additional class name */
-  className?: string;
 }
 
-export interface HeaderNavMenuProps {
+export interface HeaderNavMenuProps extends React.HTMLAttributes<HTMLLIElement> {
   /** Trigger label text */
   label: string;
   /** Whether any child in the group is active */
   active?: boolean;
-  /** Additional class name */
-  className?: string;
   children: React.ReactNode;
 }
 
-export interface HeaderNavMenuItemProps {
+export interface HeaderNavMenuItemProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Link destination */
   href?: string;
@@ -89,13 +75,22 @@ export interface HeaderNavMenuItemProps {
   active?: boolean;
   /** Render as child element (polymorphic) */
   asChild?: boolean;
-  /** Additional class name */
-  className?: string;
 }
 
 // ============================================
 // Hooks
 // ============================================
+
+function composeEventHandlers<E extends { defaultPrevented: boolean }>(
+  userHandler: ((event: E) => void) | undefined,
+  internalHandler: (event: E) => void,
+) {
+  return (event: E) => {
+    userHandler?.(event);
+    if (event.defaultPrevented) return;
+    internalHandler(event);
+  };
+}
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -153,18 +148,18 @@ function HeaderRoot({
 /**
  * Header.Brand - Logo/brand slot
  */
-function HeaderBrand({ children, href, className }: HeaderBrandProps) {
+function HeaderBrand({ children, href, className, ...htmlProps }: HeaderBrandProps) {
   const classes = [styles.brand, className].filter(Boolean).join(' ');
 
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <a {...htmlProps} href={href} className={classes}>
         {children}
       </a>
     );
   }
 
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
 /**
@@ -174,11 +169,12 @@ function HeaderNav({
   children,
   'aria-label': ariaLabel = 'Main navigation',
   className,
+  ...htmlProps
 }: HeaderNavProps) {
   const classes = [styles.nav, className].filter(Boolean).join(' ');
 
   return (
-    <nav className={classes} aria-label={ariaLabel}>
+    <nav {...htmlProps} className={classes} aria-label={ariaLabel}>
       <ul className={styles.navList}>
         {children}
       </ul>
@@ -196,6 +192,7 @@ function HeaderNavItem({
   asChild = false,
   onClick,
   className,
+  ...htmlProps
 }: HeaderNavItemProps) {
   const classes = [
     styles.navItem,
@@ -210,11 +207,17 @@ function HeaderNavItem({
   };
 
   if (asChild && React.isValidElement(children)) {
+    const childProps = children.props as {
+      className?: string;
+      onClick?: React.MouseEventHandler<HTMLElement>;
+    };
     return (
       <li>
         {React.cloneElement(children, {
+          ...htmlProps,
           ...itemProps,
-          className: [classes, (children.props as { className?: string }).className].filter(Boolean).join(' '),
+          onClick: composeEventHandlers(childProps.onClick, onClick ?? (() => {})),
+          className: [classes, childProps.className].filter(Boolean).join(' '),
         } as React.HTMLAttributes<HTMLElement>)}
       </li>
     );
@@ -223,7 +226,7 @@ function HeaderNavItem({
   if (href) {
     return (
       <li>
-        <a {...itemProps} href={href}>
+        <a {...htmlProps} {...itemProps} href={href}>
           {children}
         </a>
       </li>
@@ -232,7 +235,7 @@ function HeaderNavItem({
 
   return (
     <li>
-      <button {...itemProps} type="button">
+      <button {...htmlProps} {...itemProps} type="button">
         {children}
       </button>
     </li>
@@ -246,6 +249,7 @@ function HeaderSearch({
   children,
   expandable = false,
   className,
+  ...htmlProps
 }: HeaderSearchProps) {
   const classes = [
     styles.search,
@@ -253,15 +257,15 @@ function HeaderSearch({
     className,
   ].filter(Boolean).join(' ');
 
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
 /**
  * Header.Actions - Right-side actions container
  */
-function HeaderActions({ children, className }: HeaderActionsProps) {
+function HeaderActions({ children, className, ...htmlProps }: HeaderActionsProps) {
   const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
 /**
@@ -271,6 +275,8 @@ function HeaderTrigger({
   children,
   'aria-label': ariaLabel = 'Toggle navigation',
   className,
+  onClick,
+  ...htmlProps
 }: HeaderTriggerProps) {
   const isMobile = useIsMobile();
   const { open, setOpen } = useSidebar();
@@ -284,9 +290,10 @@ function HeaderTrigger({
 
   return (
     <button
+      {...htmlProps}
       type="button"
       className={classes}
-      onClick={() => setOpen(!open)}
+      onClick={composeEventHandlers(onClick, () => setOpen(!open))}
       aria-label={ariaLabel}
       aria-expanded={open}
     >
@@ -311,6 +318,7 @@ function HeaderNavMenu({
   active = false,
   className,
   children,
+  ...htmlProps
 }: HeaderNavMenuProps) {
   const triggerClasses = [
     styles.navItem,
@@ -320,7 +328,7 @@ function HeaderNavMenu({
   ].filter(Boolean).join(' ');
 
   return (
-    <li>
+    <li {...htmlProps}>
       <BaseMenu.Root modal={false}>
         <BaseMenu.Trigger className={triggerClasses}>
           {label}
@@ -347,6 +355,7 @@ function HeaderNavMenuItem({
   active = false,
   asChild = false,
   className,
+  ...htmlProps
 }: HeaderNavMenuItemProps) {
   const classes = [
     styles.navMenuItem,
@@ -357,6 +366,7 @@ function HeaderNavMenuItem({
   if (asChild && React.isValidElement(children)) {
     return (
       <BaseMenu.Item
+        {...htmlProps}
         className={classes}
         render={children as React.ReactElement}
       />
@@ -365,14 +375,14 @@ function HeaderNavMenuItem({
 
   if (href) {
     return (
-      <BaseMenu.Item className={classes} render={<a href={href} />}>
+      <BaseMenu.Item {...htmlProps} className={classes} render={<a href={href} />}>
         {children}
       </BaseMenu.Item>
     );
   }
 
   return (
-    <BaseMenu.Item className={classes}>
+    <BaseMenu.Item {...htmlProps} className={classes}>
       {children}
     </BaseMenu.Item>
   );

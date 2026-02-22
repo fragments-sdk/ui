@@ -118,6 +118,14 @@ describe('Drawer', () => {
     });
   });
 
+  it('accepts Drawer.Content initialFocus prop', async () => {
+    renderDrawer({ defaultOpen: true }, { initialFocus: false });
+
+    await waitFor(() => {
+      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+    });
+  });
+
   it('has no accessibility violations when open', async () => {
     const { container } = renderDrawer({ defaultOpen: true });
 

@@ -8,16 +8,8 @@ import styles from './Combobox.module.scss';
 // Types
 // ============================================
 
-export interface ComboboxProps {
+interface ComboboxCommonProps {
   children: React.ReactNode;
-  /** Controlled selected value (string for single, string[] for multiple) */
-  value?: string | string[] | null;
-  /** Default selected value (uncontrolled) */
-  defaultValue?: string | string[];
-  /** Called when selection changes */
-  onValueChange?: (value: string | string[] | null) => void;
-  /** Whether multiple items can be selected */
-  multiple?: boolean;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -29,8 +21,40 @@ export interface ComboboxProps {
   autoHighlight?: boolean;
 }
 
+export interface ComboboxSingleProps extends ComboboxCommonProps {
+  /** Whether multiple items can be selected */
+  multiple?: false;
+  /** Controlled selected value */
+  value?: string | null;
+  /** Default selected value (uncontrolled) */
+  defaultValue?: string;
+  /** Called when selection changes */
+  onValueChange?: (value: string | null) => void;
+  /** Alias for onValueChange */
+  onChange?: (value: string | null) => void;
+}
+
+export interface ComboboxMultipleProps extends ComboboxCommonProps {
+  /** Whether multiple items can be selected */
+  multiple: true;
+  /** Controlled selected value */
+  value?: string[];
+  /** Default selected value (uncontrolled) */
+  defaultValue?: string[];
+  /** Called when selection changes */
+  onValueChange?: (value: string[]) => void;
+  /** Alias for onValueChange */
+  onChange?: (value: string[]) => void;
+}
+
+export type ComboboxProps = ComboboxSingleProps | ComboboxMultipleProps;
+
 export interface ComboboxInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
+  /** Render the built-in chevron trigger beside the input.
+   * Automatically disabled when an explicit <Combobox.Trigger /> is mounted.
+   * @default true */
+  showTrigger?: boolean;
 }
 
 export interface ComboboxTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -137,6 +161,8 @@ interface ComboboxContextValue {
   itemsRef: React.MutableRefObject<Map<string, string>>;
   itemsVersion: number;
   incrementItemsVersion: () => void;
+  explicitTriggerCount: number;
+  registerTrigger: () => () => void;
 }
 
 const ComboboxContext = React.createContext<ComboboxContextValue>({
@@ -144,6 +170,8 @@ const ComboboxContext = React.createContext<ComboboxContextValue>({
   itemsRef: { current: new Map() },
   itemsVersion: 0,
   incrementItemsVersion: () => {},
+  explicitTriggerCount: 0,
+  registerTrigger: () => () => {},
 });
 
 function getNodeText(node: React.ReactNode): string {
@@ -164,6 +192,7 @@ function ComboboxRoot({
   value,
   defaultValue,
   onValueChange,
+  onChange,
   multiple = false,
   open,
   defaultOpen,
@@ -192,16 +221,11 @@ function ComboboxRoot({
   const incrementItemsVersion = React.useCallback(() => {
     setItemsVersion((v) => v + 1);
   }, []);
-
-  const handleValueChange = React.useCallback(
-    (newValue: string | string[] | null) => {
-      if (value === undefined) {
-        setInternalValue(newValue);
-      }
-      onValueChange?.(newValue);
-    },
-    [value, onValueChange]
-  );
+  const [explicitTriggerCount, setExplicitTriggerCount] = React.useState(0);
+  const registerTrigger = React.useCallback(() => {
+    setExplicitTriggerCount((count) => count + 1);
+    return () => setExplicitTriggerCount((count) => Math.max(0, count - 1));
+  }, []);
 
   const handleOpenChange = React.useCallback(
     (nextOpen: boolean) => {
@@ -227,23 +251,75 @@ function ComboboxRoot({
   }, [currentValue]);
 
   const contextValue = React.useMemo(
-    () => ({ placeholder, multiple, selectedValues, itemsRef, itemsVersion, incrementItemsVersion }),
-    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion]
+    () => ({
+      placeholder,
+      multiple,
+      selectedValues,
+      itemsRef,
+      itemsVersion,
+      incrementItemsVersion,
+      explicitTriggerCount,
+      registerTrigger,
+    }),
+    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger]
   );
+
+  if (multiple) {
+    const controlledValue = value as string[] | undefined;
+    const uncontrolledValue = defaultValue as string[] | undefined;
+    const emitChange = (onChange ?? onValueChange) as ((value: string[]) => void) | undefined;
+    const handleValueChange = (newValue: string[]) => {
+      if (controlledValue === undefined) {
+        setInternalValue(newValue);
+      }
+      emitChange?.(newValue);
+    };
+
+    return (
+      <ComboboxContext.Provider value={contextValue}>
+        <BaseCombobox.Root<string, true>
+          value={controlledValue}
+          defaultValue={uncontrolledValue}
+          onValueChange={handleValueChange}
+          open={open}
+          defaultOpen={defaultOpen}
+          onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
+          disabled={disabled}
+          required={required}
+          name={name}
+          multiple
+          autoHighlight={autoHighlight}
+          itemToStringLabel={itemToStringLabel}
+        >
+          {children}
+        </BaseCombobox.Root>
+      </ComboboxContext.Provider>
+    );
+  }
+
+  const controlledValue = value as string | null | undefined;
+  const uncontrolledValue = defaultValue as string | undefined;
+  const emitChange = (onChange ?? onValueChange) as ((value: string | null) => void) | undefined;
+  const handleValueChange = (newValue: string | null) => {
+    if (controlledValue === undefined) {
+      setInternalValue(newValue);
+    }
+    emitChange?.(newValue);
+  };
 
   return (
     <ComboboxContext.Provider value={contextValue}>
-      <BaseCombobox.Root
-        value={value as any}
-        defaultValue={defaultValue as any}
-        onValueChange={handleValueChange as any}
+      <BaseCombobox.Root<string, false>
+        value={controlledValue}
+        defaultValue={uncontrolledValue ?? null}
+        onValueChange={handleValueChange}
         open={open}
         defaultOpen={defaultOpen}
-        onOpenChange={handleOpenChange as any}
+        onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
         disabled={disabled}
         required={required}
         name={name}
-        multiple={multiple as any}
+        multiple={false}
         autoHighlight={autoHighlight}
         itemToStringLabel={itemToStringLabel}
       >
@@ -253,9 +329,10 @@ function ComboboxRoot({
   );
 }
 
-function ComboboxInput({ className, ...htmlProps }: ComboboxInputProps) {
+function ComboboxInput({ className, showTrigger = true, ...htmlProps }: ComboboxInputProps) {
   const context = React.useContext(ComboboxContext);
   const classes = [styles.input, className].filter(Boolean).join(' ');
+  const renderTrigger = showTrigger && context.explicitTriggerCount === 0;
 
   if (context.multiple) {
     return (
@@ -266,9 +343,11 @@ function ComboboxInput({ className, ...htmlProps }: ComboboxInputProps) {
             {...htmlProps}
             className={classes}
           />
-          <BaseCombobox.Trigger className={styles.trigger}>
-            <ChevronDownIcon />
-          </BaseCombobox.Trigger>
+          {renderTrigger && (
+            <BaseCombobox.Trigger className={styles.trigger}>
+              <ChevronDownIcon />
+            </BaseCombobox.Trigger>
+          )}
         </div>
         {context.selectedValues.length > 0 && (
           <BaseCombobox.Chips className={styles.chips}>
@@ -295,14 +374,18 @@ function ComboboxInput({ className, ...htmlProps }: ComboboxInputProps) {
         {...htmlProps}
         className={classes}
       />
-      <BaseCombobox.Trigger className={styles.trigger}>
-        <ChevronDownIcon />
-      </BaseCombobox.Trigger>
+      {renderTrigger && (
+        <BaseCombobox.Trigger className={styles.trigger}>
+          <ChevronDownIcon />
+        </BaseCombobox.Trigger>
+      )}
     </div>
   );
 }
 
 function ComboboxTrigger({ children, className, ...htmlProps }: ComboboxTriggerProps) {
+  const { registerTrigger } = React.useContext(ComboboxContext);
+  React.useEffect(() => registerTrigger(), [registerTrigger]);
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
 
   return (

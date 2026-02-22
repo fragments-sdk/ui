@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Dialog } from '.';
 import { Button } from '../Button';
 
@@ -34,6 +34,7 @@ export default defineFragment({
       'Use descriptive title that explains the purpose',
       'Allow dismissal via backdrop click or close button for non-critical dialogs',
       'Trap focus within the dialog for accessibility',
+      'Dialog.Trigger and Dialog.Close support asChild for buttons, links, and router link components',
     ],
     accessibility: [
       'Automatically traps focus within the dialog',
@@ -80,6 +81,7 @@ export default defineFragment({
       'open: boolean - controlled open state',
       'onOpenChange: (open) => void - open state handler',
       'modal: boolean - blocks page interaction (default: true)',
+      'Dialog.Content initialFocus?: boolean - control auto-focus on open (default: true)',
       'Dialog.Content size: sm|md|lg|xl|full - dialog width',
     ],
     scenarioTags: [
@@ -97,6 +99,7 @@ export default defineFragment({
     requiredChildren: ['Content'],
     commonPatterns: [
       '<Dialog><Dialog.Trigger><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger asChild><a href="/settings">Open settings</a></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
     ],
   },
 
@@ -179,6 +182,30 @@ export default defineFragment({
                 <Button variant="secondary">Cancel</Button>
               </Dialog.Close>
               <Button variant="primary">Save Changes</Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog>
+      ),
+    },
+    {
+      name: 'Link Trigger + No Initial Focus',
+      description: 'Use asChild with a link trigger and disable automatic initial focus when needed',
+      render: () => (
+        <Dialog>
+          <Dialog.Trigger asChild>
+            <a href="#dialog-demo">Open via link</a>
+          </Dialog.Trigger>
+          <Dialog.Content size="sm" initialFocus={false}>
+            <Dialog.Header>
+              <Dialog.Title>Linked Trigger</Dialog.Title>
+              <Dialog.Description>
+                Example using asChild with an anchor element and manual focus behavior.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Footer>
+              <Dialog.Close asChild>
+                <Button variant="secondary">Close</Button>
+              </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>

@@ -20,26 +20,20 @@ export interface ResponsiveSpan {
   xl?: SpanValue;
 }
 
-export interface BentoGridProps {
+export interface BentoGridProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   /** Number of columns (default: 3) — auto-collapses responsively */
   columns?: 2 | 3 | 4;
   /** Gap between grid items */
   gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Additional class name */
-  className?: string;
-  /** Inline styles */
-  style?: React.CSSProperties;
 }
 
-export interface BentoGridItemProps {
+export interface BentoGridItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   /** Columns to span — number for all breakpoints, object for per-breakpoint */
   colSpan?: SpanValue | ResponsiveSpan;
   /** Rows to span — number for all breakpoints, object for per-breakpoint */
   rowSpan?: SpanValue | ResponsiveSpan;
-  /** Additional class name */
-  className?: string;
 }
 
 // ============================================
@@ -82,6 +76,7 @@ export const BentoGrid = React.forwardRef<HTMLDivElement, BentoGridProps>(
       gap = 'md',
       className,
       style,
+      ...htmlProps
     },
     ref
   ) {
@@ -95,7 +90,7 @@ export const BentoGrid = React.forwardRef<HTMLDivElement, BentoGridProps>(
       .join(' ');
 
     return (
-      <div ref={ref} className={classes} style={style}>
+      <div ref={ref} {...htmlProps} className={classes} style={style}>
         {children}
       </div>
     );
@@ -113,6 +108,8 @@ const BentoGridItem = React.forwardRef<HTMLDivElement, BentoGridItemProps>(
       colSpan,
       rowSpan,
       className,
+      style,
+      ...htmlProps
     },
     ref
   ) {
@@ -123,13 +120,13 @@ const BentoGridItem = React.forwardRef<HTMLDivElement, BentoGridItemProps>(
 
     const hasVars = Object.keys(spanVars).length > 0;
     const inlineStyle = hasVars
-      ? (spanVars as unknown as React.CSSProperties)
-      : undefined;
+      ? ({ ...(spanVars as unknown as React.CSSProperties), ...style } as React.CSSProperties)
+      : style;
 
     const classes = [styles.item, className].filter(Boolean).join(' ');
 
     return (
-      <div ref={ref} className={classes} style={inlineStyle}>
+      <div ref={ref} {...htmlProps} className={classes} style={inlineStyle}>
         {children}
       </div>
     );

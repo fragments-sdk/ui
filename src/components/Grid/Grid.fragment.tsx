@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Grid } from '.';
 
 export default defineFragment({
@@ -31,6 +31,7 @@ export default defineFragment({
       'Use fixed column counts when exact column control is needed and responsiveness is not required',
       'Use Grid.Item with colSpan to create asymmetric layouts within a fixed grid',
       'Keep gap consistent within a context — md is the default and works for most cases',
+      'Pass DOM attributes (id, role, aria-*, data-*, event handlers) directly to Grid and Grid.Item roots when needed',
     ],
     accessibility: [
       'Grid is purely visual — it does not affect reading order or semantics',
@@ -60,9 +61,8 @@ export default defineFragment({
     gap: {
       type: 'union',
       values: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Gap between items. Accepts string tokens or numbers (1-8) mapping to the spacing scale',
       default: 'md',
-      description: 'Gap between grid items, mapped to spacing tokens',
+      description: 'Gap between grid items. Accepts string tokens or numbers (1-8) mapped to the spacing scale',
     },
     alignItems: {
       type: 'enum',
@@ -103,6 +103,7 @@ export default defineFragment({
       'alignItems: start|center|end|stretch — vertical alignment',
       'justifyItems: start|center|end|stretch — horizontal alignment',
       'padding: none|sm|md|lg (default: none)',
+      'Pass-through DOM props supported on Grid and Grid.Item roots (id, role, aria-*, data-*, handlers)',
     ],
     scenarioTags: [
       'layout.grid',

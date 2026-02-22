@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Form } from '.';
 import { Field } from '../Field';
 import { Fieldset } from '../Fieldset';
@@ -37,7 +37,7 @@ export default defineFragment({
     guidelines: [
       'Pass errors as Record<string, string | string[]> keyed by field name',
       'Use onClearErrors to clear errors when fields are modified',
-      'Use onFormSubmit for form submission handling',
+      'Use onSubmit for form submission handling (onFormSubmit is deprecated alias)',
       'Field components with matching name prop display errors automatically',
       'Use Grid inside Form or Fieldset for multi-column layouts',
     ],
@@ -57,9 +57,13 @@ export default defineFragment({
       type: 'object',
       description: 'Server-side errors keyed by field name',
     },
+    onSubmit: {
+      type: 'function',
+      description: 'Form submission handler (preferred)',
+    },
     onFormSubmit: {
       type: 'function',
-      description: 'Form submission handler',
+      description: 'Deprecated alias for onSubmit',
     },
     onClearErrors: {
       type: 'function',
@@ -81,7 +85,8 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'errors: Record<string, string | string[]> - server errors by field name',
-      'onFormSubmit: (event) => void - submission handler',
+      'onSubmit: (event) => void - submission handler (preferred)',
+      'onFormSubmit: (event) => void - deprecated alias for onSubmit',
       'onClearErrors: (name) => void - clear errors callback',
     ],
     scenarioTags: ['form.submit', 'form.validation', 'form.server'],
@@ -93,7 +98,7 @@ export default defineFragment({
       name: 'Sign up',
       description: 'Registration form with two-column name fields',
       render: () => (
-        <Form onFormSubmit={(e) => { e.preventDefault(); }}>
+        <Form onSubmit={(e) => { e.preventDefault(); }}>
           <Grid columns={2} gap="md">
             <Field name="firstName">
               <Field.Label>First Name</Field.Label>
@@ -143,7 +148,7 @@ export default defineFragment({
       name: 'Profile settings',
       description: 'Multi-section form with Fieldsets, switches, and radio group',
       render: () => (
-        <Form onFormSubmit={(e) => { e.preventDefault(); }}>
+        <Form onSubmit={(e) => { e.preventDefault(); }}>
           <Fieldset>
             <Fieldset.Legend>Profile</Fieldset.Legend>
             <Grid columns={2} gap="md">
@@ -209,7 +214,7 @@ export default defineFragment({
       name: 'Contact form',
       description: 'Contact form with select, textarea, and checkbox',
       render: () => (
-        <Form onFormSubmit={(e) => { e.preventDefault(); }}>
+        <Form onSubmit={(e) => { e.preventDefault(); }}>
           <Grid columns={2} gap="md">
             <Field name="name">
               <Field.Label>Name</Field.Label>

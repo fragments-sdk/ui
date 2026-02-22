@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Table } from '.';
 
 export default defineFragment({
@@ -58,6 +58,14 @@ export default defineFragment({
       description: 'Wrap table in a bordered container',
       default: 'false',
     },
+    wrapperClassName: {
+      type: 'string',
+      description: 'Class name for the outer scroll/wrapper container',
+    },
+    wrapperProps: {
+      type: 'object',
+      description: 'HTML attributes for the outer scroll/wrapper container',
+    },
   },
 
   relations: [
@@ -73,7 +81,8 @@ export default defineFragment({
       'Table.Row - table row with optional selected prop',
       'Table.HeaderCell - th with scope="col"',
       'Table.Cell - td element',
-      'Table.Caption - caption with optional hidden prop',
+      'wrapperClassName/wrapperProps - customize outer scroll wrapper',
+      'Table.Caption - caption with visuallyHidden prop (hidden is deprecated alias)',
     ],
     scenarioTags: [
       'display.table',
@@ -238,6 +247,38 @@ export default defineFragment({
               <Table.Cell>Users</Table.Cell>
               <Table.Cell>24,500</Table.Cell>
               <Table.Cell>+8%</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table>
+      ),
+    },
+    {
+      name: 'Screen Reader Caption',
+      description: 'Visually hidden caption for screen-reader context while keeping visual UI compact',
+      render: () => (
+        <Table
+          aria-label="API keys"
+          wrapperProps={{ 'data-demo': 'table-wrapper' }}
+          wrapperClassName="demo-table-wrapper"
+        >
+          <Table.Caption visuallyHidden>API keys and last-used timestamps</Table.Caption>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Name</Table.HeaderCell>
+              <Table.HeaderCell>Prefix</Table.HeaderCell>
+              <Table.HeaderCell>Last Used</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Deploy</Table.Cell>
+              <Table.Cell>frg_live_...</Table.Cell>
+              <Table.Cell>2 hours ago</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>CI</Table.Cell>
+              <Table.Cell>frg_test_...</Table.Cell>
+              <Table.Cell>Yesterday</Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>

@@ -13,9 +13,8 @@ export interface FieldsetProps extends React.HTMLAttributes<HTMLFieldSetElement>
   disabled?: boolean;
 }
 
-export interface FieldsetLegendProps {
+export interface FieldsetLegendProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
 // ============================================
@@ -32,9 +31,9 @@ function FieldsetRoot({ children, disabled, className, ...htmlProps }: FieldsetP
   );
 }
 
-function FieldsetLegend({ children, className }: FieldsetLegendProps) {
+function FieldsetLegend({ children, className, ...htmlProps }: FieldsetLegendProps) {
   const classes = [styles.legend, className].filter(Boolean).join(' ');
-  return <BaseFieldset.Legend className={classes}>{children}</BaseFieldset.Legend>;
+  return <BaseFieldset.Legend {...htmlProps} className={classes}>{children}</BaseFieldset.Legend>;
 }
 
 // ============================================

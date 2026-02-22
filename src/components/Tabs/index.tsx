@@ -25,6 +25,9 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'd
   /** Tab layout direction.
    * @default "horizontal" */
   orientation?: 'horizontal' | 'vertical';
+  /** Tab list visual style (default for Tabs.List).
+   * @default "underline" */
+  variant?: 'underline' | 'pills';
 }
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -65,39 +68,44 @@ function TabsRoot({
   value,
   onValueChange,
   orientation = 'horizontal',
+  variant = 'underline',
   className,
   ...htmlProps
 }: TabsProps) {
   const classes = [styles.root, className].filter(Boolean).join(' ');
 
   return (
-    <BaseTabs.Root
-      {...htmlProps}
-      defaultValue={defaultValue}
-      value={value}
-      onValueChange={onValueChange}
-      orientation={orientation}
-      className={classes}
-    >
-      {children}
-    </BaseTabs.Root>
+    <TabsVariantContext.Provider value={variant}>
+      <BaseTabs.Root
+        {...htmlProps}
+        defaultValue={defaultValue}
+        value={value}
+        onValueChange={onValueChange}
+        orientation={orientation}
+        className={classes}
+      >
+        {children}
+      </BaseTabs.Root>
+    </TabsVariantContext.Provider>
   );
 }
 
 function TabsList({
   children,
-  variant = 'underline',
+  variant,
   className,
   ...htmlProps
 }: TabsListProps) {
-  const variantClass = variant === 'pills' ? styles.listPills : styles.listUnderline;
+  const rootVariant = React.useContext(TabsVariantContext);
+  const resolvedVariant = variant ?? rootVariant;
+  const variantClass = resolvedVariant === 'pills' ? styles.listPills : styles.listUnderline;
   const classes = [styles.list, variantClass, className].filter(Boolean).join(' ');
 
   return (
-    <TabsVariantContext.Provider value={variant}>
+    <TabsVariantContext.Provider value={resolvedVariant}>
       <BaseTabs.List {...htmlProps} className={classes}>
         {children}
-        {variant === 'underline' && <BaseTabs.Indicator className={styles.indicator} />}
+        {resolvedVariant === 'underline' && <BaseTabs.Indicator className={styles.indicator} />}
       </BaseTabs.List>
     </TabsVariantContext.Provider>
   );

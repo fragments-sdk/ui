@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import {
   LineChart,
   Line,
@@ -69,9 +69,10 @@ export default defineFragment({
     ],
     guidelines: [
       'Use ChartContainer to wrap recharts chart components',
-      'Define a ChartConfig to map data keys to labels and colors',
+      'Define a ChartConfig to map data keys to labels and colors (and optionally icons for custom legend/tooltip UIs)',
       'Use FUI CSS variables for colors so charts adapt to theme changes',
       'Use ChartTooltip and ChartLegend for consistent themed overlays',
+      'ChartTooltip and ChartLegend accept custom content renderers for advanced formatting',
     ],
     accessibility: [
       'Charts include recharts accessibilityLayer by default',
@@ -83,7 +84,7 @@ export default defineFragment({
   props: {
     config: {
       type: 'object',
-      description: 'ChartConfig mapping data keys to labels and colors',
+      description: 'ChartConfig mapping data keys to labels/colors (optional icon per series)',
     },
     children: {
       type: 'element',
@@ -109,6 +110,7 @@ export default defineFragment({
     propsSummary: [
       'config: ChartConfig - maps data keys to labels and theme colors',
       'children: ReactElement - recharts chart component',
+      'Chart.Tooltip / Chart.Legend support custom content renderers for advanced overlays',
     ],
     scenarioTags: [
       'display.chart',

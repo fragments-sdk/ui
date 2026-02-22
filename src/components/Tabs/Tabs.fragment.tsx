@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Tabs } from '.';
 
 export default defineFragment({
@@ -65,6 +65,12 @@ export default defineFragment({
       values: ['horizontal', 'vertical'],
       default: 'horizontal',
     },
+    variant: {
+      type: 'enum',
+      description: 'Default visual style for Tabs.List (can be overridden on Tabs.List)',
+      values: ['underline', 'pills'],
+      default: 'underline',
+    },
   },
 
   relations: [
@@ -77,7 +83,8 @@ export default defineFragment({
       'value: string - controlled active tab',
       'defaultValue: string - initial active tab',
       'onValueChange: (value) => void - tab change handler',
-      'Tabs.List variant: underline|pills - visual style',
+      'variant: underline|pills - default style for Tabs.List',
+      'Tabs.List variant?: underline|pills - optional per-list override',
     ],
     scenarioTags: [
       'navigation.tabs',
@@ -101,8 +108,8 @@ export default defineFragment({
       name: 'Underline',
       description: 'Default underline style tabs',
       render: () => (
-        <Tabs defaultValue="overview">
-          <Tabs.List variant="underline">
+        <Tabs defaultValue="overview" variant="underline">
+          <Tabs.List>
             <Tabs.Tab value="overview">Overview</Tabs.Tab>
             <Tabs.Tab value="analytics">Analytics</Tabs.Tab>
             <Tabs.Tab value="settings">Settings</Tabs.Tab>
@@ -123,8 +130,8 @@ export default defineFragment({
       name: 'Pills',
       description: 'Pill-style tabs for contained sections',
       render: () => (
-        <Tabs defaultValue="all">
-          <Tabs.List variant="pills">
+        <Tabs defaultValue="all" variant="pills">
+          <Tabs.List>
             <Tabs.Tab value="all">All</Tabs.Tab>
             <Tabs.Tab value="active">Active</Tabs.Tab>
             <Tabs.Tab value="archived">Archived</Tabs.Tab>
@@ -145,8 +152,8 @@ export default defineFragment({
       name: 'With Disabled',
       description: 'Tabs with a disabled option',
       render: () => (
-        <Tabs defaultValue="general">
-          <Tabs.List variant="underline">
+        <Tabs defaultValue="general" variant="underline">
+          <Tabs.List>
             <Tabs.Tab value="general">General</Tabs.Tab>
             <Tabs.Tab value="security">Security</Tabs.Tab>
             <Tabs.Tab value="billing" disabled>Billing</Tabs.Tab>
@@ -156,6 +163,24 @@ export default defineFragment({
           </Tabs.Panel>
           <Tabs.Panel value="security">
             <p>Security settings panel.</p>
+          </Tabs.Panel>
+        </Tabs>
+      ),
+    },
+    {
+      name: 'List Variant Override',
+      description: 'Tabs sets a default variant, and Tabs.List can override it per list',
+      render: () => (
+        <Tabs defaultValue="overview" variant="pills">
+          <Tabs.List variant="underline">
+            <Tabs.Tab value="overview">Overview</Tabs.Tab>
+            <Tabs.Tab value="activity">Activity</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="overview">
+            <p>Root sets pills, but this list overrides to underline.</p>
+          </Tabs.Panel>
+          <Tabs.Panel value="activity">
+            <p>Per-list variant override example.</p>
           </Tabs.Panel>
         </Tabs>
       ),

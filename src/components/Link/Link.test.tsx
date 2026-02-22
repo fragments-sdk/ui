@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, expectNoA11yViolations } from '../../test/utils';
+import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
 import { Link } from './index';
 
 describe('Link', () => {
@@ -51,6 +51,22 @@ describe('Link', () => {
     const link = screen.getByRole('link', { name: 'Test' });
     expect(link).toHaveClass('link');
     expect(link).toHaveClass('custom-class');
+  });
+
+  it('composes child and Link event handlers when asChild is true', async () => {
+    const user = userEvent.setup();
+    const childClick = vi.fn();
+    const parentClick = vi.fn();
+
+    render(
+      <Link asChild onClick={parentClick}>
+        <button type="button" onClick={childClick}>Composed</button>
+      </Link>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Composed' }));
+    expect(childClick).toHaveBeenCalledTimes(1);
+    expect(parentClick).toHaveBeenCalledTimes(1);
   });
 
   it('has no accessibility violations', async () => {

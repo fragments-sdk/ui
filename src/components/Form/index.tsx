@@ -8,9 +8,12 @@ import styles from './Form.module.scss';
 // Types
 // ============================================
 
-export interface FormProps extends Omit<React.HTMLAttributes<HTMLFormElement>, 'onSubmit'> {
+export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
   children: React.ReactNode;
   errors?: Record<string, string | string[]>;
+  /** Standard form submit handler */
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+  /** @deprecated Use onSubmit */
   onFormSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   onClearErrors?: (name: string) => void;
   validationMode?: 'onSubmit' | 'onBlur' | 'onChange';
@@ -23,6 +26,7 @@ export interface FormProps extends Omit<React.HTMLAttributes<HTMLFormElement>, '
 function FormRoot({
   children,
   errors,
+  onSubmit,
   onFormSubmit,
   onClearErrors,
   validationMode,
@@ -30,24 +34,16 @@ function FormRoot({
   ...htmlProps
 }: FormProps) {
   const classes = [styles.root, className].filter(Boolean).join(' ');
-
-  const baseProps: Record<string, unknown> = {
-    ...htmlProps,
-    errors,
-    validationMode,
-    className: classes,
-  };
-
-  if (onFormSubmit) {
-    baseProps.onSubmit = onFormSubmit;
-  }
-
-  if (onClearErrors) {
-    baseProps.onClearErrors = onClearErrors;
-  }
+  const submitHandler = onSubmit ?? onFormSubmit;
 
   return (
-    <BaseForm {...baseProps}>
+    <BaseForm
+      {...htmlProps}
+      errors={errors}
+      validationMode={validationMode}
+      onSubmit={submitHandler}
+      className={classes}
+    >
       {children}
     </BaseForm>
   );

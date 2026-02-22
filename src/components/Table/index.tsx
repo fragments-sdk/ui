@@ -16,6 +16,10 @@ export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   striped?: boolean;
   /** Wrap table in a bordered container */
   bordered?: boolean;
+  /** Class applied to the outer wrapper element */
+  wrapperClassName?: string;
+  /** Props applied to the outer wrapper element */
+  wrapperProps?: React.HTMLAttributes<HTMLDivElement>;
   children?: React.ReactNode;
 }
 
@@ -29,14 +33,16 @@ export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElem
   children?: React.ReactNode;
 }
 
-export interface TableHeaderCellProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
+export interface TableHeaderCellProps extends React.ThHTMLAttributes<HTMLTableHeaderCellElement> {
   /** Scope for the header cell */
   scope?: string;
   children?: React.ReactNode;
 }
 
-export interface TableCaptionProps extends React.HTMLAttributes<HTMLTableCaptionElement> {
+export interface TableCaptionProps extends Omit<React.HTMLAttributes<HTMLTableCaptionElement>, 'hidden'> {
   /** Visually hide the caption (screen readers only) */
+  visuallyHidden?: boolean;
+  /** @deprecated Use visuallyHidden */
   hidden?: boolean;
   children?: React.ReactNode;
 }
@@ -97,10 +103,17 @@ function TableHeaderCell({ className, scope = 'col', children, ...props }: Table
   );
 }
 
-function TableCaption({ className, hidden: visuallyHidden, children, ...props }: TableCaptionProps) {
+function TableCaption({
+  className,
+  visuallyHidden,
+  hidden,
+  children,
+  ...props
+}: TableCaptionProps) {
+  const useVisuallyHidden = visuallyHidden ?? hidden;
   return (
     <caption
-      className={[visuallyHidden ? styles.captionHidden : styles.caption, className].filter(Boolean).join(' ')}
+      className={[useVisuallyHidden ? styles.captionHidden : styles.caption, className].filter(Boolean).join(' ')}
       {...props}
     >
       {children}
@@ -116,6 +129,8 @@ function TableRoot({
   size = 'md',
   striped = false,
   bordered = false,
+  wrapperClassName,
+  wrapperProps,
   className,
   children,
   ...htmlProps
@@ -130,7 +145,10 @@ function TableRoot({
     .join(' ');
 
   return (
-    <div className={[styles.wrapper, bordered && styles.bordered].filter(Boolean).join(' ')}>
+    <div
+      {...wrapperProps}
+      className={[styles.wrapper, bordered && styles.bordered, wrapperProps?.className, wrapperClassName].filter(Boolean).join(' ')}
+    >
       <table className={tableClasses} {...htmlProps}>
         {children}
       </table>

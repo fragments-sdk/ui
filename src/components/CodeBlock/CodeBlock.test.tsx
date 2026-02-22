@@ -121,6 +121,27 @@ describe('CodeBlock', () => {
     expect(collapseBtn).toHaveAttribute('aria-expanded', 'true');
   });
 
+  it('supports controlled tabbed mode with explicit tab values', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <CodeBlock.Tabbed
+        value="js"
+        onValueChange={onValueChange}
+        tabs={[
+          { label: 'Example', value: 'ts', language: 'typescript', code: 'const tsValue = 1;' },
+          { label: 'Example', value: 'js', language: 'javascript', code: 'const jsValue = 1;' },
+        ]}
+      />
+    );
+
+    expect(screen.getByText('const jsValue = 1;')).toBeInTheDocument();
+    const tabs = screen.getAllByRole('tab', { name: 'Example' });
+    await user.click(tabs[0]);
+    expect(onValueChange).toHaveBeenCalled();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     await expectNoA11yViolations(container);

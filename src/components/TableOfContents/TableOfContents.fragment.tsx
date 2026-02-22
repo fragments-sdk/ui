@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { TableOfContents } from '.';
 
 export default defineFragment({
@@ -30,10 +30,11 @@ export default defineFragment({
       'Use indent on sub-headings (h3) to show hierarchy',
       'Place in a sticky aside for best UX',
       'Heading IDs must match between TOC items and the actual DOM headings',
+      'TableOfContents.Item performs smooth scrolling by default; call event.preventDefault() in onClick to override',
     ],
     accessibility: [
       'Uses <nav aria-label="Table of contents"> for landmark navigation',
-      'Active item is marked with aria-current="true"',
+      'Active item is marked with aria-current="location"',
       'All items are links with smooth scroll behavior',
       'Focus-visible ring on keyboard navigation',
     ],
@@ -76,6 +77,7 @@ export default defineFragment({
       'TableOfContents.Item id: string - heading ID to link to',
       'TableOfContents.Item active: boolean - highlight as current',
       'TableOfContents.Item indent: boolean - indent for sub-headings',
+      'Forwards standard nav/anchor DOM props; TableOfContents.Item onClick can prevent default smooth scroll',
     ],
     scenarioTags: [
       'navigation.toc',

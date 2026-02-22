@@ -1,5 +1,5 @@
 import React from "react";
-import { defineFragment } from "@fragments-sdk/cli/core";
+import { defineFragment } from "@fragments-sdk/core";
 import { ToggleGroup } from ".";
 
 function DefaultExample() {
@@ -30,7 +30,7 @@ function OutlineExample() {
   const [value, setValue] = React.useState("day");
 
   return (
-    <ToggleGroup value={value} onChange={setValue} variant="outline">
+    <ToggleGroup value={value} onChange={setValue} variant="outlined">
       <ToggleGroup.Item value="day">Day</ToggleGroup.Item>
       <ToggleGroup.Item value="week">Week</ToggleGroup.Item>
       <ToggleGroup.Item value="month">Month</ToggleGroup.Item>
@@ -141,7 +141,7 @@ export default defineFragment({
       "Ensure adequate touch targets on mobile",
     ],
     accessibility: [
-      'Uses role="group" for semantic grouping',
+      'Uses role="radiogroup" for single-selection semantics',
       'Each item has role="radio" with aria-checked',
       "Keyboard navigable with Tab and arrow keys",
       "Focus visible on active item",
@@ -152,7 +152,10 @@ export default defineFragment({
     value: {
       type: "string",
       description: "Currently selected value",
-      required: true,
+    },
+    defaultValue: {
+      type: "string",
+      description: "Initial selected value (uncontrolled)",
     },
     onChange: {
       type: "function",
@@ -170,7 +173,7 @@ export default defineFragment({
     variant: {
       type: "enum",
       description: "Visual style",
-      values: ["default", "pills", "outline"],
+      values: ["default", "pills", "outline", "outlined"],
       default: "default",
     },
     size: {
@@ -184,6 +187,12 @@ export default defineFragment({
       description: "Gap between items (pills/outline variants)",
       values: ["none", "xs", "sm"],
       default: "xs",
+    },
+    selectionMode: {
+      type: "enum",
+      description: "Selection behavior",
+      values: ["single"],
+      default: "single",
     },
   },
 
@@ -199,12 +208,14 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      "value: string - selected value (required)",
+      "value?: string - controlled selected value",
+      "defaultValue?: string - initial selected value (uncontrolled)",
       "onChange: (value: string) => void - change handler (or onValueChange)",
       "children: ToggleGroup.Item[] - toggle items",
-      "variant: default|pills|outline - visual style",
+      "variant: default|pills|outline|outlined - visual style (outlined aliases outline)",
       "size: sm|md - size variant",
       "gap: none|xs|sm - spacing",
+      "selectionMode: single (default: single)",
     ],
     scenarioTags: ["forms.selection", "input.toggle", "control.fragmented"],
     a11yRules: ["A11Y_GROUP_ROLE", "A11Y_KEYBOARD_ACCESSIBLE"],
@@ -234,12 +245,26 @@ export default defineFragment({
     {
       name: "Outline Variant",
       description: "Outlined toggle buttons",
-      code: `<ToggleGroup value={value} onChange={setValue} variant="outline">
+      code: `<ToggleGroup value={value} onChange={setValue} variant="outlined">
   <ToggleGroup.Item value="day">Day</ToggleGroup.Item>
   <ToggleGroup.Item value="week">Week</ToggleGroup.Item>
   <ToggleGroup.Item value="month">Month</ToggleGroup.Item>
 </ToggleGroup>`,
       render: () => <OutlineExample />,
+    },
+    {
+      name: "Uncontrolled",
+      description: "Use defaultValue for simple single-select state",
+      code: `<ToggleGroup defaultValue="list">
+  <ToggleGroup.Item value="grid">Grid</ToggleGroup.Item>
+  <ToggleGroup.Item value="list">List</ToggleGroup.Item>
+</ToggleGroup>`,
+      render: () => (
+        <ToggleGroup defaultValue="list">
+          <ToggleGroup.Item value="grid">Grid</ToggleGroup.Item>
+          <ToggleGroup.Item value="list">List</ToggleGroup.Item>
+        </ToggleGroup>
+      ),
     },
     {
       name: "Sizes",

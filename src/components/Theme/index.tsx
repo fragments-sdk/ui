@@ -40,7 +40,7 @@ export interface UseThemeReturn {
   toggleMode: () => void;
 }
 
-export interface ThemeToggleProps {
+export interface ThemeToggleProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Size of the toggle button */
   size?: 'sm' | 'md' | 'lg';
   /** Whether to include system mode option (default: false) */
@@ -51,8 +51,6 @@ export interface ThemeToggleProps {
   onValueChange?: (value: 'light' | 'dark') => void;
   /** Accessible label for the group */
   'aria-label'?: string;
-  /** Additional class name */
-  className?: string;
 }
 
 // ============================================
@@ -282,6 +280,7 @@ function ThemeToggle({
   onValueChange,
   'aria-label': ariaLabel,
   className,
+  ...htmlProps
 }: ThemeToggleProps) {
   const { mode: contextMode, setMode: setContextMode } = useTheme();
 
@@ -314,6 +313,7 @@ function ThemeToggle({
 
   return (
     <div
+      {...htmlProps}
       className={groupClasses}
       role="group"
       aria-label={label}

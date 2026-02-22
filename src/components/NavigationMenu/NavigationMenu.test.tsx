@@ -358,6 +358,26 @@ describe('NavigationMenu', () => {
 
       expect(screen.getByTestId('custom-link')).toBeInTheDocument();
     });
+
+    it('composes asChild link click handlers', async () => {
+      const user = userEvent.setup();
+      const childClick = vi.fn();
+
+      render(
+        <NavigationMenu>
+          <NavigationMenu.List>
+            <NavigationMenu.Item>
+              <NavigationMenu.Link href="/blog" asChild onClick={() => {}}>
+                <a href="/blog" onClick={childClick}>Blog</a>
+              </NavigationMenu.Link>
+            </NavigationMenu.Item>
+          </NavigationMenu.List>
+        </NavigationMenu>
+      );
+
+      await user.click(screen.getByRole('link', { name: 'Blog' }));
+      expect(childClick).toHaveBeenCalled();
+    });
   });
 
   // ============================================

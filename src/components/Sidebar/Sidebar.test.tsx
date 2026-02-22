@@ -138,6 +138,31 @@ describe('Sidebar', () => {
 
     expect(childClick).toHaveBeenCalled();
     expect(onItemClick).toHaveBeenCalled();
+    expect(onItemClick.mock.calls[0][0]).toBeDefined();
+  });
+
+  it('passes event object to Sidebar.SubItem onClick', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+
+    render(
+      <Sidebar aria-label="Test sidebar">
+        <Sidebar.Nav aria-label="Main">
+          <Sidebar.Section label="Section">
+            <Sidebar.Item icon={<span>I</span>} hasSubmenu defaultExpanded>
+              Parent
+            </Sidebar.Item>
+            <Sidebar.Submenu>
+              <Sidebar.SubItem onClick={onClick}>Child</Sidebar.SubItem>
+            </Sidebar.Submenu>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Child' }));
+    expect(onClick).toHaveBeenCalled();
+    expect(onClick.mock.calls[0][0]).toBeDefined();
   });
 
   it('forwards html props to desktop compound parts', () => {

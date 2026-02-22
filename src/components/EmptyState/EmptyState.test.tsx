@@ -64,4 +64,22 @@ describe('EmptyState', () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  it('forwards DOM props on compound sub-components', () => {
+    render(
+      <EmptyState>
+        <EmptyState.Icon data-testid="icon" title="placeholder">ICON</EmptyState.Icon>
+        <EmptyState.Title data-testid="title" id="empty-title">Empty</EmptyState.Title>
+        <EmptyState.Description data-testid="desc" aria-live="polite">Nothing here</EmptyState.Description>
+        <EmptyState.Actions data-testid="actions" role="group">
+          <button>Add</button>
+        </EmptyState.Actions>
+      </EmptyState>
+    );
+
+    expect(screen.getByTestId('icon')).toHaveAttribute('title', 'placeholder');
+    expect(screen.getByTestId('title')).toHaveAttribute('id', 'empty-title');
+    expect(screen.getByTestId('desc')).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByTestId('actions')).toHaveAttribute('role', 'group');
+  });
 });

@@ -16,7 +16,7 @@ export interface ConversationListProps extends React.HTMLAttributes<HTMLDivEleme
   /** Auto-scroll behavior: true (always), false (never), or 'smart' (only when near bottom) */
   autoScroll?: AutoScrollBehavior;
   /** Callback when user scrolls to top (for loading history) */
-  onScrollTop?: () => void;
+  onScrollTop?: (event?: React.UIEvent<HTMLDivElement>) => void;
   /** Show loading spinner at top when loading history */
   loadingHistory?: boolean;
   /** Content to show when conversation is empty */
@@ -146,6 +146,7 @@ function ConversationListRoot({
   const contentRef = React.useRef<HTMLDivElement>(null);
   const isNearBottomRef = React.useRef(true);
   const prevChildrenCountRef = React.useRef(0);
+  const userOnScroll = htmlProps.onScroll;
 
   // Check if user is near the bottom
   const checkIsNearBottom = React.useCallback(() => {
@@ -168,7 +169,10 @@ function ConversationListRoot({
   }, []);
 
   // Handle scroll events
-  const handleScroll = React.useCallback(() => {
+  const handleScroll = React.useCallback((event: React.UIEvent<HTMLDivElement>) => {
+    userOnScroll?.(event);
+    if (event.defaultPrevented) return;
+
     const container = containerRef.current;
     if (!container) return;
 
@@ -177,9 +181,9 @@ function ConversationListRoot({
 
     // Check for scroll-to-top (history loading)
     if (onScrollTop && container.scrollTop <= scrollTopThreshold) {
-      onScrollTop();
+      onScrollTop(event);
     }
-  }, [checkIsNearBottom, onScrollTop, scrollTopThreshold]);
+  }, [checkIsNearBottom, onScrollTop, scrollTopThreshold, userOnScroll]);
 
   // Auto-scroll on new messages
   React.useEffect(() => {

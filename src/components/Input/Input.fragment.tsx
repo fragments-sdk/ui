@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Input } from '.';
 
 export default defineFragment({
@@ -31,6 +31,7 @@ export default defineFragment({
       'Use appropriate input type for data validation',
       'Show validation errors with error prop and helperText',
       'Use placeholder for format hints, not labels',
+      'Shortcut hints are display-only by default; set shortcutBehavior="focus-input" to opt into global hotkey focusing',
     ],
     accessibility: [
       'Labels must be associated with inputs',
@@ -87,6 +88,10 @@ export default defineFragment({
       type: 'function',
       description: 'Called with new value on change',
     },
+    onValueChange: {
+      type: 'function',
+      description: 'Value-first change callback alias: (value: string) => void',
+    },
     inputStyle: {
       type: 'object',
       description: 'Inline styles applied directly to the input element',
@@ -94,6 +99,21 @@ export default defineFragment({
     inputClassName: {
       type: 'string',
       description: 'Class name applied directly to the input element',
+    },
+    rootProps: {
+      type: 'object',
+      description: 'HTML attributes applied to the wrapper element',
+    },
+    withFieldWrapper: {
+      type: 'boolean',
+      default: true,
+      description: 'Render built-in label/helper wrapper (set false for Field composition or bare input rendering)',
+    },
+    shortcutBehavior: {
+      type: 'enum',
+      values: ['display-only', 'focus-input'],
+      default: 'display-only',
+      description: 'Whether shortcut hint is visual only or also registers a global focus hotkey',
     },
   },
 
@@ -124,6 +144,11 @@ export default defineFragment({
       'disabled: boolean - disables interaction',
       'error: boolean - shows error styling',
       'helperText: string - helper/error message',
+      'onValueChange: (value: string) => void - value-first change callback alias',
+      'rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props',
+      'withFieldWrapper: boolean - toggle built-in wrapper/label rendering (default: true)',
+      'shortcutBehavior: display-only|focus-input (default: display-only)',
+      '...native input attributes are supported (autoComplete, required, inputMode, pattern, etc.)',
     ],
     scenarioTags: [
       'form.input',
@@ -186,6 +211,29 @@ export default defineFragment({
       description: 'Non-interactive input',
       render: () => (
         <Input label="Username" value="readonly-user" disabled />
+      ),
+    },
+    {
+      name: 'Bare Input (Field Composition)',
+      description: 'Disable the built-in wrapper for custom Field composition',
+      render: () => (
+        <Input
+          withFieldWrapper={false}
+          placeholder="Search..."
+          rootProps={{ 'data-demo': 'bare-input-wrapper' }}
+        />
+      ),
+    },
+    {
+      name: 'Shortcut Focus Hotkey',
+      description: 'Display shortcut hint and opt into focus behavior',
+      render: () => (
+        <Input
+          label="Command Palette"
+          placeholder="Search commands"
+          shortcut="⌘K"
+          shortcutBehavior="focus-input"
+        />
       ),
     },
   ],

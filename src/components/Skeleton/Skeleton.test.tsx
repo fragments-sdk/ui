@@ -53,4 +53,16 @@ describe('Skeleton', () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  it('forwards DOM props on Skeleton and Skeleton.Text', () => {
+    const { container } = render(
+      <div>
+        <Skeleton data-testid="sk" id="skeleton-root" />
+        <Skeleton.Text data-testid="sk-text" id="skeleton-text" lines={2} />
+      </div>
+    );
+
+    expect(container.querySelector('#skeleton-root')).toHaveAttribute('data-testid', 'sk');
+    expect(container.querySelector('#skeleton-text')).toHaveAttribute('data-testid', 'sk-text');
+  });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Chip } from '.';
 
 export default defineFragment({
@@ -32,10 +32,11 @@ export default defineFragment({
       'Use Chip.Group for multi-select sets with shared state',
       'Use onRemove only when users should be able to dismiss the chip',
       'Pair avatar chips with user-related selections (assignees, reviewers)',
+      'Provide an explicit value on Chip when using non-string/custom JSX children inside Chip.Group',
     ],
     accessibility: [
-      'Chips use role="option" with aria-selected for selection state',
-      'Chip.Group uses role="listbox" with aria-multiselectable',
+      'Chips are buttons and use aria-pressed for selection state',
+      'Chip.Group is a grouping wrapper; add role/aria-label when needed for assistive context',
       'Remove buttons include descriptive aria-label with chip text',
       'Disabled chips are properly excluded from interaction',
     ],
@@ -97,6 +98,8 @@ export default defineFragment({
       'icon/avatar: ReactNode - leading visual',
       'onRemove: () => void - makes chip removable',
       'value: string - identifier for Chip.Group',
+      'Chip.Group forwards DOM props (id, role, aria-*, data-*, handlers)',
+      'Chip.Group: non-string chip labels should set an explicit value',
     ],
     scenarioTags: [
       'actions.filter',
@@ -163,6 +166,20 @@ export default defineFragment({
           <Chip value="vue">Vue</Chip>
           <Chip value="angular">Angular</Chip>
           <Chip value="svelte">Svelte</Chip>
+        </Chip.Group>
+      ),
+    },
+    {
+      name: 'Chip Group with Custom Labels',
+      description: 'Use explicit values when chip labels are custom JSX',
+      render: () => (
+        <Chip.Group aria-label="Assignees">
+          <Chip value="jane">
+            <span>Jane Doe</span>
+          </Chip>
+          <Chip value="sam">
+            <span>Sam Lee</span>
+          </Chip>
         </Chip.Group>
       ),
     },

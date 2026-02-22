@@ -3,7 +3,7 @@
 import * as React from 'react';
 import styles from './Image.module.scss';
 
-export interface ImageProps {
+export interface ImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Image source URL */
   src: string;
   /** Alt text for accessibility */
@@ -24,6 +24,15 @@ export interface ImageProps {
   className?: string;
   /** Inline styles */
   style?: React.CSSProperties;
+  /** Additional props for the underlying img element */
+  imgProps?: Omit<
+    React.ImgHTMLAttributes<HTMLImageElement>,
+    'src' | 'alt' | 'width' | 'height' | 'className' | 'style' | 'onLoad' | 'onError'
+  >;
+  /** Called when the image finishes loading */
+  onImageLoad?: React.ReactEventHandler<HTMLImageElement>;
+  /** Called when the image fails to load */
+  onImageError?: React.ReactEventHandler<HTMLImageElement>;
 }
 
 const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
@@ -39,6 +48,10 @@ const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
       fallback,
       className,
       style,
+      imgProps,
+      onImageLoad,
+      onImageError,
+      ...htmlProps
     },
     ref
   ) {
@@ -53,8 +66,14 @@ const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
       }
     }, [src]);
 
-    const handleLoad = () => setStatus('loaded');
-    const handleError = () => setStatus('error');
+    const handleLoad: React.ReactEventHandler<HTMLImageElement> = (event) => {
+      setStatus('loaded');
+      onImageLoad?.(event);
+    };
+    const handleError: React.ReactEventHandler<HTMLImageElement> = (event) => {
+      setStatus('error');
+      onImageError?.(event);
+    };
 
     const classes = [
       styles.imageContainer,
@@ -79,7 +98,7 @@ const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
     };
 
     return (
-      <div ref={ref} className={classes} style={containerStyle}>
+      <div ref={ref} {...htmlProps} className={classes} style={containerStyle}>
         {status === 'error' && fallback ? (
           <div className={styles.fallback}>{fallback}</div>
         ) : (
@@ -89,6 +108,7 @@ const ImageRoot = React.forwardRef<HTMLDivElement, ImageProps>(
             )}
             <img
               ref={imgRef}
+              {...imgProps}
               src={src}
               alt={alt}
               className={imgClasses}

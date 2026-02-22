@@ -36,6 +36,8 @@ export interface TooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   defaultOpen?: boolean;
   /** Callback when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Explicit props for the tooltip popup element (preferred over top-level HTMLAttributes for clarity) */
+  contentProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 export interface TooltipProviderProps {
@@ -81,7 +83,9 @@ function TooltipRoot({
   open,
   defaultOpen,
   onOpenChange,
+  contentProps,
   className,
+  style,
   ...htmlProps
 }: TooltipProps) {
   const hasExternalProvider = React.useContext(TooltipProviderContext);
@@ -113,6 +117,12 @@ function TooltipRoot({
     return children;
   }
 
+  const {
+    className: contentClassName,
+    style: contentStyle,
+    ...contentHtmlProps
+  } = contentProps ?? {};
+
   const tooltipNode = (
     <BaseTooltip.Root
       open={open}
@@ -127,7 +137,12 @@ function TooltipRoot({
           sideOffset={sideOffset}
           className={styles.positioner}
         >
-          <BaseTooltip.Popup {...htmlProps} className={[styles.popup, className].filter(Boolean).join(' ')}>
+          <BaseTooltip.Popup
+            {...htmlProps}
+            {...contentHtmlProps}
+            className={[styles.popup, className, contentClassName].filter(Boolean).join(' ')}
+            style={{ ...(style ?? {}), ...(contentStyle ?? {}) }}
+          >
             {content}
             {arrow && <BaseTooltip.Arrow className={styles.arrow} />}
           </BaseTooltip.Popup>

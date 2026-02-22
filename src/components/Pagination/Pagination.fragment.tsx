@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Pagination } from '.';
 
 export default defineFragment({
@@ -32,6 +32,8 @@ export default defineFragment({
       'Use edgeCount to always show first/last pages',
       'Use siblingCount to control how many pages surround the current page',
       'Pair with Table component for data table pagination',
+      'Pagination forwards standard nav props (id, aria-*, data-*, event handlers) to the root <nav>',
+      'Previous/Next/Item buttons compose your onClick handlers; call event.preventDefault() to stop the page change',
     ],
     accessibility: [
       'Uses nav element with aria-label="Pagination"',
@@ -85,6 +87,7 @@ export default defineFragment({
       'onPageChange: (page) => void - page change handler',
       'edgeCount: number - pages at edges (default: 1)',
       'siblingCount: number - pages around current (default: 1)',
+      'Forwards standard HTML nav attributes to the root element',
     ],
     scenarioTags: [
       'navigation.pagination',

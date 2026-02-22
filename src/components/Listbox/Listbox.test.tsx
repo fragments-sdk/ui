@@ -58,6 +58,20 @@ describe('Listbox', () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
+  it('passes the click event object to Listbox.Item onClick', async () => {
+    const user = userEvent.setup();
+    const handleClick = vi.fn();
+    render(
+      <Listbox aria-label="Fruits">
+        <Listbox.Item onClick={handleClick}>Apple</Listbox.Item>
+      </Listbox>
+    );
+
+    await user.click(screen.getByRole('option'));
+    expect(handleClick.mock.calls[0]?.[0]).toBeTruthy();
+    expect(handleClick.mock.calls[0]?.[0]).toEqual(expect.objectContaining({ type: 'click' }));
+  });
+
   it('does not call onClick on disabled items', async () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();

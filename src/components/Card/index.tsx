@@ -11,7 +11,7 @@ import styles from './Card.module.scss';
  * Card container for grouping related content.
  * @see https://usefragments.com/components/card
  */
-export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'> {
+export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
   /** Visual style variant. `"outline"` is an alias for `"outlined"`.
    * @default "default"
@@ -20,8 +20,9 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'o
   /** Inner padding.
    * @default "md" */
   padding?: 'none' | 'sm' | 'md' | 'lg';
-  /** Makes the card interactive (clickable) */
-  onClick?: () => void;
+  /** Root element tag.
+   * @default "article" */
+  as?: 'article' | 'div' | 'section';
 }
 
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -56,14 +57,6 @@ interface CardContextValue {
 
 const CardContext = React.createContext<CardContextValue | null>(null);
 
-function useCardContext() {
-  const context = React.useContext(CardContext);
-  if (!context) {
-    throw new Error('Card compound components must be used within a Card');
-  }
-  return context;
-}
-
 // ============================================
 // Padding Map
 // ============================================
@@ -83,17 +76,15 @@ function CardRoot({
   children,
   variant: variantProp = 'default',
   padding = 'md',
-  onClick,
+  as: Component = 'article',
   className,
   style,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedBy,
   ...htmlProps
 }: CardProps) {
   // Resolve alias: "outline" → "outlined"
   const variant = variantProp === 'outline' ? 'outlined' : variantProp;
 
-  const isInteractive = !!onClick;
+  const isInteractive = typeof htmlProps.onClick === 'function';
 
   const classes = [
     styles.card,
@@ -111,35 +102,15 @@ function CardRoot({
     isInteractive,
   };
 
-  if (isInteractive) {
-    return (
-      <CardContext.Provider value={contextValue}>
-        <button
-          type="button"
-          {...(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>)}
-          onClick={onClick}
-          className={classes}
-          style={style}
-          aria-label={ariaLabel}
-          aria-describedby={ariaDescribedBy}
-        >
-          {children}
-        </button>
-      </CardContext.Provider>
-    );
-  }
-
   return (
     <CardContext.Provider value={contextValue}>
-      <article
+      <Component
         {...htmlProps}
         className={classes}
         style={style}
-        aria-label={ariaLabel}
-        aria-describedby={ariaDescribedBy}
       >
         {children}
-      </article>
+      </Component>
     </CardContext.Provider>
   );
 }
@@ -189,5 +160,4 @@ export {
   CardDescription,
   CardBody,
   CardFooter,
-  useCardContext,
 };

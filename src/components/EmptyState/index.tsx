@@ -12,24 +12,20 @@ export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export interface EmptyStateIconProps {
+export interface EmptyStateIconProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface EmptyStateTitleProps {
+export interface EmptyStateTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface EmptyStateDescriptionProps {
+export interface EmptyStateDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface EmptyStateActionsProps {
+export interface EmptyStateActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
 // ============================================
@@ -73,24 +69,28 @@ function EmptyStateRoot({
   );
 }
 
-function EmptyStateIcon({ children, className }: EmptyStateIconProps) {
+function EmptyStateIcon({ children, className, ...htmlProps }: EmptyStateIconProps) {
   const classes = [styles.icon, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function EmptyStateTitle({ children, className }: EmptyStateTitleProps) {
+function EmptyStateTitle({ children, className, ...htmlProps }: EmptyStateTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <h3 className={classes}>{children}</h3>;
+  return <h3 {...htmlProps} className={classes}>{children}</h3>;
 }
 
-function EmptyStateDescription({ children, className }: EmptyStateDescriptionProps) {
+function EmptyStateDescription({
+  children,
+  className,
+  ...htmlProps
+}: EmptyStateDescriptionProps) {
   const classes = [styles.description, className].filter(Boolean).join(' ');
-  return <p className={classes}>{children}</p>;
+  return <p {...htmlProps} className={classes}>{children}</p>;
 }
 
-function EmptyStateActions({ children, className }: EmptyStateActionsProps) {
+function EmptyStateActions({ children, className, ...htmlProps }: EmptyStateActionsProps) {
   const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
 // ============================================

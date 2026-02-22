@@ -28,6 +28,11 @@ export interface ToastData {
   };
 }
 
+export interface ToastInput extends Omit<ToastData, 'id'> {
+  /** Optional explicit id (useful for deterministic tests / replacing a known toast) */
+  id?: string;
+}
+
 export interface ToastProps extends Omit<ToastData, 'id'>, Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Callback when toast should be dismissed */
   onDismiss?: () => void;
@@ -50,7 +55,7 @@ export interface ToastProviderProps {
 
 interface ToastContextValue {
   toasts: ToastData[];
-  addToast: (toast: Omit<ToastData, 'id'>) => string;
+  addToast: (toast: ToastInput) => string;
   removeToast: (id: string) => void;
   clearToasts: () => void;
 }
@@ -67,25 +72,25 @@ export function useToast() {
     throw new Error('useToast must be used within a ToastProvider');
   }
 
-  const toast = React.useCallback((options: Omit<ToastData, 'id'>) => {
+  const toast = React.useCallback((options: ToastInput) => {
     return context.addToast(options);
   }, [context]);
 
-  const success = React.useCallback((title: string, description?: string) => {
-    return context.addToast({ title, description, variant: 'success' });
-  }, [context]);
+  const makeVariantHelper = React.useCallback(
+    (variant: ToastVariant) =>
+      (titleOrOptions: string | Omit<ToastInput, 'variant'>, description?: string) => {
+        if (typeof titleOrOptions === 'string') {
+          return context.addToast({ title: titleOrOptions, description, variant });
+        }
+        return context.addToast({ ...titleOrOptions, variant });
+      },
+    [context]
+  );
 
-  const error = React.useCallback((title: string, description?: string) => {
-    return context.addToast({ title, description, variant: 'error' });
-  }, [context]);
-
-  const warning = React.useCallback((title: string, description?: string) => {
-    return context.addToast({ title, description, variant: 'warning' });
-  }, [context]);
-
-  const info = React.useCallback((title: string, description?: string) => {
-    return context.addToast({ title, description, variant: 'info' });
-  }, [context]);
+  const success = React.useMemo(() => makeVariantHelper('success'), [makeVariantHelper]);
+  const error = React.useMemo(() => makeVariantHelper('error'), [makeVariantHelper]);
+  const warning = React.useMemo(() => makeVariantHelper('warning'), [makeVariantHelper]);
+  const info = React.useMemo(() => makeVariantHelper('info'), [makeVariantHelper]);
 
   return {
     toast,
@@ -292,8 +297,6 @@ function ToastContainer({
 // Toast Provider
 // ============================================
 
-let toastCounter = 0;
-
 export function ToastProvider({
   position = 'bottom-right',
   duration = 8000,
@@ -301,6 +304,7 @@ export function ToastProvider({
   children,
 }: ToastProviderProps) {
   const [toasts, setToasts] = React.useState<ToastData[]>([]);
+  const idCounterRef = React.useRef(0);
   const timeoutRef = React.useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const remainingRef = React.useRef(new Map<string, number>());
   const startTimeRef = React.useRef(new Map<string, number>());
@@ -332,8 +336,8 @@ export function ToastProvider({
     [clearRemovalTimer]
   );
 
-  const addToast = React.useCallback((toast: Omit<ToastData, 'id'>) => {
-    const id = `toast-${++toastCounter}`;
+  const addToast = React.useCallback((toast: ToastInput) => {
+    const id = toast.id ?? `toast-${++idCounterRef.current}`;
     const toastDuration = toast.duration ?? (toast.action ? 0 : duration);
 
     setToasts((prev) => {

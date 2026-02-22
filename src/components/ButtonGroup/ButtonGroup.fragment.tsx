@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { ButtonGroup } from '.';
 import { Button } from '../Button';
 
@@ -32,6 +32,7 @@ export default defineFragment({
       'Use consistent button variants within a group',
       'Consider visual hierarchy - primary action should stand out',
       'Limit to 2-4 buttons per group for clarity',
+      'Pass role/aria-label/id/data-* directly to ButtonGroup when you need semantic grouping hooks',
     ],
     accessibility: [
       'Group provides semantic relationship between buttons',
@@ -75,6 +76,7 @@ export default defineFragment({
       'gap: none|xs|sm|md - spacing between buttons',
       'wrap: boolean - allow wrapping',
       'align: start|center|end - alignment',
+      'Pass-through DOM props supported on root (id, role, aria-*, data-*, handlers)',
     ],
     scenarioTags: [
       'layout.group',
@@ -143,7 +145,7 @@ export default defineFragment({
       name: 'Form Actions',
       description: 'Common pattern for form submit/cancel',
       render: () => (
-        <ButtonGroup align="end">
+        <ButtonGroup align="end" role="group" aria-label="Form actions">
           <Button variant="ghost">Cancel</Button>
           <Button variant="primary">Submit</Button>
         </ButtonGroup>

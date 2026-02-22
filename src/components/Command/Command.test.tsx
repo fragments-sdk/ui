@@ -197,6 +197,23 @@ describe('Command', () => {
     expect(onItemSelect).toHaveBeenCalledTimes(1);
   });
 
+  it('passes selected value and event to onItemSelect', async () => {
+    const user = userEvent.setup();
+    const onItemSelect = vi.fn();
+
+    render(
+      <Command>
+        <Command.Input placeholder="Search..." />
+        <Command.List>
+          <Command.Item onItemSelect={onItemSelect}>Click Me</Command.Item>
+        </Command.List>
+      </Command>
+    );
+
+    await user.click(screen.getByText('Click Me'));
+    expect(onItemSelect).toHaveBeenCalledWith('Click Me', expect.any(Object));
+  });
+
   it('disabled items are skipped in keyboard nav', async () => {
     const user = userEvent.setup();
     render(

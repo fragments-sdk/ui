@@ -50,7 +50,7 @@ export interface DatePickerProps {
   name?: string;
 }
 
-export interface DatePickerTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
+export interface DatePickerTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   placeholder?: string;
 }
@@ -430,7 +430,13 @@ function DatePickerRoot({
   );
 }
 
-function DatePickerTrigger({ children, placeholder, className, ...htmlProps }: DatePickerTriggerProps) {
+function DatePickerTrigger({
+  children,
+  placeholder,
+  className,
+  type = 'button',
+  ...htmlProps
+}: DatePickerTriggerProps) {
   const ctx = useDatePickerContext();
   const placeholderText = placeholder ?? ctx.placeholder;
 
@@ -446,6 +452,7 @@ function DatePickerTrigger({ children, placeholder, className, ...htmlProps }: D
   return (
     <BasePopover.Trigger
       {...htmlProps}
+      type={type}
       className={classes}
       disabled={ctx.disabled}
     >

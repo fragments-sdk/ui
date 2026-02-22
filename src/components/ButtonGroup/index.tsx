@@ -1,12 +1,11 @@
 import * as React from 'react';
 import styles from './ButtonGroup.module.scss';
 
-export interface ButtonGroupProps {
+export interface ButtonGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactNode;
   gap?: 'none' | 'xs' | 'sm' | 'md';
   wrap?: boolean;
   align?: 'start' | 'center' | 'end';
-  className?: string;
 }
 
 const ButtonGroupRoot = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
@@ -17,6 +16,7 @@ const ButtonGroupRoot = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
       wrap = false,
       align,
       className,
+      ...htmlProps
     },
     ref
   ) {
@@ -31,7 +31,7 @@ const ButtonGroupRoot = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
       .join(' ');
 
     return (
-      <div ref={ref} className={classes}>
+      <div ref={ref} {...htmlProps} className={classes}>
         {children}
       </div>
     );

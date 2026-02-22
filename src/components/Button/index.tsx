@@ -74,7 +74,9 @@ const ButtonRoot = React.forwardRef<
 
   // asChild: merge button styling onto child element (e.g. Next.js Link)
   if (asChild && React.isValidElement(children)) {
+    const { as: _as, ...childProps } = rest as ButtonProps & { as?: 'a' | 'button' };
     return React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+      ...childProps,
       className: [classNames, (children.props as Record<string, unknown>).className].filter(Boolean).join(' '),
       ref,
     });

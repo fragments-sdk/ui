@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
 import { Header } from './index';
 
@@ -58,6 +58,28 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Contact' })).not.toHaveAttribute('aria-current');
   });
 
+  it('composes Header.NavItem asChild click handlers and forwards extra props', async () => {
+    const user = userEvent.setup();
+    const parentClick = vi.fn();
+    const childClick = vi.fn();
+
+    render(
+      <Header>
+        <Header.Nav aria-label="Main">
+          <Header.NavItem asChild onClick={parentClick} data-testid="nav-item-link">
+            <a href="/docs" onClick={childClick}>Docs</a>
+          </Header.NavItem>
+        </Header.Nav>
+      </Header>
+    );
+
+    const link = screen.getByRole('link', { name: 'Docs' });
+    expect(link).toHaveAttribute('data-testid', 'nav-item-link');
+    await user.click(link);
+    expect(childClick).toHaveBeenCalled();
+    expect(parentClick).toHaveBeenCalled();
+  });
+
   it('renders Actions slot', () => {
     render(
       <Header>
@@ -67,6 +89,37 @@ describe('Header', () => {
       </Header>
     );
     expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
+  });
+
+  it('Header.Trigger composes onClick and forwards button props', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    const originalMatchMedia = window.matchMedia;
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation(() => ({
+        matches: true,
+        media: '(max-width: 767px)',
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+
+    render(
+      <Header>
+        <Header.Trigger data-testid="header-trigger" onClick={onClick} />
+      </Header>
+    );
+
+    const trigger = await screen.findByTestId('header-trigger');
+    await user.click(trigger);
+    expect(onClick).toHaveBeenCalled();
+
+    Object.defineProperty(window, 'matchMedia', { writable: true, value: originalMatchMedia });
   });
 
   it('has no accessibility violations', async () => {

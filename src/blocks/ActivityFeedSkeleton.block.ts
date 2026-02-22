@@ -1,4 +1,4 @@
-import { defineBlock } from '@fragments-sdk/cli/core';
+import { defineBlock } from '@fragments-sdk/core';
 
 export default defineBlock({
   name: 'Activity Feed Skeleton',

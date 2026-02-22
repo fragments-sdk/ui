@@ -8,7 +8,10 @@ import styles from './Input.module.scss';
  * Text input field with label, helper text, and validation.
  * @see https://usefragments.com/components/input
  */
-export interface InputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onBlur' | 'onFocus' | 'onKeyDown' | 'defaultValue'> {
+export interface InputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'onChange' | 'onBlur' | 'onFocus' | 'onKeyDown' | 'className' | 'style'
+> {
   /** Controlled input value */
   value?: string;
   /** Default value for uncontrolled usage */
@@ -29,17 +32,31 @@ export interface InputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   label?: string;
   /** Helper text shown below the input */
   helperText?: string;
-  /** Keyboard shortcut hint displayed inside the input (e.g., "⌘K"). Also registers a global keydown listener that focuses the input when the shortcut is pressed. */
+  /** Keyboard shortcut hint displayed inside the input (e.g., "⌘K"). */
   shortcut?: string;
+  /** Whether the shortcut should also register a global focus hotkey.
+   * @default "display-only" */
+  shortcutBehavior?: 'display-only' | 'focus-input';
+  /** Called when value changes (string value) */
   onChange?: (value: string) => void;
+  /** Alias for onChange (value-first callback) */
+  onValueChange?: (value: string) => void;
   onBlur?: () => void;
   onFocus?: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  /** Props applied to the wrapper element */
+  rootProps?: React.HTMLAttributes<HTMLDivElement>;
   /** Styles applied directly to the input element */
   inputStyle?: React.CSSProperties;
   /** Class applied directly to the input element */
   inputClassName?: string;
-  name?: string;
+  /** Whether to render the Base UI Field wrapper (label/description/invalid wiring)
+   * @default true */
+  withFieldWrapper?: boolean;
+  /** Wrapper class name */
+  className?: string;
+  /** Wrapper styles */
+  style?: React.CSSProperties;
 }
 
 function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
@@ -74,25 +91,32 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       label,
       helperText,
       shortcut,
+      shortcutBehavior = 'display-only',
       onChange,
+      onValueChange,
       onBlur,
       onFocus,
       onKeyDown,
+      rootProps,
       className,
       style,
       inputStyle,
       inputClassName,
-      name,
-      id,
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledBy,
-      'aria-describedby': ariaDescribedBy,
-      ...htmlProps
+      withFieldWrapper = true,
+      ...inputProps
     },
     ref
   ) {
     const generatedId = React.useId();
     const helperId = helperText ? `input-helper-${generatedId}` : undefined;
+    const {
+      id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
+      ...nativeInputProps
+    } = inputProps;
+    const resolvedInputId = id ?? `input-${generatedId}`;
 
     const internalRef = React.useRef<HTMLInputElement>(null);
     const mergedRef = React.useCallback(
@@ -110,6 +134,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
     // Register global keydown handler when shortcut is provided
     React.useEffect(() => {
       if (!shortcut) return;
+      if (shortcutBehavior !== 'focus-input') return;
       const parsed = parseShortcut(shortcut);
       if (!parsed) return;
 
@@ -123,7 +148,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       };
       document.addEventListener('keydown', handler);
       return () => document.removeEventListener('keydown', handler);
-    }, [shortcut]);
+    }, [shortcut, shortcutBehavior]);
 
     const inputClasses = [
       styles.input,
@@ -142,41 +167,82 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
     const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
     const labelClasses = [styles.label, size === 'sm' && styles.labelSm].filter(Boolean).join(' ');
 
+    const sharedInputProps = {
+      ...nativeInputProps,
+      ref: mergedRef,
+      id: resolvedInputId,
+      type,
+      value,
+      defaultValue,
+      placeholder,
+      disabled,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange?.(e.target.value);
+        onValueChange?.(e.target.value);
+      },
+      onBlur: () => onBlur?.(),
+      onFocus: () => onFocus?.(),
+      onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown?.(e),
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': mergeAriaIds(ariaDescribedBy, helperId),
+      className: inputClasses,
+      style: inputStyle,
+    } satisfies React.InputHTMLAttributes<HTMLInputElement> & {
+      ref: React.Ref<HTMLInputElement>;
+    };
+
     const inputElement = (
       <Field.Control
-        ref={mergedRef}
-        type={type}
-        value={value}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        name={name}
-        id={id}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          onChange?.(e.target.value)
-        }
-        onBlur={onBlur}
-        onFocus={onFocus}
-        onKeyDown={onKeyDown}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
-        aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
-        className={inputClasses}
-        style={inputStyle}
+        {...sharedInputProps}
         render={<input />}
       />
     );
 
+    const fieldlessInputElement = (
+      <input
+        {...sharedInputProps}
+        aria-invalid={error || undefined}
+      />
+    );
+
+    const content = shortcut ? (
+      <div className={styles.inputContainer}>
+        {withFieldWrapper ? inputElement : fieldlessInputElement}
+        <kbd className={styles.shortcut}>{shortcut}</kbd>
+      </div>
+    ) : (
+      withFieldWrapper ? inputElement : fieldlessInputElement
+    );
+
+    if (!withFieldWrapper) {
+      return (
+        <div
+          {...rootProps}
+          className={[styles.wrapper, rootProps?.className, className].filter(Boolean).join(' ')}
+          style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
+        >
+          {label && <label htmlFor={resolvedInputId} className={labelClasses}>{label}</label>}
+          {content}
+          {helperText && (
+            <div id={helperId} className={helperClasses}>
+              {helperText}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     return (
-      <Field.Root {...htmlProps} disabled={disabled} invalid={error} className={wrapperClasses} style={style}>
+      <Field.Root
+        {...rootProps}
+        disabled={disabled}
+        invalid={error}
+        className={[wrapperClasses, rootProps?.className].filter(Boolean).join(' ')}
+        style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
+      >
         {label && <Field.Label className={labelClasses}>{label}</Field.Label>}
-        {shortcut ? (
-          <div className={styles.inputContainer}>
-            {inputElement}
-            <kbd className={styles.shortcut}>{shortcut}</kbd>
-          </div>
-        ) : (
-          inputElement
-        )}
+        {content}
         {helperText && (
           <Field.Description id={helperId} className={helperClasses}>
             {helperText}

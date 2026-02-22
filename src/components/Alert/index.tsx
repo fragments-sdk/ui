@@ -22,40 +22,33 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   severity?: AlertSeverity;
 }
 
-export interface AlertIconProps {
+export interface AlertIconProps extends React.HTMLAttributes<HTMLSpanElement> {
   children?: React.ReactNode;
-  className?: string;
 }
 
-export interface AlertTitleProps {
+export interface AlertTitleProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface AlertContentProps {
+export interface AlertContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface AlertActionsProps {
+export interface AlertActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface AlertActionProps {
+export interface AlertActionProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   children: React.ReactNode;
-  onClick: () => void;
-  className?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export interface AlertCloseProps {
+export interface AlertCloseProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   children?: React.ReactNode;
-  className?: string;
 }
 
-export interface AlertBodyProps {
+export interface AlertBodyProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
 // ============================================
@@ -77,6 +70,17 @@ function useAlertContext() {
     throw new Error('Alert compound components must be used within an Alert');
   }
   return context;
+}
+
+function composeEventHandlers<E extends { defaultPrevented: boolean }>(
+  userHandler?: (event: E) => void,
+  internalHandler?: (event: E) => void
+) {
+  return (event: E) => {
+    userHandler?.(event);
+    if (event.defaultPrevented) return;
+    internalHandler?.(event);
+  };
 }
 
 // ============================================
@@ -136,64 +140,79 @@ function AlertRoot({
   );
 }
 
-function AlertIcon({ children, className }: AlertIconProps) {
+function AlertIcon({ children, className, ...htmlProps }: AlertIconProps) {
   const { severity } = useAlertContext();
   const classes = [styles.icon, className].filter(Boolean).join(' ');
 
   return (
-    <span className={classes} aria-hidden="true">
+    <span {...htmlProps} className={classes} aria-hidden="true">
       {children ?? severityIcons[severity]}
     </span>
   );
 }
 
-function AlertBody({ children, className }: AlertBodyProps) {
+function AlertBody({ children, className, ...htmlProps }: AlertBodyProps) {
   const classes = [styles.body, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function AlertTitle({ children, className }: AlertTitleProps) {
+function AlertTitle({ children, className, ...htmlProps }: AlertTitleProps) {
   const { titleId } = useAlertContext();
   const classes = [styles.title, className].filter(Boolean).join(' ');
   return (
-    <div id={titleId} className={classes}>
+    <div {...htmlProps} id={htmlProps.id ?? titleId} className={classes}>
       {children}
     </div>
   );
 }
 
-function AlertContent({ children, className }: AlertContentProps) {
+function AlertContent({ children, className, ...htmlProps }: AlertContentProps) {
   const { descId } = useAlertContext();
   const classes = [styles.content, className].filter(Boolean).join(' ');
   return (
-    <div id={descId} className={classes}>
+    <div {...htmlProps} id={htmlProps.id ?? descId} className={classes}>
       {children}
     </div>
   );
 }
 
-function AlertActions({ children, className }: AlertActionsProps) {
+function AlertActions({ children, className, ...htmlProps }: AlertActionsProps) {
   const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
+  return <div {...htmlProps} className={classes}>{children}</div>;
 }
 
-function AlertAction({ children, onClick, className }: AlertActionProps) {
+function AlertAction({
+  children,
+  onClick,
+  type = 'button',
+  className,
+  ...htmlProps
+}: AlertActionProps) {
   const classes = [styles.action, className].filter(Boolean).join(' ');
   return (
-    <BaseButton onClick={onClick} className={classes}>
+    <BaseButton {...htmlProps} onClick={onClick} type={type} className={classes}>
       {children}
     </BaseButton>
   );
 }
 
-function AlertClose({ children, className }: AlertCloseProps) {
+function AlertClose({
+  children,
+  className,
+  onClick,
+  type = 'button',
+  'aria-label': ariaLabel = 'Dismiss alert',
+  ...htmlProps
+}: AlertCloseProps) {
   const { dismiss } = useAlertContext();
   const classes = [styles.close, className].filter(Boolean).join(' ');
 
   return (
     <BaseButton
-      onClick={dismiss}
-      aria-label="Dismiss alert"
+      {...htmlProps}
+      onClick={composeEventHandlers(onClick, dismiss)}
+      type={type}
+      aria-label={ariaLabel}
       className={classes}
     >
       {children ?? '\u00D7'}

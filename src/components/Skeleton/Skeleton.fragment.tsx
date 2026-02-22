@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Skeleton } from '.';
 
 export default defineFragment({
@@ -30,6 +30,7 @@ export default defineFragment({
       'Use semantic variants (text, heading, avatar) for consistency',
       'Maintain similar dimensions to loaded content',
       'Avoid too many skeleton elements - simplify complex layouts',
+      'Skeleton and Skeleton.Text forward DOM props (id, aria-*, data-*, handlers)',
     ],
     accessibility: [
       'Skeletons are decorative - use aria-hidden',
@@ -90,6 +91,7 @@ export default defineFragment({
       'size: sm|md|lg (for avatar/button)',
       'width/height: custom dimensions',
       'fill: boolean - fill parent',
+      'Skeleton / Skeleton.Text forward div DOM props',
     ],
     scenarioTags: [
       'loading.content',

@@ -18,7 +18,7 @@ export interface ListboxItemProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Whether this item is disabled */
   disabled?: boolean;
   /** Click handler */
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export interface ListboxGroupProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -209,6 +209,7 @@ function ListboxItem({
   selected = false,
   disabled = false,
   onClick,
+  onKeyDown,
   onMouseEnter,
   className,
   style,
@@ -234,6 +235,15 @@ function ListboxItem({
     onMouseEnter?.(event);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented || disabled) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.currentTarget.click();
+    }
+  };
+
   return (
     <div
       {...htmlProps}
@@ -243,7 +253,7 @@ function ListboxItem({
       aria-disabled={disabled}
       data-active={context?.activeId === itemId || undefined}
       onClick={disabled ? undefined : onClick}
-      onKeyDown={disabled ? undefined : (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } }}
+      onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
       className={classes}
       style={style}

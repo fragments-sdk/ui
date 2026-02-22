@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Header } from '.';
 import { NavigationMenu } from '../NavigationMenu';
 import { ThemeToggle, ThemeProvider } from '../Theme';
@@ -37,10 +37,13 @@ export default defineFragment({
       'In default layout: include Header.Brand for logo',
       'In sidebar layout: omit Header.Brand (logo in sidebar)',
       'Header.Trigger integrates with SidebarProvider for mobile menus',
+      'Header.Trigger composes your onClick handler with sidebar toggle behavior',
       'Header.Nav is hidden on mobile; use sidebar for mobile navigation',
       'Use Header.Spacer to push items apart',
       'Use Header.NavMenu to group related nav items under a dropdown',
       'Use Header.NavMenuItem inside Header.NavMenu for dropdown items',
+      'Header sub-components forward DOM props (id, aria-*, data-*, handlers) to their rendered elements',
+      'Header.NavItem asChild composes click handlers instead of overwriting the child handler',
       'For rich dropdown content (titles, descriptions, icons), use NavigationMenu instead of Header.Nav',
       'NavigationMenu also provides an automatic mobile drawer, replacing Header.Trigger + Sidebar for mobile nav',
     ],

@@ -36,6 +36,8 @@ export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement>
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   /** Whether to show the backdrop overlay (default: true). Set to false for non-modal bottom panels. */
   backdrop?: boolean;
+  /** Whether to autofocus an element on open (default: true) */
+  initialFocus?: boolean;
 }
 
 export interface DrawerTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -66,6 +68,13 @@ export interface DrawerFooterProps extends React.HTMLAttributes<HTMLDivElement> 
 export interface DrawerCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   asChild?: boolean;
+}
+
+function getAsChildElement(children: React.ReactNode, componentName: string): React.ReactElement {
+  if (!React.isValidElement(children)) {
+    throw new Error(`${componentName} with asChild requires a single valid React element child.`);
+  }
+  return children;
 }
 
 // ============================================
@@ -122,8 +131,9 @@ function DrawerTrigger({
   ...htmlProps
 }: DrawerTriggerProps) {
   if (asChild) {
+    const child = getAsChildElement(children, 'Drawer.Trigger');
     return (
-      <BaseDialog.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
+      <BaseDialog.Trigger {...htmlProps} className={className} render={child}>
         {null}
       </BaseDialog.Trigger>
     );
@@ -141,6 +151,7 @@ function DrawerContent({
   side = 'right',
   size = 'md',
   backdrop = true,
+  initialFocus = true,
   className,
   ...htmlProps
 }: DrawerContentProps) {
@@ -156,7 +167,7 @@ function DrawerContent({
   return (
     <BaseDialog.Portal>
       {backdrop && <BaseDialog.Backdrop className={styles.backdrop} />}
-      <BaseDialog.Popup initialFocus {...htmlProps} data-side={side} className={popupClasses}>
+      <BaseDialog.Popup initialFocus={initialFocus} {...htmlProps} data-side={side} className={popupClasses}>
         {children}
       </BaseDialog.Popup>
     </BaseDialog.Portal>
@@ -207,12 +218,13 @@ function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerClose
   }
 
   if (asChild) {
+    const child = getAsChildElement(children, 'Drawer.Close');
     return (
       <BaseDialog.Close
         {...htmlProps}
         data-drawer-close
         className={className}
-        render={children as React.ReactElement}
+        render={child}
       >
         {null}
       </BaseDialog.Close>

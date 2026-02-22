@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Badge } from '.';
 import { Stack } from '../Stack';
 
@@ -33,6 +33,7 @@ export default defineFragment({
       'Use dot variant for live status indicators',
       'Pair success/error variants with meaningful labels, not just colors',
       'Use onRemove for user-created tags only, not system-generated badges',
+      'Badges are not announced as live status updates by default; use announce for screen-reader status announcements when appropriate',
     ],
     accessibility: [
       'Badge text must be meaningful without relying on color alone',
@@ -72,6 +73,11 @@ export default defineFragment({
       type: 'function',
       description: 'Makes the badge removable. Called when X is clicked.',
     },
+    announce: {
+      type: 'boolean',
+      description: 'Opt into role="status" live announcement semantics',
+      default: 'false',
+    },
   },
 
   relations: [
@@ -86,6 +92,7 @@ export default defineFragment({
       'size: sm|md - badge size',
       'dot: boolean - show status dot indicator',
       'onRemove: () => void - makes badge removable',
+      'announce: boolean - opt into role="status" + auto status aria-label',
     ],
     scenarioTags: [
       'feedback.status',
@@ -146,6 +153,14 @@ import { Stack } from '@/components/Stack';
           <Badge variant="error" dot>Offline</Badge>
         </Stack>
       ),
+    },
+    {
+      name: 'Announced Status',
+      description: 'Opt into screen-reader status announcement behavior',
+      code: `import { Badge } from '@/components/Badge';
+
+<Badge variant="success" announce>Saved</Badge>`,
+      render: () => <Badge variant="success" announce>Saved</Badge>,
     },
     {
       name: 'Outline',

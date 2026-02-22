@@ -32,6 +32,12 @@ describe('Markdown', () => {
     expect(container.firstElementChild).toHaveClass('markdown');
   });
 
+  it('forwards root DOM props to the wrapper', () => {
+    render(<Markdown content="test" id="md-root" data-testid="markdown" />);
+    const root = screen.getByTestId('markdown');
+    expect(root).toHaveAttribute('id', 'md-root');
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <Markdown content={'# Hello\n\nSome paragraph text.\n\nAnother paragraph.'} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineFragment } from '@fragments-sdk/cli/core';
+import { defineFragment } from '@fragments-sdk/core';
 import { Textarea } from '.';
 
 export default defineFragment({
@@ -88,6 +88,18 @@ export default defineFragment({
       type: 'number',
       description: 'Maximum character length',
     },
+    onChange: {
+      type: 'function',
+      description: 'Called when the textarea value changes',
+    },
+    onValueChange: {
+      type: 'function',
+      description: 'Value-first change callback alias: (value: string) => void',
+    },
+    rootProps: {
+      type: 'object',
+      description: 'HTML attributes applied to the wrapper element',
+    },
   },
 
   relations: [
@@ -106,6 +118,9 @@ export default defineFragment({
       'error: boolean - error state',
       'disabled: boolean - disabled state',
       'resize: none|vertical|horizontal|both',
+      'onValueChange: (value: string) => void - value-first change callback alias',
+      'rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props',
+      '...native textarea attributes are supported (readOnly, autoComplete, maxLength, onKeyDown, etc.)',
     ],
     scenarioTags: [
       'form.textarea',
@@ -172,6 +187,17 @@ export default defineFragment({
           label="Long Description"
           placeholder="Enter detailed information..."
           rows={6}
+        />
+      ),
+    },
+    {
+      name: 'With Root Props',
+      description: 'Pass wrapper attributes/styling via rootProps',
+      render: () => (
+        <Textarea
+          label="Notes"
+          placeholder="Add notes..."
+          rootProps={{ 'data-demo': 'textarea-wrapper' }}
         />
       ),
     },
