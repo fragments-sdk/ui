@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent, expectNoA11yViolations, act } from '../../test/utils';
 import { Editor } from './index';
@@ -11,6 +12,7 @@ function renderEditor(
     defaultValue?: string;
     onValueChange?: (v: string) => void;
     formats?: ('bold' | 'italic' | 'strikethrough' | 'link' | 'code' | 'bulletList')[];
+    toolbarIcons?: Partial<Record<'bold' | 'italic' | 'strikethrough' | 'link' | 'code' | 'bulletList', ReactNode>>;
   } = {},
 ) {
   return render(
@@ -21,6 +23,7 @@ function renderEditor(
       readOnly={props.readOnly}
       defaultValue={props.defaultValue}
       formats={props.formats}
+      toolbarIcons={props.toolbarIcons}
     >
       <Editor.Toolbar>
         <Editor.ToolbarGroup aria-label="Text formatting">
@@ -69,6 +72,17 @@ describe('Editor', () => {
     expect(screen.getByRole('button', { name: /bold/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /italic/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /code/i })).toBeInTheDocument();
+  });
+
+  it('renders custom toolbar icons from toolbarIcons', () => {
+    renderEditor({
+      formats: ['bold'],
+      toolbarIcons: {
+        bold: <span data-testid="custom-bold-icon" aria-hidden="true">B*</span>,
+      },
+    });
+    expect(screen.getByRole('button', { name: /bold/i })).toBeInTheDocument();
+    expect(screen.getByTestId('custom-bold-icon')).toBeInTheDocument();
   });
 
   it('renders toolbar with proper ARIA role', () => {
@@ -120,6 +134,28 @@ describe('Editor', () => {
     renderEditor({ formats: ['bold'] });
     const boldBtn = screen.getByRole('button', { name: /bold/i });
     expect(boldBtn).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('supports state-aware toolbar icon render functions', () => {
+    render(
+      <Editor
+        formats={['bold']}
+        toolbarIcons={{
+          bold: ({ active, isDisabled }) => (
+            <span
+              data-testid="bold-icon-state"
+              data-active={String(active)}
+              data-disabled={String(isDisabled)}
+              aria-hidden="true"
+            />
+          ),
+        }}
+      />
+    );
+
+    const icon = screen.getByTestId('bold-icon-state');
+    expect(icon).toHaveAttribute('data-active', 'false');
+    expect(icon).toHaveAttribute('data-disabled', 'false');
   });
 
   it('disables toolbar buttons when editor is disabled', () => {

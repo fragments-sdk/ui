@@ -105,8 +105,10 @@
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  padding: 2px 6px;
+  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
+  padding:
+    calc(var(--fui-space-px, $fui-space-px) * 2)
+    calc(var(--fui-space-px, $fui-space-px) * 6);
   font-size: var(--fui-font-size-xs, 0.75rem);
   font-family: var(--fui-font-mono, ui-monospace, monospace);
   color: var(--fui-text-secondary);

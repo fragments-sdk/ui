@@ -64,7 +64,7 @@
     margin: 0;
 
     & + p {
-      margin-top: 1.5rem;
+      margin-top: var(--fui-space-3, $fui-space-3);
     }
   }
 
@@ -125,7 +125,7 @@
 
   pre {
     margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-padding-inline-sm);
+    padding: var(--fui-space-2);
     border-radius: var(--fui-radius-md, $fui-radius-md);
     background-color: var(--fui-code-bg, $fui-code-bg);
     overflow-x: auto;
@@ -139,7 +139,7 @@
 
   // Only target the immediate parent wrapper of a <pre> block
   div:has(> div > div > pre) {
-    margin: 1.5rem 0;
+    margin: var(--fui-space-3, $fui-space-3) 0;
   }
 
   // ----------------------------------------
@@ -148,7 +148,7 @@
 
   blockquote {
     margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-padding-item-xs) var(--fui-padding-item-md);
+    padding: var(--fui-space-1) var(--fui-space-3);
     border-left: 3px solid var(--fui-border, $fui-border);
     color: var(--fui-text-secondary, $fui-text-secondary);
 
@@ -180,7 +180,7 @@
 
   th,
   td {
-    padding: var(--fui-padding-item-xs) var(--fui-padding-item-sm);
+    padding: var(--fui-space-1) var(--fui-space-2);
     border: 1px solid var(--fui-border, $fui-border);
     text-align: left;
   }

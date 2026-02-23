@@ -24,6 +24,8 @@ export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   max?: number;
   step?: number;
   showValue?: boolean;
+  /** Show a value bubble above the thumb while dragging */
+  showValueOnDrag?: boolean;
   valueSuffix?: string;
   disabled?: boolean;
   name?: string;
@@ -47,6 +49,7 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
       max = 100,
       step = 1,
       showValue = false,
+      showValueOnDrag = false,
       valueSuffix = '',
       disabled = false,
       className,
@@ -61,6 +64,7 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
   ) {
     // For controlled component, use value; otherwise track internal state for display
     const [internalValue, setInternalValue] = React.useState(defaultValue ?? min);
+    const [isDragging, setIsDragging] = React.useState(false);
     const displayValue = value !== undefined ? value : internalValue;
 
     const resolvedOnChange = onChange ?? onValueChange;
@@ -69,6 +73,31 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
       setInternalValue(val);
       resolvedOnChange?.(val);
     };
+
+    const handleDragStart = () => {
+      if (!disabled && showValueOnDrag) {
+        setIsDragging(true);
+      }
+    };
+
+    React.useEffect(() => {
+      if (!isDragging) return;
+
+      const handlePointerEnd = () => setIsDragging(false);
+      window.addEventListener('pointerup', handlePointerEnd);
+      window.addEventListener('pointercancel', handlePointerEnd);
+
+      return () => {
+        window.removeEventListener('pointerup', handlePointerEnd);
+        window.removeEventListener('pointercancel', handlePointerEnd);
+      };
+    }, [isDragging]);
+
+    React.useEffect(() => {
+      if (disabled && isDragging) {
+        setIsDragging(false);
+      }
+    }, [disabled, isDragging]);
 
     return (
       <Field.Root {...htmlProps} disabled={disabled} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
@@ -97,11 +126,21 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
           aria-labelledby={ariaLabelledBy}
           aria-describedby={ariaDescribedBy}
           className={styles.root}
+          onPointerDownCapture={handleDragStart}
         >
           <BaseSlider.Control className={styles.control}>
             <BaseSlider.Track className={styles.track}>
               <BaseSlider.Indicator className={styles.indicator} />
-              <BaseSlider.Thumb className={styles.thumb} />
+              <BaseSlider.Thumb
+                className={styles.thumb}
+              >
+                {showValueOnDrag && isDragging && (
+                  <span className={styles.dragValueBubble} aria-hidden="true">
+                    {displayValue}
+                    {valueSuffix}
+                  </span>
+                )}
+              </BaseSlider.Thumb>
             </BaseSlider.Track>
           </BaseSlider.Control>
         </BaseSlider.Root>

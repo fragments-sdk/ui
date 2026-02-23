@@ -359,7 +359,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-primary, $fui-text-primary);

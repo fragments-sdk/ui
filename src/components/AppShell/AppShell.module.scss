@@ -173,22 +173,22 @@
 
 // Padding variants
 .paddingSm {
-  padding: var(--fui-padding-container-sm);
+  padding: var(--fui-space-3);
 }
 
 .paddingMd {
-  padding: var(--fui-padding-container-md);
+  padding: var(--fui-space-4);
 
   @include breakpoint-md {
-    padding: var(--fui-padding-container-lg);
+    padding: var(--fui-space-6);
   }
 }
 
 .paddingLg {
-  padding: var(--fui-padding-container-lg);
+  padding: var(--fui-space-6);
 
   @include breakpoint-md {
-    padding: var(--fui-padding-container-xl);
+    padding: var(--fui-space-8);
   }
 }
 

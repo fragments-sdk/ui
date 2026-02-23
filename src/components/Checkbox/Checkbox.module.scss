@@ -1,11 +1,11 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Wrapper for checkbox + label
 .wrapper {
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-1, $fui-space-1);
   cursor: pointer;
   font-family: var(--fui-font-sans, $fui-font-sans);
 

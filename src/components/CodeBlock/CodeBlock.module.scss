@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--fui-padding-container-sm);
+  padding: 0 var(--fui-space-3);
   background-color: var(--fui-code-header-bg, $fui-code-header-bg);
   border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
   min-height: var(--fui-input-height, $fui-input-height);
@@ -90,7 +90,7 @@
   .codeContainer :global(.shiki),
   .loading pre {
     padding-right: calc(
-      var(--fui-padding-container-md, #{$fui-padding-container-md}) +
+      var(--fui-space-4, #{$fui-space-4}) +
         var(--fui-target-size-min, #{$fui-target-size-min}) + var(--fui-space-3, #{$fui-space-3})
     );
   }
@@ -108,8 +108,8 @@
 .loading {
   pre {
     margin: 0;
-    padding: var(--fui-padding-container-sm);
-    padding-right: var(--fui-padding-container-sm);
+    padding: var(--fui-space-3);
+    padding-right: var(--fui-space-3);
     background-color: transparent !important;
     border: none !important;
     border-radius: 0 !important;
@@ -135,8 +135,8 @@
   :global(.shiki) {
     background-color: transparent !important;
     margin: 0;
-    padding: var(--fui-padding-container-sm);
-    padding-right: var(--fui-padding-container-sm);
+    padding: var(--fui-space-3);
+    padding-right: var(--fui-space-3);
     border: none !important;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
@@ -252,7 +252,7 @@
 
   .codeContainer :global(.shiki),
   .loading pre {
-    padding: var(--fui-padding-inline-sm) var(--fui-padding-container-sm);
+    padding: var(--fui-space-2) var(--fui-space-3);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
     line-height: 1.5;
   }
@@ -261,7 +261,7 @@
     .codeContainer :global(.shiki),
     .loading pre {
       padding-right: calc(
-        var(--fui-padding-container-sm, #{$fui-padding-container-sm}) +
+        var(--fui-space-3, #{$fui-space-3}) +
           var(--fui-target-size-min, #{$fui-target-size-min}) + var(--fui-space-3, #{$fui-space-3})
       );
     }
@@ -298,7 +298,7 @@
   justify-content: center;
   gap: var(--fui-space-1, $fui-space-1);
   width: 100%;
-  padding: 0 var(--fui-padding-inline-sm);
+  padding: 0 var(--fui-space-2);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   font-family: var(--fui-font-sans, $fui-font-sans);

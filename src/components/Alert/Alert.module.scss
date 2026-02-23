@@ -5,7 +5,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-inline-sm, $fui-padding-inline-sm) var(--fui-padding-inline-md, $fui-padding-inline-md);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   font-family: var(--fui-font-sans, $fui-font-sans);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);

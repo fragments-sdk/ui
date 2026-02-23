@@ -13,6 +13,19 @@ export interface NavigationMenuItemInfo {
   linkHref?: string;
 }
 
+export interface NavigationMenuIconRenderState {
+  slot: 'triggerChevron' | 'mobileMenu' | 'mobileClose' | 'drawerClose';
+  open?: boolean;
+  isMobile?: boolean;
+}
+
+export type NavigationMenuIconSlot =
+  | React.ReactNode
+  | ((state: NavigationMenuIconRenderState) => React.ReactNode);
+
+export type NavigationMenuIcons =
+  Partial<Record<NavigationMenuIconRenderState['slot'], NavigationMenuIconSlot>>;
+
 // ============================================
 // Root Context
 // ============================================
@@ -61,6 +74,7 @@ export interface NavigationMenuContextValue {
 
   // Root nav id
   rootId: string;
+  icons?: NavigationMenuIcons;
 }
 
 export const NavigationMenuContext = React.createContext<NavigationMenuContextValue | null>(null);

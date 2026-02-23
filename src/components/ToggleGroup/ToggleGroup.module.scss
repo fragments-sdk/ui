@@ -12,7 +12,7 @@
 
 // Gap variants
 .gap-xs {
-  gap: 2px;
+  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
 }
 
 .gap-sm {
@@ -26,8 +26,8 @@
 .default {
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  padding: 2px;
-  gap: 2px;
+  padding: calc(var(--fui-space-px, $fui-space-px) * 2);
+  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
 
   .item {
     background-color: transparent;

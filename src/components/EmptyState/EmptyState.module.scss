@@ -13,7 +13,7 @@
 
 // Size variants
 .sm {
-  padding: var(--fui-padding-container-lg) var(--fui-padding-container-md);
+  padding: var(--fui-space-6) var(--fui-space-4);
 
   .title {
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
@@ -34,7 +34,7 @@
 }
 
 .md {
-  padding: var(--fui-space-10, $fui-space-10) var(--fui-padding-container-lg);
+  padding: var(--fui-space-10, $fui-space-10) var(--fui-space-6);
 
   .title {
     font-size: var(--fui-font-size-base, $fui-font-size-base);
@@ -55,7 +55,7 @@
 }
 
 .lg {
-  padding: var(--fui-space-12, $fui-space-12) var(--fui-padding-container-xl);
+  padding: var(--fui-space-12, $fui-space-12) var(--fui-space-8);
 
   .title {
     font-size: var(--fui-font-size-lg, $fui-font-size-lg);

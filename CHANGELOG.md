@@ -1,5 +1,13 @@
 # @fragments-sdk/ui
 
+## 0.14.0
+
+### Minor Changes
+
+- Publish accumulated UI, viewer, and webmcp updates.
+
+  Includes a new `Slider.showValueOnDrag` option in `@fragments-sdk/ui` (and matching `@fragments-sdk/a2ui` types) to show a value bubble while dragging.
+
 ## 0.13.1
 
 ### Patch Changes

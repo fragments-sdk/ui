@@ -4,13 +4,14 @@
 .root {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-3, $fui-space-3);
+  gap: var(--fui-space-2, $fui-space-2);
   cursor: pointer;
   font-family: var(--fui-font-sans, $fui-font-sans);
+  -webkit-tap-highlight-color: transparent;
 
   &[data-disabled] {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.38;
   }
 }
 
@@ -22,64 +23,103 @@
   }
 }
 
+// iOS-style track: solid fill, clean pill shape
 .track {
-  @include button-reset;
-  @include interactive-base;
-  @include min-target-size;
-
   position: relative;
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
+  box-sizing: content-box;
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-border-strong, $fui-border-strong);
-  transition: background-color var(--fui-transition-normal, $fui-transition-normal);
+  border: none;
+  // iOS unchecked: semi-transparent gray — visible in both light and dark
+  background-color: var(--fui-bg-active, $fui-bg-active);
+  overflow: hidden;
+  transition: background-color 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
 
+  // Checked: accent fill
   .root[data-checked] & {
     background-color: var(--fui-color-accent, $fui-color-accent);
   }
 
-  .root:not([data-disabled]) &:hover {
-    opacity: 0.9;
+  // Hover (unchecked): slightly more opaque
+  .root:not([data-disabled]):not([data-checked]) &:hover {
+    background-color: var(--fui-border, $fui-border);
+  }
+
+  // Hover (checked): accent hover
+  .root:not([data-disabled])[data-checked] &:hover {
+    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+
+  // Focus ring
+  .root:focus-visible & {
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
+      var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
   }
 }
 
+// Sm: 40×24
 .trackSm {
   width: var(--fui-toggle-width-sm, $fui-toggle-width-sm);
   height: var(--fui-toggle-height-sm, $fui-toggle-height-sm);
-  --_toggle-thumb-size: calc(var(--fui-toggle-height-sm, #{$fui-toggle-height-sm}) - 0.5rem);
-  --_toggle-inset: calc((var(--fui-toggle-height-sm, #{$fui-toggle-height-sm}) - var(--_toggle-thumb-size)) / 2);
+  --_toggle-thumb-size: calc(var(--fui-toggle-height-sm, #{$fui-toggle-height-sm}) - 4px);
+  --_toggle-inset: 2px;
   --_toggle-translate: calc(
     var(--fui-toggle-width-sm, #{$fui-toggle-width-sm}) -
     var(--_toggle-thumb-size) -
-    (var(--_toggle-inset) * 2)
+    4px
   );
 }
 
+// Md: 51×31 (iOS standard)
 .trackMd {
   width: var(--fui-toggle-width-md, $fui-toggle-width-md);
   height: var(--fui-toggle-height-md, $fui-toggle-height-md);
-  --_toggle-thumb-size: calc(var(--fui-toggle-height-md, #{$fui-toggle-height-md}) - 0.5rem);
-  --_toggle-inset: calc((var(--fui-toggle-height-md, #{$fui-toggle-height-md}) - var(--_toggle-thumb-size)) / 2);
+  --_toggle-thumb-size: calc(var(--fui-toggle-height-md, #{$fui-toggle-height-md}) - 4px);
+  --_toggle-inset: 2px;
   --_toggle-translate: calc(
     var(--fui-toggle-width-md, #{$fui-toggle-width-md}) -
     var(--_toggle-thumb-size) -
-    (var(--_toggle-inset) * 2)
+    4px
   );
 }
 
+// iOS-style thumb: always white, multi-layer shadow
 .thumb {
   position: absolute;
   top: var(--_toggle-inset, $fui-toggle-thumb-offset);
   left: var(--_toggle-inset, $fui-toggle-thumb-offset);
+  box-sizing: border-box;
   width: var(--_toggle-thumb-size, $fui-toggle-thumb-md);
   height: var(--_toggle-thumb-size, $fui-toggle-thumb-md);
   border-radius: 50%;
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
-  transition: transform var(--fui-transition-normal, $fui-transition-normal);
+  pointer-events: none;
+  background-color: #fff;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15),
+    0 1px 1px rgba(0, 0, 0, 0.06),
+    0 3px 1px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1),
+    background-color 250ms cubic-bezier(0.4, 0.0, 0.2, 1),
+    width 120ms cubic-bezier(0.4, 0.0, 0.2, 1);
 
+  // Slide right when checked — inverse color for contrast against accent
   .root[data-checked] & {
-    // Move thumb to the right when checked
     transform: translateX(var(--_toggle-translate, 0));
+    background-color: var(--fui-text-inverse, $fui-text-inverse);
+  }
+
+  // Press: stretch thumb wider (iOS 17+)
+  .root:active:not([data-disabled]) & {
+    width: calc(var(--_toggle-thumb-size, #{$fui-toggle-thumb-md}) + 4px);
+  }
+
+  // Press + checked: compensate translate for wider thumb
+  .root:active:not([data-disabled])[data-checked] & {
+    transform: translateX(calc(var(--_toggle-translate, 0) - 4px));
   }
 }
 

@@ -8,10 +8,10 @@ export default defineFragment({
 
   meta: {
     name: 'Icon',
-    description: 'Wrapper for Phosphor icons with consistent sizing and semantic colors. Provides standardized icon rendering across the design system.',
+    description: 'Wrapper for icon components with consistent sizing and semantic colors. Provides standardized icon rendering across the design system.',
     category: 'display',
     status: 'stable',
-    tags: ['icon', 'phosphor', 'visual', 'symbol', 'graphic'],
+    tags: ['icon', 'visual', 'symbol', 'graphic'],
     since: '0.1.0',
   },
 
@@ -31,9 +31,9 @@ export default defineFragment({
     guidelines: [
       'Use semantic color variants (success, error, warning) for status indication',
       'Pair icons with text labels for accessibility',
-      'Match icon weight to surrounding text weight for visual consistency',
+      'Match icon weight/style to surrounding text weight for visual consistency when supported by the icon package',
       'Use consistent sizes within the same context',
-      'Use iconProps for advanced Phosphor options not exposed directly on the wrapper',
+      'Use iconProps for package-specific icon options not exposed directly on the wrapper',
     ],
     accessibility: [
       'Icons are decorative by default (aria-hidden)',
@@ -46,7 +46,7 @@ export default defineFragment({
   props: {
     icon: {
       type: 'custom',
-      description: 'Phosphor icon component to render',
+      description: 'Icon component to render',
       required: true,
     },
     size: {
@@ -57,7 +57,7 @@ export default defineFragment({
     },
     weight: {
       type: 'enum',
-      description: 'Icon stroke weight/style',
+      description: 'Optional icon style/weight hint (forwarded when supported by the icon component)',
       values: ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'],
       default: 'regular',
     },
@@ -74,7 +74,7 @@ export default defineFragment({
     },
     iconProps: {
       type: 'object',
-      description: 'Additional props forwarded to the underlying Phosphor icon component',
+      description: 'Additional props forwarded to the underlying icon component (typed from the icon prop in TypeScript)',
     },
   },
 
@@ -86,11 +86,11 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      'icon: PhosphorIcon - icon component (required)',
+      'icon: React component - icon component (required)',
       'size: xs|sm|md|lg|xl - icon size',
-      'weight: thin|light|regular|bold|fill|duotone - stroke style',
+      'weight: string - optional style/weight hint for icons that support it',
       'variant: default|primary|secondary|tertiary|accent|success|warning|error - color',
-      'iconProps: Partial<PhosphorIconProps> - advanced props forwarded to the Phosphor icon',
+      'iconProps: typed from the passed icon component - advanced icon-specific props',
     ],
     scenarioTags: [
       'display.icon',
@@ -147,7 +147,7 @@ export default defineFragment({
     },
     {
       name: 'Advanced Icon Props',
-      description: 'Forward extra Phosphor icon props through iconProps',
+      description: 'Forward extra icon-package-specific props through iconProps',
       render: () => (
         <Icon icon={Heart} iconProps={{ mirrored: true }} />
       ),

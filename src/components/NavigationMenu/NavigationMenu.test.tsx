@@ -82,6 +82,15 @@ describe('NavigationMenu', () => {
       expect(screen.getByText('Community')).toBeInTheDocument();
     });
 
+    it('renders custom trigger chevron icon from icons prop', () => {
+      renderBasicMenu({
+        icons: {
+          triggerChevron: <span data-testid="navmenu-trigger-chevron" aria-hidden />,
+        },
+      });
+      expect(screen.getAllByTestId('navmenu-trigger-chevron').length).toBeGreaterThan(0);
+    });
+
     it('renders direct links', () => {
       renderBasicMenu();
       expect(screen.getByText('Blog')).toBeInTheDocument();
@@ -508,6 +517,25 @@ describe('NavigationMenu', () => {
       const drawer = await screen.findByRole('dialog', { name: 'Navigation' });
       const blogLink = within(drawer).getByRole('link', { name: 'Blog' });
       expect(blogLink).toHaveAttribute('href', '/blog');
+    });
+
+    it('renders custom mobile hamburger and drawer close icons from icons prop', async () => {
+      renderBasicMenu({
+        icons: {
+          mobileMenu: <span data-testid="navmenu-mobile-menu-icon" aria-hidden />,
+          mobileClose: <span data-testid="navmenu-mobile-close-icon" aria-hidden />,
+          drawerClose: <span data-testid="navmenu-drawer-close-icon" aria-hidden />,
+        },
+      });
+
+      const toggle = await screen.findByLabelText('Toggle navigation');
+      expect(within(toggle).getByTestId('navmenu-mobile-menu-icon')).toBeInTheDocument();
+
+      await userEvent.click(toggle);
+
+      expect(within(toggle).getByTestId('navmenu-mobile-close-icon')).toBeInTheDocument();
+      const drawer = await screen.findByRole('dialog', { name: 'Navigation' });
+      expect(within(drawer).getByTestId('navmenu-drawer-close-icon')).toBeInTheDocument();
     });
   });
 });

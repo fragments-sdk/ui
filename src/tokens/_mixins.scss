@@ -182,6 +182,10 @@
 /// @param {String} $size - Size variant: 'sm', 'md', or 'lg'
 /// @param {String} $component - Component type: 'button', 'input', or 'select'
 @mixin control-size($size, $component: 'button') {
+  // Global accessibility floor: component-specific height tokens may be customized,
+  // but controls should not shrink below the minimum target size.
+  min-height: var(--fui-target-size-min, #{$fui-target-size-min});
+
   @if $size == 'sm' {
     @if $component == 'input' {
       height: var(--fui-input-height-sm, #{$fui-input-height-sm});

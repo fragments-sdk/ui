@@ -10,12 +10,26 @@ import { useSidebar } from '../Sidebar';
 // Types
 // ============================================
 
+export interface HeaderIconRenderState {
+  slot: 'menu' | 'close' | 'navMenuChevron';
+  open?: boolean;
+  active?: boolean;
+}
+
+export type HeaderIconSlot =
+  | React.ReactNode
+  | ((state: HeaderIconRenderState) => React.ReactNode);
+
+export type HeaderIcons = Partial<Record<HeaderIconRenderState['slot'], HeaderIconSlot>>;
+
 export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Header height (default: '56px') */
   height?: string;
   /** Position behavior */
   position?: 'static' | 'fixed' | 'sticky';
+  /** Optional icon overrides for internal header controls (mobile trigger + nav menu chevron) */
+  icons?: HeaderIcons;
 }
 
 export interface HeaderBrandProps extends React.HTMLAttributes<HTMLElement> {
@@ -81,6 +95,17 @@ export interface HeaderNavMenuItemProps extends React.HTMLAttributes<HTMLElement
 // Hooks
 // ============================================
 
+const HeaderIconContext = React.createContext<HeaderIcons | undefined>(undefined);
+
+function useHeaderIcons(): HeaderIcons | undefined {
+  return React.useContext(HeaderIconContext);
+}
+
+function renderHeaderIcon(slot: HeaderIconSlot | undefined, state: HeaderIconRenderState): React.ReactNode {
+  if (slot === undefined) return undefined;
+  return typeof slot === 'function' ? slot(state) : slot;
+}
+
 function composeEventHandlers<E extends { defaultPrevented: boolean }>(
   userHandler: ((event: E) => void) | undefined,
   internalHandler: (event: E) => void,
@@ -120,6 +145,7 @@ function HeaderRoot({
   children,
   height = '56px',
   position = 'static',
+  icons,
   className,
   style: styleProp,
   ...htmlProps
@@ -137,11 +163,13 @@ function HeaderRoot({
   } as React.CSSProperties;
 
   return (
-    <header {...htmlProps} className={classes} style={style} data-position={position}>
-      <div className={styles.container}>
-        {children}
-      </div>
-    </header>
+    <HeaderIconContext.Provider value={icons}>
+      <header {...htmlProps} className={classes} style={style} data-position={position}>
+        <div className={styles.container}>
+          {children}
+        </div>
+      </header>
+    </HeaderIconContext.Provider>
   );
 }
 
@@ -280,6 +308,7 @@ function HeaderTrigger({
 }: HeaderTriggerProps) {
   const isMobile = useIsMobile();
   const { open, setOpen } = useSidebar();
+  const icons = useHeaderIcons();
 
   // Only render on mobile
   if (!isMobile) {
@@ -287,6 +316,9 @@ function HeaderTrigger({
   }
 
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const iconSlot = open ? icons?.close : icons?.menu;
+  const iconState: HeaderIconRenderState = { slot: open ? 'close' : 'menu', open };
+  const iconOverride = renderHeaderIcon(iconSlot, iconState);
 
   return (
     <button
@@ -297,7 +329,7 @@ function HeaderTrigger({
       aria-label={ariaLabel}
       aria-expanded={open}
     >
-      {children || (open ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
+      {children || iconOverride || (open ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
     </button>
   );
 }
@@ -320,19 +352,26 @@ function HeaderNavMenu({
   children,
   ...htmlProps
 }: HeaderNavMenuProps) {
+  const icons = useHeaderIcons();
   const triggerClasses = [
     styles.navItem,
     styles.navMenuTrigger,
     active && styles.navItemActive,
     className,
   ].filter(Boolean).join(' ');
+  const chevronIcon = renderHeaderIcon(icons?.navMenuChevron, {
+    slot: 'navMenuChevron',
+    active,
+  });
 
   return (
     <li {...htmlProps}>
       <BaseMenu.Root modal={false}>
         <BaseMenu.Trigger className={triggerClasses}>
           {label}
-          <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />
+          {chevronIcon
+            ? <span className={styles.navMenuChevron} aria-hidden>{chevronIcon}</span>
+            : <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />}
         </BaseMenu.Trigger>
         <BaseMenu.Portal>
           <BaseMenu.Positioner side="bottom" align="start" sideOffset={4} className={styles.navMenuPositioner}>

@@ -1,11 +1,22 @@
 import { describe, it, expect } from 'vitest';
 import { render, expectNoA11yViolations } from '../../test/utils';
 import { Icon } from './index';
-import type { IconProps as PhosphorIconProps } from '@phosphor-icons/react';
 
-// Mock Phosphor icon component
-function MockIcon(props: Partial<PhosphorIconProps>) {
-  return <svg data-testid="mock-icon" data-size={props.size} data-weight={props.weight} />;
+type MockIconProps = {
+  size?: number | string;
+  weight?: string;
+  tone?: 'warm' | 'cool';
+};
+
+function MockIcon(props: MockIconProps) {
+  return (
+    <svg
+      data-testid="mock-icon"
+      data-size={props.size}
+      data-weight={props.weight}
+      data-tone={props.tone}
+    />
+  );
 }
 
 describe('Icon', () => {
@@ -25,6 +36,18 @@ describe('Icon', () => {
   it('applies variant color class', () => {
     const { container } = render(<Icon icon={MockIcon} variant="error" />);
     expect(container.firstChild).toHaveClass('error');
+  });
+
+  it('forwards custom icon props to arbitrary icon components', () => {
+    const { container } = render(<Icon icon={MockIcon} iconProps={{ tone: 'warm' }} />);
+    const svg = container.querySelector('[data-testid="mock-icon"]');
+    expect(svg).toHaveAttribute('data-tone', 'warm');
+  });
+
+  it('does not override an explicit iconProps.size', () => {
+    const { container } = render(<Icon icon={MockIcon} size="lg" iconProps={{ size: 99 }} />);
+    const svg = container.querySelector('[data-testid="mock-icon"]');
+    expect(svg).toHaveAttribute('data-size', '99');
   });
 
   it('does not add aria-hidden by default (wrapping span is presentational)', () => {

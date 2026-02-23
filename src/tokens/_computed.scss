@@ -24,9 +24,8 @@ $_palette: palettes.get-palette(seeds.$fui-neutral);
 $_density: density.get-density(seeds.$fui-density);
 $_radius: radius.get-radius-style(seeds.$fui-radius-style);
 
-// Derive spacing and padding from density
+// Derive spacing from density
 $_spacing: density.derive-spacing($_density);
-$_padding: density.derive-padding($_density);
 
 // --------------------------------------------
 // Computed: Base Configuration
@@ -51,23 +50,6 @@ $computed-space-6: map.get($_spacing, 6);
 $computed-space-8: map.get($_spacing, 8);
 $computed-space-10: map.get($_spacing, 10);
 $computed-space-12: map.get($_spacing, 12);
-
-// --------------------------------------------
-// Computed: Density Padding
-// --------------------------------------------
-
-$computed-padding-container-sm: map.get($_padding, container-sm);
-$computed-padding-container-md: map.get($_padding, container-md);
-$computed-padding-container-lg: map.get($_padding, container-lg);
-$computed-padding-container-xl: map.get($_padding, container-xl);
-$computed-padding-inline-xs: map.get($_padding, inline-xs);
-$computed-padding-inline-sm: map.get($_padding, inline-sm);
-$computed-padding-inline-md: map.get($_padding, inline-md);
-$computed-padding-inline-lg: map.get($_padding, inline-lg);
-$computed-padding-item-xs: map.get($_padding, item-xs);
-$computed-padding-item-sm: map.get($_padding, item-sm);
-$computed-padding-item-md: map.get($_padding, item-md);
-$computed-padding-item-lg: map.get($_padding, item-lg);
 
 // --------------------------------------------
 // Computed: Border Radius

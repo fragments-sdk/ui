@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
@@ -14,7 +14,7 @@
 
   min-width: 12rem;
   max-width: 24rem;
-  padding: var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: var(--fui-space-2, $fui-space-2);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
@@ -41,7 +41,7 @@
   }
 
   // Adjust animation direction based on side
-  &[data-side='top'] {
+  &[data-side="top"] {
     &[data-starting-style] {
       transform: scale(0.95) translateY($fui-anim-offset-sm);
     }
@@ -51,8 +51,8 @@
     }
   }
 
-  &[data-side='left'],
-  &[data-side='right'] {
+  &[data-side="left"],
+  &[data-side="right"] {
     &[data-starting-style],
     &[data-ending-style] {
       transform: scale(0.95) translateY(0);
@@ -62,7 +62,7 @@
 
 // Size variants
 .sm {
-  padding: var(--fui-padding-container-sm, $fui-padding-container-sm);
+  padding: var(--fui-space-3, $fui-space-3);
   max-width: 16rem;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .lg {
-  padding: var(--fui-padding-container-lg, $fui-padding-container-lg);
+  padding: var(--fui-space-6, $fui-space-6);
   max-width: 32rem;
 }
 
@@ -125,22 +125,22 @@
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border: 1px solid var(--fui-border, $fui-border);
 
-  &[data-side='top'] {
+  &[data-side="top"] {
     border-top: none;
     border-left: none;
   }
 
-  &[data-side='bottom'] {
+  &[data-side="bottom"] {
     border-bottom: none;
     border-right: none;
   }
 
-  &[data-side='left'] {
+  &[data-side="left"] {
     border-left: none;
     border-bottom: none;
   }
 
-  &[data-side='right'] {
+  &[data-side="right"] {
     border-right: none;
     border-top: none;
   }
@@ -176,7 +176,7 @@
       transform: none;
     }
 
-    &[data-side='top'] {
+    &[data-side="top"] {
       &[data-starting-style],
       &[data-ending-style] {
         transform: none;

@@ -12,6 +12,9 @@ import {
   useNavigationMenuContext,
   useNavigationMenuItemContext,
   type NavigationMenuItemInfo,
+  type NavigationMenuIcons,
+  type NavigationMenuIconRenderState,
+  type NavigationMenuIconSlot,
 } from './NavigationMenuContext';
 import { useNavigationMenu } from './useNavigationMenu';
 import styles from './NavigationMenu.module.scss';
@@ -34,6 +37,8 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
   delayDuration?: number;
   /** Duration to skip delays between triggers (ms) */
   skipDelayDuration?: number;
+  /** Optional icon overrides for trigger chevrons and mobile drawer controls */
+  icons?: NavigationMenuIcons;
 }
 
 export interface NavigationMenuListProps {
@@ -129,6 +134,14 @@ function useIsMobile() {
   return isMobile;
 }
 
+function renderNavigationMenuIcon(
+  slot: NavigationMenuIconSlot | undefined,
+  state: NavigationMenuIconRenderState,
+): React.ReactNode {
+  if (slot === undefined) return undefined;
+  return typeof slot === 'function' ? slot(state) : slot;
+}
+
 // ============================================
 // Root
 // ============================================
@@ -141,6 +154,7 @@ function NavigationMenuRoot({
   orientation = 'horizontal',
   delayDuration = 200,
   skipDelayDuration = 300,
+  icons,
   className,
   'aria-label': ariaLabel = 'Main navigation',
   ...htmlProps
@@ -168,8 +182,9 @@ function NavigationMenuRoot({
       orientation,
       isMobile,
       rootId,
+      icons,
     }),
-    [state, orientation, isMobile, rootId]
+    [state, orientation, isMobile, rootId, icons]
   );
 
   return (
@@ -360,6 +375,11 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
   };
 
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const chevronOverride = renderNavigationMenuIcon(ctx.icons?.triggerChevron, {
+    slot: 'triggerChevron',
+    open: isOpen,
+    isMobile: ctx.isMobile,
+  });
 
   return (
     <button
@@ -377,7 +397,9 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
       onKeyDown={handleKeyDown}
     >
       {children}
-      <CaretDown size={12} className={styles.triggerChevron} aria-hidden />
+      {chevronOverride
+        ? <span className={styles.triggerChevron} aria-hidden>{chevronOverride}</span>
+        : <CaretDown size={12} className={styles.triggerChevron} aria-hidden />}
     </button>
   );
 }
@@ -761,7 +783,16 @@ function NavigationMenuMobileSection({ children, label }: NavigationMenuMobileSe
 // ============================================
 
 function MobileHamburger() {
-  const { mobileOpen, setMobileOpen } = useNavigationMenuContext();
+  const ctx = useNavigationMenuContext();
+  const { mobileOpen, setMobileOpen } = ctx;
+  const iconOverride = renderNavigationMenuIcon(
+    mobileOpen ? ctx.icons?.mobileClose : ctx.icons?.mobileMenu,
+    {
+      slot: mobileOpen ? 'mobileClose' : 'mobileMenu',
+      open: mobileOpen,
+      isMobile: true,
+    },
+  );
 
   return (
     <button
@@ -771,7 +802,7 @@ function MobileHamburger() {
       aria-label="Toggle navigation"
       aria-expanded={mobileOpen}
     >
-      {mobileOpen ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />}
+      {iconOverride ?? (mobileOpen ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
     </button>
   );
 }
@@ -838,7 +869,11 @@ function MobileDrawer() {
             onClick={() => ctx.setMobileOpen(false)}
             aria-label="Close navigation"
           >
-            <X size={20} aria-hidden />
+            {renderNavigationMenuIcon(ctx.icons?.drawerClose, {
+              slot: 'drawerClose',
+              open: ctx.mobileOpen,
+              isMobile: true,
+            }) ?? <X size={20} aria-hidden />}
           </button>
         </div>
         <ScrollArea orientation="vertical" className={styles.drawerBody}>
@@ -941,3 +976,9 @@ export {
   NavigationMenuMobileContent,
   NavigationMenuMobileSection,
 };
+
+export type {
+  NavigationMenuIcons,
+  NavigationMenuIconSlot,
+  NavigationMenuIconRenderState,
+} from './NavigationMenuContext';

@@ -31,6 +31,7 @@ export default defineFragment({
       'Use Danger variant for destructive actions',
       'Loading state should disable the button',
       'When using asChild, pass interaction and accessibility props directly on Button (they are forwarded to the child element)',
+      'Use variant="icon" for the default icon-only action button, or combine icon={true} with another visual variant when needed',
     ],
     accessibility: [
       'Button text should describe the action',
@@ -47,9 +48,9 @@ export default defineFragment({
     },
     variant: {
       type: 'enum',
-      values: ['primary', 'secondary', 'ghost', 'danger', 'outlined', 'outline'],
+      values: ['primary', 'secondary', 'ghost', 'danger', 'outlined', 'outline', 'icon'],
       default: 'primary',
-      description: 'Visual style variant',
+      description: 'Visual style variant ("icon" is a convenience alias for ghost + icon-only layout)',
       constraints: ['Only one primary button per context'],
     },
     size: {
@@ -72,7 +73,7 @@ export default defineFragment({
     icon: {
       type: 'boolean',
       default: 'false',
-      description: 'Render as icon-only button (square aspect ratio)',
+      description: 'Render as icon-only button (square aspect ratio). Useful with any visual variant; variant="icon" is the default ghost icon-only shortcut.',
     },
     fullWidth: {
       type: 'boolean',
@@ -101,12 +102,13 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      'variant: primary|secondary|ghost|danger|outlined|outline (default: primary)',
+      'variant: primary|secondary|ghost|danger|outlined|outline|icon (default: primary, icon = ghost + icon-only)',
       'size: sm|md|lg (default: md)',
       'disabled: boolean - disables interaction',
       'type: button|submit|reset (default: button)',
       'onClick: (event) => void - action handler',
       'asChild: boolean - composes styles/props onto a child element (links/router links)',
+      'icon: boolean - icon-only square layout (can be combined with visual variants)',
     ],
     scenarioTags: [
       'form.submit',
@@ -151,6 +153,15 @@ export default defineFragment({
       name: 'Outline',
       description: 'Bordered button with transparent background',
       render: () => <Button variant="outline">View Details</Button>,
+    },
+    {
+      name: 'Icon',
+      description: 'Convenience icon-only button alias (ghost + square icon sizing)',
+      render: () => (
+        <Button variant="icon" aria-label="Add item">
+          <span aria-hidden>+</span>
+        </Button>
+      ),
     },
     {
       name: 'Sizes',

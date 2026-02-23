@@ -64,7 +64,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-bottom: 1px solid var(--fui-border, $fui-border);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 }
@@ -161,7 +161,7 @@
 .contentRich {
   // TipTap editor styling
   :global(.tiptap) {
-    padding: var(--fui-padding-inline-md, $fui-padding-inline-md);
+    padding: var(--fui-space-3, $fui-space-3);
     min-height: 200px;
     outline: none;
     @include text-base;
@@ -268,7 +268,7 @@
   width: 100%;
   height: 100%;
   min-height: 200px;
-  padding: var(--fui-padding-inline-md, $fui-padding-inline-md);
+  padding: var(--fui-space-3, $fui-space-3);
   background: transparent;
   border: none;
   resize: none;
@@ -298,7 +298,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-top: 1px solid var(--fui-border, $fui-border);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 }

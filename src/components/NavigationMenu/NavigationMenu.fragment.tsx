@@ -35,6 +35,7 @@ export default defineFragment({
       'Use simple NavigationMenu.Link for items without dropdown content',
       'NavigationMenu.Link asChild composes click handlers and respects event.preventDefault()',
       'Triggers open on hover (desktop) with configurable delay',
+      'Use the icons prop to replace trigger chevrons and mobile drawer controls with icons from any package',
     ],
     accessibility: [
       'Uses disclosure pattern (not menu role) per W3C guidance',
@@ -79,6 +80,10 @@ export default defineFragment({
       description: 'Duration after close during which moving to another trigger opens instantly (ms)',
       default: '300',
     },
+    icons: {
+      type: 'object',
+      description: 'Optional icon overrides for triggerChevron, mobileMenu, mobileClose, and drawerClose controls',
+    },
   },
 
   relations: [
@@ -94,6 +99,7 @@ export default defineFragment({
       'onValueChange: (value) => void — open state handler',
       'orientation: horizontal | vertical — layout direction',
       'delayDuration: number — hover open delay (default: 200ms)',
+      'icons: { triggerChevron?, mobileMenu?, mobileClose?, drawerClose? } — custom internal control icons',
       'NavigationMenu.Link: title + description + icon for structured links, or children for simple links',
       'NavigationMenu.Link asChild: composes child and menu click handlers (preventDefault keeps menu open)',
       'NavigationMenu.MobileContent: slot for extra mobile-only sections',

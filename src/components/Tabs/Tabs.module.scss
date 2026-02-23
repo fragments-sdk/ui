@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Root container
 .root {
@@ -7,7 +7,7 @@
   flex-direction: column;
   font-family: var(--fui-font-sans, $fui-font-sans);
 
-  &[data-orientation='vertical'] {
+  &[data-orientation="vertical"] {
     flex-direction: row;
   }
 }
@@ -21,7 +21,7 @@
   border-bottom: 1px solid var(--fui-border, $fui-border);
   padding: 0 var(--fui-space-1, $fui-space-1);
 
-  &[data-orientation='vertical'] {
+  &[data-orientation="vertical"] {
     flex-direction: column;
     align-items: stretch;
     border-bottom: none;
@@ -55,7 +55,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-secondary, $fui-text-secondary);
@@ -80,7 +80,7 @@
 .tabUnderline {
   border-radius: 0;
   margin-bottom: -1px;
-  padding-bottom: calc(var(--fui-padding-item-xs, $fui-padding-item-xs) + 1px);
+  padding-bottom: calc(var(--fui-space-1, $fui-space-1) + 1px);
 
   &:hover:not([data-disabled]) {
     background-color: transparent;
@@ -122,7 +122,7 @@
     width var(--fui-transition-fast, $fui-transition-fast),
     transform var(--fui-transition-fast, $fui-transition-fast);
 
-  [data-orientation='vertical'] & {
+  [data-orientation="vertical"] & {
     bottom: auto;
     left: auto;
     right: 0;
@@ -135,7 +135,7 @@
 
 // Tab panel content
 .panel {
-  padding: var(--fui-padding-item-lg, $fui-padding-item-lg) 0;
+  padding: var(--fui-space-2, $fui-space-2) 0;
   outline: none;
 
   &[data-hidden] {

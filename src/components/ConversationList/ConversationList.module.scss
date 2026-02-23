@@ -23,7 +23,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-container-sm);
+  padding: var(--fui-space-3);
   min-height: 100%;
 }
 
@@ -36,7 +36,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-container-sm);
+  padding: var(--fui-space-3);
   color: var(--fui-text-secondary, $fui-text-secondary);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
 }
@@ -92,7 +92,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-inline-sm);
+  padding: var(--fui-space-2);
 }
 
 .typingAvatar {
@@ -115,8 +115,8 @@
 .typingContent {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: var(--fui-padding-inline-sm) var(--fui-padding-inline-md);
+  gap: calc(var(--fui-space-px, $fui-space-px) * 4);
+  padding: var(--fui-space-2) var(--fui-space-3);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
 }

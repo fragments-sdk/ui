@@ -11,7 +11,7 @@
   height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
   min-height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  padding: 0 var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: 0 var(--fui-space-4, $fui-space-4);
   z-index: var(--fui-header-z-index, $fui-header-z-index);
 }
 
@@ -92,7 +92,7 @@
 
   display: flex;
   align-items: center;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -157,7 +157,7 @@
   @include surface-elevated;
 
   min-width: 10rem;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+  padding: var(--fui-space-1, $fui-space-1);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   opacity: 0;
@@ -186,7 +186,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -302,7 +302,7 @@
   top: var(--fui-space-2, $fui-space-2);
   left: var(--fui-space-2, $fui-space-2);
   z-index: 100;
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-lg, $fui-padding-item-lg);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   color: var(--fui-text-primary, $fui-text-primary);
   border: 2px solid var(--fui-color-accent, $fui-color-accent);
@@ -317,7 +317,7 @@
     clip: auto;
     white-space: normal;
     margin: 0;
-    padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-lg, $fui-padding-item-lg);
+    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
     overflow: visible;
 
     @include focus-ring;

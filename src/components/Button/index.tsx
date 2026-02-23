@@ -10,15 +10,15 @@ import styles from './Button.module.scss';
  */
 type ButtonBaseProps = {
   children: React.ReactNode;
-  /** Visual style variant. `"outline"` is an alias for `"outlined"`.
+  /** Visual style variant. `"outline"` is an alias for `"outlined"`. `"icon"` is a convenience alias for a ghost icon-only button.
    * @default "primary"
    * @see https://usefragments.com/components/button#variants */
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined' | 'outline';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined' | 'outline' | 'icon';
   /** Button size.
    * @default "md"
    * @see https://usefragments.com/components/button#sizes */
   size?: 'sm' | 'md' | 'lg';
-  /** Render as icon-only button (square aspect ratio) */
+  /** Render as icon-only button (square aspect ratio). Prefer `variant="icon"` for the default ghost icon button. */
   icon?: boolean;
   /** Make button full width of container */
   fullWidth?: boolean;
@@ -58,14 +58,22 @@ const ButtonRoot = React.forwardRef<
     ...rest
   } = props;
 
-  // Resolve alias: "outline" → "outlined"
-  const variant = variantProp === 'outline' ? 'outlined' : variantProp;
+  const iconOnly = icon || variantProp === 'icon';
+
+  // Resolve aliases:
+  // "outline" → "outlined"
+  // "icon" → visual "ghost" + icon-only sizing
+  const variant = variantProp === 'outline'
+    ? 'outlined'
+    : variantProp === 'icon'
+      ? 'ghost'
+      : variantProp;
 
   const classNames = [
     styles.button,
     styles[size],
     styles[variant],
-    icon && styles.icon,
+    iconOnly && styles.icon,
     fullWidth && styles.fullWidth,
     className,
   ]

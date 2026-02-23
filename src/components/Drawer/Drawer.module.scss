@@ -128,7 +128,7 @@
 
 // Header area
 .header {
-  padding: var(--fui-padding-container-sm, $fui-padding-container-sm) var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
 }
 
 // Title
@@ -151,7 +151,7 @@
 // Body content
 .body {
   flex: 1;
-  padding: 0 var(--fui-padding-container-md, $fui-padding-container-md) var(--fui-padding-container-sm, $fui-padding-container-sm);
+  padding: 0 var(--fui-space-4, $fui-space-4) var(--fui-space-3, $fui-space-3);
   overflow-y: auto;
 }
 
@@ -161,7 +161,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-padding-inline-sm, $fui-padding-inline-sm) var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   border-top: 1px solid var(--fui-border, $fui-border);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 }

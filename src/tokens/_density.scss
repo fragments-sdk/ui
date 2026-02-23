@@ -163,48 +163,6 @@ $densities: (
   );
 }
 
-/// Derive container padding from density
-/// @param {Map} $density - A density configuration map
-/// @return {Map} Padding tokens
-@function derive-padding($density) {
-  $base: map.get($density, base-unit);
-  $font-size: map.get($density, base-font-size);
-  $unit-rem: math.div($base, $font-size) * 1rem;
-
-  @return (
-    // Container padding: Cards, Dialogs, Popovers
-    container-sm: $unit-rem * 3,
-    // 3 units
-    container-md: $unit-rem * 4,
-    // 4 units
-    container-lg: $unit-rem * 6,
-
-    // 6 units
-    // Inline padding: Alerts, Toasts
-    inline-xs: $unit-rem * 1,
-    // 1 unit
-    inline-sm: $unit-rem * 2,
-    // 2 units
-    inline-md: $unit-rem * 3,
-    // 3 units
-    inline-lg: $unit-rem * 4,
-
-    // 4 units
-    // Container padding (extended)
-    container-xl: $unit-rem * 8,
-
-    // 8 units
-    // Item padding: Accordion, Tabs, Menu items
-    item-xs: $unit-rem * 1,
-    // 1 unit
-    item-sm: $unit-rem * 2,
-    // 2 units
-    item-md: $unit-rem * 3,
-    // 3 units
-    item-lg: $unit-rem * 4 // 4 units
-  );
-}
-
 /// Convert pixel value to rem based on density
 /// @param {Map} $density - A density configuration map
 /// @param {Number} $px - Pixel value to convert

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 import { render, screen, expectNoA11yViolations } from '../../test/utils';
 import { Slider } from './index';
 
@@ -48,6 +49,21 @@ describe('Slider', () => {
     const handleChange = vi.fn();
     render(<Slider aria-label="Volume" value={50} onValueChange={handleChange} />);
     expect(screen.getByRole('slider')).toBeInTheDocument();
+  });
+
+  it('shows a value bubble while dragging when showValueOnDrag is enabled', () => {
+    const { container } = render(<Slider aria-label="Volume" defaultValue={33} valueSuffix="%" showValueOnDrag />);
+    const thumb = screen.getByRole('slider');
+    const root = thumb.closest('[role="group"]') ?? container.firstElementChild;
+
+    expect(screen.queryByText('33%')).not.toBeInTheDocument();
+
+    expect(root).toBeTruthy();
+    fireEvent.pointerDown(root as Element);
+    expect(screen.getByText('33%')).toBeInTheDocument();
+
+    fireEvent.pointerUp(window);
+    expect(screen.queryByText('33%')).not.toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

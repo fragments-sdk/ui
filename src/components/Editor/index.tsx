@@ -67,6 +67,21 @@ export type EditorMode = 'rich' | 'markdown';
 
 export type EditorSize = 'sm' | 'md' | 'lg';
 
+export interface EditorToolbarIconRenderState {
+  format: EditorFormat;
+  active: boolean;
+  disabled: boolean;
+  readOnly: boolean;
+  isDisabled: boolean;
+  mode: EditorMode;
+}
+
+export type EditorToolbarIconSlot =
+  | React.ReactNode
+  | ((state: EditorToolbarIconRenderState) => React.ReactNode);
+
+export type EditorToolbarIcons = Partial<Record<EditorFormat, EditorToolbarIconSlot>>;
+
 export interface EditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   children?: React.ReactNode;
   /** Controlled value */
@@ -95,6 +110,8 @@ export interface EditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   size?: EditorSize;
   /** Maximum character count (shows indicator in status bar) */
   maxLength?: number;
+  /** Custom toolbar icons keyed by format/action, for any icon package */
+  toolbarIcons?: EditorToolbarIcons;
 }
 
 export interface EditorToolbarProps {
@@ -304,6 +321,7 @@ interface EditorContextValue {
   mode: EditorMode;
   size: EditorSize;
   maxLength?: number;
+  toolbarIcons?: EditorToolbarIcons;
   wordCount: number;
   charCount: number;
   toggleFormat: (f: EditorFormat) => void;
@@ -373,6 +391,7 @@ function EditorRoot({
   autoSaveInterval = 30000,
   size = 'md',
   maxLength,
+  toolbarIcons,
   className,
   ...htmlProps
 }: EditorProps) {
@@ -600,6 +619,7 @@ function EditorRoot({
     mode,
     size,
     maxLength,
+    toolbarIcons,
     wordCount,
     charCount,
     toggleFormat,
@@ -667,7 +687,7 @@ function EditorToolbarGroup({ children, 'aria-label': ariaLabel, className }: Ed
 }
 
 function EditorToolbarButton({ format, className }: EditorToolbarButtonProps) {
-  const { toggleFormat, isFormatActive, disabled, readOnly, editor, mode } = useEditorContext();
+  const { toggleFormat, isFormatActive, disabled, readOnly, editor, mode, toolbarIcons } = useEditorContext();
   const meta = FORMAT_META[format];
   const isAction = ACTION_FORMATS.has(format);
   const active = isAction ? false : isFormatActive(format);
@@ -683,6 +703,20 @@ function EditorToolbarButton({ format, className }: EditorToolbarButtonProps) {
       isDisabled = format === 'undo' ? !editor.can().undo() : !editor.can().redo();
     }
   }
+
+  const iconState: EditorToolbarIconRenderState = {
+    format,
+    active,
+    disabled,
+    readOnly,
+    isDisabled,
+    mode,
+  };
+
+  const iconOverride = toolbarIcons?.[format];
+  const renderedOverride = typeof iconOverride === 'function'
+    ? iconOverride(iconState)
+    : iconOverride;
 
   const classes = [
     styles.toolbarButton,
@@ -700,7 +734,9 @@ function EditorToolbarButton({ format, className }: EditorToolbarButtonProps) {
       title={`${meta.label} (${meta.shortcut})`}
       {...(isAction ? {} : { 'aria-pressed': active })}
     >
-      <IconComponent size={16} weight={active ? 'bold' : 'regular'} />
+      {iconOverride !== undefined
+        ? renderedOverride
+        : <IconComponent size={16} weight={active ? 'bold' : 'regular'} />}
     </button>
   );
 }

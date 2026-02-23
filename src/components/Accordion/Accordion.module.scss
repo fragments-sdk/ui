@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) 0;
+  padding: var(--fui-space-2, $fui-space-2) 0;
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
@@ -91,7 +91,7 @@
 }
 
 .contentInner {
-  padding-bottom: var(--fui-padding-item-xs, $fui-padding-item-xs);
+  padding-bottom: var(--fui-space-1, $fui-space-1);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);

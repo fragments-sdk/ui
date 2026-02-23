@@ -51,7 +51,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
@@ -159,7 +159,7 @@
 
   display: flex;
   align-items: center;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -193,7 +193,7 @@
 .linkStructured {
   display: flex;
   gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   white-space: normal;
   min-height: auto;
@@ -371,7 +371,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: 0 var(--fui-space-4, $fui-space-4);
   border-bottom: 1px solid var(--fui-border, $fui-border);
   min-height: var(--fui-appshell-header-height, $fui-appshell-header-height);
 }
@@ -412,7 +412,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
   min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
@@ -427,7 +427,7 @@
 .drawerSectionLabel {
   @include section-label-text;
 
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-padding-container-md, $fui-padding-container-md)
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4)
     var(--fui-space-1, $fui-space-1);
 }
 
@@ -439,7 +439,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);

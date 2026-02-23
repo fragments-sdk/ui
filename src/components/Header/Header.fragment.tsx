@@ -44,6 +44,7 @@ export default defineFragment({
       'Use Header.NavMenuItem inside Header.NavMenu for dropdown items',
       'Header sub-components forward DOM props (id, aria-*, data-*, handlers) to their rendered elements',
       'Header.NavItem asChild composes click handlers instead of overwriting the child handler',
+      'Use the Header icons prop to replace internal mobile trigger and dropdown chevron icons with any icon package',
       'For rich dropdown content (titles, descriptions, icons), use NavigationMenu instead of Header.Nav',
       'NavigationMenu also provides an automatic mobile drawer, replacing Header.Trigger + Sidebar for mobile nav',
     ],
@@ -72,6 +73,10 @@ export default defineFragment({
       description: 'Position behavior (usually controlled by AppShell)',
       values: ['static', 'fixed', 'sticky'],
       default: 'static',
+    },
+    icons: {
+      type: 'object',
+      description: 'Optional icon overrides for Header.Trigger (menu/close) and Header.NavMenu chevron',
     },
   },
 
@@ -252,4 +257,26 @@ export default defineFragment({
       ),
     },
   ],
+
+  contract: {
+    propsSummary: [
+      'height: string - header height (default: 56px)',
+      'position: static|fixed|sticky - positioning behavior',
+      'icons: { menu?, close?, navMenuChevron? } - custom internal control icons (ReactNode or render function)',
+      'Header.Trigger composes click handler with Sidebar toggle behavior',
+      'Header.NavMenu provides dropdown groups via Base UI Menu',
+    ],
+    scenarioTags: [
+      'layout.header',
+      'navigation.site',
+      'navigation.dropdown',
+      'navigation.responsive',
+    ],
+    a11yRules: [
+      'A11Y_HEADER_LANDMARK',
+      'A11Y_NAV_LABEL',
+      'A11Y_SKIP_LINK',
+      'A11Y_BUTTON_LABEL',
+    ],
+  },
 });

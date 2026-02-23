@@ -99,6 +99,11 @@ export default defineFragment({
       description: 'Display current value',
       default: 'false',
     },
+    showValueOnDrag: {
+      type: 'boolean',
+      description: 'Show current value in a floating bubble while dragging the thumb',
+      default: 'false',
+    },
     valueSuffix: {
       type: 'string',
       description: 'Suffix after value (e.g., "%", "px")',
@@ -124,6 +129,7 @@ export default defineFragment({
       'step: number - increment size',
       'label: string - field label',
       'showValue: boolean - display value',
+      'showValueOnDrag: boolean - show value bubble during drag',
       'valueSuffix: string - unit suffix',
     ],
     scenarioTags: [
@@ -188,6 +194,20 @@ export default defineFragment({
       name: 'Controlled',
       description: 'Controlled slider with external state',
       render: () => <ControlledSliderDemo />,
+    },
+    {
+      name: 'Drag Value Bubble',
+      description: 'Shows a floating value bubble while the thumb is being dragged',
+      render: () => (
+        <div style={{ width: '300px' }}>
+          <Slider
+            label="Mix"
+            defaultValue={40}
+            showValueOnDrag
+            valueSuffix="%"
+          />
+        </div>
+      ),
     },
     {
       name: 'Disabled',

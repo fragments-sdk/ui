@@ -91,9 +91,9 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
       >
-        <BaseSwitch.Thumb className={trackClasses}>
-          <span className={thumbClasses} aria-hidden="true" />
-        </BaseSwitch.Thumb>
+        <span className={trackClasses} aria-hidden="true">
+          <BaseSwitch.Thumb className={thumbClasses} />
+        </span>
 
         {(label || description) && (
           <div className={styles.content}>

@@ -94,27 +94,6 @@ $fui-space-10: computed.$computed-space-10 !default;
 $fui-space-12: computed.$computed-space-12 !default;
 
 // --------------------------------------------
-// Density Padding (derived from density seed)
-// --------------------------------------------
-// Container padding: Cards, Dialogs, Popovers
-$fui-padding-container-sm: computed.$computed-padding-container-sm !default;
-$fui-padding-container-md: computed.$computed-padding-container-md !default;
-$fui-padding-container-lg: computed.$computed-padding-container-lg !default;
-$fui-padding-container-xl: computed.$computed-padding-container-xl !default;
-
-// Inline padding: Alerts, Toasts
-$fui-padding-inline-xs: computed.$computed-padding-inline-xs !default;
-$fui-padding-inline-sm: computed.$computed-padding-inline-sm !default;
-$fui-padding-inline-md: computed.$computed-padding-inline-md !default;
-$fui-padding-inline-lg: computed.$computed-padding-inline-lg !default;
-
-// Item padding: Accordion, Tabs, Menu items
-$fui-padding-item-xs: computed.$computed-padding-item-xs !default;
-$fui-padding-item-sm: computed.$computed-padding-item-sm !default;
-$fui-padding-item-md: computed.$computed-padding-item-md !default;
-$fui-padding-item-lg: computed.$computed-padding-item-lg !default;
-
-// --------------------------------------------
 // Border Radius (derived from radius-style seed)
 // --------------------------------------------
 $fui-radius-sm: computed.$computed-radius-sm !default;
@@ -277,17 +256,22 @@ $fui-touch-sm: computed.$computed-touch-sm !default;
 $fui-touch-md: computed.$computed-touch-md !default;
 $fui-touch-lg: computed.$computed-touch-lg !default;
 
-// Minimum interactive target sizes (WCAG 2.2 SC 2.5.8)
+// Minimum interactive target sizes.
+// Keep this token globally available to preserve an accessibility floor for touch/pointer targets.
+// WCAG 2.2 SC 2.5.8 (Target Size (Minimum)):
+// https://www.w3.org/TR/WCAG22/#target-size-minimum
+// Understanding WCAG 2.2 SC 2.5.8:
+// https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
 $fui-target-size-min: 1.714rem !default; // 24px
 $fui-target-size-comfortable: $fui-touch-md !default;
 
-// Toggle/Switch
-$fui-toggle-width-sm: 2.286rem !default; // 32px
-$fui-toggle-width-md: 2.857rem !default; // 40px
+// Toggle/Switch (iOS-proportioned: ~1.65:1 width:height ratio)
+$fui-toggle-width-sm: 2.857rem !default; // 40px
+$fui-toggle-width-md: 3.643rem !default; // 51px (iOS standard)
 $fui-toggle-height-sm: $fui-target-size-min !default; // 24px
-$fui-toggle-height-md: 2rem !default; // 28px
-$fui-toggle-thumb-sm: 1rem !default; // 14px
-$fui-toggle-thumb-md: 1.286rem !default; // 18px
+$fui-toggle-height-md: 2.214rem !default; // 31px (iOS standard)
+$fui-toggle-thumb-sm: 1.286rem !default; // 18px
+$fui-toggle-thumb-md: 1.929rem !default; // 27px (iOS standard)
 $fui-toggle-thumb-offset: 2px !default; // Thumb inset from track edge
 
 // Badge
@@ -340,9 +324,6 @@ $fui-colorpicker-pointer-border: 2px !default;
 
 // AppShell Layout
 $fui-appshell-header-height: 56px !default;
-$fui-appshell-sidebar-width: 240px !default;
-$fui-appshell-sidebar-collapsed-width: 64px !default;
-$fui-appshell-aside-width: 280px !default;
 $fui-header-z-index: 40 !default;
 
 // ThemeToggle sizes (derived from density)
@@ -362,8 +343,6 @@ $fui-code-header-bg: #1c1c1f !default;
 $fui-code-text: #d4d4d4 !default;
 $fui-code-text-muted: #6b7280 !default;
 $fui-code-border: rgba(255, 255, 255, 0.1) !default;
-$fui-code-tab-bg: rgba(255, 255, 255, 0.03) !default;
-$fui-code-tab-border: rgba(255, 255, 255, 0.08) !default;
 $fui-code-tab-text: #9ca3af !default;
 $fui-code-tab-text-active: #e5e7eb !default;
 $fui-code-copy-bg: rgba(255, 255, 255, 0.1) !default;
@@ -381,17 +360,12 @@ $fui-tooltip-shadow:
   0 4px 6px -1px rgba(0, 0, 0, 0.2),
   0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
 
-// Hero/Marketing gradient accent
-$fui-hero-gradient-color: rgba(120, 119, 198, 0.15) !default;
-
 // CodeBlock (dark mode) - same as light, code blocks stay dark
 $fui-dark-code-bg: #000000 !default;
 $fui-dark-code-header-bg: var(--fui-bg-elevated) !default;
 $fui-dark-code-text: #d4d4d4 !default;
 $fui-dark-code-text-muted: #6b7280 !default;
 $fui-dark-code-border: rgba(255, 255, 255, 0.1) !default;
-$fui-dark-code-tab-bg: rgba(255, 255, 255, 0.03) !default;
-$fui-dark-code-tab-border: rgba(255, 255, 255, 0.08) !default;
 $fui-dark-code-tab-text: #9ca3af !default;
 $fui-dark-code-tab-text-active: #e5e7eb !default;
 $fui-dark-code-copy-bg: rgba(255, 255, 255, 0.1) !default;
@@ -408,9 +382,6 @@ $fui-dark-tooltip-text: #f8fafc !default;
 $fui-dark-tooltip-shadow:
   0 4px 6px -1px rgba(0, 0, 0, 0.3),
   0 2px 4px -2px rgba(0, 0, 0, 0.25) !default;
-
-// Hero/Marketing gradient accent (dark mode)
-$fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
 
 // --------------------------------------------
 // CSS Custom Properties Export
@@ -457,20 +428,6 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-space-8: #{$fui-space-8};
     --fui-space-10: #{$fui-space-10};
     --fui-space-12: #{$fui-space-12};
-
-    // Density padding
-    --fui-padding-container-sm: #{$fui-padding-container-sm};
-    --fui-padding-container-md: #{$fui-padding-container-md};
-    --fui-padding-container-lg: #{$fui-padding-container-lg};
-    --fui-padding-container-xl: #{$fui-padding-container-xl};
-    --fui-padding-inline-xs: #{$fui-padding-inline-xs};
-    --fui-padding-inline-sm: #{$fui-padding-inline-sm};
-    --fui-padding-inline-md: #{$fui-padding-inline-md};
-    --fui-padding-inline-lg: #{$fui-padding-inline-lg};
-    --fui-padding-item-xs: #{$fui-padding-item-xs};
-    --fui-padding-item-sm: #{$fui-padding-item-sm};
-    --fui-padding-item-md: #{$fui-padding-item-md};
-    --fui-padding-item-lg: #{$fui-padding-item-lg};
 
     // Border radius
     --fui-radius-sm: #{$fui-radius-sm};
@@ -539,47 +496,12 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
     --fui-scrollbar-thumb-hover: #{$fui-scrollbar-thumb-hover};
 
     // Component heights
-    --fui-button-height-sm: #{$fui-button-height-sm};
-    --fui-button-height-md: #{$fui-button-height-md};
-    --fui-button-height-lg: #{$fui-button-height-lg};
-    --fui-input-height: #{$fui-input-height};
-    --fui-input-height-sm: #{$fui-input-height-sm};
-    --fui-input-height-lg: #{$fui-input-height-lg};
     --fui-target-size-min: #{$fui-target-size-min};
-    --fui-target-size-comfortable: #{$fui-target-size-comfortable};
 
     // AppShell Layout
     --fui-appshell-header-height: #{$fui-appshell-header-height};
-    --fui-appshell-sidebar-width: #{$fui-appshell-sidebar-width};
-    --fui-appshell-sidebar-collapsed-width: #{$fui-appshell-sidebar-collapsed-width};
-    --fui-appshell-aside-width: #{$fui-appshell-aside-width};
     --fui-header-z-index: #{$fui-header-z-index};
 
-    // CodeBlock
-    --fui-code-bg: #{$fui-code-bg};
-    --fui-code-header-bg: #{$fui-code-header-bg};
-    --fui-code-text: #{$fui-code-text};
-    --fui-code-text-muted: #{$fui-code-text-muted};
-    --fui-code-border: #{$fui-code-border};
-    --fui-code-tab-bg: #{$fui-code-tab-bg};
-    --fui-code-tab-border: #{$fui-code-tab-border};
-    --fui-code-tab-text: #{$fui-code-tab-text};
-    --fui-code-tab-text-active: #{$fui-code-tab-text-active};
-    --fui-code-copy-bg: #{$fui-code-copy-bg};
-    --fui-code-copy-bg-hover: #{$fui-code-copy-bg-hover};
-    --fui-code-highlight-bg: #{$fui-code-highlight-bg};
-    --fui-code-selection-bg: #{$fui-code-selection-bg};
-    --fui-code-scrollbar-track: #{$fui-code-scrollbar-track};
-    --fui-code-scrollbar-thumb: #{$fui-code-scrollbar-thumb};
-    --fui-code-scrollbar-thumb-hover: #{$fui-code-scrollbar-thumb-hover};
-
-    // Tooltip
-    --fui-tooltip-bg: #{$fui-tooltip-bg};
-    --fui-tooltip-text: #{$fui-tooltip-text};
-    --fui-tooltip-shadow: #{$fui-tooltip-shadow};
-
-    // Hero/Marketing gradient
-    --fui-hero-gradient-color: #{$fui-hero-gradient-color};
   }
 
   // Dark mode via data-theme attribute (manual toggle)
@@ -709,29 +631,4 @@ $fui-dark-hero-gradient-color: rgba(120, 119, 198, 0.25) !default;
   --fui-scrollbar-thumb: #{$fui-dark-scrollbar-thumb};
   --fui-scrollbar-thumb-hover: #{$fui-dark-scrollbar-thumb-hover};
 
-  // CodeBlock
-  --fui-code-bg: #{$fui-dark-code-bg};
-  --fui-code-header-bg: #{$fui-dark-code-header-bg};
-  --fui-code-text: #{$fui-dark-code-text};
-  --fui-code-text-muted: #{$fui-dark-code-text-muted};
-  --fui-code-border: #{$fui-dark-code-border};
-  --fui-code-tab-bg: #{$fui-dark-code-tab-bg};
-  --fui-code-tab-border: #{$fui-dark-code-tab-border};
-  --fui-code-tab-text: #{$fui-dark-code-tab-text};
-  --fui-code-tab-text-active: #{$fui-dark-code-tab-text-active};
-  --fui-code-copy-bg: #{$fui-dark-code-copy-bg};
-  --fui-code-copy-bg-hover: #{$fui-dark-code-copy-bg-hover};
-  --fui-code-highlight-bg: #{$fui-dark-code-highlight-bg};
-  --fui-code-selection-bg: #{$fui-dark-code-selection-bg};
-  --fui-code-scrollbar-track: #{$fui-dark-code-scrollbar-track};
-  --fui-code-scrollbar-thumb: #{$fui-dark-code-scrollbar-thumb};
-  --fui-code-scrollbar-thumb-hover: #{$fui-dark-code-scrollbar-thumb-hover};
-
-  // Tooltip
-  --fui-tooltip-bg: #{$fui-dark-tooltip-bg};
-  --fui-tooltip-text: #{$fui-dark-tooltip-text};
-  --fui-tooltip-shadow: #{$fui-dark-tooltip-shadow};
-
-  // Hero/Marketing gradient
-  --fui-hero-gradient-color: #{$fui-dark-hero-gradient-color};
 }

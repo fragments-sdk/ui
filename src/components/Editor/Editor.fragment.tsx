@@ -41,6 +41,7 @@ export default defineFragment({
       'Use size prop (sm/md/lg) to control editor height',
       'Use maxLength to show character limit with visual warning states',
       'New formats (headings, blockquote, orderedList, undo, redo) are opt-in via the formats prop',
+      'Use toolbarIcons to swap in icons from any icon package without changing toolbar button labels or accessibility behavior',
     ],
     accessibility: [
       'Toolbar has role="toolbar" with aria-label',
@@ -114,6 +115,10 @@ export default defineFragment({
       type: 'number',
       description: 'Maximum character count. Shows counter in status bar with warning (90%) and error (over limit) states',
     },
+    toolbarIcons: {
+      type: 'object',
+      description: 'Optional toolbar icon overrides keyed by format/action (e.g. bold, italic, undo). Values can be React nodes or render functions.',
+    },
   },
 
   relations: [
@@ -147,6 +152,7 @@ export default defineFragment({
       'onAutoSave: (value: string) => void | Promise<void> - auto-save handler',
       'size: "sm" | "md" | "lg" - editor height preset (default: "md")',
       'maxLength: number - character limit with visual indicator',
+      'toolbarIcons: Partial<Record<EditorFormat, ReactNode | (state) => ReactNode>> - custom toolbar icons',
     ],
     scenarioTags: [
       'form.editor',

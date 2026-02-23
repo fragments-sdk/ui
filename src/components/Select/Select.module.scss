@@ -96,7 +96,7 @@
     var(--fui-space-1, #{$fui-space-1}) * 2
   ) !important;
   overflow-y: auto !important;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+  padding: var(--fui-space-1, $fui-space-1);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
@@ -128,7 +128,7 @@
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   width: 100%;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   cursor: pointer;
   outline: none;
@@ -178,7 +178,7 @@
 
 // Group label
 .groupLabel {
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-md, $fui-padding-item-md);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);

@@ -122,6 +122,33 @@ describe('Header', () => {
     Object.defineProperty(window, 'matchMedia', { writable: true, value: originalMatchMedia });
   });
 
+  it('Header.Trigger renders custom icons from Header.icons', async () => {
+    const originalMatchMedia = window.matchMedia;
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation(() => ({
+        matches: true,
+        media: '(max-width: 767px)',
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+
+    render(
+      <Header icons={{ menu: <span data-testid="header-menu-icon" aria-hidden>Menu</span> }}>
+        <Header.Trigger />
+      </Header>
+    );
+
+    expect(await screen.findByTestId('header-menu-icon')).toBeInTheDocument();
+
+    Object.defineProperty(window, 'matchMedia', { writable: true, value: originalMatchMedia });
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <Header>
@@ -181,6 +208,20 @@ describe('Header.NavMenu', () => {
     );
     const trigger = screen.getByRole('button', { name: /Docs/ });
     expect(trigger.className).toMatch(/navItemActive/);
+  });
+
+  it('renders custom nav menu chevron icon from Header.icons', () => {
+    render(
+      <Header icons={{ navMenuChevron: <span data-testid="header-navmenu-chevron" aria-hidden /> }}>
+        <Header.Nav>
+          <Header.NavMenu label="Docs">
+            <Header.NavMenuItem href="/cli">CLI</Header.NavMenuItem>
+          </Header.NavMenu>
+        </Header.Nav>
+      </Header>
+    );
+
+    expect(screen.getByTestId('header-navmenu-chevron')).toBeInTheDocument();
   });
 
   it('renders NavMenuItem with href as a link', async () => {

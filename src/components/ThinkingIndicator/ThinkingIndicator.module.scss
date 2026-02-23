@@ -38,7 +38,7 @@
 .dots {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: calc(var(--fui-space-px, $fui-space-px) * 4);
 }
 
 .dot {

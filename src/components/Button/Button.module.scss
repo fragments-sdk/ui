@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .button {
   @include button-reset;
@@ -9,7 +9,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-1, $fui-space-1);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   white-space: nowrap;

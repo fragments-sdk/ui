@@ -55,7 +55,7 @@
 .tooltipItems {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
 }
 
 .tooltipItem {

@@ -51,6 +51,17 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('outlined');
   });
 
+  it('resolves variant="icon" to a ghost icon-only button', () => {
+    render(
+      <Button variant="icon" aria-label="Icon action">
+        <span aria-hidden>+</span>
+      </Button>
+    );
+    const button = screen.getByRole('button', { name: 'Icon action' });
+    expect(button).toHaveClass('ghost');
+    expect(button).toHaveClass('icon');
+  });
+
   it('renders as child element when asChild is true', () => {
     render(
       <Button asChild>

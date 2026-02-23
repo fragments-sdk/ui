@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Toast Container
@@ -63,8 +63,8 @@
 .toast {
   display: flex;
   align-items: flex-start;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-inline-sm, $fui-padding-inline-sm) var(--fui-padding-inline-md, $fui-padding-inline-md);
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
@@ -189,7 +189,8 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
+      var(--fui-focus-ring-color, $fui-focus-ring-color);
     outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
   }
 }
@@ -226,7 +227,8 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
+      var(--fui-focus-ring-color, $fui-focus-ring-color);
     outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
   }
 }

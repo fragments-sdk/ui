@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Sidebar Root
@@ -32,11 +32,11 @@
 
   .header {
     justify-content: center;
-    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+    padding: var(--fui-space-1, $fui-space-1);
   }
 
   .nav {
-    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+    padding: var(--fui-space-1, $fui-space-1);
   }
 
   .sectionLabel {
@@ -51,7 +51,7 @@
 
   .item {
     justify-content: center;
-    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+    padding: var(--fui-space-1, $fui-space-1);
     min-height: $fui-touch-md;
   }
 
@@ -61,7 +61,7 @@
 
   .footer {
     justify-content: center;
-    padding: var(--fui-padding-item-xs, $fui-padding-item-xs);
+    padding: var(--fui-space-1, $fui-space-1);
   }
 
   .collapseToggle {
@@ -101,7 +101,7 @@
     transform: translateX(100%);
   }
 
-  &[data-state='open'] {
+  &[data-state="open"] {
     transform: translateX(0);
   }
 }
@@ -114,7 +114,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2);
   flex-shrink: 0;
   height: var(--appshell-header-height, 56px);
 }
@@ -129,7 +129,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-2, $fui-space-2);
 }
 
 .navScrollArea {
@@ -151,7 +151,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
 }
 
 .sectionTrigger {
@@ -207,7 +207,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
     border-radius: var(--fui-radius-md, $fui-radius-md);
 
     &:hover {
@@ -236,7 +236,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -311,7 +311,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   // Use accent-hover for WCAG AA contrast (4.5:1 minimum)
@@ -384,7 +384,7 @@
 
   display: inline-flex;
   align-items: center;
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -394,7 +394,7 @@
 
   // Left border indicator
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 50%;
@@ -440,7 +440,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-container-md, $fui-padding-container-md);
+  padding: var(--fui-space-2, $fui-space-2);
   margin-top: auto;
   flex-shrink: 0;
 }
@@ -483,7 +483,7 @@
   opacity: 0;
   transition: opacity var(--fui-transition-normal, $fui-transition-normal);
 
-  &[data-state='open'] {
+  &[data-state="open"] {
     opacity: 1;
   }
 }
@@ -582,7 +582,7 @@
 
   // Visible rail indicator
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -629,14 +629,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-2, $fui-space-2);
 }
 
 .skeletonItem {
   display: flex;
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-padding-item-xs, $fui-padding-item-xs) var(--fui-padding-item-sm, $fui-padding-item-sm);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   min-height: $fui-sidebar-item-height;
 }
 
