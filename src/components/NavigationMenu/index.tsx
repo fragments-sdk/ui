@@ -534,7 +534,17 @@ function NavigationMenuLink({
     if (!ctx || !itemCtx) return;
 
     const existing = ctx.itemInfoMap.current.get(itemCtx.value);
-    const fallbackLabel = typeof children === 'string' ? children : typeof title === 'string' ? title : '';
+    const fallbackLabel =
+      typeof children === 'string'
+        ? children
+        : typeof title === 'string'
+          ? title
+          : React.Children.toArray(title ?? children)
+              .filter(
+                (node): node is string | number =>
+                  typeof node === 'string' || typeof node === 'number'
+              )
+              .join('');
     const resolvedHref = typeof href === 'string' ? href : existing?.linkHref;
 
     ctx.itemInfoMap.current.set(itemCtx.value, {

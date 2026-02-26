@@ -554,7 +554,6 @@ $fui-dark-tooltip-shadow:
   // that auto-update when --fui-seed-* properties change at runtime.
   // Derivation uses OKLCH space for perceptually uniform results.
   // Browsers without support gracefully fall through to SCSS-computed values above.
-  //
   // Usage: document.documentElement.style.setProperty('--fui-seed-brand', '#0066ff')
   //   → accent, accent-hover, accent-active, focus-ring all update automatically.
 

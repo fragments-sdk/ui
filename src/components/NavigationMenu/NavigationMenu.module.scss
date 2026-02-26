@@ -31,8 +31,10 @@
   margin: 0;
   padding: 0;
 
-  // Hide when container is narrow — hamburger replaces it
-  @include container-max($fui-breakpoint-md, fui-navmenu) {
+  // Use viewport breakpoint (matches useIsMobile in NavigationMenu.tsx).
+  // Self container queries on a shrink-to-content nav root can incorrectly hide
+  // the desktop list even on large screens.
+  @include below-md {
     display: none;
   }
 }
@@ -296,8 +298,8 @@
     opacity: 1;
   }
 
-  // Hide when container is narrow
-  @include container-max($fui-breakpoint-md, fui-navmenu) {
+  // Keep viewport visibility in sync with JS mobile mode.
+  @include below-md {
     display: none;
   }
 }
@@ -328,8 +330,8 @@
     height: var(--fui-icon-xl, $fui-icon-xl);
   }
 
-  // Show hamburger when container is narrow
-  @include container-max($fui-breakpoint-md, fui-navmenu) {
+  // Keep viewport visibility in sync with JS mobile mode.
+  @include below-md {
     display: flex;
   }
 }
