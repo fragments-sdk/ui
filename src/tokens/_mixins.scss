@@ -115,6 +115,43 @@
 @mixin below-lg { @media (max-width: #{$fui-breakpoint-lg - 1px}) { @content; } }
 @mixin below-xl { @media (max-width: #{$fui-breakpoint-xl - 1px}) { @content; } }
 
+// ============================================
+// Container Queries
+// ============================================
+// Component-level responsive design via container queries.
+// Unlike media queries (viewport-based), these respond to the component's
+// own container width — making components intrinsically responsive.
+// Browser support: ~96% (Chrome 105+, Firefox 110+, Safari 16+)
+
+/// Make an element a container query context.
+/// @param {String} $name - Container name for targeting in @container rules
+@mixin container($name) {
+  container-type: inline-size;
+  container-name: #{$name};
+}
+
+/// Container query: apply styles when named container is at least $width wide.
+/// @param {Length} $width - Minimum width threshold
+/// @param {String} $name - Optional container name (omit for nearest ancestor container)
+@mixin container-min($width, $name: null) {
+  @if $name {
+    @container #{$name} (min-width: #{$width}) { @content; }
+  } @else {
+    @container (min-width: #{$width}) { @content; }
+  }
+}
+
+/// Container query: apply styles when named container is below $width wide.
+/// @param {Length} $width - Maximum width threshold
+/// @param {String} $name - Optional container name (omit for nearest ancestor container)
+@mixin container-max($width, $name: null) {
+  @if $name {
+    @container #{$name} (max-width: #{$width}) { @content; }
+  } @else {
+    @container (max-width: #{$width}) { @content; }
+  }
+}
+
 // Visually hidden (for screen readers)
 @mixin visually-hidden {
   position: absolute;

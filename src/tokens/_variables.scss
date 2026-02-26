@@ -391,9 +391,25 @@ $fui-dark-tooltip-shadow:
 
 @mixin fui-css-variables {
   :root {
+    // Enable light-dark() automatic dark mode via color-scheme.
+    // Browsers supporting light-dark() (~92%) get automatic prefers-color-scheme support.
+    // Manual toggle via [data-theme="dark"] / .dark still works (sets color-scheme: dark).
+    color-scheme: light dark;
+
     // Base configuration
     font-size: #{$fui-base-font-size};
     --fui-base-unit: #{$fui-base-unit};
+
+    // Seed colors — the 5 configurable seeds exposed as custom properties.
+    // Tracks SCSS seed variables, so compile-time customization is reflected.
+    // Consumers can override at runtime: `document.documentElement.style.setProperty('--fui-seed-brand', '#0066ff')`
+    // The @supports block below derives accent/semantic tokens from these seeds
+    // using relative color syntax in OKLCH space (perceptually uniform).
+    --fui-seed-brand: #{$fui-color-accent};
+    --fui-seed-danger: #{$fui-color-danger};
+    --fui-seed-success: #{$fui-color-success};
+    --fui-seed-warning: #{$fui-color-warning};
+    --fui-seed-info: #{$fui-color-info};
 
     // Typography
     --fui-font-sans: #{$fui-font-sans};
@@ -440,60 +456,68 @@ $fui-dark-tooltip-shadow:
     --fui-transition-fast: #{$fui-transition-fast};
     --fui-transition-normal: #{$fui-transition-normal};
 
-    // Colors
-    --fui-color-accent: #{$fui-color-accent};
-    --fui-color-accent-hover: #{$fui-color-accent-hover};
-    --fui-color-accent-active: #{$fui-color-accent-active};
+    // Colors — Accent (light-dark for automatic dark mode)
+    --fui-color-accent: light-dark(#{$fui-color-accent}, #{$fui-dark-color-accent});
+    --fui-color-accent-hover: light-dark(#{$fui-color-accent-hover}, #{$fui-dark-color-accent-hover});
+    --fui-color-accent-active: light-dark(#{$fui-color-accent-active}, #{$fui-dark-color-accent-active});
+
+    // Colors — Semantic (same in light/dark, no light-dark() needed)
     --fui-color-danger: #{$fui-color-danger};
     --fui-color-danger-hover: #{$fui-color-danger-hover};
     --fui-color-success: #{$fui-color-success};
     --fui-color-warning: #{$fui-color-warning};
     --fui-color-info: #{$fui-color-info};
-    --fui-color-danger-bg: #{$fui-color-danger-bg};
-    --fui-color-success-bg: #{$fui-color-success-bg};
-    --fui-color-warning-bg: #{$fui-color-warning-bg};
-    --fui-color-info-bg: #{$fui-color-info-bg};
-    --fui-color-danger-text: #{$fui-color-danger-text};
-    --fui-color-success-text: #{$fui-color-success-text};
-    --fui-color-warning-text: #{$fui-color-warning-text};
-    --fui-color-info-text: #{$fui-color-info-text};
-    --fui-backdrop: #{$fui-backdrop};
+
+    // Colors — Semantic Backgrounds
+    --fui-color-danger-bg: light-dark(#{$fui-color-danger-bg}, #{$fui-dark-color-danger-bg});
+    --fui-color-success-bg: light-dark(#{$fui-color-success-bg}, #{$fui-dark-color-success-bg});
+    --fui-color-warning-bg: light-dark(#{$fui-color-warning-bg}, #{$fui-dark-color-warning-bg});
+    --fui-color-info-bg: light-dark(#{$fui-color-info-bg}, #{$fui-dark-color-info-bg});
+
+    // Colors — Semantic Text
+    --fui-color-danger-text: light-dark(#{$fui-color-danger-text}, #{$fui-dark-color-danger-text});
+    --fui-color-success-text: light-dark(#{$fui-color-success-text}, #{$fui-dark-color-success-text});
+    --fui-color-warning-text: light-dark(#{$fui-color-warning-text}, #{$fui-dark-color-warning-text});
+    --fui-color-info-text: light-dark(#{$fui-color-info-text}, #{$fui-dark-color-info-text});
+
+    // Backdrop
+    --fui-backdrop: light-dark(#{$fui-backdrop}, #{$fui-dark-backdrop});
 
     // Surfaces
-    --fui-bg-primary: #{$fui-bg-primary};
-    --fui-bg-secondary: #{$fui-bg-secondary};
-    --fui-bg-tertiary: #{$fui-bg-tertiary};
-    --fui-bg-elevated: #{$fui-bg-elevated};
-    --fui-bg-subtle: #{$fui-bg-subtle};
-    --fui-bg-hover: #{$fui-bg-hover};
-    --fui-bg-active: #{$fui-bg-active};
+    --fui-bg-primary: light-dark(#{$fui-bg-primary}, #{$fui-dark-bg-primary});
+    --fui-bg-secondary: light-dark(#{$fui-bg-secondary}, #{$fui-dark-bg-secondary});
+    --fui-bg-tertiary: light-dark(#{$fui-bg-tertiary}, #{$fui-dark-bg-tertiary});
+    --fui-bg-elevated: light-dark(#{$fui-bg-elevated}, #{$fui-dark-bg-elevated});
+    --fui-bg-subtle: light-dark(#{$fui-bg-subtle}, #{$fui-dark-bg-subtle});
+    --fui-bg-hover: light-dark(#{$fui-bg-hover}, #{$fui-dark-bg-hover});
+    --fui-bg-active: light-dark(#{$fui-bg-active}, #{$fui-dark-bg-active});
 
     // Text
-    --fui-text-primary: #{$fui-text-primary};
-    --fui-text-secondary: #{$fui-text-secondary};
-    --fui-text-tertiary: #{$fui-text-tertiary};
-    --fui-text-inverse: #{$fui-text-inverse};
+    --fui-text-primary: light-dark(#{$fui-text-primary}, #{$fui-dark-text-primary});
+    --fui-text-secondary: light-dark(#{$fui-text-secondary}, #{$fui-dark-text-secondary});
+    --fui-text-tertiary: light-dark(#{$fui-text-tertiary}, #{$fui-dark-text-tertiary});
+    --fui-text-inverse: light-dark(#{$fui-text-inverse}, #{$fui-dark-text-inverse});
 
     // Borders
-    --fui-border: #{$fui-border};
-    --fui-border-default: #{$fui-border-default};
-    --fui-border-strong: #{$fui-border-strong};
+    --fui-border: light-dark(#{$fui-border}, #{$fui-dark-border});
+    --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
+    --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
 
-    // Shadows
+    // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
     --fui-shadow-sm: #{$fui-shadow-sm};
     --fui-shadow-md: #{$fui-shadow-md};
     --fui-shadow-lg: #{$fui-shadow-lg};
 
     // Focus
-    --fui-focus-ring-color: #{$fui-focus-ring-color};
+    --fui-focus-ring-color: light-dark(#{$fui-focus-ring-color}, #{$fui-dark-focus-ring-color});
     --fui-focus-ring-offset: #{$fui-focus-ring-offset};
     --fui-focus-ring-width: #{$fui-focus-ring-width};
 
     // Scrollbar
     --fui-scrollbar-width: #{$fui-scrollbar-width};
-    --fui-scrollbar-track: #{$fui-scrollbar-track};
-    --fui-scrollbar-thumb: #{$fui-scrollbar-thumb};
-    --fui-scrollbar-thumb-hover: #{$fui-scrollbar-thumb-hover};
+    --fui-scrollbar-track: light-dark(#{$fui-scrollbar-track}, #{$fui-dark-scrollbar-track});
+    --fui-scrollbar-thumb: light-dark(#{$fui-scrollbar-thumb}, #{$fui-dark-scrollbar-thumb});
+    --fui-scrollbar-thumb-hover: light-dark(#{$fui-scrollbar-thumb-hover}, #{$fui-dark-scrollbar-thumb-hover});
 
     // Component heights
     --fui-target-size-min: #{$fui-target-size-min};
@@ -504,14 +528,93 @@ $fui-dark-tooltip-shadow:
 
   }
 
-  // Dark mode via data-theme attribute (manual toggle)
+  // Dark mode via data-theme attribute (manual toggle).
+  // Sets color-scheme: dark so light-dark() resolves to dark values.
+  // Explicit overrides kept as fallback for browsers without light-dark() (~8%).
   :root[data-theme="dark"] {
+    color-scheme: dark;
     @include _fui-dark-tokens;
   }
 
   // Dark mode via .dark class on html
   :root.dark {
+    color-scheme: dark;
     @include _fui-dark-tokens;
+  }
+
+  // Light mode explicit override (for manual toggle back to light)
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  // ============================================
+  // Runtime Color Derivation (Progressive Enhancement)
+  // ============================================
+  // Browsers supporting relative color syntax (~93%) get reactive tokens
+  // that auto-update when --fui-seed-* properties change at runtime.
+  // Derivation uses OKLCH space for perceptually uniform results.
+  // Browsers without support gracefully fall through to SCSS-computed values above.
+  //
+  // Usage: document.documentElement.style.setProperty('--fui-seed-brand', '#0066ff')
+  //   → accent, accent-hover, accent-active, focus-ring all update automatically.
+
+  @supports (color: oklch(from red l c h)) {
+    :root {
+      // Accent derived from seed-brand
+      // Light mode: brand as-is; dark mode: inverted lightness, reduced chroma
+      --fui-color-accent: light-dark(
+        var(--fui-seed-brand),
+        oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h)
+      );
+      --fui-color-accent-hover: light-dark(
+        oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
+        oklch(from var(--fui-seed-brand) clamp(0.80, calc(1 - l + 0.02), 0.90) min(c, 0.05) h)
+      );
+      --fui-color-accent-active: light-dark(
+        oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
+        oklch(from var(--fui-seed-brand) clamp(0.73, calc(1 - l - 0.05), 0.85) min(c, 0.05) h)
+      );
+
+      // Semantic hover derived from seed
+      --fui-color-danger-hover: oklch(from var(--fui-seed-danger) max(0.05, calc(l - 0.06)) c h);
+
+      // Semantic backgrounds derived via color-mix (opacity-based)
+      --fui-color-danger-bg: light-dark(
+        color-mix(in oklch, var(--fui-seed-danger) 10%, transparent),
+        color-mix(in oklch, var(--fui-seed-danger) 15%, transparent)
+      );
+      --fui-color-success-bg: light-dark(
+        color-mix(in oklch, var(--fui-seed-success) 10%, transparent),
+        color-mix(in oklch, var(--fui-seed-success) 15%, transparent)
+      );
+      --fui-color-warning-bg: light-dark(
+        color-mix(in oklch, var(--fui-seed-warning) 10%, transparent),
+        color-mix(in oklch, var(--fui-seed-warning) 15%, transparent)
+      );
+      --fui-color-info-bg: light-dark(
+        color-mix(in oklch, var(--fui-seed-info) 10%, transparent),
+        color-mix(in oklch, var(--fui-seed-info) 15%, transparent)
+      );
+
+      // Focus ring derived from seed-brand
+      --fui-focus-ring-color: light-dark(
+        var(--fui-seed-brand),
+        oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h)
+      );
+    }
+
+    // Runtime-derived dark mode overrides (replaces SCSS-computed when supported)
+    :root[data-theme="dark"],
+    :root.dark {
+      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h);
+      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.80, calc(1 - l + 0.02), 0.90) min(c, 0.05) h);
+      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.73, calc(1 - l - 0.05), 0.85) min(c, 0.05) h);
+      --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 15%, transparent);
+      --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
+      --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);
+      --fui-color-info-bg: color-mix(in oklch, var(--fui-seed-info) 15%, transparent);
+      --fui-focus-ring-color: oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h);
+    }
   }
 
   // High contrast mode via system preference

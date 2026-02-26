@@ -63,13 +63,13 @@ export interface NavigationMenuContentProps {
   className?: string;
 }
 
-export interface NavigationMenuLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+export interface NavigationMenuLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'title'> {
   /** Simple mode: children as text content */
   children?: React.ReactNode;
-  /** Structured mode: title text */
-  title?: string;
-  /** Structured mode: description text */
-  description?: string;
+  /** Structured mode: title (string or ReactNode) */
+  title?: React.ReactNode;
+  /** Structured mode: description (string or ReactNode) */
+  description?: React.ReactNode;
   /** Structured mode: icon element */
   icon?: React.ReactNode;
   /** Whether this link is the current page */
@@ -534,7 +534,7 @@ function NavigationMenuLink({
     if (!ctx || !itemCtx) return;
 
     const existing = ctx.itemInfoMap.current.get(itemCtx.value);
-    const fallbackLabel = typeof children === 'string' ? children : title || '';
+    const fallbackLabel = typeof children === 'string' ? children : typeof title === 'string' ? title : '';
     const resolvedHref = typeof href === 'string' ? href : existing?.linkHref;
 
     ctx.itemInfoMap.current.set(itemCtx.value, {

@@ -1,0 +1,213 @@
+// ============================================
+// @fragments-sdk/ui CSS @property Registrations
+// ============================================
+//
+// Registers typed CSS custom properties via @property.
+// Benefits:
+//   1. Animatable color/length tokens (smooth theme transitions)
+//   2. Typed defaults eliminate need for SCSS fallback long-term
+//   3. Inheritance control prevents token leaking
+//
+// Browser support: ~94% (Chrome 85+, Firefox 128+, Safari 15.4+)
+// https://caniuse.com/mdn-css_at-rules_property
+//
+// Usage: @include fui-property-registrations; (before fui-css-variables)
+// ============================================
+
+@use 'variables' as *;
+
+// ============================================
+// Color Tokens
+// ============================================
+
+@mixin _register-color($name, $initial) {
+  @property --fui-#{$name} {
+    syntax: '<color>';
+    initial-value: #{$initial};
+    inherits: true;
+  }
+}
+
+// ============================================
+// Length Tokens
+// ============================================
+
+@mixin _register-length($name, $initial) {
+  @property --fui-#{$name} {
+    syntax: '<length>';
+    initial-value: #{$initial};
+    inherits: true;
+  }
+}
+
+// ============================================
+// Number Tokens (unitless: weights, line-heights, z-index)
+// ============================================
+
+@mixin _register-number($name, $initial) {
+  @property --fui-#{$name} {
+    syntax: '<number>';
+    initial-value: #{$initial};
+    inherits: true;
+  }
+}
+
+// ============================================
+// Main Registration Mixin
+// ============================================
+
+@mixin fui-property-registrations {
+  // ------------------------------------------
+  // Seed Colors — configurable brand/semantic seeds
+  // Runtime derivation via relative color syntax operates in OKLCH space.
+  // ------------------------------------------
+  @include _register-color('seed-brand', $fui-color-accent);
+  @include _register-color('seed-danger', $fui-color-danger);
+  @include _register-color('seed-success', $fui-color-success);
+  @include _register-color('seed-warning', $fui-color-warning);
+  @include _register-color('seed-info', $fui-color-info);
+
+  // ------------------------------------------
+  // Colors — Accent (animatable for theme transitions)
+  // ------------------------------------------
+  @include _register-color('color-accent', $fui-color-accent);
+  @include _register-color('color-accent-hover', $fui-color-accent-hover);
+  @include _register-color('color-accent-active', $fui-color-accent-active);
+
+  // ------------------------------------------
+  // Colors — Semantic
+  // ------------------------------------------
+  @include _register-color('color-danger', $fui-color-danger);
+  @include _register-color('color-danger-hover', $fui-color-danger-hover);
+  @include _register-color('color-success', $fui-color-success);
+  @include _register-color('color-warning', $fui-color-warning);
+  @include _register-color('color-info', $fui-color-info);
+
+  // ------------------------------------------
+  // Colors — Semantic Backgrounds
+  // ------------------------------------------
+  @include _register-color('color-danger-bg', $fui-color-danger-bg);
+  @include _register-color('color-success-bg', $fui-color-success-bg);
+  @include _register-color('color-warning-bg', $fui-color-warning-bg);
+  @include _register-color('color-info-bg', $fui-color-info-bg);
+
+  // ------------------------------------------
+  // Colors — Semantic Text
+  // ------------------------------------------
+  @include _register-color('color-danger-text', $fui-color-danger-text);
+  @include _register-color('color-success-text', $fui-color-success-text);
+  @include _register-color('color-warning-text', $fui-color-warning-text);
+  @include _register-color('color-info-text', $fui-color-info-text);
+
+  // ------------------------------------------
+  // Colors — Surfaces
+  // ------------------------------------------
+  @include _register-color('bg-primary', $fui-bg-primary);
+  @include _register-color('bg-secondary', $fui-bg-secondary);
+  @include _register-color('bg-tertiary', $fui-bg-tertiary);
+  @include _register-color('bg-elevated', $fui-bg-elevated);
+  @include _register-color('bg-subtle', $fui-bg-subtle);
+  @include _register-color('bg-hover', $fui-bg-hover);
+  @include _register-color('bg-active', $fui-bg-active);
+
+  // ------------------------------------------
+  // Colors — Text
+  // ------------------------------------------
+  @include _register-color('text-primary', $fui-text-primary);
+  @include _register-color('text-secondary', $fui-text-secondary);
+  @include _register-color('text-tertiary', $fui-text-tertiary);
+  @include _register-color('text-inverse', $fui-text-inverse);
+
+  // ------------------------------------------
+  // Colors — Borders
+  // ------------------------------------------
+  @include _register-color('border', $fui-border);
+  @include _register-color('border-default', $fui-border-default);
+  @include _register-color('border-strong', $fui-border-strong);
+
+  // ------------------------------------------
+  // Colors — Focus
+  // ------------------------------------------
+  @include _register-color('focus-ring-color', $fui-focus-ring-color);
+
+  // ------------------------------------------
+  // Colors — Scrollbar
+  // ------------------------------------------
+  @include _register-color('scrollbar-track', $fui-scrollbar-track);
+  @include _register-color('scrollbar-thumb', $fui-scrollbar-thumb);
+  @include _register-color('scrollbar-thumb-hover', $fui-scrollbar-thumb-hover);
+
+  // ------------------------------------------
+  // Spacing — Lengths
+  // ------------------------------------------
+  @include _register-length('space-px', $fui-space-px);
+  @include _register-length('space-0-5', $fui-space-0-5);
+  @include _register-length('space-0-75', $fui-space-0-75);
+  @include _register-length('space-1', $fui-space-1);
+  @include _register-length('space-2', $fui-space-2);
+  @include _register-length('space-3', $fui-space-3);
+  @include _register-length('space-4', $fui-space-4);
+  @include _register-length('space-5', $fui-space-5);
+  @include _register-length('space-6', $fui-space-6);
+  @include _register-length('space-8', $fui-space-8);
+  @include _register-length('space-10', $fui-space-10);
+  @include _register-length('space-12', $fui-space-12);
+
+  // ------------------------------------------
+  // Border Radius — Lengths
+  // ------------------------------------------
+  @include _register-length('radius-sm', $fui-radius-sm);
+  @include _register-length('radius-md', $fui-radius-md);
+  @include _register-length('radius-lg', $fui-radius-lg);
+  @include _register-length('radius-xl', $fui-radius-xl);
+  @include _register-length('radius-full', $fui-radius-full);
+
+  // ------------------------------------------
+  // Component Heights — Lengths
+  // ------------------------------------------
+  @include _register-length('button-height-sm', $fui-button-height-sm);
+  @include _register-length('button-height-md', $fui-button-height-md);
+  @include _register-length('button-height-lg', $fui-button-height-lg);
+  @include _register-length('input-height', $fui-input-height);
+  @include _register-length('input-height-sm', $fui-input-height-sm);
+  @include _register-length('input-height-lg', $fui-input-height-lg);
+  @include _register-length('target-size-min', $fui-target-size-min);
+
+  // ------------------------------------------
+  // Focus Ring — Lengths
+  // ------------------------------------------
+  @include _register-length('focus-ring-offset', $fui-focus-ring-offset);
+  @include _register-length('focus-ring-width', $fui-focus-ring-width);
+  @include _register-length('scrollbar-width', $fui-scrollbar-width);
+
+  // ------------------------------------------
+  // Typography — Numbers (unitless, animatable)
+  // ------------------------------------------
+  @include _register-number('font-weight-normal', $fui-font-weight-normal);
+  @include _register-number('font-weight-medium', $fui-font-weight-medium);
+  @include _register-number('font-weight-semibold', $fui-font-weight-semibold);
+  @include _register-number('font-weight-bold', $fui-font-weight-bold);
+  @include _register-number('line-height-tight', $fui-line-height-tight);
+  @include _register-number('line-height-normal', $fui-line-height-normal);
+  @include _register-number('line-height-relaxed', $fui-line-height-relaxed);
+
+  // ------------------------------------------
+  // Typography — Font Sizes (lengths)
+  // ------------------------------------------
+  @include _register-length('font-size-2xs', $fui-font-size-2xs);
+  @include _register-length('font-size-xs', $fui-font-size-xs);
+  @include _register-length('font-size-sm', $fui-font-size-sm);
+  @include _register-length('font-size-base', $fui-font-size-base);
+  @include _register-length('font-size-lg', $fui-font-size-lg);
+  @include _register-length('font-size-xl', $fui-font-size-xl);
+  @include _register-length('font-size-2xl', $fui-font-size-2xl);
+
+  // ------------------------------------------
+  // Note: The following tokens are NOT registered because @property
+  // syntax doesn't support their complex types:
+  //   --fui-font-sans, --fui-font-mono (font family lists)
+  //   --fui-shadow-sm/md/lg (shadow lists)
+  //   --fui-transition-fast/normal (shorthand timing)
+  //   --fui-backdrop, --fui-dark-backdrop (rgba — registered above as <color>)
+  // ------------------------------------------
+}

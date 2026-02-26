@@ -59,6 +59,14 @@ export interface GridItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   rowSpan?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Override alignment for this item */
   alignSelf?: 'start' | 'center' | 'end' | 'stretch';
+  /**
+   * Enable CSS subgrid so children align to parent grid tracks.
+   * - `true` or `"rows"` — children align to parent row tracks
+   * - `"columns"` — children align to parent column tracks
+   * - `"both"` — children align to both row and column tracks
+   * Requires the item to span multiple rows/columns for visible effect.
+   */
+  subgrid?: boolean | 'rows' | 'columns' | 'both';
   /** Additional class name */
   className?: string;
   style?: React.CSSProperties;
@@ -163,6 +171,12 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
 // Grid.Item Sub-component
 // ============================================
 
+const subgridClasses: Record<string, string> = {
+  rows: styles.subgridRows,
+  columns: styles.subgridColumns,
+  both: styles.subgridBoth,
+};
+
 const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
   function GridItem(
     {
@@ -170,17 +184,23 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
       colSpan,
       rowSpan,
       alignSelf,
+      subgrid,
       className,
       style,
       ...htmlProps
     },
     ref
   ) {
+    const subgridClass = subgrid
+      ? subgridClasses[subgrid === true ? 'rows' : subgrid]
+      : undefined;
+
     const classes = [
       styles.item,
       colSpan && (colSpan === 'full' ? styles.colSpanFull : styles[`colSpan${colSpan}`]),
       rowSpan && styles[`rowSpan${rowSpan}`],
       alignSelf && styles[`selfAlign${cap(alignSelf)}`],
+      subgridClass,
       className,
     ]
       .filter(Boolean)

@@ -34,6 +34,14 @@ export interface BentoGridItemProps extends React.HTMLAttributes<HTMLDivElement>
   colSpan?: SpanValue | ResponsiveSpan;
   /** Rows to span — number for all breakpoints, object for per-breakpoint */
   rowSpan?: SpanValue | ResponsiveSpan;
+  /**
+   * Enable CSS subgrid so children align to parent grid tracks.
+   * - `true` or `"rows"` — children align to parent row tracks
+   * - `"columns"` — children align to parent column tracks
+   * - `"both"` — children align to both row and column tracks
+   * Requires the item to span multiple rows/columns for visible effect.
+   */
+  subgrid?: boolean | 'rows' | 'columns' | 'both';
 }
 
 // ============================================
@@ -101,12 +109,19 @@ export const BentoGrid = React.forwardRef<HTMLDivElement, BentoGridProps>(
 // BentoGrid.Item Sub-component
 // ============================================
 
+const subgridClasses: Record<string, string> = {
+  rows: styles.subgridRows,
+  columns: styles.subgridColumns,
+  both: styles.subgridBoth,
+};
+
 const BentoGridItem = React.forwardRef<HTMLDivElement, BentoGridItemProps>(
   function BentoGridItem(
     {
       children,
       colSpan,
       rowSpan,
+      subgrid,
       className,
       style,
       ...htmlProps
@@ -123,7 +138,11 @@ const BentoGridItem = React.forwardRef<HTMLDivElement, BentoGridItemProps>(
       ? ({ ...(spanVars as unknown as React.CSSProperties), ...style } as React.CSSProperties)
       : style;
 
-    const classes = [styles.item, className].filter(Boolean).join(' ');
+    const subgridClass = subgrid
+      ? subgridClasses[subgrid === true ? 'rows' : subgrid]
+      : undefined;
+
+    const classes = [styles.item, subgridClass, className].filter(Boolean).join(' ');
 
     return (
       <div ref={ref} {...htmlProps} className={classes} style={inlineStyle}>

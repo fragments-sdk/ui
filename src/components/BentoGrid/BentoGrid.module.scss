@@ -157,3 +157,23 @@
     border-color: var(--fui-text-primary, $fui-text-primary);
   }
 }
+
+// ============================================
+// Subgrid — item children align to parent tracks
+// ============================================
+
+.subgridRows {
+  display: grid;
+  grid-template-rows: subgrid;
+}
+
+.subgridColumns {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.subgridBoth {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-template-columns: subgrid;
+}

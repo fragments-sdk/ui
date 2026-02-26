@@ -64,7 +64,11 @@
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
 }
 
-.error {
+// Error state via :has() — detects aria-invalid on the input element.
+// Replaces JS class toggle: `error && styles.error`
+// The .error class is kept as a fallback for direct usage.
+.error,
+.input[aria-invalid] {
   border-color: var(--fui-color-danger, $fui-color-danger);
 
   &:focus {
@@ -80,7 +84,13 @@
   margin-top: var(--fui-space-1, $fui-space-1);
 }
 
+// Error text via :has() — detects aria-invalid on sibling input.
+// Replaces JS class toggle: `error && styles.helperError`
 .helperError {
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+.wrapper:has([aria-invalid]) .helper {
   color: var(--fui-color-danger, $fui-color-danger);
 }
 
@@ -92,8 +102,14 @@
   position: relative;
   display: flex;
   align-items: center;
+
+  // Auto-detect shortcut kbd via :has() — replaces JS class toggle: `shortcut && styles.hasShortcut`
+  &:has(> .shortcut) .input {
+    padding-right: var(--fui-space-12, 3rem);
+  }
 }
 
+// Kept as fallback for direct usage
 .hasShortcut {
   padding-right: var(--fui-space-12, 3rem);
 }
@@ -133,7 +149,8 @@
     }
   }
 
-  .error {
+  .error,
+  .input[aria-invalid] {
     border-color: var(--fui-color-danger, $fui-color-danger);
   }
 }

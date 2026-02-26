@@ -6,6 +6,9 @@
 // ============================================
 
 .root {
+  // Container query context: children respond to nav menu width, not viewport
+  @include container(fui-navmenu);
+
   position: relative;
   display: flex;
   align-items: center;
@@ -28,8 +31,8 @@
   margin: 0;
   padding: 0;
 
-  // Hide on mobile — hamburger replaces it
-  @include below-md {
+  // Hide when container is narrow — hamburger replaces it
+  @include container-max($fui-breakpoint-md, fui-navmenu) {
     display: none;
   }
 }
@@ -293,8 +296,8 @@
     opacity: 1;
   }
 
-  // Hide on mobile
-  @include below-md {
+  // Hide when container is narrow
+  @include container-max($fui-breakpoint-md, fui-navmenu) {
     display: none;
   }
 }
@@ -325,7 +328,8 @@
     height: var(--fui-icon-xl, $fui-icon-xl);
   }
 
-  @include below-md {
+  // Show hamburger when container is narrow
+  @include container-max($fui-breakpoint-md, fui-navmenu) {
     display: flex;
   }
 }

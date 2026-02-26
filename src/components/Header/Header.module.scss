@@ -6,6 +6,9 @@
 // ============================================
 
 .header {
+  // Container query context: children respond to header width, not viewport
+  @include container(fui-header);
+
   display: flex;
   align-items: center;
   height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
@@ -34,7 +37,8 @@
   width: 100%;
   max-width: 100%;
 
-  @include below-md {
+  // Compact gap when header container is narrow (replaces viewport media query)
+  @include container-max($fui-breakpoint-md, fui-header) {
     gap: var(--fui-space-1, $fui-space-1);
   }
 }
@@ -70,7 +74,8 @@
 .nav {
   display: none;
 
-  @include breakpoint-md {
+  // Show navigation when header has enough space
+  @include container-min($fui-breakpoint-md, fui-header) {
     display: flex;
     align-items: center;
   }
@@ -235,7 +240,8 @@
 .search {
   display: none;
 
-  @include breakpoint-md {
+  // Show search when header has enough space
+  @include container-min($fui-breakpoint-md, fui-header) {
     display: flex;
     align-items: center;
   }

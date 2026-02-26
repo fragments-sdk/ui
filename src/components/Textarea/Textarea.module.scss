@@ -67,8 +67,9 @@
   resize: both;
 }
 
-// Error state
-.error {
+// Error state via aria-invalid attribute (replaces JS class toggle: `error && styles.error`)
+.error,
+.textarea[aria-invalid] {
   border-color: var(--fui-color-danger, $fui-color-danger);
 
   &:focus {
@@ -84,6 +85,11 @@
   margin-top: var(--fui-space-1, $fui-space-1);
 }
 
+// Error helper text — kept as class and via :has() parent detection
 .helperError {
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+.wrapper:has([aria-invalid]) .helper {
   color: var(--fui-color-danger, $fui-color-danger);
 }

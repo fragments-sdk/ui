@@ -140,3 +140,26 @@
 .selfAlignCenter  { align-self: center; }
 .selfAlignEnd     { align-self: end; }
 .selfAlignStretch { align-self: stretch; }
+
+// ============================================
+// Subgrid — item children align to parent tracks
+// ============================================
+// Usage: <Grid.Item subgrid colSpan={3}> or <Grid.Item subgrid="rows" rowSpan={3}>
+// Children of the item participate in the parent grid's tracks.
+// ~97% browser support (Chrome 117+, Firefox 71+, Safari 16+).
+
+.subgridRows {
+  display: grid;
+  grid-template-rows: subgrid;
+}
+
+.subgridColumns {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.subgridBoth {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-template-columns: subgrid;
+}

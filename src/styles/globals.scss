@@ -48,100 +48,107 @@ $fui-info: #3b82f6 !default;
 );
 
 @use '../tokens/variables' as *;
-
-// Output all CSS custom properties
-@include fui-css-variables;
+@use '../tokens/property-registrations' as prop-reg;
 
 // ============================================
-// Box-Sizing Reset
+// Cascade Layer Order Declaration
+// ============================================
+// Establishes the priority order for the cascade.
+// Consumer styles outside any @layer always win over layered styles.
+// Within layers: tokens < base < components (declared first = lowest priority).
+// Browser support: ~97% (Chrome 99+, Firefox 97+, Safari 15.4+)
+@layer fui.tokens, fui.base;
+
+// Output typed @property registrations (must be top-level, can't be in @layer)
+@include prop-reg.fui-property-registrations;
+
+// ============================================
+// Tokens Layer — CSS custom properties & theming
 // ============================================
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-// ============================================
-// Base Element Resets
-// ============================================
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: var(--fui-font-sans, Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-  background-color: var(--fui-bg-primary, #ffffff);
-  color: var(--fui-text-primary, #171717);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "rlig" 1, "calt" 1;
-}
-
-// Global link reset
-a {
-  text-decoration: none;
-}
-
-*::selection {
-  background-color: var(--fui-color-success-bg, rgba(16, 163, 127, 0.1));
-  color: var(--fui-text-primary, #171717);
+@layer fui.tokens {
+  @include fui-css-variables;
 }
 
 // ============================================
-// Scrollbar Styles
+// Base Layer — Resets & defaults
 // ============================================
+// Uses :where() for zero-specificity resets where possible.
+// Any consumer selector overrides these without specificity fighting.
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--fui-text-tertiary, #8a8a8a);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--fui-text-secondary, #525252);
-}
-
-// Firefox scrollbar
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--fui-text-tertiary, #8a8a8a) transparent;
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+@layer fui.base {
+  // Box-Sizing Reset
+  :where(*, *::before, *::after) {
+    box-sizing: border-box;
   }
-}
 
-// ============================================
-// Accessibility: Focus Visible
-// ============================================
+  // Base Element Resets
+  :where(html) {
+    scroll-behavior: smooth;
+  }
 
-:focus:not(:focus-visible) {
-  outline: none;
-}
+  :where(body) {
+    margin: 0;
+    font-family: var(--fui-font-sans, Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    background-color: var(--fui-bg-primary, #ffffff);
+    color: var(--fui-text-primary, #171717);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 
-:focus-visible {
-  outline: var(--fui-focus-ring-width, 2px) solid var(--fui-focus-ring-color, #18181b);
-  outline-offset: var(--fui-focus-ring-offset, 2px);
+  // Global link reset
+  :where(a) {
+    text-decoration: none;
+  }
+
+  ::selection {
+    background-color: var(--fui-color-success-bg, rgba(16, 163, 127, 0.1));
+    color: var(--fui-text-primary, #171717);
+  }
+
+  // Scrollbar Styles
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--fui-text-tertiary, #8a8a8a);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--fui-text-secondary, #525252);
+  }
+
+  // Firefox scrollbar
+  :where(*) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--fui-text-tertiary, #8a8a8a) transparent;
+  }
+
+  // Accessibility: Reduced Motion
+  @media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  // Accessibility: Focus Visible
+  :where(:focus:not(:focus-visible)) {
+    outline: none;
+  }
+
+  :where(:focus-visible) {
+    outline: var(--fui-focus-ring-width, 2px) solid var(--fui-focus-ring-color, #18181b);
+    outline-offset: var(--fui-focus-ring-offset, 2px);
+  }
 }
