@@ -48,6 +48,23 @@ describe('ColorPicker', () => {
     expect(screen.getByText('Choose a brand color')).toBeInTheDocument();
   });
 
+  it('renders helperText (preferred API)', () => {
+    render(<ColorPicker label="Color" helperText="Choose a brand color" />);
+    expect(screen.getByText('Choose a brand color')).toBeInTheDocument();
+  });
+
+  it('prefers helperText over description when both are provided', () => {
+    render(
+      <ColorPicker
+        label="Color"
+        helperText="Preferred helper text"
+        description="Legacy description text"
+      />
+    );
+    expect(screen.getByText('Preferred helper text')).toBeInTheDocument();
+    expect(screen.queryByText('Legacy description text')).not.toBeInTheDocument();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<ColorPicker label="Brand Color" />);
     await expectNoA11yViolations(container);

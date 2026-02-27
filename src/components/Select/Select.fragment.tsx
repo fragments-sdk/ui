@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { defineFragment } from '@fragments-sdk/core';
 import { Select } from '.';
+import { Field } from '../Field';
 
 // Stateful wrapper for interactive demos
 function StatefulSelect(props: React.ComponentProps<typeof Select> & {
@@ -43,6 +44,7 @@ export default defineFragment({
     ],
     guidelines: [
       'Include a placeholder that explains what to select',
+      'Wrap Select in Field and use Field.Description / Field.Error for helper or validation text',
       'Group related options with SelectGroup',
       'Keep option text concise',
       'Order options logically (alphabetical, by frequency, or by category)',
@@ -117,6 +119,7 @@ export default defineFragment({
       'onChange: (value: string | null) => void - alias for onValueChange',
       'placeholder: string - placeholder text',
       'disabled: boolean - disable select',
+      'Use Field.Description / Field.Error for helper and validation text',
       'options: SelectOption[] - convenience API for simple option lists',
       'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
@@ -174,6 +177,27 @@ export default defineFragment({
             </Select.Group>
           </Select.Content>
         </StatefulSelect>
+      ),
+    },
+    {
+      name: 'With Helper Text (Field)',
+      description: 'Use Field.Description for helper text with compound Select',
+      render: () => (
+        <Field>
+          <Field.Label>Timezone</Field.Label>
+          <Field.Control>
+            <StatefulSelect placeholder="Select a timezone">
+              <Select.Trigger />
+              <Select.Content>
+                <Select.Item value="pt">Pacific Time</Select.Item>
+                <Select.Item value="mt">Mountain Time</Select.Item>
+                <Select.Item value="ct">Central Time</Select.Item>
+                <Select.Item value="et">Eastern Time</Select.Item>
+              </Select.Content>
+            </StatefulSelect>
+          </Field.Control>
+          <Field.Description>Used for reminders and calendar notifications.</Field.Description>
+        </Field>
       ),
     },
     {

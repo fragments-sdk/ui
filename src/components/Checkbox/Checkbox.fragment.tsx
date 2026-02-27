@@ -34,7 +34,7 @@ export default defineFragment({
     ],
     guidelines: [
       'Always include a visible label',
-      'Use description for additional context when needed',
+      'Use helperText for additional context when needed',
       'Group related checkboxes visually',
       'Use indeterminate state for parent/child relationships',
     ],
@@ -77,9 +77,13 @@ export default defineFragment({
       type: 'string',
       description: 'Label text',
     },
+    helperText: {
+      type: 'string',
+      description: 'Helper text shown below the label (preferred)',
+    },
     description: {
       type: 'string',
-      description: 'Description text below the label',
+      description: 'Deprecated alias for helperText',
     },
     size: {
       type: 'enum',
@@ -109,7 +113,8 @@ export default defineFragment({
       'onChange: (checked) => void - alias for onCheckedChange',
       'indeterminate: boolean - partial selection state',
       'label: string - checkbox label',
-      'description: string - helper text',
+      'helperText: string - helper text (preferred)',
+      'description: string - deprecated alias for helperText',
       'controlClassName/contentClassName - explicit styling targets for control and content',
     ],
     scenarioTags: [
@@ -127,12 +132,12 @@ export default defineFragment({
       render: () => <StatefulCheckbox label="Accept terms and conditions" />,
     },
     {
-      name: 'With Description',
+      name: 'With Helper Text',
       description: 'Checkbox with helper text',
       render: () => (
         <StatefulCheckbox
           label="Email notifications"
-          description="Receive email updates about your account activity"
+          helperText="Receive email updates about your account activity"
         />
       ),
     },
@@ -182,7 +187,7 @@ export default defineFragment({
       render: () => (
         <Checkbox
           label="Styled checkbox"
-          description="Control and content wrappers can be targeted independently"
+          helperText="Control and content wrappers can be targeted independently"
           controlClassName="demo-checkbox-control"
           contentClassName="demo-checkbox-content"
         />

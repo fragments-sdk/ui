@@ -30,7 +30,7 @@ export default defineFragment({
       'Always have one option pre-selected when possible',
       'Order options logically (alphabetical, frequency, etc.)',
       'Keep option labels concise',
-      'Use descriptions for complex options',
+      'Use helperText on RadioGroup.Item for complex options',
     ],
     accessibility: [
       'Group must have an accessible label',
@@ -123,7 +123,7 @@ export default defineFragment({
       'size: sm|md|lg (default: md)',
       'disabled: boolean - disable all options',
       'wrapperClassName/groupClassName - explicit styling targets for wrapper and group',
-      'RadioGroup.Item supports controlClassName/contentClassName for item-level styling',
+      'RadioGroup.Item supports helperText (preferred) and description (legacy alias) plus controlClassName/contentClassName for item-level styling',
     ],
     scenarioTags: [
       'form.selection',
@@ -151,24 +151,24 @@ export default defineFragment({
       ),
     },
     {
-      name: 'With Descriptions',
+      name: 'With Helper Text',
       description: 'Radio items with additional context',
       render: () => (
         <RadioGroup defaultValue="standard" label="Shipping Method">
           <RadioGroup.Item
             value="standard"
             label="Standard"
-            description="5-7 business days"
+            helperText="5-7 business days"
           />
           <RadioGroup.Item
             value="express"
             label="Express"
-            description="2-3 business days"
+            helperText="2-3 business days"
           />
           <RadioGroup.Item
             value="overnight"
             label="Overnight"
-            description="Next business day"
+            helperText="Next business day"
           />
         </RadioGroup>
       ),

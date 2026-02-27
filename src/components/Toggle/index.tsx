@@ -18,6 +18,9 @@ export interface SwitchProps {
   /** Alias for onChange (Radix convention) */
   onCheckedChange?: (checked: boolean) => void;
   label?: string;
+  /** Helper text shown below the label */
+  helperText?: string;
+  /** @deprecated Use helperText instead. */
   description?: string;
   disabled?: boolean;
   size?: 'sm' | 'md';
@@ -39,6 +42,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
       onChange,
       onCheckedChange,
       label,
+      helperText,
       description,
       disabled = false,
       size = 'md',
@@ -51,6 +55,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
     },
     ref
   ) {
+    const resolvedHelperText = helperText ?? description;
     const trackClasses = [
       styles.track,
       size === 'sm' ? styles.trackSm : styles.trackMd,
@@ -71,7 +76,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
 
     const rootClasses = [
       styles.root,
-      description && styles.rootWithDescription,
+      resolvedHelperText && styles.rootWithDescription,
       className,
     ]
       .filter(Boolean)
@@ -95,10 +100,10 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
           <BaseSwitch.Thumb className={thumbClasses} />
         </span>
 
-        {(label || description) && (
+        {(label || resolvedHelperText) && (
           <div className={styles.content}>
             {label && <span className={labelClasses}>{label}</span>}
-            {description && <span className={descClasses}>{description}</span>}
+            {resolvedHelperText && <span className={descClasses}>{resolvedHelperText}</span>}
           </div>
         )}
       </BaseSwitch.Root>

@@ -23,6 +23,15 @@ describe('RadioGroup', () => {
     expect(screen.getAllByRole('radio')).toHaveLength(2);
   });
 
+  it('renders helperText on radio items (preferred API)', () => {
+    render(
+      <RadioGroup label="Shipping">
+        <RadioGroup.Item value="standard" label="Standard" helperText="5-7 business days" />
+      </RadioGroup>
+    );
+    expect(screen.getByText('5-7 business days')).toBeInTheDocument();
+  });
+
   it('selects a radio on click', async () => {
     const user = userEvent.setup();
     render(

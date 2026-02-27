@@ -47,7 +47,9 @@ export interface RadioItemProps {
   value: string;
   /** Label text */
   label?: string;
-  /** Description text below the label */
+  /** Helper text shown below the label */
+  helperText?: string;
+  /** @deprecated Use helperText instead. Description text below the label. */
   description?: string;
   /** Whether this item is disabled */
   disabled?: boolean;
@@ -83,6 +85,7 @@ const RadioSizeContext = React.createContext<'sm' | 'md' | 'lg'>('md');
 function RadioItem({
   value,
   label,
+  helperText,
   description,
   disabled = false,
   'aria-label': ariaLabel,
@@ -92,10 +95,11 @@ function RadioItem({
   controlClassName,
   contentClassName,
 }: RadioItemProps) {
+  const resolvedHelperText = helperText ?? description;
   const size = React.useContext(RadioSizeContext);
   const id = React.useId();
   const labelId = label ? `radio-label-${id}` : undefined;
-  const descriptionId = description ? `radio-desc-${id}` : undefined;
+  const descriptionId = resolvedHelperText ? `radio-desc-${id}` : undefined;
 
   const radioClasses = [
     styles.radio,
@@ -113,7 +117,7 @@ function RadioItem({
   const wrapperClasses = [styles.itemWrapper, className].filter(Boolean).join(' ');
 
   // If no label/description, render just the radio
-  if (!label && !description) {
+  if (!label && !resolvedHelperText) {
     return (
       <BaseRadio.Root
         value={value}
@@ -132,7 +136,7 @@ function RadioItem({
     <label
       className={wrapperClasses}
       data-disabled={disabled || undefined}
-      data-has-description={description ? true : undefined}
+      data-has-description={resolvedHelperText ? true : undefined}
     >
       <BaseRadio.Root
         value={value}
@@ -146,8 +150,8 @@ function RadioItem({
       </BaseRadio.Root>
       <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
         <span id={labelId} className={labelClasses}>{label}</span>
-        {description && (
-          <span id={descriptionId} className={styles.description}>{description}</span>
+        {resolvedHelperText && (
+          <span id={descriptionId} className={styles.description}>{resolvedHelperText}</span>
         )}
       </div>
     </label>

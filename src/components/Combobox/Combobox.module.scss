@@ -79,7 +79,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: 2px var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
   background-color: var(--fui-bg-subtle, $fui-bg-subtle);
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
@@ -129,7 +129,7 @@
   cursor: pointer;
   border-radius: 0 var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0;
   transition: color var(--fui-transition-fast, $fui-transition-fast);
-  margin-inline-end: 0.5rem;
+  margin-inline-end: var(--fui-space-2, $fui-space-2);
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);

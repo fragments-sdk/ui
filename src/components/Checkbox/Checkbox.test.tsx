@@ -37,6 +37,23 @@ describe('Checkbox', () => {
     expect(screen.getByText('Get weekly updates')).toBeInTheDocument();
   });
 
+  it('renders helperText (preferred API)', () => {
+    render(<Checkbox label="Subscribe" helperText="Get weekly updates" />);
+    expect(screen.getByText('Get weekly updates')).toBeInTheDocument();
+  });
+
+  it('prefers helperText over description when both are provided', () => {
+    render(
+      <Checkbox
+        label="Subscribe"
+        helperText="Preferred helper text"
+        description="Legacy description text"
+      />
+    );
+    expect(screen.getByText('Preferred helper text')).toBeInTheDocument();
+    expect(screen.queryByText('Legacy description text')).not.toBeInTheDocument();
+  });
+
   it('disables the checkbox', () => {
     render(<Checkbox aria-label="Accept" disabled />);
     expect(screen.getByRole('checkbox')).toHaveAttribute('aria-disabled', 'true');

@@ -47,7 +47,7 @@ export default defineFragment({
     ],
     guidelines: [
       'Always provide a label to describe what the color is for',
-      'Use description to explain color usage or constraints',
+      'Use helperText to explain color usage or constraints',
       'Consider providing color presets alongside the picker for common choices',
       'Validate hex format (#RRGGBB) on input',
     ],
@@ -77,9 +77,13 @@ export default defineFragment({
       type: 'string',
       description: 'Label text above the picker',
     },
+    helperText: {
+      type: 'string',
+      description: 'Helper text below the picker (preferred)',
+    },
     description: {
       type: 'string',
-      description: 'Helper text below the picker',
+      description: 'Deprecated alias for helperText',
     },
     disabled: {
       type: 'boolean',
@@ -111,7 +115,8 @@ export default defineFragment({
       'defaultValue: string - initial color for uncontrolled usage',
       'onChange: (color: string) => void - change handler',
       'label: string - field label',
-      'description: string - helper text',
+      'helperText: string - helper text (preferred)',
+      'description: string - deprecated alias for helperText',
       'disabled: boolean - disable interaction',
       'size: sm|md - size variant',
       'showInput: boolean - show hex input field',
@@ -136,13 +141,13 @@ export default defineFragment({
       ),
     },
     {
-      name: 'With Description',
+      name: 'With Helper Text',
       description: 'Color picker with helper text',
       render: () => (
         <ColorPicker
           label="Primary Color"
           defaultValue="#10b981"
-          description="This color will be used for buttons and links"
+          helperText="This color will be used for buttons and links"
         />
       ),
     },
@@ -192,7 +197,7 @@ export default defineFragment({
         <ColorPicker
           label="Locked Color"
           defaultValue="#64748b"
-          description="This color cannot be changed"
+          helperText="This color cannot be changed"
           disabled
         />
       ),

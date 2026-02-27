@@ -37,6 +37,8 @@ export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Called with new color value when changed */
   onChange?: (color: string) => void;
   /** Helper text below the picker */
+  helperText?: string;
+  /** @deprecated Use helperText instead. */
   description?: string;
   /** Disable the color picker */
   disabled?: boolean;
@@ -53,6 +55,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       value,
       defaultValue = '#000000',
       onChange,
+      helperText,
       description,
       disabled = false,
       size = 'md',
@@ -62,6 +65,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
     },
     ref
   ) {
+    const resolvedHelperText = helperText ?? description;
     loadColorfulDeps();
     const [internalValue, setInternalValue] = React.useState(defaultValue);
     const [inputValue, setInputValue] = React.useState(value ?? defaultValue);
@@ -145,9 +149,9 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
             />
           )}
         </div>
-        {description && (
+        {resolvedHelperText && (
           <Field.Description className={styles.description}>
-            {description}
+            {resolvedHelperText}
           </Field.Description>
         )}
       </Field.Root>

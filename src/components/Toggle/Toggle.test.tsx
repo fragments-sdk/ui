@@ -28,6 +28,23 @@ describe('Switch', () => {
     expect(screen.getByText('Enable push alerts')).toBeInTheDocument();
   });
 
+  it('renders helperText (preferred API)', () => {
+    render(<Switch label="Notifications" helperText="Enable push alerts" />);
+    expect(screen.getByText('Enable push alerts')).toBeInTheDocument();
+  });
+
+  it('prefers helperText over description when both are provided', () => {
+    render(
+      <Switch
+        label="Notifications"
+        helperText="Preferred helper text"
+        description="Legacy description text"
+      />
+    );
+    expect(screen.getByText('Preferred helper text')).toBeInTheDocument();
+    expect(screen.queryByText('Legacy description text')).not.toBeInTheDocument();
+  });
+
   it('disables the switch', () => {
     render(<Switch aria-label="Dark mode" disabled />);
     expect(screen.getByRole('switch')).toHaveAttribute('aria-disabled', 'true');

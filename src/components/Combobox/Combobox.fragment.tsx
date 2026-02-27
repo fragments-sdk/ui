@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { defineFragment } from '@fragments-sdk/core';
 import { Combobox, type ComboboxMultipleProps, type ComboboxSingleProps } from '.';
+import { Field } from '../Field';
 
 // Stateful wrapper for interactive demos
 function StatefulCombobox(
@@ -75,6 +76,7 @@ export default defineFragment({
     ],
     guidelines: [
       'Include a placeholder that explains what to search for',
+      'Wrap Combobox in Field and use Field.Description / Field.Error for helper or validation text',
       'Provide an empty state message when no results match',
       'Group related options with Combobox.Group for large lists',
       'Keep option text concise and searchable',
@@ -161,6 +163,7 @@ export default defineFragment({
       'placeholder: string - input placeholder text',
       'disabled: boolean - disable combobox',
       'autoHighlight: boolean - auto-highlight first match',
+      'Use Field.Description / Field.Error for helper and validation text',
       'Combobox.Input showTrigger: boolean - hide built-in trigger when using Combobox.Trigger explicitly',
       'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
@@ -215,6 +218,27 @@ export default defineFragment({
             <Combobox.Item value="kiwi">Kiwi</Combobox.Item>
           </Combobox.Content>
         </StatefulCombobox>
+      ),
+    },
+    {
+      name: 'With Helper Text (Field)',
+      description: 'Use Field.Description for helper text with compound Combobox',
+      render: () => (
+        <Field>
+          <Field.Label>Assignee</Field.Label>
+          <Field.Control>
+            <StatefulCombobox placeholder="Search assignees...">
+              <Combobox.Input />
+              <Combobox.Content>
+                <Combobox.Empty>No matches</Combobox.Empty>
+                <Combobox.Item value="alice">Alice Johnson</Combobox.Item>
+                <Combobox.Item value="bob">Bob Chen</Combobox.Item>
+                <Combobox.Item value="carol">Carol Smith</Combobox.Item>
+              </Combobox.Content>
+            </StatefulCombobox>
+          </Field.Control>
+          <Field.Description>Type to filter the list of available assignees.</Field.Description>
+        </Field>
       ),
     },
     {

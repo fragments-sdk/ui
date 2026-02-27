@@ -32,7 +32,9 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   size?: 'sm' | 'md' | 'lg';
   /** Label text */
   label?: string;
-  /** Description text below the label */
+  /** Helper text shown below the label */
+  helperText?: string;
+  /** @deprecated Use helperText instead. Description text below the label. */
   description?: string;
   /** Name attribute for form submission */
   name?: string;
@@ -111,6 +113,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       required = false,
       size = 'md',
       label,
+      helperText,
       description,
       name,
       value,
@@ -125,10 +128,11 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     },
     ref
   ) {
+    const resolvedHelperText = helperText ?? description;
     const generatedId = React.useId();
     const checkboxId = id ?? `checkbox-${generatedId}`;
     const labelId = label ? `${checkboxId}-label` : undefined;
-    const descriptionId = description ? `${checkboxId}-description` : undefined;
+    const descriptionId = resolvedHelperText ? `${checkboxId}-description` : undefined;
 
     const checkboxClasses = [
       styles.checkbox,
@@ -147,7 +151,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     const handleCheckedChange = onChange ?? onCheckedChange;
 
     // If no label/description, render just the checkbox
-    if (!label && !description) {
+    if (!label && !resolvedHelperText) {
       const iconOnlyHtmlProps = htmlProps as unknown as Record<string, unknown>;
       return (
         <BaseCheckbox.Root
@@ -179,7 +183,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         {...htmlProps}
         className={wrapperClasses}
         data-disabled={disabled || undefined}
-        data-has-description={description ? true : undefined}
+        data-has-description={resolvedHelperText ? true : undefined}
       >
         <BaseCheckbox.Root
           ref={ref}
@@ -203,8 +207,8 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         </BaseCheckbox.Root>
         <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
           <span id={labelId} className={labelClasses}>{label}</span>
-          {description && (
-            <span id={descriptionId} className={styles.description}>{description}</span>
+          {resolvedHelperText && (
+            <span id={descriptionId} className={styles.description}>{resolvedHelperText}</span>
           )}
         </div>
       </label>

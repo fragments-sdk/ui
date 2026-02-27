@@ -37,7 +37,7 @@ export default defineFragment({
       'Switch should always have a visible label explaining what it controls',
       'The "on" state should be the positive/enabling action',
       'Changes should take effect immediately - no save button needed',
-      'Include a description for switches whose effect isn\'t obvious from the label',
+      'Include helperText for switches whose effect isn\'t obvious from the label',
       'Group related switches visually in settings panels',
     ],
     accessibility: [
@@ -66,9 +66,13 @@ export default defineFragment({
       type: 'string',
       description: 'Visible label text',
     },
+    helperText: {
+      type: 'string',
+      description: 'Helper text shown below the label (preferred)',
+    },
     description: {
       type: 'string',
-      description: 'Helper text shown below the label',
+      description: 'Deprecated alias for helperText',
     },
     disabled: {
       type: 'boolean',
@@ -93,7 +97,8 @@ export default defineFragment({
       'checked: boolean - on/off state',
       'onChange: (checked) => void - state change handler (or onCheckedChange)',
       'label: string - visible label text',
-      'description: string - helper text below label',
+      'helperText: string - helper text below label (preferred)',
+      'description: string - deprecated alias for helperText',
       'disabled: boolean - non-interactive state',
       'size: sm|md - switch size',
     ],
@@ -120,16 +125,16 @@ export default defineFragment({
       args: { checked: true, label: 'Dark mode' },
     },
     {
-      name: 'With Description',
+      name: 'With Helper Text',
       description: 'Switch with explanatory helper text',
       render: () => (
         <StatefulSwitch
           checked
           label="Auto-save"
-          description="Automatically save changes as you type"
+          helperText="Automatically save changes as you type"
         />
       ),
-      args: { checked: true, label: 'Auto-save', description: 'Automatically save changes as you type' },
+      args: { checked: true, label: 'Auto-save', helperText: 'Automatically save changes as you type' },
     },
     {
       name: 'Small Size',
@@ -160,16 +165,16 @@ export default defineFragment({
           <StatefulSwitch
             checked
             label="Push notifications"
-            description="Receive push notifications on your device"
+            helperText="Receive push notifications on your device"
           />
           <StatefulSwitch
             checked
             label="Email digest"
-            description="Weekly summary of your activity"
+            helperText="Weekly summary of your activity"
           />
           <StatefulSwitch
             label="Marketing emails"
-            description="Product updates and promotional offers"
+            helperText="Product updates and promotional offers"
           />
         </div>
       ),
