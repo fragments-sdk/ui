@@ -10,12 +10,11 @@
 // Popup container
 .popup {
   @include surface-elevated;
+  @include popup-container;
 
   list-style: none;
   margin: 0;
   min-width: 12rem;
-  padding: var(--fui-space-1, $fui-space-1);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
   opacity: 0;
@@ -39,17 +38,7 @@
 
 // Menu item (shared base)
 .item {
-  @include button-reset;
-  @include text-base;
-
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  cursor: pointer;
-  outline: none;
+  @include popup-item;
 
   &[data-highlighted] {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -154,10 +143,7 @@
 
 // Group label
 .groupLabel {
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  @include popup-group-label;
 }
 
 // Arrow

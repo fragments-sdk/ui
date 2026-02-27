@@ -1,11 +1,21 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 
-// Multi-select container — stacks input and chips vertically
-.multiContainer {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+// Form field wrapper (label + helper + error)
+@include form-field-wrapper;
+
+
+// Size variants for input wrapper
+.inputWrapperSm {
+  min-height: var(--fui-input-height-sm, $fui-input-height-sm);
+}
+
+.inputWrapperMd {
+  // Default — inherits from .inputWrapper
+}
+
+.inputWrapperLg {
+  min-height: var(--fui-input-height-lg, $fui-input-height-lg);
 }
 
 // Input + trigger wrapper
@@ -41,6 +51,17 @@
   }
 }
 
+// Size variants for text input
+.inputSm {
+  height: calc(var(--fui-input-height-sm, $fui-input-height-sm) - var(--fui-space-2, $fui-space-2));
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.inputLg {
+  height: calc(var(--fui-input-height-lg, $fui-input-height-lg) - var(--fui-space-2, $fui-space-2));
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
 // Text input
 .input {
   @include text-base;
@@ -65,26 +86,23 @@
   }
 }
 
-// Chips container (multi-select) — rendered below the input wrapper
+// Chips container (multi-select) — flows inline within inputWrapper
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fui-space-1, $fui-space-1);
-  width: 100%;
-  padding-top: var(--fui-space-1, $fui-space-1);
+  display: contents;
 }
 
-// Individual chip (multi-select)
+// Individual chip (multi-select) — matches Chip component outlined xs
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
-  background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+  gap: var(--fui-space-0-5, $fui-space-0-5);
+  height: var(--fui-target-size-min, $fui-target-size-min);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  background-color: transparent;
   border: 1px solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  line-height: 1.4;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  line-height: 1;
   white-space: nowrap;
   max-width: 12rem;
 }
@@ -95,18 +113,23 @@
   white-space: nowrap;
 }
 
-// Chip remove button
+// Chip remove button — round icon button inside the pill
 .chipRemove {
   @include button-reset;
   @include touch-target;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   width: 1rem;
   height: 1rem;
-  border-radius: var(--fui-radius-xs, 2px);
+  border-radius: var(--fui-radius-full, $fui-radius-full);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   cursor: pointer;
-  transition: color var(--fui-transition-fast, $fui-transition-fast);
+  transition:
+    color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);
@@ -160,6 +183,7 @@
 // Popup container
 .popup {
   @include surface-elevated;
+  @include popup-container;
 
   // Item height derived from text-base font + vertical padding
   --_item-h: calc(
@@ -175,8 +199,6 @@
     var(--_item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) * 2
   ) !important;
   overflow-y: auto !important;
-  padding: var(--fui-space-1, $fui-space-1);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
   opacity: 0;
@@ -200,19 +222,10 @@
 
 // Individual option
 .item {
-  @include button-reset;
-  @include text-base;
+  @include popup-item;
 
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  cursor: pointer;
-  outline: none;
-
-  &[data-highlighted] {
+  &[data-highlighted],
+  &:hover:not([data-disabled]) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
   }
 
@@ -220,7 +233,8 @@
     background-color: var(--fui-color-accent, $fui-color-accent);
     color: var(--fui-text-inverse, $fui-text-inverse);
 
-    &[data-highlighted] {
+    &[data-highlighted],
+    &:hover:not([data-disabled]) {
       background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
     }
   }
@@ -269,10 +283,38 @@
 
 // Group label
 .groupLabel {
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  @include popup-group-label;
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .inputWrapper {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &:focus-within {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .inputWrapper {
+    transition: none;
+  }
+
+  .popup {
+    transition: none;
+  }
+
+  .trigger svg {
+    transition: none;
+  }
 }

@@ -1,6 +1,9 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Form field wrapper (label + helper + error)
+@include form-field-wrapper;
+
 // Trigger button
 .trigger {
   @include button-reset;
@@ -32,6 +35,19 @@
     background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
+}
+
+// Trigger size variants
+.triggerSm {
+  height: var(--fui-input-height-sm, $fui-input-height-sm);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.triggerLg {
+  height: var(--fui-input-height-lg, $fui-input-height-lg);
+  padding: 0 var(--fui-space-4, $fui-space-4);
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
 // Value display
@@ -81,6 +97,7 @@
 // Popup container
 .popup {
   @include surface-elevated;
+  @include popup-container;
 
   // Item height derived from text-base font + vertical padding
   --_item-h: calc(
@@ -96,8 +113,6 @@
     var(--fui-space-1, #{$fui-space-1}) * 2
   ) !important;
   overflow-y: auto !important;
-  padding: var(--fui-space-1, $fui-space-1);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
   opacity: 0;
@@ -121,17 +136,7 @@
 
 // Individual option
 .item {
-  @include button-reset;
-  @include text-base;
-
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  cursor: pointer;
-  outline: none;
+  @include popup-item;
 
   &[data-highlighted] {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -178,12 +183,40 @@
 
 // Group label
 .groupLabel {
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  @include popup-group-label;
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .trigger {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &[data-popup-open] {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger {
+    transition: none;
+  }
+
+  .popup {
+    transition: none;
+  }
+
+  .icon svg {
+    transition: none;
+  }
 }
 
 // Arrow

@@ -102,6 +102,43 @@
   border-radius: var(--fui-radius-lg, #{$fui-radius-lg});
 }
 
+// Dropdown / popup container base styles.
+// Compose with @include surface-elevated for the full treatment.
+// Consumer sets min-width and optionally max-height/overflow.
+@mixin popup-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--fui-space-1, #{$fui-space-1});
+  box-shadow: var(--fui-shadow-md, #{$fui-shadow-md});
+}
+
+// Dropdown/popup item base.
+// Includes button-reset and text-base. Consumer adds state styles.
+@mixin popup-item {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, #{$fui-space-1});
+  width: 100%;
+  padding: var(--fui-space-1, #{$fui-space-1}) var(--fui-space-2, #{$fui-space-2});
+  border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
+  cursor: pointer;
+  outline: none;
+}
+
+// Group label within a dropdown/popup.
+@mixin popup-group-label {
+  padding: var(--fui-space-1, #{$fui-space-1}) var(--fui-space-2, #{$fui-space-2});
+  font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
+  font-weight: var(--fui-font-weight-medium, #{$fui-font-weight-medium});
+  color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 // Responsive breakpoint mixins (mobile-first, min-width)
 @mixin breakpoint-sm { @media (min-width: $fui-breakpoint-sm) { @content; } }
 @mixin breakpoint-md { @media (min-width: $fui-breakpoint-md) { @content; } }
@@ -253,5 +290,43 @@
       padding: 0 var(--fui-space-5, #{$fui-space-5});
       font-size: var(--fui-font-size-base, #{$fui-font-size-base});
     }
+  }
+}
+
+// ============================================
+// Form Field Wrapper
+// Generates .wrapper, .label, .helper, .helperError, .errorMessage
+// for consistent form field layout across all form components.
+// ============================================
+
+@mixin form-field-wrapper {
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .label {
+    @include label-text;
+    margin-bottom: var(--fui-space-1, #{$fui-space-1});
+  }
+
+  .required {
+    color: var(--fui-color-danger, #{$fui-color-danger});
+    margin-left: 2px;
+  }
+
+  .helper {
+    @include helper-text;
+    margin-top: var(--fui-space-1, #{$fui-space-1});
+  }
+
+  .helperError {
+    color: var(--fui-color-danger, #{$fui-color-danger});
+  }
+
+  .errorMessage {
+    font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
+    color: var(--fui-color-danger, #{$fui-color-danger});
+    margin-top: var(--fui-space-1, #{$fui-space-1});
   }
 }
