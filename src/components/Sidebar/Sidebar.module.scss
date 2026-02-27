@@ -240,7 +240,7 @@
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
-  min-height: $fui-sidebar-item-height;
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
 
   &:hover:not(.itemDisabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -389,7 +389,7 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  min-height: $fui-sidebar-subitem-height;
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-subitem-height);
   position: relative;
 
   // Left border indicator
@@ -637,7 +637,7 @@
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  min-height: $fui-sidebar-item-height;
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
 }
 
 .skeletonLabel {

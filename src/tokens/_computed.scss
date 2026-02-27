@@ -77,6 +77,9 @@ $computed-touch-sm: density.px-to-rem($_density, map.get($_density, touch-sm));
 $computed-touch-md: density.px-to-rem($_density, map.get($_density, touch-md));
 $computed-touch-lg: density.px-to-rem($_density, map.get($_density, touch-lg));
 
+// Sidebar navigation (from density)
+$computed-sidebar-item-height: density.px-to-rem($_density, map.get($_density, sidebar-item-height));
+
 // --------------------------------------------
 // Computed: Colors - Light Mode
 // --------------------------------------------

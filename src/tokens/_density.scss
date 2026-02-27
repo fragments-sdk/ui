@@ -34,10 +34,16 @@ $density-compact: (
   // 4 units
   input-height-lg: 36px,
   // 6 units
-  // Touch targets (minimum for accessibility)
+  // Touch targets (WCAG 2.5.8: minimum 24px)
   touch-sm: 24px,
-  touch-md: 30px,
-  touch-lg: 36px,
+  // 24px = WCAG AA floor
+  touch-md: 28px,
+  // -12.5% from default
+  touch-lg: 38px,
+  // -13.6% from default
+  // Sidebar navigation
+  sidebar-item-height: 30px,
+  // ~5 units
 );
 
 $density-default: (
@@ -57,10 +63,15 @@ $density-default: (
   // 4 units
   input-height-lg: 44px,
   // ~6 units
-  // Touch targets
+  // Touch targets (baseline)
   touch-sm: 24px,
+  // WCAG AA floor
   touch-md: 32px,
   touch-lg: 44px,
+  // WCAG AAA recommended
+  // Sidebar navigation
+  sidebar-item-height: 35px,
+  // 5 units
 );
 
 $density-relaxed: (
@@ -80,10 +91,16 @@ $density-relaxed: (
   // 4 units
   input-height-lg: 48px,
   // 6 units
-  // Touch targets
-  touch-sm: 32px,
-  touch-md: 40px,
+  // Touch targets (proportional from default, not blown out)
+  touch-sm: 28px,
+  // +17% from default (was 32px / +33%)
+  touch-md: 36px,
+  // +12.5% from default (was 40px / +25%)
   touch-lg: 48px,
+  // +9% from default (unchanged)
+  // Sidebar navigation
+  sidebar-item-height: 38px,
+  // ~4.75 units
 );
 
 // --------------------------------------------

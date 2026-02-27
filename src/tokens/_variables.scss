@@ -292,7 +292,7 @@ $fui-anim-offset-md: 8px !default; // Medium slide animation
 $fui-arrow-size: 10px !default;
 
 // Sidebar-specific
-$fui-sidebar-item-height: 2.5rem !default; // 35px (5 units)
+$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact: 30px, default: 35px, relaxed: 38px)
 $fui-sidebar-subitem-height: 2.571rem !default; // 36px
 $fui-sidebar-indicator-width: 2px !default;
 $fui-sidebar-indicator-height: 1.143rem !default; // 16px
@@ -519,8 +519,22 @@ $fui-dark-tooltip-shadow:
     --fui-scrollbar-thumb: light-dark(#{$fui-scrollbar-thumb}, #{$fui-dark-scrollbar-thumb});
     --fui-scrollbar-thumb-hover: light-dark(#{$fui-scrollbar-thumb-hover}, #{$fui-dark-scrollbar-thumb-hover});
 
-    // Component heights
+    // Component heights (density-responsive)
+    --fui-button-height-sm: #{$fui-button-height-sm};
+    --fui-button-height-md: #{$fui-button-height-md};
+    --fui-button-height-lg: #{$fui-button-height-lg};
+    --fui-input-height-sm: #{$fui-input-height-sm};
+    --fui-input-height: #{$fui-input-height};
+    --fui-input-height-lg: #{$fui-input-height-lg};
+
+    // Touch targets (density-responsive, WCAG 2.5.8: ≥24px)
+    --fui-touch-sm: #{$fui-touch-sm};
+    --fui-touch-md: #{$fui-touch-md};
+    --fui-touch-lg: #{$fui-touch-lg};
     --fui-target-size-min: #{$fui-target-size-min};
+
+    // Sidebar (density-responsive)
+    --fui-sidebar-item-height: #{$fui-sidebar-item-height};
 
     // AppShell Layout
     --fui-appshell-header-height: #{$fui-appshell-header-height};

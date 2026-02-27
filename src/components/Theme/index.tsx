@@ -420,12 +420,14 @@ interface DensityConfig {
   baseFontSize: number;
   buttonHeights: [number, number, number]; // sm, md, lg
   inputHeights: [number, number, number]; // sm, default, lg
+  touchTargets: [number, number, number]; // sm, md, lg — WCAG 2.5.8: ≥24px
+  sidebarItemHeight: number;
 }
 
 const DENSITY_CONFIGS: Record<DensityPreset, DensityConfig> = {
-  compact:  { baseUnit: 6,  baseFontSize: 14, buttonHeights: [24, 30, 36], inputHeights: [24, 32, 36] },
-  default:  { baseUnit: 7,  baseFontSize: 14, buttonHeights: [28, 36, 44], inputHeights: [28, 40, 44] },
-  relaxed:  { baseUnit: 8,  baseFontSize: 14, buttonHeights: [32, 40, 48], inputHeights: [32, 44, 48] },
+  compact:  { baseUnit: 6,  baseFontSize: 14, buttonHeights: [24, 30, 36], inputHeights: [24, 32, 36], touchTargets: [24, 28, 38], sidebarItemHeight: 30 },
+  default:  { baseUnit: 7,  baseFontSize: 14, buttonHeights: [28, 36, 44], inputHeights: [28, 40, 44], touchTargets: [24, 32, 44], sidebarItemHeight: 35 },
+  relaxed:  { baseUnit: 8,  baseFontSize: 14, buttonHeights: [32, 40, 48], inputHeights: [32, 44, 48], touchTargets: [28, 36, 48], sidebarItemHeight: 38 },
 };
 
 function pxToRem(px: number, baseFontSize: number): string {
@@ -508,6 +510,10 @@ export function configureTheme(options: ConfigureThemeOptions): void {
     if (d) {
       const unitRem = d.baseUnit / d.baseFontSize;
 
+      // Micro spacing
+      setVar(root, '--fui-space-0-5', `${unitRem * 0.3}rem`);
+      setVar(root, '--fui-space-0-75', `${unitRem * 0.43}rem`);
+
       // Spacing scale
       setVar(root, '--fui-space-1', `${unitRem}rem`);
       setVar(root, '--fui-space-2', `${unitRem * 2}rem`);
@@ -526,6 +532,14 @@ export function configureTheme(options: ConfigureThemeOptions): void {
       setVar(root, '--fui-input-height-sm', pxToRem(d.inputHeights[0], d.baseFontSize));
       setVar(root, '--fui-input-height', pxToRem(d.inputHeights[1], d.baseFontSize));
       setVar(root, '--fui-input-height-lg', pxToRem(d.inputHeights[2], d.baseFontSize));
+
+      // Touch targets (WCAG 2.5.8: all values ≥24px)
+      setVar(root, '--fui-touch-sm', pxToRem(d.touchTargets[0], d.baseFontSize));
+      setVar(root, '--fui-touch-md', pxToRem(d.touchTargets[1], d.baseFontSize));
+      setVar(root, '--fui-touch-lg', pxToRem(d.touchTargets[2], d.baseFontSize));
+
+      // Sidebar navigation
+      setVar(root, '--fui-sidebar-item-height', pxToRem(d.sidebarItemHeight, d.baseFontSize));
 
       // Base unit
       setVar(root, '--fui-base-unit', `${d.baseUnit}px`);
