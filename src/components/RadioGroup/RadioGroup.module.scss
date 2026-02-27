@@ -5,7 +5,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-1, $fui-space-1);
 }
 
 .groupLabel {
@@ -145,7 +145,7 @@
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
-.description {
+.helper {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: var(--fui-text-secondary, $fui-text-secondary);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
@@ -155,4 +155,33 @@
 .error {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: var(--fui-color-danger, $fui-color-danger);
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .radio {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &[data-checked] {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+
+    &[data-invalid] {
+      border-color: var(--fui-color-danger, $fui-color-danger);
+    }
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator {
+    transition: none;
+  }
 }

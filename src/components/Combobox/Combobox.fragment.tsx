@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { defineFragment } from '@fragments-sdk/core';
 import { Combobox, type ComboboxMultipleProps, type ComboboxSingleProps } from '.';
-import { Field } from '../Field';
-
 // Stateful wrapper for interactive demos
 function StatefulCombobox(
   props:
@@ -76,7 +74,8 @@ export default defineFragment({
     ],
     guidelines: [
       'Include a placeholder that explains what to search for',
-      'Wrap Combobox in Field and use Field.Description / Field.Error for helper or validation text',
+      'Use label prop for accessible field labeling',
+      'Use helperText for guidance and error for validation messages',
       'Provide an empty state message when no results match',
       'Group related options with Combobox.Group for large lists',
       'Keep option text concise and searchable',
@@ -135,10 +134,28 @@ export default defineFragment({
       type: 'string',
       description: 'Placeholder text for the input',
     },
+    label: {
+      type: 'string',
+      description: 'Visible label text above the combobox',
+    },
+    helperText: {
+      type: 'string',
+      description: 'Helper text shown below the combobox',
+    },
+    error: {
+      type: 'union',
+      description: 'Show error styling. When a string is provided, it is displayed as an error message.',
+    },
     disabled: {
       type: 'boolean',
       description: 'Disable the combobox',
       default: 'false',
+    },
+    size: {
+      type: 'enum',
+      values: ['sm', 'md', 'lg'],
+      default: 'md',
+      description: 'Size variant',
     },
     autoHighlight: {
       type: 'boolean',
@@ -161,9 +178,12 @@ export default defineFragment({
       'multiple: boolean - enable multi-select with chips',
       'When multiple=true, value/defaultValue must be string[] (single mode uses string|null)',
       'placeholder: string - input placeholder text',
+      'label: string - visible label text',
+      'helperText: string - helper text below field',
+      'error: boolean | string - error styling and message',
       'disabled: boolean - disable combobox',
+      'size: sm|md|lg (default: md)',
       'autoHighlight: boolean - auto-highlight first match',
-      'Use Field.Description / Field.Error for helper and validation text',
       'Combobox.Input showTrigger: boolean - hide built-in trigger when using Combobox.Trigger explicitly',
       'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
@@ -221,24 +241,39 @@ export default defineFragment({
       ),
     },
     {
-      name: 'With Helper Text (Field)',
-      description: 'Use Field.Description for helper text with compound Combobox',
+      name: 'With Label and Helper Text',
+      description: 'Combobox with built-in label and helper text',
       render: () => (
-        <Field>
-          <Field.Label>Assignee</Field.Label>
-          <Field.Control>
-            <StatefulCombobox placeholder="Search assignees...">
-              <Combobox.Input />
-              <Combobox.Content>
-                <Combobox.Empty>No matches</Combobox.Empty>
-                <Combobox.Item value="alice">Alice Johnson</Combobox.Item>
-                <Combobox.Item value="bob">Bob Chen</Combobox.Item>
-                <Combobox.Item value="carol">Carol Smith</Combobox.Item>
-              </Combobox.Content>
-            </StatefulCombobox>
-          </Field.Control>
-          <Field.Description>Type to filter the list of available assignees.</Field.Description>
-        </Field>
+        <StatefulCombobox
+          label="Assignee"
+          placeholder="Search assignees..."
+          helperText="Type to filter the list of available assignees."
+        >
+          <Combobox.Input />
+          <Combobox.Content>
+            <Combobox.Empty>No matches</Combobox.Empty>
+            <Combobox.Item value="alice">Alice Johnson</Combobox.Item>
+            <Combobox.Item value="bob">Bob Chen</Combobox.Item>
+            <Combobox.Item value="carol">Carol Smith</Combobox.Item>
+          </Combobox.Content>
+        </StatefulCombobox>
+      ),
+    },
+    {
+      name: 'Error State',
+      description: 'Validation error with message',
+      render: () => (
+        <Combobox
+          label="Reviewer"
+          placeholder="Search reviewers..."
+          error="Please select a reviewer"
+          disabled
+        >
+          <Combobox.Input />
+          <Combobox.Content>
+            <Combobox.Item value="alice">Alice</Combobox.Item>
+          </Combobox.Content>
+        </Combobox>
       ),
     },
     {

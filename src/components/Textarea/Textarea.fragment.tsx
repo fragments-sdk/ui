@@ -78,6 +78,12 @@ export default defineFragment({
       default: false,
       description: 'Disabled state',
     },
+    size: {
+      type: 'enum',
+      values: ['sm', 'md', 'lg'],
+      default: 'md',
+      description: 'Size variant',
+    },
     resize: {
       type: 'enum',
       values: ['none', 'vertical', 'horizontal', 'both'],
@@ -115,6 +121,7 @@ export default defineFragment({
       'value: string - controlled value',
       'rows: number - visible rows (default: 3)',
       'label: string - label text',
+      'size: sm|md|lg (default: md)',
       'error: boolean - error state',
       'disabled: boolean - disabled state',
       'resize: none|vertical|horizontal|both',
@@ -188,6 +195,17 @@ export default defineFragment({
           placeholder="Enter detailed information..."
           rows={6}
         />
+      ),
+    },
+    {
+      name: 'Sizes',
+      description: 'Available size variants',
+      render: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px' }}>
+          <Textarea label="Small" size="sm" placeholder="Small textarea" />
+          <Textarea label="Medium" size="md" placeholder="Medium textarea" />
+          <Textarea label="Large" size="lg" placeholder="Large textarea" />
+        </div>
       ),
     },
     {

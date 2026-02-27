@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
+import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from '../../utils/aria';
 import styles from './DatePicker.module.scss';
 // Import globals to ensure CSS variables are defined
 import '../../styles/globals.scss';
@@ -14,8 +15,10 @@ export type DateRange = { from: Date | undefined; to?: Date | undefined };
 export type Matcher = Date | DateRange | ((date: Date) => boolean) | Date[];
 type Locale = { [key: string]: unknown };
 
-export interface DatePickerProps {
+export interface DatePickerProps extends FormFieldProps {
   children: React.ReactNode;
+  /** Wrapper class name */
+  className?: string;
   /** Selection mode */
   mode?: 'single' | 'range';
   /** Controlled date (single mode) */
@@ -24,6 +27,8 @@ export interface DatePickerProps {
   selectedRange?: DateRange | null;
   /** Single selection callback */
   onSelect?: (date: Date | null) => void;
+  /** Alias for onSelect (consistent with Input/Select onChange convention) */
+  onChange?: (date: Date | null) => void;
   /** Range selection callback */
   onRangeSelect?: (range: DateRange | null) => void;
   /** Number of months displayed side-by-side */
@@ -271,12 +276,17 @@ function getCalendarClassNames() {
 // Components
 // ============================================
 
-function DatePickerRoot({
+const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(function DatePickerRoot({
   children,
+  label,
+  helperText,
+  error,
+  className,
   mode = 'single',
   selected: selectedProp,
   selectedRange: selectedRangeProp,
   onSelect,
+  onChange: onChangeProp,
   onRangeSelect,
   numberOfMonths = 1,
   disabled = false,
@@ -289,7 +299,7 @@ function DatePickerRoot({
   open: openProp,
   onOpenChange,
   name,
-}: DatePickerProps) {
+}: DatePickerProps, ref) {
   // Load deps eagerly so date formatters are available in the trigger
   loadDatePickerDeps();
   const [internalSelected, setInternalSelected] = React.useState<Date | null>(
@@ -327,12 +337,14 @@ function DatePickerRoot({
     [isControlledOpen, onOpenChange]
   );
 
+  const resolvedOnSelect = onSelect ?? onChangeProp;
+
   const setSelected = React.useCallback(
     (date: Date | null) => {
       if (selectedProp === undefined) {
         setInternalSelected(date);
       }
-      onSelect?.(date);
+      resolvedOnSelect?.(date);
 
       // Auto-close after single selection (controlled and uncontrolled).
       if (date) {
@@ -341,7 +353,7 @@ function DatePickerRoot({
         }, 150);
       }
     },
-    [selectedProp, onSelect, handleOpenChange]
+    [selectedProp, resolvedOnSelect, handleOpenChange]
   );
 
   const setSelectedRange = React.useCallback(
@@ -405,14 +417,30 @@ function DatePickerRoot({
     ]
   );
 
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('datepicker', { label, helperText, error });
+
+  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
+  const helperClasses = [styles.helper, hasError && styles.helperError]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <DatePickerContext.Provider value={contextValue}>
-      <BasePopover.Root
-        open={isOpen}
-        onOpenChange={handleOpenChange}
-      >
-        {children}
-      </BasePopover.Root>
+      <div ref={ref} className={wrapperClasses}>
+        {label && <span id={labelId} className={styles.label}>{label}</span>}
+        <BasePopover.Root
+          open={isOpen}
+          onOpenChange={handleOpenChange}
+        >
+          {children}
+        </BasePopover.Root>
+        {helperText && (
+          <span id={helperId} className={helperClasses}>{helperText}</span>
+        )}
+        {errorMessage && (
+          <span id={errorId} className={styles.errorMessage}>{errorMessage}</span>
+        )}
+      </div>
       {name && (
         <input
           type="hidden"
@@ -428,7 +456,7 @@ function DatePickerRoot({
       )}
     </DatePickerContext.Provider>
   );
-}
+});
 
 function DatePickerTrigger({
   children,

@@ -1,10 +1,8 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
-.wrapper {
-  display: flex;
-  flex-direction: column;
-}
+// Form field wrapper (label + helper + error)
+@include form-field-wrapper;
 
 // Size variants
 .sizeSm {
@@ -13,8 +11,8 @@
   }
 
   .swatch {
-    width: $fui-touch-sm;
-    height: $fui-touch-sm;
+    width: var(--fui-input-height-sm, $fui-input-height-sm);
+    height: var(--fui-input-height-sm, $fui-input-height-sm);
   }
 
   .hexInput {
@@ -37,7 +35,7 @@
   }
 
   .swatch {
-    width: 48px;
+    width: var(--fui-input-height-lg, $fui-input-height-lg);
     height: var(--fui-input-height-lg, $fui-input-height-lg);
   }
 
@@ -50,11 +48,6 @@
   }
 }
 
-.label {
-  @include label-text;
-  margin-bottom: var(--fui-space-1, $fui-space-1);
-}
-
 .inputWrapper {
   display: flex;
   gap: var(--fui-space-2, $fui-space-2);
@@ -65,7 +58,7 @@
   @include button-reset;
   @include interactive-base;
   @include min-target-size;
-  width: var(--fui-target-size-comfortable, $fui-target-size-comfortable);
+  width: var(--fui-input-height, $fui-input-height);
   height: var(--fui-input-height, $fui-input-height);
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
@@ -133,7 +126,23 @@
   }
 }
 
-.description {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .swatch {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .swatch {
+    transition: none;
+  }
 }

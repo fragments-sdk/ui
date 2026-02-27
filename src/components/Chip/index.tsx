@@ -15,7 +15,7 @@ export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonEle
   variant?: 'filled' | 'outlined' | 'outline' | 'soft';
   /** Chip size.
    * @default "md" */
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   /** Whether the chip is selected */
   selected?: boolean;
   /** Icon element rendered before the label */

@@ -36,10 +36,14 @@ export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   defaultValue?: string;
   /** Called with new color value when changed */
   onChange?: (color: string) => void;
+  /** Alias for onChange (Radix convention) */
+  onValueChange?: (color: string) => void;
   /** Helper text below the picker */
   helperText?: string;
   /** @deprecated Use helperText instead. */
   description?: string;
+  /** Show error styling */
+  error?: boolean;
   /** Disable the color picker */
   disabled?: boolean;
   /** Size variant */
@@ -54,9 +58,11 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       label,
       value,
       defaultValue = '#000000',
-      onChange,
+      onChange: onChangeProp,
+      onValueChange,
       helperText,
       description,
+      error = false,
       disabled = false,
       size = 'md',
       showInput = true,
@@ -77,6 +83,8 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
         setInputValue(value);
       }
     }, [value]);
+
+    const onChange = onChangeProp ?? onValueChange;
 
     const handleChange = (color: string) => {
       setInternalValue(color);
@@ -107,11 +115,16 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       className,
     ].filter(Boolean).join(' ');
 
+    const helperClasses = [styles.helper, error && styles.helperError]
+      .filter(Boolean)
+      .join(' ');
+
     return (
       <Field.Root
         ref={ref}
         {...htmlProps}
         disabled={disabled}
+        invalid={error}
         className={wrapperClasses}
       >
         {label && <Field.Label className={styles.label}>{label}</Field.Label>}
@@ -150,7 +163,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(
           )}
         </div>
         {resolvedHelperText && (
-          <Field.Description className={styles.description}>
+          <Field.Description className={helperClasses}>
             {resolvedHelperText}
           </Field.Description>
         )}

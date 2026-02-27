@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--fui-space-2, $fui-space-2);
+  margin-bottom: var(--fui-space-1, $fui-space-1);
 }
 
 .label {
@@ -37,7 +37,7 @@
 
 .track {
   position: relative;
-  height: $fui-slider-track-height;
+  height: var(--fui-slider-track-height, $fui-slider-track-height);
   width: 100%;
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   border-radius: var(--fui-radius-full, $fui-radius-full);
@@ -60,10 +60,10 @@
   @include min-target-size;
 
   position: relative;
-  width: $fui-slider-thumb-size;
-  height: $fui-slider-thumb-size;
+  width: var(--fui-slider-thumb-size, $fui-slider-thumb-size);
+  height: var(--fui-slider-thumb-size, $fui-slider-thumb-size);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: $fui-slider-thumb-border solid var(--fui-color-accent, $fui-color-accent);
+  border: var(--fui-slider-thumb-border, $fui-slider-thumb-border) solid var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: grab;
   transition:
@@ -87,6 +87,15 @@
     cursor: not-allowed;
     opacity: 0.5;
   }
+}
+
+.helper {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+}
+
+.helperError {
+  color: var(--fui-color-danger, $fui-color-danger);
 }
 
 .dragValueBubble {
@@ -116,5 +125,29 @@
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 5px solid var(--fui-tooltip-bg, $fui-tooltip-bg);
+  }
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .track {
+    border: 1px solid var(--fui-text-primary, $fui-text-primary);
+  }
+
+  .thumb {
+    border-width: 3px;
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
   }
 }

@@ -268,8 +268,10 @@ $fui-target-size-comfortable: $fui-touch-md !default;
 // Toggle/Switch (iOS-proportioned: ~1.65:1 width:height ratio)
 $fui-toggle-width-sm: 2.857rem !default; // 40px
 $fui-toggle-width-md: 3.643rem !default; // 51px (iOS standard)
+$fui-toggle-width-lg: 4.286rem !default; // 60px
 $fui-toggle-height-sm: $fui-target-size-min !default; // 24px
 $fui-toggle-height-md: 2.214rem !default; // 31px (iOS standard)
+$fui-toggle-height-lg: 2.571rem !default; // 36px
 $fui-toggle-thumb-sm: 1.286rem !default; // 18px
 $fui-toggle-thumb-md: 1.929rem !default; // 27px (iOS standard)
 $fui-toggle-thumb-offset: 2px !default; // Thumb inset from track edge

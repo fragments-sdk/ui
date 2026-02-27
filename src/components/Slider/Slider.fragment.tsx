@@ -94,6 +94,15 @@ export default defineFragment({
       type: 'string',
       description: 'Label text',
     },
+    helperText: {
+      type: 'string',
+      description: 'Helper text shown below the slider',
+    },
+    error: {
+      type: 'boolean',
+      default: false,
+      description: 'Show error styling',
+    },
     showValue: {
       type: 'boolean',
       description: 'Display current value',
@@ -128,6 +137,8 @@ export default defineFragment({
       'min/max: number - range bounds',
       'step: number - increment size',
       'label: string - field label',
+      'helperText: string - helper text below slider',
+      'error: boolean - error styling',
       'showValue: boolean - display value',
       'showValueOnDrag: boolean - show value bubble during drag',
       'valueSuffix: string - unit suffix',
@@ -205,6 +216,21 @@ export default defineFragment({
             defaultValue={40}
             showValueOnDrag
             valueSuffix="%"
+          />
+        </div>
+      ),
+    },
+    {
+      name: 'With Helper Text',
+      description: 'Slider with helper text guidance',
+      render: () => (
+        <div style={{ width: '300px' }}>
+          <Slider
+            label="Quality"
+            defaultValue={80}
+            showValue
+            valueSuffix="%"
+            helperText="Higher quality increases file size"
           />
         </div>
       ),

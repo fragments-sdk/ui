@@ -5,7 +5,7 @@ import { Switch } from '.';
 // Stateful wrapper for interactive demos
 function StatefulSwitch(props: React.ComponentProps<typeof Switch>) {
   const [checked, setChecked] = useState(props.checked ?? false);
-  return <Switch {...props} checked={checked} onChange={setChecked} />;
+  return <Switch {...props} checked={checked} onCheckedChange={setChecked} />;
 }
 
 export default defineFragment({
@@ -54,13 +54,13 @@ export default defineFragment({
       description: 'Whether the switch is in the on state',
       default: 'false',
     },
-    onChange: {
-      type: 'function',
-      description: 'Callback with new checked state: (checked: boolean) => void',
-    },
     onCheckedChange: {
       type: 'function',
-      description: 'Alias for onChange (Radix convention): (checked: boolean) => void',
+      description: 'Called when the switch is toggled: (checked: boolean) => void',
+    },
+    onChange: {
+      type: 'function',
+      description: 'Alias for onCheckedChange: (checked: boolean) => void',
     },
     label: {
       type: 'string',
@@ -82,7 +82,7 @@ export default defineFragment({
     size: {
       type: 'enum',
       description: 'Switch track size',
-      values: ['sm', 'md'],
+      values: ['sm', 'md', 'lg'],
       default: 'md',
     },
   },
@@ -95,12 +95,13 @@ export default defineFragment({
   contract: {
     propsSummary: [
       'checked: boolean - on/off state',
-      'onChange: (checked) => void - state change handler (or onCheckedChange)',
+      'onCheckedChange: (checked) => void - state change handler',
+      'onChange: (checked) => void - alias for onCheckedChange',
       'label: string - visible label text',
       'helperText: string - helper text below label (preferred)',
       'description: string - deprecated alias for helperText',
       'disabled: boolean - non-interactive state',
-      'size: sm|md - switch size',
+      'size: sm|md|lg - switch size',
     ],
     scenarioTags: [
       'form.boolean',
@@ -137,13 +138,13 @@ export default defineFragment({
       args: { checked: true, label: 'Auto-save', helperText: 'Automatically save changes as you type' },
     },
     {
-      name: 'Small Size',
-      description: 'Compact switch for dense settings panels',
+      name: 'Sizes',
+      description: 'Available size variants',
       render: () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <StatefulSwitch size="sm" checked label="Show line numbers" />
-          <StatefulSwitch size="sm" label="Word wrap" />
-          <StatefulSwitch size="sm" checked label="Minimap" />
+          <StatefulSwitch size="sm" checked label="Small switch" />
+          <StatefulSwitch size="md" checked label="Medium switch (default)" />
+          <StatefulSwitch size="lg" checked label="Large switch" />
         </div>
       ),
     },

@@ -14,16 +14,16 @@ export interface SwitchProps {
   /** Default checked state (uncontrolled) */
   defaultChecked?: boolean;
   /** Called when the switch is toggled */
-  onChange?: (checked: boolean) => void;
-  /** Alias for onChange (Radix convention) */
   onCheckedChange?: (checked: boolean) => void;
+  /** Alias for onCheckedChange */
+  onChange?: (checked: boolean) => void;
   label?: string;
   /** Helper text shown below the label */
   helperText?: string;
   /** @deprecated Use helperText instead. */
   description?: string;
   disabled?: boolean;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
   name?: string;
   id?: string;
@@ -58,25 +58,29 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
     const resolvedHelperText = helperText ?? description;
     const trackClasses = [
       styles.track,
-      size === 'sm' ? styles.trackSm : styles.trackMd,
+      size === 'sm' ? styles.trackSm : size === 'lg' ? styles.trackLg : styles.trackMd,
     ].join(' ');
 
     const thumbClasses = styles.thumb;
 
-    const labelClasses = [styles.label, size === 'sm' && styles.labelSm]
+    const labelClasses = [
+      styles.label,
+      size === 'sm' && styles.labelSm,
+      size === 'lg' && styles.labelLg,
+    ]
       .filter(Boolean)
       .join(' ');
 
-    const descClasses = [
-      styles.description,
-      size === 'sm' && styles.descriptionSm,
+    const helperClasses = [
+      styles.helper,
+      size === 'sm' && styles.helperSm,
     ]
       .filter(Boolean)
       .join(' ');
 
     const rootClasses = [
       styles.root,
-      resolvedHelperText && styles.rootWithDescription,
+      resolvedHelperText && styles.rootWithHelper,
       className,
     ]
       .filter(Boolean)
@@ -88,7 +92,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
         id={id}
         checked={checked}
         defaultChecked={defaultChecked}
-        onCheckedChange={onChange ?? onCheckedChange}
+        onCheckedChange={onCheckedChange ?? onChange}
         disabled={disabled}
         name={name}
         className={rootClasses}
@@ -103,7 +107,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
         {(label || resolvedHelperText) && (
           <div className={styles.content}>
             {label && <span className={labelClasses}>{label}</span>}
-            {resolvedHelperText && <span className={descClasses}>{resolvedHelperText}</span>}
+            {resolvedHelperText && <span className={helperClasses}>{resolvedHelperText}</span>}
           </div>
         )}
       </BaseSwitch.Root>

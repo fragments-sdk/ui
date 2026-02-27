@@ -90,10 +90,15 @@ export default defineFragment({
       description: 'Disable the color picker',
       default: 'false',
     },
+    error: {
+      type: 'boolean',
+      default: false,
+      description: 'Show error styling',
+    },
     size: {
       type: 'enum',
       description: 'Size variant',
-      values: ['sm', 'md'],
+      values: ['sm', 'md', 'lg'],
       default: 'md',
     },
     showInput: {
@@ -117,8 +122,9 @@ export default defineFragment({
       'label: string - field label',
       'helperText: string - helper text (preferred)',
       'description: string - deprecated alias for helperText',
+      'error: boolean - error styling',
       'disabled: boolean - disable interaction',
-      'size: sm|md - size variant',
+      'size: sm|md|lg - size variant',
       'showInput: boolean - show hex input field',
     ],
     scenarioTags: [
@@ -187,7 +193,20 @@ export default defineFragment({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '240px' }}>
           <ColorPicker label="Small" defaultValue="#3b82f6" size="sm" />
           <ColorPicker label="Medium (default)" defaultValue="#3b82f6" size="md" />
+          <ColorPicker label="Large" defaultValue="#3b82f6" size="lg" />
         </div>
+      ),
+    },
+    {
+      name: 'Error State',
+      description: 'Color picker with error styling',
+      render: () => (
+        <ColorPicker
+          label="Brand Color"
+          defaultValue="#000000"
+          error
+          helperText="Please select a valid brand color"
+        />
       ),
     },
     {

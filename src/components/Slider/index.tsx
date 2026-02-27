@@ -12,6 +12,10 @@ import styles from './Slider.module.scss';
 export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /** Visible label text */
   label?: string;
+  /** Helper text shown below the slider */
+  helperText?: string;
+  /** Show error styling */
+  error?: boolean;
   /** Controlled value */
   value?: number;
   /** Default value for uncontrolled usage */
@@ -41,6 +45,8 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
   function Slider(
     {
       label,
+      helperText,
+      error = false,
       value,
       defaultValue,
       onChange,
@@ -99,8 +105,12 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
       }
     }, [disabled, isDragging]);
 
+    const helperClasses = [styles.helper, error && styles.helperError]
+      .filter(Boolean)
+      .join(' ');
+
     return (
-      <Field.Root {...htmlProps} disabled={disabled} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
+      <Field.Root {...htmlProps} disabled={disabled} invalid={error} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
         {(label || showValue) && (
           <div className={styles.header}>
             {label && <Field.Label className={styles.label}>{label}</Field.Label>}
@@ -144,6 +154,11 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
             </BaseSlider.Track>
           </BaseSlider.Control>
         </BaseSlider.Root>
+        {helperText && (
+          <Field.Description className={helperClasses}>
+            {helperText}
+          </Field.Description>
+        )}
       </Field.Root>
     );
   }

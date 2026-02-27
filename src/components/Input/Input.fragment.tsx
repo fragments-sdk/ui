@@ -67,6 +67,11 @@ export default defineFragment({
       default: false,
       description: 'Whether the input is interactive',
     },
+    required: {
+      type: 'boolean',
+      default: false,
+      description: 'Whether the field is required (shows asterisk)',
+    },
     error: {
       type: 'boolean',
       default: false,
@@ -142,6 +147,7 @@ export default defineFragment({
       'label: string - accessible label text',
       'placeholder: string - format hint only',
       'disabled: boolean - disables interaction',
+      'required: boolean - required field indicator',
       'error: boolean - shows error styling',
       'helperText: string - helper/error message',
       'onValueChange: (value: string) => void - value-first change callback alias',
@@ -211,6 +217,29 @@ export default defineFragment({
       description: 'Non-interactive input',
       render: () => (
         <Input label="Username" value="readonly-user" disabled />
+      ),
+    },
+    {
+      name: 'Required',
+      description: 'Required field with asterisk indicator',
+      render: () => (
+        <Input
+          label="Email"
+          type="email"
+          placeholder="user@example.com"
+          required
+        />
+      ),
+    },
+    {
+      name: 'Sizes',
+      description: 'Available size variants',
+      render: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '300px' }}>
+          <Input label="Small" size="sm" placeholder="Small input" />
+          <Input label="Medium" size="md" placeholder="Medium input" />
+          <Input label="Large" size="lg" placeholder="Large input" />
+        </div>
       ),
     },
     {

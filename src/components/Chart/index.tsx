@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { mergeAriaIds } from '../../utils/aria';
 import styles from './Chart.module.scss';
 import '../../styles/globals.scss';
 
@@ -76,10 +77,6 @@ function loadChartDeps() {
   }
 }
 
-function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
-  const merged = ids.filter(Boolean).join(' ').trim();
-  return merged.length > 0 ? merged : undefined;
-}
 
 // ============================================
 // Context

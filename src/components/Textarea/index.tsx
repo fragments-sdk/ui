@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { mergeAriaIds } from '../../utils/aria';
 import styles from './Textarea.module.scss';
 
 export interface TextareaProps extends Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-  'onChange' | 'onBlur' | 'className' | 'style'
+  'onChange' | 'onBlur' | 'onFocus' | 'className' | 'style' | 'size'
 > {
   /** Controlled value */
   value?: string;
@@ -19,6 +20,9 @@ export interface TextareaProps extends Omit<
   maxRows?: number;
   /** Allow user to resize the textarea */
   resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+  /** Size variant.
+   * @default "md" */
+  size?: 'sm' | 'md' | 'lg';
   /** Disabled state */
   disabled?: boolean;
   /** Error state */
@@ -33,6 +37,8 @@ export interface TextareaProps extends Omit<
   onValueChange?: (value: string) => void;
   /** Called when textarea loses focus */
   onBlur?: () => void;
+  /** Called when textarea receives focus */
+  onFocus?: () => void;
   /** Form field name */
   name?: string;
   /** Maximum character length */
@@ -53,11 +59,6 @@ export interface TextareaProps extends Omit<
   style?: React.CSSProperties;
 }
 
-function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
-  const merged = ids.filter(Boolean).join(' ').trim();
-  return merged.length > 0 ? merged : undefined;
-}
-
 const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
     {
@@ -68,6 +69,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       minRows,
       maxRows,
       resize = 'vertical',
+      size = 'md',
       disabled = false,
       error = false,
       label,
@@ -75,6 +77,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       onChange,
       onValueChange,
       onBlur,
+      onFocus,
       rootProps,
       className,
       style: wrapperStyle,
@@ -99,6 +102,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const textareaClasses = [
       styles.textarea,
+      styles[size],
       error && styles.error,
       styles[`resize-${resize}`],
     ]
@@ -154,6 +158,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             onValueChange?.(e.target.value);
           }}
           onBlur={() => onBlur?.()}
+          onFocus={() => onFocus?.()}
           className={textareaClasses}
           style={Object.keys(textareaInlineStyle).length > 0 ? textareaInlineStyle : undefined}
         />

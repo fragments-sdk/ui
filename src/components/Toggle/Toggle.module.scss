@@ -11,11 +11,11 @@
 
   &[data-disabled] {
     cursor: not-allowed;
-    opacity: 0.38;
+    opacity: 0.5;
   }
 }
 
-.rootWithDescription {
+.rootWithHelper {
   align-items: flex-start;
 
   .track {
@@ -35,7 +35,7 @@
   // iOS unchecked: semi-transparent gray — visible in both light and dark
   background-color: var(--fui-bg-active, $fui-bg-active);
   overflow: hidden;
-  transition: background-color 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: background-color var(--fui-transition-normal, $fui-transition-normal);
 
   // Checked: accent fill
   .root[data-checked] & {
@@ -52,11 +52,9 @@
     background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
   }
 
-  // Focus ring
+  // Focus ring (consistent box-shadow approach across all form controls)
   .root:focus-visible & {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
-      var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+    @include focus-ring;
   }
 }
 
@@ -68,6 +66,19 @@
   --_toggle-inset: 2px;
   --_toggle-translate: calc(
     var(--fui-toggle-width-sm, #{$fui-toggle-width-sm}) -
+    var(--_toggle-thumb-size) -
+    4px
+  );
+}
+
+// Lg: 60×36
+.trackLg {
+  width: var(--fui-toggle-width-lg, $fui-toggle-width-lg);
+  height: var(--fui-toggle-height-lg, $fui-toggle-height-lg);
+  --_toggle-thumb-size: calc(var(--fui-toggle-height-lg, #{$fui-toggle-height-lg}) - 4px);
+  --_toggle-inset: 2px;
+  --_toggle-translate: calc(
+    var(--fui-toggle-width-lg, #{$fui-toggle-width-lg}) -
     var(--_toggle-thumb-size) -
     4px
   );
@@ -86,7 +97,10 @@
   );
 }
 
-// iOS-style thumb: always white, multi-layer shadow
+// iOS-style thumb: always white, multi-layer shadow.
+// The thumb is intentionally always white (#fff) to match iOS toggle UX — this is
+// a hardcoded design decision (like CodeBlock/Tooltip dark surfaces). Override via
+// --fui-toggle-thumb-bg and --fui-toggle-thumb-shadow CSS custom properties.
 .thumb {
   position: absolute;
   top: var(--_toggle-inset, $fui-toggle-thumb-offset);
@@ -96,15 +110,17 @@
   height: var(--_toggle-thumb-size, $fui-toggle-thumb-md);
   border-radius: 50%;
   pointer-events: none;
-  background-color: #fff;
-  box-shadow:
+  background-color: var(--fui-toggle-thumb-bg, #fff);
+  box-shadow: var(
+    --fui-toggle-thumb-shadow,
     0 3px 8px rgba(0, 0, 0, 0.15),
     0 1px 1px rgba(0, 0, 0, 0.06),
-    0 3px 1px rgba(0, 0, 0, 0.06);
+    0 3px 1px rgba(0, 0, 0, 0.06)
+  );
   transition:
-    transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1),
-    background-color 250ms cubic-bezier(0.4, 0.0, 0.2, 1),
-    width 120ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform var(--fui-transition-normal, $fui-transition-normal),
+    background-color var(--fui-transition-normal, $fui-transition-normal),
+    width var(--fui-transition-fast, $fui-transition-fast);
 
   // Slide right when checked — inverse color for contrast against accent
   .root[data-checked] & {
@@ -132,22 +148,41 @@
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
   line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+  user-select: none;
 }
 
 .labelSm {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
 }
 
-.description {
+.labelLg {
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.helper {
   display: block;
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  margin-top: var(--fui-space-0-5, $fui-space-0-5);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+  margin-top: var(--fui-space-1, $fui-space-1);
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
-.descriptionSm {
+.helperSm {
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .track {
+    border: 2px solid var(--fui-text-primary, $fui-text-primary);
+  }
+
+  .root[data-checked] .track {
+    border-color: var(--fui-color-accent, $fui-color-accent);
+  }
 }
 
 // ============================================

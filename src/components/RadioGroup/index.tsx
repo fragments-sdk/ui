@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { RadioGroup as BaseRadioGroup } from '@base-ui/react/radio-group';
 import { Radio as BaseRadio } from '@base-ui/react/radio';
+import { mergeAriaIds, useFormFieldIds } from '../../utils/aria';
 import styles from './RadioGroup.module.scss';
 
 // ============================================
@@ -30,8 +31,10 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   name?: string;
   /** Label for the group */
   label?: string;
-  /** Error message */
-  error?: string;
+  /** Helper text shown below the group */
+  helperText?: string;
+  /** Show error styling. When a string is provided, it is displayed as an error message. */
+  error?: boolean | string;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
   /** Class applied to the outer wrapper (label + group + error) */
@@ -65,11 +68,6 @@ export interface RadioItemProps {
   controlClassName?: string;
   /** Class applied to the item text content wrapper */
   contentClassName?: string;
-}
-
-function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
-  const merged = ids.filter(Boolean).join(' ').trim();
-  return merged.length > 0 ? merged : undefined;
 }
 
 // ============================================
@@ -151,7 +149,7 @@ function RadioItem({
       <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
         <span id={labelId} className={labelClasses}>{label}</span>
         {resolvedHelperText && (
-          <span id={descriptionId} className={styles.description}>{resolvedHelperText}</span>
+          <span id={descriptionId} className={styles.helper}>{resolvedHelperText}</span>
         )}
       </div>
     </label>
@@ -162,7 +160,7 @@ function RadioItem({
 // Radio Group Component
 // ============================================
 
-function RadioGroupRoot({
+const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroupRoot({
   value,
   defaultValue,
   onValueChange,
@@ -171,6 +169,7 @@ function RadioGroupRoot({
   disabled = false,
   name,
   label,
+  helperText,
   error,
   size = 'md',
   wrapperClassName,
@@ -181,10 +180,8 @@ function RadioGroupRoot({
   'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
   ...htmlProps
-}: RadioGroupProps) {
-  const groupId = React.useId();
-  const labelId = label ? `radio-group-label-${groupId}` : undefined;
-  const errorId = error ? `radio-group-error-${groupId}` : undefined;
+}: RadioGroupProps, ref) {
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('radio-group', { label, helperText, error });
 
   const groupClasses = [
     styles.group,
@@ -197,7 +194,7 @@ function RadioGroupRoot({
 
   return (
     <RadioSizeContext.Provider value={size}>
-      <div {...htmlProps} className={[styles.wrapper, wrapperClassName].filter(Boolean).join(' ')}>
+      <div ref={ref} {...htmlProps} className={[styles.wrapper, wrapperClassName].filter(Boolean).join(' ')}>
         {label && <span id={labelId} className={styles.groupLabel}>{label}</span>}
         <BaseRadioGroup
           value={value}
@@ -207,16 +204,21 @@ function RadioGroupRoot({
           name={name}
           aria-label={ariaLabel}
           aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
-          aria-describedby={mergeAriaIds(ariaDescribedBy, errorId)}
+          aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
           className={groupClasses}
         >
           {children}
         </BaseRadioGroup>
-        {error && <span id={errorId} className={styles.error}>{error}</span>}
+        {helperText && (
+          <span id={helperId} className={hasError ? [styles.helper, styles.error].join(' ') : styles.helper}>
+            {helperText}
+          </span>
+        )}
+        {errorMessage && <span id={errorId} className={styles.error}>{errorMessage}</span>}
       </div>
     </RadioSizeContext.Provider>
   );
-}
+});
 
 // ============================================
 // Compound Component Export

@@ -114,6 +114,18 @@ export default defineFragment({
       description: 'Number of months displayed side-by-side',
       default: '1',
     },
+    label: {
+      type: 'string',
+      description: 'Visible label text above the date picker',
+    },
+    helperText: {
+      type: 'string',
+      description: 'Helper text shown below the date picker',
+    },
+    error: {
+      type: 'union',
+      description: 'Show error styling. When a string is provided, it is displayed as an error message.',
+    },
     disabled: {
       type: 'boolean',
       description: 'Disable the picker',
@@ -143,6 +155,9 @@ export default defineFragment({
       'onSelect: (date) => void - single selection handler',
       'onRangeSelect: (range) => void - range selection handler',
       'numberOfMonths: number - months visible (default 1)',
+      'label: string - visible label text',
+      'helperText: string - helper text below field',
+      'error: boolean | string - error styling and message',
       'disabled: boolean - disable picker',
       'disabledDates: Matcher - dates to disable',
       'DatePicker.Trigger: button props supported (type defaults to "button")',
@@ -234,6 +249,34 @@ export default defineFragment({
             </div>
           </DatePicker.Content>
         </StatefulRangePicker>
+      ),
+    },
+    {
+      name: 'With Label and Helper Text',
+      description: 'Date picker with built-in label and helper text',
+      render: () => (
+        <StatefulDatePicker placeholder="Pick a date">
+          <DatePicker.Trigger />
+          <DatePicker.Content>
+            <DatePicker.Calendar />
+          </DatePicker.Content>
+        </StatefulDatePicker>
+      ),
+    },
+    {
+      name: 'Error State',
+      description: 'Validation error with message',
+      render: () => (
+        <DatePicker
+          label="Start Date"
+          placeholder="Pick a date"
+          error="Please select a start date"
+        >
+          <DatePicker.Trigger />
+          <DatePicker.Content>
+            <DatePicker.Calendar />
+          </DatePicker.Content>
+        </DatePicker>
       ),
     },
     {

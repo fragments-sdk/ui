@@ -5,7 +5,7 @@
 .wrapper {
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: var(--fui-space-2, $fui-space-2);
   cursor: pointer;
   font-family: var(--fui-font-sans, $fui-font-sans);
 
@@ -65,7 +65,7 @@
 .sm {
   width: 0.875rem;
   height: 0.875rem;
-  border-radius: var(--fui-space-0-75, $fui-space-0-75);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
 }
 
 .md {
@@ -137,8 +137,38 @@
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
-.description {
+.helper {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: var(--fui-text-secondary, $fui-text-secondary);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .checkbox {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &[data-checked],
+    &[data-indeterminate] {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+
+    &[data-invalid] {
+      border-color: var(--fui-color-danger, $fui-color-danger);
+    }
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator {
+    transition: none;
+  }
 }

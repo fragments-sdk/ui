@@ -82,9 +82,13 @@ export default defineFragment({
       type: 'string',
       description: 'Group label',
     },
-    error: {
+    helperText: {
       type: 'string',
-      description: 'Error message',
+      description: 'Helper text shown below the group',
+    },
+    error: {
+      type: 'union',
+      description: 'Show error styling. When a string is provided, it is displayed as an error message.',
     },
     wrapperClassName: {
       type: 'string',
@@ -121,6 +125,9 @@ export default defineFragment({
       'onChange: (value: string) => void - alias for onValueChange',
       'orientation: horizontal|vertical (default: vertical)',
       'size: sm|md|lg (default: md)',
+      'label: string - group label',
+      'helperText: string - helper text below the group',
+      'error: boolean | string - error styling and message',
       'disabled: boolean - disable all options',
       'wrapperClassName/groupClassName - explicit styling targets for wrapper and group',
       'RadioGroup.Item supports helperText (preferred) and description (legacy alias) plus controlClassName/contentClassName for item-level styling',
@@ -186,8 +193,19 @@ export default defineFragment({
       ),
     },
     {
+      name: 'With Group Helper Text',
+      description: 'Group-level helper text',
+      render: () => (
+        <RadioGroup defaultValue="standard" label="Plan" helperText="You can change your plan at any time">
+          <RadioGroup.Item value="free" label="Free" />
+          <RadioGroup.Item value="standard" label="Standard" />
+          <RadioGroup.Item value="pro" label="Pro" />
+        </RadioGroup>
+      ),
+    },
+    {
       name: 'With Error',
-      description: 'Validation error state',
+      description: 'Validation error state (string shows error message)',
       render: () => (
         <RadioGroup label="Required selection" error="Please select an option">
           <RadioGroup.Item value="a" label="Option A" />

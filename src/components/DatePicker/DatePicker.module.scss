@@ -1,6 +1,9 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Form field wrapper (label + helper + error)
+@include form-field-wrapper;
+
 // ============================================
 // Trigger
 // ============================================
@@ -266,7 +269,7 @@
 
 .disabled > .dayButton {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  opacity: 0.35;
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -372,6 +375,29 @@
 
   &:focus-visible {
     @include focus-ring;
+  }
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .trigger {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &[data-popup-open] {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+  }
+
+  .dayButton {
+    border: 1px solid transparent;
+
+    &:focus-visible {
+      border-color: var(--fui-text-primary, $fui-text-primary);
+    }
   }
 }
 

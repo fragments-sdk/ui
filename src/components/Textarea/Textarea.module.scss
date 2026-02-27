@@ -1,20 +1,8 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
-.wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.label {
-  @include label-text;
-  margin-bottom: var(--fui-space-1, $fui-space-1);
-}
-
-.required {
-  color: var(--fui-color-danger, $fui-color-danger);
-  margin-left: 2px;
-}
+// Form field wrapper (label + helper + error)
+@include form-field-wrapper;
 
 .textarea {
   @include text-base;
@@ -27,18 +15,18 @@
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border: 1px solid var(--fui-border-strong, $fui-border-strong);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  line-height: $fui-line-height-normal;
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   font-family: inherit;
 
   &::placeholder {
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:hover:not(:disabled):not(:focus) {
+  &:hover:not(:disabled):not(:focus-visible) {
     border-color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:focus {
+  &:focus-visible {
     @include focus-ring;
     border-color: var(--fui-color-accent, $fui-color-accent);
   }
@@ -48,6 +36,21 @@
     background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
+}
+
+// Size variants
+.sm {
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
+.md {
+  // Default size
+}
+
+.lg {
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
+  font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
 // Resize variants
@@ -72,7 +75,7 @@
 .textarea[aria-invalid] {
   border-color: var(--fui-color-danger, $fui-color-danger);
 
-  &:focus {
+  &:focus-visible {
     border-color: var(--fui-color-danger, $fui-color-danger);
     box-shadow:
       0 0 0 var(--fui-focus-ring-offset, $fui-focus-ring-offset) var(--fui-bg-primary, $fui-bg-primary),
@@ -80,16 +83,37 @@
   }
 }
 
-.helper {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
-}
-
-// Error helper text — kept as class and via :has() parent detection
-.helperError {
-  color: var(--fui-color-danger, $fui-color-danger);
-}
-
+// Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
   color: var(--fui-color-danger, $fui-color-danger);
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+@media (prefers-contrast: more) {
+  .textarea {
+    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+
+    &:focus-visible {
+      border-color: var(--fui-color-accent, $fui-color-accent);
+    }
+  }
+
+  .error,
+  .textarea[aria-invalid] {
+    border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .textarea {
+    transition: none;
+  }
 }

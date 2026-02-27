@@ -68,14 +68,14 @@ describe('Switch', () => {
     expect(handleChange.mock.calls[0][0]).toBe(true);
   });
 
-  it('prefers onChange over onCheckedChange when both provided', async () => {
+  it('prefers onCheckedChange over onChange when both provided', async () => {
     const onChange = vi.fn();
     const onCheckedChange = vi.fn();
     const user = userEvent.setup();
     render(<Switch aria-label="Test" onChange={onChange} onCheckedChange={onCheckedChange} />);
     await user.click(screen.getByRole('switch'));
-    expect(onChange).toHaveBeenCalled();
-    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(onCheckedChange).toHaveBeenCalled();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('has no accessibility violations', async () => {

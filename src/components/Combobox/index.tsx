@@ -2,23 +2,28 @@
 
 import * as React from 'react';
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
+import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from '../../utils/aria';
 import styles from './Combobox.module.scss';
 
 // ============================================
 // Types
 // ============================================
 
-interface ComboboxCommonProps {
+interface ComboboxCommonProps extends FormFieldProps {
   children: React.ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  disabled?: boolean;
   required?: boolean;
   name?: string;
   placeholder?: string;
   /** Auto-highlight first matching item while filtering */
   autoHighlight?: boolean;
+  /** Size variant.
+   * @default "md" */
+  size?: 'sm' | 'md' | 'lg';
+  /** Wrapper class name */
+  className?: string;
 }
 
 export interface ComboboxSingleProps extends ComboboxCommonProps {
@@ -163,6 +168,7 @@ interface ComboboxContextValue {
   incrementItemsVersion: () => void;
   explicitTriggerCount: number;
   registerTrigger: () => () => void;
+  size: 'sm' | 'md' | 'lg';
 }
 
 const ComboboxContext = React.createContext<ComboboxContextValue>({
@@ -172,6 +178,7 @@ const ComboboxContext = React.createContext<ComboboxContextValue>({
   incrementItemsVersion: () => {},
   explicitTriggerCount: 0,
   registerTrigger: () => () => {},
+  size: 'md',
 });
 
 function getNodeText(node: React.ReactNode): string {
@@ -187,7 +194,7 @@ function getNodeText(node: React.ReactNode): string {
 // Components
 // ============================================
 
-function ComboboxRoot({
+const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function ComboboxRoot({
   children,
   value,
   defaultValue,
@@ -202,7 +209,12 @@ function ComboboxRoot({
   name,
   placeholder,
   autoHighlight = true,
-}: ComboboxProps) {
+  label,
+  helperText,
+  error,
+  size = 'md',
+  className,
+}: ComboboxProps, ref) {
   // Track selected values for chip rendering
   const [internalValue, setInternalValue] = React.useState<string | string[] | null>(
     value ?? defaultValue ?? (multiple ? [] : null)
@@ -260,8 +272,29 @@ function ComboboxRoot({
       incrementItemsVersion,
       explicitTriggerCount,
       registerTrigger,
+      size,
     }),
-    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger]
+    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger, size]
+  );
+
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('combobox', { label, helperText, error });
+
+  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
+  const helperClasses = [styles.helper, hasError && styles.helperError]
+    .filter(Boolean)
+    .join(' ');
+
+  const wrapperContent = (inner: React.ReactNode) => (
+    <div ref={ref} className={wrapperClasses}>
+      {label && <span id={labelId} className={styles.label}>{label}</span>}
+      {inner}
+      {helperText && (
+        <span id={helperId} className={helperClasses}>{helperText}</span>
+      )}
+      {errorMessage && (
+        <span id={errorId} className={styles.errorMessage}>{errorMessage}</span>
+      )}
+    </div>
   );
 
   if (multiple) {
@@ -277,22 +310,26 @@ function ComboboxRoot({
 
     return (
       <ComboboxContext.Provider value={contextValue}>
-        <BaseCombobox.Root<string, true>
-          value={controlledValue}
-          defaultValue={uncontrolledValue}
-          onValueChange={handleValueChange}
-          open={open}
-          defaultOpen={defaultOpen}
-          onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
-          disabled={disabled}
-          required={required}
-          name={name}
-          multiple
-          autoHighlight={autoHighlight}
-          itemToStringLabel={itemToStringLabel}
-        >
-          {children}
-        </BaseCombobox.Root>
+        {wrapperContent(
+          <BaseCombobox.Root<string, true>
+            value={controlledValue}
+            defaultValue={uncontrolledValue}
+            onValueChange={handleValueChange}
+            open={open}
+            defaultOpen={defaultOpen}
+            onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
+            disabled={disabled}
+            required={required}
+            name={name}
+            multiple
+            autoHighlight={autoHighlight}
+            itemToStringLabel={itemToStringLabel}
+            aria-labelledby={labelId}
+            aria-describedby={mergeAriaIds(errorId, helperId)}
+          >
+            {children}
+          </BaseCombobox.Root>
+        )}
       </ComboboxContext.Provider>
     );
   }
@@ -309,46 +346,41 @@ function ComboboxRoot({
 
   return (
     <ComboboxContext.Provider value={contextValue}>
-      <BaseCombobox.Root<string, false>
-        value={controlledValue}
-        defaultValue={uncontrolledValue ?? null}
-        onValueChange={handleValueChange}
-        open={open}
-        defaultOpen={defaultOpen}
-        onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
-        disabled={disabled}
-        required={required}
-        name={name}
-        multiple={false}
-        autoHighlight={autoHighlight}
-        itemToStringLabel={itemToStringLabel}
-      >
-        {children}
-      </BaseCombobox.Root>
+      {wrapperContent(
+        <BaseCombobox.Root<string, false>
+          value={controlledValue}
+          defaultValue={uncontrolledValue ?? null}
+          onValueChange={handleValueChange}
+          open={open}
+          defaultOpen={defaultOpen}
+          onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
+          disabled={disabled}
+          required={required}
+          name={name}
+          multiple={false}
+          autoHighlight={autoHighlight}
+          itemToStringLabel={itemToStringLabel}
+          aria-labelledby={labelId}
+          aria-describedby={mergeAriaIds(errorId, helperId)}
+        >
+          {children}
+        </BaseCombobox.Root>
+      )}
     </ComboboxContext.Provider>
   );
-}
+});
 
 function ComboboxInput({ className, showTrigger = true, ...htmlProps }: ComboboxInputProps) {
   const context = React.useContext(ComboboxContext);
-  const classes = [styles.input, className].filter(Boolean).join(' ');
+  const inputSizeClass = context.size === 'sm' ? styles.inputSm : context.size === 'lg' ? styles.inputLg : undefined;
+  const wrapperSizeClass = context.size === 'sm' ? styles.inputWrapperSm : context.size === 'lg' ? styles.inputWrapperLg : undefined;
+  const classes = [styles.input, inputSizeClass, className].filter(Boolean).join(' ');
+  const wrapperClasses = [styles.inputWrapper, wrapperSizeClass].filter(Boolean).join(' ');
   const renderTrigger = showTrigger && context.explicitTriggerCount === 0;
 
   if (context.multiple) {
     return (
-      <div className={styles.multiContainer}>
-        <div className={styles.inputWrapper}>
-          <BaseCombobox.Input
-            placeholder={context.selectedValues.length === 0 ? context.placeholder : undefined}
-            {...htmlProps}
-            className={classes}
-          />
-          {renderTrigger && (
-            <BaseCombobox.Trigger className={styles.trigger}>
-              <ChevronDownIcon />
-            </BaseCombobox.Trigger>
-          )}
-        </div>
+      <div className={wrapperClasses}>
         {context.selectedValues.length > 0 && (
           <BaseCombobox.Chips className={styles.chips}>
             {context.selectedValues.map((chipValue) => (
@@ -363,12 +395,22 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
             ))}
           </BaseCombobox.Chips>
         )}
+        <BaseCombobox.Input
+          placeholder={context.selectedValues.length === 0 ? context.placeholder : undefined}
+          {...htmlProps}
+          className={classes}
+        />
+        {renderTrigger && (
+          <BaseCombobox.Trigger className={styles.trigger}>
+            <ChevronDownIcon />
+          </BaseCombobox.Trigger>
+        )}
       </div>
     );
   }
 
   return (
-    <div className={styles.inputWrapper}>
+    <div className={wrapperClasses}>
       <BaseCombobox.Input
         placeholder={context.placeholder}
         {...htmlProps}

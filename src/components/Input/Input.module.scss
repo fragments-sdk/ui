@@ -1,15 +1,8 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
-.wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.label {
-  @include label-text;
-  margin-bottom: var(--fui-space-1, $fui-space-1);
-}
+// Form field wrapper (label + helper + error)
+@include form-field-wrapper;
 
 .input {
   @include text-base;
@@ -25,11 +18,11 @@
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:hover:not(:disabled):not(:focus) {
+  &:hover:not(:disabled):not(:focus-visible) {
     border-color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:focus {
+  &:focus-visible {
     @include focus-ring;
     border-color: var(--fui-color-accent, $fui-color-accent);
   }
@@ -71,7 +64,7 @@
 .input[aria-invalid] {
   border-color: var(--fui-color-danger, $fui-color-danger);
 
-  &:focus {
+  &:focus-visible {
     border-color: var(--fui-color-danger, $fui-color-danger);
     box-shadow:
       0 0 0 var(--fui-focus-ring-offset, $fui-focus-ring-offset) var(--fui-bg-primary, $fui-bg-primary),
@@ -79,17 +72,7 @@
   }
 }
 
-.helper {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
-}
-
-// Error text via :has() — detects aria-invalid on sibling input.
-// Replaces JS class toggle: `error && styles.helperError`
-.helperError {
-  color: var(--fui-color-danger, $fui-color-danger);
-}
-
+// Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
   color: var(--fui-color-danger, $fui-color-danger);
 }
@@ -116,7 +99,7 @@
 
 .shortcut {
   position: absolute;
-  right: var(--fui-space-2, 0.5rem);
+  right: var(--fui-space-2, $fui-space-2);
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;
@@ -125,12 +108,12 @@
   padding:
     calc(var(--fui-space-px, $fui-space-px) * 2)
     calc(var(--fui-space-px, $fui-space-px) * 6);
-  font-size: var(--fui-font-size-xs, 0.75rem);
-  font-family: var(--fui-font-mono, ui-monospace, monospace);
-  color: var(--fui-text-secondary);
-  background: var(--fui-bg-subtle);
-  border: 1px solid var(--fui-border-default);
-  border-radius: var(--fui-radius-sm, 0.25rem);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-family: var(--fui-font-mono, $fui-font-mono);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  background: var(--fui-bg-subtle, $fui-bg-subtle);
+  border: 1px solid var(--fui-border-default, $fui-border-default);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
   pointer-events: none;
   white-space: nowrap;
 }
@@ -144,7 +127,7 @@
     border-width: 2px;
     border-color: var(--fui-text-primary, $fui-text-primary);
 
-    &:focus {
+    &:focus-visible {
       border-color: var(--fui-color-accent, $fui-color-accent);
     }
   }
@@ -152,5 +135,15 @@
   .error,
   .input[aria-invalid] {
     border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+}
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .input {
+    transition: none;
   }
 }

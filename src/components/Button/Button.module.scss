@@ -17,6 +17,10 @@
 }
 
 // Sizes
+// Note: Button padding intentionally diverges from the control-size mixin
+// (md: space-3 vs mixin's space-4, lg: space-4 vs mixin's space-5).
+// Buttons need tighter horizontal padding than inputs for visual balance,
+// since button text is typically shorter than input content.
 .sm {
   min-height: var(--fui-button-height-sm, $fui-button-height-sm);
   padding: 0 var(--fui-space-2, $fui-space-2);
@@ -132,6 +136,20 @@
 // Full width
 .fullWidth {
   width: 100%;
+}
+
+// ============================================
+// Accessibility: High Contrast Mode
+// ============================================
+
+// ============================================
+// Accessibility: Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
 }
 
 // ============================================

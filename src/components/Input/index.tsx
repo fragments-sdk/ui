@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Field } from '@base-ui/react/field';
+import { mergeAriaIds } from '../../utils/aria';
 import styles from './Input.module.scss';
 
 /**
@@ -30,6 +31,8 @@ export interface InputProps extends Omit<
   error?: boolean;
   /** Visible label text */
   label?: string;
+  /** Whether the field is required */
+  required?: boolean;
   /** Helper text shown below the input */
   helperText?: string;
   /** Keyboard shortcut hint displayed inside the input (e.g., "⌘K"). */
@@ -59,11 +62,6 @@ export interface InputProps extends Omit<
   style?: React.CSSProperties;
 }
 
-function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
-  const merged = ids.filter(Boolean).join(' ').trim();
-  return merged.length > 0 ? merged : undefined;
-}
-
 function parseShortcut(shortcut: string): { meta: boolean; shift: boolean; alt: boolean; key: string } | null {
   let meta = false, shift = false, alt = false;
   let remaining = shortcut;
@@ -88,6 +86,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       size = 'md',
       disabled = false,
       error = false,
+      required = false,
       label,
       helperText,
       shortcut,
@@ -176,6 +175,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       defaultValue,
       placeholder,
       disabled,
+      required,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange?.(e.target.value);
         onValueChange?.(e.target.value);
@@ -222,7 +222,12 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
           className={[styles.wrapper, rootProps?.className, className].filter(Boolean).join(' ')}
           style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
         >
-          {label && <label htmlFor={resolvedInputId} className={labelClasses}>{label}</label>}
+          {label && (
+            <label htmlFor={resolvedInputId} className={labelClasses}>
+              {label}
+              {required && <span className={styles.required}>*</span>}
+            </label>
+          )}
           {content}
           {helperText && (
             <div id={helperId} className={helperClasses}>
@@ -241,7 +246,12 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
         className={[wrapperClasses, rootProps?.className].filter(Boolean).join(' ')}
         style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
       >
-        {label && <Field.Label className={labelClasses}>{label}</Field.Label>}
+        {label && (
+          <Field.Label className={labelClasses}>
+            {label}
+            {required && <span className={styles.required}>*</span>}
+          </Field.Label>
+        )}
         {content}
         {helperText && (
           <Field.Description id={helperId} className={helperClasses}>

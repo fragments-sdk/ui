@@ -10,7 +10,7 @@ import styles from './Button.module.scss';
  */
 type ButtonBaseProps = {
   children: React.ReactNode;
-  /** Visual style variant. `"outline"` is an alias for `"outlined"`. `"icon"` is a convenience alias for a ghost icon-only button.
+  /** Visual style variant. `"outline"` is an alias for `"outlined"`. `"icon"` is a convenience alias for an outlined icon-only button.
    * @default "primary"
    * @see https://usefragments.com/components/button#variants */
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined' | 'outline' | 'icon';
@@ -18,7 +18,7 @@ type ButtonBaseProps = {
    * @default "md"
    * @see https://usefragments.com/components/button#sizes */
   size?: 'sm' | 'md' | 'lg';
-  /** Render as icon-only button (square aspect ratio). Prefer `variant="icon"` for the default ghost icon button. */
+  /** Render as icon-only button (square aspect ratio). Prefer `variant="icon"` for the default outlined icon button. */
   icon?: boolean;
   /** Make button full width of container */
   fullWidth?: boolean;
@@ -62,11 +62,11 @@ const ButtonRoot = React.forwardRef<
 
   // Resolve aliases:
   // "outline" → "outlined"
-  // "icon" → visual "ghost" + icon-only sizing
+  // "icon" → visual "outlined" + icon-only sizing
   const variant = variantProp === 'outline'
     ? 'outlined'
     : variantProp === 'icon'
-      ? 'ghost'
+      ? 'outlined'
       : variantProp;
 
   const classNames = [

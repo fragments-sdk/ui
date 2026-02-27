@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
+import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from '../../utils/aria';
 import styles from './Select.module.scss';
 
 // ============================================
@@ -20,7 +21,7 @@ export interface SelectOption {
  * Select dropdown for choosing from a list of options.
  * @see https://usefragments.com/components/select
  */
-export interface SelectProps {
+export interface SelectProps extends FormFieldProps {
   children?: React.ReactNode;
   /** Controlled selected value */
   value?: SelectValue | null;
@@ -36,8 +37,7 @@ export interface SelectProps {
   defaultOpen?: boolean;
   /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
-  /** Whether the select is non-interactive */
-  disabled?: boolean;
+  // disabled inherited from FormFieldProps
   /** Whether a selection is required */
   required?: boolean;
   /** Form field name */
@@ -46,6 +46,11 @@ export interface SelectProps {
   placeholder?: string;
   /** Convenience API for simple selects (renders Select.Item entries when children are omitted) */
   options?: SelectOption[];
+  /** Size variant.
+   * @default "md" */
+  size?: 'sm' | 'md' | 'lg';
+  /** Wrapper class name */
+  className?: string;
 }
 
 export interface SelectTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -127,19 +132,21 @@ interface SelectContextValue {
   items: Map<SelectValue, React.ReactNode>;
   registerItem: (value: SelectValue, content: React.ReactNode) => void;
   unregisterItem: (value: SelectValue) => void;
+  size: 'sm' | 'md' | 'lg';
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
   items: new Map(),
   registerItem: () => {},
   unregisterItem: () => {},
+  size: 'md',
 });
 
 // ============================================
 // Components
 // ============================================
 
-function SelectRoot({
+const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function SelectRoot({
   children,
   value,
   defaultValue,
@@ -153,7 +160,12 @@ function SelectRoot({
   name,
   placeholder,
   options,
-}: SelectProps) {
+  label,
+  helperText,
+  error,
+  size = 'md',
+  className,
+}: SelectProps, ref) {
   // Track current value for controlled and uncontrolled modes
   const [internalValue, setInternalValue] = React.useState<SelectValue | null | undefined>(
     value ?? defaultValue ?? null
@@ -204,38 +216,66 @@ function SelectRoot({
       items,
       registerItem,
       unregisterItem,
+      size,
     }),
-    [placeholder, value, internalValue, items, registerItem, unregisterItem]
+    [placeholder, value, internalValue, items, registerItem, unregisterItem, size]
+  );
+
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('select', { label, helperText, error });
+
+  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
+  const helperClasses = [styles.helper, hasError && styles.helperError]
+    .filter(Boolean)
+    .join(' ');
+
+  const selectContent = (
+    <BaseSelect.Root
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={handleValueChange}
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+      disabled={disabled}
+      required={required}
+      name={name}
+      aria-labelledby={labelId}
+      aria-describedby={mergeAriaIds(errorId, helperId)}
+    >
+      {children ?? options?.map((option) => (
+        <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+          {option.label}
+        </SelectItem>
+      ))}
+    </BaseSelect.Root>
   );
 
   return (
     <SelectContext.Provider value={contextValue}>
-      <BaseSelect.Root
-        value={value}
-        defaultValue={defaultValue}
-        onValueChange={handleValueChange}
-        open={open}
-        defaultOpen={defaultOpen}
-        onOpenChange={onOpenChange}
-        disabled={disabled}
-        required={required}
-        name={name}
-      >
-        {children ?? options?.map((option) => (
-          <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </BaseSelect.Root>
+      <div ref={ref} className={wrapperClasses}>
+        {label && <span id={labelId} className={styles.label}>{label}</span>}
+        {selectContent}
+        {helperText && (
+          <span id={helperId} className={helperClasses}>{helperText}</span>
+        )}
+        {errorMessage && (
+          <span id={errorId} className={styles.errorMessage}>{errorMessage}</span>
+        )}
+      </div>
     </SelectContext.Provider>
   );
-}
+});
 
 function SelectTrigger({ children, placeholder, className, ...htmlProps }: SelectTriggerProps) {
   const context = React.useContext(SelectContext);
   const placeholderText = placeholder ?? context.placeholder;
 
-  const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const classes = [
+    styles.trigger,
+    context.size === 'sm' && styles.triggerSm,
+    context.size === 'lg' && styles.triggerLg,
+    className,
+  ].filter(Boolean).join(' ');
 
   // Get the selected item's children from the registry
   const selectedContent = context.value != null

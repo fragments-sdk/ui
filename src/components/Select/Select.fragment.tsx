@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { defineFragment } from '@fragments-sdk/core';
 import { Select } from '.';
-import { Field } from '../Field';
-
 // Stateful wrapper for interactive demos
 function StatefulSelect(props: React.ComponentProps<typeof Select> & {
   children: React.ReactNode;
@@ -44,7 +42,8 @@ export default defineFragment({
     ],
     guidelines: [
       'Include a placeholder that explains what to select',
-      'Wrap Select in Field and use Field.Description / Field.Error for helper or validation text',
+      'Use label prop for accessible field labeling',
+      'Use helperText for guidance and error for validation messages',
       'Group related options with SelectGroup',
       'Keep option text concise',
       'Order options logically (alphabetical, by frequency, or by category)',
@@ -95,10 +94,28 @@ export default defineFragment({
       type: 'string',
       description: 'Placeholder text when no value selected',
     },
+    label: {
+      type: 'string',
+      description: 'Visible label text above the select',
+    },
+    helperText: {
+      type: 'string',
+      description: 'Helper text shown below the select',
+    },
+    error: {
+      type: 'union',
+      description: 'Show error styling. When a string is provided, it is displayed as an error message.',
+    },
     disabled: {
       type: 'boolean',
       description: 'Disable the select',
       default: 'false',
+    },
+    size: {
+      type: 'enum',
+      values: ['sm', 'md', 'lg'],
+      default: 'md',
+      description: 'Size variant',
     },
     options: {
       type: 'array',
@@ -117,9 +134,12 @@ export default defineFragment({
       'value: string | null - controlled selected value',
       'onValueChange: (value: string | null) => void - selection handler',
       'onChange: (value: string | null) => void - alias for onValueChange',
+      'label: string - visible label text',
+      'helperText: string - helper text below field',
+      'error: boolean | string - error styling and message',
       'placeholder: string - placeholder text',
       'disabled: boolean - disable select',
-      'Use Field.Description / Field.Error for helper and validation text',
+      'size: sm|md|lg (default: md)',
       'options: SelectOption[] - convenience API for simple option lists',
       'maxVisibleItems: number - max visible options before scrolling (default 4)',
     ],
@@ -180,24 +200,39 @@ export default defineFragment({
       ),
     },
     {
-      name: 'With Helper Text (Field)',
-      description: 'Use Field.Description for helper text with compound Select',
+      name: 'With Label and Helper Text',
+      description: 'Select with built-in label and helper text',
       render: () => (
-        <Field>
-          <Field.Label>Timezone</Field.Label>
-          <Field.Control>
-            <StatefulSelect placeholder="Select a timezone">
-              <Select.Trigger />
-              <Select.Content>
-                <Select.Item value="pt">Pacific Time</Select.Item>
-                <Select.Item value="mt">Mountain Time</Select.Item>
-                <Select.Item value="ct">Central Time</Select.Item>
-                <Select.Item value="et">Eastern Time</Select.Item>
-              </Select.Content>
-            </StatefulSelect>
-          </Field.Control>
-          <Field.Description>Used for reminders and calendar notifications.</Field.Description>
-        </Field>
+        <StatefulSelect
+          label="Timezone"
+          placeholder="Select a timezone"
+          helperText="Used for reminders and calendar notifications."
+        >
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="pt">Pacific Time</Select.Item>
+            <Select.Item value="mt">Mountain Time</Select.Item>
+            <Select.Item value="ct">Central Time</Select.Item>
+            <Select.Item value="et">Eastern Time</Select.Item>
+          </Select.Content>
+        </StatefulSelect>
+      ),
+    },
+    {
+      name: 'Error State',
+      description: 'Validation error with message',
+      render: () => (
+        <Select
+          label="Country"
+          placeholder="Select a country"
+          error="Please select a country"
+        >
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="us">United States</Select.Item>
+            <Select.Item value="uk">United Kingdom</Select.Item>
+          </Select.Content>
+        </Select>
       ),
     },
     {

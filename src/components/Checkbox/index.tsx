@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
+import { mergeAriaIds } from '../../utils/aria';
 import styles from './Checkbox.module.scss';
 
 // ============================================
@@ -52,11 +53,6 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   'aria-labelledby'?: string;
   /** Accessible described-by relationship */
   'aria-describedby'?: string;
-}
-
-function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
-  const merged = ids.filter(Boolean).join(' ').trim();
-  return merged.length > 0 ? merged : undefined;
 }
 
 // ============================================
@@ -208,7 +204,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
           <span id={labelId} className={labelClasses}>{label}</span>
           {resolvedHelperText && (
-            <span id={descriptionId} className={styles.description}>{resolvedHelperText}</span>
+            <span id={descriptionId} className={styles.helper}>{resolvedHelperText}</span>
           )}
         </div>
       </label>
