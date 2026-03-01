@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.15.0
+
+### Minor Changes
+
+- [`dff9ede`](https://github.com/ConanMcN/fragments/commit/dff9ede9e7205f3b1f7b26539df1c3430fd628dd) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add seed-derivation and theme-presets utilities. Refine palette derivation for improved contrast and consistency across neutral palettes.
+
 ## 0.14.0
 
 ### Minor Changes
