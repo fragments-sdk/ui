@@ -264,6 +264,13 @@
   },
   "files": [
     "src",
+    "!src/**/*.test.ts",
+    "!src/**/*.test.tsx",
+    "!src/test/",
+    "!src/**/*.fragment.tsx",
+    "!src/**/*.block.ts",
+    "!src/blocks/",
+    "!src/assets/*.svg",
     "dist",
     "fragments.json"
   ]
