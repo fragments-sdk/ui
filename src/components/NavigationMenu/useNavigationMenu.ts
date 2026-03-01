@@ -64,10 +64,13 @@ export function useNavigationMenu({
 
   // Clean up timers on unmount
   React.useEffect(() => {
+    const openTimer = openTimerRef.current;
+    const closeTimer = closeTimerRef.current;
+    const skipDelayTimer = skipDelayTimerRef.current;
     return () => {
-      if (openTimerRef.current) clearTimeout(openTimerRef.current);
-      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-      if (skipDelayTimerRef.current) clearTimeout(skipDelayTimerRef.current);
+      if (openTimer) clearTimeout(openTimer);
+      if (closeTimer) clearTimeout(closeTimer);
+      if (skipDelayTimer) clearTimeout(skipDelayTimer);
     };
   }, []);
 

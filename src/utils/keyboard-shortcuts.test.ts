@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import {
   matchesShortcut,
-  getShortcutLabel,
   findConflicts,
   getShortcuts,
   isEditableElement,
@@ -11,7 +10,6 @@ import {
   resetShortcutOverrides,
   useKeyboardShortcut,
   KEYBOARD_SHORTCUTS,
-  type KeyboardShortcut,
 } from './keyboard-shortcuts';
 
 // ============================================

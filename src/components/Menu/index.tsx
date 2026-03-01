@@ -73,7 +73,7 @@ export interface MenuGroupLabelProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
-export interface MenuSeparatorProps extends React.HTMLAttributes<HTMLElement> {}
+export type MenuSeparatorProps = React.HTMLAttributes<HTMLElement>;
 
 export interface MenuSubmenuProps {
   children: React.ReactNode;

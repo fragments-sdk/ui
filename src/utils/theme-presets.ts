@@ -8,7 +8,6 @@
 
 import {
   type SeedConfig,
-  type NeutralPalette,
   PALETTES,
   RADIUS_STYLES,
   getSemanticColors,

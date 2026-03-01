@@ -28,7 +28,7 @@ function FormRoot({
   errors,
   onSubmit,
   onFormSubmit,
-  onClearErrors,
+  onClearErrors: _onClearErrors,
   validationMode,
   className,
   ...htmlProps

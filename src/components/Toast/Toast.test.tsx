@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, userEvent, act, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { Toast, useToast, ToastProvider } from './index';
+import { useToast, ToastProvider } from './index';
 
 // Helper component to trigger toasts via the hook
 function ToastTrigger({

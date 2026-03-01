@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations, act } from '../../test/utils';
+import { render, screen, expectNoA11yViolations, act } from '../../test/utils';
 import { Editor } from './index';
 import { Button } from '../Button';
 

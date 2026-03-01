@@ -48,7 +48,6 @@ describe('Grid', () => {
         <Grid.Item>Normal</Grid.Item>
       </Grid>
     );
-    const wideItem = screen.getByText('Wide').parentElement ?? screen.getByText('Wide');
     // The item that contains "Wide" should have colSpan class
     expect(container.querySelector('.colSpan2')).toBeInTheDocument();
   });

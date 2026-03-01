@@ -28,7 +28,6 @@ async function loadShikiDeps() {
   await _shikiLoadPromise;
 }
 import { TabsRoot, TabsList, Tab, TabsPanel } from "../Tabs";
-import { Button } from "../Button";
 import styles from "./CodeBlock.module.scss";
 import "../../styles/globals.scss";
 

@@ -188,7 +188,7 @@ describe('Menu', () => {
     });
 
     it('does not render check indicator when checked is omitted', async () => {
-      const { container } = render(
+      render(
         <Menu defaultOpen>
           <Menu.Trigger>Open</Menu.Trigger>
           <Menu.Content>

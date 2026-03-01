@@ -142,7 +142,7 @@ describe('BentoGrid', () => {
     const item = screen.getByTestId('item');
     expect(item).toHaveStyle({ backgroundColor: 'rgb(1, 2, 3)' });
     expect(item.style.getPropertyValue('--bento-col-span')).toBe('2');
-    expect(container.querySelector('[data-testid=\"item\"]')).toBe(item);
+    expect(container.querySelector('[data-testid="item"]')).toBe(item);
   });
 
   it('has no accessibility violations', async () => {

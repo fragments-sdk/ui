@@ -267,15 +267,6 @@ function rgbToHex(r: number, g: number, b: number): string {
 }
 
 /**
- * Check if a color is considered "dark" (luminance < 0.5)
- */
-function isDarkColor(hex: string): boolean {
-  const { r, g, b } = hexToRgb(hex);
-  const luminance = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
-  return luminance < 0.5;
-}
-
-/**
  * Lighten a color by a percentage
  */
 function lighten(hex: string, percent: number): string {
