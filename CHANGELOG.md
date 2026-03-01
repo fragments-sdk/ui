@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.15.1
+
+### Patch Changes
+
+- Reduce @fragments-sdk/ui npm package size from 8.93 MB to 3.4 MB by disabling source maps, fixing Vite externals, excluding dev files, and stripping inherited props from fragments.json.
+
 ## 0.15.0
 
 ### Minor Changes
