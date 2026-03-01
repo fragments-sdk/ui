@@ -113,15 +113,43 @@
 }
 
 // --------------------------------------------
+// Contrast Correction
+// --------------------------------------------
+
+/// Progressively darken (light mode) or lighten (dark mode) a foreground
+/// color until it meets the given WCAG contrast target against a background.
+/// Used to guarantee AAA (7:1) text contrast on tinted palette surfaces.
+/// @param {Color} $fg - Foreground color to adjust
+/// @param {Color} $bg - Background color to check against
+/// @param {Number} $target - Target contrast ratio (default: 7 for AAA)
+/// @param {Boolean} $is-dark - Whether in dark mode (lighten instead of darken)
+/// @return {Color} Adjusted foreground color meeting the target ratio
+@function ensure-contrast($fg, $bg, $target: 7, $is-dark: false) {
+  $adjusted: $fg;
+  @for $i from 1 through 40 {
+    @if wcag-contrast($adjusted, $bg) < $target {
+      @if $is-dark {
+        $adjusted: color.adjust($adjusted, $lightness: 2%);
+      } @else {
+        $adjusted: color.adjust($adjusted, $lightness: -2%);
+      }
+    }
+  }
+  @return $adjusted;
+}
+
+// --------------------------------------------
 // Surface/Background Derivation
 // --------------------------------------------
 
 /// Derive surface/background tokens from a neutral palette
-/// Maps shade levels to semantic surface tokens for visual depth layering
+/// Maps shade levels to semantic surface tokens for visual depth layering.
+/// For colorful palettes (ice, earth, sand, fire), light mode uses tinted backgrounds.
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
+/// @param {String} $palette-name - Palette name for colorful detection (default: 'stone')
 /// @return {Map} Surface token values
-@function derive-surfaces($palette, $is-dark: false) {
+@function derive-surfaces($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
     // Dark mode: darker = more recessed, lighter = elevated
     @return (
@@ -133,47 +161,69 @@
       hover: rgba(255, 255, 255, 0.05),            // Interactive hover (subtle)
       active: rgba(255, 255, 255, 0.08)            // Interactive active
     );
-  } @else {
-    // Light mode: lighter = more recessed, darker shades for depth
+  }
+
+  // Light mode: colorful palettes get tinted backgrounds
+  $is-colorful: $palette-name != 'stone';
+  @if $is-colorful {
     @return (
-      primary: #ffffff,                            // Page background (white)
-      secondary: get-shade($palette, 100),         // Sidebar, secondary panels
-      tertiary: get-shade($palette, 100),          // Nested sections
+      primary: get-shade($palette, 50),            // Tinted page background
+      secondary: get-shade($palette, 100),         // Tinted secondary panels
+      tertiary: get-shade($palette, 200),          // Deeper tint for nested sections
       elevated: #ffffff,                           // Cards, modals (floats above)
-      subtle: get-shade($palette, 50),             // Very subtle backgrounds
+      subtle: get-shade($palette, 50),             // Very subtle tinted background
       hover: rgba(0, 0, 0, 0.04),                  // Interactive hover
       active: rgba(0, 0, 0, 0.06)                  // Interactive active
     );
   }
+
+  // Stone palette: neutral white backgrounds
+  @return (
+    primary: #ffffff,                            // Page background (white)
+    secondary: get-shade($palette, 100),         // Sidebar, secondary panels
+    tertiary: get-shade($palette, 100),          // Nested sections
+    elevated: #ffffff,                           // Cards, modals (floats above)
+    subtle: get-shade($palette, 50),             // Very subtle backgrounds
+    hover: rgba(0, 0, 0, 0.04),                  // Interactive hover
+    active: rgba(0, 0, 0, 0.06)                  // Interactive active
+  );
 }
 
 // --------------------------------------------
 // Text Color Derivation
 // --------------------------------------------
 
-/// Derive text tokens from a neutral palette
-/// Maps shade levels to semantic text tokens with contrast verification
+/// Derive text tokens from a neutral palette.
+/// For colorful palettes in light mode, applies ensure-contrast() to meet
+/// WCAG AAA (7:1) against tinted backgrounds (palette[50]).
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
+/// @param {String} $palette-name - Palette name for background detection (default: 'stone')
 /// @return {Map} Text token values
-@function derive-text($palette, $is-dark: false) {
+@function derive-text($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
     // Dark mode: light text on dark backgrounds
     @return (
       primary: get-shade($palette, 100),           // Main text (light on dark)
       secondary: get-shade($palette, 400),         // Secondary text
-      tertiary: get-shade($palette, 500),          // Muted text
+      // 90/10 mix of palette[400]/palette[500] for WCAG AAA 7:1
+      // against palette[950] backgrounds (pure palette[500] gives ~4.1:1)
+      tertiary: color.mix(get-shade($palette, 500), get-shade($palette, 400), 10%),
       inverse: get-shade($palette, 900)            // Text on light accents
     );
-  } @else {
-    // Light mode: dark text on light backgrounds
-    @return (
-      primary: get-shade($palette, 900),           // Main text (high contrast)
-      secondary: get-shade($palette, 600),         // Secondary text
-      tertiary: get-shade($palette, 500),          // Muted/disabled text
-      inverse: get-shade($palette, 100)            // Text on dark accents
-    );
   }
+
+  // Light mode background — stone uses white, colorful palettes use palette[50]
+  $bg: if($palette-name != 'stone', get-shade($palette, 50), #ffffff);
+
+  @return (
+    primary: get-shade($palette, 900),           // Main text (high contrast)
+    secondary: ensure-contrast(get-shade($palette, 600), $bg, 7),
+    tertiary: ensure-contrast(
+      color.mix(get-shade($palette, 600), get-shade($palette, 500), 20%), $bg, 7
+    ),
+    inverse: get-shade($palette, 100)            // Text on dark accents
+  );
 }
 
 // --------------------------------------------

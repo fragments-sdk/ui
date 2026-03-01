@@ -42,9 +42,9 @@ $palette-ice: (
   500: #0ea5e9,
   600: #0284c7,
   700: #0369a1,
-  800: #075985,
-  900: #0c4a6e,
-  950: #082f49
+  800: #0f2d3d,  // Darkened and desaturated for dark mode
+  900: #0a1f2c,  // Darkened and desaturated for dark mode
+  950: #06141c   // Very dark blue-gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -60,9 +60,9 @@ $palette-sand: (
   500: #a67c52,
   600: #8b5e34,
   700: #6f4518,
-  800: #553311,
-  900: #3d240c,
-  950: #261607
+  800: #231a12,  // Darkened and desaturated for dark mode
+  900: #181210,  // Darkened and desaturated for dark mode
+  950: #0f0c09   // Very dark warm gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -78,9 +78,9 @@ $palette-earth: (
   500: #6b8c4e,
   600: #517035,
   700: #3d5527,
-  800: #2b3d1c,
-  900: #1c2912,
-  950: #0f170a
+  800: #1a2316,  // Darkened and desaturated for dark mode
+  900: #121810,  // Darkened and desaturated for dark mode
+  950: #0a0f08   // Very dark green-gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -96,9 +96,9 @@ $palette-fire: (
   500: #f97316,
   600: #ea580c,
   700: #c2410c,
-  800: #9a3412,
-  900: #7c2d12,
-  950: #431407
+  800: #2d1810,  // Darkened and desaturated for dark mode
+  900: #1c100a,  // Darkened and desaturated for dark mode
+  950: #120a06   // Very dark warm gray for dark mode bg
 );
 
 // --------------------------------------------

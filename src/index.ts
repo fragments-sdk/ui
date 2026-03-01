@@ -664,5 +664,35 @@ export {
   type UseKeyboardShortcutOptions,
 } from './utils/keyboard-shortcuts';
 
+// Seed Derivation
+export {
+  type SeedConfig,
+  PALETTES,
+  RADIUS_STYLES,
+  PALETTE_SEMANTIC_COLORS,
+  DEFAULT_SEEDS,
+  getSemanticColors,
+  deriveText,
+  deriveSurfaces,
+  deriveBorders,
+  deriveShadows,
+  deriveAccentHover,
+  deriveAccentActive,
+  deriveDarkAccent,
+  deriveSemanticText,
+  deriveSemanticBg,
+  deriveSemanticHover,
+} from './utils/seed-derivation';
+
+// Theme Presets
+export {
+  PRESETS,
+  PRESET_DEFINITIONS,
+  generatePreset,
+  seedsToTheme,
+  type ThemeConfig,
+  type PresetDefinition,
+} from './utils/theme-presets';
+
 // Legacy aliases (deprecated)
 export { Switch as Toggle, type SwitchProps as ToggleProps } from './components/Switch';

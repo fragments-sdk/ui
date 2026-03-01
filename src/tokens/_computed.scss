@@ -109,7 +109,7 @@ $computed-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, fa
 $computed-color-info-text: derive.derive-semantic-text(seeds.$fui-info, false);
 
 // Surfaces (from neutral palette)
-$_surfaces-light: derive.derive-surfaces($_palette, false);
+$_surfaces-light: derive.derive-surfaces($_palette, false, seeds.$fui-neutral);
 $computed-bg-primary: map.get($_surfaces-light, primary);
 $computed-bg-secondary: map.get($_surfaces-light, secondary);
 $computed-bg-tertiary: map.get($_surfaces-light, tertiary);
@@ -119,7 +119,7 @@ $computed-bg-hover: map.get($_surfaces-light, hover);
 $computed-bg-active: map.get($_surfaces-light, active);
 
 // Text (from neutral palette)
-$_text-light: derive.derive-text($_palette, false);
+$_text-light: derive.derive-text($_palette, false, seeds.$fui-neutral);
 $computed-text-primary: map.get($_text-light, primary);
 $computed-text-secondary: map.get($_text-light, secondary);
 $computed-text-tertiary: map.get($_text-light, tertiary);
@@ -171,7 +171,7 @@ $computed-dark-color-warning-text: derive.derive-semantic-text(seeds.$fui-warnin
 $computed-dark-color-info-text: derive.derive-semantic-text(seeds.$fui-info, true);
 
 // Surfaces (dark mode)
-$_surfaces-dark: derive.derive-surfaces($_palette, true);
+$_surfaces-dark: derive.derive-surfaces($_palette, true, seeds.$fui-neutral);
 $computed-dark-bg-primary: map.get($_surfaces-dark, primary);
 $computed-dark-bg-secondary: map.get($_surfaces-dark, secondary);
 $computed-dark-bg-tertiary: map.get($_surfaces-dark, tertiary);
@@ -181,7 +181,7 @@ $computed-dark-bg-hover: map.get($_surfaces-dark, hover);
 $computed-dark-bg-active: map.get($_surfaces-dark, active);
 
 // Text (dark mode)
-$_text-dark: derive.derive-text($_palette, true);
+$_text-dark: derive.derive-text($_palette, true, seeds.$fui-neutral);
 $computed-dark-text-primary: map.get($_text-dark, primary);
 $computed-dark-text-secondary: map.get($_text-dark, secondary);
 $computed-dark-text-tertiary: map.get($_text-dark, tertiary);
