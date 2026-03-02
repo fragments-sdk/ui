@@ -6,9 +6,8 @@
 // ============================================
 // Grid areas: header, sidebar, main, aside
 //
-// 'default':           header spans full width, sidebar below
-// 'sidebar':           sidebar spans full height, header beside it
-// 'sidebar-floating':  like sidebar, but main floats with rounded corners
+// Structure is controlled by the `layout` prop ('default' | 'sidebar').
+// Visual treatment (floating) is controlled per-slot via `variant` props.
 
 .root {
   display: grid;
@@ -48,7 +47,7 @@
   }
 }
 
-// Sidebar layout: sidebar spans full height
+// Sidebar structure: sidebar spans full height
 // sidebar header header
 // sidebar main   aside
 .sidebarLayout {
@@ -65,11 +64,6 @@
   }
 }
 
-// Sidebar-floating layout: shell background frames the floating main area
-.sidebarFloatingLayout {
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-}
-
 // ============================================
 // Header
 // ============================================
@@ -80,11 +74,6 @@
   top: 0;
   height: var(--appshell-header-height, 56px);
   z-index: var(--fui-header-z-index, 40);
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-}
-
-// Header in sidebar-floating layout — matches shell bg
-.headerFloating {
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 }
 
@@ -129,7 +118,7 @@
   }
 }
 
-// Sidebar in sidebar/sidebar-floating layouts: full height
+// Sidebar in sidebar structure: full height
 .sidebarFullHeight {
   top: 0;
   height: 100vh;
@@ -141,11 +130,9 @@
   }
 }
 
-// Sidebar in sidebar-floating layout: no borders, primary bg (matches shell)
+// Sidebar variant="floating": blends with shell background (bg applied via inline style on Sidebar)
 .sidebarFloating {
-  :global(.root) {
-    background-color: var(--fui-bg-primary, $fui-bg-primary);
-  }
+  // No additional styles needed — bg prop is passed directly to the Sidebar component
 }
 
 // ============================================
@@ -159,13 +146,15 @@
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 }
 
-// Main content in sidebar-floating layout — elevated card effect
+// Main variant="floating": elevated card effect with inset from edges
 .mainFloating {
+  margin: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) 0;
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   overflow: hidden;
 
   @include below-md {
+    margin: var(--fui-space-2, $fui-space-2) 0;
     border-radius: var(--fui-radius-lg, $fui-radius-lg);
     width: 100%;
   }
@@ -214,5 +203,25 @@
     width: 100%;
     height: auto;
     border-top: 1px solid var(--fui-border, $fui-border);
+  }
+}
+
+// Aside variant="floating": elevated card effect with inset from edges
+.asideFloating {
+  // Override the explicit width so the aside fills its grid cell
+  // and the margin creates visible inset space from the viewport edge.
+  width: auto;
+  height: calc(100vh - var(--appshell-header-height, 56px) - var(--fui-space-2, $fui-space-2) * 2);
+  height: calc(100dvh - var(--appshell-header-height, 56px) - var(--fui-space-2, $fui-space-2) * 2);
+  margin: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) 0;
+  border-radius: var(--fui-radius-xl, $fui-radius-xl);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  overflow: hidden;
+
+  @include below-md {
+    margin: var(--fui-space-2, $fui-space-2) 0;
+    border-radius: var(--fui-radius-lg, $fui-radius-lg);
+    width: 100%;
+    height: auto;
   }
 }

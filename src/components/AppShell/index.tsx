@@ -14,46 +14,62 @@ import {
 // ============================================
 
 /**
+ * Structural layout — controls CSS grid areas.
+ *
  * ```
- * 'default'           'sidebar'          'sidebar-floating'
- * ┌──────────────┐    ┌────┬─────────┐   ┌────┬─────────┐
- * │    Header    │    │    │ Header  │   │    │ Header  │
- * ├────┬─────────┤    │Side├─────────┤   │Side├╌╌╌╌╌╌╌╌╌┤
- * │    │         │    │bar │         │   │bar │┌───────┐│
- * │Side│  Main   │    │    │  Main   │   │    ││ Main  ││
- * │bar │         │    │    │         │   │    │└───────┘│
- * └────┴─────────┘    └────┴─────────┘   └────┴─────────┘
+ * 'default'           'sidebar'
+ * ┌──────────────┐    ┌────┬─────────┐
+ * │    Header    │    │    │ Header  │
+ * ├────┬─────────┤    │Side├─────────┤
+ * │    │         │    │bar │         │
+ * │Side│  Main   │    │    │  Main   │
+ * │bar │         │    │    │         │
+ * └────┴─────────┘    └────┴─────────┘
  * ```
+ *
+ * Combine with `variant="floating"` on individual slots for floating effects:
+ *
+ * ```tsx
+ * <AppShell layout="sidebar">
+ *   <AppShell.Sidebar variant="floating" />
+ *   <AppShell.Main variant="floating" />
+ *   <AppShell.Aside variant="floating" />
+ * </AppShell>
+ * ```
+ *
+ * Legacy values `'sidebar-floating'` and `'floating'` are still accepted
+ * for backwards compatibility and internally expand to the appropriate
+ * per-slot variants.
  */
-export type AppShellLayout = 'default' | 'sidebar' | 'sidebar-floating';
+export type AppShellLayout = 'default' | 'sidebar' | 'sidebar-floating' | 'floating';
+
+/** Visual treatment for individual layout slots. */
+export type AppShellSlotVariant = 'default' | 'floating';
 
 export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /**
-   * Layout mode:
-   *
-   * ```
-   * 'default'           'sidebar'          'sidebar-floating'
-   * ┌──────────────┐    ┌────┬─────────┐   ┌────┬─────────┐
-   * │    Header    │    │    │ Header  │   │    │ Header  │
-   * ├────┬─────────┤    │Side├─────────┤   │Side├╌╌╌╌╌╌╌╌╌┤
-   * │    │         │    │bar │         │   │bar │┌───────┐│
-   * │Side│  Main   │    │    │  Main   │   │    ││ Main  ││
-   * │bar │         │    │    │         │   │    │└───────┘│
-   * └────┴─────────┘    └────┴─────────┘   └────┴─────────┘
-   * ```
+   * Layout structure:
    *
    * - `'default'`: Header spans full width, sidebar below (default)
    * - `'sidebar'`: Sidebar is full height, header sits beside it
-   * - `'sidebar-floating'`: Like `sidebar` but main content floats with rounded corners and a distinct background
+   *
+   * Legacy presets (still work, prefer per-slot `variant` props instead):
+   *
+   * - `'sidebar-floating'`: Expands to `layout="sidebar"` with floating sidebar + main
+   * - `'floating'`: Expands to `layout="sidebar"` with floating sidebar + main + aside
    */
   layout?: AppShellLayout;
+  /** Background color for the shell container (accepts any CSS color value or token) */
+  bg?: string;
 }
 
 export interface AppShellHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Header height (default: '56px') */
   height?: string;
+  /** Background color override (accepts any CSS color value or token) */
+  bg?: string;
 }
 
 export interface AppShellSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -68,12 +84,20 @@ export interface AppShellSidebarProps extends React.HTMLAttributes<HTMLDivElemen
   position?: 'left' | 'right';
   /** Default collapsed state */
   defaultCollapsed?: boolean;
+  /** Visual treatment: `'floating'` blends sidebar with the shell background */
+  variant?: AppShellSlotVariant;
+  /** Background color override (accepts any CSS color value or token) */
+  bg?: string;
 }
 
 export interface AppShellMainProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Content padding */
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Visual treatment: `'floating'` adds rounded corners and elevated background */
+  variant?: AppShellSlotVariant;
+  /** Background color override (accepts any CSS color value or token) */
+  bg?: string;
 }
 
 export interface AppShellAsideProps extends React.HTMLAttributes<HTMLElement> {
@@ -82,6 +106,35 @@ export interface AppShellAsideProps extends React.HTMLAttributes<HTMLElement> {
   width?: string;
   /** Control visibility */
   visible?: boolean;
+  /** Visual treatment: `'floating'` adds rounded corners and elevated background */
+  variant?: AppShellSlotVariant;
+  /** Background color override (accepts any CSS color value or token) */
+  bg?: string;
+}
+
+// ============================================
+// Layout resolution helpers
+// ============================================
+
+/** Resolve a layout value to its structural grid mode. */
+function resolveStructure(layout: AppShellLayout): 'default' | 'sidebar' {
+  if (layout === 'sidebar' || layout === 'sidebar-floating' || layout === 'floating') return 'sidebar';
+  return 'default';
+}
+
+/**
+ * Resolve a slot's visual variant.
+ * Explicit `variant` prop always wins. Otherwise, infer from legacy layout values.
+ */
+function resolveSlotVariant(
+  explicit: AppShellSlotVariant | undefined,
+  layout: AppShellLayout,
+  slot: 'main' | 'aside' | 'sidebar',
+): AppShellSlotVariant {
+  if (explicit !== undefined) return explicit;
+  if ((layout === 'sidebar-floating' || layout === 'floating') && (slot === 'main' || slot === 'sidebar')) return 'floating';
+  if (layout === 'floating' && slot === 'aside') return 'floating';
+  return 'default';
 }
 
 // ============================================
@@ -90,6 +143,7 @@ export interface AppShellAsideProps extends React.HTMLAttributes<HTMLElement> {
 
 interface AppShellContextValue {
   layout: AppShellLayout;
+  structure: 'default' | 'sidebar';
   headerHeight: string;
   sidebarWidth: string;
   sidebarCollapsedWidth: string;
@@ -99,6 +153,7 @@ interface AppShellContextValue {
 
 const AppShellContext = React.createContext<AppShellContextValue>({
   layout: 'default',
+  structure: 'default',
   headerHeight: '56px',
   sidebarWidth: '240px',
   sidebarCollapsedWidth: '64px',
@@ -190,20 +245,21 @@ function AppShellInner({
   children,
   className,
   layout,
+  structure,
   style: styleProp,
   ...htmlProps
 }: {
   children: React.ReactNode;
   className?: string;
   layout: AppShellLayout;
+  structure: 'default' | 'sidebar';
 } & React.HTMLAttributes<HTMLDivElement>) {
   const appShell = useAppShell();
   const { collapsed, isMobile, collapsible } = useSidebar();
 
   const classes = [
     styles.root,
-    (layout === 'sidebar' || layout === 'sidebar-floating') && styles.sidebarLayout,
-    layout === 'sidebar-floating' && styles.sidebarFloatingLayout,
+    structure === 'sidebar' && styles.sidebarLayout,
     className,
   ].filter(Boolean).join(' ');
 
@@ -243,14 +299,19 @@ function AppShellInner({
 function AppShellRoot({
   children,
   layout = 'default',
+  bg,
   className,
+  style: styleProp,
   ...htmlProps
 }: AppShellProps) {
+  const structure = resolveStructure(layout);
+
   // Extract config from children using useMemo to avoid re-renders
   const config = React.useMemo(() => extractConfigFromChildren(children), [children]);
 
   const contextValue: AppShellContextValue = {
     layout,
+    structure,
     headerHeight: config.headerHeight,
     sidebarWidth: config.sidebarWidth,
     sidebarCollapsedWidth: config.sidebarCollapsedWidth,
@@ -266,7 +327,7 @@ function AppShellRoot({
         collapsible={config.sidebarCollapsible}
         defaultCollapsed={config.sidebarDefaultCollapsed}
       >
-        <AppShellInner className={className} layout={layout} {...htmlProps}>
+        <AppShellInner className={className} layout={layout} structure={structure} style={{ ...(bg ? { backgroundColor: bg } : {}), ...styleProp }} {...htmlProps}>
           {children}
         </AppShellInner>
       </SidebarProvider>
@@ -280,21 +341,19 @@ function AppShellRoot({
 function AppShellHeader({
   children,
   height = '56px',
+  bg,
   className,
   style: styleProp,
   ...htmlProps
 }: AppShellHeaderProps) {
-  const { layout } = useAppShell();
-
   const classes = [
     styles.header,
-    (layout === 'sidebar' || layout === 'sidebar-floating') && styles.headerSidebar,
-    layout === 'sidebar-floating' && styles.headerFloating,
     className,
   ].filter(Boolean).join(' ');
 
   const style: React.CSSProperties = {
     '--header-height': height,
+    ...(bg ? { backgroundColor: bg } : {}),
     ...styleProp,
   } as React.CSSProperties;
 
@@ -315,22 +374,30 @@ function AppShellSidebar({
   collapsible = 'icon',
   position = 'left',
   defaultCollapsed = false,
+  variant,
+  bg,
   'aria-label': ariaLabel,
   className,
+  style: styleProp,
   ...htmlProps
 }: AppShellSidebarProps) {
   const isMobile = useIsMobile();
-  const { layout } = useAppShell();
+  const { layout, structure } = useAppShell();
+  const resolvedVariant = resolveSlotVariant(variant, layout, 'sidebar');
 
   const classes = [
     styles.sidebar,
-    (layout === 'sidebar' || layout === 'sidebar-floating') && styles.sidebarFullHeight,
-    layout === 'sidebar-floating' && styles.sidebarFloating,
+    structure === 'sidebar' && styles.sidebarFullHeight,
+    resolvedVariant === 'floating' && styles.sidebarFloating,
     className,
   ].filter(Boolean).join(' ');
 
+  const style: React.CSSProperties = {
+    ...styleProp,
+  } as React.CSSProperties;
+
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} className={classes} style={style}>
       <Sidebar
         width={width}
         collapsedWidth={collapsedWidth}
@@ -338,6 +405,7 @@ function AppShellSidebar({
         collapsible={collapsible}
         defaultCollapsed={defaultCollapsed}
         aria-label={ariaLabel}
+        style={bg ? { backgroundColor: bg } : undefined}
       >
         {children}
       </Sidebar>
@@ -352,21 +420,30 @@ function AppShellSidebar({
 function AppShellMain({
   children,
   padding = 'md',
+  variant,
+  bg,
   className,
+  style: styleProp,
   id = 'main-content',
   ...htmlProps
 }: AppShellMainProps) {
   const { layout } = useAppShell();
+  const resolvedVariant = resolveSlotVariant(variant, layout, 'main');
 
   const classes = [
     styles.main,
     padding !== 'none' && styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}`],
-    layout === 'sidebar-floating' && styles.mainFloating,
+    resolvedVariant === 'floating' && styles.mainFloating,
     className,
   ].filter(Boolean).join(' ');
 
+  const style: React.CSSProperties = {
+    ...(bg ? { backgroundColor: bg } : {}),
+    ...styleProp,
+  } as React.CSSProperties;
+
   return (
-    <main {...htmlProps} className={classes} id={id}>
+    <main {...htmlProps} className={classes} style={style} id={id}>
       {children}
     </main>
   );
@@ -379,18 +456,28 @@ function AppShellAside({
   children,
   width = '280px',
   visible = true,
+  variant,
+  bg,
   className,
   style: styleProp,
   ...htmlProps
 }: AppShellAsideProps) {
+  const { layout } = useAppShell();
+  const resolvedVariant = resolveSlotVariant(variant, layout, 'aside');
+
   if (!visible) {
     return null;
   }
 
-  const classes = [styles.aside, className].filter(Boolean).join(' ');
+  const classes = [
+    styles.aside,
+    resolvedVariant === 'floating' && styles.asideFloating,
+    className,
+  ].filter(Boolean).join(' ');
 
   const style: React.CSSProperties = {
     '--aside-width': width,
+    ...(bg ? { backgroundColor: bg } : {}),
     ...styleProp,
   } as React.CSSProperties;
 

@@ -341,6 +341,7 @@ export {
   AppShell,
   type AppShellProps,
   type AppShellLayout,
+  type AppShellSlotVariant,
   type AppShellHeaderProps,
   type AppShellSidebarProps,
   type AppShellMainProps,
