@@ -1,5 +1,17 @@
 # @fragments-sdk/ui
 
+## 0.16.0
+
+### Minor Changes
+
+- [`6f4ef32`](https://github.com/ConanMcN/fragments/commit/6f4ef32171104504a6cf6379bea5787a17516a4d) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Decompose AppShell layout into orthogonal props and add per-slot bg prop
+  - `layout` controls grid structure (`default` | `sidebar`)
+  - Per-slot `variant` controls floating treatment (`default` | `floating`)
+  - Per-slot `bg` accepts any CSS color to override background independently
+  - New variants: Floating Main, Floating Main & Aside, Floating Default Layout, Custom Backgrounds
+  - Export `AppShellSlotVariant` type
+  - Extract `discoverComponents` to `@fragments-sdk/core`
+
 ## 0.15.1
 
 ### Patch Changes
