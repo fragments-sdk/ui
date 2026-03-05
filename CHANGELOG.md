@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.16.1
+
+### Patch Changes
+
+- Redesign CodeBlock to Vercel-style borderless aesthetic, add bg prop for customizable background color, update code tokens, and add synthetic benchmark library
+
 ## 0.16.0
 
 ### Minor Changes
