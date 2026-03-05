@@ -66,6 +66,7 @@ export default defineFragment({
       'disabled: boolean - disables all child fields',
       'Fieldset.Legend: accessible group label',
       'Fieldset.Legend forwards DOM props',
+      'Fieldset.Description: helper text below the legend',
     ],
     scenarioTags: ['form.group', 'form.fieldset'],
     a11yRules: ['A11Y_FIELDSET_LEGEND'],
@@ -132,6 +133,26 @@ export default defineFragment({
           <Field name="newsletter">
             <Field.Control>
               <Checkbox label="Subscribe to newsletter" />
+            </Field.Control>
+          </Field>
+        </Fieldset>
+      ),
+    },
+    {
+      name: 'With Description',
+      description: 'Fieldset with descriptive helper text below the legend',
+      render: () => (
+        <Fieldset>
+          <Fieldset.Legend>Notification Settings</Fieldset.Legend>
+          <Fieldset.Description>Choose how you want to be notified about updates.</Fieldset.Description>
+          <Field name="emailNotif">
+            <Field.Control>
+              <Checkbox label="Email notifications" />
+            </Field.Control>
+          </Field>
+          <Field name="smsNotif">
+            <Field.Control>
+              <Checkbox label="SMS notifications" />
             </Field.Control>
           </Field>
         </Fieldset>

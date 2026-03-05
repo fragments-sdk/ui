@@ -24,19 +24,20 @@
 // ============================================
 
 .default {
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+  @include form-group-surface;
+
   padding: calc(var(--fui-space-px, $fui-space-px) * 2);
   gap: calc(var(--fui-space-px, $fui-space-px) * 2);
 
   .item {
     background-color: transparent;
-    border: none;
+    border: 1px solid transparent;
     border-radius: calc(var(--fui-radius-md, $fui-radius-md) - 2px);
 
     &.selected {
-      background-color: var(--fui-bg-primary, $fui-bg-primary);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      background-color: var(--fui-field-bg, $fui-bg-elevated);
+      border-color: var(--fui-field-selection-border, $fui-color-accent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
     }
   }
 }
@@ -47,17 +48,17 @@
 
 .pills {
   .item {
-    background-color: transparent;
-    border: 1px solid transparent;
+    background-color: var(--fui-field-bg, $fui-bg-elevated);
+    border: 1px solid var(--fui-form-group-border, $fui-border);
     border-radius: var(--fui-radius-md, $fui-radius-md);
 
     &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      border-color: var(--fui-field-border-hover, $fui-text-tertiary);
     }
 
     &.selected {
-      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-      border-color: var(--fui-border, $fui-border);
+      @include popup-item-selected;
     }
   }
 }
@@ -69,17 +70,16 @@
 .outline {
   .item {
     background-color: transparent;
-    border: 1px solid var(--fui-border, $fui-border);
+    border: 1px solid var(--fui-field-border, $fui-border);
     border-radius: var(--fui-radius-md, $fui-radius-md);
 
     &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      border-color: var(--fui-field-border-hover, $fui-text-tertiary);
     }
 
     &.selected {
-      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-      border-color: var(--fui-color-accent, $fui-color-accent);
-      color: var(--fui-color-accent, $fui-color-accent);
+      @include popup-item-selected;
     }
   }
 }
@@ -101,7 +101,11 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
   user-select: none;
-  transition: all 150ms ease;
+  transition:
+    background-color var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast),
+    box-shadow var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
 
   &.selected {
     color: var(--fui-text-primary, $fui-text-primary);
@@ -119,7 +123,7 @@
 
 .size-sm {
   .item {
-    min-height: 28px;
+    min-height: var(--fui-button-height-sm, $fui-button-height-sm);
     padding: 0 var(--fui-space-2, $fui-space-2);
     font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   }
@@ -127,7 +131,7 @@
 
 .size-md {
   .item {
-    min-height: 32px;
+    min-height: var(--fui-button-height-md, $fui-button-height-md);
     padding: 0 var(--fui-space-3, $fui-space-3);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   }
@@ -135,7 +139,7 @@
 
 .size-lg {
   .item {
-    min-height: 40px;
+    min-height: var(--fui-button-height-lg, $fui-button-height-lg);
     padding: 0 var(--fui-space-4, $fui-space-4);
     font-size: var(--fui-font-size-base, $fui-font-size-base);
   }

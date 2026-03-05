@@ -27,6 +27,10 @@ export interface TextareaProps extends Omit<
   disabled?: boolean;
   /** Error state */
   error?: boolean;
+  /** Success state */
+  success?: boolean;
+  /** Show character count when maxLength is set */
+  showCharCount?: boolean;
   /** Label text above the textarea */
   label?: string;
   /** Helper text below the textarea */
@@ -36,9 +40,9 @@ export interface TextareaProps extends Omit<
   /** Alias for onChange (value-first callback) */
   onValueChange?: (value: string) => void;
   /** Called when textarea loses focus */
-  onBlur?: () => void;
+  onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
   /** Called when textarea receives focus */
-  onFocus?: () => void;
+  onFocus?: React.FocusEventHandler<HTMLTextAreaElement>;
   /** Form field name */
   name?: string;
   /** Maximum character length */
@@ -72,6 +76,8 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       size = 'md',
       disabled = false,
       error = false,
+      success = false,
+      showCharCount = false,
       label,
       helperText,
       onChange,
@@ -100,16 +106,25 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const labelId = label ? `${textareaId}-label` : undefined;
     const helperId = `${textareaId}-helper`;
 
+    const [charCount, setCharCount] = React.useState(() =>
+      (value ?? defaultValue ?? '').length
+    );
+
     const textareaClasses = [
       styles.textarea,
       styles[size],
       error && styles.error,
+      success && styles.success,
       styles[`resize-${resize}`],
     ]
       .filter(Boolean)
       .join(' ');
 
-    const helperClasses = [styles.helper, error && styles.helperError]
+    const helperClasses = [
+      styles.helper,
+      error && styles.helperError,
+      success && styles.helperSuccess,
+    ]
       .filter(Boolean)
       .join(' ');
 
@@ -125,6 +140,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div
         {...rootProps}
+        data-success={success || undefined}
         className={[styles.wrapper, rootProps?.className, className].filter(Boolean).join(' ')}
         style={{ ...(rootProps?.style ?? {}), ...(wrapperStyle ?? {}) }}
       >
@@ -154,19 +170,34 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             helperText ? helperId : undefined
           )}
           onChange={(e) => {
-            onChange?.(e.target.value);
-            onValueChange?.(e.target.value);
+            const val = e.target.value;
+            setCharCount(val.length);
+            onChange?.(val);
+            onValueChange?.(val);
           }}
-          onBlur={() => onBlur?.()}
-          onFocus={() => onFocus?.()}
+          onBlur={(e) => onBlur?.(e)}
+          onFocus={(e) => onFocus?.(e)}
           className={textareaClasses}
           style={Object.keys(textareaInlineStyle).length > 0 ? textareaInlineStyle : undefined}
         />
-        {helperText && (
-          <span id={helperId} className={helperClasses}>
-            {helperText}
-          </span>
-        )}
+        <div className={styles.footer}>
+          {helperText && (
+            <span id={helperId} className={helperClasses}>
+              {helperText}
+            </span>
+          )}
+          {showCharCount && maxLength != null && (
+            <span
+              className={[
+                styles.charCount,
+                charCount > maxLength && styles.charCountOver,
+              ].filter(Boolean).join(' ')}
+              aria-live="polite"
+            >
+              {charCount}/{maxLength}
+            </span>
+          )}
+        </div>
       </div>
     );
   }

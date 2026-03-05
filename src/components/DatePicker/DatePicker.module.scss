@@ -12,30 +12,18 @@
   @include button-reset;
   @include interactive-base;
   @include text-base;
+  @include field-shell;
+  @include control-size('md', 'input');
 
   display: inline-flex;
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   width: 100%;
   min-width: 10rem;
-  height: var(--fui-input-height, $fui-input-height);
-  padding: 0 var(--fui-space-3, $fui-space-3);
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
   text-align: left;
 
-  &:hover:not([data-disabled]) {
-    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
-
   &[data-popup-open] {
-    border-color: var(--fui-color-accent, $fui-color-accent);
-  }
-
-  &[data-disabled] {
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    border-color: var(--fui-field-border-focus, $fui-color-accent);
   }
 }
 
@@ -80,6 +68,7 @@
 .popup {
   @include surface-elevated;
 
+  border-color: var(--fui-form-group-border, $fui-border);
   padding: var(--fui-space-3, $fui-space-3);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
@@ -250,15 +239,16 @@
 // ============================================
 
 .today > .dayButton {
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  box-shadow: inset 0 0 0 1px var(--fui-field-border, $fui-border-strong);
+  background-color: color-mix(in srgb, var(--fui-bg-hover, $fui-bg-hover) 55%, transparent);
 }
 
 .selected > .dayButton {
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  @include popup-item-selected;
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &:hover {
-    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
   }
 }
 
@@ -292,7 +282,7 @@
     content: '';
     position: absolute;
     inset: 2px 0;
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 10%, transparent);
     z-index: 0;
   }
 
@@ -309,18 +299,18 @@
     content: '';
     position: absolute;
     inset: 2px 0 2px 50%;
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 10%, transparent);
     z-index: 0;
   }
 
   > .dayButton {
     position: relative;
     z-index: 1;
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    @include popup-item-selected;
+    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
     &:hover {
-      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
     }
   }
 
@@ -335,18 +325,18 @@
     content: '';
     position: absolute;
     inset: 2px 50% 2px 0;
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 10%, transparent);
     z-index: 0;
   }
 
   > .dayButton {
     position: relative;
     z-index: 1;
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    @include popup-item-selected;
+    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
     &:hover {
-      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
     }
   }
 }

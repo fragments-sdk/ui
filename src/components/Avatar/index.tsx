@@ -243,8 +243,12 @@ function AvatarGroup({
         return child;
       })}
       {overflowCount > 0 && (
-        <div className={[styles.avatar, styles[size], styles.overflow].join(' ')}>
-          <span className={styles.initials}>+{overflowCount}</span>
+        <div
+          className={[styles.avatar, styles[size], styles.overflow].join(' ')}
+          role="img"
+          aria-label={`${overflowCount} more ${overflowCount === 1 ? 'person' : 'people'}`}
+        >
+          <span className={styles.initials} aria-hidden="true">+{overflowCount}</span>
         </div>
       )}
     </div>

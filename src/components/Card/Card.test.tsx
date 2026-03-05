@@ -8,9 +8,12 @@ describe('Card', () => {
     expect(screen.getByRole('article')).toBeInTheDocument();
   });
 
-  it('stays as <article> with interactive class when onClick is provided', () => {
+  it('adds button semantics when onClick is provided', () => {
     render(<Card onClick={() => {}}>Click me</Card>);
-    expect(screen.getByRole('article')).toHaveClass('interactive');
+    const card = screen.getByRole('button', { name: 'Click me' });
+    expect(card.tagName).toBe('ARTICLE');
+    expect(card).toHaveClass('interactive');
+    expect(card).toHaveAttribute('tabindex', '0');
   });
 
   it('applies variant classes', () => {
@@ -30,8 +33,21 @@ describe('Card', () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
     render(<Card onClick={handleClick}>Click me</Card>);
-    await user.click(screen.getByRole('article'));
+    await user.click(screen.getByRole('button', { name: 'Click me' }));
     expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('fires onClick when activated from the keyboard', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(<Card onClick={handleClick}>Click me</Card>);
+    const card = screen.getByRole('button', { name: 'Click me' });
+
+    card.focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
+
+    expect(handleClick).toHaveBeenCalledTimes(2);
   });
 
   it('renders compound sub-components', () => {
@@ -53,7 +69,7 @@ describe('Card', () => {
 
   it('adds interactive class when onClick is provided', () => {
     render(<Card onClick={() => {}}>Content</Card>);
-    expect(screen.getByRole('article')).toHaveClass('interactive');
+    expect(screen.getByRole('button', { name: 'Content' })).toHaveClass('interactive');
   });
 
   it('resolves variant="outline" to "outlined"', () => {

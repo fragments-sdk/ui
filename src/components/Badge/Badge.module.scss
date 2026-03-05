@@ -36,22 +36,26 @@
 }
 
 .success {
-  background-color: var(--fui-color-success-bg, $fui-color-success-bg);
+  background: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 40%, transparent);
   color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .warning {
-  background-color: var(--fui-color-warning-bg, $fui-color-warning-bg);
+  background: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 40%, transparent);
   color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .error {
-  background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  background: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 .info {
-  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+  background: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 40%, transparent);
   color: var(--fui-color-info-text, $fui-color-info-text);
 }
 
@@ -78,21 +82,23 @@
   align-items: center;
 }
 
+// Asymmetric padding when removable — tighter on right side near the × button
+.badge:has(.remove) {
+  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-1, $fui-space-1) var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
+}
+
 .remove {
   @include button-reset;
   @include interactive-base;
   @include touch-target;
 
-  padding: 0 var(--fui-space-0-5, $fui-space-0-5);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  margin-left: calc(-1 * var(--fui-space-0-5, $fui-space-0-5));
+  padding: 0;
+  font-size: inherit;
   color: inherit;
   opacity: 0.6;
   line-height: 1;
-  border-radius: var(--fui-space-0-5, $fui-space-0-5);
-
-  .sm & {
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  }
+  border-radius: var(--fui-radius-full, $fui-radius-full);
 
   &:hover {
     opacity: 1;

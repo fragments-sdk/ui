@@ -12,6 +12,7 @@
   min-width: 12rem;
   max-height: 320px;
   overflow-y: auto;
+  border-color: var(--fui-form-group-border, $fui-border);
 
   &:focus-visible {
     @include focus-ring;
@@ -38,11 +39,17 @@
 }
 
 .itemSelected {
-  background-color: var(--fui-bg-hover, $fui-bg-hover);
+  @include popup-item-selected;
 }
 
 .itemActive {
-  background-color: var(--fui-bg-hover, $fui-bg-hover);
+  &:not(.itemSelected) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+.itemActive.itemSelected {
+  @include popup-item-selected;
 }
 
 .itemDisabled {

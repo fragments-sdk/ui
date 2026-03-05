@@ -505,6 +505,19 @@ $fui-dark-tooltip-shadow:
     --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
 
+    // Form chrome (derived from theme surfaces + seed-driven accent)
+    --fui-field-bg: color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-bg-primary));
+    --fui-field-bg-disabled: color-mix(in srgb, var(--fui-bg-tertiary) 88%, var(--fui-bg-primary));
+    --fui-field-border: color-mix(in srgb, var(--fui-border-strong) 78%, var(--fui-bg-primary));
+    --fui-field-border-hover: color-mix(in srgb, var(--fui-text-tertiary) 58%, var(--fui-border-strong));
+    --fui-field-border-focus: color-mix(in srgb, var(--fui-focus-ring-color) 18%, var(--fui-border-strong));
+    --fui-field-selection-bg: color-mix(in srgb, var(--fui-color-accent) 12%, var(--fui-bg-elevated));
+    --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-color-accent) 16%, var(--fui-bg-hover));
+    --fui-field-selection-border: color-mix(in srgb, var(--fui-color-accent) 38%, var(--fui-border));
+    --fui-field-selection-color: var(--fui-text-primary);
+    --fui-form-group-bg: color-mix(in srgb, var(--fui-bg-secondary) 58%, var(--fui-bg-primary));
+    --fui-form-group-border: color-mix(in srgb, var(--fui-border) 82%, transparent);
+
     // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
     --fui-shadow-sm: #{$fui-shadow-sm};
     --fui-shadow-md: #{$fui-shadow-md};
@@ -559,7 +572,8 @@ $fui-dark-tooltip-shadow:
   }
 
   // Light mode explicit override (for manual toggle back to light)
-  :root[data-theme="light"] {
+  :root[data-theme="light"],
+  :root.light {
     color-scheme: light;
   }
 
@@ -694,6 +708,11 @@ $fui-dark-tooltip-shadow:
   // Ensure minimum contrast on interactive elements
   --fui-bg-hover: rgba(0, 0, 0, 0.12);
   --fui-bg-active: rgba(0, 0, 0, 0.18);
+  --fui-field-border: var(--fui-text-primary);
+  --fui-field-border-hover: var(--fui-text-primary);
+  --fui-field-border-focus: var(--fui-color-accent);
+  --fui-field-selection-border: var(--fui-color-accent);
+  --fui-form-group-border: var(--fui-text-primary);
 }
 
 // Private mixin for dark mode token values

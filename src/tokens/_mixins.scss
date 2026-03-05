@@ -8,8 +8,9 @@
 @mixin focus-ring {
   outline: none;
   box-shadow:
-    0 0 0 var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) var(--fui-bg-primary, #{$fui-bg-primary}),
-    0 0 0 calc(var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) + var(--fui-focus-ring-width, #{$fui-focus-ring-width})) var(--fui-focus-ring-color, #{$fui-focus-ring-color});
+    0 0 0 1px color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 28%, transparent),
+    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px) color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 12%, transparent),
+    0 10px 24px -16px color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 32%, transparent);
 }
 
 // Reset button styles
@@ -139,6 +140,48 @@
   letter-spacing: 0.05em;
 }
 
+// Shared shell for field-like controls.
+@mixin field-shell {
+  background-color: var(--fui-field-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid var(--fui-field-border, var(--fui-border-strong, #{$fui-border-strong}));
+  border-radius: var(--fui-radius-md, #{$fui-radius-md});
+  transition:
+    background-color var(--fui-transition-fast, #{$fui-transition-fast}),
+    border-color var(--fui-transition-fast, #{$fui-transition-fast}),
+    box-shadow var(--fui-transition-fast, #{$fui-transition-fast}),
+    color var(--fui-transition-fast, #{$fui-transition-fast});
+
+  &:hover:not(:disabled):not([data-disabled]):not(:focus-visible) {
+    border-color: var(--fui-field-border-hover, var(--fui-text-tertiary, #{$fui-text-tertiary}));
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    background-color: var(--fui-field-bg-disabled, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  }
+}
+
+@mixin field-shell-focus {
+  @include focus-ring;
+  border-color: var(
+    --fui-field-border-focus,
+    color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 20%, var(--fui-border-strong, #{$fui-border-strong}))
+  );
+}
+
+@mixin popup-item-selected {
+  background-color: var(--fui-field-selection-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+  color: var(--fui-field-selection-color, var(--fui-text-primary, #{$fui-text-primary}));
+  box-shadow: inset 0 0 0 1px var(--fui-field-selection-border, var(--fui-color-accent, #{$fui-color-accent}));
+}
+
+@mixin form-group-surface {
+  background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
+  border: 1px solid var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+  border-radius: var(--fui-radius-lg, #{$fui-radius-lg});
+}
+
 // Responsive breakpoint mixins (mobile-first, min-width)
 @mixin breakpoint-sm { @media (min-width: $fui-breakpoint-sm) { @content; } }
 @mixin breakpoint-md { @media (min-width: $fui-breakpoint-md) { @content; } }
@@ -240,12 +283,22 @@
   }
 }
 
+// Focus ring for success states (e.g., validated form fields)
+@mixin focus-ring-success {
+  outline: none;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 42%, transparent),
+    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px) color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 14%, transparent),
+    0 10px 24px -16px color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 28%, transparent);
+}
+
 // Focus ring for error states (e.g., invalid form fields)
 @mixin focus-ring-error {
   outline: none;
   box-shadow:
-    0 0 0 var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) var(--fui-bg-primary, #{$fui-bg-primary}),
-    0 0 0 calc(var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}) + var(--fui-focus-ring-width, #{$fui-focus-ring-width})) var(--fui-color-danger, #{$fui-color-danger});
+    0 0 0 1px color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 42%, transparent),
+    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px) color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 14%, transparent),
+    0 10px 24px -16px color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 28%, transparent);
 }
 
 // ============================================

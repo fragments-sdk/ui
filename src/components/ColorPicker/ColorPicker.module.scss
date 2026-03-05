@@ -58,19 +58,11 @@
   @include button-reset;
   @include interactive-base;
   @include min-target-size;
+  @include field-shell;
+
   width: var(--fui-input-height, $fui-input-height);
   height: var(--fui-input-height, $fui-input-height);
-  border: 1px solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
   flex-shrink: 0;
-
-  &:hover:not(:disabled) {
-    border-color: var(--fui-border-strong, $fui-border-strong);
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
 
   &:disabled {
     opacity: 0.5;
@@ -96,10 +88,10 @@
 }
 
 .popup {
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  @include surface-elevated;
+
+  border-color: var(--fui-form-group-border, $fui-border);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   padding: var(--fui-space-2, $fui-space-2);
 
   // react-colorful styling overrides

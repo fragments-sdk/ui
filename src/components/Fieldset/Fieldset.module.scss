@@ -2,21 +2,27 @@
 @use '../../tokens/mixins' as *;
 
 .root {
+  @include form-group-surface;
+
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-4, $fui-space-4);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  padding: var(--fui-space-6, $fui-space-6);
+  gap: var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-space-4, $fui-space-4);
   margin: 0;
 
   &[data-disabled] {
-    opacity: 0.6;
+    opacity: 0.55;
   }
 }
 
 .legend {
   @include label-text;
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   padding: 0;
+}
+
+.description {
+  @include helper-text;
+  margin: calc(-1 * var(--fui-space-2, $fui-space-2)) 0 0 0;
 }

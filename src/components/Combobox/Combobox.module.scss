@@ -8,6 +8,10 @@
 // Size variants for input wrapper
 .inputWrapperSm {
   min-height: var(--fui-input-height-sm, $fui-input-height-sm);
+
+  .trigger {
+    width: calc(var(--fui-input-height-sm, $fui-input-height-sm) - var(--fui-space-1, $fui-space-1));
+  }
 }
 
 .inputWrapperMd {
@@ -16,10 +20,16 @@
 
 .inputWrapperLg {
   min-height: var(--fui-input-height-lg, $fui-input-height-lg);
+
+  .trigger {
+    width: calc(var(--fui-input-height-lg, $fui-input-height-lg) - var(--fui-space-1, $fui-space-1));
+  }
 }
 
 // Input + trigger wrapper
 .inputWrapper {
+  @include field-shell;
+
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
@@ -27,26 +37,15 @@
   width: 100%;
   min-width: 10rem;
   min-height: var(--fui-input-height, $fui-input-height);
-  padding: var(--fui-space-1, $fui-space-1);
-  padding-right: 0;
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  transition:
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    box-shadow var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not(:has([data-disabled])) {
-    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
+  padding: calc(var(--fui-space-px, $fui-space-px) * 2);
+  padding-right: var(--fui-space-1, $fui-space-1);
 
   &:focus-within {
-    @include focus-ring;
-    border-color: var(--fui-color-accent, $fui-color-accent);
+    @include field-shell-focus;
   }
 
   &:has([data-disabled]) {
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    background-color: var(--fui-field-bg-disabled, $fui-bg-tertiary);
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 }
@@ -98,11 +97,12 @@
   gap: var(--fui-space-0-5, $fui-space-0-5);
   height: var(--fui-target-size-min, $fui-target-size-min);
   padding: 0 var(--fui-space-2, $fui-space-2);
-  background-color: transparent;
-  border: 1px solid var(--fui-border, $fui-border);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border: 1px solid var(--fui-form-group-border, $fui-border);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
   line-height: 1;
+  color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
   max-width: 12rem;
 }
@@ -140,22 +140,25 @@
 // Chevron trigger button
 .trigger {
   @include button-reset;
+  @include touch-target;
 
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  align-self: stretch;
-  width: 2rem;
+  width: calc(var(--fui-input-height, $fui-input-height) - var(--fui-space-1, $fui-space-1));
   margin-left: auto;
   color: var(--fui-text-secondary, $fui-text-secondary);
   cursor: pointer;
-  border-radius: 0 var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0;
-  transition: color var(--fui-transition-fast, $fui-transition-fast);
-  margin-inline-end: var(--fui-space-2, $fui-space-2);
+  border-radius: calc(var(--fui-radius-md, $fui-radius-md) - 2px);
+  transition:
+    color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
+  margin-inline-end: calc(var(--fui-space-px, $fui-space-px) * 2);
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
   }
 
   &[data-disabled] {
@@ -184,6 +187,8 @@
 .popup {
   @include surface-elevated;
   @include popup-container;
+
+  border-color: var(--fui-form-group-border, $fui-border);
 
   // Item height derived from text-base font + vertical padding
   --_item-h: calc(
@@ -230,12 +235,11 @@
   }
 
   &[data-selected] {
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    @include popup-item-selected;
 
     &[data-highlighted],
     &:hover:not([data-disabled]) {
-      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
     }
   }
 
@@ -253,6 +257,7 @@
   width: 1rem;
   height: 1rem;
   margin-left: auto;
+  color: var(--fui-color-accent, $fui-color-accent);
 
   svg {
     width: 0.875rem;

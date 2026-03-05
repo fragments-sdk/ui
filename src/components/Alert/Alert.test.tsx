@@ -3,14 +3,14 @@ import { render, screen, userEvent, expectNoA11yViolations } from '../../test/ut
 import { Alert } from './index';
 
 describe('Alert', () => {
-  it('renders with role="alert"', () => {
+  it('uses role="status" for non-urgent alerts', () => {
     render(
       <Alert>
         <Alert.Title>Info</Alert.Title>
         <Alert.Content>Details</Alert.Content>
       </Alert>
     );
-    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('applies severity variant class', () => {
@@ -26,7 +26,7 @@ describe('Alert', () => {
         <Alert.Title>Success</Alert.Title>
       </Alert>
     );
-    expect(screen.getByRole('alert')).toHaveClass('success');
+    expect(screen.getByRole('status')).toHaveClass('success');
   });
 
   it('links title and content via aria-labelledby and aria-describedby', () => {
@@ -36,7 +36,7 @@ describe('Alert', () => {
         <Alert.Content>Content</Alert.Content>
       </Alert>
     );
-    const alertEl = screen.getByRole('alert');
+    const alertEl = screen.getByRole('status');
     const titleId = alertEl.getAttribute('aria-labelledby');
     const descId = alertEl.getAttribute('aria-describedby');
     expect(titleId).toBeTruthy();
@@ -53,9 +53,9 @@ describe('Alert', () => {
         <Alert.Close />
       </Alert>
     );
-    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /dismiss alert/i }));
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('renders default severity icon', () => {
@@ -124,7 +124,7 @@ describe('Alert', () => {
 
     await user.click(screen.getByTestId('close'));
     expect(handleCloseClick).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('defaults to info severity', () => {
@@ -133,7 +133,16 @@ describe('Alert', () => {
         <Alert.Title>Default</Alert.Title>
       </Alert>
     );
-    expect(screen.getByRole('alert')).toHaveClass('info');
+    expect(screen.getByRole('status')).toHaveClass('info');
+  });
+
+  it('uses role="alert" for urgent severities', () => {
+    render(
+      <Alert severity="warning">
+        <Alert.Title>Warning</Alert.Title>
+      </Alert>
+    );
+    expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

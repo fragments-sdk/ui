@@ -65,6 +65,38 @@ describe('Input', () => {
     expect(handleChange).toHaveBeenCalledWith('a');
   });
 
+  it('forwards the native focus and blur events', async () => {
+    const handleFocus = vi.fn();
+    const handleBlur = vi.fn();
+    let focusTarget: EventTarget | null = null;
+    let blurTarget: EventTarget | null = null;
+    const user = userEvent.setup();
+    render(
+      <>
+        <Input
+          label="Name"
+          onFocus={(event) => {
+            focusTarget = event.target;
+            handleFocus(event);
+          }}
+          onBlur={(event) => {
+            blurTarget = event.target;
+            handleBlur(event);
+          }}
+        />
+        <button type="button">Next</button>
+      </>
+    );
+
+    await user.click(screen.getByRole('textbox'));
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+
+    expect(handleFocus).toHaveBeenCalledTimes(1);
+    expect(handleBlur).toHaveBeenCalledTimes(1);
+    expect(focusTarget).toBeInstanceOf(HTMLInputElement);
+    expect(blurTarget).toBeInstanceOf(HTMLInputElement);
+  });
+
   it('focuses the input when shortcut key is pressed', () => {
     render(<Input aria-label="Search" shortcut="⌘K" shortcutBehavior="focus-input" />);
     const input = screen.getByRole('textbox');
@@ -98,6 +130,22 @@ describe('Input', () => {
     );
 
     expect(document.activeElement).not.toBe(input);
+  });
+
+  it('applies success class when success is true', () => {
+    render(<Input label="Email" success />);
+    const input = screen.getByRole('textbox');
+    expect(input.className).toContain('success');
+  });
+
+  it('renders startAdornment before the input', () => {
+    render(<Input label="Price" startAdornment={<span data-testid="prefix">$</span>} />);
+    expect(screen.getByTestId('prefix')).toBeInTheDocument();
+  });
+
+  it('renders endAdornment after the input', () => {
+    render(<Input label="Weight" endAdornment={<span data-testid="suffix">kg</span>} />);
+    expect(screen.getByTestId('suffix')).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

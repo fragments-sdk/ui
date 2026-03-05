@@ -86,17 +86,18 @@
 }
 
 .danger {
-  background-color: var(--fui-color-danger, $fui-color-danger);
-  color: var(--fui-text-inverse, $fui-text-inverse);
-  border: 1px solid transparent;
+  background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
+  border: 1px solid color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-color-danger-hover, $fui-color-danger-hover);
+    background-color: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 22%, transparent);
+    border-color: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 55%, transparent);
   }
 
   &:active:not(:disabled),
   &[data-pressed] {
-    background-color: var(--fui-color-danger-hover, $fui-color-danger-hover);
+    background-color: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 28%, transparent);
   }
 }
 

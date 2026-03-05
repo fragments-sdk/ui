@@ -68,6 +68,17 @@ const paddingMap = {
   lg: styles.paddingLg,
 };
 
+function composeEventHandlers<E extends { defaultPrevented: boolean }>(
+  userHandler: ((event: E) => void) | undefined,
+  internalHandler: (event: E) => void
+) {
+  return (event: E) => {
+    userHandler?.(event);
+    if (event.defaultPrevented) return;
+    internalHandler(event);
+  };
+}
+
 // ============================================
 // Components
 // ============================================
@@ -83,8 +94,17 @@ function CardRoot({
 }: CardProps) {
   // Resolve alias: "outline" → "outlined"
   const variant = variantProp === 'outline' ? 'outlined' : variantProp;
+  const {
+    onKeyDown,
+    onKeyUp,
+    role,
+    tabIndex,
+    ...elementProps
+  } = htmlProps;
 
-  const isInteractive = typeof htmlProps.onClick === 'function';
+  const isInteractive = typeof elementProps.onClick === 'function';
+  const resolvedRole = isInteractive ? role ?? 'button' : role;
+  const resolvedTabIndex = isInteractive ? tabIndex ?? 0 : tabIndex;
 
   const classes = [
     styles.card,
@@ -105,7 +125,32 @@ function CardRoot({
   return (
     <CardContext.Provider value={contextValue}>
       <Component
-        {...htmlProps}
+        {...elementProps}
+        role={resolvedRole}
+        tabIndex={resolvedTabIndex}
+        onKeyDown={
+          isInteractive && resolvedRole === 'button'
+            ? composeEventHandlers(onKeyDown, (event: React.KeyboardEvent<HTMLElement>) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  event.currentTarget.click();
+                }
+                if (event.key === ' ') {
+                  event.preventDefault();
+                }
+              })
+            : onKeyDown
+        }
+        onKeyUp={
+          isInteractive && resolvedRole === 'button'
+            ? composeEventHandlers(onKeyUp, (event: React.KeyboardEvent<HTMLElement>) => {
+                if (event.key === ' ') {
+                  event.preventDefault();
+                  event.currentTarget.click();
+                }
+              })
+            : onKeyUp
+        }
         className={classes}
         style={style}
       >

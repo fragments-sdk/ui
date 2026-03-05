@@ -50,6 +50,56 @@ describe('Textarea', () => {
     expect(handleChange).toHaveBeenCalledWith('x');
   });
 
+  it('forwards the native focus and blur events', async () => {
+    const handleFocus = vi.fn();
+    const handleBlur = vi.fn();
+    let focusTarget: EventTarget | null = null;
+    let blurTarget: EventTarget | null = null;
+    const user = userEvent.setup();
+    render(
+      <>
+        <Textarea
+          label="Notes"
+          onFocus={(event) => {
+            focusTarget = event.target;
+            handleFocus(event);
+          }}
+          onBlur={(event) => {
+            blurTarget = event.target;
+            handleBlur(event);
+          }}
+        />
+        <button type="button">Next</button>
+      </>
+    );
+
+    await user.click(screen.getByRole('textbox'));
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+
+    expect(handleFocus).toHaveBeenCalledTimes(1);
+    expect(handleBlur).toHaveBeenCalledTimes(1);
+    expect(focusTarget).toBeInstanceOf(HTMLTextAreaElement);
+    expect(blurTarget).toBeInstanceOf(HTMLTextAreaElement);
+  });
+
+  it('applies success class when success is true', () => {
+    render(<Textarea label="Bio" success />);
+    const textarea = screen.getByRole('textbox');
+    expect(textarea.className).toContain('success');
+  });
+
+  it('renders character counter when showCharCount and maxLength are set', () => {
+    render(<Textarea label="Bio" maxLength={100} showCharCount />);
+    expect(screen.getByText('0/100')).toBeInTheDocument();
+  });
+
+  it('updates character counter on input', async () => {
+    const user = userEvent.setup();
+    render(<Textarea label="Bio" maxLength={100} showCharCount />);
+    await user.type(screen.getByRole('textbox'), 'hello');
+    expect(screen.getByText('5/100')).toBeInTheDocument();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Textarea label="Accessible textarea" />);
     await expectNoA11yViolations(container);

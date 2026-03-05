@@ -33,6 +33,11 @@ describe('Switch', () => {
     expect(screen.getByText('Enable push alerts')).toBeInTheDocument();
   });
 
+  it('associates helper text via aria-describedby', () => {
+    render(<Switch label="Notifications" helperText="Enable push alerts" />);
+    expect(screen.getByRole('switch')).toHaveAccessibleDescription('Enable push alerts');
+  });
+
   it('prefers helperText over description when both are provided', () => {
     render(
       <Switch

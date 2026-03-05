@@ -148,7 +148,10 @@ $fui-info: #3b82f6 !default;
   }
 
   :where(:focus-visible) {
-    outline: var(--fui-focus-ring-width, 2px) solid var(--fui-focus-ring-color, #18181b);
+    outline: 1px solid color-mix(in srgb, var(--fui-focus-ring-color, #18181b) 24%, transparent);
     outline-offset: var(--fui-focus-ring-offset, 2px);
+    box-shadow:
+      0 0 0 calc(var(--fui-focus-ring-width, 2px) + 1px) color-mix(in srgb, var(--fui-focus-ring-color, #18181b) 10%, transparent),
+      0 10px 24px -16px color-mix(in srgb, var(--fui-focus-ring-color, #18181b) 18%, transparent);
   }
 }

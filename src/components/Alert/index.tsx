@@ -117,6 +117,7 @@ function AlertRoot({
   const classes = [styles.alert, styles[severity], className]
     .filter(Boolean)
     .join(' ');
+  const role = severity === 'warning' || severity === 'error' ? 'alert' : 'status';
 
   const contextValue: AlertContextValue = {
     severity,
@@ -129,7 +130,7 @@ function AlertRoot({
     <AlertContext.Provider value={contextValue}>
       <div
         {...htmlProps}
-        role="alert"
+        role={role}
         aria-labelledby={titleId}
         aria-describedby={descId}
         className={classes}

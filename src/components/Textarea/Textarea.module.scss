@@ -7,14 +7,12 @@
 .textarea {
   @include text-base;
   @include interactive-base;
+  @include field-shell;
 
   display: block;
   width: 100%;
   min-height: var(--fui-input-height, $fui-input-height);
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   font-family: inherit;
 
@@ -22,19 +20,8 @@
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:hover:not(:disabled):not(:focus-visible) {
-    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
-
   &:focus-visible {
-    @include focus-ring;
-    border-color: var(--fui-color-accent, $fui-color-accent);
-  }
-
-  &:disabled,
-  &[data-disabled] {
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    @include field-shell-focus;
   }
 }
 
@@ -77,14 +64,54 @@
 
   &:focus-visible {
     border-color: var(--fui-color-danger, $fui-color-danger);
-    box-shadow:
-      0 0 0 var(--fui-focus-ring-offset, $fui-focus-ring-offset) var(--fui-bg-primary, $fui-bg-primary),
-      0 0 0 calc(var(--fui-focus-ring-offset, $fui-focus-ring-offset) + var(--fui-focus-ring-width, $fui-focus-ring-width)) var(--fui-color-danger, $fui-color-danger);
+    @include focus-ring-error;
+  }
+}
+
+// Success state — green border for validated fields
+.success {
+  border-color: var(--fui-color-success, $fui-color-success);
+
+  &:focus-visible {
+    border-color: var(--fui-color-success, $fui-color-success);
+    @include focus-ring-success;
   }
 }
 
 // Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
+// Auto-detect success state
+.wrapper[data-success] .helper,
+.helperSuccess {
+  color: var(--fui-color-success, $fui-color-success);
+}
+
+// Footer row — helper + character counter side by side
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--fui-space-2, $fui-space-2);
+  min-height: calc(var(--fui-font-size-xs, #{$fui-font-size-xs}) * var(--fui-line-height-normal, #{$fui-line-height-normal}) + var(--fui-space-1, #{$fui-space-1}));
+
+  &:empty {
+    display: none;
+  }
+}
+
+// Character counter
+.charCount {
+  @include helper-text;
+  margin-top: var(--fui-space-1, $fui-space-1);
+  margin-left: auto;
+  font-family: var(--fui-font-mono, $fui-font-mono);
+  white-space: nowrap;
+}
+
+.charCountOver {
   color: var(--fui-color-danger, $fui-color-danger);
 }
 
@@ -105,6 +132,10 @@
   .error,
   .textarea[aria-invalid] {
     border-color: var(--fui-color-danger, $fui-color-danger);
+  }
+
+  .success {
+    border-color: var(--fui-color-success, $fui-color-success);
   }
 }
 

@@ -73,6 +73,16 @@ export default defineFragment({
       default: false,
       description: 'Error state',
     },
+    success: {
+      type: 'boolean',
+      default: false,
+      description: 'Whether to show success/validated styling',
+    },
+    showCharCount: {
+      type: 'boolean',
+      default: false,
+      description: 'Show character counter when maxLength is set',
+    },
     disabled: {
       type: 'boolean',
       default: false,
@@ -123,6 +133,8 @@ export default defineFragment({
       'label: string - label text',
       'size: sm|md|lg (default: md)',
       'error: boolean - error state',
+      'success: boolean - shows success/validated styling',
+      'showCharCount: boolean - show character counter (requires maxLength)',
       'disabled: boolean - disabled state',
       'resize: none|vertical|horizontal|both',
       'onValueChange: (value: string) => void - value-first change callback alias',
@@ -216,6 +228,30 @@ export default defineFragment({
           label="Notes"
           placeholder="Add notes..."
           rootProps={{ 'data-demo': 'textarea-wrapper' }}
+        />
+      ),
+    },
+    {
+      name: 'Success State',
+      description: 'Textarea showing validated/success styling',
+      render: () => (
+        <Textarea
+          label="Bio"
+          value="A short bio about myself."
+          success
+          helperText="Looks great!"
+        />
+      ),
+    },
+    {
+      name: 'With Character Counter',
+      description: 'Textarea with character count and maxLength',
+      render: () => (
+        <Textarea
+          label="Bio"
+          placeholder="Tell us about yourself..."
+          maxLength={200}
+          showCharCount
         />
       ),
     },

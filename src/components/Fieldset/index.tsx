@@ -17,6 +17,10 @@ export interface FieldsetLegendProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
+export interface FieldsetDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  children: React.ReactNode;
+}
+
 // ============================================
 // Components
 // ============================================
@@ -36,12 +40,18 @@ function FieldsetLegend({ children, className, ...htmlProps }: FieldsetLegendPro
   return <BaseFieldset.Legend {...htmlProps} className={classes}>{children}</BaseFieldset.Legend>;
 }
 
+function FieldsetDescription({ children, className, ...htmlProps }: FieldsetDescriptionProps) {
+  const classes = [styles.description, className].filter(Boolean).join(' ');
+  return <p {...htmlProps} className={classes}>{children}</p>;
+}
+
 // ============================================
 // Export compound component
 // ============================================
 
 export const Fieldset = Object.assign(FieldsetRoot, {
   Legend: FieldsetLegend,
+  Description: FieldsetDescription,
 });
 
-export { FieldsetRoot, FieldsetLegend };
+export { FieldsetRoot, FieldsetLegend, FieldsetDescription };

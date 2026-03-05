@@ -14,26 +14,26 @@
 
 // Severity variants
 .info {
-  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
-  border: 1px solid var(--fui-color-info, $fui-color-info);
+  background: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 40%, transparent);
   color: var(--fui-color-info-text, $fui-color-info-text);
 }
 
 .success {
-  background-color: var(--fui-color-success-bg, $fui-color-success-bg);
-  border: 1px solid var(--fui-color-success, $fui-color-success);
+  background: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 40%, transparent);
   color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .warning {
-  background-color: var(--fui-color-warning-bg, $fui-color-warning-bg);
-  border: 1px solid var(--fui-color-warning, $fui-color-warning);
+  background: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 40%, transparent);
   color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .error {
-  background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
-  border: 1px solid var(--fui-color-danger, $fui-color-danger);
+  background: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 

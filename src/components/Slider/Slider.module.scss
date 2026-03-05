@@ -39,7 +39,8 @@
   position: relative;
   height: var(--fui-slider-track-height, $fui-slider-track-height);
   width: 100%;
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  background-color: var(--fui-form-group-bg, $fui-bg-secondary);
+  box-shadow: inset 0 0 0 1px var(--fui-form-group-border, $fui-border);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: pointer;
 
@@ -52,7 +53,7 @@
 .indicator {
   position: absolute;
   height: 100%;
-  background-color: var(--fui-color-accent, $fui-color-accent);
+  background-color: var(--fui-field-selection-border, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 }
 
@@ -63,20 +64,21 @@
   width: var(--fui-slider-thumb-size, $fui-slider-thumb-size);
   height: var(--fui-slider-thumb-size, $fui-slider-thumb-size);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-slider-thumb-border, $fui-slider-thumb-border) solid var(--fui-color-accent, $fui-color-accent);
+  border: 1px solid var(--fui-field-selection-border, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
   cursor: grab;
   transition:
-    transform var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast),
     box-shadow var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    transform: scale(1.1);
+    border-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 58%, transparent);
   }
 
   &:active {
     cursor: grabbing;
-    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
   }
 
   &:focus-visible {
@@ -107,25 +109,13 @@
   white-space: nowrap;
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  background: var(--fui-tooltip-bg, $fui-tooltip-bg);
-  color: var(--fui-tooltip-text, $fui-tooltip-text);
+  background: var(--fui-form-group-bg, $fui-bg-secondary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  border: 1px solid var(--fui-form-group-border, $fui-border);
   font-family: var(--fui-font-mono, $fui-font-mono);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   line-height: 1;
-  box-shadow: var(--fui-tooltip-shadow, $fui-tooltip-shadow);
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--fui-tooltip-bg, $fui-tooltip-bg);
-  }
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
 }
 
 // ============================================

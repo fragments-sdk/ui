@@ -73,6 +73,24 @@ describe('Button', () => {
     expect(link).toHaveClass('button');
   });
 
+  it('translates disabled semantics for non-button asChild children', async () => {
+    const user = userEvent.setup();
+    const handleClick = vi.fn();
+    render(
+      <Button asChild disabled>
+        <a href="/test" onClick={handleClick}>Link Button</a>
+      </Button>
+    );
+
+    const link = screen.getByRole('link', { name: 'Link Button' });
+    expect(link).toHaveAttribute('aria-disabled', 'true');
+    expect(link).toHaveAttribute('data-disabled', '');
+    expect(link).toHaveAttribute('tabindex', '-1');
+
+    await user.click(link);
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Button>Accessible</Button>);
     await expectNoA11yViolations(container);

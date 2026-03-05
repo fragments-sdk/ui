@@ -97,34 +97,74 @@
 }
 
 .success {
-  border-left: 3px solid var(--fui-color-success, $fui-color-success);
+  background: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 40%, transparent);
+
+  .title {
+    color: var(--fui-color-success-text, $fui-color-success-text);
+  }
+
+  .description {
+    color: var(--fui-color-success-text, $fui-color-success-text);
+    opacity: 0.8;
+  }
 
   .icon {
-    color: var(--fui-color-success, $fui-color-success);
+    color: var(--fui-color-success-text, $fui-color-success-text);
   }
 }
 
 .error {
-  border-left: 3px solid var(--fui-color-danger, $fui-color-danger);
+  background: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
+
+  .title {
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
+
+  .description {
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+    opacity: 0.8;
+  }
 
   .icon {
-    color: var(--fui-color-danger, $fui-color-danger);
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
 
 .warning {
-  border-left: 3px solid var(--fui-color-warning, $fui-color-warning);
+  background: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 40%, transparent);
+
+  .title {
+    color: var(--fui-color-warning-text, $fui-color-warning-text);
+  }
+
+  .description {
+    color: var(--fui-color-warning-text, $fui-color-warning-text);
+    opacity: 0.8;
+  }
 
   .icon {
-    color: var(--fui-color-warning, $fui-color-warning);
+    color: var(--fui-color-warning-text, $fui-color-warning-text);
   }
 }
 
 .info {
-  border-left: 3px solid var(--fui-color-info, $fui-color-info);
+  background: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 40%, transparent);
+
+  .title {
+    color: var(--fui-color-info-text, $fui-color-info-text);
+  }
+
+  .description {
+    color: var(--fui-color-info-text, $fui-color-info-text);
+    opacity: 0.8;
+  }
 
   .icon {
-    color: var(--fui-color-info, $fui-color-info);
+    color: var(--fui-color-info-text, $fui-color-info-text);
   }
 }
 

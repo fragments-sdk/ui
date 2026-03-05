@@ -50,7 +50,7 @@ export default defineFragment({
       type: 'enum',
       values: ['primary', 'secondary', 'ghost', 'danger', 'outlined', 'outline', 'icon'],
       default: 'primary',
-      description: 'Visual style variant ("icon" is a convenience alias for ghost + icon-only layout)',
+      description: 'Visual style variant ("icon" is a convenience alias for outlined + icon-only layout)',
       constraints: ['Only one primary button per context'],
     },
     size: {
@@ -73,7 +73,7 @@ export default defineFragment({
     icon: {
       type: 'boolean',
       default: 'false',
-      description: 'Render as icon-only button (square aspect ratio). Useful with any visual variant; variant="icon" is the default ghost icon-only shortcut.',
+      description: 'Render as icon-only button (square aspect ratio). Useful with any visual variant; variant="icon" is the default outlined icon-only shortcut.',
     },
     fullWidth: {
       type: 'boolean',
@@ -102,7 +102,7 @@ export default defineFragment({
 
   contract: {
     propsSummary: [
-      'variant: primary|secondary|ghost|danger|outlined|outline|icon (default: primary, icon = ghost + icon-only)',
+      'variant: primary|secondary|ghost|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only)',
       'size: sm|md|lg (default: md)',
       'disabled: boolean - disables interaction',
       'type: button|submit|reset (default: button)',

@@ -77,6 +77,19 @@ export default defineFragment({
       default: false,
       description: 'Whether to show error styling',
     },
+    success: {
+      type: 'boolean',
+      default: false,
+      description: 'Whether to show success/validated styling',
+    },
+    startAdornment: {
+      type: 'node',
+      description: 'Content rendered before the input (icon or prefix text)',
+    },
+    endAdornment: {
+      type: 'node',
+      description: 'Content rendered after the input (icon or suffix text)',
+    },
     label: {
       type: 'string',
       description: 'Label text displayed above input',
@@ -149,6 +162,9 @@ export default defineFragment({
       'disabled: boolean - disables interaction',
       'required: boolean - required field indicator',
       'error: boolean - shows error styling',
+      'success: boolean - shows success/validated styling',
+      'startAdornment: ReactNode - content before the input (icon or prefix)',
+      'endAdornment: ReactNode - content after the input (icon or suffix)',
       'helperText: string - helper/error message',
       'onValueChange: (value: string) => void - value-first change callback alias',
       'rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props',
@@ -248,6 +264,7 @@ export default defineFragment({
       render: () => (
         <Input
           withFieldWrapper={false}
+          aria-label="Search"
           placeholder="Search..."
           rootProps={{ 'data-demo': 'bare-input-wrapper' }}
         />
@@ -262,6 +279,41 @@ export default defineFragment({
           placeholder="Search commands"
           shortcut="⌘K"
           shortcutBehavior="focus-input"
+        />
+      ),
+    },
+    {
+      name: 'Success State',
+      description: 'Input showing validated/success styling',
+      render: () => (
+        <Input
+          label="Email"
+          type="email"
+          value="user@example.com"
+          success
+          helperText="Email verified"
+        />
+      ),
+    },
+    {
+      name: 'With Start Adornment',
+      description: 'Input with icon or prefix before the text',
+      render: () => (
+        <Input
+          label="Price"
+          placeholder="0.00"
+          startAdornment={<span>$</span>}
+        />
+      ),
+    },
+    {
+      name: 'With End Adornment',
+      description: 'Input with icon or suffix after the text',
+      render: () => (
+        <Input
+          label="Weight"
+          placeholder="0"
+          endAdornment={<span>kg</span>}
         />
       ),
     },

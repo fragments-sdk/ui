@@ -31,6 +31,7 @@ describe('Avatar', () => {
     );
     // 2 visible + 1 overflow indicator
     expect(screen.getByText('+2')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: '2 more people' })).toBeInTheDocument();
   });
 
   it('applies a custom avatar size when customSize is provided', () => {

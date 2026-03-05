@@ -4,6 +4,18 @@ import * as React from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import styles from './Button.module.scss';
 
+function composeEventHandlers<T extends (...args: any[]) => void>(
+  childHandler: T | undefined,
+  parentHandler: T | undefined
+) {
+  if (!childHandler) return parentHandler;
+  if (!parentHandler) return childHandler;
+  return ((...args: Parameters<T>) => {
+    childHandler(...args);
+    parentHandler(...args);
+  }) as T;
+}
+
 /**
  * Button props.
  * @see https://usefragments.com/components/button
@@ -82,12 +94,56 @@ const ButtonRoot = React.forwardRef<
 
   // asChild: merge button styling onto child element (e.g. Next.js Link)
   if (asChild && React.isValidElement(children)) {
-    const { as: _as, ...childProps } = rest as ButtonProps & { as?: 'a' | 'button' };
-    return React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+    const {
+      as: _as,
+      disabled,
+      style,
+      onClick,
+      onKeyDown,
+      ...childProps
+    } = rest as React.ButtonHTMLAttributes<HTMLButtonElement>
+      & React.AnchorHTMLAttributes<HTMLAnchorElement>
+      & { as?: 'a' | 'button'; disabled?: boolean };
+    const childElement = children as React.ReactElement<Record<string, unknown>>;
+    const childElementProps = childElement.props as Record<string, unknown>;
+    const isIntrinsicButton = typeof childElement.type === 'string' && childElement.type === 'button';
+    const isDisabled = Boolean(disabled);
+
+    const mergedProps: Record<string, unknown> = {
       ...childProps,
-      className: [classNames, (children.props as Record<string, unknown>).className].filter(Boolean).join(' '),
+      className: [classNames, childElementProps.className].filter(Boolean).join(' '),
+      style: { ...(style as React.CSSProperties | undefined), ...(childElementProps.style as React.CSSProperties | undefined) },
       ref,
-    });
+    };
+
+    if (isIntrinsicButton) {
+      mergedProps.disabled = isDisabled;
+    } else if (isDisabled) {
+      mergedProps['aria-disabled'] = true;
+      mergedProps['data-disabled'] = '';
+      mergedProps.tabIndex = -1;
+      mergedProps.onClick = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+      };
+      mergedProps.onKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      };
+    } else {
+      mergedProps.onClick = composeEventHandlers(
+        childElementProps.onClick as ((event: React.MouseEvent<HTMLElement>) => void) | undefined,
+        onClick as ((event: React.MouseEvent<HTMLElement>) => void) | undefined
+      );
+      mergedProps.onKeyDown = composeEventHandlers(
+        childElementProps.onKeyDown as ((event: React.KeyboardEvent<HTMLElement>) => void) | undefined,
+        onKeyDown as ((event: React.KeyboardEvent<HTMLElement>) => void) | undefined
+      );
+    }
+
+    return React.cloneElement(childElement, mergedProps);
   }
 
   // Render as anchor

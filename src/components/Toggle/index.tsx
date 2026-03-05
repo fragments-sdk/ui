@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Switch as BaseSwitch } from '@base-ui/react/switch';
+import { mergeAriaIds } from '../../utils/aria';
 import styles from './Toggle.module.scss';
 
 /**
@@ -56,6 +57,9 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
     ref
   ) {
     const resolvedHelperText = helperText ?? description;
+    const generatedId = React.useId();
+    const resolvedId = id ?? `switch-${generatedId}`;
+    const helperId = resolvedHelperText ? `${resolvedId}-helper` : undefined;
     const trackClasses = [
       styles.track,
       size === 'sm' ? styles.trackSm : size === 'lg' ? styles.trackLg : styles.trackMd,
@@ -89,7 +93,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
     return (
       <BaseSwitch.Root
         ref={ref}
-        id={id}
+        id={resolvedId}
         checked={checked}
         defaultChecked={defaultChecked}
         onCheckedChange={onCheckedChange ?? onChange}
@@ -98,7 +102,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
         className={rootClasses}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
+        aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
       >
         <span className={trackClasses} aria-hidden="true">
           <BaseSwitch.Thumb className={thumbClasses} />
@@ -107,7 +111,11 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
         {(label || resolvedHelperText) && (
           <div className={styles.content}>
             {label && <span className={labelClasses}>{label}</span>}
-            {resolvedHelperText && <span className={helperClasses}>{resolvedHelperText}</span>}
+            {resolvedHelperText && (
+              <span id={helperId} className={helperClasses}>
+                {resolvedHelperText}
+              </span>
+            )}
           </div>
         )}
       </BaseSwitch.Root>

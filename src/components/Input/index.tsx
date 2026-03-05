@@ -29,12 +29,18 @@ export interface InputProps extends Omit<
   disabled?: boolean;
   /** Show error styling */
   error?: boolean;
+  /** Show success styling */
+  success?: boolean;
   /** Visible label text */
   label?: string;
   /** Whether the field is required */
   required?: boolean;
   /** Helper text shown below the input */
   helperText?: string;
+  /** Content rendered before the input (e.g., icon or prefix text) */
+  startAdornment?: React.ReactNode;
+  /** Content rendered after the input (e.g., icon or suffix text) */
+  endAdornment?: React.ReactNode;
   /** Keyboard shortcut hint displayed inside the input (e.g., "⌘K"). */
   shortcut?: string;
   /** Whether the shortcut should also register a global focus hotkey.
@@ -44,8 +50,8 @@ export interface InputProps extends Omit<
   onChange?: (value: string) => void;
   /** Alias for onChange (value-first callback) */
   onValueChange?: (value: string) => void;
-  onBlur?: () => void;
-  onFocus?: () => void;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   /** Props applied to the wrapper element */
   rootProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -86,9 +92,12 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       size = 'md',
       disabled = false,
       error = false,
+      success = false,
       required = false,
       label,
       helperText,
+      startAdornment,
+      endAdornment,
       shortcut,
       shortcutBehavior = 'display-only',
       onChange,
@@ -149,17 +158,24 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       return () => document.removeEventListener('keydown', handler);
     }, [shortcut, shortcutBehavior]);
 
+    const hasAdornment = !!(startAdornment || endAdornment);
+
     const inputClasses = [
       styles.input,
       styles[size],
       error && styles.error,
+      success && styles.success,
       shortcut && styles.hasShortcut,
       inputClassName,
     ]
       .filter(Boolean)
       .join(' ');
 
-    const helperClasses = [styles.helper, error && styles.helperError]
+    const helperClasses = [
+      styles.helper,
+      error && styles.helperError,
+      success && styles.helperSuccess,
+    ]
       .filter(Boolean)
       .join(' ');
 
@@ -180,8 +196,8 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
         onChange?.(e.target.value);
         onValueChange?.(e.target.value);
       },
-      onBlur: () => onBlur?.(),
-      onFocus: () => onFocus?.(),
+      onBlur: (e: React.FocusEvent<HTMLInputElement>) => onBlur?.(e),
+      onFocus: (e: React.FocusEvent<HTMLInputElement>) => onFocus?.(e),
       onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown?.(e),
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
@@ -206,14 +222,16 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
       />
     );
 
-    const content = shortcut ? (
-      <div className={styles.inputContainer}>
-        {withFieldWrapper ? inputElement : fieldlessInputElement}
-        <kbd className={styles.shortcut}>{shortcut}</kbd>
+    const rawInput = withFieldWrapper ? inputElement : fieldlessInputElement;
+
+    const content = (hasAdornment || shortcut) ? (
+      <div className={[styles.inputContainer, hasAdornment && styles.hasAdornment].filter(Boolean).join(' ')}>
+        {startAdornment && <span className={styles.adornment}>{startAdornment}</span>}
+        {rawInput}
+        {endAdornment && <span className={styles.adornment}>{endAdornment}</span>}
+        {shortcut && <kbd className={styles.shortcut}>{shortcut}</kbd>}
       </div>
-    ) : (
-      withFieldWrapper ? inputElement : fieldlessInputElement
-    );
+    ) : rawInput;
 
     if (!withFieldWrapper) {
       return (
@@ -243,6 +261,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(
         {...rootProps}
         disabled={disabled}
         invalid={error}
+        data-success={success || undefined}
         className={[wrapperClasses, rootProps?.className].filter(Boolean).join(' ')}
         style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
       >
