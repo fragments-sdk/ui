@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.17.0
+
+### Minor Changes
+
+- [`55eaed6`](https://github.com/ConanMcN/fragments/commit/55eaed6ba53b70f1d511104c2952c5e18601e1ed) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Redesign semantic styles across Alert, Toast, Badge, and Button. Add success state and adornments to Input, character counter to Textarea, Fieldset.Description sub-component. Fix theme toggle dark-to-light switching. Improve kbd shortcut hint styling.
+
 ## 0.16.1
 
 ### Patch Changes
