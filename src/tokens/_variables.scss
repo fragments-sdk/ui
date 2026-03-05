@@ -339,21 +339,21 @@ $fui-theme-toggle-lg-width: 40px !default;
 $fui-theme-toggle-lg-height: 34px !default;
 $fui-theme-toggle-lg-icon: 18px !default;
 
-// CodeBlock (light mode)
-$fui-code-bg: #000000 !default;
-$fui-code-header-bg: #1c1c1f !default;
-$fui-code-text: #d4d4d4 !default;
-$fui-code-text-muted: #6b7280 !default;
-$fui-code-border: rgba(255, 255, 255, 0.1) !default;
-$fui-code-tab-text: #9ca3af !default;
-$fui-code-tab-text-active: #e5e7eb !default;
-$fui-code-copy-bg: rgba(255, 255, 255, 0.1) !default;
-$fui-code-copy-bg-hover: rgba(255, 255, 255, 0.15) !default;
-$fui-code-highlight-bg: rgba(255, 255, 255, 0.08) !default;
-$fui-code-selection-bg: rgba(59, 130, 246, 0.4) !default;
-$fui-code-scrollbar-track: rgba(255, 255, 255, 0.05) !default;
-$fui-code-scrollbar-thumb: rgba(255, 255, 255, 0.15) !default;
-$fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25) !default;
+// CodeBlock (always dark — no light variant)
+$fui-code-bg: #0c0c0e !default;
+$fui-code-header-bg: transparent !default;
+$fui-code-text: #e2e2e5 !default;
+$fui-code-text-muted: #5a5a6e !default;
+$fui-code-border: rgba(255, 255, 255, 0.06) !default;
+$fui-code-tab-text: #8a8a9a !default;
+$fui-code-tab-text-active: #e2e2e5 !default;
+$fui-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
+$fui-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
+$fui-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
+$fui-code-selection-bg: rgba(59, 130, 246, 0.3) !default;
+$fui-code-scrollbar-track: transparent !default;
+$fui-code-scrollbar-thumb: rgba(255, 255, 255, 0.1) !default;
+$fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
 
 // Tooltip (always dark bg with light text)
 $fui-tooltip-bg: #1e293b !default;
@@ -362,21 +362,21 @@ $fui-tooltip-shadow:
   0 4px 6px -1px rgba(0, 0, 0, 0.2),
   0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
 
-// CodeBlock (dark mode) - same as light, code blocks stay dark
-$fui-dark-code-bg: #000000 !default;
-$fui-dark-code-header-bg: var(--fui-bg-elevated) !default;
-$fui-dark-code-text: #d4d4d4 !default;
-$fui-dark-code-text-muted: #6b7280 !default;
-$fui-dark-code-border: rgba(255, 255, 255, 0.1) !default;
-$fui-dark-code-tab-text: #9ca3af !default;
-$fui-dark-code-tab-text-active: #e5e7eb !default;
-$fui-dark-code-copy-bg: rgba(255, 255, 255, 0.1) !default;
-$fui-dark-code-copy-bg-hover: rgba(255, 255, 255, 0.15) !default;
-$fui-dark-code-highlight-bg: rgba(255, 255, 255, 0.08) !default;
-$fui-dark-code-selection-bg: rgba(59, 130, 246, 0.4) !default;
-$fui-dark-code-scrollbar-track: rgba(255, 255, 255, 0.05) !default;
-$fui-dark-code-scrollbar-thumb: rgba(255, 255, 255, 0.15) !default;
-$fui-dark-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25) !default;
+// CodeBlock (dark mode) - identical to light, code blocks are always dark
+$fui-dark-code-bg: #0c0c0e !default;
+$fui-dark-code-header-bg: transparent !default;
+$fui-dark-code-text: #e2e2e5 !default;
+$fui-dark-code-text-muted: #5a5a6e !default;
+$fui-dark-code-border: rgba(255, 255, 255, 0.06) !default;
+$fui-dark-code-tab-text: #8a8a9a !default;
+$fui-dark-code-tab-text-active: #e2e2e5 !default;
+$fui-dark-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
+$fui-dark-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
+$fui-dark-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
+$fui-dark-code-selection-bg: rgba(59, 130, 246, 0.3) !default;
+$fui-dark-code-scrollbar-track: transparent !default;
+$fui-dark-code-scrollbar-thumb: rgba(255, 255, 255, 0.1) !default;
+$fui-dark-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
 
 // Tooltip (dark mode) - same as light, tooltips stay dark
 $fui-dark-tooltip-bg: #1e293b !default;

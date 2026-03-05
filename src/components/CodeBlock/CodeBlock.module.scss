@@ -16,12 +16,12 @@
 }
 
 // Code blocks always use dark theme styling (same in light and dark mode)
+// --fui-code-bg can be overridden inline via the `bg` prop
 .wrapper {
   position: relative;
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   overflow: hidden;
   background-color: var(--fui-code-bg, $fui-code-bg);
-  border: 1px solid var(--fui-code-border, $fui-code-border);
 }
 
 // ============================================
@@ -31,8 +31,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--fui-space-3);
-  background-color: var(--fui-code-header-bg, $fui-code-header-bg);
+  padding: 0 var(--fui-space-4, $fui-space-4);
+  background-color: transparent;
   border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
   min-height: var(--fui-input-height, $fui-input-height);
 }
@@ -41,7 +41,8 @@
   font-family: var(--fui-font-mono, $fui-font-mono);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-  color: var(--fui-code-text, $fui-code-text);
+  color: var(--fui-code-text-muted, $fui-code-text-muted);
+  letter-spacing: 0.01em;
 }
 
 // Copy button - icon-only for header or overlay placements
@@ -55,11 +56,12 @@
   color: var(--fui-code-text-muted, $fui-code-text-muted);
   background: transparent;
   border: none;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
   cursor: pointer;
   transition:
     background var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
+    color var(--fui-transition-fast, $fui-transition-fast),
+    opacity var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
     color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
@@ -72,6 +74,7 @@
 
   &.copied {
     color: var(--fui-color-success, $fui-color-success);
+    opacity: 1;
   }
 }
 
@@ -81,12 +84,26 @@
   right: var(--fui-space-2, $fui-space-2);
   z-index: 2;
   background: var(--fui-code-copy-bg, $fui-code-copy-bg);
-  border: 1px solid var(--fui-code-border, $fui-code-border);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  opacity: 0;
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    background var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
 }
 
 .withCopyOverlay {
+  // Reveal copy button on container hover
+  &:hover .copyOverlay,
+  .copyOverlay:focus-visible {
+    opacity: 1;
+  }
+
+  // Also reveal when copied (feedback must be visible)
+  .copyOverlay.copied {
+    opacity: 1;
+  }
+
   .codeContainer :global(.shiki),
   .loading pre {
     padding-right: calc(
@@ -103,19 +120,25 @@
 .persistentCopy {
   top: 50%;
   transform: translateY(-50%);
+  opacity: 1;
+}
+
+.persistentCopyWrapper {
+  .copyOverlay {
+    opacity: 1;
+  }
 }
 
 .loading {
   pre {
     margin: 0;
-    padding: var(--fui-space-3);
-    padding-right: var(--fui-space-3);
+    padding: var(--fui-space-4, $fui-space-4);
     background-color: transparent !important;
     border: none !important;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--fui-code-text, $fui-code-text);
     overflow-x: auto;
   }
@@ -135,13 +158,12 @@
   :global(.shiki) {
     background-color: transparent !important;
     margin: 0;
-    padding: var(--fui-space-3);
-    padding-right: var(--fui-space-3);
+    padding: var(--fui-space-4, $fui-space-4);
     border: none !important;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: 1.7;
+    line-height: 1.6;
     overflow-x: auto;
     tab-size: 2;
 
@@ -164,9 +186,9 @@
 
     &:global(.highlighted) {
       background-color: var(--fui-code-highlight-bg, $fui-code-highlight-bg);
-      margin: 0 calc(-1 * var(--fui-space-3, $fui-space-3));
-      padding: 0 var(--fui-space-3, $fui-space-3);
-      border-left: 3px solid var(--fui-color-info, $fui-color-info);
+      margin: 0 calc(-1 * var(--fui-space-4, $fui-space-4));
+      padding: 0 var(--fui-space-4, $fui-space-4);
+      border-left: 2px solid var(--fui-color-info, $fui-color-info);
     }
   }
 
@@ -178,6 +200,7 @@
     text-align: right;
     color: var(--fui-code-text-muted, $fui-code-text-muted);
     user-select: none;
+    opacity: 0.6;
   }
 
   // Custom selection highlight for better visibility
@@ -188,17 +211,16 @@
 
   // Custom scrollbar for code blocks
   :global(.shiki)::-webkit-scrollbar {
-    height: 6px;
+    height: 4px;
   }
 
   :global(.shiki)::-webkit-scrollbar-track {
-    background: var(--fui-code-scrollbar-track, $fui-code-scrollbar-track);
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+    background: transparent;
   }
 
   :global(.shiki)::-webkit-scrollbar-thumb {
     background: var(--fui-code-scrollbar-thumb, $fui-code-scrollbar-thumb);
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+    border-radius: var(--fui-radius-full, $fui-radius-full);
 
     &:hover {
       background: var(--fui-code-scrollbar-thumb-hover, $fui-code-scrollbar-thumb-hover);
@@ -225,8 +247,8 @@
 
   :global(.diff-added) {
     background-color: var(--fui-color-success-bg, $fui-color-success-bg);
-    margin: 0 calc(-1 * var(--fui-space-3, $fui-space-3));
-    padding: 0 var(--fui-space-3, $fui-space-3);
+    margin: 0 calc(-1 * var(--fui-space-4, $fui-space-4));
+    padding: 0 var(--fui-space-4, $fui-space-4);
 
     :global(.diff-marker) {
       color: var(--fui-color-success, $fui-color-success);
@@ -235,8 +257,8 @@
 
   :global(.diff-removed) {
     background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
-    margin: 0 calc(-1 * var(--fui-space-3, $fui-space-3));
-    padding: 0 var(--fui-space-3, $fui-space-3);
+    margin: 0 calc(-1 * var(--fui-space-4, $fui-space-4));
+    padding: 0 var(--fui-space-4, $fui-space-4);
 
     :global(.diff-marker) {
       color: var(--fui-color-danger, $fui-color-danger);
@@ -252,7 +274,7 @@
 
   .codeContainer :global(.shiki),
   .loading pre {
-    padding: var(--fui-space-2) var(--fui-space-3);
+    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
     line-height: 1.5;
   }
@@ -287,10 +309,9 @@
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   margin-top: var(--fui-space-2, $fui-space-2);
-  font-style: italic;
 }
 
-// Collapse/expand button
+// Collapse/expand button with gradient fade
 .collapseButton {
   @include button-reset;
   display: flex;
@@ -298,20 +319,22 @@
   justify-content: center;
   gap: var(--fui-space-1, $fui-space-1);
   width: 100%;
-  padding: 0 var(--fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   font-family: var(--fui-font-sans, $fui-font-sans);
   color: var(--fui-code-text-muted, $fui-code-text-muted);
-  background: var(--fui-code-header-bg, $fui-code-header-bg);
-  border-top: 1px solid var(--fui-code-border, $fui-code-border);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--fui-code-bg, $fui-code-bg) 40%
+  );
+  border-top: none;
   cursor: pointer;
   transition:
-    background var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    background: var(--fui-code-copy-bg, $fui-code-copy-bg);
     color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
   }
 
@@ -326,7 +349,7 @@
 @media (max-width: $fui-breakpoint-md) {
   .codeContainer :global(.shiki) {
     font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-    padding: var(--fui-space-2, $fui-space-2);
+    padding: var(--fui-space-3, $fui-space-3);
   }
 }
 

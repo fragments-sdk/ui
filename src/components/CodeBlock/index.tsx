@@ -132,6 +132,8 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   persistentCopy?: boolean;
   /** Placement of copy button when not using persistent copy */
   copyPlacement?: CodeBlockCopyPlacement;
+  /** Custom background color for the code block (useful when the content area is pure black or dark gray) */
+  bg?: string;
   /** Callback fired when the copy button is clicked and copy succeeds */
   onCopy?: () => void;
 }
@@ -550,6 +552,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     compact = false,
     persistentCopy = false,
     copyPlacement = "auto",
+    bg,
     onCopy,
     className,
     ...htmlProps
@@ -675,11 +678,14 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     .join(" ");
 
   const codeContainerStyle: React.CSSProperties = maxHeight ? { maxHeight, overflow: "auto" } : {};
+  const wrapperStyle: React.CSSProperties | undefined = bg
+    ? { ["--fui-code-bg" as string]: bg }
+    : undefined;
 
   return (
     <div ref={ref} {...htmlProps} className={classNames} data-theme="dark">
       {title && <div className={styles.title}>{title}</div>}
-      <div className={wrapperClasses}>
+      <div className={wrapperClasses} style={wrapperStyle}>
         {shouldRenderHeader && (
           <div className={styles.header}>
             <span className={styles.filename}>{filename ?? ""}</span>
