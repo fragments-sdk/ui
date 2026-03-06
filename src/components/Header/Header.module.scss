@@ -298,6 +298,105 @@
 }
 
 // ============================================
+// Mobile Nav Drawer
+// ============================================
+
+.mobileNavBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+  background: rgba(0, 0, 0, 0.5);
+  animation: mobileNavFadeIn var(--fui-transition-normal, $fui-transition-normal) ease;
+}
+
+.mobileNavDrawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  width: min(320px, 85vw);
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  border-left: 1px solid var(--fui-border, $fui-border);
+  display: flex;
+  flex-direction: column;
+  animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal) ease;
+}
+
+.mobileNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
+  border-bottom: 1px solid var(--fui-border, $fui-border);
+}
+
+.mobileNavClose {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fui-touch-md, $fui-touch-md);
+  height: var(--fui-touch-md, $fui-touch-md);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.mobileNavBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
+}
+
+.mobileNavLink {
+  @include button-reset;
+  @include text-base;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  text-decoration: none;
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.mobileNavLinkActive {
+  color: var(--fui-text-primary, $fui-text-primary);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+@keyframes mobileNavFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mobileNavSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobileNavBackdrop,
+  .mobileNavDrawer {
+    animation: none;
+  }
+}
+
+// ============================================
 // Skip Link (Accessibility)
 // ============================================
 

@@ -1,8 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { CaretDown, List, X } from '@phosphor-icons/react';
+import { useFocusTrap } from '../../utils/a11y';
+import { ScrollArea } from '../ScrollArea';
 import styles from './Header.module.scss';
 import { useSidebar } from '../Sidebar';
 
@@ -11,7 +14,7 @@ import { useSidebar } from '../Sidebar';
 // ============================================
 
 export interface HeaderIconRenderState {
-  slot: 'menu' | 'close' | 'navMenuChevron';
+  slot: 'menu' | 'close' | 'navMenuChevron' | 'mobileClose';
   open?: boolean;
   active?: boolean;
 }
@@ -91,6 +94,33 @@ export interface HeaderNavMenuItemProps extends React.HTMLAttributes<HTMLElement
   asChild?: boolean;
 }
 
+export interface HeaderMobileNavProps {
+  /** Content rendered inside the mobile drawer */
+  children: React.ReactNode;
+  /** Optional className for the drawer panel */
+  className?: string;
+}
+
+// ============================================
+// Internal Context
+// ============================================
+
+interface HeaderContextValue {
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+  icons?: HeaderIcons;
+}
+
+const HeaderContext = React.createContext<HeaderContextValue | null>(null);
+
+function useHeaderContext(): HeaderContextValue {
+  const ctx = React.useContext(HeaderContext);
+  if (!ctx) {
+    throw new Error('Header compound components must be used within a Header');
+  }
+  return ctx;
+}
+
 // ============================================
 // Hooks
 // ============================================
@@ -150,6 +180,8 @@ function HeaderRoot({
   style: styleProp,
   ...htmlProps
 }: HeaderProps) {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
   const classes = [
     styles.header,
     position === 'fixed' && styles.fixed,
@@ -162,14 +194,21 @@ function HeaderRoot({
     ...styleProp,
   } as React.CSSProperties;
 
+  const contextValue = React.useMemo(
+    () => ({ mobileOpen, setMobileOpen, icons }),
+    [mobileOpen, icons]
+  );
+
   return (
-    <HeaderIconContext.Provider value={icons}>
-      <header {...htmlProps} className={classes} style={style} data-position={position}>
-        <div className={styles.container}>
-          {children}
-        </div>
-      </header>
-    </HeaderIconContext.Provider>
+    <HeaderContext.Provider value={contextValue}>
+      <HeaderIconContext.Provider value={icons}>
+        <header {...htmlProps} className={classes} style={style} data-position={position}>
+          <div className={styles.container}>
+            {children}
+          </div>
+        </header>
+      </HeaderIconContext.Provider>
+    </HeaderContext.Provider>
   );
 }
 
@@ -297,7 +336,11 @@ function HeaderActions({ children, className, ...htmlProps }: HeaderActionsProps
 }
 
 /**
- * Header.Trigger - Mobile menu trigger (integrates with SidebarProvider)
+ * Header.Trigger - Mobile menu trigger
+ *
+ * Works in two modes:
+ * 1. With SidebarProvider — toggles sidebar open state (existing behavior)
+ * 2. Standalone — toggles Header's internal mobile nav drawer
  */
 function HeaderTrigger({
   children,
@@ -307,13 +350,24 @@ function HeaderTrigger({
   ...htmlProps
 }: HeaderTriggerProps) {
   const isMobile = useIsMobile();
-  const { open, setOpen } = useSidebar();
+  const sidebar = useSidebar();
+  const headerCtx = React.useContext(HeaderContext);
   const icons = useHeaderIcons();
 
   // Only render on mobile
   if (!isMobile) {
     return null;
   }
+
+  // Determine which state to use: sidebar (if available with a real provider) or header internal
+  const hasSidebarProvider = sidebar.open !== undefined && sidebar.setOpen !== undefined
+    && typeof sidebar.setOpen === 'function';
+  const isUsingSidebar = hasSidebarProvider && sidebar.isMobile;
+
+  const open = isUsingSidebar ? sidebar.open : (headerCtx?.mobileOpen ?? false);
+  const setOpen = isUsingSidebar
+    ? sidebar.setOpen
+    : (headerCtx?.setMobileOpen ?? (() => {}));
 
   const classes = [styles.trigger, className].filter(Boolean).join(' ');
   const iconSlot = open ? icons?.close : icons?.menu;
@@ -428,6 +482,129 @@ function HeaderNavMenuItem({
 }
 
 /**
+ * Header.MobileNav - Mobile navigation drawer
+ *
+ * Renders a full-screen slide-in drawer on mobile when the Header.Trigger is toggled.
+ * Place navigation links, actions, or any content as children.
+ */
+function HeaderMobileNav({ children, className }: HeaderMobileNavProps) {
+  const { mobileOpen, setMobileOpen, icons } = useHeaderContext();
+  const drawerRef = React.useRef<HTMLDivElement>(null);
+
+  useFocusTrap(drawerRef, mobileOpen);
+
+  // Lock body scroll when open
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
+  // Handle Escape
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [mobileOpen, setMobileOpen]);
+
+  if (!mobileOpen) return null;
+  if (typeof document === 'undefined') return null;
+
+  const closeIcon = renderHeaderIcon(icons?.mobileClose, {
+    slot: 'mobileClose',
+    open: true,
+  });
+
+  const drawerContent = (
+    <>
+      <div
+        className={styles.mobileNavBackdrop}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden
+      />
+      <div
+        ref={drawerRef}
+        className={[styles.mobileNavDrawer, className].filter(Boolean).join(' ')}
+        role="dialog"
+        aria-modal
+        aria-label="Navigation"
+      >
+        <div className={styles.mobileNavHeader}>
+          <button
+            type="button"
+            className={styles.mobileNavClose}
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close navigation"
+          >
+            {closeIcon ?? <X size={20} aria-hidden />}
+          </button>
+        </div>
+        <ScrollArea orientation="vertical" className={styles.mobileNavBody}>
+          {children}
+        </ScrollArea>
+      </div>
+    </>
+  );
+
+  return createPortal(drawerContent, document.body);
+}
+
+/**
+ * Header.MobileNavLink - A link inside the mobile drawer
+ */
+function HeaderMobileNavLink({
+  children,
+  href,
+  active = false,
+  asChild = false,
+  onClick,
+  className,
+  ...htmlProps
+}: HeaderNavItemProps) {
+  const { setMobileOpen } = useHeaderContext();
+
+  const classes = [
+    styles.mobileNavLink,
+    active && styles.mobileNavLinkActive,
+    className,
+  ].filter(Boolean).join(' ');
+
+  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    onClick?.(e);
+    if (!e.defaultPrevented) setMobileOpen(false);
+  };
+
+  if (asChild && React.isValidElement(children)) {
+    const childProps = children.props as {
+      className?: string;
+      onClick?: React.MouseEventHandler<HTMLElement>;
+    };
+    return React.cloneElement(children, {
+      ...htmlProps,
+      className: [classes, childProps.className].filter(Boolean).join(' '),
+      onClick: composeEventHandlers(childProps.onClick, handleClick),
+    } as React.HTMLAttributes<HTMLElement>);
+  }
+
+  if (href) {
+    return (
+      <a {...htmlProps} href={href} className={classes} onClick={handleClick}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button {...htmlProps} type="button" className={classes} onClick={handleClick}>
+      {children}
+    </button>
+  );
+}
+
+/**
  * Header.SkipLink - Skip to main content link (accessibility)
  */
 function HeaderSkipLink({
@@ -462,6 +639,8 @@ export const Header = Object.assign(HeaderRoot, {
   Trigger: HeaderTrigger,
   Spacer: HeaderSpacer,
   SkipLink: HeaderSkipLink,
+  MobileNav: HeaderMobileNav,
+  MobileNavLink: HeaderMobileNavLink,
 });
 
 export {
@@ -476,4 +655,6 @@ export {
   HeaderTrigger,
   HeaderSpacer,
   HeaderSkipLink,
+  HeaderMobileNav,
+  HeaderMobileNavLink,
 };

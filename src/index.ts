@@ -335,6 +335,7 @@ export {
   type HeaderSearchProps,
   type HeaderActionsProps,
   type HeaderTriggerProps,
+  type HeaderMobileNavProps,
 } from './components/Header';
 
 // AppShell
