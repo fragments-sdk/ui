@@ -226,6 +226,7 @@
 
 .itemWrapper {
   list-style: none;
+  width: 100%;
 }
 
 .item {
@@ -235,8 +236,9 @@
 
   display: flex;
   align-items: center;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  width: 100%;
+  gap: var(--fui-sidebar-item-gap, var(--fui-space-2, $fui-space-2));
+  padding: var(--fui-sidebar-item-padding-y, var(--fui-space-1, $fui-space-1)) var(--fui-sidebar-item-padding-x, var(--fui-space-2, $fui-space-2));
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -635,8 +637,8 @@
 .skeletonItem {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-sidebar-item-gap, var(--fui-space-2, $fui-space-2));
+  padding: var(--fui-sidebar-item-padding-y, var(--fui-space-1, $fui-space-1)) var(--fui-sidebar-item-padding-x, var(--fui-space-2, $fui-space-2));
   min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
 }
 
