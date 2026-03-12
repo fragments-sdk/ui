@@ -214,7 +214,10 @@
   }
 
   // Light mode background — stone uses white, colorful palettes use palette[50]
-  $bg: if($palette-name != 'stone', get-shade($palette, 50), #ffffff);
+  $bg: #ffffff;
+  @if $palette-name != 'stone' {
+    $bg: get-shade($palette, 50);
+  }
 
   @return (
     primary: get-shade($palette, 900),           // Main text (high contrast)
