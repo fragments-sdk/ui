@@ -4,6 +4,20 @@ import * as matchers from 'vitest-axe/matchers';
 
 expect.extend(matchers);
 
+// Polyfill PointerEvent for Base UI >=1.3.0 click handling in jsdom
+if (typeof global.PointerEvent === 'undefined') {
+  // @ts-expect-error — minimal polyfill sufficient for Base UI's instanceof check
+  global.PointerEvent = class PointerEvent extends MouseEvent {
+    readonly pointerId: number;
+    readonly pointerType: string;
+    constructor(type: string, params: PointerEventInit = {}) {
+      super(type, params);
+      this.pointerId = params.pointerId ?? 0;
+      this.pointerType = params.pointerType ?? '';
+    }
+  };
+}
+
 // Polyfill ResizeObserver for Base UI components in jsdom
 global.ResizeObserver = class ResizeObserver {
   observe() {}
