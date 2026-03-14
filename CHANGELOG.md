@@ -1,5 +1,21 @@
 # @fragments-sdk/ui
 
+## 0.18.0
+
+### Minor Changes
+
+- V2 contract.json — agent-native, framework-agnostic UI registry
+  - `.contract.json` is now the canonical component metadata format (replaces `.fragment.tsx`)
+  - 30-40% fewer tokens than TSX, framework-agnostic, schema-validatable
+  - New required fields: `$schema`, `sourcePath`, `exportName`, `propsSummary`, `provenance`
+  - Provenance: `verified: boolean` replaces `confidence: number`
+  - Build pipeline: ExtractorAdapter, drift verification, duplicate detection
+  - Governance: registry-derived component allowlist, props/unknown and props/invalid-value validators
+  - MCP: compact discover includes `propsSummary`, inspect compact mode ~200 tokens
+  - CLI: `fragments migrate-contract` command for migration
+  - Preview: contract-native via generated `.preview.tsx` modules
+  - All 66 UI components migrated, `.fragment.tsx` files removed
+
 ## 0.17.0
 
 ### Minor Changes
