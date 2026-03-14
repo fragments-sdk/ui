@@ -94,14 +94,6 @@ function getAsChildElement(children: React.ReactNode, componentName: string): Re
   return children;
 }
 
-// Map side → default swipe direction for dismissal
-const SIDE_TO_SWIPE: Record<string, 'up' | 'down' | 'left' | 'right'> = {
-  right: 'right',
-  left: 'left',
-  top: 'up',
-  bottom: 'down',
-};
-
 // ============================================
 // Close Icon
 // ============================================
@@ -125,16 +117,6 @@ function CloseIcon() {
     </svg>
   );
 }
-
-// ============================================
-// Internal context to pass side/swipe from Content → Root
-// ============================================
-
-interface DrawerInternalContext {
-  side: 'left' | 'right' | 'top' | 'bottom';
-}
-
-const DrawerSideContext = React.createContext<DrawerInternalContext>({ side: 'right' });
 
 // ============================================
 // Components
@@ -208,18 +190,16 @@ function DrawerContent({
     .join(' ');
 
   return (
-    <DrawerSideContext.Provider value={{ side }}>
-      <BaseDrawer.Portal>
-        {backdrop && <BaseDrawer.Backdrop className={styles.backdrop} />}
-        <BaseDrawer.Viewport className={styles.viewport}>
-          <BaseDrawer.Popup initialFocus={initialFocus} {...htmlProps} data-side={side} className={popupClasses}>
-            <BaseDrawer.Content>
-              {children}
-            </BaseDrawer.Content>
-          </BaseDrawer.Popup>
-        </BaseDrawer.Viewport>
-      </BaseDrawer.Portal>
-    </DrawerSideContext.Provider>
+    <BaseDrawer.Portal>
+      {backdrop && <BaseDrawer.Backdrop className={styles.backdrop} />}
+      <BaseDrawer.Viewport className={styles.viewport}>
+        <BaseDrawer.Popup initialFocus={initialFocus} {...htmlProps} data-side={side} className={popupClasses}>
+          <BaseDrawer.Content>
+            {children}
+          </BaseDrawer.Content>
+        </BaseDrawer.Popup>
+      </BaseDrawer.Viewport>
+    </BaseDrawer.Portal>
   );
 }
 
