@@ -171,15 +171,14 @@
     }
   },
   "scripts": {
-    "cli:ensure": "node ./scripts/ensure-fragments-cli.mjs",
-    "dev": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build",
+    "dev": "node ../../packages/compiler/dist/bin.js build",
     "build": "pnpm run build:fragments",
-    "build:fragments": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build --if-needed",
-    "check:fragments": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build --check",
+    "build:fragments": "node ../../packages/compiler/dist/bin.js build --if-needed",
+    "check:fragments": "node ../../packages/compiler/dist/bin.js build --check",
     "build:dist": "vite build && tsc -p tsconfig.build.json",
     "build:publish": "pnpm run build:fragments && pnpm run build:dist",
     "lint": "eslint src",
-    "validate": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js validate",
+    "validate": "node ../../packages/cli/dist/bin.js validate",
     "test": "vitest run",
     "prepack": "pnpm run build:publish"
   },
@@ -242,6 +241,7 @@
     "@scarf/scarf": "^1.4.0"
   },
   "devDependencies": {
+    "@fragments-sdk/compiler": "workspace:*",
     "@fragments-sdk/core": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "@testing-library/jest-dom": "^6.6.0",
