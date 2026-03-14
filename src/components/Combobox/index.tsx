@@ -277,7 +277,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger, size]
   );
 
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('combobox', { label, helperText, error });
+  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds('combobox', { label, helperText, error });
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
   const helperClasses = [styles.helper, hasError && styles.helperError]
@@ -286,7 +286,6 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
 
   const wrapperContent = (inner: React.ReactNode) => (
     <div ref={ref} className={wrapperClasses}>
-      {label && <span id={labelId} className={styles.label}>{label}</span>}
       {inner}
       {helperText && (
         <span id={helperId} className={helperClasses}>{helperText}</span>
@@ -324,9 +323,9 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
             multiple
             autoHighlight={autoHighlight}
             itemToStringLabel={itemToStringLabel}
-            aria-labelledby={labelId}
             aria-describedby={mergeAriaIds(errorId, helperId)}
           >
+            {label && <BaseCombobox.Label className={styles.label}>{label}</BaseCombobox.Label>}
             {children}
           </BaseCombobox.Root>
         )}
@@ -360,9 +359,9 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
           multiple={false}
           autoHighlight={autoHighlight}
           itemToStringLabel={itemToStringLabel}
-          aria-labelledby={labelId}
           aria-describedby={mergeAriaIds(errorId, helperId)}
         >
+          {label && <BaseCombobox.Label className={styles.label}>{label}</BaseCombobox.Label>}
           {children}
         </BaseCombobox.Root>
       )}
@@ -380,7 +379,7 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
 
   if (context.multiple) {
     return (
-      <div className={wrapperClasses}>
+      <BaseCombobox.InputGroup className={wrapperClasses}>
         {context.selectedValues.length > 0 && (
           <BaseCombobox.Chips className={styles.chips}>
             {context.selectedValues.map((chipValue) => (
@@ -405,12 +404,12 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
             <ChevronDownIcon />
           </BaseCombobox.Trigger>
         )}
-      </div>
+      </BaseCombobox.InputGroup>
     );
   }
 
   return (
-    <div className={wrapperClasses}>
+    <BaseCombobox.InputGroup className={wrapperClasses}>
       <BaseCombobox.Input
         placeholder={context.placeholder}
         {...htmlProps}
@@ -421,7 +420,7 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
           <ChevronDownIcon />
         </BaseCombobox.Trigger>
       )}
-    </div>
+    </BaseCombobox.InputGroup>
   );
 }
 

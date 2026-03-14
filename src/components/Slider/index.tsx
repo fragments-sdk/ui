@@ -111,16 +111,6 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
 
     return (
       <Field.Root {...htmlProps} disabled={disabled} invalid={error} className={[styles.wrapper, className].filter(Boolean).join(' ')}>
-        {(label || showValue) && (
-          <div className={styles.header}>
-            {label && <Field.Label className={styles.label}>{label}</Field.Label>}
-            {showValue && (
-              <span className={styles.value}>
-                {displayValue}{valueSuffix}
-              </span>
-            )}
-          </div>
-        )}
         <BaseSlider.Root
           ref={ref}
           value={value !== undefined ? [value] : undefined}
@@ -138,6 +128,16 @@ const SliderRoot = React.forwardRef<HTMLDivElement, SliderProps>(
           className={styles.root}
           onPointerDownCapture={handleDragStart}
         >
+          {(label || showValue) && (
+            <div className={styles.header}>
+              {label && <BaseSlider.Label className={styles.label}>{label}</BaseSlider.Label>}
+              {showValue && (
+                <span className={styles.value}>
+                  {displayValue}{valueSuffix}
+                </span>
+              )}
+            </div>
+          )}
           <BaseSlider.Control className={styles.control}>
             <BaseSlider.Track className={styles.track}>
               <BaseSlider.Indicator className={styles.indicator} />

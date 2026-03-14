@@ -132,9 +132,8 @@ function TooltipRoot({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
-      closeOnClick={closeOnClick}
     >
-      <BaseTooltip.Trigger render={renderTrigger} />
+      <BaseTooltip.Trigger closeOnClick={closeOnClick} render={renderTrigger} />
       <BaseTooltip.Portal>
         <BaseTooltip.Positioner
           side={side}

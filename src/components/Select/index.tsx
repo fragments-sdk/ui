@@ -221,40 +221,35 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     [placeholder, value, internalValue, items, registerItem, unregisterItem, size]
   );
 
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('select', { label, helperText, error });
+  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds('select', { label, helperText, error });
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
   const helperClasses = [styles.helper, hasError && styles.helperError]
     .filter(Boolean)
     .join(' ');
 
-  const selectContent = (
-    <BaseSelect.Root
-      value={value}
-      defaultValue={defaultValue}
-      onValueChange={handleValueChange}
-      open={open}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
-      disabled={disabled}
-      required={required}
-      name={name}
-      aria-labelledby={labelId}
-      aria-describedby={mergeAriaIds(errorId, helperId)}
-    >
-      {children ?? options?.map((option) => (
-        <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
-          {option.label}
-        </SelectItem>
-      ))}
-    </BaseSelect.Root>
-  );
-
   return (
     <SelectContext.Provider value={contextValue}>
       <div ref={ref} className={wrapperClasses}>
-        {label && <span id={labelId} className={styles.label}>{label}</span>}
-        {selectContent}
+        <BaseSelect.Root
+          value={value}
+          defaultValue={defaultValue}
+          onValueChange={handleValueChange}
+          open={open}
+          defaultOpen={defaultOpen}
+          onOpenChange={onOpenChange}
+          disabled={disabled}
+          required={required}
+          name={name}
+          aria-describedby={mergeAriaIds(errorId, helperId)}
+        >
+          {label && <BaseSelect.Label className={styles.label}>{label}</BaseSelect.Label>}
+          {children ?? options?.map((option) => (
+            <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </BaseSelect.Root>
         {helperText && (
           <span id={helperId} className={helperClasses}>{helperText}</span>
         )}
