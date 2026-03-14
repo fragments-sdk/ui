@@ -171,7 +171,7 @@
     }
   },
   "scripts": {
-    "cli:ensure": "test -f ../../packages/cli/dist/bin.js || pnpm turbo build --filter=@fragments-sdk/cli",
+    "cli:ensure": "test -f ../../packages/cli/dist/bin.js || pnpm --filter @fragments-sdk/cli build",
     "dev": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build",
     "build": "pnpm run build:fragments",
     "build:fragments": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build --if-needed",
