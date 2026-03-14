@@ -1,0 +1,145 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "TableOfContents",
+  "description": "Sticky sidebar navigation for long-form content. Renders heading links with active state highlighting for scroll spy integration.",
+  "category": "navigation",
+  "tags": [
+    "toc",
+    "table-of-contents",
+    "navigation",
+    "sidebar",
+    "scroll-spy",
+    "headings"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/TableOfContents/index.tsx",
+  "exportName": "TableOfContents",
+  "propsSummary": [
+    "children: node (required)",
+    "label: string (default: Table of contents)",
+    "title: string (default: On This Page)",
+    "hideTitle: boolean (default: false)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "TableOfContents.Item elements",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "description": "Accessible label for the nav landmark",
+      "default": "Table of contents",
+      "required": false
+    },
+    "title": {
+      "type": "string",
+      "description": "Visible title above the list",
+      "default": "On This Page",
+      "required": false
+    },
+    "hideTitle": {
+      "type": "boolean",
+      "description": "Hide the visible title",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Long-form content pages (docs, blog posts, articles)",
+      "Component documentation with multiple sections",
+      "Any page with 3+ headings that benefits from quick navigation"
+    ],
+    "whenNot": [
+      "Short pages with only 1-2 sections",
+      "Primary site navigation (use Sidebar or Header)",
+      "Step-by-step flows (use Stepper)"
+    ],
+    "guidelines": [
+      "Pair with a scroll spy hook (e.g., IntersectionObserver) to track active heading",
+      "Use indent on sub-headings (h3) to show hierarchy",
+      "Place in a sticky aside for best UX",
+      "Heading IDs must match between TOC items and the actual DOM headings",
+      "TableOfContents.Item performs smooth scrolling by default; call event.preventDefault() in onClick to override"
+    ],
+    "accessibility": [
+      "Uses <nav aria-label=\"Table of contents\"> for landmark navigation",
+      "Active item is marked with aria-current=\"location\"",
+      "All items are links with smooth scroll behavior",
+      "Focus-visible ring on keyboard navigation"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic table of contents with section links",
+      "code": "<TableOfContents>\n  <TableOfContents.Item id=\"introduction\">Introduction</TableOfContents.Item>\n  <TableOfContents.Item id=\"getting-started\">Getting Started</TableOfContents.Item>\n  <TableOfContents.Item id=\"installation\" indent>Installation</TableOfContents.Item>\n  <TableOfContents.Item id=\"configuration\" indent>Configuration</TableOfContents.Item>\n  <TableOfContents.Item id=\"api-reference\">API Reference</TableOfContents.Item>\n  <TableOfContents.Item id=\"examples\">Examples</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "With Active Item",
+      "description": "Active state highlighting the current section",
+      "code": "<TableOfContents>\n  <TableOfContents.Item id=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Item id=\"setup\" active>Setup</TableOfContents.Item>\n  <TableOfContents.Item id=\"usage\" indent>Basic Usage</TableOfContents.Item>\n  <TableOfContents.Item id=\"advanced\" indent>Advanced</TableOfContents.Item>\n  <TableOfContents.Item id=\"props\">Props</TableOfContents.Item>\n  <TableOfContents.Item id=\"accessibility\">Accessibility</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "Custom Title",
+      "description": "Table of contents with a custom title",
+      "code": "<TableOfContents title=\"Contents\">\n  <TableOfContents.Item id=\"chapter-1\">Chapter 1: The Beginning</TableOfContents.Item>\n  <TableOfContents.Item id=\"chapter-2\">Chapter 2: The Middle</TableOfContents.Item>\n  <TableOfContents.Item id=\"chapter-3\">Chapter 3: The End</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "No Title",
+      "description": "Table of contents without a visible title",
+      "code": "<TableOfContents hideTitle>\n  <TableOfContents.Item id=\"section-a\">Section A</TableOfContents.Item>\n  <TableOfContents.Item id=\"section-b\" active>Section B</TableOfContents.Item>\n  <TableOfContents.Item id=\"section-c\">Section C</TableOfContents.Item>\n</TableOfContents>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Breadcrumbs",
+      "relationship": "complementary",
+      "note": "Breadcrumbs show hierarchy, TOC shows page sections"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "complementary",
+      "note": "Sidebar for site nav, TOC for in-page nav"
+    },
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Tabs for switching views, TOC for scrolling to sections"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "title: string - visible heading (default \"On This Page\")",
+      "hideTitle: boolean - hide the title",
+      "label: string - aria-label for nav landmark",
+      "TableOfContents.Item id: string - heading ID to link to",
+      "TableOfContents.Item active: boolean - highlight as current",
+      "TableOfContents.Item indent: boolean - indent for sub-headings",
+      "Forwards standard nav/anchor DOM props; TableOfContents.Item onClick can prevent default smooth scroll"
+    ],
+    "a11yRules": [
+      "A11Y_NAV_LANDMARK",
+      "A11Y_ARIA_CURRENT"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Item"
+    ],
+    "requiredChildren": [
+      "Item"
+    ],
+    "commonPatterns": [
+      "<TableOfContents>{headings.map(h => <TableOfContents.Item key={h.id} id={h.id} active={activeId === h.id} indent={h.level === 3}>{h.text}</TableOfContents.Item>)}</TableOfContents>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.685Z"
+  }
+}

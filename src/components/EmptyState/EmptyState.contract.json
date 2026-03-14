@@ -1,0 +1,133 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "EmptyState",
+  "description": "Placeholder for empty content areas. Provides context, guidance, and actions when no data is available.",
+  "category": "feedback",
+  "tags": [
+    "empty",
+    "placeholder",
+    "no-data",
+    "zero-state",
+    "blank-slate"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/EmptyState/index.tsx",
+  "exportName": "EmptyState",
+  "propsSummary": [
+    "children: node (required)",
+    "size: sm|md|lg (default: md)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "EmptyState content - use EmptyState.Icon, EmptyState.Title, EmptyState.Description, EmptyState.Actions sub-components",
+      "required": true
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Empty lists, tables, or search results",
+      "New user onboarding (no content yet)",
+      "Filtered views with no matches",
+      "Error states where content failed to load"
+    ],
+    "whenNot": [
+      "Loading states (use skeleton or spinner)",
+      "Error messages with retry (use Alert)",
+      "Temporary messages (use Toast)"
+    ],
+    "guidelines": [
+      "Always explain why the area is empty",
+      "Provide a clear action to resolve the empty state",
+      "Use appropriate icons to reinforce the message",
+      "Keep messaging positive and actionable",
+      "EmptyState compound sub-components forward DOM props for ids, aria attributes, and handlers"
+    ],
+    "accessibility": [
+      "Empty state content is accessible to screen readers",
+      "Action buttons follow button accessibility guidelines"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic empty state with action",
+      "code": "<EmptyState>\n  <EmptyState.Icon><FolderIcon /></EmptyState.Icon>\n  <EmptyState.Title>No projects yet</EmptyState.Title>\n  <EmptyState.Description>Get started by creating your first project.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Create Project</Button>\n  </EmptyState.Actions>\n</EmptyState>"
+    },
+    {
+      "name": "No Results",
+      "description": "Empty search results",
+      "code": "<EmptyState>\n  <EmptyState.Icon><SearchIcon /></EmptyState.Icon>\n  <EmptyState.Title>No results found</EmptyState.Title>\n  <EmptyState.Description>Try adjusting your search terms or filters.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button variant=\"secondary\">Clear Filters</Button>\n  </EmptyState.Actions>\n</EmptyState>"
+    },
+    {
+      "name": "With Secondary Action",
+      "description": "Empty state with two actions",
+      "code": "<EmptyState>\n  <EmptyState.Icon><InboxIcon /></EmptyState.Icon>\n  <EmptyState.Title>Inbox is empty</EmptyState.Title>\n  <EmptyState.Description>You have no new messages.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Compose Message</Button>\n    <Button variant=\"secondary\">View Archive</Button>\n  </EmptyState.Actions>\n</EmptyState>"
+    },
+    {
+      "name": "Small",
+      "description": "Compact empty state for inline use",
+      "code": "<EmptyState size=\"sm\">\n  <EmptyState.Title>No items</EmptyState.Title>\n  <EmptyState.Description>Add items to see them here.</EmptyState.Description>\n</EmptyState>"
+    },
+    {
+      "name": "Large",
+      "description": "Prominent empty state for full-page use",
+      "code": "<EmptyState size=\"lg\">\n  <EmptyState.Icon><FolderIcon /></EmptyState.Icon>\n  <EmptyState.Title>Welcome to your workspace</EmptyState.Title>\n  <EmptyState.Description>\n    This is where your projects will appear. Create your first project to get started.\n  </EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Create Your First Project</Button>\n  </EmptyState.Actions>\n</EmptyState>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Alert",
+      "relationship": "alternative",
+      "note": "Use Alert for error states with retry"
+    },
+    {
+      "component": "Progress",
+      "relationship": "alternative",
+      "note": "Use Progress/Spinner for loading states"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "size: sm|md|lg (default: md)",
+      "Sub-components: EmptyState.Icon, EmptyState.Title, EmptyState.Description, EmptyState.Actions",
+      "Compound sub-components forward DOM props to their rendered elements"
+    ],
+    "a11yRules": [
+      "A11Y_EMPTY_STATE_CONTENT"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Icon",
+      "Title",
+      "Description",
+      "Actions"
+    ],
+    "requiredChildren": [
+      "Title"
+    ],
+    "commonPatterns": [
+      "<EmptyState><EmptyState.Title>{title}</EmptyState.Title><EmptyState.Description>{description}</EmptyState.Description></EmptyState>",
+      "<EmptyState><EmptyState.Icon>{icon}</EmptyState.Icon><EmptyState.Title>{title}</EmptyState.Title><EmptyState.Description>{description}</EmptyState.Description><EmptyState.Actions><Button>{action}</Button></EmptyState.Actions></EmptyState>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:56.922Z"
+  }
+}

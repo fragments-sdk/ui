@@ -1,0 +1,344 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Input",
+  "description": "Text input field for single-line user data entry",
+  "category": "forms",
+  "tags": [
+    "form",
+    "input",
+    "text"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Input/index.tsx",
+  "exportName": "Input",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "placeholder: string",
+    "type: number|text|email|password|tel|url (default: text)",
+    "size: sm|md|lg (default: md)",
+    "disabled: boolean (default: false)",
+    "error: boolean (default: false)",
+    "success: boolean (default: false)",
+    "label: string",
+    "required: boolean (default: false)",
+    "helperText: string",
+    "startAdornment: node",
+    "endAdornment: node",
+    "shortcut: string",
+    "shortcutBehavior: display-only|focus-input (default: display-only)",
+    "onChange: function",
+    "onValueChange: function",
+    "onBlur: function",
+    "onFocus: function",
+    "onKeyDown: function",
+    "rootProps: object",
+    "inputStyle: object",
+    "inputClassName: string",
+    "withFieldWrapper: boolean (default: true)",
+    "className: string",
+    "style: object"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Current input value (controlled)",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default value for uncontrolled usage",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text shown when empty",
+      "required": false,
+      "constraints": [
+        "Use for format hints only, not as a replacement for labels"
+      ]
+    },
+    "type": {
+      "type": "enum",
+      "description": "HTML input type for validation and keyboard",
+      "default": "text",
+      "required": false,
+      "values": [
+        "number",
+        "text",
+        "email",
+        "password",
+        "tel",
+        "url"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Whether the input is interactive",
+      "default": "false",
+      "required": false
+    },
+    "error": {
+      "type": "boolean",
+      "description": "Whether to show error styling",
+      "default": "false",
+      "required": false
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether to show success/validated styling",
+      "default": "false",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text displayed above input",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Whether the field is required (shows asterisk)",
+      "default": "false",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper or error message below input",
+      "required": false
+    },
+    "startAdornment": {
+      "type": "node",
+      "description": "Content rendered before the input (icon or prefix text)",
+      "required": false
+    },
+    "endAdornment": {
+      "type": "node",
+      "description": "Content rendered after the input (icon or suffix text)",
+      "required": false
+    },
+    "shortcut": {
+      "type": "string",
+      "description": "Keyboard shortcut hint displayed inside the input",
+      "required": false
+    },
+    "shortcutBehavior": {
+      "type": "enum",
+      "description": "Whether shortcut hint is visual only or also registers a global focus hotkey",
+      "default": "display-only",
+      "required": false,
+      "values": [
+        "display-only",
+        "focus-input"
+      ]
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Called with new value on change",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Value-first change callback alias: (value: string) => void",
+      "required": false
+    },
+    "onBlur": {
+      "type": "function",
+      "description": "",
+      "required": false
+    },
+    "onFocus": {
+      "type": "function",
+      "description": "",
+      "required": false
+    },
+    "onKeyDown": {
+      "type": "function",
+      "description": "",
+      "required": false
+    },
+    "rootProps": {
+      "type": "object",
+      "description": "HTML attributes applied to the wrapper element",
+      "required": false
+    },
+    "inputStyle": {
+      "type": "object",
+      "description": "Inline styles applied directly to the input element",
+      "required": false
+    },
+    "inputClassName": {
+      "type": "string",
+      "description": "Class name applied directly to the input element",
+      "required": false
+    },
+    "withFieldWrapper": {
+      "type": "boolean",
+      "description": "Render built-in label/helper wrapper (set false for Field composition or bare input rendering)",
+      "default": "true",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Wrapper class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Wrapper styles",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Collecting single-line text data from users",
+      "Email, password, phone number, or URL input",
+      "Search fields",
+      "Short form fields (name, title, etc.)"
+    ],
+    "whenNot": [
+      "Multi-line text (use Textarea)",
+      "Selecting from predefined options (use Select)",
+      "Boolean input (use Checkbox or Switch)",
+      "Date/time input (use DatePicker)"
+    ],
+    "guidelines": [
+      "Always provide a label for accessibility",
+      "Use appropriate input type for data validation",
+      "Show validation errors with error prop and helperText",
+      "Use placeholder for format hints, not labels",
+      "Shortcut hints are display-only by default; set shortcutBehavior=\"focus-input\" to opt into global hotkey focusing"
+    ],
+    "accessibility": [
+      "Labels must be associated with inputs",
+      "Error messages should be announced to screen readers",
+      "Required fields should be indicated"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic text input",
+      "code": "<Input label=\"Name\" placeholder=\"Enter your name\" />"
+    },
+    {
+      "name": "With Value",
+      "description": "Input with pre-filled value",
+      "code": "<Input label=\"Email\" type=\"email\" value=\"user@example.com\" />"
+    },
+    {
+      "name": "With Helper",
+      "description": "Input with helper text",
+      "code": "<Input\n  label=\"Password\"\n  type=\"password\"\n  placeholder=\"Create a password\"\n  helperText=\"Must be at least 8 characters\"\n/>"
+    },
+    {
+      "name": "Error State",
+      "description": "Input showing validation error",
+      "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  value=\"invalid-email\"\n  error\n  helperText=\"Please enter a valid email address\"\n/>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive input",
+      "code": "<Input label=\"Username\" value=\"readonly-user\" disabled />"
+    },
+    {
+      "name": "Required",
+      "description": "Required field with asterisk indicator",
+      "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  placeholder=\"user@example.com\"\n  required\n/>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size variants",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '300px' }}>\n  <Input label=\"Small\" size=\"sm\" placeholder=\"Small input\" />\n  <Input label=\"Medium\" size=\"md\" placeholder=\"Medium input\" />\n  <Input label=\"Large\" size=\"lg\" placeholder=\"Large input\" />\n</div>"
+    },
+    {
+      "name": "Bare Input (Field Composition)",
+      "description": "Disable the built-in wrapper for custom Field composition",
+      "code": "<Input\n  withFieldWrapper={false}\n  aria-label=\"Search\"\n  placeholder=\"Search...\"\n  rootProps={{ 'data-demo': 'bare-input-wrapper' }}\n/>"
+    },
+    {
+      "name": "Shortcut Focus Hotkey",
+      "description": "Display shortcut hint and opt into focus behavior",
+      "code": "<Input\n  label=\"Command Palette\"\n  placeholder=\"Search commands\"\n  shortcut=\"⌘K\"\n  shortcutBehavior=\"focus-input\"\n/>"
+    },
+    {
+      "name": "Success State",
+      "description": "Input showing validated/success styling",
+      "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  value=\"user@example.com\"\n  success\n  helperText=\"Email verified\"\n/>"
+    },
+    {
+      "name": "With Start Adornment",
+      "description": "Input with icon or prefix before the text",
+      "code": "<Input\n  label=\"Price\"\n  placeholder=\"0.00\"\n  startAdornment={<span>$</span>}\n/>"
+    },
+    {
+      "name": "With End Adornment",
+      "description": "Input with icon or suffix after the text",
+      "code": "<Input\n  label=\"Weight\"\n  placeholder=\"0\"\n  endAdornment={<span>kg</span>}\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Textarea",
+      "relationship": "alternative",
+      "note": "Use Textarea for multi-line text input"
+    },
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select when choosing from predefined options"
+    },
+    {
+      "component": "Field",
+      "relationship": "parent",
+      "note": "Use Field for advanced form composition and custom controls"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "type: text|email|password|number|tel|url (default: text)",
+      "value: string - controlled input value",
+      "label: string - accessible label text",
+      "placeholder: string - format hint only",
+      "disabled: boolean - disables interaction",
+      "required: boolean - required field indicator",
+      "error: boolean - shows error styling",
+      "success: boolean - shows success/validated styling",
+      "startAdornment: ReactNode - content before the input (icon or prefix)",
+      "endAdornment: ReactNode - content after the input (icon or suffix)",
+      "helperText: string - helper/error message",
+      "onValueChange: (value: string) => void - value-first change callback alias",
+      "rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props",
+      "withFieldWrapper: boolean - toggle built-in wrapper/label rendering (default: true)",
+      "shortcutBehavior: display-only|focus-input (default: display-only)",
+      "...native input attributes are supported (autoComplete, required, inputMode, pattern, etc.)"
+    ],
+    "a11yRules": [
+      "A11Y_INPUT_LABEL",
+      "A11Y_INPUT_ERROR",
+      "A11Y_INPUT_REQUIRED"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.208Z"
+  }
+}

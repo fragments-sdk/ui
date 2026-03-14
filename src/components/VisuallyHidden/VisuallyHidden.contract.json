@@ -1,0 +1,116 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "VisuallyHidden",
+  "description": "Hides content visually while keeping it accessible to screen readers. Essential for accessible icon-only buttons and supplementary text.",
+  "category": "navigation",
+  "tags": [
+    "accessibility",
+    "a11y",
+    "screen-reader",
+    "hidden",
+    "sr-only"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/VisuallyHidden/index.tsx",
+  "exportName": "VisuallyHidden",
+  "propsSummary": [
+    "children: node (required)",
+    "as: span|div (default: span)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Content to hide visually",
+      "required": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "span",
+      "required": false,
+      "values": [
+        "span",
+        "div"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Providing accessible labels for icon-only buttons",
+      "Adding context that screen readers need but sighted users don't",
+      "Hiding decorative content while providing text alternatives",
+      "Skip links for keyboard navigation"
+    ],
+    "whenNot": [
+      "Hiding content from everyone (use display: none or conditional render)",
+      "Content that should be visible on focus (use focus-visible styles)",
+      "Temporarily hidden content (use proper ARIA attributes)",
+      "Lazy-loaded content (use suspense or loading states)"
+    ],
+    "guidelines": [
+      "Always use with icon-only interactive elements",
+      "Keep hidden text concise but descriptive",
+      "Test with screen readers to verify announcements",
+      "Don't overuse; visible text is often better",
+      "VisuallyHidden forwards DOM props and className to the rendered element"
+    ],
+    "accessibility": [
+      "Content is announced by screen readers",
+      "Content is focusable if interactive elements are inside",
+      "Essential for WCAG 2.1 compliance with icon-only controls",
+      "Must convey equivalent information to visual content"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Icon Button Label",
+      "description": "Accessible label for icon-only button",
+      "code": "<button style={{\n  display: 'inline-flex',\n  alignItems: 'center',\n  justifyContent: 'center',\n  width: '40px',\n  height: '40px',\n  border: '1px solid var(--fui-border-default)',\n  borderRadius: '8px',\n  background: 'var(--fui-color-surface-primary)',\n  cursor: 'pointer'\n}}>\n  <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth=\"2\">\n    <path d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\" />\n  </svg>\n  <VisuallyHidden>Search</VisuallyHidden>\n</button>"
+    },
+    {
+      "name": "Supplementary Text",
+      "description": "Additional context for screen readers",
+      "code": "<a href=\"#\" style={{ color: 'var(--fui-color-accent)' }}>\n  Read more\n  <VisuallyHidden> about our accessibility features</VisuallyHidden>\n</a>"
+    },
+    {
+      "name": "Skip Link",
+      "description": "Navigation aid that becomes visible on focus",
+      "code": "<div>\n  <VisuallyHidden as=\"div\">\n    <a\n      href=\"#main-content\"\n      style={{\n        position: 'absolute',\n        padding: '8px 16px',\n        background: 'var(--fui-color-accent)',\n        color: 'white'\n      }}\n    >\n      Skip to main content\n    </a>\n  </VisuallyHidden>\n  <p style={{ color: 'var(--fui-color-text-tertiary)', fontSize: '14px' }}>\n    (Screen reader only: \"Skip to main content\" link)\n  </p>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "Use inside icon-only buttons for accessible labels"
+    },
+    {
+      "component": "Icon",
+      "relationship": "sibling",
+      "note": "Pair with icons to provide text alternatives"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - hidden text (required)",
+      "as: span|div - HTML element",
+      "Forwards standard DOM props (id, aria-*, data-*, className, handlers)"
+    ],
+    "a11yRules": [
+      "A11Y_SR_ONLY",
+      "A11Y_ICON_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:06.625Z"
+  }
+}

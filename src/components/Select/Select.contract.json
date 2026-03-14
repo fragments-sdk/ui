@@ -1,0 +1,269 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Select",
+  "description": "Dropdown for choosing from a list of options. Use when there are more than 4-5 choices that would clutter the UI.",
+  "category": "forms",
+  "tags": [
+    "select",
+    "dropdown",
+    "form",
+    "options",
+    "picker"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Select/index.tsx",
+  "exportName": "Select",
+  "propsSummary": [
+    "children: node",
+    "value: string",
+    "defaultValue: string",
+    "onValueChange: function",
+    "onChange: function",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "required: boolean",
+    "name: string",
+    "placeholder: string",
+    "options: array",
+    "size: sm|md|lg (default: md)",
+    "className: string",
+    "label: string",
+    "helperText: string",
+    "error: union",
+    "disabled: boolean"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Select trigger and content",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled selected value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default selected value (uncontrolled)",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called when selection changes",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Alias for onValueChange",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state of the dropdown",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Initial open state for uncontrolled usage",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when dropdown open state changes",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Whether a selection is required",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text when no value selected",
+      "required": false
+    },
+    "options": {
+      "type": "array",
+      "description": "Convenience options array for simple selects (alternative to compound Select.Item children)",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "className": {
+      "type": "string",
+      "description": "Wrapper class name",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible label text above the select",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the select",
+      "required": false
+    },
+    "error": {
+      "type": "union",
+      "description": "Show error styling. When a string is provided, it is displayed as an error message.",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the select",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Choosing from a predefined list of options",
+      "More than 4-5 options that would clutter UI as radio buttons",
+      "Space-constrained forms",
+      "When users need to see all options at once"
+    ],
+    "whenNot": [
+      "Very few options (2-3) - use radio buttons",
+      "Users might type custom values - use Combobox",
+      "Multiple selections needed - use Checkbox group or MultiSelect",
+      "Actions, not selection - use Menu"
+    ],
+    "guidelines": [
+      "Include a placeholder that explains what to select",
+      "Use label prop for accessible field labeling",
+      "Use helperText for guidance and error for validation messages",
+      "Group related options with SelectGroup",
+      "Keep option text concise",
+      "Order options logically (alphabetical, by frequency, or by category)"
+    ],
+    "accessibility": [
+      "Full keyboard navigation support",
+      "Type-ahead search within options",
+      "Proper ARIA roles and attributes"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic select dropdown",
+      "code": "<StatefulSelect placeholder=\"Select a fruit\">\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Item value=\"apple\">Apple</Select.Item>\n    <Select.Item value=\"banana\">Banana</Select.Item>\n    <Select.Item value=\"orange\">Orange</Select.Item>\n    <Select.Item value=\"grape\">Grape</Select.Item>\n  </Select.Content>\n</StatefulSelect>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Options organized into groups",
+      "code": "<StatefulSelect placeholder=\"Select a country\">\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Group>\n      <Select.GroupLabel>North America</Select.GroupLabel>\n      <Select.Item value=\"us\">United States</Select.Item>\n      <Select.Item value=\"ca\">Canada</Select.Item>\n      <Select.Item value=\"mx\">Mexico</Select.Item>\n    </Select.Group>\n    <Select.Group>\n      <Select.GroupLabel>Europe</Select.GroupLabel>\n      <Select.Item value=\"uk\">United Kingdom</Select.Item>\n      <Select.Item value=\"de\">Germany</Select.Item>\n      <Select.Item value=\"fr\">France</Select.Item>\n    </Select.Group>\n  </Select.Content>\n</StatefulSelect>"
+    },
+    {
+      "name": "With Label and Helper Text",
+      "description": "Select with built-in label and helper text",
+      "code": "<StatefulSelect\n  label=\"Timezone\"\n  placeholder=\"Select a timezone\"\n  helperText=\"Used for reminders and calendar notifications.\"\n>\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Item value=\"pt\">Pacific Time</Select.Item>\n    <Select.Item value=\"mt\">Mountain Time</Select.Item>\n    <Select.Item value=\"ct\">Central Time</Select.Item>\n    <Select.Item value=\"et\">Eastern Time</Select.Item>\n  </Select.Content>\n</StatefulSelect>"
+    },
+    {
+      "name": "Error State",
+      "description": "Validation error with message",
+      "code": "<Select\n  label=\"Country\"\n  placeholder=\"Select a country\"\n  error=\"Please select a country\"\n>\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Item value=\"us\">United States</Select.Item>\n    <Select.Item value=\"uk\">United Kingdom</Select.Item>\n  </Select.Content>\n</Select>"
+    },
+    {
+      "name": "With Disabled Options",
+      "description": "Some options are disabled",
+      "code": "<StatefulSelect placeholder=\"Select a plan\">\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Item value=\"free\">Free</Select.Item>\n    <Select.Item value=\"pro\">Pro</Select.Item>\n    <Select.Item value=\"enterprise\" disabled>Enterprise (Contact Sales)</Select.Item>\n  </Select.Content>\n</StatefulSelect>"
+    },
+    {
+      "name": "Scrollable List",
+      "description": "Long list with scroll hint — shows 4 items with half-peek of the 5th to indicate more",
+      "code": "<StatefulSelect placeholder=\"Select a timezone\">\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Item value=\"utc-8\">Pacific Time (UTC-8)</Select.Item>\n    <Select.Item value=\"utc-7\">Mountain Time (UTC-7)</Select.Item>\n    <Select.Item value=\"utc-6\">Central Time (UTC-6)</Select.Item>\n    <Select.Item value=\"utc-5\">Eastern Time (UTC-5)</Select.Item>\n    <Select.Item value=\"utc-4\">Atlantic Time (UTC-4)</Select.Item>\n    <Select.Item value=\"utc+0\">GMT (UTC+0)</Select.Item>\n    <Select.Item value=\"utc+1\">Central European (UTC+1)</Select.Item>\n    <Select.Item value=\"utc+5.5\">India Standard (UTC+5:30)</Select.Item>\n    <Select.Item value=\"utc+8\">China Standard (UTC+8)</Select.Item>\n    <Select.Item value=\"utc+9\">Japan Standard (UTC+9)</Select.Item>\n  </Select.Content>\n</StatefulSelect>"
+    },
+    {
+      "name": "Custom Max Visible Items",
+      "description": "Show 6 items before scrolling with half-peek scroll hint",
+      "code": "<StatefulSelect placeholder=\"Select a color\">\n  <Select.Trigger />\n  <Select.Content maxVisibleItems={6}>\n    <Select.Item value=\"red\">Red</Select.Item>\n    <Select.Item value=\"orange\">Orange</Select.Item>\n    <Select.Item value=\"yellow\">Yellow</Select.Item>\n    <Select.Item value=\"green\">Green</Select.Item>\n    <Select.Item value=\"blue\">Blue</Select.Item>\n    <Select.Item value=\"indigo\">Indigo</Select.Item>\n    <Select.Item value=\"violet\">Violet</Select.Item>\n    <Select.Item value=\"pink\">Pink</Select.Item>\n    <Select.Item value=\"teal\">Teal</Select.Item>\n    <Select.Item value=\"cyan\">Cyan</Select.Item>\n  </Select.Content>\n</StatefulSelect>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Disabled select",
+      "code": "<Select disabled placeholder=\"Select an option\">\n  <Select.Trigger />\n  <Select.Content>\n    <Select.Item value=\"1\">Option 1</Select.Item>\n  </Select.Content>\n</Select>"
+    },
+    {
+      "name": "Options Prop",
+      "description": "Convenience API for simple lists without manual Select.Item composition",
+      "code": "<StatefulSelect\n  placeholder=\"Select a team\"\n  options={[\n    { value: 'eng', label: 'Engineering' },\n    { value: 'design', label: 'Design' },\n    { value: 'pm', label: 'Product' },\n  ]}\n>\n  <Select.Trigger />\n  <Select.Content />\n</StatefulSelect>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for action-based dropdowns"
+    },
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Use Input for free-form text entry"
+    },
+    {
+      "component": "Checkbox",
+      "relationship": "alternative",
+      "note": "Use Checkbox group for multiple selections"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string | null - controlled selected value",
+      "onValueChange: (value: string | null) => void - selection handler",
+      "onChange: (value: string | null) => void - alias for onValueChange",
+      "label: string - visible label text",
+      "helperText: string - helper text below field",
+      "error: boolean | string - error styling and message",
+      "placeholder: string - placeholder text",
+      "disabled: boolean - disable select",
+      "size: sm|md|lg (default: md)",
+      "options: SelectOption[] - convenience API for simple option lists",
+      "maxVisibleItems: number - max visible options before scrolling (default 4)"
+    ],
+    "a11yRules": [
+      "A11Y_SELECT_KEYBOARD",
+      "A11Y_SELECT_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Item",
+      "Group",
+      "GroupLabel"
+    ],
+    "requiredChildren": [
+      "Trigger",
+      "Content"
+    ],
+    "commonPatterns": [
+      "<Select placeholder=\"Select option\"><Select.Trigger /><Select.Content><Select.Item value=\"opt1\">{label1}</Select.Item><Select.Item value=\"opt2\">{label2}</Select.Item></Select.Content></Select>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:03.116Z"
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Stack",
+  "description": "Flexible layout component for arranging children in rows or columns with consistent spacing. Supports responsive direction and gap.",
+  "category": "layout",
+  "tags": [
+    "stack",
+    "layout",
+    "flex",
+    "spacing",
+    "responsive"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Stack/index.tsx",
+  "exportName": "Stack",
+  "propsSummary": [
+    "children: node (required)",
+    "direction: union (default: column)",
+    "gap: union (default: md)",
+    "align: start|center|end|stretch|baseline",
+    "justify: start|center|end|between",
+    "wrap: boolean (default: false)",
+    "separator: node",
+    "as: div|section|nav|article|aside|header|footer|main|ul|ol (default: div)",
+    "className: string",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Elements to arrange",
+      "required": true
+    },
+    "direction": {
+      "type": "union",
+      "description": "Stack direction: \"row\", \"column\", or responsive object",
+      "default": "column",
+      "required": false
+    },
+    "gap": {
+      "type": "union",
+      "description": "Spacing between items: \"none\"|\"xs\"|\"sm\"|\"md\"|\"lg\"|\"xl\", a number (1-8) for space scale, or responsive object",
+      "default": "md",
+      "required": false
+    },
+    "align": {
+      "type": "enum",
+      "description": "Cross-axis alignment",
+      "required": false,
+      "values": [
+        "start",
+        "center",
+        "end",
+        "stretch",
+        "baseline"
+      ]
+    },
+    "justify": {
+      "type": "enum",
+      "description": "Main-axis alignment",
+      "required": false,
+      "values": [
+        "start",
+        "center",
+        "end",
+        "between"
+      ]
+    },
+    "wrap": {
+      "type": "boolean",
+      "description": "Allow items to wrap",
+      "default": "false",
+      "required": false
+    },
+    "separator": {
+      "type": "node",
+      "description": "Render a separator between children. true = default 1px line, or pass a ReactNode for custom separators.",
+      "required": false
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "div",
+      "required": false,
+      "values": [
+        "div",
+        "section",
+        "nav",
+        "article",
+        "aside",
+        "header",
+        "footer",
+        "main",
+        "ul",
+        "ol"
+      ]
+    },
+    "className": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Arranging elements in a row or column",
+      "Creating consistent spacing between items",
+      "Building responsive layouts",
+      "Simple flexbox-based arrangements"
+    ],
+    "whenNot": [
+      "Complex grid layouts (use Grid)",
+      "Button-specific grouping (use ButtonGroup)",
+      "Page-level layout (use AppShell)"
+    ],
+    "guidelines": [
+      "Use semantic elements via the \"as\" prop when appropriate",
+      "Leverage responsive props for mobile-first layouts",
+      "Keep spacing consistent within related sections",
+      "Consider alignment for visual balance",
+      "Pass DOM attributes (id, role, aria-*, data-*, event handlers) directly to Stack root when needed"
+    ],
+    "accessibility": [
+      "Use semantic elements (nav, section, etc.) via \"as\" prop",
+      "Maintains source order for screen readers",
+      "No accessibility concerns with visual arrangement"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Vertical Stack",
+      "description": "Default column layout",
+      "code": "<Stack gap=\"sm\">\n  <Badge>Item 1</Badge>\n  <Badge>Item 2</Badge>\n  <Badge>Item 3</Badge>\n</Stack>"
+    },
+    {
+      "name": "Horizontal Stack",
+      "description": "Row layout",
+      "code": "<Stack direction=\"row\" gap=\"sm\">\n  <Badge>Item 1</Badge>\n  <Badge>Item 2</Badge>\n  <Badge>Item 3</Badge>\n</Stack>"
+    },
+    {
+      "name": "Gap Sizes",
+      "description": "Different spacing options",
+      "code": "<Stack gap=\"lg\">\n  <Stack direction=\"row\" gap=\"xs\">\n    <Badge variant=\"info\">XS</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\">\n    <Badge variant=\"info\">SM</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"md\">\n    <Badge variant=\"info\">MD</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"lg\">\n    <Badge variant=\"info\">LG</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n</Stack>"
+    },
+    {
+      "name": "Numeric Gap",
+      "description": "Using number values (1-8) mapped to the spacing scale",
+      "code": "<Stack gap=\"lg\">\n  <Stack direction=\"row\" gap={2}>\n    <Badge variant=\"info\">Gap 2</Badge>\n    <Badge variant=\"info\">Gap 2</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap={4}>\n    <Badge variant=\"info\">Gap 4</Badge>\n    <Badge variant=\"info\">Gap 4</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap={6}>\n    <Badge variant=\"info\">Gap 6</Badge>\n    <Badge variant=\"info\">Gap 6</Badge>\n  </Stack>\n</Stack>"
+    },
+    {
+      "name": "Alignment",
+      "description": "Cross-axis and main-axis alignment",
+      "code": "<Stack gap=\"md\">\n  <Stack direction=\"row\" gap=\"sm\" justify=\"between\" style={{ width: '200px', padding: '8px', background: 'var(--fui-bg-secondary)', borderRadius: '4px' }}>\n    <Badge>Start</Badge>\n    <Badge>End</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\" justify=\"center\" style={{ width: '200px', padding: '8px', background: 'var(--fui-bg-secondary)', borderRadius: '4px' }}>\n    <Badge>Centered</Badge>\n  </Stack>\n</Stack>"
+    },
+    {
+      "name": "Responsive",
+      "description": "Direction changes at breakpoints",
+      "code": "<Stack\n  direction={{ base: 'column', md: 'row' }}\n  gap={{ base: 'sm', md: 'lg' }}\n>\n  <Button variant=\"secondary\">First</Button>\n  <Button variant=\"secondary\">Second</Button>\n  <Button variant=\"secondary\">Third</Button>\n</Stack>"
+    },
+    {
+      "name": "With Separator",
+      "description": "Default line separator between items",
+      "code": "<Stack gap=\"md\" separator>\n  <div>Section One</div>\n  <div>Section Two</div>\n  <div>Section Three</div>\n</Stack>"
+    },
+    {
+      "name": "Semantic Element",
+      "description": "Using nav element for navigation",
+      "code": "<Stack as=\"nav\" direction=\"row\" gap=\"md\">\n  <Button variant=\"ghost\" size=\"sm\">Home</Button>\n  <Button variant=\"ghost\" size=\"sm\">About</Button>\n  <Button variant=\"ghost\" size=\"sm\">Contact</Button>\n</Stack>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Grid",
+      "relationship": "alternative",
+      "note": "Use Grid for complex 2D layouts"
+    },
+    {
+      "component": "ButtonGroup",
+      "relationship": "sibling",
+      "note": "ButtonGroup is specialized for buttons"
+    },
+    {
+      "component": "Box",
+      "relationship": "sibling",
+      "note": "Box for single-element styling"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "direction: row|column|{responsive} - stack direction",
+      "gap: none|xs|sm|md|lg|xl|number|{responsive} - spacing (number maps to space scale)",
+      "align: start|center|end|stretch|baseline - cross-axis",
+      "justify: start|center|end|between - main-axis",
+      "wrap: boolean - allow wrapping",
+      "separator: boolean|ReactNode - divider between children",
+      "as: string - HTML element",
+      "Pass-through DOM props supported on the root (id, role, aria-*, data-*, handlers)"
+    ],
+    "a11yRules": [
+      "A11Y_SEMANTIC_ELEMENTS"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.310Z"
+  }
+}

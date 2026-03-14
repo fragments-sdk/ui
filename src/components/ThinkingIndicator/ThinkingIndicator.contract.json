@@ -1,0 +1,165 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "ThinkingIndicator",
+  "description": "Animated indicator showing AI is processing",
+  "category": "ai",
+  "tags": [
+    "thinking",
+    "loading",
+    "ai",
+    "processing",
+    "indicator",
+    "animation"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/ThinkingIndicator/index.tsx",
+  "exportName": "ThinkingIndicator",
+  "propsSummary": [
+    "active: boolean (default: true)",
+    "label: string (default: Thinking...)",
+    "variant: dots|pulse|spinner (default: dots)",
+    "showElapsed: boolean (default: false)",
+    "steps: array"
+  ],
+  "props": {
+    "active": {
+      "type": "boolean",
+      "description": "Whether thinking is active",
+      "default": "true",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Status text",
+      "default": "Thinking...",
+      "required": false
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Animation style",
+      "default": "dots",
+      "required": false,
+      "values": [
+        "dots",
+        "pulse",
+        "spinner"
+      ]
+    },
+    "showElapsed": {
+      "type": "boolean",
+      "description": "Show elapsed time",
+      "default": "false",
+      "required": false
+    },
+    "steps": {
+      "type": "array",
+      "description": "Multi-step progress array",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "AI is processing a request and generating a response",
+      "Need visual feedback during async AI operations",
+      "Want to show multi-step progress for complex AI tasks",
+      "Indicating streaming is about to begin"
+    ],
+    "whenNot": [
+      "Simple loading states (use Progress or Skeleton)",
+      "Form submission loading (use Button loading state)",
+      "Page-level loading (use Progress or Skeleton)"
+    ],
+    "guidelines": [
+      "Use active prop to control visibility",
+      "Choose variant based on context (dots for chat, spinner for actions)",
+      "Enable showElapsed for longer operations",
+      "Use steps for multi-step AI workflows (tool calls, research)"
+    ],
+    "accessibility": [
+      "Uses role=\"status\" and aria-live=\"polite\"",
+      "Provides aria-label for screen readers",
+      "Animations respect prefers-reduced-motion",
+      "Elapsed time uses tabular numbers for stability"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Dots (Default)",
+      "description": "Bouncing dots animation",
+      "code": "<ThinkingIndicator variant=\"dots\" label=\"Thinking...\" />"
+    },
+    {
+      "name": "Pulse",
+      "description": "Pulsing ring animation",
+      "code": "<ThinkingIndicator variant=\"pulse\" label=\"Processing...\" />"
+    },
+    {
+      "name": "Spinner",
+      "description": "Rotating spinner animation",
+      "code": "<ThinkingIndicator variant=\"spinner\" label=\"Loading...\" />"
+    },
+    {
+      "name": "With Elapsed Time",
+      "description": "Shows time since started",
+      "code": "<ThinkingIndicator\n  variant=\"dots\"\n  label=\"Generating response...\"\n  showElapsed\n/>"
+    },
+    {
+      "name": "Multi-Step Progress",
+      "description": "Shows progress through multiple steps",
+      "code": "<ThinkingIndicator\n  variant=\"spinner\"\n  label=\"Working...\"\n  steps={[\n    { id: '1', label: 'Analyzing request', status: 'complete' },\n    { id: '2', label: 'Searching knowledge base', status: 'active' },\n    { id: '3', label: 'Generating response', status: 'pending' },\n  ]}\n/>"
+    },
+    {
+      "name": "With Error Step",
+      "description": "Shows a step that encountered an error",
+      "code": "<ThinkingIndicator\n  variant=\"spinner\"\n  label=\"Retrying...\"\n  steps={[\n    { id: '1', label: 'Connecting to API', status: 'complete' },\n    { id: '2', label: 'Fetching data', status: 'error' },\n    { id: '3', label: 'Retrying with fallback', status: 'active' },\n  ]}\n/>"
+    },
+    {
+      "name": "Custom Label",
+      "description": "Custom status text",
+      "code": "<ThinkingIndicator\n  variant=\"dots\"\n  label=\"Claude is writing code...\"\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Message",
+      "relationship": "sibling",
+      "note": "Show ThinkingIndicator while waiting for assistant message"
+    },
+    {
+      "component": "ConversationList",
+      "relationship": "parent",
+      "note": "Typically placed at bottom of ConversationList"
+    },
+    {
+      "component": "Progress",
+      "relationship": "alternative",
+      "note": "Use Progress for determinate progress"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "active: boolean - whether indicator is visible (default: true)",
+      "label: string - status text (default: \"Thinking...\")",
+      "variant: \"dots\" | \"pulse\" | \"spinner\" - animation style",
+      "showElapsed: boolean - show elapsed time",
+      "steps: ThinkingStep[] - multi-step progress"
+    ],
+    "a11yRules": [
+      "A11Y_ARIA_LIVE",
+      "A11Y_MOTION_PREFERENCE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Steps",
+      "Step"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.747Z"
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Switch",
+  "description": "Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly.",
+  "category": "forms",
+  "tags": [
+    "switch",
+    "toggle",
+    "boolean",
+    "settings",
+    "preference"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Toggle/index.tsx",
+  "exportName": "Switch",
+  "propsSummary": [
+    "checked: boolean",
+    "defaultChecked: boolean",
+    "onCheckedChange: function",
+    "onChange: function",
+    "label: string",
+    "helperText: string",
+    "description: string",
+    "disabled: boolean (default: false)",
+    "size: sm|md|lg (default: md)",
+    "className: string",
+    "name: string",
+    "id: string",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string"
+  ],
+  "props": {
+    "checked": {
+      "type": "boolean",
+      "description": "Whether the switch is in the on state",
+      "default": "false",
+      "required": false
+    },
+    "defaultChecked": {
+      "type": "boolean",
+      "description": "Default checked state (uncontrolled)",
+      "required": false
+    },
+    "onCheckedChange": {
+      "type": "function",
+      "description": "Called when the switch is toggled: (checked: boolean) => void",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Alias for onCheckedChange: (checked: boolean) => void",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible label text",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the label (preferred)",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "description": "Deprecated alias for helperText",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Whether the switch is non-interactive",
+      "default": "false",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Switch track size",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "className": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "id": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Binary settings that take effect immediately (e.g., dark mode, notifications)",
+      "Enabling/disabling features in a settings panel",
+      "Options where the result is immediately visible",
+      "Mobile-friendly boolean inputs"
+    ],
+    "whenNot": [
+      "Multiple options in a group (use checkbox group)",
+      "Selection requires form submission to take effect (use checkbox)",
+      "Yes/No questions in forms (use radio buttons)",
+      "Complex multi-state options (use select or radio)"
+    ],
+    "guidelines": [
+      "Switch should always have a visible label explaining what it controls",
+      "The \"on\" state should be the positive/enabling action",
+      "Changes should take effect immediately - no save button needed",
+      "Include helperText for switches whose effect isn't obvious from the label",
+      "Group related switches visually in settings panels"
+    ],
+    "accessibility": [
+      "Uses role=\"switch\" with aria-checked for proper semantics",
+      "Must have an accessible label (visible or aria-label)",
+      "Focus indicator must be clearly visible",
+      "State change must be announced by screen readers"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default Off",
+      "description": "Switch in the off state",
+      "code": "<StatefulSwitch label=\"Email notifications\" />",
+      "args": {
+        "label": "Email notifications"
+      }
+    },
+    {
+      "name": "Checked",
+      "description": "Switch in the on state",
+      "code": "<StatefulSwitch checked label=\"Dark mode\" />",
+      "args": {
+        "checked": true,
+        "label": "Dark mode"
+      }
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Switch with explanatory helper text",
+      "code": "<StatefulSwitch\n  checked\n  label=\"Auto-save\"\n  helperText=\"Automatically save changes as you type\"\n/>",
+      "args": {
+        "checked": true,
+        "label": "Auto-save",
+        "helperText": "Automatically save changes as you type"
+      }
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size variants",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <StatefulSwitch size=\"sm\" checked label=\"Small switch\" />\n  <StatefulSwitch size=\"md\" checked label=\"Medium switch (default)\" />\n  <StatefulSwitch size=\"lg\" checked label=\"Large switch\" />\n</div>"
+    },
+    {
+      "name": "Disabled States",
+      "description": "Non-interactive switches showing both states",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Switch disabled label=\"Premium feature (upgrade required)\" />\n  <Switch disabled checked label=\"System managed (read-only)\" />\n</div>"
+    },
+    {
+      "name": "Settings Panel",
+      "description": "Multiple switches in a realistic settings layout",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '320px' }}>\n  <StatefulSwitch\n    checked\n    label=\"Push notifications\"\n    helperText=\"Receive push notifications on your device\"\n  />\n  <StatefulSwitch\n    checked\n    label=\"Email digest\"\n    helperText=\"Weekly summary of your activity\"\n  />\n  <StatefulSwitch\n    label=\"Marketing emails\"\n    helperText=\"Product updates and promotional offers\"\n  />\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Input handles text/number entry; Switch handles boolean state"
+    },
+    {
+      "component": "Checkbox",
+      "relationship": "alternative",
+      "note": "Use Checkbox when change requires form submission"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "checked: boolean - on/off state",
+      "onCheckedChange: (checked) => void - state change handler",
+      "onChange: (checked) => void - alias for onCheckedChange",
+      "label: string - visible label text",
+      "helperText: string - helper text below label (preferred)",
+      "description: string - deprecated alias for helperText",
+      "disabled: boolean - non-interactive state",
+      "size: sm|md|lg - switch size"
+    ],
+    "a11yRules": [
+      "A11Y_SWITCH_ROLE",
+      "A11Y_SWITCH_LABEL",
+      "A11Y_SWITCH_FOCUS",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:06.429Z"
+  }
+}

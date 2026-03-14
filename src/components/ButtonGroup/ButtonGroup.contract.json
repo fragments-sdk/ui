@@ -1,0 +1,140 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "ButtonGroup",
+  "description": "Groups related buttons together with consistent spacing and alignment. Useful for action bars, toolbars, and related button sets.",
+  "category": "forms",
+  "tags": [
+    "button",
+    "group",
+    "toolbar",
+    "actions",
+    "layout"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/ButtonGroup/index.tsx",
+  "exportName": "ButtonGroup",
+  "propsSummary": [
+    "children: node (required)",
+    "gap: none|xs|sm|md (default: sm)",
+    "wrap: boolean (default: false)",
+    "align: start|center|end"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Button elements to group together",
+      "required": true
+    },
+    "gap": {
+      "type": "enum",
+      "description": "Spacing between buttons",
+      "default": "sm",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md"
+      ]
+    },
+    "wrap": {
+      "type": "boolean",
+      "description": "Allow buttons to wrap to next line",
+      "default": "false",
+      "required": false
+    },
+    "align": {
+      "type": "enum",
+      "description": "Alignment of buttons",
+      "required": false,
+      "values": [
+        "start",
+        "center",
+        "end"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Grouping related actions together",
+      "Creating toolbars or action bars",
+      "Form submit/cancel button pairs",
+      "Pagination controls"
+    ],
+    "whenNot": [
+      "Unrelated buttons (use Stack instead)",
+      "Navigation links (use nav element)",
+      "Single button (no grouping needed)"
+    ],
+    "guidelines": [
+      "Keep button groups focused on related actions",
+      "Use consistent button variants within a group",
+      "Consider visual hierarchy - primary action should stand out",
+      "Limit to 2-4 buttons per group for clarity",
+      "Pass role/aria-label/id/data-* directly to ButtonGroup when you need semantic grouping hooks"
+    ],
+    "accessibility": [
+      "Group provides semantic relationship between buttons",
+      "Each button remains individually focusable",
+      "Consider using role=\"group\" with aria-label for screen readers"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic button group with default spacing",
+      "code": "<ButtonGroup>\n  <Button variant=\"secondary\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+    },
+    {
+      "name": "Gap Variants",
+      "description": "Different spacing options",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  <ButtonGroup gap=\"none\">\n    <Button variant=\"secondary\" size=\"sm\">None</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"xs\">\n    <Button variant=\"secondary\" size=\"sm\">XS</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"sm\">\n    <Button variant=\"secondary\" size=\"sm\">SM</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"md\">\n    <Button variant=\"secondary\" size=\"sm\">MD</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n</div>"
+    },
+    {
+      "name": "Alignment",
+      "description": "Different alignment options",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '300px' }}>\n  <ButtonGroup align=\"start\">\n    <Button variant=\"secondary\" size=\"sm\">Start</Button>\n    <Button variant=\"secondary\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n  <ButtonGroup align=\"center\">\n    <Button variant=\"secondary\" size=\"sm\">Center</Button>\n    <Button variant=\"secondary\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n  <ButtonGroup align=\"end\">\n    <Button variant=\"secondary\" size=\"sm\">End</Button>\n    <Button variant=\"secondary\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n</div>"
+    },
+    {
+      "name": "Form Actions",
+      "description": "Common pattern for form submit/cancel",
+      "code": "<ButtonGroup align=\"end\" role=\"group\" aria-label=\"Form actions\">\n  <Button variant=\"ghost\">Cancel</Button>\n  <Button variant=\"primary\">Submit</Button>\n</ButtonGroup>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "ButtonGroup contains Button components"
+    },
+    {
+      "component": "Stack",
+      "relationship": "alternative",
+      "note": "Use Stack for more general layout needs"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - buttons to group",
+      "gap: none|xs|sm|md - spacing between buttons",
+      "wrap: boolean - allow wrapping",
+      "align: start|center|end - alignment",
+      "Pass-through DOM props supported on root (id, role, aria-*, data-*, handlers)"
+    ],
+    "a11yRules": [
+      "A11Y_GROUP_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.693Z"
+  }
+}

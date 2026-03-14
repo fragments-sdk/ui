@@ -1,0 +1,180 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Link",
+  "description": "Styled anchor element for navigation. Supports internal and external links with consistent visual treatment.",
+  "category": "navigation",
+  "tags": [
+    "link",
+    "anchor",
+    "navigation",
+    "href",
+    "url"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Link/index.tsx",
+  "exportName": "Link",
+  "propsSummary": [
+    "children: node (required)",
+    "variant: default|subtle|muted (default: default)",
+    "underline: always|hover|none (default: hover)",
+    "external: boolean (default: false)",
+    "asChild: boolean (default: false)",
+    "className: string",
+    "style: object",
+    "target: union",
+    "rel: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Link text content",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style variant",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "subtle",
+        "muted"
+      ]
+    },
+    "underline": {
+      "type": "enum",
+      "description": "Underline behavior",
+      "default": "hover",
+      "required": false,
+      "values": [
+        "always",
+        "hover",
+        "none"
+      ]
+    },
+    "external": {
+      "type": "boolean",
+      "description": "Opens in new tab with noopener noreferrer",
+      "default": "false",
+      "required": false
+    },
+    "asChild": {
+      "type": "boolean",
+      "description": "Render as child element (polymorphic). Merges link props/classes and composes event handlers onto the single child (e.g. Next.js Link).",
+      "default": "false",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Inline styles",
+      "required": false
+    },
+    "target": {
+      "type": "union",
+      "description": "",
+      "required": false
+    },
+    "rel": {
+      "type": "string",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Inline text links within paragraphs",
+      "Navigation links in footers or sidebars",
+      "\"Forgot password?\" or \"Sign up\" links in forms",
+      "External links to documentation or resources"
+    ],
+    "whenNot": [
+      "Primary call-to-action (use Button instead)",
+      "Navigation tabs (use Tabs component)",
+      "Menu items in dropdowns (use Menu component)",
+      "Cards that link to detail pages should still use real link semantics (Link or anchor inside Card)"
+    ],
+    "guidelines": [
+      "Link text should describe the destination, not \"click here\"",
+      "Use external prop for links that open in new tabs",
+      "Use subtle variant for secondary/contextual links",
+      "Ensure links are distinguishable from regular text",
+      "When using asChild, Link composes event handlers with the child instead of overwriting them"
+    ],
+    "accessibility": [
+      "Link text must be descriptive of the destination",
+      "External links should indicate they open in new window",
+      "Links must have visible focus indicators",
+      "Avoid using links that look like buttons without button semantics"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Standard link with hover underline",
+      "code": "<Link href=\"#\">Learn more about our services</Link>"
+    },
+    {
+      "name": "Variants",
+      "description": "Visual style options",
+      "code": "<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>\n  <Link href=\"#\" variant=\"default\">Default</Link>\n  <Link href=\"#\" variant=\"subtle\">Subtle</Link>\n  <Link href=\"#\" variant=\"muted\">Muted</Link>\n</div>"
+    },
+    {
+      "name": "Underline Styles",
+      "description": "Different underline behaviors",
+      "code": "<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>\n  <Link href=\"#\" underline=\"always\">Always underlined</Link>\n  <Link href=\"#\" underline=\"hover\">Underline on hover</Link>\n  <Link href=\"#\" underline=\"none\">No underline</Link>\n</div>"
+    },
+    {
+      "name": "External Link",
+      "description": "Link that opens in new tab",
+      "code": "<Link href=\"https://example.com\" external>\n  View documentation ↗\n</Link>"
+    },
+    {
+      "name": "As Child (Polymorphic)",
+      "description": "Renders as a custom element while applying Link styles and composing handlers. Useful with Next.js Link for client-side navigation.",
+      "code": "<Link asChild variant=\"subtle\" onClick={() => {}}>\n  <button type=\"button\" onClick={() => alert('Navigated!')}>\n    Polymorphic link as button\n  </button>\n</Link>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "alternative",
+      "note": "Use Button for primary actions, Link for navigation"
+    },
+    {
+      "component": "Text",
+      "relationship": "parent",
+      "note": "Links often appear within Text components"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - link text (required)",
+      "href: string - destination URL",
+      "variant: default|subtle|muted - visual style",
+      "underline: always|hover|none - underline behavior",
+      "external: boolean - opens in new tab",
+      "asChild: boolean - polymorphic child rendering with merged styles and composed event handlers"
+    ],
+    "a11yRules": [
+      "A11Y_LINK_TEXT",
+      "A11Y_LINK_FOCUS"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.546Z"
+  }
+}

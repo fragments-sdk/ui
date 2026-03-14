@@ -1,0 +1,187 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Badge",
+  "description": "Compact label for status, counts, or categorization. Draws attention to metadata without dominating the layout.",
+  "category": "display",
+  "tags": [
+    "status",
+    "label",
+    "tag",
+    "count",
+    "chip"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Badge/index.tsx",
+  "exportName": "Badge",
+  "propsSummary": [
+    "children: node (required)",
+    "variant: default|success|warning|error|info|outline (default: default)",
+    "size: sm|md|lg (default: md)",
+    "dot: boolean (default: false)",
+    "icon: node",
+    "onRemove: function",
+    "announce: boolean (default: false)",
+    "role: union"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Badge label text",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style indicating severity or category",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "success",
+        "warning",
+        "error",
+        "info",
+        "outline"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Badge size",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "dot": {
+      "type": "boolean",
+      "description": "Show a colored dot indicator before the label",
+      "default": "false",
+      "required": false
+    },
+    "icon": {
+      "type": "node",
+      "description": "Optional icon element before the text",
+      "required": false
+    },
+    "onRemove": {
+      "type": "function",
+      "description": "Makes the badge removable. Called when X is clicked.",
+      "required": false
+    },
+    "announce": {
+      "type": "boolean",
+      "description": "Opt into role=\"status\" live announcement semantics",
+      "default": "false",
+      "required": false
+    },
+    "role": {
+      "type": "union",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Showing item status (active, pending, archived)",
+      "Displaying counts or quantities inline",
+      "Categorizing or tagging content",
+      "Highlighting new or updated items"
+    ],
+    "whenNot": [
+      "Conveying critical errors (use Alert instead)",
+      "Long-form status messages (use Alert)",
+      "Interactive filtering (use Chip/ToggleGroup)",
+      "Navigation labels (use Tabs or links)"
+    ],
+    "guidelines": [
+      "Keep badge text under 20 characters",
+      "Use dot variant for live status indicators",
+      "Pair success/error variants with meaningful labels, not just colors",
+      "Use onRemove for user-created tags only, not system-generated badges",
+      "Badges are not announced as live status updates by default; use announce for screen-reader status announcements when appropriate"
+    ],
+    "accessibility": [
+      "Badge text must be meaningful without relying on color alone",
+      "Removable badges must have accessible dismiss button labels",
+      "Avoid using badges as the sole indicator of important state changes"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Neutral badge for general labels",
+      "code": "import { Badge } from '@/components/Badge';\n\n<Badge>Default</Badge>"
+    },
+    {
+      "name": "Status Variants",
+      "description": "All severity variants for different contexts",
+      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"default\">Default</Badge>\n  <Badge variant=\"success\">Active</Badge>\n  <Badge variant=\"warning\">Pending</Badge>\n  <Badge variant=\"error\">Failed</Badge>\n  <Badge variant=\"info\">New</Badge>\n</Stack>"
+    },
+    {
+      "name": "With Dot",
+      "description": "Live status indicators using dot prefix",
+      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"success\" dot>Online</Badge>\n  <Badge variant=\"warning\" dot>Away</Badge>\n  <Badge variant=\"error\" dot>Offline</Badge>\n</Stack>"
+    },
+    {
+      "name": "Announced Status",
+      "description": "Opt into screen-reader status announcement behavior",
+      "code": "import { Badge } from '@/components/Badge';\n\n<Badge variant=\"success\" announce>Saved</Badge>"
+    },
+    {
+      "name": "Outline",
+      "description": "Minimal bordered badge for neutral emphasis",
+      "code": "import { Badge } from '@/components/Badge';\n\n<Badge variant=\"outline\">Outline</Badge>"
+    },
+    {
+      "name": "Small Size",
+      "description": "Compact badges for dense UIs",
+      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Badge size=\"sm\" variant=\"info\">v2.1</Badge>\n  <Badge size=\"sm\" variant=\"success\">Stable</Badge>\n  <Badge size=\"md\" variant=\"info\">Standard</Badge>\n</Stack>"
+    },
+    {
+      "name": "Removable",
+      "description": "User-created tags that can be dismissed",
+      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"info\" onRemove={() => {}}>React</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>TypeScript</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>CSS</Badge>\n</Stack>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Alert",
+      "relationship": "alternative",
+      "note": "Use Alert for prominent, longer messages with actions"
+    },
+    {
+      "component": "Chip",
+      "relationship": "sibling",
+      "note": "Chip is interactive (clickable/filterable); Badge is display-only"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - badge label (required)",
+      "variant: default|success|warning|error|info|outline - visual style",
+      "size: sm|md - badge size",
+      "dot: boolean - show status dot indicator",
+      "onRemove: () => void - makes badge removable",
+      "announce: boolean - opt into role=\"status\" + auto status aria-label"
+    ],
+    "a11yRules": [
+      "A11Y_BADGE_CONTRAST",
+      "A11Y_BADGE_DISMISS",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.941Z"
+  }
+}

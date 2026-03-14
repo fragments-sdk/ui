@@ -1,0 +1,209 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Image",
+  "description": "Responsive image component with aspect ratio control, loading states, and error fallbacks. Handles image display with consistent styling.",
+  "category": "display",
+  "tags": [
+    "image",
+    "media",
+    "photo",
+    "picture",
+    "visual"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Image/index.tsx",
+  "exportName": "Image",
+  "propsSummary": [
+    "src: string (required)",
+    "alt: string (required)",
+    "aspectRatio: 1:1|4:3|16:9|21:9|auto (default: auto)",
+    "objectFit: cover|contain|fill|none (default: cover)",
+    "width: union",
+    "height: union",
+    "rounded: none|sm|md|lg|full (default: none)",
+    "fallback: node",
+    "className: string",
+    "style: object",
+    "imgProps: object",
+    "onImageLoad: function",
+    "onImageError: function"
+  ],
+  "props": {
+    "src": {
+      "type": "string",
+      "description": "Image source URL",
+      "required": true
+    },
+    "alt": {
+      "type": "string",
+      "description": "Alt text for accessibility (required)",
+      "required": true
+    },
+    "aspectRatio": {
+      "type": "enum",
+      "description": "Aspect ratio of the image container",
+      "default": "auto",
+      "required": false,
+      "values": [
+        "1:1",
+        "4:3",
+        "16:9",
+        "21:9",
+        "auto"
+      ]
+    },
+    "objectFit": {
+      "type": "enum",
+      "description": "How the image fits within its container",
+      "default": "cover",
+      "required": false,
+      "values": [
+        "cover",
+        "contain",
+        "fill",
+        "none"
+      ]
+    },
+    "width": {
+      "type": "union",
+      "description": "Width of the image container",
+      "required": false
+    },
+    "height": {
+      "type": "union",
+      "description": "Height of the image container",
+      "required": false
+    },
+    "rounded": {
+      "type": "enum",
+      "description": "Border radius",
+      "default": "none",
+      "required": false,
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg",
+        "full"
+      ]
+    },
+    "fallback": {
+      "type": "node",
+      "description": "Content to show while loading or on error",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Inline styles",
+      "required": false
+    },
+    "imgProps": {
+      "type": "object",
+      "description": "Additional props for the underlying img element (except src/alt/size/style/events)",
+      "required": false
+    },
+    "onImageLoad": {
+      "type": "function",
+      "description": "Called when the underlying img element loads",
+      "required": false
+    },
+    "onImageError": {
+      "type": "function",
+      "description": "Called when the underlying img element fails to load",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying product images in cards or grids",
+      "Hero images with specific aspect ratios",
+      "User-uploaded content that may fail to load",
+      "Thumbnails in lists or galleries"
+    ],
+    "whenNot": [
+      "User avatars (use Avatar component)",
+      "Icons or symbols (use Icon component)",
+      "Background images (use CSS background-image)",
+      "SVG illustrations (use inline SVG or Image component)"
+    ],
+    "guidelines": [
+      "Always provide meaningful alt text for accessibility",
+      "Use appropriate aspect ratios for consistent layouts",
+      "Provide fallback content for failed loads",
+      "Use objectFit=\"contain\" for logos to preserve aspect ratio",
+      "Use imgProps / onImageLoad / onImageError when you need lower-level img control"
+    ],
+    "accessibility": [
+      "Alt text is required and must describe the image content",
+      "Decorative images should have empty alt=\"\"",
+      "Avoid text in images; if necessary, describe the text in alt",
+      "Ensure sufficient contrast between image and surrounding content"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic image display",
+      "code": "<Image\n  src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop\"\n  alt=\"Code on a screen\"\n  width={300}\n/>"
+    },
+    {
+      "name": "Aspect Ratios",
+      "description": "Different aspect ratio options",
+      "code": "<div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop\"\n    alt=\"Square image\"\n    aspectRatio=\"1:1\"\n    width={100}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=150&fit=crop\"\n    alt=\"4:3 image\"\n    aspectRatio=\"4:3\"\n    width={120}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=320&h=180&fit=crop\"\n    alt=\"16:9 image\"\n    aspectRatio=\"16:9\"\n    width={160}\n  />\n</div>"
+    },
+    {
+      "name": "Rounded Corners",
+      "description": "Border radius options",
+      "code": "<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop\"\n    alt=\"No rounding\"\n    rounded=\"none\"\n    width={80}\n    height={80}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop\"\n    alt=\"Medium rounding\"\n    rounded=\"md\"\n    width={80}\n    height={80}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop\"\n    alt=\"Full rounding\"\n    rounded=\"full\"\n    width={80}\n    height={80}\n  />\n</div>"
+    },
+    {
+      "name": "With Fallback",
+      "description": "Fallback content for loading/error states",
+      "code": "<Image\n  src=\"https://invalid-url.example/image.jpg\"\n  alt=\"Image that will fail\"\n  width={200}\n  height={150}\n  rounded=\"md\"\n  fallback={\n    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: 'var(--fui-color-surface-secondary)' }}>\n      <span style={{ color: 'var(--fui-color-text-tertiary)' }}>No image</span>\n    </div>\n  }\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "child",
+      "note": "Common pattern to use Image at top of product cards"
+    },
+    {
+      "component": "Avatar",
+      "relationship": "alternative",
+      "note": "Use Avatar for user profile pictures"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "src: string - image URL (required)",
+      "alt: string - accessibility text (required)",
+      "aspectRatio: 1:1|4:3|16:9|21:9|auto - container ratio",
+      "objectFit: cover|contain|fill|none - image fitting",
+      "rounded: none|sm|md|lg|full - border radius",
+      "fallback: ReactNode - loading/error content",
+      "imgProps/onImageLoad/onImageError - low-level img customization and events"
+    ],
+    "a11yRules": [
+      "A11Y_IMG_ALT",
+      "A11Y_IMG_DECORATIVE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.379Z"
+  }
+}

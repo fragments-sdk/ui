@@ -1,0 +1,423 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Box",
+  "description": "Primitive layout component for applying spacing, backgrounds, and borders. A flexible container for building custom layouts.",
+  "category": "layout",
+  "tags": [
+    "layout",
+    "container",
+    "spacing",
+    "primitive",
+    "box"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Box/index.tsx",
+  "exportName": "Box",
+  "propsSummary": [
+    "children: node",
+    "as: div|section|article|aside|main|header|footer|nav|span (default: div)",
+    "padding: none|xs|sm|md|lg|xl",
+    "paddingX: none|xs|sm|md|lg|xl",
+    "paddingY: none|xs|sm|md|lg|xl",
+    "margin: none|xs|sm|md|lg|xl|auto",
+    "marginX: none|xs|sm|md|lg|xl|auto",
+    "marginY: none|xs|sm|md|lg|xl|auto",
+    "background: none|primary|secondary|tertiary|elevated",
+    "rounded: none|sm|md|lg|full",
+    "border: boolean",
+    "borderTop: boolean",
+    "borderBottom: boolean",
+    "borderLeft: boolean",
+    "borderRight: boolean",
+    "borderColor: default|strong|accent|danger",
+    "shadow: none|sm|md|lg",
+    "overflow: hidden|auto|scroll|visible",
+    "color: primary|secondary|tertiary|accent|inverse",
+    "display: none|block|inline|inline-block|flex|inline-flex|grid",
+    "width: union",
+    "minWidth: union",
+    "maxWidth: union",
+    "height: union",
+    "minHeight: union",
+    "maxHeight: union",
+    "className: string",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Content to render inside the box",
+      "required": false
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "div",
+      "required": false,
+      "values": [
+        "div",
+        "section",
+        "article",
+        "aside",
+        "main",
+        "header",
+        "footer",
+        "nav",
+        "span"
+      ]
+    },
+    "padding": {
+      "type": "enum",
+      "description": "Padding on all sides",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "paddingX": {
+      "type": "enum",
+      "description": "Horizontal padding",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "paddingY": {
+      "type": "enum",
+      "description": "Vertical padding",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "margin": {
+      "type": "enum",
+      "description": "Margin on all sides",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+        "auto"
+      ]
+    },
+    "marginX": {
+      "type": "enum",
+      "description": "Horizontal margin",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+        "auto"
+      ]
+    },
+    "marginY": {
+      "type": "enum",
+      "description": "Vertical margin",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+        "auto"
+      ]
+    },
+    "background": {
+      "type": "enum",
+      "description": "Background color",
+      "required": false,
+      "values": [
+        "none",
+        "primary",
+        "secondary",
+        "tertiary",
+        "elevated"
+      ]
+    },
+    "rounded": {
+      "type": "enum",
+      "description": "Border radius",
+      "required": false,
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg",
+        "full"
+      ]
+    },
+    "border": {
+      "type": "boolean",
+      "description": "Show border",
+      "default": "false",
+      "required": false
+    },
+    "borderTop": {
+      "type": "boolean",
+      "description": "Show top border only",
+      "default": "false",
+      "required": false
+    },
+    "borderBottom": {
+      "type": "boolean",
+      "description": "Show bottom border only",
+      "default": "false",
+      "required": false
+    },
+    "borderLeft": {
+      "type": "boolean",
+      "description": "Show left border only",
+      "default": "false",
+      "required": false
+    },
+    "borderRight": {
+      "type": "boolean",
+      "description": "Show right border only",
+      "default": "false",
+      "required": false
+    },
+    "borderColor": {
+      "type": "enum",
+      "description": "Border color variant (requires border or directional border)",
+      "required": false,
+      "values": [
+        "default",
+        "strong",
+        "accent",
+        "danger"
+      ]
+    },
+    "shadow": {
+      "type": "enum",
+      "description": "Box shadow",
+      "required": false,
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "overflow": {
+      "type": "enum",
+      "description": "Overflow behavior",
+      "required": false,
+      "values": [
+        "hidden",
+        "auto",
+        "scroll",
+        "visible"
+      ]
+    },
+    "color": {
+      "type": "enum",
+      "description": "Text color",
+      "required": false,
+      "values": [
+        "primary",
+        "secondary",
+        "tertiary",
+        "accent",
+        "inverse"
+      ]
+    },
+    "display": {
+      "type": "enum",
+      "description": "Display type",
+      "required": false,
+      "values": [
+        "none",
+        "block",
+        "inline",
+        "inline-block",
+        "flex",
+        "inline-flex",
+        "grid"
+      ]
+    },
+    "width": {
+      "type": "union",
+      "description": "Width (CSS value, e.g. \"100%\", \"300px\", or number for px)",
+      "required": false
+    },
+    "minWidth": {
+      "type": "union",
+      "description": "Min width",
+      "required": false
+    },
+    "maxWidth": {
+      "type": "union",
+      "description": "Max width",
+      "required": false
+    },
+    "height": {
+      "type": "union",
+      "description": "Height (CSS value)",
+      "required": false
+    },
+    "minHeight": {
+      "type": "union",
+      "description": "Min height",
+      "required": false
+    },
+    "maxHeight": {
+      "type": "union",
+      "description": "Max height",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Inline styles",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Applying consistent padding or margin to content sections",
+      "Creating bordered or elevated containers",
+      "Wrapping content with semantic HTML elements",
+      "Building custom layouts not covered by Stack or Grid"
+    ],
+    "whenNot": [
+      "Horizontal or vertical stacking (use Stack)",
+      "Grid-based layouts (use Grid)",
+      "Card-like containers with header/body/footer (use Card)",
+      "Simple text styling (use Text)"
+    ],
+    "guidelines": [
+      "Use padding props instead of inline styles for consistency",
+      "Choose semantic HTML elements (section, article) where appropriate",
+      "Combine with Stack or Grid for complex layouts",
+      "Use background variants from the design system, not custom colors",
+      "Box forwards DOM props (id, role, aria-*, data-*, event handlers) to the rendered element"
+    ],
+    "accessibility": [
+      "Choose semantic as prop values for proper document structure",
+      "Avoid div-soup; use meaningful elements like section, article",
+      "Ensure proper heading hierarchy within Box containers"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic box with padding",
+      "code": "<Box padding=\"md\" background=\"secondary\" rounded=\"md\">\n  Content with padding and background\n</Box>"
+    },
+    {
+      "name": "With Border",
+      "description": "Bordered container",
+      "code": "<Box padding=\"lg\" border rounded=\"md\">\n  Bordered content area\n</Box>"
+    },
+    {
+      "name": "Directional Padding",
+      "description": "Different horizontal and vertical padding",
+      "code": "<Box paddingX=\"xl\" paddingY=\"sm\" background=\"tertiary\" rounded=\"sm\">\n  Wide horizontal padding, short vertical\n</Box>"
+    },
+    {
+      "name": "Centered with Auto Margin",
+      "description": "Centered content using margin auto",
+      "code": "<Box padding=\"md\" marginX=\"auto\" background=\"elevated\" rounded=\"lg\" style={{ maxWidth: '300px' }}>\n  Centered content\n</Box>"
+    },
+    {
+      "name": "Directional Borders",
+      "description": "Individual border sides",
+      "code": "<Box padding=\"md\" borderTop borderBottom>\n  Top and bottom borders only\n</Box>"
+    },
+    {
+      "name": "With Shadow",
+      "description": "Box with shadow elevation",
+      "code": "<Box padding=\"lg\" rounded=\"md\" shadow=\"md\" background=\"primary\">\n  Elevated content with shadow\n</Box>"
+    },
+    {
+      "name": "Overflow Hidden",
+      "description": "Content overflow clipped",
+      "code": "<Box padding=\"md\" overflow=\"hidden\" border rounded=\"md\" style={{ maxHeight: '60px' }}>\n  This box clips overflowing content. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n</Box>"
+    },
+    {
+      "name": "Text Colors",
+      "description": "Text color variants",
+      "code": "<Box padding=\"md\" display=\"flex\" style={{ gap: '16px' }}>\n  <Box color=\"primary\">Primary</Box>\n  <Box color=\"secondary\">Secondary</Box>\n  <Box color=\"tertiary\">Tertiary</Box>\n  <Box color=\"accent\">Accent</Box>\n</Box>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Stack",
+      "relationship": "alternative",
+      "note": "Use Stack for directional layouts with gap"
+    },
+    {
+      "component": "Grid",
+      "relationship": "alternative",
+      "note": "Use Grid for column-based layouts"
+    },
+    {
+      "component": "Card",
+      "relationship": "alternative",
+      "note": "Use Card for content containers with structure"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "as: div|section|article|... - HTML element",
+      "padding: none|xs|sm|md|lg|xl - all-sides padding",
+      "paddingX/paddingY: directional padding overrides",
+      "margin: none|xs|sm|md|lg|xl|auto - margin",
+      "background: none|primary|secondary|tertiary|elevated",
+      "rounded: none|sm|md|lg|full - border radius",
+      "border: boolean - show border",
+      "borderTop/borderBottom/borderLeft/borderRight: boolean - directional borders",
+      "borderColor: default|strong|accent|danger - border color variant",
+      "shadow: sm|md|lg|none - box shadow",
+      "overflow: hidden|auto|scroll|visible - overflow behavior",
+      "color: primary|secondary|tertiary|accent|inverse - text color",
+      "width/minWidth/maxWidth: string|number - sizing",
+      "height/minHeight/maxHeight: string|number - sizing",
+      "All standard HTMLElement props are forwarded to the rendered element"
+    ],
+    "a11yRules": [
+      "A11Y_SEMANTIC_HTML"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.126Z"
+  }
+}

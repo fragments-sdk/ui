@@ -1,0 +1,171 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Table",
+  "description": "Semantic HTML table with compound API. For data-rich tables with sorting and selection, use DataTable.",
+  "category": "display",
+  "tags": [
+    "table",
+    "semantic",
+    "html",
+    "layout"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Table/index.tsx",
+  "exportName": "Table",
+  "propsSummary": [
+    "size: sm|md (default: md)",
+    "striped: boolean (default: false)",
+    "bordered: boolean (default: false)",
+    "wrapperClassName: string",
+    "wrapperProps: object",
+    "children: node"
+  ],
+  "props": {
+    "size": {
+      "type": "enum",
+      "description": "Table density",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md"
+      ]
+    },
+    "striped": {
+      "type": "boolean",
+      "description": "Show alternating row backgrounds",
+      "default": "false",
+      "required": false
+    },
+    "bordered": {
+      "type": "boolean",
+      "description": "Wrap table in a bordered container",
+      "default": "false",
+      "required": false
+    },
+    "wrapperClassName": {
+      "type": "string",
+      "description": "Class name for the outer scroll/wrapper container",
+      "required": false
+    },
+    "wrapperProps": {
+      "type": "object",
+      "description": "HTML attributes for the outer scroll/wrapper container",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying simple tabular data with semantic HTML",
+      "Static data that does not need sorting or selection",
+      "Showing structured information with headers and rows",
+      "Tables with footers or captions"
+    ],
+    "whenNot": [
+      "Data that needs sorting (use DataTable)",
+      "Data that needs row selection (use DataTable)",
+      "Data that needs clickable rows (use DataTable)",
+      "Simple lists (use List component)"
+    ],
+    "guidelines": [
+      "Use Table.HeaderCell for column headers (adds scope=\"col\" by default)",
+      "Use Table.Caption for table descriptions (can be visually hidden)",
+      "Keep tables simple — use DataTable for interactive features",
+      "Consider mobile responsiveness; table scrolls horizontally on small screens"
+    ],
+    "accessibility": [
+      "Semantic HTML table elements (thead, tbody, tfoot, th, td)",
+      "Column headers have scope=\"col\" by default",
+      "Caption provides table description for screen readers",
+      "Supports visually-hidden caption for screen-reader-only labels"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic semantic table",
+      "code": "<Table aria-label=\"Team members\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Role</Table.HeaderCell>\n      <Table.HeaderCell>Status</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Alice Johnson</Table.Cell>\n      <Table.Cell>Engineer</Table.Cell>\n      <Table.Cell>Active</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Bob Smith</Table.Cell>\n      <Table.Cell>Designer</Table.Cell>\n      <Table.Cell>Active</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Carol Williams</Table.Cell>\n      <Table.Cell>PM</Table.Cell>\n      <Table.Cell>Away</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Striped",
+      "description": "Alternating row backgrounds for readability",
+      "code": "<Table striped aria-label=\"Inventory\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Item</Table.HeaderCell>\n      <Table.HeaderCell>Category</Table.HeaderCell>\n      <Table.HeaderCell>Qty</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Widget A</Table.Cell>\n      <Table.Cell>Hardware</Table.Cell>\n      <Table.Cell>120</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Widget B</Table.Cell>\n      <Table.Cell>Software</Table.Cell>\n      <Table.Cell>85</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Widget C</Table.Cell>\n      <Table.Cell>Hardware</Table.Cell>\n      <Table.Cell>200</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Widget D</Table.Cell>\n      <Table.Cell>Software</Table.Cell>\n      <Table.Cell>50</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Bordered",
+      "description": "Table with bordered container",
+      "code": "<Table bordered aria-label=\"Pricing\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Plan</Table.HeaderCell>\n      <Table.HeaderCell>Price</Table.HeaderCell>\n      <Table.HeaderCell>Features</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Basic</Table.Cell>\n      <Table.Cell>$9/mo</Table.Cell>\n      <Table.Cell>5 projects</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Pro</Table.Cell>\n      <Table.Cell>$29/mo</Table.Cell>\n      <Table.Cell>Unlimited</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Compact",
+      "description": "Small, dense table",
+      "code": "<Table size=\"sm\" aria-label=\"Shortcuts\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Key</Table.HeaderCell>\n      <Table.HeaderCell>Action</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Ctrl+S</Table.Cell>\n      <Table.Cell>Save</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Ctrl+Z</Table.Cell>\n      <Table.Cell>Undo</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Ctrl+C</Table.Cell>\n      <Table.Cell>Copy</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "With Caption",
+      "description": "Table with visible caption",
+      "code": "<Table aria-label=\"Q1 results\">\n  <Table.Caption>Quarterly Results (Q1 2026)</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Metric</Table.HeaderCell>\n      <Table.HeaderCell>Value</Table.HeaderCell>\n      <Table.HeaderCell>Change</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Revenue</Table.Cell>\n      <Table.Cell>$1.2M</Table.Cell>\n      <Table.Cell>+15%</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Users</Table.Cell>\n      <Table.Cell>24,500</Table.Cell>\n      <Table.Cell>+8%</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Screen Reader Caption",
+      "description": "Visually hidden caption for screen-reader context while keeping visual UI compact",
+      "code": "<Table\n  aria-label=\"API keys\"\n  wrapperProps={{ 'data-demo': 'table-wrapper' }}\n  wrapperClassName=\"demo-table-wrapper\"\n>\n  <Table.Caption visuallyHidden>API keys and last-used timestamps</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Prefix</Table.HeaderCell>\n      <Table.HeaderCell>Last Used</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Deploy</Table.Cell>\n      <Table.Cell>frg_live_...</Table.Cell>\n      <Table.Cell>2 hours ago</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>CI</Table.Cell>\n      <Table.Cell>frg_test_...</Table.Cell>\n      <Table.Cell>Yesterday</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "With Footer",
+      "description": "Table with footer row for totals",
+      "code": "<Table bordered aria-label=\"Expenses\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Category</Table.HeaderCell>\n      <Table.HeaderCell>Amount</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Marketing</Table.Cell>\n      <Table.Cell>$12,000</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Engineering</Table.Cell>\n      <Table.Cell>$45,000</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Operations</Table.Cell>\n      <Table.Cell>$8,000</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n  <Table.Footer>\n    <Table.Row>\n      <Table.Cell>Total</Table.Cell>\n      <Table.Cell>$65,000</Table.Cell>\n    </Table.Row>\n  </Table.Footer>\n</Table>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "DataTable",
+      "relationship": "alternative",
+      "note": "Use DataTable for sorting, selection, and TanStack features"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "size: sm|md - table density",
+      "striped: boolean - alternating row backgrounds",
+      "bordered: boolean - bordered container",
+      "Table.Head, Table.Body, Table.Footer - section wrappers",
+      "Table.Row - table row with optional selected prop",
+      "Table.HeaderCell - th with scope=\"col\"",
+      "Table.Cell - td element",
+      "wrapperClassName/wrapperProps - customize outer scroll wrapper",
+      "Table.Caption - caption with visuallyHidden prop (hidden is deprecated alias)"
+    ],
+    "a11yRules": [
+      "A11Y_TABLE_HEADERS",
+      "A11Y_TABLE_CAPTION"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root",
+      "Head",
+      "Body",
+      "Footer",
+      "Row",
+      "Cell",
+      "HeaderCell",
+      "Caption"
+    ],
+    "commonPatterns": [
+      "<Table><Table.Head><Table.Row><Table.HeaderCell>Name</Table.HeaderCell></Table.Row></Table.Head><Table.Body><Table.Row><Table.Cell>Alice</Table.Cell></Table.Row></Table.Body></Table>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.484Z"
+  }
+}

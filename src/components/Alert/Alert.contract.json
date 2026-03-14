@@ -1,0 +1,157 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Alert",
+  "description": "Contextual feedback messages for user actions or system status. Supports multiple severity levels with optional actions and dismissibility.",
+  "category": "feedback",
+  "tags": [
+    "notification",
+    "message",
+    "feedback",
+    "banner",
+    "toast"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Alert/index.tsx",
+  "exportName": "Alert",
+  "propsSummary": [
+    "children: node (required)",
+    "severity: info|success|warning|error (default: info)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Alert content - use Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Close sub-components",
+      "required": true
+    },
+    "severity": {
+      "type": "enum",
+      "description": "Visual severity level",
+      "default": "info",
+      "required": false,
+      "values": [
+        "info",
+        "success",
+        "warning",
+        "error"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Communicating the result of a user action (success, error)",
+      "Warning about potential issues before they occur",
+      "Providing important contextual information inline",
+      "System status notifications that require attention"
+    ],
+    "whenNot": [
+      "Brief status labels (use Badge instead)",
+      "Transient notifications (use Toast/Snackbar)",
+      "Form-field-level errors (use Input error prop)",
+      "Confirmation before destructive actions (use Dialog)"
+    ],
+    "guidelines": [
+      "Match severity to the actual importance: info for context, warning for potential issues, error for failures",
+      "Always provide actionable guidance in error alerts",
+      "Use Alert.Title for complex messages; skip titles for brief one-liners",
+      "Limit to one action per alert to avoid decision paralysis",
+      "Use Alert.Close only for non-critical information",
+      "Alert.Action and Alert.Close render buttons with type=\"button\" by default (safe inside forms)",
+      "Alert.Close composes your onClick handler with built-in dismiss behavior and respects preventDefault()",
+      "Alert sub-components forward DOM props (aria-*, data-*, id, handlers) to their rendered elements"
+    ],
+    "accessibility": [
+      "Uses role=\"alert\" for screen reader announcement",
+      "Error and warning alerts are announced immediately by assistive technology",
+      "Alert.Close must have an accessible label",
+      "Color alone must not convey meaning - icons and text reinforce severity"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Info",
+      "description": "Informational context for the user",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      Your session will expire in 15 minutes. Save your work to avoid losing changes.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Success",
+      "description": "Positive confirmation of completed action",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"success\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Payment processed</Alert.Title>\n    <Alert.Content>\n      Your order #12345 has been confirmed. You will receive a confirmation email shortly.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Warning",
+      "description": "Caution about potential issues",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Storage almost full</Alert.Title>\n    <Alert.Content>\n      You have used 90% of your storage quota. Consider deleting unused files.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Error",
+      "description": "Error state requiring user attention",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"error\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Upload failed</Alert.Title>\n    <Alert.Content>\n      The file could not be uploaded. Check your connection and try again.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "With Action",
+      "description": "Alert with an actionable button",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Update available</Alert.Title>\n    <Alert.Content>\n      A new version is available with important security fixes.\n    </Alert.Content>\n    <Alert.Actions>\n      <Alert.Action onClick={() => {}}>Update now</Alert.Action>\n    </Alert.Actions>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Dismissible",
+      "description": "Alert that can be closed by the user",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      You can customize your notification preferences in Settings.\n    </Alert.Content>\n  </Alert.Body>\n  <Alert.Close />\n</Alert>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Badge",
+      "relationship": "alternative",
+      "note": "Use Badge for compact, inline status labels"
+    },
+    {
+      "component": "Toast",
+      "relationship": "alternative",
+      "note": "Use Toast for transient notifications that auto-dismiss"
+    },
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Use Dialog for blocking confirmations"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "severity: info|success|warning|error - visual severity",
+      "Sub-components: Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Action, Alert.Close",
+      "Alert.Action / Alert.Close accept button props and default type=\"button\""
+    ],
+    "a11yRules": [
+      "A11Y_ALERT_ROLE",
+      "A11Y_ALERT_DISMISS",
+      "A11Y_ALERT_CONTRAST",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Icon",
+      "Body",
+      "Title",
+      "Content",
+      "Actions",
+      "Action",
+      "Close"
+    ],
+    "requiredChildren": [
+      "Body"
+    ],
+    "commonPatterns": [
+      "<Alert severity=\"info\"><Alert.Icon /><Alert.Body><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
+      "<Alert severity=\"warning\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
+      "<Alert severity=\"error\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body><Alert.Close /></Alert>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.066Z"
+  }
+}

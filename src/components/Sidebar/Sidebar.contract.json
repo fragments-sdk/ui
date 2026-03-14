@@ -1,0 +1,258 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Sidebar",
+  "description": "Responsive navigation sidebar with collapsible desktop mode and mobile drawer behavior.",
+  "category": "navigation",
+  "tags": [
+    "sidebar",
+    "navigation",
+    "drawer",
+    "menu",
+    "layout"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Sidebar/index.tsx",
+  "exportName": "Sidebar",
+  "propsSummary": [
+    "children: node (required)",
+    "collapsed: boolean",
+    "defaultCollapsed: boolean (default: false)",
+    "onCollapsedChange: function",
+    "open: boolean",
+    "defaultOpen: boolean (default: false)",
+    "onOpenChange: function",
+    "width: string (default: 240px)",
+    "collapsedWidth: string (default: 56px)",
+    "position: left|right (default: left)",
+    "collapsible: icon|offcanvas|none (default: icon)",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Sidebar content (use Sidebar.Header, Sidebar.Nav, Sidebar.Section, etc.)",
+      "required": true
+    },
+    "collapsed": {
+      "type": "boolean",
+      "description": "Icon-only mode for desktop (controlled)",
+      "required": false
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "description": "Initial collapsed state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onCollapsedChange": {
+      "type": "function",
+      "description": "Called when collapsed state changes",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Mobile drawer open state (controlled)",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Initial open state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when open state changes",
+      "required": false
+    },
+    "width": {
+      "type": "string",
+      "description": "Width of expanded sidebar",
+      "default": "240px",
+      "required": false
+    },
+    "collapsedWidth": {
+      "type": "string",
+      "description": "Width when collapsed",
+      "default": "56px",
+      "required": false
+    },
+    "position": {
+      "type": "enum",
+      "description": "Sidebar position",
+      "default": "left",
+      "required": false,
+      "values": [
+        "left",
+        "right"
+      ]
+    },
+    "collapsible": {
+      "type": "enum",
+      "description": "Collapse behavior mode",
+      "default": "icon",
+      "required": false,
+      "values": [
+        "icon",
+        "offcanvas",
+        "none"
+      ]
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Primary app navigation with multiple sections",
+      "Dashboard layouts requiring persistent navigation",
+      "Admin interfaces with hierarchical menu structure",
+      "Apps that need both mobile drawer and desktop sidebar"
+    ],
+    "whenNot": [
+      "Simple websites with few pages (use header nav)",
+      "Content-focused sites where navigation is secondary",
+      "Single-page applications with no navigation needs",
+      "Mobile-only apps where bottom navigation is preferred"
+    ],
+    "guidelines": [
+      "Group related items into sections with clear labels",
+      "Use icons for all items to support collapsed mode",
+      "Limit nesting to 2 levels maximum",
+      "Place most frequently used items at the top",
+      "Use badges sparingly for notifications or counts",
+      "The `active` prop on items should be controlled by your app based on current route",
+      "Use `collapsedContent` on Header to show just a logo icon when collapsed",
+      "Submenus are hidden when collapsed - use tooltips for navigation hints instead",
+      "Use SidebarProvider to enable external triggers and keyboard shortcuts",
+      "Use asChild with routing libraries (Next.js Link, React Router NavLink)",
+      "Sidebar.Item and Sidebar.SubItem onClick handlers receive the click event object",
+      "Use Sidebar.MenuSkeleton while loading navigation data"
+    ],
+    "accessibility": [
+      "Uses semantic <nav> element with aria-label",
+      "aria-current=\"page\" on active items",
+      "aria-expanded on items with submenus",
+      "Escape key closes mobile drawer",
+      "Cmd/Ctrl+B keyboard shortcut toggles sidebar (when using SidebarProvider)",
+      "Focus trap in mobile drawer mode",
+      "Minimum 44px touch targets"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Standard sidebar with navigation sections. The `active` prop highlights the current page.",
+      "code": "<Sidebar>\n  <Sidebar.Header>\n    <Logo />\n    <span>Acme App</span>\n  </Sidebar.Header>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>\n      <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>\n      <Sidebar.Item icon={<UsersIcon />}>Team</Sidebar.Item>\n      <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>\n    </Sidebar.Section>\n    <Sidebar.Section label=\"Settings\">\n      <Sidebar.Item icon={<GearIcon />}>Preferences</Sidebar.Item>\n      <Sidebar.Item icon={<HelpIcon />}>Help</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n  <Sidebar.Footer>\n    <Sidebar.CollapseToggle />\n  </Sidebar.Footer>\n</Sidebar>"
+    },
+    {
+      "name": "Collapsed",
+      "description": "Icon-only collapsed state. Header shows only logo, tooltips appear on hover.",
+      "code": "function App() {\n  const [collapsed, setCollapsed] = useState(true);\n\n  return (\n    <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed}>\n      <Sidebar.Header collapsedContent={<Logo />}>\n        <Logo />\n        <span>Acme App</span>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section>\n          <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>\n          <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n      <Sidebar.Footer>\n        <Sidebar.CollapseToggle />\n      </Sidebar.Footer>\n    </Sidebar>\n  );\n}"
+    },
+    {
+      "name": "With Badges",
+      "description": "Navigation items with notification badges for counts or alerts.",
+      "code": "<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>\n      <Sidebar.Item icon={<ChartIcon />} badge=\"3\">Analytics</Sidebar.Item>\n      <Sidebar.Item icon={<UsersIcon />} badge=\"12\">Team</Sidebar.Item>\n      <Sidebar.Item icon={<FolderIcon />}>Projects</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Submenu",
+      "description": "Nested navigation with expandable sections. Use defaultExpanded for initial state without manual state tracking.",
+      "code": "<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HomeIcon />}>Dashboard</Sidebar.Item>\n      {/* Use defaultExpanded for uncontrolled mode - no state needed! */}\n      <Sidebar.Item icon={<FolderIcon />} hasSubmenu defaultExpanded>\n        Projects\n      </Sidebar.Item>\n      <Sidebar.Submenu>\n        <Sidebar.SubItem active>Website Redesign</Sidebar.SubItem>\n        <Sidebar.SubItem>Mobile App</Sidebar.SubItem>\n        <Sidebar.SubItem>API Integration</Sidebar.SubItem>\n      </Sidebar.Submenu>\n      {/* Multiple submenus work without tracking separate state */}\n      <Sidebar.Item icon={<UsersIcon />} hasSubmenu>\n        Team\n      </Sidebar.Item>\n      <Sidebar.Submenu>\n        <Sidebar.SubItem>Engineering</Sidebar.SubItem>\n        <Sidebar.SubItem>Design</Sidebar.SubItem>\n      </Sidebar.Submenu>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Disabled Items",
+      "description": "Some navigation items are disabled for permissions or feature flags.",
+      "code": "<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>\n      <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>\n      <Sidebar.Item icon={<UsersIcon />} disabled>\n        Team (Coming Soon)\n      </Sidebar.Item>\n      <Sidebar.Item icon={<FolderIcon />} disabled>\n        Projects (Upgrade)\n      </Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Provider & External Trigger",
+      "description": "SidebarProvider enables external triggers and keyboard shortcuts (Cmd/Ctrl+B).",
+      "code": "function App() {\n  return (\n    <SidebarProvider>\n      <Sidebar>\n        <Sidebar.Header>\n          <Logo />\n          <span>Acme App</span>\n          <Sidebar.CollapseToggle />\n        </Sidebar.Header>\n        {/* sidebar nav */}\n      </Sidebar>\n      <MainContent />\n    </SidebarProvider>\n  );\n}\n\nfunction MainContent() {\n  const { toggleSidebar, state } = useSidebar();\n  return (\n    <main>\n      <p>State: {state}</p>\n      <button onClick={toggleSidebar}>Toggle</button>\n    </main>\n  );\n}"
+    },
+    {
+      "name": "With asChild (Polymorphic)",
+      "description": "Use asChild to render items as custom elements like Next.js Link or React Router NavLink.",
+      "code": "import { Link } from 'next/link';\n\n<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HomeIcon />} active asChild>\n        <Link href=\"/dashboard\">Dashboard</Link>\n      </Sidebar.Item>\n      <Sidebar.Item icon={<ChartIcon />} asChild>\n        <Link href=\"/analytics\">Analytics</Link>\n      </Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Section Action",
+      "description": "Section headers can include action buttons for quick actions like \"Add Project\".",
+      "code": "<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section\n      label=\"Projects\"\n      action={\n        <Sidebar.SectionAction aria-label=\"Add project\" onClick={handleAdd}>\n          <PlusIcon />\n        </Sidebar.SectionAction>\n      }\n    >\n      <Sidebar.Item icon={<FolderIcon />}>Website Redesign</Sidebar.Item>\n      <Sidebar.Item icon={<FolderIcon />}>Mobile App</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Loading Skeleton",
+      "description": "Show skeleton placeholders while navigation data is loading.",
+      "code": "<Sidebar>\n  <Sidebar.Nav>\n    {loading ? (\n      <Sidebar.MenuSkeleton count={6} />\n    ) : (\n      <Sidebar.Section>\n        <Sidebar.Item icon={<HomeIcon />}>Dashboard</Sidebar.Item>\n        {/* ... */}\n      </Sidebar.Section>\n    )}\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Rail Toggle",
+      "description": "Add a Rail component for a subtle drag-handle style toggle at the sidebar edge. Hover to reveal, click to toggle.",
+      "code": "<Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed}>\n  <Sidebar.Header>{/* ... */}</Sidebar.Header>\n  <Sidebar.Nav>{/* ... */}</Sidebar.Nav>\n  <Sidebar.Footer>\n    <Sidebar.CollapseToggle />\n  </Sidebar.Footer>\n  <Sidebar.Rail />\n</Sidebar>"
+    },
+    {
+      "name": "Offcanvas Collapsed",
+      "description": "Offcanvas mode hides the sidebar completely when collapsed, but the toggle button remains visible as a floating button so the user can always re-expand.",
+      "code": "function App() {\n  const [collapsed, setCollapsed] = useState(true);\n\n  return (\n    <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} collapsible=\"offcanvas\">\n      <Sidebar.Header collapsedContent={<Logo />}>\n        <Logo />\n        <span>Acme App</span>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section>\n          <Sidebar.Item icon={<HomeIcon />} active>Dashboard</Sidebar.Item>\n          <Sidebar.Item icon={<ChartIcon />}>Analytics</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n      <Sidebar.Footer>\n        <Sidebar.CollapseToggle />\n      </Sidebar.Footer>\n    </Sidebar>\n  );\n}"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Use Tabs for in-page section navigation"
+    },
+    {
+      "component": "Menu",
+      "relationship": "composition",
+      "note": "Use Menu for contextual actions within sidebar"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "collapsed: boolean - icon-only desktop mode",
+      "open: boolean - mobile drawer state",
+      "width: string - expanded width (default: 240px)",
+      "position: left|right - sidebar position",
+      "active: boolean - set on Sidebar.Item to mark current page (app-controlled)",
+      "Sidebar.Item/SubItem onClick: (event) => void - click handler receives mouse event"
+    ],
+    "a11yRules": [
+      "A11Y_NAV_LANDMARK",
+      "A11Y_FOCUS_TRAP",
+      "A11Y_ESCAPE_CLOSE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Header",
+      "Nav",
+      "Section",
+      "SectionAction",
+      "Item",
+      "SubItem",
+      "Submenu",
+      "Footer",
+      "Trigger",
+      "Overlay",
+      "CollapseToggle",
+      "Rail",
+      "MenuSkeleton"
+    ],
+    "requiredChildren": [
+      "Nav"
+    ],
+    "commonPatterns": [
+      "<Sidebar><Sidebar.Header>{logo}</Sidebar.Header><Sidebar.Nav><Sidebar.Section><Sidebar.Item icon={icon} active>{label}</Sidebar.Item></Sidebar.Section></Sidebar.Nav><Sidebar.Footer><Sidebar.CollapseToggle /></Sidebar.Footer></Sidebar>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:03.784Z"
+  }
+}

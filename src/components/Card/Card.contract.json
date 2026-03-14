@@ -1,0 +1,185 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Card",
+  "description": "Container for grouping related content",
+  "category": "layout",
+  "tags": [
+    "container",
+    "layout",
+    "surface"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Card/index.tsx",
+  "exportName": "Card",
+  "propsSummary": [
+    "children: node (required)",
+    "variant: default|outlined|outline|elevated (default: default)",
+    "padding: none|sm|md|lg (default: md)",
+    "as: article|div|section (default: article)",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Card content - use Card.Header, Card.Body, Card.Footer sub-components",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style of the card surface",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "outlined",
+        "outline",
+        "elevated"
+      ],
+      "constraints": [
+        "Use \"elevated\" sparingly to maintain visual hierarchy"
+      ]
+    },
+    "padding": {
+      "type": "enum",
+      "description": "Internal padding size",
+      "default": "md",
+      "required": false,
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "as": {
+      "type": "enum",
+      "description": "Semantic HTML element for the card root",
+      "default": "article",
+      "required": false,
+      "values": [
+        "article",
+        "div",
+        "section"
+      ]
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Grouping related pieces of content together",
+      "Creating visual separation between content sections",
+      "Displaying a preview or summary of an item",
+      "Building dashboard widgets or tiles"
+    ],
+    "whenNot": [
+      "Simple text content that does not need grouping",
+      "Modal or dialog content (use Dialog component)",
+      "Navigation items (use List or Sidebar patterns)"
+    ],
+    "guidelines": [
+      "Use consistent card variants within the same context",
+      "Cards in a grid should have uniform sizing",
+      "Use elevated variant sparingly for emphasis",
+      "If a card is clickable, provide clear hover/focus affordances and prefer explicit buttons/links inside the card"
+    ],
+    "accessibility": [
+      "Card is a semantic container (article/div/section); onClick does not automatically add button semantics",
+      "Card titles should be appropriate heading levels"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Standard card with subtle shadow",
+      "code": "<Card>\n  <Card.Header>\n    <Card.Title>Card Title</Card.Title>\n    <Card.Description>A brief description</Card.Description>\n  </Card.Header>\n  <Card.Body>Card content goes here.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "Outlined",
+      "description": "Card with border instead of shadow",
+      "code": "<Card variant=\"outlined\">\n  <Card.Header>\n    <Card.Title>Outlined Card</Card.Title>\n  </Card.Header>\n  <Card.Body>Content with border.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "Outline",
+      "description": "Card with border, using the \"outline\" alias for \"outlined\"",
+      "code": "<Card variant=\"outline\">\n  <Card.Header>\n    <Card.Title>Outline Card</Card.Title>\n  </Card.Header>\n  <Card.Body>Uses the Radix/Shadcn-style alias.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "Elevated",
+      "description": "Card with prominent shadow for emphasis",
+      "code": "<Card variant=\"elevated\">\n  <Card.Header>\n    <Card.Title>Featured Item</Card.Title>\n  </Card.Header>\n  <Card.Body>Important content.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "Interactive",
+      "description": "Clickable card surface (root stays a semantic container)",
+      "code": "<Card as=\"section\" onClick={() => alert('Card clicked!')}>\n  <Card.Header>\n    <Card.Title>Click Me</Card.Title>\n    <Card.Description>This card is interactive</Card.Description>\n  </Card.Header>\n  <Card.Body>Click anywhere on this card.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "Section Root",
+      "description": "Use the as prop to match the surrounding document semantics",
+      "code": "<Card as=\"section\" aria-labelledby=\"billing-card-title\">\n  <Card.Header>\n    <Card.Title id=\"billing-card-title\">Billing Summary</Card.Title>\n  </Card.Header>\n  <Card.Body>Section semantics can improve document structure for grouped content.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "With Footer",
+      "description": "Card with header, body, and footer",
+      "code": "<Card>\n  <Card.Header>\n    <Card.Title>Card with Footer</Card.Title>\n    <Card.Description>Complete card layout</Card.Description>\n  </Card.Header>\n  <Card.Body>Main content area.</Card.Body>\n  <Card.Footer>Footer actions go here</Card.Footer>\n</Card>"
+    },
+    {
+      "name": "Content Only",
+      "description": "Card with just body content",
+      "code": "<Card>\n  <Card.Body>Just content, no header or footer.</Card.Body>\n</Card>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Grid",
+      "relationship": "parent",
+      "note": "Use Grid + Card for responsive card layouts"
+    },
+    {
+      "component": "List",
+      "relationship": "alternative",
+      "note": "Use List for linear, text-first layouts"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "variant: default|outlined|outline|elevated (default: default)",
+      "padding: none|sm|md|lg (default: md)",
+      "as: article|div|section (default: article) - card root element",
+      "onClick: (event) => void - click handler on root (semantics unchanged)",
+      "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer"
+    ],
+    "a11yRules": [
+      "A11Y_CARD_HEADING",
+      "A11Y_CARD_INTERACTIVE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Header",
+      "Title",
+      "Description",
+      "Body",
+      "Footer"
+    ],
+    "requiredChildren": [
+      "Body"
+    ],
+    "commonPatterns": [
+      "<Card><Card.Body>{content}</Card.Body></Card>",
+      "<Card><Card.Header><Card.Title>{title}</Card.Title></Card.Header><Card.Body>{content}</Card.Body></Card>",
+      "<Card><Card.Header><Card.Title>{title}</Card.Title><Card.Description>{desc}</Card.Description></Card.Header><Card.Body>{content}</Card.Body><Card.Footer>{actions}</Card.Footer></Card>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.869Z"
+  }
+}

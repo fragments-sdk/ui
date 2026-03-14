@@ -1,0 +1,308 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Textarea",
+  "description": "Multi-line text input for longer form content",
+  "category": "forms",
+  "tags": [
+    "input",
+    "text",
+    "form",
+    "multiline"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Textarea/index.tsx",
+  "exportName": "Textarea",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "placeholder: string",
+    "rows: number (default: 3)",
+    "minRows: number",
+    "maxRows: number",
+    "resize: none|vertical|horizontal|both (default: vertical)",
+    "size: sm|md|lg (default: md)",
+    "disabled: boolean (default: false)",
+    "error: boolean (default: false)",
+    "success: boolean (default: false)",
+    "showCharCount: boolean (default: false)",
+    "label: string",
+    "helperText: string",
+    "onChange: function",
+    "onValueChange: function",
+    "onBlur: function",
+    "onFocus: function",
+    "name: string",
+    "maxLength: number",
+    "required: boolean",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string",
+    "rootProps: object",
+    "className: string",
+    "style: object"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Controlled value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default value for uncontrolled usage",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text",
+      "required": false
+    },
+    "rows": {
+      "type": "number",
+      "description": "Number of visible text rows",
+      "default": "3",
+      "required": false
+    },
+    "minRows": {
+      "type": "number",
+      "description": "Minimum number of rows when auto-resizing",
+      "required": false
+    },
+    "maxRows": {
+      "type": "number",
+      "description": "Maximum number of rows when auto-resizing",
+      "required": false
+    },
+    "resize": {
+      "type": "enum",
+      "description": "Resize behavior",
+      "default": "vertical",
+      "required": false,
+      "values": [
+        "none",
+        "vertical",
+        "horizontal",
+        "both"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disabled state",
+      "default": "false",
+      "required": false
+    },
+    "error": {
+      "type": "boolean",
+      "description": "Error state",
+      "default": "false",
+      "required": false
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether to show success/validated styling",
+      "default": "false",
+      "required": false
+    },
+    "showCharCount": {
+      "type": "boolean",
+      "description": "Show character counter when maxLength is set",
+      "default": "false",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text above the textarea",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text below the textarea",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Called when the textarea value changes",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Value-first change callback alias: (value: string) => void",
+      "required": false
+    },
+    "onBlur": {
+      "type": "function",
+      "description": "Called when textarea loses focus",
+      "required": false
+    },
+    "onFocus": {
+      "type": "function",
+      "description": "Called when textarea receives focus",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    },
+    "maxLength": {
+      "type": "number",
+      "description": "Maximum character length",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Required field",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible label for no-visible-label usage",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "Accessible labelled-by relationship",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "Accessible described-by relationship",
+      "required": false
+    },
+    "rootProps": {
+      "type": "object",
+      "description": "HTML attributes applied to the wrapper element",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Wrapper class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Wrapper styles",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Collecting multi-line text (comments, descriptions)",
+      "Free-form text input that may span multiple lines",
+      "Message composition fields",
+      "Code or content editing"
+    ],
+    "whenNot": [
+      "Single-line input (use Input)",
+      "Rich text editing (use rich text editor)",
+      "Selecting from predefined options (use Select)"
+    ],
+    "guidelines": [
+      "Set appropriate rows for expected content length",
+      "Use placeholder to show example format",
+      "Show character count when maxLength is set",
+      "Consider auto-resize for better UX"
+    ],
+    "accessibility": [
+      "Always provide a visible label",
+      "Use helperText for format hints",
+      "Error messages should be descriptive"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic textarea with label",
+      "code": "<Textarea\n  label=\"Description\"\n  placeholder=\"Enter a description...\"\n/>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Textarea with additional guidance",
+      "code": "<Textarea\n  label=\"Bio\"\n  placeholder=\"Tell us about yourself...\"\n  helperText=\"Max 500 characters\"\n  maxLength={500}\n/>"
+    },
+    {
+      "name": "Error State",
+      "description": "Textarea showing validation error",
+      "code": "<Textarea\n  label=\"Comments\"\n  placeholder=\"Add your comments...\"\n  error\n  helperText=\"This field is required\"\n/>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive textarea",
+      "code": "<Textarea\n  label=\"Notes\"\n  placeholder=\"Cannot edit...\"\n  disabled\n/>"
+    },
+    {
+      "name": "Custom Rows",
+      "description": "Textarea with more visible rows",
+      "code": "<Textarea\n  label=\"Long Description\"\n  placeholder=\"Enter detailed information...\"\n  rows={6}\n/>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size variants",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px' }}>\n  <Textarea label=\"Small\" size=\"sm\" placeholder=\"Small textarea\" />\n  <Textarea label=\"Medium\" size=\"md\" placeholder=\"Medium textarea\" />\n  <Textarea label=\"Large\" size=\"lg\" placeholder=\"Large textarea\" />\n</div>"
+    },
+    {
+      "name": "With Root Props",
+      "description": "Pass wrapper attributes/styling via rootProps",
+      "code": "<Textarea\n  label=\"Notes\"\n  placeholder=\"Add notes...\"\n  rootProps={{ 'data-demo': 'textarea-wrapper' }}\n/>"
+    },
+    {
+      "name": "Success State",
+      "description": "Textarea showing validated/success styling",
+      "code": "<Textarea\n  label=\"Bio\"\n  value=\"A short bio about myself.\"\n  success\n  helperText=\"Looks great!\"\n/>"
+    },
+    {
+      "name": "With Character Counter",
+      "description": "Textarea with character count and maxLength",
+      "code": "<Textarea\n  label=\"Bio\"\n  placeholder=\"Tell us about yourself...\"\n  maxLength={200}\n  showCharCount\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for single-line text"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled value",
+      "rows: number - visible rows (default: 3)",
+      "label: string - label text",
+      "size: sm|md|lg (default: md)",
+      "error: boolean - error state",
+      "success: boolean - shows success/validated styling",
+      "showCharCount: boolean - show character counter (requires maxLength)",
+      "disabled: boolean - disabled state",
+      "resize: none|vertical|horizontal|both",
+      "onValueChange: (value: string) => void - value-first change callback alias",
+      "rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props",
+      "...native textarea attributes are supported (readOnly, autoComplete, maxLength, onKeyDown, etc.)"
+    ],
+    "a11yRules": [
+      "A11Y_LABEL_REQUIRED"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.217Z"
+  }
+}

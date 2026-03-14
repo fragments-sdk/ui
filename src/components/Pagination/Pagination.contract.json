@@ -1,0 +1,163 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Pagination",
+  "description": "Page navigation for paginated data. Supports controlled/uncontrolled, page counts, and edge/sibling customization.",
+  "category": "navigation",
+  "tags": [
+    "pagination",
+    "paging",
+    "pages",
+    "navigation"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Pagination/index.tsx",
+  "exportName": "Pagination",
+  "propsSummary": [
+    "children: node (required)",
+    "totalPages: number (required)",
+    "page: number",
+    "defaultPage: number (default: 1)",
+    "onPageChange: function",
+    "edgeCount: number (default: 1)",
+    "siblingCount: number (default: 1)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": true
+    },
+    "totalPages": {
+      "type": "number",
+      "description": "Total number of pages",
+      "required": true
+    },
+    "page": {
+      "type": "number",
+      "description": "Controlled current page (1-indexed)",
+      "required": false
+    },
+    "defaultPage": {
+      "type": "number",
+      "description": "Default page (uncontrolled)",
+      "default": "1",
+      "required": false
+    },
+    "onPageChange": {
+      "type": "function",
+      "description": "Called when page changes",
+      "required": false
+    },
+    "edgeCount": {
+      "type": "number",
+      "description": "Number of pages shown at edges",
+      "default": "1",
+      "required": false
+    },
+    "siblingCount": {
+      "type": "number",
+      "description": "Number of pages shown around current",
+      "default": "1",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Navigating through paginated data sets",
+      "Table or list pagination controls",
+      "Search results with multiple pages",
+      "Any content split across multiple pages"
+    ],
+    "whenNot": [
+      "Small lists that fit on one page",
+      "Infinite scroll patterns (use IntersectionObserver)",
+      "Tab-based navigation (use Tabs)",
+      "Step-by-step wizards (use Stepper)"
+    ],
+    "guidelines": [
+      "Place below the content being paginated",
+      "Use edgeCount to always show first/last pages",
+      "Use siblingCount to control how many pages surround the current page",
+      "Pair with Table component for data table pagination",
+      "Pagination forwards standard nav props (id, aria-*, data-*, event handlers) to the root <nav>",
+      "Previous/Next/Item buttons compose your onClick handlers; call event.preventDefault() to stop the page change"
+    ],
+    "accessibility": [
+      "Uses nav element with aria-label=\"Pagination\"",
+      "aria-current=\"page\" marks the active page",
+      "Previous/Next buttons have descriptive aria-labels",
+      "Disabled buttons at boundaries prevent invalid navigation"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic pagination with 10 pages",
+      "code": "<Pagination totalPages={10} defaultPage={1}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "With Edge Pages",
+      "description": "Shows 2 pages at each edge",
+      "code": "<Pagination totalPages={20} defaultPage={10} edgeCount={2} siblingCount={1}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "Compact",
+      "description": "No siblings, minimal display",
+      "code": "<Pagination totalPages={20} defaultPage={10} siblingCount={0}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "Controlled",
+      "description": "Controlled pagination at page 3",
+      "code": "<Pagination totalPages={5} page={3}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Table",
+      "relationship": "sibling",
+      "note": "Commonly paired for table pagination"
+    },
+    {
+      "component": "Listbox",
+      "relationship": "alternative",
+      "note": "Use Listbox for small sets of options"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "totalPages: number - total page count (required)",
+      "page: number - controlled current page (1-indexed)",
+      "defaultPage: number - initial page (default: 1)",
+      "onPageChange: (page) => void - page change handler",
+      "edgeCount: number - pages at edges (default: 1)",
+      "siblingCount: number - pages around current (default: 1)",
+      "Forwards standard HTML nav attributes to the root element"
+    ],
+    "a11yRules": [
+      "A11Y_NAV_LABEL",
+      "A11Y_CURRENT_PAGE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Previous",
+      "Next",
+      "Items",
+      "Item",
+      "Ellipsis"
+    ],
+    "requiredChildren": [
+      "Items"
+    ],
+    "commonPatterns": [
+      "<Pagination totalPages={totalPages} page={currentPage} onPageChange={setPage}><Pagination.Previous /><Pagination.Items /><Pagination.Next /></Pagination>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:01.648Z"
+  }
+}

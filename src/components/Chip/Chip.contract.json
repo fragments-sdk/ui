@@ -1,0 +1,212 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Chip",
+  "description": "Interactive pill-shaped element for filtering, selecting, and tagging. Supports single and multi-select via Chip.Group.",
+  "category": "forms",
+  "tags": [
+    "chip",
+    "tag",
+    "filter",
+    "selection",
+    "multi-select",
+    "action"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Chip/index.tsx",
+  "exportName": "Chip",
+  "propsSummary": [
+    "children: node (required)",
+    "variant: filled|outlined|outline|soft (default: filled)",
+    "size: xs|sm|md|lg (default: md)",
+    "selected: boolean (default: false)",
+    "icon: node",
+    "avatar: node",
+    "onRemove: function",
+    "value: string",
+    "disabled: boolean (default: false)",
+    "onClick: function"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Chip label text",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style variant",
+      "default": "filled",
+      "required": false,
+      "values": [
+        "filled",
+        "outlined",
+        "outline",
+        "soft"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Chip size",
+      "default": "md",
+      "required": false,
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "selected": {
+      "type": "boolean",
+      "description": "Whether the chip is in a selected state",
+      "default": "false",
+      "required": false
+    },
+    "icon": {
+      "type": "node",
+      "description": "Icon element rendered before the label",
+      "required": false
+    },
+    "avatar": {
+      "type": "node",
+      "description": "Avatar element rendered before the label",
+      "required": false
+    },
+    "onRemove": {
+      "type": "function",
+      "description": "Makes chip removable. Called when X is clicked.",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Value identifier used by Chip.Group for selection tracking",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "",
+      "default": "false",
+      "required": false
+    },
+    "onClick": {
+      "type": "function",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Filtering content by categories or tags",
+      "Multi-select scenarios like choosing interests or skills",
+      "Toggling options in a compact pill-shaped control",
+      "Displaying removable user-applied filters"
+    ],
+    "whenNot": [
+      "Display-only status labels (use Badge)",
+      "Navigation between views (use Tabs)",
+      "Binary on/off state (use Switch)",
+      "Primary call-to-action (use Button)"
+    ],
+    "guidelines": [
+      "Keep chip labels short (1-3 words)",
+      "Use Chip.Group for multi-select sets with shared state",
+      "Use onRemove only when users should be able to dismiss the chip",
+      "Pair avatar chips with user-related selections (assignees, reviewers)",
+      "Provide an explicit value on Chip when using non-string/custom JSX children inside Chip.Group"
+    ],
+    "accessibility": [
+      "Chips are buttons and use aria-pressed for selection state",
+      "Chip.Group is a grouping wrapper; add role/aria-label when needed for assistive context",
+      "Remove buttons include descriptive aria-label with chip text",
+      "Disabled chips are properly excluded from interaction"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic filled chip",
+      "code": "<Chip>Default</Chip>"
+    },
+    {
+      "name": "Outline",
+      "description": "Chip with border using the \"outline\" alias for \"outlined\"",
+      "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip variant=\"outline\">Outline</Chip>\n  <Chip variant=\"outline\" selected>Outline Selected</Chip>\n</div>"
+    },
+    {
+      "name": "Selected",
+      "description": "Chip in selected state across variants",
+      "code": "<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>\n  <Chip selected>Filled</Chip>\n  <Chip variant=\"outlined\" selected>Outlined</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</div>"
+    },
+    {
+      "name": "With Avatar",
+      "description": "Chip with a leading avatar image",
+      "code": "<Chip avatar={<img src=\"https://i.pravatar.cc/32?u=chip\" alt=\"\" />}>\n  Jane Doe\n</Chip>"
+    },
+    {
+      "name": "With Remove",
+      "description": "Removable chip with dismiss button",
+      "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip onRemove={() => {}}>React</Chip>\n  <Chip onRemove={() => {}}>TypeScript</Chip>\n  <Chip onRemove={() => {}}>SCSS</Chip>\n</div>"
+    },
+    {
+      "name": "Chip Group",
+      "description": "Multi-select chip set with shared state",
+      "code": "<Chip.Group defaultValue={['react']}>\n  <Chip value=\"react\">React</Chip>\n  <Chip value=\"vue\">Vue</Chip>\n  <Chip value=\"angular\">Angular</Chip>\n  <Chip value=\"svelte\">Svelte</Chip>\n</Chip.Group>"
+    },
+    {
+      "name": "Chip Group with Custom Labels",
+      "description": "Use explicit values when chip labels are custom JSX",
+      "code": "<Chip.Group aria-label=\"Assignees\">\n  <Chip value=\"jane\">\n    <span>Jane Doe</span>\n  </Chip>\n  <Chip value=\"sam\">\n    <span>Sam Lee</span>\n  </Chip>\n</Chip.Group>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Chip in disabled state",
+      "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip disabled>Disabled</Chip>\n  <Chip disabled selected>Disabled Selected</Chip>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Badge is display-only; Chip is interactive"
+    },
+    {
+      "component": "ToggleGroup",
+      "relationship": "alternative",
+      "note": "Use ToggleGroup for mutually exclusive options"
+    },
+    {
+      "component": "Button",
+      "relationship": "alternative",
+      "note": "Use Button for primary actions, Chip for selection/filtering"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - chip label (required)",
+      "variant: filled|outlined|outline|soft - visual style",
+      "size: sm|md - chip size",
+      "selected: boolean - selection state",
+      "icon/avatar: ReactNode - leading visual",
+      "onRemove: () => void - makes chip removable",
+      "value: string - identifier for Chip.Group",
+      "Chip.Group forwards DOM props (id, role, aria-*, data-*, handlers)",
+      "Chip.Group: non-string chip labels should set an explicit value"
+    ],
+    "a11yRules": [
+      "A11Y_CHIP_SELECTION",
+      "A11Y_CHIP_DISMISS"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Group"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:54.270Z"
+  }
+}

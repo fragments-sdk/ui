@@ -1,0 +1,143 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Separator",
+  "description": "Visual divider between content sections. Use to create clear visual boundaries and improve content organization.",
+  "category": "layout",
+  "tags": [
+    "separator",
+    "divider",
+    "hr",
+    "line",
+    "layout"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Separator/index.tsx",
+  "exportName": "Separator",
+  "propsSummary": [
+    "orientation: horizontal|vertical (default: horizontal)",
+    "spacing: none|sm|md|lg (default: none)",
+    "soft: boolean (default: false)",
+    "label: string",
+    "style: object"
+  ],
+  "props": {
+    "orientation": {
+      "type": "enum",
+      "description": "Direction of the separator",
+      "default": "horizontal",
+      "required": false,
+      "values": [
+        "horizontal",
+        "vertical"
+      ]
+    },
+    "spacing": {
+      "type": "enum",
+      "description": "Margin around the separator",
+      "default": "none",
+      "required": false,
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "soft": {
+      "type": "boolean",
+      "description": "Softer, lighter appearance",
+      "default": "false",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Optional text label (horizontal only)",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Dividing content sections",
+      "Separating groups of related items",
+      "Creating visual breathing room",
+      "Labeled section breaks"
+    ],
+    "whenNot": [
+      "Creating grid layouts (use CSS Grid)",
+      "Decorative borders (use CSS)",
+      "Spacing alone is sufficient"
+    ],
+    "guidelines": [
+      "Use sparingly - too many separators create visual noise",
+      "Consider if spacing alone would work",
+      "Use soft variant for subtle separation",
+      "Labeled separators work well for major section breaks"
+    ],
+    "accessibility": [
+      "Uses role=\"separator\" for semantic meaning",
+      "Decorative separators should be aria-hidden"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic horizontal separator",
+      "code": "<div style={{ width: '300px' }}>\n  <p>Content above</p>\n  <Separator spacing=\"md\" />\n  <p>Content below</p>\n</div>"
+    },
+    {
+      "name": "With Label",
+      "description": "Labeled section divider",
+      "code": "<div style={{ width: '300px' }}>\n  <p>First section</p>\n  <Separator label=\"Or\" spacing=\"md\" />\n  <p>Second section</p>\n</div>"
+    },
+    {
+      "name": "Soft",
+      "description": "Subtle separator",
+      "code": "<div style={{ width: '300px' }}>\n  <p>Content above</p>\n  <Separator soft spacing=\"md\" />\n  <p>Content below</p>\n</div>"
+    },
+    {
+      "name": "Vertical",
+      "description": "Vertical separator between elements",
+      "code": "<div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '40px' }}>\n  <span>Item 1</span>\n  <Separator orientation=\"vertical\" />\n  <span>Item 2</span>\n  <Separator orientation=\"vertical\" />\n  <span>Item 3</span>\n</div>"
+    },
+    {
+      "name": "Spacing Options",
+      "description": "Different spacing sizes",
+      "code": "<div style={{ width: '300px' }}>\n  <p>No spacing</p>\n  <Separator spacing=\"none\" />\n  <p>Small spacing</p>\n  <Separator spacing=\"sm\" />\n  <p>Medium spacing</p>\n  <Separator spacing=\"md\" />\n  <p>Large spacing</p>\n  <Separator spacing=\"lg\" />\n  <p>End</p>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "sibling",
+      "note": "Cards provide stronger visual grouping"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "orientation: horizontal|vertical - direction",
+      "spacing: none|sm|md|lg - margin",
+      "soft: boolean - lighter appearance",
+      "label: string - centered label text"
+    ],
+    "a11yRules": [
+      "A11Y_SEPARATOR_ROLE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:03.327Z"
+  }
+}

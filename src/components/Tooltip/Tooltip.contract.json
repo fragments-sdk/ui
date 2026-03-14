@@ -1,0 +1,214 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Tooltip",
+  "description": "Contextual help text that appears on hover or focus. Perfect for explaining icons, truncated text, or providing additional context.",
+  "category": "feedback",
+  "tags": [
+    "tooltip",
+    "hint",
+    "help",
+    "hover",
+    "contextual"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Tooltip/index.tsx",
+  "exportName": "Tooltip",
+  "propsSummary": [
+    "children: element (required)",
+    "content: node (required)",
+    "side: top|bottom|left|right (default: top)",
+    "align: start|center|end (default: center)",
+    "sideOffset: number (default: 6)",
+    "delay: number",
+    "closeDelay: number",
+    "disabled: boolean (default: false)",
+    "arrow: boolean (default: true)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "contentProps: object",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "element",
+      "description": "The element that triggers the tooltip",
+      "required": true
+    },
+    "content": {
+      "type": "node",
+      "description": "Content to display in the tooltip",
+      "required": true
+    },
+    "side": {
+      "type": "enum",
+      "description": "Which side to show the tooltip",
+      "default": "top",
+      "required": false,
+      "values": [
+        "top",
+        "bottom",
+        "left",
+        "right"
+      ]
+    },
+    "align": {
+      "type": "enum",
+      "description": "Alignment along the side",
+      "default": "center",
+      "required": false,
+      "values": [
+        "start",
+        "center",
+        "end"
+      ]
+    },
+    "sideOffset": {
+      "type": "number",
+      "description": "Distance from trigger in pixels",
+      "default": "6",
+      "required": false
+    },
+    "delay": {
+      "type": "number",
+      "description": "Delay before showing (ms)",
+      "default": "400",
+      "required": false
+    },
+    "closeDelay": {
+      "type": "number",
+      "description": "Delay before hiding (ms)",
+      "default": "0",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the tooltip",
+      "default": "false",
+      "required": false
+    },
+    "arrow": {
+      "type": "boolean",
+      "description": "Show arrow pointing to trigger",
+      "default": "true",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Callback when open state changes",
+      "required": false
+    },
+    "contentProps": {
+      "type": "object",
+      "description": "Props forwarded to the tooltip popup element (preferred way to pass popup attrs/className/style)",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Explaining icon-only buttons",
+      "Showing full text for truncated content",
+      "Providing keyboard shortcuts",
+      "Brief contextual help that fits in one line"
+    ],
+    "whenNot": [
+      "Long-form help content (use Popover)",
+      "Critical information users must see (use Alert)",
+      "Interactive content (use Popover or Menu)",
+      "Mobile-primary interfaces (tooltips require hover)"
+    ],
+    "guidelines": [
+      "Keep tooltip text concise (under 80 characters)",
+      "Use sentence case, no period for single sentences",
+      "Avoid duplicating visible label text",
+      "Consider mobile users who cannot hover",
+      "Use contentProps for tooltip popup attributes/styling; top-level HTML attrs are applied to the popup for backward compatibility"
+    ],
+    "accessibility": [
+      "Accessible via focus as well as hover",
+      "Uses role=\"tooltip\" with proper aria association",
+      "Delay prevents tooltips from appearing during navigation"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic tooltip on hover",
+      "code": "<Tooltip content=\"Save your changes\">\n  <Button>Save</Button>\n</Tooltip>"
+    },
+    {
+      "name": "Positions",
+      "description": "Tooltips on different sides",
+      "code": "<div style={{ display: 'flex', gap: '16px', padding: '40px' }}>\n  <Tooltip content=\"Top tooltip\" side=\"top\">\n    <Button variant=\"secondary\">Top</Button>\n  </Tooltip>\n  <Tooltip content=\"Bottom tooltip\" side=\"bottom\">\n    <Button variant=\"secondary\">Bottom</Button>\n  </Tooltip>\n  <Tooltip content=\"Left tooltip\" side=\"left\">\n    <Button variant=\"secondary\">Left</Button>\n  </Tooltip>\n  <Tooltip content=\"Right tooltip\" side=\"right\">\n    <Button variant=\"secondary\">Right</Button>\n  </Tooltip>\n</div>"
+    },
+    {
+      "name": "With Shortcut",
+      "description": "Tooltip showing keyboard shortcut",
+      "code": "<Tooltip content=\"Undo (Ctrl+Z)\">\n  <Button variant=\"ghost\">Undo</Button>\n</Tooltip>"
+    },
+    {
+      "name": "No Arrow",
+      "description": "Tooltip without arrow",
+      "code": "<Tooltip content=\"Clean tooltip\" arrow={false}>\n  <Button variant=\"secondary\">Hover me</Button>\n</Tooltip>"
+    },
+    {
+      "name": "With Content Props",
+      "description": "Pass popup attributes/styling using contentProps",
+      "code": "<Tooltip content=\"Custom popup attrs\" contentProps={{ id: 'custom-tooltip-popup' }}>\n  <Button variant=\"secondary\">Hover me</Button>\n</Tooltip>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Popover",
+      "relationship": "alternative",
+      "note": "Use Popover for interactive or longer content"
+    },
+    {
+      "component": "Alert",
+      "relationship": "alternative",
+      "note": "Use Alert for critical information that must be visible"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "content: ReactNode - tooltip content",
+      "side: top|bottom|left|right - position",
+      "delay: number - show delay in ms (default: 400)",
+      "arrow: boolean - show arrow (default: true)",
+      "contentProps: HTMLAttributes<HTMLDivElement> - popup element props"
+    ],
+    "a11yRules": [
+      "A11Y_TOOLTIP_FOCUS",
+      "A11Y_TOOLTIP_ROLE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root",
+      "Provider"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:07.058Z"
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Slider",
+  "description": "Range input control for selecting a numeric value within a defined range. Supports labels, value display, and custom step intervals.",
+  "category": "forms",
+  "tags": [
+    "slider",
+    "range",
+    "input",
+    "number",
+    "control"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Slider/index.tsx",
+  "exportName": "Slider",
+  "propsSummary": [
+    "label: string",
+    "helperText: string",
+    "error: boolean (default: false)",
+    "value: number",
+    "defaultValue: number",
+    "onChange: function",
+    "onValueChange: function",
+    "min: number (default: 0)",
+    "max: number (default: 100)",
+    "step: number (default: 1)",
+    "showValue: boolean (default: false)",
+    "showValueOnDrag: boolean (default: false)",
+    "valueSuffix: string (default: )",
+    "disabled: boolean (default: false)",
+    "name: string",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string",
+    "id: string"
+  ],
+  "props": {
+    "label": {
+      "type": "string",
+      "description": "Label text",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the slider",
+      "required": false
+    },
+    "error": {
+      "type": "boolean",
+      "description": "Show error styling",
+      "default": "false",
+      "required": false
+    },
+    "value": {
+      "type": "number",
+      "description": "Controlled value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "number",
+      "description": "Default value for uncontrolled usage",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Called with new value when changed",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Alias for onChange (Radix convention): (value: number) => void",
+      "required": false
+    },
+    "min": {
+      "type": "number",
+      "description": "Minimum value",
+      "default": "0",
+      "required": false
+    },
+    "max": {
+      "type": "number",
+      "description": "Maximum value",
+      "default": "100",
+      "required": false
+    },
+    "step": {
+      "type": "number",
+      "description": "Step interval",
+      "default": "1",
+      "required": false
+    },
+    "showValue": {
+      "type": "boolean",
+      "description": "Display current value",
+      "default": "false",
+      "required": false
+    },
+    "showValueOnDrag": {
+      "type": "boolean",
+      "description": "Show current value in a floating bubble while dragging the thumb",
+      "default": "false",
+      "required": false
+    },
+    "valueSuffix": {
+      "type": "string",
+      "description": "Suffix after value (e.g., \"%\", \"px\")",
+      "default": "",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the slider",
+      "default": "false",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible label when visible label is omitted",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "Accessible labelled-by relationship",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "Accessible described-by relationship",
+      "required": false
+    },
+    "id": {
+      "type": "string",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Selecting a value from a continuous range",
+      "Volume or brightness controls",
+      "Price range filters",
+      "Settings that benefit from visual feedback"
+    ],
+    "whenNot": [
+      "Precise numeric input (use Input type=\"number\")",
+      "Discrete options (use RadioGroup or Select)",
+      "Yes/no choices (use Switch)"
+    ],
+    "guidelines": [
+      "Always provide a label describing what the slider controls",
+      "Show the current value when precision matters",
+      "Use appropriate min/max values for the context",
+      "Consider step size for usability"
+    ],
+    "accessibility": [
+      "Label is associated with the slider",
+      "Keyboard accessible with arrow keys",
+      "Current value is announced to screen readers",
+      "Uses native slider semantics"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic slider with label",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider label=\"Volume\" defaultValue={50} />\n</div>"
+    },
+    {
+      "name": "With Value Display",
+      "description": "Shows current value alongside the slider",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Brightness\"\n    defaultValue={75}\n    showValue\n    valueSuffix=\"%\"\n  />\n</div>"
+    },
+    {
+      "name": "Custom Range",
+      "description": "Custom min, max, and step values",
+      "code": "<div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  <Slider\n    label=\"Temperature\"\n    min={60}\n    max={80}\n    step={1}\n    defaultValue={72}\n    showValue\n    valueSuffix=\"°F\"\n  />\n  <Slider\n    label=\"Font Size\"\n    min={12}\n    max={32}\n    step={2}\n    defaultValue={16}\n    showValue\n    valueSuffix=\"px\"\n  />\n</div>"
+    },
+    {
+      "name": "Controlled",
+      "description": "Controlled slider with external state",
+      "code": "<ControlledSliderDemo />"
+    },
+    {
+      "name": "Drag Value Bubble",
+      "description": "Shows a floating value bubble while the thumb is being dragged",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Mix\"\n    defaultValue={40}\n    showValueOnDrag\n    valueSuffix=\"%\"\n  />\n</div>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Slider with helper text guidance",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Quality\"\n    defaultValue={80}\n    showValue\n    valueSuffix=\"%\"\n    helperText=\"Higher quality increases file size\"\n  />\n</div>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Disabled slider",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Locked Setting\"\n    defaultValue={30}\n    showValue\n    disabled\n  />\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for precise numeric entry"
+    },
+    {
+      "component": "Progress",
+      "relationship": "sibling",
+      "note": "Similar visual, but Progress is read-only"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: number - controlled value",
+      "defaultValue: number - initial value",
+      "onChange: (value: number) => void - change handler (or onValueChange)",
+      "min/max: number - range bounds",
+      "step: number - increment size",
+      "label: string - field label",
+      "helperText: string - helper text below slider",
+      "error: boolean - error styling",
+      "showValue: boolean - display value",
+      "showValueOnDrag: boolean - show value bubble during drag",
+      "valueSuffix: string - unit suffix"
+    ],
+    "a11yRules": [
+      "A11Y_LABEL_REQUIRED",
+      "A11Y_KEYBOARD_ACCESSIBLE",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.141Z"
+  }
+}

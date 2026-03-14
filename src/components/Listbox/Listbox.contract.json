@@ -1,0 +1,158 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Listbox",
+  "description": "Controlled listbox for search results, autocomplete dropdowns, and command menus. Provides Menu-like styling without requiring a trigger.",
+  "category": "forms",
+  "tags": [
+    "listbox",
+    "search",
+    "autocomplete",
+    "combobox",
+    "command",
+    "dropdown"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Listbox/index.tsx",
+  "exportName": "Listbox",
+  "propsSummary": [
+    "children: node (required)",
+    "style: object",
+    "tabIndex: number",
+    "onFocus: function",
+    "onKeyDown: function"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Listbox.Item, Listbox.Group, or Listbox.Empty components",
+      "required": true
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    },
+    "tabIndex": {
+      "type": "number",
+      "description": "",
+      "required": false
+    },
+    "onFocus": {
+      "type": "function",
+      "description": "",
+      "required": false
+    },
+    "onKeyDown": {
+      "type": "function",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Search result dropdowns",
+      "Autocomplete suggestions",
+      "Command palette results",
+      "Keyboard-navigable option lists"
+    ],
+    "whenNot": [
+      "Static lists without selection (use List)",
+      "Action menus with trigger button (use Menu)",
+      "Form field selection (use Select)",
+      "Navigation menus (use Sidebar or Tabs)"
+    ],
+    "guidelines": [
+      "Control open/close state externally based on input focus or query",
+      "Listbox provides arrow/home/end + Enter/Space keyboard navigation when focused",
+      "Use Listbox.Empty for no results state",
+      "Group related items with Listbox.Group when appropriate"
+    ],
+    "accessibility": [
+      "Uses listbox and option ARIA roles",
+      "aria-selected indicates current selection",
+      "aria-disabled for non-interactive items",
+      "Connect to input with aria-controls for full combobox pattern"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic listbox with selectable items",
+      "code": "<Listbox aria-label=\"Options\">\n  <Listbox.Item selected>First option</Listbox.Item>\n  <Listbox.Item>Second option</Listbox.Item>\n  <Listbox.Item>Third option</Listbox.Item>\n</Listbox>"
+    },
+    {
+      "name": "Search Results",
+      "description": "Typical search results pattern with label and metadata",
+      "code": "<Listbox aria-label=\"Search results\">\n  <Listbox.Item selected>\n    <span style={{ fontWeight: 500 }}>Button</span>\n    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--fui-text-tertiary)' }}>Components</span>\n  </Listbox.Item>\n  <Listbox.Item>\n    <span style={{ fontWeight: 500 }}>Badge</span>\n    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--fui-text-tertiary)' }}>Components</span>\n  </Listbox.Item>\n  <Listbox.Item>\n    <span style={{ fontWeight: 500 }}>Box</span>\n    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--fui-text-tertiary)' }}>Layout</span>\n  </Listbox.Item>\n</Listbox>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Grouped items with labels",
+      "code": "<Listbox aria-label=\"Commands\">\n  <Listbox.Group label=\"Recent\">\n    <Listbox.Item selected>Open file...</Listbox.Item>\n    <Listbox.Item>Save as...</Listbox.Item>\n  </Listbox.Group>\n  <Listbox.Group label=\"Actions\">\n    <Listbox.Item>Copy</Listbox.Item>\n    <Listbox.Item>Paste</Listbox.Item>\n    <Listbox.Item disabled>Cut</Listbox.Item>\n  </Listbox.Group>\n</Listbox>"
+    },
+    {
+      "name": "Empty State",
+      "description": "No results found message",
+      "code": "<Listbox aria-label=\"Search results\">\n  <Listbox.Empty>No results found</Listbox.Empty>\n</Listbox>"
+    },
+    {
+      "name": "With Disabled Items",
+      "description": "Mix of enabled and disabled items",
+      "code": "<Listbox aria-label=\"Options\">\n  <Listbox.Item>Available option</Listbox.Item>\n  <Listbox.Item disabled>Disabled option</Listbox.Item>\n  <Listbox.Item>Another option</Listbox.Item>\n</Listbox>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Pair with Input for search/autocomplete patterns"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu when you need a trigger button"
+    },
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for form field selection"
+    },
+    {
+      "component": "List",
+      "relationship": "alternative",
+      "note": "Use List for static, non-interactive lists"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - Listbox.Item components (required)",
+      "aria-label: string - accessible label",
+      "Listbox.Item selected: boolean - highlight state",
+      "Listbox.Item disabled: boolean - non-interactive"
+    ],
+    "a11yRules": [
+      "A11Y_LISTBOX_ROLE",
+      "A11Y_OPTION_ROLE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Item",
+      "Group",
+      "Empty"
+    ],
+    "requiredChildren": [
+      "Item"
+    ],
+    "commonPatterns": [
+      "<Listbox aria-label=\"Search results\">{results.map(item => <Listbox.Item key={item.id} selected={item.id === selectedId} onClick={() => onSelect(item)}>{item.label}</Listbox.Item>)}</Listbox>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.924Z"
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "BentoGrid",
+  "description": "Asymmetric grid layout with responsive spans and built-in surface styling for bento-style feature sections",
+  "category": "layout",
+  "tags": [
+    "bento",
+    "grid",
+    "layout",
+    "responsive",
+    "feature-grid",
+    "asymmetric"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/BentoGrid/index.tsx",
+  "exportName": "BentoGrid",
+  "propsSummary": [
+    "children: node",
+    "columns: union (default: 3)",
+    "gap: none|xs|sm|md|lg|xl (default: md)",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "BentoGrid.Item children",
+      "required": false
+    },
+    "columns": {
+      "type": "union",
+      "description": "Number of columns — auto-collapses responsively (3→2→1)",
+      "default": "3",
+      "required": false,
+      "values": [
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    "gap": {
+      "type": "enum",
+      "description": "Gap between grid items, mapped to spacing tokens",
+      "default": "md",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Asymmetric feature grids with hero + supporting items",
+      "Dashboard overviews where cards have different visual weight",
+      "Marketing pages with mixed-size content blocks",
+      "Any layout where items need per-breakpoint column/row spans"
+    ],
+    "whenNot": [
+      "Uniform grids where all items are the same size (use Grid)",
+      "Form layouts with labeled fields (use Grid)",
+      "Simple stacked content (use Stack)"
+    ],
+    "guidelines": [
+      "Use colSpan/rowSpan with responsive objects for layouts that adapt across breakpoints",
+      "The hero item typically uses colSpan={2} rowSpan={2} at lg and above",
+      "Items include built-in surface styling — no need to wrap children in Card",
+      "Grid auto-collapses: 3→2 columns below lg, all→1 column below sm",
+      "Root and Item forward DOM props (aria-*, data-*, handlers), and Item style merges with span CSS vars"
+    ],
+    "accessibility": [
+      "Grid is purely visual — it does not affect reading order or semantics",
+      "Ensure logical source order matches visual order for screen readers",
+      "Hover effects are disabled when prefers-reduced-motion is set",
+      "Border thickness increases in prefers-contrast: more mode"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic 3-column uniform bento grid",
+      "code": "<BentoGrid columns={3} gap=\"md\">\n  <BentoGrid.Item>Item 1</BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item>Item 3</BentoGrid.Item>\n  <BentoGrid.Item>Item 4</BentoGrid.Item>\n  <BentoGrid.Item>Item 5</BentoGrid.Item>\n  <BentoGrid.Item>Item 6</BentoGrid.Item>\n</BentoGrid>"
+    },
+    {
+      "name": "Hero Layout",
+      "description": "2×2 hero item with 4 supporting items in a 3-column grid",
+      "code": "<BentoGrid columns={3} gap=\"md\">\n  <BentoGrid.Item colSpan={{ base: 1, lg: 2 }} rowSpan={{ base: 1, lg: 2 }}>\n    Hero content\n  </BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item>Item 3</BentoGrid.Item>\n  <BentoGrid.Item>Item 4</BentoGrid.Item>\n  <BentoGrid.Item>Item 5</BentoGrid.Item>\n</BentoGrid>"
+    },
+    {
+      "name": "Two Column",
+      "description": "2-column bento with a wide item",
+      "code": "<BentoGrid columns={2} gap=\"md\">\n  <BentoGrid.Item>Item 1</BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item colSpan={2}>Wide item</BentoGrid.Item>\n  <BentoGrid.Item>Item 4</BentoGrid.Item>\n  <BentoGrid.Item>Item 5</BentoGrid.Item>\n</BentoGrid>"
+    },
+    {
+      "name": "Full-Width Banner",
+      "description": "3-column grid with a full-width item spanning all columns",
+      "code": "<BentoGrid columns={3} gap=\"md\">\n  <BentoGrid.Item>Item 1</BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item>Item 3</BentoGrid.Item>\n  <BentoGrid.Item colSpan={3}>Full-width banner</BentoGrid.Item>\n</BentoGrid>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Grid",
+      "relationship": "alternative",
+      "note": "Use Grid for uniform layouts; BentoGrid for asymmetric spans with built-in surfaces"
+    },
+    {
+      "component": "Card",
+      "relationship": "sibling",
+      "note": "BentoGrid.Item has built-in surface styling similar to Card"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "columns: 2|3|4 (default: 3) — auto-collapses responsively",
+      "gap: none|xs|sm|md|lg|xl (default: md)",
+      "BentoGrid.Item colSpan: 1|2|3 | { base, sm, md, lg, xl }",
+      "BentoGrid.Item rowSpan: 1|2|3 | { base, sm, md, lg, xl }",
+      "BentoGrid and BentoGrid.Item forward div DOM props; Item style is merged with generated span vars"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.407Z"
+  }
+}

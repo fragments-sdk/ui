@@ -1,0 +1,288 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "DatePicker",
+  "description": "Date picker with calendar dropdown for selecting single dates or date ranges. Built on react-day-picker with seed-based theming.",
+  "category": "forms",
+  "tags": [
+    "date",
+    "picker",
+    "calendar",
+    "range",
+    "form",
+    "input"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/DatePicker/index.tsx",
+  "exportName": "DatePicker",
+  "propsSummary": [
+    "children: node (required)",
+    "className: string",
+    "mode: single|range (default: single)",
+    "selected: object",
+    "selectedRange: object",
+    "onSelect: function",
+    "onChange: function",
+    "onRangeSelect: function",
+    "numberOfMonths: number (default: 1)",
+    "disabled: boolean (default: false)",
+    "disabledDates: union",
+    "placeholder: string",
+    "locale: object",
+    "fixedWeeks: boolean (default: false)",
+    "formatDate: function",
+    "formatRange: function",
+    "open: boolean",
+    "onOpenChange: function",
+    "name: string",
+    "label: string",
+    "helperText: string",
+    "error: union"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "DatePicker trigger and content",
+      "required": true
+    },
+    "className": {
+      "type": "string",
+      "description": "Wrapper class name",
+      "required": false
+    },
+    "mode": {
+      "type": "enum",
+      "description": "Selection mode",
+      "default": "single",
+      "required": false,
+      "values": [
+        "single",
+        "range"
+      ]
+    },
+    "selected": {
+      "type": "object",
+      "description": "Controlled date (single mode). Type: Date | null",
+      "required": false
+    },
+    "selectedRange": {
+      "type": "object",
+      "description": "Controlled range (range mode). Type: DateRange | null",
+      "required": false
+    },
+    "onSelect": {
+      "type": "function",
+      "description": "Called when a single date is selected",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Alias for onSelect (consistent with Input/Select onChange convention)",
+      "required": false
+    },
+    "onRangeSelect": {
+      "type": "function",
+      "description": "Called when a date range is selected",
+      "required": false
+    },
+    "numberOfMonths": {
+      "type": "number",
+      "description": "Number of months displayed side-by-side",
+      "default": "1",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the picker",
+      "default": "false",
+      "required": false
+    },
+    "disabledDates": {
+      "type": "union",
+      "description": "Dates to disable (react-day-picker Matcher | Matcher[])",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Trigger placeholder text",
+      "required": false
+    },
+    "locale": {
+      "type": "object",
+      "description": "date-fns locale for i18n",
+      "required": false
+    },
+    "fixedWeeks": {
+      "type": "boolean",
+      "description": "Always show 6 rows",
+      "default": "false",
+      "required": false
+    },
+    "formatDate": {
+      "type": "function",
+      "description": "Custom trigger date formatter",
+      "required": false
+    },
+    "formatRange": {
+      "type": "function",
+      "description": "Custom trigger range formatter",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled popover open state",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Popover open state change callback",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Hidden input name for forms",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible label text above the date picker",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the date picker",
+      "required": false
+    },
+    "error": {
+      "type": "union",
+      "description": "Show error styling. When a string is provided, it is displayed as an error message.",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Selecting a single date from a calendar",
+      "Selecting a date range (start/end)",
+      "Date inputs in forms",
+      "Filtering by date or date range"
+    ],
+    "whenNot": [
+      "Time-only input - use a dedicated TimePicker",
+      "Selecting from a small set of known dates - use Select",
+      "Free-form date entry - use Input with date masking"
+    ],
+    "guidelines": [
+      "Use range mode with numberOfMonths={2} for date range selection",
+      "Add presets for common ranges (Today, Last 7 days, Last 30 days)",
+      "Use disabledDates to prevent selecting past dates or unavailable dates",
+      "Provide a meaningful placeholder",
+      "DatePicker.Trigger forwards button props and defaults to type=\"button\" (safe inside forms)"
+    ],
+    "accessibility": [
+      "Full keyboard navigation within the calendar grid",
+      "Arrow keys navigate between days",
+      "Escape closes the calendar",
+      "Focus returns to trigger on close"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Single date picker with default settings",
+      "code": "<StatefulDatePicker placeholder=\"Pick a date\">\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
+    },
+    {
+      "name": "Date Range",
+      "description": "Range mode with dual months",
+      "code": "<StatefulRangePicker placeholder=\"Select date range\" numberOfMonths={2}>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulRangePicker>"
+    },
+    {
+      "name": "Multi-Month",
+      "description": "Single date with 3 months visible",
+      "code": "<StatefulDatePicker placeholder=\"Pick a date\" numberOfMonths={3}>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
+    },
+    {
+      "name": "Disabled Dates",
+      "description": "Past dates disabled",
+      "code": "<StatefulDatePicker\n  placeholder=\"Select a future date\"\n  disabledDates={{ before: new Date() }}\n>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
+    },
+    {
+      "name": "With Presets",
+      "description": "Range picker with sidebar preset buttons",
+      "code": "<StatefulRangePicker placeholder=\"Select date range\" numberOfMonths={2}>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <div style={{ display: 'flex', gap: '1rem' }}>\n      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '8rem' }}>\n        <DatePicker.Preset range={{ from: today, to: today }}>Today</DatePicker.Preset>\n        <DatePicker.Preset range={{ from: subDays(today, 7), to: today }}>Last 7 days</DatePicker.Preset>\n        <DatePicker.Preset range={{ from: subDays(today, 30), to: today }}>Last 30 days</DatePicker.Preset>\n        <DatePicker.Preset range={{ from: subDays(today, 90), to: today }}>Last 90 days</DatePicker.Preset>\n      </div>\n      <DatePicker.Calendar />\n    </div>\n  </DatePicker.Content>\n</StatefulRangePicker>"
+    },
+    {
+      "name": "With Label and Helper Text",
+      "description": "Date picker with built-in label and helper text",
+      "code": "<StatefulDatePicker placeholder=\"Pick a date\">\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
+    },
+    {
+      "name": "Error State",
+      "description": "Validation error with message",
+      "code": "<DatePicker\n  label=\"Start Date\"\n  placeholder=\"Pick a date\"\n  error=\"Please select a start date\"\n>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Disabled date picker",
+      "code": "<StatefulDatePicker placeholder=\"Pick a date\" disabled>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for choosing from a list of options"
+    },
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Use Input for free-form text date entry"
+    },
+    {
+      "component": "Popover",
+      "relationship": "composition",
+      "note": "DatePicker uses Popover for the calendar dropdown"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "mode: \"single\" | \"range\" - selection mode",
+      "selected: Date - controlled date (single)",
+      "selectedRange: DateRange - controlled range",
+      "onSelect: (date) => void - single selection handler",
+      "onRangeSelect: (range) => void - range selection handler",
+      "numberOfMonths: number - months visible (default 1)",
+      "label: string - visible label text",
+      "helperText: string - helper text below field",
+      "error: boolean | string - error styling and message",
+      "disabled: boolean - disable picker",
+      "disabledDates: Matcher - dates to disable",
+      "DatePicker.Trigger: button props supported (type defaults to \"button\")"
+    ],
+    "a11yRules": [
+      "A11Y_DATEPICKER_KEYBOARD",
+      "A11Y_DATEPICKER_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Calendar",
+      "Preset"
+    ],
+    "requiredChildren": [
+      "Trigger",
+      "Content"
+    ],
+    "commonPatterns": [
+      "<DatePicker selected={date} onSelect={setDate}><DatePicker.Trigger placeholder=\"Pick a date\" /><DatePicker.Content><DatePicker.Calendar /></DatePicker.Content></DatePicker>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:54.712Z"
+  }
+}

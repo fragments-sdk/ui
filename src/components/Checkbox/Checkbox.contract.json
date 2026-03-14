@@ -1,0 +1,246 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Checkbox",
+  "description": "Binary toggle for form fields. Use for options that require explicit submission, unlike Switch which takes effect immediately.",
+  "category": "forms",
+  "tags": [
+    "checkbox",
+    "form",
+    "boolean",
+    "selection",
+    "input"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Checkbox/index.tsx",
+  "exportName": "Checkbox",
+  "propsSummary": [
+    "checked: boolean",
+    "defaultChecked: boolean",
+    "onCheckedChange: function",
+    "onChange: function",
+    "indeterminate: boolean (default: false)",
+    "disabled: boolean (default: false)",
+    "required: boolean (default: false)",
+    "size: sm|md|lg (default: md)",
+    "label: string",
+    "helperText: string",
+    "description: string",
+    "name: string",
+    "value: string",
+    "id: string",
+    "controlClassName: string",
+    "contentClassName: string",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string"
+  ],
+  "props": {
+    "checked": {
+      "type": "boolean",
+      "description": "Controlled checked state",
+      "required": false
+    },
+    "defaultChecked": {
+      "type": "boolean",
+      "description": "Default checked state (uncontrolled)",
+      "required": false
+    },
+    "onCheckedChange": {
+      "type": "function",
+      "description": "Called when checked state changes",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Alias for onCheckedChange: (checked: boolean) => void",
+      "required": false
+    },
+    "indeterminate": {
+      "type": "boolean",
+      "description": "Indeterminate state (partial selection)",
+      "default": "false",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the checkbox",
+      "default": "false",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Whether the checkbox is required",
+      "default": "false",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Checkbox size",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the label (preferred)",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "description": "Deprecated alias for helperText",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for form submission",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Value attribute for form submission",
+      "required": false
+    },
+    "id": {
+      "type": "string",
+      "description": "ID for the checkbox input",
+      "required": false
+    },
+    "controlClassName": {
+      "type": "string",
+      "description": "Class name for the checkbox control element (stable styling target)",
+      "required": false
+    },
+    "contentClassName": {
+      "type": "string",
+      "description": "Class name for the label/description content wrapper",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible label for icon-only mode",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "Accessible labelled-by relationship for icon-only mode",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "Accessible described-by relationship",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Form fields requiring explicit submission",
+      "Multi-select from a list of options",
+      "Terms and conditions acceptance",
+      "Filter or preference checklists"
+    ],
+    "whenNot": [
+      "Immediate effect settings (use Switch)",
+      "Single selection from options (use RadioGroup)",
+      "Selecting from many options (use Select)"
+    ],
+    "guidelines": [
+      "Always include a visible label",
+      "Use helperText for additional context when needed",
+      "Group related checkboxes visually",
+      "Use indeterminate state for parent/child relationships"
+    ],
+    "accessibility": [
+      "Proper label association",
+      "Keyboard accessible (Space to toggle)",
+      "Visible focus indicator",
+      "Indeterminate state properly announced"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic checkbox with label",
+      "code": "<StatefulCheckbox label=\"Accept terms and conditions\" />"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Checkbox with helper text",
+      "code": "<StatefulCheckbox\n  label=\"Email notifications\"\n  helperText=\"Receive email updates about your account activity\"\n/>"
+    },
+    {
+      "name": "Checked",
+      "description": "Pre-checked checkbox",
+      "code": "<StatefulCheckbox defaultChecked label=\"Subscribe to newsletter\" />"
+    },
+    {
+      "name": "Indeterminate",
+      "description": "Partial selection state",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Checkbox indeterminate label=\"Select all\" />\n  <div style={{ marginLeft: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>\n    <StatefulCheckbox defaultChecked label=\"Option 1\" />\n    <StatefulCheckbox label=\"Option 2\" />\n    <StatefulCheckbox defaultChecked label=\"Option 3\" />\n  </div>\n</div>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size options",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <StatefulCheckbox size=\"sm\" label=\"Small checkbox\" />\n  <StatefulCheckbox size=\"md\" label=\"Medium checkbox\" />\n  <StatefulCheckbox size=\"lg\" label=\"Large checkbox\" />\n</div>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive states",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Checkbox disabled label=\"Disabled unchecked\" />\n  <Checkbox disabled checked label=\"Disabled checked\" />\n</div>"
+    },
+    {
+      "name": "Custom Styling Targets",
+      "description": "Use explicit class targets for control vs content styling",
+      "code": "<Checkbox\n  label=\"Styled checkbox\"\n  helperText=\"Control and content wrappers can be targeted independently\"\n  controlClassName=\"demo-checkbox-control\"\n  contentClassName=\"demo-checkbox-content\"\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Switch",
+      "relationship": "alternative",
+      "note": "Use Switch for immediate-effect settings"
+    },
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Checkbox handles boolean; Input handles text"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "checked: boolean - controlled checked state",
+      "onCheckedChange: (checked) => void - change handler",
+      "onChange: (checked) => void - alias for onCheckedChange",
+      "indeterminate: boolean - partial selection state",
+      "label: string - checkbox label",
+      "helperText: string - helper text (preferred)",
+      "description: string - deprecated alias for helperText",
+      "controlClassName/contentClassName - explicit styling targets for control and content"
+    ],
+    "a11yRules": [
+      "A11Y_CHECKBOX_LABEL",
+      "A11Y_CHECKBOX_FOCUS",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.226Z"
+  }
+}

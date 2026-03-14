@@ -1,0 +1,167 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Loading",
+  "description": "Versatile loading indicator with multiple variants for showing progress or waiting states",
+  "category": "feedback",
+  "tags": [
+    "loading",
+    "spinner",
+    "progress",
+    "feedback",
+    "indicator",
+    "async"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Loading/index.tsx",
+  "exportName": "Loading",
+  "propsSummary": [
+    "size: sm|md|lg|xl (default: md)",
+    "variant: spinner|dots|pulse (default: spinner)",
+    "label: string (default: Loading...)",
+    "centered: boolean (default: false)",
+    "fill: boolean (default: false)",
+    "overlay: boolean (default: false)",
+    "color: accent|current|muted (default: accent)"
+  ],
+  "props": {
+    "size": {
+      "type": "enum",
+      "description": "Size of the loading indicator",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style of the loading animation",
+      "default": "spinner",
+      "required": false,
+      "values": [
+        "spinner",
+        "dots",
+        "pulse"
+      ]
+    },
+    "label": {
+      "type": "string",
+      "description": "Accessible label for screen readers",
+      "default": "Loading...",
+      "required": false
+    },
+    "centered": {
+      "type": "boolean",
+      "description": "Whether to center the loading indicator in its container",
+      "default": "false",
+      "required": false
+    },
+    "fill": {
+      "type": "boolean",
+      "description": "Whether to fill the parent container",
+      "default": "false",
+      "required": false
+    },
+    "overlay": {
+      "type": "boolean",
+      "description": "Whether to show with a backdrop overlay",
+      "default": "false",
+      "required": false
+    },
+    "color": {
+      "type": "enum",
+      "description": "Color variant - accent uses theme color, current inherits text color",
+      "default": "accent",
+      "required": false,
+      "values": [
+        "accent",
+        "current",
+        "muted"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Indicating content is being fetched or processed",
+      "Showing a pending state while waiting for an async operation",
+      "Displaying loading state for buttons, forms, or page sections",
+      "Full-screen loading during initial app/page load"
+    ],
+    "whenNot": [
+      "For showing determinate progress - use Progress component instead",
+      "For showing skeleton placeholders - use Skeleton component instead",
+      "For AI-specific thinking states - use ThinkingIndicator instead"
+    ],
+    "guidelines": [
+      "Use spinner variant for general loading states",
+      "Use dots variant for chat/messaging contexts",
+      "Use pulse variant for subtle, ambient loading",
+      "Always provide a meaningful label for screen readers",
+      "Consider using Loading.Screen for initial page loads",
+      "Use Loading.Inline when loading indicator should flow with text"
+    ],
+    "accessibility": [
+      "Component uses role=\"status\" and aria-live=\"polite\"",
+      "Always provide descriptive label prop for screen readers",
+      "Animations respect prefers-reduced-motion preference"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Default spinner loading indicator",
+      "code": "<Loading />"
+    },
+    {
+      "name": "Sizes",
+      "description": "Loading indicators in different sizes",
+      "code": "<div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>\n  <Loading size=\"sm\" />\n  <Loading size=\"md\" />\n  <Loading size=\"lg\" />\n  <Loading size=\"xl\" />\n</div>"
+    },
+    {
+      "name": "Dots",
+      "description": "Bouncing dots animation",
+      "code": "<Loading variant=\"dots\" />"
+    },
+    {
+      "name": "Pulse",
+      "description": "Pulsing circle animation",
+      "code": "<Loading variant=\"pulse\" />"
+    },
+    {
+      "name": "Colors",
+      "description": "Different color variants",
+      "code": "<div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>\n  <Loading color=\"accent\" />\n  <Loading color=\"muted\" />\n  <span style={{ color: '#3b82f6' }}>\n    <Loading color=\"current\" />\n  </span>\n</div>"
+    },
+    {
+      "name": "Inline",
+      "description": "Inline loading indicator that flows with text",
+      "code": "<p style={{ margin: 0 }}>\n  Processing your request <Loading.Inline /> please wait...\n</p>"
+    },
+    {
+      "name": "Centered",
+      "description": "Centered in container",
+      "code": "<div style={{ width: '200px', height: '100px', border: '1px dashed #ccc', borderRadius: '8px' }}>\n  <Loading centered fill />\n</div>"
+    },
+    {
+      "name": "Screen",
+      "description": "Full-screen loading state with optional label",
+      "code": "<div style={{ position: 'relative', width: '300px', height: '200px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', transform: 'scale(1)' }}>\n  <Loading.Screen size=\"lg\" label=\"Loading application...\" showLabel />\n</div>"
+    }
+  ],
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Inline",
+      "Screen"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.576Z"
+  }
+}

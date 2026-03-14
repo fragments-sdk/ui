@@ -1,0 +1,152 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Theme",
+  "description": "Theme management system with provider, toggle, and hook pattern. Supports light, dark, and system modes with localStorage persistence.",
+  "category": "navigation",
+  "tags": [
+    "theme",
+    "dark-mode",
+    "light-mode",
+    "provider",
+    "toggle"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Theme/index.tsx",
+  "exportName": "ThemeProvider",
+  "propsSummary": [
+    "children: node (required)",
+    "defaultMode: light|dark|system",
+    "defaultTheme: light|dark|system",
+    "mode: light|dark|system",
+    "onModeChange: function",
+    "storageKey: string (default: fui-theme)",
+    "attribute: data-theme|class (default: data-theme)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Application content",
+      "required": true
+    },
+    "defaultMode": {
+      "type": "enum",
+      "description": "Default theme mode for uncontrolled usage",
+      "default": "system",
+      "required": false,
+      "values": [
+        "light",
+        "dark",
+        "system"
+      ]
+    },
+    "defaultTheme": {
+      "type": "enum",
+      "description": "",
+      "required": false,
+      "values": [
+        "light",
+        "dark",
+        "system"
+      ]
+    },
+    "mode": {
+      "type": "enum",
+      "description": "Controlled theme mode",
+      "required": false,
+      "values": [
+        "light",
+        "dark",
+        "system"
+      ]
+    },
+    "onModeChange": {
+      "type": "function",
+      "description": "Callback when mode changes",
+      "required": false
+    },
+    "storageKey": {
+      "type": "string",
+      "description": "localStorage key for persistence",
+      "default": "fui-theme",
+      "required": false
+    },
+    "attribute": {
+      "type": "enum",
+      "description": "How to apply theme to DOM",
+      "default": "data-theme",
+      "required": false,
+      "values": [
+        "data-theme",
+        "class"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Providing theme context to an application",
+      "Toggling between light and dark modes",
+      "Respecting system color scheme preference",
+      "Persisting theme preference across sessions"
+    ],
+    "whenNot": [
+      "Simple one-off color changes (use CSS variables)",
+      "Component-level theming (use component props)"
+    ],
+    "guidelines": [
+      "Wrap your app with ThemeProvider at the root level",
+      "Use useTheme hook to access theme state in components",
+      "ThemeToggle cycles through light → dark → system",
+      "Use storageKey to customize localStorage key",
+      "Set attribute=\"class\" if your CSS uses .dark class instead of data-theme",
+      "ThemeToggle forwards DOM props (id, data-*, className, handlers) to the toggle group"
+    ],
+    "accessibility": [
+      "ThemeToggle button has accessible label indicating current mode",
+      "Theme changes are applied via CSS custom properties for smooth transitions",
+      "System preference is detected via prefers-color-scheme media query"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "ThemeProvider with system default",
+      "code": "<ThemeProvider defaultMode=\"system\">\n  <ThemeDemo />\n</ThemeProvider>"
+    },
+    {
+      "name": "With Toggle",
+      "description": "ThemeProvider with toggle button",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>\n    <ThemeToggle />\n    <span>Click to cycle themes</span>\n  </div>\n</ThemeProvider>"
+    },
+    {
+      "name": "Toggle Sizes",
+      "description": "ThemeToggle in different sizes",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>\n    <ThemeToggle size=\"sm\" />\n    <ThemeToggle size=\"md\" />\n    <ThemeToggle size=\"lg\" />\n  </div>\n</ThemeProvider>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "AppShell",
+      "relationship": "sibling",
+      "note": "ThemeProvider typically wraps AppShell"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "defaultMode: light|dark|system - initial theme mode",
+      "mode: light|dark|system - controlled mode",
+      "onModeChange: (mode) => void - change handler",
+      "attribute: data-theme|class - DOM theme attribute",
+      "ThemeToggle size: sm|md|lg - toggle button size",
+      "ThemeToggle forwards div DOM props to the button group root"
+    ],
+    "a11yRules": [
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.406Z"
+  }
+}

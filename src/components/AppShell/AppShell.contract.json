@@ -1,0 +1,155 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "AppShell",
+  "description": "Full layout wrapper integrating sidebar, header, main content, and optional aside panel. Two structural layouts (default, sidebar) combine with per-slot variant=\"floating\" for full flexibility.",
+  "category": "layout",
+  "tags": [
+    "layout",
+    "shell",
+    "scaffold",
+    "dashboard",
+    "app-layout"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/AppShell/index.tsx",
+  "exportName": "AppShell",
+  "propsSummary": [
+    "children: node (required)",
+    "layout: default|sidebar|sidebar-floating|floating (default: default)",
+    "bg: string",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Layout content (use AppShell.Header, AppShell.Sidebar, AppShell.Main, AppShell.Aside)",
+      "required": true
+    },
+    "layout": {
+      "type": "enum",
+      "description": "Structural layout for CSS grid areas",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "sidebar",
+        "sidebar-floating",
+        "floating"
+      ]
+    },
+    "bg": {
+      "type": "string",
+      "description": "Background color override for the shell container (accepts any CSS color or token reference like \"var(--fui-bg-secondary)\")",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Building dashboard-style applications",
+      "Apps with persistent sidebar navigation",
+      "Layouts requiring header, sidebar, and main content areas",
+      "Responsive layouts that need mobile drawer behavior"
+    ],
+    "whenNot": [
+      "Simple marketing pages (use standard layout)",
+      "Content-first sites without navigation (use simpler layout)",
+      "Single-page apps with minimal UI (use minimal layout)"
+    ],
+    "guidelines": [
+      "Use layout=\"default\" when header should span full width (logo in header)",
+      "Use layout=\"sidebar\" when sidebar should be full height (logo in sidebar)",
+      "Add variant=\"floating\" to individual slots for rounded, elevated appearance",
+      "Use bg prop on any slot to override its background color",
+      "Combine layout with per-slot variants freely — no enum explosion",
+      "AppShell automatically wraps with SidebarProvider",
+      "Use AppShell.Sidebar to configure sidebar width and collapse behavior",
+      "Main content responds to sidebar collapsed state",
+      "Aside panel is hidden on mobile automatically"
+    ],
+    "accessibility": [
+      "Main content area has id=\"main-content\" for skip links",
+      "Use Header.SkipLink for keyboard navigation",
+      "Sidebar drawer has proper focus trap on mobile",
+      "Keyboard navigation supported throughout"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default Layout",
+      "description": "Header spans full width above sidebar (default). Best when brand/logo should be prominent in header.",
+      "code": "import { ChartBar, Gear, House } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"default\">\n    <AppShell.Header>\n      <Header>\n        <Header.Trigger />\n        <Header.Brand>MyApp</Header.Brand>\n        <Header.Nav>\n          <Header.NavItem active>Dashboard</Header.NavItem>\n          <Header.NavItem>Settings</Header.NavItem>\n        </Header.Nav>\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"200px\" collapsible=\"offcanvas\">\n      <Sidebar.Nav>\n        <Sidebar.Section label=\"Menu\">\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Analytics</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={Gear} size=\"md\" />}>Settings</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Default Layout</Text>\n        <Text as=\"p\" color=\"secondary\">\n          Header spans full width. Logo is in the header.\n        </Text>\n      </Stack>\n    </AppShell.Main>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "Sidebar Layout",
+      "description": "Sidebar is full height, header sits next to it. Best for documentation sites or when sidebar branding is preferred.",
+      "code": "import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"sidebar\">\n    <AppShell.Header>\n      <Header>\n        <Header.Trigger />\n        <Header.Search>\n          <Box background=\"secondary\" rounded=\"sm\" paddingX=\"sm\" paddingY=\"xs\">\n            <Stack direction=\"row\" align=\"center\" gap=\"sm\">\n              <Icon icon={MagnifyingGlass} size=\"sm\" variant=\"tertiary\" />\n              <Text size=\"sm\" color=\"tertiary\">Search...</Text>\n            </Stack>\n          </Box>\n        </Header.Search>\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"200px\" collapsible=\"offcanvas\">\n      <Sidebar.Header>\n        <Text weight=\"semibold\">MyApp</Text>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section label=\"Menu\">\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Analytics</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={Gear} size=\"md\" />}>Settings</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n      <Sidebar.Footer>v1.0.0</Sidebar.Footer>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Sidebar Layout</Text>\n        <Text as=\"p\" color=\"secondary\">\n          Sidebar is full height. Logo is in the sidebar header.\n        </Text>\n      </Stack>\n    </AppShell.Main>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "With Aside Panel",
+      "description": "App shell with optional right panel for additional context or actions.",
+      "code": "import { ChartBar, House } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"default\">\n    <AppShell.Header>\n      <Header>\n        <Header.Brand>App</Header.Brand>\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"180px\" collapsible=\"offcanvas\">\n      <Sidebar.Nav>\n        <Sidebar.Section>\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Stats</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Main Content</Text>\n        <Text as=\"p\">Content with aside panel on the right.</Text>\n      </Stack>\n    </AppShell.Main>\n\n    <AppShell.Aside width=\"180px\">\n      <Box padding=\"md\">\n        <Stack gap=\"xs\">\n          <Text as=\"h3\" size=\"sm\" weight=\"semibold\">Aside Panel</Text>\n          <Text as=\"p\" size=\"sm\" color=\"secondary\">\n            Additional context, filters, or quick actions.\n          </Text>\n        </Stack>\n      </Box>\n    </AppShell.Aside>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "Collapsible Icon Sidebar",
+      "description": "Sidebar that collapses to icons only on desktop.",
+      "code": "import { ChartBar, Gear, House } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"sidebar\">\n    <AppShell.Header>\n      <Header>\n        <Header.Trigger />\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar collapsible=\"icon\" width=\"200px\" collapsedWidth=\"56px\">\n      <Sidebar.Header>\n        <Text weight=\"semibold\">App</Text>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section>\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Analytics</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={Gear} size=\"md\" />}>Settings</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n      <Sidebar.Footer>\n        <Sidebar.CollapseToggle />\n      </Sidebar.Footer>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\">\n      <Text as=\"p\">\n        Click the collapse button in the sidebar footer to toggle between expanded and icon-only modes.\n      </Text>\n    </AppShell.Main>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "Floating Main",
+      "description": "Sidebar layout with floating main content. Per-slot variant=\"floating\" gives the main area rounded corners and a distinct background, while the sidebar blends with the shell.",
+      "code": "import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"sidebar\">\n    <AppShell.Header>\n      <Header>\n        <Header.Trigger />\n        <Header.Search>\n          <Box background=\"primary\" border rounded=\"sm\" paddingX=\"sm\" paddingY=\"xs\">\n            <Stack direction=\"row\" align=\"center\" gap=\"sm\">\n              <Icon icon={MagnifyingGlass} size=\"sm\" variant=\"tertiary\" />\n              <Text size=\"sm\" color=\"tertiary\">Search...</Text>\n            </Stack>\n          </Box>\n        </Header.Search>\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"200px\" collapsible=\"offcanvas\" variant=\"floating\">\n      <Sidebar.Header>\n        <Text weight=\"semibold\">MyApp</Text>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section label=\"Menu\">\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Analytics</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={Gear} size=\"md\" />}>Settings</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n      <Sidebar.Footer>v1.0.0</Sidebar.Footer>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\" variant=\"floating\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Floating Main</Text>\n        <Text as=\"p\" color=\"secondary\">\n          Main content has rounded corners and visual separation from the sidebar.\n        </Text>\n      </Stack>\n    </AppShell.Main>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "Floating Main & Aside",
+      "description": "Both main content and aside panel float with rounded corners. Each slot independently opts into the floating visual treatment via variant=\"floating\".",
+      "code": "import { ChartBar, Gear, House, MagnifyingGlass } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"sidebar\">\n    <AppShell.Header>\n      <Header>\n        <Header.Trigger />\n        <Header.Search>\n          <Box background=\"primary\" border rounded=\"sm\" paddingX=\"sm\" paddingY=\"xs\">\n            <Stack direction=\"row\" align=\"center\" gap=\"sm\">\n              <Icon icon={MagnifyingGlass} size=\"sm\" variant=\"tertiary\" />\n              <Text size=\"sm\" color=\"tertiary\">Search...</Text>\n            </Stack>\n          </Box>\n        </Header.Search>\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"200px\" collapsible=\"offcanvas\" variant=\"floating\">\n      <Sidebar.Header>\n        <Text weight=\"semibold\">MyApp</Text>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section label=\"Menu\">\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Analytics</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={Gear} size=\"md\" />}>Settings</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n      <Sidebar.Footer>v1.0.0</Sidebar.Footer>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\" variant=\"floating\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Floating Main & Aside</Text>\n        <Text as=\"p\" color=\"secondary\">\n          Both main content and aside panel float with rounded corners.\n        </Text>\n      </Stack>\n    </AppShell.Main>\n\n    <AppShell.Aside width=\"200px\" variant=\"floating\">\n      <Box padding=\"md\">\n        <Stack gap=\"xs\">\n          <Text as=\"h3\" size=\"sm\" weight=\"semibold\">Aside Panel</Text>\n          <Text as=\"p\" size=\"sm\" color=\"secondary\">\n            This aside also floats, matching the main content area.\n          </Text>\n        </Stack>\n      </Box>\n    </AppShell.Aside>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "Floating Default Layout",
+      "description": "Default header-on-top structure with a floating main content area. Demonstrates that floating is independent of structure — any slot can float in any layout.",
+      "code": "import { ChartBar, House } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"default\">\n    <AppShell.Header>\n      <Header>\n        <Header.Brand>MyApp</Header.Brand>\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"180px\" collapsible=\"offcanvas\" variant=\"floating\">\n      <Sidebar.Nav>\n        <Sidebar.Section>\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Stats</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\" variant=\"floating\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Floating Default Layout</Text>\n        <Text as=\"p\" color=\"secondary\">\n          Default structure (header on top) with floating main content. Any slot can float in any layout.\n        </Text>\n      </Stack>\n    </AppShell.Main>\n  </AppShell>\n</Box>"
+    },
+    {
+      "name": "Custom Backgrounds",
+      "description": "Each slot accepts a bg prop to override its background color independently. Here the sidebar and aside use bg-elevated (lighter) while main uses bg-primary (darker).",
+      "code": "import { ChartBar, House } from '@phosphor-icons/react';\nimport { AppShell } from '@/components/AppShell';\nimport { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Icon } from '@/components/Icon';\nimport { Sidebar } from '@/components/Sidebar';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box minHeight=\"100vh\" overflow=\"hidden\" border rounded=\"md\">\n  <AppShell layout=\"sidebar\">\n    <AppShell.Header>\n      <Header>\n        <Header.Trigger />\n        <Header.Spacer />\n        <Header.Actions>\n          <ThemeToggle size=\"sm\" />\n        </Header.Actions>\n      </Header>\n    </AppShell.Header>\n\n    <AppShell.Sidebar width=\"200px\" collapsible=\"offcanvas\" bg=\"var(--fui-bg-elevated)\">\n      <Sidebar.Header>\n        <Text weight=\"semibold\">MyApp</Text>\n      </Sidebar.Header>\n      <Sidebar.Nav>\n        <Sidebar.Section label=\"Menu\">\n          <Sidebar.Item icon={<Icon icon={House} size=\"md\" />} active>Home</Sidebar.Item>\n          <Sidebar.Item icon={<Icon icon={ChartBar} size=\"md\" />}>Analytics</Sidebar.Item>\n        </Sidebar.Section>\n      </Sidebar.Nav>\n    </AppShell.Sidebar>\n\n    <AppShell.Main padding=\"md\" bg=\"var(--fui-bg-primary)\">\n      <Stack gap=\"xs\">\n        <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Custom Backgrounds</Text>\n        <Text as=\"p\" color=\"secondary\">\n          Sidebar uses bg-elevated (lighter), main uses bg-primary (darker). Any CSS color or token works.\n        </Text>\n      </Stack>\n    </AppShell.Main>\n\n    <AppShell.Aside width=\"200px\" bg=\"var(--fui-bg-elevated)\">\n      <Box padding=\"md\">\n        <Stack gap=\"xs\">\n          <Text as=\"h3\" size=\"sm\" weight=\"semibold\">Aside Panel</Text>\n          <Text as=\"p\" size=\"sm\" color=\"secondary\">\n            Aside with bg-elevated background matching the sidebar.\n          </Text>\n        </Stack>\n      </Box>\n    </AppShell.Aside>\n  </AppShell>\n</Box>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Theme",
+      "relationship": "parent",
+      "note": "AppShell should be wrapped in ThemeProvider"
+    },
+    {
+      "component": "Header",
+      "relationship": "child",
+      "note": "Header is placed inside AppShell.Header"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "child",
+      "note": "Sidebar content goes inside AppShell.Sidebar"
+    }
+  ],
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Header",
+      "Sidebar",
+      "Main",
+      "Aside"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.550Z"
+  }
+}

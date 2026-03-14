@@ -1,0 +1,154 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Collapsible",
+  "description": "An interactive component that expands/collapses to show or hide content",
+  "category": "layout",
+  "tags": [
+    "collapsible",
+    "expandable",
+    "accordion",
+    "disclosure",
+    "toggle"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Collapsible/index.tsx",
+  "exportName": "Collapsible",
+  "propsSummary": [
+    "children: node (required)",
+    "defaultOpen: boolean (default: false)",
+    "open: boolean",
+    "onOpenChange: function",
+    "disabled: boolean (default: false)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Collapsible.Trigger and Collapsible.Content components",
+      "required": true
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Whether the collapsible is initially open (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Callback when open state changes - (open: boolean) => void",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Whether the collapsible is disabled",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Showing/hiding additional content on demand",
+      "Building accordions or expandable sections",
+      "Collapsible navigation sections",
+      "FAQ sections with expandable answers",
+      "Settings panels with grouped options"
+    ],
+    "whenNot": [
+      "Single item disclosure (use Accordion instead)",
+      "Navigation menus with complex interactions (use Menu)",
+      "Modal or overlay content (use Dialog or Popover)"
+    ],
+    "guidelines": [
+      "Use clear trigger labels that indicate expandable content",
+      "Consider defaultOpen for primary content users often need",
+      "Keep trigger text concise but descriptive",
+      "Use chevron icons consistently to indicate collapsible state"
+    ],
+    "accessibility": [
+      "Trigger must have aria-expanded to indicate state",
+      "Content region needs aria-labelledby pointing to trigger",
+      "Keyboard: Enter/Space toggles open state",
+      "Focus should remain on trigger after toggle"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic collapsible with trigger and content",
+      "code": "<Collapsible>\n  <Collapsible.Trigger>Click to expand</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>This content is hidden by default and revealed when the trigger is clicked.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Default Open",
+      "description": "Collapsible that starts in the expanded state",
+      "code": "<Collapsible defaultOpen>\n  <Collapsible.Trigger>Section Title</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>This content is visible by default. Click the trigger to collapse.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Chevron Start",
+      "description": "Collapsible with chevron icon on the left",
+      "code": "<Collapsible>\n  <Collapsible.Trigger chevronPosition=\"start\">Navigation</Collapsible.Trigger>\n  <Collapsible.Content>\n    <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>\n      <li>Dashboard</li>\n      <li>Settings</li>\n      <li>Profile</li>\n    </ul>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "No Chevron",
+      "description": "Collapsible without chevron indicator",
+      "code": "<Collapsible>\n  <Collapsible.Trigger showChevron={false}>Show more details</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>Hidden details that appear when triggered.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Collapsible in disabled state",
+      "code": "<Collapsible disabled>\n  <Collapsible.Trigger>Cannot toggle (disabled)</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>This content cannot be shown because the collapsible is disabled.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Multiple Sections",
+      "description": "Multiple independent collapsible sections",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>\n  <Collapsible defaultOpen>\n    <Collapsible.Trigger>Getting Started</Collapsible.Trigger>\n    <Collapsible.Content>\n      <p>Introduction and setup instructions.</p>\n    </Collapsible.Content>\n  </Collapsible>\n  <Collapsible>\n    <Collapsible.Trigger>Advanced Usage</Collapsible.Trigger>\n    <Collapsible.Content>\n      <p>Advanced configuration options.</p>\n    </Collapsible.Content>\n  </Collapsible>\n  <Collapsible>\n    <Collapsible.Trigger>API Reference</Collapsible.Trigger>\n    <Collapsible.Content>\n      <p>Complete API documentation.</p>\n    </Collapsible.Content>\n  </Collapsible>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Accordion",
+      "relationship": "alternative",
+      "note": "Use Accordion for multiple exclusive collapsible sections"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "used-by",
+      "note": "Sidebar uses Collapsible for section expand/collapse"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for dropdown navigation with actions"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "defaultOpen: boolean - initial open state (default: false)",
+      "open: boolean - controlled open state",
+      "onOpenChange: (open: boolean) => void - state change callback",
+      "disabled: boolean - prevents interaction"
+    ],
+    "a11yRules": [
+      "A11Y_EXPANDED_STATE",
+      "A11Y_REGION_LABEL",
+      "A11Y_KEYBOARD_NAV"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root",
+      "Trigger",
+      "Content"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.800Z"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Field",
+  "description": "Compositional form field wrapper providing validation, labels, descriptions, and error messages. Use for advanced form needs beyond baked-in Input/Textarea props.",
+  "category": "forms",
+  "tags": [
+    "form",
+    "field",
+    "validation",
+    "label",
+    "error",
+    "input",
+    "accessible"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Field/index.tsx",
+  "exportName": "Field",
+  "propsSummary": [
+    "children: node (required)",
+    "name: string",
+    "disabled: boolean",
+    "invalid: boolean",
+    "validate: function",
+    "validationMode: onSubmit|onBlur|onChange",
+    "validationDebounceTime: number"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Field content (Label, Control, Description, Error)",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "description": "Field name, used for error distribution from Form",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disables the field and its control",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Marks the field as invalid",
+      "required": false
+    },
+    "validate": {
+      "type": "function",
+      "description": "Custom validation function returning error string(s) or null",
+      "required": false
+    },
+    "validationMode": {
+      "type": "enum",
+      "description": "When to trigger validation",
+      "required": false,
+      "values": [
+        "onSubmit",
+        "onBlur",
+        "onChange"
+      ]
+    },
+    "validationDebounceTime": {
+      "type": "number",
+      "description": "Debounce time in ms for onChange validation",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "You need granular validation with match-based error messages",
+      "Custom form controls need accessible labels and descriptions",
+      "Server-side errors need to be distributed to specific fields",
+      "You need dirty/touched tracking or custom validation logic"
+    ],
+    "whenNot": [
+      "Simple inputs with basic label and helper text (use Input with label prop)",
+      "Standalone selects or textareas with built-in error display"
+    ],
+    "guidelines": [
+      "Always provide a Field.Label for accessibility",
+      "Wrap any form control in Field.Control to connect it to the field context",
+      "Use match prop on Field.Error for granular native validation messages",
+      "Wrap in Form to enable server-side error distribution by field name"
+    ],
+    "accessibility": [
+      "Label automatically linked to control via aria-labelledby",
+      "Description linked via aria-describedby",
+      "Error messages announced to screen readers",
+      "Supports data-disabled and data-invalid attributes for styling"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Single field",
+      "description": "A single field with label, control, and description",
+      "code": "<Field name=\"email\">\n  <Field.Label>Email address</Field.Label>\n  <Field.Control>\n    <Input type=\"email\" placeholder=\"jane@example.com\" />\n  </Field.Control>\n  <Field.Description>We will never share your email.</Field.Description>\n</Field>"
+    },
+    {
+      "name": "Two-column layout",
+      "description": "Fields arranged in a two-column grid",
+      "code": "<Grid columns={2} gap=\"md\">\n  <Field name=\"firstName\">\n    <Field.Label>First Name</Field.Label>\n    <Field.Control>\n      <Input placeholder=\"Jane\" />\n    </Field.Control>\n  </Field>\n  <Field name=\"lastName\">\n    <Field.Label>Last Name</Field.Label>\n    <Field.Control>\n      <Input placeholder=\"Doe\" />\n    </Field.Control>\n  </Field>\n  <Grid.Item colSpan=\"full\">\n    <Field name=\"email\">\n      <Field.Label>Email</Field.Label>\n      <Field.Control>\n        <Input type=\"email\" placeholder=\"jane@example.com\" />\n      </Field.Control>\n      <Field.Error match=\"typeMismatch\">Enter a valid email address</Field.Error>\n    </Field>\n  </Grid.Item>\n</Grid>"
+    },
+    {
+      "name": "Custom validation",
+      "description": "Field with custom validate function",
+      "code": "<Field\n  name=\"age\"\n  validate={(value) => {\n    const num = Number(value);\n    if (isNaN(num) || num < 18) return 'Must be 18 or older';\n    return null;\n  }}\n  validationMode=\"onChange\"\n  validationDebounceTime={500}\n>\n  <Field.Label>Age</Field.Label>\n  <Field.Control>\n    <Input type=\"number\" placeholder=\"18\" />\n  </Field.Control>\n  <Field.Description>You must be at least 18 years old.</Field.Description>\n  <Field.Error match=\"customError\" />\n</Field>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for simple fields with built-in label/error"
+    },
+    {
+      "component": "Form",
+      "relationship": "parent",
+      "note": "Wrap in Form for server-side error distribution"
+    },
+    {
+      "component": "Fieldset",
+      "relationship": "sibling",
+      "note": "Use Fieldset to group related fields"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "name: string - field name for error distribution",
+      "validate: (value) => string | null - custom validation",
+      "validationMode: onSubmit|onBlur|onChange - validation trigger",
+      "Field.Control: wraps any form component (Input, Textarea, etc.)",
+      "Field.Error match: valueMissing|typeMismatch|customError|... - granular errors"
+    ],
+    "a11yRules": [
+      "A11Y_FIELD_LABEL",
+      "A11Y_FIELD_ERROR",
+      "A11Y_FIELD_DESCRIPTION"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Label",
+      "Control",
+      "Description",
+      "Error",
+      "Validity"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.733Z"
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Avatar",
+  "description": "Visual representation of a user or entity",
+  "category": "display",
+  "tags": [
+    "user",
+    "profile",
+    "image",
+    "identity"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Avatar/index.tsx",
+  "exportName": "Avatar",
+  "propsSummary": [
+    "src: string",
+    "alt: string (default: )",
+    "initials: string",
+    "name: string",
+    "size: xs|sm|md|lg|xl (default: md)",
+    "customSize: union",
+    "shape: circle|square (default: circle)",
+    "color: string",
+    "imageStyle: object",
+    "imageProps: object",
+    "style: object"
+  ],
+  "props": {
+    "src": {
+      "type": "string",
+      "description": "Image source URL",
+      "required": false
+    },
+    "alt": {
+      "type": "string",
+      "description": "Alt text for the image",
+      "default": "",
+      "required": false
+    },
+    "initials": {
+      "type": "string",
+      "description": "Fallback initials (1-2 characters)",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name - used to generate initials",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "customSize": {
+      "type": "union",
+      "description": "Custom avatar size (number in px or CSS size string like \"2.25rem\"), overrides size width/height",
+      "required": false
+    },
+    "shape": {
+      "type": "enum",
+      "description": "Shape variant",
+      "default": "circle",
+      "required": false,
+      "values": [
+        "circle",
+        "square"
+      ]
+    },
+    "color": {
+      "type": "string",
+      "description": "Custom background color for fallback avatar",
+      "required": false
+    },
+    "imageStyle": {
+      "type": "object",
+      "description": "Inline style object applied to the underlying image element",
+      "required": false
+    },
+    "imageProps": {
+      "type": "object",
+      "description": "Additional props for the underlying img element (except src/alt/className/style)",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying user profile pictures",
+      "Showing team member lists",
+      "Representing entities in lists or cards",
+      "User identification in comments or messages"
+    ],
+    "whenNot": [
+      "Decorative images (use Image)",
+      "Logo display (use Logo component)",
+      "Large profile headers (use custom layout)"
+    ],
+    "guidelines": [
+      "Always provide alt text or name for accessibility",
+      "Use consistent sizes within the same context",
+      "Provide fallback initials when image may not load",
+      "Use Avatar.Group for multiple avatars in a row",
+      "Use imageProps for advanced img attributes (loading, decoding, referrerPolicy, etc.)"
+    ],
+    "accessibility": [
+      "Include meaningful alt text describing the user",
+      "Initials should be derived from name for screen readers",
+      "Decorative avatars should have empty alt"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Avatar with image",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar\n  src=\"https://i.pravatar.cc/150?u=jane\"\n  alt=\"Jane Doe\"\n  name=\"Jane Doe\"\n/>"
+    },
+    {
+      "name": "With Initials",
+      "description": "Fallback when no image is provided",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"John Smith\" />"
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size options",
+      "code": "import { Avatar } from '@/components/Avatar';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Avatar name=\"XS\" size=\"xs\" />\n  <Avatar name=\"SM\" size=\"sm\" />\n  <Avatar name=\"MD\" size=\"md\" />\n  <Avatar name=\"LG\" size=\"lg\" />\n  <Avatar name=\"XL\" size=\"xl\" />\n</Stack>"
+    },
+    {
+      "name": "Custom Size",
+      "description": "Set an exact avatar size",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"Conan McNicholl\" customSize={36} />"
+    },
+    {
+      "name": "Square Shape",
+      "description": "Square variant for app icons or brands",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"App\" shape=\"square\" />"
+    },
+    {
+      "name": "Group",
+      "description": "Multiple avatars stacked together",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar.Group max={3} size=\"md\">\n  <Avatar name=\"Alice Johnson\" />\n  <Avatar name=\"Bob Smith\" />\n  <Avatar name=\"Carol Williams\" />\n  <Avatar name=\"David Brown\" />\n  <Avatar name=\"Eve Davis\" />\n</Avatar.Group>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Avatar",
+      "relationship": "parent",
+      "note": "Use Avatar.Group for stacked avatar displays"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "src: string - image URL",
+      "name: string - used for initials fallback",
+      "size: xs|sm|md|lg|xl (default: md)",
+      "customSize: number|string - custom size override",
+      "imageStyle: CSSProperties - inline image styling",
+      "imageProps: ImgHTMLAttributes - advanced img attributes",
+      "shape: circle|square (default: circle)"
+    ],
+    "a11yRules": [
+      "A11Y_IMG_ALT"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Group"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.743Z"
+  }
+}

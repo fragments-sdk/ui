@@ -1,0 +1,160 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Drawer",
+  "description": "A panel that slides in from screen edges. Extends the Dialog pattern with slide animations and edge positioning.",
+  "category": "feedback",
+  "tags": [
+    "drawer",
+    "sheet",
+    "panel",
+    "sidebar",
+    "slide-over"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Drawer/index.tsx",
+  "exportName": "Drawer",
+  "propsSummary": [
+    "children: node (required)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "modal: boolean (default: true)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Drawer content (use Drawer.Content, Drawer.Header, etc.)",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when open state changes",
+      "required": false
+    },
+    "modal": {
+      "type": "boolean",
+      "description": "Whether to render as modal (blocks interaction with rest of page)",
+      "default": "true",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Side panels for editing or creating content",
+      "Mobile-style bottom sheets for actions",
+      "Navigation panels that slide in from the left",
+      "Detail views that overlay the main content"
+    ],
+    "whenNot": [
+      "Centered modal dialogs (use Dialog)",
+      "Non-blocking notifications (use Toast)",
+      "Permanent side navigation (use Sidebar)",
+      "Small contextual menus (use Menu or Popover)"
+    ],
+    "guidelines": [
+      "Default to right side for content editing and forms",
+      "Use left side for navigation drawers",
+      "Use bottom for mobile-style action sheets",
+      "Provide clear close affordance (X button or cancel)",
+      "Keep drawer content focused on a single task",
+      "Drawer.Trigger and Drawer.Close with asChild require a single valid React element child",
+      "Set Drawer.Content initialFocus={false} when custom focus management is needed"
+    ],
+    "accessibility": [
+      "Automatically traps focus within the drawer",
+      "Closes on Escape key press",
+      "Returns focus to trigger element on close",
+      "Uses role=\"dialog\" with proper aria attributes"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Right-side drawer with header, body, and footer",
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button>Open Drawer</Button>\n  </Drawer.Trigger>\n  <Drawer.Content>\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Drawer Title</Drawer.Title>\n      <Drawer.Description>\n        A panel sliding in from the right.\n      </Drawer.Description>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Drawer content goes here.</p>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close asChild>\n        <Button variant=\"secondary\">Cancel</Button>\n      </Drawer.Close>\n      <Button variant=\"primary\">Save</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
+    },
+    {
+      "name": "Left Side",
+      "description": "Left-side drawer for navigation",
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button variant=\"secondary\">Open Left</Button>\n  </Drawer.Trigger>\n  <Drawer.Content side=\"left\">\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Navigation</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Left-side drawer for navigation or filters.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+    },
+    {
+      "name": "Bottom Sheet",
+      "description": "Bottom drawer for mobile-style actions",
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button variant=\"secondary\">Open Bottom Sheet</Button>\n  </Drawer.Trigger>\n  <Drawer.Content side=\"bottom\" size=\"sm\">\n    <Drawer.Header>\n      <Drawer.Title>Actions</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Bottom sheet for mobile-style actions.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+    },
+    {
+      "name": "With Form",
+      "description": "Drawer with a form layout",
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button>Edit Settings</Button>\n  </Drawer.Trigger>\n  <Drawer.Content size=\"md\">\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Settings</Drawer.Title>\n      <Drawer.Description>Update your preferences.</Drawer.Description>\n    </Drawer.Header>\n    <Drawer.Body>\n      <Stack gap=\"md\">\n        <Input label=\"Display Name\" placeholder=\"Enter name\" />\n        <Input label=\"Email\" type=\"email\" placeholder=\"you@example.com\" />\n      </Stack>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close asChild>\n        <Button variant=\"secondary\">Cancel</Button>\n      </Drawer.Close>\n      <Button variant=\"primary\">Save Changes</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Use Dialog for centered modal overlays"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "alternative",
+      "note": "Use Sidebar for permanent side navigation"
+    },
+    {
+      "component": "Popover",
+      "relationship": "alternative",
+      "note": "Use Popover for small contextual content"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "open: boolean - controlled open state",
+      "onOpenChange: (open) => void - open state handler",
+      "modal: boolean - blocks page interaction (default: true)",
+      "Drawer.Content side: left|right|top|bottom - slide direction (default: right)",
+      "Drawer.Content size: sm|md|lg|xl|full - panel size",
+      "Drawer.Content initialFocus: boolean - auto-focus popup on open (default: true)"
+    ],
+    "a11yRules": [
+      "A11Y_DIALOG_FOCUS",
+      "A11Y_DIALOG_ESCAPE",
+      "A11Y_DIALOG_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Close",
+      "Header",
+      "Title",
+      "Description",
+      "Body",
+      "Footer"
+    ],
+    "requiredChildren": [
+      "Content"
+    ],
+    "commonPatterns": [
+      "<Drawer><Drawer.Trigger><Button>Open</Button></Drawer.Trigger><Drawer.Content><Drawer.Close /><Drawer.Header><Drawer.Title>{title}</Drawer.Title></Drawer.Header><Drawer.Body>{content}</Drawer.Body><Drawer.Footer><Drawer.Close asChild><Button variant=\"secondary\">Cancel</Button></Drawer.Close><Button>Save</Button></Drawer.Footer></Drawer.Content></Drawer>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:55.637Z"
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "List",
+  "description": "Compound component for rendering ordered or unordered lists with consistent styling. Supports bullet, numbered, and icon-prefixed items.",
+  "category": "display",
+  "tags": [
+    "list",
+    "items",
+    "bullet",
+    "ordered",
+    "unordered"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/List/index.tsx",
+  "exportName": "List",
+  "propsSummary": [
+    "children: node (required)",
+    "as: ul|ol (default: ul)",
+    "variant: none|disc|decimal|icon (default: disc)",
+    "gap: none|xs|sm|md|lg (default: sm)",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "List.Item components",
+      "required": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "List type",
+      "default": "ul",
+      "required": false,
+      "values": [
+        "ul",
+        "ol"
+      ]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "List style variant",
+      "default": "disc",
+      "required": false,
+      "values": [
+        "none",
+        "disc",
+        "decimal",
+        "icon"
+      ]
+    },
+    "gap": {
+      "type": "enum",
+      "description": "Spacing between items",
+      "default": "sm",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Feature lists with checkmarks or icons",
+      "Ordered steps or instructions",
+      "Navigation lists in sidebars",
+      "Pricing plan feature comparisons"
+    ],
+    "whenNot": [
+      "Interactive selection lists (use Menu or Select)",
+      "Data tables with columns (use Table)",
+      "Cards in a grid (use Grid with Card)",
+      "Navigation tabs (use Tabs)"
+    ],
+    "guidelines": [
+      "Use as=\"ol\" for sequential or numbered content",
+      "Use variant=\"icon\" with meaningful icons for feature lists",
+      "Keep list items concise and parallel in structure",
+      "Use consistent icons within a single list"
+    ],
+    "accessibility": [
+      "Use semantic list elements (ul, ol) for screen reader support",
+      "List items are automatically announced with count",
+      "Icons are decorative; ensure text conveys meaning",
+      "Avoid deeply nested lists (3+ levels)"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Bullet List",
+      "description": "Default unordered list with bullets",
+      "code": "<List variant=\"disc\">\n  <List.Item>First item</List.Item>\n  <List.Item>Second item</List.Item>\n  <List.Item>Third item</List.Item>\n</List>"
+    },
+    {
+      "name": "Numbered List",
+      "description": "Ordered list with numbers",
+      "code": "<List as=\"ol\" variant=\"decimal\">\n  <List.Item>Create your account</List.Item>\n  <List.Item>Configure your settings</List.Item>\n  <List.Item>Start building</List.Item>\n</List>"
+    },
+    {
+      "name": "Icon List",
+      "description": "List with custom icons per item",
+      "code": "<List variant=\"icon\">\n  <List.Item icon={<Check weight=\"bold\" color=\"var(--fui-color-success)\" />}>\n    Unlimited projects\n  </List.Item>\n  <List.Item icon={<Check weight=\"bold\" color=\"var(--fui-color-success)\" />}>\n    Priority support\n  </List.Item>\n  <List.Item icon={<Check weight=\"bold\" color=\"var(--fui-color-success)\" />}>\n    Advanced analytics\n  </List.Item>\n</List>"
+    },
+    {
+      "name": "No Style",
+      "description": "Plain list without markers",
+      "code": "<List variant=\"none\" gap=\"md\">\n  <List.Item>Dashboard</List.Item>\n  <List.Item>Settings</List.Item>\n  <List.Item>Profile</List.Item>\n</List>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Icon",
+      "relationship": "child",
+      "note": "Use Icon as List.Item icon prop"
+    },
+    {
+      "component": "Stack",
+      "relationship": "alternative",
+      "note": "Use Stack for non-semantic vertical lists"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: List.Item[] - list items (required)",
+      "as: ul|ol - list type",
+      "variant: none|disc|decimal|icon - list style",
+      "gap: none|xs|sm|md|lg - item spacing"
+    ],
+    "a11yRules": [
+      "A11Y_LIST_SEMANTIC",
+      "A11Y_LIST_NESTING"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Item"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.915Z"
+  }
+}

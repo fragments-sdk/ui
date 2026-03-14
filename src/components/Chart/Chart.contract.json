@@ -1,0 +1,129 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Chart",
+  "description": "Composable chart wrapper for recharts with theme-aware tooltips, legends, and color integration.",
+  "category": "display",
+  "tags": [
+    "chart",
+    "graph",
+    "data-visualization",
+    "recharts"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Chart/index.tsx",
+  "exportName": "ChartContainer",
+  "propsSummary": [
+    "config: object (required)",
+    "children: element (required)",
+    "summary: string",
+    "dataTable: node",
+    "style: object"
+  ],
+  "props": {
+    "config": {
+      "type": "object",
+      "description": "ChartConfig mapping data keys to labels/colors (optional icon per series)",
+      "required": true
+    },
+    "children": {
+      "type": "element",
+      "description": "A recharts chart component (LineChart, BarChart, etc.)",
+      "required": true
+    },
+    "summary": {
+      "type": "string",
+      "description": "Non-visual summary announced to assistive technology users",
+      "required": false
+    },
+    "dataTable": {
+      "type": "node",
+      "description": "Optional accessible data table or textual fallback",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying data trends over time",
+      "Comparing categorical data",
+      "Showing distribution or composition",
+      "Dashboard data visualizations"
+    ],
+    "whenNot": [
+      "Simple numeric values (use Text or Badge)",
+      "Progress toward a goal (use Progress)",
+      "Tabular data without visualization (use Table)"
+    ],
+    "guidelines": [
+      "Use ChartContainer to wrap recharts chart components",
+      "Define a ChartConfig to map data keys to labels and colors (and optionally icons for custom legend/tooltip UIs)",
+      "Use FUI CSS variables for colors so charts adapt to theme changes",
+      "Use ChartTooltip and ChartLegend for consistent themed overlays",
+      "ChartTooltip and ChartLegend accept custom content renderers for advanced formatting"
+    ],
+    "accessibility": [
+      "Charts include recharts accessibilityLayer by default",
+      "Provide meaningful labels in ChartConfig for screen readers",
+      "Consider providing a data table alternative for complex charts"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Line Chart",
+      "description": "Multi-series line chart showing trends over time",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    config={{\n      revenue: { label: 'Revenue', color: 'var(--fui-color-accent)' },\n      users: { label: 'Users', color: 'var(--fui-color-info)' },\n    }}\n  >\n    <LineChart data={monthlyData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>\n      <CartesianGrid strokeDasharray=\"3 3\" />\n      <XAxis dataKey=\"month\" />\n      <YAxis />\n      <ChartTooltip />\n      <ChartLegend />\n      <Line type=\"monotone\" dataKey=\"revenue\" stroke=\"var(--fui-color-accent)\" strokeWidth={2} dot={false} />\n      <Line type=\"monotone\" dataKey=\"users\" stroke=\"var(--fui-color-info)\" strokeWidth={2} dot={false} />\n    </LineChart>\n  </ChartContainer>\n</div>"
+    },
+    {
+      "name": "Bar Chart",
+      "description": "Categorical bar chart comparing device sessions",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    config={{\n      sessions: { label: 'Sessions', color: 'var(--fui-color-accent)' },\n    }}\n  >\n    <BarChart data={deviceData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>\n      <CartesianGrid strokeDasharray=\"3 3\" />\n      <XAxis dataKey=\"device\" />\n      <YAxis />\n      <ChartTooltip />\n      <Bar dataKey=\"sessions\" fill=\"var(--fui-color-accent)\" radius={[4, 4, 0, 0]} />\n    </BarChart>\n  </ChartContainer>\n</div>"
+    },
+    {
+      "name": "Area Chart",
+      "description": "Filled area chart showing revenue trend",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    config={{\n      revenue: { label: 'Revenue', color: 'var(--fui-color-accent)' },\n    }}\n  >\n    <AreaChart data={monthlyData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>\n      <CartesianGrid strokeDasharray=\"3 3\" />\n      <XAxis dataKey=\"month\" />\n      <YAxis />\n      <ChartTooltip />\n      <Area type=\"monotone\" dataKey=\"revenue\" stroke=\"var(--fui-color-accent)\" fill=\"var(--fui-color-accent)\" fillOpacity={0.15} strokeWidth={2} />\n    </AreaChart>\n  </ChartContainer>\n</div>"
+    },
+    {
+      "name": "Pie Chart",
+      "description": "Donut chart showing browser share distribution",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    config={{\n      Chrome: { label: 'Chrome', color: 'var(--fui-color-accent)' },\n      Firefox: { label: 'Firefox', color: 'var(--fui-color-info)' },\n      Safari: { label: 'Safari', color: 'var(--fui-color-success)' },\n      Edge: { label: 'Edge', color: 'var(--fui-color-warning)' },\n    }}\n  >\n    <PieChart>\n      <ChartTooltip />\n      <ChartLegend />\n      <Pie\n        data={browserData}\n        dataKey=\"value\"\n        nameKey=\"name\"\n        cx=\"50%\"\n        cy=\"50%\"\n        innerRadius={60}\n        outerRadius={90}\n        strokeWidth={2}\n      >\n        {browserData.map((entry) => (\n          <Cell key={entry.name} fill={entry.color} />\n        ))}\n      </Pie>\n    </PieChart>\n  </ChartContainer>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "parent",
+      "note": "Charts are typically placed inside Cards"
+    },
+    {
+      "component": "Progress",
+      "relationship": "alternative",
+      "note": "Use Progress for single-value completion"
+    },
+    {
+      "component": "Table",
+      "relationship": "sibling",
+      "note": "Combine with Table for full data views"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "config: ChartConfig - maps data keys to labels and theme colors",
+      "children: ReactElement - recharts chart component",
+      "Chart.Tooltip / Chart.Legend support custom content renderers for advanced overlays"
+    ],
+    "a11yRules": [
+      "A11Y_CHART_LABEL"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.043Z"
+  }
+}

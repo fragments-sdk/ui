@@ -1,0 +1,166 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Skeleton",
+  "description": "Placeholder loading state for content",
+  "category": "feedback",
+  "tags": [
+    "loading",
+    "placeholder",
+    "skeleton",
+    "shimmer"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Skeleton/index.tsx",
+  "exportName": "Skeleton",
+  "propsSummary": [
+    "variant: text|heading|avatar|button|input|rect (default: rect)",
+    "size: sm|md|lg (default: md)",
+    "width: union",
+    "height: union",
+    "fill: boolean (default: false)",
+    "radius: sm|md|lg|none|full",
+    "static: boolean (default: false)"
+  ],
+  "props": {
+    "variant": {
+      "type": "enum",
+      "description": "Semantic variant that auto-sizes",
+      "default": "rect",
+      "required": false,
+      "values": [
+        "text",
+        "heading",
+        "avatar",
+        "button",
+        "input",
+        "rect"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size for avatar/button variants",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "width": {
+      "type": "union",
+      "description": "Custom width (string or number)",
+      "required": false
+    },
+    "height": {
+      "type": "union",
+      "description": "Custom height (string or number)",
+      "required": false
+    },
+    "fill": {
+      "type": "boolean",
+      "description": "Fill parent container",
+      "default": "false",
+      "required": false
+    },
+    "radius": {
+      "type": "enum",
+      "description": "Border radius override",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg",
+        "none",
+        "full"
+      ]
+    },
+    "static": {
+      "type": "boolean",
+      "description": "Disable skeleton animation",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Content is loading asynchronously",
+      "Preventing layout shift during data fetching",
+      "Providing visual feedback that content is coming",
+      "Improving perceived performance"
+    ],
+    "whenNot": [
+      "Short loading times (< 300ms)",
+      "When spinner is more appropriate",
+      "Background operations without visible impact"
+    ],
+    "guidelines": [
+      "Match skeleton shape to expected content",
+      "Use semantic variants (text, heading, avatar) for consistency",
+      "Maintain similar dimensions to loaded content",
+      "Avoid too many skeleton elements - simplify complex layouts",
+      "Skeleton and Skeleton.Text forward DOM props (id, aria-*, data-*, handlers)"
+    ],
+    "accessibility": [
+      "Skeletons are decorative - use aria-hidden",
+      "Announce loading state separately if needed",
+      "Ensure sufficient contrast for the animation"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic rectangle skeleton",
+      "code": "<Skeleton width={200} height={20} />"
+    },
+    {
+      "name": "Text Lines",
+      "description": "Multi-line text placeholder",
+      "code": "<Skeleton.Text lines={3} />"
+    },
+    {
+      "name": "Semantic Variants",
+      "description": "Pre-configured shapes for common elements",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--fui-space-2)' }}>\n  <Skeleton variant=\"heading\" width={200} />\n  <Skeleton variant=\"text\" width=\"100%\" />\n  <Skeleton variant=\"text\" width=\"80%\" />\n</div>"
+    },
+    {
+      "name": "Avatar Skeleton",
+      "description": "Circular placeholder for avatars",
+      "code": "<div style={{ display: 'flex', gap: 'var(--fui-space-1)', alignItems: 'center' }}>\n  <Skeleton.Circle size=\"sm\" />\n  <Skeleton.Circle size=\"md\" />\n  <Skeleton.Circle size=\"lg\" />\n</div>"
+    },
+    {
+      "name": "Card Skeleton",
+      "description": "Composed skeleton for a card layout",
+      "code": "<div style={{ width: 300, padding: 'var(--fui-space-2)', border: '1px solid var(--fui-border)', borderRadius: 'var(--fui-radius-lg)' }}>\n  <Skeleton variant=\"rect\" height={120} radius=\"md\" />\n  <div style={{ marginTop: 'var(--fui-space-2)' }}>\n    <Skeleton variant=\"heading\" width=\"60%\" />\n  </div>\n  <div style={{ marginTop: 'var(--fui-space-1)' }}>\n    <Skeleton.Text lines={2} />\n  </div>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Progress",
+      "relationship": "alternative",
+      "note": "Use Progress for determinate loading"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "variant: text|heading|avatar|button|input|rect",
+      "size: sm|md|lg (for avatar/button)",
+      "width/height: custom dimensions",
+      "fill: boolean - fill parent",
+      "Skeleton / Skeleton.Text forward div DOM props"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Text",
+      "Circle"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:03.952Z"
+  }
+}

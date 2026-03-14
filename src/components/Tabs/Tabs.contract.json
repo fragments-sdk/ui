@@ -1,0 +1,159 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Tabs",
+  "description": "Organize content into switchable panels. Use for related content that benefits from a compact, navigable layout.",
+  "category": "navigation",
+  "tags": [
+    "tabs",
+    "navigation",
+    "panels",
+    "content-switcher"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Tabs/index.tsx",
+  "exportName": "Tabs",
+  "propsSummary": [
+    "children: node (required)",
+    "defaultValue: string",
+    "value: string",
+    "onValueChange: function",
+    "orientation: horizontal|vertical (default: horizontal)",
+    "variant: underline|pills (default: underline)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Tab list and panels (use Tabs.List, Tabs.Tab, Tabs.Panel)",
+      "required": true
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initially active tab (uncontrolled)",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled active tab value",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called when active tab changes",
+      "required": false
+    },
+    "orientation": {
+      "type": "enum",
+      "description": "Tab list orientation",
+      "default": "horizontal",
+      "required": false,
+      "values": [
+        "horizontal",
+        "vertical"
+      ]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Default visual style for Tabs.List (can be overridden on Tabs.List)",
+      "default": "underline",
+      "required": false,
+      "values": [
+        "underline",
+        "pills"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Organizing related content into sections",
+      "Reducing page scrolling by grouping content",
+      "Settings pages with multiple categories",
+      "Dashboard views with different data perspectives"
+    ],
+    "whenNot": [
+      "Primary navigation (use sidebar or header nav)",
+      "Sequential steps (use Stepper or wizard)",
+      "Comparing content side-by-side",
+      "Very long lists of options (use Select or Menu)"
+    ],
+    "guidelines": [
+      "Keep tab labels short (1-2 words)",
+      "Order tabs by usage frequency or logical sequence",
+      "Avoid more than 5-6 tabs; consider sub-navigation for more",
+      "Tab content should be roughly equivalent in scope",
+      "Use pills variant for contained sections, underline for page-level tabs"
+    ],
+    "accessibility": [
+      "Keyboard navigation with arrow keys",
+      "Tab panels are properly labeled",
+      "Focus management follows WAI-ARIA tabs pattern"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Underline",
+      "description": "Default underline style tabs",
+      "code": "<Tabs defaultValue=\"overview\" variant=\"underline\">\n  <Tabs.List>\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"analytics\">Analytics</Tabs.Tab>\n    <Tabs.Tab value=\"settings\">Settings</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Overview content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"analytics\">\n    <p>Analytics content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"settings\">\n    <p>Settings content goes here.</p>\n  </Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "name": "Pills",
+      "description": "Pill-style tabs for contained sections",
+      "code": "<Tabs defaultValue=\"all\" variant=\"pills\">\n  <Tabs.List>\n    <Tabs.Tab value=\"all\">All</Tabs.Tab>\n    <Tabs.Tab value=\"active\">Active</Tabs.Tab>\n    <Tabs.Tab value=\"archived\">Archived</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"all\">\n    <p>Showing all items.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"active\">\n    <p>Showing active items only.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"archived\">\n    <p>Showing archived items.</p>\n  </Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "name": "With Disabled",
+      "description": "Tabs with a disabled option",
+      "code": "<Tabs defaultValue=\"general\" variant=\"underline\">\n  <Tabs.List>\n    <Tabs.Tab value=\"general\">General</Tabs.Tab>\n    <Tabs.Tab value=\"security\">Security</Tabs.Tab>\n    <Tabs.Tab value=\"billing\" disabled>Billing</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"general\">\n    <p>General settings panel.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"security\">\n    <p>Security settings panel.</p>\n  </Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "name": "List Variant Override",
+      "description": "Tabs sets a default variant, and Tabs.List can override it per list",
+      "code": "<Tabs defaultValue=\"overview\" variant=\"pills\">\n  <Tabs.List variant=\"underline\">\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"activity\">Activity</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Root sets pills, but this list overrides to underline.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"activity\">\n    <p>Per-list variant override example.</p>\n  </Tabs.Panel>\n</Tabs>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for many options in compact space"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for action-based navigation"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled active tab",
+      "defaultValue: string - initial active tab",
+      "onValueChange: (value) => void - tab change handler",
+      "variant: underline|pills - default style for Tabs.List",
+      "Tabs.List variant?: underline|pills - optional per-list override"
+    ],
+    "a11yRules": [
+      "A11Y_TABS_KEYBOARD",
+      "A11Y_TABS_LABELS"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "List",
+      "Tab",
+      "Panel"
+    ],
+    "requiredChildren": [
+      "List",
+      "Panel"
+    ],
+    "commonPatterns": [
+      "<Tabs defaultValue=\"tab1\"><Tabs.List><Tabs.Tab value=\"tab1\">{label1}</Tabs.Tab><Tabs.Tab value=\"tab2\">{label2}</Tabs.Tab></Tabs.List><Tabs.Panel value=\"tab1\">{content1}</Tabs.Panel><Tabs.Panel value=\"tab2\">{content2}</Tabs.Panel></Tabs>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.871Z"
+  }
+}

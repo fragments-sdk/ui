@@ -1,0 +1,169 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Accordion",
+  "description": "Vertically stacked, collapsible content sections. Use for organizing related content that can be progressively disclosed.",
+  "category": "layout",
+  "tags": [
+    "accordion",
+    "collapse",
+    "expand",
+    "disclosure",
+    "faq"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Accordion/index.tsx",
+  "exportName": "Accordion",
+  "propsSummary": [
+    "type: single|multiple (default: single)",
+    "value: union",
+    "defaultValue: union",
+    "onValueChange: union",
+    "children: node (required)",
+    "collapsible: boolean (default: false)",
+    "headingLevel: union (default: 3)"
+  ],
+  "props": {
+    "type": {
+      "type": "enum",
+      "description": "Whether one or multiple items can be open",
+      "default": "single",
+      "required": false,
+      "values": [
+        "single",
+        "multiple"
+      ]
+    },
+    "value": {
+      "type": "union",
+      "description": "Controlled open item(s): string in single mode, string[] in multiple mode",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "union",
+      "description": "Initially open item(s): string in single mode, string[] in multiple mode",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "union",
+      "description": "Called when open items change (single: string | undefined, multiple: string[])",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "Accordion items (use Accordion.Item with Accordion.Trigger and Accordion.Content)",
+      "required": true
+    },
+    "collapsible": {
+      "type": "boolean",
+      "description": "Whether all items can be closed (single mode only)",
+      "default": "false",
+      "required": false
+    },
+    "headingLevel": {
+      "type": "union",
+      "description": "Semantic heading level for accordion triggers",
+      "default": "3",
+      "required": false,
+      "values": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "FAQ pages with multiple questions and answers",
+      "Settings panels with grouped options",
+      "Long forms that benefit from progressive disclosure",
+      "Navigation menus with nested items"
+    ],
+    "whenNot": [
+      "Primary content that all users need to see",
+      "Very short content (just display inline)",
+      "Sequential steps (use Stepper or wizard)",
+      "Tab-like navigation (use Tabs instead)"
+    ],
+    "guidelines": [
+      "Keep section headers concise and descriptive",
+      "Use single mode when only one section should be open at a time",
+      "Use multiple mode when users may need to compare sections",
+      "Consider defaulting important sections to open",
+      "Avoid nesting accordions more than one level deep"
+    ],
+    "accessibility": [
+      "Keyboard navigation with Enter/Space to toggle",
+      "Uses proper ARIA expanded/controls attributes",
+      "Focus is visible on accordion triggers"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic",
+      "description": "Single accordion with collapsible sections",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"single\" collapsible defaultValue=\"item-1\">\n  <Accordion.Item value=\"item-1\">\n    <Accordion.Trigger>What is Fragments UI?</Accordion.Trigger>\n    <Accordion.Content>\n      Fragments UI is a modern React component library built on Base UI primitives, providing accessible and customizable components.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"item-2\">\n    <Accordion.Trigger>How do I install it?</Accordion.Trigger>\n    <Accordion.Content>\n      Install via npm or pnpm: pnpm add @fragments-sdk/ui\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"item-3\">\n    <Accordion.Trigger>Is it accessible?</Accordion.Trigger>\n    <Accordion.Content>\n      Yes! All components follow WAI-ARIA guidelines and support keyboard navigation.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+    },
+    {
+      "name": "Multiple Open",
+      "description": "Allows multiple sections to be open simultaneously",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"multiple\" defaultValue={['features', 'pricing']}>\n  <Accordion.Item value=\"features\">\n    <Accordion.Trigger>Features</Accordion.Trigger>\n    <Accordion.Content>\n      Comprehensive component library with theming support, accessibility built-in, and TypeScript-first development.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"pricing\">\n    <Accordion.Trigger>Pricing</Accordion.Trigger>\n    <Accordion.Content>\n      Free and open source. MIT licensed for both personal and commercial use.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"support\">\n    <Accordion.Trigger>Support</Accordion.Trigger>\n    <Accordion.Content>\n      Community support via GitHub issues and discussions.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+    },
+    {
+      "name": "With Disabled",
+      "description": "Accordion with a disabled item",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"single\" collapsible>\n  <Accordion.Item value=\"available\">\n    <Accordion.Trigger>Available Section</Accordion.Trigger>\n    <Accordion.Content>\n      This section can be expanded and collapsed.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"disabled\" disabled>\n    <Accordion.Trigger>Disabled Section</Accordion.Trigger>\n    <Accordion.Content>\n      This content is not accessible because the item is disabled.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"another\">\n    <Accordion.Trigger>Another Section</Accordion.Trigger>\n    <Accordion.Content>\n      This section is also available for interaction.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Use Tabs for horizontal switching between related views"
+    },
+    {
+      "component": "Dialog",
+      "relationship": "alternative",
+      "note": "Use Dialog for focused content that interrupts the flow"
+    },
+    {
+      "component": "Card",
+      "relationship": "complementary",
+      "note": "Accordion items can contain Card-like content"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "type: single|multiple - controls how many items can be open",
+      "value/defaultValue are type-discriminated (single -> string, multiple -> string[])",
+      "onValueChange is type-discriminated by mode (single -> string|undefined, multiple -> string[])",
+      "collapsible: boolean - allow all closed in single mode",
+      "Accordion.Trigger forwards button props and defaults type=\"button\""
+    ],
+    "a11yRules": [
+      "A11Y_DISCLOSURE_KEYBOARD",
+      "A11Y_FOCUS_VISIBLE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Item",
+      "Trigger",
+      "Content"
+    ],
+    "requiredChildren": [
+      "Item"
+    ],
+    "commonPatterns": [
+      "<Accordion type=\"single\" collapsible><Accordion.Item value=\"item-1\"><Accordion.Trigger>{title}</Accordion.Trigger><Accordion.Content>{content}</Accordion.Content></Accordion.Item></Accordion>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:49.840Z"
+  }
+}

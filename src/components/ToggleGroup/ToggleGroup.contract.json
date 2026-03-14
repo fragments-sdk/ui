@@ -1,0 +1,206 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "ToggleGroup",
+  "description": "A group of toggle buttons where only one can be selected at a time. Useful for switching between views, modes, or options.",
+  "category": "forms",
+  "tags": [
+    "toggle",
+    "group",
+    "fragmented",
+    "control",
+    "tabs",
+    "switch"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/ToggleGroup/index.tsx",
+  "exportName": "ToggleGroup",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "onChange: function",
+    "onValueChange: function",
+    "children: node (required)",
+    "variant: default|pills|outline|outlined (default: default)",
+    "size: sm|md|lg (default: md)",
+    "gap: sm|none|xs (default: xs)",
+    "selectionMode: single (default: single)"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Currently selected value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initial selected value (uncontrolled)",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Called with new value when selection changes",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Alias for onChange (Radix convention): (value: string) => void",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "ToggleGroup.Item components",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "pills",
+        "outline",
+        "outlined"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "gap": {
+      "type": "enum",
+      "description": "Gap between items (pills/outline variants)",
+      "default": "xs",
+      "required": false,
+      "values": [
+        "sm",
+        "none",
+        "xs"
+      ]
+    },
+    "selectionMode": {
+      "type": "enum",
+      "description": "Selection behavior",
+      "default": "single",
+      "required": false,
+      "values": [
+        "single"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Switching between mutually exclusive views or modes",
+      "Selecting one option from a small set (2-5 options)",
+      "Fragmented controls like view switchers",
+      "Filter or sort options"
+    ],
+    "whenNot": [
+      "Multiple selections allowed (use Checkbox group)",
+      "Many options (use Select or RadioGroup)",
+      "Navigation between pages (use Tabs)",
+      "On/off toggle (use Switch component)"
+    ],
+    "guidelines": [
+      "Keep options to 2-5 items for clarity",
+      "Use clear, concise labels",
+      "Consider icons for common actions (grid/list view)",
+      "Ensure adequate touch targets on mobile"
+    ],
+    "accessibility": [
+      "Uses role=\"radiogroup\" for single-selection semantics",
+      "Each item has role=\"radio\" with aria-checked",
+      "Keyboard navigable with Tab and arrow keys",
+      "Focus visible on active item"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic toggle group",
+      "code": "<ToggleGroup value={value} onChange={setValue}>\n  <ToggleGroup.Item value=\"left\">Left</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"center\">Center</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"right\">Right</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Pills Variant",
+      "description": "Pill-shaped toggle buttons",
+      "code": "<ToggleGroup value={value} onChange={setValue} variant=\"pills\">\n  <ToggleGroup.Item value=\"all\">All</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"active\">Active</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"completed\">Completed</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Outline Variant",
+      "description": "Outlined toggle buttons",
+      "code": "<ToggleGroup value={value} onChange={setValue} variant=\"outlined\">\n  <ToggleGroup.Item value=\"day\">Day</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"week\">Week</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"month\">Month</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Uncontrolled",
+      "description": "Use defaultValue for simple single-select state",
+      "code": "<ToggleGroup defaultValue=\"list\">\n  <ToggleGroup.Item value=\"grid\">Grid</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\">List</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Different size variants",
+      "code": "<ToggleGroup value={value} onChange={setValue} size=\"sm\">\n  <ToggleGroup.Item value=\"a\">Small</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"b\">Size</ToggleGroup.Item>\n</ToggleGroup>\n<ToggleGroup value={value} onChange={setValue} size=\"md\">\n  <ToggleGroup.Item value=\"a\">Medium</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"b\">Size</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "View Switcher",
+      "description": "Common pattern for switching between views",
+      "code": "<ToggleGroup value={view} onChange={setView} size=\"sm\">\n  <ToggleGroup.Item value=\"grid\"><GridIcon /></ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\"><ListIcon /></ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "With Disabled Item",
+      "description": "Toggle group with a disabled option",
+      "code": "<ToggleGroup value={value} onChange={setValue}>\n  <ToggleGroup.Item value=\"basic\">Basic</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"pro\">Pro</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"enterprise\" disabled>Enterprise</ToggleGroup.Item>\n</ToggleGroup>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "RadioGroup",
+      "relationship": "alternative",
+      "note": "RadioGroup for form-style single selection"
+    },
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Tabs for content panel switching"
+    },
+    {
+      "component": "Switch",
+      "relationship": "sibling",
+      "note": "Switch for single on/off control"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value?: string - controlled selected value",
+      "defaultValue?: string - initial selected value (uncontrolled)",
+      "onChange: (value: string) => void - change handler (or onValueChange)",
+      "children: ToggleGroup.Item[] - toggle items",
+      "variant: default|pills|outline|outlined - visual style (outlined aliases outline)",
+      "size: sm|md - size variant",
+      "gap: none|xs|sm - spacing",
+      "selectionMode: single (default: single)"
+    ],
+    "a11yRules": [
+      "A11Y_GROUP_ROLE",
+      "A11Y_KEYBOARD_ACCESSIBLE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Item"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:07.233Z"
+  }
+}

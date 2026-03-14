@@ -1,0 +1,163 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Popover",
+  "description": "Rich content overlay anchored to a trigger element. Use for forms, detailed information, or interactive content that should stay in context.",
+  "category": "feedback",
+  "tags": [
+    "popover",
+    "overlay",
+    "dropdown",
+    "floating",
+    "contextual"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Popover/index.tsx",
+  "exportName": "Popover",
+  "propsSummary": [
+    "children: node (required)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "modal: boolean (default: false)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Popover trigger and content",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when open state changes",
+      "required": false
+    },
+    "modal": {
+      "type": "boolean",
+      "description": "Whether to block page interaction",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Inline editing forms",
+      "Rich preview content",
+      "Filter panels",
+      "Date/color pickers",
+      "Content that needs more space than a tooltip"
+    ],
+    "whenNot": [
+      "Simple hints (use Tooltip)",
+      "Action lists (use Menu)",
+      "Blocking user interaction (use Dialog)",
+      "System notifications (use Toast or Alert)"
+    ],
+    "guidelines": [
+      "Keep popover content focused and minimal",
+      "Include a clear way to close (X button or action buttons)",
+      "Position to avoid covering important content",
+      "Use arrow to visually connect popover to trigger",
+      "Popover.Trigger and Popover.Close support asChild for links/router-link components (single valid element child required)"
+    ],
+    "accessibility": [
+      "Focus is moved to popover content on open",
+      "Closes on Escape key",
+      "Focus returns to trigger on close"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic popover with content",
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"secondary\">Open Popover</Button>\n  </Popover.Trigger>\n  <Popover.Content>\n    <Popover.Close />\n    <Popover.Title>Popover Title</Popover.Title>\n    <Popover.Description>\n      This is a popover with some content. It can contain text, forms, or other elements.\n    </Popover.Description>\n  </Popover.Content>\n</Popover>"
+    },
+    {
+      "name": "With Form",
+      "description": "Popover containing a form",
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"secondary\">Edit Name</Button>\n  </Popover.Trigger>\n  <Popover.Content size=\"sm\">\n    <Popover.Close />\n    <Popover.Title>Edit Name</Popover.Title>\n    <Popover.Body>\n      <Input label=\"Display Name\" placeholder=\"Enter name\" />\n    </Popover.Body>\n    <Popover.Footer>\n      <Popover.Close asChild>\n        <Button variant=\"secondary\" size=\"sm\">Cancel</Button>\n      </Popover.Close>\n      <Button variant=\"primary\" size=\"sm\">Save</Button>\n    </Popover.Footer>\n  </Popover.Content>\n</Popover>"
+    },
+    {
+      "name": "With Arrow",
+      "description": "Popover with pointing arrow",
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"secondary\">Info</Button>\n  </Popover.Trigger>\n  <Popover.Content arrow>\n    <Popover.Title>Quick Tip</Popover.Title>\n    <Popover.Description>\n      This popover has an arrow pointing to its trigger element.\n    </Popover.Description>\n  </Popover.Content>\n</Popover>"
+    },
+    {
+      "name": "Positions",
+      "description": "Popover on different sides",
+      "code": "<div style={{ display: 'flex', gap: '16px', padding: '60px' }}>\n  <Popover>\n    <Popover.Trigger asChild>\n      <Button variant=\"secondary\">Top</Button>\n    </Popover.Trigger>\n    <Popover.Content side=\"top\" size=\"sm\">\n      <Popover.Description>Popover on top</Popover.Description>\n    </Popover.Content>\n  </Popover>\n  <Popover>\n    <Popover.Trigger asChild>\n      <Button variant=\"secondary\">Bottom</Button>\n    </Popover.Trigger>\n    <Popover.Content side=\"bottom\" size=\"sm\">\n      <Popover.Description>Popover on bottom</Popover.Description>\n    </Popover.Content>\n  </Popover>\n</div>"
+    },
+    {
+      "name": "Link Trigger",
+      "description": "Use asChild with a non-button trigger element",
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <a href=\"#popover-help\">Open help</a>\n  </Popover.Trigger>\n  <Popover.Content size=\"sm\">\n    <Popover.Description>Popover trigger can be an anchor when using asChild.</Popover.Description>\n  </Popover.Content>\n</Popover>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Tooltip",
+      "relationship": "alternative",
+      "note": "Use Tooltip for brief, non-interactive hints"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for action lists"
+    },
+    {
+      "component": "Dialog",
+      "relationship": "alternative",
+      "note": "Use Dialog for blocking interactions"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "open: boolean - controlled open state",
+      "onOpenChange: (open) => void - state handler",
+      "modal: boolean - blocks page interaction (default: false)",
+      "Popover.Trigger / Popover.Close asChild support non-button children",
+      "Popover.Content side: top|bottom|left|right - position"
+    ],
+    "a11yRules": [
+      "A11Y_POPOVER_FOCUS",
+      "A11Y_POPOVER_ESCAPE",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Close",
+      "Title",
+      "Description",
+      "Body",
+      "Footer"
+    ],
+    "requiredChildren": [
+      "Trigger",
+      "Content"
+    ],
+    "commonPatterns": [
+      "<Popover><Popover.Trigger asChild><Button>Open</Button></Popover.Trigger><Popover.Content><Popover.Close /><Popover.Title>{title}</Popover.Title><Popover.Description>{description}</Popover.Description></Popover.Content></Popover>",
+      "<Popover><Popover.Trigger asChild><a href=\"#help\">Open help</a></Popover.Trigger><Popover.Content>...</Popover.Content></Popover>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.154Z"
+  }
+}

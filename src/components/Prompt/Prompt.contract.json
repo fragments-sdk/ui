@@ -1,0 +1,211 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Prompt",
+  "description": "Multi-line input with toolbar for AI/chat interfaces",
+  "category": "ai",
+  "tags": [
+    "prompt",
+    "chat",
+    "ai",
+    "input",
+    "textarea",
+    "form"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Prompt/index.tsx",
+  "exportName": "Prompt",
+  "propsSummary": [
+    "children: node (required)",
+    "value: string",
+    "defaultValue: string (default: )",
+    "onChange: function",
+    "onSubmit: function",
+    "placeholder: string (default: Ask, Search or Chat...)",
+    "disabled: boolean (default: false)",
+    "loading: boolean (default: false)",
+    "minRows: number (default: 1)",
+    "maxRows: number (default: 8)",
+    "autoResize: boolean (default: true)",
+    "submitOnEnter: boolean (default: true)",
+    "variant: default|fixed|sticky (default: default)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Prompt composition using Prompt sub-components",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled input value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Uncontrolled default value",
+      "default": "",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Called when value changes",
+      "required": false
+    },
+    "onSubmit": {
+      "type": "function",
+      "description": "Called on form submission",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text for the textarea",
+      "default": "Ask, Search or Chat...",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the entire prompt",
+      "default": "false",
+      "required": false
+    },
+    "loading": {
+      "type": "boolean",
+      "description": "Show loading state",
+      "default": "false",
+      "required": false
+    },
+    "minRows": {
+      "type": "number",
+      "description": "Minimum number of visible rows",
+      "default": "1",
+      "required": false
+    },
+    "maxRows": {
+      "type": "number",
+      "description": "Maximum number of visible rows",
+      "default": "8",
+      "required": false
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Enable auto-resize based on content",
+      "default": "true",
+      "required": false
+    },
+    "submitOnEnter": {
+      "type": "boolean",
+      "description": "Submit on Enter (Shift+Enter for newline)",
+      "default": "true",
+      "required": false
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual/positioning variant",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "fixed",
+        "sticky"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Building chat or AI assistant interfaces",
+      "Need multi-line input with submit action",
+      "Require toolbar with actions like attachments or model selection"
+    ],
+    "whenNot": [
+      "Simple single-line text input (use Input)",
+      "Basic multi-line without toolbar (use Textarea)",
+      "Search-only interface (use Input with search variant)"
+    ],
+    "guidelines": [
+      "Always provide an onSubmit handler",
+      "Use loading state during API calls",
+      "Prompt.Textarea forwards native textarea props (autoComplete, inputMode, aria-*, data-*, handlers)",
+      "Prompt.Textarea composes your onChange/onKeyDown handlers with built-in submit and auto-resize behavior",
+      "Consider showing usage/token limits for AI contexts"
+    ],
+    "accessibility": [
+      "Enter submits, Shift+Enter for newline",
+      "Submit button is keyboard accessible",
+      "Loading state prevents duplicate submissions"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic",
+      "description": "Simple prompt with submit button",
+      "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions />\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "With Actions",
+      "description": "Prompt with attachment and mode buttons",
+      "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "With Usage",
+      "description": "Shows token usage indicator",
+      "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton active>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Usage>52% used</Prompt.Usage>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "Loading State",
+      "description": "During API submission",
+      "code": "<Prompt\n  onSubmit={(value) => console.log(value)}\n  loading\n  defaultValue=\"Tell me about the weather...\"\n>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Usage>52% used</Prompt.Usage>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive prompt",
+      "code": "<Prompt onSubmit={(value) => console.log(value)} disabled>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for simple single-line text input"
+    },
+    {
+      "component": "Textarea",
+      "relationship": "alternative",
+      "note": "Use Textarea for multi-line without toolbar"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled input value",
+      "onSubmit: (value: string) => void - submission handler",
+      "placeholder: string - hint text (default: \"Ask, Search or Chat...\")",
+      "disabled: boolean - disables interaction",
+      "loading: boolean - shows loading state",
+      "minRows/maxRows: number - row constraints (default: 1/8)",
+      "submitOnEnter: boolean - Enter key behavior (default: true)",
+      "Prompt.Textarea accepts native textarea props and optional aria-label override"
+    ],
+    "a11yRules": [
+      "A11Y_TEXTAREA_LABEL",
+      "A11Y_BUTTON_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Textarea",
+      "Toolbar",
+      "Actions",
+      "Info",
+      "ActionButton",
+      "ModeButton",
+      "Usage",
+      "Submit"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.513Z"
+  }
+}

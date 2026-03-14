@@ -1,0 +1,194 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Header",
+  "description": "Composable header with slots for brand, navigation, search, and actions. Supports dropdown nav groups via Header.NavMenu. Designed for use within AppShell with responsive mobile support.",
+  "category": "navigation",
+  "tags": [
+    "header",
+    "navigation",
+    "navbar",
+    "brand",
+    "layout",
+    "dropdown"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Header/index.tsx",
+  "exportName": "Header",
+  "propsSummary": [
+    "children: node (required)",
+    "height: string (default: 56px)",
+    "position: static|fixed|sticky (default: static)",
+    "icons: object",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Header content (use Header.Brand, Header.Nav, etc.)",
+      "required": true
+    },
+    "height": {
+      "type": "string",
+      "description": "Header height",
+      "default": "56px",
+      "required": false
+    },
+    "position": {
+      "type": "enum",
+      "description": "Position behavior (usually controlled by AppShell)",
+      "default": "static",
+      "required": false,
+      "values": [
+        "static",
+        "fixed",
+        "sticky"
+      ]
+    },
+    "icons": {
+      "type": "object",
+      "description": "Optional icon overrides for Header.Trigger (menu/close) and Header.NavMenu chevron",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Primary site or app header inside AppShell",
+      "Navigation bar with branding (default layout)",
+      "Search and actions bar (sidebar layout)",
+      "Header with responsive mobile menu trigger",
+      "Grouping related nav items under a dropdown menu"
+    ],
+    "whenNot": [
+      "Simple page titles (use heading elements)",
+      "Footer navigation (use Footer component)",
+      "Standalone sidebar navigation (use Sidebar directly)"
+    ],
+    "guidelines": [
+      "Use Header.SkipLink for accessibility (skip to main content)",
+      "In default layout: include Header.Brand for logo",
+      "In sidebar layout: omit Header.Brand (logo in sidebar)",
+      "Header.Trigger integrates with SidebarProvider for mobile menus",
+      "Header.Trigger composes your onClick handler with sidebar toggle behavior",
+      "Header.Nav is hidden on mobile; use sidebar for mobile navigation",
+      "Use Header.Spacer to push items apart",
+      "Use Header.NavMenu to group related nav items under a dropdown",
+      "Use Header.NavMenuItem inside Header.NavMenu for dropdown items",
+      "Header sub-components forward DOM props (id, aria-*, data-*, handlers) to their rendered elements",
+      "Header.NavItem asChild composes click handlers instead of overwriting the child handler",
+      "Use the Header icons prop to replace internal mobile trigger and dropdown chevron icons with any icon package",
+      "For rich dropdown content (titles, descriptions, icons), use NavigationMenu instead of Header.Nav",
+      "NavigationMenu also provides an automatic mobile drawer, replacing Header.Trigger + Sidebar for mobile nav"
+    ],
+    "accessibility": [
+      "Include Header.SkipLink for keyboard users",
+      "Navigation has aria-label for screen readers",
+      "Active nav items use aria-current=\"page\"",
+      "Mobile trigger has aria-expanded state",
+      "NavMenu dropdown opens with click and is keyboard navigable"
+    ]
+  },
+  "examples": [
+    {
+      "name": "For Default Layout",
+      "description": "Header with brand, nav, and actions. Use with AppShell layout=\"default\".",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/dashboard\" active>Dashboard</Header.NavItem>\n      <Header.NavItem href=\"/projects\">Projects</Header.NavItem>\n      <Header.NavItem href=\"/settings\">Settings</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"secondary\" size=\"sm\">Sign In</Button>\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    },
+    {
+      "name": "With Dropdown Nav",
+      "description": "Header with a dropdown menu grouping related navigation links.",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/components\" active>Components</Header.NavItem>\n      <Header.NavItem href=\"/blocks\">Blocks</Header.NavItem>\n      <Header.NavMenu label=\"Docs\">\n        <Header.NavMenuItem href=\"/getting-started\">Getting Started</Header.NavMenuItem>\n        <Header.NavMenuItem href=\"/cli\">CLI Reference</Header.NavMenuItem>\n        <Header.NavMenuItem href=\"/mcp\">MCP Tools</Header.NavMenuItem>\n      </Header.NavMenu>\n      <Header.NavItem href=\"/blog\">Blog</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    },
+    {
+      "name": "For Sidebar Layout",
+      "description": "Header without brand (logo is in sidebar). Use with AppShell layout=\"sidebar\" or \"sidebar-floating\".",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Search>\n      <Input placeholder=\"Search...\" style={{ width: '240px' }} />\n    </Header.Search>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    },
+    {
+      "name": "Minimal",
+      "description": "Clean header with just trigger and actions",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Trigger />\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    },
+    {
+      "name": "With Search",
+      "description": "Header featuring a prominent search input",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Brand>Docs</Header.Brand>\n    <Header.Search>\n      <div style={{\n        display: 'flex',\n        alignItems: 'center',\n        gap: '8px',\n        padding: '8px 12px',\n        background: 'var(--fui-bg-secondary)',\n        borderRadius: '6px',\n        color: 'var(--fui-text-tertiary)',\n        fontSize: '14px',\n        width: '280px'\n      }}>\n        <MagnifyingGlass size={16} /> Search documentation...\n      </div>\n    </Header.Search>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    },
+    {
+      "name": "With Skip Link",
+      "description": "Accessible header with skip link for keyboard navigation",
+      "code": "<Header>\n  <Header.SkipLink href=\"#main-content\">Skip to content</Header.SkipLink>\n  <Header.Brand>Accessible App</Header.Brand>\n  <Header.Nav>\n    <Header.NavItem href=\"/\" active>Home</Header.NavItem>\n    <Header.NavItem href=\"/about\">About</Header.NavItem>\n  </Header.Nav>\n</Header>"
+    },
+    {
+      "name": "With NavigationMenu",
+      "description": "Header using NavigationMenu for rich dropdown content panels with titles, descriptions, and automatic mobile drawer.",
+      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <NavigationMenu aria-label=\"Site navigation\">\n      <NavigationMenu.List>\n        <NavigationMenu.Item value=\"products\">\n          <NavigationMenu.Trigger>Products</NavigationMenu.Trigger>\n          <NavigationMenu.Content>\n            <div style={{ display: 'flex', flexDirection: 'column', padding: '4px', minWidth: '200px' }}>\n              <NavigationMenu.Link href=\"/analytics\" title=\"Analytics\" description=\"Track your metrics.\" />\n              <NavigationMenu.Link href=\"/automation\" title=\"Automation\" description=\"Automate workflows.\" />\n            </div>\n          </NavigationMenu.Content>\n        </NavigationMenu.Item>\n        <NavigationMenu.Item>\n          <NavigationMenu.Link href=\"/pricing\">Pricing</NavigationMenu.Link>\n        </NavigationMenu.Item>\n      </NavigationMenu.List>\n      <NavigationMenu.Viewport />\n    </NavigationMenu>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"primary\" size=\"sm\">Sign Up</Button>\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "AppShell",
+      "relationship": "parent",
+      "note": "Header is typically used inside AppShell.Header"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "sibling",
+      "note": "Header.Trigger toggles Sidebar on mobile"
+    },
+    {
+      "component": "Theme",
+      "relationship": "child",
+      "note": "ThemeToggle is commonly placed in Header.Actions"
+    },
+    {
+      "component": "NavigationMenu",
+      "relationship": "child",
+      "note": "Use NavigationMenu inside Header for rich dropdown nav with auto mobile drawer"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "height: string - header height (default: 56px)",
+      "position: static|fixed|sticky - positioning behavior",
+      "icons: { menu?, close?, navMenuChevron? } - custom internal control icons (ReactNode or render function)",
+      "Header.Trigger composes click handler with Sidebar toggle behavior",
+      "Header.NavMenu provides dropdown groups via Base UI Menu"
+    ],
+    "a11yRules": [
+      "A11Y_HEADER_LANDMARK",
+      "A11Y_NAV_LABEL",
+      "A11Y_SKIP_LINK",
+      "A11Y_BUTTON_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "SkipLink",
+      "Trigger",
+      "Brand",
+      "Nav",
+      "NavItem",
+      "NavMenu",
+      "NavMenuItem",
+      "Search",
+      "Spacer",
+      "Actions"
+    ],
+    "commonPatterns": [
+      "<Header><Header.Brand href=\"/\">{appName}</Header.Brand><Header.Nav><Header.NavItem href=\"/home\" active>Home</Header.NavItem></Header.Nav><Header.Spacer /><Header.Actions>{actions}</Header.Actions></Header>",
+      "<Header><Header.Nav><Header.NavItem href=\"/home\">Home</Header.NavItem><Header.NavMenu label=\"Docs\" active><Header.NavMenuItem href=\"/cli\">CLI</Header.NavMenuItem><Header.NavMenuItem href=\"/mcp\">MCP</Header.NavMenuItem></Header.NavMenu></Header.Nav></Header>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:58.820Z"
+  }
+}

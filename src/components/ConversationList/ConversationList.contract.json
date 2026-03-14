@@ -1,0 +1,151 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "ConversationList",
+  "description": "Scrollable message container with auto-scroll and history loading",
+  "category": "ai",
+  "tags": [
+    "conversation",
+    "chat",
+    "messages",
+    "scroll",
+    "ai",
+    "list"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/ConversationList/index.tsx",
+  "exportName": "ConversationList",
+  "propsSummary": [
+    "children: node (required)",
+    "autoScroll: union (default: smart)",
+    "onScrollTop: function",
+    "loadingHistory: boolean (default: false)",
+    "emptyState: node",
+    "scrollTopThreshold: number (default: 50)",
+    "scrollBottomThreshold: number (default: 100)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Message components",
+      "required": true
+    },
+    "autoScroll": {
+      "type": "union",
+      "description": "Auto-scroll behavior: true (always), false (never), or \"smart\" (only when near bottom)",
+      "default": "smart",
+      "required": false
+    },
+    "onScrollTop": {
+      "type": "function",
+      "description": "Callback when user scrolls to top (for loading history). Receives the scroll event.",
+      "required": false
+    },
+    "loadingHistory": {
+      "type": "boolean",
+      "description": "Show loading spinner at top when loading history",
+      "default": "false",
+      "required": false
+    },
+    "emptyState": {
+      "type": "node",
+      "description": "Content to show when conversation is empty",
+      "required": false
+    },
+    "scrollTopThreshold": {
+      "type": "number",
+      "description": "Pixels from top to trigger onScrollTop",
+      "default": "50",
+      "required": false
+    },
+    "scrollBottomThreshold": {
+      "type": "number",
+      "description": "Pixels from bottom for smart auto-scroll",
+      "default": "100",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Building a chat interface with multiple messages",
+      "Need auto-scroll behavior when new messages arrive",
+      "Require infinite scroll for loading message history",
+      "Want date separators between message groups"
+    ],
+    "whenNot": [
+      "Simple list of items without chat context (use List)",
+      "Single message display (use Message directly)",
+      "Non-scrolling message layout"
+    ],
+    "guidelines": [
+      "Use autoScroll=\"smart\" for best UX (only auto-scrolls when near bottom)",
+      "Implement onScrollTop for loading older messages",
+      "ConversationList composes your onScroll handler with internal auto-scroll/history logic",
+      "Provide an emptyState for new conversations",
+      "Use DateSeparator between messages from different days"
+    ],
+    "accessibility": [
+      "Uses proper ARIA roles for separators",
+      "Typing indicator has aria-label",
+      "Smooth scroll respects reduced motion preferences",
+      "Keyboard navigation works within scrollable container"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic",
+      "description": "Simple conversation with messages",
+      "code": "<ConversationList>\n  <Message role=\"user\">\n    <Message.Content>Hello!</Message.Content>\n  </Message>\n  <Message role=\"assistant\">\n    <Message.Content>Hi there! How can I help you today?</Message.Content>\n  </Message>\n  <Message role=\"user\">\n    <Message.Content>Can you explain React hooks?</Message.Content>\n  </Message>\n</ConversationList>"
+    },
+    {
+      "name": "With Date Separators",
+      "description": "Messages grouped by date",
+      "code": "<ConversationList>\n  <ConversationList.DateSeparator date={new Date(Date.now() - 86400000)} />\n  <Message role=\"user\">\n    <Message.Content>A message from yesterday</Message.Content>\n  </Message>\n  <ConversationList.DateSeparator date={new Date()} />\n  <Message role=\"assistant\">\n    <Message.Content>And a message from today!</Message.Content>\n  </Message>\n</ConversationList>"
+    },
+    {
+      "name": "With Typing Indicator",
+      "description": "Shows assistant is typing",
+      "code": "<ConversationList>\n  <Message role=\"user\">\n    <Message.Content>What is TypeScript?</Message.Content>\n  </Message>\n  <ConversationList.TypingIndicator name=\"Assistant\" />\n</ConversationList>"
+    },
+    {
+      "name": "Loading History",
+      "description": "Loading older messages",
+      "code": "<ConversationList loadingHistory>\n  <Message role=\"user\">\n    <Message.Content>This is the latest message</Message.Content>\n  </Message>\n</ConversationList>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Message",
+      "relationship": "child",
+      "note": "ConversationList contains Message components"
+    },
+    {
+      "component": "ThinkingIndicator",
+      "relationship": "child",
+      "note": "Show ThinkingIndicator at bottom while awaiting response"
+    },
+    {
+      "component": "Prompt",
+      "relationship": "sibling",
+      "note": "Typically paired with Prompt for input"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - Message components",
+      "autoScroll: boolean | \"smart\" - scroll behavior (default: \"smart\")",
+      "onScrollTop: (event?) => void - callback for loading history (receives scroll event)",
+      "loadingHistory: boolean - show history loading spinner",
+      "emptyState: ReactNode - empty conversation content"
+    ],
+    "a11yRules": [
+      "A11Y_ARIA_ROLES",
+      "A11Y_MOTION_PREFERENCE"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:53.889Z"
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Button",
+  "description": "Interactive element for user actions and form submissions",
+  "category": "forms",
+  "tags": [
+    "action",
+    "button",
+    "form",
+    "interactive"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Button/index.tsx",
+  "exportName": "Button",
+  "propsSummary": [
+    "as: button|a",
+    "children: node (required)",
+    "variant: primary|secondary|ghost|danger|outlined|outline|icon (default: \"primary\")",
+    "size: sm|md|lg (default: \"md\")",
+    "icon: boolean",
+    "fullWidth: boolean",
+    "asChild: boolean"
+  ],
+  "props": {
+    "as": {
+      "type": "enum",
+      "description": "Render as a native button or anchor element",
+      "default": "button",
+      "required": false,
+      "values": [
+        "button",
+        "a"
+      ]
+    },
+    "children": {
+      "type": "node",
+      "description": "Button label content",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual style variant (\"icon\" is a convenience alias for outlined + icon-only layout)",
+      "default": "\"primary\"",
+      "required": false,
+      "values": [
+        "primary",
+        "secondary",
+        "ghost",
+        "danger",
+        "outlined",
+        "outline",
+        "icon"
+      ],
+      "constraints": [
+        "Only one primary button per context"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Button size",
+      "default": "\"md\"",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "icon": {
+      "type": "boolean",
+      "description": "Render as icon-only button (square aspect ratio). Useful with any visual variant; variant=\"icon\" is the default outlined icon-only shortcut.",
+      "default": "false",
+      "required": false
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "description": "Make button full width of container",
+      "default": "false",
+      "required": false
+    },
+    "asChild": {
+      "type": "boolean",
+      "description": "Merge button styling onto child element (e.g. Next.js Link)",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Triggering an action (save, submit, delete, etc.)",
+      "Form submission",
+      "Opening dialogs or menus",
+      "Navigation when action context is needed"
+    ],
+    "whenNot": [
+      "Simple navigation (use Link)",
+      "Toggling state (use Switch or Checkbox)",
+      "Selecting from options (use Select or RadioGroup)"
+    ],
+    "guidelines": [
+      "Use Primary for the main action in a context",
+      "Only one Primary button per section/form",
+      "Use Danger variant for destructive actions",
+      "Loading state should disable the button",
+      "When using asChild, pass interaction and accessibility props directly on Button (they are forwarded to the child element)",
+      "Use variant=\"icon\" for the default icon-only action button, or combine icon={true} with another visual variant when needed"
+    ],
+    "accessibility": [
+      "Button text should describe the action",
+      "Avoid generic labels like \"Click here\"",
+      "Icon-only buttons need aria-label"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Primary",
+      "description": "Default action button for primary actions",
+      "code": "<Button variant=\"primary\">Save Changes</Button>"
+    },
+    {
+      "name": "Secondary",
+      "description": "Less prominent action button",
+      "code": "<Button variant=\"secondary\">Cancel</Button>"
+    },
+    {
+      "name": "Ghost",
+      "description": "Minimal visual weight for subtle actions",
+      "code": "<Button variant=\"ghost\">Learn More</Button>"
+    },
+    {
+      "name": "Danger",
+      "description": "Destructive action requiring attention",
+      "code": "<Button variant=\"danger\">Delete Item</Button>"
+    },
+    {
+      "name": "Outline",
+      "description": "Bordered button with transparent background",
+      "code": "<Button variant=\"outline\">View Details</Button>"
+    },
+    {
+      "name": "Icon",
+      "description": "Convenience icon-only button alias (ghost + square icon sizing)",
+      "code": "<Button variant=\"icon\" aria-label=\"Add item\">\n  <span aria-hidden>+</span>\n</Button>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size options",
+      "code": "<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>\n  <Button size=\"sm\">Small</Button>\n  <Button size=\"md\">Medium</Button>\n  <Button size=\"lg\">Large</Button>\n</div>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive state",
+      "code": "<Button disabled>Cannot Click</Button>"
+    },
+    {
+      "name": "As Child",
+      "description": "Compose button styles onto another interactive element while preserving forwarded props",
+      "code": "<Button asChild variant=\"outlined\" aria-label=\"Open billing settings\">\n  <a href=\"#billing-settings\">Billing Settings</a>\n</Button>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Link",
+      "relationship": "alternative",
+      "note": "Use Link for navigation without action context"
+    },
+    {
+      "component": "Icon",
+      "relationship": "complementary",
+      "note": "Use Icon inside Button for icon-leading/trailing or icon-only actions"
+    },
+    {
+      "component": "ButtonGroup",
+      "relationship": "parent",
+      "note": "Use ButtonGroup for related action sets"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "variant: primary|secondary|ghost|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only)",
+      "size: sm|md|lg (default: md)",
+      "disabled: boolean - disables interaction",
+      "type: button|submit|reset (default: button)",
+      "onClick: (event) => void - action handler",
+      "asChild: boolean - composes styles/props onto a child element (links/router links)",
+      "icon: boolean - icon-only square layout (can be combined with visual variants)"
+    ],
+    "a11yRules": [
+      "A11Y_BTN_LABEL",
+      "A11Y_BTN_FOCUS"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.517Z"
+  }
+}

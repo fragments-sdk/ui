@@ -1,0 +1,194 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Icon",
+  "description": "Wrapper for icon components with consistent sizing and semantic colors. Provides standardized icon rendering across the design system.",
+  "category": "display",
+  "tags": [
+    "icon",
+    "visual",
+    "symbol",
+    "graphic"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Icon/index.tsx",
+  "exportName": "Icon",
+  "propsSummary": [
+    "style: object",
+    "icon: union (required)",
+    "size: xs|sm|md|lg|xl (default: md)",
+    "weight: string (default: regular)",
+    "variant: default|primary|secondary|tertiary|accent|success|warning|error",
+    "color: primary|secondary|tertiary|accent|success|warning|error",
+    "iconProps: object"
+  ],
+  "props": {
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    },
+    "icon": {
+      "type": "union",
+      "description": "Icon component to render",
+      "required": true
+    },
+    "size": {
+      "type": "enum",
+      "description": "Icon size",
+      "default": "md",
+      "required": false,
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "weight": {
+      "type": "string",
+      "description": "Optional icon style/weight hint (forwarded when supported by the icon component)",
+      "default": "regular",
+      "required": false,
+      "values": [
+        "thin",
+        "light",
+        "regular",
+        "bold",
+        "fill",
+        "duotone"
+      ]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Semantic color variant",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "primary",
+        "secondary",
+        "tertiary",
+        "accent",
+        "success",
+        "warning",
+        "error"
+      ]
+    },
+    "color": {
+      "type": "enum",
+      "description": "Deprecated alias for variant",
+      "required": false,
+      "values": [
+        "primary",
+        "secondary",
+        "tertiary",
+        "accent",
+        "success",
+        "warning",
+        "error"
+      ]
+    },
+    "iconProps": {
+      "type": "object",
+      "description": "Additional props forwarded to the underlying icon component (typed from the icon prop in TypeScript)",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying UI icons alongside text or in buttons",
+      "Indicating status or state visually",
+      "Adding visual hierarchy to feature lists",
+      "Decorating cards or stats with relevant symbols"
+    ],
+    "whenNot": [
+      "Large decorative illustrations (use Image or custom SVG)",
+      "Logo display (use dedicated Logo component)",
+      "Complex graphics with multiple colors",
+      "Animated icons (use custom implementation)"
+    ],
+    "guidelines": [
+      "Use semantic color variants (success, error, warning) for status indication",
+      "Pair icons with text labels for accessibility",
+      "Match icon weight/style to surrounding text weight for visual consistency when supported by the icon package",
+      "Use consistent sizes within the same context",
+      "Use iconProps for package-specific icon options not exposed directly on the wrapper"
+    ],
+    "accessibility": [
+      "Icons are decorative by default (aria-hidden)",
+      "Always pair with visible or visually-hidden text for meaning",
+      "Do not rely on color alone to convey information",
+      "Consider using VisuallyHidden for icon-only buttons"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic icon with default styling",
+      "code": "<Icon icon={Heart} />"
+    },
+    {
+      "name": "Sizes",
+      "description": "Available size options",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Star} size=\"xs\" />\n  <Icon icon={Star} size=\"sm\" />\n  <Icon icon={Star} size=\"md\" />\n  <Icon icon={Star} size=\"lg\" />\n  <Icon icon={Star} size=\"xl\" />\n</div>"
+    },
+    {
+      "name": "Semantic Colors",
+      "description": "Status and semantic color variants",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Check} variant=\"success\" />\n  <Icon icon={Warning} variant=\"warning\" />\n  <Icon icon={Warning} variant=\"error\" />\n  <Icon icon={Info} variant=\"accent\" />\n</div>"
+    },
+    {
+      "name": "Weights",
+      "description": "Icon weight/style options",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Heart} weight=\"thin\" />\n  <Icon icon={Heart} weight=\"light\" />\n  <Icon icon={Heart} weight=\"regular\" />\n  <Icon icon={Heart} weight=\"bold\" />\n  <Icon icon={Heart} weight=\"fill\" />\n  <Icon icon={Heart} weight=\"duotone\" />\n</div>"
+    },
+    {
+      "name": "Advanced Icon Props",
+      "description": "Forward extra icon-package-specific props through iconProps",
+      "code": "<Icon icon={Heart} iconProps={{ mirrored: true }} />"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "Use inside icon-only buttons with VisuallyHidden label"
+    },
+    {
+      "component": "VisuallyHidden",
+      "relationship": "sibling",
+      "note": "Pair with VisuallyHidden for accessible icon-only elements"
+    },
+    {
+      "component": "Badge",
+      "relationship": "child",
+      "note": "Can be used as badge icon prop"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "icon: React component - icon component (required)",
+      "size: xs|sm|md|lg|xl - icon size",
+      "weight: string - optional style/weight hint for icons that support it",
+      "variant: default|primary|secondary|tertiary|accent|success|warning|error - color",
+      "iconProps: typed from the passed icon component - advanced icon-specific props"
+    ],
+    "a11yRules": [
+      "A11Y_ICON_LABEL",
+      "A11Y_COLOR_CONTRAST"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:58.998Z"
+  }
+}

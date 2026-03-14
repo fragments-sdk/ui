@@ -172,7 +172,7 @@
   },
   "scripts": {
     "cli:ensure": "test -f ../../packages/cli/dist/bin.js || pnpm --filter @fragments-sdk/cli build",
-    "dev": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js dev",
+    "dev": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build",
     "build": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js build && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint src",
     "validate": "pnpm run cli:ensure && node ../../packages/cli/dist/bin.js validate",

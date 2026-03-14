@@ -1,0 +1,131 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "ScrollArea",
+  "description": "A styled scrollable container with thin scrollbars and optional fade indicators.",
+  "category": "layout",
+  "tags": [
+    "scroll",
+    "overflow",
+    "scrollbar",
+    "container",
+    "layout"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/ScrollArea/index.tsx",
+  "exportName": "ScrollArea",
+  "propsSummary": [
+    "children: node (required)",
+    "orientation: horizontal|vertical|both (default: vertical)",
+    "scrollbarVisibility: auto|always|hover (default: auto)",
+    "showFades: boolean (default: false)",
+    "className: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Scrollable content",
+      "required": true
+    },
+    "orientation": {
+      "type": "enum",
+      "description": "Scroll direction",
+      "default": "vertical",
+      "required": false,
+      "values": [
+        "horizontal",
+        "vertical",
+        "both"
+      ]
+    },
+    "scrollbarVisibility": {
+      "type": "enum",
+      "description": "When to show the scrollbar",
+      "default": "auto",
+      "required": false,
+      "values": [
+        "auto",
+        "always",
+        "hover"
+      ]
+    },
+    "showFades": {
+      "type": "boolean",
+      "description": "Show gradient fade indicators at scroll edges",
+      "default": "false",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Content overflows its container and needs scrolling",
+      "Horizontal tab bars or chip lists that may overflow",
+      "Scrollable panels, sidebars, or dropdown content",
+      "Any area where native scrollbars look too heavy"
+    ],
+    "whenNot": [
+      "Page-level scrolling (use native body scroll)",
+      "Very short content that never overflows"
+    ],
+    "guidelines": [
+      "Use `orientation` to constrain scroll direction",
+      "Use `showFades` to hint at hidden content beyond the viewport",
+      "The `hover` scrollbar visibility keeps the UI clean until the user interacts",
+      "Combine with `orientation=\"horizontal\"` for tab bars and chip rows"
+    ],
+    "accessibility": [
+      "Preserves native scroll behavior and keyboard support",
+      "Scrollbar is visible on focus for keyboard users",
+      "Respects prefers-reduced-motion for fade transitions"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Vertical",
+      "description": "Vertical scrollable area with thin scrollbar.",
+      "code": "<ScrollArea style={{ height: '200px' }}>\n  {/* Long content */}\n</ScrollArea>"
+    },
+    {
+      "name": "Horizontal",
+      "description": "Horizontal scrollable area for overflowing inline content like tabs or chips.",
+      "code": "<ScrollArea orientation=\"horizontal\">\n  <div style={{ display: 'flex', gap: '8px' }}>\n    {tags.map(tag => <Chip key={tag}>{tag}</Chip>)}\n  </div>\n</ScrollArea>"
+    },
+    {
+      "name": "With Fades",
+      "description": "Fade indicators show when content is scrollable in either direction.",
+      "code": "<ScrollArea orientation=\"horizontal\" showFades>\n  {/* Overflowing content */}\n</ScrollArea>"
+    },
+    {
+      "name": "Hover Scrollbar",
+      "description": "Scrollbar is hidden until the user hovers over the scroll area.",
+      "code": "<ScrollArea scrollbarVisibility=\"hover\" style={{ height: '200px' }}>\n  {/* Content */}\n</ScrollArea>"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "orientation: horizontal|vertical|both - scroll direction",
+      "scrollbarVisibility: auto|always|hover - scrollbar display mode",
+      "showFades: boolean - gradient edge indicators"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ],
+    "commonPatterns": [
+      "<ScrollArea orientation=\"horizontal\"><div style={{ display: \"flex\", gap: 8 }}>{items}</div></ScrollArea>",
+      "<ScrollArea style={{ height: 300 }}>{longContent}</ScrollArea>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.867Z"
+  }
+}

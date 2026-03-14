@@ -1,0 +1,302 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "DataTable",
+  "description": "Data table with sorting, selection, and column management. Powered by TanStack Table.",
+  "category": "display",
+  "tags": [
+    "table",
+    "data",
+    "grid",
+    "list",
+    "sorting",
+    "tanstack"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/DataTable/index.tsx",
+  "exportName": "DataTable",
+  "propsSummary": [
+    "columns: array (required)",
+    "data: array (required)",
+    "getRowId: function",
+    "sortable: boolean (default: false)",
+    "sorting: array",
+    "onSortingChange: function",
+    "selectable: boolean (default: false)",
+    "showCheckbox: boolean (default: false)",
+    "rowSelection: object",
+    "onRowSelectionChange: function",
+    "onRowClick: function",
+    "getSubRows: function",
+    "expanded: union",
+    "onExpandedChange: function",
+    "emptyMessage: string (default: No data available)",
+    "size: sm|md (default: md)",
+    "caption: string",
+    "captionHidden: boolean (default: false)",
+    "striped: boolean (default: false)",
+    "bordered: boolean (default: false)",
+    "wrapperClassName: string",
+    "wrapperProps: object"
+  ],
+  "props": {
+    "columns": {
+      "type": "array",
+      "description": "Column definitions",
+      "required": true
+    },
+    "data": {
+      "type": "array",
+      "description": "Data rows to display",
+      "required": true
+    },
+    "getRowId": {
+      "type": "function",
+      "description": "Unique key extractor for each row",
+      "required": false
+    },
+    "sortable": {
+      "type": "boolean",
+      "description": "Enable column sorting",
+      "default": "false",
+      "required": false
+    },
+    "sorting": {
+      "type": "array",
+      "description": "Controlled sorting state",
+      "required": false
+    },
+    "onSortingChange": {
+      "type": "function",
+      "description": "Sorting change handler",
+      "required": false
+    },
+    "selectable": {
+      "type": "boolean",
+      "description": "Enable row selection",
+      "default": "false",
+      "required": false
+    },
+    "showCheckbox": {
+      "type": "boolean",
+      "description": "Show checkbox column for row selection (requires selectable)",
+      "default": "false",
+      "required": false
+    },
+    "rowSelection": {
+      "type": "object",
+      "description": "Controlled row selection state",
+      "required": false
+    },
+    "onRowSelectionChange": {
+      "type": "function",
+      "description": "Row selection change handler",
+      "required": false
+    },
+    "onRowClick": {
+      "type": "function",
+      "description": "Handler for row clicks/keyboard activation. Called as (row, event)",
+      "required": false
+    },
+    "getSubRows": {
+      "type": "function",
+      "description": "Extract sub-rows for expandable tree tables",
+      "required": false
+    },
+    "expanded": {
+      "type": "union",
+      "description": "Controlled expanded state",
+      "required": false
+    },
+    "onExpandedChange": {
+      "type": "function",
+      "description": "Expanded state change handler",
+      "required": false
+    },
+    "emptyMessage": {
+      "type": "string",
+      "description": "Message when no data",
+      "default": "No data available",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Table density",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md"
+      ]
+    },
+    "caption": {
+      "type": "string",
+      "description": "Visible caption for the table",
+      "required": false
+    },
+    "captionHidden": {
+      "type": "boolean",
+      "description": "Hide caption visually but keep it for screen readers",
+      "default": "false",
+      "required": false
+    },
+    "striped": {
+      "type": "boolean",
+      "description": "Show alternating row backgrounds",
+      "default": "false",
+      "required": false
+    },
+    "bordered": {
+      "type": "boolean",
+      "description": "Wrap table in a bordered container",
+      "default": "false",
+      "required": false
+    },
+    "wrapperClassName": {
+      "type": "string",
+      "description": "Additional class name for the outer wrapper div",
+      "required": false
+    },
+    "wrapperProps": {
+      "type": "object",
+      "description": "Props forwarded to the outer wrapper div (id, aria-*, data-*, handlers)",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying structured, tabular data with sorting",
+      "Data that users need to scan, compare, and act upon",
+      "Lists with multiple attributes per item that need sorting or selection",
+      "Data-rich tables requiring column sizing and row clicks",
+      "Hierarchical data with expandable sub-rows"
+    ],
+    "whenNot": [
+      "Simple static tables (use Table component)",
+      "Simple lists (use List component)",
+      "Card-based layouts (use Grid with Cards)",
+      "Small screens (consider card or list view)"
+    ],
+    "guidelines": [
+      "Keep columns to a reasonable number (5-7 max)",
+      "Use consistent alignment (numbers right, text left)",
+      "Provide meaningful empty states",
+      "Consider mobile responsiveness",
+      "Use showCheckbox for bulk selection workflows"
+    ],
+    "accessibility": [
+      "Proper table semantics with headers",
+      "Sortable columns are keyboard accessible",
+      "Row selection checkboxes include aria-labels",
+      "Expand/collapse buttons have aria-expanded state"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic data table with status badges and role columns",
+      "code": "<DataTable\n  columns={basicColumns}\n  data={sampleUsers}\n  aria-label=\"Team members\"\n/>"
+    },
+    {
+      "name": "Rich Cells",
+      "description": "Custom cells with avatars, stacked text, and column sizing",
+      "code": "<DataTable\n  columns={richColumns}\n  data={sampleUsers}\n  bordered\n  aria-label=\"Team members\"\n/>"
+    },
+    {
+      "name": "Sortable",
+      "description": "Click column headers to sort ascending or descending",
+      "code": "<DataTable\n  columns={transactionColumns}\n  data={sampleTransactions}\n  sortable\n  bordered\n  caption=\"Recent transactions\"\n  captionHidden\n  aria-label=\"Transactions\"\n/>"
+    },
+    {
+      "name": "Checkbox Selection",
+      "description": "Select rows with header checkbox for select-all and individual row checkboxes",
+      "code": "function TeamTable() {\n  const [selection, setSelection] = useState({});\n  const selectedCount = Object.values(selection).filter(Boolean).length;\n\n  return (\n    <Stack gap=\"sm\">\n      <Stack direction=\"row\" justify=\"between\" align=\"center\">\n        <Text size=\"sm\" color=\"secondary\">\n          {selectedCount > 0 ? `${selectedCount} selected` : 'Select rows with checkboxes'}\n        </Text>\n        {selectedCount > 0 && (\n          <Button size=\"sm\" variant=\"ghost\" onClick={() => setSelection({})}>\n            Clear\n          </Button>\n        )}\n      </Stack>\n      <DataTable\n        columns={columns}\n        data={users}\n        selectable\n        showCheckbox\n        rowSelection={selection}\n        onRowSelectionChange={setSelection}\n        getRowId={(row) => row.id}\n        bordered\n        aria-label=\"Team members\"\n      />\n    </Stack>\n  );\n}"
+    },
+    {
+      "name": "Expandable Rows",
+      "description": "Hierarchical data with collapsible sub-rows, like a file tree",
+      "code": "const fileTreeData = [\n  {\n    id: '1', name: 'src', type: 'folder', modified: 'Feb 18, 2026',\n    subRows: [\n      { id: '1.1', name: 'components', type: 'folder', modified: 'Feb 18, 2026',\n        subRows: [\n          { id: '1.1.1', name: 'Button.tsx', type: 'file', size: '4.2 KB', modified: 'Feb 17, 2026' },\n          { id: '1.1.2', name: 'Card.tsx', type: 'file', size: '3.8 KB', modified: 'Feb 16, 2026' },\n        ],\n      },\n    ],\n  },\n  { id: '2', name: 'package.json', type: 'file', size: '1.2 KB', modified: 'Feb 18, 2026' },\n];\n\n<DataTable\n  columns={fileColumns}\n  data={fileTreeData}\n  getSubRows={(row) => row.subRows}\n  getRowId={(row) => row.id}\n  bordered\n  size=\"sm\"\n  aria-label=\"File tree\"\n/>"
+    },
+    {
+      "name": "With Filters",
+      "description": "Combine with search input and menu dropdowns for filtered views",
+      "code": "function FilteredTable() {\n  const [search, setSearch] = useState('');\n  const [statusFilter, setStatusFilter] = useState(null);\n\n  const filteredData = useMemo(() => {\n    return users.filter((user) => {\n      if (search && !user.name.toLowerCase().includes(search.toLowerCase())) return false;\n      if (statusFilter && user.status !== statusFilter) return false;\n      return true;\n    });\n  }, [search, statusFilter]);\n\n  return (\n    <Stack gap=\"sm\">\n      <Stack direction=\"row\" gap=\"sm\" align=\"center\">\n        <Input placeholder=\"Search...\" size=\"sm\" value={search} onChange={(e) => setSearch(e.target.value)} />\n        <Menu>\n          <Menu.Trigger asChild>\n            <Button variant=\"secondary\" size=\"sm\">Status</Button>\n          </Menu.Trigger>\n          <Menu.Content>\n            <Menu.Item onClick={() => setStatusFilter(null)}>All</Menu.Item>\n            <Menu.Item onClick={() => setStatusFilter('active')}>Active</Menu.Item>\n            <Menu.Item onClick={() => setStatusFilter('pending')}>Pending</Menu.Item>\n          </Menu.Content>\n        </Menu>\n      </Stack>\n      <DataTable\n        columns={columns}\n        data={filteredData}\n        sortable\n        bordered\n        emptyMessage=\"No users match the current filters\"\n        aria-label=\"Filtered team members\"\n      />\n    </Stack>\n  );\n}"
+    },
+    {
+      "name": "Clickable Rows",
+      "description": "Rows respond to click and keyboard activation",
+      "code": "<DataTable\n  columns={endpointColumns}\n  data={sampleEndpoints}\n  onRowClick={(row) => alert(`${row.method} ${row.path}`)}\n  size=\"sm\"\n  aria-label=\"API endpoints\"\n/>"
+    },
+    {
+      "name": "Striped",
+      "description": "Alternating row backgrounds for dense data",
+      "code": "<DataTable\n  columns={endpointColumns}\n  data={sampleEndpoints}\n  striped\n  size=\"sm\"\n  sortable\n  aria-label=\"API endpoints\"\n/>"
+    },
+    {
+      "name": "Empty State",
+      "description": "Display when no data matches the current filters",
+      "code": "<DataTable\n  columns={basicColumns}\n  data={[]}\n  emptyMessage=\"No users match your search criteria\"\n  aria-label=\"Search results\"\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Table",
+      "relationship": "alternative",
+      "note": "Use Table for simple semantic HTML tables"
+    },
+    {
+      "component": "EmptyState",
+      "relationship": "sibling",
+      "note": "Use EmptyState for empty table states"
+    },
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Use Badge for status columns"
+    },
+    {
+      "component": "Menu",
+      "relationship": "sibling",
+      "note": "Use Menu for filter dropdowns"
+    },
+    {
+      "component": "Checkbox",
+      "relationship": "sibling",
+      "note": "Built-in checkbox selection via showCheckbox"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "columns: ColumnDef[] - column definitions",
+      "data: T[] - row data array",
+      "sortable: boolean - enable sorting",
+      "selectable: boolean - enable row selection",
+      "showCheckbox: boolean - add checkbox column",
+      "getSubRows: (row) => T[] - enable expandable rows",
+      "onRowClick: (row, event) => void - row activation handler with event access",
+      "size: sm|md - table density",
+      "striped: boolean - alternating row backgrounds",
+      "bordered: boolean - bordered container",
+      "wrapperClassName / wrapperProps - style and configure the outer wrapper div"
+    ],
+    "a11yRules": [
+      "A11Y_TABLE_HEADERS",
+      "A11Y_TABLE_SORT"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "simple",
+    "subComponents": [
+      "Root",
+      "Columns"
+    ],
+    "commonPatterns": [
+      "<DataTable columns={createColumns([{key:\"name\",header:\"Name\"},{key:\"status\",header:\"Status\"}])} data={[{name:\"Item 1\",status:\"Active\"}]} />"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:54.097Z"
+  }
+}

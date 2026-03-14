@@ -1,0 +1,263 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Editor",
+  "description": "Rich text editor with formatting toolbar, auto-save, and word count",
+  "category": "forms",
+  "tags": [
+    "editor",
+    "rich-text",
+    "markdown",
+    "toolbar",
+    "writing",
+    "blog",
+    "content"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Editor/index.tsx",
+  "exportName": "Editor",
+  "propsSummary": [
+    "children: node",
+    "value: string",
+    "defaultValue: string (default: )",
+    "onValueChange: function",
+    "placeholder: string (default: Start typing...)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "formats: array",
+    "toolbar: boolean (default: true)",
+    "statusBar: boolean (default: true)",
+    "onAutoSave: function",
+    "autoSaveInterval: number (default: 30000)",
+    "size: sm|md|lg (default: md)",
+    "maxLength: number",
+    "toolbarIcons: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled editor value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default value for uncontrolled usage",
+      "default": "",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called when content changes",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text shown when empty",
+      "default": "Start typing...",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the editor",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Make the editor read-only",
+      "default": "false",
+      "required": false
+    },
+    "formats": {
+      "type": "array",
+      "description": "Which format buttons to show in the toolbar",
+      "default": "[\"bold\", \"italic\", \"strikethrough\", \"link\", \"code\", \"bulletList\"]",
+      "required": false
+    },
+    "toolbar": {
+      "type": "boolean",
+      "description": "Show default toolbar",
+      "default": "true",
+      "required": false
+    },
+    "statusBar": {
+      "type": "boolean",
+      "description": "Show default status bar with word/character counts",
+      "default": "true",
+      "required": false
+    },
+    "onAutoSave": {
+      "type": "function",
+      "description": "Auto-save callback, called at autoSaveInterval (may be async)",
+      "required": false
+    },
+    "autoSaveInterval": {
+      "type": "number",
+      "description": "Auto-save interval in milliseconds",
+      "default": "30000",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Editor size preset: \"sm\" (120px), \"md\" (200px), or \"lg\" (400px)",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "maxLength": {
+      "type": "number",
+      "description": "Maximum character count. Shows counter in status bar with warning (90%) and error (over limit) states",
+      "required": false
+    },
+    "toolbarIcons": {
+      "type": "object",
+      "description": "Optional toolbar icon overrides keyed by format/action (e.g. bold, italic, undo). Values can be React nodes or render functions.",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Building blog post or article editors",
+      "Need rich text editing with formatting controls",
+      "Content management with auto-save and word count",
+      "Markdown or WYSIWYG editing interfaces"
+    ],
+    "whenNot": [
+      "Simple single-line text input (use Input)",
+      "Plain multi-line without formatting (use Textarea)",
+      "Chat/AI prompt input (use Prompt)",
+      "Code editing (use CodeBlock)"
+    ],
+    "guidelines": [
+      "Use compound pattern for custom toolbar layouts",
+      "Install @tiptap/react, @tiptap/starter-kit, and @tiptap/extension-link for rich text mode",
+      "Falls back to a markdown-aware textarea when TipTap is not installed",
+      "Use onAutoSave for periodic content persistence",
+      "onAutoSave may return a Promise; save status updates after the async save resolves/rejects",
+      "Use size prop (sm/md/lg) to control editor height",
+      "Use maxLength to show character limit with visual warning states",
+      "New formats (headings, blockquote, orderedList, undo, redo) are opt-in via the formats prop",
+      "Use toolbarIcons to swap in icons from any icon package without changing toolbar button labels or accessibility behavior"
+    ],
+    "accessibility": [
+      "Toolbar has role=\"toolbar\" with aria-label",
+      "Format buttons use aria-pressed to indicate active state",
+      "Action buttons (undo/redo) omit aria-pressed since they are not toggles",
+      "Status indicator uses aria-live=\"polite\" for save status announcements",
+      "Keyboard shortcuts match standard text editor conventions (Ctrl+B, Ctrl+I, etc.)",
+      "Global shortcuts (e.g., Sidebar Ctrl+B) automatically yield when focus is inside the Editor",
+      "Focus ring appears on the editor container when any child element is focused"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Editor with default toolbar and status bar",
+      "code": "<Editor placeholder=\"Start typing your masterpiece here...\" />"
+    },
+    {
+      "name": "With Auto-Save and Publish",
+      "description": "Full compound usage with custom toolbar, auto-save indicator, and publish button",
+      "code": "<Editor\n  placeholder=\"Start typing your masterpiece here...\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Actions\">\n      <Editor.StatusIndicator status=\"saved\" />\n      <Button variant=\"accent\" size=\"sm\">\n        Publish\n      </Button>\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "Minimal",
+      "description": "Editor with subset of formats",
+      "code": "<Editor\n  placeholder=\"Quick note...\"\n  formats={['bold', 'italic', 'code']}\n/>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive editor with content",
+      "code": "<Editor\n  defaultValue=\"This content cannot be edited.\"\n  disabled\n/>"
+    },
+    {
+      "name": "Read Only",
+      "description": "Visible content, non-editable",
+      "code": "<Editor\n  defaultValue=\"This content is read-only. You can select and copy text but cannot modify it.\"\n  readOnly\n/>"
+    },
+    {
+      "name": "Custom Toolbar",
+      "description": "Compound usage with custom toolbar layout and separator",
+      "code": "<Editor\n  placeholder=\"Write your blog post...\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Basic formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Advanced formatting\">\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"saving\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "Full Formatting",
+      "description": "All format options including headings, blockquote, ordered list, undo/redo",
+      "code": "<Editor\n  placeholder=\"Write an article...\"\n  size=\"lg\"\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"History\">\n      <Editor.ToolbarButton format=\"undo\" />\n      <Editor.ToolbarButton format=\"redo\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Headings\">\n      <Editor.ToolbarButton format=\"heading1\" />\n      <Editor.ToolbarButton format=\"heading2\" />\n      <Editor.ToolbarButton format=\"heading3\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"code\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Block formatting\">\n      <Editor.ToolbarButton format=\"bulletList\" />\n      <Editor.ToolbarButton format=\"orderedList\" />\n      <Editor.ToolbarButton format=\"blockquote\" />\n      <Editor.ToolbarButton format=\"link\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "With Character Limit",
+      "description": "Editor with maxLength showing character count indicator with warning and error states",
+      "code": "<Editor\n  placeholder=\"Write a tweet-sized message...\"\n  maxLength={280}\n  size=\"sm\"\n  formats={['bold', 'italic', 'link']}\n/>"
+    },
+    {
+      "name": "Small Size",
+      "description": "Compact editor with sm size preset (120px min-height)",
+      "code": "<Editor\n  placeholder=\"Quick note...\"\n  size=\"sm\"\n  formats={['bold', 'italic', 'code']}\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Prompt",
+      "relationship": "sibling",
+      "note": "Prompt is for AI/chat input; Editor is for long-form content editing"
+    },
+    {
+      "component": "Textarea",
+      "relationship": "alternative",
+      "note": "Use Textarea for simple multi-line input without formatting toolbar"
+    },
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for single-line text input"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled editor value",
+      "onValueChange: (value: string) => void - change callback",
+      "placeholder: string - hint text (default: \"Start typing...\")",
+      "disabled: boolean - disables interaction",
+      "readOnly: boolean - prevents editing",
+      "formats: EditorFormat[] - toolbar buttons (default: all 6)",
+      "toolbar: boolean - show default toolbar (default: true)",
+      "statusBar: boolean - show word/char counts (default: true)",
+      "onAutoSave: (value: string) => void | Promise<void> - auto-save handler",
+      "size: \"sm\" | \"md\" | \"lg\" - editor height preset (default: \"md\")",
+      "maxLength: number - character limit with visual indicator",
+      "toolbarIcons: Partial<Record<EditorFormat, ReactNode | (state) => ReactNode>> - custom toolbar icons"
+    ],
+    "a11yRules": [
+      "A11Y_TOOLBAR_ROLE",
+      "A11Y_BUTTON_LABEL",
+      "A11Y_LIVE_REGION"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Toolbar",
+      "ToolbarGroup",
+      "ToolbarButton",
+      "Separator",
+      "StatusIndicator",
+      "Content",
+      "StatusBar"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:56.748Z"
+  }
+}

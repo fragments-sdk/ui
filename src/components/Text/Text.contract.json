@@ -1,0 +1,239 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Text",
+  "description": "Typography component for rendering text with consistent styling. Supports various sizes, weights, colors, and semantic elements.",
+  "category": "display",
+  "tags": [
+    "text",
+    "typography",
+    "heading",
+    "paragraph",
+    "font"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Text/index.tsx",
+  "exportName": "Text",
+  "propsSummary": [
+    "children: node (required)",
+    "as: h1|h2|h3|h4|h5|h6|p|span|label|div|strong|em|small|mark|del|ins|sub|sup|time|address|blockquote|cite|code|abbr (default: span)",
+    "variant: section-label",
+    "size: 2xs|xs|sm|base|md|lg|xl|2xl",
+    "weight: normal|medium|semibold|bold (default: \"normal\")",
+    "color: primary|secondary|tertiary|muted (default: \"primary\")",
+    "font: sans|mono (default: sans)",
+    "truncate: boolean",
+    "lineClamp: number",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Text content",
+      "required": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "span",
+      "required": false,
+      "values": [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "p",
+        "span",
+        "label",
+        "div",
+        "strong",
+        "em",
+        "small",
+        "mark",
+        "del",
+        "ins",
+        "sub",
+        "sup",
+        "time",
+        "address",
+        "blockquote",
+        "cite",
+        "code",
+        "abbr"
+      ]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Preset text variant",
+      "required": false,
+      "values": [
+        "section-label"
+      ]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Font size (md is an alias for base)",
+      "required": false,
+      "values": [
+        "2xs",
+        "xs",
+        "sm",
+        "base",
+        "md",
+        "lg",
+        "xl",
+        "2xl"
+      ]
+    },
+    "weight": {
+      "type": "enum",
+      "description": "Font weight",
+      "default": "\"normal\"",
+      "required": false,
+      "values": [
+        "normal",
+        "medium",
+        "semibold",
+        "bold"
+      ]
+    },
+    "color": {
+      "type": "enum",
+      "description": "Text color (muted is an alias for tertiary)",
+      "default": "\"primary\"",
+      "required": false,
+      "values": [
+        "primary",
+        "secondary",
+        "tertiary",
+        "muted"
+      ]
+    },
+    "font": {
+      "type": "enum",
+      "description": "Font family",
+      "default": "sans",
+      "required": false,
+      "values": [
+        "sans",
+        "mono"
+      ]
+    },
+    "truncate": {
+      "type": "boolean",
+      "description": "Truncate with ellipsis on overflow",
+      "required": false
+    },
+    "lineClamp": {
+      "type": "number",
+      "description": "Number of lines before truncating (requires truncate)",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying text with specific typography styles",
+      "Creating headings, paragraphs, or labels",
+      "Text that needs truncation or line clamping",
+      "Consistent typography across the application"
+    ],
+    "whenNot": [
+      "Complex rich text (use a rich text editor)",
+      "Code display (use CodeBlock)",
+      "Interactive text (use Link or Button)"
+    ],
+    "guidelines": [
+      "Use semantic elements (h1-h6, p) via the \"as\" prop",
+      "Maintain heading hierarchy for accessibility",
+      "Use color variants sparingly for visual hierarchy",
+      "Consider truncation for user-generated content"
+    ],
+    "accessibility": [
+      "Use proper heading levels (h1-h6) for document structure",
+      "Semantic elements convey meaning to screen readers",
+      "Truncated text should have full content in title/tooltip"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Sizes",
+      "description": "Different text sizes",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text size=\"2xs\">Extra extra small (2xs)</Text>\n  <Text size=\"xs\">Extra small (xs)</Text>\n  <Text size=\"sm\">Small (sm)</Text>\n  <Text size=\"base\">Base size</Text>\n  <Text size=\"lg\">Large (lg)</Text>\n  <Text size=\"xl\">Extra large (xl)</Text>\n  <Text size=\"2xl\">Extra extra large (2xl)</Text>\n</div>"
+    },
+    {
+      "name": "Weights",
+      "description": "Different font weights",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text weight=\"normal\">Normal weight</Text>\n  <Text weight=\"medium\">Medium weight</Text>\n  <Text weight=\"semibold\">Semibold weight</Text>\n  <Text weight=\"bold\">Bold weight</Text>\n</div>"
+    },
+    {
+      "name": "Colors",
+      "description": "Different text colors",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text color=\"primary\">Primary color (default)</Text>\n  <Text color=\"secondary\">Secondary color</Text>\n  <Text color=\"tertiary\">Tertiary color</Text>\n  <Text color=\"muted\">Muted color (alias for tertiary)</Text>\n</div>"
+    },
+    {
+      "name": "Semantic Elements",
+      "description": "Using appropriate HTML elements",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text as=\"h1\" size=\"2xl\" weight=\"semibold\">Heading 1</Text>\n  <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Heading 2</Text>\n  <Text as=\"h3\" size=\"lg\" weight=\"medium\">Heading 3</Text>\n  <Text as=\"p\" color=\"secondary\">\n    This is a paragraph of text that demonstrates the Text component\n    with semantic paragraph element.\n  </Text>\n</div>"
+    },
+    {
+      "name": "Monospace",
+      "description": "Monospace font for code-like text",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text font=\"mono\" size=\"sm\">const greeting = \"Hello, World!\";</Text>\n  <Text font=\"mono\" size=\"sm\" color=\"secondary\">npm install @fragments-sdk/ui</Text>\n</div>"
+    },
+    {
+      "name": "Truncation",
+      "description": "Text truncation with ellipsis",
+      "code": "<div style={{ width: '200px', display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text truncate>\n    This is a very long text that will be truncated with an ellipsis when it overflows.\n  </Text>\n  <Text truncate lineClamp={2}>\n    This text will be clamped to two lines. Any content beyond two lines\n    will be hidden and replaced with an ellipsis at the end.\n  </Text>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Link",
+      "relationship": "sibling",
+      "note": "Use Link for clickable text"
+    },
+    {
+      "component": "CodeBlock",
+      "relationship": "alternative",
+      "note": "Use CodeBlock for code display"
+    },
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Use Badge for labels/tags"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "as: string - HTML element",
+      "size: 2xs|xs|sm|base|md|lg|xl|2xl - font size (md = base)",
+      "weight: normal|medium|semibold|bold - font weight",
+      "color: primary|secondary|tertiary|muted - text color (muted = tertiary)",
+      "font: sans|mono - font family",
+      "truncate: boolean - enable truncation",
+      "lineClamp: number - max lines"
+    ],
+    "a11yRules": [
+      "A11Y_HEADING_HIERARCHY",
+      "A11Y_SEMANTIC_ELEMENTS"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.045Z"
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Form",
+  "description": "Form wrapper that handles server-side error distribution to Field components. Pairs with Field for complete form validation.",
+  "category": "forms",
+  "tags": [
+    "form",
+    "validation",
+    "errors",
+    "submit",
+    "server"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Form/index.tsx",
+  "exportName": "Form",
+  "propsSummary": [
+    "children: node (required)",
+    "errors: object",
+    "onSubmit: function",
+    "onFormSubmit: function",
+    "onClearErrors: function",
+    "validationMode: onSubmit|onBlur|onChange"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Form content",
+      "required": true
+    },
+    "errors": {
+      "type": "object",
+      "description": "Server-side errors keyed by field name",
+      "required": false
+    },
+    "onSubmit": {
+      "type": "function",
+      "description": "Form submission handler (preferred)",
+      "required": false
+    },
+    "onFormSubmit": {
+      "type": "function",
+      "description": "Deprecated alias for onSubmit",
+      "required": false
+    },
+    "onClearErrors": {
+      "type": "function",
+      "description": "Called with field name when errors should be cleared",
+      "required": false
+    },
+    "validationMode": {
+      "type": "enum",
+      "description": "When field validation should run",
+      "required": false,
+      "values": [
+        "onSubmit",
+        "onBlur",
+        "onChange"
+      ]
+    }
+  },
+  "usage": {
+    "when": [
+      "Building forms that need server-side error handling",
+      "Distributing validation errors to specific fields by name",
+      "Combining client and server validation in one form"
+    ],
+    "whenNot": [
+      "Simple forms with only client-side validation (use native form or Field alone)",
+      "Non-form layouts (use Grid or Card)"
+    ],
+    "guidelines": [
+      "Pass errors as Record<string, string | string[]> keyed by field name",
+      "Use onClearErrors to clear errors when fields are modified",
+      "Use onSubmit for form submission handling (onFormSubmit is deprecated alias)",
+      "Field components with matching name prop display errors automatically",
+      "Use Grid inside Form or Fieldset for multi-column layouts"
+    ],
+    "accessibility": [
+      "Renders semantic form element",
+      "Error messages linked to fields via aria-describedby"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Sign up",
+      "description": "Registration form with two-column name fields",
+      "code": "<Form onSubmit={(e) => { e.preventDefault(); }}>\n  <Grid columns={2} gap=\"md\">\n    <Field name=\"firstName\">\n      <Field.Label>First Name</Field.Label>\n      <Field.Control>\n        <Input placeholder=\"Jane\" />\n      </Field.Control>\n    </Field>\n    <Field name=\"lastName\">\n      <Field.Label>Last Name</Field.Label>\n      <Field.Control>\n        <Input placeholder=\"Doe\" />\n      </Field.Control>\n    </Field>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"email\">\n        <Field.Label>Email</Field.Label>\n        <Field.Control>\n          <Input type=\"email\" placeholder=\"jane@example.com\" />\n        </Field.Control>\n        <Field.Error match=\"typeMismatch\">Enter a valid email address</Field.Error>\n      </Field>\n    </Grid.Item>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"password\">\n        <Field.Label>Password</Field.Label>\n        <Field.Control>\n          <Input type=\"password\" placeholder=\"At least 8 characters\" />\n        </Field.Control>\n        <Field.Description>Must be at least 8 characters</Field.Description>\n      </Field>\n    </Grid.Item>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"terms\">\n        <Field.Control>\n          <Checkbox label=\"I agree to the terms and conditions\" />\n        </Field.Control>\n      </Field>\n    </Grid.Item>\n    <Grid.Item colSpan=\"full\">\n      <Button type=\"submit\" variant=\"primary\">Create Account</Button>\n    </Grid.Item>\n  </Grid>\n</Form>"
+    },
+    {
+      "name": "Profile settings",
+      "description": "Multi-section form with Fieldsets, switches, and radio group",
+      "code": "<Form onSubmit={(e) => { e.preventDefault(); }}>\n  <Fieldset>\n    <Fieldset.Legend>Profile</Fieldset.Legend>\n    <Grid columns={2} gap=\"md\">\n      <Field name=\"displayName\">\n        <Field.Label>Display Name</Field.Label>\n        <Field.Control>\n          <Input placeholder=\"How others see you\" />\n        </Field.Control>\n      </Field>\n      <Field name=\"timezone\">\n        <Field.Label>Timezone</Field.Label>\n        <Field.Control>\n          <Select placeholder=\"Select timezone\">\n            <Select.Trigger />\n            <Select.Content>\n              <Select.Item value=\"utc\">UTC</Select.Item>\n              <Select.Item value=\"est\">Eastern (EST)</Select.Item>\n              <Select.Item value=\"pst\">Pacific (PST)</Select.Item>\n              <Select.Item value=\"gmt\">GMT</Select.Item>\n            </Select.Content>\n          </Select>\n        </Field.Control>\n      </Field>\n      <Grid.Item colSpan=\"full\">\n        <Field name=\"bio\">\n          <Field.Label>Bio</Field.Label>\n          <Field.Control>\n            <Textarea placeholder=\"Tell us about yourself\" rows={3} maxLength={280} />\n          </Field.Control>\n          <Field.Description>Max 280 characters</Field.Description>\n        </Field>\n      </Grid.Item>\n    </Grid>\n  </Fieldset>\n  <Fieldset>\n    <Fieldset.Legend>Notifications</Fieldset.Legend>\n    <Field name=\"emailNotifs\">\n      <Field.Control>\n        <Switch label=\"Email notifications\" />\n      </Field.Control>\n    </Field>\n    <Field name=\"marketingEmails\">\n      <Field.Control>\n        <Switch label=\"Marketing emails\" />\n      </Field.Control>\n    </Field>\n    <Field name=\"frequency\">\n      <Field.Label>Digest frequency</Field.Label>\n      <Field.Control>\n        <RadioGroup name=\"frequency\" orientation=\"vertical\">\n          <RadioGroup.Item value=\"daily\" label=\"Daily\" />\n          <RadioGroup.Item value=\"weekly\" label=\"Weekly\" />\n          <RadioGroup.Item value=\"monthly\" label=\"Monthly\" />\n        </RadioGroup>\n      </Field.Control>\n    </Field>\n  </Fieldset>\n  <Button type=\"submit\" variant=\"primary\">Save Changes</Button>\n</Form>"
+    },
+    {
+      "name": "Contact form",
+      "description": "Contact form with select, textarea, and checkbox",
+      "code": "<Form onSubmit={(e) => { e.preventDefault(); }}>\n  <Grid columns={2} gap=\"md\">\n    <Field name=\"name\">\n      <Field.Label>Name</Field.Label>\n      <Field.Control>\n        <Input placeholder=\"Your name\" />\n      </Field.Control>\n    </Field>\n    <Field name=\"email\">\n      <Field.Label>Email</Field.Label>\n      <Field.Control>\n        <Input type=\"email\" placeholder=\"you@example.com\" />\n      </Field.Control>\n    </Field>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"subject\">\n        <Field.Label>Subject</Field.Label>\n        <Field.Control>\n          <Select placeholder=\"What is this about?\">\n            <Select.Trigger />\n            <Select.Content>\n              <Select.Item value=\"general\">General Inquiry</Select.Item>\n              <Select.Item value=\"support\">Technical Support</Select.Item>\n              <Select.Item value=\"billing\">Billing</Select.Item>\n              <Select.Item value=\"feedback\">Feedback</Select.Item>\n            </Select.Content>\n          </Select>\n        </Field.Control>\n      </Field>\n    </Grid.Item>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"message\">\n        <Field.Label>Message</Field.Label>\n        <Field.Control>\n          <Textarea placeholder=\"How can we help?\" rows={5} />\n        </Field.Control>\n      </Field>\n    </Grid.Item>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"copy\">\n        <Field.Control>\n          <Checkbox label=\"Send me a copy\" />\n        </Field.Control>\n      </Field>\n    </Grid.Item>\n    <Grid.Item colSpan=\"full\">\n      <Button type=\"submit\" variant=\"primary\">Send Message</Button>\n    </Grid.Item>\n  </Grid>\n</Form>"
+    },
+    {
+      "name": "With server errors",
+      "description": "Form displaying server-side validation errors",
+      "code": "<Form errors={{ username: 'Username is already taken', email: 'Email is already registered' }}>\n  <Grid columns={2} gap=\"md\">\n    <Field name=\"username\">\n      <Field.Label>Username</Field.Label>\n      <Field.Control>\n        <Input defaultValue=\"janedoe\" />\n      </Field.Control>\n      <Field.Error match=\"customError\" />\n    </Field>\n    <Field name=\"email\">\n      <Field.Label>Email</Field.Label>\n      <Field.Control>\n        <Input type=\"email\" defaultValue=\"jane@example.com\" />\n      </Field.Control>\n      <Field.Error match=\"customError\" />\n    </Field>\n    <Grid.Item colSpan=\"full\">\n      <Button type=\"submit\" variant=\"primary\">Submit</Button>\n    </Grid.Item>\n  </Grid>\n</Form>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Field",
+      "relationship": "sibling",
+      "note": "Contains Field components for error distribution"
+    },
+    {
+      "component": "Fieldset",
+      "relationship": "sibling",
+      "note": "Use Fieldset to group fields within a Form"
+    },
+    {
+      "component": "Button",
+      "relationship": "sibling",
+      "note": "Use Button type=\"submit\" for form submission"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "errors: Record<string, string | string[]> - server errors by field name",
+      "onSubmit: (event) => void - submission handler (preferred)",
+      "onFormSubmit: (event) => void - deprecated alias for onSubmit",
+      "onClearErrors: (name) => void - clear errors callback"
+    ],
+    "a11yRules": [
+      "A11Y_FORM_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:57.100Z"
+  }
+}

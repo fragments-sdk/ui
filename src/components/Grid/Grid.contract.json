@@ -1,0 +1,195 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Grid",
+  "description": "Responsive grid layout for arranging items in columns with consistent spacing",
+  "category": "layout",
+  "tags": [
+    "grid",
+    "layout",
+    "columns",
+    "responsive"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Grid/index.tsx",
+  "exportName": "Grid",
+  "propsSummary": [
+    "children: node",
+    "columns: union (default: 1)",
+    "minChildWidth: string",
+    "gap: union (default: md)",
+    "alignItems: start|center|end|stretch",
+    "justifyItems: start|center|end|stretch",
+    "padding: none|sm|md|lg (default: none)",
+    "className: string",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Grid items and content",
+      "required": false
+    },
+    "columns": {
+      "type": "union",
+      "description": "Number of columns: a number (1-12), a responsive object { base, sm, md, lg, xl }, or \"auto\" for auto-fill",
+      "default": "1",
+      "required": false,
+      "constraints": [
+        "Use \"auto\" with minChildWidth for fully fluid layouts",
+        "Use responsive object for explicit breakpoint control: { base: 1, md: 2, lg: 3 }"
+      ]
+    },
+    "minChildWidth": {
+      "type": "string",
+      "description": "Minimum width for auto-fill columns (e.g., \"16rem\", \"250px\")",
+      "required": false,
+      "constraints": [
+        "Only applies when columns=\"auto\""
+      ]
+    },
+    "gap": {
+      "type": "union",
+      "description": "Gap between grid items. Accepts string tokens or numbers (1-8) mapped to the spacing scale",
+      "default": "md",
+      "required": false,
+      "values": [
+        "none",
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ]
+    },
+    "alignItems": {
+      "type": "enum",
+      "description": "Vertical alignment of items within their cells",
+      "required": false,
+      "values": [
+        "start",
+        "center",
+        "end",
+        "stretch"
+      ]
+    },
+    "justifyItems": {
+      "type": "enum",
+      "description": "Horizontal alignment of items within their cells",
+      "required": false,
+      "values": [
+        "start",
+        "center",
+        "end",
+        "stretch"
+      ]
+    },
+    "padding": {
+      "type": "enum",
+      "description": "Internal padding of the grid container",
+      "default": "none",
+      "required": false,
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Inline styles",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Arranging cards, tiles, or media in a responsive grid",
+      "Building form layouts with multi-column fields",
+      "Creating dashboard layouts with widgets",
+      "Any content that should reflow across breakpoints"
+    ],
+    "whenNot": [
+      "Single-column stacked content (use a simple flex column or Stack)",
+      "Navigation bars or toolbars (use a dedicated nav component)",
+      "Content that must not wrap (use inline layout)"
+    ],
+    "guidelines": [
+      "Use columns=\"auto\" with minChildWidth for grids that adapt without breakpoints",
+      "Use responsive object { base: 1, md: 2, lg: 3 } when you need explicit control per breakpoint",
+      "Use fixed column counts when exact column control is needed and responsiveness is not required",
+      "Use Grid.Item with colSpan to create asymmetric layouts within a fixed grid",
+      "Keep gap consistent within a context — md is the default and works for most cases",
+      "Pass DOM attributes (id, role, aria-*, data-*, event handlers) directly to Grid and Grid.Item roots when needed"
+    ],
+    "accessibility": [
+      "Grid is purely visual — it does not affect reading order or semantics",
+      "Ensure logical source order matches visual order for screen readers"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic 3-column grid",
+      "code": "<Grid columns={3} gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Item 1</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Item 2</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Item 3</div>\n</Grid>"
+    },
+    {
+      "name": "Responsive",
+      "description": "1 column on mobile, 2 on tablet, 3 on desktop",
+      "code": "<Grid columns={{ base: 1, md: 2, lg: 3 }} gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 1</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 2</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 3</div>\n</Grid>"
+    },
+    {
+      "name": "Auto-fill",
+      "description": "Responsive grid that auto-fills based on minimum child width",
+      "code": "<Grid columns=\"auto\" minChildWidth=\"12rem\" gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 1</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 2</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 3</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 4</div>\n</Grid>"
+    },
+    {
+      "name": "Numeric Gap",
+      "description": "Using number values (1-8) mapped to the spacing scale",
+      "code": "<Grid columns={3} gap={4}>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>\n</Grid>"
+    },
+    {
+      "name": "With Spanning",
+      "description": "Grid items spanning multiple columns",
+      "code": "<Grid columns={4} gap=\"md\">\n  <Grid.Item colSpan={2}>\n    <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Spans 2 cols</div>\n  </Grid.Item>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>1 col</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>1 col</div>\n  <Grid.Item colSpan=\"full\">\n    <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Full width</div>\n  </Grid.Item>\n</Grid>"
+    },
+    {
+      "name": "Form Layout",
+      "description": "Two-column form that collapses to single column on mobile",
+      "code": "<Grid columns={{ base: 1, md: 2 }} gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-1)', background: 'var(--fui-bg-secondary)' }}>First Name</div>\n  <div style={{ padding: 'var(--fui-space-1)', background: 'var(--fui-bg-secondary)' }}>Last Name</div>\n  <Grid.Item colSpan=\"full\">\n    <div style={{ padding: 'var(--fui-space-1)', background: 'var(--fui-bg-secondary)' }}>Email Address</div>\n  </Grid.Item>\n</Grid>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "child",
+      "note": "Grid commonly contains Card components for dashboard and tile layouts"
+    },
+    {
+      "component": "Separator",
+      "relationship": "sibling",
+      "note": "Use Separator between grid sections"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "columns: 1-12 | { base, sm, md, lg, xl } | \"auto\" (default: 1)",
+      "minChildWidth: string — min width for auto-fill (only with columns=\"auto\")",
+      "gap: none|xs|sm|md|lg|xl|number (default: md, number maps to space scale)",
+      "alignItems: start|center|end|stretch — vertical alignment",
+      "justifyItems: start|center|end|stretch — horizontal alignment",
+      "padding: none|sm|md|lg (default: none)",
+      "Pass-through DOM props supported on Grid and Grid.Item roots (id, role, aria-*, data-*, handlers)"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:57.444Z"
+  }
+}

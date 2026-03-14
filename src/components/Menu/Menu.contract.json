@@ -1,0 +1,177 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Menu",
+  "description": "Dropdown menu for actions and commands. Supports submenus, check items, radio groups, and keyboard shortcuts.",
+  "category": "feedback",
+  "tags": [
+    "menu",
+    "dropdown",
+    "actions",
+    "context-menu",
+    "commands",
+    "submenu"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Menu/index.tsx",
+  "exportName": "Menu",
+  "propsSummary": [
+    "children: node (required)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "modal: boolean (default: true)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Menu trigger and content",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when open state changes",
+      "required": false
+    },
+    "modal": {
+      "type": "boolean",
+      "description": "Whether menu is modal",
+      "default": "true",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Overflow actions that dont fit in the toolbar",
+      "Context menus (right-click)",
+      "User account menus",
+      "Grouped actions with separators",
+      "Nested menus with submenus"
+    ],
+    "whenNot": [
+      "Selecting from options (use Select)",
+      "Navigation (use Tabs or navigation components)",
+      "Form selection (use Select or RadioGroup)"
+    ],
+    "guidelines": [
+      "Group related actions with Menu.Group",
+      "Use separators to divide action categories",
+      "Include keyboard shortcuts where applicable",
+      "Use danger variant for destructive actions",
+      "Keep menu items under 10-12 for usability",
+      "Use checked prop on Menu.Item for simple selection state",
+      "Use Menu.Submenu for nested secondary options",
+      "Menu.Trigger supports asChild for links/router-link components (single valid element child required)"
+    ],
+    "accessibility": [
+      "Full keyboard navigation with arrow keys",
+      "Type-ahead search for items",
+      "Focus returns to trigger on close",
+      "Proper ARIA menu roles",
+      "ArrowRight opens submenus, ArrowLeft closes them"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic dropdown menu",
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Actions</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>Edit</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Duplicate</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
+    },
+    {
+      "name": "With Shortcuts",
+      "description": "Menu items with keyboard shortcuts",
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Edit</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item shortcut=\"Ctrl+Z\" onSelect={() => {}}>Undo</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+Y\" onSelect={() => {}}>Redo</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item shortcut=\"Ctrl+C\" onSelect={() => {}}>Copy</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+V\" onSelect={() => {}}>Paste</Menu.Item>\n  </Menu.Content>\n</Menu>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Menu with labeled groups",
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Options</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Group>\n      <Menu.GroupLabel>View</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Zoom In</Menu.Item>\n      <Menu.Item onSelect={() => {}}>Zoom Out</Menu.Item>\n    </Menu.Group>\n    <Menu.Separator />\n    <Menu.Group>\n      <Menu.GroupLabel>Layout</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Grid View</Menu.Item>\n      <Menu.Item onSelect={() => {}}>List View</Menu.Item>\n    </Menu.Group>\n  </Menu.Content>\n</Menu>"
+    },
+    {
+      "name": "With Checkboxes",
+      "description": "Menu with toggleable checkbox options",
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Display</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.CheckboxItem defaultChecked>Show Grid</Menu.CheckboxItem>\n    <Menu.CheckboxItem defaultChecked>Show Rulers</Menu.CheckboxItem>\n    <Menu.CheckboxItem>Show Guides</Menu.CheckboxItem>\n  </Menu.Content>\n</Menu>"
+    },
+    {
+      "name": "With Checked Items",
+      "description": "Filter menu with check marks indicating active selections",
+      "code": "<CheckedItemsMenuDemo />"
+    },
+    {
+      "name": "With Submenu",
+      "description": "Menu with nested submenu for grouped secondary options",
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">File</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>New File</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Open</Menu.Item>\n    <Menu.Separator />\n    <Menu.Submenu>\n      <Menu.SubmenuTrigger>Export As</Menu.SubmenuTrigger>\n      <Menu.Content side=\"right\" align=\"start\">\n        <Menu.Item onSelect={() => {}}>PNG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>SVG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>PDF</Menu.Item>\n      </Menu.Content>\n    </Menu.Submenu>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
+    },
+    {
+      "name": "Link Trigger",
+      "description": "Use asChild with a non-button trigger element",
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <a href=\"#menu-actions\">Open menu</a>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>Inspect</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Rename</Menu.Item>\n  </Menu.Content>\n</Menu>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for form field selection"
+    },
+    {
+      "component": "Popover",
+      "relationship": "alternative",
+      "note": "Use Popover for rich non-action content"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "open: boolean - controlled open state",
+      "onOpenChange: (open) => void - state handler",
+      "Menu.Trigger asChild supports non-button trigger elements",
+      "Menu.Item onSelect: (event) => void - selection callback receives click event",
+      "Menu.Item danger: boolean - destructive styling",
+      "Menu.Item shortcut: string - keyboard shortcut text",
+      "Menu.Item checked: boolean - check indicator for selection state"
+    ],
+    "a11yRules": [
+      "A11Y_MENU_KEYBOARD",
+      "A11Y_MENU_ROLE"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Item",
+      "CheckboxItem",
+      "RadioGroup",
+      "RadioItem",
+      "Group",
+      "GroupLabel",
+      "Separator",
+      "Submenu",
+      "SubmenuTrigger"
+    ],
+    "requiredChildren": [
+      "Trigger",
+      "Content"
+    ],
+    "commonPatterns": [
+      "<Menu><Menu.Trigger asChild><Button>Actions</Button></Menu.Trigger><Menu.Content><Menu.Item>{action1}</Menu.Item><Menu.Separator /><Menu.Item danger>{delete}</Menu.Item></Menu.Content></Menu>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:00.159Z"
+  }
+}

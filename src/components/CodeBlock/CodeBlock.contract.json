@@ -1,0 +1,388 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "CodeBlock",
+  "description": "Syntax-highlighted code display with copy functionality, theming, diff view, and collapsible sections",
+  "category": "display",
+  "tags": [
+    "code",
+    "syntax",
+    "highlighting",
+    "documentation",
+    "developer",
+    "diff"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/CodeBlock/index.tsx",
+  "exportName": "CodeBlock",
+  "propsSummary": [
+    "code: string (required)",
+    "language: tsx|typescript|ts|javascript|js|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext|text (default: tsx)",
+    "theme: synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: one-dark-pro)",
+    "showCopy: boolean (default: true)",
+    "title: string",
+    "filename: string",
+    "caption: string",
+    "showLineNumbers: boolean (default: false)",
+    "startLineNumber: number (default: 1)",
+    "highlightLines: array",
+    "addedLines: array",
+    "removedLines: array",
+    "wordWrap: boolean (default: false)",
+    "maxHeight: number",
+    "collapsible: boolean (default: false)",
+    "defaultCollapsed: boolean (default: false)",
+    "collapsedLines: number (default: 5)",
+    "compact: boolean (default: false)",
+    "persistentCopy: boolean (default: false)",
+    "copyPlacement: auto|header|overlay (default: auto)",
+    "bg: string",
+    "onCopy: function"
+  ],
+  "props": {
+    "code": {
+      "type": "string",
+      "description": "The code string to display",
+      "required": true
+    },
+    "language": {
+      "type": "enum",
+      "description": "Programming language for syntax highlighting",
+      "default": "tsx",
+      "required": false,
+      "values": [
+        "tsx",
+        "typescript",
+        "ts",
+        "javascript",
+        "js",
+        "jsx",
+        "bash",
+        "shell",
+        "css",
+        "scss",
+        "sass",
+        "json",
+        "html",
+        "xml",
+        "markdown",
+        "md",
+        "yaml",
+        "yml",
+        "python",
+        "py",
+        "ruby",
+        "go",
+        "rust",
+        "java",
+        "kotlin",
+        "swift",
+        "c",
+        "cpp",
+        "csharp",
+        "php",
+        "sql",
+        "graphql",
+        "diff",
+        "plaintext",
+        "text"
+      ]
+    },
+    "theme": {
+      "type": "enum",
+      "description": "Syntax highlighting theme",
+      "default": "one-dark-pro",
+      "required": false,
+      "values": [
+        "synthwave-84",
+        "github-dark",
+        "github-light",
+        "one-dark-pro",
+        "dracula",
+        "nord",
+        "monokai",
+        "vitesse-dark",
+        "vitesse-light",
+        "min-dark",
+        "min-light"
+      ]
+    },
+    "showCopy": {
+      "type": "boolean",
+      "description": "Whether to show the copy button",
+      "default": "true",
+      "required": false
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional title displayed above the code block (external label)",
+      "required": false
+    },
+    "filename": {
+      "type": "string",
+      "description": "Optional filename shown in header bar inside code block",
+      "required": false
+    },
+    "caption": {
+      "type": "string",
+      "description": "Optional caption displayed below the code block",
+      "required": false
+    },
+    "showLineNumbers": {
+      "type": "boolean",
+      "description": "Whether to display line numbers",
+      "default": "false",
+      "required": false
+    },
+    "startLineNumber": {
+      "type": "number",
+      "description": "Starting line number (useful for code excerpts)",
+      "default": "1",
+      "required": false
+    },
+    "highlightLines": {
+      "type": "array",
+      "description": "Lines to highlight (e.g., [1, 3, \"5-7\"])",
+      "required": false
+    },
+    "addedLines": {
+      "type": "array",
+      "description": "Lines marked as added in diff view (e.g., [2, \"4-6\"])",
+      "required": false
+    },
+    "removedLines": {
+      "type": "array",
+      "description": "Lines marked as removed in diff view (e.g., [1, 3])",
+      "required": false
+    },
+    "wordWrap": {
+      "type": "boolean",
+      "description": "Enable word wrapping for long lines",
+      "default": "false",
+      "required": false
+    },
+    "maxHeight": {
+      "type": "number",
+      "description": "Maximum height in pixels (enables scrolling)",
+      "required": false
+    },
+    "collapsible": {
+      "type": "boolean",
+      "description": "Allow collapsing/expanding the code block",
+      "default": "false",
+      "required": false
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "description": "Initial collapsed state (only applies when collapsible is true)",
+      "default": "false",
+      "required": false
+    },
+    "collapsedLines": {
+      "type": "number",
+      "description": "Number of lines to show when collapsed",
+      "default": "5",
+      "required": false
+    },
+    "compact": {
+      "type": "boolean",
+      "description": "Compact mode with reduced padding",
+      "default": "false",
+      "required": false
+    },
+    "persistentCopy": {
+      "type": "boolean",
+      "description": "Show a persistent copy button that is always visible",
+      "default": "false",
+      "required": false
+    },
+    "copyPlacement": {
+      "type": "enum",
+      "description": "Where to place the copy button when not using persistentCopy",
+      "default": "auto",
+      "required": false,
+      "values": [
+        "auto",
+        "header",
+        "overlay"
+      ]
+    },
+    "bg": {
+      "type": "string",
+      "description": "Custom background color for the code block (useful when the content area is pure black or dark gray)",
+      "required": false
+    },
+    "onCopy": {
+      "type": "function",
+      "description": "Callback fired when the copy button is clicked and copy succeeds",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Displaying code examples in documentation",
+      "Showing installation commands",
+      "Presenting configuration snippets",
+      "Teaching programming concepts",
+      "Showing code diffs or changes",
+      "Displaying long code files with collapse functionality"
+    ],
+    "whenNot": [
+      "User-editable code (use code editor)",
+      "Very short inline code (use <code> element)",
+      "Non-code content (use Text or Card)"
+    ],
+    "guidelines": [
+      "Always specify the correct language for accurate highlighting",
+      "Use filename prop to show source file name in header bar",
+      "Use copyPlacement=\"auto\" to render copy in overlay mode when no filename is provided",
+      "Use title prop for external labels above the code block",
+      "Enable line numbers for longer code samples",
+      "Use highlightLines to draw attention to key lines",
+      "Use addedLines/removedLines for diff highlighting",
+      "Set maxHeight for very long code blocks to prevent layout issues",
+      "Use collapsible for code samples that users may want to skim",
+      "Choose a theme that matches your documentation style",
+      "Keep code examples concise and focused",
+      "Use CodeBlock.Tabbed for multi-language snippets; tabs support controlled value/onValueChange and explicit tab values"
+    ],
+    "accessibility": [
+      "Code is presented in a semantic pre/code structure",
+      "Copy button has appropriate aria-label",
+      "Keyboard accessible copy functionality",
+      "Collapse button has aria-expanded state"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic code block with syntax highlighting",
+      "code": "<CodeBlock code={`import { Button } from '@fragments-sdk/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}`} language=\"tsx\" />"
+    },
+    {
+      "name": "With Filename",
+      "description": "Code block with filename in header bar",
+      "code": "<CodeBlock filename=\"app.tsx\" code={`import { Button, Card } from '@fragments-sdk/ui';\n\nfunction App() {\n  return (\n    <Card>\n      <Card.Header>Welcome</Card.Header>\n      <Card.Content>\n        <Button>Get Started</Button>\n      </Card.Content>\n    </Card>\n  );\n}`} language=\"tsx\" />"
+    },
+    {
+      "name": "With Title",
+      "description": "Code block with external title label",
+      "code": "<CodeBlock title=\"Installation\" code=\"npm install @fragments-sdk/ui\" language=\"bash\" />"
+    },
+    {
+      "name": "With Caption",
+      "description": "Code block with footer caption",
+      "code": "<CodeBlock\n  code={`const API_URL = process.env.NEXT_PUBLIC_API_URL;`}\n  language=\"typescript\"\n  caption=\"Environment variables must be prefixed with NEXT_PUBLIC_ to be available in the browser.\"\n/>"
+    },
+    {
+      "name": "With Line Numbers",
+      "description": "Shows line numbers for reference",
+      "code": "<CodeBlock code={`const greeting = \"Hello\";\nconst name = \"World\";\nconsole.log(\\`\\${greeting}, \\${name}!\\`);`} language=\"typescript\" showLineNumbers />"
+    },
+    {
+      "name": "Custom Start Line",
+      "description": "Shows code excerpt starting from a specific line number",
+      "code": "<CodeBlock\n  code={`  return (\n    <button onClick={() => setCount(c => c + 1)}>\n      Count: {count}\n    </button>\n  );\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  startLineNumber={15}\n  caption=\"Lines 15-20 from Counter.tsx\"\n/>"
+    },
+    {
+      "name": "With Highlighted Lines",
+      "description": "Emphasizes specific lines of code",
+      "code": "<CodeBlock code={`import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <button onClick={() => setCount(c => c + 1)}>\n      Count: {count}\n    </button>\n  );\n}`} language=\"tsx\" showLineNumbers highlightLines={[4, '7-9']} />"
+    },
+    {
+      "name": "Diff View",
+      "description": "Shows added and removed lines in a diff-like format",
+      "code": "<CodeBlock\n  code={`import { useState } from 'react';\nimport { useCallback } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const increment = () => setCount(c => c + 1);\n  const increment = useCallback(() => setCount(c => c + 1), []);\n\n  return <button onClick={increment}>Count: {count}</button>;\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  removedLines={[6]}\n  addedLines={[2, 7]}\n/>"
+    },
+    {
+      "name": "GitHub Dark Theme",
+      "description": "Using the GitHub Dark theme",
+      "code": "<CodeBlock\n  code={`async function fetchUser(id: string) {\n  const response = await fetch(\\`/api/users/\\${id}\\`);\n  return response.json();\n}`}\n  language=\"typescript\"\n  theme=\"github-dark\"\n/>"
+    },
+    {
+      "name": "GitHub Light Theme",
+      "description": "Using the GitHub Light theme for light backgrounds",
+      "code": "<CodeBlock\n  code={`def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)`}\n  language=\"python\"\n  theme=\"github-light\"\n/>"
+    },
+    {
+      "name": "Dracula Theme",
+      "description": "Using the popular Dracula theme",
+      "code": "<CodeBlock\n  code={`fn main() {\n    println!(\"Hello, Rust!\");\n}`}\n  language=\"rust\"\n  theme=\"dracula\"\n/>"
+    },
+    {
+      "name": "Word Wrap",
+      "description": "Long lines wrap instead of scrolling horizontally",
+      "code": "<CodeBlock\n  code={`const longString = \"This is a very long string that would normally cause horizontal scrolling, but with word wrap enabled it will break to the next line instead.\";`}\n  language=\"typescript\"\n  wordWrap\n/>"
+    },
+    {
+      "name": "Max Height with Scroll",
+      "description": "Constrains height with scrollable content",
+      "code": "<CodeBlock\n  code={`// This code block has a maximum height\nfunction processItems(items: string[]) {\n  const results = [];\n  for (const item of items) {\n    if (item.startsWith('_')) {\n      continue;\n    }\n    const processed = item.trim().toLowerCase();\n    if (processed.length > 0) {\n      results.push(processed);\n    }\n  }\n  return results;\n}\n\nexport default processItems;`}\n  language=\"typescript\"\n  maxHeight={150}\n  showLineNumbers\n/>"
+    },
+    {
+      "name": "Collapsible",
+      "description": "Long code that can be expanded/collapsed",
+      "code": "<CodeBlock\n  code={`import React, { useState, useEffect } from 'react';\n\ninterface User {\n  id: string;\n  name: string;\n  email: string;\n  avatar?: string;\n}\n\nexport function UserProfile({ userId }: { userId: string }) {\n  const [user, setUser] = useState<User | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  useEffect(() => {\n    async function fetchUser() {\n      try {\n        setLoading(true);\n        const response = await fetch(\\`/api/users/\\${userId}\\`);\n        if (!response.ok) throw new Error('Failed to fetch');\n        const data = await response.json();\n        setUser(data);\n      } catch (err) {\n        setError(err instanceof Error ? err.message : 'Unknown error');\n      } finally {\n        setLoading(false);\n      }\n    }\n    fetchUser();\n  }, [userId]);\n\n  if (loading) return <div>Loading...</div>;\n  if (error) return <div>Error: {error}</div>;\n  if (!user) return null;\n\n  return (\n    <div>\n      <h1>{user.name}</h1>\n      <p>{user.email}</p>\n    </div>\n  );\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  collapsible\n  defaultCollapsed\n  collapsedLines={8}\n/>"
+    },
+    {
+      "name": "JSON",
+      "description": "Configuration file example",
+      "code": "<CodeBlock title=\"package.json\" code={`{\n  \"name\": \"my-app\",\n  \"dependencies\": {\n    \"@fragments-sdk/ui\": \"^0.3.0\"\n  }\n}`} language=\"json\" />"
+    },
+    {
+      "name": "Without Copy Button",
+      "description": "Minimal display without copy functionality",
+      "code": "<CodeBlock code=\"const simple = true;\" language=\"typescript\" showCopy={false} />"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "parent",
+      "note": "Can be wrapped in Card for additional context"
+    },
+    {
+      "component": "Tabs",
+      "relationship": "child",
+      "note": "Use in Tabs for showing code in multiple languages"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "code: string - required code content",
+      "language: tsx|typescript|javascript|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext",
+      "theme: synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: one-dark-pro)",
+      "showCopy: boolean (default: true)",
+      "copyPlacement: auto|header|overlay (default: auto)",
+      "title: string - optional external label",
+      "filename: string - optional filename in header bar",
+      "caption: string - optional footer caption",
+      "showLineNumbers: boolean (default: false)",
+      "startLineNumber: number (default: 1)",
+      "highlightLines: (number | string)[] - lines to emphasize",
+      "addedLines: (number | string)[] - diff added lines",
+      "removedLines: (number | string)[] - diff removed lines",
+      "wordWrap: boolean (default: false)",
+      "maxHeight: number - max height with scrolling",
+      "collapsible: boolean (default: false)",
+      "defaultCollapsed: boolean (default: false)",
+      "collapsedLines: number (default: 5)",
+      "CodeBlock.Tabbed: tabs[] plus optional defaultTab/value/onValueChange for multi-language snippets"
+    ],
+    "a11yRules": [
+      "A11Y_CODE_SEMANTIC",
+      "A11Y_BTN_LABEL"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Tabbed"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.626Z"
+  }
+}

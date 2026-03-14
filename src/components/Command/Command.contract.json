@@ -1,0 +1,165 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Command",
+  "description": "A searchable command palette for quick actions. Combines an input with a filterable, keyboard-navigable list of actions.",
+  "category": "navigation",
+  "tags": [
+    "command",
+    "palette",
+    "search",
+    "spotlight",
+    "quick-actions",
+    "cmdk"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Command/index.tsx",
+  "exportName": "Command",
+  "propsSummary": [
+    "children: node (required)",
+    "search: string",
+    "defaultSearch: string (default: )",
+    "onSearchChange: function",
+    "filter: function",
+    "loop: boolean (default: true)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Command.Input, Command.List, and other sub-components",
+      "required": true
+    },
+    "search": {
+      "type": "string",
+      "description": "Controlled search value",
+      "required": false
+    },
+    "defaultSearch": {
+      "type": "string",
+      "description": "Default search value (uncontrolled)",
+      "default": "",
+      "required": false
+    },
+    "onSearchChange": {
+      "type": "function",
+      "description": "Called when search input changes",
+      "required": false
+    },
+    "filter": {
+      "type": "function",
+      "description": "Custom filter function. Return 0 to hide, >0 to show.",
+      "required": false
+    },
+    "loop": {
+      "type": "boolean",
+      "description": "Whether to loop keyboard navigation",
+      "default": "true",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Quick-access command palettes (Ctrl+K)",
+      "Searchable action menus",
+      "Inline command lists with filtering",
+      "Application-wide search interfaces"
+    ],
+    "whenNot": [
+      "Simple dropdown menus (use Menu)",
+      "Form field selection (use Select or Combobox)",
+      "Static navigation (use Sidebar or Tabs)",
+      "Search with complex result types (build custom)"
+    ],
+    "guidelines": [
+      "Compose inside Dialog for modal command palette usage",
+      "Use Command.Group to organize items by category",
+      "Provide Command.Empty for no-results feedback",
+      "Use keywords prop for items that should match on aliases",
+      "Keep item labels short and action-oriented"
+    ],
+    "accessibility": [
+      "Uses combobox + listbox ARIA pattern",
+      "Keyboard navigation with ArrowUp/ArrowDown, Enter to select",
+      "Home/End jump to first/last item",
+      "aria-activedescendant tracks focused item"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Inline command list with search",
+      "code": "<div style={{ maxWidth: '400px', width: '100%' }}>\n  <Command>\n    <Command.Input placeholder=\"Type a command...\" />\n    <Command.List>\n      <Command.Item onItemSelect={() => {}}>Open File</Command.Item>\n      <Command.Item onItemSelect={() => {}}>Save Document</Command.Item>\n      <Command.Item onItemSelect={() => {}}>Print</Command.Item>\n      <Command.Empty>No results found.</Command.Empty>\n    </Command.List>\n  </Command>\n</div>"
+    },
+    {
+      "name": "Dialog Command Palette",
+      "description": "Command palette inside a Dialog",
+      "code": "<Dialog>\n  <Dialog.Trigger asChild>\n    <Button variant=\"secondary\">Open Command Palette</Button>\n  </Dialog.Trigger>\n  <Dialog.Content size=\"sm\">\n    <Command>\n      <Command.Input placeholder=\"Search commands...\" />\n      <Command.List>\n        <Command.Group heading=\"Actions\">\n          <Command.Item onItemSelect={() => {}}>New File</Command.Item>\n          <Command.Item onItemSelect={() => {}}>Open Recent</Command.Item>\n        </Command.Group>\n        <Command.Separator />\n        <Command.Group heading=\"Settings\">\n          <Command.Item onItemSelect={() => {}}>Preferences</Command.Item>\n          <Command.Item onItemSelect={() => {}}>Keyboard Shortcuts</Command.Item>\n        </Command.Group>\n        <Command.Empty>No results found.</Command.Empty>\n      </Command.List>\n    </Command>\n  </Dialog.Content>\n</Dialog>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Organized by category groups",
+      "code": "<div style={{ maxWidth: '400px', width: '100%' }}>\n  <Command>\n    <Command.Input placeholder=\"Search...\" />\n    <Command.List>\n      <Command.Group heading=\"Suggestions\">\n        <Command.Item onItemSelect={() => {}}>Calendar</Command.Item>\n        <Command.Item onItemSelect={() => {}}>Calculator</Command.Item>\n      </Command.Group>\n      <Command.Separator />\n      <Command.Group heading=\"Settings\">\n        <Command.Item onItemSelect={() => {}}>Profile</Command.Item>\n        <Command.Item onItemSelect={() => {}}>Billing</Command.Item>\n        <Command.Item disabled onItemSelect={() => {}}>\n          Team (coming soon)\n        </Command.Item>\n      </Command.Group>\n      <Command.Empty>No results found.</Command.Empty>\n    </Command.List>\n  </Command>\n</div>"
+    },
+    {
+      "name": "With Icons",
+      "description": "Items with leading icons",
+      "code": "<div style={{ maxWidth: '400px', width: '100%' }}>\n  <Command>\n    <Command.Input placeholder=\"What do you need?\" />\n    <Command.List>\n      <Command.Item onItemSelect={() => {}}>\n        <span style={{ marginRight: '0.5rem', fontSize: '1rem' }}>+</span> New Document\n      </Command.Item>\n      <Command.Item onItemSelect={() => {}}>\n        <span style={{ marginRight: '0.5rem', fontSize: '1rem' }}>{'>'}</span> Open Folder\n      </Command.Item>\n      <Command.Item onItemSelect={() => {}}>\n        <span style={{ marginRight: '0.5rem', fontSize: '1rem' }}>?</span> Search\n      </Command.Item>\n      <Command.Empty>No results found.</Command.Empty>\n    </Command.List>\n  </Command>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Compose inside Dialog for modal command palette"
+    },
+    {
+      "component": "Listbox",
+      "relationship": "sibling",
+      "note": "Command uses Listbox-like keyboard navigation internally"
+    },
+    {
+      "component": "Combobox",
+      "relationship": "alternative",
+      "note": "Use Combobox for form field selection with search"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "search: string - controlled search value",
+      "onSearchChange: (search) => void - search change handler",
+      "filter: (value, search, keywords?) => number - custom filter",
+      "loop: boolean - loop keyboard navigation (default: true)",
+      "Command.Item value: string - filter match value",
+      "Command.Item keywords: string[] - extra filter terms",
+      "Command.Item onItemSelect: (value, event) => void - selection handler"
+    ],
+    "a11yRules": [
+      "A11Y_COMBOBOX_ROLE",
+      "A11Y_LISTBOX_ROLE",
+      "A11Y_ACTIVE_DESCENDANT"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Input",
+      "List",
+      "Item",
+      "Group",
+      "Empty",
+      "Separator"
+    ],
+    "requiredChildren": [
+      "Input",
+      "List"
+    ],
+    "commonPatterns": [
+      "<Dialog><Dialog.Trigger><Button>Open Palette</Button></Dialog.Trigger><Dialog.Content size=\"sm\"><Command><Command.Input placeholder=\"Search...\" /><Command.List><Command.Group heading=\"Actions\"><Command.Item onItemSelect={() => {}}>Action 1</Command.Item></Command.Group><Command.Empty>No results.</Command.Empty></Command.List></Command></Dialog.Content></Dialog>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:53.723Z"
+  }
+}

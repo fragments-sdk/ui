@@ -1,0 +1,226 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "RadioGroup",
+  "description": "Single selection from a list of mutually exclusive options",
+  "category": "forms",
+  "tags": [
+    "form",
+    "radio",
+    "selection",
+    "options"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/RadioGroup/index.tsx",
+  "exportName": "RadioGroup",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "onValueChange: function",
+    "onChange: function",
+    "orientation: horizontal|vertical (default: vertical)",
+    "disabled: boolean (default: false)",
+    "name: string",
+    "label: string",
+    "helperText: string",
+    "error: union",
+    "size: sm|md|lg (default: md)",
+    "wrapperClassName: string",
+    "groupClassName: string",
+    "children: node (required)"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Controlled selected value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default value (uncontrolled)",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Callback when selection changes",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Alias for onValueChange",
+      "required": false
+    },
+    "orientation": {
+      "type": "enum",
+      "description": "Layout orientation",
+      "default": "vertical",
+      "required": false,
+      "values": [
+        "horizontal",
+        "vertical"
+      ]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable all options",
+      "default": "false",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Group label",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the group",
+      "required": false
+    },
+    "error": {
+      "type": "union",
+      "description": "Show error styling. When a string is provided, it is displayed as an error message.",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size variant",
+      "default": "md",
+      "required": false,
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "wrapperClassName": {
+      "type": "string",
+      "description": "Class name for the outer wrapper element",
+      "required": false
+    },
+    "groupClassName": {
+      "type": "string",
+      "description": "Class name for the inner radio group element",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "RadioGroup.Item elements",
+      "required": true
+    }
+  },
+  "usage": {
+    "when": [
+      "User must select exactly one option from a small set",
+      "Options are mutually exclusive",
+      "All options should be visible at once",
+      "2-5 options available"
+    ],
+    "whenNot": [
+      "Multiple selections allowed (use Checkbox group)",
+      "Many options (use Select)",
+      "Binary on/off choice (use Switch)",
+      "Options need to be searchable (use Combobox)"
+    ],
+    "guidelines": [
+      "Always have one option pre-selected when possible",
+      "Order options logically (alphabetical, frequency, etc.)",
+      "Keep option labels concise",
+      "Use helperText on RadioGroup.Item for complex options"
+    ],
+    "accessibility": [
+      "Group must have an accessible label",
+      "Use arrow keys to navigate between options",
+      "Selected option should be clearly indicated"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Basic radio group with labels",
+      "code": "<RadioGroup defaultValue=\"option1\" label=\"Select an option\">\n  <RadioGroup.Item value=\"option1\" label=\"Option 1\" />\n  <RadioGroup.Item value=\"option2\" label=\"Option 2\" />\n  <RadioGroup.Item value=\"option3\" label=\"Option 3\" />\n</RadioGroup>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Radio items with additional context",
+      "code": "<RadioGroup defaultValue=\"standard\" label=\"Shipping Method\">\n  <RadioGroup.Item\n    value=\"standard\"\n    label=\"Standard\"\n    helperText=\"5-7 business days\"\n  />\n  <RadioGroup.Item\n    value=\"express\"\n    label=\"Express\"\n    helperText=\"2-3 business days\"\n  />\n  <RadioGroup.Item\n    value=\"overnight\"\n    label=\"Overnight\"\n    helperText=\"Next business day\"\n  />\n</RadioGroup>"
+    },
+    {
+      "name": "Horizontal",
+      "description": "Side-by-side layout",
+      "code": "<RadioGroup orientation=\"horizontal\" defaultValue=\"small\" label=\"Size\">\n  <RadioGroup.Item value=\"small\" label=\"S\" />\n  <RadioGroup.Item value=\"medium\" label=\"M\" />\n  <RadioGroup.Item value=\"large\" label=\"L\" />\n  <RadioGroup.Item value=\"xlarge\" label=\"XL\" />\n</RadioGroup>"
+    },
+    {
+      "name": "With Group Helper Text",
+      "description": "Group-level helper text",
+      "code": "<RadioGroup defaultValue=\"standard\" label=\"Plan\" helperText=\"You can change your plan at any time\">\n  <RadioGroup.Item value=\"free\" label=\"Free\" />\n  <RadioGroup.Item value=\"standard\" label=\"Standard\" />\n  <RadioGroup.Item value=\"pro\" label=\"Pro\" />\n</RadioGroup>"
+    },
+    {
+      "name": "With Error",
+      "description": "Validation error state (string shows error message)",
+      "code": "<RadioGroup label=\"Required selection\" error=\"Please select an option\">\n  <RadioGroup.Item value=\"a\" label=\"Option A\" />\n  <RadioGroup.Item value=\"b\" label=\"Option B\" />\n</RadioGroup>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Non-interactive state",
+      "code": "<RadioGroup disabled defaultValue=\"locked\" label=\"Locked selection\">\n  <RadioGroup.Item value=\"locked\" label=\"This is locked\" />\n  <RadioGroup.Item value=\"other\" label=\"Cannot select\" />\n</RadioGroup>"
+    },
+    {
+      "name": "Styling Targets",
+      "description": "Use explicit class names for wrapper/group/item styling hooks",
+      "code": "<RadioGroup\n  defaultValue=\"a\"\n  label=\"Display mode\"\n  wrapperClassName=\"demo-radio-wrapper\"\n  groupClassName=\"demo-radio-group\"\n>\n  <RadioGroup.Item value=\"a\" label=\"Compact\" controlClassName=\"demo-radio-control\" contentClassName=\"demo-radio-content\" />\n  <RadioGroup.Item value=\"b\" label=\"Comfortable\" />\n</RadioGroup>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Checkbox",
+      "relationship": "alternative",
+      "note": "Use Checkbox for multiple selections"
+    },
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for many options or limited space"
+    },
+    {
+      "component": "Switch",
+      "relationship": "alternative",
+      "note": "Use Switch for binary on/off choices"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - selected value",
+      "onValueChange: (value: string) => void",
+      "onChange: (value: string) => void - alias for onValueChange",
+      "orientation: horizontal|vertical (default: vertical)",
+      "size: sm|md|lg (default: md)",
+      "label: string - group label",
+      "helperText: string - helper text below the group",
+      "error: boolean | string - error styling and message",
+      "disabled: boolean - disable all options",
+      "wrapperClassName/groupClassName - explicit styling targets for wrapper and group",
+      "RadioGroup.Item supports helperText (preferred) and description (legacy alias) plus controlClassName/contentClassName for item-level styling"
+    ],
+    "a11yRules": [
+      "A11Y_RADIO_GROUP",
+      "A11Y_LABEL_REQUIRED",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Item"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.692Z"
+  }
+}

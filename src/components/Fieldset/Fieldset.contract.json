@@ -1,0 +1,117 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Fieldset",
+  "description": "Groups related form fields with an accessible legend. Use to organize forms into logical sections.",
+  "category": "forms",
+  "tags": [
+    "form",
+    "fieldset",
+    "group",
+    "legend",
+    "accessible"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/Fieldset/index.tsx",
+  "exportName": "Fieldset",
+  "propsSummary": [
+    "children: node (required)",
+    "disabled: boolean"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Fieldset content including Fieldset.Legend and form fields",
+      "required": true
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disables all fields within the fieldset",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Grouping related fields in a form (e.g., address, personal info)",
+      "Disabling a group of fields together",
+      "Providing an accessible group label for screen readers"
+    ],
+    "whenNot": [
+      "Generic visual grouping (use Card)",
+      "Single field wrapping (use Field)"
+    ],
+    "guidelines": [
+      "Always include a Fieldset.Legend for accessibility",
+      "Use disabled prop to disable all fields within the group",
+      "Use Grid inside Fieldset for multi-column layouts",
+      "Fieldset.Legend forwards DOM props for ids, aria attributes, and custom data hooks"
+    ],
+    "accessibility": [
+      "Renders semantic fieldset element",
+      "Legend provides accessible group label",
+      "Disabled state propagates to all child fields"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Two-column layout",
+      "description": "Fieldset with Grid for side-by-side fields",
+      "code": "<Fieldset>\n  <Fieldset.Legend>Personal Information</Fieldset.Legend>\n  <Grid columns={2} gap=\"md\">\n    <Field name=\"firstName\">\n      <Field.Label>First Name</Field.Label>\n      <Field.Control>\n        <Input placeholder=\"Jane\" />\n      </Field.Control>\n    </Field>\n    <Field name=\"lastName\">\n      <Field.Label>Last Name</Field.Label>\n      <Field.Control>\n        <Input placeholder=\"Doe\" />\n      </Field.Control>\n    </Field>\n    <Grid.Item colSpan=\"full\">\n      <Field name=\"email\">\n        <Field.Label>Email</Field.Label>\n        <Field.Control>\n          <Input type=\"email\" placeholder=\"jane@example.com\" />\n        </Field.Control>\n      </Field>\n    </Grid.Item>\n  </Grid>\n</Fieldset>"
+    },
+    {
+      "name": "Mixed controls",
+      "description": "Fieldset with textarea, select, and checkbox",
+      "code": "<Fieldset>\n  <Fieldset.Legend>Preferences</Fieldset.Legend>\n  <Field name=\"bio\">\n    <Field.Label>Bio</Field.Label>\n    <Field.Control>\n      <Textarea placeholder=\"Tell us about yourself\" rows={3} />\n    </Field.Control>\n    <Field.Description>Brief description for your profile.</Field.Description>\n  </Field>\n  <Field name=\"role\">\n    <Field.Label>Role</Field.Label>\n    <Field.Control>\n      <Select placeholder=\"Select a role\">\n        <Select.Trigger />\n        <Select.Content>\n          <Select.Item value=\"admin\">Admin</Select.Item>\n          <Select.Item value=\"editor\">Editor</Select.Item>\n          <Select.Item value=\"viewer\">Viewer</Select.Item>\n        </Select.Content>\n      </Select>\n    </Field.Control>\n  </Field>\n  <Field name=\"newsletter\">\n    <Field.Control>\n      <Checkbox label=\"Subscribe to newsletter\" />\n    </Field.Control>\n  </Field>\n</Fieldset>"
+    },
+    {
+      "name": "With Description",
+      "description": "Fieldset with descriptive helper text below the legend",
+      "code": "<Fieldset>\n  <Fieldset.Legend>Notification Settings</Fieldset.Legend>\n  <Fieldset.Description>Choose how you want to be notified about updates.</Fieldset.Description>\n  <Field name=\"emailNotif\">\n    <Field.Control>\n      <Checkbox label=\"Email notifications\" />\n    </Field.Control>\n  </Field>\n  <Field name=\"smsNotif\">\n    <Field.Control>\n      <Checkbox label=\"SMS notifications\" />\n    </Field.Control>\n  </Field>\n</Fieldset>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Disabled fieldset prevents interaction with all children",
+      "code": "<Fieldset disabled>\n  <Fieldset.Legend>Locked Section</Fieldset.Legend>\n  <Grid columns={2} gap=\"md\">\n    <Field name=\"lockedFirst\">\n      <Field.Label>First Name</Field.Label>\n      <Field.Control>\n        <Input defaultValue=\"Jane\" />\n      </Field.Control>\n    </Field>\n    <Field name=\"lockedLast\">\n      <Field.Label>Last Name</Field.Label>\n      <Field.Control>\n        <Input defaultValue=\"Doe\" />\n      </Field.Control>\n    </Field>\n  </Grid>\n  <Field name=\"lockedCheck\">\n    <Field.Control>\n      <Checkbox label=\"Cannot toggle\" defaultChecked />\n    </Field.Control>\n  </Field>\n</Fieldset>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Field",
+      "relationship": "sibling",
+      "note": "Contains Field components"
+    },
+    {
+      "component": "Form",
+      "relationship": "parent",
+      "note": "Used within a Form"
+    },
+    {
+      "component": "Card",
+      "relationship": "alternative",
+      "note": "Use Card for non-form visual grouping"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "disabled: boolean - disables all child fields",
+      "Fieldset.Legend: accessible group label",
+      "Fieldset.Legend forwards DOM props",
+      "Fieldset.Description: helper text below the legend"
+    ],
+    "a11yRules": [
+      "A11Y_FIELDSET_LEGEND"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Legend",
+      "Description"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:57.275Z"
+  }
+}
