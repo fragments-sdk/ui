@@ -56,7 +56,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
@@ -95,6 +95,10 @@
   left: 0;
   top: 0;
   width: auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--fui-space-1, $fui-space-1);
+  min-width: 180px;
 
   // Motion direction for directional slide
   &[data-motion='from-start'] {
@@ -164,7 +168,7 @@
 
   display: flex;
   align-items: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -197,8 +201,8 @@
 // Structured link (title + description + icon) inside content panels
 .linkStructured {
   display: flex;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   white-space: normal;
   min-height: auto;
@@ -433,7 +437,7 @@
 .drawerSectionLabel {
   @include section-label-text;
 
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4)
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4)
     var(--fui-space-1, $fui-space-1);
 }
 
@@ -467,7 +471,7 @@
 }
 
 .drawerCollapsibleContent {
-  padding-left: var(--fui-space-3, $fui-space-3);
+  padding-left: var(--fui-space-2, $fui-space-2);
 }
 
 // ============================================

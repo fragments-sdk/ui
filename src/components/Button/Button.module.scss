@@ -39,6 +39,29 @@
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
+// ============================================
+// Optical alignment: icon + text combinations
+// ============================================
+// Icons (SVGs) have built-in whitespace that makes symmetric padding look
+// uneven. When an icon leads or trails text, reduce padding on the icon
+// side so the content appears optically centered.
+//
+// Uses :has() + :first-child/:last-child to detect icon position without
+// JS. The negative margin pulls the icon into the padding zone, compensating
+// for the icon's inherent visual whitespace.
+
+.button:not(.icon) {
+  > svg:first-child:not(:last-child) {
+    // Leading icon: pull left to optically balance
+    margin-left: calc(var(--fui-space-1, $fui-space-1) * -0.5);
+  }
+
+  > svg:last-child:not(:first-child) {
+    // Trailing icon: pull right to optically balance
+    margin-right: calc(var(--fui-space-1, $fui-space-1) * -0.5);
+  }
+}
+
 // Variants
 .primary {
   background-color: var(--fui-color-accent, $fui-color-accent);

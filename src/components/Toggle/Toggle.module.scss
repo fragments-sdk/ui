@@ -62,7 +62,7 @@
   width: var(--fui-toggle-width-sm, $fui-toggle-width-sm);
   height: var(--fui-toggle-height-sm, $fui-toggle-height-sm);
   --_toggle-thumb-size: calc(var(--fui-toggle-height-sm, #{$fui-toggle-height-sm}) - 4px);
-  --_toggle-inset: 2px;
+  --_toggle-inset: 1px;
   --_toggle-translate: calc(
     var(--fui-toggle-width-sm, #{$fui-toggle-width-sm}) -
     var(--_toggle-thumb-size) -
@@ -75,7 +75,7 @@
   width: var(--fui-toggle-width-lg, $fui-toggle-width-lg);
   height: var(--fui-toggle-height-lg, $fui-toggle-height-lg);
   --_toggle-thumb-size: calc(var(--fui-toggle-height-lg, #{$fui-toggle-height-lg}) - 4px);
-  --_toggle-inset: 2px;
+  --_toggle-inset: 1px;
   --_toggle-translate: calc(
     var(--fui-toggle-width-lg, #{$fui-toggle-width-lg}) -
     var(--_toggle-thumb-size) -
@@ -88,7 +88,7 @@
   width: var(--fui-toggle-width-md, $fui-toggle-width-md);
   height: var(--fui-toggle-height-md, $fui-toggle-height-md);
   --_toggle-thumb-size: calc(var(--fui-toggle-height-md, #{$fui-toggle-height-md}) - 4px);
-  --_toggle-inset: 2px;
+  --_toggle-inset: 1px;
   --_toggle-translate: calc(
     var(--fui-toggle-width-md, #{$fui-toggle-width-md}) -
     var(--_toggle-thumb-size) -

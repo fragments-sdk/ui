@@ -83,13 +83,18 @@ $fui-info: #3b82f6 !default;
   }
 
   // Base Element Resets
-  :where(html) {
+  // Use real specificity (not :where()) for font-size so it overrides
+  // the browser default 16px. This makes 1rem = 14px throughout.
+  html {
+    font-size: #{$fui-base-font-size};
     scroll-behavior: smooth;
   }
 
   :where(body) {
     margin: 0;
+    font-size: inherit;
     font-family: var(--fui-font-sans, Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
     background-color: var(--fui-bg-primary, #ffffff);
     color: var(--fui-text-primary, #171717);
     -webkit-font-smoothing: antialiased;

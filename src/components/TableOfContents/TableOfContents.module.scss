@@ -1,4 +1,5 @@
 @use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
 
 // Root nav wrapper
 .root {
@@ -10,7 +11,7 @@
 // Title text ("On This Page")
 .title {
   margin: 0;
-  padding: 0 0 var(--fui-space-2, $fui-space-2) 0;
+  padding: 0 var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2);
 }
 
 // List container
@@ -20,6 +21,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  gap: var(--fui-space-0-5, $fui-space-0-5);
 }
 
 // Individual item
@@ -27,40 +29,42 @@
   display: block;
 }
 
-// Link styling shared by all items
+// Link styling — matches Sidebar.Item pattern
 .link {
-  display: block;
-  padding: var(--fui-space-1, $fui-space-1) 0 var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-  border-left: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   text-decoration: none;
-  transition: color var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast);
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+    @include focus-ring;
   }
 }
 
 // Indent for depth > 2 (h3s)
 .indent {
-  padding-left: var(--fui-space-6, $fui-space-6);
+  padding-left: var(--fui-space-5, $fui-space-5);
 }
 
-// Active state
+// Active state — matches Sidebar.Item active pattern
 .active {
-  border-left-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-color-accent, $fui-color-accent);
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &:hover {
-    color: var(--fui-color-accent, $fui-color-accent);
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 }

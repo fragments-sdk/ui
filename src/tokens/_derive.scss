@@ -20,14 +20,8 @@
 /// @param {Color} $color - Color to check
 /// @return {Boolean} True if dark
 @function is-dark-color($color) {
-  $r: math.div(color.channel($color, 'red', $space: rgb), 255);
-  $g: math.div(color.channel($color, 'green', $space: rgb), 255);
-  $b: math.div(color.channel($color, 'blue', $space: rgb), 255);
-
-  // Relative luminance formula (simplified)
-  $luminance: 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
-
-  @return $luminance < 0.5;
+  // oklch lightness is perceptually uniform (0-1 range)
+  @return color.channel($color, 'lightness', $space: oklch) < 0.5;
 }
 
 /// Get appropriate contrast color (black or white)
@@ -52,22 +46,22 @@
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Color} Hover state color
 @function derive-accent-hover($base, $is-dark: false) {
-  $l: color.channel($base, 'lightness', $space: hsl);
+  $l: color.channel($base, 'lightness', $space: oklch);
 
   @if $is-dark {
-    @if $l > 85% {
+    @if $l > 0.85 {
       // Very light accent on dark bg: darken for visible hover
-      @return color.scale($base, $lightness: -10%);
+      @return color.adjust($base, $lightness: -0.05, $space: oklch);
     }
     // Standard dark mode: lighten for hover
-    @return color.scale($base, $lightness: 8%);
+    @return color.adjust($base, $lightness: 0.04, $space: oklch);
   } @else {
-    @if $l < 15% {
+    @if $l < 0.15 {
       // Very dark accent on light bg: lighten for visible hover
-      @return color.scale($base, $lightness: 18%);
+      @return color.adjust($base, $lightness: 0.09, $space: oklch);
     }
     // Standard light mode: darken for hover
-    @return color.scale($base, $lightness: -10%);
+    @return color.adjust($base, $lightness: -0.05, $space: oklch);
   }
 }
 
@@ -78,22 +72,22 @@
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Color} Active state color
 @function derive-accent-active($base, $is-dark: false) {
-  $l: color.channel($base, 'lightness', $space: hsl);
+  $l: color.channel($base, 'lightness', $space: oklch);
 
   @if $is-dark {
-    @if $l > 85% {
+    @if $l > 0.85 {
       // Very light accent on dark bg: darken more for active
-      @return color.scale($base, $lightness: -16%);
+      @return color.adjust($base, $lightness: -0.08, $space: oklch);
     }
     // Standard dark mode: lighten more for active
-    @return color.scale($base, $lightness: 14%);
+    @return color.adjust($base, $lightness: 0.07, $space: oklch);
   } @else {
-    @if $l < 15% {
+    @if $l < 0.15 {
       // Very dark accent on light bg: lighten more for active
-      @return color.scale($base, $lightness: 28%);
+      @return color.adjust($base, $lightness: 0.14, $space: oklch);
     }
     // Standard light mode: darken more for active
-    @return color.scale($base, $lightness: -18%);
+    @return color.adjust($base, $lightness: -0.09, $space: oklch);
   }
 }
 
@@ -108,7 +102,7 @@
     @return #f2f2f2;
   } @else {
     // If brand is already light, use it as-is or slightly adjust
-    @return color.scale($brand, $lightness: 10%);
+    @return color.adjust($brand, $lightness: 0.05, $space: oklch);
   }
 }
 
@@ -129,9 +123,9 @@
   @for $i from 1 through 40 {
     @if wcag-contrast($adjusted, $bg) < $target {
       @if $is-dark {
-        $adjusted: color.adjust($adjusted, $lightness: 2%);
+        $adjusted: color.adjust($adjusted, $lightness: 2%, $space: oklch);
       } @else {
-        $adjusted: color.adjust($adjusted, $lightness: -2%);
+        $adjusted: color.adjust($adjusted, $lightness: -2%, $space: oklch);
       }
     }
   }
@@ -239,16 +233,16 @@
 /// @return {Map} Border token values
 @function derive-borders($palette, $is-dark: false) {
   @if $is-dark {
-    // Dark mode: semi-transparent borders that adapt to any surface
+    // Dark mode: subtle borders (Linear uses borders over shadows)
     @return (
-      default: rgba(255, 255, 255, 0.08),
-      strong: rgba(255, 255, 255, 0.14)
+      default: rgba(255, 255, 255, 0.05),
+      strong: rgba(255, 255, 255, 0.10)
     );
   } @else {
-    // Light mode: semi-transparent borders that adapt to any surface
+    // Light mode: reduced opacity (ChatGPT --border-light ~5%)
     @return (
-      default: rgba(0, 0, 0, 0.08),
-      strong: rgba(0, 0, 0, 0.14)
+      default: rgba(0, 0, 0, 0.05),
+      strong: rgba(0, 0, 0, 0.10)
     );
   }
 }
@@ -262,18 +256,18 @@
 /// @return {Map} Shadow token values
 @function derive-shadows($is-dark: false) {
   @if $is-dark {
-    // Dark mode: reduced shadows for AI-era aesthetic
+    // Dark mode: near-zero shadows (Linear uses borders, not shadows)
     @return (
-      sm: (0 1px 2px 0 rgba(0, 0, 0, 0.2)),
-      md: (0 2px 4px -1px rgba(0, 0, 0, 0.25), 0 1px 3px -2px rgba(0, 0, 0, 0.2)),
-      lg: (0 8px 12px -3px rgba(0, 0, 0, 0.35), 0 3px 5px -4px rgba(0, 0, 0, 0.25))
+      sm: (0 1px 2px 0 rgba(0, 0, 0, 0.15)),
+      md: (0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 3px -2px rgba(0, 0, 0, 0.15)),
+      lg: (0 8px 12px -3px rgba(0, 0, 0, 0.25), 0 3px 5px -4px rgba(0, 0, 0, 0.18))
     );
   } @else {
-    // Light mode: minimal shadows ("felt but not noticed")
+    // Light mode: flatter aesthetic (Linear/ChatGPT near-zero shadows)
     @return (
-      sm: (0 1px 2px 0 rgba(0, 0, 0, 0.03)),
-      md: (0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 3px -2px rgba(0, 0, 0, 0.04)),
-      lg: (0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 3px 5px -4px rgba(0, 0, 0, 0.05))
+      sm: (0 1px 2px 0 rgba(0, 0, 0, 0.02)),
+      md: (0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03)),
+      lg: (0 8px 12px -3px rgba(0, 0, 0, 0.06), 0 3px 5px -4px rgba(0, 0, 0, 0.04))
     );
   }
 }
@@ -324,7 +318,7 @@
 /// @param {Color} $color - The semantic color
 /// @return {Color} Hover state color
 @function derive-semantic-hover($color) {
-  @return color.scale($color, $lightness: -10%);
+  @return color.adjust($color, $lightness: -0.05, $space: oklch);
 }
 
 // --------------------------------------------
@@ -424,9 +418,9 @@
   @for $i from 1 through 40 {
     @if wcag-contrast($adjusted, $bg) < $target {
       @if $is-dark {
-        $adjusted: color.adjust($adjusted, $lightness: 2%);
+        $adjusted: color.adjust($adjusted, $lightness: 2%, $space: oklch);
       } @else {
-        $adjusted: color.adjust($adjusted, $lightness: -2%);
+        $adjusted: color.adjust($adjusted, $lightness: -2%, $space: oklch);
       }
     }
   }

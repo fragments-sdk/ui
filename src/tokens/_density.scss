@@ -59,8 +59,8 @@ $density-default: (
   // Input height
   input-height: 40px,
   // ~6 units
-  input-height-sm: 28px,
-  // 4 units
+  input-height-sm: 32px,
+  // ~4.5 units
   input-height-lg: 44px,
   // ~6 units
   // Touch targets (baseline)
@@ -70,8 +70,8 @@ $density-default: (
   touch-lg: 44px,
   // WCAG AAA recommended
   // Sidebar navigation
-  sidebar-item-height: 35px,
-  // 5 units
+  sidebar-item-height: 36px,
+  // ~5 units
 );
 
 $density-relaxed: (

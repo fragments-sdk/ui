@@ -7,9 +7,6 @@
 
 .markdown {
   @include text-base;
-  font-size: 1.25rem;
-  line-height: 1.7;
-  letter-spacing: -0.01em;
   word-wrap: break-word;
   color: var(--fui-text-secondary, $fui-text-secondary);
 

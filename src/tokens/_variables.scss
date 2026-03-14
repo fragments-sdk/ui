@@ -57,13 +57,15 @@ $fui-font-mono:
   "Geist Mono", "SF Mono", SFMono-Regular, ui-monospace, "Cascadia Code", Menlo, monospace !default;
 
 // Font sizes (rem based on 14px root)
+// Compressed scale: base/md = 14px (1rem). No 16px step.
+// Hierarchy driven by weight, not size jumps.
 $fui-font-size-2xs: 0.714rem !default; // 10px
 $fui-font-size-xs: 0.857rem !default; // 12px
 $fui-font-size-sm: 1rem !default; // 14px (base)
-$fui-font-size-base: 1.143rem !default; // 16px
+$fui-font-size-base: 1rem !default; // 14px (= sm, body base)
 $fui-font-size-lg: 1.286rem !default; // 18px
-$fui-font-size-xl: 1.714rem !default; // 24px
-$fui-font-size-2xl: 2.143rem !default; // 30px
+$fui-font-size-xl: 1.429rem !default; // 20px
+$fui-font-size-2xl: 1.714rem !default; // 24px
 
 $fui-font-weight-normal: 400 !default;
 $fui-font-weight-medium: 500 !default;
@@ -73,6 +75,10 @@ $fui-font-weight-bold: 700 !default;
 $fui-line-height-tight: 1.25 !default;
 $fui-line-height-normal: 1.5 !default;
 $fui-line-height-relaxed: 1.625 !default;
+
+// Letter spacing (Linear-inspired tight tracking for headings)
+$fui-letter-spacing-tight: -0.02em !default; // for xl+ headings
+$fui-letter-spacing-normal: normal !default;
 
 // --------------------------------------------
 // Spacing (derived from density seed)
@@ -105,8 +111,8 @@ $fui-radius-full: computed.$computed-radius-full !default;
 // --------------------------------------------
 // Transitions
 // --------------------------------------------
-$fui-transition-fast: 150ms ease !default;
-$fui-transition-normal: 200ms ease !default;
+$fui-transition-fast: 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !default; // Linear's easing
+$fui-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1) !default; // ChatGPT's easing
 
 // --------------------------------------------
 // Colors - Light Mode (derived from brand/neutral seeds)
@@ -265,15 +271,15 @@ $fui-touch-lg: computed.$computed-touch-lg !default;
 $fui-target-size-min: 1.714rem !default; // 24px
 $fui-target-size-comfortable: $fui-touch-md !default;
 
-// Toggle/Switch (iOS-proportioned: ~1.65:1 width:height ratio)
-$fui-toggle-width-sm: 2.857rem !default; // 40px
-$fui-toggle-width-md: 3.643rem !default; // 51px (iOS standard)
-$fui-toggle-width-lg: 4.286rem !default; // 60px
-$fui-toggle-height-sm: $fui-target-size-min !default; // 24px
-$fui-toggle-height-md: 2.214rem !default; // 31px (iOS standard)
-$fui-toggle-height-lg: 2.571rem !default; // 36px
-$fui-toggle-thumb-sm: 1.286rem !default; // 18px
-$fui-toggle-thumb-md: 1.929rem !default; // 27px (iOS standard)
+// Toggle/Switch (web-proportioned: ~1.8:1 width:height ratio)
+$fui-toggle-width-sm: 1.857rem !default; // 26px
+$fui-toggle-width-md: 2.571rem !default; // 36px
+$fui-toggle-width-lg: 3.286rem !default; // 46px
+$fui-toggle-height-sm: 1.143rem !default; // 16px
+$fui-toggle-height-md: 1.429rem !default; // 20px
+$fui-toggle-height-lg: 1.857rem !default; // 26px
+$fui-toggle-thumb-sm: 0.857rem !default; // 12px
+$fui-toggle-thumb-md: 1.143rem !default; // 16px
 $fui-toggle-thumb-offset: 2px !default; // Thumb inset from track edge
 
 // Badge
@@ -430,6 +436,8 @@ $fui-dark-tooltip-shadow:
     --fui-line-height-tight: #{$fui-line-height-tight};
     --fui-line-height-normal: #{$fui-line-height-normal};
     --fui-line-height-relaxed: #{$fui-line-height-relaxed};
+    --fui-letter-spacing-tight: #{$fui-letter-spacing-tight};
+    --fui-letter-spacing-normal: #{$fui-letter-spacing-normal};
 
     // Spacing (micro)
     --fui-space-px: #{$fui-space-px};
@@ -506,7 +514,7 @@ $fui-dark-tooltip-shadow:
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
 
     // Form chrome (derived from theme surfaces + seed-driven accent)
-    --fui-field-bg: color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-bg-primary));
+    --fui-field-bg: var(--fui-bg-tertiary);
     --fui-field-bg-disabled: color-mix(in srgb, var(--fui-bg-tertiary) 88%, var(--fui-bg-primary));
     --fui-field-border: color-mix(in srgb, var(--fui-border-strong) 78%, var(--fui-bg-primary));
     --fui-field-border-hover: color-mix(in srgb, var(--fui-text-tertiary) 58%, var(--fui-border-strong));
