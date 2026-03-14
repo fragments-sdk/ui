@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Dialog as BaseDialog } from '@base-ui/react/dialog';
+import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
 import styles from './Drawer.module.scss';
 
 // ============================================
@@ -10,6 +10,7 @@ import styles from './Drawer.module.scss';
 
 /**
  * Slide-in panel for navigation, forms, or supplementary content.
+ * Now backed by Base UI's stable Drawer (v1.3.0) with native swipe gestures.
  * @see https://usefragments.com/components/drawer
  */
 export interface DrawerProps {
@@ -20,9 +21,18 @@ export interface DrawerProps {
   defaultOpen?: boolean;
   /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Called after open/close animation completes */
+  onOpenChangeComplete?: (open: boolean) => void;
   /** Whether the drawer blocks interaction with the rest of the page.
    * @default true */
-  modal?: boolean;
+  modal?: boolean | 'trap-focus';
+  /** Swipe direction to dismiss.
+   * @default derived from `side` prop on Content */
+  swipeDirection?: 'up' | 'down' | 'left' | 'right';
+  /** Preset snap-point heights for bottom-sheet drawers */
+  snapPoints?: number[];
+  /** Disable outside-click dismissal */
+  disablePointerDismissal?: boolean;
 }
 
 export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -70,12 +80,27 @@ export interface DrawerCloseProps extends React.ButtonHTMLAttributes<HTMLButtonE
   asChild?: boolean;
 }
 
+export interface DrawerSwipeAreaProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Swipe direction to open the drawer */
+  swipeDirection?: 'up' | 'down' | 'left' | 'right';
+  /** Disable swipe detection */
+  disabled?: boolean;
+}
+
 function getAsChildElement(children: React.ReactNode, componentName: string): React.ReactElement {
   if (!React.isValidElement(children)) {
     throw new Error(`${componentName} with asChild requires a single valid React element child.`);
   }
   return children;
 }
+
+// Map side → default swipe direction for dismissal
+const SIDE_TO_SWIPE: Record<string, 'up' | 'down' | 'left' | 'right'> = {
+  right: 'right',
+  left: 'left',
+  top: 'up',
+  bottom: 'down',
+};
 
 // ============================================
 // Close Icon
@@ -102,6 +127,16 @@ function CloseIcon() {
 }
 
 // ============================================
+// Internal context to pass side/swipe from Content → Root
+// ============================================
+
+interface DrawerInternalContext {
+  side: 'left' | 'right' | 'top' | 'bottom';
+}
+
+const DrawerSideContext = React.createContext<DrawerInternalContext>({ side: 'right' });
+
+// ============================================
 // Components
 // ============================================
 
@@ -110,17 +145,25 @@ function DrawerRoot({
   open,
   defaultOpen,
   onOpenChange,
+  onOpenChangeComplete,
   modal = true,
+  swipeDirection,
+  snapPoints,
+  disablePointerDismissal,
 }: DrawerProps) {
   return (
-    <BaseDialog.Root
+    <BaseDrawer.Root
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
+      onOpenChangeComplete={onOpenChangeComplete}
       modal={modal}
+      swipeDirection={swipeDirection}
+      snapPoints={snapPoints}
+      disablePointerDismissal={disablePointerDismissal}
     >
       {children}
-    </BaseDialog.Root>
+    </BaseDrawer.Root>
   );
 }
 
@@ -133,16 +176,16 @@ function DrawerTrigger({
   if (asChild) {
     const child = getAsChildElement(children, 'Drawer.Trigger');
     return (
-      <BaseDialog.Trigger {...htmlProps} className={className} render={child}>
+      <BaseDrawer.Trigger {...htmlProps} className={className} render={child}>
         {null}
-      </BaseDialog.Trigger>
+      </BaseDrawer.Trigger>
     );
   }
 
   return (
-    <BaseDialog.Trigger {...htmlProps} className={className}>
+    <BaseDrawer.Trigger {...htmlProps} className={className}>
       {children}
-    </BaseDialog.Trigger>
+    </BaseDrawer.Trigger>
   );
 }
 
@@ -165,12 +208,18 @@ function DrawerContent({
     .join(' ');
 
   return (
-    <BaseDialog.Portal>
-      {backdrop && <BaseDialog.Backdrop className={styles.backdrop} />}
-      <BaseDialog.Popup initialFocus={initialFocus} {...htmlProps} data-side={side} className={popupClasses}>
-        {children}
-      </BaseDialog.Popup>
-    </BaseDialog.Portal>
+    <DrawerSideContext.Provider value={{ side }}>
+      <BaseDrawer.Portal>
+        {backdrop && <BaseDrawer.Backdrop className={styles.backdrop} />}
+        <BaseDrawer.Viewport className={styles.viewport}>
+          <BaseDrawer.Popup initialFocus={initialFocus} {...htmlProps} data-side={side} className={popupClasses}>
+            <BaseDrawer.Content>
+              {children}
+            </BaseDrawer.Content>
+          </BaseDrawer.Popup>
+        </BaseDrawer.Viewport>
+      </BaseDrawer.Portal>
+    </DrawerSideContext.Provider>
   );
 }
 
@@ -181,15 +230,15 @@ function DrawerHeader({ children, className, ...htmlProps }: DrawerHeaderProps) 
 
 function DrawerTitle({ children, className, ...htmlProps }: DrawerTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BaseDialog.Title {...htmlProps} className={classes}>{children}</BaseDialog.Title>;
+  return <BaseDrawer.Title {...htmlProps} className={classes}>{children}</BaseDrawer.Title>;
 }
 
 function DrawerDescription({ children, className, ...htmlProps }: DrawerDescriptionProps) {
   const classes = [styles.description, className].filter(Boolean).join(' ');
   return (
-    <BaseDialog.Description {...htmlProps} className={classes}>
+    <BaseDrawer.Description {...htmlProps} className={classes}>
       {children}
-    </BaseDialog.Description>
+    </BaseDrawer.Description>
   );
 }
 
@@ -206,35 +255,47 @@ function DrawerFooter({ children, className, ...htmlProps }: DrawerFooterProps) 
 function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerCloseProps) {
   if (!children) {
     return (
-      <BaseDialog.Close
+      <BaseDrawer.Close
         {...htmlProps}
         data-drawer-close
         aria-label="Close drawer"
         className={[styles.close, className].filter(Boolean).join(' ')}
       >
         <CloseIcon />
-      </BaseDialog.Close>
+      </BaseDrawer.Close>
     );
   }
 
   if (asChild) {
     const child = getAsChildElement(children, 'Drawer.Close');
     return (
-      <BaseDialog.Close
+      <BaseDrawer.Close
         {...htmlProps}
         data-drawer-close
         className={className}
         render={child}
       >
         {null}
-      </BaseDialog.Close>
+      </BaseDrawer.Close>
     );
   }
 
   return (
-    <BaseDialog.Close {...htmlProps} data-drawer-close className={className}>
+    <BaseDrawer.Close {...htmlProps} data-drawer-close className={className}>
       {children}
-    </BaseDialog.Close>
+    </BaseDrawer.Close>
+  );
+}
+
+function DrawerSwipeArea({ swipeDirection, disabled, className, ...htmlProps }: DrawerSwipeAreaProps) {
+  const classes = [styles.swipeArea, className].filter(Boolean).join(' ');
+  return (
+    <BaseDrawer.SwipeArea
+      {...htmlProps}
+      swipeDirection={swipeDirection}
+      disabled={disabled}
+      className={classes}
+    />
   );
 }
 
@@ -251,6 +312,7 @@ export const Drawer = Object.assign(DrawerRoot, {
   Body: DrawerBody,
   Footer: DrawerFooter,
   Close: DrawerClose,
+  SwipeArea: DrawerSwipeArea,
 });
 
 // Re-export individual components for tree-shaking
@@ -264,4 +326,5 @@ export {
   DrawerBody,
   DrawerFooter,
   DrawerClose,
+  DrawerSwipeArea,
 };

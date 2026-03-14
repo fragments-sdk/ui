@@ -36,6 +36,12 @@
   }
 }
 
+// Viewport — enables content transition animations
+.viewport {
+  overflow: hidden;
+  transition: height var(--fui-transition-fast, $fui-transition-fast);
+}
+
 // Menu item (shared base)
 .item {
   @include popup-item;

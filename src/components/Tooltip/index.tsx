@@ -36,6 +36,9 @@ export interface TooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   defaultOpen?: boolean;
   /** Callback when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Whether clicking the trigger closes the tooltip.
+   * @default false */
+  closeOnClick?: boolean;
   /** Explicit props for the tooltip popup element (preferred over top-level HTMLAttributes for clarity) */
   contentProps?: React.HTMLAttributes<HTMLDivElement>;
 }
@@ -83,6 +86,7 @@ function TooltipRoot({
   open,
   defaultOpen,
   onOpenChange,
+  closeOnClick = false,
   contentProps,
   className,
   style,
@@ -128,6 +132,7 @@ function TooltipRoot({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
+      closeOnClick={closeOnClick}
     >
       <BaseTooltip.Trigger render={renderTrigger} />
       <BaseTooltip.Portal>

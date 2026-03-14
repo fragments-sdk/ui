@@ -191,7 +191,9 @@ function MenuContent({
         className={styles.positioner}
       >
         <BaseMenu.Popup {...htmlProps} className={popupClasses}>
-          {children}
+          <BaseMenu.Viewport className={styles.viewport}>
+            {children}
+          </BaseMenu.Viewport>
         </BaseMenu.Popup>
       </BaseMenu.Positioner>
     </BaseMenu.Portal>

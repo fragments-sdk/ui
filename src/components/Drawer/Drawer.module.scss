@@ -22,6 +22,18 @@
   }
 }
 
+// Viewport positioning container
+.viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 51;
+  pointer-events: none;
+
+  &[data-open] {
+    pointer-events: auto;
+  }
+}
+
 // The popup panel
 .popup {
   @include surface-elevated;
@@ -33,6 +45,7 @@
   flex-direction: column;
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   overflow-y: auto;
+  pointer-events: auto;
 
   // Animation
   transition:
@@ -47,14 +60,18 @@
 }
 
 // ============================================
-// Side positioning
+// Side positioning — swipe-aware transforms
 // ============================================
 
 .side-right {
   top: 0;
   right: 0;
   bottom: 0;
-  transform: translateX(100%);
+  transform: translateX(calc(100% + var(--drawer-swipe-movement-x, 0px)));
+
+  &[data-open] {
+    transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  }
 
   &[data-starting-style],
   &[data-ending-style] {
@@ -66,7 +83,11 @@
   top: 0;
   left: 0;
   bottom: 0;
-  transform: translateX(-100%);
+  transform: translateX(calc(-100% + var(--drawer-swipe-movement-x, 0px)));
+
+  &[data-open] {
+    transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  }
 
   &[data-starting-style],
   &[data-ending-style] {
@@ -78,7 +99,11 @@
   top: 0;
   left: 0;
   right: 0;
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% + var(--drawer-swipe-movement-y, 0px)));
+
+  &[data-open] {
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  }
 
   &[data-starting-style],
   &[data-ending-style] {
@@ -90,12 +115,21 @@
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(100%);
+  transform: translateY(calc(100% + var(--drawer-swipe-movement-y, 0px)));
+
+  &[data-open] {
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  }
 
   &[data-starting-style],
   &[data-ending-style] {
     transform: translateY(100%);
   }
+}
+
+// Disable transition during active swipe for instant feedback
+.popup[data-swiping] {
+  transition-duration: 0s;
 }
 
 // ============================================
@@ -192,6 +226,12 @@
     width: 1rem;
     height: 1rem;
   }
+}
+
+// SwipeArea — invisible gesture zone at screen edge
+.swipeArea {
+  position: fixed;
+  z-index: 49;
 }
 
 // ============================================

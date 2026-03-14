@@ -591,6 +591,7 @@ export {
   type DrawerBodyProps,
   type DrawerFooterProps,
   type DrawerCloseProps,
+  type DrawerSwipeAreaProps,
 } from './components/Drawer';
 
 // Pagination
