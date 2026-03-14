@@ -117,8 +117,8 @@ function TooltipRoot({
     [children],
   );
 
-  if (disabled) {
-    return children;
+  if (disabled || !children) {
+    return children ?? null;
   }
 
   const {
