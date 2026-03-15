@@ -91,13 +91,13 @@
 // ============================================
 
 .content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   position: absolute;
   left: 0;
   top: 0;
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  padding: var(--fui-space-1, $fui-space-1);
+  width: 100%;
   min-width: 180px;
 
   // Motion direction for directional slide
@@ -164,22 +164,17 @@
 // ============================================
 
 .link {
-  @include text-base;
+  @include popup-item;
 
-  display: flex;
-  align-items: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  color: var(--fui-text-primary, $fui-text-primary);
   text-decoration: none;
   white-space: nowrap;
-  min-height: var(--fui-button-height-md, $fui-button-height-md);
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
   }
 
   &:focus-visible {
@@ -188,14 +183,8 @@
 }
 
 .linkActive {
-  color: var(--fui-text-primary, $fui-text-primary);
+  background-color: var(--fui-bg-hover, $fui-bg-hover);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-
-  &:hover {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
 }
 
 // Structured link (title + description + icon) inside content panels
@@ -277,10 +266,12 @@
   @include surface-elevated;
 
   position: absolute;
-  top: 100%;
+  top: calc(100% + var(--fui-space-1, #{$fui-space-1}));
   left: var(--fui-navmenu-viewport-left, 0);
   overflow: hidden;
-  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
+  padding: var(--fui-space-1, $fui-space-1);
+  border-color: var(--fui-border-strong, $fui-border-strong);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 1);
 
   width: var(--fui-navmenu-viewport-width);
