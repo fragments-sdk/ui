@@ -404,6 +404,8 @@ export {
   type PromptVariant,
   type PromptTextareaProps,
   type PromptToolbarProps,
+  type PromptTabsProps,
+  type PromptTabProps,
   type PromptActionsProps,
   type PromptInfoProps,
   type PromptActionButtonProps,

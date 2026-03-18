@@ -55,6 +55,20 @@ export interface PromptToolbarProps {
   className?: string;
 }
 
+export interface PromptTabsProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export interface PromptTabProps {
+  children: React.ReactNode;
+  /** Whether this tab is currently active */
+  active?: boolean;
+  /** Click handler */
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  className?: string;
+}
+
 export interface PromptActionsProps {
   children?: React.ReactNode;
   className?: string;
@@ -330,6 +344,28 @@ function PromptToolbar({ children, className }: PromptToolbarProps) {
   return <div className={classes}>{children}</div>;
 }
 
+function PromptTabs({ children, className }: PromptTabsProps) {
+  const classes = [styles.tabs, className].filter(Boolean).join(' ');
+  return (
+    <div className={classes}>
+      <div className={styles.tabsInner}>{children}</div>
+    </div>
+  );
+}
+
+function PromptTab({ children, active = false, onClick, className }: PromptTabProps) {
+  const classes = [
+    styles.tabButton,
+    active && styles.tabButtonActive,
+    className,
+  ].filter(Boolean).join(' ');
+  return (
+    <button type="button" className={classes} onClick={onClick} aria-pressed={active}>
+      {children}
+    </button>
+  );
+}
+
 function PromptActions({ children, className }: PromptActionsProps) {
   if (!children) return null;
   const classes = [styles.actions, className].filter(Boolean).join(' ');
@@ -444,6 +480,8 @@ function PromptSubmit({
 export const Prompt = Object.assign(PromptRoot, {
   Textarea: PromptTextarea,
   Toolbar: PromptToolbar,
+  Tabs: PromptTabs,
+  Tab: PromptTab,
   Actions: PromptActions,
   Info: PromptInfo,
   ActionButton: PromptActionButton,
@@ -456,6 +494,8 @@ export {
   PromptRoot,
   PromptTextarea,
   PromptToolbar,
+  PromptTabs,
+  PromptTab,
   PromptActions,
   PromptInfo,
   PromptActionButton,

@@ -11,11 +11,75 @@
   flex-direction: column;
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   overflow: hidden;
+  position: relative;
+
+  // Beam border — rotating conic gradient clipped to a 1px border
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  // Gradient layer (behind everything)
+  &::before {
+    inset: -1px;
+    z-index: 0;
+    background: conic-gradient(
+      from var(--beam-angle, 0deg) at 50% 50%,
+      transparent 0%,
+      transparent 25%,
+      var(--fui-color-accent, $fui-color-accent) 45%,
+      transparent 50%,
+      transparent 55%,
+      color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 40%, transparent) 70%,
+      transparent 75%,
+      transparent 100%
+    );
+    animation: beam-rotate 4s linear infinite;
+    opacity: 0.6;
+    transition: opacity 300ms ease;
+  }
+
+  // Mask layer — covers the interior, leaving only the 1px border visible
+  &::after {
+    inset: 1px;
+    z-index: 1;
+    background: var(--fui-bg-elevated, $fui-bg-elevated);
+  }
+
+  // Content must sit above the mask
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:focus-within::before {
+    opacity: 1;
+  }
 
   &[data-disabled] {
     opacity: 0.5;
     pointer-events: none;
+
+    &::before {
+      animation-play-state: paused;
+      opacity: 0.2;
+    }
   }
+}
+
+@keyframes beam-rotate {
+  from { --beam-angle: 0deg; }
+  to { --beam-angle: 360deg; }
+}
+
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
 // Fixed variant - for viewport-fixed prompts (centered to page)
@@ -71,14 +135,62 @@
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
+  // Focus is shown on the prompt container via :focus-within instead
+  &:focus,
   &:focus-visible {
-    @include focus-ring;
-    border-radius: var(--fui-radius-md, $fui-radius-md);
+    outline: none;
+    box-shadow: none;
   }
 
   &:disabled {
     cursor: not-allowed;
   }
+}
+
+// ============================================
+// Tabs (floating above the prompt body)
+// ============================================
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: calc(-1 * var(--fui-space-1, $fui-space-1)); // overlap the prompt border
+  position: relative;
+  z-index: 1;
+}
+
+.tabsInner {
+  display: inline-flex;
+  gap: 1px;
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg) 0 0;
+  padding: 3px 3px 0 3px;
+  border: 1px solid var(--fui-border, $fui-border);
+  border-bottom: none;
+}
+
+.tabButton {
+  @include button-reset;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0 0;
+  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  transition: all 120ms ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.tabButtonActive {
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-primary, $fui-text-primary);
 }
 
 // ============================================
@@ -102,7 +214,9 @@
 .actions {
   display: flex;
   align-items: center;
+  align-self: flex-end;
   gap: var(--fui-space-1, $fui-space-1);
+  padding: 0 var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) 0;
 }
 
 .info {
