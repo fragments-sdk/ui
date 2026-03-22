@@ -25,7 +25,6 @@ function loadColorfulDeps() {
 import { Field } from '@base-ui/react/field';
 import { Input } from '../Input';
 import styles from './ColorPicker.module.scss';
-import '../../styles/globals.scss';
 
 export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /** Label text above the picker */

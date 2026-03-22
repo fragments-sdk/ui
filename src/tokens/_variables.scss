@@ -598,18 +598,16 @@ $fui-dark-tooltip-shadow:
   @supports (color: oklch(from red l c h)) {
     :root {
       // Accent derived from seed-brand
-      // Light mode: brand as-is; dark mode: inverted lightness, reduced chroma
-      --fui-color-accent: light-dark(
-        var(--fui-seed-brand),
-        oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h)
-      );
+      // Light mode: brand as-is with darkened hover/active
+      // Dark mode: brand as-is with darkened hover/active
+      --fui-color-accent: var(--fui-seed-brand);
       --fui-color-accent-hover: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.80, calc(1 - l + 0.02), 0.90) min(c, 0.05) h)
+        oklch(from var(--fui-seed-brand) clamp(0.45, calc(l - 0.06), 0.85) c h)
       );
       --fui-color-accent-active: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.73, calc(1 - l - 0.05), 0.85) min(c, 0.05) h)
+        oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.12), 0.80) c h)
       );
 
       // Semantic hover derived from seed
@@ -634,23 +632,22 @@ $fui-dark-tooltip-shadow:
       );
 
       // Focus ring derived from seed-brand
-      --fui-focus-ring-color: light-dark(
-        var(--fui-seed-brand),
-        oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h)
-      );
+      --fui-focus-ring-color: var(--fui-seed-brand);
     }
 
     // Runtime-derived dark mode overrides (replaces SCSS-computed when supported)
+    // Accent uses the brand color directly — users pick a specific color and
+    // expect to see it. Hover/active get slight lightness adjustments only.
     :root[data-theme="dark"],
     :root.dark {
-      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h);
-      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.80, calc(1 - l + 0.02), 0.90) min(c, 0.05) h);
-      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.73, calc(1 - l - 0.05), 0.85) min(c, 0.05) h);
+      --fui-color-accent: var(--fui-seed-brand);
+      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.45, calc(l - 0.06), 0.85) c h);
+      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.12), 0.80) c h);
       --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 15%, transparent);
       --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
       --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);
       --fui-color-info-bg: color-mix(in oklch, var(--fui-seed-info) 15%, transparent);
-      --fui-focus-ring-color: oklch(from var(--fui-seed-brand) clamp(0.88, calc(1 - l + 0.1), 0.96) min(c, 0.05) h);
+      --fui-focus-ring-color: var(--fui-seed-brand);
     }
   }
 

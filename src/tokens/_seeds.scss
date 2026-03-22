@@ -26,7 +26,7 @@
 $fui-brand: #18181b !default;
 
 /// Neutral palette name for surfaces, text, and borders
-/// Options: "stone" | "ice" | "earth" | "sand" | "fire"
+/// Options: "stone" | "ice" | "earth" | "sand" | "fire" | "fragments"
 /// @type String
 $fui-neutral: "stone" !default;
 
@@ -45,7 +45,7 @@ $fui-radius-style: "default" !default;
 // --------------------------------------------
 // Fail fast at compile time if invalid seed values are provided.
 
-$_valid-neutrals: "stone", "ice", "earth", "sand", "fire";
+$_valid-neutrals: "stone", "ice", "earth", "sand", "fire", "fragments";
 @if not list.index($_valid-neutrals, $fui-neutral) {
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
 }

@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { mergeAriaIds } from '../../utils/aria';
 import styles from './Chart.module.scss';
-import '../../styles/globals.scss';
 
 // ============================================
 // Types (self-owned — no external dependency for types)

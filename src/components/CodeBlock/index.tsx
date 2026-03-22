@@ -29,7 +29,6 @@ async function loadShikiDeps() {
 }
 import { TabsRoot, TabsList, Tab, TabsPanel } from "../Tabs";
 import styles from "./CodeBlock.module.scss";
-import "../../styles/globals.scss";
 
 export type CodeBlockLanguage =
   | "tsx"

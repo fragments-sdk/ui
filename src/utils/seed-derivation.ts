@@ -13,7 +13,7 @@
 // Types
 // ============================================
 
-export type NeutralPalette = 'stone' | 'ice' | 'sand' | 'earth' | 'fire';
+export type NeutralPalette = 'stone' | 'ice' | 'sand' | 'earth' | 'fire' | 'fragments';
 export type DensityPreset = 'compact' | 'default' | 'relaxed';
 export type RadiusStyle = 'sharp' | 'subtle' | 'default' | 'rounded' | 'pill';
 
@@ -128,6 +128,21 @@ export const PALETTES: Record<NeutralPalette, PaletteShades> = {
     900: '#1c100a',  // Darkened and desaturated for dark mode
     950: '#120a06',  // Very dark warm gray for dark mode bg
   },
+  // Fragments - Rich saturated green tones (the Fragments brand palette)
+  // Dark shades anchor to the Fragments marketing aesthetic
+  fragments: {
+    50: '#f0f7f3',
+    100: '#dceee3',
+    200: '#b8ddc6',
+    300: '#88c5a0',
+    400: '#5aaa7a',
+    500: '#3d8f60',
+    600: '#2d7049',
+    700: '#235536',
+    800: '#1a3025',  // Dark card surface
+    900: '#142318',  // Dark surface
+    950: '#0d1f17',  // Darkest bg
+  },
 };
 
 // ============================================
@@ -180,6 +195,13 @@ export const PALETTE_SEMANTIC_COLORS: Record<NeutralPalette, SemanticColors> = {
     warning: '#f59e0b', // Amber 500
     danger: '#dc2626',  // Red 600 (complements orange)
     info: '#2563eb',    // Blue 600
+  },
+  // Fragments - Brand-complementary semantic colors
+  fragments: {
+    success: '#39d98a', // Vibrant green (brand signature)
+    warning: '#f59e0b', // Amber 500
+    danger: '#ef4444',  // Red 500
+    info: '#3b82f6',    // Blue 500
   },
 };
 

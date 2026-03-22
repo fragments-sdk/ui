@@ -4,8 +4,6 @@ import * as React from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { useFormFieldIds, type FormFieldProps } from '../../utils/aria';
 import styles from './DatePicker.module.scss';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 
 // ============================================
 // Types (self-owned — no external dependency for types)

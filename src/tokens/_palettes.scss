@@ -84,6 +84,24 @@ $palette-earth: (
 );
 
 // --------------------------------------------
+// Fragments - Rich saturated green tones
+// The Fragments brand palette — deep forest greens
+// --------------------------------------------
+$palette-fragments: (
+  50:  #f0f7f3,
+  100: #dceee3,
+  200: #b8ddc6,
+  300: #88c5a0,
+  400: #5aaa7a,
+  500: #3d8f60,
+  600: #2d7049,
+  700: #235536,
+  800: #1a3025,  // Dark card surface
+  900: #142318,  // Dark surface
+  950: #0d1f17   // Darkest bg
+);
+
+// --------------------------------------------
 // Fire - Warm red/orange tones
 // Energy, passion feel
 // --------------------------------------------
@@ -110,6 +128,7 @@ $palettes: (
   "sand": $palette-sand,
   "earth": $palette-earth,
   "fire": $palette-fire,
+  "fragments": $palette-fragments,
   "wind": $palette-stone  // Legacy alias — "wind" was renamed to "stone"
 );
 
@@ -118,7 +137,7 @@ $palettes: (
 // --------------------------------------------
 
 /// Get a palette map by name
-/// @param {String} $name - Palette name (stone, ice, sand, earth, fire)
+/// @param {String} $name - Palette name (stone, ice, sand, earth, fire, fragments)
 /// @return {Map} The palette map with shades 50-950
 @function get-palette($name) {
   @if not map.has-key($palettes, $name) {

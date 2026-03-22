@@ -1,8 +1,6 @@
 'use client';
 
 import * as React from 'react';
-// Import globals to ensure CSS variables are defined
-import '../../styles/globals.scss';
 import styles from './Table.module.scss';
 
 // ============================================
