@@ -119,6 +119,7 @@ $fui-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1) !default; // ChatGPT'
 // --------------------------------------------
 // Accent colors (derived from $fui-brand seed)
 $fui-color-accent: computed.$computed-color-accent !default;
+$fui-color-on-accent: computed.$computed-color-on-accent !default;
 $fui-color-accent-hover: computed.$computed-color-accent-hover !default;
 $fui-color-accent-active: computed.$computed-color-accent-active !default;
 
@@ -180,8 +181,9 @@ $fui-scrollbar-thumb-hover: computed.$computed-scrollbar-thumb-hover !default;
 // --------------------------------------------
 // Colors - Dark Mode (derived from seeds)
 // --------------------------------------------
-// Accent colors (light on dark background)
+// Accent colors (brand used directly in dark mode; on-accent handles text contrast)
 $fui-dark-color-accent: computed.$computed-dark-color-accent !default;
+$fui-dark-color-on-accent: computed.$computed-dark-color-on-accent !default;
 $fui-dark-color-accent-hover: computed.$computed-dark-color-accent-hover !default;
 $fui-dark-color-accent-active: computed.$computed-dark-color-accent-active !default;
 
@@ -468,6 +470,7 @@ $fui-dark-tooltip-shadow:
 
     // Colors — Accent (light-dark for automatic dark mode)
     --fui-color-accent: light-dark(#{$fui-color-accent}, #{$fui-dark-color-accent});
+    --fui-color-on-accent: light-dark(#{$fui-color-on-accent}, #{$fui-dark-color-on-accent});
     --fui-color-accent-hover: light-dark(#{$fui-color-accent-hover}, #{$fui-dark-color-accent-hover});
     --fui-color-accent-active: light-dark(#{$fui-color-accent-active}, #{$fui-dark-color-accent-active});
 
@@ -598,16 +601,22 @@ $fui-dark-tooltip-shadow:
   @supports (color: oklch(from red l c h)) {
     :root {
       // Accent derived from seed-brand
-      // Light mode: brand as-is with darkened hover/active
-      // Dark mode: brand as-is with darkened hover/active
-      --fui-color-accent: var(--fui-seed-brand);
+      // Light mode: brand as-is. Dark mode: lightened for visibility on dark surfaces.
+      --fui-color-accent: light-dark(
+        var(--fui-seed-brand),
+        oklch(from var(--fui-seed-brand) clamp(0.45, l, 0.85) min(c, 0.12) h)
+      );
+
+      // Auto-contrast text for elements on accent backgrounds (buttons, chips, etc.)
+      // Lightness > 0.6 → dark text; otherwise → white. Users can override this token.
+      --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
       --fui-color-accent-hover: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.45, calc(l - 0.06), 0.85) c h)
+        oklch(from var(--fui-seed-brand) clamp(0.52, calc(l + 0.07), 0.90) min(c, 0.12) h)
       );
       --fui-color-accent-active: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.12), 0.80) c h)
+        oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.05), 0.80) min(c, 0.12) h)
       );
 
       // Semantic hover derived from seed
@@ -636,13 +645,14 @@ $fui-dark-tooltip-shadow:
     }
 
     // Runtime-derived dark mode overrides (replaces SCSS-computed when supported)
-    // Accent uses the brand color directly — users pick a specific color and
-    // expect to see it. Hover/active get slight lightness adjustments only.
+    // Dark brands are lightened so the button stands out against dark backgrounds.
+    // Hover goes slightly lighter, active slightly darker. on-accent handles text.
     :root[data-theme="dark"],
     :root.dark {
-      --fui-color-accent: var(--fui-seed-brand);
-      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.45, calc(l - 0.06), 0.85) c h);
-      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.12), 0.80) c h);
+      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.45, l, 0.85) min(c, 0.12) h);
+      --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
+      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.52, calc(l + 0.07), 0.90) min(c, 0.12) h);
+      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.05), 0.80) min(c, 0.12) h);
       --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 15%, transparent);
       --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
       --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);
@@ -722,8 +732,9 @@ $fui-dark-tooltip-shadow:
 
 // Private mixin for dark mode token values
 @mixin _fui-dark-tokens {
-  // Accent colors invert for dark mode (light on dark)
+  // Accent colors — brand used directly; on-accent handles text contrast
   --fui-color-accent: #{$fui-dark-color-accent};
+  --fui-color-on-accent: #{$fui-dark-color-on-accent};
   --fui-color-accent-hover: #{$fui-dark-color-accent-hover};
   --fui-color-accent-active: #{$fui-dark-color-accent-active};
 

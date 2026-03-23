@@ -318,7 +318,7 @@
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   // Use accent-hover for WCAG AA contrast (4.5:1 minimum)
   background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  color: var(--fui-color-on-accent, $fui-color-on-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   min-width: $fui-icon-lg;
   line-height: 1;

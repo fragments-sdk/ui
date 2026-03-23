@@ -36,7 +36,7 @@
 
   .content {
     background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    color: var(--fui-color-on-accent, $fui-color-on-accent);
   }
 }
 
@@ -99,7 +99,7 @@
 
 .avatarUser {
   background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  color: var(--fui-color-on-accent, $fui-color-on-accent);
 }
 
 .avatarAssistant {

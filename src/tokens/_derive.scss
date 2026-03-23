@@ -92,18 +92,16 @@
 }
 
 /// Derive a light variant of accent for dark mode
-/// Auto-lightens dark brand colors so they're visible on dark backgrounds
+/// Lightens dark brand colors so the accent stands out on dark backgrounds.
+/// Clamps lightness to 0.45–0.85 and chroma to 0.12 to keep it muted.
 /// @param {Color} $brand - Brand color
 /// @return {Color} Lightened accent for dark mode
 @function derive-dark-accent($brand) {
-  @if is-dark-color($brand) {
-    // If brand is dark, invert to light for dark mode
-    // Use a light gray as the dark mode accent
-    @return #f2f2f2;
-  } @else {
-    // If brand is already light, use it as-is or slightly adjust
-    @return color.adjust($brand, $lightness: 0.05, $space: oklch);
-  }
+  $l: color.channel($brand, 'lightness', $space: oklch);
+  $c: color.channel($brand, 'chroma', $space: oklch);
+  $clamped-l: math.max(0.45, math.min($l, 0.85));
+  $clamped-c: math.min($c, 0.12);
+  @return oklch($clamped-l $clamped-c color.channel($brand, 'hue', $space: oklch));
 }
 
 // --------------------------------------------

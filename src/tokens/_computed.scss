@@ -86,6 +86,7 @@ $computed-sidebar-item-height: density.px-to-rem($_density, map.get($_density, s
 
 // Accent colors (from brand seed)
 $computed-color-accent: seeds.$fui-brand;
+$computed-color-on-accent: derive.contrast-color(seeds.$fui-brand);
 $computed-color-accent-hover: derive.derive-accent-hover(seeds.$fui-brand, false);
 $computed-color-accent-active: derive.derive-accent-active(seeds.$fui-brand, false);
 
@@ -153,8 +154,9 @@ $computed-backdrop: derive.derive-backdrop(false);
 // Computed: Colors - Dark Mode
 // --------------------------------------------
 
-// Accent colors (derive light version for dark mode)
+// Accent colors — dark brands lightened for visibility; on-accent handles text contrast
 $computed-dark-color-accent: derive.derive-dark-accent(seeds.$fui-brand);
+$computed-dark-color-on-accent: derive.contrast-color($computed-dark-color-accent);
 $computed-dark-color-accent-hover: derive.derive-accent-hover($computed-dark-color-accent, true);
 $computed-dark-color-accent-active: derive.derive-accent-active($computed-dark-color-accent, true);
 

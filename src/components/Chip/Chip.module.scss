@@ -62,7 +62,7 @@
 
   &.selected {
     background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    color: var(--fui-color-on-accent, $fui-color-on-accent);
 
     &:hover:not(:disabled) {
       background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
@@ -90,7 +90,7 @@
 
   &.selected {
     background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    color: var(--fui-color-on-accent, $fui-color-on-accent);
     border-color: var(--fui-color-accent, $fui-color-accent);
 
     &:hover:not(:disabled) {
@@ -119,7 +119,7 @@
 
   &.selected {
     background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-text-inverse, $fui-text-inverse);
+    color: var(--fui-color-on-accent, $fui-color-on-accent);
 
     &:hover:not(:disabled) {
       background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
@@ -245,7 +245,7 @@
 
 .selected + .remove {
   background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  color: var(--fui-color-on-accent, $fui-color-on-accent);
   border-left-color: transparent;
 
   &:hover:not(:disabled) {

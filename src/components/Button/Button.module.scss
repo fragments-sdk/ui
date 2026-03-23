@@ -65,7 +65,7 @@
 // Variants
 .primary {
   background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  color: var(--fui-color-on-accent, $fui-color-on-accent);
   border: 1px solid transparent;
 
   &:hover:not(:disabled) {

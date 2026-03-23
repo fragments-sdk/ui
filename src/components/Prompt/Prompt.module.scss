@@ -315,7 +315,7 @@
   height: 2rem;
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-text-inverse, $fui-text-inverse);
+  color: var(--fui-color-on-accent, $fui-color-on-accent);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
