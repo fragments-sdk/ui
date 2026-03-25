@@ -1,5 +1,46 @@
 # @fragments-sdk/ui
 
+## 0.19.0
+
+### Minor Changes
+
+- [#6](https://github.com/ConanMcN/fragments/pull/6) [`3b9dfbb`](https://github.com/ConanMcN/fragments/commit/3b9dfbb0245d088b1a921b74c098be7cf0bf0298) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Evolve design tokens toward Linear/OpenAI design language
+
+  **Token changes:**
+  - Font scale compressed: `base`/`md` = 14px (1rem), `xl` = 20px, `2xl` = 24px
+  - Transitions: precise easing curves from Linear (`cubic-bezier(0.25, 0.46, 0.45, 0.94)`) and ChatGPT (`cubic-bezier(0.4, 0, 0.2, 1)`)
+  - Borders: opacity reduced from 8%/14% to 5%/10% (ChatGPT-style)
+  - Shadows: opacity reduced ~33% for flatter aesthetic
+  - Color derivation converted to oklch for perceptual uniformity
+  - New letter-spacing tokens (`-0.02em` tight, `normal`)
+  - Toggle/Switch: iOS dimensions → compact web proportions (36×20 md)
+  - Input sm height: 28→32px
+  - Sidebar item height: 35→36px
+
+  **Component improvements:**
+  - Button: optical alignment for icon + text combinations
+  - Input: optical alignment for adornments and kbd shortcuts
+  - Command.Input: restyled as proper field with field-shell
+  - TableOfContents: restyled to match Sidebar.Item pattern
+  - NavigationMenu.Content: flex layout with padding
+  - Field bg simplified to `bg-tertiary`
+
+  **Docs:**
+  - Hero beam colors extracted to CSS custom properties
+  - Mega-menu removed (WebMCP/A2UI not ready), simplified to dropdown
+  - Search trigger uses Input with shortcut kbd
+  - Share buttons use Button `variant="outline"`
+  - Logo uses `currentColor` for theme-aware rendering
+
+### Patch Changes
+
+- [#5](https://github.com/ConanMcN/fragments/pull/5) [`97cd4c5`](https://github.com/ConanMcN/fragments/commit/97cd4c5b74bbb66a8fc984fbdeb534806f42160a) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Extract @fragments-sdk/compiler from CLI to break build dependency cycle
+
+  The fragment compilation logic (build, freshness checking, discovery, parsing) has been extracted from `@fragments-sdk/cli` into a new `@fragments-sdk/compiler` package. This eliminates the `cli → viewer → ui` dependency cycle that required runtime workarounds.
+  - **@fragments-sdk/compiler**: New package — fragment build, freshness check, and core compilation utilities. Depends only on `core` + `context`.
+  - **@fragments-sdk/cli**: Build commands now delegate to `@fragments-sdk/compiler`. No public API changes.
+  - **@fragments-sdk/ui**: Build scripts use compiler directly instead of CLI. No output changes.
+
 ## 0.18.0
 
 ### Minor Changes
