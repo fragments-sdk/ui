@@ -220,7 +220,9 @@ describe('Editor', () => {
       </Editor>
     );
 
-    await vi.advanceTimersByTimeAsync(25);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(25);
+    });
     expect(onAutoSave).toHaveBeenCalledTimes(1);
     expect(String(onAutoSave.mock.calls[0][0])).toContain('Hello world');
     expect(screen.getByText('SAVING...')).toBeInTheDocument();
