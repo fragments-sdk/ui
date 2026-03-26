@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.19.1
+
+### Patch Changes
+
+- Fix the Prompt component bottom action row by removing the extra actions padding that caused the toolbar content to render misaligned.
+
 ## 0.19.0
 
 ### Minor Changes
