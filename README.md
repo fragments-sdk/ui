@@ -305,7 +305,7 @@ The library includes composition blocks — named patterns showing how component
 - **Dashboard Layout** — Featured card with metrics grid
 - **Settings Page** — Settings sections with cards and controls
 
-Access blocks via the MCP server's `fragments_blocks` tool or `fragments_context`.
+Access blocks via the MCP server's `blocks` tool or `context`.
 
 ## License
 
