@@ -473,8 +473,10 @@ export {
   TableOfContents,
   TableOfContentsRoot,
   TableOfContentsItem,
+  TableOfContentsGroup,
   type TableOfContentsProps,
   type TableOfContentsItemProps,
+  type TableOfContentsGroupProps,
 } from './components/TableOfContents';
 
 // Box

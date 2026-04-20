@@ -65,6 +65,7 @@ $computed-radius-full: radius.radius-full();
 // Computed: Component Heights (from density)
 // --------------------------------------------
 
+$computed-button-height-xs: density.px-to-rem($_density, map.get($_density, button-height-xs));
 $computed-button-height-sm: density.px-to-rem($_density, map.get($_density, button-height-sm));
 $computed-button-height-md: density.px-to-rem($_density, map.get($_density, button-height-md));
 $computed-button-height-lg: density.px-to-rem($_density, map.get($_density, button-height-lg));

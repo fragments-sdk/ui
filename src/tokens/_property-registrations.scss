@@ -162,6 +162,7 @@
   // ------------------------------------------
   // Component Heights — Lengths
   // ------------------------------------------
+  @include register-length('button-height-xs', $fui-button-height-xs);
   @include register-length('button-height-sm', $fui-button-height-sm);
   @include register-length('button-height-md', $fui-button-height-md);
   @include register-length('button-height-lg', $fui-button-height-lg);

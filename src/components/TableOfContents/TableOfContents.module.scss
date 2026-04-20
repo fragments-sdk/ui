@@ -1,39 +1,169 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
-// Root nav wrapper
+// ============================================
+// Single-rail "snake" geometry
+// ============================================
+//
+// All <li>s are siblings in one flat <ul>. Each carries data-depth, which
+// sets the X of its per-row rail (drawn as `::before`). At depth-0 → depth-1
+// transitions an opening elbow is drawn via `::after` on the depth-1 item;
+// at depth-1 → depth-0 transitions a closing elbow is drawn via `::after`
+// on the depth-0 item. Active items paint their rail in accent; the curves
+// into and out of an active depth-1 also flip to accent so the section
+// reads as one continuous coloured snake.
+
+$rail-x-0: 7px;
+$rail-indent: 14px;
+$rail-x-1: 21px;            // = $rail-x-0 + $rail-indent
+$rail-pad: 18px;             // <ul> padding-left
+$rail-curve: 14px;
+$rail-thickness: 1.25px;
+$rail-active-thickness: 1.75px;
+
+$rail-from-item-0: $rail-x-0 - $rail-pad;   // -11px
+$rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
+
 .root {
   font-family: var(--fui-font-sans, $fui-font-sans);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
-// Title text ("On This Page")
 .title {
-  margin: 0;
-  padding: 0 var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2);
+  margin: 0 0 var(--fui-space-2, $fui-space-2);
+  padding: 0 var(--fui-space-2, $fui-space-2);
 }
 
-// List container
 .list {
-  display: flex;
-  flex-direction: column;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: var(--fui-space-0-5, $fui-space-0-5);
+  padding-left: $rail-pad;
+  position: relative;
 }
 
-// Individual item
-.item {
-  display: block;
+// ============================================
+// Per-row rail
+// ============================================
+
+.item,
+.groupHeaderRow {
+  position: relative;
+  list-style: none;
 }
 
-// Link styling — matches Sidebar.Item pattern
+[data-depth='0']::before {
+  content: '';
+  position: absolute;
+  left: $rail-from-item-0;
+  top: 0;
+  bottom: 0;
+  width: $rail-thickness;
+  background: var(--fui-border-default, $fui-border-default);
+  pointer-events: none;
+}
+
+[data-depth='1']::before {
+  content: '';
+  position: absolute;
+  left: $rail-from-item-1;
+  top: 0;
+  bottom: 0;
+  width: $rail-thickness;
+  background: var(--fui-border-default, $fui-border-default);
+  pointer-events: none;
+}
+
+// First depth-1 after a depth-0: shorten rail at top so opening curve has
+// a clean run-in.
+[data-depth='0'] + [data-depth='1']::before {
+  top: $rail-curve;
+}
+
+// Last depth-1 before a depth-0: shorten rail at bottom so closing curve
+// has a clean run-out.
+[data-depth='1']:has(+ [data-depth='0'])::before {
+  bottom: $rail-curve;
+}
+
+// ============================================
+// Opening elbow (depth-0 → depth-1)
+// ============================================
+
+[data-depth='0'] + [data-depth='1']::after {
+  content: '';
+  position: absolute;
+  left: $rail-from-item-0;
+  top: 0;
+  width: $rail-curve;
+  height: $rail-curve;
+  border-left: $rail-thickness solid
+    var(--fui-border-default, $fui-border-default);
+  border-bottom: $rail-thickness solid
+    var(--fui-border-default, $fui-border-default);
+  border-bottom-left-radius: $rail-curve;
+  pointer-events: none;
+}
+
+// ============================================
+// Closing elbow (depth-1 → depth-0)
+// ============================================
+
+[data-depth='1'] + [data-depth='0']::after {
+  content: '';
+  position: absolute;
+  left: $rail-from-item-0;
+  top: -$rail-curve;
+  width: $rail-curve;
+  height: $rail-curve;
+  border-right: $rail-thickness solid
+    var(--fui-border-default, $fui-border-default);
+  border-bottom: $rail-thickness solid
+    var(--fui-border-default, $fui-border-default);
+  border-bottom-right-radius: $rail-curve;
+  pointer-events: none;
+}
+
+// ============================================
+// Active state — paint rail + adjacent curves in accent
+// ============================================
+
+[data-active]::before {
+  background: var(--fui-color-accent, $fui-color-accent);
+  width: $rail-active-thickness;
+}
+
+[data-depth='0']:has(+ [data-depth='1'][data-active])::before {
+  background: var(--fui-color-accent, $fui-color-accent);
+  width: $rail-active-thickness;
+}
+
+[data-depth='0'] + [data-depth='1'][data-active]::after {
+  border-left-color: var(--fui-color-accent, $fui-color-accent);
+  border-bottom-color: var(--fui-color-accent, $fui-color-accent);
+  border-left-width: $rail-active-thickness;
+  border-bottom-width: $rail-active-thickness;
+}
+
+[data-depth='1'][data-active] + [data-depth='0']::after {
+  border-right-color: var(--fui-color-accent, $fui-color-accent);
+  border-bottom-color: var(--fui-color-accent, $fui-color-accent);
+  border-right-width: $rail-active-thickness;
+  border-bottom-width: $rail-active-thickness;
+}
+
+// ============================================
+// Item link
+// ============================================
+
 .link {
   display: flex;
   align-items: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1)
+    var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
@@ -52,19 +182,111 @@
   }
 }
 
-// Indent for depth > 2 (h3s)
-.indent {
-  padding-left: var(--fui-space-5, $fui-space-5);
+[data-depth='1'] .link {
+  padding-left: calc(var(--fui-space-2, $fui-space-2) + #{$rail-indent});
 }
 
-// Active state — matches Sidebar.Item active pattern
+.linkLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leading,
+.trailing {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.trailing {
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
 .active {
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  color: var(--fui-text-primary, $fui-text-primary);
+  color: var(--fui-color-accent, $fui-color-accent);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+}
+
+// ============================================
+// Group header
+// ============================================
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  padding: var(--fui-space-1, $fui-space-1)
+    var(--fui-space-2, $fui-space-2);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  font-family: inherit;
+  cursor: default;
+}
+
+.groupHeaderInteractive {
+  cursor: pointer;
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.groupHeaderActive {
+  color: var(--fui-color-accent, $fui-color-accent);
+}
+
+.groupChevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: inherit;
+  opacity: 0.7;
+  transition: transform var(--fui-transition-fast, $fui-transition-fast);
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  &[data-open] {
+    transform: rotate(90deg);
+  }
+}
+
+.groupLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .groupHeaderInteractive,
+  .groupChevron {
+    transition: none;
   }
 }

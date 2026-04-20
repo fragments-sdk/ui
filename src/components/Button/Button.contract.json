@@ -15,8 +15,8 @@
   "propsSummary": [
     "as: button|a",
     "children: node (required)",
-    "variant: primary|secondary|ghost|danger|outlined|outline|icon (default: \"primary\")",
-    "size: sm|md|lg (default: \"md\")",
+    "variant: primary|secondary|ghost|link|danger|outlined|outline|icon (default: \"primary\")",
+    "size: xs|sm|md|lg (default: \"md\")",
     "icon: boolean",
     "fullWidth: boolean",
     "asChild: boolean"
@@ -39,13 +39,14 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual style variant (\"icon\" is a convenience alias for outlined + icon-only layout)",
+      "description": "Visual style variant (\"icon\" is a convenience alias for outlined + icon-only layout, \"link\" is accent-coloured + transparent for tertiary CTAs)",
       "default": "\"primary\"",
       "required": false,
       "values": [
         "primary",
         "secondary",
         "ghost",
+        "link",
         "danger",
         "outlined",
         "outline",
@@ -57,10 +58,11 @@
     },
     "size": {
       "type": "enum",
-      "description": "Button size",
+      "description": "Button size (\"xs\" is for inline row-action controls where \"sm\" is too tall)",
       "default": "\"md\"",
       "required": false,
       "values": [
+        "xs",
         "sm",
         "md",
         "lg"
@@ -128,6 +130,11 @@
       "code": "<Button variant=\"ghost\">Learn More</Button>"
     },
     {
+      "name": "Link",
+      "description": "Accent-coloured transparent button for tertiary CTAs",
+      "code": "<Button variant=\"link\">View all →</Button>"
+    },
+    {
       "name": "Danger",
       "description": "Destructive action requiring attention",
       "code": "<Button variant=\"danger\">Delete Item</Button>"
@@ -145,7 +152,7 @@
     {
       "name": "Sizes",
       "description": "Available size options",
-      "code": "<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>\n  <Button size=\"sm\">Small</Button>\n  <Button size=\"md\">Medium</Button>\n  <Button size=\"lg\">Large</Button>\n</div>"
+      "code": "<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>\n  <Button size=\"xs\" variant=\"icon\" aria-label=\"Dismiss\">\u00d7</Button>\n  <Button size=\"sm\">Small</Button>\n  <Button size=\"md\">Medium</Button>\n  <Button size=\"lg\">Large</Button>\n</div>"
     },
     {
       "name": "Disabled",
@@ -177,8 +184,8 @@
   ],
   "contract": {
     "propsSummary": [
-      "variant: primary|secondary|ghost|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only)",
-      "size: sm|md|lg (default: md)",
+      "variant: primary|secondary|ghost|link|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only, link = accent transparent)",
+      "size: xs|sm|md|lg (default: md, xs for inline row-action controls)",
       "disabled: boolean - disables interaction",
       "type: button|submit|reset (default: button)",
       "onClick: (event) => void - action handler",

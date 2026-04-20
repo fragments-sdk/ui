@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "TableOfContents",
-  "description": "Sticky sidebar navigation for long-form content. Renders heading links with active state highlighting for scroll spy integration.",
+  "description": "Sticky sidebar navigation for long-form content or filterable lists. Renders heading links with a continuous hierarchy rail that branches in for nested groups and back out for parent items, with active-segment highlighting.",
   "category": "navigation",
   "tags": [
     "toc",
@@ -9,7 +9,9 @@
     "navigation",
     "sidebar",
     "scroll-spy",
-    "headings"
+    "headings",
+    "tree",
+    "hierarchy"
   ],
   "status": "stable",
   "sourcePath": "src/components/TableOfContents/index.tsx",
@@ -23,7 +25,7 @@
   "props": {
     "children": {
       "type": "node",
-      "description": "TableOfContents.Item elements",
+      "description": "TableOfContents.Item or TableOfContents.Group elements",
       "required": true
     },
     "label": {
@@ -49,7 +51,8 @@
     "when": [
       "Long-form content pages (docs, blog posts, articles)",
       "Component documentation with multiple sections",
-      "Any page with 3+ headings that benefits from quick navigation"
+      "Filterable list sidebars where items are grouped by category",
+      "Any page with 3+ headings or nested sections that benefit from quick navigation"
     ],
     "whenNot": [
       "Short pages with only 1-2 sections",
@@ -58,15 +61,18 @@
     ],
     "guidelines": [
       "Pair with a scroll spy hook (e.g., IntersectionObserver) to track active heading",
-      "Use indent on sub-headings (h3) to show hierarchy",
+      "Use TableOfContents.Group to nest items under a labeled, optionally-collapsible parent",
+      "The legacy `indent` boolean on Item is preserved for back-compat; prefer Group for new code",
       "Place in a sticky aside for best UX",
       "Heading IDs must match between TOC items and the actual DOM headings",
-      "TableOfContents.Item performs smooth scrolling by default; call event.preventDefault() in onClick to override"
+      "TableOfContents.Item performs smooth scrolling by default; call event.preventDefault() in onClick to override",
+      "Group is uncontrolled (defaultOpen=true) by default; pass open + onOpenChange for controlled state"
     ],
     "accessibility": [
       "Uses <nav aria-label=\"Table of contents\"> for landmark navigation",
       "Active item is marked with aria-current=\"location\"",
       "All items are links with smooth scroll behavior",
+      "Group toggle is a real <button> with aria-expanded reflecting open state",
       "Focus-visible ring on keyboard navigation"
     ]
   },
@@ -75,6 +81,11 @@
       "name": "Default",
       "description": "Basic table of contents with section links",
       "code": "<TableOfContents>\n  <TableOfContents.Item id=\"introduction\">Introduction</TableOfContents.Item>\n  <TableOfContents.Item id=\"getting-started\">Getting Started</TableOfContents.Item>\n  <TableOfContents.Item id=\"installation\" indent>Installation</TableOfContents.Item>\n  <TableOfContents.Item id=\"configuration\" indent>Configuration</TableOfContents.Item>\n  <TableOfContents.Item id=\"api-reference\">API Reference</TableOfContents.Item>\n  <TableOfContents.Item id=\"examples\">Examples</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "Nested Groups",
+      "description": "Filterable list grouped by category — the hierarchy rail branches in for children and back out for the next parent item",
+      "code": "<TableOfContents title=\"Components\">\n  <TableOfContents.Item id=\"all\" active>All</TableOfContents.Item>\n  <TableOfContents.Group label=\"Primitives\" trailing={<span>3</span>}>\n    <TableOfContents.Item id=\"button\">Button</TableOfContents.Item>\n    <TableOfContents.Item id=\"card\">Card</TableOfContents.Item>\n    <TableOfContents.Item id=\"input\">Input</TableOfContents.Item>\n  </TableOfContents.Group>\n  <TableOfContents.Group label=\"Custom\" defaultOpen={false}>\n    <TableOfContents.Item id=\"features\">Features</TableOfContents.Item>\n    <TableOfContents.Item id=\"plans\">Plans</TableOfContents.Item>\n  </TableOfContents.Group>\n</TableOfContents>"
     },
     {
       "name": "With Active Item",
@@ -115,25 +126,34 @@
       "hideTitle: boolean - hide the title",
       "label: string - aria-label for nav landmark",
       "TableOfContents.Item id: string - heading ID to link to",
-      "TableOfContents.Item active: boolean - highlight as current",
-      "TableOfContents.Item indent: boolean - indent for sub-headings",
+      "TableOfContents.Item active: boolean - highlight as current (also paints the rail segment in accent)",
+      "TableOfContents.Item indent: boolean - legacy depth=1 indent for flat lists; prefer Group for new code",
+      "TableOfContents.Item leading/trailing: node - optional adornments before/after the label",
+      "TableOfContents.Group label: node - header text for the group",
+      "TableOfContents.Group defaultOpen / open / onOpenChange - uncontrolled or controlled open state (default open)",
+      "TableOfContents.Group collapsible: boolean - render as a static label (default true)",
+      "TableOfContents.Group trailing/leading: node - optional adornments on the group header row",
       "Forwards standard nav/anchor DOM props; TableOfContents.Item onClick can prevent default smooth scroll"
     ],
     "a11yRules": [
       "A11Y_NAV_LANDMARK",
-      "A11Y_ARIA_CURRENT"
+      "A11Y_ARIA_CURRENT",
+      "A11Y_ARIA_EXPANDED"
     ]
   },
   "ai": {
     "compositionPattern": "compound",
     "subComponents": [
-      "Item"
+      "Item",
+      "Group"
     ],
     "requiredChildren": [
-      "Item"
+      "Item",
+      "Group"
     ],
     "commonPatterns": [
-      "<TableOfContents>{headings.map(h => <TableOfContents.Item key={h.id} id={h.id} active={activeId === h.id} indent={h.level === 3}>{h.text}</TableOfContents.Item>)}</TableOfContents>"
+      "<TableOfContents>{headings.map(h => <TableOfContents.Item key={h.id} id={h.id} active={activeId === h.id} indent={h.level === 3}>{h.text}</TableOfContents.Item>)}</TableOfContents>",
+      "<TableOfContents>{groups.map(g => <TableOfContents.Group key={g.label} label={g.label} trailing={g.count}>{g.items.map(i => <TableOfContents.Item key={i.id} id={i.id} active={activeId === i.id}>{i.label}</TableOfContents.Item>)}</TableOfContents.Group>)}</TableOfContents>"
     ]
   },
   "provenance": {

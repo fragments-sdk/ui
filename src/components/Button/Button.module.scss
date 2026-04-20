@@ -21,6 +21,12 @@
 // (md: space-3 vs mixin's space-4, lg: space-4 vs mixin's space-5).
 // Buttons need tighter horizontal padding than inputs for visual balance,
 // since button text is typically shorter than input content.
+.xs {
+  min-height: var(--fui-button-height-xs, $fui-button-height-xs);
+  padding: 0 var(--fui-space-1, $fui-space-1);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+}
+
 .sm {
   min-height: var(--fui-button-height-sm, $fui-button-height-sm);
   padding: 0 var(--fui-space-2, $fui-space-2);
@@ -108,6 +114,33 @@
   }
 }
 
+// Link: accent-coloured, transparent background. For tertiary CTAs
+// ("View all →", "Learn more →") that should feel linkish but live in
+// button contexts. Differs from ghost (text-primary) by using accent.
+.link {
+  background-color: transparent;
+  color: var(--fui-color-accent, $fui-color-accent);
+  border: 1px solid transparent;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 10%,
+      transparent
+    );
+    color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  }
+
+  &:active:not(:disabled),
+  &[data-pressed] {
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 18%,
+      transparent
+    );
+  }
+}
+
 .danger {
   background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
@@ -143,6 +176,10 @@
 .icon {
   aspect-ratio: 1;
   padding: 0;
+
+  &.xs {
+    width: var(--fui-button-height-xs, $fui-button-height-xs);
+  }
 
   &.sm {
     width: var(--fui-button-height-sm, $fui-button-height-sm);
@@ -196,6 +233,14 @@
 
     &:hover:not(:disabled) {
       border-color: var(--fui-text-primary, $fui-text-primary);
+    }
+  }
+
+  .link {
+    border-width: 2px;
+
+    &:hover:not(:disabled) {
+      border-color: var(--fui-color-accent, $fui-color-accent);
     }
   }
 }

@@ -21,6 +21,8 @@ $density-compact: (
   base-unit: 6px,
   base-font-size: 14px,
   // Button heights (more compact)
+  button-height-xs: 20px,
+  // ~3.3 units
   button-height-sm: 24px,
   // ~4 units
   button-height-md: 30px,
@@ -50,6 +52,8 @@ $density-default: (
   base-unit: 7px,
   base-font-size: 14px,
   // Button heights (current values)
+  button-height-xs: 24px,
+  // ~3.4 units
   button-height-sm: 28px,
   // 4 units
   button-height-md: 36px,
@@ -78,6 +82,8 @@ $density-relaxed: (
   base-unit: 8px,
   base-font-size: 14px,
   // Button heights (more spacious)
+  button-height-xs: 28px,
+  // 3.5 units
   button-height-sm: 32px,
   // 4 units
   button-height-md: 40px,

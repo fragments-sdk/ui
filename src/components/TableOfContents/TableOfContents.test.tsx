@@ -133,8 +133,20 @@ describe('TableOfContents', () => {
         <TableOfContents.Item id="c">C</TableOfContents.Item>
       </TableOfContents>
     );
-    expect(screen.getByRole('list')).toBeInTheDocument();
+    expect(screen.getAllByRole('list')).toHaveLength(1);
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
+  });
+
+  it('marks top-level items with data-depth=0 and indented items with data-depth=1', () => {
+    render(
+      <TableOfContents>
+        <TableOfContents.Item id="a">A</TableOfContents.Item>
+        <TableOfContents.Item id="b" indent>B</TableOfContents.Item>
+      </TableOfContents>
+    );
+    const items = screen.getAllByRole('listitem');
+    expect(items[0]).toHaveAttribute('data-depth', '0');
+    expect(items[1]).toHaveAttribute('data-depth', '1');
   });
 
   it('has no accessibility violations', async () => {
@@ -147,5 +159,121 @@ describe('TableOfContents', () => {
       </TableOfContents>
     );
     await expectNoA11yViolations(container);
+  });
+
+  describe('Group', () => {
+    it('renders the group label and nested items', () => {
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
+          <TableOfContents.Group label="Primitives">
+            <TableOfContents.Item id="button">Button</TableOfContents.Item>
+            <TableOfContents.Item id="card">Card</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      expect(screen.getByRole('button', { name: /primitives/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Button' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Card' })).toBeInTheDocument();
+    });
+
+    it('starts open by default and toggles closed on click', async () => {
+      const user = userEvent.setup();
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Group label="Custom">
+            <TableOfContents.Item id="features">Features</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      const trigger = screen.getByRole('button', { name: /custom/i });
+      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('link', { name: 'Features' })).toBeInTheDocument();
+
+      await user.click(trigger);
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.queryByRole('link', { name: 'Features' })).not.toBeInTheDocument();
+    });
+
+    it('respects defaultOpen=false', () => {
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Group label="Custom" defaultOpen={false}>
+            <TableOfContents.Item id="features">Features</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      expect(screen.getByRole('button', { name: /custom/i })).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.queryByRole('link', { name: 'Features' })).not.toBeInTheDocument();
+    });
+
+    it('supports controlled open + onOpenChange', async () => {
+      const user = userEvent.setup();
+      const onOpenChange = vi.fn();
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Group label="Custom" open={true} onOpenChange={onOpenChange}>
+            <TableOfContents.Item id="features">Features</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      await user.click(screen.getByRole('button', { name: /custom/i }));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      // Stays open because controlled
+      expect(screen.getByRole('button', { name: /custom/i })).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('link', { name: 'Features' })).toBeInTheDocument();
+    });
+
+    it('renders a non-interactive header when collapsible=false', () => {
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Group label="Always Open" collapsible={false}>
+            <TableOfContents.Item id="x">X</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      expect(screen.queryByRole('button', { name: /always open/i })).not.toBeInTheDocument();
+      expect(screen.getByText('Always Open')).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'X' })).toBeInTheDocument();
+    });
+
+    it('inherits depth=1 for nested items inside a Group', () => {
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Group label="Primitives">
+            <TableOfContents.Item id="button">Button</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      const nestedItem = screen.getByRole('link', { name: 'Button' }).closest('li');
+      expect(nestedItem).toHaveAttribute('data-depth', '1');
+    });
+
+    it('renders trailing content (e.g., a count) on the group header', () => {
+      render(
+        <TableOfContents hideTitle>
+          <TableOfContents.Group label="Custom" trailing={<span data-testid="count">140</span>}>
+            <TableOfContents.Item id="x">X</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      expect(screen.getByTestId('count')).toHaveTextContent('140');
+    });
+
+    it('has no accessibility violations with nested groups', async () => {
+      const { container } = render(
+        <TableOfContents>
+          <TableOfContents.Item id="all" active>All</TableOfContents.Item>
+          <TableOfContents.Group label="Primitives">
+            <TableOfContents.Item id="button">Button</TableOfContents.Item>
+            <TableOfContents.Item id="card">Card</TableOfContents.Item>
+          </TableOfContents.Group>
+          <TableOfContents.Group label="Custom" defaultOpen={false}>
+            <TableOfContents.Item id="features">Features</TableOfContents.Item>
+          </TableOfContents.Group>
+        </TableOfContents>
+      );
+      await expectNoA11yViolations(container);
+    });
   });
 });

@@ -249,6 +249,7 @@ $fui-breakpoint-xl: 1280px !default;
 // --------------------------------------------
 
 // Button heights (derived from density seed)
+$fui-button-height-xs: computed.$computed-button-height-xs !default;
 $fui-button-height-sm: computed.$computed-button-height-sm !default;
 $fui-button-height-md: computed.$computed-button-height-md !default;
 $fui-button-height-lg: computed.$computed-button-height-lg !default;
@@ -546,6 +547,7 @@ $fui-dark-tooltip-shadow:
     --fui-scrollbar-thumb-hover: light-dark(#{$fui-scrollbar-thumb-hover}, #{$fui-dark-scrollbar-thumb-hover});
 
     // Component heights (density-responsive)
+    --fui-button-height-xs: #{$fui-button-height-xs};
     --fui-button-height-sm: #{$fui-button-height-sm};
     --fui-button-height-md: #{$fui-button-height-md};
     --fui-button-height-lg: #{$fui-button-height-lg};

@@ -24,9 +24,31 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('danger');
   });
 
+  it('applies link variant class', () => {
+    render(<Button variant="link">View all</Button>);
+    expect(screen.getByRole('button')).toHaveClass('link');
+  });
+
   it('applies size classes', () => {
     render(<Button size="lg">Btn</Button>);
     expect(screen.getByRole('button')).toHaveClass('lg');
+  });
+
+  it('applies xs size class for inline row actions', () => {
+    render(<Button size="xs">Btn</Button>);
+    expect(screen.getByRole('button')).toHaveClass('xs');
+  });
+
+  it('combines xs size with icon variant for compact row actions', () => {
+    render(
+      <Button variant="icon" size="xs" aria-label="Dismiss">
+        <span aria-hidden>×</span>
+      </Button>
+    );
+    const button = screen.getByRole('button', { name: 'Dismiss' });
+    expect(button).toHaveClass('outlined');
+    expect(button).toHaveClass('icon');
+    expect(button).toHaveClass('xs');
   });
 
   it('renders as an anchor when as="a"', () => {

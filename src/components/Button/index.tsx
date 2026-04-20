@@ -22,14 +22,26 @@ function composeEventHandlers<T extends (...args: any[]) => void>(
  */
 type ButtonBaseProps = {
   children: React.ReactNode;
-  /** Visual style variant. `"outline"` is an alias for `"outlined"`. `"icon"` is a convenience alias for an outlined icon-only button.
+  /** Visual style variant.
    * @default "primary"
-   * @see https://usefragments.com/components/button#variants */
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outlined' | 'outline' | 'icon';
-  /** Button size.
+   * @see https://usefragments.com/components/button#variants
+   * @remarks
+   * - `"link"` — accent-coloured, transparent; for tertiary CTAs like "View all →"
+   * - `"icon"` — convenience alias for outlined + icon-only layout
+   * - `"outline"` — alias for `"outlined"` */
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'danger'
+    | 'outlined'
+    | 'outline'
+    | 'icon';
+  /** Button size. `"xs"` is for inline row-action controls (accept/dismiss, table-row icons) where `"sm"` is too tall.
    * @default "md"
    * @see https://usefragments.com/components/button#sizes */
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   /** Render as icon-only button (square aspect ratio). Prefer `variant="icon"` for the default outlined icon button. */
   icon?: boolean;
   /** Make button full width of container */
