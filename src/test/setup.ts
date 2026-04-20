@@ -1,8 +1,9 @@
-import '@testing-library/jest-dom/vitest';
+import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
 import { expect } from 'vitest';
-import * as matchers from 'vitest-axe/matchers';
+import * as axeMatchers from 'vitest-axe/matchers';
 
-expect.extend(matchers);
+expect.extend(jestDomMatchers);
+expect.extend(axeMatchers);
 
 // Polyfill PointerEvent for Base UI >=1.3.0 click handling in jsdom
 if (typeof global.PointerEvent === 'undefined') {
