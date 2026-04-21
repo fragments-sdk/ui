@@ -1,11 +1,21 @@
 # @fragments-sdk/ui
 
-A component library built on [Base UI](https://base-ui.com/) headless primitives with design tokens, SCSS modules, and full AI agent support via [Fragments](https://github.com/ConanMcN/fragments).
+A component library built on [Base UI](https://base-ui.com/) headless primitives with design tokens, SCSS modules, and full AI agent support. Project home: [usefragments.com](https://usefragments.com).
+
+## About this repository
+
+This GitHub repository is a **read-only mirror** of `@fragments-sdk/ui`. The canonical source lives in a private monorepo and is mirrored here on every push to `main`.
+
+- **Install from npm:** `pnpm add @fragments-sdk/ui` (or `npm install @fragments-sdk/ui`)
+- **Docs:** [usefragments.com](https://usefragments.com)
+- **Issues:** file them in this repo — they're triaged by maintainers.
+- **Contributions:** pull requests are not merged from this mirror. Describe proposed changes in an issue; maintainers land them in the canonical repo and the mirror re-syncs automatically.
 
 ## Install
 
 ```bash
-npm install @fragments-sdk/ui
+pnpm add @fragments-sdk/ui
+# or: npm install @fragments-sdk/ui
 ```
 
 Peer dependencies:
