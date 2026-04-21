@@ -7,7 +7,8 @@
   "homepage": "https://usefragments.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ConanMcN/fragments"
+    "url": "https://github.com/fragments-sdk/fragments",
+    "directory": "libs/ui"
   },
   "type": "module",
   "main": "src/index.ts",
