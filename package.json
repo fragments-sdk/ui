@@ -171,10 +171,10 @@
     }
   },
   "scripts": {
-    "dev": "node ../../packages/compiler/dist/bin.js build",
+    "dev": "pnpm exec fragments-compile build",
     "build": "pnpm run build:fragments",
-    "build:fragments": "node ../../packages/compiler/dist/bin.js build --if-needed",
-    "check:fragments": "node ../../packages/compiler/dist/bin.js build --check",
+    "build:fragments": "pnpm exec fragments-compile build --if-needed",
+    "check:fragments": "pnpm exec fragments-compile build --check",
     "build:dist": "vite build && tsc -p tsconfig.build.json",
     "build:publish": "pnpm run build:fragments && pnpm run build:dist",
     "lint": "eslint src",
