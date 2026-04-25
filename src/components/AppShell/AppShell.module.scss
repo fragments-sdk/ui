@@ -130,9 +130,17 @@
   }
 }
 
-// Sidebar variant="floating": blends with shell background (bg applied via inline style on Sidebar)
+// Sidebar variant="floating": dissolves the sidebar's own surface so it sits
+// directly on the shell canvas. Desktop only — on mobile the sidebar is an
+// overlay modal and needs its opaque surface to occlude the page.
+// Consumers can still pass `bg` to paint a custom surface — the inline style
+// on the inner Sidebar wins over this rule.
 .sidebarFloating {
-  // No additional styles needed — bg prop is passed directly to the Sidebar component
+  @include breakpoint-md {
+    > aside {
+      background-color: transparent;
+    }
+  }
 }
 
 // ============================================
@@ -146,15 +154,26 @@
   background-color: var(--fui-bg-primary, $fui-bg-primary);
 }
 
-// Main variant="floating": elevated card effect with inset from edges
+// Main variant="floating": elevated card inset from all edges of the shell.
+// - Inset 1px top highlight simulates a lit upper edge on dark canvases.
+// - Soft drop shadow lifts the card away from the canvas without heavy depth.
+// - Scroll is contained inside the card so the canvas stays fixed when the
+//   shell is height-constrained (e.g. 100dvh wrapper with overflow:hidden).
 .mainFloating {
-  margin: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) 0;
+  margin: var(--fui-space-2, $fui-space-2);
+  border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--fui-text-primary) 5%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 6px 18px rgba(0, 0, 0, 0.08);
+  overflow: hidden auto;
 
   @include below-md {
     margin: var(--fui-space-2, $fui-space-2) 0;
+    border-left: none;
+    border-right: none;
     border-radius: var(--fui-radius-lg, $fui-radius-lg);
     width: 100%;
   }
@@ -206,7 +225,8 @@
   }
 }
 
-// Aside variant="floating": elevated card effect with inset from edges
+// Aside variant="floating": matches the main floating card treatment so the
+// two panels read as sibling cards on the shell canvas.
 .asideFloating {
   // Override the explicit width so the aside fills its grid cell
   // and the margin creates visible inset space from the viewport edge.
@@ -214,12 +234,19 @@
   height: calc(100vh - var(--appshell-header-height, 56px) - var(--fui-space-2, $fui-space-2) * 2);
   height: calc(100dvh - var(--appshell-header-height, 56px) - var(--fui-space-2, $fui-space-2) * 2);
   margin: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2) 0;
+  border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--fui-text-primary) 5%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 6px 18px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 
   @include below-md {
     margin: var(--fui-space-2, $fui-space-2) 0;
+    border-left: none;
+    border-right: none;
     border-radius: var(--fui-radius-lg, $fui-radius-lg);
     width: 100%;
     height: auto;

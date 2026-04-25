@@ -18,13 +18,21 @@ $rail-indent: 14px;
 $rail-x-1: 21px;            // = $rail-x-0 + $rail-indent
 $rail-pad: 18px;             // <ul> padding-left
 $rail-curve: 14px;
-$rail-thickness: 1.25px;
-$rail-active-thickness: 1.75px;
+$rail-thickness: 1px;
+$rail-active-thickness: 1px;
 
 $rail-from-item-0: $rail-x-0 - $rail-pad;   // -11px
 $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 
 .root {
+  // Solid rail color that adapts to light/dark and tracks the page background.
+  // 18% mix gives clearly-visible contrast against bg-primary at 1px width
+  // (subtler --fui-bg-tertiary blends into the bg at this thickness).
+  --toc-rail: color-mix(
+    in srgb,
+    var(--fui-bg-primary, #fff),
+    var(--fui-text-primary, #000) 18%
+  );
   font-family: var(--fui-font-sans, $fui-font-sans);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
@@ -42,6 +50,9 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   padding: 0;
   padding-left: $rail-pad;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 // ============================================
@@ -52,6 +63,15 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 .groupHeaderRow {
   position: relative;
   list-style: none;
+
+  // Fade rail + elbows when [data-active] moves between items so the accent
+  // colour hands off smoothly rather than snapping as the user scrolls.
+  &::before,
+  &::after {
+    transition:
+      background-color var(--fui-transition-normal, $fui-transition-normal),
+      border-color var(--fui-transition-normal, $fui-transition-normal);
+  }
 }
 
 [data-depth='0']::before {
@@ -59,9 +79,11 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   position: absolute;
   left: $rail-from-item-0;
   top: 0;
-  bottom: 0;
+  // Extend 1px past the bottom so the rail spans the 1px list gap between
+  // adjacent items, preserving a continuous rail under `gap: 1px` on .list.
+  bottom: -1px;
   width: $rail-thickness;
-  background: var(--fui-border-default, $fui-border-default);
+  background-color: var(--toc-rail);
   pointer-events: none;
 }
 
@@ -70,9 +92,9 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   position: absolute;
   left: $rail-from-item-1;
   top: 0;
-  bottom: 0;
+  bottom: -1px;
   width: $rail-thickness;
-  background: var(--fui-border-default, $fui-border-default);
+  background-color: var(--toc-rail);
   pointer-events: none;
 }
 
@@ -99,11 +121,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   top: 0;
   width: $rail-curve;
   height: $rail-curve;
-  border-left: $rail-thickness solid
-    var(--fui-border-default, $fui-border-default);
-  border-bottom: $rail-thickness solid
-    var(--fui-border-default, $fui-border-default);
-  border-bottom-left-radius: $rail-curve;
+  border-left: $rail-thickness solid var(--toc-rail);
+  border-bottom: $rail-thickness solid var(--toc-rail);
   pointer-events: none;
 }
 
@@ -115,14 +134,13 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   content: '';
   position: absolute;
   left: $rail-from-item-0;
-  top: -$rail-curve;
+  // Start 1px higher to bridge the `gap: 1px` between depth-1 and depth-0 so
+  // the elbow's vertical stem meets the depth-1 rail end without a break.
+  top: calc(-#{$rail-curve} - 1px);
   width: $rail-curve;
-  height: $rail-curve;
-  border-right: $rail-thickness solid
-    var(--fui-border-default, $fui-border-default);
-  border-bottom: $rail-thickness solid
-    var(--fui-border-default, $fui-border-default);
-  border-bottom-right-radius: $rail-curve;
+  height: calc(#{$rail-curve} + 1px);
+  border-right: $rail-thickness solid var(--toc-rail);
+  border-bottom: $rail-thickness solid var(--toc-rail);
   pointer-events: none;
 }
 
@@ -131,12 +149,12 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 // ============================================
 
 [data-active]::before {
-  background: var(--fui-color-accent, $fui-color-accent);
+  background-color: var(--fui-color-accent, $fui-color-accent);
   width: $rail-active-thickness;
 }
 
 [data-depth='0']:has(+ [data-depth='1'][data-active])::before {
-  background: var(--fui-color-accent, $fui-color-accent);
+  background-color: var(--fui-color-accent, $fui-color-accent);
   width: $rail-active-thickness;
 }
 
@@ -162,12 +180,15 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   display: flex;
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-1, $fui-space-1)
-    var(--fui-space-2, $fui-space-2);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  min-height: 28px;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  // 13px recedes below the 14px sidebar nav and 15px article body,
+  // establishing three distinct nav tiers (sidebar ▸ body ▸ TOC).
+  font-size: 0.929rem;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
   text-decoration: none;
   transition: background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
@@ -182,8 +203,12 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   }
 }
 
+// Depth-1 link sits to the right of the rail (which lives at x=3px from li edge).
+// Margin pushes the link's hover/active background past the rail so it doesn't
+// paint over the line. Reduced padding-left keeps the text in the same x-position.
 [data-depth='1'] .link {
-  padding-left: calc(var(--fui-space-2, $fui-space-2) + #{$rail-indent});
+  margin-left: var(--fui-space-2, $fui-space-2);
+  padding-left: $rail-indent;
 }
 
 .linkLabel {
@@ -221,8 +246,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
   width: 100%;
-  padding: var(--fui-space-1, $fui-space-1)
-    var(--fui-space-2, $fui-space-2);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  min-height: 32px;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
@@ -288,5 +313,13 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   .groupHeaderInteractive,
   .groupChevron {
     transition: none;
+  }
+
+  .item,
+  .groupHeaderRow {
+    &::before,
+    &::after {
+      transition: none;
+    }
   }
 }

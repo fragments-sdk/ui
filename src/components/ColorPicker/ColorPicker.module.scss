@@ -1,6 +1,12 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Local component tokens
+$fui-colorpicker-size: 180px !default;
+$fui-colorpicker-hue-height: $fui-target-size-min !default;
+$fui-colorpicker-pointer-size: $fui-target-size-min !default;
+$fui-colorpicker-pointer-border: 2px !default;
+
 // Form field wrapper (label + helper + error)
 @include form-field-wrapper;
 

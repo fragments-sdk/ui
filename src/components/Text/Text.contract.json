@@ -17,7 +17,7 @@
     "children: node (required)",
     "as: h1|h2|h3|h4|h5|h6|p|span|label|div|strong|em|small|mark|del|ins|sub|sup|time|address|blockquote|cite|code|abbr (default: span)",
     "variant: section-label",
-    "size: 2xs|xs|sm|base|md|lg|xl|2xl",
+    "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl",
     "weight: normal|medium|semibold|bold (default: \"normal\")",
     "color: primary|secondary|tertiary|muted (default: \"primary\")",
     "font: sans|mono (default: sans)",
@@ -73,7 +73,7 @@
     },
     "size": {
       "type": "enum",
-      "description": "Font size (md is an alias for base)",
+      "description": "Font size. 2xs (10), xs (12), sm/base (14), md (15 prose body), lg (20), xl (24), 2xl (30), 3xl (36 page title), 4xl (48 hero).",
       "required": false,
       "values": [
         "2xs",
@@ -83,7 +83,9 @@
         "md",
         "lg",
         "xl",
-        "2xl"
+        "2xl",
+        "3xl",
+        "4xl"
       ]
     },
     "weight": {
@@ -164,7 +166,7 @@
     {
       "name": "Sizes",
       "description": "Different text sizes",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text size=\"2xs\">Extra extra small (2xs)</Text>\n  <Text size=\"xs\">Extra small (xs)</Text>\n  <Text size=\"sm\">Small (sm)</Text>\n  <Text size=\"base\">Base size</Text>\n  <Text size=\"lg\">Large (lg)</Text>\n  <Text size=\"xl\">Extra large (xl)</Text>\n  <Text size=\"2xl\">Extra extra large (2xl)</Text>\n</div>"
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text size=\"2xs\">Extra extra small (2xs — 10px)</Text>\n  <Text size=\"xs\">Extra small (xs — 12px)</Text>\n  <Text size=\"sm\">Small (sm — 14px)</Text>\n  <Text size=\"base\">Base size (14px)</Text>\n  <Text size=\"md\">Medium prose body (md — 15px)</Text>\n  <Text size=\"lg\">Large (lg — 20px)</Text>\n  <Text size=\"xl\">Extra large (xl — 24px)</Text>\n  <Text size=\"2xl\">Extra extra large (2xl — 30px)</Text>\n  <Text size=\"3xl\">Page title (3xl — 36px)</Text>\n  <Text size=\"4xl\">Hero display (4xl — 48px)</Text>\n</div>"
     },
     {
       "name": "Weights",
@@ -179,7 +181,7 @@
     {
       "name": "Semantic Elements",
       "description": "Using appropriate HTML elements",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text as=\"h1\" size=\"2xl\" weight=\"semibold\">Heading 1</Text>\n  <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Heading 2</Text>\n  <Text as=\"h3\" size=\"lg\" weight=\"medium\">Heading 3</Text>\n  <Text as=\"p\" color=\"secondary\">\n    This is a paragraph of text that demonstrates the Text component\n    with semantic paragraph element.\n  </Text>\n</div>"
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text as=\"h1\" size=\"3xl\" weight=\"semibold\">Heading 1</Text>\n  <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Heading 2</Text>\n  <Text as=\"h3\" size=\"lg\" weight=\"semibold\">Heading 3</Text>\n  <Text as=\"p\" size=\"md\" color=\"secondary\">\n    This is a paragraph of text that demonstrates the Text component\n    with semantic paragraph element.\n  </Text>\n</div>"
     },
     {
       "name": "Monospace",
@@ -212,7 +214,7 @@
   "contract": {
     "propsSummary": [
       "as: string - HTML element",
-      "size: 2xs|xs|sm|base|md|lg|xl|2xl - font size (md = base)",
+      "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl - font size (px: 10/12/14/14/15/20/24/30/36/48)",
       "weight: normal|medium|semibold|bold - font weight",
       "color: primary|secondary|tertiary|muted - text color (muted = tertiary)",
       "font: sans|mono - font family",

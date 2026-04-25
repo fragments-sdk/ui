@@ -188,6 +188,8 @@
   @include register-number('line-height-tight', $fui-line-height-tight);
   @include register-number('line-height-normal', $fui-line-height-normal);
   @include register-number('line-height-relaxed', $fui-line-height-relaxed);
+  @include register-number('line-height-display', $fui-line-height-display);
+  @include register-number('line-height-prose', $fui-line-height-prose);
 
   // ------------------------------------------
   // Typography — Font Sizes (lengths)
@@ -196,9 +198,12 @@
   @include register-length('font-size-xs', $fui-font-size-xs);
   @include register-length('font-size-sm', $fui-font-size-sm);
   @include register-length('font-size-base', $fui-font-size-base);
+  @include register-length('font-size-md', $fui-font-size-md);
   @include register-length('font-size-lg', $fui-font-size-lg);
   @include register-length('font-size-xl', $fui-font-size-xl);
   @include register-length('font-size-2xl', $fui-font-size-2xl);
+  @include register-length('font-size-3xl', $fui-font-size-3xl);
+  @include register-length('font-size-4xl', $fui-font-size-4xl);
 
   // ------------------------------------------
   // Note: The following tokens are NOT registered because @property

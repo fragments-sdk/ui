@@ -1,9 +1,13 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 
-// ============================================
-// Sidebar Root
-// ============================================
+// Local component tokens
+$fui-sidebar-indicator-width: 2px !default;
+$fui-sidebar-indicator-height: 1.143rem !default; // 16px
+$fui-sidebar-rail-width: 1.143rem !default; // 16px
+$fui-sidebar-rail-indicator-width: 4px !default;
+$fui-sidebar-rail-indicator-height: 2.857rem !default; // 40px
+$fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
 .root {
   position: relative;
@@ -17,7 +21,7 @@
   overflow: hidden;
   flex-shrink: 0;
 
-  // Hide sidebar on mobile before JS hydrates to prevent flash
+  // Prevent flash on mobile before JS hydrates
   @include below-md {
     &:not(.mobile) {
       position: fixed;
@@ -26,17 +30,18 @@
   }
 }
 
-// Desktop collapsed state
 .collapsed {
   width: var(--sidebar-effective-collapsed-width, var(--sidebar-collapsed-width));
 
-  .header {
-    justify-content: center;
+  .header,
+  .nav,
+  .footer {
     padding: var(--fui-space-1, $fui-space-1);
   }
 
-  .nav {
-    padding: var(--fui-space-1, $fui-space-1);
+  .header,
+  .footer {
+    justify-content: center;
   }
 
   .sectionLabel {
@@ -58,20 +63,13 @@
   .itemIcon {
     margin: 0;
   }
-
-  .footer {
-    justify-content: center;
-    padding: var(--fui-space-1, $fui-space-1);
-  }
-
   .collapseToggle {
     margin: 0 auto;
   }
 }
 
-.collapsedNoIcons {
-  overflow: visible;
-
+.collapsedNoIcons,
+.offcanvasCollapsed {
   .header,
   .nav,
   .footer {
@@ -85,7 +83,20 @@
   }
 }
 
-// Mobile state
+.collapsedNoIcons {
+  overflow: visible;
+}
+
+.offcanvasCollapsed {
+  width: 0;
+  overflow: visible;
+
+  .rail {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 .mobile {
   position: fixed;
   top: 0;
@@ -106,22 +117,15 @@
   }
 }
 
-// ============================================
-// Header
-// ============================================
-
 .header {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2)
+    var(--fui-space-1, $fui-space-1);
   flex-shrink: 0;
-  height: var(--appshell-header-height, 56px);
+  min-height: 44px;
 }
-
-// ============================================
-// Navigation
-// ============================================
 
 .nav {
   flex: 1;
@@ -129,7 +133,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2)
+    var(--fui-space-2, $fui-space-2);
 }
 
 .navScrollArea {
@@ -137,32 +142,33 @@
   min-height: 0;
 }
 
-// ============================================
-// Section
-// ============================================
-
-.section {
-  &:not(:first-child) {
-    margin-top: var(--fui-space-4, $fui-space-4);
-  }
+.section:not(:first-child) {
+  margin-top: var(--fui-space-3, $fui-space-3);
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-2, $fui-space-2)
+    var(--fui-space-1, $fui-space-1);
 }
 
 .sectionTrigger {
   flex: 1;
 }
 
+// Override section-label-text inheritance — sidebar groups read as quiet
+// title-case headings, not shouty all-caps labels.
 .sectionLabel {
   @include section-label-text;
-
   flex: 1;
   min-width: 0;
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
 .sectionActionWrapper {
@@ -192,40 +198,53 @@
   }
 }
 
-.sectionList {
+.sectionList,
+.submenu {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
-// Collapsible section styles (using Collapsible component)
-.sectionCollapsible {
-  // Override Collapsible trigger styles for sidebar context
-  .sectionTrigger {
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-    border-radius: var(--fui-radius-md, $fui-radius-md);
+.sectionCollapsible .sectionTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--fui-space-1, $fui-space-1);
+  width: 100%;
+  padding: 2px 0;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background: transparent;
 
-    &:hover {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
+  &:hover {
+    background-color: transparent;
+
+    .sectionLabel {
+      color: var(--fui-text-secondary, $fui-text-secondary);
     }
+
+    svg {
+      color: var(--fui-text-secondary, $fui-text-secondary);
+    }
+  }
+
+  // Trailing caret reads as a quiet disclosure twistie.
+  svg {
+    width: 10px;
+    height: 10px;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 }
 
-.sectionContent {
-  // Content container - no extra padding needed
+.itemWrapper,
+.subItemWrapper,
+.submenuWrapper {
+  list-style: none;
 }
 
-// ============================================
-// Item
-// ============================================
-
 .itemWrapper {
-  list-style: none;
   width: 100%;
 }
 
@@ -237,12 +256,14 @@
   display: flex;
   align-items: center;
   width: 100%;
-  gap: var(--fui-sidebar-item-gap, var(--fui-space-2, $fui-space-2));
-  padding: var(--fui-sidebar-item-padding-y, var(--fui-space-1, $fui-space-1)) var(--fui-sidebar-item-padding-x, var(--fui-space-2, $fui-space-2));
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
   min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
 
   &:hover:not(.itemDisabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -255,19 +276,15 @@
   }
 }
 
+// Alpha-overlay active state reads as a depression on any surface,
+// adapting cleanly across light and dark themes.
 .itemActive {
-  // Use secondary surface + primary text so active state adapts in light and dark themes
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  background-color: var(--fui-bg-active, $fui-bg-active);
   color: var(--fui-text-primary, $fui-text-primary);
 
-  &:hover {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary) !important;
-    color: var(--fui-text-primary, $fui-text-primary) !important;
-    text-decoration: none;
-  }
-
+  &:hover,
   &:active {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary) !important;
+    background-color: var(--fui-bg-active, $fui-bg-active) !important;
     color: var(--fui-text-primary, $fui-text-primary) !important;
     text-decoration: none;
   }
@@ -277,7 +294,8 @@
   }
 }
 
-.itemDisabled {
+.itemDisabled,
+.subItemDisabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -286,14 +304,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: $fui-icon-lg;
-  height: $fui-icon-lg;
+  width: $fui-icon-sm;
+  height: $fui-icon-sm;
   flex-shrink: 0;
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 
   svg {
-    width: $fui-icon-lg;
-    height: $fui-icon-lg;
+    width: $fui-icon-sm;
+    height: $fui-icon-sm;
   }
 
   .item:hover:not(.itemDisabled) & {
@@ -309,6 +327,7 @@
   text-overflow: ellipsis;
 }
 
+// accent-hover gives WCAG AA contrast (4.5:1) against on-accent text.
 .itemBadge {
   display: flex;
   align-items: center;
@@ -316,7 +335,6 @@
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  // Use accent-hover for WCAG AA contrast (4.5:1 minimum)
   background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
   color: var(--fui-color-on-accent, $fui-color-on-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
@@ -348,35 +366,15 @@
   transform: rotate(90deg);
 }
 
-// ============================================
-// Submenu
-// ============================================
-
 .submenu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   padding-left: var(--fui-space-6, $fui-space-6);
   overflow: hidden;
   max-height: 0;
   transition: max-height var(--fui-transition-normal, $fui-transition-normal);
 }
 
-// Submenu wrapper (for proper ARIA list structure)
-.submenuWrapper {
-  list-style: none;
-}
-
 .itemExpanded + .submenuWrapper .submenu {
-  max-height: 500px; // Generous max for animation
-}
-
-// ============================================
-// Sub Item
-// ============================================
-
-.subItemWrapper {
-  list-style: none;
+  max-height: 500px;
 }
 
 .subItem {
@@ -386,15 +384,13 @@
 
   display: inline-flex;
   align-items: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  min-height: var(--fui-sidebar-item-height, $fui-sidebar-subitem-height);
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
   position: relative;
 
-  // Left border indicator
   &::before {
     content: "";
     position: absolute;
@@ -419,8 +415,8 @@
   }
 }
 
+// accent-hover for WCAG AA contrast.
 .subItemActive {
-  // Use accent-hover for WCAG AA contrast (4.5:1 minimum)
   color: var(--fui-color-accent-hover, $fui-color-accent-hover);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
@@ -428,15 +424,6 @@
     background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
   }
 }
-
-.subItemDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-// ============================================
-// Footer
-// ============================================
 
 .footer {
   display: flex;
@@ -446,10 +433,6 @@
   margin-top: auto;
   flex-shrink: 0;
 }
-
-// ============================================
-// Trigger (Mobile hamburger)
-// ============================================
 
 .trigger {
   @include button-reset;
@@ -473,10 +456,6 @@
   }
 }
 
-// ============================================
-// Overlay (Mobile backdrop)
-// ============================================
-
 .overlay {
   position: fixed;
   inset: 0;
@@ -489,10 +468,6 @@
     opacity: 1;
   }
 }
-
-// ============================================
-// Collapse Toggle
-// ============================================
 
 .collapseToggle {
   @include button-reset;
@@ -534,32 +509,6 @@
   }
 }
 
-// ============================================
-// Offcanvas Mode (collapses to zero width with floating toggle)
-// ============================================
-
-.offcanvasCollapsed {
-  width: 0;
-  overflow: visible;
-
-  .header,
-  .nav,
-  .footer,
-  .rail {
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  .collapseToggleFloating {
-    visibility: visible;
-    pointer-events: auto;
-  }
-}
-
-// ============================================
-// Rail (toggle to expand/collapse sidebar)
-// ============================================
-
 .rail {
   @include button-reset;
 
@@ -568,21 +517,13 @@
   right: 0;
   width: $fui-sidebar-rail-width;
   height: 100%;
-  cursor: pointer;
   z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  padding: 0;
 
   .positionRight & {
     right: auto;
     left: 0;
   }
 
-  // Visible rail indicator
   &::before {
     content: "";
     position: absolute;
@@ -605,27 +546,20 @@
     }
   }
 
-  // Show indicator on hover
-  &:hover::before {
-    opacity: 1;
-    height: $fui-sidebar-rail-indicator-height-hover;
-    background-color: var(--fui-color-accent, $fui-color-accent);
-  }
-
+  &:hover::before,
   &:focus-visible::before {
     opacity: 1;
     background-color: var(--fui-color-accent, $fui-color-accent);
   }
+
+  &:hover::before {
+    height: $fui-sidebar-rail-indicator-height-hover;
+  }
 }
 
-// When collapsed, always show the rail indicator
 .railCollapsed::before {
   opacity: 0.7;
 }
-
-// ============================================
-// Menu Skeleton (loading state)
-// ============================================
 
 .menuSkeleton {
   display: flex;
@@ -637,8 +571,8 @@
 .skeletonItem {
   display: flex;
   align-items: center;
-  gap: var(--fui-sidebar-item-gap, var(--fui-space-2, $fui-space-2));
-  padding: var(--fui-sidebar-item-padding-y, var(--fui-space-1, $fui-space-1)) var(--fui-sidebar-item-padding-x, var(--fui-space-2, $fui-space-2));
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: 0 var(--fui-space-2, $fui-space-2);
   min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
 }
 
@@ -646,35 +580,13 @@
   flex: 1;
 }
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
 @media (prefers-reduced-motion: reduce) {
-  .root {
-    transition: none;
-  }
-
-  .mobile {
-    transition: none;
-  }
-
-  .overlay {
-    transition: none;
-  }
-
-  .submenu {
-    transition: none;
-  }
-
-  .itemChevron {
-    transition: none;
-  }
-
-  .rail::before {
-    transition: none;
-  }
-
+  .root,
+  .mobile,
+  .overlay,
+  .submenu,
+  .itemChevron,
+  .rail::before,
   .subItem::before {
     transition: none;
   }

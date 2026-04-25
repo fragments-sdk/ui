@@ -81,6 +81,7 @@ describe('AppShell', () => {
   it('preserves root style props while applying internal CSS variables', () => {
     const { container } = render(
       <AppShell style={{ backgroundColor: 'rgb(1, 2, 3)' }}>
+        <AppShell.Header>Header</AppShell.Header>
         <AppShell.Main>Content</AppShell.Main>
       </AppShell>
     );
@@ -88,6 +89,17 @@ describe('AppShell', () => {
     const root = container.firstElementChild as HTMLElement;
     expect(root.style.backgroundColor).toBe('rgb(1, 2, 3)');
     expect(root.style.getPropertyValue('--appshell-header-height')).toBe('56px');
+  });
+
+  it('collapses header track to 0px when no AppShell.Header is rendered', () => {
+    const { container } = render(
+      <AppShell>
+        <AppShell.Main>Content</AppShell.Main>
+      </AppShell>
+    );
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.style.getPropertyValue('--appshell-header-height')).toBe('0px');
   });
 
   describe('layout structures', () => {

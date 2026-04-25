@@ -87,13 +87,15 @@
   color: var(--fui-text-secondary, #{$fui-text-secondary});
 }
 
-// Section label text (e.g. sidebar headings, TOC label)
+// Section label text (e.g. sidebar headings, TOC label).
+// 11px uppercase reads cleanly where 10px starts to crush; semibold + 0.06em
+// tracking gives the label enough weight to register without shouting.
 @mixin section-label-text {
   @include helper-text;
-  font-size: var(--fui-font-size-2xs, #{$fui-font-size-2xs});
-  font-weight: var(--fui-font-weight-medium, #{$fui-font-weight-medium});
+  font-size: 0.786rem; // 11px at 14px root
+  font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 // Card surface

@@ -102,9 +102,26 @@ $fui-info: #3b82f6 !default;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  // Global link reset
+  // Global link defaults.
+  // Classed or inline-styled anchors (e.g., those wrapping a <Button>) get the
+  // bare reset — text-decoration: none, color inherited — so consumers style
+  // them without specificity fighting. Naked <a> tags in prose (no className,
+  // no inline style) get the accent color + underline so they look intentional
+  // instead of falling back to the browser's blue/purple defaults.
   :where(a) {
     text-decoration: none;
+    color: inherit;
+  }
+
+  :where(a:not([class]):not([style])) {
+    color: var(--fui-color-accent, #{$fui-color-accent});
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--fui-color-accent-hover, #{$fui-color-accent-hover});
+    }
   }
 
   ::selection {
@@ -112,7 +129,9 @@ $fui-info: #3b82f6 !default;
     color: var(--fui-text-primary, #171717);
   }
 
-  // Scrollbar Styles
+  // Scrollbar Styles — transparent by default, visible on hover of the
+  // scrollable element. Mirrors macOS overlay-scrollbar behaviour so
+  // content reads cleanly at rest.
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -123,17 +142,29 @@ $fui-info: #3b82f6 !default;
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: var(--fui-text-tertiary, #8a8a8a);
+    background-color: transparent;
     border-radius: 9999px;
+    transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+  }
+
+  // Reveal thumb when the scrollable element (or any ancestor) is hovered.
+  // :hover bubbles up the tree, so hovering a child of a scroll container
+  // still triggers the container's thumb to appear.
+  :where(*:hover)::-webkit-scrollbar-thumb {
+    background-color: var(--fui-text-tertiary, #8a8a8a);
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--fui-text-secondary, #525252);
   }
 
-  // Firefox scrollbar
+  // Firefox scrollbar — hidden at rest, shown on hover.
   :where(*) {
     scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  :where(*:hover) {
     scrollbar-color: var(--fui-text-tertiary, #8a8a8a) transparent;
   }
 

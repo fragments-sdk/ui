@@ -1,6 +1,11 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Local component tokens
+$fui-slider-track-height: 4px !default;
+$fui-slider-thumb-size: $fui-target-size-min !default;
+$fui-slider-thumb-border: 2px !default;
+
 .wrapper {
   display: flex;
   flex-direction: column;

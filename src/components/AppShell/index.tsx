@@ -211,10 +211,13 @@ function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
     asideVisible: false,
   };
 
+  let hasHeader = false;
+
   React.Children.forEach(children, child => {
     if (!React.isValidElement(child)) return;
 
     if (child.type === AppShellHeader) {
+      hasHeader = true;
       const props = child.props as AppShellHeaderProps;
       if (props.height) config.headerHeight = props.height;
     }
@@ -233,6 +236,9 @@ function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
       if (props.visible !== false) config.asideVisible = true;
     }
   });
+
+  // Header-less shell: collapse the header row so sidebar + main fill the viewport.
+  if (!hasHeader) config.headerHeight = '0px';
 
   return config;
 }

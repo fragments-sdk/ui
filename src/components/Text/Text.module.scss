@@ -25,9 +25,12 @@
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
-.size-base,
-.size-md {
+.size-base {
   font-size: var(--fui-font-size-base, $fui-font-size-base);
+}
+
+.size-md {
+  font-size: var(--fui-font-size-md, $fui-font-size-md);
 }
 
 .size-lg {
@@ -40,6 +43,18 @@
 
 .size-2xl {
   font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
+}
+
+.size-3xl {
+  font-size: var(--fui-font-size-3xl, $fui-font-size-3xl);
+  line-height: var(--fui-line-height-display, $fui-line-height-display);
+  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
+}
+
+.size-4xl {
+  font-size: var(--fui-font-size-4xl, $fui-font-size-4xl);
+  line-height: var(--fui-line-height-display, $fui-line-height-display);
+  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
 }
 
 // Font weights
@@ -92,4 +107,29 @@
   -webkit-line-clamp: var(--fui-line-clamp, 2);
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+// Letter-spacing presets for dense UI chrome and display numerics.
+// "tight" = labels / nav chrome, "tighter" = headings / stat values,
+// "tightest" = large display numerics.
+.tracking-normal {
+  letter-spacing: normal;
+}
+
+.tracking-tight {
+  letter-spacing: -0.01em;
+}
+
+.tracking-tighter {
+  letter-spacing: -0.02em;
+}
+
+.tracking-tightest {
+  letter-spacing: -0.025em;
+}
+
+// Tabular (fixed-width) numerals — digits align in columns so updating
+// numbers don't jitter. Essential for stat values and tables.
+.tabularNums {
+  font-variant-numeric: tabular-nums;
 }

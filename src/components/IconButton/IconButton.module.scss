@@ -1,0 +1,101 @@
+@use '../../tokens/variables' as *;
+@use '../../tokens/mixins' as *;
+
+.iconButton {
+  @include button-reset;
+  @include interactive-base;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  border: 1px solid transparent;
+  background-color: transparent;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled):not([data-disabled]) {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+// Sizes — tight square targets tuned for dense UI chrome. Icon sizing is
+// driven by the button height so a single <IconButton size="sm"><Icon /></>
+// always renders a correctly-scaled glyph without consumer math.
+.sm {
+  width: 1.571rem; // 22px
+  height: 1.571rem;
+
+  svg {
+    width: var(--fui-icon-sm, $fui-icon-sm);
+    height: var(--fui-icon-sm, $fui-icon-sm);
+  }
+}
+
+.md {
+  width: 2rem; // 28px
+  height: 2rem;
+
+  svg {
+    width: var(--fui-icon-md, $fui-icon-md);
+    height: var(--fui-icon-md, $fui-icon-md);
+  }
+}
+
+.lg {
+  width: 2.286rem; // 32px
+  height: 2.286rem;
+
+  svg {
+    width: var(--fui-icon-lg, $fui-icon-lg);
+    height: var(--fui-icon-lg, $fui-icon-lg);
+  }
+}
+
+// Variants
+.ghost {
+  &:hover:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.subtle {
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+
+  &:hover:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+.outlined {
+  border-color: var(--fui-border, $fui-border);
+
+  &:hover:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    border-color: var(--fui-border-strong, $fui-border-strong);
+  }
+
+  &:active:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+}
+
+// Pressed (for toggle-style affordances) — sits on the active surface even
+// while idle so the "on" state reads clearly.
+.pressed {
+  background-color: var(--fui-bg-active, $fui-bg-active);
+  color: var(--fui-text-primary, $fui-text-primary);
+}

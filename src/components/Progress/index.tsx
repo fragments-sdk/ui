@@ -41,7 +41,7 @@ export interface CircularProgressProps extends React.HTMLAttributes<HTMLDivEleme
 }
 
 // ============================================
-// Linear Progress
+// Horizontal progress bar
 // ============================================
 
 function ProgressRoot({

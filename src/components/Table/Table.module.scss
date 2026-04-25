@@ -46,6 +46,33 @@
   }
 }
 
+// Dashboard-dense rows — 36px tall, 14px horizontal padding, 12px text.
+// Hairline dividers only; no striping. Header sits flush on the same rail
+// as rows so it reads as part of the list, not a separate band.
+.compact {
+  .th,
+  .td {
+    padding: 0 var(--fui-space-2, $fui-space-2);
+    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+    height: 2.571rem; // 36px
+    line-height: 1;
+  }
+
+  .th {
+    font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  }
+}
+
+// Tabular numerals on a cell — digits align in columns so updating numbers
+// don't jitter. Essential for numeric columns, timestamps, currencies.
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 // Header
 .thead {
   position: sticky;

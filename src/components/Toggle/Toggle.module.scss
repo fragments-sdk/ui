@@ -1,6 +1,17 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Local component tokens (web-proportioned: ~1.8:1 width:height ratio)
+$fui-toggle-width-sm: 1.857rem !default; // 26px
+$fui-toggle-width-md: 2.571rem !default; // 36px
+$fui-toggle-width-lg: 3.286rem !default; // 46px
+$fui-toggle-height-sm: 1.143rem !default; // 16px
+$fui-toggle-height-md: 1.429rem !default; // 20px
+$fui-toggle-height-lg: 1.857rem !default; // 26px
+$fui-toggle-thumb-sm: 0.857rem !default; // 12px
+$fui-toggle-thumb-md: 1.143rem !default; // 16px
+$fui-toggle-thumb-offset: 2px !default;
+
 .root {
   display: flex;
   align-items: center;

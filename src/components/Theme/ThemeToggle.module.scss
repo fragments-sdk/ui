@@ -1,6 +1,17 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Local component tokens
+$fui-theme-toggle-sm-width: 26px !default;
+$fui-theme-toggle-sm-height: 24px !default;
+$fui-theme-toggle-sm-icon: 12px !default;
+$fui-theme-toggle-md-width: 32px !default;
+$fui-theme-toggle-md-height: 28px !default;
+$fui-theme-toggle-md-icon: 14px !default;
+$fui-theme-toggle-lg-width: 40px !default;
+$fui-theme-toggle-lg-height: 34px !default;
+$fui-theme-toggle-lg-icon: 18px !default;
+
 // ============================================
 // Theme Toggle - Fragmented Button Group
 // ============================================

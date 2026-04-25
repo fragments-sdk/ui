@@ -56,16 +56,23 @@ $fui-font-sans:
 $fui-font-mono:
   "Geist Mono", "SF Mono", SFMono-Regular, ui-monospace, "Cascadia Code", Menlo, monospace !default;
 
-// Font sizes (rem based on 14px root)
-// Compressed scale: base/md = 14px (1rem). No 16px step.
-// Hierarchy driven by weight, not size jumps.
+// Font sizes (rem based on 14px root).
+// Scale ladder tuned for industry-leading docs hierarchy:
+//   - UI chrome stays dense at 14px (sm/base).
+//   - `md` (15px) is the prose body size — comfortable reading.
+//   - `lg`/`xl`/`2xl` step 20 / 24 / 30 for h3 / h2 / large display.
+//   - `3xl`/`4xl` (36 / 48) land page-title and hero sizes without
+//     per-page clamps.
 $fui-font-size-2xs: 0.714rem !default; // 10px
 $fui-font-size-xs: 0.857rem !default; // 12px
 $fui-font-size-sm: 1rem !default; // 14px (base)
 $fui-font-size-base: 1rem !default; // 14px (= sm, body base)
-$fui-font-size-lg: 1.286rem !default; // 18px
-$fui-font-size-xl: 1.429rem !default; // 20px
-$fui-font-size-2xl: 1.714rem !default; // 24px
+$fui-font-size-md: 1.071rem !default; // 15px (prose body — longer reading)
+$fui-font-size-lg: 1.429rem !default; // 20px (h3, dialog/drawer/alert title)
+$fui-font-size-xl: 1.714rem !default; // 24px (h2, section heading)
+$fui-font-size-2xl: 2.143rem !default; // 30px (large display)
+$fui-font-size-3xl: 2.571rem !default; // 36px (h1, page title)
+$fui-font-size-4xl: 3.429rem !default; // 48px (hero display)
 
 $fui-font-weight-normal: 400 !default;
 $fui-font-weight-medium: 500 !default;
@@ -75,10 +82,13 @@ $fui-font-weight-bold: 700 !default;
 $fui-line-height-tight: 1.25 !default;
 $fui-line-height-normal: 1.5 !default;
 $fui-line-height-relaxed: 1.625 !default;
+$fui-line-height-display: 1.1 !default; // h1/hero — tight for large type
+$fui-line-height-prose: 1.7 !default; // p/li inside long-form reading columns
 
-// Letter spacing (Linear-inspired tight tracking for headings)
+// Letter spacing — tight tracking for headings and dense chrome.
 $fui-letter-spacing-tight: -0.02em !default; // for xl+ headings
 $fui-letter-spacing-normal: normal !default;
+$fui-letter-spacing-display: -0.02em !default; // for h1/display
 
 // --------------------------------------------
 // Spacing (derived from density seed)
@@ -111,8 +121,8 @@ $fui-radius-full: computed.$computed-radius-full !default;
 // --------------------------------------------
 // Transitions
 // --------------------------------------------
-$fui-transition-fast: 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !default; // Linear's easing
-$fui-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1) !default; // ChatGPT's easing
+$fui-transition-fast: 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !default; // Snappy easeOut for chrome
+$fui-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1) !default; // Standard material-style easing
 
 // --------------------------------------------
 // Colors - Light Mode (derived from brand/neutral seeds)
@@ -274,21 +284,6 @@ $fui-touch-lg: computed.$computed-touch-lg !default;
 $fui-target-size-min: 1.714rem !default; // 24px
 $fui-target-size-comfortable: $fui-touch-md !default;
 
-// Toggle/Switch (web-proportioned: ~1.8:1 width:height ratio)
-$fui-toggle-width-sm: 1.857rem !default; // 26px
-$fui-toggle-width-md: 2.571rem !default; // 36px
-$fui-toggle-width-lg: 3.286rem !default; // 46px
-$fui-toggle-height-sm: 1.143rem !default; // 16px
-$fui-toggle-height-md: 1.429rem !default; // 20px
-$fui-toggle-height-lg: 1.857rem !default; // 26px
-$fui-toggle-thumb-sm: 0.857rem !default; // 12px
-$fui-toggle-thumb-md: 1.143rem !default; // 16px
-$fui-toggle-thumb-offset: 2px !default; // Thumb inset from track edge
-
-// Badge
-$fui-badge-dot-sm: 5px !default;
-$fui-badge-dot-md: 6px !default;
-
 // Icon sizes (standard conventions)
 $fui-icon-sm: 1rem !default; // 14px (2 units)
 $fui-icon-md: 1.143rem !default; // 16px (standard small icon)
@@ -299,100 +294,16 @@ $fui-icon-xl: 1.714rem !default; // 24px (standard large icon)
 $fui-anim-offset-sm: 4px !default; // Small slide animation
 $fui-anim-offset-md: 8px !default; // Medium slide animation
 
-// Popover/Tooltip arrow
-$fui-arrow-size: 10px !default;
-
-// Sidebar-specific
-$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact: 30px, default: 35px, relaxed: 38px)
-$fui-sidebar-subitem-height: 2.571rem !default; // 36px
-$fui-sidebar-indicator-width: 2px !default;
-$fui-sidebar-indicator-height: 1.143rem !default; // 16px
-$fui-sidebar-rail-width: 1.143rem !default; // 16px
-$fui-sidebar-rail-indicator-width: 4px !default;
-$fui-sidebar-rail-indicator-height: 2.857rem !default; // 40px
-$fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
-
-// Slider
-$fui-slider-track-height: 4px !default;
-$fui-slider-thumb-size: $fui-target-size-min !default;
-$fui-slider-thumb-border: 2px !default;
-
-// EmptyState content max-widths
-$fui-emptystate-width-sm: 240px !default;
-$fui-emptystate-width-md: 320px !default;
-$fui-emptystate-width-lg: 400px !default;
-
-// EmptyState icon sizes
-$fui-emptystate-icon-sm: $fui-icon-xl !default; // 24px
-$fui-emptystate-icon-md: 2.286rem !default; // 32px
-$fui-emptystate-icon-lg: 2.857rem !default; // 40px
-
-// ColorChip/ColorPicker
-$fui-colorpicker-size: 180px !default;
-$fui-colorpicker-hue-height: $fui-target-size-min !default;
-$fui-colorpicker-pointer-size: $fui-target-size-min !default;
-$fui-colorpicker-pointer-border: 2px !default;
+// Sidebar (multi-consumer — used by Sidebar, NavigationMenu, Theme)
+$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact: 26px, default: 28px, relaxed: 32px)
 
 // AppShell Layout
 $fui-appshell-header-height: 56px !default;
 $fui-header-z-index: 40 !default;
 
-// ThemeToggle sizes (derived from density)
-$fui-theme-toggle-sm-width: 26px !default;
-$fui-theme-toggle-sm-height: 24px !default;
-$fui-theme-toggle-sm-icon: 12px !default;
-$fui-theme-toggle-md-width: 32px !default;
-$fui-theme-toggle-md-height: 28px !default;
-$fui-theme-toggle-md-icon: 14px !default;
-$fui-theme-toggle-lg-width: 40px !default;
-$fui-theme-toggle-lg-height: 34px !default;
-$fui-theme-toggle-lg-icon: 18px !default;
-
-// CodeBlock (always dark — no light variant)
+// CodeBlock background — shared with Markdown's <pre> prose styling.
+// Other code/tooltip styling tokens live in their component modules.
 $fui-code-bg: #0c0c0e !default;
-$fui-code-header-bg: transparent !default;
-$fui-code-text: #e2e2e5 !default;
-$fui-code-text-muted: #5a5a6e !default;
-$fui-code-border: rgba(255, 255, 255, 0.06) !default;
-$fui-code-tab-text: #8a8a9a !default;
-$fui-code-tab-text-active: #e2e2e5 !default;
-$fui-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
-$fui-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-code-selection-bg: rgba(59, 130, 246, 0.3) !default;
-$fui-code-scrollbar-track: transparent !default;
-$fui-code-scrollbar-thumb: rgba(255, 255, 255, 0.1) !default;
-$fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
-
-// Tooltip (always dark bg with light text)
-$fui-tooltip-bg: #1e293b !default;
-$fui-tooltip-text: #f8fafc !default;
-$fui-tooltip-shadow:
-  0 4px 6px -1px rgba(0, 0, 0, 0.2),
-  0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
-
-// CodeBlock (dark mode) - identical to light, code blocks are always dark
-$fui-dark-code-bg: #0c0c0e !default;
-$fui-dark-code-header-bg: transparent !default;
-$fui-dark-code-text: #e2e2e5 !default;
-$fui-dark-code-text-muted: #5a5a6e !default;
-$fui-dark-code-border: rgba(255, 255, 255, 0.06) !default;
-$fui-dark-code-tab-text: #8a8a9a !default;
-$fui-dark-code-tab-text-active: #e2e2e5 !default;
-$fui-dark-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-dark-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
-$fui-dark-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-dark-code-selection-bg: rgba(59, 130, 246, 0.3) !default;
-$fui-dark-code-scrollbar-track: transparent !default;
-$fui-dark-code-scrollbar-thumb: rgba(255, 255, 255, 0.1) !default;
-$fui-dark-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
-
-// Tooltip (dark mode) - same as light, tooltips stay dark
-$fui-dark-tooltip-bg: #1e293b !default;
-$fui-dark-tooltip-text: #f8fafc !default;
-$fui-dark-tooltip-shadow:
-  0 4px 6px -1px rgba(0, 0, 0, 0.3),
-  0 2px 4px -2px rgba(0, 0, 0, 0.25) !default;
 
 // --------------------------------------------
 // CSS Custom Properties Export
@@ -429,9 +340,12 @@ $fui-dark-tooltip-shadow:
     --fui-font-size-xs: #{$fui-font-size-xs};
     --fui-font-size-sm: #{$fui-font-size-sm};
     --fui-font-size-base: #{$fui-font-size-base};
+    --fui-font-size-md: #{$fui-font-size-md};
     --fui-font-size-lg: #{$fui-font-size-lg};
     --fui-font-size-xl: #{$fui-font-size-xl};
     --fui-font-size-2xl: #{$fui-font-size-2xl};
+    --fui-font-size-3xl: #{$fui-font-size-3xl};
+    --fui-font-size-4xl: #{$fui-font-size-4xl};
     --fui-font-weight-normal: #{$fui-font-weight-normal};
     --fui-font-weight-medium: #{$fui-font-weight-medium};
     --fui-font-weight-semibold: #{$fui-font-weight-semibold};
@@ -439,8 +353,11 @@ $fui-dark-tooltip-shadow:
     --fui-line-height-tight: #{$fui-line-height-tight};
     --fui-line-height-normal: #{$fui-line-height-normal};
     --fui-line-height-relaxed: #{$fui-line-height-relaxed};
+    --fui-line-height-display: #{$fui-line-height-display};
+    --fui-line-height-prose: #{$fui-line-height-prose};
     --fui-letter-spacing-tight: #{$fui-letter-spacing-tight};
     --fui-letter-spacing-normal: #{$fui-letter-spacing-normal};
+    --fui-letter-spacing-display: #{$fui-letter-spacing-display};
 
     // Spacing (micro)
     --fui-space-px: #{$fui-space-px};
@@ -604,9 +521,13 @@ $fui-dark-tooltip-shadow:
     :root {
       // Accent derived from seed-brand
       // Light mode: brand as-is. Dark mode: lightened for visibility on dark surfaces.
+      // Dark-mode floor (0.85) sits well above --fui-text-secondary's effective
+      // lightness (rgba(255,255,255,0.6) ≈ ~0.71 over bg-primary) so accent reads
+      // substantially brighter — important for chroma-0 seeds (e.g. neutral grey
+      // brand) where lightness is the only available perceptual cue.
       --fui-color-accent: light-dark(
         var(--fui-seed-brand),
-        oklch(from var(--fui-seed-brand) clamp(0.45, l, 0.85) min(c, 0.12) h)
+        oklch(from var(--fui-seed-brand) clamp(0.85, l, 0.92) min(c, 0.12) h)
       );
 
       // Auto-contrast text for elements on accent backgrounds (buttons, chips, etc.)
@@ -614,11 +535,11 @@ $fui-dark-tooltip-shadow:
       --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
       --fui-color-accent-hover: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.52, calc(l + 0.07), 0.90) min(c, 0.12) h)
+        oklch(from var(--fui-seed-brand) clamp(0.90, calc(l + 0.07), 0.96) min(c, 0.12) h)
       );
       --fui-color-accent-active: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.05), 0.80) min(c, 0.12) h)
+        oklch(from var(--fui-seed-brand) clamp(0.80, calc(l - 0.05), 0.88) min(c, 0.12) h)
       );
 
       // Semantic hover derived from seed
@@ -651,10 +572,10 @@ $fui-dark-tooltip-shadow:
     // Hover goes slightly lighter, active slightly darker. on-accent handles text.
     :root[data-theme="dark"],
     :root.dark {
-      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.45, l, 0.85) min(c, 0.12) h);
+      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.85, l, 0.92) min(c, 0.12) h);
       --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
-      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.52, calc(l + 0.07), 0.90) min(c, 0.12) h);
-      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.40, calc(l - 0.05), 0.80) min(c, 0.12) h);
+      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.90, calc(l + 0.07), 0.96) min(c, 0.12) h);
+      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.80, calc(l - 0.05), 0.88) min(c, 0.12) h);
       --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 15%, transparent);
       --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
       --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);

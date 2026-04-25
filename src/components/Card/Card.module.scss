@@ -24,6 +24,41 @@
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 }
 
+// Compact metric tile for dashboard grids. Hairline-bordered over a near-
+// transparent white/black overlay — rises off *whatever surface it sits on*
+// (page bg or a nested panel) by ~2%, so the tile reads as raised in both
+// floating-panel and flat-page layouts. Rises primarily through the border,
+// not through shadow, to match the dense dashboard aesthetic.
+.stat {
+  background-color: color-mix(
+    in srgb,
+    var(--fui-text-primary, $fui-text-primary) 2%,
+    transparent
+  );
+  border-color: var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  box-shadow: none;
+}
+
+// Hairline-bordered panel with no own padding — designed for compound use
+// with `Card.Header divided` + `Card.Body` inside dashboards. Each region
+// owns its spacing so panel headers can be full-bleed with a hairline
+// divider underneath. Uses the same surface-agnostic overlay as `.stat`.
+// Padding is forced to 0 here so the variant works regardless of the
+// `padding` prop — children manage their own spacing inside a panel.
+.panel {
+  background-color: color-mix(
+    in srgb,
+    var(--fui-text-primary, $fui-text-primary) 2%,
+    transparent
+  );
+  border-color: var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  box-shadow: none;
+  overflow: hidden;
+  padding: 0;
+}
+
 // Padding
 .paddingNone {
   padding: 0;
@@ -41,15 +76,21 @@
   padding: var(--fui-space-4, $fui-space-4);
 }
 
-// Interactive card (when onClick is provided)
+// Interactive card (when onClick is provided).
+// Card renders as an `article`/`div`/`section` (never a real `<button>`), so
+// applying `button-reset` here was gratuitous — and it was silently wiping
+// out variant-applied borders and backgrounds (the reset sets
+// `border: none; background: transparent`). Keep only the clickable
+// affordances; variants keep their surface and border untouched.
 .interactive {
-  @include button-reset;
   @include interactive-base;
 
   display: block;
   width: 100%;
   text-align: left;
   cursor: pointer;
+  font: inherit;
+  color: inherit;
 
   &:hover {
     border-color: var(--fui-border-strong, $fui-border-strong);
@@ -65,6 +106,19 @@
 
 .header {
   margin-bottom: var(--fui-space-2, $fui-space-2);
+}
+
+// Full-bleed panel-header bar: fixed 40px rail with horizontal padding and a
+// hairline bottom divider. No trailing margin — it sits flush above the
+// panel body, which manages its own padding. Use inside `variant="panel"`.
+.headerDivided {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  min-height: 2.857rem; // 40px
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--fui-border, $fui-border);
 }
 
 .title {

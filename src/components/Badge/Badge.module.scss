@@ -1,6 +1,10 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Local component tokens
+$fui-badge-dot-sm: 5px !default;
+$fui-badge-dot-md: 6px !default;
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -65,11 +69,49 @@
   border: 1px solid var(--fui-border-strong, $fui-border-strong);
 }
 
+// Compact hairline-bordered label for dense dashboard metadata rows.
+// Overrides the base pill radius and padding — squared corners read as
+// data metadata rather than status chrome.
+.label {
+  height: 1.429rem; // 20px
+  padding: 0 calc(var(--fui-space-1, $fui-space-1) - 1px); // ~7px
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background-color: transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+}
+
+// Dim filter-chip chrome for toolbar segmented controls. Transparent at
+// rest, panel-surface + hairline when marked active.
+.dim {
+  height: 1.714rem; // 24px
+  padding: 0 calc(var(--fui-space-1, $fui-space-1) + 2px); // ~9px
+  border: 1px solid transparent;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background-color: transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  transition:
+    color var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
+
+  &.active {
+    border-color: var(--fui-border, $fui-border);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
 .dot {
   width: $fui-badge-dot-md;
   height: $fui-badge-dot-md;
   border-radius: 50%;
-  background-color: currentColor;
+  background-color: var(--fui-badge-dot-color, currentColor);
+  flex-shrink: 0;
 
   .sm & {
     width: $fui-badge-dot-sm;

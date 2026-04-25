@@ -8,8 +8,10 @@ import styles from './Table.module.scss';
 // ============================================
 
 export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
-  /** Size variant */
-  size?: 'sm' | 'md';
+  /** Size variant. `compact` gives dense 36px-row dashboard lists with 12px
+   * text and hairline dividers — use when the table is a status surface,
+   * not a reading experience. */
+  size?: 'sm' | 'md' | 'compact';
   /** Show alternating row backgrounds */
   striped?: boolean;
   /** Wrap table in a bordered container */
@@ -28,6 +30,9 @@ export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement>
 }
 
 export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+  /** Use tabular (fixed-width) numerals so digits align in columns. Ideal
+   * for numeric columns that update — counts, timestamps, currency. */
+  tabularNums?: boolean;
   children?: React.ReactNode;
 }
 
@@ -85,9 +90,12 @@ function TableRow({ className, selected, children, ...props }: TableRowProps) {
   );
 }
 
-function TableCell({ className, children, ...props }: TableCellProps) {
+function TableCell({ className, tabularNums, children, ...props }: TableCellProps) {
   return (
-    <td className={[styles.td, className].filter(Boolean).join(' ')} {...props}>
+    <td
+      className={[styles.td, tabularNums && styles.tabular, className].filter(Boolean).join(' ')}
+      {...props}
+    >
       {children}
     </td>
   );

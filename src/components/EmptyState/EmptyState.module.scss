@@ -1,6 +1,14 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 
+// Local component tokens
+$fui-emptystate-width-sm: 240px !default;
+$fui-emptystate-width-md: 320px !default;
+$fui-emptystate-width-lg: 400px !default;
+$fui-emptystate-icon-sm: $fui-icon-xl !default; // 24px
+$fui-emptystate-icon-md: 2.286rem !default; // 32px
+$fui-emptystate-icon-lg: 2.857rem !default; // 40px
+
 .emptyState {
   display: flex;
   flex-direction: column;

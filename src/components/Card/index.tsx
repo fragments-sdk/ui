@@ -14,9 +14,16 @@ import styles from './Card.module.scss';
 export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   children: React.ReactNode;
   /** Visual style variant. `"outline"` is an alias for `"outlined"`.
+   *
+   * - `default` / `outlined` / `elevated`: general-purpose cards.
+   * - `stat`: compact metric tile for dashboard grids — hairline border,
+   *   panel-subtle surface, tight radius, zero shadow.
+   * - `panel`: hairline-bordered panel with zero own padding, designed for
+   *   compound use with `Card.Header divided` + `Card.Body` so each region
+   *   manages its own spacing.
    * @default "default"
    * @see https://usefragments.com/components/card#variants */
-  variant?: 'default' | 'outlined' | 'outline' | 'elevated';
+  variant?: 'default' | 'outlined' | 'outline' | 'elevated' | 'stat' | 'panel';
   /** Inner padding.
    * @default "md" */
   padding?: 'none' | 'sm' | 'md' | 'lg';
@@ -27,6 +34,10 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'chil
 
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Renders the header as a divided bar: fixed height, horizontal padding,
+   * hairline bottom border, no trailing margin. Used with `variant="panel"`
+   * for dashboard-style panel headers. */
+  divided?: boolean;
 }
 
 export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -50,7 +61,7 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 interface CardContextValue {
-  variant: 'default' | 'outlined' | 'elevated';
+  variant: 'default' | 'outlined' | 'elevated' | 'stat' | 'panel';
   padding: 'none' | 'sm' | 'md' | 'lg';
   isInteractive: boolean;
 }
@@ -160,8 +171,10 @@ function CardRoot({
   );
 }
 
-function CardHeader({ children, className, ...htmlProps }: CardHeaderProps) {
-  const classes = [styles.header, className].filter(Boolean).join(' ');
+function CardHeader({ children, divided, className, ...htmlProps }: CardHeaderProps) {
+  const classes = [styles.header, divided && styles.headerDivided, className]
+    .filter(Boolean)
+    .join(' ');
   return <div {...htmlProps} className={classes}>{children}</div>;
 }
 

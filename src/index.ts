@@ -54,6 +54,7 @@ export {
   type AlertCloseProps,
 } from './components/Alert';
 export { Badge, type BadgeProps } from './components/Badge';
+export { IconButton, type IconButtonProps } from './components/IconButton';
 export { Avatar, type AvatarProps, type AvatarGroupProps, type AvatarSize } from './components/Avatar';
 
 // Accordion

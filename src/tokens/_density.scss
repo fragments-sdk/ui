@@ -44,8 +44,7 @@ $density-compact: (
   touch-lg: 38px,
   // -13.6% from default
   // Sidebar navigation
-  sidebar-item-height: 30px,
-  // ~5 units
+  sidebar-item-height: 26px,
 );
 
 $density-default: (
@@ -74,8 +73,7 @@ $density-default: (
   touch-lg: 44px,
   // WCAG AAA recommended
   // Sidebar navigation
-  sidebar-item-height: 36px,
-  // ~5 units
+  sidebar-item-height: 28px,
 );
 
 $density-relaxed: (
@@ -105,8 +103,7 @@ $density-relaxed: (
   touch-lg: 48px,
   // +9% from default (unchanged)
   // Sidebar navigation
-  sidebar-item-height: 38px,
-  // ~4.75 units
+  sidebar-item-height: 32px,
 );
 
 // --------------------------------------------
