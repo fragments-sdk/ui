@@ -106,6 +106,8 @@
   @include register-color('bg-subtle', $fui-bg-subtle);
   @include register-color('bg-hover', $fui-bg-hover);
   @include register-color('bg-active', $fui-bg-active);
+  @include register-color('body-bg', $fui-body-bg);
+  @include register-color('main-bg', $fui-main-bg);
 
   // ------------------------------------------
   // Colors — Text

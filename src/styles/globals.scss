@@ -95,7 +95,7 @@ $fui-info: #3b82f6 !default;
     font-size: inherit;
     font-family: var(--fui-font-sans, Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
     line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-    background-color: var(--fui-bg-primary, #ffffff);
+    background-color: var(--fui-body-bg, #{$fui-body-bg});
     color: var(--fui-text-primary, #171717);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

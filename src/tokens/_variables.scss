@@ -160,6 +160,8 @@ $fui-bg-elevated: computed.$computed-bg-elevated !default;
 $fui-bg-subtle: computed.$computed-bg-subtle !default;
 $fui-bg-hover: computed.$computed-bg-hover !default;
 $fui-bg-active: computed.$computed-bg-active !default;
+$fui-body-bg: computed.$computed-body-bg !default;
+$fui-main-bg: computed.$computed-main-bg !default;
 
 // Text colors (derived from $fui-neutral palette)
 $fui-text-primary: computed.$computed-text-primary !default;
@@ -205,6 +207,8 @@ $fui-dark-bg-elevated: computed.$computed-dark-bg-elevated !default;
 $fui-dark-bg-subtle: computed.$computed-dark-bg-subtle !default;
 $fui-dark-bg-hover: computed.$computed-dark-bg-hover !default;
 $fui-dark-bg-active: computed.$computed-dark-bg-active !default;
+$fui-dark-body-bg: computed.$computed-dark-body-bg !default;
+$fui-dark-main-bg: computed.$computed-dark-main-bg !default;
 
 // Text colors (dark) - derived from $fui-neutral palette
 $fui-dark-text-primary: computed.$computed-dark-text-primary !default;
@@ -422,6 +426,8 @@ $fui-code-bg: #0c0c0e !default;
     --fui-bg-subtle: light-dark(#{$fui-bg-subtle}, #{$fui-dark-bg-subtle});
     --fui-bg-hover: light-dark(#{$fui-bg-hover}, #{$fui-dark-bg-hover});
     --fui-bg-active: light-dark(#{$fui-bg-active}, #{$fui-dark-bg-active});
+    --fui-body-bg: light-dark(#{$fui-body-bg}, #{$fui-dark-body-bg});
+    --fui-main-bg: light-dark(#{$fui-main-bg}, #{$fui-dark-main-bg});
 
     // Text
     --fui-text-primary: light-dark(#{$fui-text-primary}, #{$fui-dark-text-primary});
@@ -669,6 +675,8 @@ $fui-code-bg: #0c0c0e !default;
   --fui-bg-subtle: #{$fui-dark-bg-subtle};
   --fui-bg-hover: #{$fui-dark-bg-hover};
   --fui-bg-active: #{$fui-dark-bg-active};
+  --fui-body-bg: #{$fui-dark-body-bg};
+  --fui-main-bg: #{$fui-dark-main-bg};
 
   // Text
   --fui-text-primary: #{$fui-dark-text-primary};

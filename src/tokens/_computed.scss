@@ -120,6 +120,11 @@ $computed-bg-subtle: map.get($_surfaces-light, subtle);
 $computed-bg-hover: map.get($_surfaces-light, hover);
 $computed-bg-active: map.get($_surfaces-light, active);
 
+// App/document surfaces
+$_app-surfaces-light: derive.derive-app-surfaces($_palette, false, seeds.$fui-neutral);
+$computed-body-bg: map.get($_app-surfaces-light, body);
+$computed-main-bg: map.get($_app-surfaces-light, main);
+
 // Text (from neutral palette)
 $_text-light: derive.derive-text($_palette, false, seeds.$fui-neutral);
 $computed-text-primary: map.get($_text-light, primary);
@@ -182,6 +187,11 @@ $computed-dark-bg-elevated: map.get($_surfaces-dark, elevated);
 $computed-dark-bg-subtle: map.get($_surfaces-dark, subtle);
 $computed-dark-bg-hover: map.get($_surfaces-dark, hover);
 $computed-dark-bg-active: map.get($_surfaces-dark, active);
+
+// App/document surfaces (dark mode)
+$_app-surfaces-dark: derive.derive-app-surfaces($_palette, true, seeds.$fui-neutral);
+$computed-dark-body-bg: map.get($_app-surfaces-dark, body);
+$computed-dark-main-bg: map.get($_app-surfaces-dark, main);
 
 // Text (dark mode)
 $_text-dark: derive.derive-text($_palette, true, seeds.$fui-neutral);

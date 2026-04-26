@@ -187,6 +187,42 @@
   );
 }
 
+/// Derive document/application canvas tokens used by base body styles and
+/// large layout containers. The defaults intentionally separate the page
+/// canvas from the primary main surface so app shells can expose chrome around
+/// the focused content region.
+/// @param {Map} $palette - Neutral palette map
+/// @param {Boolean} $is-dark - Whether in dark mode
+/// @param {String} $palette-name - Palette name for colorful detection
+/// @return {Map} Body and main background values
+@function derive-app-surfaces($palette, $is-dark: false, $palette-name: 'stone') {
+  @if $is-dark {
+    @if $palette-name == 'stone' or $palette-name == 'wind' {
+      @return (
+        body: #262626,
+        main: #161616
+      );
+    }
+
+    @return (
+      body: get-shade($palette, 800),
+      main: get-shade($palette, 900)
+    );
+  }
+
+  @if $palette-name == 'stone' or $palette-name == 'wind' {
+    @return (
+      body: get-shade($palette, 100),
+      main: #ffffff
+    );
+  }
+
+  @return (
+    body: get-shade($palette, 100),
+    main: get-shade($palette, 50)
+  );
+}
+
 // --------------------------------------------
 // Text Color Derivation
 // --------------------------------------------

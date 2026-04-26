@@ -1,13 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './AppShell.module.scss';
-import {
-  SidebarProvider,
-  Sidebar,
-  useSidebar,
-  type SidebarCollapsible,
-} from '../Sidebar';
+import * as React from "react";
+import styles from "./AppShell.module.scss";
+import { SidebarProvider, Sidebar, useSidebar, type SidebarCollapsible } from "../Sidebar";
 
 // ============================================
 // Types
@@ -41,10 +36,10 @@ import {
  * for backwards compatibility and internally expand to the appropriate
  * per-slot variants.
  */
-export type AppShellLayout = 'default' | 'sidebar' | 'sidebar-floating' | 'floating';
+export type AppShellLayout = "default" | "sidebar" | "sidebar-floating" | "floating";
 
 /** Visual treatment for individual layout slots. */
-export type AppShellSlotVariant = 'default' | 'floating';
+export type AppShellSlotVariant = "default" | "floating";
 
 export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -81,7 +76,7 @@ export interface AppShellSidebarProps extends React.HTMLAttributes<HTMLDivElemen
   /** Collapse behavior */
   collapsible?: SidebarCollapsible;
   /** Sidebar position */
-  position?: 'left' | 'right';
+  position?: "left" | "right";
   /** Default collapsed state */
   defaultCollapsed?: boolean;
   /** Visual treatment: `'floating'` blends sidebar with the shell background */
@@ -93,8 +88,8 @@ export interface AppShellSidebarProps extends React.HTMLAttributes<HTMLDivElemen
 export interface AppShellMainProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Content padding */
-  padding?: 'none' | 'sm' | 'md' | 'lg';
-  /** Visual treatment: `'floating'` adds rounded corners and elevated background */
+  padding?: "none" | "sm" | "md" | "lg";
+  /** Visual treatment: `'floating'` adds inset spacing and rounded corners */
   variant?: AppShellSlotVariant;
   /** Background color override (accepts any CSS color value or token) */
   bg?: string;
@@ -106,7 +101,7 @@ export interface AppShellAsideProps extends React.HTMLAttributes<HTMLElement> {
   width?: string;
   /** Control visibility */
   visible?: boolean;
-  /** Visual treatment: `'floating'` adds rounded corners and elevated background */
+  /** Visual treatment: `'floating'` adds inset spacing and rounded corners */
   variant?: AppShellSlotVariant;
   /** Background color override (accepts any CSS color value or token) */
   bg?: string;
@@ -117,9 +112,10 @@ export interface AppShellAsideProps extends React.HTMLAttributes<HTMLElement> {
 // ============================================
 
 /** Resolve a layout value to its structural grid mode. */
-function resolveStructure(layout: AppShellLayout): 'default' | 'sidebar' {
-  if (layout === 'sidebar' || layout === 'sidebar-floating' || layout === 'floating') return 'sidebar';
-  return 'default';
+function resolveStructure(layout: AppShellLayout): "default" | "sidebar" {
+  if (layout === "sidebar" || layout === "sidebar-floating" || layout === "floating")
+    return "sidebar";
+  return "default";
 }
 
 /**
@@ -129,12 +125,16 @@ function resolveStructure(layout: AppShellLayout): 'default' | 'sidebar' {
 function resolveSlotVariant(
   explicit: AppShellSlotVariant | undefined,
   layout: AppShellLayout,
-  slot: 'main' | 'aside' | 'sidebar',
+  slot: "main" | "aside" | "sidebar"
 ): AppShellSlotVariant {
   if (explicit !== undefined) return explicit;
-  if ((layout === 'sidebar-floating' || layout === 'floating') && (slot === 'main' || slot === 'sidebar')) return 'floating';
-  if (layout === 'floating' && slot === 'aside') return 'floating';
-  return 'default';
+  if (
+    (layout === "sidebar-floating" || layout === "floating") &&
+    (slot === "main" || slot === "sidebar")
+  )
+    return "floating";
+  if (layout === "floating" && slot === "aside") return "floating";
+  return "default";
 }
 
 // ============================================
@@ -143,7 +143,7 @@ function resolveSlotVariant(
 
 interface AppShellContextValue {
   layout: AppShellLayout;
-  structure: 'default' | 'sidebar';
+  structure: "default" | "sidebar";
   headerHeight: string;
   sidebarWidth: string;
   sidebarCollapsedWidth: string;
@@ -152,12 +152,12 @@ interface AppShellContextValue {
 }
 
 const AppShellContext = React.createContext<AppShellContextValue>({
-  layout: 'default',
-  structure: 'default',
-  headerHeight: '56px',
-  sidebarWidth: '240px',
-  sidebarCollapsedWidth: '64px',
-  asideWidth: '280px',
+  layout: "default",
+  structure: "default",
+  headerHeight: "56px",
+  sidebarWidth: "240px",
+  sidebarCollapsedWidth: "64px",
+  asideWidth: "280px",
   asideVisible: false,
 });
 
@@ -173,14 +173,14 @@ function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mq = window.matchMedia('(max-width: 767px)');
+    const mq = window.matchMedia("(max-width: 767px)");
     setIsMobile(mq.matches);
 
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
   return isMobile;
@@ -202,18 +202,18 @@ interface ExtractedConfig {
 
 function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
   const config: ExtractedConfig = {
-    headerHeight: '56px',
-    sidebarWidth: '240px',
-    sidebarCollapsedWidth: '64px',
-    sidebarCollapsible: 'icon',
+    headerHeight: "56px",
+    sidebarWidth: "240px",
+    sidebarCollapsedWidth: "64px",
+    sidebarCollapsible: "icon",
     sidebarDefaultCollapsed: false,
-    asideWidth: '280px',
+    asideWidth: "280px",
     asideVisible: false,
   };
 
   let hasHeader = false;
 
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
 
     if (child.type === AppShellHeader) {
@@ -227,7 +227,8 @@ function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
       if (props.width) config.sidebarWidth = props.width;
       if (props.collapsedWidth) config.sidebarCollapsedWidth = props.collapsedWidth;
       if (props.collapsible) config.sidebarCollapsible = props.collapsible;
-      if (props.defaultCollapsed !== undefined) config.sidebarDefaultCollapsed = props.defaultCollapsed;
+      if (props.defaultCollapsed !== undefined)
+        config.sidebarDefaultCollapsed = props.defaultCollapsed;
     }
 
     if (child.type === AppShellAside) {
@@ -238,7 +239,7 @@ function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
   });
 
   // Header-less shell: collapse the header row so sidebar + main fill the viewport.
-  if (!hasHeader) config.headerHeight = '0px';
+  if (!hasHeader) config.headerHeight = "0px";
 
   return config;
 }
@@ -258,37 +259,41 @@ function AppShellInner({
   children: React.ReactNode;
   className?: string;
   layout: AppShellLayout;
-  structure: 'default' | 'sidebar';
+  structure: "default" | "sidebar";
 } & React.HTMLAttributes<HTMLDivElement>) {
   const appShell = useAppShell();
   const { collapsed, isMobile, collapsible } = useSidebar();
 
-  const classes = [
-    styles.root,
-    structure === 'sidebar' && styles.sidebarLayout,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.root, structure === "sidebar" && styles.sidebarLayout, className]
+    .filter(Boolean)
+    .join(" ");
 
   // Calculate actual sidebar width based on state
   const actualSidebarWidth = isMobile
-    ? '0px'
-    : (collapsible === 'icon' && collapsed)
+    ? "0px"
+    : collapsible === "icon" && collapsed
       ? appShell.sidebarCollapsedWidth
-      : (collapsible === 'offcanvas' && collapsed)
-        ? '0px'
+      : collapsible === "offcanvas" && collapsed
+        ? "0px"
         : appShell.sidebarWidth;
 
   const style: React.CSSProperties = {
-    '--appshell-header-height': appShell.headerHeight,
-    '--appshell-sidebar-width': actualSidebarWidth,
-    '--appshell-sidebar-expanded-width': appShell.sidebarWidth,
-    '--appshell-sidebar-collapsed-width': appShell.sidebarCollapsedWidth,
-    '--appshell-aside-width': appShell.asideVisible ? appShell.asideWidth : '0px',
+    "--appshell-header-height": appShell.headerHeight,
+    "--appshell-sidebar-width": actualSidebarWidth,
+    "--appshell-sidebar-expanded-width": appShell.sidebarWidth,
+    "--appshell-sidebar-collapsed-width": appShell.sidebarCollapsedWidth,
+    "--appshell-aside-width": appShell.asideVisible ? appShell.asideWidth : "0px",
     ...styleProp,
   } as React.CSSProperties;
 
   return (
-    <div {...htmlProps} className={classes} style={style} data-layout={layout} data-mobile={isMobile || undefined}>
+    <div
+      {...htmlProps}
+      className={classes}
+      style={style}
+      data-layout={layout}
+      data-mobile={isMobile || undefined}
+    >
       {children}
     </div>
   );
@@ -304,7 +309,7 @@ function AppShellInner({
  */
 function AppShellRoot({
   children,
-  layout = 'default',
+  layout = "default",
   bg,
   className,
   style: styleProp,
@@ -333,7 +338,13 @@ function AppShellRoot({
         collapsible={config.sidebarCollapsible}
         defaultCollapsed={config.sidebarDefaultCollapsed}
       >
-        <AppShellInner className={className} layout={layout} structure={structure} style={{ ...(bg ? { backgroundColor: bg } : {}), ...styleProp }} {...htmlProps}>
+        <AppShellInner
+          className={className}
+          layout={layout}
+          structure={structure}
+          style={{ ...(bg ? { backgroundColor: bg } : {}), ...styleProp }}
+          {...htmlProps}
+        >
           {children}
         </AppShellInner>
       </SidebarProvider>
@@ -346,19 +357,16 @@ function AppShellRoot({
  */
 function AppShellHeader({
   children,
-  height = '56px',
+  height = "56px",
   bg,
   className,
   style: styleProp,
   ...htmlProps
 }: AppShellHeaderProps) {
-  const classes = [
-    styles.header,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.header, className].filter(Boolean).join(" ");
 
   const style: React.CSSProperties = {
-    '--header-height': height,
+    "--header-height": height,
     ...(bg ? { backgroundColor: bg } : {}),
     ...styleProp,
   } as React.CSSProperties;
@@ -375,28 +383,30 @@ function AppShellHeader({
  */
 function AppShellSidebar({
   children,
-  width = '240px',
-  collapsedWidth = '64px',
-  collapsible = 'icon',
-  position = 'left',
+  width = "240px",
+  collapsedWidth = "64px",
+  collapsible = "icon",
+  position = "left",
   defaultCollapsed = false,
   variant,
   bg,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
   className,
   style: styleProp,
   ...htmlProps
 }: AppShellSidebarProps) {
   const isMobile = useIsMobile();
   const { layout, structure } = useAppShell();
-  const resolvedVariant = resolveSlotVariant(variant, layout, 'sidebar');
+  const resolvedVariant = resolveSlotVariant(variant, layout, "sidebar");
 
   const classes = [
     styles.sidebar,
-    structure === 'sidebar' && styles.sidebarFullHeight,
-    resolvedVariant === 'floating' && styles.sidebarFloating,
+    structure === "sidebar" && styles.sidebarFullHeight,
+    resolvedVariant === "floating" && styles.sidebarFloating,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const style: React.CSSProperties = {
     ...styleProp,
@@ -425,23 +435,25 @@ function AppShellSidebar({
  */
 function AppShellMain({
   children,
-  padding = 'md',
+  padding = "sm",
   variant,
   bg,
   className,
   style: styleProp,
-  id = 'main-content',
+  id = "main-content",
   ...htmlProps
 }: AppShellMainProps) {
   const { layout } = useAppShell();
-  const resolvedVariant = resolveSlotVariant(variant, layout, 'main');
+  const resolvedVariant = resolveSlotVariant(variant, layout, "main");
 
   const classes = [
     styles.main,
-    padding !== 'none' && styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}`],
-    resolvedVariant === 'floating' && styles.mainFloating,
+    padding !== "none" && styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}`],
+    resolvedVariant === "floating" && styles.mainFloating,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const style: React.CSSProperties = {
     ...(bg ? { backgroundColor: bg } : {}),
@@ -460,7 +472,7 @@ function AppShellMain({
  */
 function AppShellAside({
   children,
-  width = '280px',
+  width = "280px",
   visible = true,
   variant,
   bg,
@@ -469,20 +481,18 @@ function AppShellAside({
   ...htmlProps
 }: AppShellAsideProps) {
   const { layout } = useAppShell();
-  const resolvedVariant = resolveSlotVariant(variant, layout, 'aside');
+  const resolvedVariant = resolveSlotVariant(variant, layout, "aside");
 
   if (!visible) {
     return null;
   }
 
-  const classes = [
-    styles.aside,
-    resolvedVariant === 'floating' && styles.asideFloating,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.aside, resolvedVariant === "floating" && styles.asideFloating, className]
+    .filter(Boolean)
+    .join(" ");
 
   const style: React.CSSProperties = {
-    '--aside-width': width,
+    "--aside-width": width,
     ...(bg ? { backgroundColor: bg } : {}),
     ...styleProp,
   } as React.CSSProperties;
@@ -505,11 +515,4 @@ export const AppShell = Object.assign(AppShellRoot, {
   Aside: AppShellAside,
 });
 
-export {
-  AppShellRoot,
-  AppShellHeader,
-  AppShellSidebar,
-  AppShellMain,
-  AppShellAside,
-  useAppShell,
-};
+export { AppShellRoot, AppShellHeader, AppShellSidebar, AppShellMain, AppShellAside, useAppShell };
