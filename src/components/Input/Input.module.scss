@@ -30,13 +30,13 @@
 
 .md {
   height: var(--fui-input-height, $fui-input-height);
-  padding: 0 var(--fui-space-3, $fui-space-3);
+  padding: 0 var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
 .lg {
   height: var(--fui-input-height-lg, $fui-input-height-lg);
-  padding: 0 var(--fui-space-4, $fui-space-4);
+  padding: 0 var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
@@ -92,7 +92,7 @@
   // in the visible area between the left edge and the kbd badge.
   &:has(> .shortcut) .input {
     padding-right: var(--fui-space-12, 3rem);
-    padding-left: var(--fui-space-3, $fui-space-3);
+    padding-left: var(--fui-space-2, $fui-space-2);
   }
 }
 
@@ -101,18 +101,8 @@
   @include field-shell;
 
   gap: var(--fui-space-2, $fui-space-2);
-  padding: 0 var(--fui-space-3, $fui-space-3);
+  padding: 0 var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-
-  // Optical alignment: icons have built-in whitespace, so reduce padding
-  // on the side with an adornment to keep the content optically centered.
-  &:has(> .adornment:first-child) {
-    padding-left: var(--fui-space-2, $fui-space-2);
-  }
-
-  &:has(> .adornment:last-of-type:not(:first-child)) {
-    padding-right: var(--fui-space-2, $fui-space-2);
-  }
 
   &:focus-within {
     @include field-shell-focus;

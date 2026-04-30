@@ -569,8 +569,9 @@ $fui-code-bg: #0c0c0e !default;
         color-mix(in oklch, var(--fui-seed-info) 15%, transparent)
       );
 
-      // Focus ring derived from seed-brand
-      --fui-focus-ring-color: var(--fui-seed-brand);
+      // Focus ring follows the resolved accent so dark brands are lifted on
+      // dark surfaces instead of disappearing into the field chrome.
+      --fui-focus-ring-color: var(--fui-color-accent);
     }
 
     // Runtime-derived dark mode overrides (replaces SCSS-computed when supported)
@@ -586,7 +587,7 @@ $fui-code-bg: #0c0c0e !default;
       --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
       --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);
       --fui-color-info-bg: color-mix(in oklch, var(--fui-seed-info) 15%, transparent);
-      --fui-focus-ring-color: var(--fui-seed-brand);
+      --fui-focus-ring-color: var(--fui-color-accent);
     }
   }
 
