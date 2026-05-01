@@ -17,9 +17,9 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   --fui-sidebar-icon-size: 1.143rem;
   --fui-sidebar-muted: color-mix(in srgb, var(--fui-text-secondary, #a3a3a3) 76%, transparent);
   --fui-sidebar-faint: color-mix(in srgb, var(--fui-text-tertiary, #737373) 82%, transparent);
-  --fui-sidebar-hover-bg: color-mix(in srgb, var(--fui-text-primary, #ffffff) 5%, transparent);
-  --fui-sidebar-active-bg: color-mix(in srgb, var(--fui-text-primary, #ffffff) 9%, transparent);
-  --fui-sidebar-active-border: color-mix(in srgb, var(--fui-text-primary, #ffffff) 5%, transparent);
+  --fui-sidebar-hover-bg: color-mix(in srgb, var(--fui-text-primary, #ffffff) 4%, transparent);
+  --fui-sidebar-active-bg: color-mix(in srgb, var(--fui-color-accent, #6366f1) 10%, transparent);
+  --fui-sidebar-active-border: transparent;
 
   position: relative;
   display: flex;
@@ -27,7 +27,11 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   width: var(--sidebar-width);
   height: 100%;
   max-height: 100vh;
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  background: color-mix(
+    in srgb,
+    var(--fui-bg-secondary, #151515) 18%,
+    var(--fui-bg-primary, #0f0f0f)
+  );
   transition: width var(--fui-transition-normal, $fui-transition-normal);
   overflow: hidden;
   flex-shrink: 0;
@@ -152,7 +156,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 }
 
 .section:not(:first-child) {
-  margin-top: 1.714rem;
+  margin-top: 1.286rem;
 }
 
 .sectionHeader {
@@ -264,6 +268,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   @include interactive-base;
   @include text-base;
 
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
@@ -301,6 +306,17 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   border-color: var(--fui-sidebar-active-border);
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -0.571rem;
+    top: 0.286rem;
+    bottom: 0.286rem;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    background: var(--fui-color-accent, $fui-color-accent);
+  }
 
   &:hover,
   &:active {
@@ -460,6 +476,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   padding: 0.857rem;
   margin-top: auto;
   flex-shrink: 0;
+  border-top: 1px solid color-mix(in srgb, var(--fui-border-default, #2a2a2a) 58%, transparent);
 }
 
 .trigger {
