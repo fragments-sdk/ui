@@ -144,7 +144,7 @@
 
 // Shared shell for field-like controls.
 @mixin field-shell {
-  background-color: var(--fui-field-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  background-color: var(--fui-field-bg, transparent);
   border: 1px solid var(--fui-field-border, var(--fui-border-strong, #{$fui-border-strong}));
   border-radius: var(--fui-radius-md, #{$fui-radius-md});
   transition:
@@ -155,6 +155,13 @@
 
   &:hover:not(:disabled):not([data-disabled]):not(:focus-visible) {
     border-color: var(--fui-field-border-hover, var(--fui-text-tertiary, #{$fui-text-tertiary}));
+  }
+
+  &:focus:not(:disabled):not([data-disabled]) {
+    border-color: var(
+      --fui-field-border-focus,
+      var(--fui-color-accent, #{$fui-color-accent})
+    );
   }
 
   &:disabled,
@@ -168,7 +175,7 @@
   @include focus-ring;
   border-color: var(
     --fui-field-border-focus,
-    color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 20%, var(--fui-border-strong, #{$fui-border-strong}))
+    var(--fui-color-accent, #{$fui-color-accent})
   );
 }
 

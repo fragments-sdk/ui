@@ -441,11 +441,11 @@ $fui-code-bg: #0c0c0e !default;
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
 
     // Form chrome (derived from theme surfaces + seed-driven accent)
-    --fui-field-bg: var(--fui-bg-tertiary);
+    --fui-field-bg: transparent;
     --fui-field-bg-disabled: color-mix(in srgb, var(--fui-bg-tertiary) 88%, var(--fui-bg-primary));
-    --fui-field-border: color-mix(in srgb, var(--fui-border-strong) 78%, var(--fui-bg-primary));
-    --fui-field-border-hover: color-mix(in srgb, var(--fui-text-tertiary) 58%, var(--fui-border-strong));
-    --fui-field-border-focus: color-mix(in srgb, var(--fui-focus-ring-color) 18%, var(--fui-border-strong));
+    --fui-field-border: color-mix(in srgb, var(--fui-border-strong) 86%, var(--fui-text-secondary));
+    --fui-field-border-hover: color-mix(in srgb, var(--fui-text-tertiary) 72%, var(--fui-border-strong));
+    --fui-field-border-focus: var(--fui-color-accent);
     --fui-field-selection-bg: color-mix(in srgb, var(--fui-color-accent) 12%, var(--fui-bg-elevated));
     --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-color-accent) 16%, var(--fui-bg-hover));
     --fui-field-selection-border: color-mix(in srgb, var(--fui-color-accent) 38%, var(--fui-border));
