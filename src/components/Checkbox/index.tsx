@@ -31,6 +31,14 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   /** Size variant.
    * @default "md" */
   size?: 'sm' | 'md' | 'lg';
+  /**
+   * Visual variant.
+   * - `default`: inline checkbox next to a label (form-control style).
+   * - `card`: full-width clickable card with the checkbox tucked inside.
+   *   Useful for multi-select question lists, settings toggles, etc.
+   * @default "default"
+   */
+  variant?: 'default' | 'card';
   /** Label text */
   label?: string;
   /** Helper text shown below the label */
@@ -108,6 +116,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       disabled = false,
       required = false,
       size = 'md',
+      variant = 'default',
       label,
       helperText,
       description,
@@ -143,7 +152,11 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       size === 'lg' && styles.labelLg,
     ].filter(Boolean).join(' ');
 
-    const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
+    const wrapperClasses = [
+      styles.wrapper,
+      variant === 'card' && styles.wrapperCard,
+      className,
+    ].filter(Boolean).join(' ');
     const handleCheckedChange = onChange ?? onCheckedChange;
 
     // If no label/description, render just the checkbox

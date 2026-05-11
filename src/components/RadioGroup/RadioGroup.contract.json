@@ -96,6 +96,16 @@
         "lg"
       ]
     },
+    "variant": {
+      "type": "enum",
+      "description": "Visual variant. 'default' is the inline radio, 'card' renders each item as a full-width clickable card with the radio tucked inside.",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "card"
+      ]
+    },
     "wrapperClassName": {
       "type": "string",
       "description": "Class name for the outer wrapper element",

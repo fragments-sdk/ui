@@ -37,6 +37,14 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   error?: boolean | string;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
+  /**
+   * Visual variant.
+   * - `default`: inline radio circle next to a label (form-control style).
+   * - `card`: each item is a full-width clickable card with the radio circle
+   *   tucked inside. Useful for high-stakes choices, surveys, plan pickers.
+   * @default "default"
+   */
+  variant?: 'default' | 'card';
   /** Class applied to the outer wrapper (label + group + error) */
   wrapperClassName?: string;
   /** Class applied to the inner radio group container */
@@ -71,10 +79,11 @@ export interface RadioItemProps {
 }
 
 // ============================================
-// Context for size
+// Context for size + variant
 // ============================================
 
 const RadioSizeContext = React.createContext<'sm' | 'md' | 'lg'>('md');
+const RadioVariantContext = React.createContext<'default' | 'card'>('default');
 
 // ============================================
 // Radio Item Component
@@ -95,6 +104,7 @@ function RadioItem({
 }: RadioItemProps) {
   const resolvedHelperText = helperText ?? description;
   const size = React.useContext(RadioSizeContext);
+  const variant = React.useContext(RadioVariantContext);
   const id = React.useId();
   const labelId = label ? `radio-label-${id}` : undefined;
   const descriptionId = resolvedHelperText ? `radio-desc-${id}` : undefined;
@@ -112,7 +122,11 @@ function RadioItem({
     size === 'lg' && styles.labelLg,
   ].filter(Boolean).join(' ');
 
-  const wrapperClasses = [styles.itemWrapper, className].filter(Boolean).join(' ');
+  const wrapperClasses = [
+    styles.itemWrapper,
+    variant === 'card' && styles.itemWrapperCard,
+    className,
+  ].filter(Boolean).join(' ');
 
   // If no label/description, render just the radio
   if (!label && !resolvedHelperText) {
@@ -172,6 +186,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
   helperText,
   error,
   size = 'md',
+  variant = 'default',
   wrapperClassName,
   groupClassName,
   children,
@@ -194,6 +209,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
 
   return (
     <RadioSizeContext.Provider value={size}>
+     <RadioVariantContext.Provider value={variant}>
       <div ref={ref} {...htmlProps} className={[styles.wrapper, wrapperClassName].filter(Boolean).join(' ')}>
         {label && <span id={labelId} className={styles.groupLabel}>{label}</span>}
         <BaseRadioGroup
@@ -216,6 +232,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
         )}
         {errorMessage && <span id={errorId} className={styles.error}>{errorMessage}</span>}
       </div>
+     </RadioVariantContext.Provider>
     </RadioSizeContext.Provider>
   );
 });

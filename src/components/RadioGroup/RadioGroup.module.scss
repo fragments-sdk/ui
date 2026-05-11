@@ -160,6 +160,68 @@
 }
 
 // ============================================
+// Card variant: each item is a full-width clickable surface that signals
+// selection via background + border tint while keeping the inline radio
+// circle as the canonical control. The `:has([data-checked])` selector is
+// the source of truth for selected styling — no extra attribute plumbing
+// required from JS.
+// ============================================
+// Card variant uses a transparent base so the selected accent tint reads
+// as a deliberate state change rather than a small shift between two grey
+// surfaces. Mirrors the pattern used by the Checkbox card variant.
+.itemWrapperCard {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-3, $fui-space-3);
+  width: 100%;
+  height: 36px; // matches Input size="md" so radio cards align with form fields
+  box-sizing: border-box;
+  padding: 0 var(--fui-space-3, $fui-space-3);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  border: 1px solid var(--fui-border-default, $fui-border-default);
+  background: transparent;
+  transition:
+    background var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast),
+    box-shadow var(--fui-transition-fast, $fui-transition-fast);
+
+  &:hover:not([data-disabled]) {
+    background: var(--fui-bg-hover, $fui-bg-hover);
+    border-color: var(--fui-border-strong, $fui-border-strong);
+  }
+
+  &:focus-within:not([data-disabled]) {
+    border-color: var(--fui-color-accent, $fui-color-accent);
+    box-shadow: 0 0 0 1px var(--fui-color-accent, $fui-color-accent);
+  }
+
+  &:has([data-checked]) {
+    background: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 13%,
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 62%,
+      transparent
+    );
+    box-shadow: 0 0 0 1px
+      color-mix(
+        in srgb,
+        var(--fui-color-accent, #{$fui-color-accent}) 28%,
+        transparent
+      );
+  }
+
+  // Inline with the input field convention rather than the lifted card
+  // headline weight — the label sits at base-size, tight against the radio.
+  .label {
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  }
+}
+
+// ============================================
 // Accessibility: High Contrast Mode
 // ============================================
 

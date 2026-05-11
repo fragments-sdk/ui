@@ -84,6 +84,16 @@
         "lg"
       ]
     },
+    "variant": {
+      "type": "enum",
+      "description": "Visual variant. 'default' is the inline checkbox, 'card' renders as a full-width clickable card with the checkbox tucked inside.",
+      "default": "default",
+      "required": false,
+      "values": [
+        "default",
+        "card"
+      ]
+    },
     "label": {
       "type": "string",
       "description": "Label text",
