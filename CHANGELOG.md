@@ -1,5 +1,11 @@
 # @fragments-sdk/ui
 
+## 0.19.2
+
+### Patch Changes
+
+- Add `band` prop to `Table.Row` for explicit stripe banding (useful for virtualized or grouped rows) and forward refs to the underlying `<tr>` so consumers can measure or scroll rows.
+
 ## 0.19.1
 
 ### Patch Changes

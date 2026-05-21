@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .wrapper {
   overflow-x: auto;
@@ -107,10 +107,15 @@
 }
 
 // Body
-.tbody {}
+.tbody {
+}
 
 .row {
+  --fui-table-row-base-bg: var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
+  --fui-table-row-bg: var(--fui-table-row-base-bg);
+
   border-bottom: 1px solid var(--fui-border, $fui-border);
+  background-color: var(--fui-table-row-bg);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:last-child {
@@ -118,15 +123,27 @@
   }
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    --fui-table-row-bg: color-mix(
+      in srgb,
+      var(--fui-bg-hover, $fui-bg-hover) 72%,
+      var(--fui-table-row-base-bg)
+    );
   }
 }
 
 .selected {
-  background-color: rgba($fui-color-accent, 0.08);
+  --fui-table-row-bg: color-mix(
+    in srgb,
+    var(--fui-color-accent, #{$fui-color-accent}) 8%,
+    var(--fui-table-row-base-bg)
+  );
 
   &:hover {
-    background-color: rgba($fui-color-accent, 0.12);
+    --fui-table-row-bg: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 12%,
+      var(--fui-table-row-base-bg)
+    );
   }
 }
 
@@ -148,16 +165,13 @@
 
 // Striped rows
 .striped {
-  .tbody .row:nth-child(even) {
-    background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+  .tbody .row:nth-child(even),
+  .tbody .row[data-band="alt"] {
+    --fui-table-row-base-bg: var(--fui-bg-subtle, $fui-bg-subtle);
   }
 
-  .selected {
-    background-color: rgba($fui-color-accent, 0.08);
-
-    &:hover {
-      background-color: rgba($fui-color-accent, 0.12);
-    }
+  .tbody .row[data-band="default"] {
+    --fui-table-row-base-bg: var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
   }
 }
 
