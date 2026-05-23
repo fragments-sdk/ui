@@ -142,6 +142,25 @@ const SelectContext = React.createContext<SelectContextValue>({
   size: 'md',
 });
 
+// Walk the declared Select children at render time to build a value→label map.
+// The trigger reads this so a preselected value renders its label immediately,
+// without waiting for the lazily-portaled popup to mount and register items.
+function collectDeclaredItems(
+  children: React.ReactNode,
+  map: Map<SelectValue, React.ReactNode>,
+) {
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    if (child.type === SelectItem) {
+      const props = child.props as SelectItemProps;
+      map.set(props.value, props.children);
+      return;
+    }
+    const nested = (child.props as { children?: React.ReactNode })?.children;
+    if (nested) collectDeclaredItems(nested, map);
+  });
+}
+
 // ============================================
 // Components
 // ============================================
@@ -209,16 +228,33 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     [value, onChange, onValueChange]
   );
 
+  // Labels declared up-front via children/options, so the trigger can show the
+  // selected value before the popup has ever opened. Merged with the live
+  // registry, which still wins for items that register dynamically.
+  const declaredItems = React.useMemo(() => {
+    const map = new Map<SelectValue, React.ReactNode>();
+    options?.forEach((option) => map.set(option.value, option.label));
+    collectDeclaredItems(children, map);
+    return map;
+  }, [children, options]);
+
+  const resolvedItems = React.useMemo(() => {
+    if (declaredItems.size === 0) return items;
+    const merged = new Map(declaredItems);
+    items.forEach((content, itemValue) => merged.set(itemValue, content));
+    return merged;
+  }, [declaredItems, items]);
+
   const contextValue = React.useMemo(
     () => ({
       placeholder,
       value: value !== undefined ? value : internalValue,
-      items,
+      items: resolvedItems,
       registerItem,
       unregisterItem,
       size,
     }),
-    [placeholder, value, internalValue, items, registerItem, unregisterItem, size]
+    [placeholder, value, internalValue, resolvedItems, registerItem, unregisterItem, size]
   );
 
   const { helperId, errorId, hasError, errorMessage } = useFormFieldIds('select', { label, helperText, error });

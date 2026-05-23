@@ -51,6 +51,16 @@ describe('Select', () => {
     expect(bananaOption).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('shows the selected value label in the trigger before the menu is opened', () => {
+    // Regression: the trigger reads labels declared in children, so a
+    // preselected value renders its label without first opening the popup
+    // (whose items are lazily mounted via the portal).
+    renderSelect({ value: 'banana', placeholder: 'Pick one' });
+    const trigger = screen.getByRole('combobox');
+    expect(trigger).toHaveTextContent('Banana');
+    expect(trigger).not.toHaveTextContent('Pick one');
+  });
+
   it('disables the trigger when disabled prop is true', () => {
     renderSelect({ disabled: true });
     expect(screen.getByRole('combobox')).toBeDisabled();
