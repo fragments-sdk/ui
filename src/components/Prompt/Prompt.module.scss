@@ -40,7 +40,7 @@
     );
     animation: beam-rotate 4s linear infinite;
     opacity: 0.6;
-    transition: opacity 300ms ease;
+    transition: opacity var(--fui-transition-normal, $fui-transition-normal);
   }
 
   // Mask layer — covers the interior, leaving only the 1px border visible
@@ -123,13 +123,13 @@
 
   display: block;
   width: 100%;
-  min-height: 2.857rem; // ~40px
-  padding: var(--fui-space-2) var(--fui-space-3);
+  min-height: var(--fui-input-height, $fui-input-height);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   background: transparent;
   border: none;
   resize: none;
   overflow-y: auto;
-  line-height: $fui-line-height-normal;
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 
   &::placeholder {
     color: var(--fui-text-tertiary, $fui-text-tertiary);
@@ -161,10 +161,10 @@
 
 .tabsInner {
   display: inline-flex;
-  gap: 1px;
+  gap: var(--fui-space-px, $fui-space-px);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border-radius: var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg) 0 0;
-  padding: 3px 3px 0 3px;
+  padding: var(--fui-space-0-75, $fui-space-0-75) var(--fui-space-0-75, $fui-space-0-75) 0;
   border: 1px solid var(--fui-border, $fui-border);
   border-bottom: none;
 }
@@ -180,7 +180,9 @@
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  transition: all 120ms ease;
+  transition:
+    color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
   white-space: nowrap;
 
   &:hover {
@@ -202,7 +204,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-1) var(--fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-top: 1px solid var(--fui-border, $fui-border);
 }
@@ -268,7 +270,7 @@
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-1) var(--fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);

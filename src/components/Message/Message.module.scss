@@ -8,7 +8,7 @@
 .message {
   display: flex;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2);
+  padding: var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
@@ -66,8 +66,14 @@
 // Status styles
 .error {
   .content {
-    background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
-    border: 1px solid var(--fui-color-danger, $fui-color-danger);
+    // Matches Alert/Toast semantic-surface recipe (color-mix tint + soft border)
+    background: color-mix(
+      in srgb,
+      var(--fui-color-danger, #{$fui-color-danger}) 15%,
+      var(--fui-bg-elevated, #{$fui-bg-elevated})
+    );
+    border: 1px solid
+      color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
     color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
@@ -141,7 +147,7 @@
 
 .content {
   @include text-base;
-  padding: var(--fui-space-2) var(--fui-space-3);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   word-wrap: break-word;
@@ -165,7 +171,7 @@
 
   pre {
     margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-space-2);
+    padding: var(--fui-space-2, $fui-space-2);
     border-radius: var(--fui-radius-md, $fui-radius-md);
     background-color: var(--fui-bg-subtle, $fui-bg-subtle);
     overflow-x: auto;

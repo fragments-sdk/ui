@@ -67,8 +67,8 @@
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--fui-icon-sm, $fui-icon-sm);
+    height: var(--fui-icon-sm, $fui-icon-sm);
   }
 }
 
@@ -124,21 +124,22 @@
 .item {
   @include popup-item;
 
+  // Base UI sets [data-highlighted] on pointer-hover AND keyboard nav → one indicator.
   &[data-highlighted] {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include popup-item-highlight;
   }
 
   &[data-selected] {
     @include popup-item-selected;
 
+    // Selected + active: stronger accent-tinted wash so it still reads as selected.
     &[data-highlighted] {
       background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
     }
   }
 
   &[data-disabled] {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-    cursor: not-allowed;
+    @include popup-item-disabled;
   }
 }
 
@@ -147,14 +148,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
+  width: var(--fui-icon-sm, $fui-icon-sm);
+  height: var(--fui-icon-sm, $fui-icon-sm);
   margin-left: auto;
   color: var(--fui-color-accent, $fui-color-accent);
 
   svg {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: var(--fui-icon-xs, $fui-icon-xs);
+    height: var(--fui-icon-xs, $fui-icon-xs);
   }
 }
 

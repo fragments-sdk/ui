@@ -166,24 +166,24 @@
 .link {
   @include popup-item;
 
-  color: var(--fui-text-primary, $fui-text-primary);
   text-decoration: none;
   white-space: nowrap;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include popup-item-highlight;
   }
 
+  // Links are real tab stops, so keep the focus ring on top of the highlight.
   &:focus-visible {
     @include focus-ring;
   }
 }
 
+// Current route — a "you are here" selection state, so it earns accent (distinct from
+// the neutral hover highlight, which previously made active indistinguishable).
 .linkActive {
-  background-color: var(--fui-bg-hover, $fui-bg-hover);
+  background-color: var(--fui-field-selection-bg, var(--fui-bg-hover, $fui-bg-hover));
+  color: var(--fui-color-accent, $fui-color-accent);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }
 
@@ -197,7 +197,7 @@
   min-height: auto;
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include popup-item-highlight;
   }
 }
 
@@ -237,7 +237,7 @@
   border: 1px solid var(--fui-border, $fui-border);
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include popup-item-highlight;
     border-color: var(--fui-border-strong, $fui-border-strong);
   }
 }
@@ -251,7 +251,7 @@
   bottom: 0;
   height: 2px;
   background-color: var(--fui-color-accent, $fui-color-accent);
-  border-radius: 1px;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
   transition:
     left var(--fui-transition-normal, $fui-transition-normal),
     width var(--fui-transition-normal, $fui-transition-normal);
@@ -420,8 +420,7 @@
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
+    @include popup-item-highlight;
   }
 }
 

@@ -36,8 +36,9 @@
     transparent
   );
   border-color: var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
   box-shadow: none;
+  // Radius inherits the base card `radius-lg` (was an off-base `radius-md`
+  // override) so all card variants share a single corner radius.
 }
 
 // Hairline-bordered panel with no own padding — designed for compound use
@@ -53,10 +54,11 @@
     transparent
   );
   border-color: var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
   box-shadow: none;
   overflow: hidden;
   padding: 0;
+  // Radius inherits the base card `radius-lg` (was an off-base `radius-md`
+  // override) so all card variants share a single corner radius.
 }
 
 // Padding
@@ -64,12 +66,13 @@
   padding: 0;
 }
 
+// Canonical spacing scale (shared with Box/Stack/Grid/BentoGrid/List): sm=2 md=3 lg=4
 .paddingSm {
-  padding: var(--fui-space-1, $fui-space-1);
+  padding: var(--fui-space-2, $fui-space-2);
 }
 
 .paddingMd {
-  padding: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-3, $fui-space-3);
 }
 
 .paddingLg {

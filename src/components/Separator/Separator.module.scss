@@ -41,7 +41,7 @@
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
   white-space: nowrap;
 }
 

@@ -4,7 +4,6 @@
 // Local component tokens
 $fui-slider-track-height: 4px !default;
 $fui-slider-thumb-size: $fui-target-size-min !default;
-$fui-slider-thumb-border: 2px !default;
 
 .wrapper {
   display: flex;
@@ -71,7 +70,7 @@ $fui-slider-thumb-border: 2px !default;
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   border: 1px solid var(--fui-field-selection-border, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
   cursor: grab;
   transition:
     border-color var(--fui-transition-fast, $fui-transition-fast),
@@ -83,7 +82,7 @@ $fui-slider-thumb-border: 2px !default;
 
   &:active {
     cursor: grabbing;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   }
 
   &:focus-visible {

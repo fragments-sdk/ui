@@ -60,28 +60,38 @@ function getInitials(name: string): string {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
 
-function stringToColor(str: string): string {
-  // Generate a consistent color from a string
+// Generated identicon backgrounds keep a fixed hue per name but vary lightness
+// by theme: deeper in light mode, lighter in dark mode so the fallback never
+// reads as a fixed mid-tone against the surrounding surface.
+const FALLBACK_SATURATION_LIGHT = 55;
+const FALLBACK_LIGHTNESS_LIGHT = 42;
+const FALLBACK_SATURATION_DARK = 50;
+const FALLBACK_LIGHTNESS_DARK = 62;
+
+function hashString(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const hue = Math.abs(hash % 360);
-  return `hsl(${hue}, 55%, 40%)`;
+  return Math.abs(hash % 360);
+}
+
+function stringToColor(str: string): string {
+  // Generate a consistent hue from a string, theme-aware lightness via
+  // light-dark() so it isn't a fixed mid-tone in dark mode.
+  const hue = hashString(str);
+  return (
+    `light-dark(` +
+    `hsl(${hue} ${FALLBACK_SATURATION_LIGHT}% ${FALLBACK_LIGHTNESS_LIGHT}%), ` +
+    `hsl(${hue} ${FALLBACK_SATURATION_DARK}% ${FALLBACK_LIGHTNESS_DARK}%))`
+  );
 }
 
 /**
- * Compute a contrast-safe text color (white or black) for a given HSL background.
+ * Compute a contrast-safe text color (white or black) for an HSL background.
  * Uses WCAG relative luminance to pick whichever gives higher contrast.
  */
-function getContrastTextColor(bgColor: string): string | undefined {
-  const match = bgColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!match) return undefined;
-
-  const h = parseInt(match[1]);
-  const s = parseInt(match[2]) / 100;
-  const l = parseInt(match[3]) / 100;
-
+function contrastForHsl(h: number, s: number, l: number): string {
   // HSL → RGB
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs((h / 60) % 2 - 1));
@@ -100,6 +110,43 @@ function getContrastTextColor(bgColor: string): string | undefined {
   const lum = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 
   return lum > 0.179 ? '#000000' : '#ffffff';
+}
+
+/**
+ * Compute a contrast-safe initials color for a generated fallback background.
+ * The background uses theme-aware lightness via light-dark(), so the text color
+ * is computed for each mode and returned as a matching light-dark() value.
+ * Custom (non-generated) colors fall back to the single-color path.
+ */
+function getContrastTextColor(bgColor: string): string | undefined {
+  // Generated identicon background: light-dark(hsl(...), hsl(...))
+  const ld = bgColor.match(
+    /light-dark\(\s*hsl\((\d+)\s+(\d+)%\s+(\d+)%\)\s*,\s*hsl\((\d+)\s+(\d+)%\s+(\d+)%\)\s*\)/
+  );
+  if (ld) {
+    const lightText = contrastForHsl(
+      parseInt(ld[1]),
+      parseInt(ld[2]) / 100,
+      parseInt(ld[3]) / 100
+    );
+    const darkText = contrastForHsl(
+      parseInt(ld[4]),
+      parseInt(ld[5]) / 100,
+      parseInt(ld[6]) / 100
+    );
+    return lightText === darkText
+      ? lightText
+      : `light-dark(${lightText}, ${darkText})`;
+  }
+
+  // Legacy / custom single HSL color
+  const match = bgColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+  if (!match) return undefined;
+  return contrastForHsl(
+    parseInt(match[1]),
+    parseInt(match[2]) / 100,
+    parseInt(match[3]) / 100
+  );
 }
 
 // ============================================

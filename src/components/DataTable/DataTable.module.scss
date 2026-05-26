@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .wrapper {
   overflow-x: auto;
@@ -64,6 +64,8 @@
   white-space: nowrap;
   vertical-align: middle;
   user-select: none;
+  // Opaque so the sticky header doesn't let rows bleed through on scroll.
+  background: var(--fui-bg-primary, $fui-bg-primary);
 
   &:first-child {
     border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
@@ -110,13 +112,33 @@
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   flex-shrink: 0;
 
+  svg {
+    width: var(--fui-icon-xs, $fui-icon-xs);
+    height: var(--fui-icon-xs, $fui-icon-xs);
+  }
+  // Quiet by default; the neutral glyph appears on hover/focus, and the
+  // active direction arrow stays visible (revealed via aria-sort below).
+  opacity: 0;
+  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
+
   .sortButton:hover & {
     color: var(--fui-text-secondary, $fui-text-secondary);
+    opacity: 1;
+  }
+
+  .sortButton:focus-visible & {
+    opacity: 1;
   }
 }
 
+.th[aria-sort="ascending"] .sortIndicator,
+.th[aria-sort="descending"] .sortIndicator {
+  opacity: 1;
+}
+
 // Body
-.tbody {}
+.tbody {
+}
 
 .row {
   border-bottom: 1px solid var(--fui-border, $fui-border);
@@ -148,10 +170,21 @@
 }
 
 .selected {
-  background-color: rgba($fui-color-accent, 0.08);
+  background-color: color-mix(
+    in srgb,
+    var(--fui-color-accent, #{$fui-color-accent}) 8%,
+    transparent
+  );
+  // Accent rail on the leading edge so selection reads at a glance, not
+  // just a faint tint.
+  box-shadow: inset 2px 0 0 var(--fui-color-accent, $fui-color-accent);
 
   &:hover {
-    background-color: rgba($fui-color-accent, 0.12);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 12%,
+      transparent
+    );
   }
 }
 
@@ -177,10 +210,18 @@
   }
 
   .selected {
-    background-color: rgba($fui-color-accent, 0.08);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, #{$fui-color-accent}) 8%,
+      transparent
+    );
 
     &:hover {
-      background-color: rgba($fui-color-accent, 0.12);
+      background-color: color-mix(
+        in srgb,
+        var(--fui-color-accent, #{$fui-color-accent}) 12%,
+        transparent
+      );
     }
   }
 }
@@ -195,6 +236,96 @@
 // Fixed layout for explicit column sizes
 .fixedLayout {
   table-layout: fixed;
+}
+
+// ============================================
+// Density presets — condensed / regular / relaxed
+// ============================================
+
+// Fixed density rails. Off the 7px spacing grid by design (no row-height
+// token set exists yet); kept as literals so the three steps stay an even
+// 40/48/56 ladder. Snap to row-height tokens once they land.
+.densityCondensed .row {
+  height: 40px;
+}
+
+.densityRegular .row {
+  height: 48px;
+}
+
+.densityRelaxed .row {
+  height: 56px;
+}
+
+// ============================================
+// Per-column alignment (numbers align right)
+// ============================================
+
+.th[data-align="right"],
+.td[data-align="right"] {
+  text-align: right;
+}
+
+.th[data-align="right"] .headerContent,
+.th[data-align="right"] .sortButton {
+  justify-content: flex-end;
+}
+
+.th[data-align="center"],
+.td[data-align="center"] {
+  text-align: center;
+}
+
+.th[data-align="center"] .headerContent,
+.th[data-align="center"] .sortButton {
+  justify-content: center;
+}
+
+// ============================================
+// Truncation (single line + ellipsis; pairs with a column width)
+// ============================================
+
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// ============================================
+// Loading skeleton
+// ============================================
+
+.skeletonBar {
+  display: block;
+  height: 10px;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, currentColor 8%, transparent) 25%,
+    color-mix(in srgb, currentColor 14%, transparent) 50%,
+    color-mix(in srgb, currentColor 8%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: dataTableShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes dataTableShimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonBar {
+    animation: none;
+  }
+
+  .sortIndicator {
+    transition: none;
+  }
 }
 
 // Checkbox column
@@ -217,13 +348,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: var(--fui-icon-lg, $fui-icon-lg);
+  height: var(--fui-icon-lg, $fui-icon-lg);
   flex-shrink: 0;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  transition: color var(--fui-transition-fast, $fui-transition-fast),
-              background-color var(--fui-transition-fast, $fui-transition-fast);
+  transition:
+    color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);
@@ -233,6 +365,16 @@
   &:focus-visible {
     @include focus-ring;
   }
+}
+
+.expandIcon {
+  width: var(--fui-icon-xs, $fui-icon-xs);
+  height: var(--fui-icon-xs, $fui-icon-xs);
+  transition: transform var(--fui-transition-fast, $fui-transition-fast);
+}
+
+.expandIconOpen {
+  transform: rotate(90deg);
 }
 
 .subRow {

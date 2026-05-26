@@ -69,7 +69,7 @@
 .tooltipIndicator {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
   flex-shrink: 0;
 
   &.tooltipIndicatorLine {
@@ -118,7 +118,7 @@
 .legendDot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
   flex-shrink: 0;
 }
 

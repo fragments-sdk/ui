@@ -1,6 +1,9 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 
+// Local component tokens — arrow size shared with Popover/Tooltip
+$fui-arrow-size: 10px !default;
+
 // Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
   z-index: 52;
@@ -46,13 +49,13 @@
 .item {
   @include popup-item;
 
+  // Base UI sets [data-highlighted] on pointer-hover AND keyboard nav → one indicator.
   &[data-highlighted] {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include popup-item-highlight;
   }
 
   &[data-disabled] {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-    cursor: not-allowed;
+    @include popup-item-disabled;
   }
 }
 
@@ -154,8 +157,8 @@
 
 // Arrow
 .arrow {
-  width: 10px;
-  height: 10px;
+  width: $fui-arrow-size;
+  height: $fui-arrow-size;
   transform: rotate(45deg);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border: 1px solid var(--fui-border, $fui-border);

@@ -5,15 +5,15 @@
 // override any consumer-configured palette.
 
 // Runtime CSS detection — warns if component styles aren't loaded
-import { checkCssLoaded } from './utils/css-warning';
-if (typeof window !== 'undefined') {
+import { checkCssLoaded } from "./utils/css-warning";
+if (typeof window !== "undefined") {
   checkCssLoaded();
 }
 
 // Core Components
-export { Button, type ButtonProps } from './components/Button';
-export { Input, type InputProps } from './components/Input';
-export { Textarea, type TextareaProps } from './components/Textarea';
+export { Button, type ButtonProps } from "./components/Button";
+export { Input, type InputProps } from "./components/Input";
+export { Textarea, type TextareaProps } from "./components/Textarea";
 export {
   Card,
   CardRoot,
@@ -28,11 +28,8 @@ export {
   type CardDescriptionProps,
   type CardBodyProps,
   type CardFooterProps,
-} from './components/Card';
-export {
-  Switch,
-  type SwitchProps,
-} from './components/Switch';
+} from "./components/Card";
+export { Switch, type SwitchProps } from "./components/Switch";
 export {
   Alert,
   AlertRoot,
@@ -52,10 +49,15 @@ export {
   type AlertActionsProps,
   type AlertActionProps,
   type AlertCloseProps,
-} from './components/Alert';
-export { Badge, type BadgeProps } from './components/Badge';
-export { IconButton, type IconButtonProps } from './components/IconButton';
-export { Avatar, type AvatarProps, type AvatarGroupProps, type AvatarSize } from './components/Avatar';
+} from "./components/Alert";
+export { Badge, type BadgeProps } from "./components/Badge";
+export { IconButton, type IconButtonProps } from "./components/IconButton";
+export {
+  Avatar,
+  type AvatarProps,
+  type AvatarGroupProps,
+  type AvatarSize,
+} from "./components/Avatar";
 
 // Accordion
 export {
@@ -65,7 +67,7 @@ export {
   type AccordionTriggerProps,
   type AccordionContentProps,
   type AccordionValue,
-} from './components/Accordion';
+} from "./components/Accordion";
 
 // Collapsible
 export {
@@ -78,7 +80,7 @@ export {
   type CollapsibleRootProps,
   type CollapsibleTriggerProps,
   type CollapsibleContentProps,
-} from './components/Collapsible';
+} from "./components/Collapsible";
 
 // Dialog
 export {
@@ -92,7 +94,7 @@ export {
   type DialogFooterProps,
   type DialogTriggerProps,
   type DialogCloseProps,
-} from './components/Dialog';
+} from "./components/Dialog";
 
 // Tabs
 export {
@@ -102,7 +104,7 @@ export {
   type TabProps,
   type TabsPanelProps,
   type TabValue,
-} from './components/Tabs';
+} from "./components/Tabs";
 
 // Tooltip
 export {
@@ -112,7 +114,7 @@ export {
   type TooltipProviderProps,
   type TooltipSide,
   type TooltipAlign,
-} from './components/Tooltip';
+} from "./components/Tooltip";
 
 // Select
 export {
@@ -125,7 +127,7 @@ export {
   type SelectGroupLabelProps,
   type SelectValue,
   type SelectOption,
-} from './components/Select';
+} from "./components/Select";
 
 // Menu
 export {
@@ -140,7 +142,7 @@ export {
   type MenuGroupProps,
   type MenuGroupLabelProps,
   type MenuSeparatorProps,
-} from './components/Menu';
+} from "./components/Menu";
 
 // Popover
 export {
@@ -153,7 +155,7 @@ export {
   type PopoverBodyProps,
   type PopoverFooterProps,
   type PopoverCloseProps,
-} from './components/Popover';
+} from "./components/Popover";
 
 // Progress
 export {
@@ -161,10 +163,10 @@ export {
   CircularProgress,
   type ProgressProps,
   type CircularProgressProps,
-} from './components/Progress';
+} from "./components/Progress";
 
 // Checkbox
-export { Checkbox, type CheckboxProps } from './components/Checkbox';
+export { Checkbox, type CheckboxProps } from "./components/Checkbox";
 
 // Combobox
 export {
@@ -177,23 +179,29 @@ export {
   type ComboboxEmptyProps,
   type ComboboxGroupProps,
   type ComboboxGroupLabelProps,
-} from './components/Combobox';
+} from "./components/Combobox";
 
 // RadioGroup
-export {
-  RadioGroup,
-  type RadioGroupProps,
-  type RadioItemProps,
-} from './components/RadioGroup';
+export { RadioGroup, type RadioGroupProps, type RadioItemProps } from "./components/RadioGroup";
 
 // Grid
-export { Grid, type GridProps, type GridItemProps, type ResponsiveColumns } from './components/Grid';
+export {
+  Grid,
+  type GridProps,
+  type GridItemProps,
+  type ResponsiveColumns,
+} from "./components/Grid";
 
 // BentoGrid
-export { BentoGrid, type BentoGridProps, type BentoGridItemProps, type ResponsiveSpan } from './components/BentoGrid';
+export {
+  BentoGrid,
+  type BentoGridProps,
+  type BentoGridItemProps,
+  type ResponsiveSpan,
+} from "./components/BentoGrid";
 
 // Separator
-export { Separator, type SeparatorProps } from './components/Separator';
+export { Separator, type SeparatorProps } from "./components/Separator";
 
 // Skeleton
 export {
@@ -202,7 +210,7 @@ export {
   type SkeletonTextProps,
   type SkeletonVariant,
   type SkeletonSize,
-} from './components/Skeleton';
+} from "./components/Skeleton";
 
 // Loading
 export {
@@ -215,7 +223,7 @@ export {
   type LoadingVariant,
   type LoadingInlineProps,
   type LoadingScreenProps,
-} from './components/Loading';
+} from "./components/Loading";
 
 // Table (simple semantic HTML table)
 export {
@@ -225,7 +233,7 @@ export {
   type TableCellProps,
   type TableHeaderCellProps,
   type TableCaptionProps,
-} from './components/Table';
+} from "./components/Table";
 
 // DataTable (TanStack-powered data table)
 export {
@@ -234,10 +242,20 @@ export {
   type DataTableProps,
   type DataTableColumn,
   type ColumnDef,
+  type ColumnAlign,
+  type DataTableDensity,
   type SortingState,
   type RowSelectionState,
   type ExpandedState,
-} from './components/DataTable';
+} from "./components/DataTable";
+
+// DataTable row virtualization (opt-in; requires @tanstack/react-virtual)
+export {
+  useTableVirtualizer,
+  type UseTableVirtualizerOptions,
+  type UseTableVirtualizerResult,
+  type VirtualTableRow,
+} from "./components/DataTable/DataTable.virtual";
 
 // EmptyState
 export {
@@ -252,7 +270,7 @@ export {
   type EmptyStateTitleProps,
   type EmptyStateDescriptionProps,
   type EmptyStateActionsProps,
-} from './components/EmptyState';
+} from "./components/EmptyState";
 
 // Toast
 export {
@@ -264,7 +282,7 @@ export {
   type ToastData,
   type ToastVariant,
   type ToastPosition,
-} from './components/Toast';
+} from "./components/Toast";
 
 // Field
 export {
@@ -275,7 +293,7 @@ export {
   type FieldDescriptionProps,
   type FieldErrorProps,
   type FieldValidityProps,
-} from './components/Field';
+} from "./components/Field";
 
 // Fieldset
 export {
@@ -283,10 +301,10 @@ export {
   type FieldsetProps,
   type FieldsetLegendProps,
   type FieldsetDescriptionProps,
-} from './components/Fieldset';
+} from "./components/Fieldset";
 
 // Form
-export { Form, type FormProps } from './components/Form';
+export { Form, type FormProps } from "./components/Form";
 
 // Sidebar
 export {
@@ -309,7 +327,7 @@ export {
   type SidebarRailProps,
   type SidebarMenuSkeletonProps,
   type SidebarCollapsible,
-} from './components/Sidebar';
+} from "./components/Sidebar";
 
 // Theme
 export {
@@ -326,7 +344,7 @@ export {
   type NeutralPalette,
   type DensityPreset,
   type RadiusStyle,
-} from './components/Theme';
+} from "./components/Theme";
 
 // Header
 export {
@@ -339,7 +357,7 @@ export {
   type HeaderActionsProps,
   type HeaderTriggerProps,
   type HeaderMobileNavProps,
-} from './components/Header';
+} from "./components/Header";
 
 // AppShell
 export {
@@ -351,7 +369,7 @@ export {
   type AppShellSidebarProps,
   type AppShellMainProps,
   type AppShellAsideProps,
-} from './components/AppShell';
+} from "./components/AppShell";
 
 // Stack
 export {
@@ -359,13 +377,13 @@ export {
   type StackProps,
   type ResponsiveDirection,
   type ResponsiveGap,
-} from './components/Stack';
+} from "./components/Stack";
 
 // Text
-export { Text, type TextProps } from './components/Text';
+export { Text, type TextProps } from "./components/Text";
 
 // ButtonGroup
-export { ButtonGroup, type ButtonGroupProps } from './components/ButtonGroup';
+export { ButtonGroup, type ButtonGroupProps } from "./components/ButtonGroup";
 
 // ToggleGroup
 export {
@@ -374,13 +392,13 @@ export {
   ToggleGroupItem,
   type ToggleGroupProps,
   type ToggleGroupItemProps,
-} from './components/ToggleGroup';
+} from "./components/ToggleGroup";
 
 // Slider
-export { Slider, type SliderProps } from './components/Slider';
+export { Slider, type SliderProps } from "./components/Slider";
 
 // ColorPicker
-export { ColorPicker, type ColorPickerProps } from './components/ColorPicker';
+export { ColorPicker, type ColorPickerProps } from "./components/ColorPicker";
 
 // DatePicker
 export {
@@ -397,7 +415,7 @@ export {
   type DatePickerPresetProps,
   type DateRange,
   type Matcher,
-} from './components/DatePicker';
+} from "./components/DatePicker";
 
 // Prompt
 export {
@@ -415,7 +433,7 @@ export {
   type PromptModeButtonProps,
   type PromptUsageProps,
   type PromptSubmitProps,
-} from './components/Prompt';
+} from "./components/Prompt";
 
 // CodeBlock
 export {
@@ -425,25 +443,19 @@ export {
   type CodeBlockLanguage,
   type CodeBlockTab,
   type TabbedCodeBlockProps,
-} from './components/CodeBlock';
+} from "./components/CodeBlock";
 
 // Icon
-export { Icon, type IconProps } from './components/Icon';
+export { Icon, type IconProps } from "./components/Icon";
 
 // Image
-export { Image, type ImageProps } from './components/Image';
+export { Image, type ImageProps } from "./components/Image";
 
 // Link
-export { Link, type LinkProps } from './components/Link';
+export { Link, type LinkProps } from "./components/Link";
 
 // List
-export {
-  List,
-  ListRoot,
-  ListItem,
-  type ListProps,
-  type ListItemProps,
-} from './components/List';
+export { List, ListRoot, ListItem, type ListProps, type ListItemProps } from "./components/List";
 
 // Listbox (for search results, autocomplete, command menus)
 export {
@@ -456,7 +468,7 @@ export {
   type ListboxItemProps,
   type ListboxGroupProps,
   type ListboxEmptyProps,
-} from './components/Listbox';
+} from "./components/Listbox";
 
 // Breadcrumbs
 export {
@@ -467,7 +479,7 @@ export {
   type BreadcrumbsProps,
   type BreadcrumbsItemProps,
   type BreadcrumbsSeparatorProps,
-} from './components/Breadcrumbs';
+} from "./components/Breadcrumbs";
 
 // TableOfContents
 export {
@@ -478,25 +490,25 @@ export {
   type TableOfContentsProps,
   type TableOfContentsItemProps,
   type TableOfContentsGroupProps,
-} from './components/TableOfContents';
+} from "./components/TableOfContents";
 
 // Box
-export { Box, type BoxProps } from './components/Box';
+export { Box, type BoxProps } from "./components/Box";
 
 // ScrollArea
-export { ScrollArea, type ScrollAreaProps } from './components/ScrollArea';
+export { ScrollArea, type ScrollAreaProps } from "./components/ScrollArea";
 
 // Chip
-export { Chip, type ChipProps, type ChipGroupProps } from './components/Chip';
+export { Chip, type ChipProps, type ChipGroupProps } from "./components/Chip";
 
 // VisuallyHidden
-export { VisuallyHidden, type VisuallyHiddenProps } from './components/VisuallyHidden';
+export { VisuallyHidden, type VisuallyHiddenProps } from "./components/VisuallyHidden";
 
 // Brand
-export { BRAND, type Brand } from './brand';
+export { BRAND, type Brand } from "./brand";
 
 // Markdown (AI Chat)
-export { Markdown, type MarkdownProps } from './components/Markdown';
+export { Markdown, type MarkdownProps } from "./components/Markdown";
 
 // Message (AI Chat)
 export {
@@ -514,7 +526,7 @@ export {
   type MessageActionsProps,
   type MessageTimestampProps,
   type MessageAvatarProps,
-} from './components/Message';
+} from "./components/Message";
 
 // ConversationList (AI Chat)
 export {
@@ -527,7 +539,7 @@ export {
   type AutoScrollBehavior,
   type DateSeparatorProps,
   type TypingIndicatorProps,
-} from './components/ConversationList';
+} from "./components/ConversationList";
 
 // ThinkingIndicator (AI Chat)
 export {
@@ -542,7 +554,7 @@ export {
   type StepStatus,
   type ThinkingStepsProps,
   type ThinkingStepProps,
-} from './components/ThinkingIndicator';
+} from "./components/ThinkingIndicator";
 
 // Chart
 export {
@@ -556,10 +568,10 @@ export {
   type ChartContainerProps,
   type ChartTooltipContentProps,
   type ChartLegendContentProps,
-} from './components/Chart';
+} from "./components/Chart";
 
 // Assets
-export { FragmentsLogo, fragmentsLogoSvg, type FragmentsLogoProps } from './assets/fragments-logo';
+export { FragmentsLogo, fragmentsLogoSvg, type FragmentsLogoProps } from "./assets/fragments-logo";
 
 // NavigationMenu
 export {
@@ -584,7 +596,7 @@ export {
   type NavigationMenuViewportProps,
   type NavigationMenuMobileContentProps,
   type NavigationMenuMobileSectionProps,
-} from './components/NavigationMenu';
+} from "./components/NavigationMenu";
 
 // Drawer
 export {
@@ -599,14 +611,14 @@ export {
   type DrawerFooterProps,
   type DrawerCloseProps,
   type DrawerSwipeAreaProps,
-} from './components/Drawer';
+} from "./components/Drawer";
 
 // Pagination
 export {
   Pagination,
   type PaginationProps,
   type PaginationItemProps,
-} from './components/Pagination';
+} from "./components/Pagination";
 
 // Command
 export {
@@ -618,7 +630,7 @@ export {
   type CommandGroupProps,
   type CommandEmptyProps,
   type CommandSeparatorProps,
-} from './components/Command';
+} from "./components/Command";
 
 // Editor
 export {
@@ -644,7 +656,7 @@ export {
   type EditorStatusIndicatorProps,
   type EditorContentProps,
   type EditorStatusBarProps,
-} from './components/Editor';
+} from "./components/Editor";
 
 // Accessibility Utilities
 export {
@@ -656,7 +668,7 @@ export {
   handleArrowNavigation,
   VisuallyHidden as A11yVisuallyHidden,
   type VisuallyHiddenProps as A11yVisuallyHiddenProps,
-} from './utils/a11y';
+} from "./utils/a11y";
 
 // Keyboard Shortcuts
 export {
@@ -673,7 +685,7 @@ export {
   type KeyboardShortcut,
   type ShortcutName,
   type UseKeyboardShortcutOptions,
-} from './utils/keyboard-shortcuts';
+} from "./utils/keyboard-shortcuts";
 
 // Seed Derivation
 export {
@@ -693,7 +705,7 @@ export {
   deriveSemanticText,
   deriveSemanticBg,
   deriveSemanticHover,
-} from './utils/seed-derivation';
+} from "./utils/seed-derivation";
 
 // Theme Presets
 export {
@@ -703,7 +715,7 @@ export {
   seedsToTheme,
   type ThemeConfig,
   type PresetDefinition,
-} from './utils/theme-presets';
+} from "./utils/theme-presets";
 
 // Legacy aliases (deprecated)
-export { Switch as Toggle, type SwitchProps as ToggleProps } from './components/Switch';
+export { Switch as Toggle, type SwitchProps as ToggleProps } from "./components/Switch";

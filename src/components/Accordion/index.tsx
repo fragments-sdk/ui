@@ -240,8 +240,6 @@ function AccordionTrigger({
         <span className={styles.triggerContent}>{children}</span>
         <svg
           className={styles.chevron}
-          width="16"
-          height="16"
           viewBox="0 0 16 16"
           fill="none"
           aria-hidden="true"

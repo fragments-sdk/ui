@@ -5,8 +5,10 @@
 $fui-emptystate-width-sm: 240px !default;
 $fui-emptystate-width-md: 320px !default;
 $fui-emptystate-width-lg: 400px !default;
-$fui-emptystate-icon-sm: $fui-icon-xl !default; // 24px
-$fui-emptystate-icon-md: 2.286rem !default; // 32px
+$fui-emptystate-icon-sm: $fui-icon-xl !default; // 24px (--fui-icon-xl)
+$fui-emptystate-icon-md: $fui-icon-2xl !default; // 32px (--fui-icon-2xl)
+// 40px has no icon-ladder step; kept as a documented local between
+// icon-2xl (32) and space-6 (42) so the lg display glyph stays distinct.
 $fui-emptystate-icon-lg: 2.857rem !default; // 40px
 
 .emptyState {
@@ -91,18 +93,19 @@ $fui-emptystate-icon-lg: 2.857rem !default; // 40px
 
   // Icon sizing based on parent size variant
   svg {
-    width: $fui-emptystate-icon-md;
-    height: $fui-emptystate-icon-md;
+    width: var(--fui-icon-2xl, #{$fui-emptystate-icon-md}); // 32px
+    height: var(--fui-icon-2xl, #{$fui-emptystate-icon-md});
   }
 
   .lg & svg {
+    // 40px has no icon-ladder step — see local token note above.
     width: $fui-emptystate-icon-lg;
     height: $fui-emptystate-icon-lg;
   }
 
   .sm & svg {
-    width: $fui-emptystate-icon-sm;
-    height: $fui-emptystate-icon-sm;
+    width: var(--fui-icon-xl, #{$fui-emptystate-icon-sm}); // 24px
+    height: var(--fui-icon-xl, #{$fui-emptystate-icon-sm});
   }
 }
 

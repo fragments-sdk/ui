@@ -91,21 +91,29 @@
   }
 }
 
-/// Derive a light variant of accent for dark mode
-/// Lightens dark brand colors so the accent stands out on dark backgrounds.
-/// Clamps lightness to 0.85–0.92 and chroma to 0.12 to keep it muted.
-/// Floor sits well above --fui-text-secondary's effective lightness
-/// (rgba(255,255,255,0.6) ≈ oklch ~0.71 over bg-primary) so accent reads
-/// substantially brighter than secondary text — important for chroma-0 seeds
-/// where lightness is the only available perceptual cue.
+/// Derive the dark-mode accent from the brand.
+/// Chroma-aware: chroma is PRESERVED (never clamped), so a saturated brand stays
+/// vibrant in dark mode instead of washing out. Lightness is only lifted for
+/// near-grey/chroma-0 brands via the `0.95 - 2c` term — a vibrant brand (high c)
+/// keeps its own lightness, while a neutral grey brand (c≈0) lifts toward ~0.85 so
+/// it stays visible on dark surfaces where lightness is the only perceptual cue.
+/// Final lightness clamped to [0.55, 0.85]. Mirrors the runtime OKLCH derivation in
+/// _variables.scss (the SCSS-computed fallback for browsers without relative color).
 /// @param {Color} $brand - Brand color
-/// @return {Color} Lightened accent for dark mode
+/// @return {Color} Dark-mode accent
 @function derive-dark-accent($brand) {
   $l: color.channel($brand, 'lightness', $space: oklch);
   $c: color.channel($brand, 'chroma', $space: oklch);
-  $clamped-l: math.max(0.85, math.min($l, 0.92));
-  $clamped-c: math.min($c, 0.12);
-  @return oklch($clamped-l $clamped-c color.channel($brand, 'hue', $space: oklch));
+  // color.channel returns lightness as a percentage; normalize to a unitless 0–1
+  // ratio so the comparisons below share a scale with the 0.55/0.85 bounds.
+  $l-num: $l;
+  @if not math.is-unitless($l) {
+    $l-num: math.div($l, 100%);
+  }
+  // grey-lift only kicks in for low-chroma brands; vibrant brands keep their own L.
+  $target-l: math.max($l-num, 0.95 - 2 * $c);
+  $clamped-l: math.max(0.55, math.min($target-l, 0.85));
+  @return oklch($clamped-l $c color.channel($brand, 'hue', $space: oklch));
 }
 
 // --------------------------------------------

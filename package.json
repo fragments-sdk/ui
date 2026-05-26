@@ -184,6 +184,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-table": ">=8.0.0",
+    "@tanstack/react-virtual": ">=3.0.0",
     "@tiptap/extension-link": ">=2.0.0",
     "@tiptap/react": ">=2.0.0",
     "@tiptap/starter-kit": ">=2.0.0",
@@ -222,6 +223,9 @@
     "@tanstack/react-table": {
       "optional": true
     },
+    "@tanstack/react-virtual": {
+      "optional": true
+    },
     "@tiptap/react": {
       "optional": true
     },
@@ -244,6 +248,7 @@
     "@fragments-sdk/compiler": "workspace:*",
     "@fragments-sdk/core": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.18",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.0",

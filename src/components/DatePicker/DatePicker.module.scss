@@ -34,8 +34,8 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--fui-icon-sm, $fui-icon-sm);
+    height: var(--fui-icon-sm, $fui-icon-sm);
   }
 }
 
@@ -98,6 +98,9 @@
 
 .calendar {
   @include text-base;
+
+  // Square size shared by weekday headers + day cells/buttons (32px grid).
+  --_day-size: var(--fui-icon-2xl, #{$fui-icon-2xl});
 }
 
 .months {
@@ -155,8 +158,8 @@
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--fui-icon-sm, $fui-icon-sm);
+    height: var(--fui-icon-sm, $fui-icon-sm);
   }
 }
 
@@ -180,8 +183,8 @@
 .weekday {
   @include text-base;
 
-  width: 2.286rem;
-  height: 2.286rem;
+  width: var(--_day-size);
+  height: var(--_day-size);
   padding: 0;
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
@@ -203,8 +206,8 @@
 // ============================================
 
 .day {
-  width: 2.286rem;
-  height: 2.286rem;
+  width: var(--_day-size);
+  height: var(--_day-size);
   padding: 0;
   text-align: center;
   vertical-align: middle;
@@ -217,8 +220,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.286rem;
-  height: 2.286rem;
+  width: var(--_day-size);
+  height: var(--_day-size);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-primary, $fui-text-primary);

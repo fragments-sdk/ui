@@ -128,13 +128,16 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       .filter(Boolean)
       .join(' ');
 
-    // Calculate min/max height based on rows
+    // Calculate min/max height based on rows: N text lines (line-height-normal)
+    // plus the field's vertical padding (space-3 total ≈ 1.5rem at the 14px root).
+    const rowLine = 'var(--fui-line-height-normal, 1.5) * 1em';
+    const rowPad = 'var(--fui-space-3, 1.5rem)';
     const textareaInlineStyle: React.CSSProperties = {};
     if (minRows) {
-      textareaInlineStyle.minHeight = `calc(${minRows} * 1.5em + 1.5rem)`;
+      textareaInlineStyle.minHeight = `calc(${minRows} * ${rowLine} + ${rowPad})`;
     }
     if (maxRows) {
-      textareaInlineStyle.maxHeight = `calc(${maxRows} * 1.5em + 1.5rem)`;
+      textareaInlineStyle.maxHeight = `calc(${maxRows} * ${rowLine} + ${rowPad})`;
     }
 
     return (

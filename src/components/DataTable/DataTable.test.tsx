@@ -1,46 +1,46 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { DataTable, createColumns } from './index';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { DataTable, createColumns } from "./index";
 
 type Person = { id: string; name: string; age: number };
 
 const columns = createColumns<Person>([
-  { key: 'name', header: 'Name' },
-  { key: 'age', header: 'Age' },
+  { key: "name", header: "Name" },
+  { key: "age", header: "Age" },
 ]);
 
 const data: Person[] = [
-  { id: '1', name: 'Alice', age: 30 },
-  { id: '2', name: 'Bob', age: 25 },
-  { id: '3', name: 'Carol', age: 35 },
+  { id: "1", name: "Alice", age: 30 },
+  { id: "2", name: "Bob", age: 25 },
+  { id: "3", name: "Carol", age: 35 },
 ];
 
-describe('DataTable', () => {
-  it('renders a table element with column headers', () => {
+describe("DataTable", () => {
+  it("renders a table element with column headers", () => {
     render(<DataTable columns={columns} data={data} aria-label="People" />);
-    expect(screen.getByRole('table')).toBeInTheDocument();
-    const headers = screen.getAllByRole('columnheader');
+    expect(screen.getByRole("table")).toBeInTheDocument();
+    const headers = screen.getAllByRole("columnheader");
     expect(headers).toHaveLength(2);
-    expect(headers[0]).toHaveAttribute('scope', 'col');
-    expect(headers[0]).toHaveTextContent('Name');
-    expect(headers[1]).toHaveTextContent('Age');
+    expect(headers[0]).toHaveAttribute("scope", "col");
+    expect(headers[0]).toHaveTextContent("Name");
+    expect(headers[1]).toHaveTextContent("Age");
   });
 
-  it('renders data rows', () => {
+  it("renders data rows", () => {
     render(<DataTable columns={columns} data={data} aria-label="People" />);
-    const rows = screen.getAllByRole('row');
+    const rows = screen.getAllByRole("row");
     // 1 header row + 3 data rows
     expect(rows).toHaveLength(4);
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('25')).toBeInTheDocument();
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+    expect(screen.getByText("25")).toBeInTheDocument();
   });
 
-  it('renders caption when provided', () => {
+  it("renders caption when provided", () => {
     render(<DataTable columns={columns} data={data} caption="People Table" aria-label="People" />);
-    expect(screen.getByText('People Table')).toBeInTheDocument();
+    expect(screen.getByText("People Table")).toBeInTheDocument();
   });
 
-  it('shows empty state message when data is empty', () => {
+  it("shows empty state message when data is empty", () => {
     render(
       <DataTable
         columns={columns}
@@ -50,37 +50,39 @@ describe('DataTable', () => {
         aria-label="People"
       />
     );
-    expect(screen.getByText('Nothing here')).toBeInTheDocument();
-    expect(screen.getByRole('table', { name: /people/i })).toBeInTheDocument();
-    expect(screen.getByText('People Table')).toBeInTheDocument();
+    expect(screen.getByText("Nothing here")).toBeInTheDocument();
+    expect(screen.getByRole("table", { name: /people/i })).toBeInTheDocument();
+    expect(screen.getByText("People Table")).toBeInTheDocument();
   });
 
   it('defaults to "No data available" empty message', () => {
     render(<DataTable columns={columns} data={[]} aria-label="People" />);
-    expect(screen.getByText('No data available')).toBeInTheDocument();
+    expect(screen.getByText("No data available")).toBeInTheDocument();
   });
 
-  it('supports sortable columns with aria-sort', async () => {
+  it("supports sortable columns with aria-sort", async () => {
     const user = userEvent.setup();
     render(<DataTable columns={columns} data={data} sortable aria-label="People" />);
-    const headers = screen.getAllByRole('columnheader');
+    const headers = screen.getAllByRole("columnheader");
     // Initially aria-sort="none" for sortable columns
-    expect(headers[0]).toHaveAttribute('aria-sort', 'none');
+    expect(headers[0]).toHaveAttribute("aria-sort", "none");
 
     // Click the sort button inside the first header
-    const sortButton = headers[0].querySelector('button')!;
+    const sortButton = headers[0].querySelector("button")!;
     await user.click(sortButton);
-    expect(headers[0]).toHaveAttribute('aria-sort', 'ascending');
+    expect(headers[0]).toHaveAttribute("aria-sort", "ascending");
 
     await user.click(sortButton);
-    expect(headers[0]).toHaveAttribute('aria-sort', 'descending');
+    expect(headers[0]).toHaveAttribute("aria-sort", "descending");
   });
 
-  it('calls onRowClick when a row is clicked', async () => {
+  it("calls onRowClick when a row is clicked", async () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
-    render(<DataTable columns={columns} data={data} onRowClick={handleClick} aria-label="People" />);
-    const rows = screen.getAllByRole('row');
+    render(
+      <DataTable columns={columns} data={data} onRowClick={handleClick} aria-label="People" />
+    );
+    const rows = screen.getAllByRole("row");
     // rows[0] is header, rows[1] is first data row
     await user.click(rows[1]);
     expect(handleClick).toHaveBeenCalledTimes(1);
@@ -88,69 +90,73 @@ describe('DataTable', () => {
     expect(handleClick.mock.calls[0][1]).toBeDefined();
   });
 
-  it('applies striped class when striped prop is true', () => {
-    const { container } = render(<DataTable columns={columns} data={data} striped aria-label="People" />);
-    expect(container.querySelector('.striped')).toBeInTheDocument();
+  it("applies striped class when striped prop is true", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={data} striped aria-label="People" />
+    );
+    expect(container.querySelector(".striped")).toBeInTheDocument();
   });
 
-  it('createColumns helper generates proper column defs', () => {
+  it("createColumns helper generates proper column defs", () => {
     const cols = createColumns<Person>([
-      { key: 'name', header: 'Full Name', width: 200 },
-      { key: 'age', header: 'Years', cell: (row) => `${row.age} years` },
+      { key: "name", header: "Full Name", width: 200 },
+      { key: "age", header: "Years", cell: (row) => `${row.age} years` },
     ]);
     expect(cols).toHaveLength(2);
-    expect(cols[0].id).toBe('name');
-    expect(cols[0].header).toBe('Full Name');
+    expect(cols[0].id).toBe("name");
+    expect(cols[0].header).toBe("Full Name");
     expect(cols[0].size).toBe(200);
-    expect(cols[1].id).toBe('age');
+    expect(cols[1].id).toBe("age");
   });
 
-  it('supports row selection', () => {
+  it("supports row selection", () => {
     render(
       <DataTable
         columns={columns}
         data={data}
         selectable
-        rowSelection={{ '1': true }}
+        rowSelection={{ "1": true }}
         getRowId={(row) => row.id}
         aria-label="People"
       />
     );
-    const rows = screen.getAllByRole('row');
+    const rows = screen.getAllByRole("row");
     // First data row (id='1') should have data-selected
-    expect(rows[1]).toHaveAttribute('data-selected');
+    expect(rows[1]).toHaveAttribute("data-selected");
   });
 
-  it('supports keyboard activation of clickable rows', async () => {
+  it("supports keyboard activation of clickable rows", async () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
-    render(<DataTable columns={columns} data={data} onRowClick={handleClick} aria-label="People" />);
-    const rows = screen.getAllByRole('row');
+    render(
+      <DataTable columns={columns} data={data} onRowClick={handleClick} aria-label="People" />
+    );
+    const rows = screen.getAllByRole("row");
     rows[1].focus();
-    await user.keyboard('{Enter}');
+    await user.keyboard("{Enter}");
     expect(handleClick).toHaveBeenCalledTimes(1);
     expect(handleClick.mock.calls[0][0]).toEqual(data[0]);
     expect(handleClick.mock.calls[0][1]).toBeDefined();
   });
 
-  it('forwards wrapper props to the outer container', () => {
+  it("forwards wrapper props to the outer container", () => {
     const { container } = render(
       <DataTable
         columns={columns}
         data={data}
         aria-label="People"
         wrapperClassName="custom-wrapper"
-        wrapperProps={{ id: 'people-table-wrapper', 'data-testid': 'people-table-wrapper' }}
+        wrapperProps={{ id: "people-table-wrapper", "data-testid": "people-table-wrapper" }}
       />
     );
 
-    const wrapper = screen.getByTestId('people-table-wrapper');
-    expect(wrapper).toHaveAttribute('id', 'people-table-wrapper');
-    expect(wrapper).toHaveClass('custom-wrapper');
-    expect(container.querySelector('.custom-wrapper')).toBe(wrapper);
+    const wrapper = screen.getByTestId("people-table-wrapper");
+    expect(wrapper).toHaveAttribute("id", "people-table-wrapper");
+    expect(wrapper).toHaveClass("custom-wrapper");
+    expect(container.querySelector(".custom-wrapper")).toBe(wrapper);
   });
 
-  it('renders checkbox column when showCheckbox and selectable', async () => {
+  it("renders checkbox column when showCheckbox and selectable", async () => {
     const user = userEvent.setup();
     render(
       <DataTable
@@ -163,51 +169,43 @@ describe('DataTable', () => {
       />
     );
     // 2 data columns + 1 checkbox column = 3 headers
-    const headers = screen.getAllByRole('columnheader');
+    const headers = screen.getAllByRole("columnheader");
     expect(headers).toHaveLength(3);
 
     // "Select all" checkbox in header
-    const selectAll = screen.getByRole('checkbox', { name: 'Select all rows' });
+    const selectAll = screen.getByRole("checkbox", { name: "Select all rows" });
     expect(selectAll).toBeInTheDocument();
 
     // Individual row checkboxes
-    const rowCheckboxes = screen.getAllByRole('checkbox', { name: /Select row/ });
+    const rowCheckboxes = screen.getAllByRole("checkbox", { name: /Select row/ });
     expect(rowCheckboxes).toHaveLength(3);
 
     // Click a row checkbox toggles selection
     await user.click(rowCheckboxes[0]);
-    expect(rowCheckboxes[0]).toHaveAttribute('aria-checked', 'true');
+    expect(rowCheckboxes[0]).toHaveAttribute("aria-checked", "true");
   });
 
-  it('does not render checkbox column when only showCheckbox without selectable', () => {
-    render(
-      <DataTable
-        columns={columns}
-        data={data}
-        showCheckbox
-        aria-label="People"
-      />
-    );
+  it("does not render checkbox column when only showCheckbox without selectable", () => {
+    render(<DataTable columns={columns} data={data} showCheckbox aria-label="People" />);
     // Should only have the 2 data columns
-    expect(screen.getAllByRole('columnheader')).toHaveLength(2);
-    expect(screen.queryByLabelText('Select all rows')).not.toBeInTheDocument();
+    expect(screen.getAllByRole("columnheader")).toHaveLength(2);
+    expect(screen.queryByLabelText("Select all rows")).not.toBeInTheDocument();
   });
 
-  it('renders expandable sub-rows with expand/collapse buttons', async () => {
+  it("renders expandable sub-rows with expand/collapse buttons", async () => {
     type Node = { id: string; name: string; children?: Node[] };
     const treeData: Node[] = [
       {
-        id: '1', name: 'Parent',
+        id: "1",
+        name: "Parent",
         children: [
-          { id: '1.1', name: 'Child A' },
-          { id: '1.2', name: 'Child B' },
+          { id: "1.1", name: "Child A" },
+          { id: "1.2", name: "Child B" },
         ],
       },
-      { id: '2', name: 'Standalone' },
+      { id: "2", name: "Standalone" },
     ];
-    const treeCols = createColumns<Node>([
-      { key: 'name', header: 'Name' },
-    ]);
+    const treeCols = createColumns<Node>([{ key: "name", header: "Name" }]);
 
     const user = userEvent.setup();
     render(
@@ -221,31 +219,77 @@ describe('DataTable', () => {
     );
 
     // Initially only top-level rows visible (1 header + 2 data)
-    expect(screen.getAllByRole('row')).toHaveLength(3);
-    expect(screen.getByText('Parent')).toBeInTheDocument();
-    expect(screen.getByText('Standalone')).toBeInTheDocument();
+    expect(screen.getAllByRole("row")).toHaveLength(3);
+    expect(screen.getByText("Parent")).toBeInTheDocument();
+    expect(screen.getByText("Standalone")).toBeInTheDocument();
 
     // Expand button present for parent row
-    const expandBtn = screen.getByLabelText('Expand row');
-    expect(expandBtn).toHaveAttribute('aria-expanded', 'false');
+    const expandBtn = screen.getByLabelText("Expand row");
+    expect(expandBtn).toHaveAttribute("aria-expanded", "false");
 
     // Click expand to show children
     await user.click(expandBtn);
-    expect(screen.getAllByRole('row')).toHaveLength(5); // 1 header + 2 top + 2 children
-    expect(screen.getByText('Child A')).toBeInTheDocument();
-    expect(screen.getByText('Child B')).toBeInTheDocument();
+    expect(screen.getAllByRole("row")).toHaveLength(5); // 1 header + 2 top + 2 children
+    expect(screen.getByText("Child A")).toBeInTheDocument();
+    expect(screen.getByText("Child B")).toBeInTheDocument();
 
     // Button now shows "Collapse row"
-    const collapseBtn = screen.getByLabelText('Collapse row');
-    expect(collapseBtn).toHaveAttribute('aria-expanded', 'true');
+    const collapseBtn = screen.getByLabelText("Collapse row");
+    expect(collapseBtn).toHaveAttribute("aria-expanded", "true");
 
     // Child rows have data-depth attribute
-    const childRows = screen.getAllByRole('row').filter(r => r.getAttribute('data-depth'));
+    const childRows = screen.getAllByRole("row").filter((r) => r.getAttribute("data-depth"));
     expect(childRows).toHaveLength(2);
-    expect(childRows[0]).toHaveAttribute('data-depth', '1');
+    expect(childRows[0]).toHaveAttribute("data-depth", "1");
   });
 
-  it('has no accessibility violations', async () => {
+  it("applies per-column alignment via data-align", () => {
+    const alignedColumns = [
+      { id: "name", header: "Name", cell: ({ row }: any) => row.original.name },
+      {
+        id: "age",
+        header: "Age",
+        align: "right" as const,
+        cell: ({ row }: any) => row.original.age,
+      },
+    ];
+    render(<DataTable columns={alignedColumns} data={data} aria-label="People" />);
+    const headers = screen.getAllByRole("columnheader");
+    expect(headers[1]).toHaveAttribute("data-align", "right");
+  });
+
+  it("applies a density preset class", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={data} density="condensed" aria-label="People" />
+    );
+    expect(container.querySelector("table")?.className).toMatch(/density/i);
+  });
+
+  it("renders skeleton rows while loading and marks the table busy", () => {
+    render(<DataTable columns={columns} data={[]} loading skeletonRows={3} aria-label="People" />);
+    expect(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+    expect(screen.queryByText("Alice")).not.toBeInTheDocument();
+  });
+
+  it("renders a custom empty state when there is no data", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={[]}
+        emptyState={<div>Nothing here yet</div>}
+        aria-label="People"
+      />
+    );
+    expect(screen.getByText("Nothing here yet")).toBeInTheDocument();
+  });
+
+  it("hides the header row when hideHeader is set", () => {
+    render(<DataTable columns={columns} data={data} hideHeader aria-label="People" />);
+    expect(screen.queryAllByRole("columnheader")).toHaveLength(0);
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+  });
+
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <DataTable columns={columns} data={data} caption="People Table" aria-label="People" />
     );

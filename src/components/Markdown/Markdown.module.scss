@@ -41,14 +41,14 @@
 
   h2 {
     font-size: var(--fui-font-size-xl, $fui-font-size-xl);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
     margin-top: var(--fui-space-8, $fui-space-8);
   }
 
   h3 {
     font-size: var(--fui-font-size-lg, $fui-font-size-lg);
-    letter-spacing: -0.005em;
-    line-height: 1.3;
+    letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
+    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   }
 
   h4 {

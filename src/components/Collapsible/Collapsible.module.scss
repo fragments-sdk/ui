@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: var(--fui-space-1);
+  padding: var(--fui-space-1, $fui-space-1);
   background: transparent;
   border: none;
   border-radius: var(--fui-radius-md, $fui-radius-md);
@@ -18,7 +18,7 @@
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
   gap: var(--fui-space-2, $fui-space-2);
 
   &:hover:not(:disabled) {
@@ -42,8 +42,10 @@
 
 .chevron {
   flex-shrink: 0;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  transition: transform 0.2s ease-out;
+  width: var(--fui-icon-md, $fui-icon-md);
+  height: var(--fui-icon-md, $fui-icon-md);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  transition: transform var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .chevronOpen {
@@ -52,7 +54,9 @@
 
 .content {
   overflow: hidden;
-  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
+  transition:
+    max-height var(--fui-transition-normal, $fui-transition-normal),
+    opacity var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .contentOpen {
@@ -79,18 +83,16 @@
 // Animation variant using CSS animation instead of max-height
 // Can be used with forceMount for smoother animations
 .root[data-animated='true'] {
-  .content {
-    animation-duration: 0.2s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-  }
-
+  // Duration + easing come from --fui-transition-normal (matches the
+  // max-height/opacity transition above); fill-mode keeps the end state.
   .contentOpen {
-    animation-name: collapsibleSlideDown;
+    animation: collapsibleSlideDown var(--fui-transition-normal, $fui-transition-normal)
+      forwards;
   }
 
   .contentClosed {
-    animation-name: collapsibleSlideUp;
+    animation: collapsibleSlideUp var(--fui-transition-normal, $fui-transition-normal)
+      forwards;
   }
 }
 

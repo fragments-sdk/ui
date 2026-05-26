@@ -9,8 +9,18 @@
   @include surface-elevated;
   @include popup-container;
 
+  // Item height derived from text-base font + vertical padding (matches Select/Combobox)
+  --_item-h: calc(
+    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
+      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
+      var(--fui-space-2, #{$fui-space-2}) * 2
+  );
+
   min-width: 12rem;
-  max-height: 320px;
+  // Show N items + half-peek scroll hint (default 4.5 items)
+  max-height: calc(
+    var(--_item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) * 2
+  );
   overflow-y: auto;
   border-color: var(--fui-form-group-border, $fui-border);
 
@@ -27,12 +37,14 @@
   @include popup-item;
 
   text-align: left;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  // Pointer-hover and keyboard-active share the one neutral highlight (see _mixins).
+  &:hover,
+  &[data-highlighted] {
+    @include popup-item-highlight;
   }
 
+  // Listbox items are individually focusable, so keep the keyboard ring on top.
   &:focus-visible {
     @include focus-ring;
   }
@@ -44,7 +56,7 @@
 
 .itemActive {
   &:not(.itemSelected) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include popup-item-highlight;
   }
 }
 
@@ -53,8 +65,7 @@
 }
 
 .itemDisabled {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  cursor: not-allowed;
+  @include popup-item-disabled;
 }
 
 // ============================================
@@ -80,7 +91,7 @@
 .empty {
   @include text-base;
 
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
 }

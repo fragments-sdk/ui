@@ -2,11 +2,8 @@
 @use '../../tokens/mixins' as *;
 
 // Local component tokens (tooltips always use inverted colors — no light variant)
-$fui-tooltip-bg: #1e293b !default;
-$fui-tooltip-text: #f8fafc !default;
-$fui-tooltip-shadow:
-  0 4px 6px -1px rgba(0, 0, 0, 0.2),
-  0 2px 4px -2px rgba(0, 0, 0, 0.15) !default;
+// Arrow size shared with Popover/Menu for a consistent overlay arrow.
+$fui-arrow-size: 10px !default;
 
 // Positioner (handles placement)
 .positioner {
@@ -18,14 +15,14 @@ $fui-tooltip-shadow:
 .popup {
   @include text-base;
 
-  padding: var(--fui-space-1) var(--fui-space-2);
+  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   // Tooltips use inverted colors - always dark bg with light text
-  color: var(--fui-tooltip-text, $fui-tooltip-text);
-  background-color: var(--fui-tooltip-bg, $fui-tooltip-bg);
+  color: var(--fui-text-inverse, $fui-text-inverse);
+  background-color: var(--fui-bg-inverse, $fui-bg-inverse);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  box-shadow: var(--fui-tooltip-shadow, $fui-tooltip-shadow);
+  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   max-width: 20rem; // 320px
   word-wrap: break-word;
 
@@ -58,28 +55,29 @@ $fui-tooltip-shadow:
   }
 }
 
-// Arrow element
+// Arrow element — matches Popover/Menu (10px + border)
 .arrow {
-  width: 8px;
-  height: 8px;
+  width: $fui-arrow-size;
+  height: $fui-arrow-size;
   transform: rotate(45deg);
-  background-color: var(--fui-tooltip-bg, $fui-tooltip-bg);
+  background-color: var(--fui-bg-inverse, $fui-bg-inverse);
+  border: 1px solid var(--fui-bg-inverse, $fui-bg-inverse);
 
-  // Position based on side
+  // Position based on side (offset = half the arrow size)
   &[data-side='top'] {
-    bottom: -4px;
+    bottom: calc($fui-arrow-size / -2);
   }
 
   &[data-side='bottom'] {
-    top: -4px;
+    top: calc($fui-arrow-size / -2);
   }
 
   &[data-side='left'] {
-    right: -4px;
+    right: calc($fui-arrow-size / -2);
   }
 
   &[data-side='right'] {
-    left: -4px;
+    left: calc($fui-arrow-size / -2);
   }
 }
 

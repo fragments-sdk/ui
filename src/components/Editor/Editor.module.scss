@@ -112,8 +112,8 @@
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--fui-icon-sm, $fui-icon-sm); // 14px
+    height: var(--fui-icon-sm, $fui-icon-sm);
   }
 }
 
@@ -190,8 +190,10 @@
     }
 
     // Headings (Enhancement #4)
+    // Heading scale matches Markdown's prose scale (h1=3xl, h2=xl, h3=lg) so the
+    // editing canvas mirrors how the rendered content reads.
     h1 {
-      font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
+      font-size: var(--fui-font-size-3xl, $fui-font-size-3xl);
       font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
       line-height: var(--fui-line-height-tight, $fui-line-height-tight);
       margin: 0 0 var(--fui-space-3, $fui-space-3);
@@ -220,11 +222,11 @@
       font-style: italic;
     }
 
-    // Inline code
+    // Inline code — padding matches Markdown's inline <code> (0.125em 0.375em)
     code {
       background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
       border-radius: var(--fui-radius-sm, $fui-radius-sm);
-      padding: 0.15em 0.3em;
+      padding: 0.125em 0.375em;
       font-family: var(--fui-font-mono, $fui-font-mono);
       font-size: 0.9em;
     }

@@ -73,8 +73,8 @@ $fui-badge-dot-md: 6px !default;
 // Overrides the base pill radius and padding — squared corners read as
 // data metadata rather than status chrome.
 .label {
-  height: 1.429rem; // 20px
-  padding: 0 calc(var(--fui-space-1, $fui-space-1) - 1px); // ~7px
+  height: var(--fui-target-size-min, $fui-target-size-min); // 24px (a11y target floor)
+  padding: 0 calc(var(--fui-space-1, $fui-space-1) - var(--fui-space-px, $fui-space-px)); // ~6px
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;
@@ -86,8 +86,8 @@ $fui-badge-dot-md: 6px !default;
 // Dim filter-chip chrome for toolbar segmented controls. Transparent at
 // rest, panel-surface + hairline when marked active.
 .dim {
-  height: 1.714rem; // 24px
-  padding: 0 calc(var(--fui-space-1, $fui-space-1) + 2px); // ~9px
+  height: var(--fui-button-height-sm, $fui-button-height-sm); // 24px
+  padding: 0 calc(var(--fui-space-1, $fui-space-1) + var(--fui-space-0-5, $fui-space-0-5)); // ~9px
   border: 1px solid transparent;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;

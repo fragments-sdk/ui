@@ -12,7 +12,7 @@
 
 // Gap variants
 .gap-xs {
-  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
+  gap: var(--fui-space-0-5, $fui-space-0-5);
 }
 
 .gap-sm {
@@ -26,13 +26,13 @@
 .default {
   @include form-group-surface;
 
-  padding: calc(var(--fui-space-px, $fui-space-px) * 2);
-  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
+  padding: var(--fui-space-0-5, $fui-space-0-5);
+  gap: var(--fui-space-0-5, $fui-space-0-5);
 
   .item {
     background-color: transparent;
     border: 1px solid transparent;
-    border-radius: calc(var(--fui-radius-md, $fui-radius-md) - 2px);
+    border-radius: var(--fui-radius-sm, $fui-radius-sm);
 
     &.selected {
       background-color: var(--fui-field-bg, $fui-bg-elevated);

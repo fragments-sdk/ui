@@ -11,7 +11,12 @@ $fui-code-tab-text-active: #e2e2e5 !default;
 $fui-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
 $fui-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
 $fui-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-code-selection-bg: rgba(59, 130, 246, 0.3) !default;
+// Selection tint derived from the info accent (blue) instead of a raw rgba.
+$fui-code-selection-bg: color-mix(
+  in srgb,
+  var(--fui-color-info, #{$fui-color-info}) 30%,
+  transparent
+) !default;
 $fui-code-scrollbar-track: transparent !default;
 $fui-code-scrollbar-thumb: rgba(255, 255, 255, 0.1) !default;
 $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
@@ -26,7 +31,7 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
   margin-bottom: var(--fui-space-1, $fui-space-1);
 }
 
@@ -153,7 +158,7 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: 1.6;
+    line-height: var(--fui-line-height-relaxed, $fui-line-height-relaxed);
     color: var(--fui-code-text, $fui-code-text);
     overflow-x: auto;
   }
@@ -178,7 +183,7 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: 1.6;
+    line-height: var(--fui-line-height-relaxed, $fui-line-height-relaxed);
     overflow-x: auto;
     tab-size: 2;
 
@@ -197,7 +202,8 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   :global(.line) {
     display: inline-block;
     width: 100%;
-    min-height: 1.6em;
+    // Match the relaxed line-height so empty lines keep the code rhythm.
+    min-height: calc(var(--fui-line-height-relaxed, #{$fui-line-height-relaxed}) * 1em);
 
     &:global(.highlighted) {
       background-color: var(--fui-code-highlight-bg, $fui-code-highlight-bg);
@@ -291,7 +297,8 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   .loading pre {
     padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: 1.5;
+    // Compact variant uses the normal (tighter) rhythm vs default relaxed.
+    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   }
 
   .withCopyOverlay {
@@ -354,6 +361,8 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   }
 
   &:focus-visible {
+    // Inset outline (not the box-shadow focus-ring mixin) because the wrapper
+    // clips overflow — a box-shadow ring would be hidden.
     outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
       var(--fui-focus-ring-color, $fui-focus-ring-color);
     outline-offset: calc(-1 * var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}));

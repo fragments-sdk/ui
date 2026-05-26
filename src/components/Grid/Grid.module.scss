@@ -73,18 +73,18 @@
 .gapNone { gap: 0; }
 .gapXs   { gap: var(--fui-space-1, $fui-space-1); }
 .gapSm   { gap: var(--fui-space-2, $fui-space-2); }
-.gapMd   { gap: var(--fui-space-4, $fui-space-4); }
-.gapLg   { gap: var(--fui-space-6, $fui-space-6); }
-.gapXl   { gap: var(--fui-space-8, $fui-space-8); }
+.gapMd   { gap: var(--fui-space-3, $fui-space-3); }
+.gapLg   { gap: var(--fui-space-4, $fui-space-4); }
+.gapXl   { gap: var(--fui-space-6, $fui-space-6); }
 
 // ============================================
 // Padding
 // ============================================
 
 .paddingNone { padding: 0; }
-.paddingSm   { padding: var(--fui-space-3); }
-.paddingMd   { padding: var(--fui-space-4); }
-.paddingLg   { padding: var(--fui-space-6); }
+.paddingSm   { padding: var(--fui-space-2, $fui-space-2); }
+.paddingMd   { padding: var(--fui-space-3, $fui-space-3); }
+.paddingLg   { padding: var(--fui-space-4, $fui-space-4); }
 
 // ============================================
 // Align items (cross-axis within cells)

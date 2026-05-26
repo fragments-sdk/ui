@@ -60,6 +60,8 @@
 
 .chevron {
   flex-shrink: 0;
+  width: var(--fui-icon-md, $fui-icon-md);
+  height: var(--fui-icon-md, $fui-icon-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   transition: transform var(--fui-transition-normal, $fui-transition-normal);
 

@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 1 / 1;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   border: 1px solid transparent;
   background-color: transparent;
@@ -24,12 +24,13 @@
   }
 }
 
-// Sizes — tight square targets tuned for dense UI chrome. Icon sizing is
-// driven by the button height so a single <IconButton size="sm"><Icon /></>
-// always renders a correctly-scaled glyph without consumer math.
+// Sizes — square targets share the Button height ladder so an IconButton
+// lines up with its sibling Buttons in toolbars. Icon sizing is driven by
+// the button height so a single <IconButton size="sm"><Icon /></> always
+// renders a correctly-scaled glyph without consumer math.
 .sm {
-  width: 1.571rem; // 22px
-  height: 1.571rem;
+  width: var(--fui-button-height-sm, $fui-button-height-sm);
+  height: var(--fui-button-height-sm, $fui-button-height-sm);
 
   svg {
     width: var(--fui-icon-sm, $fui-icon-sm);
@@ -38,8 +39,8 @@
 }
 
 .md {
-  width: 2rem; // 28px
-  height: 2rem;
+  width: var(--fui-button-height-md, $fui-button-height-md);
+  height: var(--fui-button-height-md, $fui-button-height-md);
 
   svg {
     width: var(--fui-icon-md, $fui-icon-md);
@@ -48,8 +49,8 @@
 }
 
 .lg {
-  width: 2.286rem; // 32px
-  height: 2.286rem;
+  width: var(--fui-button-height-lg, $fui-button-height-lg);
+  height: var(--fui-button-height-lg, $fui-button-height-lg);
 
   svg {
     width: var(--fui-icon-lg, $fui-icon-lg);

@@ -89,6 +89,7 @@ $fui-line-height-prose: 1.7 !default; // p/li inside long-form reading columns
 $fui-letter-spacing-tight: -0.02em !default; // for xl+ headings
 $fui-letter-spacing-normal: normal !default;
 $fui-letter-spacing-display: -0.02em !default; // for h1/display
+$fui-letter-spacing-wide: 0.05em !default; // uppercase micro-labels (section headings, table/column headers)
 
 // --------------------------------------------
 // Spacing (derived from density seed)
@@ -169,6 +170,11 @@ $fui-text-secondary: computed.$computed-text-secondary !default;
 $fui-text-tertiary: computed.$computed-text-tertiary !default;
 $fui-text-inverse: computed.$computed-text-inverse !default;
 
+// Inverse surface — a themed surface that flips relative to the active theme
+// (dark surface in light mode, light surface in dark mode). Used by tooltips
+// and any always-contrasting chip. Pairs with $fui-text-inverse for its text.
+$fui-bg-inverse: $fui-text-primary !default;
+
 // Border colors (derived from $fui-neutral palette)
 $fui-border: computed.$computed-border !default;
 $fui-border-default: computed.$computed-border-default !default;
@@ -215,6 +221,9 @@ $fui-dark-text-primary: computed.$computed-dark-text-primary !default;
 $fui-dark-text-secondary: computed.$computed-dark-text-secondary !default;
 $fui-dark-text-tertiary: computed.$computed-dark-text-tertiary !default;
 $fui-dark-text-inverse: computed.$computed-dark-text-inverse !default;
+
+// Inverse surface (dark) — light surface for tooltips/inverted chips in dark mode
+$fui-dark-bg-inverse: computed.$computed-dark-text-primary !default;
 
 // Border colors (dark) - derived from $fui-neutral palette
 $fui-dark-border: computed.$computed-dark-border !default;
@@ -289,10 +298,12 @@ $fui-target-size-min: 1.714rem !default; // 24px
 $fui-target-size-comfortable: $fui-touch-md !default;
 
 // Icon sizes (standard conventions)
+$fui-icon-xs: 0.857rem !default; // 12px (inline/caption glyphs)
 $fui-icon-sm: 1rem !default; // 14px (2 units)
 $fui-icon-md: 1.143rem !default; // 16px (standard small icon)
 $fui-icon-lg: 1.429rem !default; // 20px (standard medium icon)
 $fui-icon-xl: 1.714rem !default; // 24px (standard large icon)
+$fui-icon-2xl: 2.286rem !default; // 32px (display/empty-state/loading)
 
 // Animation offsets
 $fui-anim-offset-sm: 4px !default; // Small slide animation
@@ -362,6 +373,7 @@ $fui-code-bg: #0c0c0e !default;
     --fui-letter-spacing-tight: #{$fui-letter-spacing-tight};
     --fui-letter-spacing-normal: #{$fui-letter-spacing-normal};
     --fui-letter-spacing-display: #{$fui-letter-spacing-display};
+    --fui-letter-spacing-wide: #{$fui-letter-spacing-wide};
 
     // Spacing (micro)
     --fui-space-px: #{$fui-space-px};
@@ -428,6 +440,7 @@ $fui-code-bg: #0c0c0e !default;
     --fui-bg-active: light-dark(#{$fui-bg-active}, #{$fui-dark-bg-active});
     --fui-body-bg: light-dark(#{$fui-body-bg}, #{$fui-dark-body-bg});
     --fui-main-bg: light-dark(#{$fui-main-bg}, #{$fui-dark-main-bg});
+    --fui-bg-inverse: light-dark(#{$fui-bg-inverse}, #{$fui-dark-bg-inverse});
 
     // Text
     --fui-text-primary: light-dark(#{$fui-text-primary}, #{$fui-dark-text-primary});
@@ -452,6 +465,12 @@ $fui-code-bg: #0c0c0e !default;
     --fui-field-selection-color: var(--fui-text-primary);
     --fui-form-group-bg: color-mix(in srgb, var(--fui-bg-secondary) 58%, var(--fui-bg-primary));
     --fui-form-group-border: color-mix(in srgb, var(--fui-border) 82%, transparent);
+
+    // Popup/menu active-item highlight — neutral, deliberately stronger than
+    // --fui-bg-hover (which is tuned for subtle surface hovers and reads as ~invisible
+    // on menu items, esp. in dark mode). Shared by every popup-list surface. Accent is
+    // reserved for the *selected* item (see --fui-field-selection-*), not hover.
+    --fui-bg-highlight: color-mix(in srgb, var(--fui-text-primary) 7%, transparent);
 
     // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
     --fui-shadow-sm: #{$fui-shadow-sm};
@@ -491,6 +510,14 @@ $fui-code-bg: #0c0c0e !default;
     --fui-appshell-header-height: #{$fui-appshell-header-height};
     --fui-header-z-index: #{$fui-header-z-index};
 
+    // Icon sizes (single source of truth — components must not hardcode SVG box sizes)
+    --fui-icon-xs: #{$fui-icon-xs};
+    --fui-icon-sm: #{$fui-icon-sm};
+    --fui-icon-md: #{$fui-icon-md};
+    --fui-icon-lg: #{$fui-icon-lg};
+    --fui-icon-xl: #{$fui-icon-xl};
+    --fui-icon-2xl: #{$fui-icon-2xl};
+
   }
 
   // Dark mode via data-theme attribute (manual toggle).
@@ -525,15 +552,17 @@ $fui-code-bg: #0c0c0e !default;
 
   @supports (color: oklch(from red l c h)) {
     :root {
-      // Accent derived from seed-brand
-      // Light mode: brand as-is. Dark mode: lightened for visibility on dark surfaces.
-      // Dark-mode floor (0.85) sits well above --fui-text-secondary's effective
-      // lightness (rgba(255,255,255,0.6) ≈ ~0.71 over bg-primary) so accent reads
-      // substantially brighter — important for chroma-0 seeds (e.g. neutral grey
-      // brand) where lightness is the only available perceptual cue.
+      // Accent derived from seed-brand.
+      // Light mode: brand as-is. Dark mode: CHROMA-AWARE lift. Chroma is preserved
+      // (never clamped), so a saturated brand — e.g. blue-600 oklch(0.55 0.22 262) —
+      // stays a true, vibrant blue instead of a washed-out tint. Lightness is only
+      // lifted for near-grey/chroma-0 seeds, via the `0.95 - 2*c` term: a vibrant
+      // brand (high c) keeps its own lightness, while a neutral grey brand (c≈0) lifts
+      // toward ~0.85 so it stays visible on dark surfaces where lightness is the only
+      // perceptual cue. Final L is clamped to [0.55, 0.85].
       --fui-color-accent: light-dark(
         var(--fui-seed-brand),
-        oklch(from var(--fui-seed-brand) clamp(0.85, l, 0.92) min(c, 0.12) h)
+        oklch(from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h)
       );
 
       // Auto-contrast text for elements on accent backgrounds (buttons, chips, etc.)
@@ -541,11 +570,11 @@ $fui-code-bg: #0c0c0e !default;
       --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
       --fui-color-accent-hover: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.90, calc(l + 0.07), 0.96) min(c, 0.12) h)
+        oklch(from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h)
       );
       --fui-color-accent-active: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.80, calc(l - 0.05), 0.88) min(c, 0.12) h)
+        oklch(from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h)
       );
 
       // Semantic hover derived from seed
@@ -574,15 +603,16 @@ $fui-code-bg: #0c0c0e !default;
       --fui-focus-ring-color: var(--fui-color-accent);
     }
 
-    // Runtime-derived dark mode overrides (replaces SCSS-computed when supported)
-    // Dark brands are lightened so the button stands out against dark backgrounds.
-    // Hover goes slightly lighter, active slightly darker. on-accent handles text.
+    // Runtime-derived dark mode overrides (replaces SCSS-computed when supported).
+    // Chroma-aware lift mirroring the light-dark() dark half above: vibrant brands
+    // keep their own lightness + chroma; near-grey brands lift toward ~0.85. Chroma
+    // is never clamped, so saturated brands (e.g. blue-600) stay true in dark mode.
     :root[data-theme="dark"],
     :root.dark {
-      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.85, l, 0.92) min(c, 0.12) h);
+      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h);
       --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
-      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.90, calc(l + 0.07), 0.96) min(c, 0.12) h);
-      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.80, calc(l - 0.05), 0.88) min(c, 0.12) h);
+      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h);
+      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h);
       --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 15%, transparent);
       --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
       --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);
@@ -676,8 +706,11 @@ $fui-code-bg: #0c0c0e !default;
   --fui-bg-subtle: #{$fui-dark-bg-subtle};
   --fui-bg-hover: #{$fui-dark-bg-hover};
   --fui-bg-active: #{$fui-dark-bg-active};
+  // Menu highlight runs a touch stronger in dark so it clears the low-contrast floor.
+  --fui-bg-highlight: color-mix(in srgb, var(--fui-text-primary) 10%, transparent);
   --fui-body-bg: #{$fui-dark-body-bg};
   --fui-main-bg: #{$fui-dark-main-bg};
+  --fui-bg-inverse: #{$fui-dark-bg-inverse};
 
   // Text
   --fui-text-primary: #{$fui-dark-text-primary};

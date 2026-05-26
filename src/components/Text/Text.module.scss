@@ -113,19 +113,20 @@
 // "tight" = labels / nav chrome, "tighter" = headings / stat values,
 // "tightest" = large display numerics.
 .tracking-normal {
-  letter-spacing: normal;
+  letter-spacing: var(--fui-letter-spacing-normal, $fui-letter-spacing-normal);
 }
 
 .tracking-tight {
-  letter-spacing: -0.01em;
+  letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
 }
 
 .tracking-tighter {
-  letter-spacing: -0.02em;
+  // -0.02em == the display tracking token
+  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
 }
 
 .tracking-tightest {
-  letter-spacing: -0.025em;
+  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
 }
 
 // Tabular (fixed-width) numerals — digits align in columns so updating

@@ -21,23 +21,17 @@
   }
 }
 
-// Size variants
+// Size variants — shared control-size path (matches Select/DatePicker)
 .sm {
-  height: var(--fui-input-height-sm, $fui-input-height-sm);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include control-size('sm', 'input');
 }
 
 .md {
-  height: var(--fui-input-height, $fui-input-height);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include control-size('md', 'input');
 }
 
 .lg {
-  height: var(--fui-input-height-lg, $fui-input-height-lg);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
+  @include control-size('lg', 'input');
 }
 
 .labelSm {
@@ -149,8 +143,8 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--fui-icon-sm, $fui-icon-sm);
+    height: var(--fui-icon-sm, $fui-icon-sm);
   }
 }
 

@@ -169,6 +169,8 @@ interface ComboboxContextValue {
   explicitTriggerCount: number;
   registerTrigger: () => () => void;
   size: 'sm' | 'md' | 'lg';
+  // Id applied to Combobox.Input so a native <label htmlFor> can target it.
+  inputId?: string;
 }
 
 const ComboboxContext = React.createContext<ComboboxContextValue>({
@@ -262,6 +264,15 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     return [currentValue];
   }, [currentValue]);
 
+  const { id: fieldId, labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds(
+    'combobox',
+    { label, helperText, error }
+  );
+  // Base UI's <Combobox.Label> only labels a Trigger; the form control here is
+  // <Combobox.Input>, so we render a native <label htmlFor> and put a matching id on
+  // the input (passed via context) instead. Avoids the Base UI label-misuse warning.
+  const inputId = label ? `combobox-input-${fieldId}` : undefined;
+
   const contextValue = React.useMemo(
     () => ({
       placeholder,
@@ -273,11 +284,10 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       explicitTriggerCount,
       registerTrigger,
       size,
+      inputId,
     }),
-    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger, size]
+    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger, size, inputId]
   );
-
-  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds('combobox', { label, helperText, error });
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
   const helperClasses = [styles.helper, hasError && styles.helperError]
@@ -325,7 +335,11 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
             itemToStringLabel={itemToStringLabel}
             aria-describedby={mergeAriaIds(errorId, helperId)}
           >
-            {label && <BaseCombobox.Label className={styles.label}>{label}</BaseCombobox.Label>}
+            {label && (
+              <label id={labelId} htmlFor={inputId} className={styles.label}>
+                {label}
+              </label>
+            )}
             {children}
           </BaseCombobox.Root>
         )}
@@ -361,7 +375,11 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
           itemToStringLabel={itemToStringLabel}
           aria-describedby={mergeAriaIds(errorId, helperId)}
         >
-          {label && <BaseCombobox.Label className={styles.label}>{label}</BaseCombobox.Label>}
+          {label && (
+            <label id={labelId} htmlFor={inputId} className={styles.label}>
+              {label}
+            </label>
+          )}
           {children}
         </BaseCombobox.Root>
       )}
@@ -396,6 +414,7 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
         )}
         <BaseCombobox.Input
           placeholder={context.selectedValues.length === 0 ? context.placeholder : undefined}
+          id={context.inputId}
           {...htmlProps}
           className={classes}
         />

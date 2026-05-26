@@ -16,20 +16,23 @@
 // Sizes
 // ============================================
 
+// Sizes ride the shared `--fui-icon-*` ladder. The step names are offset by one
+// (sm→icon-sm, md→icon-lg, lg→icon-xl, xl→icon-2xl), intentionally skipping
+// icon-md so the rendered px stays 14/20/24/32 for existing consumers.
 .sm {
-  --loading-size: #{$fui-icon-sm};  // 14px
+  --loading-size: var(--fui-icon-sm, #{$fui-icon-sm});  // 14px
 }
 
 .md {
-  --loading-size: #{$fui-icon-lg};  // 20px
+  --loading-size: var(--fui-icon-lg, #{$fui-icon-lg});  // 20px
 }
 
 .lg {
-  --loading-size: #{$fui-icon-xl};  // 24px
+  --loading-size: var(--fui-icon-xl, #{$fui-icon-xl});  // 24px
 }
 
 .xl {
-  --loading-size: 2.286rem;  // 32px
+  --loading-size: var(--fui-icon-2xl, #{$fui-icon-2xl});  // 32px
 }
 
 // ============================================

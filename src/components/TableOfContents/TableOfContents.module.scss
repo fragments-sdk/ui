@@ -30,8 +30,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   // (subtler --fui-bg-tertiary blends into the bg at this thickness).
   --toc-rail: color-mix(
     in srgb,
-    var(--fui-bg-primary, #fff),
-    var(--fui-text-primary, #000) 18%
+    var(--fui-bg-primary, #{$fui-bg-primary}),
+    var(--fui-text-primary, #{$fui-text-primary}) 18%
   );
   font-family: var(--fui-font-sans, $fui-font-sans);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
@@ -181,14 +181,14 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   padding: 0 var(--fui-space-2, $fui-space-2);
-  min-height: 28px;
+  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   // 13px recedes below the 14px sidebar nav and 15px article body,
   // establishing three distinct nav tiers (sidebar ▸ body ▸ TOC).
   font-size: 0.929rem;
-  line-height: 1.45;
-  letter-spacing: -0.005em;
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
   text-decoration: none;
   transition: background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
@@ -252,7 +252,7 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
   text-transform: uppercase;
   background: transparent;
   border: 0;
@@ -284,8 +284,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 12px;
-  height: 12px;
+  width: var(--fui-icon-xs, $fui-icon-xs);
+  height: var(--fui-icon-xs, $fui-icon-xs);
   color: inherit;
   opacity: 0.7;
   transition: transform var(--fui-transition-fast, $fui-transition-fast);

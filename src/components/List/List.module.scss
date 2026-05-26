@@ -63,7 +63,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  line-height: 1.5;
+  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
 .itemContent {

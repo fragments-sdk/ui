@@ -40,10 +40,7 @@ $fui-theme-toggle-lg-icon: 18px !default;
     color: var(--fui-text-primary, $fui-text-primary);
   }
 
-  &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
-  }
+  // Keyboard focus ring is supplied by @include interactive-base.
 
   svg {
     flex-shrink: 0;

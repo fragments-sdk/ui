@@ -102,6 +102,8 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
   white-space: nowrap;
+  // Horizontal header chrome (button-sized), not a vertical list-nav row —
+  // keeps the larger button-height target rather than --fui-sidebar-item-height.
   min-height: var(--fui-button-height-md, $fui-button-height-md);
 
   &:hover {
@@ -305,7 +307,7 @@
   position: fixed;
   inset: 0;
   z-index: 98;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--fui-backdrop, $fui-backdrop);
   animation: mobileNavFadeIn var(--fui-transition-normal, $fui-transition-normal) ease;
 }
 

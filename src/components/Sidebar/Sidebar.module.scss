@@ -10,15 +10,16 @@ $fui-sidebar-rail-indicator-height: 2.857rem !default; // 40px
 $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
 .root {
-  --fui-sidebar-row-height: 2rem;
-  --fui-sidebar-row-radius: 0.429rem;
+  --fui-sidebar-row-height: var(--fui-sidebar-item-height, #{$fui-sidebar-item-height});
+  --fui-sidebar-row-radius: var(--fui-radius-md, #{$fui-radius-md});
+  // 8px: de-facto sidebar gutter, 1px above the 7px space-1 grid step.
   --fui-sidebar-row-gap: 0.571rem;
   --fui-sidebar-row-padding-x: 0.571rem;
-  --fui-sidebar-icon-size: 1.143rem;
-  --fui-sidebar-muted: color-mix(in srgb, var(--fui-text-secondary, #a3a3a3) 76%, transparent);
-  --fui-sidebar-faint: color-mix(in srgb, var(--fui-text-tertiary, #737373) 82%, transparent);
-  --fui-sidebar-hover-bg: color-mix(in srgb, var(--fui-text-primary, #ffffff) 4%, transparent);
-  --fui-sidebar-active-bg: color-mix(in srgb, var(--fui-color-accent, #6366f1) 10%, transparent);
+  --fui-sidebar-icon-size: var(--fui-icon-md, #{$fui-icon-md});
+  --fui-sidebar-muted: color-mix(in srgb, var(--fui-text-secondary, #{$fui-text-secondary}) 76%, transparent);
+  --fui-sidebar-faint: color-mix(in srgb, var(--fui-text-tertiary, #{$fui-text-tertiary}) 82%, transparent);
+  --fui-sidebar-hover-bg: color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 4%, transparent);
+  --fui-sidebar-active-bg: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 10%, transparent);
   --fui-sidebar-active-border: transparent;
 
   position: relative;
@@ -29,8 +30,8 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   max-height: 100vh;
   background: color-mix(
     in srgb,
-    var(--fui-bg-secondary, #151515) 18%,
-    var(--fui-bg-primary, #0f0f0f)
+    var(--fui-bg-secondary, #{$fui-bg-secondary}) 18%,
+    var(--fui-bg-primary, #{$fui-bg-primary})
   );
   transition: width var(--fui-transition-normal, $fui-transition-normal);
   overflow: hidden;
@@ -181,7 +182,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   text-transform: none;
   letter-spacing: 0;
-  line-height: 1.273;
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   color: var(--fui-sidebar-faint);
 }
 
@@ -279,14 +280,16 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   color: var(--fui-sidebar-muted);
   text-decoration: none;
   min-height: var(--fui-sidebar-row-height);
+  // 0.929rem (13px): de-facto nav font, one step below font-size-sm (14px).
+  // Left off the ladder intentionally to preserve the denser nav rhythm.
   font-size: 0.929rem;
   font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-  line-height: 1.231;
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   outline-offset: -1px;
   transition:
-    background-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 120ms cubic-bezier(0.16, 1, 0.3, 1);
+    background-color var(--fui-transition-fast, $fui-transition-fast),
+    border-color var(--fui-transition-fast, $fui-transition-fast),
+    color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover:not(.itemDisabled) {
     background-color: var(--fui-sidebar-hover-bg);
@@ -431,8 +434,9 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   color: var(--fui-sidebar-muted);
   text-decoration: none;
   min-height: var(--fui-sidebar-row-height);
+  // 0.929rem (13px): matches .item nav font — one step below font-size-sm.
   font-size: 0.929rem;
-  line-height: 1.231;
+  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   position: relative;
 
   &::before {
@@ -476,7 +480,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   padding: 0.857rem;
   margin-top: auto;
   flex-shrink: 0;
-  border-top: 1px solid color-mix(in srgb, var(--fui-border-default, #2a2a2a) 58%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent);
 }
 
 .trigger {

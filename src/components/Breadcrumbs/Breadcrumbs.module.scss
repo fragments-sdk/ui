@@ -50,8 +50,7 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+    @include focus-ring;
   }
 }
 
@@ -103,8 +102,7 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+    @include focus-ring;
   }
 }
 

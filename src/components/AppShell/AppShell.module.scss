@@ -26,11 +26,11 @@
     1fr
     var(--appshell-aside-width, 0px);
   grid-template-rows:
-    var(--appshell-header-height, 56px)
+    var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
     1fr;
 
   // Smooth transition for sidebar collapse/expand
-  transition: grid-template-columns var(--fui-transition-normal, 200ms) ease;
+  transition: grid-template-columns var(--fui-transition-normal, $fui-transition-normal) ease;
 
   // Mobile: single column layout
   @include below-md {
@@ -40,7 +40,7 @@
       "aside";
     grid-template-columns: 1fr;
     grid-template-rows:
-      var(--appshell-header-height, 56px)
+      var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
       1fr
       auto;
     transition: none; // No column transition on mobile
@@ -72,8 +72,8 @@
   grid-area: header;
   position: sticky;
   top: 0;
-  height: var(--appshell-header-height, 56px);
-  z-index: var(--fui-header-z-index, 40);
+  height: var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
+  z-index: var(--fui-header-z-index, $fui-header-z-index);
   background-color: inherit;
 
   > header {
@@ -88,9 +88,9 @@
 .sidebar {
   grid-area: sidebar;
   position: sticky;
-  top: var(--appshell-header-height, 56px);
-  height: calc(100vh - var(--appshell-header-height, 56px));
-  height: calc(100dvh - var(--appshell-header-height, 56px));
+  top: var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
+  height: calc(100vh - var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height)));
+  height: calc(100dvh - var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height)));
   z-index: 30;
   overflow: hidden;
   background-color: inherit;
@@ -132,7 +132,7 @@
   top: 0;
   height: 100vh;
   height: 100dvh;
-  z-index: var(--fui-header-z-index, 40);
+  z-index: var(--fui-header-z-index, $fui-header-z-index);
 
   :global(.root) {
     height: 100%;
@@ -172,9 +172,9 @@
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-main-bg, $fui-main-bg);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--fui-text-primary) 5%, transparent),
-    0 1px 2px rgba(0, 0, 0, 0.14),
-    0 6px 18px rgba(0, 0, 0, 0.08);
+    inset 0 1px 0
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent),
+    var(--fui-shadow-md, $fui-shadow-md);
   overflow: hidden auto;
 
   @include below-md {
@@ -193,9 +193,9 @@
 .aside {
   grid-area: aside;
   position: sticky;
-  top: var(--appshell-header-height, 56px);
-  height: calc(100vh - var(--appshell-header-height, 56px));
-  height: calc(100dvh - var(--appshell-header-height, 56px));
+  top: var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
+  height: calc(100vh - var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height)));
+  height: calc(100dvh - var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height)));
   width: var(--aside-width, 280px);
   min-height: 0; // Allow shrinking in grid
   z-index: 30;
@@ -217,17 +217,17 @@
   // Override the explicit width so the aside fills its grid cell
   // and the margin creates visible inset space from the viewport edge.
   width: auto;
-  height: calc(100vh - var(--appshell-header-height, 56px) - var(--fui-space-1, $fui-space-1) * 2);
-  height: calc(100dvh - var(--appshell-header-height, 56px) - var(--fui-space-1, $fui-space-1) * 2);
+  height: calc(100vh - var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height)) - var(--fui-space-1, $fui-space-1) * 2);
+  height: calc(100dvh - var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height)) - var(--fui-space-1, $fui-space-1) * 2);
   margin: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1)
     var(--fui-space-1, $fui-space-1) 0;
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: inherit;
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--fui-text-primary) 5%, transparent),
-    0 1px 2px rgba(0, 0, 0, 0.14),
-    0 6px 18px rgba(0, 0, 0, 0.08);
+    inset 0 1px 0
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent),
+    var(--fui-shadow-md, $fui-shadow-md);
   overflow: hidden;
 
   @include below-md {

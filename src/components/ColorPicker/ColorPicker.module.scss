@@ -2,7 +2,7 @@
 @use '../../tokens/mixins' as *;
 
 // Local component tokens
-$fui-colorpicker-size: 180px !default;
+$fui-colorpicker-size: 200px !default; // react-colorful saturation/hue square
 $fui-colorpicker-hue-height: $fui-target-size-min !default;
 $fui-colorpicker-pointer-size: $fui-target-size-min !default;
 $fui-colorpicker-pointer-border: 2px !default;
@@ -69,11 +69,7 @@ $fui-colorpicker-pointer-border: 2px !default;
   width: var(--fui-input-height, $fui-input-height);
   height: var(--fui-input-height, $fui-input-height);
   flex-shrink: 0;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  // Disabled state (opacity + pointer-events) comes from @include interactive-base.
 }
 
 // Hex input wrapper (using Input component)
@@ -102,8 +98,8 @@ $fui-colorpicker-pointer-border: 2px !default;
 
   // react-colorful styling overrides
   :global(.react-colorful) {
-    width: 200px;
-    height: 200px;
+    width: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
+    height: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
   }
 
   :global(.react-colorful__saturation) {

@@ -7,7 +7,8 @@
 
 .container {
   position: fixed;
-  z-index: 9999;
+  // Sits above all overlays (Dialog/Drawer 50-51, Menu/Popover 52, Tooltip 60).
+  z-index: 70;
   display: flex;
   flex-direction: column;
   gap: var(--fui-space-2, $fui-space-2);
@@ -72,7 +73,7 @@
   font-family: var(--fui-font-sans, $fui-font-sans);
 
   // Animation
-  animation: toastEnter 0.2s ease-out;
+  animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
 }
 
 @keyframes toastEnter {
@@ -229,9 +230,7 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
-      var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+    @include focus-ring;
   }
 }
 
@@ -267,9 +266,7 @@
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
-      var(--fui-focus-ring-color, $fui-focus-ring-color);
-    outline-offset: var(--fui-focus-ring-offset, $fui-focus-ring-offset);
+    @include focus-ring;
   }
 }
 

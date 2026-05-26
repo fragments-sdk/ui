@@ -32,130 +32,11 @@
 }
 
 // ============================================
-// Dots Animation
-// ============================================
-
-.dots {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--fui-space-px, $fui-space-px) * 4);
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  animation: bounce 1.4s ease-in-out infinite;
-
-  &:nth-child(1) {
-    animation-delay: 0s;
-  }
-
-  &:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 0.6;
-  }
-}
-
-@keyframes bounce {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.4;
-  }
-  30% {
-    transform: translateY(-4px);
-    opacity: 1;
-  }
-}
-
-// ============================================
-// Pulse Animation
-// ============================================
-
-.pulse {
-  position: relative;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pulseRing {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  opacity: 0.3;
-  animation: pulseRing 1.5s ease-out infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 0.2;
-  }
-}
-
-.pulseDot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  z-index: 1;
-}
-
-@keyframes pulseRing {
-  0% {
-    transform: scale(0.5);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-}
-
-// ============================================
-// Spinner Animation
-// ============================================
-
-.spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.spinnerIcon {
-  animation: spin 1s linear infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-// ============================================
 // Steps
+//
+// NOTE: The dots/pulse/spinner animations live in <Loading>; the three
+// ThinkingIndicator variants delegate to it (see index.tsx). No animation
+// styles are kept here.
 // ============================================
 
 .steps {
@@ -164,7 +45,7 @@
   gap: var(--fui-space-1, $fui-space-1);
   padding-left: var(--fui-space-4, $fui-space-4);
   border-left: 2px solid var(--fui-border, $fui-border);
-  margin-left: 7px; // Align with center of animation
+  margin-left: var(--fui-space-1, $fui-space-1); // 7px — align with center of animation
 }
 
 .step {
@@ -179,8 +60,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: var(--fui-icon-md, $fui-icon-md); // 16px
+  height: var(--fui-icon-md, $fui-icon-md);
   flex-shrink: 0;
 }
 

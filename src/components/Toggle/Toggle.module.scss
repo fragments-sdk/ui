@@ -118,7 +118,7 @@ $fui-toggle-thumb-offset: 2px !default;
   pointer-events: none;
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   border: 1px solid color-mix(in srgb, var(--fui-border-strong, $fui-border-strong) 55%, transparent);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
   transition:
     transform var(--fui-transition-normal, $fui-transition-normal),
     background-color var(--fui-transition-normal, $fui-transition-normal),
@@ -132,7 +132,7 @@ $fui-toggle-thumb-offset: 2px !default;
   }
 
   .root:active:not([data-disabled]) & {
-    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
+    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   }
 }
 
