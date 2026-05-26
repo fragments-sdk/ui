@@ -1,5 +1,32 @@
 # @fragments-sdk/ui
 
+## 0.20.0
+
+### Minor Changes
+
+- [#90](https://github.com/fragments-sdk/fragments/pull/90) [`07711a8`](https://github.com/fragments-sdk/fragments/commit/07711a8057b9e30eaa554333a7665c7021f5e5ee) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Design-system consistency pass and new theming tokens.
+
+  New tokens: `--fui-bg-inverse` (theme-flipping inverse surface, used by Tooltip),
+  the full `--fui-icon-{xs,sm,md,lg,xl,2xl}` scale exported as CSS variables,
+  `--fui-letter-spacing-wide` (uppercase micro-labels), and `--fui-bg-highlight`
+  (a neutral, clearly-visible active-item wash for menu/list popups in light and
+  dark).
+
+  Unified popup-item interaction model across Combobox, Select, Menu, Listbox,
+  Command, and NavigationMenu — pointer hover and keyboard-active now share one
+  neutral highlight (fixes near-invisible Combobox hover in dark mode), with accent
+  reserved for the selected item. Chroma-aware dark-mode accent derivation keeps
+  vibrant brand seeds true in dark mode instead of washing them out. Combobox now
+  labels its input with a native `<label>` (was Base UI `Combobox.Label`).
+  Broad micro-consistency fixes: tokenized transitions, restored SCSS dual
+  fallbacks, unified focus and disabled treatments, and off-ladder typography
+  snapped to tokens.
+
+  NOTE — consumer-visible change: the spacing scale for `padding`/`gap` size props
+  is now unified (compact `xs/sm/md/lg/xl` = `space-1/2/3/4/6`) across Box, Stack,
+  Grid, BentoGrid, Card, and List. Box/Grid/BentoGrid tighten at md/lg/xl and Card
+  grows slightly at sm/md; re-check layouts and regenerate visual snapshots.
+
 ## 0.19.2
 
 ### Patch Changes
