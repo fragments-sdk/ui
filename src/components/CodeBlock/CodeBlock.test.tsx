@@ -3,7 +3,11 @@ import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../.
 import { CodeBlock } from './index';
 import styles from './CodeBlock.module.scss';
 
-// shiki is loaded dynamically via require() — no mock needed since it's in devDependencies
+vi.mock('shiki', () => ({
+  codeToHtml: vi.fn(
+    async (code: string) => `<pre class="shiki"><code>${code}</code></pre>`
+  ),
+}));
 
 describe('CodeBlock', () => {
   it('renders pre and code elements', async () => {
