@@ -33,7 +33,15 @@
 // Variant: pills (shadcn-style with background container)
 .listPills {
   border-bottom: none;
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  border: 1px solid
+    var(
+      --fui-tabs-pills-border,
+      color-mix(in srgb, var(--fui-border, #{$fui-border}) 72%, transparent)
+    );
+  background-color: var(
+    --fui-tabs-pills-bg,
+    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
+  );
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   padding: var(--fui-space-0-75, $fui-space-0-75);
   gap: var(--fui-space-0-75, $fui-space-0-75);
@@ -101,9 +109,12 @@
   }
 
   &[data-active] {
-    background-color: var(--fui-bg-primary, $fui-bg-primary);
+    background-color: var(--fui-tabs-pill-active-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
     color: var(--fui-text-primary, $fui-text-primary);
-    box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+    box-shadow: var(
+      --fui-tabs-pill-active-shadow,
+      inset 0 0 0 1px color-mix(in srgb, var(--fui-border, #{$fui-border}) 74%, transparent)
+    );
   }
 }
 

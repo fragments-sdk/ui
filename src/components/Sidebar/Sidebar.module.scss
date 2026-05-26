@@ -16,10 +16,26 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   --fui-sidebar-row-gap: 0.571rem;
   --fui-sidebar-row-padding-x: 0.571rem;
   --fui-sidebar-icon-size: var(--fui-icon-md, #{$fui-icon-md});
-  --fui-sidebar-muted: color-mix(in srgb, var(--fui-text-secondary, #{$fui-text-secondary}) 76%, transparent);
-  --fui-sidebar-faint: color-mix(in srgb, var(--fui-text-tertiary, #{$fui-text-tertiary}) 82%, transparent);
-  --fui-sidebar-hover-bg: color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 4%, transparent);
-  --fui-sidebar-active-bg: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 10%, transparent);
+  --fui-sidebar-muted: color-mix(
+    in srgb,
+    var(--fui-text-secondary, #{$fui-text-secondary}) 76%,
+    transparent
+  );
+  --fui-sidebar-faint: color-mix(
+    in srgb,
+    var(--fui-text-tertiary, #{$fui-text-tertiary}) 82%,
+    transparent
+  );
+  --fui-sidebar-hover-bg: color-mix(
+    in srgb,
+    var(--fui-text-primary, #{$fui-text-primary}) 4%,
+    transparent
+  );
+  --fui-sidebar-active-bg: color-mix(
+    in srgb,
+    var(--fui-color-accent, #{$fui-color-accent}) 10%,
+    transparent
+  );
   --fui-sidebar-active-border: transparent;
 
   position: relative;
@@ -280,9 +296,6 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   color: var(--fui-sidebar-muted);
   text-decoration: none;
   min-height: var(--fui-sidebar-row-height);
-  // 0.929rem (13px): de-facto nav font, one step below font-size-sm (14px).
-  // Left off the ladder intentionally to preserve the denser nav rhythm.
-  font-size: 0.929rem;
   font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
   line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   outline-offset: -1px;
@@ -434,8 +447,6 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   color: var(--fui-sidebar-muted);
   text-decoration: none;
   min-height: var(--fui-sidebar-row-height);
-  // 0.929rem (13px): matches .item nav font — one step below font-size-sm.
-  font-size: 0.929rem;
   line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   position: relative;
 
@@ -480,7 +491,8 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   padding: 0.857rem;
   margin-top: auto;
   flex-shrink: 0;
-  border-top: 1px solid color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent);
 }
 
 .trigger {

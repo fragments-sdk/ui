@@ -2,6 +2,13 @@
 @use "../../tokens/mixins" as *;
 
 .wrapper {
+  --fui-data-table-bg: var(--fui-bg-elevated, #{$fui-bg-elevated});
+  --fui-data-table-header-bg: color-mix(
+    in srgb,
+    var(--fui-data-table-bg) 94%,
+    var(--fui-text-primary, #{$fui-text-primary}) 6%
+  );
+
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -64,8 +71,9 @@
   white-space: nowrap;
   vertical-align: middle;
   user-select: none;
-  // Opaque so the sticky header doesn't let rows bleed through on scroll.
-  background: var(--fui-bg-primary, $fui-bg-primary);
+  // Opaque so the sticky header doesn't let rows bleed through on scroll,
+  // while inheriting the table surface instead of forcing the page background.
+  background: var(--fui-data-table-header-bg);
 
   &:first-child {
     border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
@@ -230,6 +238,7 @@
 .bordered {
   border: 1px solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-md, $fui-radius-md);
+  background: var(--fui-data-table-bg);
   overflow: hidden;
 }
 

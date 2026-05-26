@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Single-rail "snake" geometry
@@ -15,14 +15,14 @@
 
 $rail-x-0: 7px;
 $rail-indent: 14px;
-$rail-x-1: 21px;            // = $rail-x-0 + $rail-indent
-$rail-pad: 18px;             // <ul> padding-left
+$rail-x-1: 21px; // = $rail-x-0 + $rail-indent
+$rail-pad: 18px; // <ul> padding-left
 $rail-curve: 14px;
 $rail-thickness: 1px;
 $rail-active-thickness: 1px;
 
-$rail-from-item-0: $rail-x-0 - $rail-pad;   // -11px
-$rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
+$rail-from-item-0: $rail-x-0 - $rail-pad; // -11px
+$rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
 
 .root {
   // Solid rail color that adapts to light/dark and tracks the page background.
@@ -74,8 +74,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   }
 }
 
-[data-depth='0']::before {
-  content: '';
+[data-depth="0"]::before {
+  content: "";
   position: absolute;
   left: $rail-from-item-0;
   top: 0;
@@ -87,8 +87,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   pointer-events: none;
 }
 
-[data-depth='1']::before {
-  content: '';
+[data-depth="1"]::before {
+  content: "";
   position: absolute;
   left: $rail-from-item-1;
   top: 0;
@@ -100,13 +100,13 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 
 // First depth-1 after a depth-0: shorten rail at top so opening curve has
 // a clean run-in.
-[data-depth='0'] + [data-depth='1']::before {
+[data-depth="0"] + [data-depth="1"]::before {
   top: $rail-curve;
 }
 
 // Last depth-1 before a depth-0: shorten rail at bottom so closing curve
 // has a clean run-out.
-[data-depth='1']:has(+ [data-depth='0'])::before {
+[data-depth="1"]:has(+ [data-depth="0"])::before {
   bottom: $rail-curve;
 }
 
@@ -114,8 +114,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 // Opening elbow (depth-0 → depth-1)
 // ============================================
 
-[data-depth='0'] + [data-depth='1']::after {
-  content: '';
+[data-depth="0"] + [data-depth="1"]::after {
+  content: "";
   position: absolute;
   left: $rail-from-item-0;
   top: 0;
@@ -130,8 +130,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 // Closing elbow (depth-1 → depth-0)
 // ============================================
 
-[data-depth='1'] + [data-depth='0']::after {
-  content: '';
+[data-depth="1"] + [data-depth="0"]::after {
+  content: "";
   position: absolute;
   left: $rail-from-item-0;
   // Start 1px higher to bridge the `gap: 1px` between depth-1 and depth-0 so
@@ -153,19 +153,19 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   width: $rail-active-thickness;
 }
 
-[data-depth='0']:has(+ [data-depth='1'][data-active])::before {
+[data-depth="0"]:has(+ [data-depth="1"][data-active])::before {
   background-color: var(--fui-color-accent, $fui-color-accent);
   width: $rail-active-thickness;
 }
 
-[data-depth='0'] + [data-depth='1'][data-active]::after {
+[data-depth="0"] + [data-depth="1"][data-active]::after {
   border-left-color: var(--fui-color-accent, $fui-color-accent);
   border-bottom-color: var(--fui-color-accent, $fui-color-accent);
   border-left-width: $rail-active-thickness;
   border-bottom-width: $rail-active-thickness;
 }
 
-[data-depth='1'][data-active] + [data-depth='0']::after {
+[data-depth="1"][data-active] + [data-depth="0"]::after {
   border-right-color: var(--fui-color-accent, $fui-color-accent);
   border-bottom-color: var(--fui-color-accent, $fui-color-accent);
   border-right-width: $rail-active-thickness;
@@ -184,13 +184,11 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
   min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  // 13px recedes below the 14px sidebar nav and 15px article body,
-  // establishing three distinct nav tiers (sidebar ▸ body ▸ TOC).
-  font-size: 0.929rem;
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
   text-decoration: none;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+  transition:
+    background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
@@ -206,7 +204,7 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 // Depth-1 link sits to the right of the rail (which lives at x=3px from li edge).
 // Margin pushes the link's hover/active background past the rail so it doesn't
 // paint over the line. Reduced padding-left keeps the text in the same x-position.
-[data-depth='1'] .link {
+[data-depth="1"] .link {
   margin-left: var(--fui-space-2, $fui-space-2);
   padding-left: $rail-indent;
 }
@@ -263,7 +261,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad;   //  3px
 
 .groupHeaderInteractive {
   cursor: pointer;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+  transition:
+    background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
