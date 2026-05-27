@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { fireEvent, act, within } from '@testing-library/react';
+import { fireEvent, act, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { NavigationMenu } from '.';
 
@@ -135,7 +135,9 @@ describe('NavigationMenu', () => {
 
       // Click to close
       await userEvent.click(trigger);
-      expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+      });
     });
 
     it('shows content panel with structured links', async () => {
