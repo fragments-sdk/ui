@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { RadioGroup as BaseRadioGroup } from '@base-ui/react/radio-group';
-import { Radio as BaseRadio } from '@base-ui/react/radio';
-import { mergeAriaIds, useFormFieldIds } from '../../utils/aria';
-import styles from './RadioGroup.module.scss';
+import * as React from "react";
+import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
+import { Radio as BaseRadio } from "@base-ui/react/radio";
+import { mergeAriaIds, useFormFieldIds } from "../../utils/aria";
+import styles from "./RadioGroup.module.scss";
 
 // ============================================
 // Types
@@ -14,7 +14,10 @@ import styles from './RadioGroup.module.scss';
  * Radio group for selecting one option from a set.
  * @see https://usefragments.com/components/radiogroup
  */
-export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+export interface RadioGroupProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange" | "defaultValue"
+> {
   /** Current value (controlled) */
   value?: string;
   /** Default value (uncontrolled) */
@@ -24,11 +27,19 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   /** Alias for onValueChange */
   onChange?: (value: string) => void;
   /** Orientation of the radio group */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   /** Whether the group is disabled */
   disabled?: boolean;
+  /** Whether the selected value cannot be changed by the user */
+  readOnly?: boolean;
+  /** Whether the user must choose a value before submitting a form */
+  required?: boolean;
   /** Form field name */
   name?: string;
+  /** ID of the form that owns the radio inputs */
+  form?: string;
+  /** Ref to the hidden input element */
+  inputRef?: React.Ref<HTMLInputElement>;
   /** Label for the group */
   label?: string;
   /** Helper text shown below the group */
@@ -36,7 +47,7 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   /** Show error styling. When a string is provided, it is displayed as an error message. */
   error?: boolean | string;
   /** Size variant */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /**
    * Visual variant.
    * - `default`: inline radio circle next to a label (form-control style).
@@ -44,7 +55,7 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
    *   tucked inside. Useful for high-stakes choices, surveys, plan pickers.
    * @default "default"
    */
-  variant?: 'default' | 'card';
+  variant?: "default" | "card";
   /** Class applied to the outer wrapper (label + group + error) */
   wrapperClassName?: string;
   /** Class applied to the inner radio group container */
@@ -65,11 +76,11 @@ export interface RadioItemProps {
   /** Whether this item is disabled */
   disabled?: boolean;
   /** Accessible name for icon-only mode */
-  'aria-label'?: string;
+  "aria-label"?: string;
   /** Accessible labelled-by relationship */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
   /** Accessible described-by relationship */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
   /** Additional class name */
   className?: string;
   /** Class applied directly to the radio control */
@@ -82,8 +93,8 @@ export interface RadioItemProps {
 // Context for size + variant
 // ============================================
 
-const RadioSizeContext = React.createContext<'sm' | 'md' | 'lg'>('md');
-const RadioVariantContext = React.createContext<'default' | 'card'>('default');
+const RadioSizeContext = React.createContext<"sm" | "md" | "lg">("md");
+const RadioVariantContext = React.createContext<"default" | "card">("default");
 
 // ============================================
 // Radio Item Component
@@ -95,9 +106,9 @@ function RadioItem({
   helperText,
   description,
   disabled = false,
-  'aria-label': ariaLabel,
-  'aria-labelledby': ariaLabelledBy,
-  'aria-describedby': ariaDescribedBy,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
   className,
   controlClassName,
   contentClassName,
@@ -111,22 +122,28 @@ function RadioItem({
 
   const radioClasses = [
     styles.radio,
-    size === 'sm' && styles.radioSm,
-    size === 'lg' && styles.radioLg,
+    size === "sm" && styles.radioSm,
+    size === "lg" && styles.radioLg,
     controlClassName,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const labelClasses = [
     styles.label,
-    size === 'sm' && styles.labelSm,
-    size === 'lg' && styles.labelLg,
-  ].filter(Boolean).join(' ');
+    size === "sm" && styles.labelSm,
+    size === "lg" && styles.labelLg,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const wrapperClasses = [
     styles.itemWrapper,
-    variant === 'card' && styles.itemWrapperCard,
+    variant === "card" && styles.itemWrapperCard,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   // If no label/description, render just the radio
   if (!label && !resolvedHelperText) {
@@ -137,7 +154,7 @@ function RadioItem({
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
-        className={[radioClasses, className].filter(Boolean).join(' ')}
+        className={[radioClasses, className].filter(Boolean).join(" ")}
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
@@ -160,10 +177,14 @@ function RadioItem({
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
-      <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
-        <span id={labelId} className={labelClasses}>{label}</span>
+      <div className={[styles.content, contentClassName].filter(Boolean).join(" ")}>
+        <span id={labelId} className={labelClasses}>
+          {label}
+        </span>
         {resolvedHelperText && (
-          <span id={descriptionId} className={styles.helper}>{resolvedHelperText}</span>
+          <span id={descriptionId} className={styles.helper}>
+            {resolvedHelperText}
+          </span>
         )}
       </div>
     </label>
@@ -174,65 +195,92 @@ function RadioItem({
 // Radio Group Component
 // ============================================
 
-const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroupRoot({
-  value,
-  defaultValue,
-  onValueChange,
-  onChange,
-  orientation = 'vertical',
-  disabled = false,
-  name,
-  label,
-  helperText,
-  error,
-  size = 'md',
-  variant = 'default',
-  wrapperClassName,
-  groupClassName,
-  children,
-  className,
-  'aria-label': ariaLabel,
-  'aria-labelledby': ariaLabelledBy,
-  'aria-describedby': ariaDescribedBy,
-  ...htmlProps
-}: RadioGroupProps, ref) {
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('radio-group', { label, helperText, error });
-
-  const groupClasses = [
-    styles.group,
-    styles[orientation],
-    className,
+const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroupRoot(
+  {
+    value,
+    defaultValue,
+    onValueChange,
+    onChange,
+    orientation = "vertical",
+    disabled = false,
+    readOnly = false,
+    required = false,
+    name,
+    form,
+    inputRef,
+    label,
+    helperText,
+    error,
+    size = "md",
+    variant = "default",
+    wrapperClassName,
     groupClassName,
-  ].filter(Boolean).join(' ');
+    children,
+    className,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    ...htmlProps
+  }: RadioGroupProps,
+  ref
+) {
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("radio-group", {
+    label,
+    helperText,
+    error,
+  });
+
+  const groupClasses = [styles.group, styles[orientation], className, groupClassName]
+    .filter(Boolean)
+    .join(" ");
 
   const handleValueChange = onChange ?? onValueChange;
 
   return (
     <RadioSizeContext.Provider value={size}>
-     <RadioVariantContext.Provider value={variant}>
-      <div ref={ref} {...htmlProps} className={[styles.wrapper, wrapperClassName].filter(Boolean).join(' ')}>
-        {label && <span id={labelId} className={styles.groupLabel}>{label}</span>}
-        <BaseRadioGroup
-          value={value}
-          defaultValue={defaultValue}
-          onValueChange={handleValueChange}
-          disabled={disabled}
-          name={name}
-          aria-label={ariaLabel}
-          aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
-          aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
-          className={groupClasses}
+      <RadioVariantContext.Provider value={variant}>
+        <div
+          ref={ref}
+          {...htmlProps}
+          className={[styles.wrapper, wrapperClassName].filter(Boolean).join(" ")}
         >
-          {children}
-        </BaseRadioGroup>
-        {helperText && (
-          <span id={helperId} className={hasError ? [styles.helper, styles.error].join(' ') : styles.helper}>
-            {helperText}
-          </span>
-        )}
-        {errorMessage && <span id={errorId} className={styles.error}>{errorMessage}</span>}
-      </div>
-     </RadioVariantContext.Provider>
+          {label && (
+            <span id={labelId} className={styles.groupLabel}>
+              {label}
+            </span>
+          )}
+          <BaseRadioGroup
+            value={value}
+            defaultValue={defaultValue}
+            onValueChange={handleValueChange}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+            name={name}
+            form={form}
+            inputRef={inputRef}
+            aria-label={ariaLabel}
+            aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+            aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
+            className={groupClasses}
+          >
+            {children}
+          </BaseRadioGroup>
+          {helperText && (
+            <span
+              id={helperId}
+              className={hasError ? [styles.helper, styles.error].join(" ") : styles.helper}
+            >
+              {helperText}
+            </span>
+          )}
+          {errorMessage && (
+            <span id={errorId} className={styles.error}>
+              {errorMessage}
+            </span>
+          )}
+        </div>
+      </RadioVariantContext.Provider>
     </RadioSizeContext.Provider>
   );
 });

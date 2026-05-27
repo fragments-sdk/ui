@@ -1,33 +1,36 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Tabs as BaseTabs } from '@base-ui/react/tabs';
-import styles from './Tabs.module.scss';
+import * as React from "react";
+import { Tabs as BaseTabs } from "@base-ui/react/tabs";
+import styles from "./Tabs.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
 export type TabValue = string;
+export type TabsChangeEventDetails = Parameters<
+  NonNullable<React.ComponentProps<typeof BaseTabs.Root>["onValueChange"]>
+>[1];
 
 /**
  * Tabbed navigation for switching between content panels.
  * @see https://usefragments.com/components/tabs
  */
-export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
+export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
   children: React.ReactNode;
   /** Default active tab value (uncontrolled) */
   defaultValue?: TabValue;
   /** Controlled active tab value */
   value?: TabValue;
   /** Called when the active tab changes */
-  onValueChange?: (value: TabValue) => void;
+  onValueChange?: (value: TabValue, eventDetails: TabsChangeEventDetails) => void;
   /** Tab layout direction.
    * @default "horizontal" */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   /** Tab list visual style (default for Tabs.List).
    * @default "underline" */
-  variant?: 'underline' | 'pills';
+  variant?: "underline" | "pills";
 }
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,7 +38,7 @@ export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Tab list visual style.
    * @default "underline"
    * @see https://usefragments.com/components/tabs#variants */
-  variant?: 'underline' | 'pills';
+  variant?: "underline" | "pills";
 }
 
 export interface TabProps {
@@ -56,7 +59,7 @@ export interface TabsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
 // Context for variant
 // ============================================
 
-const TabsVariantContext = React.createContext<'underline' | 'pills'>('underline');
+const TabsVariantContext = React.createContext<"underline" | "pills">("underline");
 
 // ============================================
 // Components
@@ -67,12 +70,12 @@ function TabsRoot({
   defaultValue,
   value,
   onValueChange,
-  orientation = 'horizontal',
-  variant = 'underline',
+  orientation = "horizontal",
+  variant = "underline",
   className,
   ...htmlProps
 }: TabsProps) {
-  const classes = [styles.root, className].filter(Boolean).join(' ');
+  const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
     <TabsVariantContext.Provider value={variant}>
@@ -90,36 +93,26 @@ function TabsRoot({
   );
 }
 
-function TabsList({
-  children,
-  variant,
-  className,
-  ...htmlProps
-}: TabsListProps) {
+function TabsList({ children, variant, className, ...htmlProps }: TabsListProps) {
   const rootVariant = React.useContext(TabsVariantContext);
   const resolvedVariant = variant ?? rootVariant;
-  const variantClass = resolvedVariant === 'pills' ? styles.listPills : styles.listUnderline;
-  const classes = [styles.list, variantClass, className].filter(Boolean).join(' ');
+  const variantClass = resolvedVariant === "pills" ? styles.listPills : styles.listUnderline;
+  const classes = [styles.list, variantClass, className].filter(Boolean).join(" ");
 
   return (
     <TabsVariantContext.Provider value={resolvedVariant}>
       <BaseTabs.List {...htmlProps} className={classes}>
         {children}
-        {resolvedVariant === 'underline' && <BaseTabs.Indicator className={styles.indicator} />}
+        {resolvedVariant === "underline" && <BaseTabs.Indicator className={styles.indicator} />}
       </BaseTabs.List>
     </TabsVariantContext.Provider>
   );
 }
 
-function Tab({
-  children,
-  value,
-  disabled,
-  className,
-}: TabProps) {
+function Tab({ children, value, disabled, className }: TabProps) {
   const variant = React.useContext(TabsVariantContext);
-  const variantClass = variant === 'pills' ? styles.tabPills : styles.tabUnderline;
-  const classes = [styles.tab, variantClass, className].filter(Boolean).join(' ');
+  const variantClass = variant === "pills" ? styles.tabPills : styles.tabUnderline;
+  const classes = [styles.tab, variantClass, className].filter(Boolean).join(" ");
 
   return (
     <BaseTabs.Tab value={value} disabled={disabled} className={classes}>
@@ -136,11 +129,7 @@ function TabsPanel({
   className,
   ...htmlProps
 }: TabsPanelProps) {
-  const classes = [
-    styles.panel,
-    flush && styles.panelFlush,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.panel, flush && styles.panelFlush, className].filter(Boolean).join(" ");
 
   return (
     <BaseTabs.Panel {...htmlProps} value={value} keepMounted={keepMounted} className={classes}>

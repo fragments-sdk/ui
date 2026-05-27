@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Switch as BaseSwitch } from '@base-ui/react/switch';
-import { mergeAriaIds } from '../../utils/aria';
-import styles from './Toggle.module.scss';
+import * as React from "react";
+import { Switch as BaseSwitch } from "@base-ui/react/switch";
+import { mergeAriaIds } from "../../utils/aria";
+import styles from "./Toggle.module.scss";
 
 /**
  * Binary on/off switch for settings and preferences.
@@ -24,104 +24,111 @@ export interface SwitchProps {
   /** @deprecated Use helperText instead. */
   description?: string;
   disabled?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  readOnly?: boolean;
+  required?: boolean;
+  size?: "sm" | "md" | "lg";
   className?: string;
   name?: string;
+  form?: string;
+  value?: string;
+  uncheckedValue?: string;
+  inputRef?: React.Ref<HTMLInputElement>;
   id?: string;
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
-  'aria-describedby'?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
 }
 
 export type ToggleProps = SwitchProps;
 
-const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(
-  function Switch(
-    {
-      checked,
-      defaultChecked,
-      onChange,
-      onCheckedChange,
-      label,
-      helperText,
-      description,
-      disabled = false,
-      size = 'md',
-      className,
-      name,
-      id,
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledBy,
-      'aria-describedby': ariaDescribedBy,
-    },
-    ref
-  ) {
-    const resolvedHelperText = helperText ?? description;
-    const generatedId = React.useId();
-    const resolvedId = id ?? `switch-${generatedId}`;
-    const helperId = resolvedHelperText ? `${resolvedId}-helper` : undefined;
-    const trackClasses = [
-      styles.track,
-      size === 'sm' ? styles.trackSm : size === 'lg' ? styles.trackLg : styles.trackMd,
-    ].join(' ');
+const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Switch(
+  {
+    checked,
+    defaultChecked,
+    onChange,
+    onCheckedChange,
+    label,
+    helperText,
+    description,
+    disabled = false,
+    readOnly = false,
+    required = false,
+    size = "md",
+    className,
+    name,
+    form,
+    value,
+    uncheckedValue,
+    inputRef,
+    id,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+  },
+  ref
+) {
+  const resolvedHelperText = helperText ?? description;
+  const generatedId = React.useId();
+  const resolvedId = id ?? `switch-${generatedId}`;
+  const helperId = resolvedHelperText ? `${resolvedId}-helper` : undefined;
+  const trackClasses = [
+    styles.track,
+    size === "sm" ? styles.trackSm : size === "lg" ? styles.trackLg : styles.trackMd,
+  ].join(" ");
 
-    const thumbClasses = styles.thumb;
+  const thumbClasses = styles.thumb;
 
-    const labelClasses = [
-      styles.label,
-      size === 'sm' && styles.labelSm,
-      size === 'lg' && styles.labelLg,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const labelClasses = [
+    styles.label,
+    size === "sm" && styles.labelSm,
+    size === "lg" && styles.labelLg,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const helperClasses = [
-      styles.helper,
-      size === 'sm' && styles.helperSm,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const helperClasses = [styles.helper, size === "sm" && styles.helperSm].filter(Boolean).join(" ");
 
-    const rootClasses = [
-      styles.root,
-      resolvedHelperText && styles.rootWithHelper,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const rootClasses = [styles.root, resolvedHelperText && styles.rootWithHelper, className]
+    .filter(Boolean)
+    .join(" ");
 
-    return (
-      <BaseSwitch.Root
-        ref={ref}
-        id={resolvedId}
-        checked={checked}
-        defaultChecked={defaultChecked}
-        onCheckedChange={onCheckedChange ?? onChange}
-        disabled={disabled}
-        name={name}
-        className={rootClasses}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
-        aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
-      >
-        <span className={trackClasses} aria-hidden="true">
-          <BaseSwitch.Thumb className={thumbClasses} />
-        </span>
+  return (
+    <BaseSwitch.Root
+      ref={ref}
+      id={resolvedId}
+      checked={checked}
+      defaultChecked={defaultChecked}
+      onCheckedChange={onCheckedChange ?? onChange}
+      disabled={disabled}
+      readOnly={readOnly}
+      required={required}
+      name={name}
+      form={form}
+      value={value}
+      uncheckedValue={uncheckedValue}
+      inputRef={inputRef}
+      className={rootClasses}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
+    >
+      <span className={trackClasses} aria-hidden="true">
+        <BaseSwitch.Thumb className={thumbClasses} />
+      </span>
 
-        {(label || resolvedHelperText) && (
-          <div className={styles.content}>
-            {label && <span className={labelClasses}>{label}</span>}
-            {resolvedHelperText && (
-              <span id={helperId} className={helperClasses}>
-                {resolvedHelperText}
-              </span>
-            )}
-          </div>
-        )}
-      </BaseSwitch.Root>
-    );
-  }
-);
+      {(label || resolvedHelperText) && (
+        <div className={styles.content}>
+          {label && <span className={labelClasses}>{label}</span>}
+          {resolvedHelperText && (
+            <span id={helperId} className={helperClasses}>
+              {resolvedHelperText}
+            </span>
+          )}
+        </div>
+      )}
+    </BaseSwitch.Root>
+  );
+});
 
 export const Switch = Object.assign(SwitchRoot, {
   Root: SwitchRoot,

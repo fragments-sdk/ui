@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
-import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from '../../utils/aria';
-import styles from './Combobox.module.scss';
+import * as React from "react";
+import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
+import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import styles from "./Combobox.module.scss";
 
 // ============================================
 // Types
@@ -15,13 +15,17 @@ interface ComboboxCommonProps extends FormFieldProps {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   required?: boolean;
+  readOnly?: boolean;
   name?: string;
+  form?: string;
+  autoComplete?: string;
+  inputRef?: React.Ref<HTMLInputElement>;
   placeholder?: string;
   /** Auto-highlight first matching item while filtering */
   autoHighlight?: boolean;
   /** Size variant.
    * @default "md" */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Wrapper class name */
   className?: string;
 }
@@ -70,12 +74,12 @@ export interface ComboboxTriggerProps extends React.ButtonHTMLAttributes<HTMLBut
 export interface ComboboxContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   sideOffset?: number;
-  align?: 'start' | 'center' | 'end';
+  align?: "start" | "center" | "end";
   /** Maximum number of visible options before scrolling. Shows half of the next item as a scroll hint. @default 4 */
   maxVisibleItems?: number;
 }
 
-export interface ComboboxItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface ComboboxItemProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
   value: string;
   disabled?: boolean;
@@ -168,7 +172,7 @@ interface ComboboxContextValue {
   incrementItemsVersion: () => void;
   explicitTriggerCount: number;
   registerTrigger: () => () => void;
-  size: 'sm' | 'md' | 'lg';
+  size: "sm" | "md" | "lg";
   // Id applied to Combobox.Input so a native <label htmlFor> can target it.
   inputId?: string;
 }
@@ -180,43 +184,50 @@ const ComboboxContext = React.createContext<ComboboxContextValue>({
   incrementItemsVersion: () => {},
   explicitTriggerCount: 0,
   registerTrigger: () => () => {},
-  size: 'md',
+  size: "md",
 });
 
 function getNodeText(node: React.ReactNode): string {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(getNodeText).join('');
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(getNodeText).join("");
   if (React.isValidElement(node))
     return getNodeText((node.props as { children?: React.ReactNode }).children);
-  return '';
+  return "";
 }
 
 // ============================================
 // Components
 // ============================================
 
-const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function ComboboxRoot({
-  children,
-  value,
-  defaultValue,
-  onValueChange,
-  onChange,
-  multiple = false,
-  open,
-  defaultOpen,
-  onOpenChange,
-  disabled,
-  required,
-  name,
-  placeholder,
-  autoHighlight = true,
-  label,
-  helperText,
-  error,
-  size = 'md',
-  className,
-}: ComboboxProps, ref) {
+const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function ComboboxRoot(
+  {
+    children,
+    value,
+    defaultValue,
+    onValueChange,
+    onChange,
+    multiple = false,
+    open,
+    defaultOpen,
+    onOpenChange,
+    disabled,
+    required,
+    readOnly,
+    name,
+    form,
+    autoComplete,
+    inputRef,
+    placeholder,
+    autoHighlight = true,
+    label,
+    helperText,
+    error,
+    size = "md",
+    className,
+  }: ComboboxProps,
+  ref
+) {
   // Track selected values for chip rendering
   const [internalValue, setInternalValue] = React.useState<string | string[] | null>(
     value ?? defaultValue ?? (multiple ? [] : null)
@@ -249,12 +260,9 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
   );
 
   // Convert value → label for input display
-  const itemToStringLabel = React.useCallback(
-    (itemValue: string) => {
-      return itemsRef.current.get(itemValue) ?? itemValue;
-    },
-    []
-  );
+  const itemToStringLabel = React.useCallback((itemValue: string) => {
+    return itemsRef.current.get(itemValue) ?? itemValue;
+  }, []);
 
   // Derive selected values array for chip rendering
   const currentValue = value !== undefined ? value : internalValue;
@@ -264,10 +272,14 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     return [currentValue];
   }, [currentValue]);
 
-  const { id: fieldId, labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds(
-    'combobox',
-    { label, helperText, error }
-  );
+  const {
+    id: fieldId,
+    labelId,
+    helperId,
+    errorId,
+    hasError,
+    errorMessage,
+  } = useFormFieldIds("combobox", { label, helperText, error });
   // Base UI's <Combobox.Label> only labels a Trigger; the form control here is
   // <Combobox.Input>, so we render a native <label htmlFor> and put a matching id on
   // the input (passed via context) instead. Avoids the Base UI label-misuse warning.
@@ -286,22 +298,34 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       size,
       inputId,
     }),
-    [placeholder, multiple, selectedValues, itemsVersion, incrementItemsVersion, explicitTriggerCount, registerTrigger, size, inputId]
+    [
+      placeholder,
+      multiple,
+      selectedValues,
+      itemsVersion,
+      incrementItemsVersion,
+      explicitTriggerCount,
+      registerTrigger,
+      size,
+      inputId,
+    ]
   );
 
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
-  const helperClasses = [styles.helper, hasError && styles.helperError]
-    .filter(Boolean)
-    .join(' ');
+  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
+  const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
 
   const wrapperContent = (inner: React.ReactNode) => (
     <div ref={ref} className={wrapperClasses}>
       {inner}
       {helperText && (
-        <span id={helperId} className={helperClasses}>{helperText}</span>
+        <span id={helperId} className={helperClasses}>
+          {helperText}
+        </span>
       )}
       {errorMessage && (
-        <span id={errorId} className={styles.errorMessage}>{errorMessage}</span>
+        <span id={errorId} className={styles.errorMessage}>
+          {errorMessage}
+        </span>
       )}
     </div>
   );
@@ -329,7 +353,11 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
             onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
             disabled={disabled}
             required={required}
+            readOnly={readOnly}
             name={name}
+            form={form}
+            autoComplete={autoComplete}
+            inputRef={inputRef}
             multiple
             autoHighlight={autoHighlight}
             itemToStringLabel={itemToStringLabel}
@@ -369,7 +397,11 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
           onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
           disabled={disabled}
           required={required}
+          readOnly={readOnly}
           name={name}
+          form={form}
+          autoComplete={autoComplete}
+          inputRef={inputRef}
           multiple={false}
           autoHighlight={autoHighlight}
           itemToStringLabel={itemToStringLabel}
@@ -394,10 +426,16 @@ function ComboboxInput({
   ...htmlProps
 }: ComboboxInputProps) {
   const context = React.useContext(ComboboxContext);
-  const inputSizeClass = context.size === 'sm' ? styles.inputSm : context.size === 'lg' ? styles.inputLg : undefined;
-  const wrapperSizeClass = context.size === 'sm' ? styles.inputWrapperSm : context.size === 'lg' ? styles.inputWrapperLg : undefined;
-  const classes = [styles.input, inputSizeClass, className].filter(Boolean).join(' ');
-  const wrapperClasses = [styles.inputWrapper, wrapperSizeClass].filter(Boolean).join(' ');
+  const inputSizeClass =
+    context.size === "sm" ? styles.inputSm : context.size === "lg" ? styles.inputLg : undefined;
+  const wrapperSizeClass =
+    context.size === "sm"
+      ? styles.inputWrapperSm
+      : context.size === "lg"
+        ? styles.inputWrapperLg
+        : undefined;
+  const classes = [styles.input, inputSizeClass, className].filter(Boolean).join(" ");
+  const wrapperClasses = [styles.inputWrapper, wrapperSizeClass].filter(Boolean).join(" ");
   const renderTrigger = showTrigger && context.explicitTriggerCount === 0;
   const inputId = context.inputId ?? htmlProps.id;
   const inputPlaceholder = placeholder ?? context.placeholder;
@@ -454,7 +492,7 @@ function ComboboxInput({
 function ComboboxTrigger({ children, className, ...htmlProps }: ComboboxTriggerProps) {
   const { registerTrigger } = React.useContext(ComboboxContext);
   React.useEffect(() => registerTrigger(), [registerTrigger]);
-  const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const classes = [styles.trigger, className].filter(Boolean).join(" ");
 
   return (
     <BaseCombobox.Trigger {...htmlProps} className={classes}>
@@ -467,15 +505,19 @@ function ComboboxContent({
   children,
   className,
   sideOffset = 4,
-  align = 'start',
+  align = "start",
   maxVisibleItems,
   ...htmlProps
 }: ComboboxContentProps) {
-  const popupClasses = [styles.popup, className].filter(Boolean).join(' ');
+  const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
 
-  const popupStyle = maxVisibleItems != null
-    ? { '--fui-select-max-items': maxVisibleItems + 0.5, ...htmlProps.style } as React.CSSProperties
-    : htmlProps.style;
+  const popupStyle =
+    maxVisibleItems != null
+      ? ({
+          "--fui-select-max-items": maxVisibleItems + 0.5,
+          ...htmlProps.style,
+        } as React.CSSProperties)
+      : htmlProps.style;
 
   return (
     <BaseCombobox.Portal>
@@ -495,7 +537,7 @@ function ComboboxContent({
 
 function ComboboxItem({ children, value, disabled, className, ...htmlProps }: ComboboxItemProps) {
   const { itemsRef, incrementItemsVersion } = React.useContext(ComboboxContext);
-  const classes = [styles.item, className].filter(Boolean).join(' ');
+  const classes = [styles.item, className].filter(Boolean).join(" ");
 
   // Register this item's label in the registry so the input can display it
   const label = React.useMemo(() => getNodeText(children).trim() || value, [children, value]);
@@ -521,18 +563,30 @@ function ComboboxItem({ children, value, disabled, className, ...htmlProps }: Co
 }
 
 function ComboboxEmpty({ children, className, ...htmlProps }: ComboboxEmptyProps) {
-  const classes = [styles.empty, className].filter(Boolean).join(' ');
-  return <BaseCombobox.Empty {...htmlProps} className={classes}>{children}</BaseCombobox.Empty>;
+  const classes = [styles.empty, className].filter(Boolean).join(" ");
+  return (
+    <BaseCombobox.Empty {...htmlProps} className={classes}>
+      {children}
+    </BaseCombobox.Empty>
+  );
 }
 
 function ComboboxGroup({ children, className, ...htmlProps }: ComboboxGroupProps) {
-  const classes = [styles.group, className].filter(Boolean).join(' ');
-  return <BaseCombobox.Group {...htmlProps} className={classes}>{children}</BaseCombobox.Group>;
+  const classes = [styles.group, className].filter(Boolean).join(" ");
+  return (
+    <BaseCombobox.Group {...htmlProps} className={classes}>
+      {children}
+    </BaseCombobox.Group>
+  );
 }
 
 function ComboboxGroupLabel({ children, className, ...htmlProps }: ComboboxGroupLabelProps) {
-  const classes = [styles.groupLabel, className].filter(Boolean).join(' ');
-  return <BaseCombobox.GroupLabel {...htmlProps} className={classes}>{children}</BaseCombobox.GroupLabel>;
+  const classes = [styles.groupLabel, className].filter(Boolean).join(" ");
+  return (
+    <BaseCombobox.GroupLabel {...htmlProps} className={classes}>
+      {children}
+    </BaseCombobox.GroupLabel>
+  );
 }
 
 // ============================================

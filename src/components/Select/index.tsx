@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Select as BaseSelect } from '@base-ui/react/select';
-import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from '../../utils/aria';
-import styles from './Select.module.scss';
+import * as React from "react";
+import { Select as BaseSelect } from "@base-ui/react/select";
+import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import styles from "./Select.module.scss";
 
 // ============================================
 // Types
@@ -38,17 +38,25 @@ export interface SelectProps extends FormFieldProps {
   /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
   // disabled inherited from FormFieldProps
+  /** Whether the user cannot choose a different option */
+  readOnly?: boolean;
   /** Whether a selection is required */
   required?: boolean;
   /** Form field name */
   name?: string;
+  /** ID of the form that owns the hidden input */
+  form?: string;
+  /** Browser autofill hint for the hidden input */
+  autoComplete?: string;
+  /** Ref to the hidden input element */
+  inputRef?: React.Ref<HTMLInputElement>;
   /** Placeholder text when no value is selected */
   placeholder?: string;
   /** Convenience API for simple selects (renders Select.Item entries when children are omitted) */
   options?: SelectOption[];
   /** Size variant.
    * @default "md" */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Wrapper class name */
   className?: string;
 }
@@ -61,12 +69,12 @@ export interface SelectTriggerProps extends React.HTMLAttributes<HTMLButtonEleme
 export interface SelectContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   sideOffset?: number;
-  align?: 'start' | 'center' | 'end';
+  align?: "start" | "center" | "end";
   /** Maximum number of visible options before scrolling. Shows half of the next item as a scroll hint. @default 4 */
   maxVisibleItems?: number;
 }
 
-export interface SelectItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface SelectItemProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
   value: SelectValue;
   disabled?: boolean;
@@ -132,23 +140,20 @@ interface SelectContextValue {
   items: Map<SelectValue, React.ReactNode>;
   registerItem: (value: SelectValue, content: React.ReactNode) => void;
   unregisterItem: (value: SelectValue) => void;
-  size: 'sm' | 'md' | 'lg';
+  size: "sm" | "md" | "lg";
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
   items: new Map(),
   registerItem: () => {},
   unregisterItem: () => {},
-  size: 'md',
+  size: "md",
 });
 
 // Walk the declared Select children at render time to build a value→label map.
 // The trigger reads this so a preselected value renders its label immediately,
 // without waiting for the lazily-portaled popup to mount and register items.
-function collectDeclaredItems(
-  children: React.ReactNode,
-  map: Map<SelectValue, React.ReactNode>,
-) {
+function collectDeclaredItems(children: React.ReactNode, map: Map<SelectValue, React.ReactNode>) {
   React.Children.forEach(children, (child) => {
     if (!React.isValidElement(child)) return;
     if (child.type === SelectItem) {
@@ -165,35 +170,40 @@ function collectDeclaredItems(
 // Components
 // ============================================
 
-const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function SelectRoot({
-  children,
-  value,
-  defaultValue,
-  onValueChange,
-  onChange,
-  open,
-  defaultOpen,
-  onOpenChange,
-  disabled,
-  required,
-  name,
-  placeholder,
-  options,
-  label,
-  helperText,
-  error,
-  size = 'md',
-  className,
-}: SelectProps, ref) {
+const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function SelectRoot(
+  {
+    children,
+    value,
+    defaultValue,
+    onValueChange,
+    onChange,
+    open,
+    defaultOpen,
+    onOpenChange,
+    disabled,
+    readOnly,
+    required,
+    name,
+    form,
+    autoComplete,
+    inputRef,
+    placeholder,
+    options,
+    label,
+    helperText,
+    error,
+    size = "md",
+    className,
+  }: SelectProps,
+  ref
+) {
   // Track current value for controlled and uncontrolled modes
   const [internalValue, setInternalValue] = React.useState<SelectValue | null | undefined>(
     value ?? defaultValue ?? null
   );
 
   // Registry for item children - allows trigger to render selected item's content
-  const [items, setItems] = React.useState<Map<SelectValue, React.ReactNode>>(
-    () => new Map()
-  );
+  const [items, setItems] = React.useState<Map<SelectValue, React.ReactNode>>(() => new Map());
   const registerItem = React.useCallback((itemValue: SelectValue, content: React.ReactNode) => {
     setItems((prev) => {
       const next = new Map(prev);
@@ -217,15 +227,18 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     }
   }, [value]);
 
+  const selectedValue = value !== undefined ? value : internalValue;
+
   const handleValueChange = React.useCallback(
     (newValue: SelectValue | null) => {
+      if (readOnly) return;
       if (value === undefined) {
         // Uncontrolled mode
         setInternalValue(newValue);
       }
       (onChange ?? onValueChange)?.(newValue);
     },
-    [value, onChange, onValueChange]
+    [readOnly, value, onChange, onValueChange]
   );
 
   // Labels declared up-front via children/options, so the trigger can show the
@@ -248,49 +261,60 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
   const contextValue = React.useMemo(
     () => ({
       placeholder,
-      value: value !== undefined ? value : internalValue,
+      value: selectedValue,
       items: resolvedItems,
       registerItem,
       unregisterItem,
       size,
     }),
-    [placeholder, value, internalValue, resolvedItems, registerItem, unregisterItem, size]
+    [placeholder, selectedValue, resolvedItems, registerItem, unregisterItem, size]
   );
 
-  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds('select', { label, helperText, error });
+  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds("select", {
+    label,
+    helperText,
+    error,
+  });
 
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
-  const helperClasses = [styles.helper, hasError && styles.helperError]
-    .filter(Boolean)
-    .join(' ');
+  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
+  const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
 
   return (
     <SelectContext.Provider value={contextValue}>
       <div ref={ref} className={wrapperClasses}>
         <BaseSelect.Root
-          value={value}
-          defaultValue={defaultValue}
+          value={value !== undefined || readOnly ? selectedValue : undefined}
+          defaultValue={value === undefined && !readOnly ? defaultValue : undefined}
           onValueChange={handleValueChange}
           open={open}
           defaultOpen={defaultOpen}
           onOpenChange={onOpenChange}
           disabled={disabled}
+          readOnly={readOnly}
           required={required}
           name={name}
+          form={form}
+          autoComplete={autoComplete}
+          inputRef={inputRef}
           aria-describedby={mergeAriaIds(errorId, helperId)}
         >
           {label && <BaseSelect.Label className={styles.label}>{label}</BaseSelect.Label>}
-          {children ?? options?.map((option) => (
-            <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
-              {option.label}
-            </SelectItem>
-          ))}
+          {children ??
+            options?.map((option) => (
+              <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+                {option.label}
+              </SelectItem>
+            ))}
         </BaseSelect.Root>
         {helperText && (
-          <span id={helperId} className={helperClasses}>{helperText}</span>
+          <span id={helperId} className={helperClasses}>
+            {helperText}
+          </span>
         )}
         {errorMessage && (
-          <span id={errorId} className={styles.errorMessage}>{errorMessage}</span>
+          <span id={errorId} className={styles.errorMessage}>
+            {errorMessage}
+          </span>
         )}
       </div>
     </SelectContext.Provider>
@@ -303,20 +327,20 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
 
   const classes = [
     styles.trigger,
-    context.size === 'sm' && styles.triggerSm,
-    context.size === 'lg' && styles.triggerLg,
+    context.size === "sm" && styles.triggerSm,
+    context.size === "lg" && styles.triggerLg,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   // Get the selected item's children from the registry
-  const selectedContent = context.value != null
-    ? context.items.get(context.value)
-    : null;
+  const selectedContent = context.value != null ? context.items.get(context.value) : null;
 
   // Determine what to show in the value area
-  const displayContent = selectedContent ?? (
-    placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null
-  );
+  const displayContent =
+    selectedContent ??
+    (placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null);
 
   return (
     <BaseSelect.Trigger {...htmlProps} className={classes}>
@@ -336,23 +360,23 @@ function SelectContent({
   children,
   className,
   sideOffset = 4,
-  align = 'start',
+  align = "start",
   maxVisibleItems,
   ...htmlProps
 }: SelectContentProps) {
-  const popupClasses = [styles.popup, className].filter(Boolean).join(' ');
+  const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
 
-  const popupStyle = maxVisibleItems != null
-    ? { '--fui-select-max-items': maxVisibleItems + 0.5, ...htmlProps.style } as React.CSSProperties
-    : htmlProps.style;
+  const popupStyle =
+    maxVisibleItems != null
+      ? ({
+          "--fui-select-max-items": maxVisibleItems + 0.5,
+          ...htmlProps.style,
+        } as React.CSSProperties)
+      : htmlProps.style;
 
   return (
     <BaseSelect.Portal>
-      <BaseSelect.Positioner
-        sideOffset={sideOffset}
-        align={align}
-        className={styles.positioner}
-      >
+      <BaseSelect.Positioner sideOffset={sideOffset} align={align} className={styles.positioner}>
         <BaseSelect.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
           {children}
         </BaseSelect.Popup>
@@ -363,7 +387,7 @@ function SelectContent({
 
 function SelectItem({ children, value, disabled, className, ...htmlProps }: SelectItemProps) {
   const { registerItem, unregisterItem } = React.useContext(SelectContext);
-  const classes = [styles.item, className].filter(Boolean).join(' ');
+  const classes = [styles.item, className].filter(Boolean).join(" ");
 
   // Register this item's children in the registry so the trigger can display them
   React.useEffect(() => {
@@ -384,13 +408,21 @@ function SelectItem({ children, value, disabled, className, ...htmlProps }: Sele
 }
 
 function SelectGroup({ children, className, ...htmlProps }: SelectGroupProps) {
-  const classes = [styles.group, className].filter(Boolean).join(' ');
-  return <BaseSelect.Group {...htmlProps} className={classes}>{children}</BaseSelect.Group>;
+  const classes = [styles.group, className].filter(Boolean).join(" ");
+  return (
+    <BaseSelect.Group {...htmlProps} className={classes}>
+      {children}
+    </BaseSelect.Group>
+  );
 }
 
 function SelectGroupLabel({ children, className, ...htmlProps }: SelectGroupLabelProps) {
-  const classes = [styles.groupLabel, className].filter(Boolean).join(' ');
-  return <BaseSelect.GroupLabel {...htmlProps} className={classes}>{children}</BaseSelect.GroupLabel>;
+  const classes = [styles.groupLabel, className].filter(Boolean).join(" ");
+  return (
+    <BaseSelect.GroupLabel {...htmlProps} className={classes}>
+      {children}
+    </BaseSelect.GroupLabel>
+  );
 }
 
 // ============================================
@@ -406,11 +438,4 @@ export const Select = Object.assign(SelectRoot, {
 });
 
 // Re-export individual components
-export {
-  SelectRoot,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectGroup,
-  SelectGroupLabel,
-};
+export { SelectRoot, SelectTrigger, SelectContent, SelectItem, SelectGroup, SelectGroupLabel };

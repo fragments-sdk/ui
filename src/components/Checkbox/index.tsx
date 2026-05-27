@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
-import { mergeAriaIds } from '../../utils/aria';
-import styles from './Checkbox.module.scss';
+import * as React from "react";
+import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
+import { mergeAriaIds } from "../../utils/aria";
+import styles from "./Checkbox.module.scss";
 
 // ============================================
 // Types
@@ -13,7 +13,10 @@ import styles from './Checkbox.module.scss';
  * Checkbox for boolean or indeterminate selections in forms.
  * @see https://usefragments.com/components/checkbox
  */
-export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElement>, 'onChange' | 'defaultChecked'> {
+export interface CheckboxProps extends Omit<
+  React.HTMLAttributes<HTMLLabelElement>,
+  "onChange" | "defaultChecked"
+> {
   /** Whether the checkbox is checked */
   checked?: boolean;
   /** Default checked state (uncontrolled) */
@@ -26,11 +29,13 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   indeterminate?: boolean;
   /** Whether the checkbox is disabled */
   disabled?: boolean;
+  /** Whether the checkbox cannot be changed by the user */
+  readOnly?: boolean;
   /** Whether the checkbox is required */
   required?: boolean;
   /** Size variant.
    * @default "md" */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /**
    * Visual variant.
    * - `default`: inline checkbox next to a label (form-control style).
@@ -38,7 +43,7 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
    *   Useful for multi-select question lists, settings toggles, etc.
    * @default "default"
    */
-  variant?: 'default' | 'card';
+  variant?: "default" | "card";
   /** Label text */
   label?: string;
   /** Helper text shown below the label */
@@ -47,8 +52,16 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   description?: string;
   /** Name attribute for form submission */
   name?: string;
+  /** ID of the form that owns the hidden input */
+  form?: string;
   /** Value attribute for form submission */
   value?: string;
+  /** Value submitted when unchecked */
+  uncheckedValue?: string;
+  /** Ref to the hidden input element */
+  inputRef?: React.Ref<HTMLInputElement>;
+  /** Whether this checkbox controls child checkboxes in a checkbox group */
+  parent?: boolean;
   /** ID for the checkbox input */
   id?: string;
   /** Class applied directly to the checkbox control element */
@@ -56,11 +69,11 @@ export interface CheckboxProps extends Omit<React.HTMLAttributes<HTMLLabelElemen
   /** Class applied to the label/description content wrapper */
   contentClassName?: string;
   /** Accessible label for icon-only mode */
-  'aria-label'?: string;
+  "aria-label"?: string;
   /** Accessible labelled-by relationship for icon-only mode */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
   /** Accessible described-by relationship */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 // ============================================
@@ -105,125 +118,144 @@ function MinusIcon() {
 // Component
 // ============================================
 
-const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(
-  function Checkbox(
-    {
-      checked,
-      defaultChecked,
-      onCheckedChange,
-      onChange,
-      indeterminate = false,
-      disabled = false,
-      required = false,
-      size = 'md',
-      variant = 'default',
-      label,
-      helperText,
-      description,
-      name,
-      value,
-      className,
-      controlClassName,
-      contentClassName,
-      id,
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledBy,
-      'aria-describedby': ariaDescribedBy,
-      ...htmlProps
-    },
-    ref
-  ) {
-    const resolvedHelperText = helperText ?? description;
-    const generatedId = React.useId();
-    const checkboxId = id ?? `checkbox-${generatedId}`;
-    const labelId = label ? `${checkboxId}-label` : undefined;
-    const descriptionId = resolvedHelperText ? `${checkboxId}-description` : undefined;
+const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function Checkbox(
+  {
+    checked,
+    defaultChecked,
+    onCheckedChange,
+    onChange,
+    indeterminate = false,
+    disabled = false,
+    readOnly = false,
+    required = false,
+    size = "md",
+    variant = "default",
+    label,
+    helperText,
+    description,
+    name,
+    form,
+    value,
+    uncheckedValue,
+    inputRef,
+    parent,
+    className,
+    controlClassName,
+    contentClassName,
+    id,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    ...htmlProps
+  },
+  ref
+) {
+  const resolvedHelperText = helperText ?? description;
+  const generatedId = React.useId();
+  const checkboxId = id ?? `checkbox-${generatedId}`;
+  const labelId = label ? `${checkboxId}-label` : undefined;
+  const descriptionId = resolvedHelperText ? `${checkboxId}-description` : undefined;
 
-    const checkboxClasses = [
-      styles.checkbox,
-      size === 'sm' && styles.sm,
-      size === 'lg' && styles.lg,
-      controlClassName,
-    ].filter(Boolean).join(' ');
+  const checkboxClasses = [
+    styles.checkbox,
+    size === "sm" && styles.sm,
+    size === "lg" && styles.lg,
+    controlClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const labelClasses = [
-      styles.label,
-      size === 'sm' && styles.labelSm,
-      size === 'lg' && styles.labelLg,
-    ].filter(Boolean).join(' ');
+  const labelClasses = [
+    styles.label,
+    size === "sm" && styles.labelSm,
+    size === "lg" && styles.labelLg,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const wrapperClasses = [
-      styles.wrapper,
-      variant === 'card' && styles.wrapperCard,
-      className,
-    ].filter(Boolean).join(' ');
-    const handleCheckedChange = onChange ?? onCheckedChange;
+  const wrapperClasses = [styles.wrapper, variant === "card" && styles.wrapperCard, className]
+    .filter(Boolean)
+    .join(" ");
+  const handleCheckedChange = onChange ?? onCheckedChange;
 
-    // If no label/description, render just the checkbox
-    if (!label && !resolvedHelperText) {
-      const iconOnlyHtmlProps = htmlProps as unknown as Record<string, unknown>;
-      return (
-        <BaseCheckbox.Root
-          {...iconOnlyHtmlProps}
-          ref={ref}
-          checked={checked}
-          defaultChecked={defaultChecked}
-          onCheckedChange={handleCheckedChange}
-          indeterminate={indeterminate}
-          disabled={disabled}
-          required={required}
-          name={name}
-          value={value}
-          id={checkboxId}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledBy}
-          aria-describedby={ariaDescribedBy}
-          className={[checkboxClasses, className].filter(Boolean).join(' ')}
-        >
-          <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
-            {indeterminate ? <MinusIcon /> : <CheckIcon />}
-          </BaseCheckbox.Indicator>
-        </BaseCheckbox.Root>
-      );
-    }
-
+  // If no label/description, render just the checkbox
+  if (!label && !resolvedHelperText) {
+    const iconOnlyHtmlProps = htmlProps as unknown as Record<string, unknown>;
     return (
-      <label
-        {...htmlProps}
-        className={wrapperClasses}
-        data-disabled={disabled || undefined}
-        data-has-description={resolvedHelperText ? true : undefined}
+      <BaseCheckbox.Root
+        {...iconOnlyHtmlProps}
+        ref={ref}
+        checked={checked}
+        defaultChecked={defaultChecked}
+        onCheckedChange={handleCheckedChange}
+        indeterminate={indeterminate}
+        disabled={disabled}
+        readOnly={readOnly}
+        required={required}
+        name={name}
+        form={form}
+        value={value}
+        uncheckedValue={uncheckedValue}
+        inputRef={inputRef}
+        parent={parent}
+        id={checkboxId}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        className={[checkboxClasses, className].filter(Boolean).join(" ")}
       >
-        <BaseCheckbox.Root
-          ref={ref}
-          checked={checked}
-          defaultChecked={defaultChecked}
-          onCheckedChange={handleCheckedChange}
-          indeterminate={indeterminate}
-          disabled={disabled}
-          required={required}
-          name={name}
-          value={value}
-          id={checkboxId}
-          aria-label={ariaLabel}
-          aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
-          aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
-          className={checkboxClasses}
-        >
-          <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
-            {indeterminate ? <MinusIcon /> : <CheckIcon />}
-          </BaseCheckbox.Indicator>
-        </BaseCheckbox.Root>
-        <div className={[styles.content, contentClassName].filter(Boolean).join(' ')}>
-          <span id={labelId} className={labelClasses}>{label}</span>
-          {resolvedHelperText && (
-            <span id={descriptionId} className={styles.helper}>{resolvedHelperText}</span>
-          )}
-        </div>
-      </label>
+        <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
+          {indeterminate ? <MinusIcon /> : <CheckIcon />}
+        </BaseCheckbox.Indicator>
+      </BaseCheckbox.Root>
     );
   }
-);
+
+  return (
+    <label
+      {...htmlProps}
+      className={wrapperClasses}
+      data-disabled={disabled || undefined}
+      data-has-description={resolvedHelperText ? true : undefined}
+    >
+      <BaseCheckbox.Root
+        ref={ref}
+        checked={checked}
+        defaultChecked={defaultChecked}
+        onCheckedChange={handleCheckedChange}
+        indeterminate={indeterminate}
+        disabled={disabled}
+        readOnly={readOnly}
+        required={required}
+        name={name}
+        form={form}
+        value={value}
+        uncheckedValue={uncheckedValue}
+        inputRef={inputRef}
+        parent={parent}
+        id={checkboxId}
+        aria-label={ariaLabel}
+        aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+        aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
+        className={checkboxClasses}
+      >
+        <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
+          {indeterminate ? <MinusIcon /> : <CheckIcon />}
+        </BaseCheckbox.Indicator>
+      </BaseCheckbox.Root>
+      <div className={[styles.content, contentClassName].filter(Boolean).join(" ")}>
+        <span id={labelId} className={labelClasses}>
+          {label}
+        </span>
+        {resolvedHelperText && (
+          <span id={descriptionId} className={styles.helper}>
+            {resolvedHelperText}
+          </span>
+        )}
+      </div>
+    </label>
+  );
+});
 
 export const Checkbox = Object.assign(CheckboxRoot, {
   Root: CheckboxRoot,

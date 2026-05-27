@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { Drawer } from './index';
+import { describe, it, expect } from "vitest";
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { Drawer } from "./index";
 
 function renderDrawer(
   props: Partial<React.ComponentProps<typeof Drawer>> = {},
-  contentProps: Partial<React.ComponentProps<typeof Drawer.Content>> = {},
+  contentProps: Partial<React.ComponentProps<typeof Drawer.Content>> = {}
 ) {
   return render(
     <Drawer {...props}>
@@ -28,45 +28,45 @@ function renderDrawer(
   );
 }
 
-describe('Drawer', () => {
-  it('opens when trigger is clicked', async () => {
+describe("Drawer", () => {
+  it("opens when trigger is clicked", async () => {
     const user = userEvent.setup();
     renderDrawer();
 
-    expect(screen.queryByText('Drawer Title')).not.toBeInTheDocument();
+    expect(screen.queryByText("Drawer Title")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /open drawer/i }));
+    await user.click(screen.getByRole("button", { name: /open drawer/i }));
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
     });
   });
 
-  it('closes when close button is clicked', async () => {
+  it("closes when close button is clicked", async () => {
     const user = userEvent.setup();
     renderDrawer({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
     });
 
-    const closeButton = screen.getByRole('button', { name: /close drawer/i });
+    const closeButton = screen.getByRole("button", { name: /close drawer/i });
     await user.click(closeButton);
 
     await waitFor(() => {
-      expect(screen.queryByText('Drawer Title')).not.toBeInTheDocument();
+      expect(screen.queryByText("Drawer Title")).not.toBeInTheDocument();
     });
   });
 
-  it('renders title and description', async () => {
+  it("renders title and description", async () => {
     renderDrawer({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
-      expect(screen.getByText('Drawer description text')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
+      expect(screen.getByText("Drawer description text")).toBeInTheDocument();
     });
   });
 
-  it('forwards html props to trigger, title, description, and close', async () => {
+  it("forwards html props to trigger, title, description, and close", async () => {
     const user = userEvent.setup();
     render(
       <Drawer>
@@ -83,109 +83,127 @@ describe('Drawer', () => {
       </Drawer>
     );
 
-    expect(screen.getByRole('button', { name: /open/i })).toHaveAttribute('id', 'drawer-trigger');
-    await user.click(screen.getByRole('button', { name: /open/i }));
+    expect(screen.getByRole("button", { name: /open/i })).toHaveAttribute("id", "drawer-trigger");
+    await user.click(screen.getByRole("button", { name: /open/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toHaveAttribute('id', 'drawer-title');
-      expect(screen.getByText('Drawer Description')).toHaveAttribute('id', 'drawer-description');
-      expect(screen.getByTestId('drawer-close')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toHaveAttribute("id", "drawer-title");
+      expect(screen.getByText("Drawer Description")).toHaveAttribute("id", "drawer-description");
+      expect(screen.getByTestId("drawer-close")).toBeInTheDocument();
     });
   });
 
-  it('renders compound sub-components (Header, Body, Footer)', async () => {
+  it("renders compound sub-components (Header, Body, Footer)", async () => {
     renderDrawer({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Body content')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      expect(screen.getByText("Body content")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
     });
   });
 
-  it('supports side prop', async () => {
-    renderDrawer({ defaultOpen: true }, { side: 'left' });
+  it("supports side prop", async () => {
+    renderDrawer({ defaultOpen: true }, { side: "left" });
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
     });
   });
 
-  it('supports size prop', async () => {
-    renderDrawer({ defaultOpen: true }, { size: 'lg' });
+  it("supports size prop", async () => {
+    renderDrawer({ defaultOpen: true }, { size: "lg" });
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
     });
   });
 
-  it('accepts Drawer.Content initialFocus prop', async () => {
+  it("accepts Drawer.Content initialFocus prop", async () => {
     renderDrawer({ defaultOpen: true }, { initialFocus: false });
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
     });
   });
 
-  it('has no accessibility violations when open', async () => {
+  it("forwards props to the Base UI viewport", async () => {
+    renderDrawer(
+      { defaultOpen: true },
+      {
+        viewportProps: {
+          "data-testid": "drawer-viewport",
+          style: { paddingTop: 12 },
+        },
+      }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("drawer-viewport")).toHaveStyle({
+        paddingTop: "12px",
+      });
+    });
+  });
+
+  it("has no accessibility violations when open", async () => {
     const { container } = renderDrawer({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
     });
 
     await expectNoA11yViolations(container, {
       // Base UI focus guard spans have role="button" without labels.
-      disabledRules: ['aria-command-name'],
+      disabledRules: ["aria-command-name"],
     });
   });
 
-  describe('keyboard & focus', () => {
-    it('Escape closes drawer', async () => {
+  describe("keyboard & focus", () => {
+    it("Escape closes drawer", async () => {
       const user = userEvent.setup();
       renderDrawer({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+        expect(screen.getByText("Drawer Title")).toBeInTheDocument();
       });
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
 
       await waitFor(() => {
-        expect(screen.queryByText('Drawer Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Drawer Title")).not.toBeInTheDocument();
       });
     });
 
-    it('focus moves into drawer on open', async () => {
+    it("focus moves into drawer on open", async () => {
       const user = userEvent.setup();
       renderDrawer();
 
-      await user.click(screen.getByRole('button', { name: /open drawer/i }));
+      await user.click(screen.getByRole("button", { name: /open drawer/i }));
 
       await waitFor(() => {
-        expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+        expect(screen.getByText("Drawer Title")).toBeInTheDocument();
       });
 
       await waitFor(() => {
-        const dialog = screen.getByRole('dialog');
+        const dialog = screen.getByRole("dialog");
         expect(dialog.contains(document.activeElement)).toBe(true);
       });
     });
 
-    it('focus returns to trigger on close', async () => {
+    it("focus returns to trigger on close", async () => {
       const user = userEvent.setup();
       renderDrawer();
 
-      const trigger = screen.getByRole('button', { name: /open drawer/i });
+      const trigger = screen.getByRole("button", { name: /open drawer/i });
       await user.click(trigger);
 
       await waitFor(() => {
-        expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+        expect(screen.getByText("Drawer Title")).toBeInTheDocument();
       });
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
 
       await waitFor(() => {
-        expect(screen.queryByText('Drawer Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Drawer Title")).not.toBeInTheDocument();
       });
 
       await waitFor(() => {
@@ -193,15 +211,15 @@ describe('Drawer', () => {
       });
     });
 
-    it('Tab cycles within drawer (focus trap)', async () => {
+    it("Tab cycles within drawer (focus trap)", async () => {
       const user = userEvent.setup();
       renderDrawer({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+        expect(screen.getByText("Drawer Title")).toBeInTheDocument();
       });
 
-      const dialog = screen.getByRole('dialog');
+      const dialog = screen.getByRole("dialog");
 
       // Tab through focusable elements — focus should stay inside drawer
       await user.tab();
@@ -213,19 +231,19 @@ describe('Drawer', () => {
       });
     });
 
-    it('Shift+Tab cycles backward', async () => {
+    it("Shift+Tab cycles backward", async () => {
       const user = userEvent.setup();
       renderDrawer({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+        expect(screen.getByText("Drawer Title")).toBeInTheDocument();
       });
 
-      const dialog = screen.getByRole('dialog');
+      const dialog = screen.getByRole("dialog");
 
-      await user.keyboard('{Shift>}{Tab}{/Shift}');
-      await user.keyboard('{Shift>}{Tab}{/Shift}');
-      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
 
       await waitFor(() => {
         expect(dialog.contains(document.activeElement)).toBe(true);
@@ -236,26 +254,26 @@ describe('Drawer', () => {
       renderDrawer({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
       });
     });
 
-    it('backdrop click closes drawer', async () => {
+    it("backdrop click closes drawer", async () => {
       const user = userEvent.setup();
       renderDrawer({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Drawer Title')).toBeInTheDocument();
+        expect(screen.getByText("Drawer Title")).toBeInTheDocument();
       });
 
       // Click the backdrop (outside the drawer content)
-      const backdrop = document.querySelector('[data-open]');
+      const backdrop = document.querySelector("[data-open]");
       if (backdrop) {
         await user.click(backdrop as HTMLElement);
       }
 
       await waitFor(() => {
-        expect(screen.queryByText('Drawer Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Drawer Title")).not.toBeInTheDocument();
       });
     });
   });

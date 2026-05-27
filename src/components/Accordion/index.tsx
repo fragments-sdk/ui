@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Collapsible as BaseCollapsible } from '@base-ui/react/collapsible';
-import styles from './Accordion.module.scss';
+import * as React from "react";
+import { Collapsible as BaseCollapsible } from "@base-ui/react/collapsible";
+import styles from "./Accordion.module.scss";
 
 // ============================================
 // Types
@@ -10,7 +10,7 @@ import styles from './Accordion.module.scss';
 
 export type AccordionValue = string | string[];
 
-interface AccordionSharedProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
+interface AccordionSharedProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
   children: React.ReactNode;
   /** Whether items can be fully collapsed (only for type="single") */
   collapsible?: boolean;
@@ -24,7 +24,7 @@ interface AccordionSharedProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 
 export interface AccordionSingleProps extends AccordionSharedProps {
   /** Allow multiple items to be open at once */
-  type?: 'single';
+  type?: "single";
   /** Controlled value for single mode */
   value?: string;
   /** Default value for uncontrolled usage */
@@ -35,7 +35,7 @@ export interface AccordionSingleProps extends AccordionSharedProps {
 
 export interface AccordionMultipleProps extends AccordionSharedProps {
   /** Allow multiple items to be open at once */
-  type: 'multiple';
+  type: "multiple";
   /** Controlled values for multiple mode */
   value?: string[];
   /** Default values for uncontrolled usage */
@@ -60,6 +60,10 @@ export interface AccordionTriggerProps extends React.ButtonHTMLAttributes<HTMLBu
 
 export interface AccordionContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Keep panel content mounted while collapsed */
+  keepMounted?: boolean;
+  /** Let browser find-in-page reveal collapsed content */
+  hiddenUntilFound?: boolean;
 }
 
 // ============================================
@@ -67,7 +71,7 @@ export interface AccordionContentProps extends React.HTMLAttributes<HTMLDivEleme
 // ============================================
 
 interface AccordionContextValue {
-  type: 'single' | 'multiple';
+  type: "single" | "multiple";
   openItems: string[];
   toggle: (value: string) => void;
   collapsible: boolean;
@@ -89,7 +93,7 @@ const AccordionItemContext = React.createContext<AccordionItemContextValue | nul
 function useAccordionContext() {
   const context = React.useContext(AccordionContext);
   if (!context) {
-    throw new Error('Accordion components must be used within an Accordion');
+    throw new Error("Accordion components must be used within an Accordion");
   }
   return context;
 }
@@ -97,7 +101,7 @@ function useAccordionContext() {
 function useAccordionItemContext() {
   const context = React.useContext(AccordionItemContext);
   if (!context) {
-    throw new Error('Accordion.Trigger/Content must be used within an Accordion.Item');
+    throw new Error("Accordion.Trigger/Content must be used within an Accordion.Item");
   }
   return context;
 }
@@ -108,7 +112,7 @@ function useAccordionItemContext() {
 
 function AccordionRoot({
   children,
-  type = 'single',
+  type = "single",
   value,
   defaultValue,
   onValueChange,
@@ -123,46 +127,49 @@ function AccordionRoot({
     return Array.isArray(val) ? val : [val];
   };
 
-  const [openItems, setOpenItems] = React.useState<string[]>(() =>
-    normalizeValue(defaultValue)
-  );
+  const [openItems, setOpenItems] = React.useState<string[]>(() => normalizeValue(defaultValue));
 
   // Use controlled value if provided
   const controlledOpenItems = value !== undefined ? normalizeValue(value) : undefined;
   const currentOpenItems = controlledOpenItems ?? openItems;
 
-  const toggle = React.useCallback((itemValue: string) => {
-    const newItems = (() => {
-      if (type === 'single') {
-        // For single, toggle or set new item
-        if (currentOpenItems.includes(itemValue)) {
-          return collapsible ? [] : currentOpenItems;
+  const toggle = React.useCallback(
+    (itemValue: string) => {
+      const newItems = (() => {
+        if (type === "single") {
+          // For single, toggle or set new item
+          if (currentOpenItems.includes(itemValue)) {
+            return collapsible ? [] : currentOpenItems;
+          }
+          return [itemValue];
+        } else {
+          // For multiple, toggle item in array
+          if (currentOpenItems.includes(itemValue)) {
+            return currentOpenItems.filter((v) => v !== itemValue);
+          }
+          return [...currentOpenItems, itemValue];
         }
-        return [itemValue];
-      } else {
-        // For multiple, toggle item in array
-        if (currentOpenItems.includes(itemValue)) {
-          return currentOpenItems.filter(v => v !== itemValue);
-        }
-        return [...currentOpenItems, itemValue];
+      })();
+
+      if (controlledOpenItems === undefined) {
+        setOpenItems(newItems);
       }
-    })();
 
-    if (controlledOpenItems === undefined) {
-      setOpenItems(newItems);
-    }
+      if (type === "single") {
+        (onValueChange as AccordionSingleProps["onValueChange"] | undefined)?.(newItems[0]);
+      } else {
+        (onValueChange as AccordionMultipleProps["onValueChange"] | undefined)?.(newItems);
+      }
+    },
+    [type, currentOpenItems, collapsible, controlledOpenItems, onValueChange]
+  );
 
-    if (type === 'single') {
-      (onValueChange as AccordionSingleProps['onValueChange'] | undefined)?.(newItems[0]);
-    } else {
-      (onValueChange as AccordionMultipleProps['onValueChange'] | undefined)?.(newItems);
-    }
-  }, [type, currentOpenItems, collapsible, controlledOpenItems, onValueChange]);
-
-  const classes = [styles.accordion, className].filter(Boolean).join(' ');
+  const classes = [styles.accordion, className].filter(Boolean).join(" ");
 
   return (
-    <AccordionContext.Provider value={{ type, openItems: currentOpenItems, toggle, collapsible, headingLevel }}>
+    <AccordionContext.Provider
+      value={{ type, openItems: currentOpenItems, toggle, collapsible, headingLevel }}
+    >
       <div {...htmlProps} className={classes} data-orientation="vertical">
         {children}
       </div>
@@ -188,12 +195,19 @@ function AccordionItem({
     isOpen && styles.itemOpen,
     disabled && styles.itemDisabled,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <AccordionItemContext.Provider value={{ value, isOpen, disabled, triggerId, contentId }}>
       <BaseCollapsible.Root open={isOpen} disabled={disabled}>
-        <div {...htmlProps} className={classes} data-state={isOpen ? 'open' : 'closed'} data-disabled={disabled || undefined}>
+        <div
+          {...htmlProps}
+          className={classes}
+          data-state={isOpen ? "open" : "closed"}
+          data-disabled={disabled || undefined}
+        >
           {children}
         </div>
       </BaseCollapsible.Root>
@@ -219,31 +233,26 @@ function AccordionTrigger({
     }
   };
 
-  const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const classes = [styles.trigger, className].filter(Boolean).join(" ");
 
   // Create the heading element dynamically based on headingLevel
-  const HeadingTag = `h${headingLevel}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  const HeadingTag = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6";
 
   return (
     <HeadingTag className={styles.heading}>
       <BaseCollapsible.Trigger
         {...htmlProps}
-        type={buttonType ?? 'button'}
+        type={buttonType ?? "button"}
         id={triggerId}
         className={classes}
         onClick={handleClick}
         aria-expanded={isOpen}
         aria-controls={contentId}
-        data-state={isOpen ? 'open' : 'closed'}
+        data-state={isOpen ? "open" : "closed"}
         disabled={disabled}
       >
         <span className={styles.triggerContent}>{children}</span>
-        <svg
-          className={styles.chevron}
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-        >
+        <svg className={styles.chevron} viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path
             d="M4 6L8 10L12 6"
             stroke="currentColor"
@@ -259,25 +268,27 @@ function AccordionTrigger({
 
 function AccordionContent({
   children,
+  keepMounted = false,
+  hiddenUntilFound = false,
   className,
   ...htmlProps
 }: AccordionContentProps) {
   const { isOpen, triggerId, contentId } = useAccordionItemContext();
 
-  const classes = [styles.content, className].filter(Boolean).join(' ');
+  const classes = [styles.content, className].filter(Boolean).join(" ");
 
   return (
     <BaseCollapsible.Panel
       {...htmlProps}
       id={contentId}
       className={classes}
-      data-state={isOpen ? 'open' : 'closed'}
+      data-state={isOpen ? "open" : "closed"}
       role="region"
       aria-labelledby={triggerId}
+      keepMounted={keepMounted}
+      hiddenUntilFound={hiddenUntilFound}
     >
-      <div className={styles.contentInner}>
-        {children}
-      </div>
+      <div className={styles.contentInner}>{children}</div>
     </BaseCollapsible.Panel>
   );
 }

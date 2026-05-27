@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
-import styles from './Drawer.module.scss';
+import * as React from "react";
+import { Drawer as BaseDrawer } from "@base-ui/react/drawer";
+import styles from "./Drawer.module.scss";
 
 // ============================================
 // Types
@@ -25,10 +25,10 @@ export interface DrawerProps {
   onOpenChangeComplete?: (open: boolean) => void;
   /** Whether the drawer blocks interaction with the rest of the page.
    * @default true */
-  modal?: boolean | 'trap-focus';
+  modal?: boolean | "trap-focus";
   /** Swipe direction to dismiss.
    * @default derived from `side` prop on Content */
-  swipeDirection?: 'up' | 'down' | 'left' | 'right';
+  swipeDirection?: "up" | "down" | "left" | "right";
   /** Preset snap-point heights for bottom-sheet drawers */
   snapPoints?: number[];
   /** Disable outside-click dismissal */
@@ -39,15 +39,17 @@ export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement>
   children: React.ReactNode;
   /** Which edge the drawer slides from.
    * @default "right" */
-  side?: 'left' | 'right' | 'top' | 'bottom';
+  side?: "left" | "right" | "top" | "bottom";
   /** Drawer width (for left/right) or height (for top/bottom).
    * @default "md"
    * @see https://usefragments.com/components/drawer#sizes */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: "sm" | "md" | "lg" | "xl" | "full";
   /** Whether to show the backdrop overlay (default: true). Set to false for non-modal bottom panels. */
   backdrop?: boolean;
   /** Whether to autofocus an element on open (default: true) */
   initialFocus?: boolean;
+  /** Props applied to the Base UI Drawer.Viewport wrapper */
+  viewportProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 export interface DrawerTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -59,11 +61,14 @@ export interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface DrawerTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface DrawerTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
 }
 
-export interface DrawerDescriptionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface DrawerDescriptionProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  "children"
+> {
   children: React.ReactNode;
 }
 
@@ -82,7 +87,7 @@ export interface DrawerCloseProps extends React.ButtonHTMLAttributes<HTMLButtonE
 
 export interface DrawerSwipeAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Swipe direction to open the drawer */
-  swipeDirection?: 'up' | 'down' | 'left' | 'right';
+  swipeDirection?: "up" | "down" | "left" | "right";
   /** Disable swipe detection */
   disabled?: boolean;
 }
@@ -149,14 +154,9 @@ function DrawerRoot({
   );
 }
 
-function DrawerTrigger({
-  children,
-  asChild,
-  className,
-  ...htmlProps
-}: DrawerTriggerProps) {
+function DrawerTrigger({ children, asChild, className, ...htmlProps }: DrawerTriggerProps) {
   if (asChild) {
-    const child = getAsChildElement(children, 'Drawer.Trigger');
+    const child = getAsChildElement(children, "Drawer.Trigger");
     return (
       <BaseDrawer.Trigger {...htmlProps} className={className} render={child}>
         {null}
@@ -173,30 +173,33 @@ function DrawerTrigger({
 
 function DrawerContent({
   children,
-  side = 'right',
-  size = 'md',
+  side = "right",
+  size = "md",
   backdrop = true,
   initialFocus = true,
+  viewportProps,
   className,
   ...htmlProps
 }: DrawerContentProps) {
-  const popupClasses = [
-    styles.popup,
-    styles[`side-${side}`],
-    styles[`size-${size}`],
-    className,
-  ]
+  const { className: viewportClassName, ...viewportHtmlProps } = viewportProps ?? {};
+  const popupClasses = [styles.popup, styles[`side-${side}`], styles[`size-${size}`], className]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <BaseDrawer.Portal>
       {backdrop && <BaseDrawer.Backdrop className={styles.backdrop} />}
-      <BaseDrawer.Viewport className={styles.viewport}>
-        <BaseDrawer.Popup initialFocus={initialFocus} {...htmlProps} data-side={side} className={popupClasses}>
-          <BaseDrawer.Content>
-            {children}
-          </BaseDrawer.Content>
+      <BaseDrawer.Viewport
+        {...viewportHtmlProps}
+        className={[styles.viewport, viewportClassName].filter(Boolean).join(" ")}
+      >
+        <BaseDrawer.Popup
+          initialFocus={initialFocus}
+          {...htmlProps}
+          data-side={side}
+          className={popupClasses}
+        >
+          <BaseDrawer.Content>{children}</BaseDrawer.Content>
         </BaseDrawer.Popup>
       </BaseDrawer.Viewport>
     </BaseDrawer.Portal>
@@ -204,17 +207,25 @@ function DrawerContent({
 }
 
 function DrawerHeader({ children, className, ...htmlProps }: DrawerHeaderProps) {
-  const classes = [styles.header, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.header, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function DrawerTitle({ children, className, ...htmlProps }: DrawerTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BaseDrawer.Title {...htmlProps} className={classes}>{children}</BaseDrawer.Title>;
+  const classes = [styles.title, className].filter(Boolean).join(" ");
+  return (
+    <BaseDrawer.Title {...htmlProps} className={classes}>
+      {children}
+    </BaseDrawer.Title>
+  );
 }
 
 function DrawerDescription({ children, className, ...htmlProps }: DrawerDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(' ');
+  const classes = [styles.description, className].filter(Boolean).join(" ");
   return (
     <BaseDrawer.Description {...htmlProps} className={classes}>
       {children}
@@ -223,13 +234,21 @@ function DrawerDescription({ children, className, ...htmlProps }: DrawerDescript
 }
 
 function DrawerBody({ children, className, ...htmlProps }: DrawerBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.body, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function DrawerFooter({ children, className, ...htmlProps }: DrawerFooterProps) {
-  const classes = [styles.footer, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.footer, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerCloseProps) {
@@ -239,7 +258,7 @@ function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerClose
         {...htmlProps}
         data-drawer-close
         aria-label="Close drawer"
-        className={[styles.close, className].filter(Boolean).join(' ')}
+        className={[styles.close, className].filter(Boolean).join(" ")}
       >
         <CloseIcon />
       </BaseDrawer.Close>
@@ -247,14 +266,9 @@ function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerClose
   }
 
   if (asChild) {
-    const child = getAsChildElement(children, 'Drawer.Close');
+    const child = getAsChildElement(children, "Drawer.Close");
     return (
-      <BaseDrawer.Close
-        {...htmlProps}
-        data-drawer-close
-        className={className}
-        render={child}
-      >
+      <BaseDrawer.Close {...htmlProps} data-drawer-close className={className} render={child}>
         {null}
       </BaseDrawer.Close>
     );
@@ -267,8 +281,13 @@ function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerClose
   );
 }
 
-function DrawerSwipeArea({ swipeDirection, disabled, className, ...htmlProps }: DrawerSwipeAreaProps) {
-  const classes = [styles.swipeArea, className].filter(Boolean).join(' ');
+function DrawerSwipeArea({
+  swipeDirection,
+  disabled,
+  className,
+  ...htmlProps
+}: DrawerSwipeAreaProps) {
+  const classes = [styles.swipeArea, className].filter(Boolean).join(" ");
   return (
     <BaseDrawer.SwipeArea
       {...htmlProps}

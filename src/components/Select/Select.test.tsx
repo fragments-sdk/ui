@@ -1,72 +1,126 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Select } from './index';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Select } from "./index";
 
-function renderSelect(props: { onValueChange?: (v: string | null) => void; disabled?: boolean; value?: string; placeholder?: string } = {}) {
+function renderSelect(
+  props: {
+    onValueChange?: (v: string | null) => void;
+    disabled?: boolean;
+    readOnly?: boolean;
+    value?: string;
+    placeholder?: string;
+    name?: string;
+    form?: string;
+    autoComplete?: string;
+    inputRef?: (node: HTMLInputElement | null) => void;
+  } = {}
+) {
   return render(
     <Select
-      placeholder={props.placeholder ?? 'Pick one'}
+      placeholder={props.placeholder ?? "Pick one"}
       onValueChange={props.onValueChange}
       disabled={props.disabled}
+      readOnly={props.readOnly}
       value={props.value}
+      name={props.name}
+      form={props.form}
+      autoComplete={props.autoComplete}
+      inputRef={props.inputRef}
     >
       <Select.Trigger />
       <Select.Content>
         <Select.Item value="apple">Apple</Select.Item>
         <Select.Item value="banana">Banana</Select.Item>
-        <Select.Item value="cherry" disabled>Cherry</Select.Item>
+        <Select.Item value="cherry" disabled>
+          Cherry
+        </Select.Item>
       </Select.Content>
     </Select>
   );
 }
 
-describe('Select', () => {
-  it('renders a trigger button', () => {
+describe("Select", () => {
+  it("renders a trigger button", () => {
     renderSelect();
-    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
-  it('shows placeholder text when no value selected', () => {
-    renderSelect({ placeholder: 'Choose fruit' });
-    expect(screen.getByText('Choose fruit')).toBeInTheDocument();
+  it("shows placeholder text when no value selected", () => {
+    renderSelect({ placeholder: "Choose fruit" });
+    expect(screen.getByText("Choose fruit")).toBeInTheDocument();
   });
 
-  it('opens dropdown and selects an option on click', async () => {
+  it("opens dropdown and selects an option on click", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     renderSelect({ onValueChange: onChange });
 
-    await user.click(screen.getByRole('combobox'));
-    const option = await screen.findByRole('option', { name: 'Apple' });
+    await user.click(screen.getByRole("combobox"));
+    const option = await screen.findByRole("option", { name: "Apple" });
     await user.click(option);
-    expect(onChange).toHaveBeenCalledWith('apple');
+    expect(onChange).toHaveBeenCalledWith("apple");
   });
 
-  it('renders with a controlled value', async () => {
+  it("renders with a controlled value", async () => {
     const user = userEvent.setup();
-    renderSelect({ value: 'banana' });
+    renderSelect({ value: "banana" });
     // The trigger should display the selected item label
-    await user.click(screen.getByRole('combobox'));
-    const bananaOption = await screen.findByRole('option', { name: 'Banana' });
-    expect(bananaOption).toHaveAttribute('aria-selected', 'true');
+    await user.click(screen.getByRole("combobox"));
+    const bananaOption = await screen.findByRole("option", { name: "Banana" });
+    expect(bananaOption).toHaveAttribute("aria-selected", "true");
   });
 
-  it('shows the selected value label in the trigger before the menu is opened', () => {
+  it("shows the selected value label in the trigger before the menu is opened", () => {
     // Regression: the trigger reads labels declared in children, so a
     // preselected value renders its label without first opening the popup
     // (whose items are lazily mounted via the portal).
-    renderSelect({ value: 'banana', placeholder: 'Pick one' });
-    const trigger = screen.getByRole('combobox');
-    expect(trigger).toHaveTextContent('Banana');
-    expect(trigger).not.toHaveTextContent('Pick one');
+    renderSelect({ value: "banana", placeholder: "Pick one" });
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveTextContent("Banana");
+    expect(trigger).not.toHaveTextContent("Pick one");
   });
 
-  it('disables the trigger when disabled prop is true', () => {
+  it("disables the trigger when disabled prop is true", () => {
     renderSelect({ disabled: true });
-    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.getByRole("combobox")).toBeDisabled();
   });
 
-  it('renders groups and group labels', async () => {
+  it("does not select a new option when readOnly", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <Select readOnly defaultOpen onValueChange={onChange} placeholder="Pick one">
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="apple">Apple</Select.Item>
+        </Select.Content>
+      </Select>
+    );
+
+    await user.click(await screen.findByRole("option", { name: "Apple" }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("combobox")).toHaveTextContent("Pick one");
+  });
+
+  it("forwards form props to the hidden input", () => {
+    let inputNode: HTMLInputElement | null = null;
+    const { container } = renderSelect({
+      name: "fruit",
+      form: "external-form",
+      autoComplete: "off",
+      inputRef: (node) => {
+        inputNode = node;
+      },
+    });
+
+    const input = container.querySelector('input[name="fruit"]');
+    expect(input).toBe(inputNode);
+    expect(input).toHaveAttribute("form", "external-form");
+    expect(input).toHaveAttribute("autocomplete", "off");
+  });
+
+  it("renders groups and group labels", async () => {
     const user = userEvent.setup();
     render(
       <Select placeholder="Pick">
@@ -79,11 +133,11 @@ describe('Select', () => {
         </Select.Content>
       </Select>
     );
-    await user.click(screen.getByRole('combobox'));
-    expect(await screen.findByText('Fruits')).toBeInTheDocument();
+    await user.click(screen.getByRole("combobox"));
+    expect(await screen.findByText("Fruits")).toBeInTheDocument();
   });
 
-  it('forwards html props to item and group labels', async () => {
+  it("forwards html props to item and group labels", async () => {
     const user = userEvent.setup();
     render(
       <Select placeholder="Pick">
@@ -91,19 +145,24 @@ describe('Select', () => {
         <Select.Content>
           <Select.Group id="fruit-group">
             <Select.GroupLabel id="fruit-group-label">Fruits</Select.GroupLabel>
-            <Select.Item id="apple-option" value="apple">Apple</Select.Item>
+            <Select.Item id="apple-option" value="apple">
+              Apple
+            </Select.Item>
           </Select.Group>
         </Select.Content>
       </Select>
     );
 
-    await user.click(screen.getByRole('combobox'));
-    expect(await screen.findByRole('option', { name: 'Apple' })).toHaveAttribute('id', 'apple-option');
-    expect(screen.getByText('Fruits')).toHaveAttribute('id', 'fruit-group-label');
-    expect(screen.getByText('Fruits').closest('#fruit-group')).toBeInTheDocument();
+    await user.click(screen.getByRole("combobox"));
+    expect(await screen.findByRole("option", { name: "Apple" })).toHaveAttribute(
+      "id",
+      "apple-option"
+    );
+    expect(screen.getByText("Fruits")).toHaveAttribute("id", "fruit-group-label");
+    expect(screen.getByText("Fruits").closest("#fruit-group")).toBeInTheDocument();
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <Select placeholder="Pick one">
         <Select.Trigger aria-label="Select a fruit" />
@@ -115,81 +174,81 @@ describe('Select', () => {
     await expectNoA11yViolations(container);
   });
 
-  describe('keyboard & focus', () => {
-    it('ArrowDown opens the dropdown from focused trigger', async () => {
+  describe("keyboard & focus", () => {
+    it("ArrowDown opens the dropdown from focused trigger", async () => {
       const user = userEvent.setup();
       renderSelect();
 
       await user.tab(); // focus trigger
-      await user.keyboard('{ArrowDown}');
-      expect(await screen.findByRole('option', { name: 'Apple' })).toBeInTheDocument();
+      await user.keyboard("{ArrowDown}");
+      expect(await screen.findByRole("option", { name: "Apple" })).toBeInTheDocument();
     });
 
-    it('listbox receives focus when dropdown opens', async () => {
+    it("listbox receives focus when dropdown opens", async () => {
       const user = userEvent.setup();
       renderSelect();
 
-      await user.click(screen.getByRole('combobox'));
-      const listbox = await screen.findByRole('listbox');
+      await user.click(screen.getByRole("combobox"));
+      const listbox = await screen.findByRole("listbox");
       expect(listbox).toBeInTheDocument();
     });
 
-    it('all options are rendered in the listbox', async () => {
+    it("all options are rendered in the listbox", async () => {
       const user = userEvent.setup();
       renderSelect();
 
-      await user.click(screen.getByRole('combobox'));
-      expect(await screen.findByRole('option', { name: 'Apple' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Banana' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Cherry' })).toBeInTheDocument();
+      await user.click(screen.getByRole("combobox"));
+      expect(await screen.findByRole("option", { name: "Apple" })).toBeInTheDocument();
+      expect(screen.getByRole("option", { name: "Banana" })).toBeInTheDocument();
+      expect(screen.getByRole("option", { name: "Cherry" })).toBeInTheDocument();
     });
 
-    it('clicking an option selects it', async () => {
+    it("clicking an option selects it", async () => {
       const user = userEvent.setup();
       const onChange = vi.fn();
       renderSelect({ onValueChange: onChange });
 
-      await user.click(screen.getByRole('combobox'));
-      await user.click(await screen.findByRole('option', { name: 'Banana' }));
-      expect(onChange).toHaveBeenCalledWith('banana');
+      await user.click(screen.getByRole("combobox"));
+      await user.click(await screen.findByRole("option", { name: "Banana" }));
+      expect(onChange).toHaveBeenCalledWith("banana");
     });
 
-    it('Escape closes the dropdown', async () => {
+    it("Escape closes the dropdown", async () => {
       const user = userEvent.setup();
       renderSelect();
 
-      await user.click(screen.getByRole('combobox'));
-      await screen.findByRole('option', { name: 'Apple' });
+      await user.click(screen.getByRole("combobox"));
+      await screen.findByRole("option", { name: "Apple" });
 
-      await user.keyboard('{Escape}');
-      expect(screen.queryByRole('option')).not.toBeInTheDocument();
+      await user.keyboard("{Escape}");
+      expect(screen.queryByRole("option")).not.toBeInTheDocument();
     });
 
-    it('trigger is focusable after closing dropdown', async () => {
+    it("trigger is focusable after closing dropdown", async () => {
       const user = userEvent.setup();
       renderSelect();
 
-      const trigger = screen.getByRole('combobox');
+      const trigger = screen.getByRole("combobox");
       await user.click(trigger);
-      await screen.findByRole('option', { name: 'Apple' });
+      await screen.findByRole("option", { name: "Apple" });
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
       // After closing, the trigger should still be accessible
       expect(trigger).toBeInTheDocument();
       expect(trigger).not.toBeDisabled();
     });
 
-    it('disabled option has aria-disabled attribute', async () => {
+    it("disabled option has aria-disabled attribute", async () => {
       const user = userEvent.setup();
       renderSelect();
 
-      await user.click(screen.getByRole('combobox'));
-      const cherry = await screen.findByRole('option', { name: 'Cherry' });
-      expect(cherry).toHaveAttribute('aria-disabled', 'true');
+      await user.click(screen.getByRole("combobox"));
+      const cherry = await screen.findByRole("option", { name: "Cherry" });
+      expect(cherry).toHaveAttribute("aria-disabled", "true");
     });
   });
 
-  it('updates trigger label when selected option is removed', async () => {
+  it("updates trigger label when selected option is removed", async () => {
     const renderDemo = (showApple: boolean) => (
       <Select value="apple" placeholder="Pick one" defaultOpen>
         <Select.Trigger />
@@ -202,11 +261,11 @@ describe('Select', () => {
 
     const { rerender } = render(renderDemo(true));
 
-    await screen.findByRole('option', { name: 'Apple' });
-    expect(screen.getByRole('combobox')).toHaveTextContent('Apple');
+    await screen.findByRole("option", { name: "Apple" });
+    expect(screen.getByRole("combobox")).toHaveTextContent("Apple");
 
     rerender(renderDemo(false));
 
-    expect(await screen.findByRole('combobox')).toHaveTextContent('Pick one');
+    expect(await screen.findByRole("combobox")).toHaveTextContent("Pick one");
   });
 });
