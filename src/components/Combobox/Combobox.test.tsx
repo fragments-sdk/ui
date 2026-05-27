@@ -52,6 +52,32 @@ describe('Combobox', () => {
     expect(screen.getByPlaceholderText('Type to search')).toBeInTheDocument();
   });
 
+  it('labels the single-select input from the root label', () => {
+    render(
+      <Combobox label="Framework" placeholder="Search">
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    expect(screen.getByRole('combobox', { name: 'Framework' })).toBeInTheDocument();
+  });
+
+  it('labels the multi-select input from the root label', () => {
+    render(
+      <Combobox label="Frameworks" placeholder="Search" multiple>
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    expect(screen.getByRole('combobox', { name: 'Frameworks' })).toBeInTheDocument();
+  });
+
   it('opens dropdown and shows options when trigger is clicked', async () => {
     const user = userEvent.setup();
     renderCombobox();

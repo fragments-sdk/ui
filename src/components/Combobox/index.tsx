@@ -387,13 +387,20 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
   );
 });
 
-function ComboboxInput({ className, showTrigger = true, ...htmlProps }: ComboboxInputProps) {
+function ComboboxInput({
+  className,
+  showTrigger = true,
+  placeholder,
+  ...htmlProps
+}: ComboboxInputProps) {
   const context = React.useContext(ComboboxContext);
   const inputSizeClass = context.size === 'sm' ? styles.inputSm : context.size === 'lg' ? styles.inputLg : undefined;
   const wrapperSizeClass = context.size === 'sm' ? styles.inputWrapperSm : context.size === 'lg' ? styles.inputWrapperLg : undefined;
   const classes = [styles.input, inputSizeClass, className].filter(Boolean).join(' ');
   const wrapperClasses = [styles.inputWrapper, wrapperSizeClass].filter(Boolean).join(' ');
   const renderTrigger = showTrigger && context.explicitTriggerCount === 0;
+  const inputId = context.inputId ?? htmlProps.id;
+  const inputPlaceholder = placeholder ?? context.placeholder;
 
   if (context.multiple) {
     return (
@@ -413,9 +420,9 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
           </BaseCombobox.Chips>
         )}
         <BaseCombobox.Input
-          placeholder={context.selectedValues.length === 0 ? context.placeholder : undefined}
-          id={context.inputId}
           {...htmlProps}
+          placeholder={context.selectedValues.length === 0 ? inputPlaceholder : undefined}
+          id={inputId}
           className={classes}
         />
         {renderTrigger && (
@@ -430,8 +437,9 @@ function ComboboxInput({ className, showTrigger = true, ...htmlProps }: Combobox
   return (
     <BaseCombobox.InputGroup className={wrapperClasses}>
       <BaseCombobox.Input
-        placeholder={context.placeholder}
         {...htmlProps}
+        placeholder={inputPlaceholder}
+        id={inputId}
         className={classes}
       />
       {renderTrigger && (
