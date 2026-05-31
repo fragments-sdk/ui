@@ -182,6 +182,8 @@
     "test": "vitest run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "chromatic": "chromatic",
+    "chromatic:ci": "chromatic --build-script-name build-storybook",
     "prepack": "pnpm run build:publish"
   },
   "peerDependencies": {
@@ -265,6 +267,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "chromatic": "^17.1.0",
     "date-fns": "^4.0.0",
     "jsdom": "^25.0.0",
     "react": "^19.0.0",
