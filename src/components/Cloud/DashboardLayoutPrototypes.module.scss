@@ -167,6 +167,31 @@
   align-items: center;
 }
 
+.prToolbar {
+  display: grid;
+  grid-template-columns:
+    minmax(260px, 1fr)
+    minmax(150px, 180px)
+    minmax(150px, 180px)
+    minmax(150px, 180px);
+  gap: var(--fui-space-2);
+  align-items: center;
+}
+
+.prDetailSummary {
+  min-width: 0;
+  padding-block-end: var(--fui-space-3);
+  border-block-end: 1px solid var(--fui-border-subtle);
+}
+
+.prRowActions {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: var(--fui-space-1);
+  min-width: max-content;
+}
+
 @media (max-width: 1120px) {
   .heroActionGrid {
     grid-template-columns: 1fr;
@@ -183,6 +208,10 @@
   }
 
   .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .prToolbar {
     grid-template-columns: 1fr;
   }
 }

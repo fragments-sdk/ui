@@ -1,18 +1,4 @@
-import type { ReactNode } from "react";
-import {
-  ArrowRight,
-  Clock,
-  Cube,
-  Gear,
-  GitBranch,
-  House,
-  MagnifyingGlass,
-  Palette,
-  ShieldCheck,
-  WarningCircle,
-} from "@phosphor-icons/react";
-import { AppShell } from "../AppShell";
-import { Avatar } from "../Avatar";
+import { ArrowRight, MagnifyingGlass } from "@phosphor-icons/react";
 import { Badge } from "../Badge";
 import { Box } from "../Box";
 import { Button } from "../Button";
@@ -22,9 +8,9 @@ import { Input } from "../Input";
 import { Progress, type ProgressProps } from "../Progress";
 import { Select } from "../Select";
 import { Separator } from "../Separator";
-import { Sidebar } from "../Sidebar";
 import { Stack } from "../Stack";
 import { Text } from "../Text";
+export { PrototypeShell } from "./DashboardLayoutPrototypes.shell";
 import styles from "./DashboardLayoutPrototypes.module.scss";
 
 export type StateVariant = "success" | "warning" | "error" | "info";
@@ -172,112 +158,6 @@ const activityColumns: DataTableColumn<Activity>[] = [
     align: "right",
   },
 ];
-
-function SidebarBrand() {
-  return (
-    <Stack direction="row" gap="sm" align="center">
-      <Box as="span" className={styles.brandMark}>
-        <GitBranch size={16} weight="bold" />
-      </Box>
-      <Stack gap="none" className={styles.truncate}>
-        <Text variant="section-label" color="tertiary" truncate>
-          Active repository
-        </Text>
-        <Text size="sm" weight="semibold" truncate>
-          fragments-sdk/ui
-        </Text>
-      </Stack>
-    </Stack>
-  );
-}
-
-function CloudSidebar() {
-  return (
-    <>
-      <Sidebar.Header>
-        <SidebarBrand />
-      </Sidebar.Header>
-      <Sidebar.Nav>
-        <Sidebar.Section>
-          <Sidebar.Item icon={<House size={18} />} active>
-            Dashboard
-          </Sidebar.Item>
-          <Sidebar.Item icon={<Cube size={18} />}>Components</Sidebar.Item>
-          <Sidebar.Item icon={<Palette size={18} />}>Tokens</Sidebar.Item>
-          <Sidebar.Item icon={<WarningCircle size={18} />} badge={7}>
-            Findings
-          </Sidebar.Item>
-          <Sidebar.Item icon={<ShieldCheck size={18} />}>Governance</Sidebar.Item>
-        </Sidebar.Section>
-        <Sidebar.Section label="Setup">
-          <Sidebar.Item icon={<Clock size={18} />}>Developer setup</Sidebar.Item>
-          <Sidebar.Item icon={<Gear size={18} />}>Settings</Sidebar.Item>
-        </Sidebar.Section>
-      </Sidebar.Nav>
-      <Sidebar.Footer>
-        <Stack direction="row" align="center" gap="sm">
-          <Avatar initials="T" name="Test User" size="md" />
-          <Stack gap="none" className={styles.truncate}>
-            <Text size="sm" weight="semibold" truncate>
-              Test User
-            </Text>
-            <Text size="2xs" color="tertiary" truncate>
-              dev_test@app.usefragments.com
-            </Text>
-          </Stack>
-        </Stack>
-      </Sidebar.Footer>
-    </>
-  );
-}
-
-export function PrototypeShell({
-  eyebrow,
-  title,
-  children,
-}: {
-  eyebrow?: string;
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <Box className={styles.frame}>
-      <AppShell layout="sidebar" bg="var(--fui-app-canvas-bg)" className={styles.shell}>
-        <AppShell.Sidebar width="260px" collapsible="offcanvas">
-          <CloudSidebar />
-        </AppShell.Sidebar>
-        <AppShell.Main padding="none" className={styles.main}>
-          <Stack as="main" gap="lg" className={styles.page}>
-            <Stack direction="row" justify="between" align="start" gap="md" wrap>
-              <Stack gap="xs" className={styles.heading}>
-                {eyebrow ? (
-                  <Text variant="section-label" color="tertiary">
-                    {eyebrow}
-                  </Text>
-                ) : null}
-                <Text as="h1" size="xl" weight="bold">
-                  {title}
-                </Text>
-                <Text as="p" size="sm" color="secondary">
-                  Design contract coverage, drift budgets, and release readiness.
-                </Text>
-              </Stack>
-              <Stack direction="row" gap="sm" wrap>
-                <Button variant="outlined" size="sm">
-                  View reports
-                </Button>
-                <Button variant="secondary" size="sm">
-                  Learn more
-                </Button>
-              </Stack>
-            </Stack>
-            {children}
-          </Stack>
-        </AppShell.Main>
-      </AppShell>
-    </Box>
-  );
-}
 
 export function MetricPanel({
   label,
