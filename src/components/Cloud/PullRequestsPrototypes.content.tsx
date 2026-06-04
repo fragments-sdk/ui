@@ -195,23 +195,23 @@ const prColumns: DataTableColumn<PullRequest>[] = [
         <Box className={styles.prRowActions}>
           <Button
             as="a"
-            href={`/pull-requests/${row.number}`}
-            variant="outlined"
-            size="xs"
-            aria-label={`View pull request ${row.number} in Fragments`}
-          >
-            Fragments
-          </Button>
-          <Button
-            as="a"
             href={`https://github.com/fragments-sdk/fragments/pull/${row.number}`}
             target="_blank"
             rel="noopener noreferrer"
-            variant="ghost"
+            variant="outlined"
             size="xs"
-            aria-label={`View raw GitHub pull request ${row.number}`}
+            aria-label={`View pull request ${row.number} on GitHub`}
           >
-            Raw
+            View on GitHub
+          </Button>
+          <Button
+            as="a"
+            href={`/pull-requests/${row.number}`}
+            variant="secondary"
+            size="xs"
+            aria-label={`Open pull request ${row.number} in Fragments`}
+          >
+            Open
           </Button>
         </Box>
       );
@@ -382,11 +382,11 @@ function DetailSummary() {
             href="https://github.com/fragments-sdk/fragments/pull/248"
             target="_blank"
             rel="noopener noreferrer"
-            variant="ghost"
+            variant="outlined"
             size="sm"
           >
             <ArrowSquareOut size={14} />
-            Raw PR
+            View on GitHub
           </Button>
         </Stack>
       </Stack>
@@ -458,7 +458,7 @@ export function PullRequestDetailActions() {
         size="sm"
       >
         <GitPullRequest size={14} />
-        View raw pull request
+        View on GitHub
       </Button>
     </Stack>
   );
