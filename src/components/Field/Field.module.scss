@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .root {
   display: flex;
@@ -27,5 +27,5 @@
 .error {
   @include helper-text;
   margin-top: var(--fui-space-1, $fui-space-1);
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }

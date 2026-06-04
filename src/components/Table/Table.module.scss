@@ -80,7 +80,7 @@
   z-index: 1;
 
   > tr {
-    border-bottom: 1px solid var(--fui-border, $fui-border);
+    border-bottom: 1px solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
   }
 }
 
@@ -111,10 +111,10 @@
 }
 
 .row {
-  --fui-table-row-base-bg: var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
+  --fui-table-row-base-bg: var(--fui-table-bg, var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary})));
   --fui-table-row-bg: var(--fui-table-row-base-bg);
 
-  border-bottom: 1px solid var(--fui-border, $fui-border);
+  border-bottom: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
   background-color: var(--fui-table-row-bg);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
@@ -123,30 +123,16 @@
   }
 
   &:hover {
-    --fui-table-row-bg: color-mix(
-      in srgb,
-      var(--fui-bg-hover, $fui-bg-hover) 72%,
-      var(--fui-table-row-base-bg)
-    );
+    --fui-table-row-bg: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 }
 
 .selected {
-  --fui-table-row-bg: color-mix(
-    in srgb,
-    var(--fui-color-accent, #{$fui-color-accent}) 8%,
-    var(--fui-table-row-base-bg)
-  );
-  // Accent rail on the leading edge so selection reads at a glance, matching
-  // DataTable's selected-row treatment for a consistent table language.
-  box-shadow: inset 2px 0 0 var(--fui-color-accent, $fui-color-accent);
+  --fui-table-row-bg: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent));
+  box-shadow: inset 1px 0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
 
   &:hover {
-    --fui-table-row-bg: color-mix(
-      in srgb,
-      var(--fui-color-accent, #{$fui-color-accent}) 12%,
-      var(--fui-table-row-base-bg)
-    );
+    --fui-table-row-bg: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent));
   }
 }
 
@@ -158,7 +144,7 @@
 
 // Footer
 .tfoot {
-  border-top: 2px solid var(--fui-border, $fui-border);
+  border-top: 1px solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
 
   .td,
   .th {
@@ -170,7 +156,7 @@
 .striped {
   .tbody .row:nth-child(even),
   .tbody .row[data-band="alt"] {
-    --fui-table-row-base-bg: var(--fui-bg-subtle, $fui-bg-subtle);
+    --fui-table-row-base-bg: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
   }
 
   .tbody .row[data-band="default"] {
@@ -180,7 +166,7 @@
 
 // Bordered
 .bordered {
-  border: 1px solid var(--fui-border, $fui-border);
+  border: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-md, $fui-radius-md);
   overflow: hidden;
 }

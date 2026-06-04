@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Form field wrapper (label + helper + error)
 @include form-field-wrapper;
@@ -23,15 +23,15 @@
 
 // Size variants — shared control-size path (matches Select/DatePicker)
 .sm {
-  @include control-size('sm', 'input');
+  @include control-size("sm", "input");
 }
 
 .md {
-  @include control-size('md', 'input');
+  @include control-size("md", "input");
 }
 
 .lg {
-  @include control-size('lg', 'input');
+  @include control-size("lg", "input");
 }
 
 .labelSm {
@@ -43,33 +43,33 @@
 // The .error class is kept as a fallback for direct usage.
 .error,
 .input[aria-invalid] {
-  border-color: var(--fui-color-danger, $fui-color-danger);
+  border-color: var(--fui-color-danger-text, $fui-color-danger-text);
 
   &:focus-visible {
-    border-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
     @include focus-ring-error;
   }
 }
 
 // Success state — green border for validated fields (DoorDash/Stocksy pattern)
 .success {
-  border-color: var(--fui-color-success, $fui-color-success);
+  border-color: var(--fui-color-success-text, $fui-color-success-text);
 
   &:focus-visible {
-    border-color: var(--fui-color-success, $fui-color-success);
+    border-color: var(--fui-color-success-text, $fui-color-success-text);
     @include focus-ring-success;
   }
 }
 
 // Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // Auto-detect success state via :has() — applies success color to helper
 .wrapper[data-success] .helper,
 .helperSuccess {
-  color: var(--fui-color-success, $fui-color-success);
+  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 // ============================================
@@ -82,10 +82,8 @@
   align-items: center;
 
   // Auto-detect shortcut kbd via :has() — replaces JS class toggle: `shortcut && styles.hasShortcut`
-  // Optical alignment: nudge left padding slightly to center the placeholder
-  // in the visible area between the left edge and the kbd badge.
-  &:has(> .shortcut) .input {
-    padding-right: var(--fui-space-12, 3rem);
+  &:has(> .shortcut):not(.hasAdornment) .input {
+    padding-right: var(--fui-kbd-reserved-width, 2.714rem);
     padding-left: var(--fui-space-2, $fui-space-2);
   }
 }
@@ -94,9 +92,25 @@
 .hasAdornment {
   @include field-shell;
 
+  height: var(--fui-input-height, $fui-input-height);
+  min-height: var(--fui-target-size-min, $fui-target-size-min);
   gap: var(--fui-space-2, $fui-space-2);
   padding: 0 var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
+
+  &:has(.sm) {
+    height: var(--fui-input-height-sm, $fui-input-height-sm);
+  }
+
+  &:has(.lg) {
+    height: var(--fui-input-height-lg, $fui-input-height-lg);
+  }
+
+  &:has(> .shortcut) {
+    padding-right: calc(
+      var(--fui-space-2, #{$fui-space-2}) + var(--fui-kbd-reserved-width, 2.714rem)
+    );
+  }
 
   &:focus-within {
     @include field-shell-focus;
@@ -104,6 +118,8 @@
 
   // Strip the input's own shell when inside adornment container
   .input {
+    min-height: 0;
+    height: 100%;
     border: none;
     background: transparent;
     padding: 0;
@@ -117,20 +133,20 @@
 
   // Error state on adornment container
   &:has(.error) {
-    border-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
 
     &:focus-within {
-      border-color: var(--fui-color-danger, $fui-color-danger);
+      border-color: var(--fui-color-danger-text, $fui-color-danger-text);
       @include focus-ring-error;
     }
   }
 
   // Success state on adornment container
   &:has(.success) {
-    border-color: var(--fui-color-success, $fui-color-success);
+    border-color: var(--fui-color-success-text, $fui-color-success-text);
 
     &:focus-within {
-      border-color: var(--fui-color-success, $fui-color-success);
+      border-color: var(--fui-color-success-text, $fui-color-success-text);
       @include focus-ring-success;
     }
   }
@@ -150,30 +166,31 @@
 
 // Kept as fallback for direct usage
 .hasShortcut {
-  padding-right: var(--fui-space-12, 3rem);
+  padding-right: var(--fui-kbd-reserved-width, 2.714rem);
 }
 
 .shortcut {
   position: absolute;
-  right: var(--fui-space-2, $fui-space-2);
+  right: var(--fui-space-1, $fui-space-1);
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
-  min-width: 24px;
-  height: 24px;
-  padding: 0 var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  font-family: var(--fui-font-sans, $fui-font-sans);
+  gap: var(--fui-kbd-gap, calc(var(--fui-space-px, #{$fui-space-px}) * 2));
+  min-width: var(--fui-kbd-min-width, 1.714rem);
+  height: var(--fui-kbd-height, 1.286rem);
+  padding: 0 var(--fui-kbd-padding-x, $fui-space-0-75);
+  font-family: var(--fui-font-mono, $fui-font-mono);
+  font-size: var(--fui-kbd-font-size, $fui-font-size-2xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  background: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-field-border, $fui-border);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--fui-kbd-color, var(--fui-text-tertiary, #{$fui-text-tertiary}));
+  background: var(--fui-kbd-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: 1px solid var(--fui-kbd-border, var(--fui-border, #{$fui-border}));
+  border-radius: var(--fui-kbd-radius, var(--fui-radius-sm, #{$fui-radius-sm}));
+  box-shadow: var(--fui-kbd-shadow, none);
   pointer-events: none;
   white-space: nowrap;
   user-select: none;
@@ -195,11 +212,11 @@
 
   .error,
   .input[aria-invalid] {
-    border-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 
   .success {
-    border-color: var(--fui-color-success, $fui-color-success);
+    border-color: var(--fui-color-success-text, $fui-color-success-text);
   }
 }
 

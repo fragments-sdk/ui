@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { AppShell } from '.';
-import { Header } from '../Header';
-import { Sidebar } from '../Sidebar';
+import type { Meta, StoryObj } from "@storybook/react";
+import { AppShell } from ".";
+import { Header } from "../Header";
+import { Sidebar } from "../Sidebar";
 
 /**
  * AppShell is the full application layout wrapper integrating header, sidebar,
@@ -9,30 +9,30 @@ import { Sidebar } from '../Sidebar';
  * compose AppShell.Header, AppShell.Sidebar, AppShell.Main, and AppShell.Aside.
  */
 const meta = {
-  title: 'Layout/AppShell',
+  title: "Layout/AppShell",
   component: AppShell,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component:
-          'Full layout wrapper integrating sidebar, header, main content, and optional aside panel.',
+          "Full layout wrapper integrating sidebar, header, main content, and optional aside panel.",
       },
     },
   },
   argTypes: {
     layout: {
-      control: 'select',
-      options: ['default', 'sidebar', 'sidebar-floating', 'floating'],
-      description: 'Structural layout for CSS grid areas',
+      control: "select",
+      options: ["default", "sidebar", "sidebar-floating", "floating"],
+      description: "Structural layout for CSS grid areas",
     },
     bg: {
-      control: 'text',
-      description: 'Background color override for the shell container',
+      control: "text",
+      description: "Background color override for the shell container",
     },
   },
   args: {
-    layout: 'default',
+    layout: "default",
     children: (
       <>
         <AppShell.Header>
@@ -59,7 +59,7 @@ type Story = StoryObj<typeof meta>;
 
 export const DefaultLayout: Story = {
   render: () => (
-    <div style={{ height: '360px', overflow: 'hidden' }}>
+    <div style={{ height: "360px", overflow: "hidden" }}>
       <AppShell layout="default">
         <AppShell.Header>
           <Header>
@@ -83,7 +83,7 @@ export const DefaultLayout: Story = {
 
 export const SidebarLayout: Story = {
   render: () => (
-    <div style={{ height: '360px', overflow: 'hidden' }}>
+    <div style={{ height: "360px", overflow: "hidden" }}>
       <AppShell layout="sidebar">
         <AppShell.Header>
           <Header>
@@ -107,7 +107,7 @@ export const SidebarLayout: Story = {
 
 export const WithAside: Story = {
   render: () => (
-    <div style={{ height: '360px', overflow: 'hidden' }}>
+    <div style={{ height: "360px", overflow: "hidden" }}>
       <AppShell layout="default">
         <AppShell.Header>
           <Header>
@@ -122,7 +122,9 @@ export const WithAside: Story = {
           </Sidebar.Nav>
         </AppShell.Sidebar>
         <AppShell.Main padding="md">Content with an aside panel on the right.</AppShell.Main>
-        <AppShell.Aside width="180px">Additional context, filters, or quick actions.</AppShell.Aside>
+        <AppShell.Aside width="180px">
+          Additional context, filters, or quick actions.
+        </AppShell.Aside>
       </AppShell>
     </div>
   ),
@@ -130,7 +132,7 @@ export const WithAside: Story = {
 
 export const FloatingMain: Story = {
   render: () => (
-    <div style={{ height: '360px', overflow: 'hidden' }}>
+    <div style={{ height: "360px", overflow: "hidden" }}>
       <AppShell layout="sidebar">
         <AppShell.Header>
           <Header>

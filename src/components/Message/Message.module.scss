@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Message Root
@@ -66,14 +66,8 @@
 // Status styles
 .error {
   .content {
-    // Matches Alert/Toast semantic-surface recipe (color-mix tint + soft border)
-    background: color-mix(
-      in srgb,
-      var(--fui-color-danger, #{$fui-color-danger}) 15%,
-      var(--fui-bg-elevated, #{$fui-bg-elevated})
-    );
-    border: 1px solid
-      color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
+    background: var(--fui-color-danger-bg, $fui-color-danger-bg);
+    border: 1px solid var(--fui-color-danger-border, $fui-color-danger-border);
     color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
@@ -115,7 +109,7 @@
 
 .avatarSystem {
   background-color: var(--fui-color-info-bg, $fui-color-info-bg);
-  color: var(--fui-color-info, $fui-color-info);
+  color: var(--fui-color-info-text, $fui-color-info-text);
 }
 
 .avatarImage {
@@ -191,7 +185,7 @@
 
 .streaming {
   &::after {
-    content: '';
+    content: "";
     display: inline-block;
     width: 0.5em;
     height: 1em;

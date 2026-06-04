@@ -3,14 +3,7 @@
   "name": "DatePicker",
   "description": "Date picker with calendar dropdown for selecting single dates or date ranges. Built on react-day-picker with seed-based theming.",
   "category": "forms",
-  "tags": [
-    "date",
-    "picker",
-    "calendar",
-    "range",
-    "form",
-    "input"
-  ],
+  "tags": ["date", "picker", "calendar", "range", "form", "input"],
   "status": "stable",
   "sourcePath": "src/components/DatePicker/index.tsx",
   "exportName": "DatePicker",
@@ -25,6 +18,7 @@
     "onRangeSelect: function",
     "numberOfMonths: number (default: 1)",
     "disabled: boolean (default: false)",
+    "size: sm|md|lg (default: md)",
     "disabledDates: union",
     "placeholder: string",
     "locale: object",
@@ -54,10 +48,7 @@
       "description": "Selection mode",
       "default": "single",
       "required": false,
-      "values": [
-        "single",
-        "range"
-      ]
+      "values": ["single", "range"]
     },
     "selected": {
       "type": "object",
@@ -95,6 +86,13 @@
       "description": "Disable the picker",
       "default": "false",
       "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Trigger size variant",
+      "default": "md",
+      "required": false,
+      "values": ["sm", "md", "lg"]
     },
     "disabledDates": {
       "type": "union",
@@ -172,6 +170,7 @@
     ],
     "guidelines": [
       "Use range mode with numberOfMonths={2} for date range selection",
+      "Use size=\"sm\" in dense toolbars so DatePicker aligns with Input, Select, Combobox, Button, and IconButton",
       "Add presets for common ranges (Today, Last 7 days, Last 30 days)",
       "Use disabledDates to prevent selecting past dates or unavailable dates",
       "Provide a meaningful placeholder",
@@ -189,6 +188,11 @@
       "name": "Default",
       "description": "Single date picker with default settings",
       "code": "<StatefulDatePicker placeholder=\"Pick a date\">\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
+    },
+    {
+      "name": "Small Trigger",
+      "description": "Dense toolbar date picker aligned to other small controls",
+      "code": "<StatefulDatePicker size=\"sm\" placeholder=\"Last scanned\">\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</StatefulDatePicker>"
     },
     {
       "name": "Date Range",
@@ -251,6 +255,7 @@
       "onSelect: (date) => void - single selection handler",
       "onRangeSelect: (range) => void - range selection handler",
       "numberOfMonths: number - months visible (default 1)",
+      "size: \"sm\" | \"md\" | \"lg\" - trigger size variant (default md)",
       "label: string - visible label text",
       "helperText: string - helper text below field",
       "error: boolean | string - error styling and message",
@@ -258,24 +263,14 @@
       "disabledDates: Matcher - dates to disable",
       "DatePicker.Trigger: button props supported (type defaults to \"button\")"
     ],
-    "a11yRules": [
-      "A11Y_DATEPICKER_KEYBOARD",
-      "A11Y_DATEPICKER_LABEL"
-    ]
+    "a11yRules": ["A11Y_DATEPICKER_KEYBOARD", "A11Y_DATEPICKER_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Trigger",
-      "Content",
-      "Calendar",
-      "Preset"
-    ],
-    "requiredChildren": [
-      "Trigger",
-      "Content"
-    ],
+    "subComponents": ["Trigger", "Content", "Calendar", "Preset"],
+    "requiredChildren": ["Trigger", "Content"],
     "commonPatterns": [
+      "<DatePicker size=\"sm\" selected={date} onSelect={setDate}><DatePicker.Trigger placeholder=\"Pick a date\" /><DatePicker.Content><DatePicker.Calendar /></DatePicker.Content></DatePicker>",
       "<DatePicker selected={date} onSelect={setDate}><DatePicker.Trigger placeholder=\"Pick a date\" /><DatePicker.Content><DatePicker.Calendar /></DatePicker.Content></DatePicker>"
     ]
   },

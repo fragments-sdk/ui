@@ -39,6 +39,12 @@ function renderSelect(
   );
 }
 
+const teamOptions = [
+  { value: "eng", label: "Engineering" },
+  { value: "design", label: "Design" },
+  { value: "pm", label: "Product", disabled: true },
+];
+
 describe("Select", () => {
   it("renders a trigger button", () => {
     renderSelect();
@@ -78,6 +84,34 @@ describe("Select", () => {
     const trigger = screen.getByRole("combobox");
     expect(trigger).toHaveTextContent("Banana");
     expect(trigger).not.toHaveTextContent("Pick one");
+  });
+
+  it("renders options prop as a complete simple select", () => {
+    render(<Select placeholder="Select a team" options={teamOptions} />);
+
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveTextContent("Select a team");
+    expect(screen.queryByRole("option", { name: "Engineering" })).not.toBeInTheDocument();
+  });
+
+  it("opens and selects an option from the options prop", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<Select placeholder="Select a team" options={teamOptions} onValueChange={onChange} />);
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "Design" }));
+
+    expect(onChange).toHaveBeenCalledWith("design");
+    expect(screen.getByRole("combobox")).toHaveTextContent("Design");
+  });
+
+  it("shows the selected options prop label before the menu is opened", () => {
+    render(<Select value="eng" placeholder="Select a team" options={teamOptions} />);
+
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveTextContent("Engineering");
+    expect(trigger).not.toHaveTextContent("Select a team");
   });
 
   it("disables the trigger when disabled prop is true", () => {

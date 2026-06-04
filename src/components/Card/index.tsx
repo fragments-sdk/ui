@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Card.module.scss';
+import * as React from "react";
+import styles from "./Card.module.scss";
 
 // ============================================
 // Types
@@ -11,7 +11,7 @@ import styles from './Card.module.scss';
  * Card container for grouping related content.
  * @see https://usefragments.com/components/card
  */
-export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
   /** Visual style variant. `"outline"` is an alias for `"outlined"`.
    *
@@ -23,13 +23,13 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'chil
    *   manages its own spacing.
    * @default "default"
    * @see https://usefragments.com/components/card#variants */
-  variant?: 'default' | 'outlined' | 'outline' | 'elevated' | 'stat' | 'panel';
+  variant?: "default" | "outlined" | "outline" | "elevated" | "stat" | "panel";
   /** Inner padding.
    * @default "md" */
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: "none" | "sm" | "md" | "lg";
   /** Root element tag.
    * @default "article" */
-  as?: 'article' | 'div' | 'section';
+  as?: "article" | "div" | "section";
 }
 
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -50,6 +50,9 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
 
 export interface CardBodyProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Inner padding for body-only spacing, useful with `variant="panel"`.
+   * Omit when the card root already owns padding. */
+  padding?: "none" | "sm" | "md" | "lg";
 }
 
 export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -61,8 +64,8 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 interface CardContextValue {
-  variant: 'default' | 'outlined' | 'elevated' | 'stat' | 'panel';
-  padding: 'none' | 'sm' | 'md' | 'lg';
+  variant: "default" | "outlined" | "elevated" | "stat" | "panel";
+  padding: "none" | "sm" | "md" | "lg";
   isInteractive: boolean;
 }
 
@@ -96,26 +99,20 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
 
 function CardRoot({
   children,
-  variant: variantProp = 'default',
-  padding = 'md',
-  as: Component = 'article',
+  variant: variantProp = "default",
+  padding = "md",
+  as: Component = "article",
   className,
   style,
   ...htmlProps
 }: CardProps) {
   // Resolve alias: "outline" → "outlined"
-  const variant = variantProp === 'outline' ? 'outlined' : variantProp;
-  const {
-    onKeyDown,
-    onKeyUp,
-    role,
-    tabIndex,
-    ...elementProps
-  } = htmlProps;
+  const variant = variantProp === "outline" ? "outlined" : variantProp;
+  const { onKeyDown, onKeyUp, role, tabIndex, ...elementProps } = htmlProps;
 
-  const isInteractive = typeof elementProps.onClick === 'function';
-  const resolvedRole = isInteractive ? role ?? 'button' : role;
-  const resolvedTabIndex = isInteractive ? tabIndex ?? 0 : tabIndex;
+  const isInteractive = typeof elementProps.onClick === "function";
+  const resolvedRole = isInteractive ? (role ?? "button") : role;
+  const resolvedTabIndex = isInteractive ? (tabIndex ?? 0) : tabIndex;
 
   const classes = [
     styles.card,
@@ -125,7 +122,7 @@ function CardRoot({
     className,
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   const contextValue: CardContextValue = {
     variant,
@@ -140,22 +137,22 @@ function CardRoot({
         role={resolvedRole}
         tabIndex={resolvedTabIndex}
         onKeyDown={
-          isInteractive && resolvedRole === 'button'
+          isInteractive && resolvedRole === "button"
             ? composeEventHandlers(onKeyDown, (event: React.KeyboardEvent<HTMLElement>) => {
-                if (event.key === 'Enter') {
+                if (event.key === "Enter") {
                   event.preventDefault();
                   event.currentTarget.click();
                 }
-                if (event.key === ' ') {
+                if (event.key === " ") {
                   event.preventDefault();
                 }
               })
             : onKeyDown
         }
         onKeyUp={
-          isInteractive && resolvedRole === 'button'
+          isInteractive && resolvedRole === "button"
             ? composeEventHandlers(onKeyUp, (event: React.KeyboardEvent<HTMLElement>) => {
-                if (event.key === ' ') {
+                if (event.key === " ") {
                   event.preventDefault();
                   event.currentTarget.click();
                 }
@@ -174,28 +171,50 @@ function CardRoot({
 function CardHeader({ children, divided, className, ...htmlProps }: CardHeaderProps) {
   const classes = [styles.header, divided && styles.headerDivided, className]
     .filter(Boolean)
-    .join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+    .join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function CardTitle({ children, className, ...htmlProps }: CardTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <h3 {...htmlProps} className={classes}>{children}</h3>;
+  const classes = [styles.title, className].filter(Boolean).join(" ");
+  return (
+    <h3 {...htmlProps} className={classes}>
+      {children}
+    </h3>
+  );
 }
 
 function CardDescription({ children, className, ...htmlProps }: CardDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(' ');
-  return <p {...htmlProps} className={classes}>{children}</p>;
+  const classes = [styles.description, className].filter(Boolean).join(" ");
+  return (
+    <p {...htmlProps} className={classes}>
+      {children}
+    </p>
+  );
 }
 
-function CardBody({ children, className, ...htmlProps }: CardBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+function CardBody({ children, padding, className, ...htmlProps }: CardBodyProps) {
+  const classes = [styles.body, padding && paddingMap[padding], className]
+    .filter(Boolean)
+    .join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function CardFooter({ children, className, ...htmlProps }: CardFooterProps) {
-  const classes = [styles.footer, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.footer, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 // ============================================
@@ -211,11 +230,4 @@ export const Card = Object.assign(CardRoot, {
 });
 
 // Re-export individual components for tree-shaking
-export {
-  CardRoot,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardBody,
-  CardFooter,
-};
+export { CardRoot, CardHeader, CardTitle, CardDescription, CardBody, CardFooter };

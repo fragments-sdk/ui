@@ -98,8 +98,8 @@
 }
 
 .success {
-  background: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 40%, transparent);
+  background: var(--fui-color-success-bg, $fui-color-success-bg);
+  border-color: var(--fui-color-success-border, $fui-color-success-border);
 
   .title {
     color: var(--fui-color-success-text, $fui-color-success-text);
@@ -116,8 +116,8 @@
 }
 
 .error {
-  background: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
+  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  border-color: var(--fui-color-danger-border, $fui-color-danger-border);
 
   .title {
     color: var(--fui-color-danger-text, $fui-color-danger-text);
@@ -134,8 +134,8 @@
 }
 
 .warning {
-  background: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 40%, transparent);
+  background: var(--fui-color-warning-bg, $fui-color-warning-bg);
+  border-color: var(--fui-color-warning-border, $fui-color-warning-border);
 
   .title {
     color: var(--fui-color-warning-text, $fui-color-warning-text);
@@ -152,8 +152,8 @@
 }
 
 .info {
-  background: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 40%, transparent);
+  background: var(--fui-color-info-bg, $fui-color-info-bg);
+  border-color: var(--fui-color-info-border, $fui-color-info-border);
 
   .title {
     color: var(--fui-color-info-text, $fui-color-info-text);

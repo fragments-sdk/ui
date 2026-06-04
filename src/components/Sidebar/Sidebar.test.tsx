@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
+import { Badge } from '../Badge';
 import { Sidebar } from './index';
 
 function mockMatchMedia(matches: boolean) {
@@ -80,6 +81,37 @@ describe('Sidebar', () => {
     renderSidebar();
     const disabledItem = screen.getByText('Disabled').closest('button');
     expect(disabledItem).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('renders item badges with the shared Badge component', () => {
+    render(
+      <Sidebar aria-label="Test sidebar">
+        <Sidebar.Nav aria-label="Main">
+          <Sidebar.Section label="Section One">
+            <Sidebar.Item badge="3">Analytics</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+
+    const badge = screen.getByText('3').closest('.badge');
+    expect(badge).toHaveClass('badge', 'sm', 'default');
+    expect(badge?.parentElement).toHaveClass('itemBadge');
+  });
+
+  it('does not wrap explicit Badge elements passed to item badges', () => {
+    render(
+      <Sidebar aria-label="Test sidebar">
+        <Sidebar.Nav aria-label="Main">
+          <Sidebar.Section label="Section One">
+            <Sidebar.Item badge={<Badge variant="info">7</Badge>}>Findings</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+
+    expect(document.querySelectorAll('.badge')).toHaveLength(1);
+    expect(screen.getByText('7').closest('.badge')).toHaveClass('info');
   });
 
   it('supports data-state attribute', () => {

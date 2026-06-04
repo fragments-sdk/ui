@@ -3,13 +3,7 @@
   "name": "Badge",
   "description": "Compact label for status, counts, or categorization. Draws attention to metadata without dominating the layout.",
   "category": "display",
-  "tags": [
-    "status",
-    "label",
-    "tag",
-    "count",
-    "chip"
-  ],
+  "tags": ["status", "label", "tag", "count", "chip"],
   "status": "stable",
   "sourcePath": "src/components/Badge/index.tsx",
   "exportName": "Badge",
@@ -34,25 +28,14 @@
       "description": "Visual style indicating severity or category",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "success",
-        "warning",
-        "error",
-        "info",
-        "outline"
-      ]
+      "values": ["default", "success", "warning", "error", "info", "outline"]
     },
     "size": {
       "type": "enum",
       "description": "Badge size",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "dot": {
       "type": "boolean",
@@ -99,6 +82,7 @@
       "Keep badge text under 20 characters",
       "Use dot variant for live status indicators",
       "Pair success/error variants with meaningful labels, not just colors",
+      "Semantic status badges are borderless pills using shared semantic bg/text tokens",
       "Use onRemove for user-created tags only, not system-generated badges",
       "Badges are not announced as live status updates by default; use announce for screen-reader status announcements when appropriate"
     ],
@@ -118,6 +102,11 @@
       "name": "Status Variants",
       "description": "All severity variants for different contexts",
       "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"default\">Default</Badge>\n  <Badge variant=\"success\">Active</Badge>\n  <Badge variant=\"warning\">Pending</Badge>\n  <Badge variant=\"error\">Failed</Badge>\n  <Badge variant=\"info\">New</Badge>\n</Stack>"
+    },
+    {
+      "name": "Delivery Status",
+      "description": "Reference status pills with deep semantic fill and bright text",
+      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"success\" size=\"lg\">Delivered</Badge>\n  <Badge variant=\"error\" size=\"lg\">Bounced</Badge>\n</Stack>"
     },
     {
       "name": "With Dot",
@@ -166,17 +155,11 @@
       "onRemove: () => void - makes badge removable",
       "announce: boolean - opt into role=\"status\" + auto status aria-label"
     ],
-    "a11yRules": [
-      "A11Y_BADGE_CONTRAST",
-      "A11Y_BADGE_DISMISS",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_BADGE_CONTRAST", "A11Y_BADGE_DISMISS", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

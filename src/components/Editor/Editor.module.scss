@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Editor Root
@@ -30,7 +30,7 @@
   }
 
   // Size variants (Enhancement #2)
-  &[data-size='sm'] {
+  &[data-size="sm"] {
     .content,
     .contentTextarea,
     :global(.tiptap) {
@@ -38,7 +38,7 @@
     }
   }
 
-  &[data-size='md'] {
+  &[data-size="md"] {
     .content,
     .contentTextarea,
     :global(.tiptap) {
@@ -46,7 +46,7 @@
     }
   }
 
-  &[data-size='lg'] {
+  &[data-size="lg"] {
     .content,
     .contentTextarea,
     :global(.tiptap) {
@@ -67,7 +67,11 @@
   gap: var(--fui-space-2, $fui-space-2);
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-bottom: 1px solid var(--fui-form-group-border, $fui-border);
-  background-color: color-mix(in srgb, var(--fui-form-group-bg, $fui-bg-secondary) 72%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--fui-form-group-bg, $fui-bg-secondary) 72%,
+    transparent
+  );
 }
 
 // ============================================
@@ -121,7 +125,8 @@
   color: var(--fui-text-primary, $fui-text-primary);
   background-color: var(--fui-field-selection-bg, $fui-bg-hover);
   border-color: var(--fui-field-selection-border, $fui-color-accent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
@@ -153,7 +158,7 @@
 }
 
 .statusError {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // ============================================
@@ -310,7 +315,11 @@
   gap: var(--fui-space-2, $fui-space-2);
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-top: 1px solid var(--fui-form-group-border, $fui-border);
-  background-color: color-mix(in srgb, var(--fui-form-group-bg, $fui-bg-secondary) 56%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--fui-form-group-bg, $fui-bg-secondary) 56%,
+    transparent
+  );
 }
 
 .statusBarLeft {
@@ -333,11 +342,11 @@
 
 // maxLength indicator states (Enhancement #1)
 .statusBarItemWarning {
-  color: var(--fui-color-warning, $fui-color-warning);
+  color: var(--fui-color-warning-text, $fui-color-warning-text);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }
 
 .statusBarItemError {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }

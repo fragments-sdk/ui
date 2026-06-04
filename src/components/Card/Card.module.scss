@@ -4,41 +4,56 @@
 .card {
   @include surface-elevated;
   font-family: var(--fui-font-sans, $fui-font-sans);
+  color: var(--fui-text-primary, $fui-text-primary);
+  background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
+  border-radius: var(--fui-card-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
+  box-shadow: var(--fui-card-shadow, none);
   transition:
     box-shadow var(--fui-transition-fast, $fui-transition-fast),
     border-color var(--fui-transition-fast, $fui-transition-fast),
+    background-color var(--fui-transition-fast, $fui-transition-fast),
     transform var(--fui-transition-fast, $fui-transition-fast);
 }
 
 // Variants
 .default {
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+  background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
+  box-shadow: var(--fui-card-shadow, none);
 }
 
 .outlined {
-  border-color: var(--fui-border-strong, $fui-border-strong);
+  background-color: transparent;
+  border-color: var(
+    --fui-card-outlined-border,
+    var(--fui-card-border, var(--fui-border-strong, #{$fui-border-strong}))
+  );
   box-shadow: none;
 }
 
 .elevated {
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+  background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
+  box-shadow: var(--fui-card-elevated-shadow, var(--fui-card-shadow, none));
 }
 
-// Compact metric tile for dashboard grids. Hairline-bordered over a near-
-// transparent white/black overlay — rises off *whatever surface it sits on*
-// (page bg or a nested panel) by ~2%, so the tile reads as raised in both
-// floating-panel and flat-page layouts. Rises primarily through the border,
-// not through shadow, to match the dense dashboard aesthetic.
+// Compact metric tile for dashboard grids. It uses the same card radius and
+// hairline model as panels, with a quieter fill so adjacent metric tiles read
+// as one dashboard system rather than separate hero cards.
 .stat {
-  background-color: color-mix(
-    in srgb,
-    var(--fui-text-primary, $fui-text-primary) 2%,
-    transparent
+  background-color: var(
+    --fui-card-stat-bg,
+    var(
+      --fui-card-bg,
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
+    )
   );
-  border-color: var(--fui-border, $fui-border);
-  box-shadow: none;
-  // Radius inherits the base card `radius-lg` (was an off-base `radius-md`
-  // override) so all card variants share a single corner radius.
+  border-color: var(
+    --fui-card-stat-border,
+    var(--fui-card-border, var(--fui-border, #{$fui-border}))
+  );
+  box-shadow: var(--fui-card-stat-shadow, var(--fui-card-shadow, none));
 }
 
 // Hairline-bordered panel with no own padding — designed for compound use
@@ -48,17 +63,17 @@
 // Padding is forced to 0 here so the variant works regardless of the
 // `padding` prop — children manage their own spacing inside a panel.
 .panel {
-  background-color: color-mix(
-    in srgb,
-    var(--fui-text-primary, $fui-text-primary) 2%,
-    transparent
+  background-color: var(
+    --fui-panel-bg,
+    var(
+      --fui-card-bg,
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
+    )
   );
-  border-color: var(--fui-border, $fui-border);
-  box-shadow: none;
+  border-color: var(--fui-panel-border, var(--fui-card-border, var(--fui-border, #{$fui-border})));
+  box-shadow: var(--fui-card-panel-shadow, var(--fui-card-shadow, none));
   overflow: hidden;
   padding: 0;
-  // Radius inherits the base card `radius-lg` (was an off-base `radius-md`
-  // override) so all card variants share a single corner radius.
 }
 
 // Padding
@@ -96,14 +111,17 @@
   color: inherit;
 
   &:hover {
-    border-color: var(--fui-border-strong, $fui-border-strong);
-    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-    transform: translateY(-2px);
+    background-color: var(--fui-card-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+    border-color: var(--fui-card-hover-border, var(--fui-border-strong, #{$fui-border-strong}));
+    box-shadow: none;
   }
 
   &:active {
-    box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
-    transform: translateY(0);
+    background-color: var(--fui-card-active-bg, var(--fui-bg-active, $fui-bg-active));
+    box-shadow: var(
+      --fui-card-active-shadow,
+      inset 0 1px 2px color-mix(in srgb, black 12%, transparent)
+    );
   }
 }
 

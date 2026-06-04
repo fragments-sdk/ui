@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Group Container
@@ -26,8 +26,10 @@
 .default {
   @include form-group-surface;
 
-  padding: var(--fui-space-0-5, $fui-space-0-5);
-  gap: var(--fui-space-0-5, $fui-space-0-5);
+  border: 0;
+  padding: 0;
+  gap: 0;
+  box-shadow: inset 0 0 0 1px var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
 
   .item {
     background-color: transparent;
@@ -37,7 +39,8 @@
     &.selected {
       background-color: var(--fui-field-bg, $fui-bg-elevated);
       border-color: var(--fui-field-selection-border, $fui-color-accent);
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
+      box-shadow: inset 0 0 0 1px
+        color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
     }
   }
 }

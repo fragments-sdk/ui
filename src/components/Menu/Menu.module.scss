@@ -61,10 +61,11 @@ $fui-arrow-size: 10px !default;
 
 // Danger variant for destructive actions
 .itemDanger {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 
   &[data-highlighted] {
     background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
 
@@ -78,7 +79,7 @@ $fui-arrow-size: 10px !default;
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   .itemDanger & {
-    color: var(--fui-color-danger, $fui-color-danger);
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 
   svg {

@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .alert {
   display: flex;
@@ -14,26 +14,26 @@
 
 // Severity variants
 .info {
-  background: color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: 1px solid color-mix(in srgb, var(--fui-color-info, #{$fui-color-info}) 40%, transparent);
+  background: var(--fui-color-info-bg, $fui-color-info-bg);
+  border: 1px solid var(--fui-color-info-border, $fui-color-info-border);
   color: var(--fui-color-info-text, $fui-color-info-text);
 }
 
 .success {
-  background: color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: 1px solid color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 40%, transparent);
+  background: var(--fui-color-success-bg, $fui-color-success-bg);
+  border: 1px solid var(--fui-color-success-border, $fui-color-success-border);
   color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .warning {
-  background: color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: 1px solid color-mix(in srgb, var(--fui-color-warning, #{$fui-color-warning}) 40%, transparent);
+  background: var(--fui-color-warning-bg, $fui-color-warning-bg);
+  border: 1px solid var(--fui-color-warning-border, $fui-color-warning-border);
   color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .error {
-  background: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 15%, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: 1px solid color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 40%, transparent);
+  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  border: 1px solid var(--fui-color-danger-border, $fui-color-danger-border);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
@@ -52,19 +52,19 @@
 }
 
 .info .icon {
-  background-color: var(--fui-color-info, $fui-color-info);
+  background-color: var(--fui-color-info-text, $fui-color-info-text);
 }
 
 .success .icon {
-  background-color: var(--fui-color-success, $fui-color-success);
+  background-color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .warning .icon {
-  background-color: var(--fui-color-warning, $fui-color-warning);
+  background-color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .error .icon {
-  background-color: var(--fui-color-danger, $fui-color-danger);
+  background-color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 .body {

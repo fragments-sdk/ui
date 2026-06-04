@@ -1,0 +1,188 @@
+.frame {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  color: var(--fui-text-primary);
+  background: var(--fui-app-canvas-bg);
+}
+
+.shell {
+  height: 100%;
+  min-height: 0;
+}
+
+.main {
+  overflow: auto;
+}
+
+.page {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding: clamp(var(--fui-space-4), 3vw, var(--fui-space-6));
+}
+
+.heading {
+  min-width: min(100%, 360px);
+}
+
+.brandMark {
+  display: grid;
+  width: var(--fui-target-size-min);
+  height: var(--fui-target-size-min);
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--fui-text-primary);
+  background: var(--fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong);
+  border-radius: var(--fui-radius-md);
+}
+
+.truncate,
+.minWidthZero {
+  min-width: 0;
+}
+
+.full {
+  width: 100%;
+}
+
+.heroActionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr);
+  gap: var(--fui-space-4);
+  align-items: stretch;
+}
+
+.stretchCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.stretchBody {
+  flex: 1;
+  min-height: 0;
+}
+
+.actionPanelBody {
+  display: flex;
+  flex: 1;
+}
+
+.actionPanelContent {
+  width: 100%;
+}
+
+.actionButton {
+  align-self: flex-start;
+}
+
+.coverageBody {
+  position: relative;
+  height: 100%;
+  min-height: 132px;
+  overflow: hidden;
+}
+
+.coverageChartWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--fui-bg-elevated) 82%, transparent),
+      transparent
+    ),
+    var(--fui-bg-subtle);
+  color: var(--fui-color-success-text);
+  opacity: 0.74;
+  pointer-events: none;
+}
+
+.coverageSummary {
+  position: relative;
+  z-index: 1;
+  padding: var(--fui-space-2);
+}
+
+.coverageDelta {
+  color: var(--fui-color-success-text);
+}
+
+.coverageTrendChart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.twoColumn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: var(--fui-space-4);
+  align-items: start;
+}
+
+.areaDriftCard {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.areaDriftSummary {
+  padding: var(--fui-space-2);
+}
+
+.areaDelta[data-trend="up"] {
+  color: var(--fui-color-danger-text);
+}
+
+.areaDelta[data-trend="down"] {
+  color: var(--fui-color-success-text);
+}
+
+.chartWrap {
+  overflow: hidden;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--fui-bg-elevated) 64%, transparent),
+      transparent
+    ),
+    var(--fui-bg-subtle);
+  border-block-start: 1px solid var(--fui-border-subtle);
+}
+
+.driftChart {
+  display: block;
+  width: 100%;
+  height: 112px;
+  color: var(--fui-text-tertiary);
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(160px, 200px);
+  gap: var(--fui-space-2);
+  align-items: center;
+}
+
+@media (max-width: 1120px) {
+  .heroActionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .twoColumn {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: var(--fui-space-3);
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+}

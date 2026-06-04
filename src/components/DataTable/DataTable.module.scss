@@ -2,12 +2,8 @@
 @use "../../tokens/mixins" as *;
 
 .wrapper {
-  --fui-data-table-bg: var(--fui-bg-elevated, #{$fui-bg-elevated});
-  --fui-data-table-header-bg: color-mix(
-    in srgb,
-    var(--fui-data-table-bg) 94%,
-    var(--fui-text-primary, #{$fui-text-primary}) 6%
-  );
+  --fui-data-table-bg: var(--fui-table-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  --fui-data-table-header-bg: var(--fui-table-header-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent));
 
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -61,7 +57,7 @@
 }
 
 .headerRow {
-  border-bottom: 1px solid var(--fui-border, $fui-border);
+  border-bottom: 1px solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
 }
 
 .th {
@@ -149,7 +145,7 @@
 }
 
 .row {
-  border-bottom: 1px solid var(--fui-border, $fui-border);
+  border-bottom: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:last-child {
@@ -157,7 +153,7 @@
   }
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 }
 
@@ -165,7 +161,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 
   &:focus-visible {
@@ -173,26 +169,16 @@
   }
 
   &:active {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+    background-color: var(--fui-table-row-active-bg, var(--fui-bg-active, #{$fui-bg-active}));
   }
 }
 
 .selected {
-  background-color: color-mix(
-    in srgb,
-    var(--fui-color-accent, #{$fui-color-accent}) 8%,
-    transparent
-  );
-  // Accent rail on the leading edge so selection reads at a glance, not
-  // just a faint tint.
-  box-shadow: inset 2px 0 0 var(--fui-color-accent, $fui-color-accent);
+  background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent));
+  box-shadow: inset 1px 0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
 
   &:hover {
-    background-color: color-mix(
-      in srgb,
-      var(--fui-color-accent, #{$fui-color-accent}) 12%,
-      transparent
-    );
+    background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent));
   }
 }
 
@@ -205,38 +191,30 @@
 // Striped rows
 .striped {
   .row:nth-child(even) {
-    background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+    background-color: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
   }
 
   // Hover and selected override stripe
   .clickable:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 
   .clickable:active {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+    background-color: var(--fui-table-row-active-bg, var(--fui-bg-active, #{$fui-bg-active}));
   }
 
   .selected {
-    background-color: color-mix(
-      in srgb,
-      var(--fui-color-accent, #{$fui-color-accent}) 8%,
-      transparent
-    );
+    background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent));
 
     &:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--fui-color-accent, #{$fui-color-accent}) 12%,
-        transparent
-      );
+      background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent));
     }
   }
 }
 
 // Bordered
 .bordered {
-  border: 1px solid var(--fui-border, $fui-border);
+  border: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background: var(--fui-data-table-bg);
   overflow: hidden;
@@ -387,10 +365,10 @@
 }
 
 .subRow {
-  background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+  background-color: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
 
   &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 }
 

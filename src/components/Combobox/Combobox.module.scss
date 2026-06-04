@@ -4,7 +4,6 @@
 // Form field wrapper (label + helper + error)
 @include form-field-wrapper;
 
-
 // Input + trigger wrapper.
 // --_field-h is the single field-height source (same input-height tokens that
 // control-size() uses for Select/DatePicker); the inner text input + chevron
@@ -70,6 +69,14 @@
   border: none;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   outline: none;
+  box-shadow: none;
+
+  &:focus,
+  &:focus-visible,
+  &[data-focus-visible] {
+    outline: none;
+    box-shadow: none;
+  }
 
   &::placeholder {
     color: var(--fui-text-tertiary, $fui-text-tertiary);
@@ -137,13 +144,15 @@
 // Chevron trigger button
 .trigger {
   @include button-reset;
-  @include touch-target;
 
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: calc(var(--_field-h) - var(--fui-space-1, #{$fui-space-1}));
+  min-width: 0;
+  min-height: 0;
+  width: calc(var(--_field-h) - var(--fui-space-2, #{$fui-space-2}));
+  height: calc(var(--_field-h) - var(--fui-space-2, #{$fui-space-2}));
   margin-left: auto;
   color: var(--fui-text-secondary, $fui-text-secondary);
   cursor: pointer;

@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Root container
 .root {
@@ -64,15 +64,15 @@
 
 // Color variants
 .indicatorSuccess {
-  background-color: var(--fui-color-success, $fui-color-success);
+  background-color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .indicatorWarning {
-  background-color: var(--fui-color-warning, $fui-color-warning);
+  background-color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .indicatorDanger {
-  background-color: var(--fui-color-danger, $fui-color-danger);
+  background-color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // Indeterminate animation
@@ -95,7 +95,7 @@
 
 // Complete state
 .root[data-complete] .indicator {
-  background-color: var(--fui-color-success, $fui-color-success);
+  background-color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 // Circular progress variant
@@ -123,15 +123,15 @@
 }
 
 .circularIndicatorSuccess {
-  stroke: var(--fui-color-success, $fui-color-success);
+  stroke: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .circularIndicatorWarning {
-  stroke: var(--fui-color-warning, $fui-color-warning);
+  stroke: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .circularIndicatorDanger {
-  stroke: var(--fui-color-danger, $fui-color-danger);
+  stroke: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 .circularIndicatorIndeterminate {

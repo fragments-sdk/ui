@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Form field wrapper (label + helper + error)
 @include form-field-wrapper;
@@ -13,7 +13,7 @@
   @include interactive-base;
   @include text-base;
   @include field-shell;
-  @include control-size('md', 'input');
+  @include control-size("md", "input");
 
   display: inline-flex;
   align-items: center;
@@ -25,6 +25,14 @@
   &[data-popup-open] {
     border-color: var(--fui-field-border-focus, $fui-color-accent);
   }
+}
+
+.triggerSm {
+  @include control-size("sm", "input");
+}
+
+.triggerLg {
+  @include control-size("lg", "input");
 }
 
 .triggerIcon {
@@ -225,7 +233,8 @@
   border-radius: var(--fui-radius-md, $fui-radius-md);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-primary, $fui-text-primary);
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast),
+  transition:
+    background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
@@ -282,10 +291,14 @@
 
 .rangeMiddle {
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 2px 0;
-    background-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 10%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, $fui-color-accent) 10%,
+      transparent
+    );
     z-index: 0;
   }
 
@@ -299,10 +312,14 @@
 
 .rangeStart {
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 2px 0 2px 50%;
-    background-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 10%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, $fui-color-accent) 10%,
+      transparent
+    );
     z-index: 0;
   }
 
@@ -325,10 +342,14 @@
 
 .rangeEnd {
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 2px 50% 2px 0;
-    background-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 10%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-color-accent, $fui-color-accent) 10%,
+      transparent
+    );
     z-index: 0;
   }
 

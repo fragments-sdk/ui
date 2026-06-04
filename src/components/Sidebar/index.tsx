@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import styles from './Sidebar.module.scss';
+import { Badge } from '../Badge';
 import { Tooltip } from '../Tooltip';
 import { Skeleton } from '../Skeleton';
 import { Collapsible } from '../Collapsible';
@@ -18,6 +19,26 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
     if (event.defaultPrevented) return;
     internalHandler(event);
   };
+}
+
+function hasBadgeContent(badge: React.ReactNode) {
+  return badge !== null && badge !== undefined && badge !== false;
+}
+
+function renderSidebarBadge(badge: React.ReactNode) {
+  if (!hasBadgeContent(badge)) {
+    return null;
+  }
+
+  if (React.isValidElement(badge) && (badge.type === Badge || badge.type === Badge.Root)) {
+    return badge;
+  }
+
+  return (
+    <Badge variant="default" size="sm">
+      {badge}
+    </Badge>
+  );
 }
 
 // ============================================
@@ -805,8 +826,16 @@ function SidebarItem({
   const itemContent = (
     <>
       {icon && <span className={styles.itemIcon}>{icon}</span>}
-      {showLabel && <span className={styles.itemLabel}>{asChild && React.isValidElement(children) ? (children.props as { children?: React.ReactNode }).children : children}</span>}
-      {showLabel && badge && <span className={styles.itemBadge}>{badge}</span>}
+      {showLabel && (
+        <span className={styles.itemLabel}>
+          {asChild && React.isValidElement(children)
+            ? (children.props as { children?: React.ReactNode }).children
+            : children}
+        </span>
+      )}
+      {showLabel && hasBadgeContent(badge) && (
+        <span className={styles.itemBadge}>{renderSidebarBadge(badge)}</span>
+      )}
       {showLabel && hasSubmenu && (
         <span className={styles.itemChevron}>
           <ChevronRightIcon />

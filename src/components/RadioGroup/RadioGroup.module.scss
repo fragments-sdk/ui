@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Container wrapper
 .wrapper {
@@ -76,7 +76,7 @@
   }
 
   &[data-invalid] {
-    border-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
 
@@ -156,7 +156,7 @@
 // Error message
 .error {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // ============================================
@@ -174,7 +174,10 @@
   align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
   width: 100%;
-  height: var(--fui-input-height, $fui-input-height); // matches Input size="md" so radio cards align with form fields
+  height: var(
+    --fui-input-height,
+    $fui-input-height
+  ); // matches Input size="md" so radio cards align with form fields
   box-sizing: border-box;
   padding: 0 var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md);
@@ -196,22 +199,14 @@
   }
 
   &:has([data-checked]) {
-    background: color-mix(
-      in srgb,
-      var(--fui-color-accent, #{$fui-color-accent}) 13%,
-      transparent
-    );
+    background: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 13%, transparent);
     border-color: color-mix(
       in srgb,
       var(--fui-color-accent, #{$fui-color-accent}) 62%,
       transparent
     );
     box-shadow: 0 0 0 1px
-      color-mix(
-        in srgb,
-        var(--fui-color-accent, #{$fui-color-accent}) 28%,
-        transparent
-      );
+      color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 28%, transparent);
   }
 
   // Inline with the input field convention rather than the lifted card
@@ -235,7 +230,7 @@
     }
 
     &[data-invalid] {
-      border-color: var(--fui-color-danger, $fui-color-danger);
+      border-color: var(--fui-color-danger-text, $fui-color-danger-text);
     }
   }
 }

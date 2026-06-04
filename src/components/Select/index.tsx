@@ -229,6 +229,25 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
 
   const selectedValue = value !== undefined ? value : internalValue;
 
+  const optionItems = React.useMemo(
+    () =>
+      options?.map((option) => (
+        <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+          {option.label}
+        </SelectItem>
+      )) ?? null,
+    [options]
+  );
+
+  const resolvedChildren =
+    children ??
+    (optionItems ? (
+      <>
+        <SelectTrigger />
+        <SelectContent>{optionItems}</SelectContent>
+      </>
+    ) : null);
+
   const handleValueChange = React.useCallback(
     (newValue: SelectValue | null) => {
       if (readOnly) return;
@@ -299,12 +318,7 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
           aria-describedby={mergeAriaIds(errorId, helperId)}
         >
           {label && <BaseSelect.Label className={styles.label}>{label}</BaseSelect.Label>}
-          {children ??
-            options?.map((option) => (
-              <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
-                {option.label}
-              </SelectItem>
-            ))}
+          {resolvedChildren}
         </BaseSelect.Root>
         {helperText && (
           <span id={helperId} className={helperClasses}>

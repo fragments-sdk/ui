@@ -3,13 +3,7 @@
   "name": "Select",
   "description": "Dropdown for choosing from a list of options. Use when there are more than 4-5 choices that would clutter the UI.",
   "category": "forms",
-  "tags": [
-    "select",
-    "dropdown",
-    "form",
-    "options",
-    "picker"
-  ],
+  "tags": ["select", "dropdown", "form", "options", "picker"],
   "status": "stable",
   "sourcePath": "src/components/Select/index.tsx",
   "exportName": "Select",
@@ -36,7 +30,7 @@
   "props": {
     "children": {
       "type": "node",
-      "description": "Select trigger and content",
+      "description": "Select trigger and content when options prop is not used",
       "required": false
     },
     "value": {
@@ -100,11 +94,7 @@
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "className": {
       "type": "string",
@@ -204,7 +194,7 @@
     {
       "name": "Options Prop",
       "description": "Convenience API for simple lists without manual Select.Item composition",
-      "code": "<StatefulSelect\n  placeholder=\"Select a team\"\n  options={[\n    { value: 'eng', label: 'Engineering' },\n    { value: 'design', label: 'Design' },\n    { value: 'pm', label: 'Product' },\n  ]}\n>\n  <Select.Trigger />\n  <Select.Content />\n</StatefulSelect>"
+      "code": "<StatefulSelect\n  placeholder=\"Select a team\"\n  options={[\n    { value: 'eng', label: 'Engineering' },\n    { value: 'design', label: 'Design' },\n    { value: 'pm', label: 'Product' },\n  ]}\n/>"
     }
   ],
   "relations": [
@@ -238,25 +228,15 @@
       "options: SelectOption[] - convenience API for simple option lists",
       "maxVisibleItems: number - max visible options before scrolling (default 4)"
     ],
-    "a11yRules": [
-      "A11Y_SELECT_KEYBOARD",
-      "A11Y_SELECT_LABEL"
-    ]
+    "a11yRules": ["A11Y_SELECT_KEYBOARD", "A11Y_SELECT_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Trigger",
-      "Content",
-      "Item",
-      "Group",
-      "GroupLabel"
-    ],
-    "requiredChildren": [
-      "Trigger",
-      "Content"
-    ],
+    "subComponents": ["Trigger", "Content", "Item", "Group", "GroupLabel"],
+    "requiredChildren": ["Trigger", "Content"],
+    "childrenRequirement": "Select.Trigger and Select.Content are required for compound usage. Omit children entirely when using the options prop; the component generates the trigger, content, and items.",
     "commonPatterns": [
+      "<Select placeholder=\"Select option\" options={[{ value: 'opt1', label: 'Option 1' }, { value: 'opt2', label: 'Option 2' }]} />",
       "<Select placeholder=\"Select option\"><Select.Trigger /><Select.Content><Select.Item value=\"opt1\">{label1}</Select.Item><Select.Item value=\"opt2\">{label2}</Select.Item></Select.Content></Select>"
     ]
   },

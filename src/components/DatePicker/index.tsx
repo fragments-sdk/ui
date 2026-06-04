@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Popover as BasePopover } from '@base-ui/react/popover';
-import { useFormFieldIds, type FormFieldProps } from '../../utils/aria';
-import styles from './DatePicker.module.scss';
+import * as React from "react";
+import { Popover as BasePopover } from "@base-ui/react/popover";
+import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import styles from "./DatePicker.module.scss";
 
 // ============================================
 // Types (self-owned — no external dependency for types)
@@ -18,7 +18,7 @@ export interface DatePickerProps extends FormFieldProps {
   /** Wrapper class name */
   className?: string;
   /** Selection mode */
-  mode?: 'single' | 'range';
+  mode?: "single" | "range";
   /** Controlled date (single mode) */
   selected?: Date | null;
   /** Controlled range (range mode) */
@@ -33,6 +33,9 @@ export interface DatePickerProps extends FormFieldProps {
   numberOfMonths?: number;
   /** Disable the picker */
   disabled?: boolean;
+  /** Size variant.
+   * @default "md" */
+  size?: "sm" | "md" | "lg";
   /** react-day-picker Matcher for disabled dates */
   disabledDates?: Matcher | Matcher[];
   /** Trigger placeholder text */
@@ -61,7 +64,7 @@ export interface DatePickerTriggerProps extends React.ButtonHTMLAttributes<HTMLB
 export interface DatePickerContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   sideOffset?: number;
-  align?: 'start' | 'center' | 'end';
+  align?: "start" | "center" | "end";
 }
 
 export interface DatePickerCalendarProps {
@@ -95,7 +98,7 @@ function loadDatePickerDeps() {
   _dpLoaded = true;
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const rdp = require('react-day-picker');
+    const rdp = require("react-day-picker");
     _DayPicker = rdp.DayPicker;
     _dpUI = rdp.UI;
     _SelectionState = rdp.SelectionState;
@@ -105,7 +108,7 @@ function loadDatePickerDeps() {
   }
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    _formatDate = require('date-fns').format;
+    _formatDate = require("date-fns").format;
   } catch {
     _dpFailed = true;
   }
@@ -180,7 +183,7 @@ function ChevronRightIcon() {
 // ============================================
 
 interface DatePickerContextValue {
-  mode: 'single' | 'range';
+  mode: "single" | "range";
   selected: Date | null;
   selectedRange: DateRange | null;
   setSelected: (date: Date | null) => void;
@@ -196,6 +199,7 @@ interface DatePickerContextValue {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   isControlledOpen: boolean;
+  size: "sm" | "md" | "lg";
   name?: string;
 }
 
@@ -204,7 +208,7 @@ const DatePickerContext = React.createContext<DatePickerContextValue | null>(nul
 function useDatePickerContext() {
   const context = React.useContext(DatePickerContext);
   if (!context) {
-    throw new Error('DatePicker compound components must be used within <DatePicker>');
+    throw new Error("DatePicker compound components must be used within <DatePicker>");
   }
   return context;
 }
@@ -214,25 +218,25 @@ function useDatePickerContext() {
 // ============================================
 
 function defaultFormatDate(date: Date): string {
-  if (_formatDate) return _formatDate(date, 'PPP');
+  if (_formatDate) return _formatDate(date, "PPP");
   return date.toLocaleDateString();
 }
 
 function defaultFormatRange(range: DateRange): string {
-  if (!range.from) return '';
+  if (!range.from) return "";
   if (_formatDate) {
-    if (!range.to) return _formatDate(range.from, 'LLL dd, y');
-    return `${_formatDate(range.from, 'LLL dd, y')} - ${_formatDate(range.to, 'LLL dd, y')}`;
+    if (!range.to) return _formatDate(range.from, "LLL dd, y");
+    return `${_formatDate(range.from, "LLL dd, y")} - ${_formatDate(range.to, "LLL dd, y")}`;
   }
   if (!range.to) return range.from.toLocaleDateString();
   return `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`;
 }
 
 function formatDateForHiddenInput(date?: Date): string {
-  if (!date) return '';
+  if (!date) return "";
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -274,35 +278,37 @@ function getCalendarClassNames() {
 // Components
 // ============================================
 
-const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(function DatePickerRoot({
-  children,
-  label,
-  helperText,
-  error,
-  className,
-  mode = 'single',
-  selected: selectedProp,
-  selectedRange: selectedRangeProp,
-  onSelect,
-  onChange: onChangeProp,
-  onRangeSelect,
-  numberOfMonths = 1,
-  disabled = false,
-  disabledDates,
-  placeholder,
-  locale,
-  fixedWeeks = false,
-  formatDate: formatDateProp,
-  formatRange: formatRangeProp,
-  open: openProp,
-  onOpenChange,
-  name,
-}: DatePickerProps, ref) {
+const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(function DatePickerRoot(
+  {
+    children,
+    label,
+    helperText,
+    error,
+    className,
+    mode = "single",
+    selected: selectedProp,
+    selectedRange: selectedRangeProp,
+    onSelect,
+    onChange: onChangeProp,
+    onRangeSelect,
+    numberOfMonths = 1,
+    disabled = false,
+    size = "md",
+    disabledDates,
+    placeholder,
+    locale,
+    fixedWeeks = false,
+    formatDate: formatDateProp,
+    formatRange: formatRangeProp,
+    open: openProp,
+    onOpenChange,
+    name,
+  }: DatePickerProps,
+  ref
+) {
   // Load deps eagerly so date formatters are available in the trigger
   loadDatePickerDeps();
-  const [internalSelected, setInternalSelected] = React.useState<Date | null>(
-    selectedProp ?? null
-  );
+  const [internalSelected, setInternalSelected] = React.useState<Date | null>(selectedProp ?? null);
   const [internalRange, setInternalRange] = React.useState<DateRange | null>(
     selectedRangeProp ?? null
   );
@@ -369,7 +375,7 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
     [selectedRangeProp, onRangeSelect]
   );
 
-  const defaultPlaceholder = mode === 'range' ? 'Select date range' : 'Pick a date';
+  const defaultPlaceholder = mode === "range" ? "Select date range" : "Pick a date";
 
   const contextValue = React.useMemo<DatePickerContextValue>(
     () => ({
@@ -389,6 +395,7 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
       isOpen,
       setIsOpen: handleOpenChange,
       isControlledOpen,
+      size,
       name,
     }),
     [
@@ -411,32 +418,40 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
       isOpen,
       handleOpenChange,
       isControlledOpen,
+      size,
       name,
     ]
   );
 
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds('datepicker', { label, helperText, error });
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("datepicker", {
+    label,
+    helperText,
+    error,
+  });
 
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(' ');
-  const helperClasses = [styles.helper, hasError && styles.helperError]
-    .filter(Boolean)
-    .join(' ');
+  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
+  const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
 
   return (
     <DatePickerContext.Provider value={contextValue}>
       <div ref={ref} className={wrapperClasses}>
-        {label && <span id={labelId} className={styles.label}>{label}</span>}
-        <BasePopover.Root
-          open={isOpen}
-          onOpenChange={handleOpenChange}
-        >
+        {label && (
+          <span id={labelId} className={styles.label}>
+            {label}
+          </span>
+        )}
+        <BasePopover.Root open={isOpen} onOpenChange={handleOpenChange}>
           {children}
         </BasePopover.Root>
         {helperText && (
-          <span id={helperId} className={helperClasses}>{helperText}</span>
+          <span id={helperId} className={helperClasses}>
+            {helperText}
+          </span>
         )}
         {errorMessage && (
-          <span id={errorId} className={styles.errorMessage}>{errorMessage}</span>
+          <span id={errorId} className={styles.errorMessage}>
+            {errorMessage}
+          </span>
         )}
       </div>
       {name && (
@@ -444,11 +459,11 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
           type="hidden"
           name={name}
           value={
-              mode === 'single'
+            mode === "single"
               ? formatDateForHiddenInput(contextValue.selected ?? undefined)
               : contextValue.selectedRange
                 ? `${formatDateForHiddenInput(contextValue.selectedRange.from)},${formatDateForHiddenInput(contextValue.selectedRange.to)}`
-                : ''
+                : ""
           }
         />
       )}
@@ -460,28 +475,30 @@ function DatePickerTrigger({
   children,
   placeholder,
   className,
-  type = 'button',
+  type = "button",
   ...htmlProps
 }: DatePickerTriggerProps) {
   const ctx = useDatePickerContext();
   const placeholderText = placeholder ?? ctx.placeholder;
 
-  const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const classes = [
+    styles.trigger,
+    ctx.size === "sm" && styles.triggerSm,
+    ctx.size === "lg" && styles.triggerLg,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   let displayText: string | null = null;
-  if (ctx.mode === 'single' && ctx.selected) {
+  if (ctx.mode === "single" && ctx.selected) {
     displayText = ctx.formatDate(ctx.selected);
-  } else if (ctx.mode === 'range' && ctx.selectedRange?.from) {
+  } else if (ctx.mode === "range" && ctx.selectedRange?.from) {
     displayText = ctx.formatRange(ctx.selectedRange);
   }
 
   return (
-    <BasePopover.Trigger
-      {...htmlProps}
-      type={type}
-      className={classes}
-      disabled={ctx.disabled}
-    >
+    <BasePopover.Trigger {...htmlProps} type={type} className={classes} disabled={ctx.disabled}>
       {children ?? (
         <>
           <span className={styles.triggerIcon}>
@@ -500,10 +517,10 @@ function DatePickerContent({
   children,
   className,
   sideOffset = 4,
-  align = 'start',
+  align = "start",
   ...htmlProps
 }: DatePickerContentProps) {
-  const popupClasses = [styles.popup, className].filter(Boolean).join(' ');
+  const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
 
   return (
     <BasePopover.Portal>
@@ -521,7 +538,10 @@ function DatePickerContent({
   );
 }
 
-function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: DatePickerCalendarProps) {
+function DatePickerCalendar({
+  numberOfMonths: numberOfMonthsProp,
+  className,
+}: DatePickerCalendarProps) {
   loadDatePickerDeps();
 
   const ctx = useDatePickerContext();
@@ -530,16 +550,16 @@ function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: D
   const components = React.useMemo(
     () => ({
       Chevron: (props: { orientation?: string }) =>
-        props.orientation === 'left' ? <ChevronLeftIcon /> : <ChevronRightIcon />,
+        props.orientation === "left" ? <ChevronLeftIcon /> : <ChevronRightIcon />,
     }),
     []
   );
 
   if (_dpFailed || !_DayPicker) {
-    if (_dpFailed && process.env.NODE_ENV === 'development') {
+    if (_dpFailed && process.env.NODE_ENV === "development") {
       console.warn(
-        '[@fragments-sdk/ui] DatePicker: react-day-picker and date-fns are not installed. ' +
-        'Install them with: npm install react-day-picker date-fns'
+        "[@fragments-sdk/ui] DatePicker: react-day-picker and date-fns are not installed. " +
+          "Install them with: npm install react-day-picker date-fns"
       );
     }
     return null;
@@ -548,12 +568,12 @@ function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: D
   const calendarClassNames = getCalendarClassNames();
 
   const calendarClasses = className
-    ? { ...calendarClassNames, [_dpUI.Root]: [styles.calendar, className].join(' ') }
+    ? { ...calendarClassNames, [_dpUI.Root]: [styles.calendar, className].join(" ") }
     : calendarClassNames;
 
   const DayPickerComponent = _DayPicker;
 
-  if (ctx.mode === 'range') {
+  if (ctx.mode === "range") {
     const rangeSelected = ctx.selectedRange
       ? { from: ctx.selectedRange.from ?? undefined, to: ctx.selectedRange.to ?? undefined }
       : undefined;
@@ -563,7 +583,9 @@ function DatePickerCalendar({ numberOfMonths: numberOfMonthsProp, className }: D
         mode="range"
         selected={rangeSelected}
         onSelect={(range: any) => {
-          ctx.setSelectedRange(range ? { from: range.from ?? undefined, to: range.to ?? undefined } : null);
+          ctx.setSelectedRange(
+            range ? { from: range.from ?? undefined, to: range.to ?? undefined } : null
+          );
         }}
         numberOfMonths={monthCount}
         disabled={ctx.disabledDates}
@@ -603,17 +625,20 @@ function DatePickerPreset({
   ...htmlProps
 }: DatePickerPresetProps) {
   const ctx = useDatePickerContext();
-  const classes = [styles.preset, className].filter(Boolean).join(' ');
+  const classes = [styles.preset, className].filter(Boolean).join(" ");
 
-  const handleClick = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    onClick?.(event);
-    if (event.defaultPrevented) return;
-    if (ctx.mode === 'single' && date) {
-      ctx.setSelected(date);
-    } else if (ctx.mode === 'range' && range) {
-      ctx.setSelectedRange(range);
-    }
-  }, [ctx, date, range, onClick]);
+  const handleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      onClick?.(event);
+      if (event.defaultPrevented) return;
+      if (ctx.mode === "single" && date) {
+        ctx.setSelected(date);
+      } else if (ctx.mode === "range" && range) {
+        ctx.setSelectedRange(range);
+      }
+    },
+    [ctx, date, range, onClick]
+  );
 
   return (
     <button type="button" {...htmlProps} className={classes} onClick={handleClick}>

@@ -133,7 +133,7 @@ $computed-text-tertiary: map.get($_text-light, tertiary);
 $computed-text-inverse: map.get($_text-light, inverse);
 
 // Borders (from neutral palette)
-$_borders-light: derive.derive-borders($_palette, false);
+$_borders-light: derive.derive-borders($_palette, false, seeds.$fui-neutral);
 $computed-border: map.get($_borders-light, default);
 $computed-border-default: map.get($_borders-light, default);
 $computed-border-strong: map.get($_borders-light, strong);
@@ -201,7 +201,7 @@ $computed-dark-text-tertiary: map.get($_text-dark, tertiary);
 $computed-dark-text-inverse: map.get($_text-dark, inverse);
 
 // Borders (dark mode)
-$_borders-dark: derive.derive-borders($_palette, true);
+$_borders-dark: derive.derive-borders($_palette, true, seeds.$fui-neutral);
 $computed-dark-border: map.get($_borders-dark, default);
 $computed-dark-border-default: map.get($_borders-dark, default);
 $computed-dark-border-strong: map.get($_borders-dark, strong);

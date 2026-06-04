@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { DatePicker } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { DatePicker } from ".";
 
 /**
  * Date picker with a calendar dropdown for single dates or date ranges,
@@ -7,28 +7,34 @@ import { DatePicker } from '.';
  * and DatePicker.Calendar. Supports modes single/range and disabled dates.
  */
 const meta = {
-  title: 'Forms/DatePicker',
+  title: "Forms/DatePicker",
   component: DatePicker,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Date picker with calendar dropdown for dates or ranges.',
+        component: "Date picker with calendar dropdown for dates or ranges.",
       },
     },
   },
   argTypes: {
     mode: {
-      control: 'select',
-      options: ['single', 'range'],
-      description: 'Selection mode',
+      control: "select",
+      options: ["single", "range"],
+      description: "Selection mode",
     },
-    disabled: { control: 'boolean' },
-    fixedWeeks: { control: 'boolean', description: 'Always show 6 rows' },
+    size: {
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Trigger size variant",
+    },
+    disabled: { control: "boolean" },
+    fixedWeeks: { control: "boolean", description: "Always show 6 rows" },
   },
   args: {
-    mode: 'single',
-    placeholder: 'Pick a date',
+    mode: "single",
+    size: "md",
+    placeholder: "Pick a date",
     children: (
       <>
         <DatePicker.Trigger />
@@ -56,7 +62,7 @@ export const Default: Story = {
 };
 
 export const Range: Story = {
-  args: { mode: 'range', placeholder: 'Select date range', numberOfMonths: 2 },
+  args: { mode: "range", placeholder: "Select date range", numberOfMonths: 2 },
   render: (args) => (
     <DatePicker {...args}>
       <DatePicker.Trigger />
@@ -69,7 +75,7 @@ export const Range: Story = {
 
 export const DisabledDates: Story = {
   args: {
-    placeholder: 'Select a future date',
+    placeholder: "Select a future date",
     disabledDates: (date: Date) => date < new Date(),
   },
   render: (args) => (
@@ -84,9 +90,9 @@ export const DisabledDates: Story = {
 
 export const WithLabel: Story = {
   args: {
-    label: 'Start Date',
-    placeholder: 'Pick a date',
-    helperText: 'Choose when the project begins.',
+    label: "Start Date",
+    placeholder: "Pick a date",
+    helperText: "Choose when the project begins.",
   },
   render: (args) => (
     <DatePicker {...args}>
@@ -99,7 +105,7 @@ export const WithLabel: Story = {
 };
 
 export const ErrorState: Story = {
-  args: { label: 'Start Date', placeholder: 'Pick a date' },
+  args: { label: "Start Date", placeholder: "Pick a date" },
   render: (args) => (
     <DatePicker {...args} error="Please select a start date">
       <DatePicker.Trigger />
@@ -111,7 +117,7 @@ export const ErrorState: Story = {
 };
 
 export const Disabled: Story = {
-  args: { placeholder: 'Pick a date', disabled: true },
+  args: { placeholder: "Pick a date", disabled: true },
   render: (args) => (
     <DatePicker {...args}>
       <DatePicker.Trigger />

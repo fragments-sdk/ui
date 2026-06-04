@@ -95,7 +95,7 @@
 .borderColor-default { border-color: var(--fui-border-default, $fui-border-default); }
 .borderColor-strong { border-color: var(--fui-border-strong, $fui-border-strong); }
 .borderColor-accent { border-color: var(--fui-color-accent, $fui-color-accent); }
-.borderColor-danger { border-color: var(--fui-color-danger, $fui-color-danger); }
+.borderColor-danger { border-color: var(--fui-color-danger-border, $fui-color-danger-border); }
 
 // Shadow
 .shadow-sm { box-shadow: var(--fui-shadow-sm, $fui-shadow-sm); }

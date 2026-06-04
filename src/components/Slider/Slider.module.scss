@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Local component tokens
 $fui-slider-track-height: 4px !default;
@@ -101,7 +101,7 @@ $fui-slider-thumb-size: $fui-target-size-min !default;
 }
 
 .helperError {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 .dragValueBubble {

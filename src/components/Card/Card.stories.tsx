@@ -1,5 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Card } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Card } from ".";
+import { Progress } from "../Progress";
+import { Stack } from "../Stack";
+import { Text } from "../Text";
 
 /**
  * Card is a container for grouping related content into a distinct surface. It
@@ -7,34 +10,34 @@ import { Card } from '.';
  * Card.Body, and Card.Footer inside the root.
  */
 const meta = {
-  title: 'Layout/Card',
+  title: "Layout/Card",
   component: Card,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
-      description: { component: 'Container for grouping related content.' },
+      description: { component: "Container for grouping related content." },
     },
   },
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'outlined', 'outline', 'elevated'],
-      description: 'Visual style of the card surface',
+      control: "select",
+      options: ["default", "outlined", "outline", "elevated", "stat", "panel"],
+      description: "Visual style of the card surface",
     },
     padding: {
-      control: 'select',
-      options: ['none', 'sm', 'md', 'lg'],
-      description: 'Internal padding size',
+      control: "select",
+      options: ["none", "sm", "md", "lg"],
+      description: "Internal padding size",
     },
     as: {
-      control: 'select',
-      options: ['article', 'div', 'section'],
-      description: 'Semantic HTML element for the card root',
+      control: "select",
+      options: ["article", "div", "section"],
+      description: "Semantic HTML element for the card root",
     },
   },
   args: {
-    variant: 'default',
-    padding: 'md',
+    variant: "default",
+    padding: "md",
     children: (
       <>
         <Card.Header>
@@ -81,6 +84,40 @@ export const Elevated: Story = {
         <Card.Title>Featured Item</Card.Title>
       </Card.Header>
       <Card.Body>Important content.</Card.Body>
+    </Card>
+  ),
+};
+
+export const Stat: Story = {
+  render: () => (
+    <Card variant="stat" style={{ width: 280 }}>
+      <Stack gap="md">
+        <Stack gap="xs">
+          <Text as="strong" size="2xl" weight="bold" letterSpacing="tighter" tabularNums>
+            94%
+          </Text>
+          <Text as="p" size="sm" color="secondary">
+            Component coverage
+          </Text>
+        </Stack>
+        <Progress value={94} variant="success" size="sm" />
+      </Stack>
+    </Card>
+  ),
+};
+
+export const Panel: Story = {
+  render: () => (
+    <Card variant="panel" padding="none" style={{ width: 360 }}>
+      <Card.Header divided>
+        <Card.Title>System states</Card.Title>
+      </Card.Header>
+      <Card.Body padding="md">
+        <Text as="p" size="sm" color="secondary">
+          Use panel cards for bordered dashboard regions with their own internal header and body
+          rhythm.
+        </Text>
+      </Card.Body>
     </Card>
   ),
 };

@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Form field wrapper (label + helper + error)
 @include form-field-wrapper;
@@ -23,12 +23,26 @@
   &:focus-visible {
     @include field-shell-focus;
   }
+
+  &[rows="1"] {
+    height: var(--fui-input-height, $fui-input-height);
+    min-height: var(--fui-input-height, $fui-input-height);
+    padding-block: var(--fui-space-2, $fui-space-2);
+    overflow-y: hidden;
+  }
 }
 
 // Size variants
 .sm {
+  min-height: var(--fui-input-height-sm, $fui-input-height-sm);
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+
+  &[rows="1"] {
+    height: var(--fui-input-height-sm, $fui-input-height-sm);
+    min-height: var(--fui-input-height-sm, $fui-input-height-sm);
+    padding-block: var(--fui-space-1, $fui-space-1);
+  }
 }
 
 .md {
@@ -36,8 +50,15 @@
 }
 
 .lg {
+  min-height: var(--fui-input-height-lg, $fui-input-height-lg);
   padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
   font-size: var(--fui-font-size-base, $fui-font-size-base);
+
+  &[rows="1"] {
+    height: var(--fui-input-height-lg, $fui-input-height-lg);
+    min-height: var(--fui-input-height-lg, $fui-input-height-lg);
+    padding-block: var(--fui-space-2, $fui-space-2);
+  }
 }
 
 // Resize variants
@@ -60,33 +81,33 @@
 // Error state via aria-invalid attribute (replaces JS class toggle: `error && styles.error`)
 .error,
 .textarea[aria-invalid] {
-  border-color: var(--fui-color-danger, $fui-color-danger);
+  border-color: var(--fui-color-danger-text, $fui-color-danger-text);
 
   &:focus-visible {
-    border-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
     @include focus-ring-error;
   }
 }
 
 // Success state — green border for validated fields
 .success {
-  border-color: var(--fui-color-success, $fui-color-success);
+  border-color: var(--fui-color-success-text, $fui-color-success-text);
 
   &:focus-visible {
-    border-color: var(--fui-color-success, $fui-color-success);
+    border-color: var(--fui-color-success-text, $fui-color-success-text);
     @include focus-ring-success;
   }
 }
 
 // Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // Auto-detect success state
 .wrapper[data-success] .helper,
 .helperSuccess {
-  color: var(--fui-color-success, $fui-color-success);
+  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 // Footer row — helper + character counter side by side
@@ -95,7 +116,11 @@
   justify-content: space-between;
   align-items: baseline;
   gap: var(--fui-space-2, $fui-space-2);
-  min-height: calc(var(--fui-font-size-xs, #{$fui-font-size-xs}) * var(--fui-line-height-normal, #{$fui-line-height-normal}) + var(--fui-space-1, #{$fui-space-1}));
+  min-height: calc(
+    var(--fui-font-size-xs, #{$fui-font-size-xs}) *
+      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
+      var(--fui-space-1, #{$fui-space-1})
+  );
 
   &:empty {
     display: none;
@@ -112,7 +137,7 @@
 }
 
 .charCountOver {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // ============================================
@@ -131,11 +156,11 @@
 
   .error,
   .textarea[aria-invalid] {
-    border-color: var(--fui-color-danger, $fui-color-danger);
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 
   .success {
-    border-color: var(--fui-color-success, $fui-color-success);
+    border-color: var(--fui-color-success-text, $fui-color-success-text);
   }
 }
 

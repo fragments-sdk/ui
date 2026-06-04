@@ -1,6 +1,7 @@
-import type { Preview } from '@storybook/react';
-import { ThemeProvider } from '../src/components/Theme';
-import '../src/styles/globals.scss';
+import { useEffect, type ReactNode } from "react";
+import type { Preview } from "@storybook/react";
+import { ThemeProvider, type ThemeMode } from "../src/components/Theme";
+import "../src/styles/globals.scss";
 
 /**
  * Storybook preview for the Fragments UI library.
@@ -11,17 +12,60 @@ import '../src/styles/globals.scss';
  * published build renders components with their real tokens and theming. A
  * consuming team wires the same two things in their own `.storybook/preview`.
  */
+type StorybookTheme = Extract<ThemeMode, "light" | "dark">;
+
+function resolveTheme(value: unknown): StorybookTheme {
+  return value === "dark" ? "dark" : "light";
+}
+
+function StorybookThemeProvider({
+  children,
+  theme,
+}: {
+  children: ReactNode;
+  theme: StorybookTheme;
+}) {
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute("data-theme", theme);
+    root.style.colorScheme = theme;
+  }, [theme]);
+
+  return (
+    <ThemeProvider mode={theme} defaultMode={theme} storageKey="">
+      {children}
+    </ThemeProvider>
+  );
+}
+
 const preview: Preview = {
+  globalTypes: {
+    theme: {
+      name: "Theme",
+      description: "Switch Fragments UI between light and dark mode",
+      toolbar: {
+        icon: "circlehollow",
+        items: [
+          { value: "light", title: "Light" },
+          { value: "dark", title: "Dark" },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    theme: "light",
+  },
   parameters: {
     controls: {
       matchers: { color: /(background|color)$/i, date: /Date$/i },
     },
   },
   decorators: [
-    (Story) => (
-      <ThemeProvider defaultMode="light">
+    (Story, context) => (
+      <StorybookThemeProvider theme={resolveTheme(context.globals.theme)}>
         <Story />
-      </ThemeProvider>
+      </StorybookThemeProvider>
     ),
   ],
 };

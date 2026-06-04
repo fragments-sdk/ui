@@ -1,0 +1,49 @@
+.frame {
+  min-height: 100vh;
+  background: var(--fui-app-main-bg, var(--fui-bg-primary));
+}
+
+.content {
+  width: min(1180px, 100%);
+  margin-inline: auto;
+}
+
+.section {
+  width: 100%;
+}
+
+.sizeRow {
+  width: 100%;
+}
+
+.samples {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sizeMeta {
+  flex: 0 0 96px;
+}
+
+.sample {
+  min-width: 0;
+}
+
+.control {
+  width: 100%;
+}
+
+.compactControl {
+  width: max-content;
+}
+
+.tabsSlot {
+  width: max-content;
+  max-width: 100%;
+}
+
+@media (max-width: 720px) {
+  .sizeMeta {
+    flex-basis: auto;
+  }
+}

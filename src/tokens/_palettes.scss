@@ -30,6 +30,25 @@ $palette-stone: (
 );
 
 // --------------------------------------------
+// Mono - Restraint-first neutral palette
+// Dark mode is intentionally close to true black so product surfaces feel
+// unified, not like separate panels pasted onto a grey shell.
+// --------------------------------------------
+$palette-mono: (
+  50:  #fafafa,
+  100: #f5f5f5,
+  200: #e5e5e5,
+  300: #d4d4d4,
+  400: #a3a3a3,
+  500: #737373,
+  600: #525252,
+  700: #404040,
+  800: #171717,
+  900: #0a0a0a,
+  950: #000000
+);
+
+// --------------------------------------------
 // Ice - Cool blue tones
 // Professional, tech feel
 // --------------------------------------------
@@ -124,6 +143,7 @@ $palette-fire: (
 // --------------------------------------------
 $palettes: (
   "stone": $palette-stone,
+  "mono": $palette-mono,
   "ice": $palette-ice,
   "sand": $palette-sand,
   "earth": $palette-earth,

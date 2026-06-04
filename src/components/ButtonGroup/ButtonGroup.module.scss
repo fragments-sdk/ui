@@ -1,4 +1,4 @@
-@use '../../tokens/variables' as *;
+@use "../../tokens/variables" as *;
 
 .group {
   display: flex;
@@ -6,6 +6,30 @@
 }
 
 // Gap sizes
+.gapNone {
+  gap: 0;
+
+  > * {
+    position: relative;
+  }
+
+  > *:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  > *:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  > *:hover,
+  > *:focus-visible {
+    z-index: 1;
+  }
+}
+
 .gap-xs {
   gap: var(--fui-space-1, $fui-space-1);
 }

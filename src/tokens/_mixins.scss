@@ -2,15 +2,18 @@
 // @fragments-sdk/ui Shared Mixins
 // ============================================
 
-@use 'variables' as *;
+@use "variables" as *;
 
 // Focus ring for keyboard accessibility
 @mixin focus-ring {
   outline: none;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 28%, transparent),
-    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px) color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 12%, transparent),
-    0 10px 24px -16px color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 32%, transparent);
+    0 0 0 1px
+      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 28%, transparent),
+    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
+      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 12%, transparent),
+    0 10px 24px -16px
+      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 32%, transparent);
 }
 
 // Reset button styles
@@ -191,10 +194,7 @@
   }
 
   &:focus:not(:disabled):not([data-disabled]) {
-    border-color: var(
-      --fui-field-border-focus,
-      var(--fui-color-accent, #{$fui-color-accent})
-    );
+    border-color: var(--fui-field-border-focus, var(--fui-color-accent, #{$fui-color-accent}));
   }
 
   &:disabled,
@@ -206,16 +206,14 @@
 
 @mixin field-shell-focus {
   @include focus-ring;
-  border-color: var(
-    --fui-field-border-focus,
-    var(--fui-color-accent, #{$fui-color-accent})
-  );
+  border-color: var(--fui-field-border-focus, var(--fui-color-accent, #{$fui-color-accent}));
 }
 
 @mixin popup-item-selected {
   background-color: var(--fui-field-selection-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   color: var(--fui-field-selection-color, var(--fui-text-primary, #{$fui-text-primary}));
-  box-shadow: inset 0 0 0 1px var(--fui-field-selection-border, var(--fui-color-accent, #{$fui-color-accent}));
+  box-shadow: inset 0 0 0 1px
+    var(--fui-field-selection-border, var(--fui-color-accent, #{$fui-color-accent}));
 }
 
 @mixin form-group-surface {
@@ -225,17 +223,49 @@
 }
 
 // Responsive breakpoint mixins (mobile-first, min-width)
-@mixin breakpoint-sm { @media (min-width: $fui-breakpoint-sm) { @content; } }
-@mixin breakpoint-md { @media (min-width: $fui-breakpoint-md) { @content; } }
-@mixin breakpoint-lg { @media (min-width: $fui-breakpoint-lg) { @content; } }
-@mixin breakpoint-xl { @media (min-width: $fui-breakpoint-xl) { @content; } }
+@mixin breakpoint-sm {
+  @media (min-width: $fui-breakpoint-sm) {
+    @content;
+  }
+}
+@mixin breakpoint-md {
+  @media (min-width: $fui-breakpoint-md) {
+    @content;
+  }
+}
+@mixin breakpoint-lg {
+  @media (min-width: $fui-breakpoint-lg) {
+    @content;
+  }
+}
+@mixin breakpoint-xl {
+  @media (min-width: $fui-breakpoint-xl) {
+    @content;
+  }
+}
 
 // Responsive breakpoint mixins (desktop-first, max-width)
 // Use for hiding/changing elements below a breakpoint
-@mixin below-sm { @media (max-width: #{$fui-breakpoint-sm - 1px}) { @content; } }
-@mixin below-md { @media (max-width: #{$fui-breakpoint-md - 1px}) { @content; } }
-@mixin below-lg { @media (max-width: #{$fui-breakpoint-lg - 1px}) { @content; } }
-@mixin below-xl { @media (max-width: #{$fui-breakpoint-xl - 1px}) { @content; } }
+@mixin below-sm {
+  @media (max-width: #{$fui-breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+@mixin below-md {
+  @media (max-width: #{$fui-breakpoint-md - 1px}) {
+    @content;
+  }
+}
+@mixin below-lg {
+  @media (max-width: #{$fui-breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+@mixin below-xl {
+  @media (max-width: #{$fui-breakpoint-xl - 1px}) {
+    @content;
+  }
+}
 
 // ============================================
 // Container Queries
@@ -257,9 +287,13 @@
 /// @param {String} $name - Optional container name (omit for nearest ancestor container)
 @mixin container-min($width, $name: null) {
   @if $name {
-    @container #{$name} (min-width: #{$width}) { @content; }
+    @container #{$name} (min-width: #{$width}) {
+      @content;
+    }
   } @else {
-    @container (min-width: #{$width}) { @content; }
+    @container (min-width: #{$width}) {
+      @content;
+    }
   }
 }
 
@@ -268,9 +302,13 @@
 /// @param {String} $name - Optional container name (omit for nearest ancestor container)
 @mixin container-max($width, $name: null) {
   @if $name {
-    @container #{$name} (max-width: #{$width}) { @content; }
+    @container #{$name} (max-width: #{$width}) {
+      @content;
+    }
   } @else {
-    @container (max-width: #{$width}) { @content; }
+    @container (max-width: #{$width}) {
+      @content;
+    }
   }
 }
 
@@ -329,18 +367,24 @@
 @mixin focus-ring-success {
   outline: none;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 42%, transparent),
-    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px) color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 14%, transparent),
-    0 10px 24px -16px color-mix(in srgb, var(--fui-color-success, #{$fui-color-success}) 28%, transparent);
+    0 0 0 1px
+      color-mix(in srgb, var(--fui-color-success-text, #{$fui-color-success-text}) 42%, transparent),
+    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
+      color-mix(in srgb, var(--fui-color-success-text, #{$fui-color-success-text}) 14%, transparent),
+    0 10px 24px -16px
+      color-mix(in srgb, var(--fui-color-success-text, #{$fui-color-success-text}) 28%, transparent);
 }
 
 // Focus ring for error states (e.g., invalid form fields)
 @mixin focus-ring-error {
   outline: none;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 42%, transparent),
-    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px) color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 14%, transparent),
-    0 10px 24px -16px color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 28%, transparent);
+    0 0 0 1px
+      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 42%, transparent),
+    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
+      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 14%, transparent),
+    0 10px 24px -16px
+      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 28%, transparent);
 }
 
 // ============================================
@@ -350,13 +394,13 @@
 /// Control size mixin for standardized sizing across buttons, inputs, selects
 /// @param {String} $size - Size variant: 'sm', 'md', or 'lg'
 /// @param {String} $component - Component type: 'button', 'input', or 'select'
-@mixin control-size($size, $component: 'button') {
+@mixin control-size($size, $component: "button") {
   // Global accessibility floor: component-specific height tokens may be customized,
   // but controls should not shrink below the minimum target size.
   min-height: var(--fui-target-size-min, #{$fui-target-size-min});
 
-  @if $size == 'sm' {
-    @if $component == 'input' {
+  @if $size == "sm" {
+    @if $component == "input" {
       height: var(--fui-input-height-sm, #{$fui-input-height-sm});
       padding: 0 var(--fui-space-2, #{$fui-space-2});
       font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
@@ -365,8 +409,8 @@
       padding: 0 var(--fui-space-2, #{$fui-space-2});
       font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
     }
-  } @else if $size == 'md' {
-    @if $component == 'input' {
+  } @else if $size == "md" {
+    @if $component == "input" {
       height: var(--fui-input-height, #{$fui-input-height});
       padding: 0 var(--fui-space-3, #{$fui-space-3});
       font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
@@ -375,8 +419,8 @@
       padding: 0 var(--fui-space-4, #{$fui-space-4});
       font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
     }
-  } @else if $size == 'lg' {
-    @if $component == 'input' {
+  } @else if $size == "lg" {
+    @if $component == "input" {
       height: var(--fui-input-height-lg, #{$fui-input-height-lg});
       padding: 0 var(--fui-space-4, #{$fui-space-4});
       font-size: var(--fui-font-size-base, #{$fui-font-size-base});
@@ -406,7 +450,7 @@
   }
 
   .required {
-    color: var(--fui-color-danger, #{$fui-color-danger});
+    color: var(--fui-color-danger-text, #{$fui-color-danger-text});
     margin-left: 2px;
   }
 
@@ -416,12 +460,12 @@
   }
 
   .helperError {
-    color: var(--fui-color-danger, #{$fui-color-danger});
+    color: var(--fui-color-danger-text, #{$fui-color-danger-text});
   }
 
   .errorMessage {
     font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
-    color: var(--fui-color-danger, #{$fui-color-danger});
+    color: var(--fui-color-danger-text, #{$fui-color-danger-text});
     margin-top: var(--fui-space-1, #{$fui-space-1});
   }
 }

@@ -1,0 +1,88 @@
+.frame {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--fui-app-canvas-bg);
+}
+
+.shell {
+  height: 100%;
+  min-height: 0;
+}
+
+.main {
+  overflow: auto;
+}
+
+.page {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: clamp(var(--fui-space-4), 3vw, var(--fui-space-6));
+}
+
+.brandMark {
+  display: grid;
+  width: var(--fui-target-size-min);
+  height: var(--fui-target-size-min);
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--fui-text-primary);
+  background: var(--fui-bg-elevated);
+  border: 1px solid var(--fui-border-strong);
+  border-radius: var(--fui-radius-md);
+}
+
+.brandCopy {
+  min-width: 0;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  gap: var(--fui-space-4);
+  align-items: start;
+}
+
+.tableColumn {
+  min-width: 0;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(150px, 180px) minmax(150px, 180px);
+  gap: var(--fui-space-2);
+  align-items: center;
+}
+
+.panelHeader {
+  width: 100%;
+}
+
+.stateRow {
+  min-height: var(--fui-target-size-min);
+}
+
+.actions {
+  width: 100%;
+}
+
+@media (max-width: 1120px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .frame {
+    min-height: 100vh;
+  }
+
+  .page {
+    padding: var(--fui-space-3);
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+}

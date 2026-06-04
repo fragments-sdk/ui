@@ -1,4 +1,4 @@
-@use '../../tokens/variables' as *;
+@use "../../tokens/variables" as *;
 
 .icon {
   display: inline-flex;
@@ -26,13 +26,13 @@
 }
 
 .success {
-  color: var(--fui-color-success, $fui-color-success);
+  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .warning {
-  color: var(--fui-color-warning, $fui-color-warning);
+  color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .error {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }

@@ -33,18 +33,19 @@
 // Variant: pills (shadcn-style with background container)
 .listPills {
   border-bottom: none;
-  border: 1px solid
-    var(
-      --fui-tabs-pills-border,
-      color-mix(in srgb, var(--fui-border, #{$fui-border}) 72%, transparent)
-    );
+  border: 0;
   background-color: var(
     --fui-tabs-pills-bg,
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
   );
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  padding: var(--fui-space-0-75, $fui-space-0-75);
-  gap: var(--fui-space-0-75, $fui-space-0-75);
+  padding: 0;
+  gap: 0;
+  box-shadow: inset 0 0 0 1px
+    var(
+      --fui-tabs-pills-border,
+      color-mix(in srgb, var(--fui-border, #{$fui-border}) 72%, transparent)
+    );
   width: fit-content;
 }
 
@@ -63,7 +64,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  min-height: var(--fui-button-height-sm, $fui-button-height-sm);
+  padding: 0 var(--fui-space-3, $fui-space-3);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-secondary, $fui-text-secondary);
@@ -88,7 +90,6 @@
 .tabUnderline {
   border-radius: 0;
   margin-bottom: -1px;
-  padding-bottom: calc(var(--fui-space-1, $fui-space-1) + 1px);
 
   &:hover:not([data-disabled]) {
     background-color: transparent;
@@ -104,7 +105,7 @@
     box-shadow var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover:not([data-disabled]):not([data-active]) {
-    background-color: transparent;
+    background-color: var(--fui-tabs-pill-hover-bg, transparent);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Select } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Select } from ".";
 
 /**
  * Select is a dropdown for choosing from a list of options. It is a compound
@@ -7,27 +7,27 @@ import { Select } from '.';
  * Select.Item entries (optionally organized via Select.Group).
  */
 const meta = {
-  title: 'Forms/Select',
+  title: "Forms/Select",
   component: Select,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
-        component: 'Dropdown for choosing from a list of options.',
+        component: "Dropdown for choosing from a list of options.",
       },
     },
   },
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Size variant',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size variant",
     },
-    disabled: { control: 'boolean', description: 'Disable the select' },
-    required: { control: 'boolean', description: 'Whether a selection is required' },
-    placeholder: { control: 'text', description: 'Placeholder text when no value selected' },
+    disabled: { control: "boolean", description: "Disable the select" },
+    required: { control: "boolean", description: "Whether a selection is required" },
+    placeholder: { control: "text", description: "Placeholder text when no value selected" },
   },
-  args: { placeholder: 'Select a fruit', size: 'md' },
+  args: { placeholder: "Select a fruit", size: "md" },
   render: (args) => (
     <Select {...args}>
       <Select.Trigger />
@@ -48,7 +48,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const WithGroups: Story = {
-  args: { placeholder: 'Select a country' },
+  args: { placeholder: "Select a country" },
   render: (args) => (
     <Select {...args}>
       <Select.Trigger />
@@ -70,9 +70,9 @@ export const WithGroups: Story = {
 
 export const WithLabelAndHelper: Story = {
   args: {
-    label: 'Timezone',
-    placeholder: 'Select a timezone',
-    helperText: 'Used for reminders and calendar notifications.',
+    label: "Timezone",
+    placeholder: "Select a timezone",
+    helperText: "Used for reminders and calendar notifications.",
   },
   render: (args) => (
     <Select {...args}>
@@ -87,8 +87,22 @@ export const WithLabelAndHelper: Story = {
   ),
 };
 
+export const OptionsProp: Story = {
+  args: { placeholder: "Select a team" },
+  render: (args) => (
+    <Select
+      {...args}
+      options={[
+        { value: "eng", label: "Engineering" },
+        { value: "design", label: "Design" },
+        { value: "pm", label: "Product" },
+      ]}
+    />
+  ),
+};
+
 export const ErrorState: Story = {
-  args: { label: 'Country', placeholder: 'Select a country', error: 'Please select a country' },
+  args: { label: "Country", placeholder: "Select a country", error: "Please select a country" },
   render: (args) => (
     <Select {...args}>
       <Select.Trigger />
@@ -101,7 +115,7 @@ export const ErrorState: Story = {
 };
 
 export const Disabled: Story = {
-  args: { placeholder: 'Select an option', disabled: true },
+  args: { placeholder: "Select an option", disabled: true },
   render: (args) => (
     <Select {...args}>
       <Select.Trigger />

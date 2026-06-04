@@ -85,10 +85,11 @@ $fui-line-height-relaxed: 1.625 !default;
 $fui-line-height-display: 1.1 !default; // h1/hero — tight for large type
 $fui-line-height-prose: 1.7 !default; // p/li inside long-form reading columns
 
-// Letter spacing — tight tracking for headings and dense chrome.
-$fui-letter-spacing-tight: -0.02em !default; // for xl+ headings
+// Letter spacing — keep neutral by default so dense product chrome, headings,
+// and generated app surfaces do not drift into separate typographic systems.
+$fui-letter-spacing-tight: 0 !default; // for xl+ headings
 $fui-letter-spacing-normal: normal !default;
-$fui-letter-spacing-display: -0.02em !default; // for h1/display
+$fui-letter-spacing-display: 0 !default; // for h1/display
 $fui-letter-spacing-wide: 0.05em !default; // uppercase micro-labels (section headings, table/column headers)
 
 // --------------------------------------------
@@ -153,6 +154,12 @@ $fui-color-success-text: computed.$computed-color-success-text !default;
 $fui-color-warning-text: computed.$computed-color-warning-text !default;
 $fui-color-info-text: computed.$computed-color-info-text !default;
 
+// Semantic borders (fallbacks for --fui-color-*-border CSS custom properties)
+$fui-color-danger-border: color-mix(in srgb, $fui-color-danger-text 30%, transparent) !default;
+$fui-color-success-border: color-mix(in srgb, $fui-color-success-text 28%, transparent) !default;
+$fui-color-warning-border: color-mix(in srgb, $fui-color-warning-text 28%, transparent) !default;
+$fui-color-info-border: color-mix(in srgb, $fui-color-info-text 30%, transparent) !default;
+
 // Surface colors (derived from $fui-neutral palette)
 $fui-bg-primary: computed.$computed-bg-primary !default;
 $fui-bg-secondary: computed.$computed-bg-secondary !default;
@@ -188,7 +195,7 @@ $fui-shadow-lg: computed.$computed-shadow-lg !default;
 // Focus ring (derived from $fui-brand)
 $fui-focus-ring-color: computed.$computed-focus-ring-color !default;
 $fui-focus-ring-offset: 2px !default;
-$fui-focus-ring-width: 2px !default;
+$fui-focus-ring-width: 1px !default;
 
 // Scrollbar (derived from $fui-neutral palette)
 $fui-scrollbar-width: 8px !default;
@@ -289,12 +296,10 @@ $fui-touch-md: computed.$computed-touch-md !default;
 $fui-touch-lg: computed.$computed-touch-lg !default;
 
 // Minimum interactive target sizes.
-// Keep this token globally available to preserve an accessibility floor for touch/pointer targets.
-// WCAG 2.2 SC 2.5.8 (Target Size (Minimum)):
-// https://www.w3.org/TR/WCAG22/#target-size-minimum
-// Understanding WCAG 2.2 SC 2.5.8:
-// https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
-$fui-target-size-min: 1.714rem !default; // 24px
+// Keep this token globally available to preserve a product-control floor for
+// touch/pointer targets. WCAG 2.2 allows 24px, but Fragments uses 32px so
+// field controls, toolbar buttons, tabs, and picker triggers align.
+$fui-target-size-min: 2.286rem !default; // 32px
 $fui-target-size-comfortable: $fui-touch-md !default;
 
 // Icon sizes (standard conventions)
@@ -310,7 +315,7 @@ $fui-anim-offset-sm: 4px !default; // Small slide animation
 $fui-anim-offset-md: 8px !default; // Medium slide animation
 
 // Sidebar (multi-consumer — used by Sidebar, NavigationMenu, Theme)
-$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact: 26px, default: 28px, relaxed: 32px)
+$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact/default: 32px, relaxed: 36px)
 
 // AppShell Layout
 $fui-appshell-header-height: 56px !default;
@@ -405,8 +410,14 @@ $fui-code-bg: #0c0c0e !default;
     // Colors — Accent (light-dark for automatic dark mode)
     --fui-color-accent: light-dark(#{$fui-color-accent}, #{$fui-dark-color-accent});
     --fui-color-on-accent: light-dark(#{$fui-color-on-accent}, #{$fui-dark-color-on-accent});
-    --fui-color-accent-hover: light-dark(#{$fui-color-accent-hover}, #{$fui-dark-color-accent-hover});
-    --fui-color-accent-active: light-dark(#{$fui-color-accent-active}, #{$fui-dark-color-accent-active});
+    --fui-color-accent-hover: light-dark(
+      #{$fui-color-accent-hover},
+      #{$fui-dark-color-accent-hover}
+    );
+    --fui-color-accent-active: light-dark(
+      #{$fui-color-accent-active},
+      #{$fui-dark-color-accent-active}
+    );
 
     // Colors — Semantic (same in light/dark, no light-dark() needed)
     --fui-color-danger: #{$fui-color-danger};
@@ -415,17 +426,60 @@ $fui-code-bg: #0c0c0e !default;
     --fui-color-warning: #{$fui-color-warning};
     --fui-color-info: #{$fui-color-info};
 
-    // Colors — Semantic Backgrounds
-    --fui-color-danger-bg: light-dark(#{$fui-color-danger-bg}, #{$fui-dark-color-danger-bg});
-    --fui-color-success-bg: light-dark(#{$fui-color-success-bg}, #{$fui-dark-color-success-bg});
-    --fui-color-warning-bg: light-dark(#{$fui-color-warning-bg}, #{$fui-dark-color-warning-bg});
-    --fui-color-info-bg: light-dark(#{$fui-color-info-bg}, #{$fui-dark-color-info-bg});
+    // Colors — Semantic Status Recipe
+    // Inspired by compact status pills: dark mode uses a deep tinted fill with
+    // bright semantic text; light mode keeps the same hue recipe on a pale fill.
+    --fui-color-danger-bg: light-dark(
+      color-mix(in srgb, var(--fui-color-danger) 12%, white),
+      color-mix(in srgb, var(--fui-color-danger) 24%, black)
+    );
+    --fui-color-success-bg: light-dark(
+      color-mix(in srgb, var(--fui-color-success) 12%, white),
+      color-mix(in srgb, var(--fui-color-success) 24%, black)
+    );
+    --fui-color-warning-bg: light-dark(
+      color-mix(in srgb, var(--fui-color-warning) 12%, white),
+      color-mix(in srgb, var(--fui-color-warning) 24%, black)
+    );
+    --fui-color-info-bg: light-dark(
+      color-mix(in srgb, var(--fui-color-info) 12%, white),
+      color-mix(in srgb, var(--fui-color-info) 24%, black)
+    );
 
-    // Colors — Semantic Text
-    --fui-color-danger-text: light-dark(#{$fui-color-danger-text}, #{$fui-dark-color-danger-text});
-    --fui-color-success-text: light-dark(#{$fui-color-success-text}, #{$fui-dark-color-success-text});
-    --fui-color-warning-text: light-dark(#{$fui-color-warning-text}, #{$fui-dark-color-warning-text});
-    --fui-color-info-text: light-dark(#{$fui-color-info-text}, #{$fui-dark-color-info-text});
+    --fui-color-danger-text: light-dark(
+      color-mix(in srgb, var(--fui-color-danger) 72%, black),
+      color-mix(in srgb, var(--fui-color-danger) 78%, white 22%)
+    );
+    --fui-color-success-text: light-dark(
+      color-mix(in srgb, var(--fui-color-success) 72%, black),
+      color-mix(in srgb, var(--fui-color-success) 78%, white 22%)
+    );
+    --fui-color-warning-text: light-dark(
+      color-mix(in srgb, var(--fui-color-warning) 72%, black),
+      color-mix(in srgb, var(--fui-color-warning) 78%, white 22%)
+    );
+    --fui-color-info-text: light-dark(
+      color-mix(in srgb, var(--fui-color-info) 72%, black),
+      color-mix(in srgb, var(--fui-color-info) 78%, white 22%)
+    );
+
+    // Colors — Semantic Borders
+    --fui-color-danger-border: light-dark(
+      color-mix(in srgb, var(--fui-color-danger) 32%, transparent),
+      color-mix(in srgb, var(--fui-color-danger-text) 30%, transparent)
+    );
+    --fui-color-success-border: light-dark(
+      color-mix(in srgb, var(--fui-color-success) 32%, transparent),
+      color-mix(in srgb, var(--fui-color-success-text) 28%, transparent)
+    );
+    --fui-color-warning-border: light-dark(
+      color-mix(in srgb, var(--fui-color-warning) 32%, transparent),
+      color-mix(in srgb, var(--fui-color-warning-text) 28%, transparent)
+    );
+    --fui-color-info-border: light-dark(
+      color-mix(in srgb, var(--fui-color-info) 32%, transparent),
+      color-mix(in srgb, var(--fui-color-info-text) 30%, transparent)
+    );
 
     // Backdrop
     --fui-backdrop: light-dark(#{$fui-backdrop}, #{$fui-dark-backdrop});
@@ -453,24 +507,205 @@ $fui-code-bg: #0c0c0e !default;
     --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
 
-    // Form chrome (derived from theme surfaces + seed-driven accent)
-    --fui-field-bg: transparent;
-    --fui-field-bg-disabled: color-mix(in srgb, var(--fui-bg-tertiary) 88%, var(--fui-bg-primary));
-    --fui-field-border: color-mix(in srgb, var(--fui-border-strong) 86%, var(--fui-text-secondary));
-    --fui-field-border-hover: color-mix(in srgb, var(--fui-text-tertiary) 72%, var(--fui-border-strong));
-    --fui-field-border-focus: var(--fui-color-accent);
-    --fui-field-selection-bg: color-mix(in srgb, var(--fui-color-accent) 12%, var(--fui-bg-elevated));
-    --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-color-accent) 16%, var(--fui-bg-hover));
-    --fui-field-selection-border: color-mix(in srgb, var(--fui-color-accent) 38%, var(--fui-border));
+    // Form chrome (shared by Input, Textarea, Select, Combobox, DatePicker,
+    // ColorPicker, Editor, and listbox-style controls).
+    --fui-field-bg: color-mix(in srgb, var(--fui-bg-elevated) 72%, transparent);
+    --fui-field-bg-disabled: color-mix(in srgb, var(--fui-bg-tertiary) 78%, var(--fui-bg-primary));
+    --fui-field-border: var(--fui-border-strong);
+    --fui-field-border-hover: color-mix(
+      in srgb,
+      var(--fui-text-tertiary) 46%,
+      var(--fui-border-strong)
+    );
+    --fui-field-border-focus: var(--fui-text-primary);
+    --fui-field-selection-bg: color-mix(in srgb, var(--fui-text-primary) 8%, transparent);
+    --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-text-primary) 11%, transparent);
+    --fui-field-selection-border: var(--fui-border-strong);
     --fui-field-selection-color: var(--fui-text-primary);
-    --fui-form-group-bg: color-mix(in srgb, var(--fui-bg-secondary) 58%, var(--fui-bg-primary));
-    --fui-form-group-border: color-mix(in srgb, var(--fui-border) 82%, transparent);
+    --fui-form-group-bg: color-mix(in srgb, var(--fui-bg-secondary) 48%, var(--fui-bg-primary));
+    --fui-form-group-border: var(--fui-border-default);
+
+    // Keyboard shortcut hints. Kept flatter than buttons so embedded input
+    // hints read as secondary chrome, not as nested actions.
+    --fui-kbd-height: 1.286rem; // 18px at 14px root
+    --fui-kbd-min-width: 1.714rem; // 24px
+    --fui-kbd-padding-x: var(--fui-space-0-75);
+    --fui-kbd-gap: calc(var(--fui-space-px) * 2);
+    --fui-kbd-bg: color-mix(in srgb, var(--fui-text-primary) 4%, transparent);
+    --fui-kbd-border: color-mix(in srgb, var(--fui-border-strong) 72%, transparent);
+    --fui-kbd-color: var(--fui-text-tertiary);
+    --fui-kbd-shadow: inset 0 1px 0
+      light-dark(
+        color-mix(in srgb, white 74%, transparent),
+        color-mix(in srgb, white 5%, transparent)
+      );
+    --fui-kbd-font-size: var(--fui-font-size-2xs);
+    --fui-kbd-radius: var(--fui-radius-sm);
+    --fui-kbd-reserved-width: 2.714rem; // 38px, enough for "⌘K"
+
+    // Button chrome. Neutral and primary buttons use the same raised-edge
+    // recipe in light and dark: crisp border, subtle top highlight, and a
+    // pressed inset state.
+    --fui-button-radius: var(--fui-radius-lg);
+    --fui-button-primary-base: light-dark(#0a84ff, #0a84ff);
+    --fui-button-primary-hover: light-dark(#1994ff, #2f9bff);
+    --fui-button-primary-active: light-dark(#006edb, #0068d6);
+    --fui-button-primary-bg: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--fui-button-primary-base) 78%, white 22%) 0%,
+      var(--fui-button-primary-base) 52%,
+      color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 100%
+    );
+    --fui-button-primary-bg-hover: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--fui-button-primary-hover) 76%, white 24%) 0%,
+      var(--fui-button-primary-hover) 52%,
+      color-mix(in srgb, var(--fui-button-primary-active) 84%, black 16%) 100%
+    );
+    --fui-button-primary-bg-active: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 0%,
+      var(--fui-button-primary-active) 100%
+    );
+    --fui-button-primary-border-hover: color-mix(
+      in srgb,
+      var(--fui-button-primary-active) 86%,
+      black 14%
+    );
+    --fui-button-primary-border: color-mix(
+      in srgb,
+      var(--fui-button-primary-active) 74%,
+      black 26%
+    );
+    --fui-button-primary-color: #fff;
+    --fui-button-primary-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
+      inset 0 -1px 0 color-mix(in srgb, black 18%, transparent),
+      0 1px 1px color-mix(in srgb, black 16%, transparent);
+    --fui-button-primary-shadow-active:
+      inset 0 1px 2px color-mix(in srgb, black 30%, transparent),
+      0 1px 0 color-mix(in srgb, white 8%, transparent);
+
+    --fui-button-neutral-bg: linear-gradient(
+      to bottom,
+      light-dark(
+          color-mix(in srgb, var(--fui-bg-elevated) 97%, var(--fui-text-primary) 3%),
+          color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%)
+        )
+        0%,
+      light-dark(
+          color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%),
+          color-mix(in srgb, var(--fui-bg-elevated) 96%, var(--fui-text-primary) 4%)
+        )
+        100%
+    );
+    --fui-button-neutral-bg-hover: linear-gradient(
+      to bottom,
+      light-dark(
+          color-mix(in srgb, var(--fui-bg-elevated) 99%, var(--fui-text-primary) 1%),
+          color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%)
+        )
+        0%,
+      light-dark(
+          color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%),
+          color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%)
+        )
+        100%
+    );
+    --fui-button-neutral-bg-active: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%) 0%,
+      color-mix(in srgb, var(--fui-bg-elevated) 90%, var(--fui-text-primary) 10%) 100%
+    );
+    --fui-button-neutral-border: color-mix(
+      in srgb,
+      var(--fui-border-strong) 78%,
+      var(--fui-text-primary) 22%
+    );
+    --fui-button-neutral-border-hover: color-mix(
+      in srgb,
+      var(--fui-border-strong) 58%,
+      var(--fui-text-primary) 42%
+    );
+    --fui-button-neutral-color: var(--fui-text-primary);
+    --fui-button-neutral-shadow:
+      inset 0 1px 0
+        light-dark(
+          color-mix(in srgb, white 88%, transparent),
+          color-mix(in srgb, white 7%, transparent)
+        ),
+      inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary) 7%, transparent),
+      0 1px 1px color-mix(in srgb, black 12%, transparent);
+    --fui-button-neutral-shadow-active:
+      inset 0 1px 2px color-mix(in srgb, black 16%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--fui-text-primary) 6%, transparent);
 
     // Popup/menu active-item highlight — neutral, deliberately stronger than
     // --fui-bg-hover (which is tuned for subtle surface hovers and reads as ~invisible
     // on menu items, esp. in dark mode). Shared by every popup-list surface. Accent is
     // reserved for the *selected* item (see --fui-field-selection-*), not hover.
     --fui-bg-highlight: color-mix(in srgb, var(--fui-text-primary) 7%, transparent);
+
+    // Product shell and navigation chrome. These stay neutral-first so a
+    // dashboard page reads as one system instead of brand-tinted islands.
+    --fui-app-canvas-bg: var(--fui-body-bg);
+    --fui-app-main-bg: var(--fui-main-bg);
+    --fui-app-sidebar-bg: color-mix(in srgb, var(--fui-bg-primary) 78%, var(--fui-bg-secondary));
+    --fui-sidebar-bg: var(--fui-app-sidebar-bg);
+    --fui-sidebar-border: var(--fui-border-default);
+    --fui-sidebar-item-color: var(--fui-text-secondary);
+    --fui-sidebar-item-icon-color: var(--fui-text-tertiary);
+    --fui-sidebar-item-hover-bg: var(--fui-bg-hover);
+    --fui-sidebar-item-hover-color: var(--fui-text-primary);
+    --fui-sidebar-item-active-bg: color-mix(in srgb, var(--fui-text-primary) 8%, transparent);
+    --fui-sidebar-item-active-border: var(--fui-border-strong);
+    --fui-sidebar-item-active-color: var(--fui-text-primary);
+    --fui-sidebar-item-active-indicator: transparent;
+    --fui-sidebar-footer-border: color-mix(in srgb, var(--fui-border-default) 68%, transparent);
+
+    // Card/panel surfaces.
+    --fui-card-radius: var(--fui-radius-lg);
+    --fui-card-bg: color-mix(in srgb, var(--fui-bg-elevated) 92%, transparent);
+    --fui-card-border: color-mix(in srgb, var(--fui-border-default) 86%, transparent);
+    --fui-card-shadow: inset 0 1px 0
+      light-dark(
+        color-mix(in srgb, white 86%, transparent),
+        color-mix(in srgb, white 4%, transparent)
+      );
+    --fui-card-elevated-shadow:
+      var(--fui-card-shadow), 0 1px 2px color-mix(in srgb, black 8%, transparent),
+      0 16px 36px -28px color-mix(in srgb, black 34%, transparent);
+    --fui-card-hover-bg: color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 4%);
+    --fui-card-hover-border: color-mix(in srgb, var(--fui-border-strong) 86%, transparent);
+    --fui-card-active-bg: color-mix(
+      in srgb,
+      var(--fui-bg-elevated) 84%,
+      var(--fui-text-primary) 6%
+    );
+    --fui-card-stat-bg: color-mix(in srgb, var(--fui-bg-elevated) 74%, transparent);
+    --fui-card-stat-border: color-mix(in srgb, var(--fui-border-default) 78%, transparent);
+    --fui-card-stat-shadow: var(--fui-card-shadow);
+    --fui-panel-bg: color-mix(in srgb, var(--fui-bg-elevated) 74%, transparent);
+    --fui-panel-border: color-mix(in srgb, var(--fui-border-default) 78%, transparent);
+
+    // Tables.
+    --fui-table-bg: transparent;
+    --fui-table-border: var(--fui-border-default);
+    --fui-table-header-bg: color-mix(in srgb, var(--fui-text-primary) 5%, transparent);
+    --fui-table-header-border: var(--fui-border-strong);
+    --fui-table-row-hover-bg: var(--fui-bg-hover);
+    --fui-table-row-active-bg: var(--fui-bg-active);
+    --fui-table-row-selected-bg: color-mix(in srgb, var(--fui-text-primary) 8%, transparent);
+    --fui-table-row-selected-border: var(--fui-border-strong);
+    --fui-table-subrow-bg: color-mix(in srgb, var(--fui-bg-secondary) 62%, transparent);
+
+    // Segmented controls / tabs.
+    --fui-tabs-pills-bg: color-mix(in srgb, var(--fui-text-primary) 5%, transparent);
+    --fui-tabs-pills-border: var(--fui-border-default);
+    --fui-tabs-pill-hover-bg: transparent;
+    --fui-tabs-pill-active-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
+    --fui-tabs-pill-active-border: var(--fui-border-strong);
+    --fui-tabs-pill-active-shadow: inset 0 0 0 1px var(--fui-tabs-pill-active-border);
 
     // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
     --fui-shadow-sm: #{$fui-shadow-sm};
@@ -486,7 +721,10 @@ $fui-code-bg: #0c0c0e !default;
     --fui-scrollbar-width: #{$fui-scrollbar-width};
     --fui-scrollbar-track: light-dark(#{$fui-scrollbar-track}, #{$fui-dark-scrollbar-track});
     --fui-scrollbar-thumb: light-dark(#{$fui-scrollbar-thumb}, #{$fui-dark-scrollbar-thumb});
-    --fui-scrollbar-thumb-hover: light-dark(#{$fui-scrollbar-thumb-hover}, #{$fui-dark-scrollbar-thumb-hover});
+    --fui-scrollbar-thumb-hover: light-dark(
+      #{$fui-scrollbar-thumb-hover},
+      #{$fui-dark-scrollbar-thumb-hover}
+    );
 
     // Component heights (density-responsive)
     --fui-button-height-xs: #{$fui-button-height-xs};
@@ -497,7 +735,7 @@ $fui-code-bg: #0c0c0e !default;
     --fui-input-height: #{$fui-input-height};
     --fui-input-height-lg: #{$fui-input-height-lg};
 
-    // Touch targets (density-responsive, WCAG 2.5.8: ≥24px)
+    // Touch targets (density-responsive, Fragments control floor: ≥32px)
     --fui-touch-sm: #{$fui-touch-sm};
     --fui-touch-md: #{$fui-touch-md};
     --fui-touch-lg: #{$fui-touch-lg};
@@ -517,7 +755,6 @@ $fui-code-bg: #0c0c0e !default;
     --fui-icon-lg: #{$fui-icon-lg};
     --fui-icon-xl: #{$fui-icon-xl};
     --fui-icon-2xl: #{$fui-icon-2xl};
-
   }
 
   // Dark mode via data-theme attribute (manual toggle).
@@ -567,35 +804,57 @@ $fui-code-bg: #0c0c0e !default;
 
       // Auto-contrast text for elements on accent backgrounds (buttons, chips, etc.)
       // Lightness > 0.6 → dark text; otherwise → white. Users can override this token.
-      --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
+      --fui-color-on-accent: oklch(
+        from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0
+      );
       --fui-color-accent-hover: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h)
+        oklch(
+          from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h
+        )
       );
       --fui-color-accent-active: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        oklch(from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h)
+        oklch(
+          from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h
+        )
       );
 
       // Semantic hover derived from seed
       --fui-color-danger-hover: oklch(from var(--fui-seed-danger) max(0.05, calc(l - 0.06)) c h);
 
-      // Semantic backgrounds derived via color-mix (opacity-based)
+      // Semantic status recipe, matching the static token block above.
       --fui-color-danger-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-danger) 10%, transparent),
-        color-mix(in oklch, var(--fui-seed-danger) 15%, transparent)
+        color-mix(in oklch, var(--fui-seed-danger) 12%, white),
+        color-mix(in oklch, var(--fui-seed-danger) 24%, black)
       );
       --fui-color-success-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-success) 10%, transparent),
-        color-mix(in oklch, var(--fui-seed-success) 15%, transparent)
+        color-mix(in oklch, var(--fui-seed-success) 12%, white),
+        color-mix(in oklch, var(--fui-seed-success) 24%, black)
       );
       --fui-color-warning-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-warning) 10%, transparent),
-        color-mix(in oklch, var(--fui-seed-warning) 15%, transparent)
+        color-mix(in oklch, var(--fui-seed-warning) 12%, white),
+        color-mix(in oklch, var(--fui-seed-warning) 24%, black)
       );
       --fui-color-info-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-info) 10%, transparent),
-        color-mix(in oklch, var(--fui-seed-info) 15%, transparent)
+        color-mix(in oklch, var(--fui-seed-info) 12%, white),
+        color-mix(in oklch, var(--fui-seed-info) 24%, black)
+      );
+      --fui-color-danger-text: light-dark(
+        color-mix(in oklch, var(--fui-seed-danger) 72%, black),
+        color-mix(in oklch, var(--fui-seed-danger) 78%, white 22%)
+      );
+      --fui-color-success-text: light-dark(
+        color-mix(in oklch, var(--fui-seed-success) 72%, black),
+        color-mix(in oklch, var(--fui-seed-success) 78%, white 22%)
+      );
+      --fui-color-warning-text: light-dark(
+        color-mix(in oklch, var(--fui-seed-warning) 72%, black),
+        color-mix(in oklch, var(--fui-seed-warning) 78%, white 22%)
+      );
+      --fui-color-info-text: light-dark(
+        color-mix(in oklch, var(--fui-seed-info) 72%, black),
+        color-mix(in oklch, var(--fui-seed-info) 78%, white 22%)
       );
 
       // Focus ring follows the resolved accent so dark brands are lifted on
@@ -609,14 +868,26 @@ $fui-code-bg: #0c0c0e !default;
     // is never clamped, so saturated brands (e.g. blue-600) stay true in dark mode.
     :root[data-theme="dark"],
     :root.dark {
-      --fui-color-accent: oklch(from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h);
-      --fui-color-on-accent: oklch(from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0);
-      --fui-color-accent-hover: oklch(from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h);
-      --fui-color-accent-active: oklch(from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h);
-      --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 15%, transparent);
-      --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 15%, transparent);
-      --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 15%, transparent);
-      --fui-color-info-bg: color-mix(in oklch, var(--fui-seed-info) 15%, transparent);
+      --fui-color-accent: oklch(
+        from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h
+      );
+      --fui-color-on-accent: oklch(
+        from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0
+      );
+      --fui-color-accent-hover: oklch(
+        from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h
+      );
+      --fui-color-accent-active: oklch(
+        from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h
+      );
+      --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 24%, black);
+      --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 24%, black);
+      --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 24%, black);
+      --fui-color-info-bg: color-mix(in oklch, var(--fui-seed-info) 24%, black);
+      --fui-color-danger-text: color-mix(in oklch, var(--fui-seed-danger) 78%, white 22%);
+      --fui-color-success-text: color-mix(in oklch, var(--fui-seed-success) 78%, white 22%);
+      --fui-color-warning-text: color-mix(in oklch, var(--fui-seed-warning) 78%, white 22%);
+      --fui-color-info-text: color-mix(in oklch, var(--fui-seed-info) 78%, white 22%);
       --fui-focus-ring-color: var(--fui-color-accent);
     }
   }
@@ -728,17 +999,22 @@ $fui-code-bg: #0c0c0e !default;
   --fui-shadow-md: #{$fui-dark-shadow-md};
   --fui-shadow-lg: #{$fui-dark-shadow-lg};
 
-  // Semantic backgrounds
-  --fui-color-danger-bg: #{$fui-dark-color-danger-bg};
-  --fui-color-success-bg: #{$fui-dark-color-success-bg};
-  --fui-color-warning-bg: #{$fui-dark-color-warning-bg};
-  --fui-color-info-bg: #{$fui-dark-color-info-bg};
+  // Semantic status recipe
+  --fui-color-danger-bg: color-mix(in srgb, var(--fui-color-danger) 24%, black);
+  --fui-color-success-bg: color-mix(in srgb, var(--fui-color-success) 24%, black);
+  --fui-color-warning-bg: color-mix(in srgb, var(--fui-color-warning) 24%, black);
+  --fui-color-info-bg: color-mix(in srgb, var(--fui-color-info) 24%, black);
 
-  // Semantic text colors (WCAG AA contrast-safe)
-  --fui-color-danger-text: #{$fui-dark-color-danger-text};
-  --fui-color-success-text: #{$fui-dark-color-success-text};
-  --fui-color-warning-text: #{$fui-dark-color-warning-text};
-  --fui-color-info-text: #{$fui-dark-color-info-text};
+  --fui-color-danger-text: color-mix(in srgb, var(--fui-color-danger) 78%, white 22%);
+  --fui-color-success-text: color-mix(in srgb, var(--fui-color-success) 78%, white 22%);
+  --fui-color-warning-text: color-mix(in srgb, var(--fui-color-warning) 78%, white 22%);
+  --fui-color-info-text: color-mix(in srgb, var(--fui-color-info) 78%, white 22%);
+
+  // Semantic borders
+  --fui-color-danger-border: color-mix(in srgb, var(--fui-color-danger-text) 30%, transparent);
+  --fui-color-success-border: color-mix(in srgb, var(--fui-color-success-text) 28%, transparent);
+  --fui-color-warning-border: color-mix(in srgb, var(--fui-color-warning-text) 28%, transparent);
+  --fui-color-info-border: color-mix(in srgb, var(--fui-color-info-text) 30%, transparent);
 
   // Focus & backdrop
   --fui-focus-ring-color: #{$fui-dark-focus-ring-color};
@@ -748,5 +1024,4 @@ $fui-code-bg: #0c0c0e !default;
   --fui-scrollbar-track: #{$fui-dark-scrollbar-track};
   --fui-scrollbar-thumb: #{$fui-dark-scrollbar-thumb};
   --fui-scrollbar-thumb-hover: #{$fui-dark-scrollbar-thumb-hover};
-
 }

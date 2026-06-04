@@ -3,17 +3,13 @@
   "name": "Card",
   "description": "Container for grouping related content",
   "category": "layout",
-  "tags": [
-    "container",
-    "layout",
-    "surface"
-  ],
+  "tags": ["container", "layout", "surface"],
   "status": "stable",
   "sourcePath": "src/components/Card/index.tsx",
   "exportName": "Card",
   "propsSummary": [
     "children: node (required)",
-    "variant: default|outlined|outline|elevated (default: default)",
+    "variant: default|outlined|outline|elevated|stat|panel (default: default)",
     "padding: none|sm|md|lg (default: md)",
     "as: article|div|section (default: article)",
     "style: object"
@@ -29,14 +25,11 @@
       "description": "Visual style of the card surface",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "outlined",
-        "outline",
-        "elevated"
-      ],
+      "values": ["default", "outlined", "outline", "elevated", "stat", "panel"],
       "constraints": [
-        "Use \"elevated\" sparingly to maintain visual hierarchy"
+        "Use \"elevated\" sparingly to maintain visual hierarchy",
+        "Use \"stat\" for compact dashboard metric tiles",
+        "Use \"panel\" with Card.Header divided and padding=\"none\" for dashboard panels"
       ]
     },
     "padding": {
@@ -44,23 +37,14 @@
       "description": "Internal padding size",
       "default": "md",
       "required": false,
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["none", "sm", "md", "lg"]
     },
     "as": {
       "type": "enum",
       "description": "Semantic HTML element for the card root",
       "default": "article",
       "required": false,
-      "values": [
-        "article",
-        "div",
-        "section"
-      ]
+      "values": ["article", "div", "section"]
     },
     "style": {
       "type": "object",
@@ -84,17 +68,18 @@
       "Use consistent card variants within the same context",
       "Cards in a grid should have uniform sizing",
       "Use elevated variant sparingly for emphasis",
+      "Use stat and panel variants for dashboard surfaces so spacing, border, and radius stay consistent",
       "If a card is clickable, provide clear hover/focus affordances and prefer explicit buttons/links inside the card"
     ],
     "accessibility": [
-      "Card is a semantic container (article/div/section); onClick does not automatically add button semantics",
+      "Card is a semantic container (article/div/section); onClick adds keyboard and role=\"button\" behavior, but explicit Button or Link actions are preferred",
       "Card titles should be appropriate heading levels"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Standard card with subtle shadow",
+      "description": "Standard quiet card surface",
       "code": "<Card>\n  <Card.Header>\n    <Card.Title>Card Title</Card.Title>\n    <Card.Description>A brief description</Card.Description>\n  </Card.Header>\n  <Card.Body>Card content goes here.</Card.Body>\n</Card>"
     },
     {
@@ -111,6 +96,16 @@
       "name": "Elevated",
       "description": "Card with prominent shadow for emphasis",
       "code": "<Card variant=\"elevated\">\n  <Card.Header>\n    <Card.Title>Featured Item</Card.Title>\n  </Card.Header>\n  <Card.Body>Important content.</Card.Body>\n</Card>"
+    },
+    {
+      "name": "Stat",
+      "description": "Compact metric tile for dashboard grids",
+      "code": "<Card variant=\"stat\">\n  <Stack gap=\"md\">\n    <Stack gap=\"xs\">\n      <Text as=\"strong\" size=\"2xl\" weight=\"bold\" letterSpacing=\"tighter\" tabularNums>94%</Text>\n      <Text as=\"p\" size=\"sm\" color=\"secondary\">Component coverage</Text>\n    </Stack>\n    <Progress value={94} variant=\"success\" size=\"sm\" aria-label=\"Component coverage progress\" />\n  </Stack>\n</Card>"
+    },
+    {
+      "name": "Panel",
+      "description": "Dashboard panel with a divided header and body-owned spacing",
+      "code": "<Card variant=\"panel\" padding=\"none\">\n  <Card.Header divided>\n    <Card.Title>System states</Card.Title>\n  </Card.Header>\n  <Card.Body padding=\"md\">\n    Panel content\n  </Card.Body>\n</Card>"
     },
     {
       "name": "Interactive",
@@ -147,29 +142,19 @@
   ],
   "contract": {
     "propsSummary": [
-      "variant: default|outlined|outline|elevated (default: default)",
+      "variant: default|outlined|outline|elevated|stat|panel (default: default)",
       "padding: none|sm|md|lg (default: md)",
       "as: article|div|section (default: article) - card root element",
-      "onClick: (event) => void - click handler on root (semantics unchanged)",
-      "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer"
+      "onClick: (event) => void - click handler on root (adds role/button keyboard behavior)",
+      "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer",
+      "Card.Body padding: none|sm|md|lg - use for panel body spacing"
     ],
-    "a11yRules": [
-      "A11Y_CARD_HEADING",
-      "A11Y_CARD_INTERACTIVE"
-    ]
+    "a11yRules": ["A11Y_CARD_HEADING", "A11Y_CARD_INTERACTIVE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Header",
-      "Title",
-      "Description",
-      "Body",
-      "Footer"
-    ],
-    "requiredChildren": [
-      "Body"
-    ],
+    "subComponents": ["Header", "Title", "Description", "Body", "Footer"],
+    "requiredChildren": ["Body"],
     "commonPatterns": [
       "<Card><Card.Body>{content}</Card.Body></Card>",
       "<Card><Card.Header><Card.Title>{title}</Card.Title></Card.Header><Card.Body>{content}</Card.Body></Card>",

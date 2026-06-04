@@ -3,11 +3,7 @@
   "name": "Input",
   "description": "Text input field for single-line user data entry",
   "category": "forms",
-  "tags": [
-    "form",
-    "input",
-    "text"
-  ],
+  "tags": ["form", "input", "text"],
   "status": "stable",
   "sourcePath": "src/components/Input/index.tsx",
   "exportName": "Input",
@@ -54,34 +50,21 @@
       "type": "string",
       "description": "Placeholder text shown when empty",
       "required": false,
-      "constraints": [
-        "Use for format hints only, not as a replacement for labels"
-      ]
+      "constraints": ["Use for format hints only, not as a replacement for labels"]
     },
     "type": {
       "type": "enum",
       "description": "HTML input type for validation and keyboard",
       "default": "text",
       "required": false,
-      "values": [
-        "number",
-        "text",
-        "email",
-        "password",
-        "tel",
-        "url"
-      ]
+      "values": ["number", "text", "email", "password", "tel", "url"]
     },
     "size": {
       "type": "enum",
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "disabled": {
       "type": "boolean",
@@ -129,7 +112,7 @@
     },
     "shortcut": {
       "type": "string",
-      "description": "Keyboard shortcut hint displayed inside the input",
+      "description": "Keyboard shortcut hint displayed as a visual kbd token inside the input",
       "required": false
     },
     "shortcutBehavior": {
@@ -137,10 +120,7 @@
       "description": "Whether shortcut hint is visual only or also registers a global focus hotkey",
       "default": "display-only",
       "required": false,
-      "values": [
-        "display-only",
-        "focus-input"
-      ]
+      "values": ["display-only", "focus-input"]
     },
     "onChange": {
       "type": "function",
@@ -217,6 +197,7 @@
       "Use appropriate input type for data validation",
       "Show validation errors with error prop and helperText",
       "Use placeholder for format hints, not labels",
+      "Use the shortcut prop for embedded keyboard hints instead of custom kbd markup around inputs",
       "Shortcut hints are display-only by default; set shortcutBehavior=\"focus-input\" to opt into global hotkey focusing"
     ],
     "accessibility": [
@@ -272,6 +253,11 @@
       "code": "<Input\n  label=\"Command Palette\"\n  placeholder=\"Search commands\"\n  shortcut=\"⌘K\"\n  shortcutBehavior=\"focus-input\"\n/>"
     },
     {
+      "name": "Search With Shortcut",
+      "description": "Search input with a leading icon and embedded kbd hint",
+      "code": "<Input\n  aria-label=\"Search findings\"\n  placeholder=\"Search findings...\"\n  shortcut=\"⌘K\"\n  shortcutBehavior=\"focus-input\"\n  startAdornment={<MagnifyingGlass aria-hidden=\"true\" />}\n  withFieldWrapper={false}\n/>"
+    },
+    {
       "name": "Success State",
       "description": "Input showing validated/success styling",
       "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  value=\"user@example.com\"\n  success\n  helperText=\"Email verified\"\n/>"
@@ -316,6 +302,7 @@
       "success: boolean - shows success/validated styling",
       "startAdornment: ReactNode - content before the input (icon or prefix)",
       "endAdornment: ReactNode - content after the input (icon or suffix)",
+      "shortcut: string - visual kbd hint inside the input; do not hand-roll extra kbd markup",
       "helperText: string - helper/error message",
       "onValueChange: (value: string) => void - value-first change callback alias",
       "rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props",
@@ -323,17 +310,11 @@
       "shortcutBehavior: display-only|focus-input (default: display-only)",
       "...native input attributes are supported (autoComplete, required, inputMode, pattern, etc.)"
     ],
-    "a11yRules": [
-      "A11Y_INPUT_LABEL",
-      "A11Y_INPUT_ERROR",
-      "A11Y_INPUT_REQUIRED"
-    ]
+    "a11yRules": ["A11Y_INPUT_LABEL", "A11Y_INPUT_ERROR", "A11Y_INPUT_REQUIRED"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

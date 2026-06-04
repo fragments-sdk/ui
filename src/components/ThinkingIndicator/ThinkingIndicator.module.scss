@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Thinking Indicator Root
@@ -94,14 +94,14 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   .stepIndicator {
-    color: var(--fui-color-success, $fui-color-success);
+    color: var(--fui-color-success-text, $fui-color-success-text);
   }
 }
 
 .stepError {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 
   .stepIndicator {
-    color: var(--fui-color-danger, $fui-color-danger);
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }

@@ -16,27 +16,20 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   --fui-sidebar-row-gap: 0.571rem;
   --fui-sidebar-row-padding-x: 0.571rem;
   --fui-sidebar-icon-size: var(--fui-icon-md, #{$fui-icon-md});
-  --fui-sidebar-muted: color-mix(
-    in srgb,
-    var(--fui-text-secondary, #{$fui-text-secondary}) 76%,
-    transparent
+  --fui-sidebar-muted: var(
+    --fui-sidebar-item-color,
+    var(--fui-text-secondary, #{$fui-text-secondary})
   );
-  --fui-sidebar-faint: color-mix(
-    in srgb,
-    var(--fui-text-tertiary, #{$fui-text-tertiary}) 82%,
-    transparent
+  --fui-sidebar-faint: var(
+    --fui-sidebar-item-icon-color,
+    var(--fui-text-tertiary, #{$fui-text-tertiary})
   );
-  --fui-sidebar-hover-bg: color-mix(
-    in srgb,
-    var(--fui-text-primary, #{$fui-text-primary}) 4%,
-    transparent
+  --fui-sidebar-hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+  --fui-sidebar-active-bg: var(
+    --fui-sidebar-item-active-bg,
+    var(--fui-bg-active, #{$fui-bg-active})
   );
-  --fui-sidebar-active-bg: color-mix(
-    in srgb,
-    var(--fui-color-accent, #{$fui-color-accent}) 10%,
-    transparent
-  );
-  --fui-sidebar-active-border: transparent;
+  --fui-sidebar-active-border: var(--fui-sidebar-item-active-border, transparent);
 
   position: relative;
   display: flex;
@@ -44,11 +37,9 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   width: var(--sidebar-width);
   height: 100%;
   max-height: 100vh;
-  background: color-mix(
-    in srgb,
-    var(--fui-bg-secondary, #{$fui-bg-secondary}) 18%,
-    var(--fui-bg-primary, #{$fui-bg-primary})
-  );
+  background: var(--fui-sidebar-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
+  border-inline-end: 1px solid
+    var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
   transition: width var(--fui-transition-normal, $fui-transition-normal);
   overflow: hidden;
   flex-shrink: 0;
@@ -60,6 +51,12 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
       transform: translateX(-100%);
     }
   }
+}
+
+.positionRight {
+  border-inline-start: 1px solid
+    var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
+  border-inline-end: 0;
 }
 
 .collapsed {
@@ -306,7 +303,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
   &:hover:not(.itemDisabled) {
     background-color: var(--fui-sidebar-hover-bg);
-    color: var(--fui-text-primary, $fui-text-primary);
+    color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
     text-decoration: none;
   }
 
@@ -320,7 +317,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .itemActive {
   background-color: var(--fui-sidebar-active-bg);
   border-color: var(--fui-sidebar-active-border);
-  color: var(--fui-text-primary, $fui-text-primary);
+  color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &::before {
@@ -331,14 +328,20 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
     bottom: 0.286rem;
     width: 2px;
     border-radius: 0 2px 2px 0;
-    background: var(--fui-color-accent, $fui-color-accent);
+    background: var(
+      --fui-sidebar-item-active-indicator,
+      var(--fui-color-accent, #{$fui-color-accent})
+    );
   }
 
   &:hover,
   &:active {
     background-color: var(--fui-sidebar-active-bg) !important;
     border-color: var(--fui-sidebar-active-border) !important;
-    color: var(--fui-text-primary, $fui-text-primary) !important;
+    color: var(
+      --fui-sidebar-item-active-color,
+      var(--fui-text-primary, #{$fui-text-primary})
+    ) !important;
     text-decoration: none;
   }
 
@@ -372,7 +375,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   }
 
   .itemActive & {
-    color: var(--fui-text-primary, $fui-text-primary);
+    color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
   }
 }
 
@@ -385,24 +388,12 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   padding-top: 0.071rem;
 }
 
-// accent-hover gives WCAG AA contrast (4.5:1) against on-accent text.
 .itemBadge {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-  color: var(--fui-color-on-accent, $fui-color-on-accent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  min-width: $fui-icon-lg;
-  line-height: 1;
-
-  .itemActive & {
-    background-color: var(--fui-bg-primary, $fui-bg-primary);
-    color: var(--fui-color-accent, $fui-color-accent);
-  }
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .itemChevron {
@@ -465,7 +456,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
   &:hover:not(.subItemDisabled) {
     background-color: var(--fui-sidebar-hover-bg);
-    color: var(--fui-text-primary, $fui-text-primary);
+    color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
     text-decoration: none;
   }
 
@@ -474,13 +465,15 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   }
 }
 
-// accent-hover for WCAG AA contrast.
 .subItemActive {
-  color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+  color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &::before {
-    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    background-color: var(
+      --fui-sidebar-item-active-indicator,
+      var(--fui-border-strong, #{$fui-border-strong})
+    );
   }
 }
 
@@ -492,7 +485,10 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   margin-top: auto;
   flex-shrink: 0;
   border-top: 1px solid
-    color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent);
+    var(
+      --fui-sidebar-footer-border,
+      color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent)
+    );
 }
 
 .trigger {
@@ -610,7 +606,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   &:hover::before,
   &:focus-visible::before {
     opacity: 1;
-    background-color: var(--fui-color-accent, $fui-color-accent);
+    background-color: var(--fui-border-strong, $fui-border-strong);
   }
 
   &:hover::before {
