@@ -184,12 +184,17 @@
   border-block-end: 1px solid var(--fui-border-subtle);
 }
 
+.prTable {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .prRowActions {
   display: flex;
   flex-wrap: nowrap;
   justify-content: flex-end;
   gap: var(--fui-space-1);
-  min-width: max-content;
+  min-width: 0;
 }
 
 @media (max-width: 1120px) {

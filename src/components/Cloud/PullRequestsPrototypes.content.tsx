@@ -1,4 +1,10 @@
-import { ArrowSquareOut, Check, GitPullRequest, MagnifyingGlass } from "@phosphor-icons/react";
+import {
+  ArrowSquareOut,
+  Check,
+  GithubLogo,
+  GitPullRequest,
+  MagnifyingGlass,
+} from "@phosphor-icons/react";
 import { Badge } from "../Badge";
 import { Box } from "../Box";
 import { Button } from "../Button";
@@ -187,7 +193,7 @@ const prColumns: DataTableColumn<PullRequest>[] = [
   {
     id: "actions",
     header: "Actions",
-    size: 160,
+    size: 96,
     align: "right",
     cell: (context) => {
       const row = context.row.original as PullRequest;
@@ -200,9 +206,10 @@ const prColumns: DataTableColumn<PullRequest>[] = [
             rel="noopener noreferrer"
             variant="outlined"
             size="xs"
+            icon
             aria-label={`View pull request ${row.number} on GitHub`}
           >
-            View on GitHub
+            <GithubLogo size={14} weight="fill" />
           </Button>
           <Button
             as="a"
@@ -323,6 +330,7 @@ function PullRequestTable({ density = "condensed" }: { density?: "condensed" | "
         bordered
         caption="Pull requests"
         captionHidden
+        wrapperClassName={styles.prTable}
       />
       <Stack direction="row" justify="between" align="center" gap="md" wrap>
         <Text size="xs" color="tertiary">
