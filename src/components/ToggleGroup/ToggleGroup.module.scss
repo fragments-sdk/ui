@@ -6,8 +6,11 @@
 // ============================================
 
 .group {
+  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+
   display: inline-flex;
-  align-items: center;
+  align-items: stretch;
+  min-height: var(--fui-toggle-group-height);
 }
 
 // Gap variants
@@ -94,7 +97,6 @@
 .item {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
 
   display: inline-flex;
   align-items: center;
@@ -125,24 +127,30 @@
 // ============================================
 
 .size-sm {
+  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+
   .item {
-    min-height: var(--fui-button-height-sm, $fui-button-height-sm);
+    min-height: var(--fui-toggle-group-height);
     padding: 0 var(--fui-space-2, $fui-space-2);
     font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   }
 }
 
 .size-md {
+  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+
   .item {
-    min-height: var(--fui-button-height-md, $fui-button-height-md);
+    min-height: var(--fui-toggle-group-height);
     padding: 0 var(--fui-space-3, $fui-space-3);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   }
 }
 
 .size-lg {
+  --fui-toggle-group-height: var(--fui-button-height-lg, #{$fui-button-height-lg});
+
   .item {
-    min-height: var(--fui-button-height-lg, $fui-button-height-lg);
+    min-height: var(--fui-toggle-group-height);
     padding: 0 var(--fui-space-4, $fui-space-4);
     font-size: var(--fui-font-size-base, $fui-font-size-base);
   }

@@ -18,8 +18,9 @@ $fui-theme-toggle-lg-icon: 18px !default;
 
 .toggleGroup {
   display: inline-flex;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-0-5, $fui-space-0-5);
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   border-radius: var(--fui-radius-md, $fui-radius-md);
 }
@@ -27,7 +28,6 @@ $fui-theme-toggle-lg-icon: 18px !default;
 .toggleButton {
   @include button-reset;
   @include interactive-base;
-  @include min-target-size;
 
   display: flex;
   align-items: center;

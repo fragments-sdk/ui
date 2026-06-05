@@ -168,7 +168,9 @@ $fui-bg-elevated: computed.$computed-bg-elevated !default;
 $fui-bg-subtle: computed.$computed-bg-subtle !default;
 $fui-bg-hover: computed.$computed-bg-hover !default;
 $fui-bg-active: computed.$computed-bg-active !default;
-$fui-body-bg: computed.$computed-body-bg !default;
+// The document canvas stays white in light mode. Component and app surfaces
+// continue to use the computed neutral palette.
+$fui-body-bg: #fff !default;
 $fui-main-bg: computed.$computed-main-bg !default;
 
 // Text colors (derived from $fui-neutral palette)
@@ -506,6 +508,14 @@ $fui-code-bg: #0c0c0e !default;
     --fui-border: light-dark(#{$fui-border}, #{$fui-dark-border});
     --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
+
+    // Native browser text selection. This should track the primary action blue,
+    // while component-selected states can stay tuned per control density.
+    --fui-selection-bg: light-dark(
+      color-mix(in srgb, var(--fui-button-primary-base, #0a84ff) 18%, transparent),
+      color-mix(in srgb, var(--fui-button-primary-base, #0a84ff) 32%, transparent)
+    );
+    --fui-selection-color: var(--fui-text-primary);
 
     // Form chrome (shared by Input, Textarea, Select, Combobox, DatePicker,
     // ColorPicker, Editor, and listbox-style controls).

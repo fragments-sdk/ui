@@ -11,10 +11,10 @@ $fui-code-tab-text-active: #e2e2e5 !default;
 $fui-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
 $fui-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
 $fui-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
-// Selection tint derived from the info accent (blue) instead of a raw rgba.
+// Selection tint derived from the primary action blue instead of semantic state colors.
 $fui-code-selection-bg: color-mix(
   in srgb,
-  var(--fui-color-info-text, #{$fui-color-info-text}) 30%,
+  var(--fui-button-primary-base, #0a84ff) 30%,
   transparent
 ) !default;
 $fui-code-scrollbar-track: transparent !default;

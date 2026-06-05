@@ -1,11 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { PrototypeShell } from "./DashboardLayoutPrototypes.shared";
-import {
-  PrototypeActions,
-  PullRequestDetailActions,
-  PullRequestInbox,
-  PullRequestReviewSurface,
-} from "./PullRequestsPrototypes.content";
+import { PrototypeActions, PullRequestInbox } from "./PullRequestsPrototypes.content";
+import { PullRequestDecisionActions, PullRequestDetail } from "./PullRequestsPrototypes.detail";
+import { PullRequestIdPage } from "./PullRequestsPrototypes.id-page";
 
 const meta = {
   title: "Cloud/Prototypes/Pull Requests",
@@ -58,13 +55,27 @@ export const Layout3PullRequestDetail: Story = {
   render: () => (
     <PrototypeShell
       activeNav="Pull Requests"
+      eyebrow="Pull request #248 · feat/launch-pages"
+      title="Refresh marketing campaign cards"
+      description="Review every Fragments finding, the merge gate, and design impact before you merge."
+      actions={<PullRequestDecisionActions />}
+    >
+      <PullRequestDetail />
+    </PrototypeShell>
+  ),
+};
+
+export const Layout4PullRequestIdPage: Story = {
+  name: "Layout 4 · Pull request id page",
+  render: () => (
+    <PrototypeShell
+      activeNav="Pull Requests"
       eyebrow="PR #248"
       title="Pull Request"
-      description="Review Fragments comments, violations, and drift evidence before opening or updating the raw GitHub PR."
+      description="Review GitHub checks, Fragments comments, and design impact before the merge decision."
       actions={<PrototypeActions />}
     >
-      <PullRequestReviewSurface />
-      <PullRequestDetailActions />
+      <PullRequestIdPage />
     </PrototypeShell>
   ),
 };
