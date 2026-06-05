@@ -31,7 +31,7 @@
 .itemWrapper {
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-space-1, $fui-space-1);
   cursor: pointer;
   font-family: var(--fui-font-sans, $fui-font-sans);
 
@@ -48,10 +48,13 @@
 // The radio circle
 .radio {
   @include interactive-base;
-  @include touch-target;
 
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  box-sizing: border-box;
   width: var(--fui-icon-sm, $fui-icon-sm);
   height: var(--fui-icon-sm, $fui-icon-sm);
   margin-top: 0;
@@ -65,18 +68,37 @@
   }
 
   &[data-checked] {
-    background-color: var(--fui-field-selection-bg, $fui-bg-hover);
-    border-color: var(--fui-field-selection-border, $fui-color-accent);
-    box-shadow: inset 0 0 0 1px var(--fui-field-selection-border, $fui-color-accent);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-button-primary-base, #{$fui-color-accent}) 8%,
+      var(--fui-field-bg, #{$fui-bg-elevated})
+    );
+    border-color: var(--fui-button-primary-base, $fui-color-accent);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--fui-button-primary-base, #{$fui-color-accent}) 55%, transparent);
   }
 
   &[data-checked]:hover:not([data-disabled]) {
-    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    border-color: var(--fui-field-selection-border, $fui-color-accent);
+    background-color: color-mix(
+      in srgb,
+      var(--fui-button-primary-hover, #{$fui-color-accent}) 12%,
+      var(--fui-field-bg, #{$fui-bg-elevated})
+    );
+    border-color: var(--fui-button-primary-hover, $fui-color-accent);
   }
 
   &[data-invalid] {
     border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--fui-target-size-min, $fui-target-size-min);
+    height: var(--fui-target-size-min, $fui-target-size-min);
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -96,9 +118,9 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0.75rem;
-  height: 0.75rem;
-  background-color: var(--fui-color-accent, $fui-color-accent);
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--fui-button-primary-base, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 
   // Animation - use translate for centering combined with scale
@@ -194,19 +216,23 @@
   }
 
   &:focus-within:not([data-disabled]) {
-    border-color: var(--fui-color-accent, $fui-color-accent);
+    border-color: var(--fui-button-primary-base, $fui-color-accent);
     @include focus-ring;
   }
 
   &:has([data-checked]) {
-    background: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 13%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--fui-button-primary-base, #{$fui-color-accent}) 13%,
+      transparent
+    );
     border-color: color-mix(
       in srgb,
-      var(--fui-color-accent, #{$fui-color-accent}) 62%,
+      var(--fui-button-primary-base, #{$fui-color-accent}) 62%,
       transparent
     );
     box-shadow: 0 0 0 1px
-      color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 28%, transparent);
+      color-mix(in srgb, var(--fui-button-primary-base, #{$fui-color-accent}) 28%, transparent);
   }
 
   // Inline with the input field convention rather than the lifted card
@@ -226,7 +252,7 @@
     border-color: var(--fui-text-primary, $fui-text-primary);
 
     &[data-checked] {
-      border-color: var(--fui-color-accent, $fui-color-accent);
+      border-color: var(--fui-button-primary-base, $fui-color-accent);
     }
 
     &[data-invalid] {

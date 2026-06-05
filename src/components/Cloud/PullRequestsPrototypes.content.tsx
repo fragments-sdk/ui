@@ -1,10 +1,4 @@
-import {
-  ArrowSquareOut,
-  Check,
-  GithubLogo,
-  GitPullRequest,
-  MagnifyingGlass,
-} from "@phosphor-icons/react";
+import { GithubLogo, MagnifyingGlass } from "@phosphor-icons/react";
 import { Badge } from "../Badge";
 import { Box } from "../Box";
 import { Button } from "../Button";
@@ -13,7 +7,6 @@ import { Input } from "../Input";
 import { Pagination } from "../Pagination";
 import { Select } from "../Select";
 import { Stack } from "../Stack";
-import { Tabs } from "../Tabs";
 import { Text } from "../Text";
 import type { StateVariant } from "./DashboardLayoutPrototypes.shared";
 import styles from "./DashboardLayoutPrototypes.module.scss";
@@ -33,15 +26,6 @@ type PullRequest = {
   comments: number;
   updated: string;
   gate: GateState;
-  variant: StateVariant;
-};
-
-type ReviewComment = {
-  file: string;
-  line: string;
-  comment: string;
-  area: string;
-  status: string;
   variant: StateVariant;
 };
 
@@ -123,36 +107,6 @@ const pullRequests: PullRequest[] = [
   },
 ];
 
-const reviewComments: ReviewComment[] = [
-  {
-    file: "src/routes/(marketing)/launch/Hero.tsx",
-    line: "42",
-    comment:
-      "Replace the raw danger background with the semantic danger token so badges, buttons, and alerts stay aligned.",
-    area: "Marketing",
-    status: "Blocking",
-    variant: "error",
-  },
-  {
-    file: "src/routes/(marketing)/launch/Form.tsx",
-    line: "88",
-    comment:
-      "This native button bypasses Button loading, disabled, focus, and variant behavior. Use the Button contract.",
-    area: "Marketing",
-    status: "Safe fix",
-    variant: "warning",
-  },
-  {
-    file: "src/components/campaign/CardGrid.tsx",
-    line: "31",
-    comment:
-      "Spacing is off scale. Use a Fragments spacing token so the marketing surface matches the rest of Cloud.",
-    area: "Marketing",
-    status: "Review",
-    variant: "info",
-  },
-];
-
 const prColumns: DataTableColumn<PullRequest>[] = [
   {
     id: "pull-request",
@@ -221,33 +175,6 @@ const prColumns: DataTableColumn<PullRequest>[] = [
             Open
           </Button>
         </Box>
-      );
-    },
-  },
-];
-
-const commentColumns: DataTableColumn<ReviewComment>[] = [
-  { accessorKey: "comment", header: "Comment", minSize: 360, truncate: true },
-  {
-    id: "evidence",
-    header: "Evidence",
-    minSize: 260,
-    cell: (context) => {
-      const row = context.row.original as ReviewComment;
-      return `${row.file}:${row.line}`;
-    },
-  },
-  { accessorKey: "area", header: "Area", size: 120 },
-  {
-    accessorKey: "status",
-    header: "Status",
-    size: 112,
-    cell: (context) => {
-      const row = context.row.original as ReviewComment;
-      return (
-        <Badge variant={row.variant} size="sm">
-          {row.status}
-        </Badge>
       );
     },
   },
@@ -351,123 +278,6 @@ export function PullRequestInbox({ density = "condensed" }: { density?: "condens
     <Stack gap="md">
       <PullRequestFilters />
       <PullRequestTable density={density} />
-    </Stack>
-  );
-}
-
-function DetailSummary() {
-  const pr = pullRequests[0];
-
-  return (
-    <Box className={styles.prDetailSummary}>
-      <Stack direction={{ base: "column", md: "row" }} justify="between" gap="md">
-        <Stack gap="xs" className={styles.minWidthZero}>
-          <Stack direction="row" align="center" gap="sm" wrap>
-            <Badge variant={pr.variant} size="sm">
-              {pr.gate}
-            </Badge>
-            <Text size="xs" color="tertiary">
-              #{pr.number} · {pr.branch} · {pr.author}
-            </Text>
-          </Stack>
-          <Text size="lg" weight="semibold">
-            {pr.title}
-          </Text>
-          <Text size="sm" color="secondary">
-            Marketing coverage drops by {pr.coverageDelta.replace("-", "")}. Fragments found{" "}
-            {pr.blocking} blocking comments and {pr.safeFixes} safe fixes.
-          </Text>
-        </Stack>
-        <Stack direction="row" align="center" gap="sm" wrap>
-          <Button variant="primary" size="sm">
-            Create fix PR
-          </Button>
-          <Button variant="outlined" size="sm">
-            Post comments
-          </Button>
-          <Button
-            as="a"
-            href="https://github.com/fragments-sdk/fragments/pull/248"
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="outlined"
-            size="sm"
-          >
-            <ArrowSquareOut size={14} />
-            View on GitHub
-          </Button>
-        </Stack>
-      </Stack>
-    </Box>
-  );
-}
-
-export function PullRequestReviewSurface() {
-  return (
-    <Stack gap="md">
-      <DetailSummary />
-      <Tabs defaultValue="comments" variant="pills">
-        <Tabs.List>
-          <Tabs.Tab value="comments">Comments 8</Tabs.Tab>
-          <Tabs.Tab value="violations">Violations 11</Tabs.Tab>
-          <Tabs.Tab value="diff">Changed files 6</Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value="comments" flush>
-          <DataTable
-            columns={commentColumns}
-            data={reviewComments}
-            getRowId={(row) => `${row.file}:${row.line}`}
-            density="condensed"
-            bordered
-            caption="Fragments pull request comments"
-            captionHidden
-          />
-        </Tabs.Panel>
-        <Tabs.Panel value="violations" flush>
-          <DataTable
-            columns={commentColumns}
-            data={reviewComments}
-            getRowId={(row) => `${row.file}:${row.line}`}
-            density="condensed"
-            bordered
-            caption="Fragments pull request violations"
-            captionHidden
-          />
-        </Tabs.Panel>
-        <Tabs.Panel value="diff" flush>
-          <DataTable
-            columns={commentColumns}
-            data={reviewComments}
-            getRowId={(row) => `${row.file}:${row.line}`}
-            density="condensed"
-            bordered
-            caption="Fragments pull request changed files"
-            captionHidden
-          />
-        </Tabs.Panel>
-      </Tabs>
-    </Stack>
-  );
-}
-
-export function PullRequestDetailActions() {
-  return (
-    <Stack direction="row" align="center" gap="sm" wrap>
-      <Button variant="primary" size="sm">
-        <Check size={14} weight="bold" />
-        Approve after fixes
-      </Button>
-      <Button
-        as="a"
-        href="https://github.com/fragments-sdk/fragments/pull/248"
-        target="_blank"
-        rel="noopener noreferrer"
-        variant="outlined"
-        size="sm"
-      >
-        <GitPullRequest size={14} />
-        View on GitHub
-      </Button>
     </Stack>
   );
 }
