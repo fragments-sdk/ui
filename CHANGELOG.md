@@ -1,5 +1,12 @@
 # @fragments-sdk/ui
 
+## 0.21.1
+
+### Patch Changes
+
+- [#145](https://github.com/fragments-sdk/fragments/pull/145) [`8bde5c6`](https://github.com/fragments-sdk/fragments/commit/8bde5c67bdf7f9ef842f594784fd8bc543f97494) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix `NavigationMenu` click toggling so a pending hover-open timer cannot reopen
+  content after the user clicks an open trigger to close it.
+
 ## 0.21.0
 
 ### Minor Changes
