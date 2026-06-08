@@ -37,7 +37,11 @@ function renderBasicMenu(props: Record<string, unknown> = {}) {
           <NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>
           <NavigationMenu.Content>
             <NavigationMenu.Link href="/docs" title="Documentation" description="Start building." />
-            <NavigationMenu.Link href="/tutorials" title="Tutorials" description="Step-by-step guides." />
+            <NavigationMenu.Link
+              href="/tutorials"
+              title="Tutorials"
+              description="Step-by-step guides."
+            />
           </NavigationMenu.Content>
         </NavigationMenu.Item>
         <NavigationMenu.Item value="community">
@@ -138,6 +142,28 @@ describe('NavigationMenu', () => {
       await waitFor(() => {
         expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
       });
+    });
+
+    it('does not reopen after a close click with a pending hover timer', () => {
+      vi.useFakeTimers();
+      try {
+        renderBasicMenu({ delayDuration: 50 });
+        const trigger = screen.getByText('Learn');
+
+        fireEvent.click(trigger);
+        expect(screen.getByText('Documentation')).toBeInTheDocument();
+
+        fireEvent.pointerEnter(trigger);
+        fireEvent.click(trigger);
+        expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+
+        act(() => {
+          vi.advanceTimersByTime(50);
+        });
+        expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('shows content panel with structured links', async () => {
@@ -325,7 +351,9 @@ describe('NavigationMenu', () => {
         <NavigationMenu>
           <NavigationMenu.List>
             <NavigationMenu.Item>
-              <NavigationMenu.Link href="/blog" active>Blog</NavigationMenu.Link>
+              <NavigationMenu.Link href="/blog" active>
+                Blog
+              </NavigationMenu.Link>
             </NavigationMenu.Item>
           </NavigationMenu.List>
         </NavigationMenu>
@@ -341,7 +369,12 @@ describe('NavigationMenu', () => {
             <NavigationMenu.Item value="test">
               <NavigationMenu.Trigger>Test</NavigationMenu.Trigger>
               <NavigationMenu.Content>
-                <NavigationMenu.Link href="/featured" title="Featured" description="Special item" featured />
+                <NavigationMenu.Link
+                  href="/featured"
+                  title="Featured"
+                  description="Special item"
+                  featured
+                />
               </NavigationMenu.Content>
             </NavigationMenu.Item>
           </NavigationMenu.List>
@@ -360,7 +393,9 @@ describe('NavigationMenu', () => {
           <NavigationMenu.List>
             <NavigationMenu.Item>
               <NavigationMenu.Link href="/blog" asChild>
-                <a href="/blog" data-testid="custom-link">Blog</a>
+                <a href="/blog" data-testid="custom-link">
+                  Blog
+                </a>
               </NavigationMenu.Link>
             </NavigationMenu.Item>
           </NavigationMenu.List>
@@ -379,7 +414,9 @@ describe('NavigationMenu', () => {
           <NavigationMenu.List>
             <NavigationMenu.Item>
               <NavigationMenu.Link href="/blog" asChild onClick={() => {}}>
-                <a href="/blog" onClick={childClick}>Blog</a>
+                <a href="/blog" onClick={childClick}>
+                  Blog
+                </a>
               </NavigationMenu.Link>
             </NavigationMenu.Item>
           </NavigationMenu.List>

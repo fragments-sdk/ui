@@ -63,7 +63,10 @@ export interface NavigationMenuContentProps {
   className?: string;
 }
 
-export interface NavigationMenuLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'title'> {
+export interface NavigationMenuLinkProps extends Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  'title'
+> {
   /** Simple mode: children as text content */
   children?: React.ReactNode;
   /** Structured mode: title (string or ReactNode) */
@@ -82,7 +85,7 @@ export interface NavigationMenuLinkProps extends Omit<React.AnchorHTMLAttributes
 
 function composeNavMenuClickHandlers(
   childHandler: React.MouseEventHandler<HTMLElement> | undefined,
-  internalHandler: React.MouseEventHandler<HTMLAnchorElement>,
+  internalHandler: React.MouseEventHandler<HTMLAnchorElement>
 ): React.MouseEventHandler<HTMLElement> {
   return (event) => {
     childHandler?.(event);
@@ -136,7 +139,7 @@ function useIsMobile() {
 
 function renderNavigationMenuIcon(
   slot: NavigationMenuIconSlot | undefined,
-  state: NavigationMenuIconRenderState,
+  state: NavigationMenuIconRenderState
 ): React.ReactNode {
   if (slot === undefined) return undefined;
   return typeof slot === 'function' ? slot(state) : slot;
@@ -170,11 +173,9 @@ function NavigationMenuRoot({
     skipDelayDuration,
   });
 
-  const classes = [
-    styles.root,
-    orientation === 'vertical' && styles.rootVertical,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.root, orientation === 'vertical' && styles.rootVertical, className]
+    .filter(Boolean)
+    .join(' ');
 
   const contextValue = React.useMemo(
     () => ({
@@ -209,7 +210,9 @@ function NavigationMenuList({ children, className }: NavigationMenuListProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const order = triggerOrder.current;
-    const focusedValue = (document.activeElement as HTMLElement | null)?.getAttribute('data-navmenu-value');
+    const focusedValue = (document.activeElement as HTMLElement | null)?.getAttribute(
+      'data-navmenu-value'
+    );
     const currentValue = focusedValue || value;
     const currentIdx = order.indexOf(currentValue);
 
@@ -225,11 +228,9 @@ function NavigationMenuList({ children, className }: NavigationMenuListProps) {
     }
   };
 
-  const classes = [
-    styles.list,
-    orientation === 'vertical' && styles.listVertical,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.list, orientation === 'vertical' && styles.listVertical, className]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <ul
@@ -270,7 +271,7 @@ function NavigationMenuItem({ children, value: valueProp, className }: Navigatio
     }
 
     return () => {
-      rootCtx.itemOrder.current = rootCtx.itemOrder.current.filter(v => v !== autoValue);
+      rootCtx.itemOrder.current = rootCtx.itemOrder.current.filter((v) => v !== autoValue);
       rootCtx.itemInfoMap.current.delete(autoValue);
     };
   }, [autoValue, rootCtx.itemInfoMap, rootCtx.itemOrder]);
@@ -312,7 +313,7 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
     }
     return () => {
       ctx.triggerRefs.current.delete(itemCtx.value);
-      ctx.triggerOrder.current = ctx.triggerOrder.current.filter(v => v !== itemCtx.value);
+      ctx.triggerOrder.current = ctx.triggerOrder.current.filter((v) => v !== itemCtx.value);
     };
     // Only register/unregister on mount/unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -331,6 +332,14 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
   }, [itemCtx.value, children]);
 
   const handleClick = () => {
+    if (ctx.openTimerRef.current) {
+      clearTimeout(ctx.openTimerRef.current);
+      ctx.openTimerRef.current = null;
+    }
+    if (ctx.closeTimerRef.current) {
+      clearTimeout(ctx.closeTimerRef.current);
+      ctx.closeTimerRef.current = null;
+    }
     ctx.setValue(isOpen ? '' : itemCtx.value);
   };
 
@@ -397,9 +406,13 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
       onKeyDown={handleKeyDown}
     >
       {children}
-      {chevronOverride
-        ? <span className={styles.triggerChevron} aria-hidden>{chevronOverride}</span>
-        : <CaretDown size={12} className={styles.triggerChevron} aria-hidden />}
+      {chevronOverride ? (
+        <span className={styles.triggerChevron} aria-hidden>
+          {chevronOverride}
+        </span>
+      ) : (
+        <CaretDown size={12} className={styles.triggerChevron} aria-hidden />
+      )}
     </button>
   );
 }
@@ -577,7 +590,9 @@ function NavigationMenuLink({
       active && styles.linkActive,
       featured && styles.linkFeatured,
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const linkProps = {
       ...htmlProps,
@@ -620,11 +635,7 @@ function NavigationMenuLink({
   }
 
   // Simple link mode
-  const classes = [
-    styles.link,
-    active && styles.linkActive,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.link, active && styles.linkActive, className].filter(Boolean).join(' ');
 
   const linkProps = {
     ...htmlProps,
@@ -801,7 +812,7 @@ function MobileHamburger() {
       slot: mobileOpen ? 'mobileClose' : 'mobileMenu',
       open: mobileOpen,
       isMobile: true,
-    },
+    }
   );
 
   return (
@@ -859,11 +870,7 @@ function MobileDrawer() {
 
   const drawerContent = (
     <>
-      <div
-        className={styles.drawerBackdrop}
-        onClick={() => ctx.setMobileOpen(false)}
-        aria-hidden
-      />
+      <div className={styles.drawerBackdrop} onClick={() => ctx.setMobileOpen(false)} aria-hidden />
       <div
         ref={drawerRef}
         className={styles.drawer}
@@ -939,14 +946,14 @@ function MobileCollapsibleSection({
 }) {
   return (
     <Collapsible defaultOpen={false}>
-      <Collapsible.Trigger className={styles.drawerCollapsibleTrigger}>
-        {label}
-      </Collapsible.Trigger>
+      <Collapsible.Trigger className={styles.drawerCollapsibleTrigger}>{label}</Collapsible.Trigger>
       <Collapsible.Content>
         <div
           className={styles.drawerCollapsibleContent}
           onClick={onLinkClick}
-          onKeyDown={(e) => { if (e.key === 'Enter') onLinkClick(); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onLinkClick();
+          }}
           role="group"
         >
           {children}
