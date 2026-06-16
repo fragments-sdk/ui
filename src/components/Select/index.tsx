@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Select as BaseSelect } from "@base-ui/react/select";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
 import styles from "./Select.module.scss";
 
@@ -192,11 +193,12 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     label,
     helperText,
     error,
-    size = "md",
+    size: sizeProp,
     className,
   }: SelectProps,
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   // Track current value for controlled and uncontrolled modes
   const [internalValue, setInternalValue] = React.useState<SelectValue | null | undefined>(
     value ?? defaultValue ?? null

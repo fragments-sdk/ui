@@ -1,6 +1,11 @@
 "use client";
 
 import * as React from "react";
+import {
+  ComponentDefaultsProvider,
+  useResolvedControlSize,
+  type ComponentDefaults,
+} from "../ComponentDefaults";
 import styles from "./ThemeToggle.module.scss";
 
 // ============================================
@@ -11,6 +16,8 @@ export type ThemeMode = "light" | "dark" | "system";
 
 export interface ThemeProviderProps {
   children: React.ReactNode;
+  /** Default primitive component behavior for the subtree. */
+  componentDefaults?: ComponentDefaults;
   /** Default theme mode for uncontrolled usage */
   defaultMode?: ThemeMode;
   /**
@@ -174,6 +181,7 @@ function MonitorIcon({ size = 20 }: { size?: number }) {
  */
 function ThemeProvider({
   children,
+  componentDefaults,
   defaultMode,
   defaultTheme,
   mode: controlledMode,
@@ -262,7 +270,19 @@ function ThemeProvider({
     toggleMode,
   };
 
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
+  const themedChildren = (
+    <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
+  );
+
+  if (!componentDefaults) {
+    return themedChildren;
+  }
+
+  return (
+    <ComponentDefaultsProvider value={componentDefaults}>
+      {themedChildren}
+    </ComponentDefaultsProvider>
+  );
 }
 
 /**
@@ -273,7 +293,7 @@ function ThemeProvider({
  * 2. Controlled: Pass `value` and `onValueChange` props for custom behavior
  */
 function ThemeToggle({
-  size = "md",
+  size: sizeProp,
   showSystem = false,
   value: controlledValue,
   onValueChange,
@@ -281,6 +301,7 @@ function ThemeToggle({
   className,
   ...htmlProps
 }: ThemeToggleProps) {
+  const size = useResolvedControlSize(sizeProp);
   const { mode: contextMode, setMode: setContextMode } = useTheme();
 
   // Use controlled value if provided, otherwise use context

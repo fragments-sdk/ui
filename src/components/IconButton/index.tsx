@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./IconButton.module.scss";
 
 /**
@@ -45,7 +46,7 @@ const IconButtonRoot = React.forwardRef<HTMLButtonElement, IconButtonProps>(func
   {
     children,
     variant = "ghost",
-    size = "md",
+    size: sizeProp,
     pressed,
     className,
     "aria-label": ariaLabel,
@@ -61,6 +62,7 @@ const IconButtonRoot = React.forwardRef<HTMLButtonElement, IconButtonProps>(func
     );
   }
 
+  const size = useResolvedControlSize(sizeProp);
   const classes = [
     styles.iconButton,
     styles[size],

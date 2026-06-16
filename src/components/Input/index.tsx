@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Field } from "@base-ui/react/field";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds } from "../../utils/aria";
 import styles from "./Input.module.scss";
 
@@ -101,7 +102,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
     defaultValue,
     placeholder,
     type = "text",
-    size = "md",
+    size: sizeProp,
     disabled = false,
     error = false,
     success = false,
@@ -127,6 +128,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   const generatedId = React.useId();
   const helperId = helperText ? `input-helper-${generatedId}` : undefined;
   const {

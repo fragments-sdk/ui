@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui/react/popover";
 import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./DatePicker.module.scss";
 
 // ============================================
@@ -293,7 +294,7 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
     onRangeSelect,
     numberOfMonths = 1,
     disabled = false,
-    size = "md",
+    size: sizeProp,
     disabledDates,
     placeholder,
     locale,
@@ -306,6 +307,7 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
   }: DatePickerProps,
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   // Load deps eagerly so date formatters are available in the trigger
   loadDatePickerDeps();
   const [internalSelected, setInternalSelected] = React.useState<Date | null>(selectedProp ?? null);

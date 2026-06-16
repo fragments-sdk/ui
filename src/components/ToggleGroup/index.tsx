@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './ToggleGroup.module.scss';
+import * as React from "react";
+import { useResolvedControlSize } from "../ComponentDefaults";
+import styles from "./ToggleGroup.module.scss";
 
 // ============================================
 // Types
@@ -11,7 +12,7 @@ import styles from './ToggleGroup.module.scss';
  * A group of toggle buttons where only one can be selected at a time.
  * @see https://usefragments.com/components/togglegroup
  */
-export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
   /** Current selected value */
   value?: string;
   /** Default selected value (uncontrolled) */
@@ -25,18 +26,21 @@ export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Visual variant.
    * @default "default"
    * @see https://usefragments.com/components/togglegroup#variants */
-  variant?: 'default' | 'pills' | 'outline' | 'outlined';
+  variant?: "default" | "pills" | "outline" | "outlined";
   /** Size.
    * @default "md" */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Gap between items (for pills/outline variants) */
-  gap?: 'none' | 'xs' | 'sm';
+  gap?: "none" | "xs" | "sm";
   /** Selection mode for this control. Currently only single-select is supported.
    * @default "single" */
-  selectionMode?: 'single';
+  selectionMode?: "single";
 }
 
-export interface ToggleGroupItemProps extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'onClick'> {
+export interface ToggleGroupItemProps extends Omit<
+  React.HTMLAttributes<HTMLButtonElement>,
+  "onClick"
+> {
   /** Value for this item */
   value: string;
   /** Item content */
@@ -52,20 +56,18 @@ export interface ToggleGroupItemProps extends Omit<React.HTMLAttributes<HTMLButt
 interface ToggleGroupContextValue {
   value: string;
   onChange: (value: string) => void;
-  variant: 'default' | 'pills' | 'outline';
-  size: 'sm' | 'md' | 'lg';
+  variant: "default" | "pills" | "outline";
+  size: "sm" | "md" | "lg";
   hasFocusableSelection: boolean;
   firstEnabledValue: string | null;
 }
 
-const ToggleGroupContext = React.createContext<ToggleGroupContextValue | null>(
-  null
-);
+const ToggleGroupContext = React.createContext<ToggleGroupContextValue | null>(null);
 
 function useToggleGroupContext() {
   const context = React.useContext(ToggleGroupContext);
   if (!context) {
-    throw new Error('ToggleGroup.Item must be used within a ToggleGroup');
+    throw new Error("ToggleGroup.Item must be used within a ToggleGroup");
   }
   return context;
 }
@@ -80,32 +82,36 @@ function ToggleGroupRoot({
   onChange,
   onValueChange,
   children,
-  variant = 'default',
-  size = 'md',
-  gap = 'xs',
-  selectionMode = 'single',
+  variant = "default",
+  size: sizeProp,
+  gap = "xs",
+  selectionMode = "single",
   className,
   ...htmlProps
 }: ToggleGroupProps) {
-  const normalizedVariant = variant === 'outlined' ? 'outline' : variant;
-  const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
+  const size = useResolvedControlSize(sizeProp);
+  const normalizedVariant = variant === "outlined" ? "outline" : variant;
+  const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
   const isControlled = value !== undefined;
-  const currentValue = isControlled ? value ?? '' : internalValue;
-  const emitChange = React.useCallback((nextValue: string) => {
-    if (!isControlled) {
-      setInternalValue(nextValue);
-    }
-    (onChange ?? onValueChange)?.(nextValue);
-  }, [isControlled, onChange, onValueChange]);
+  const currentValue = isControlled ? (value ?? "") : internalValue;
+  const emitChange = React.useCallback(
+    (nextValue: string) => {
+      if (!isControlled) {
+        setInternalValue(nextValue);
+      }
+      (onChange ?? onValueChange)?.(nextValue);
+    },
+    [isControlled, onChange, onValueChange]
+  );
   const classes = [
     styles.group,
     styles[normalizedVariant],
     styles[`size-${size}`],
-    gap !== 'none' && styles[`gap-${gap}`],
+    gap !== "none" && styles[`gap-${gap}`],
     className,
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   const childItems = React.Children.toArray(children).filter(
     (child): child is React.ReactElement<ToggleGroupItemProps> =>
@@ -129,7 +135,7 @@ function ToggleGroupRoot({
     <ToggleGroupContext.Provider value={contextValue}>
       <div
         {...htmlProps}
-        role={selectionMode === 'single' ? 'radiogroup' : 'radiogroup'}
+        role={selectionMode === "single" ? "radiogroup" : "radiogroup"}
         className={classes}
       >
         {children}
@@ -149,7 +155,8 @@ function ToggleGroupItem({
   const context = useToggleGroupContext();
   const isSelected = context.value === value;
   const isTabbableSelected = isSelected && !disabled;
-  const isFirstFallback = !context.hasFocusableSelection && !disabled && context.firstEnabledValue === value;
+  const isFirstFallback =
+    !context.hasFocusableSelection && !disabled && context.firstEnabledValue === value;
 
   const classes = [
     styles.item,
@@ -158,7 +165,7 @@ function ToggleGroupItem({
     className,
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   const handleClick = () => {
     if (!disabled) {
@@ -174,12 +181,12 @@ function ToggleGroupItem({
 
     const key = event.key;
     const supportsRoving =
-      key === 'ArrowRight' ||
-      key === 'ArrowDown' ||
-      key === 'ArrowLeft' ||
-      key === 'ArrowUp' ||
-      key === 'Home' ||
-      key === 'End';
+      key === "ArrowRight" ||
+      key === "ArrowDown" ||
+      key === "ArrowLeft" ||
+      key === "ArrowUp" ||
+      key === "Home" ||
+      key === "End";
 
     if (!supportsRoving) return;
 
@@ -198,13 +205,13 @@ function ToggleGroupItem({
     const fallbackIndex = currentIndex >= 0 ? currentIndex : 0;
     let nextIndex = fallbackIndex;
 
-    if (key === 'ArrowRight' || key === 'ArrowDown') {
+    if (key === "ArrowRight" || key === "ArrowDown") {
       nextIndex = (fallbackIndex + 1) % radios.length;
-    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+    } else if (key === "ArrowLeft" || key === "ArrowUp") {
       nextIndex = (fallbackIndex - 1 + radios.length) % radios.length;
-    } else if (key === 'Home') {
+    } else if (key === "Home") {
       nextIndex = 0;
-    } else if (key === 'End') {
+    } else if (key === "End") {
       nextIndex = radios.length - 1;
     }
 

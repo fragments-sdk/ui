@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { ComponentDefaultsProvider } from "../ComponentDefaults";
 import { Input } from "./index";
 
 describe("Input", () => {
@@ -50,6 +51,28 @@ describe("Input", () => {
     render(<Input aria-label="Name" size="sm" />);
     const input = screen.getByRole("textbox");
     expect(input.className).toContain("sm");
+  });
+
+  it("uses the provider control size when size is omitted", () => {
+    render(
+      <ComponentDefaultsProvider controlSize="sm">
+        <Input aria-label="Name" />
+      </ComponentDefaultsProvider>
+    );
+    const input = screen.getByRole("textbox");
+    expect(input.className).toContain("sm");
+    expect(input.className).not.toContain("md");
+  });
+
+  it("keeps explicit size over the provider control size", () => {
+    render(
+      <ComponentDefaultsProvider controlSize="sm">
+        <Input aria-label="Name" size="lg" />
+      </ComponentDefaultsProvider>
+    );
+    const input = screen.getByRole("textbox");
+    expect(input.className).toContain("lg");
+    expect(input.className).not.toContain("sm");
   });
 
   it("forwards ref to the input element", () => {

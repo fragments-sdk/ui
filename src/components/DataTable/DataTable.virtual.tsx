@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
+import { Table, type TableProps } from "../Table";
 
 // ============================================
 // Dependency (@tanstack/react-virtual)
@@ -56,6 +57,56 @@ export interface UseTableVirtualizerResult<TItem> {
   virtualizer: Virtualizer<HTMLElement, Element>;
 }
 
+export interface DataTableVirtualProps<TItem> extends Omit<TableProps, "children"> {
+  caption?: React.ReactNode;
+  captionHidden?: boolean;
+  header: React.ReactNode;
+  virtualRows: VirtualTableRow<TItem>[];
+  paddingTop: number;
+  paddingBottom: number;
+  colSpan: number;
+  renderRow: (row: VirtualTableRow<TItem>) => React.ReactNode;
+}
+
+function DataTableVirtualRoot<TItem>({
+  caption,
+  captionHidden = false,
+  header,
+  virtualRows,
+  paddingTop,
+  paddingBottom,
+  colSpan,
+  renderRow,
+  ...tableProps
+}: DataTableVirtualProps<TItem>) {
+  return (
+    <Table {...tableProps}>
+      {caption ? <Table.Caption visuallyHidden={captionHidden}>{caption}</Table.Caption> : null}
+      <Table.Head>{header}</Table.Head>
+      <Table.Body>
+        {paddingTop > 0 ? (
+          <tr aria-hidden="true">
+            <td colSpan={colSpan} style={{ height: paddingTop, padding: 0 }} />
+          </tr>
+        ) : null}
+        {virtualRows.map((row) => renderRow(row))}
+        {paddingBottom > 0 ? (
+          <tr aria-hidden="true">
+            <td colSpan={colSpan} style={{ height: paddingBottom, padding: 0, border: 0 }} />
+          </tr>
+        ) : null}
+      </Table.Body>
+    </Table>
+  );
+}
+
+export const DataTableVirtual = Object.assign(DataTableVirtualRoot, {
+  Root: DataTableVirtualRoot,
+  Row: Table.Row,
+  Cell: Table.Cell,
+  HeaderCell: Table.HeaderCell,
+});
+
 /**
  * Table-flavored wrapper over `@tanstack/react-virtual`. Encapsulates the
  * windowing conventions a virtualized table needs — estimate-by-item, dynamic
@@ -103,9 +154,7 @@ export function useTableVirtualizer<TItem>({
     getScrollElement,
     estimateSize: (index) => estimateSize(itemsRef.current[index]!, index),
     overscan,
-    getItemKey: getItemKey
-      ? (index) => getItemKey(itemsRef.current[index]!, index)
-      : undefined,
+    getItemKey: getItemKey ? (index) => getItemKey(itemsRef.current[index]!, index) : undefined,
   });
 
   if (!enabled) {
@@ -131,8 +180,7 @@ export function useTableVirtualizer<TItem>({
     key: v.key,
   }));
   const paddingTop = measured.length > 0 ? measured[0]!.start : 0;
-  const paddingBottom =
-    measured.length > 0 ? totalSize - measured[measured.length - 1]!.end : 0;
+  const paddingBottom = measured.length > 0 ? totalSize - measured[measured.length - 1]!.end : 0;
 
   return {
     virtualRows,

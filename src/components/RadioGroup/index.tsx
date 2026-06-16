@@ -4,6 +4,7 @@ import * as React from "react";
 import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
 import { Radio as BaseRadio } from "@base-ui/react/radio";
 import { mergeAriaIds, useFormFieldIds } from "../../utils/aria";
+import { useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
 import styles from "./RadioGroup.module.scss";
 
 // ============================================
@@ -93,7 +94,7 @@ export interface RadioItemProps {
 // Context for size + variant
 // ============================================
 
-const RadioSizeContext = React.createContext<"sm" | "md" | "lg">("md");
+const RadioSizeContext = React.createContext<ControlSize>("md");
 const RadioVariantContext = React.createContext<"default" | "card">("default");
 
 // ============================================
@@ -211,7 +212,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
     label,
     helperText,
     error,
-    size = "md",
+    size: sizeProp,
     variant = "default",
     wrapperClassName,
     groupClassName,
@@ -224,6 +225,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
   }: RadioGroupProps,
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("radio-group", {
     label,
     helperText,

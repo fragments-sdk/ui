@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
+import { useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
 import styles from "./Tabs.module.scss";
 
 // ============================================
@@ -31,6 +32,8 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "d
   /** Tab list visual style (default for Tabs.List).
    * @default "underline" */
   variant?: "underline" | "pills";
+  /** Tab control size. Defaults to the component-default control size. */
+  size?: ControlSize;
 }
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -39,6 +42,8 @@ export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default "underline"
    * @see https://usefragments.com/components/tabs#variants */
   variant?: "underline" | "pills";
+  /** Tab control size. Defaults to the nearest Tabs root or provider default. */
+  size?: ControlSize;
 }
 
 export interface TabProps {
@@ -60,6 +65,7 @@ export interface TabsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 const TabsVariantContext = React.createContext<"underline" | "pills">("underline");
+const TabsSizeContext = React.createContext<ControlSize>("sm");
 
 // ============================================
 // Components
@@ -72,47 +78,57 @@ function TabsRoot({
   onValueChange,
   orientation = "horizontal",
   variant = "underline",
+  size: sizeProp,
   className,
   ...htmlProps
 }: TabsProps) {
+  const size = useResolvedControlSize(sizeProp, "sm");
   const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
     <TabsVariantContext.Provider value={variant}>
-      <BaseTabs.Root
-        {...htmlProps}
-        defaultValue={defaultValue}
-        value={value}
-        onValueChange={onValueChange}
-        orientation={orientation}
-        className={classes}
-      >
-        {children}
-      </BaseTabs.Root>
+      <TabsSizeContext.Provider value={size}>
+        <BaseTabs.Root
+          {...htmlProps}
+          defaultValue={defaultValue}
+          value={value}
+          onValueChange={onValueChange}
+          orientation={orientation}
+          className={classes}
+        >
+          {children}
+        </BaseTabs.Root>
+      </TabsSizeContext.Provider>
     </TabsVariantContext.Provider>
   );
 }
 
-function TabsList({ children, variant, className, ...htmlProps }: TabsListProps) {
+function TabsList({ children, variant, size: sizeProp, className, ...htmlProps }: TabsListProps) {
   const rootVariant = React.useContext(TabsVariantContext);
+  const rootSize = React.useContext(TabsSizeContext);
+  const size = sizeProp ?? rootSize;
   const resolvedVariant = variant ?? rootVariant;
   const variantClass = resolvedVariant === "pills" ? styles.listPills : styles.listUnderline;
   const classes = [styles.list, variantClass, className].filter(Boolean).join(" ");
 
   return (
     <TabsVariantContext.Provider value={resolvedVariant}>
-      <BaseTabs.List {...htmlProps} className={classes}>
-        {children}
-        {resolvedVariant === "underline" && <BaseTabs.Indicator className={styles.indicator} />}
-      </BaseTabs.List>
+      <TabsSizeContext.Provider value={size}>
+        <BaseTabs.List {...htmlProps} className={classes}>
+          {children}
+          {resolvedVariant === "underline" && <BaseTabs.Indicator className={styles.indicator} />}
+        </BaseTabs.List>
+      </TabsSizeContext.Provider>
     </TabsVariantContext.Provider>
   );
 }
 
 function Tab({ children, value, disabled, className }: TabProps) {
   const variant = React.useContext(TabsVariantContext);
+  const size = React.useContext(TabsSizeContext);
   const variantClass = variant === "pills" ? styles.tabPills : styles.tabUnderline;
-  const classes = [styles.tab, variantClass, className].filter(Boolean).join(" ");
+  const sizeClass = size === "sm" ? styles.tabSm : size === "lg" ? styles.tabLg : styles.tabMd;
+  const classes = [styles.tab, sizeClass, variantClass, className].filter(Boolean).join(" ");
 
   return (
     <BaseTabs.Tab value={value} disabled={disabled} className={classes}>

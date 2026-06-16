@@ -53,6 +53,14 @@ export {
 export { Badge, type BadgeProps } from "./components/Badge";
 export { IconButton, type IconButtonProps } from "./components/IconButton";
 export {
+  ComponentDefaultsProvider,
+  useComponentDefaults,
+  useResolvedControlSize,
+  type ComponentDefaults,
+  type ComponentDefaultsProviderProps,
+  type ControlSize,
+} from "./components/ComponentDefaults";
+export {
   Avatar,
   type AvatarProps,
   type AvatarGroupProps,
@@ -251,7 +259,9 @@ export {
 
 // DataTable row virtualization (opt-in; requires @tanstack/react-virtual)
 export {
+  DataTableVirtual,
   useTableVirtualizer,
+  type DataTableVirtualProps,
   type UseTableVirtualizerOptions,
   type UseTableVirtualizerResult,
   type VirtualTableRow,

@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 .accordion {
   font-family: var(--fui-font-sans, $fui-font-sans);
@@ -44,10 +44,6 @@
   color: var(--fui-text-primary, $fui-text-primary);
   text-align: left;
 
-  &:hover:not(:disabled) {
-    text-decoration: underline;
-  }
-
   &:focus-visible {
     @include focus-ring;
     border-radius: var(--fui-radius-sm, $fui-radius-sm);
@@ -65,7 +61,7 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   transition: transform var(--fui-transition-normal, $fui-transition-normal);
 
-  [data-state='open'] & {
+  [data-state="open"] & {
     transform: rotate(180deg);
   }
 }
@@ -75,11 +71,11 @@
 
   // Base UI Collapsible handles height animation via CSS
   // We need to handle the collapsed state
-  &[data-state='closed'] {
+  &[data-state="closed"] {
     height: 0;
   }
 
-  &[data-state='open'] {
+  &[data-state="open"] {
     height: auto;
   }
 

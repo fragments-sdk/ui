@@ -158,7 +158,7 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: var(--fui-line-height-relaxed, $fui-line-height-relaxed);
+    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
     color: var(--fui-code-text, $fui-code-text);
     overflow-x: auto;
   }
@@ -183,7 +183,7 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
     border-radius: 0 !important;
     font-family: var(--fui-font-mono, $fui-font-mono);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: var(--fui-line-height-relaxed, $fui-line-height-relaxed);
+    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
     overflow-x: auto;
     tab-size: 2;
 
@@ -202,8 +202,8 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   :global(.line) {
     display: inline-block;
     width: 100%;
-    // Match the relaxed line-height so empty lines keep the code rhythm.
-    min-height: calc(var(--fui-line-height-relaxed, #{$fui-line-height-relaxed}) * 1em);
+    // Match the code line-height so empty lines keep the code rhythm.
+    min-height: calc(var(--fui-line-height-normal, #{$fui-line-height-normal}) * 1em);
 
     &:global(.highlighted) {
       background-color: var(--fui-code-highlight-bg, $fui-code-highlight-bg);
@@ -297,8 +297,11 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   .loading pre {
     padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
     font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    // Compact variant uses the normal (tighter) rhythm vs default relaxed.
-    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
+  }
+
+  .codeContainer :global(.line) {
+    min-height: calc(var(--fui-line-height-tight, #{$fui-line-height-tight}) * 1em);
   }
 
   .withCopyOverlay {

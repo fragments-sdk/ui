@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
 import styles from "./Combobox.module.scss";
 
@@ -223,11 +224,12 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     label,
     helperText,
     error,
-    size = "md",
+    size: sizeProp,
     className,
   }: ComboboxProps,
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   // Track selected values for chip rendering
   const [internalValue, setInternalValue] = React.useState<string | string[] | null>(
     value ?? defaultValue ?? (multiple ? [] : null)

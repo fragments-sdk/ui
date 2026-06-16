@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Switch as BaseSwitch } from "@base-ui/react/switch";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds } from "../../utils/aria";
 import styles from "./Toggle.module.scss";
 
@@ -53,7 +54,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
     disabled = false,
     readOnly = false,
     required = false,
-    size = "md",
+    size: sizeProp,
     className,
     name,
     form,
@@ -67,6 +68,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
   },
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   const resolvedHelperText = helperText ?? description;
   const generatedId = React.useId();
   const resolvedId = id ?? `switch-${generatedId}`;

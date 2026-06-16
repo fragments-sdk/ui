@@ -40,10 +40,9 @@
     border-radius: var(--fui-radius-sm, $fui-radius-sm);
 
     &.selected {
-      background-color: var(--fui-field-bg, $fui-bg-elevated);
-      border-color: var(--fui-field-selection-border, $fui-color-accent);
-      box-shadow: inset 0 0 0 1px
-        color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+      border-color: var(--fui-toggle-group-selected-border, transparent);
+      box-shadow: var(--fui-toggle-group-selected-shadow, none);
     }
   }
 }
@@ -64,7 +63,9 @@
     }
 
     &.selected {
-      @include popup-item-selected;
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+      border-color: var(--fui-toggle-group-selected-border, transparent);
+      box-shadow: var(--fui-toggle-group-selected-shadow, none);
     }
   }
 }
@@ -85,7 +86,9 @@
     }
 
     &.selected {
-      @include popup-item-selected;
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+      border-color: var(--fui-toggle-group-selected-border, transparent);
+      box-shadow: var(--fui-toggle-group-selected-shadow, none);
     }
   }
 }

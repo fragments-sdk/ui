@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Chip.module.scss';
+import * as React from "react";
+import { useResolvedControlSize } from "../ComponentDefaults";
+import styles from "./Chip.module.scss";
 
 /**
  * Chip for selections, filters, and tags. Use with Chip.Group for multi-select.
  * @see https://usefragments.com/components/chip
  */
-export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   children: React.ReactNode;
   /** Visual style variant. `"outline"` is an alias for `"outlined"`.
    * @default "filled"
    * @see https://usefragments.com/components/chip#variants */
-  variant?: 'filled' | 'outlined' | 'outline' | 'soft';
+  variant?: "filled" | "outlined" | "outline" | "soft";
   /** Chip size.
    * @default "md" */
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: "xs" | "sm" | "md" | "lg";
   /** Whether the chip is selected */
   selected?: boolean;
   /** Icon element rendered before the label */
@@ -28,7 +29,10 @@ export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonEle
   value?: string;
 }
 
-export interface ChipGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
+export interface ChipGroupProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "children" | "onChange"
+> {
   children: React.ReactNode;
   /** Controlled selected values */
   value?: string[];
@@ -38,94 +42,100 @@ export interface ChipGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement
   onChange?: (value: string[]) => void;
 }
 
-const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(
-  function Chip(
-    {
-      children,
-      variant: variantProp = 'filled',
-      size = 'md',
-      selected = false,
-      disabled = false,
-      icon,
-      avatar,
-      onRemove,
-      className,
-      onClick,
-      value: _value,
-      ...htmlProps
-    },
-    ref
-  ) {
-    // Resolve alias: "outline" → "outlined"
-    const variant = variantProp === 'outline' ? 'outlined' : variantProp;
+const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
+  {
+    children,
+    variant: variantProp = "filled",
+    size: sizeProp,
+    selected = false,
+    disabled = false,
+    icon,
+    avatar,
+    onRemove,
+    className,
+    onClick,
+    value: _value,
+    ...htmlProps
+  },
+  ref
+) {
+  const size = useResolvedControlSize(sizeProp);
+  // Resolve alias: "outline" → "outlined"
+  const variant = variantProp === "outline" ? "outlined" : variantProp;
 
-    const classes = [
-      styles.chip,
-      styles[size],
-      styles[variant],
-      selected && styles.selected,
-      onRemove && styles.withRemove,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const classes = [
+    styles.chip,
+    styles[size],
+    styles[variant],
+    selected && styles.selected,
+    onRemove && styles.withRemove,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const handleRemoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
-      onRemove?.();
-    };
+  const handleRemoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onRemove?.();
+  };
 
-    const removeAriaLabel = `Remove ${typeof children === 'string' ? children : 'chip'}`;
+  const removeAriaLabel = `Remove ${typeof children === "string" ? children : "chip"}`;
 
-    const chipButton = (
-      <button
-        ref={ref}
-        type="button"
-        aria-pressed={selected}
-        disabled={disabled}
-        className={classes}
-        onClick={onClick}
-        {...htmlProps}
-      >
-        {avatar && (
-          <span className={styles.avatar} aria-hidden="true">
-            {avatar}
-          </span>
-        )}
-        {icon && (
-          <span className={styles.icon} aria-hidden="true">
-            {icon}
-          </span>
-        )}
-        <span>{children}</span>
-      </button>
-    );
+  const chipButton = (
+    <button
+      ref={ref}
+      type="button"
+      aria-pressed={selected}
+      disabled={disabled}
+      className={classes}
+      onClick={onClick}
+      {...htmlProps}
+    >
+      {avatar && (
+        <span className={styles.avatar} aria-hidden="true">
+          {avatar}
+        </span>
+      )}
+      {icon && (
+        <span className={styles.icon} aria-hidden="true">
+          {icon}
+        </span>
+      )}
+      <span>{children}</span>
+    </button>
+  );
 
-    if (!onRemove) {
-      return chipButton;
-    }
-
-    return (
-      <span className={styles.removableChip} data-disabled={disabled || undefined}>
-        {chipButton}
-        <button
-          type="button"
-          className={styles.remove}
-          onClick={handleRemoveClick}
-          aria-label={removeAriaLabel}
-          disabled={disabled}
-        >
-          &times;
-        </button>
-      </span>
-    );
+  if (!onRemove) {
+    return chipButton;
   }
-);
+
+  return (
+    <span className={styles.removableChip} data-disabled={disabled || undefined}>
+      {chipButton}
+      <button
+        type="button"
+        className={styles.remove}
+        onClick={handleRemoveClick}
+        aria-label={removeAriaLabel}
+        disabled={disabled}
+      >
+        &times;
+      </button>
+    </span>
+  );
+});
 
 const EMPTY_CHIP_GROUP: string[] = [];
 
 function ChipGroupInner(
-  { children, value: controlledValue, defaultValue = EMPTY_CHIP_GROUP, onChange, className, ...htmlProps }: ChipGroupProps,
+  {
+    children,
+    value: controlledValue,
+    defaultValue = EMPTY_CHIP_GROUP,
+    onChange,
+    className,
+    ...htmlProps
+  }: ChipGroupProps,
   ref: React.Ref<HTMLDivElement>
 ) {
   const [internalValue, setInternalValue] = React.useState<string[]>(defaultValue);
@@ -146,7 +156,7 @@ function ChipGroupInner(
     [currentValue, isControlled, onChange]
   );
 
-  const classes = [styles.group, className].filter(Boolean).join(' ');
+  const classes = [styles.group, className].filter(Boolean).join(" ");
 
   return (
     <div ref={ref} {...htmlProps} className={classes}>
@@ -154,11 +164,13 @@ function ChipGroupInner(
         if (!React.isValidElement<ChipProps>(child)) return child;
         const chipValue = (() => {
           if (child.props.value != null) return child.props.value;
-          if (typeof child.props.children === 'string') return child.props.children;
+          if (typeof child.props.children === "string") return child.props.children;
           if (child.key != null) return String(child.key);
-          if (process.env.NODE_ENV !== 'production') {
+          if (process.env.NODE_ENV !== "production") {
             // Non-string labels need an explicit value to avoid unstable group selection keys.
-            console.warn('Chip.Group: Chips with non-string children should provide a `value` prop.');
+            console.warn(
+              "Chip.Group: Chips with non-string children should provide a `value` prop."
+            );
           }
           return `__chip-${index}`;
         })();

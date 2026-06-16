@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
+import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds } from "../../utils/aria";
 import styles from "./Checkbox.module.scss";
 
@@ -128,7 +129,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
     disabled = false,
     readOnly = false,
     required = false,
-    size = "md",
+    size: sizeProp,
     variant = "default",
     label,
     helperText,
@@ -150,6 +151,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
   },
   ref
 ) {
+  const size = useResolvedControlSize(sizeProp);
   const resolvedHelperText = helperText ?? description;
   const generatedId = React.useId();
   const checkboxId = id ?? `checkbox-${generatedId}`;

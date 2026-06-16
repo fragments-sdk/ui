@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { ComponentDefaultsProvider } from "../ComponentDefaults";
 import { Tabs } from "./index";
 
 function renderTabs(props: Partial<React.ComponentProps<typeof Tabs>> = {}) {
@@ -105,6 +106,38 @@ describe("Tabs", () => {
     renderTabs({ orientation: "vertical" });
     const tablist = screen.getByRole("tablist");
     expect(tablist).toHaveAttribute("aria-orientation", "vertical");
+  });
+
+  it("uses the provider control size when size is omitted", () => {
+    render(
+      <ComponentDefaultsProvider controlSize="lg">
+        <Tabs defaultValue="tab1">
+          <Tabs.List>
+            <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="tab1">Panel One</Tabs.Panel>
+        </Tabs>
+      </ComponentDefaultsProvider>
+    );
+
+    expect(screen.getByRole("tab", { name: /tab one/i })).toHaveClass("tabLg");
+  });
+
+  it("keeps explicit size over the provider control size", () => {
+    render(
+      <ComponentDefaultsProvider controlSize="lg">
+        <Tabs defaultValue="tab1" size="sm">
+          <Tabs.List>
+            <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="tab1">Panel One</Tabs.Panel>
+        </Tabs>
+      </ComponentDefaultsProvider>
+    );
+
+    const tab = screen.getByRole("tab", { name: /tab one/i });
+    expect(tab).toHaveClass("tabSm");
+    expect(tab).not.toHaveClass("tabLg");
   });
 
   it("has no accessibility violations", async () => {
