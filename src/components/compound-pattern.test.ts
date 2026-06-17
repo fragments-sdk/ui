@@ -8,9 +8,14 @@ const COMPONENTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 // Accept Object.assign(...) and typed static assignment patterns (e.g. Grid.Item = ...).
 const COMPOUND_EXPORT_PATTERN = /Object\.assign\s*\(|\(\s*[A-Za-z0-9_]+\s+as\s+[A-Za-z0-9_]+\s*\)\.[A-Z][A-Za-z0-9_]*\s*=/;
 
+// Provider/utility modules that live under components/ but are intentionally not
+// compound components (context providers, hooks, shared infrastructure).
+const NON_COMPOUND_MODULES = new Set(['ComponentDefaults']);
+
 describe('component export pattern', () => {
   it('keeps component exports compound across the UI library', () => {
     const componentDirs = readdirSync(COMPONENTS_DIR).filter((entry) => {
+      if (NON_COMPOUND_MODULES.has(entry)) return false;
       const fullPath = path.join(COMPONENTS_DIR, entry);
       return statSync(fullPath).isDirectory();
     });
