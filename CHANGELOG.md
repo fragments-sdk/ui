@@ -1,5 +1,13 @@
 # @fragments-sdk/ui
 
+## 0.22.0
+
+### Minor Changes
+
+- [#261](https://github.com/fragments-sdk/fragments/pull/261) [`6367c82`](https://github.com/fragments-sdk/fragments/commit/6367c821caa9bccf6a8beafa1aa6c1b70b56099c) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add cloud-contract aware governance scanning, canonical source helpers, and inspect overlay support.
+
+  The CLI now fails CI scans when a required Cloud policy cannot be fetched, persists served policy metadata for hook enforcement, and surfaces hook stderr. Core and extract gain the canonical source and raw markup resolution helpers used by the inspect workflow. UI primitives now emit canonical stamp metadata and expose popover anchoring options needed by host overlays.
+
 ## 0.21.1
 
 ### Patch Changes
