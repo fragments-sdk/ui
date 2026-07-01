@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Popover } from '.';
 
@@ -92,4 +93,60 @@ export const SmallSize: Story = {
       </Popover.Content>
     </Popover>
   ),
+};
+
+function VirtualAnchorDemo(args: React.ComponentProps<typeof Popover>) {
+  const [anchor, setAnchor] = React.useState<HTMLDivElement | null>(null);
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div style={{ paddingTop: 80 }}>
+      <div
+        ref={setAnchor}
+        style={{
+          width: 160,
+          height: 40,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px dashed currentColor',
+          borderRadius: 8,
+        }}
+      >
+        Anchor element
+      </div>
+      <Popover {...args} open={open} onOpenChange={setOpen}>
+        <Popover.Trigger
+          style={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            overflow: 'hidden',
+            clip: 'rect(0 0 0 0)',
+          }}
+          onClick={() => setOpen(true)}
+        >
+          Open (off-screen trigger)
+        </Popover.Trigger>
+        <Popover.Content anchor={anchor} positionMethod="fixed">
+          <Popover.Close />
+          <Popover.Title>Anchored elsewhere</Popover.Title>
+          <Popover.Description>
+            This content is positioned against the dashed box above, not the
+            (visually hidden) trigger button.
+          </Popover.Description>
+        </Popover.Content>
+      </Popover>
+    </div>
+  );
+}
+
+/**
+ * Positions content against an arbitrary DOM element instead of the
+ * trigger, via `anchor` + `positionMethod="fixed"`. Used by Fragments
+ * Inspect's element-anchored detail view, where the "anchor" is a node in
+ * the host page rather than something rendered by this popover's own tree.
+ */
+export const VirtualAnchor: Story = {
+  render: (args) => <VirtualAnchorDemo {...args} />,
 };

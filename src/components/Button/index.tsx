@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
 import { useResolvedControlSize } from "../ComponentDefaults";
+import { fragmentsCanonicalStampProps } from "../../utils/canonical-stamp";
 import styles from "./Button.module.scss";
 
 function composeEventHandlers<T extends (...args: any[]) => void>(
@@ -79,6 +80,7 @@ const ButtonRoot = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Butto
     // "icon" → visual "outlined" + icon-only sizing
     const variant =
       variantProp === "outline" ? "outlined" : variantProp === "icon" ? "outlined" : variantProp;
+    const canonicalStamp = fragmentsCanonicalStampProps("Button");
 
     const classNames = [
       styles.button,
@@ -110,6 +112,7 @@ const ButtonRoot = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Butto
 
       const mergedProps: Record<string, unknown> = {
         ...childProps,
+        ...canonicalStamp,
         className: [classNames, childElementProps.className].filter(Boolean).join(" "),
         style: {
           ...(style as React.CSSProperties | undefined),
@@ -154,7 +157,12 @@ const ButtonRoot = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Butto
     if (props.as === "a") {
       const { as: _as, ...anchorProps } = rest as ButtonAsAnchorProps & { as?: "a" };
       return (
-        <a ref={ref as React.Ref<HTMLAnchorElement>} className={classNames} {...anchorProps}>
+        <a
+          ref={ref as React.Ref<HTMLAnchorElement>}
+          className={classNames}
+          {...anchorProps}
+          {...canonicalStamp}
+        >
           {children}
         </a>
       );
@@ -169,6 +177,7 @@ const ButtonRoot = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Butto
         disabled={(buttonProps as ButtonAsButtonProps).disabled || false}
         className={classNames}
         {...buttonProps}
+        {...canonicalStamp}
       >
         {children}
       </BaseButton>

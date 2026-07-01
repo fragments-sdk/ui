@@ -10,6 +10,14 @@ describe("Button", () => {
     expect(screen.getByRole("button", { name: "Click me" })).toBeInTheDocument();
   });
 
+  it("emits canonical inspect stamps on the root in development", () => {
+    render(<Button>Stamped</Button>);
+    const button = screen.getByRole("button", { name: "Stamped" });
+    expect(button).toHaveAttribute("data-fc-canonical", "Button");
+    expect(button).toHaveAttribute("data-fc-slot", "root");
+    expect(button).toHaveAttribute("data-fc-contract", "source:@fragments-sdk/ui#Button");
+  });
+
   it("calls onClick when clicked", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
@@ -59,7 +67,11 @@ describe("Button", () => {
     });
 
     render(
-      <ThemeProvider defaultMode="light" componentDefaults={{ controlSize: "sm" }}>
+      <ThemeProvider
+        defaultMode="light"
+        storageKey=""
+        componentDefaults={{ controlSize: "sm" }}
+      >
         <Button>Btn</Button>
       </ThemeProvider>
     );
@@ -142,6 +154,7 @@ describe("Button", () => {
     const link = screen.getByRole("link", { name: "Link Button" });
     expect(link).toHaveAttribute("href", "/test");
     expect(link).toHaveClass("button");
+    expect(link).toHaveAttribute("data-fc-canonical", "Button");
   });
 
   it("translates disabled semantics for non-button asChild children", async () => {

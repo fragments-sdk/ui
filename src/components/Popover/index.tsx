@@ -42,6 +42,22 @@ export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement
   align?: 'start' | 'center' | 'end';
   sideOffset?: number;
   arrow?: boolean;
+  /**
+   * Position the popover against an element outside the trigger-anchored
+   * flow (e.g. an arbitrary DOM node in a host page). Defaults to the
+   * trigger, like Base UI's own default.
+   */
+  anchor?: Element | null;
+  /** CSS `position` for the floating content. @default 'absolute' */
+  positionMethod?: 'absolute' | 'fixed';
+  /**
+   * Render the portal into a specific container instead of `document.body`
+   * (e.g. a shadow root whose styles wouldn't otherwise reach body-portaled
+   * content).
+   */
+  container?: HTMLElement | ShadowRoot | null;
+  /** Extra className applied to the positioner element (not the popup). */
+  positionerClassName?: string;
 }
 
 export interface PopoverTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
@@ -147,6 +163,10 @@ function PopoverContent({
   align = 'center',
   sideOffset = 8,
   arrow = false,
+  anchor,
+  positionMethod,
+  container,
+  positionerClassName,
   className,
   ...htmlProps
 }: PopoverContentProps) {
@@ -155,14 +175,17 @@ function PopoverContent({
     size !== 'md' && styles[size],
     className,
   ].filter(Boolean).join(' ');
+  const positionerClasses = [styles.positioner, positionerClassName].filter(Boolean).join(' ');
 
   return (
-    <BasePopover.Portal>
+    <BasePopover.Portal container={container}>
       <BasePopover.Positioner
         side={side}
         align={align}
         sideOffset={sideOffset}
-        className={styles.positioner}
+        anchor={anchor}
+        positionMethod={positionMethod}
+        className={positionerClasses}
       >
         <BasePopover.Popup {...htmlProps} className={popupClasses}>
           {children}

@@ -113,6 +113,49 @@ describe('Popover', () => {
     });
   });
 
+  it('positions against an external anchor element and applies a custom positioner class', async () => {
+    const anchorEl = document.createElement('div');
+    anchorEl.getBoundingClientRect = () =>
+      ({ x: 10, y: 20, width: 50, height: 20, top: 20, left: 10, right: 60, bottom: 40, toJSON: () => ({}) }) as DOMRect;
+    document.body.appendChild(anchorEl);
+
+    render(
+      <Popover defaultOpen>
+        <Popover.Trigger>Open</Popover.Trigger>
+        <Popover.Content anchor={anchorEl} positionMethod="fixed" positionerClassName="fi-test-positioner">
+          <p>Anchored content</p>
+        </Popover.Content>
+      </Popover>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Anchored content')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Anchored content').closest('.fi-test-positioner')).not.toBeNull();
+
+    document.body.removeChild(anchorEl);
+  });
+
+  it('portals into a custom container instead of document.body', async () => {
+    const customContainer = document.createElement('div');
+    document.body.appendChild(customContainer);
+
+    render(
+      <Popover defaultOpen>
+        <Popover.Trigger>Open</Popover.Trigger>
+        <Popover.Content container={customContainer}>
+          <p>Portaled content</p>
+        </Popover.Content>
+      </Popover>
+    );
+
+    await waitFor(() => {
+      expect(customContainer.textContent).toContain('Portaled content');
+    });
+
+    document.body.removeChild(customContainer);
+  });
+
   it('has no accessibility violations when open', async () => {
     const { container } = renderPopover({ defaultOpen: true });
 
