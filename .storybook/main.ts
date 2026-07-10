@@ -6,7 +6,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
  * These stories double as the canonical-catalog ingestion fixtures: Fragments
  * Cloud discovers this config + the co-located `*.stories.tsx` files during a
  * repo scan and extracts each component's variants and import path into the
- * design-system catalog. See `@fragments-sdk/extract` `parseStorybookConfigContent`.
+ * design-system catalog. See `@repo/engine/extract` `parseStorybookConfigContent`.
  */
 const config: StorybookConfig = {
   stories: ['../src/components/**/*.stories.@(ts|tsx)'],

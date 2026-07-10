@@ -15,7 +15,7 @@ describe("Button", () => {
     const button = screen.getByRole("button", { name: "Stamped" });
     expect(button).toHaveAttribute("data-fc-canonical", "Button");
     expect(button).toHaveAttribute("data-fc-slot", "root");
-    expect(button).toHaveAttribute("data-fc-contract", "source:@fragments-sdk/ui#Button");
+    expect(button).toHaveAttribute("data-fc-contract", "source:@usefragments/ui#Button");
   });
 
   it("calls onClick when clicked", async () => {

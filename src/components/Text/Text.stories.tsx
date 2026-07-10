@@ -120,7 +120,7 @@ export const Secondary: Story = {
 };
 
 export const Monospace: Story = {
-  args: { font: 'mono', size: 'sm', children: 'npm install @fragments-sdk/ui' },
+  args: { font: 'mono', size: 'sm', children: 'npm install @usefragments/ui' },
 };
 
 export const Truncated: Story = {

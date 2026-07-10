@@ -4,7 +4,7 @@
 // Keyboard Shortcuts Registry
 // ============================================
 //
-// Central source of truth for all keyboard shortcuts in @fragments-sdk/ui.
+// Central source of truth for all keyboard shortcuts in @usefragments/ui.
 // Import from here instead of hardcoding key combinations in components.
 //
 // This prevents conflicts (e.g., Sidebar Ctrl+B vs Editor Ctrl+B) and
@@ -378,7 +378,7 @@ const shortcutOverrides = new Map<ShortcutName, Partial<KeyboardShortcut> | null
  *
  * @example
  * ```ts
- * import { configureShortcuts } from '@fragments-sdk/ui';
+ * import { configureShortcuts } from '@usefragments/ui';
  *
  * // Remap sidebar toggle to Ctrl+\
  * configureShortcuts({ SIDEBAR_TOGGLE: { key: '\\', label: 'Ctrl+\\' } });

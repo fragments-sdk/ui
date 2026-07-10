@@ -30,7 +30,7 @@ export function fragmentsCanonicalStampProps(
   return {
     "data-fc-canonical": component,
     "data-fc-slot": slot,
-    "data-fc-contract": `source:@fragments-sdk/ui#${component}`,
+    "data-fc-contract": `source:@usefragments/ui#${component}`,
   };
 }
 

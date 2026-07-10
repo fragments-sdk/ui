@@ -17,11 +17,11 @@ export function checkCssLoaded(): void {
       console.warn(
         '[Fragments UI] Component styles not loaded. Components will render unstyled.\n\n' +
           'Add this import to your app entry point (e.g., main.tsx, layout.tsx):\n\n' +
-          "  import '@fragments-sdk/ui/styles';\n\n" +
+          "  import '@usefragments/ui/styles';\n\n" +
           'Next.js users also need:\n\n' +
           "  // next.config.ts\n" +
-          "  transpilePackages: ['@fragments-sdk/ui']\n\n" +
-          'Or run: npx @fragments-sdk/cli setup\n\n' +
+          "  transpilePackages: ['@usefragments/ui']\n\n" +
+          'Or run: npx @usefragments/cli setup\n\n' +
           'Docs: https://usefragments.com/getting-started'
       );
     }

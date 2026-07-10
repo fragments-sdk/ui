@@ -1,4 +1,4 @@
-import { defineBlock } from '@fragments-sdk/core';
+import { defineBlock } from '@usefragments/core';
 
 export default defineBlock({
   name: 'Blog Editor',

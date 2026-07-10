@@ -4,7 +4,7 @@ import { fragmentsCanonicalStampProps } from "./canonical-stamp";
 const SOURCE_BOUND = {
   "data-fc-canonical": "Button",
   "data-fc-slot": "root",
-  "data-fc-contract": "source:@fragments-sdk/ui#Button",
+  "data-fc-contract": "source:@usefragments/ui#Button",
 };
 
 describe("fragmentsCanonicalStampProps", () => {
@@ -42,7 +42,7 @@ describe("fragmentsCanonicalStampProps", () => {
     expect(fragmentsCanonicalStampProps("Card", "header")).toEqual({
       "data-fc-canonical": "Card",
       "data-fc-slot": "header",
-      "data-fc-contract": "source:@fragments-sdk/ui#Card",
+      "data-fc-contract": "source:@usefragments/ui#Card",
     });
   });
 });

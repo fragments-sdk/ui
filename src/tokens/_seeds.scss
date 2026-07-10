@@ -1,14 +1,14 @@
 @use 'sass:list';
 
 // ============================================
-// @fragments-sdk/ui Design Token Seeds
+// @usefragments/ui Design Token Seeds
 // ============================================
 //
 // User-configurable seed tokens for the design system.
 // Configure via @use ... with() on the styles entry point:
 //
 // Example:
-//   @use '@fragments-sdk/ui/styles' with (
+//   @use '@usefragments/ui/styles' with (
 //     $fui-brand: #0066ff,
 //     $fui-neutral: "ice",
 //     $fui-density: "compact",

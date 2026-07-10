@@ -1,12 +1,12 @@
-# @fragments-sdk/ui
+# @usefragments/ui
 
 A component library built on [Base UI](https://base-ui.com/) headless primitives with design tokens, SCSS modules, and full AI agent support. Project home: [usefragments.com](https://usefragments.com).
 
 ## About this repository
 
-This GitHub repository is a **read-only mirror** of `@fragments-sdk/ui`. The canonical source lives in a private monorepo and is mirrored here on every push to `main`.
+This GitHub repository is a **read-only mirror** of `@usefragments/ui`. The canonical source lives in a private monorepo and is mirrored here on every push to `main`.
 
-- **Install from npm:** `pnpm add @fragments-sdk/ui` (or `npm install @fragments-sdk/ui`)
+- **Install from npm:** `pnpm add @usefragments/ui` (or `npm install @usefragments/ui`)
 - **Docs:** [usefragments.com](https://usefragments.com)
 - **Issues:** file them in this repo — they're triaged by maintainers.
 - **Contributions:** pull requests are not merged from this mirror. Describe proposed changes in an issue; maintainers land them in the canonical repo and the mirror re-syncs automatically.
@@ -14,8 +14,8 @@ This GitHub repository is a **read-only mirror** of `@fragments-sdk/ui`. The can
 ## Install
 
 ```bash
-pnpm add @fragments-sdk/ui
-# or: npm install @fragments-sdk/ui
+pnpm add @usefragments/ui
+# or: npm install @usefragments/ui
 ```
 
 Peer dependencies:
@@ -29,13 +29,13 @@ npm install react react-dom
 **Quick start (no SCSS)** — import the prebuilt CSS in your app entry point. This loads component styles with default tokens:
 
 ```tsx
-import "@fragments-sdk/ui/styles";
+import "@usefragments/ui/styles";
 ```
 
-**Custom theming (SCSS)** — create a `.scss` file with `@use '@fragments-sdk/ui/styles' with (...)` to set your seed values, then import both:
+**Custom theming (SCSS)** — create a `.scss` file with `@use '@usefragments/ui/styles' with (...)` to set your seed values, then import both:
 
 ```tsx
-import "@fragments-sdk/ui/styles"; // component styles (ui.css)
+import "@usefragments/ui/styles"; // component styles (ui.css)
 import "./styles/globals.scss"; // your seed overrides
 ```
 
@@ -44,14 +44,14 @@ import "./styles/globals.scss"; // your seed overrides
 ```js
 // next.config.js
 const nextConfig = {
-  transpilePackages: ["@fragments-sdk/ui"],
+  transpilePackages: ["@usefragments/ui"],
 };
 ```
 
 Then use components:
 
 ```tsx
-import { Button, Card, Input, Grid } from "@fragments-sdk/ui";
+import { Button, Card, Input, Grid } from "@usefragments/ui";
 
 function App() {
   return (
@@ -148,14 +148,14 @@ Configure ~5 seeds and everything derives automatically using the SCSS `@use ...
 // styles/globals.scss
 
 // Minimal setup — just your brand color
-@use "@fragments-sdk/ui/styles" with (
+@use "@usefragments/ui/styles" with (
   $fui-brand: #0066ff
 );
 ```
 
 ```scss
 // Full customization
-@use "@fragments-sdk/ui/styles" with (
+@use "@usefragments/ui/styles" with (
   $fui-brand: #0066ff,
   $fui-neutral: "ice",
   $fui-density: "compact",
@@ -212,7 +212,7 @@ Configure ~5 seeds and everything derives automatically using the SCSS `@use ...
 You can still override individual tokens directly:
 
 ```scss
-@use "@fragments-sdk/ui/tokens" as *;
+@use "@usefragments/ui/tokens" as *;
 
 .custom {
   padding: $fui-space-4;
@@ -224,7 +224,7 @@ You can still override individual tokens directly:
 ### Breakpoints
 
 ```scss
-@use "@fragments-sdk/ui/mixins" as *;
+@use "@usefragments/ui/mixins" as *;
 
 .responsive {
   @include breakpoint-md {
@@ -247,7 +247,7 @@ You can still override individual tokens directly:
 
 **Existing code continues to work.** The seed system is fully backward compatible:
 
-- Existing `@use '@fragments-sdk/ui/tokens'` imports work unchanged
+- Existing `@use '@usefragments/ui/tokens'` imports work unchanged
 - Individual variable overrides (`$fui-color-accent: #blue`) still work
 - CSS variable usage (`var(--fui-color-accent)`) works
 - Component APIs remain the same
@@ -265,7 +265,7 @@ You can still override individual tokens directly:
    // ...many more
 
    // After: just seeds
-   @use "@fragments-sdk/ui/styles" with (
+   @use "@usefragments/ui/styles" with (
      $fui-brand: #0066ff,
      $fui-neutral: "ice"
    );
@@ -275,36 +275,28 @@ You can still override individual tokens directly:
 
 ## AI Agent Support
 
-This package ships a `fragments.json` file that describes every component's props, usage guidelines, accessibility rules, and code examples. AI agents can access this data through the [`@fragments-sdk/mcp`](https://www.npmjs.com/package/@fragments-sdk/mcp) server.
+This package ships a `fragments.json` file that describes every component's props, usage guidelines, accessibility rules, and code examples. Projects indexed in Fragments Cloud can expose their curated design-system data to AI agents through the hosted Fragments MCP service.
 
 ### Setup with Claude Code
 
-1. Install both packages:
-
-```bash
-npm install @fragments-sdk/ui @fragments-sdk/mcp
-```
-
-2. Add the MCP server to your Claude Code settings (`~/.claude/settings.json`):
+Add the hosted MCP server to your Claude Code settings (`~/.claude/settings.json`):
 
 ```json
 {
   "mcpServers": {
     "fragments": {
-      "command": "npx",
-      "args": ["@fragments-sdk/mcp"]
+      "type": "http",
+      "url": "https://app.usefragments.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${FRAGMENTS_API_KEY}"
+      }
     }
   }
 }
 ```
 
-The MCP server automatically discovers `fragments.json` from the installed `@fragments-sdk/ui` package. No configuration needed.
-
-Or use the CLI to set up everything at once:
-
-```bash
-npx @fragments-sdk/cli setup --mcp
-```
+Interactive clients can use the endpoint's OAuth discovery flow instead of an
+API-key header. There is no MCP npm package or local stdio process to install.
 
 ## Composition Blocks
 
@@ -317,7 +309,7 @@ The library includes composition blocks — named patterns showing how component
 - **Dashboard Layout** — Featured card with metrics grid
 - **Settings Page** — Settings sections with cards and controls
 
-Access blocks via the MCP server's `blocks` tool or `context`.
+Access blocks through the Fragments docs or context generated by the CLI.
 
 ## License
 

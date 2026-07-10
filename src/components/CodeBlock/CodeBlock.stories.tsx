@@ -90,7 +90,7 @@ const meta = {
     persistentCopy: { control: 'boolean' },
   },
   args: {
-    code: "import { Button } from '@fragments-sdk/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}",
+    code: "import { Button } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}",
     language: 'tsx',
     theme: 'one-dark-pro',
   },
@@ -105,7 +105,7 @@ export const Default: Story = {};
 export const WithFilename: Story = {
   args: {
     filename: 'app.tsx',
-    code: "import { Button, Card } from '@fragments-sdk/ui';\n\nfunction App() {\n  return <Button>Get Started</Button>;\n}",
+    code: "import { Button, Card } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Get Started</Button>;\n}",
   },
 };
 
@@ -131,7 +131,7 @@ export const Bash: Story = {
   args: {
     language: 'bash',
     title: 'Installation',
-    code: 'npm install @fragments-sdk/ui',
+    code: 'npm install @usefragments/ui',
   },
 };
 

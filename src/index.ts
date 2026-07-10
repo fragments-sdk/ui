@@ -1,6 +1,6 @@
 // CSS variables and base styles are NOT auto-imported here.
 // Consumers must import styles separately with seed configuration:
-//   @use '@fragments-sdk/ui/styles' with ($fui-brand: ..., $fui-neutral: ...);
+//   @use '@usefragments/ui/styles' with ($fui-brand: ..., $fui-neutral: ...);
 // Bundling globals.scss here would compile with default seeds and
 // override any consumer-configured palette.
 
@@ -513,9 +513,6 @@ export { Chip, type ChipProps, type ChipGroupProps } from "./components/Chip";
 
 // VisuallyHidden
 export { VisuallyHidden, type VisuallyHiddenProps } from "./components/VisuallyHidden";
-
-// Brand
-export { BRAND, type Brand } from "./brand";
 
 // Markdown (AI Chat)
 export { Markdown, type MarkdownProps } from "./components/Markdown";

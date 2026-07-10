@@ -256,17 +256,17 @@
     {
       "name": "Default",
       "description": "Basic code block with syntax highlighting",
-      "code": "<CodeBlock code={`import { Button } from '@fragments-sdk/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}`} language=\"tsx\" />"
+      "code": "<CodeBlock code={`import { Button } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}`} language=\"tsx\" />"
     },
     {
       "name": "With Filename",
       "description": "Code block with filename in header bar",
-      "code": "<CodeBlock filename=\"app.tsx\" code={`import { Button, Card } from '@fragments-sdk/ui';\n\nfunction App() {\n  return (\n    <Card>\n      <Card.Header>Welcome</Card.Header>\n      <Card.Content>\n        <Button>Get Started</Button>\n      </Card.Content>\n    </Card>\n  );\n}`} language=\"tsx\" />"
+      "code": "<CodeBlock filename=\"app.tsx\" code={`import { Button, Card } from '@usefragments/ui';\n\nfunction App() {\n  return (\n    <Card>\n      <Card.Header>Welcome</Card.Header>\n      <Card.Content>\n        <Button>Get Started</Button>\n      </Card.Content>\n    </Card>\n  );\n}`} language=\"tsx\" />"
     },
     {
       "name": "With Title",
       "description": "Code block with external title label",
-      "code": "<CodeBlock title=\"Installation\" code=\"npm install @fragments-sdk/ui\" language=\"bash\" />"
+      "code": "<CodeBlock title=\"Installation\" code=\"npm install @usefragments/ui\" language=\"bash\" />"
     },
     {
       "name": "With Caption",
@@ -326,7 +326,7 @@
     {
       "name": "JSON",
       "description": "Configuration file example",
-      "code": "<CodeBlock title=\"package.json\" code={`{\n  \"name\": \"my-app\",\n  \"dependencies\": {\n    \"@fragments-sdk/ui\": \"^0.3.0\"\n  }\n}`} language=\"json\" />"
+      "code": "<CodeBlock title=\"package.json\" code={`{\n  \"name\": \"my-app\",\n  \"dependencies\": {\n    \"@usefragments/ui\": \"^0.3.0\"\n  }\n}`} language=\"json\" />"
     },
     {
       "name": "Without Copy Button",

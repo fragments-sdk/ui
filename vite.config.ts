@@ -14,6 +14,11 @@ export default defineConfig({
         codeblock: resolve(__dirname, 'src/components/CodeBlock/index.tsx'),
         colorpicker: resolve(__dirname, 'src/components/ColorPicker/index.tsx'),
         table: resolve(__dirname, 'src/components/Table/index.tsx'),
+        'data-table': resolve(
+          __dirname,
+          'src/components/DataTable/index.tsx',
+        ),
+        editor: resolve(__dirname, 'src/components/Editor/index.tsx'),
       },
       formats: ['es', 'cjs'],
       cssFileName: 'ui',

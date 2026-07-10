@@ -272,7 +272,7 @@ export function ChartTooltip({
   if (_chartFailed || !_RechartsTooltip) {
     if (_chartFailed && process.env.NODE_ENV === 'development') {
       console.warn(
-        '[@fragments-sdk/ui] Chart: recharts is not installed. ' +
+        '[@usefragments/ui] Chart: recharts is not installed. ' +
         'Install it with: npm install recharts'
       );
     }
@@ -339,7 +339,7 @@ export function ChartLegend({ content, ...props }: ChartLegendProps) {
   if (_chartFailed || !_RechartsLegend) {
     if (_chartFailed && process.env.NODE_ENV === 'development') {
       console.warn(
-        '[@fragments-sdk/ui] Chart: recharts is not installed. ' +
+        '[@usefragments/ui] Chart: recharts is not installed. ' +
         'Install it with: npm install recharts'
       );
     }

@@ -61,7 +61,7 @@ export const Single: Story = {
       </Accordion.Item>
       <Accordion.Item value="item-2">
         <Accordion.Trigger>How do I install it?</Accordion.Trigger>
-        <Accordion.Content>Install via pnpm add @fragments-sdk/ui.</Accordion.Content>
+        <Accordion.Content>Install via pnpm add @usefragments/ui.</Accordion.Content>
       </Accordion.Item>
       <Accordion.Item value="item-3">
         <Accordion.Trigger>Is it accessible?</Accordion.Trigger>

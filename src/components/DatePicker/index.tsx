@@ -560,7 +560,7 @@ function DatePickerCalendar({
   if (_dpFailed || !_DayPicker) {
     if (_dpFailed && process.env.NODE_ENV === "development") {
       console.warn(
-        "[@fragments-sdk/ui] DatePicker: react-day-picker and date-fns are not installed. " +
+        "[@usefragments/ui] DatePicker: react-day-picker and date-fns are not installed. " +
           "Install them with: npm install react-day-picker date-fns"
       );
     }

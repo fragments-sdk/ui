@@ -594,7 +594,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
       if (_shikiFailed || !_codeToHtml) {
         if (_shikiFailed && process.env.NODE_ENV === "development") {
           console.warn(
-            "[@fragments-sdk/ui] CodeBlock: shiki is not installed. " +
+            "[@usefragments/ui] CodeBlock: shiki is not installed. " +
               "Install it with: npm install shiki"
           );
         }

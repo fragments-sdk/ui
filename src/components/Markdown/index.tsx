@@ -81,7 +81,7 @@ const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(
     if (loadFailed || !ReactMarkdown) {
       if (loadFailed && process.env.NODE_ENV === 'development') {
         console.warn(
-          '[@fragments-sdk/ui] Markdown: react-markdown is not installed. ' +
+          '[@usefragments/ui] Markdown: react-markdown is not installed. ' +
           'Install it with: npm install react-markdown remark-gfm'
         );
       }

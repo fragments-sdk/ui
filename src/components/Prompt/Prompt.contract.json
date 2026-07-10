@@ -194,6 +194,8 @@
     "subComponents": [
       "Textarea",
       "Toolbar",
+      "Tabs",
+      "Tab",
       "Actions",
       "Info",
       "ActionButton",

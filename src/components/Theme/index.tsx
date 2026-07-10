@@ -490,7 +490,7 @@ function setVar(el: HTMLElement, name: string, value: string) {
  *
  * @example
  * ```ts
- * import { configureTheme } from '@fragments-sdk/ui';
+ * import { configureTheme } from '@usefragments/ui';
  *
  * configureTheme({
  *   brand: '#6366f1',

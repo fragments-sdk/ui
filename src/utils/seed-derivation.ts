@@ -5,8 +5,8 @@
  * This is the single source of truth — the SCSS derivation in
  * libs/ui/src/tokens/_derive.scss mirrors this logic.
  *
- * Consumers (docs app, CLI viewer, configureTheme) should import from here
- * or via the @fragments-sdk/ui barrel export.
+ * Consumers (the docs app and configureTheme) should import from here or via
+ * the @usefragments/ui barrel export.
  */
 
 // ============================================
