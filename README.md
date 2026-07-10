@@ -18,10 +18,15 @@ pnpm add @usefragments/ui
 # or: npm install @usefragments/ui
 ```
 
-Peer dependencies:
+The root export includes the advanced table, editor, markdown, chart, date,
+color, and code components. Their libraries are therefore required peers rather
+than optional peers. npm and pnpm install them automatically by default. If peer
+auto-install is disabled, install the full peer set explicitly:
 
 ```bash
-npm install react react-dom
+npm install react react-dom @tanstack/react-table @tanstack/react-virtual \
+  @tiptap/extension-link @tiptap/react @tiptap/starter-kit date-fns \
+  react-colorful react-day-picker react-markdown recharts remark-gfm shiki
 ```
 
 ## Setup

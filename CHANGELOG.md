@@ -1,4 +1,11 @@
-# @fragments-sdk/ui
+# @usefragments/ui
+
+## 1.0.1
+
+### Patch Changes
+
+- Require the peer libraries re-exported by the package root so a documented
+  `@usefragments/ui` install can import the complete public surface.
 
 ## 0.22.0
 

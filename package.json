@@ -1,13 +1,14 @@
 {
   "name": "@usefragments/ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
   "homepage": "https://usefragments.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fragments-sdk/ui"
+    "url": "https://github.com/fragments-sdk/fragments",
+    "directory": "libs/ui"
   },
   "type": "module",
   "main": "src/index.ts",
@@ -183,44 +184,6 @@
     "recharts": ">=2.0.0 || >=3.0.0",
     "remark-gfm": ">=4.0.0",
     "shiki": ">=1.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react-markdown": {
-      "optional": true
-    },
-    "recharts": {
-      "optional": true
-    },
-    "remark-gfm": {
-      "optional": true
-    },
-    "react-day-picker": {
-      "optional": true
-    },
-    "date-fns": {
-      "optional": true
-    },
-    "shiki": {
-      "optional": true
-    },
-    "react-colorful": {
-      "optional": true
-    },
-    "@tanstack/react-table": {
-      "optional": true
-    },
-    "@tanstack/react-virtual": {
-      "optional": true
-    },
-    "@tiptap/react": {
-      "optional": true
-    },
-    "@tiptap/starter-kit": {
-      "optional": true
-    },
-    "@tiptap/extension-link": {
-      "optional": true
-    }
   },
   "scarfSettings": {
     "defaultOptIn": true
