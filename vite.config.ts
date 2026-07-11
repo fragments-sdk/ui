@@ -25,7 +25,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: (id) =>
-        /^(react|react-dom|react\/jsx-runtime|@base-ui\/react|@phosphor-icons\/react|@floating-ui|use-sync-external-store|react-markdown|recharts|remark-gfm|react-day-picker|date-fns|shiki|react-colorful|@tanstack\/react-table|@tiptap)/.test(id),
+        /^(react|react-dom|react\/jsx-runtime|@base-ui\/react|@phosphor-icons\/react|@floating-ui|use-sync-external-store|react-markdown|recharts|remark-gfm|react-day-picker|date-fns|shiki|react-colorful|@tanstack\/|@tiptap)/.test(id),
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',

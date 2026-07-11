@@ -1,5 +1,13 @@
 # @usefragments/ui
 
+## 1.0.2
+
+### Patch Changes
+
+- Keep TanStack peers external in the published build so consumers load their
+  installed dependencies instead of a pnpm-specific path embedded in the
+  package tarball.
+
 ## 1.0.1
 
 ### Patch Changes
