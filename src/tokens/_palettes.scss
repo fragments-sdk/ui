@@ -121,6 +121,29 @@ $palette-fragments: (
 );
 
 // --------------------------------------------
+// Carbon - Fragments brand neutral (DEFAULT)
+// The hybrid-skin charcoal ramp. Distinct from `mono` (true black) — carbon's
+// dark surfaces sit at #212121 (page) with #171717 recessed panels and #2f2f2f
+// raised/elevated so panels read as material, not voids. Dark surface/text/
+// border values are emitted explicitly by the derive-* branches; light mode
+// behaves like a neutral white palette. Key stops: 900 = page bg,
+// 950 = recessed surface, 800 = hairline, 700 = strong border, 500 = faint text.
+// --------------------------------------------
+$palette-carbon: (
+  50:  #fafafa,
+  100: #f4f4f4,
+  200: #e4e4e4,
+  300: #d1d1d1,
+  400: #b0b0b0,
+  500: #8f8f8f,  // faint / placeholder text
+  600: #5a5a5a,
+  700: #4b4b4b,  // strong border
+  800: #323232,  // hairline / default border
+  900: #212121,  // page / body background
+  950: #171717   // recessed surface (cards, panels, code wells)
+);
+
+// --------------------------------------------
 // Fire - Warm red/orange tones
 // Energy, passion feel
 // --------------------------------------------
@@ -149,6 +172,7 @@ $palettes: (
   "earth": $palette-earth,
   "fire": $palette-fire,
   "fragments": $palette-fragments,
+  "carbon": $palette-carbon,
   "wind": $palette-stone  // Legacy alias — "wind" was renamed to "stone"
 );
 

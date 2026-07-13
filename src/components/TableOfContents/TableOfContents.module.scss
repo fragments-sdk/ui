@@ -176,6 +176,15 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
 // Item link
 // ============================================
 
+// ── Plain index (design-system default) ──────────────────────────────────────
+// The "on this page" index reads as a quiet list — the active row is signalled
+// by ink + medium weight (see .active), not a coloured rail. Drop the per-row
+// rail and elbow pseudo-elements the snake geometry above would otherwise draw.
+.root [data-depth]::before,
+.root [data-depth]::after {
+  content: none;
+}
+
 .link {
   display: flex;
   align-items: center;
@@ -231,7 +240,7 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
 }
 
 .active {
-  color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }
 

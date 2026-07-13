@@ -37,7 +37,10 @@
   .item {
     background-color: transparent;
     border: 1px solid transparent;
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+    // Match the container's radius (form-group-surface = --fui-radius-lg),
+    // less its 1px inset border, so the selected fill nests inside the
+    // container corners instead of poking past them.
+    border-radius: calc(var(--fui-radius-lg, #{$fui-radius-lg}) - 1px);
 
     &.selected {
       background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));

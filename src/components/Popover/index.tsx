@@ -111,6 +111,28 @@ function CloseIcon() {
 }
 
 // ============================================
+// Helpers
+// ============================================
+
+/**
+ * Base UI's button-like triggers default `nativeButton` to `true`. When an
+ * `asChild` trigger renders something other than a native `<button>` (an
+ * anchor, or a component rendered `as="a"`), that default is wrong and Base UI
+ * warns that native button semantics were removed. Resolve the correct value
+ * from the child so the trigger stays honest and the warning goes away.
+ */
+function resolveNativeButton(child: React.ReactElement): boolean {
+  const type = child.type;
+  // Intrinsic elements: only `<button>` is a native button.
+  if (typeof type === 'string') return type === 'button';
+  // Custom components render a native `<button>` by default; treat anchors
+  // (via `as="a"` or an `href`) as non-native.
+  const props = (child.props ?? {}) as Record<string, unknown>;
+  if (props.as === 'a' || props.href != null) return false;
+  return true;
+}
+
+// ============================================
 // Components
 // ============================================
 
@@ -139,7 +161,12 @@ function PopoverTrigger({ children, asChild, className, ...htmlProps }: PopoverT
       throw new Error('Popover.Trigger with asChild requires a single valid React element child.');
     }
     return (
-      <BasePopover.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
+      <BasePopover.Trigger
+        {...htmlProps}
+        nativeButton={resolveNativeButton(children as React.ReactElement)}
+        className={className}
+        render={children as React.ReactElement}
+      >
         {null}
       </BasePopover.Trigger>
     );
@@ -240,7 +267,12 @@ function PopoverClose({ children, asChild, className, ...htmlProps }: PopoverClo
       throw new Error('Popover.Close with asChild requires a single valid React element child.');
     }
     return (
-      <BasePopover.Close {...htmlProps} className={className} render={children as React.ReactElement}>
+      <BasePopover.Close
+        {...htmlProps}
+        nativeButton={resolveNativeButton(children as React.ReactElement)}
+        className={className}
+        render={children as React.ReactElement}
+      >
         {null}
       </BasePopover.Close>
     );

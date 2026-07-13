@@ -29,6 +29,14 @@
   white-space: nowrap;
   user-select: none;
 
+  // A composed link — `Button asChild` cloning an <a>, or an anchor rendered
+  // as a child — must wear the button's own foreground, never the global
+  // naked-link accent color (which would collide, e.g. accent-on-accent).
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
   &:hover:not(:disabled):not([data-disabled]) {
     border-color: var(--_button-border-hover);
     background: var(--_button-bg-hover);
@@ -173,23 +181,10 @@
 }
 
 .danger {
-  --_button-bg: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 82%, white 18%) 0%,
-    var(--fui-color-danger, #{$fui-color-danger}) 52%,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 86%, black 14%) 100%
-  );
-  --_button-bg-hover: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 76%, white 24%) 0%,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 94%, black 6%) 52%,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 78%, black 22%) 100%
-  );
-  --_button-bg-active: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 72%, black 28%) 0%,
-    color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 82%, black 18%) 100%
-  );
+  // Flat danger fill — no gradient. Hover/active darken the solid colour.
+  --_button-bg: var(--fui-color-danger, #{$fui-color-danger});
+  --_button-bg-hover: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 88%, black 12%);
+  --_button-bg-active: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 80%, black 20%);
   --_button-border: color-mix(
     in srgb,
     var(--fui-color-danger, #{$fui-color-danger}) 76%,

@@ -155,6 +155,19 @@
 /// @return {Map} Surface token values
 @function derive-surfaces($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
+    // Carbon (Fragments default) — charcoal material surfaces, not voids.
+    @if $palette-name == 'carbon' {
+      @return (
+        primary: #212121,   // page / body background
+        secondary: #171717, // sidebar, recessed panels, surface
+        tertiary: #2f2f2f,  // raised / hover / active row (surface-2)
+        elevated: #2f2f2f,  // cards float above the page tone
+        subtle: #171717,    // recessed (code wells, insets)
+        hover: rgba(255, 255, 255, 0.055),
+        active: rgba(255, 255, 255, 0.085)
+      );
+    }
+
     @if $palette-name == 'stone' or $palette-name == 'mono' {
       @return (
         primary: #000000,
@@ -181,8 +194,9 @@
     );
   }
 
-  // Light mode: colorful palettes get tinted backgrounds
-  $is-colorful: $palette-name != 'stone';
+  // Light mode: colorful palettes get tinted backgrounds. Carbon is a neutral
+  // (like stone) — white surfaces in light mode.
+  $is-colorful: $palette-name != 'stone' and $palette-name != 'carbon';
   @if $is-colorful {
     @return (
       primary: get-shade($palette, 50),            // Tinted page background
@@ -217,6 +231,14 @@
 /// @return {Map} Body and main background values
 @function derive-app-surfaces($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
+    // Carbon (Fragments default) — flat page canvas at #212121.
+    @if $palette-name == 'carbon' {
+      @return (
+        body: #212121,
+        main: #212121
+      );
+    }
+
     @if $palette-name == 'stone' or $palette-name == 'mono' or $palette-name == 'wind' {
       @return (
         body: #000000,
@@ -230,7 +252,7 @@
     );
   }
 
-  @if $palette-name == 'stone' or $palette-name == 'wind' {
+  @if $palette-name == 'stone' or $palette-name == 'carbon' or $palette-name == 'wind' {
     @return (
       body: get-shade($palette, 100),
       main: #ffffff
@@ -256,6 +278,16 @@
 /// @return {Map} Text token values
 @function derive-text($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
+    // Carbon (Fragments default) — ink / muted / faint text tiers.
+    @if $palette-name == 'carbon' {
+      @return (
+        primary: #ececec,   // ink
+        secondary: #b4b4b4, // muted
+        tertiary: #8f8f8f,  // faint / placeholder
+        inverse: #212121    // text on light (sage) accents
+      );
+    }
+
     @if $palette-name == 'stone' or $palette-name == 'mono' {
       @return (
         primary: #ededed,
@@ -280,9 +312,9 @@
     );
   }
 
-  // Light mode background — stone uses white, colorful palettes use palette[50]
+  // Light mode background — stone/carbon use white, colorful palettes use palette[50]
   $bg: #ffffff;
-  @if $palette-name != 'stone' {
+  @if $palette-name != 'stone' and $palette-name != 'carbon' {
     $bg: get-shade($palette, 50);
   }
 
@@ -306,6 +338,14 @@
 /// @return {Map} Border token values
 @function derive-borders($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
+    // Carbon (Fragments default) — solid hairline + strong border.
+    @if $palette-name == 'carbon' {
+      @return (
+        default: #323232, // hairline
+        strong: #4b4b4b   // strong border
+      );
+    }
+
     @if $palette-name == 'stone' or $palette-name == 'mono' {
       @return (
         default: rgba(255, 255, 255, 0.075),
@@ -364,8 +404,17 @@
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Map} Scrollbar token values
-@function derive-scrollbar($palette, $is-dark: false) {
+@function derive-scrollbar($palette, $is-dark: false, $palette-name: 'stone') {
   @if $is-dark {
+    // Carbon (Fragments default) — transparent track, strong-border thumb.
+    @if $palette-name == 'carbon' {
+      @return (
+        track: transparent,
+        thumb: #4b4b4b,
+        thumb-hover: #b4b4b4
+      );
+    }
+
     @return (
       track: get-shade($palette, 800),
       thumb: get-shade($palette, 600),

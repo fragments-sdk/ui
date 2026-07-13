@@ -63,7 +63,9 @@
 
 .toast {
   display: flex;
-  align-items: flex-start;
+  // Single-line toasts (title only) read best vertically centered; toasts
+  // with a description are multi-line and top-align — see `:has(.description)`.
+  align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
@@ -74,6 +76,12 @@
 
   // Animation
   animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
+}
+
+// With a description the toast is multi-line: top-align icon/close to the
+// first line rather than the block centre.
+.toast:has(.description) {
+  align-items: flex-start;
 }
 
 @keyframes toastEnter {
@@ -177,12 +185,17 @@
   flex-shrink: 0;
   width: 1.25rem;
   height: 1.25rem;
-  margin-top: 1px;
 
   svg {
     width: 100%;
     height: 100%;
   }
+}
+
+// Nudge the icon to meet the first line only in multi-line toasts; centered
+// single-line toasts need no offset.
+.toast:has(.description) .icon {
+  margin-top: 1px;
 }
 
 .content {

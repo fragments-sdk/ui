@@ -22,6 +22,7 @@
 // ============================================
 
 // Import computed values from seed system
+@use "sass:string";
 @use "computed" as computed;
 
 // --------------------------------------------
@@ -44,17 +45,15 @@ $fui-base-unit: computed.$computed-base-unit !default;
 // Typography
 // --------------------------------------------
 $fui-font-sans:
-  "Geist Sans",
-  "Geist",
+  "Inter Variable",
   Inter,
-  system-ui,
   -apple-system,
   BlinkMacSystemFont,
   "Segoe UI",
-  Roboto,
+  system-ui,
   sans-serif !default;
 $fui-font-mono:
-  "Geist Mono", "SF Mono", SFMono-Regular, ui-monospace, "Cascadia Code", Menlo, monospace !default;
+  "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace !default;
 
 // Font sizes (rem based on 14px root).
 // Scale ladder tuned for industry-leading docs hierarchy:
@@ -197,7 +196,7 @@ $fui-shadow-lg: computed.$computed-shadow-lg !default;
 // Focus ring (derived from $fui-brand)
 $fui-focus-ring-color: computed.$computed-focus-ring-color !default;
 $fui-focus-ring-offset: 2px !default;
-$fui-focus-ring-width: 1px !default;
+$fui-focus-ring-width: 2px !default;
 
 // Scrollbar (derived from $fui-neutral palette)
 $fui-scrollbar-width: 8px !default;
@@ -213,6 +212,28 @@ $fui-dark-color-accent: computed.$computed-dark-color-accent !default;
 $fui-dark-color-on-accent: computed.$computed-dark-color-on-accent !default;
 $fui-dark-color-accent-hover: computed.$computed-dark-color-accent-hover !default;
 $fui-dark-color-accent-active: computed.$computed-dark-color-accent-active !default;
+
+// True when the brand seed is the Fragments default (pine). When true, the
+// runtime (relative-color) dark accent is pinned to the exact SCSS-computed
+// sage values so the ~93% relative-color path and the SCSS fallback agree.
+// Any consumer-supplied $fui-brand flips this false and restores the reactive
+// OKLCH derivation that tracks --fui-seed-brand at runtime.
+$fui-brand-is-default: computed.$brand-is-fragments-default !default;
+
+$_rt-dark-accent: $fui-dark-color-accent;
+$_rt-dark-accent-hover: $fui-dark-color-accent-hover;
+$_rt-dark-accent-active: $fui-dark-color-accent-active;
+@if not $fui-brand-is-default {
+  $_rt-dark-accent: string.unquote(
+    "oklch(from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h)"
+  );
+  $_rt-dark-accent-hover: string.unquote(
+    "oklch(from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h)"
+  );
+  $_rt-dark-accent-active: string.unquote(
+    "oklch(from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h)"
+  );
+}
 
 // Surface colors (dark) - derived from $fui-neutral palette
 $fui-dark-bg-primary: computed.$computed-dark-bg-primary !default;
@@ -325,7 +346,7 @@ $fui-header-z-index: 40 !default;
 
 // CodeBlock background — shared with Markdown's <pre> prose styling.
 // Other code/tooltip styling tokens live in their component modules.
-$fui-code-bg: #0c0c0e !default;
+$fui-code-bg: #171717 !default;
 
 // --------------------------------------------
 // CSS Custom Properties Export
@@ -509,11 +530,12 @@ $fui-code-bg: #0c0c0e !default;
     --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
 
-    // Native browser text selection. This should track the primary action blue,
-    // while component-selected states can stay tuned per control density.
+    // Native browser text selection tracks the accent (pine in light, sage in
+    // dark) as a soft wash — matching the Flight Recorder accent-tint.
+    // Component-selected states stay tuned per control density.
     --fui-selection-bg: light-dark(
-      color-mix(in srgb, var(--fui-button-primary-base, #0a84ff) 18%, transparent),
-      color-mix(in srgb, var(--fui-button-primary-base, #0a84ff) 32%, transparent)
+      color-mix(in srgb, var(--fui-color-accent, #006b57) 18%, transparent),
+      color-mix(in srgb, var(--fui-color-accent, #7fc9b3) 22%, transparent)
     );
     --fui-selection-color: var(--fui-text-primary);
 
@@ -553,30 +575,13 @@ $fui-code-bg: #0c0c0e !default;
     --fui-kbd-radius: var(--fui-radius-sm);
     --fui-kbd-reserved-width: 2.714rem; // 38px, enough for "⌘K"
 
-    // Button chrome. Neutral and primary buttons use the same raised-edge
-    // recipe in light and dark: crisp border, subtle top highlight, and a
-    // pressed inset state.
-    --fui-button-radius: var(--fui-radius-lg);
-    --fui-button-primary-base: light-dark(#0a84ff, #0a84ff);
-    --fui-button-primary-hover: light-dark(#1994ff, #2f9bff);
-    --fui-button-primary-active: light-dark(#006edb, #0068d6);
-    --fui-button-primary-bg: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--fui-button-primary-base) 78%, white 22%) 0%,
-      var(--fui-button-primary-base) 52%,
-      color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 100%
-    );
-    --fui-button-primary-bg-hover: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--fui-button-primary-hover) 76%, white 24%) 0%,
-      var(--fui-button-primary-hover) 52%,
-      color-mix(in srgb, var(--fui-button-primary-active) 84%, black 16%) 100%
-    );
-    --fui-button-primary-bg-active: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 0%,
-      var(--fui-button-primary-active) 100%
-    );
+    // Button chrome. Primary fill = pine. Border/color are shared; the fill
+    // treatment and radius branch on the brand: the Fragments default renders a
+    // FLAT solid pill (hybrid-skin), while consumer-branded builds keep the
+    // raised-gradient recipe with crisp border, top highlight, and pressed inset.
+    --fui-button-primary-base: light-dark(#006b57, #006b57);
+    --fui-button-primary-hover: light-dark(#187762, #187762);
+    --fui-button-primary-active: light-dark(#005f4c, #005f4c);
     --fui-button-primary-border-hover: color-mix(
       in srgb,
       var(--fui-button-primary-active) 86%,
@@ -588,13 +593,44 @@ $fui-code-bg: #0c0c0e !default;
       black 26%
     );
     --fui-button-primary-color: #fff;
-    --fui-button-primary-shadow:
-      inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
-      inset 0 -1px 0 color-mix(in srgb, black 18%, transparent),
-      0 1px 1px color-mix(in srgb, black 16%, transparent);
-    --fui-button-primary-shadow-active:
-      inset 0 1px 2px color-mix(in srgb, black 30%, transparent),
-      0 1px 0 color-mix(in srgb, white 8%, transparent);
+
+    @if $fui-brand-is-default {
+      // Flat solid pill — hybrid-skin treatment.
+      --fui-button-radius: var(--fui-radius-full);
+      --fui-button-primary-bg: var(--fui-button-primary-base);
+      --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
+      --fui-button-primary-bg-active: var(--fui-button-primary-active);
+      --fui-button-primary-shadow: none;
+      --fui-button-primary-shadow-active: inset 0 1px 2px
+        color-mix(in srgb, black 22%, transparent);
+    } @else {
+      // Raised-gradient recipe for consumer-branded builds.
+      --fui-button-radius: var(--fui-radius-lg);
+      --fui-button-primary-bg: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--fui-button-primary-base) 78%, white 22%) 0%,
+        var(--fui-button-primary-base) 52%,
+        color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 100%
+      );
+      --fui-button-primary-bg-hover: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--fui-button-primary-hover) 76%, white 24%) 0%,
+        var(--fui-button-primary-hover) 52%,
+        color-mix(in srgb, var(--fui-button-primary-active) 84%, black 16%) 100%
+      );
+      --fui-button-primary-bg-active: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 0%,
+        var(--fui-button-primary-active) 100%
+      );
+      --fui-button-primary-shadow:
+        inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
+        inset 0 -1px 0 color-mix(in srgb, black 18%, transparent),
+        0 1px 1px color-mix(in srgb, black 16%, transparent);
+      --fui-button-primary-shadow-active:
+        inset 0 1px 2px color-mix(in srgb, black 30%, transparent),
+        0 1px 0 color-mix(in srgb, white 8%, transparent);
+    }
 
     --fui-button-neutral-bg: linear-gradient(
       to bottom,
@@ -810,10 +846,10 @@ $fui-code-bg: #0c0c0e !default;
       // brand (high c) keeps its own lightness, while a neutral grey brand (c≈0) lifts
       // toward ~0.85 so it stays visible on dark surfaces where lightness is the only
       // perceptual cue. Final L is clamped to [0.55, 0.85].
-      --fui-color-accent: light-dark(
-        var(--fui-seed-brand),
-        oklch(from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h)
-      );
+      // Dark half is gated: the Fragments default emits the exact SCSS-computed
+      // sage constants (#{$_rt-dark-accent}) so this path and the fallback agree;
+      // any consumer $fui-brand restores the reactive chroma-aware OKLCH lift.
+      --fui-color-accent: light-dark(var(--fui-seed-brand), #{$_rt-dark-accent});
 
       // Auto-contrast text for elements on accent backgrounds (buttons, chips, etc.)
       // Lightness > 0.6 → dark text; otherwise → white. Users can override this token.
@@ -822,15 +858,11 @@ $fui-code-bg: #0c0c0e !default;
       );
       --fui-color-accent-hover: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        oklch(
-          from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h
-        )
+        #{$_rt-dark-accent-hover}
       );
       --fui-color-accent-active: light-dark(
         oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        oklch(
-          from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h
-        )
+        #{$_rt-dark-accent-active}
       );
 
       // Semantic hover derived from seed
@@ -881,18 +913,12 @@ $fui-code-bg: #0c0c0e !default;
     // is never clamped, so saturated brands (e.g. blue-600) stay true in dark mode.
     :root[data-theme="dark"],
     :root.dark {
-      --fui-color-accent: oklch(
-        from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h
-      );
+      --fui-color-accent: #{$_rt-dark-accent};
       --fui-color-on-accent: oklch(
         from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0
       );
-      --fui-color-accent-hover: oklch(
-        from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h
-      );
-      --fui-color-accent-active: oklch(
-        from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h
-      );
+      --fui-color-accent-hover: #{$_rt-dark-accent-hover};
+      --fui-color-accent-active: #{$_rt-dark-accent-active};
       --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 24%, black);
       --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 24%, black);
       --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 24%, black);

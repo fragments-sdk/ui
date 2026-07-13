@@ -22,13 +22,16 @@
 // --------------------------------------------
 
 /// Primary brand color - derives accent colors, focus rings, etc.
+/// Default = Fragments "pine" (the fill/foreground accent). The out-of-box
+/// theme derives a sage foreground accent in dark mode from this seed.
 /// @type Color
-$fui-brand: #18181b !default;
+$fui-brand: #006b57 !default;
 
 /// Neutral palette name for surfaces, text, and borders
-/// Options: "stone" | "mono" | "ice" | "earth" | "sand" | "fire" | "fragments"
+/// Options: "carbon" | "stone" | "mono" | "ice" | "earth" | "sand" | "fire" | "fragments"
+/// Default = "carbon" (the Fragments "Flight Recorder" near-black ramp).
 /// @type String
-$fui-neutral: "stone" !default;
+$fui-neutral: "carbon" !default;
 
 /// Density preset controlling spacing scale
 /// Options: "compact" | "default" | "relaxed"
@@ -45,7 +48,7 @@ $fui-radius-style: "default" !default;
 // --------------------------------------------
 // Fail fast at compile time if invalid seed values are provided.
 
-$_valid-neutrals: "stone", "mono", "ice", "earth", "sand", "fire", "fragments";
+$_valid-neutrals: "carbon", "stone", "mono", "ice", "earth", "sand", "fire", "fragments";
 @if not list.index($_valid-neutrals, $fui-neutral) {
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
 }
@@ -66,18 +69,23 @@ $_valid-radii: "sharp", "subtle", "default", "rounded", "pill";
 // Override these to customize semantic colors.
 // If not overridden, they use sensible defaults.
 
-/// Danger/error color (defaults to red-500)
-/// @type Color
-$fui-danger: #ef4444 !default;
+// The status seeds below are tuned to sit in one family with the sage brand
+// (`$fui-brand` / success `#7fc9b3`): soft, muted, ~60% lightness rather than
+// neon. Danger is the warm complement of sage, warning its split-complement,
+// info a cool teal-adjacent slate — so they read as one palette, not bolted-on.
 
-/// Success color (defaults to green-500)
+/// Danger/error color — muted coral-terracotta, sage's warm complement.
 /// @type Color
-$fui-success: #22c55e !default;
+$fui-danger: #d97066 !default;
 
-/// Warning color (defaults to amber-500)
+/// Success color (Fragments brand default — sage; green means "contract passing")
 /// @type Color
-$fui-warning: #f59e0b !default;
+$fui-success: #7fc9b3 !default;
 
-/// Info color (defaults to blue-500)
+/// Warning color — honey amber, muted to match the sage family.
 /// @type Color
-$fui-info: #3b82f6 !default;
+$fui-warning: #e0aa5c !default;
+
+/// Info color — dusty slate-blue, a cool teal-adjacent tone (was flat grey).
+/// @type Color
+$fui-info: #7fa6c4 !default;

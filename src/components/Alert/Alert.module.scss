@@ -3,13 +3,21 @@
 
 .alert {
   display: flex;
-  align-items: flex-start;
+  // Single-line alerts (icon + one line, no title) read best vertically
+  // centered. Multi-line alerts top-align instead — see `:has(.title)` below.
+  align-items: center;
   gap: var(--fui-space-3, $fui-space-3);
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   font-family: var(--fui-font-sans, $fui-font-sans);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+}
+
+// With a title (title + description), the block is multi-line: top-align so
+// the icon and close sit with the first line rather than the block's centre.
+.alert:has(.title) {
+  align-items: flex-start;
 }
 
 // Severity variants
@@ -47,8 +55,13 @@
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
   flex-shrink: 0;
-  margin-top: var(--fui-space-px, $fui-space-px);
   color: var(--fui-text-inverse, $fui-text-inverse);
+}
+
+// Only nudge the icon down to meet the first text line when the alert is
+// multi-line; centered single-line alerts need no offset.
+.alert:has(.title) .icon {
+  margin-top: var(--fui-space-px, $fui-space-px);
 }
 
 .info .icon {

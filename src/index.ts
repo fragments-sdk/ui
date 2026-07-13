@@ -579,6 +579,7 @@ export {
 
 // Assets
 export { FragmentsLogo, fragmentsLogoSvg, type FragmentsLogoProps } from "./assets/fragments-logo";
+export { FragmentsWordmark, type FragmentsWordmarkProps } from "./assets/fragments-wordmark";
 
 // NavigationMenu
 export {
