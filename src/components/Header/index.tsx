@@ -25,12 +25,26 @@ export type HeaderIconSlot =
 
 export type HeaderIcons = Partial<Record<HeaderIconRenderState['slot'], HeaderIconSlot>>;
 
+export type HeaderNavAlign = 'start' | 'center';
+export type HeaderContainer = 'full' | 'page';
+
+export interface HeaderElevatedOnScrollOptions {
+  /** Scroll offset before the elevated surface is applied */
+  threshold?: number;
+}
+
 export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Header height (default: '56px') */
   height?: string;
   /** Position behavior */
   position?: 'static' | 'fixed' | 'sticky';
+  /** Apply the elevated header surface after scroll */
+  elevatedOnScroll?: boolean | HeaderElevatedOnScrollOptions;
+  /** Navigation alignment inside the header */
+  navAlign?: HeaderNavAlign;
+  /** Header content width */
+  container?: HeaderContainer;
   /** Optional icon overrides for internal header controls (mobile trigger + nav menu chevron) */
   icons?: HeaderIcons;
 }
@@ -39,6 +53,8 @@ export interface HeaderBrandProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Link destination */
   href?: string;
+  /** Render as child element (polymorphic) */
+  asChild?: boolean;
 }
 
 export interface HeaderNavProps extends React.HTMLAttributes<HTMLElement> {
@@ -99,6 +115,10 @@ export interface HeaderMobileNavProps {
   children: React.ReactNode;
   /** Optional className for the drawer panel */
   className?: string;
+}
+
+export interface HeaderMobileNavActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
 }
 
 // ============================================
@@ -175,17 +195,37 @@ function HeaderRoot({
   children,
   height = '56px',
   position = 'static',
+  elevatedOnScroll = false,
+  navAlign = 'start',
+  container = 'full',
   icons,
   className,
   style: styleProp,
   ...htmlProps
 }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
+  const shouldElevateOnScroll = Boolean(elevatedOnScroll);
+  const scrollThreshold =
+    typeof elevatedOnScroll === 'object' ? (elevatedOnScroll.threshold ?? 16) : 16;
+
+  React.useEffect(() => {
+    if (!shouldElevateOnScroll) return;
+
+    const updateScrolled = () => setScrolled(window.scrollY > scrollThreshold);
+    updateScrolled();
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrolled);
+  }, [scrollThreshold, shouldElevateOnScroll]);
 
   const classes = [
     styles.header,
     position === 'fixed' && styles.fixed,
     position === 'sticky' && styles.sticky,
+    shouldElevateOnScroll && styles.elevatedOnScroll,
+    shouldElevateOnScroll && scrolled && styles.scrolled,
+    navAlign === 'center' && styles.navCentered,
+    container === 'page' && styles.containerPage,
     className,
   ].filter(Boolean).join(' ');
 
@@ -202,7 +242,13 @@ function HeaderRoot({
   return (
     <HeaderContext.Provider value={contextValue}>
       <HeaderIconContext.Provider value={icons}>
-        <header {...htmlProps} className={classes} style={style} data-position={position}>
+        <header
+          {...htmlProps}
+          className={classes}
+          style={style}
+          data-position={position}
+          data-scrolled={shouldElevateOnScroll ? scrolled : undefined}
+        >
           <div className={styles.container}>
             {children}
           </div>
@@ -215,8 +261,29 @@ function HeaderRoot({
 /**
  * Header.Brand - Logo/brand slot
  */
-function HeaderBrand({ children, href, className, ...htmlProps }: HeaderBrandProps) {
+function HeaderBrand({
+  children,
+  href,
+  asChild = false,
+  className,
+  ...htmlProps
+}: HeaderBrandProps) {
   const classes = [styles.brand, className].filter(Boolean).join(' ');
+
+  if (asChild && React.isValidElement(children)) {
+    const childProps = children.props as {
+      className?: string;
+      onClick?: React.MouseEventHandler<HTMLElement>;
+    };
+    const { onClick, ...restHtmlProps } = htmlProps as React.HTMLAttributes<HTMLElement>;
+
+    return React.cloneElement(children, {
+      ...restHtmlProps,
+      ...(href ? { href } : {}),
+      className: [classes, childProps.className].filter(Boolean).join(' '),
+      onClick: onClick ? composeEventHandlers(childProps.onClick, onClick) : childProps.onClick,
+    } as React.HTMLAttributes<HTMLElement>);
+  }
 
   if (href) {
     return (
@@ -605,6 +672,23 @@ function HeaderMobileNavLink({
 }
 
 /**
+ * Header.MobileNavActions - Action row inside the mobile drawer
+ */
+function HeaderMobileNavActions({
+  children,
+  className,
+  ...htmlProps
+}: HeaderMobileNavActionsProps) {
+  const classes = [styles.mobileNavActions, className].filter(Boolean).join(' ');
+
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
+}
+
+/**
  * Header.SkipLink - Skip to main content link (accessibility)
  */
 function HeaderSkipLink({
@@ -641,6 +725,7 @@ export const Header = Object.assign(HeaderRoot, {
   SkipLink: HeaderSkipLink,
   MobileNav: HeaderMobileNav,
   MobileNavLink: HeaderMobileNavLink,
+  MobileNavActions: HeaderMobileNavActions,
 });
 
 export {
@@ -657,4 +742,5 @@ export {
   HeaderSkipLink,
   HeaderMobileNav,
   HeaderMobileNavLink,
+  HeaderMobileNavActions,
 };

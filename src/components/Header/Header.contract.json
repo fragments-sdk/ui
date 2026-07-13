@@ -18,6 +18,9 @@
     "children: node (required)",
     "height: string (default: 56px)",
     "position: static|fixed|sticky (default: static)",
+    "elevatedOnScroll: boolean|{ threshold?: number }",
+    "navAlign: start|center (default: start)",
+    "container: full|page (default: full)",
     "icons: object",
     "style: object"
   ],
@@ -43,6 +46,26 @@
         "fixed",
         "sticky"
       ]
+    },
+    "elevatedOnScroll": {
+      "type": "boolean|object",
+      "description": "Apply the elevated header border after scrolling. Object form accepts { threshold?: number }.",
+      "default": false,
+      "required": false
+    },
+    "navAlign": {
+      "type": "enum",
+      "description": "Navigation alignment inside the header",
+      "default": "start",
+      "required": false,
+      "values": ["start", "center"]
+    },
+    "container": {
+      "type": "enum",
+      "description": "Header content width",
+      "default": "full",
+      "required": false,
+      "values": ["full", "page"]
     },
     "icons": {
       "type": "object",
@@ -79,7 +102,12 @@
       "Use Header.NavMenu to group related nav items under a dropdown",
       "Use Header.NavMenuItem inside Header.NavMenu for dropdown items",
       "Header sub-components forward DOM props (id, aria-*, data-*, handlers) to their rendered elements",
+      "Header.Brand asChild composes custom link components while preserving canonical brand styling",
       "Header.NavItem asChild composes click handlers instead of overwriting the child handler",
+      "Use elevatedOnScroll on sticky marketing headers that need a boundary after scrolling",
+      "Use navAlign=\"center\" when navigation must stay centered independently of brand and actions",
+      "Use container=\"page\" when the header should share a bounded page gutter",
+      "Use Header.MobileNavActions for the primary action row inside Header.MobileNav",
       "Use the Header icons prop to replace internal mobile trigger and dropdown chevron icons with any icon package",
       "For rich dropdown content (titles, descriptions, icons), use NavigationMenu instead of Header.Nav",
       "NavigationMenu also provides an automatic mobile drawer, replacing Header.Trigger + Sidebar for mobile nav"
@@ -97,6 +125,11 @@
       "name": "For Default Layout",
       "description": "Header with brand, nav, and actions. Use with AppShell layout=\"default\".",
       "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/dashboard\" active>Dashboard</Header.NavItem>\n      <Header.NavItem href=\"/projects\">Projects</Header.NavItem>\n      <Header.NavItem href=\"/settings\">Settings</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"secondary\" size=\"sm\">Sign In</Button>\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+    },
+    {
+      "name": "Marketing Header",
+      "description": "Sticky, page-width marketing header with centered navigation, scroll elevation, custom link composition, and mobile actions.",
+      "code": "<Header position=\"sticky\" elevatedOnScroll navAlign=\"center\" container=\"page\">\n  <Header.SkipLink href=\"#main-content\" />\n  <Header.Brand asChild>\n    <a href=\"/\" aria-label=\"Home\">Logo</a>\n  </Header.Brand>\n  <Header.Nav aria-label=\"Main navigation\">\n    <Header.NavItem href=\"/docs\">Docs</Header.NavItem>\n  </Header.Nav>\n  <Header.Actions>\n    <Button size=\"sm\">Start free</Button>\n  </Header.Actions>\n  <Header.Trigger />\n  <Header.MobileNav>\n    <Header.MobileNavLink href=\"/docs\">Docs</Header.MobileNavLink>\n    <Header.MobileNavActions>\n      <Button size=\"sm\">Start free</Button>\n    </Header.MobileNavActions>\n  </Header.MobileNav>\n</Header>"
     },
     {
       "name": "With Dropdown Nav",
@@ -155,9 +188,14 @@
     "propsSummary": [
       "height: string - header height (default: 56px)",
       "position: static|fixed|sticky - positioning behavior",
+      "elevatedOnScroll: boolean|{ threshold?: number } - scroll-elevated boundary",
+      "navAlign: start|center - nav placement inside the header",
+      "container: full|page - content width and gutter",
       "icons: { menu?, close?, navMenuChevron? } - custom internal control icons (ReactNode or render function)",
+      "Header.Brand asChild composes custom link components",
       "Header.Trigger composes click handler with Sidebar toggle behavior",
-      "Header.NavMenu provides dropdown groups via Base UI Menu"
+      "Header.NavMenu provides dropdown groups via Base UI Menu",
+      "Header.MobileNavActions provides an action row inside the mobile drawer"
     ],
     "a11yRules": [
       "A11Y_HEADER_LANDMARK",
@@ -176,6 +214,7 @@
       "NavItem",
       "MobileNav",
       "MobileNavLink",
+      "MobileNavActions",
       "NavMenu",
       "NavMenuItem",
       "Search",
@@ -184,6 +223,7 @@
     ],
     "commonPatterns": [
       "<Header><Header.Brand href=\"/\">{appName}</Header.Brand><Header.Nav><Header.NavItem href=\"/home\" active>Home</Header.NavItem></Header.Nav><Header.Spacer /><Header.Actions>{actions}</Header.Actions></Header>",
+      "<Header position=\"sticky\" elevatedOnScroll navAlign=\"center\" container=\"page\"><Header.Brand asChild>{link}</Header.Brand><Header.Nav>{links}</Header.Nav><Header.Actions>{actions}</Header.Actions><Header.Trigger /><Header.MobileNav>{mobileLinks}<Header.MobileNavActions>{mobileActions}</Header.MobileNavActions></Header.MobileNav></Header>",
       "<Header><Header.Nav><Header.NavItem href=\"/home\">Home</Header.NavItem><Header.NavMenu label=\"Docs\" active><Header.NavMenuItem href=\"/cli\">CLI</Header.NavMenuItem><Header.NavMenuItem href=\"/mcp\">MCP</Header.NavMenuItem></Header.NavMenu></Header.Nav></Header>"
     ]
   },

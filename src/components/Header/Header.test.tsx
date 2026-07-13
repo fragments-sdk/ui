@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
 import { Header } from './index';
@@ -9,7 +10,10 @@ describe('Header', () => {
         <Header.Brand>Logo</Header.Brand>
       </Header>
     );
-    expect(screen.getByRole('banner')).toBeInTheDocument();
+    const header = screen.getByRole('banner');
+    expect(header).toBeInTheDocument();
+    expect(header).not.toHaveAttribute('data-scrolled');
+    expect(header.className).not.toMatch(/elevatedOnScroll|navCentered|containerPage/);
   });
 
   it('renders Brand slot content', () => {
@@ -29,6 +33,68 @@ describe('Header', () => {
     );
     const link = screen.getByRole('link', { name: 'Home' });
     expect(link).toHaveAttribute('href', '/');
+  });
+
+  it('renders Brand asChild while preserving semantics, ref, classes, and handlers', async () => {
+    const user = userEvent.setup();
+    const ref = createRef<HTMLAnchorElement>();
+    const parentClick = vi.fn();
+    const childClick = vi.fn();
+
+    render(
+      <Header>
+        <Header.Brand asChild className="parent-brand" onClick={parentClick}>
+          <a
+            ref={ref}
+            href="/"
+            className="child-brand"
+            aria-label="Fragments home"
+            onClick={childClick}
+          >
+            Fragments
+          </a>
+        </Header.Brand>
+      </Header>
+    );
+
+    const link = screen.getByRole('link', { name: 'Fragments home' });
+    expect(ref.current).toBe(link);
+    expect(link).toHaveAttribute('href', '/');
+    expect(link.className).toMatch(/brand/);
+    expect(link.className).toContain('parent-brand');
+    expect(link.className).toContain('child-brand');
+
+    await user.click(link);
+    expect(childClick).toHaveBeenCalledOnce();
+    expect(parentClick).toHaveBeenCalledOnce();
+  });
+
+  it('applies page layout and scroll elevation options without changing initial markup', async () => {
+    const originalScrollY = Object.getOwnPropertyDescriptor(window, 'scrollY');
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 32 });
+
+    try {
+      render(
+        <Header elevatedOnScroll={{ threshold: 16 }} navAlign="center" container="page">
+          <Header.Brand>Fragments</Header.Brand>
+          <Header.Nav>
+            <Header.NavItem href="/docs">Docs</Header.NavItem>
+          </Header.Nav>
+        </Header>
+      );
+
+      const header = screen.getByRole('banner');
+      expect(header.className).toMatch(/elevatedOnScroll/);
+      expect(header.className).toMatch(/navCentered/);
+      expect(header.className).toMatch(/containerPage/);
+      await waitFor(() => expect(header).toHaveAttribute('data-scrolled', 'true'));
+    } finally {
+      if (originalScrollY) {
+        Object.defineProperty(window, 'scrollY', originalScrollY);
+      } else {
+        Reflect.deleteProperty(window, 'scrollY');
+      }
+    }
   });
 
   it('renders navigation with accessible label', () => {
@@ -89,6 +155,21 @@ describe('Header', () => {
       </Header>
     );
     expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
+  });
+
+  it('renders mobile navigation actions with forwarded props and classes', () => {
+    render(
+      <Header>
+        <Header.MobileNavActions className="custom-mobile-actions" data-testid="mobile-actions">
+          <button>Start free</button>
+        </Header.MobileNavActions>
+      </Header>
+    );
+
+    const actions = screen.getByTestId('mobile-actions');
+    expect(actions.className).toMatch(/mobileNavActions/);
+    expect(actions.className).toContain('custom-mobile-actions');
+    expect(screen.getByRole('button', { name: 'Start free' })).toBeInTheDocument();
   });
 
   it('Header.Trigger composes onClick and forwards button props', async () => {

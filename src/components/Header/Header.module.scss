@@ -30,6 +30,24 @@
   top: 0;
 }
 
+.elevatedOnScroll {
+  border-bottom: var(--fui-space-px, $fui-space-px) solid transparent;
+  transition: border-color var(--fui-transition-fast, $fui-transition-fast);
+}
+
+.scrolled {
+  border-bottom-color: var(--fui-border, $fui-border);
+}
+
+.containerPage {
+  padding-inline: clamp(var(--fui-space-4, $fui-space-4), 4vw, var(--fui-space-12, $fui-space-12));
+
+  .container {
+    max-width: calc(var(--fui-space-12, $fui-space-12) * 31);
+    margin-inline: auto;
+  }
+}
+
 .container {
   display: flex;
   align-items: center;
@@ -40,6 +58,21 @@
   // Compact gap when header container is narrow (replaces viewport media query)
   @include container-max($fui-breakpoint-md, fui-header) {
     gap: var(--fui-space-1, $fui-space-1);
+  }
+}
+
+.navCentered {
+  .container {
+    position: relative;
+  }
+
+  .nav {
+    @include container-min($fui-breakpoint-md, fui-header) {
+      position: absolute;
+      inset-block: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
 
@@ -379,6 +412,13 @@
 .mobileNavLinkActive {
   color: var(--fui-text-primary, $fui-text-primary);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+.mobileNavActions {
+  display: flex;
+  align-items: center;
+  gap: var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-3, $fui-space-3) 0 var(--fui-space-2, $fui-space-2);
 }
 
 @keyframes mobileNavFadeIn {
