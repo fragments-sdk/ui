@@ -3,14 +3,7 @@
   "name": "DataTable",
   "description": "Data table with sorting, selection, and column management. Powered by TanStack Table.",
   "category": "display",
-  "tags": [
-    "table",
-    "data",
-    "grid",
-    "list",
-    "sorting",
-    "tanstack"
-  ],
+  "tags": ["table", "data", "grid", "list", "sorting", "tanstack"],
   "status": "stable",
   "sourcePath": "src/components/DataTable/index.tsx",
   "exportName": "DataTable",
@@ -26,6 +19,7 @@
     "rowSelection: object",
     "onRowSelectionChange: function",
     "onRowClick: function",
+    "getRowProps: function",
     "getSubRows: function",
     "expanded: union",
     "onExpandedChange: function",
@@ -97,6 +91,11 @@
       "description": "Handler for row clicks/keyboard activation. Called as (row, event)",
       "required": false
     },
+    "getRowProps": {
+      "type": "function",
+      "description": "Returns row-level HTML, ARIA, data, class, and event props for each rendered data row",
+      "required": false
+    },
     "getSubRows": {
       "type": "function",
       "description": "Extract sub-rows for expandable tree tables",
@@ -123,10 +122,7 @@
       "description": "Table density",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md"
-      ]
+      "values": ["sm", "md"]
     },
     "caption": {
       "type": "string",
@@ -181,13 +177,15 @@
       "Use consistent alignment (numbers right, text left)",
       "Provide meaningful empty states",
       "Consider mobile responsiveness",
-      "Use showCheckbox for bulk selection workflows"
+      "Use showCheckbox for bulk selection workflows",
+      "Use getRowProps to provide an accessible name and intentional semantics for clickable rows"
     ],
     "accessibility": [
       "Proper table semantics with headers",
       "Sortable columns are keyboard accessible",
       "Row selection checkboxes include aria-labels",
-      "Expand/collapse buttons have aria-expanded state"
+      "Expand/collapse buttons have aria-expanded state",
+      "Clickable rows expose an accessible action label through getRowProps"
     ]
   },
   "examples": [
@@ -224,7 +222,7 @@
     {
       "name": "Clickable Rows",
       "description": "Rows respond to click and keyboard activation",
-      "code": "<DataTable\n  columns={endpointColumns}\n  data={sampleEndpoints}\n  onRowClick={(row) => alert(`${row.method} ${row.path}`)}\n  size=\"sm\"\n  aria-label=\"API endpoints\"\n/>"
+      "code": "<DataTable\n  columns={endpointColumns}\n  data={sampleEndpoints}\n  getRowProps={(row) => ({\n    role: 'button',\n    'aria-label': `Open ${row.method} ${row.path}`,\n  })}\n  onRowClick={(row) => alert(`${row.method} ${row.path}`)}\n  size=\"sm\"\n  aria-label=\"API endpoints\"\n/>"
     },
     {
       "name": "Striped",
@@ -273,22 +271,17 @@
       "showCheckbox: boolean - add checkbox column",
       "getSubRows: (row) => T[] - enable expandable rows",
       "onRowClick: (row, event) => void - row activation handler with event access",
+      "getRowProps: (row) => HTMLAttributes<HTMLTableRowElement> - row-level ARIA, role, data, class, and event props",
       "size: sm|md - table density",
       "striped: boolean - alternating row backgrounds",
       "bordered: boolean - bordered container",
       "wrapperClassName / wrapperProps - style and configure the outer wrapper div"
     ],
-    "a11yRules": [
-      "A11Y_TABLE_HEADERS",
-      "A11Y_TABLE_SORT"
-    ]
+    "a11yRules": ["A11Y_TABLE_HEADERS", "A11Y_TABLE_SORT"]
   },
   "ai": {
     "compositionPattern": "simple",
-    "subComponents": [
-      "Root",
-      "Columns"
-    ],
+    "subComponents": ["Root", "Columns"],
     "commonPatterns": [
       "<DataTable columns={createColumns([{key:\"name\",header:\"Name\"},{key:\"status\",header:\"Status\"}])} data={[{name:\"Item 1\",status:\"Active\"}]} />"
     ]

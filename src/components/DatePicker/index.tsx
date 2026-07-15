@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui/react/popover";
+import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
+import { format as formatDateWithPattern } from "date-fns";
 import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./DatePicker.module.scss";
@@ -80,39 +82,6 @@ export interface DatePickerPresetProps extends React.ButtonHTMLAttributes<HTMLBu
   date?: Date;
   /** Range to select (range mode) */
   range?: DateRange;
-}
-
-// ============================================
-// Lazy-loaded dependencies (react-day-picker + date-fns)
-// ============================================
-
-let _DayPicker: any = null;
-let _dpUI: any = null;
-let _SelectionState: any = null;
-let _DayFlag: any = null;
-let _formatDate: ((date: Date, fmt: string) => string) | null = null;
-let _dpLoaded = false;
-let _dpFailed = false;
-
-function loadDatePickerDeps() {
-  if (_dpLoaded) return;
-  _dpLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const rdp = require("react-day-picker");
-    _DayPicker = rdp.DayPicker;
-    _dpUI = rdp.UI;
-    _SelectionState = rdp.SelectionState;
-    _DayFlag = rdp.DayFlag;
-  } catch {
-    _dpFailed = true;
-  }
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    _formatDate = require("date-fns").format;
-  } catch {
-    _dpFailed = true;
-  }
 }
 
 // ============================================
@@ -219,18 +188,13 @@ function useDatePickerContext() {
 // ============================================
 
 function defaultFormatDate(date: Date): string {
-  if (_formatDate) return _formatDate(date, "PPP");
-  return date.toLocaleDateString();
+  return formatDateWithPattern(date, "PPP");
 }
 
 function defaultFormatRange(range: DateRange): string {
   if (!range.from) return "";
-  if (_formatDate) {
-    if (!range.to) return _formatDate(range.from, "LLL dd, y");
-    return `${_formatDate(range.from, "LLL dd, y")} - ${_formatDate(range.to, "LLL dd, y")}`;
-  }
-  if (!range.to) return range.from.toLocaleDateString();
-  return `${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`;
+  if (!range.to) return formatDateWithPattern(range.from, "LLL dd, y");
+  return `${formatDateWithPattern(range.from, "LLL dd, y")} - ${formatDateWithPattern(range.to, "LLL dd, y")}`;
 }
 
 function formatDateForHiddenInput(date?: Date): string {
@@ -246,32 +210,31 @@ function formatDateForHiddenInput(date?: Date): string {
 // ============================================
 
 function getCalendarClassNames() {
-  if (!_dpUI || !_SelectionState || !_DayFlag) return {};
   return {
-    [_dpUI.Root]: styles.calendar,
-    [_dpUI.Months]: styles.months,
-    [_dpUI.Month]: styles.month,
-    [_dpUI.MonthCaption]: styles.monthCaption,
-    [_dpUI.CaptionLabel]: styles.captionLabel,
-    [_dpUI.Nav]: styles.nav,
-    [_dpUI.PreviousMonthButton]: styles.navButton,
-    [_dpUI.NextMonthButton]: styles.navButton,
-    [_dpUI.MonthGrid]: styles.monthGrid,
-    [_dpUI.Weekdays]: styles.weekdays,
-    [_dpUI.Weekday]: styles.weekday,
-    [_dpUI.Weeks]: styles.weeks,
-    [_dpUI.Week]: styles.week,
-    [_dpUI.Day]: styles.day,
-    [_dpUI.DayButton]: styles.dayButton,
-    [_dpUI.Chevron]: styles.chevron,
-    [_SelectionState.selected]: styles.selected,
-    [_SelectionState.range_start]: styles.rangeStart,
-    [_SelectionState.range_middle]: styles.rangeMiddle,
-    [_SelectionState.range_end]: styles.rangeEnd,
-    [_DayFlag.today]: styles.today,
-    [_DayFlag.outside]: styles.outside,
-    [_DayFlag.disabled]: styles.disabled,
-    [_DayFlag.focused]: styles.focused,
+    [UI.Root]: styles.calendar,
+    [UI.Months]: styles.months,
+    [UI.Month]: styles.month,
+    [UI.MonthCaption]: styles.monthCaption,
+    [UI.CaptionLabel]: styles.captionLabel,
+    [UI.Nav]: styles.nav,
+    [UI.PreviousMonthButton]: styles.navButton,
+    [UI.NextMonthButton]: styles.navButton,
+    [UI.MonthGrid]: styles.monthGrid,
+    [UI.Weekdays]: styles.weekdays,
+    [UI.Weekday]: styles.weekday,
+    [UI.Weeks]: styles.weeks,
+    [UI.Week]: styles.week,
+    [UI.Day]: styles.day,
+    [UI.DayButton]: styles.dayButton,
+    [UI.Chevron]: styles.chevron,
+    [SelectionState.selected]: styles.selected,
+    [SelectionState.range_start]: styles.rangeStart,
+    [SelectionState.range_middle]: styles.rangeMiddle,
+    [SelectionState.range_end]: styles.rangeEnd,
+    [DayFlag.today]: styles.today,
+    [DayFlag.outside]: styles.outside,
+    [DayFlag.disabled]: styles.disabled,
+    [DayFlag.focused]: styles.focused,
   };
 }
 
@@ -309,7 +272,6 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
 ) {
   const size = useResolvedControlSize(sizeProp);
   // Load deps eagerly so date formatters are available in the trigger
-  loadDatePickerDeps();
   const [internalSelected, setInternalSelected] = React.useState<Date | null>(selectedProp ?? null);
   const [internalRange, setInternalRange] = React.useState<DateRange | null>(
     selectedRangeProp ?? null
@@ -544,8 +506,6 @@ function DatePickerCalendar({
   numberOfMonths: numberOfMonthsProp,
   className,
 }: DatePickerCalendarProps) {
-  loadDatePickerDeps();
-
   const ctx = useDatePickerContext();
   const monthCount = numberOfMonthsProp ?? ctx.numberOfMonths;
 
@@ -557,23 +517,11 @@ function DatePickerCalendar({
     []
   );
 
-  if (_dpFailed || !_DayPicker) {
-    if (_dpFailed && process.env.NODE_ENV === "development") {
-      console.warn(
-        "[@usefragments/ui] DatePicker: react-day-picker and date-fns are not installed. " +
-          "Install them with: npm install react-day-picker date-fns"
-      );
-    }
-    return null;
-  }
-
   const calendarClassNames = getCalendarClassNames();
 
   const calendarClasses = className
-    ? { ...calendarClassNames, [_dpUI.Root]: [styles.calendar, className].join(" ") }
+    ? { ...calendarClassNames, [UI.Root]: [styles.calendar, className].join(" ") }
     : calendarClassNames;
-
-  const DayPickerComponent = _DayPicker;
 
   if (ctx.mode === "range") {
     const rangeSelected = ctx.selectedRange
@@ -581,7 +529,7 @@ function DatePickerCalendar({
       : undefined;
 
     return (
-      <DayPickerComponent
+      <DayPicker
         mode="range"
         selected={rangeSelected}
         onSelect={(range: any) => {
@@ -601,7 +549,7 @@ function DatePickerCalendar({
   }
 
   return (
-    <DayPickerComponent
+    <DayPicker
       mode="single"
       selected={ctx.selected ?? undefined}
       onSelect={(date: any) => {

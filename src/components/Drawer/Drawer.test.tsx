@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { describe, it, expect, vi } from "vitest";
+import { fireEvent } from "@testing-library/react";
+import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { Drawer } from "./index";
 
 function renderDrawer(
@@ -26,6 +27,82 @@ function renderDrawer(
       </Drawer.Content>
     </Drawer>
   );
+}
+
+type SwipeDirection = NonNullable<React.ComponentProps<typeof Drawer>["swipeDirection"]>;
+
+const DRAWER_SIDE_CASES = [
+  ["right", "right"],
+  ["left", "left"],
+  ["top", "up"],
+  ["bottom", "down"],
+] as const;
+
+const SWIPE_RELEASE_POSITION: Record<SwipeDirection, { clientX: number; clientY: number }> = {
+  left: { clientX: -100, clientY: 0 },
+  right: { clientX: 100, clientY: 0 },
+  up: { clientX: 0, clientY: -100 },
+  down: { clientX: 0, clientY: 100 },
+};
+
+async function commitPrimaryButtonSwipe(
+  viewport: HTMLElement,
+  popup: HTMLElement,
+  direction: SwipeDirection
+) {
+  Object.defineProperties(popup, {
+    offsetHeight: { configurable: true, value: 100 },
+    offsetWidth: { configurable: true, value: 100 },
+  });
+
+  const elementFromPointDescriptor = Object.getOwnPropertyDescriptor(document, "elementFromPoint");
+  Object.defineProperty(document, "elementFromPoint", {
+    configurable: true,
+    value: () => popup,
+  });
+
+  const releasePosition = SWIPE_RELEASE_POSITION[direction];
+
+  try {
+    fireEvent.pointerDown(viewport, {
+      button: 0,
+      buttons: 1,
+      pointerId: 1,
+      clientX: 0,
+      clientY: 0,
+      pointerType: "mouse",
+    });
+    fireEvent.pointerMove(viewport, {
+      buttons: 1,
+      pointerId: 1,
+      clientX: 0,
+      clientY: 0,
+      pointerType: "mouse",
+    });
+    fireEvent.pointerMove(viewport, {
+      buttons: 1,
+      pointerId: 1,
+      ...releasePosition,
+      pointerType: "mouse",
+    });
+    fireEvent.pointerMove(viewport, {
+      buttons: 0,
+      pointerId: 1,
+      ...releasePosition,
+      pointerType: "mouse",
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+  } finally {
+    if (elementFromPointDescriptor) {
+      Object.defineProperty(document, "elementFromPoint", elementFromPointDescriptor);
+    } else {
+      delete (document as Document & { elementFromPoint?: Document["elementFromPoint"] })
+        .elementFromPoint;
+    }
+  }
 }
 
 describe("Drawer", () => {
@@ -102,12 +179,66 @@ describe("Drawer", () => {
     });
   });
 
-  it("supports side prop", async () => {
-    renderDrawer({ defaultOpen: true }, { side: "left" });
+  it("defaults the content side and swipe direction to right", async () => {
+    renderDrawer({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
+      expect(screen.getByRole("dialog")).toHaveAttribute("data-side", "right");
+      expect(screen.getByRole("dialog")).toHaveAttribute("data-swipe-direction", "right");
     });
+  });
+
+  it.each(DRAWER_SIDE_CASES)(
+    "derives a %s drawer's %s swipe dismissal from Drawer.Content",
+    async (side, expectedDirection) => {
+      const onOpenChange = vi.fn();
+      renderDrawer(
+        { defaultOpen: true, onOpenChange },
+        {
+          side,
+          viewportProps: { "data-testid": "swipe-viewport" },
+        }
+      );
+
+      const viewport = await screen.findByTestId("swipe-viewport");
+      const popup = screen.getByRole("dialog");
+      await waitFor(() => {
+        expect(popup).toHaveAttribute("data-side", side);
+        expect(popup).toHaveAttribute("data-swipe-direction", expectedDirection);
+      });
+
+      await commitPrimaryButtonSwipe(viewport, popup, expectedDirection);
+
+      expect(onOpenChange).toHaveBeenCalled();
+      expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
+    }
+  );
+
+  it("lets an explicit swipeDirection override Drawer.Content side", async () => {
+    const onOpenChange = vi.fn();
+    renderDrawer(
+      {
+        defaultOpen: true,
+        swipeDirection: "left",
+        onOpenChange,
+      },
+      {
+        side: "bottom",
+        viewportProps: { "data-testid": "swipe-viewport" },
+      }
+    );
+
+    const viewport = await screen.findByTestId("swipe-viewport");
+    const popup = screen.getByRole("dialog");
+    await waitFor(() => {
+      expect(popup).toHaveAttribute("data-side", "bottom");
+      expect(popup).toHaveAttribute("data-swipe-direction", "left");
+    });
+
+    await commitPrimaryButtonSwipe(viewport, popup, "left");
+
+    expect(onOpenChange).toHaveBeenCalled();
+    expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
   });
 
   it("supports size prop", async () => {

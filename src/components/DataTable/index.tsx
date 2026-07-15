@@ -82,6 +82,8 @@ export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLTableEl
   onRowSelectionChange?: OnChangeFn<RowSelectionState>;
   /** Row click handler */
   onRowClick?: (row: T, event: DataTableRowClickEvent) => void;
+  /** Props applied to each rendered data row. Use this for row-level ARIA labels, roles, and data attributes. */
+  getRowProps?: (row: T) => React.HTMLAttributes<HTMLTableRowElement>;
   /** Extract sub-rows from a row for expandable tree tables */
   getSubRows?: (row: T) => T[] | undefined;
   /** Controlled expanded state */
@@ -143,7 +145,11 @@ function isInteractiveTarget(target: EventTarget | null, currentTarget: HTMLTabl
     'button, a, input, select, textarea, [role="button"], [role="link"], [role="checkbox"], [role="switch"]'
   );
 
-  return Boolean(interactiveElement && currentTarget.contains(interactiveElement));
+  return Boolean(
+    interactiveElement &&
+    interactiveElement !== currentTarget &&
+    currentTarget.contains(interactiveElement)
+  );
 }
 
 function DataTableRoot<T>({
@@ -158,6 +164,7 @@ function DataTableRoot<T>({
   rowSelection: controlledRowSelection,
   onRowSelectionChange,
   onRowClick,
+  getRowProps,
   getSubRows,
   expanded: controlledExpanded,
   onExpandedChange,
@@ -411,13 +418,25 @@ function DataTableRoot<T>({
               const isSelected = selectable ? row.getIsSelected() : false;
               const depth: number = row.depth ?? 0;
               const canExpand = hasSubRows && row.getCanExpand();
+              const resolvedRowProps = getRowProps?.(row.original) ?? {};
+              const {
+                className: rowClassName,
+                onClick: rowOnClick,
+                onKeyDown: rowOnKeyDown,
+                tabIndex: rowTabIndex,
+                ...rowHtmlProps
+              } = resolvedRowProps;
               const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
+                rowOnClick?.(event);
+                if (event.defaultPrevented) return;
                 if (!onRowClick) return;
                 if (isInteractiveTarget(event.target, event.currentTarget)) return;
                 onRowClick(row.original, event);
               };
 
               const handleRowKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+                rowOnKeyDown?.(event);
+                if (event.defaultPrevented) return;
                 if (!onRowClick) return;
                 if (isInteractiveTarget(event.target, event.currentTarget)) return;
                 if (event.key === "Enter" || event.key === " ") {
@@ -428,18 +447,20 @@ function DataTableRoot<T>({
 
               return (
                 <tr
+                  {...rowHtmlProps}
                   key={row.id}
                   className={[
                     styles.row,
                     isClickable && styles.clickable,
                     isSelected && styles.selected,
                     depth > 0 && styles.subRow,
+                    rowClassName,
                   ]
                     .filter(Boolean)
                     .join(" ")}
-                  onClick={isClickable ? handleRowClick : undefined}
-                  onKeyDown={isClickable ? handleRowKeyDown : undefined}
-                  tabIndex={isClickable ? 0 : undefined}
+                  onClick={isClickable || rowOnClick ? handleRowClick : undefined}
+                  onKeyDown={isClickable || rowOnKeyDown ? handleRowKeyDown : undefined}
+                  tabIndex={rowTabIndex ?? (isClickable ? 0 : undefined)}
                   data-selected={isSelected || undefined}
                   data-depth={depth > 0 ? depth : undefined}
                 >

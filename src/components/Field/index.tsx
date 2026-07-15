@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Field as BaseField, type FieldValidityState } from '@base-ui/react/field';
-import styles from './Field.module.scss';
+import * as React from "react";
+import {
+  Field as BaseField,
+  type FieldControlProps as BaseFieldControlProps,
+  type FieldValidityState,
+} from "@base-ui/react/field";
+import styles from "./Field.module.scss";
 
 // ============================================
 // Types
@@ -14,7 +18,7 @@ export interface FieldProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
   invalid?: boolean;
   validate?: (value: unknown) => string | string[] | null | Promise<string | string[] | null>;
-  validationMode?: 'onSubmit' | 'onBlur' | 'onChange';
+  validationMode?: "onSubmit" | "onBlur" | "onChange";
   validationDebounceTime?: number;
 }
 
@@ -23,7 +27,10 @@ export interface FieldLabelProps {
   className?: string;
 }
 
-export interface FieldControlProps {
+export interface FieldControlProps extends Omit<
+  BaseFieldControlProps,
+  "children" | "className" | "ref" | "render"
+> {
   children: React.ReactElement;
   className?: string;
 }
@@ -35,7 +42,14 @@ export interface FieldDescriptionProps {
 
 export interface FieldErrorProps {
   children?: React.ReactNode;
-  match?: 'valueMissing' | 'typeMismatch' | 'tooShort' | 'tooLong' | 'patternMismatch' | 'customError' | boolean;
+  match?:
+    | "valueMissing"
+    | "typeMismatch"
+    | "tooShort"
+    | "tooLong"
+    | "patternMismatch"
+    | "customError"
+    | boolean;
   className?: string;
 }
 
@@ -60,7 +74,7 @@ function FieldRoot({
   className,
   ...htmlProps
 }: FieldProps) {
-  const classes = [styles.root, className].filter(Boolean).join(' ');
+  const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
     <BaseField.Root
@@ -79,7 +93,7 @@ function FieldRoot({
 }
 
 function FieldLabel({ children, className }: FieldLabelProps) {
-  const classes = [styles.label, className].filter(Boolean).join(' ');
+  const classes = [styles.label, className].filter(Boolean).join(" ");
   return <BaseField.Label className={classes}>{children}</BaseField.Label>;
 }
 
@@ -90,31 +104,24 @@ function FieldLabel({ children, className }: FieldLabelProps) {
  *
  * Works with Input, Textarea, Checkbox, Switch, Select, or any element.
  */
-function FieldControl({ children, className }: FieldControlProps) {
-  const classes = [styles.control, className].filter(Boolean).join(' ');
-  return (
-    <BaseField.Control
-      className={classes}
-      render={children}
-    />
-  );
+function FieldControl({ children, className, ...controlProps }: FieldControlProps) {
+  const classes = [styles.control, className].filter(Boolean).join(" ");
+  return <BaseField.Control {...controlProps} className={classes} render={children} />;
 }
 
 function FieldDescription({ children, className }: FieldDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(' ');
-  return (
-    <BaseField.Description className={classes}>
-      {children}
-    </BaseField.Description>
-  );
+  const classes = [styles.description, className].filter(Boolean).join(" ");
+  return <BaseField.Description className={classes}>{children}</BaseField.Description>;
 }
 
 function FieldError({ children, match, className }: FieldErrorProps) {
-  const classes = [styles.error, className].filter(Boolean).join(' ');
+  const classes = [styles.error, className].filter(Boolean).join(" ");
   return (
-    <BaseField.Error match={match} className={classes}>
-      {children}
-    </BaseField.Error>
+    <BaseField.Error
+      match={match}
+      className={classes}
+      {...(children === undefined ? {} : { children })}
+    />
   );
 }
 
@@ -134,11 +141,4 @@ export const Field = Object.assign(FieldRoot, {
   Validity: FieldValidity,
 });
 
-export {
-  FieldRoot,
-  FieldLabel,
-  FieldControl,
-  FieldDescription,
-  FieldError,
-  FieldValidity,
-};
+export { FieldRoot, FieldLabel, FieldControl, FieldDescription, FieldError, FieldValidity };

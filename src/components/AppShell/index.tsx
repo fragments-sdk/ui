@@ -448,7 +448,7 @@ function AppShellMain({
 
   const classes = [
     styles.main,
-    padding !== "none" && styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}`],
+    styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}`],
     resolvedVariant === "floating" && styles.mainFloating,
     className,
   ]

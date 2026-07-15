@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { act, render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { RadioGroup } from "./index";
 
 describe("RadioGroup", () => {
@@ -11,6 +11,17 @@ describe("RadioGroup", () => {
       </RadioGroup>
     );
     expect(screen.getByRole("radiogroup")).toBeInTheDocument();
+  });
+
+  it("forwards groupId to the radiogroup while preserving the wrapper id", () => {
+    const { container } = render(
+      <RadioGroup id="shipping-field" groupId="shipping-options" label="Shipping">
+        <RadioGroup.Item value="standard" label="Standard" />
+      </RadioGroup>
+    );
+
+    expect(container.firstElementChild).toHaveAttribute("id", "shipping-field");
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("id", "shipping-options");
   });
 
   it("renders radio items", () => {
@@ -43,6 +54,27 @@ describe("RadioGroup", () => {
     const radios = screen.getAllByRole("radio");
     await user.click(radios[1]);
     expect(radios[1]).toBeChecked();
+  });
+
+  it("selects a focused radio when Space is released", async () => {
+    const user = userEvent.setup();
+    render(
+      <RadioGroup label="Color">
+        <RadioGroup.Item value="red" label="Red" />
+        <RadioGroup.Item value="blue" label="Blue" />
+      </RadioGroup>
+    );
+
+    const blue = screen.getByRole("radio", { name: "Blue" });
+    act(() => {
+      blue.focus();
+    });
+
+    await user.keyboard("[Space>]");
+    expect(blue).not.toBeChecked();
+
+    await user.keyboard("[/Space]");
+    expect(blue).toBeChecked();
   });
 
   it("renders the group label", () => {
@@ -140,6 +172,21 @@ describe("RadioGroup", () => {
     const radios = screen.getAllByRole("radio");
     expect(radios[0]).toHaveAttribute("aria-disabled", "true");
     expect(radios[1]).not.toHaveAttribute("aria-disabled", "true");
+  });
+
+  it("omits a disabled selected item from native form submission", () => {
+    render(
+      <form data-testid="form">
+        <RadioGroup label="Color" name="color" defaultValue="red">
+          <RadioGroup.Item value="red" label="Red" disabled />
+          <RadioGroup.Item value="blue" label="Blue" />
+        </RadioGroup>
+      </form>
+    );
+
+    const form = screen.getByTestId("form") as HTMLFormElement;
+    expect(screen.getByRole("radio", { name: "Red" })).toBeChecked();
+    expect(new FormData(form).get("color")).toBeNull();
   });
 
   it("calls onValueChange with the selected value", async () => {

@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { Dialog } from './index';
+import * as React from "react";
+import { describe, it, expect } from "vitest";
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { Dialog } from "./index";
 
 function renderDialog(props: Partial<React.ComponentProps<typeof Dialog>> = {}) {
   return render(
@@ -25,53 +26,53 @@ function renderDialog(props: Partial<React.ComponentProps<typeof Dialog>> = {}) 
   );
 }
 
-describe('Dialog', () => {
-  it('opens when trigger is clicked', async () => {
+describe("Dialog", () => {
+  it("opens when trigger is clicked", async () => {
     const user = userEvent.setup();
     renderDialog();
 
-    expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+    expect(screen.queryByText("Dialog Title")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /open dialog/i }));
+    await user.click(screen.getByRole("button", { name: /open dialog/i }));
     await waitFor(() => {
-      expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      expect(screen.getByText("Dialog Title")).toBeInTheDocument();
     });
   });
 
-  it('closes when close button is clicked', async () => {
+  it("closes when close button is clicked", async () => {
     const user = userEvent.setup();
     renderDialog({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      expect(screen.getByText("Dialog Title")).toBeInTheDocument();
     });
 
-    const closeButton = screen.getByRole('button', { name: /close dialog/i });
+    const closeButton = screen.getByRole("button", { name: /close dialog/i });
     await user.click(closeButton);
 
     await waitFor(() => {
-      expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+      expect(screen.queryByText("Dialog Title")).not.toBeInTheDocument();
     });
   });
 
-  it('close button has aria-label', async () => {
+  it("close button has aria-label", async () => {
     renderDialog({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /close dialog/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /close dialog/i })).toBeInTheDocument();
     });
   });
 
-  it('renders title and description', async () => {
+  it("renders title and description", async () => {
     renderDialog({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Dialog Title')).toBeInTheDocument();
-      expect(screen.getByText('Dialog description text')).toBeInTheDocument();
+      expect(screen.getByText("Dialog Title")).toBeInTheDocument();
+      expect(screen.getByText("Dialog description text")).toBeInTheDocument();
     });
   });
 
-  it('forwards html props to trigger, title, description, and close', async () => {
+  it("forwards html props to trigger, title, description, and close", async () => {
     const user = userEvent.setup();
     render(
       <Dialog>
@@ -84,26 +85,26 @@ describe('Dialog', () => {
       </Dialog>
     );
 
-    expect(screen.getByRole('button', { name: /open/i })).toHaveAttribute('id', 'dialog-trigger');
-    await user.click(screen.getByRole('button', { name: /open/i }));
+    expect(screen.getByRole("button", { name: /open/i })).toHaveAttribute("id", "dialog-trigger");
+    await user.click(screen.getByRole("button", { name: /open/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Dialog Title')).toHaveAttribute('id', 'dialog-title');
-      expect(screen.getByText('Dialog Description')).toHaveAttribute('id', 'dialog-description');
-      expect(screen.getByTestId('dialog-close')).toBeInTheDocument();
+      expect(screen.getByText("Dialog Title")).toHaveAttribute("id", "dialog-title");
+      expect(screen.getByText("Dialog Description")).toHaveAttribute("id", "dialog-description");
+      expect(screen.getByTestId("dialog-close")).toBeInTheDocument();
     });
   });
 
-  it('renders compound sub-components (Header, Body, Footer)', async () => {
+  it("renders compound sub-components (Header, Body, Footer)", async () => {
     renderDialog({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Body content')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      expect(screen.getByText("Body content")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
     });
   });
 
-  it('supports size variant prop', async () => {
+  it("supports size variant prop", async () => {
     render(
       <Dialog defaultOpen>
         <Dialog.Trigger>Open</Dialog.Trigger>
@@ -114,78 +115,140 @@ describe('Dialog', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Large Dialog')).toBeInTheDocument();
+      expect(screen.getByText("Large Dialog")).toBeInTheDocument();
     });
   });
 
-  it('renders as modal by default', async () => {
+  it("renders as modal by default", async () => {
     renderDialog({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      expect(screen.getByText("Dialog Title")).toBeInTheDocument();
     });
   });
 
-  it('has no accessibility violations when open', async () => {
+  it("has no accessibility violations when open", async () => {
     const { container } = renderDialog({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+      expect(screen.getByText("Dialog Title")).toBeInTheDocument();
     });
 
     await expectNoA11yViolations(container, {
       // Base UI focus guard spans have role="button" without labels.
-      disabledRules: ['aria-command-name'],
+      disabledRules: ["aria-command-name"],
     });
   });
 
-  describe('keyboard & focus', () => {
-    it('Escape closes dialog (WCAG 2.1.1)', async () => {
+  describe("keyboard & focus", () => {
+    it("returns focus to the external control that opened a controlled dialog", async () => {
+      function ControlledDialog() {
+        const [open, setOpen] = React.useState(false);
+
+        return (
+          <>
+            <button type="button" onClick={() => setOpen(true)}>
+              Open externally
+            </button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog.Trigger>Reference trigger</Dialog.Trigger>
+              <Dialog.Content>
+                <Dialog.Title>Controlled dialog</Dialog.Title>
+                <Dialog.Close>Close controlled dialog</Dialog.Close>
+              </Dialog.Content>
+            </Dialog>
+          </>
+        );
+      }
+
+      const user = userEvent.setup();
+      render(<ControlledDialog />);
+
+      const opener = screen.getByRole("button", { name: "Open externally" });
+      await user.click(opener);
+      await screen.findByRole("dialog");
+
+      await user.click(screen.getByRole("button", { name: "Close controlled dialog" }));
+
+      await waitFor(() => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+        expect(opener).toHaveFocus();
+      });
+    });
+
+    it("closes a non-modal dialog when keyboard focus moves outside", async () => {
+      const user = userEvent.setup();
+      render(
+        <>
+          <Dialog modal={false}>
+            <Dialog.Trigger>Open non-modal dialog</Dialog.Trigger>
+            <Dialog.Content>
+              <Dialog.Title>Non-modal dialog</Dialog.Title>
+              <button type="button">Inside control</button>
+            </Dialog.Content>
+          </Dialog>
+          <button type="button">Outside control</button>
+        </>
+      );
+
+      await user.click(screen.getByRole("button", { name: "Open non-modal dialog" }));
+      const inside = await screen.findByRole("button", { name: "Inside control" });
+      await waitFor(() => expect(inside).toHaveFocus());
+
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "Outside control" })).toHaveFocus();
+      });
+    });
+
+    it("Escape closes dialog (WCAG 2.1.1)", async () => {
       const user = userEvent.setup();
       renderDialog({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
 
       await waitFor(() => {
-        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Dialog Title")).not.toBeInTheDocument();
       });
     });
 
-    it('focus moves into dialog on open (WCAG 2.4.3)', async () => {
+    it("focus moves into dialog on open (WCAG 2.4.3)", async () => {
       const user = userEvent.setup();
       renderDialog();
 
-      await user.click(screen.getByRole('button', { name: /open dialog/i }));
+      await user.click(screen.getByRole("button", { name: /open dialog/i }));
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
       await waitFor(() => {
-        const dialog = screen.getByRole('dialog');
+        const dialog = screen.getByRole("dialog");
         expect(dialog.contains(document.activeElement)).toBe(true);
       });
     });
 
-    it('focus returns to trigger on Escape (WCAG 2.4.3)', async () => {
+    it("focus returns to trigger on Escape (WCAG 2.4.3)", async () => {
       const user = userEvent.setup();
       renderDialog();
 
-      const trigger = screen.getByRole('button', { name: /open dialog/i });
+      const trigger = screen.getByRole("button", { name: /open dialog/i });
       await user.click(trigger);
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
 
       await waitFor(() => {
-        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Dialog Title")).not.toBeInTheDocument();
       });
 
       await waitFor(() => {
@@ -193,22 +256,22 @@ describe('Dialog', () => {
       });
     });
 
-    it('focus returns to trigger on Close button click (WCAG 2.4.3)', async () => {
+    it("focus returns to trigger on Close button click (WCAG 2.4.3)", async () => {
       const user = userEvent.setup();
       renderDialog();
 
-      const trigger = screen.getByRole('button', { name: /open dialog/i });
+      const trigger = screen.getByRole("button", { name: /open dialog/i });
       await user.click(trigger);
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
-      const closeButton = screen.getByRole('button', { name: /close dialog/i });
+      const closeButton = screen.getByRole("button", { name: /close dialog/i });
       await user.click(closeButton);
 
       await waitFor(() => {
-        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Dialog Title")).not.toBeInTheDocument();
       });
 
       await waitFor(() => {
@@ -216,17 +279,17 @@ describe('Dialog', () => {
       });
     });
 
-    it('Tab cycles within dialog (focus trap) (WCAG 2.1.2)', async () => {
+    it("Tab cycles within dialog (focus trap) (WCAG 2.1.2)", async () => {
       const user = userEvent.setup();
       renderDialog({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
-      const dialog = screen.getByRole('dialog');
-      const closeButton = screen.getByRole('button', { name: /close dialog/i });
-      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+      const dialog = screen.getByRole("dialog");
+      const closeButton = screen.getByRole("button", { name: /close dialog/i });
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
 
       // Tab through focusable elements — focus should stay inside dialog
       await user.tab();
@@ -246,20 +309,20 @@ describe('Dialog', () => {
       expect(dialog.contains(document.activeElement)).toBe(true);
     });
 
-    it('Shift+Tab cycles backward (WCAG 2.1.2)', async () => {
+    it("Shift+Tab cycles backward (WCAG 2.1.2)", async () => {
       const user = userEvent.setup();
       renderDialog({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
-      const dialog = screen.getByRole('dialog');
+      const dialog = screen.getByRole("dialog");
 
       // Shift+Tab backward multiple times — focus should remain trapped
-      await user.keyboard('{Shift>}{Tab}{/Shift}');
-      await user.keyboard('{Shift>}{Tab}{/Shift}');
-      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
 
       await waitFor(() => {
         expect(dialog.contains(document.activeElement)).toBe(true);
@@ -270,26 +333,26 @@ describe('Dialog', () => {
       renderDialog({ defaultOpen: true });
 
       await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
       });
     });
 
-    it('Cancel button closes dialog and returns focus (WCAG 2.4.3)', async () => {
+    it("Cancel button closes dialog and returns focus (WCAG 2.4.3)", async () => {
       const user = userEvent.setup();
       renderDialog();
 
-      const trigger = screen.getByRole('button', { name: /open dialog/i });
+      const trigger = screen.getByRole("button", { name: /open dialog/i });
       await user.click(trigger);
 
       await waitFor(() => {
-        expect(screen.getByText('Dialog Title')).toBeInTheDocument();
+        expect(screen.getByText("Dialog Title")).toBeInTheDocument();
       });
 
-      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
       await user.click(cancelButton);
 
       await waitFor(() => {
-        expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument();
+        expect(screen.queryByText("Dialog Title")).not.toBeInTheDocument();
       });
 
       await waitFor(() => {

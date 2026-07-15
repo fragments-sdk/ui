@@ -183,8 +183,16 @@
 .danger {
   // Flat danger fill — no gradient. Hover/active darken the solid colour.
   --_button-bg: var(--fui-color-danger, #{$fui-color-danger});
-  --_button-bg-hover: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 88%, black 12%);
-  --_button-bg-active: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 80%, black 20%);
+  --_button-bg-hover: color-mix(
+    in srgb,
+    var(--fui-color-danger, #{$fui-color-danger}) 88%,
+    black 12%
+  );
+  --_button-bg-active: color-mix(
+    in srgb,
+    var(--fui-color-danger, #{$fui-color-danger}) 80%,
+    black 20%
+  );
   --_button-border: color-mix(
     in srgb,
     var(--fui-color-danger, #{$fui-color-danger}) 76%,
@@ -208,11 +216,7 @@
   --_button-border: var(--fui-button-neutral-border);
   --_button-border-hover: var(--fui-button-neutral-border-hover);
   --_button-color: var(--fui-button-neutral-color, var(--fui-text-primary, #{$fui-text-primary}));
-  --_button-shadow: inset 0 1px 0
-    light-dark(
-      color-mix(in srgb, white 72%, transparent),
-      color-mix(in srgb, white 5%, transparent)
-    );
+  --_button-shadow: var(--fui-button-outlined-shadow, #{$fui-button-outlined-shadow});
   --_button-shadow-hover: var(--fui-button-neutral-shadow);
   --_button-shadow-active: var(--fui-button-neutral-shadow-active);
 }

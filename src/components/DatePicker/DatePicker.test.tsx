@@ -1,17 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { DatePicker } from './index';
-import type { DateRange } from './index';
+import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { DatePicker } from "./index";
+import type { DateRange } from "./index";
 
-function renderDatePicker(props: {
-  onSelect?: (date: Date | null) => void;
-  disabled?: boolean;
-  selected?: Date | null;
-  placeholder?: string;
-} = {}) {
+function renderDatePicker(
+  props: {
+    onSelect?: (date: Date | null) => void;
+    disabled?: boolean;
+    selected?: Date | null;
+    placeholder?: string;
+  } = {}
+) {
   return render(
     <DatePicker
-      placeholder={props.placeholder ?? 'Pick a date'}
+      placeholder={props.placeholder ?? "Pick a date"}
       onSelect={props.onSelect}
       disabled={props.disabled}
       selected={props.selected}
@@ -24,16 +27,18 @@ function renderDatePicker(props: {
   );
 }
 
-function renderRangePicker(props: {
-  onRangeSelect?: (range: DateRange | null) => void;
-  selectedRange?: DateRange | null;
-  numberOfMonths?: number;
-  placeholder?: string;
-} = {}) {
+function renderRangePicker(
+  props: {
+    onRangeSelect?: (range: DateRange | null) => void;
+    selectedRange?: DateRange | null;
+    numberOfMonths?: number;
+    placeholder?: string;
+  } = {}
+) {
   return render(
     <DatePicker
       mode="range"
-      placeholder={props.placeholder ?? 'Select date range'}
+      placeholder={props.placeholder ?? "Select date range"}
       onRangeSelect={props.onRangeSelect}
       selectedRange={props.selectedRange}
       numberOfMonths={props.numberOfMonths ?? 2}
@@ -46,14 +51,14 @@ function renderRangePicker(props: {
   );
 }
 
-describe('DatePicker', () => {
-  describe('rendering', () => {
-    it('renders a trigger button', () => {
+describe("DatePicker", () => {
+  describe("rendering", () => {
+    it("renders a trigger button", () => {
       renderDatePicker();
-      expect(screen.getByRole('button')).toBeInTheDocument();
+      expect(screen.getByRole("button")).toBeInTheDocument();
     });
 
-    it('uses button semantics and forwards button props on Trigger', () => {
+    it("uses button semantics and forwards button props on Trigger", () => {
       render(
         <form>
           <DatePicker>
@@ -65,114 +70,117 @@ describe('DatePicker', () => {
         </form>
       );
 
-      const trigger = screen.getByTestId('trigger');
-      expect(trigger).toHaveAttribute('type', 'button');
-      expect(trigger).toHaveAttribute('name', 'date-trigger');
+      const trigger = screen.getByTestId("trigger");
+      expect(trigger).toHaveAttribute("type", "button");
+      expect(trigger).toHaveAttribute("name", "date-trigger");
     });
 
-    it('shows placeholder text when no value selected', () => {
-      renderDatePicker({ placeholder: 'Choose date' });
-      expect(screen.getByText('Choose date')).toBeInTheDocument();
+    it("shows placeholder text when no value selected", () => {
+      renderDatePicker({ placeholder: "Choose date" });
+      expect(screen.getByText("Choose date")).toBeInTheDocument();
     });
 
-    it('shows formatted date when selected', () => {
+    it("shows formatted date when selected", () => {
       renderDatePicker({ selected: new Date(2025, 0, 15) });
       // format(date, 'PPP') produces "January 15th, 2025"
-      expect(screen.getByRole('button')).toHaveTextContent('January');
-      expect(screen.getByRole('button')).toHaveTextContent('2025');
+      expect(screen.getByRole("button")).toHaveTextContent("January");
+      expect(screen.getByRole("button")).toHaveTextContent("2025");
     });
 
-    it('shows formatted range when range selected', () => {
+    it("shows formatted range when range selected", () => {
       const range: DateRange = {
         from: new Date(2025, 0, 10),
         to: new Date(2025, 0, 20),
       };
       renderRangePicker({ selectedRange: range });
-      expect(screen.getByRole('button')).toHaveTextContent('Jan 10, 2025');
-      expect(screen.getByRole('button')).toHaveTextContent('Jan 20, 2025');
+      expect(screen.getByRole("button")).toHaveTextContent("Jan 10, 2025");
+      expect(screen.getByRole("button")).toHaveTextContent("Jan 20, 2025");
     });
   });
 
-  describe('interaction', () => {
-    it('opens on click', async () => {
+  describe("interaction", () => {
+    it("opens on click", async () => {
       const user = userEvent.setup();
       renderDatePicker();
 
-      await user.click(screen.getByRole('button'));
+      await user.click(screen.getByRole("button"));
       // DayPicker renders a grid
-      expect(await screen.findByRole('grid')).toBeInTheDocument();
+      expect(await screen.findByRole("grid")).toBeInTheDocument();
     });
 
-    it('selects a date on click', async () => {
+    it("selects a date on click", async () => {
       const user = userEvent.setup();
       const onSelect = vi.fn();
       renderDatePicker({ onSelect });
 
-      await user.click(screen.getByRole('button'));
-      await screen.findByRole('grid');
+      await user.click(screen.getByRole("button"));
+      await screen.findByRole("grid");
 
       // Click the 15th day button (find any visible "15" in a grid cell)
-      const dayButtons = screen.getAllByRole('gridcell');
+      const dayButtons = screen.getAllByRole("gridcell");
       const day15 = dayButtons.find((cell) => {
-        const btn = cell.querySelector('button');
-        return btn?.textContent === '15';
+        const btn = cell.querySelector("button");
+        return btn?.textContent === "15";
       });
       expect(day15).toBeDefined();
-      const btn = day15!.querySelector('button')!;
+      const btn = day15!.querySelector("button")!;
       await user.click(btn);
 
       expect(onSelect).toHaveBeenCalledWith(expect.any(Date));
     });
 
-    it('auto-closes after single date selection', async () => {
+    it("auto-closes after single date selection", async () => {
       const user = userEvent.setup();
       renderDatePicker({ onSelect: vi.fn() });
 
-      await user.click(screen.getByRole('button'));
-      await screen.findByRole('grid');
+      await user.click(screen.getByRole("button"));
+      await screen.findByRole("grid");
 
-      const dayButtons = screen.getAllByRole('gridcell');
+      const dayButtons = screen.getAllByRole("gridcell");
       const visibleDay = dayButtons.find((cell) => {
-        const btn = cell.querySelector('button');
-        return btn?.textContent === '10';
+        const btn = cell.querySelector("button");
+        return btn?.textContent === "10";
       });
-      const btn = visibleDay!.querySelector('button')!;
+      const btn = visibleDay!.querySelector("button")!;
       await user.click(btn);
 
-      await waitFor(() => {
-        expect(screen.queryByRole('grid')).not.toBeInTheDocument();
-      }, { timeout: 500 });
+      await waitFor(
+        () => {
+          expect(screen.queryByRole("grid")).not.toBeInTheDocument();
+        },
+        { timeout: 500 }
+      );
     });
 
-    it('range mode: stays open after both clicks (no auto-close)', async () => {
+    it("range mode: stays open after both clicks (no auto-close)", async () => {
       const user = userEvent.setup();
       const onRangeSelect = vi.fn();
       renderRangePicker({ onRangeSelect, numberOfMonths: 1 });
 
-      await user.click(screen.getByRole('button'));
-      await screen.findByRole('grid');
+      await user.click(screen.getByRole("button"));
+      await screen.findByRole("grid");
 
-      const dayButtons = screen.getAllByRole('gridcell');
+      const dayButtons = screen.getAllByRole("gridcell");
       const day10 = dayButtons.find((cell) => {
-        const btn = cell.querySelector('button');
-        return btn?.textContent === '10';
+        const btn = cell.querySelector("button");
+        return btn?.textContent === "10";
       });
-      await user.click(day10!.querySelector('button')!);
+      await user.click(day10!.querySelector("button")!);
 
       // Should still be open after first click
-      expect(screen.getByRole('grid')).toBeInTheDocument();
+      expect(screen.getByRole("grid")).toBeInTheDocument();
 
       const day20 = dayButtons.find((cell) => {
-        const btn = cell.querySelector('button');
-        return btn?.textContent === '20';
+        const btn = cell.querySelector("button");
+        return btn?.textContent === "20";
       });
-      await user.click(day20!.querySelector('button')!);
+      await user.click(day20!.querySelector("button")!);
 
       // Range mode never auto-closes — user closes via Escape or click-outside
-      expect(screen.getByRole('grid')).toBeInTheDocument();
+      expect(screen.getByRole("grid")).toBeInTheDocument();
     });
 
-    it('preset click selects a date', async () => {
+    it("preset click selects a date", async () => {
       const user = userEvent.setup();
       const onSelect = vi.fn();
       const presetDate = new Date(2025, 5, 1);
@@ -187,13 +195,13 @@ describe('DatePicker', () => {
         </DatePicker>
       );
 
-      await user.click(screen.getByRole('button', { name: /pick a date/i }));
-      await user.click(await screen.findByText('June 1st'));
+      await user.click(screen.getByRole("button", { name: /pick a date/i }));
+      await user.click(await screen.findByText("June 1st"));
 
       expect(onSelect).toHaveBeenCalledWith(presetDate);
     });
 
-    it('preset forwards html props', async () => {
+    it("preset forwards html props", async () => {
       const user = userEvent.setup();
       const onSelect = vi.fn();
       const onPresetClick = vi.fn();
@@ -217,56 +225,90 @@ describe('DatePicker', () => {
         </DatePicker>
       );
 
-      await user.click(screen.getByRole('button', { name: /pick a date/i }));
-      await user.click(screen.getByTestId('preset'));
+      await user.click(screen.getByRole("button", { name: /pick a date/i }));
+      await user.click(screen.getByTestId("preset"));
 
-      expect(screen.getByTestId('preset')).toHaveAttribute('id', 'preset-june-2');
+      expect(screen.getByTestId("preset")).toHaveAttribute("id", "preset-june-2");
       expect(onPresetClick).toHaveBeenCalled();
       expect(onSelect).toHaveBeenCalledWith(presetDate);
     });
   });
 
-  describe('keyboard', () => {
-    it('Escape closes the calendar', async () => {
+  describe("keyboard", () => {
+    it("Escape closes the calendar", async () => {
       const user = userEvent.setup();
       renderDatePicker();
 
-      await user.click(screen.getByRole('button'));
-      await screen.findByRole('grid');
+      await user.click(screen.getByRole("button"));
+      await screen.findByRole("grid");
 
-      await user.keyboard('{Escape}');
+      await user.keyboard("{Escape}");
       await waitFor(() => {
-        expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+        expect(screen.queryByRole("grid")).not.toBeInTheDocument();
       });
     });
   });
 
-  describe('disabled', () => {
-    it('trigger is disabled when disabled prop is true', () => {
+  describe("disabled", () => {
+    it("trigger is disabled when disabled prop is true", () => {
       renderDatePicker({ disabled: true });
-      expect(screen.getByRole('button')).toBeDisabled();
+      expect(screen.getByRole("button")).toBeDisabled();
     });
   });
 
-  describe('controlled', () => {
-    it('reflects external selected value', () => {
-      const date = new Date(2025, 2, 20);
-      renderDatePicker({ selected: date });
-      expect(screen.getByRole('button')).toHaveTextContent('March');
-      expect(screen.getByRole('button')).toHaveTextContent('2025');
+  describe("controlled", () => {
+    it("returns focus to an external control after a programmatic open closes", async () => {
+      function ProgrammaticDatePicker() {
+        const [open, setOpen] = React.useState(false);
+
+        return (
+          <>
+            <button type="button" onClick={() => setOpen(true)}>
+              Open date picker externally
+            </button>
+            <DatePicker open={open} onOpenChange={setOpen}>
+              <DatePicker.Trigger placeholder="Reference date trigger" />
+              <DatePicker.Content>
+                <DatePicker.Calendar />
+              </DatePicker.Content>
+            </DatePicker>
+          </>
+        );
+      }
+
+      const user = userEvent.setup();
+      render(<ProgrammaticDatePicker />);
+
+      const opener = screen.getByRole("button", { name: "Open date picker externally" });
+      await user.click(opener);
+      await screen.findByRole("grid");
+
+      await user.keyboard("{Escape}");
+
+      await waitFor(() => {
+        expect(screen.queryByRole("grid")).not.toBeInTheDocument();
+        expect(opener).toHaveFocus();
+      });
     });
 
-    it('reflects external selectedRange value', () => {
+    it("reflects external selected value", () => {
+      const date = new Date(2025, 2, 20);
+      renderDatePicker({ selected: date });
+      expect(screen.getByRole("button")).toHaveTextContent("March");
+      expect(screen.getByRole("button")).toHaveTextContent("2025");
+    });
+
+    it("reflects external selectedRange value", () => {
       const range: DateRange = {
         from: new Date(2025, 3, 1),
         to: new Date(2025, 3, 7),
       };
       renderRangePicker({ selectedRange: range });
-      expect(screen.getByRole('button')).toHaveTextContent('Apr 01, 2025');
-      expect(screen.getByRole('button')).toHaveTextContent('Apr 07, 2025');
+      expect(screen.getByRole("button")).toHaveTextContent("Apr 01, 2025");
+      expect(screen.getByRole("button")).toHaveTextContent("Apr 07, 2025");
     });
 
-    it('requests close after single selection when open is controlled', async () => {
+    it("requests close after single selection when open is controlled", async () => {
       const user = userEvent.setup();
       const onOpenChange = vi.fn();
       const onSelect = vi.fn();
@@ -280,25 +322,28 @@ describe('DatePicker', () => {
         </DatePicker>
       );
 
-      await screen.findByRole('grid');
+      await screen.findByRole("grid");
 
-      const dayButtons = screen.getAllByRole('gridcell');
+      const dayButtons = screen.getAllByRole("gridcell");
       const day10 = dayButtons.find((cell) => {
-        const btn = cell.querySelector('button');
-        return btn?.textContent === '10';
+        const btn = cell.querySelector("button");
+        return btn?.textContent === "10";
       });
 
-      await user.click(day10!.querySelector('button')!);
+      await user.click(day10!.querySelector("button")!);
 
-      await waitFor(() => {
-        expect(onSelect).toHaveBeenCalledWith(expect.any(Date));
-        expect(onOpenChange).toHaveBeenCalledWith(false);
-      }, { timeout: 500 });
+      await waitFor(
+        () => {
+          expect(onSelect).toHaveBeenCalledWith(expect.any(Date));
+          expect(onOpenChange).toHaveBeenCalledWith(false);
+        },
+        { timeout: 500 }
+      );
     });
   });
 
-  describe('forms', () => {
-    it('serializes selected date to a date-only hidden input value', () => {
+  describe("forms", () => {
+    it("serializes selected date to a date-only hidden input value", () => {
       render(
         <DatePicker name="appointment" selected={new Date(2025, 0, 15)}>
           <DatePicker.Trigger />
@@ -308,25 +353,27 @@ describe('DatePicker', () => {
         </DatePicker>
       );
 
-      const input = document.querySelector<HTMLInputElement>('input[type="hidden"][name="appointment"]');
+      const input = document.querySelector<HTMLInputElement>(
+        'input[type="hidden"][name="appointment"]'
+      );
       expect(input).toBeTruthy();
-      expect(input?.value).toBe('2025-01-15');
+      expect(input?.value).toBe("2025-01-15");
     });
   });
 
-  describe('multi-month', () => {
-    it('renders correct number of month panels', async () => {
+  describe("multi-month", () => {
+    it("renders correct number of month panels", async () => {
       const user = userEvent.setup();
       renderRangePicker({ numberOfMonths: 2 });
 
-      await user.click(screen.getByRole('button'));
-      const grids = await screen.findAllByRole('grid');
+      await user.click(screen.getByRole("button"));
+      const grids = await screen.findAllByRole("grid");
       expect(grids).toHaveLength(2);
     });
   });
 
-  describe('a11y', () => {
-    it('has no accessibility violations (closed)', async () => {
+  describe("a11y", () => {
+    it("has no accessibility violations (closed)", async () => {
       const { container } = render(
         <DatePicker>
           <DatePicker.Trigger aria-label="Pick a date" placeholder="Pick a date" />
@@ -338,7 +385,7 @@ describe('DatePicker', () => {
       await expectNoA11yViolations(container);
     });
 
-    it('has no accessibility violations (open)', async () => {
+    it("has no accessibility violations (open)", async () => {
       const user = userEvent.setup();
       const { container } = render(
         <DatePicker>
@@ -349,11 +396,11 @@ describe('DatePicker', () => {
         </DatePicker>
       );
 
-      await user.click(screen.getByRole('button'));
-      await screen.findByRole('grid');
+      await user.click(screen.getByRole("button"));
+      await screen.findByRole("grid");
       // Disable aria-command-name: Base UI focus guard spans have role="button" without names (upstream)
       await expectNoA11yViolations(container, {
-        disabledRules: ['aria-command-name'],
+        disabledRules: ["aria-command-name"],
       });
     });
   });

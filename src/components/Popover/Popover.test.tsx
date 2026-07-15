@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { Popover } from './index';
+import * as React from "react";
+import { describe, it, expect } from "vitest";
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { Popover } from "./index";
 
 function renderPopover(props: Partial<React.ComponentProps<typeof Popover>> = {}) {
   return render(
@@ -17,33 +18,33 @@ function renderPopover(props: Partial<React.ComponentProps<typeof Popover>> = {}
   );
 }
 
-describe('Popover', () => {
-  it('opens when trigger is clicked', async () => {
+describe("Popover", () => {
+  it("opens when trigger is clicked", async () => {
     const user = userEvent.setup();
     renderPopover();
 
-    expect(screen.queryByText('Popover Title')).not.toBeInTheDocument();
+    expect(screen.queryByText("Popover Title")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /open popover/i }));
+    await user.click(screen.getByRole("button", { name: /open popover/i }));
     await waitFor(() => {
-      expect(screen.getByText('Popover Title')).toBeInTheDocument();
+      expect(screen.getByText("Popover Title")).toBeInTheDocument();
     });
   });
 
-  it('renders content sub-components', async () => {
+  it("renders content sub-components", async () => {
     const user = userEvent.setup();
     renderPopover();
 
-    await user.click(screen.getByRole('button', { name: /open popover/i }));
+    await user.click(screen.getByRole("button", { name: /open popover/i }));
     await waitFor(() => {
-      expect(screen.getByText('Popover Title')).toBeInTheDocument();
-      expect(screen.getByText('Popover description')).toBeInTheDocument();
-      expect(screen.getByText('Body text')).toBeInTheDocument();
-      expect(screen.getByText('Footer content')).toBeInTheDocument();
+      expect(screen.getByText("Popover Title")).toBeInTheDocument();
+      expect(screen.getByText("Popover description")).toBeInTheDocument();
+      expect(screen.getByText("Body text")).toBeInTheDocument();
+      expect(screen.getByText("Footer content")).toBeInTheDocument();
     });
   });
 
-  it('forwards html props to trigger, title, description, and close', async () => {
+  it("forwards html props to trigger, title, description, and close", async () => {
     const user = userEvent.setup();
     render(
       <Popover>
@@ -56,49 +57,49 @@ describe('Popover', () => {
       </Popover>
     );
 
-    expect(screen.getByRole('button', { name: /open/i })).toHaveAttribute('id', 'popover-trigger');
-    await user.click(screen.getByRole('button', { name: /open/i }));
+    expect(screen.getByRole("button", { name: /open/i })).toHaveAttribute("id", "popover-trigger");
+    await user.click(screen.getByRole("button", { name: /open/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Popover Title')).toHaveAttribute('id', 'popover-title');
-      expect(screen.getByText('Popover Description')).toHaveAttribute('id', 'popover-description');
-      expect(screen.getByTestId('popover-close')).toBeInTheDocument();
+      expect(screen.getByText("Popover Title")).toHaveAttribute("id", "popover-title");
+      expect(screen.getByText("Popover Description")).toHaveAttribute("id", "popover-description");
+      expect(screen.getByTestId("popover-close")).toBeInTheDocument();
     });
   });
 
-  it('has a close button with aria-label', async () => {
+  it("has a close button with aria-label", async () => {
     const user = userEvent.setup();
     renderPopover();
 
-    await user.click(screen.getByRole('button', { name: /open popover/i }));
+    await user.click(screen.getByRole("button", { name: /open popover/i }));
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /close popover/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /close popover/i })).toBeInTheDocument();
     });
   });
 
-  it('closes when close button is clicked', async () => {
+  it("closes when close button is clicked", async () => {
     const user = userEvent.setup();
     renderPopover({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Popover Title')).toBeInTheDocument();
+      expect(screen.getByText("Popover Title")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: /close popover/i }));
+    await user.click(screen.getByRole("button", { name: /close popover/i }));
     await waitFor(() => {
-      expect(screen.queryByText('Popover Title')).not.toBeInTheDocument();
+      expect(screen.queryByText("Popover Title")).not.toBeInTheDocument();
     });
   });
 
-  it('supports defaultOpen prop', async () => {
+  it("supports defaultOpen prop", async () => {
     renderPopover({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Popover Title')).toBeInTheDocument();
+      expect(screen.getByText("Popover Title")).toBeInTheDocument();
     });
   });
 
-  it('renders with arrow when enabled', async () => {
+  it("renders with arrow when enabled", async () => {
     render(
       <Popover defaultOpen>
         <Popover.Trigger>Open</Popover.Trigger>
@@ -109,35 +110,49 @@ describe('Popover', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('With arrow')).toBeInTheDocument();
+      expect(screen.getByText("With arrow")).toBeInTheDocument();
     });
   });
 
-  it('positions against an external anchor element and applies a custom positioner class', async () => {
-    const anchorEl = document.createElement('div');
+  it("positions against an external anchor element and applies a custom positioner class", async () => {
+    const anchorEl = document.createElement("div");
     anchorEl.getBoundingClientRect = () =>
-      ({ x: 10, y: 20, width: 50, height: 20, top: 20, left: 10, right: 60, bottom: 40, toJSON: () => ({}) }) as DOMRect;
+      ({
+        x: 10,
+        y: 20,
+        width: 50,
+        height: 20,
+        top: 20,
+        left: 10,
+        right: 60,
+        bottom: 40,
+        toJSON: () => ({}),
+      }) as DOMRect;
     document.body.appendChild(anchorEl);
 
     render(
       <Popover defaultOpen>
         <Popover.Trigger>Open</Popover.Trigger>
-        <Popover.Content anchor={anchorEl} positionMethod="fixed" positionerClassName="fi-test-positioner">
+        <Popover.Content
+          anchor={anchorEl}
+          positionMethod="fixed"
+          positionerClassName="fi-test-positioner"
+        >
           <p>Anchored content</p>
         </Popover.Content>
       </Popover>
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Anchored content')).toBeInTheDocument();
+      expect(screen.getByText("Anchored content")).toBeInTheDocument();
     });
-    expect(screen.getByText('Anchored content').closest('.fi-test-positioner')).not.toBeNull();
+    expect(screen.getByText("Anchored content").closest(".fi-test-positioner")).not.toBeNull();
 
     document.body.removeChild(anchorEl);
   });
 
-  it('portals into a custom container instead of document.body', async () => {
-    const customContainer = document.createElement('div');
+  it("portals into a custom container instead of document.body", async () => {
+    const customContainer = document.createElement("div");
     document.body.appendChild(customContainer);
 
     render(
@@ -150,22 +165,84 @@ describe('Popover', () => {
     );
 
     await waitFor(() => {
-      expect(customContainer.textContent).toContain('Portaled content');
+      expect(customContainer.textContent).toContain("Portaled content");
     });
 
     document.body.removeChild(customContainer);
   });
 
-  it('has no accessibility violations when open', async () => {
+  it("returns focus to the external control that opened a controlled popover", async () => {
+    function ControlledPopover() {
+      const [open, setOpen] = React.useState(false);
+
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>
+            Open externally
+          </button>
+          <Popover open={open} onOpenChange={setOpen}>
+            <Popover.Trigger>Reference trigger</Popover.Trigger>
+            <Popover.Content>
+              <Popover.Title>Controlled popover</Popover.Title>
+              <Popover.Close>Close controlled popover</Popover.Close>
+            </Popover.Content>
+          </Popover>
+        </>
+      );
+    }
+
+    const user = userEvent.setup();
+    render(<ControlledPopover />);
+
+    const opener = screen.getByRole("button", { name: "Open externally" });
+    await user.click(opener);
+    await screen.findByRole("dialog");
+
+    await user.click(screen.getByRole("button", { name: "Close controlled popover" }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(opener).toHaveFocus();
+    });
+  });
+
+  it("closes when keyboard focus leaves its non-modal content", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <Popover>
+          <Popover.Trigger>Open focus-out popover</Popover.Trigger>
+          <Popover.Content>
+            <Popover.Title>Focus-out popover</Popover.Title>
+            <button type="button">Inside control</button>
+          </Popover.Content>
+        </Popover>
+        <button type="button">Outside control</button>
+      </>
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open focus-out popover" }));
+    const inside = await screen.findByRole("button", { name: "Inside control" });
+    await waitFor(() => expect(inside).toHaveFocus());
+
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Outside control" })).toHaveFocus();
+    });
+  });
+
+  it("has no accessibility violations when open", async () => {
     const { container } = renderPopover({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Popover Title')).toBeInTheDocument();
+      expect(screen.getByText("Popover Title")).toBeInTheDocument();
     });
 
     await expectNoA11yViolations(container, {
       // Base UI focus guard spans have role="button" without labels.
-      disabledRules: ['aria-command-name'],
+      disabledRules: ["aria-command-name"],
     });
   });
 });

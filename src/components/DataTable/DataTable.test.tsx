@@ -125,18 +125,83 @@ describe("DataTable", () => {
     expect(rows[1]).toHaveAttribute("data-selected");
   });
 
-  it("supports keyboard activation of clickable rows", async () => {
+  it.each([
+    ["Enter", "{Enter}"],
+    ["Space", " "],
+  ])("supports %s activation through public row button semantics", async (_, key) => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
     render(
-      <DataTable columns={columns} data={data} onRowClick={handleClick} aria-label="People" />
+      <DataTable
+        columns={columns}
+        data={data}
+        onRowClick={handleClick}
+        getRowProps={(person) => ({
+          role: "button",
+          "aria-label": `Open ${person.name}`,
+        })}
+        aria-label="People"
+      />
     );
-    const rows = screen.getAllByRole("row");
-    rows[1].focus();
-    await user.keyboard("{Enter}");
+    const row = screen.getByRole("button", { name: "Open Alice" });
+    row.focus();
+    await user.keyboard(key);
     expect(handleClick).toHaveBeenCalledTimes(1);
     expect(handleClick.mock.calls[0][0]).toEqual(data[0]);
     expect(handleClick.mock.calls[0][1]).toBeDefined();
+  });
+
+  it("composes row props without bypassing an application cancellation", async () => {
+    const user = userEvent.setup();
+    const handleClick = vi.fn();
+    render(
+      <DataTable
+        columns={columns}
+        data={data}
+        onRowClick={handleClick}
+        getRowProps={(person) => ({
+          className: "governed-row",
+          "data-row-id": person.id,
+          onClick: (event) => event.preventDefault(),
+        })}
+        aria-label="People"
+      />
+    );
+
+    const row = screen.getByText("Alice").closest("tr")!;
+    expect(row).toHaveClass("governed-row");
+    expect(row).toHaveAttribute("data-row-id", "1");
+    await user.click(row);
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
+  it("does not activate a clickable row from a nested interactive control", async () => {
+    const user = userEvent.setup();
+    const handleClick = vi.fn();
+    const columnsWithAction = createColumns<Person>([
+      { key: "name", header: "Name" },
+      {
+        key: "age",
+        header: "Action",
+        cell: (person) => <button type="button">Open {person.name}</button>,
+      },
+    ]);
+    render(
+      <DataTable
+        columns={columnsWithAction}
+        data={data}
+        onRowClick={handleClick}
+        aria-label="People"
+      />
+    );
+
+    const nestedButton = screen.getByRole("button", { name: "Open Alice" });
+    await user.click(nestedButton);
+    nestedButton.focus();
+    await user.keyboard("{Enter}");
+    await user.keyboard(" ");
+
+    expect(handleClick).not.toHaveBeenCalled();
   });
 
   it("forwards wrapper props to the outer container", () => {

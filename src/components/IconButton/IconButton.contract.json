@@ -1,0 +1,120 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "IconButton",
+  "description": "Compact square button for icon-only actions in dense toolbars, top bars, and row controls.",
+  "category": "forms",
+  "tags": ["action", "button", "icon", "toolbar", "interactive"],
+  "status": "stable",
+  "sourcePath": "src/components/IconButton/index.tsx",
+  "exportName": "IconButton",
+  "propsSummary": [
+    "children: node (required)",
+    "variant: ghost|subtle|outlined (default: ghost)",
+    "size: sm|md|lg (default: md)",
+    "pressed: boolean",
+    "aria-label: string",
+    "aria-labelledby: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Icon element rendered inside the button",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual treatment for the icon-only action",
+      "default": "ghost",
+      "required": false,
+      "values": ["ghost", "subtle", "outlined"]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Control size aligned with adjacent fields and toolbar actions",
+      "default": "md",
+      "required": false,
+      "values": ["sm", "md", "lg"]
+    },
+    "pressed": {
+      "type": "boolean",
+      "description": "Marks a toggle-style action as pressed and sets aria-pressed",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible action name when no labelled-by relationship is available",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "ID reference for an external accessible action label",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Compact icon-only actions in toolbars or top bars",
+      "Row actions where a text button would be too wide",
+      "Toggle-style icon actions with a visible pressed state"
+    ],
+    "whenNot": [
+      "The action needs a visible text label (use Button)",
+      "The control changes a persistent boolean setting (use Switch)",
+      "The icon is decorative and not interactive (use Icon)"
+    ],
+    "guidelines": [
+      "Always provide aria-label or aria-labelledby",
+      "Use ghost for ordinary toolbar actions and outlined when more separation is needed",
+      "Use pressed only when the button represents a persistent toggle state"
+    ],
+    "accessibility": [
+      "Every icon-only button must have an accessible name",
+      "The accessible name should describe the action, not the icon",
+      "Pressed state must be exposed with aria-pressed"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Toolbar action",
+      "description": "A named icon-only toolbar action",
+      "code": "<IconButton aria-label=\"Add item\">\n  <PlusIcon aria-hidden />\n</IconButton>"
+    },
+    {
+      "name": "Pressed state",
+      "description": "A toggle-style action with its state exposed",
+      "code": "import { PushPin as PinIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Pin item\" pressed>\n  <PinIcon aria-hidden />\n</IconButton>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "sibling",
+      "note": "Use Button when the action should have a visible text label or broader layout variants"
+    },
+    {
+      "component": "Icon",
+      "relationship": "complementary",
+      "note": "Icon supplies the visual glyph rendered inside IconButton"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - icon element (required)",
+      "variant: ghost|subtle|outlined - visual treatment",
+      "size: sm|md|lg - square control size",
+      "pressed: boolean - toggle state exposed with aria-pressed",
+      "aria-label or aria-labelledby - required accessible name"
+    ],
+    "a11yRules": ["A11Y_BTN_LABEL", "A11Y_BTN_FOCUS", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-07-14T00:00:00.000Z"
+  }
+}

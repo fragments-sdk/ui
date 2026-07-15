@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Field } from "../Field";
 import { Checkbox } from "./index";
 
 describe("Checkbox", () => {
@@ -25,6 +26,33 @@ describe("Checkbox", () => {
   it("supports indeterminate state via aria-checked=mixed", () => {
     render(<Checkbox aria-label="Select all" indeterminate />);
     expect(screen.getByRole("checkbox")).toHaveAttribute("aria-checked", "mixed");
+  });
+
+  it("keeps the hidden input indeterminate state in sync", () => {
+    let inputNode: HTMLInputElement | null = null;
+    const { rerender } = render(
+      <Checkbox
+        aria-label="Select all"
+        indeterminate
+        inputRef={(node) => {
+          inputNode = node;
+        }}
+      />
+    );
+
+    expect(inputNode).toHaveProperty("indeterminate", true);
+
+    rerender(
+      <Checkbox
+        aria-label="Select all"
+        indeterminate={false}
+        inputRef={(node) => {
+          inputNode = node;
+        }}
+      />
+    );
+
+    expect(inputNode).toHaveProperty("indeterminate", false);
   });
 
   it("renders label text", () => {
@@ -59,6 +87,19 @@ describe("Checkbox", () => {
     expect(screen.getByRole("checkbox")).toHaveAttribute("aria-disabled", "true");
   });
 
+  it("does not expose Field focus state when disabled", () => {
+    render(
+      <Field>
+        <Checkbox aria-label="Accept" disabled data-testid="checkbox" />
+      </Field>
+    );
+
+    const checkbox = screen.getByTestId("checkbox");
+    checkbox.focus();
+
+    expect(checkbox).not.toHaveAttribute("data-focused");
+  });
+
   it("sets required attribute", () => {
     render(<Checkbox aria-label="Accept" required />);
     expect(screen.getByRole("checkbox")).toBeRequired();
@@ -88,6 +129,7 @@ describe("Checkbox", () => {
     const { container } = render(
       <Checkbox
         aria-label="Accept"
+        id="terms-checkbox"
         name="terms"
         form="external-form"
         value="yes"
@@ -101,6 +143,8 @@ describe("Checkbox", () => {
     const input = container.querySelector('input[type="checkbox"][name="terms"]');
     const uncheckedInput = container.querySelector('input[type="hidden"][name="terms"]');
     expect(input).toBe(inputNode);
+    expect(input).toHaveAttribute("id", "terms-checkbox");
+    expect(screen.getByRole("checkbox")).not.toHaveAttribute("id", "terms-checkbox");
     expect(input).toHaveAttribute("form", "external-form");
     expect(input).toHaveAttribute("value", "yes");
     expect(uncheckedInput).toHaveAttribute("form", "external-form");
@@ -114,6 +158,21 @@ describe("Checkbox", () => {
     await user.click(screen.getByRole("checkbox"));
     expect(handleChange).toHaveBeenCalled();
     expect(handleChange.mock.calls[0][0]).toBe(true);
+  });
+
+  it("validates exactly once when changed inside a Field", async () => {
+    const validate = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <Field validationMode="onChange" validate={validate}>
+        <Checkbox aria-label="Accept" />
+      </Field>
+    );
+
+    await user.click(screen.getByRole("checkbox"));
+
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(validate).toHaveBeenLastCalledWith(true, expect.anything());
   });
 
   it("has no accessibility violations", async () => {

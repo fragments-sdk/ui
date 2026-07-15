@@ -8,6 +8,7 @@ $fui-arrow-size: 10px !default;
 .positioner {
   z-index: 52;
   outline: none;
+  pointer-events: auto;
 }
 
 // Popup container
@@ -19,23 +20,21 @@ $fui-arrow-size: 10px !default;
   margin: 0;
   min-width: 12rem;
 
-  // Animation
-  opacity: 0;
-  transform: scale(0.95);
+  // Menus must be fully hit-testable as soon as they open. A fade/scale
+  // entrance can let fast clicks pass through to page links under the portal.
+  opacity: 1;
+  transform: none;
   transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
 
   &[data-open] {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
   }
 
   &[data-starting-style],
   &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -204,7 +203,6 @@ $fui-arrow-size: 10px !default;
 
 @media (prefers-reduced-motion: reduce) {
   .popup {
-    transition: none;
     transform: none;
 
     &[data-starting-style],

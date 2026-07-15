@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { fireEvent } from "@testing-library/react";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Accordion } from "./index";
 
@@ -176,6 +177,43 @@ describe("Accordion", () => {
     expect(trigger).toHaveAttribute("aria-expanded", "true");
   });
 
+  it("honors a canceled trigger click", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <Accordion onValueChange={onValueChange}>
+        <Accordion.Item value="one">
+          <Accordion.Trigger onClick={(event) => event.preventDefault()}>
+            Item One
+          </Accordion.Trigger>
+          <Accordion.Content>Content One</Accordion.Content>
+        </Accordion.Item>
+      </Accordion>
+    );
+
+    const trigger = screen.getByRole("button", { name: /item one/i });
+    await user.click(trigger);
+
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("keeps arrow-key focus native instead of using accordion roving focus", async () => {
+    const user = userEvent.setup();
+    renderAccordion();
+
+    const triggerOne = screen.getByRole("button", { name: /item one/i });
+    const triggerTwo = screen.getByRole("button", { name: /item two/i });
+
+    triggerOne.focus();
+    await user.keyboard("{ArrowDown}");
+    expect(triggerOne).toHaveFocus();
+
+    await user.tab();
+    expect(triggerTwo).toHaveFocus();
+  });
+
   it("forwards html props to trigger and content", async () => {
     const user = userEvent.setup();
     render(
@@ -210,6 +248,31 @@ describe("Accordion", () => {
     );
 
     expect(screen.getByTestId("content")).toBeInTheDocument();
+  });
+
+  it("opens hidden-until-found content when the browser fires beforematch", () => {
+    const onValueChange = vi.fn();
+    render(
+      <Accordion onValueChange={onValueChange}>
+        <Accordion.Item value="one">
+          <Accordion.Trigger>Item One</Accordion.Trigger>
+          <Accordion.Content hiddenUntilFound data-testid="content">
+            Content One
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion>
+    );
+
+    const trigger = screen.getByRole("button", { name: /item one/i });
+    const content = screen.getByTestId("content");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(content).toHaveAttribute("hidden", "until-found");
+
+    fireEvent(content, new Event("beforematch"));
+
+    expect(onValueChange).toHaveBeenCalledWith("one");
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(content).not.toHaveAttribute("hidden");
   });
 
   it('uses type="button" for triggers by default to avoid form submission', () => {

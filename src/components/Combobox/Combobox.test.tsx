@@ -1,5 +1,7 @@
+import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { fireEvent } from "@testing-library/react";
+import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { Combobox } from "./index";
 
 type RenderComboboxProps =
@@ -137,6 +139,35 @@ describe("Combobox", () => {
     expect(input).toHaveAttribute("autocomplete", "off");
   });
 
+  it("matches browser autofill against an item's rendered label", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const { container } = render(
+      <Combobox name="country" onValueChange={onValueChange}>
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="US">United States</Combobox.Item>
+          <Combobox.Item value="CA">Canada</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    const input = screen.getByRole("combobox");
+    const hiddenInput = container.querySelector<HTMLInputElement>('input[name="country"]');
+    expect(hiddenInput).not.toBeNull();
+
+    // Browsers autofill the rendered label rather than the serialized option value.
+    fireEvent.change(hiddenInput!, { target: { value: "canada" } });
+
+    await waitFor(() => expect(onValueChange).toHaveBeenCalledWith("CA"));
+    await user.click(input);
+
+    expect(await screen.findByRole("option", { name: "Canada" })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
+  });
+
   it("filters options based on input text", async () => {
     const user = userEvent.setup();
     renderCombobox();
@@ -146,6 +177,39 @@ describe("Combobox", () => {
     await user.type(input, "rea");
     // React should be visible, Vue/Angular may be filtered out
     expect(await screen.findByRole("option", { name: "React" })).toBeInTheDocument();
+  });
+
+  it("does not re-render mounted items when typing keeps the result set unchanged", async () => {
+    const user = userEvent.setup();
+    const recordItemCommit = vi.fn();
+    const rows = Array.from({ length: 50 }, (_, index) => `Row ${index}`);
+
+    render(
+      <Combobox defaultOpen autoHighlight={false} placeholder="Filter rows">
+        <Combobox.Input />
+        <Combobox.Content>
+          {rows.map((row) => (
+            <React.Profiler key={row} id={row} onRender={recordItemCommit}>
+              <Combobox.Item value={row}>{row}</Combobox.Item>
+            </React.Profiler>
+          ))}
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    expect(await screen.findByRole("option", { name: "Row 0" })).toBeInTheDocument();
+    await act(async () => {
+      await Promise.resolve();
+    });
+    recordItemCommit.mockClear();
+
+    // Every row still matches each intermediate query. Fragments uses Base's
+    // manually composed item path (not the items-array path optimized in 1.6),
+    // so this guards the wrapper's existing zero-commit hot-path contract.
+    await user.type(screen.getByRole("combobox"), "Row ");
+
+    expect(screen.getAllByRole("option")).toHaveLength(rows.length);
+    expect(recordItemCommit).not.toHaveBeenCalled();
   });
 
   it("renders groups and group labels", async () => {

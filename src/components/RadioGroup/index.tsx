@@ -61,6 +61,8 @@ export interface RadioGroupProps extends Omit<
   wrapperClassName?: string;
   /** Class applied to the inner radio group container */
   groupClassName?: string;
+  /** ID applied to the inner element with `role="radiogroup"`. The inherited `id` remains on the outer field wrapper for compatibility. */
+  groupId?: string;
   /** Children (Radio.Item components) */
   children: React.ReactNode;
 }
@@ -216,6 +218,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
     variant = "default",
     wrapperClassName,
     groupClassName,
+    groupId,
     children,
     className,
     "aria-label": ariaLabel,
@@ -252,6 +255,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
             </span>
           )}
           <BaseRadioGroup
+            id={groupId}
             value={value}
             defaultValue={defaultValue}
             onValueChange={handleValueChange}

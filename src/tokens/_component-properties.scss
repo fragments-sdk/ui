@@ -1,0 +1,25 @@
+// Component-scoped custom-property contract.
+//
+// These properties are authored on component instances from public props or
+// measured Base UI state. The mixin is intentionally not emitted at :root:
+// doing so would override each component's fallback/inheritance behavior.
+// Governance reads this file as the explicit vocabulary for dynamic values.
+@mixin fui-component-property-contract {
+  --fui-grid-min-child-width: 16rem;
+  --fui-line-clamp: 2;
+  --fui-navmenu-viewport-height: 0px;
+  --fui-navmenu-viewport-left: 0px;
+  --fui-navmenu-viewport-width: 0px;
+  --fui-prompt-inset-left: 0px;
+  --fui-select-max-items: 4.5;
+  --fui-stack-direction: column;
+  --fui-stack-direction-sm: var(--fui-stack-direction);
+  --fui-stack-direction-md: var(--fui-stack-direction-sm);
+  --fui-stack-direction-lg: var(--fui-stack-direction-md);
+  --fui-stack-direction-xl: var(--fui-stack-direction-lg);
+  --fui-stack-gap: 0;
+  --fui-stack-gap-sm: var(--fui-stack-gap);
+  --fui-stack-gap-md: var(--fui-stack-gap-sm);
+  --fui-stack-gap-lg: var(--fui-stack-gap-md);
+  --fui-stack-gap-xl: var(--fui-stack-gap-lg);
+}

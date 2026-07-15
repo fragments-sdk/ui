@@ -92,6 +92,18 @@ export interface DrawerSwipeAreaProps extends React.HTMLAttributes<HTMLDivElemen
   disabled?: boolean;
 }
 
+type DrawerSide = NonNullable<DrawerContentProps["side"]>;
+type DrawerSwipeDirection = NonNullable<DrawerProps["swipeDirection"]>;
+
+const SWIPE_DIRECTION_BY_SIDE: Record<DrawerSide, DrawerSwipeDirection> = {
+  left: "left",
+  right: "right",
+  top: "up",
+  bottom: "down",
+};
+
+const DrawerContentSideContext = React.createContext<(side: DrawerSide) => void>(() => {});
+
 function getAsChildElement(children: React.ReactNode, componentName: string): React.ReactElement {
   if (!React.isValidElement(children)) {
     throw new Error(`${componentName} with asChild requires a single valid React element child.`);
@@ -138,19 +150,24 @@ function DrawerRoot({
   snapPoints,
   disablePointerDismissal,
 }: DrawerProps) {
+  const [contentSide, setContentSide] = React.useState<DrawerSide>("right");
+  const resolvedSwipeDirection = swipeDirection ?? SWIPE_DIRECTION_BY_SIDE[contentSide];
+
   return (
-    <BaseDrawer.Root
-      open={open}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
-      onOpenChangeComplete={onOpenChangeComplete}
-      modal={modal}
-      swipeDirection={swipeDirection}
-      snapPoints={snapPoints}
-      disablePointerDismissal={disablePointerDismissal}
-    >
-      {children}
-    </BaseDrawer.Root>
+    <DrawerContentSideContext.Provider value={setContentSide}>
+      <BaseDrawer.Root
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={onOpenChange}
+        onOpenChangeComplete={onOpenChangeComplete}
+        modal={modal}
+        swipeDirection={resolvedSwipeDirection}
+        snapPoints={snapPoints}
+        disablePointerDismissal={disablePointerDismissal}
+      >
+        {children}
+      </BaseDrawer.Root>
+    </DrawerContentSideContext.Provider>
   );
 }
 
@@ -181,10 +198,19 @@ function DrawerContent({
   className,
   ...htmlProps
 }: DrawerContentProps) {
+  const registerContentSide = React.useContext(DrawerContentSideContext);
   const { className: viewportClassName, ...viewportHtmlProps } = viewportProps ?? {};
   const popupClasses = [styles.popup, styles[`side-${side}`], styles[`size-${size}`], className]
     .filter(Boolean)
     .join(" ");
+
+  React.useEffect(() => {
+    registerContentSide(side);
+
+    return () => {
+      registerContentSide("right");
+    };
+  }, [registerContentSide, side]);
 
   return (
     <BaseDrawer.Portal>

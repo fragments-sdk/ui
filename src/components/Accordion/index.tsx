@@ -184,7 +184,7 @@ function AccordionItem({
   className,
   ...htmlProps
 }: AccordionItemProps) {
-  const { openItems } = useAccordionContext();
+  const { openItems, toggle } = useAccordionContext();
   const isOpen = openItems.includes(value);
   const baseId = React.useId();
   const triggerId = `accordion-trigger-${baseId}`;
@@ -201,7 +201,17 @@ function AccordionItem({
 
   return (
     <AccordionItemContext.Provider value={{ value, isOpen, disabled, triggerId, contentId }}>
-      <BaseCollapsible.Root open={isOpen} disabled={disabled}>
+      <BaseCollapsible.Root
+        open={isOpen}
+        disabled={disabled}
+        onOpenChange={(nextOpen, eventDetails) => {
+          // Trigger presses stay in AccordionTrigger so its public onClick can cancel them.
+          // Base owns the browser-only beforematch event used by hiddenUntilFound panels.
+          if (eventDetails.event.type === "beforematch" && nextOpen !== isOpen) {
+            toggle(value);
+          }
+        }}
+      >
         <div
           {...htmlProps}
           className={classes}
@@ -285,7 +295,7 @@ function AccordionContent({
       data-state={isOpen ? "open" : "closed"}
       role="region"
       aria-labelledby={triggerId}
-      keepMounted={keepMounted}
+      keepMounted={keepMounted || hiddenUntilFound}
       hiddenUntilFound={hiddenUntilFound}
     >
       <div className={styles.contentInner}>{children}</div>

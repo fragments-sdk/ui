@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Field } from "../Field";
 import { Switch } from "./index";
 
 describe("Switch", () => {
@@ -84,6 +85,7 @@ describe("Switch", () => {
     const { container } = render(
       <Switch
         aria-label="Dark mode"
+        id="dark-mode-switch"
         name="darkMode"
         form="external-form"
         value="enabled"
@@ -97,6 +99,8 @@ describe("Switch", () => {
     const input = container.querySelector('input[type="checkbox"][name="darkMode"]');
     const uncheckedInput = container.querySelector('input[type="hidden"][name="darkMode"]');
     expect(input).toBe(inputNode);
+    expect(input).toHaveAttribute("id", "dark-mode-switch");
+    expect(screen.getByRole("switch")).not.toHaveAttribute("id", "dark-mode-switch");
     expect(input).toHaveAttribute("form", "external-form");
     expect(input).toHaveAttribute("value", "enabled");
     expect(uncheckedInput).toHaveAttribute("form", "external-form");
@@ -119,6 +123,21 @@ describe("Switch", () => {
     await user.click(screen.getByRole("switch"));
     expect(handleChange).toHaveBeenCalled();
     expect(handleChange.mock.calls[0][0]).toBe(true);
+  });
+
+  it("validates exactly once when changed inside a Field", async () => {
+    const validate = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <Field validationMode="onChange" validate={validate}>
+        <Switch aria-label="Dark mode" />
+      </Field>
+    );
+
+    await user.click(screen.getByRole("switch"));
+
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(validate).toHaveBeenLastCalledWith(true, expect.anything());
   });
 
   it("prefers onCheckedChange over onChange when both provided", async () => {

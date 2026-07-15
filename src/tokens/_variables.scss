@@ -306,6 +306,8 @@ $fui-button-height-xs: computed.$computed-button-height-xs !default;
 $fui-button-height-sm: computed.$computed-button-height-sm !default;
 $fui-button-height-md: computed.$computed-button-height-md !default;
 $fui-button-height-lg: computed.$computed-button-height-lg !default;
+$fui-button-outlined-shadow: inset 0 1px 0
+  light-dark(color-mix(in srgb, white 72%, transparent), color-mix(in srgb, white 5%, transparent)) !default;
 
 // Input heights (derived from density seed)
 // Note: These are dedicated input tokens, not reusing button heights
@@ -344,9 +346,15 @@ $fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // de
 $fui-appshell-header-height: 56px !default;
 $fui-header-z-index: 40 !default;
 
-// CodeBlock background — shared with Markdown's <pre> prose styling.
-// Other code/tooltip styling tokens live in their component modules.
+// CodeBlock background — shared with Markdown's <pre> prose styling — and
+// selection tint are runtime hooks so consuming apps can preserve their own
+// code-surface treatment without forking either component.
 $fui-code-bg: #171717 !default;
+$fui-code-selection-bg: color-mix(
+  in srgb,
+  var(--fui-button-primary-base, #006b57) 30%,
+  transparent
+) !default;
 
 // --------------------------------------------
 // CSS Custom Properties Export
@@ -529,6 +537,7 @@ $fui-code-bg: #171717 !default;
     --fui-border: light-dark(#{$fui-border}, #{$fui-dark-border});
     --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
+    --fui-border-subtle: color-mix(in srgb, var(--fui-border-default) 68%, transparent);
 
     // Native browser text selection tracks the accent (pine in light, sage in
     // dark) as a soft wash — matching the Flight Recorder accent-tint.
@@ -601,7 +610,10 @@ $fui-code-bg: #171717 !default;
       --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
       --fui-button-primary-bg-active: var(--fui-button-primary-active);
       --fui-button-primary-shadow: none;
-      --fui-button-primary-shadow-active: inset 0 1px 2px
+      --fui-button-primary-shadow-active: inset
+        0
+        1px
+        2px
         color-mix(in srgb, black 22%, transparent);
     } @else {
       // Raised-gradient recipe for consumer-branded builds.
@@ -674,6 +686,7 @@ $fui-code-bg: #171717 !default;
       var(--fui-text-primary) 42%
     );
     --fui-button-neutral-color: var(--fui-text-primary);
+    --fui-button-outlined-shadow: #{$fui-button-outlined-shadow};
     --fui-button-neutral-shadow:
       inset 0 1px 0
         light-dark(
@@ -685,6 +698,9 @@ $fui-code-bg: #171717 !default;
     --fui-button-neutral-shadow-active:
       inset 0 1px 2px color-mix(in srgb, black 16%, transparent),
       inset 0 0 0 1px color-mix(in srgb, var(--fui-text-primary) 6%, transparent);
+
+    --fui-code-bg: #{$fui-code-bg};
+    --fui-code-selection-bg: #{$fui-code-selection-bg};
 
     // Popup/menu active-item highlight — neutral, deliberately stronger than
     // --fui-bg-hover (which is tuned for subtle surface hovers and reads as ~invisible
@@ -710,9 +726,12 @@ $fui-code-bg: #171717 !default;
     --fui-sidebar-footer-border: color-mix(in srgb, var(--fui-border-default) 68%, transparent);
 
     // Card/panel surfaces.
+    --fui-badge-radius: var(--fui-radius-lg);
+    --fui-badge-dot-color: currentColor;
     --fui-card-radius: var(--fui-radius-lg);
     --fui-card-bg: color-mix(in srgb, var(--fui-bg-elevated) 92%, transparent);
     --fui-card-border: color-mix(in srgb, var(--fui-border-default) 86%, transparent);
+    --fui-card-outlined-border: var(--fui-card-border);
     --fui-card-shadow: inset 0 1px 0
       light-dark(
         color-mix(in srgb, white 86%, transparent),
@@ -728,6 +747,8 @@ $fui-code-bg: #171717 !default;
       var(--fui-bg-elevated) 84%,
       var(--fui-text-primary) 6%
     );
+    --fui-card-active-shadow: inset 0 1px 2px color-mix(in srgb, black 12%, transparent);
+    --fui-card-panel-shadow: var(--fui-card-shadow);
     --fui-card-stat-bg: color-mix(in srgb, var(--fui-bg-elevated) 74%, transparent);
     --fui-card-stat-border: color-mix(in srgb, var(--fui-border-default) 78%, transparent);
     --fui-card-stat-shadow: var(--fui-card-shadow);

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { fireEvent } from "@testing-library/react";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Select } from "./index";
 
@@ -154,6 +155,32 @@ describe("Select", () => {
     expect(input).toHaveAttribute("autocomplete", "off");
   });
 
+  it("matches browser autofill against an item label regardless of case", async () => {
+    let inputNode: HTMLInputElement | null = null;
+    render(
+      <Select
+        name="country"
+        placeholder="Pick a country"
+        inputRef={(node) => {
+          inputNode = node;
+        }}
+      >
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="US">United States</Select.Item>
+          <Select.Item value="CA">Canada</Select.Item>
+        </Select.Content>
+      </Select>
+    );
+
+    expect(inputNode).toBeInstanceOf(HTMLInputElement);
+    fireEvent.change(inputNode as unknown as HTMLInputElement, {
+      target: { value: "canada" },
+    });
+
+    expect(await screen.findByRole("combobox")).toHaveTextContent("Canada");
+  });
+
   it("renders groups and group labels", async () => {
     const user = userEvent.setup();
     render(
@@ -279,6 +306,30 @@ describe("Select", () => {
       await user.click(screen.getByRole("combobox"));
       const cherry = await screen.findByRole("option", { name: "Cherry" });
       expect(cherry).toHaveAttribute("aria-disabled", "true");
+    });
+
+    it("skips disabled matches during closed-trigger typeahead", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+      render(
+        <Select placeholder="Pick one" onValueChange={onValueChange}>
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="apricot" disabled>
+              Apricot
+            </Select.Item>
+            <Select.Item value="avocado">Avocado</Select.Item>
+          </Select.Content>
+        </Select>
+      );
+
+      await user.tab();
+      expect(screen.getByRole("combobox")).toHaveFocus();
+
+      await user.keyboard("a");
+
+      expect(onValueChange).toHaveBeenCalledWith("avocado");
+      expect(screen.getByRole("combobox")).toHaveTextContent("Avocado");
     });
   });
 

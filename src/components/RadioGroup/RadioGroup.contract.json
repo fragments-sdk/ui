@@ -3,12 +3,7 @@
   "name": "RadioGroup",
   "description": "Single selection from a list of mutually exclusive options",
   "category": "forms",
-  "tags": [
-    "form",
-    "radio",
-    "selection",
-    "options"
-  ],
+  "tags": ["form", "radio", "selection", "options"],
   "status": "stable",
   "sourcePath": "src/components/RadioGroup/index.tsx",
   "exportName": "RadioGroup",
@@ -26,6 +21,7 @@
     "size: sm|md|lg (default: md)",
     "wrapperClassName: string",
     "groupClassName: string",
+    "groupId: string",
     "children: node (required)"
   ],
   "props": {
@@ -54,10 +50,7 @@
       "description": "Layout orientation",
       "default": "vertical",
       "required": false,
-      "values": [
-        "horizontal",
-        "vertical"
-      ]
+      "values": ["horizontal", "vertical"]
     },
     "disabled": {
       "type": "boolean",
@@ -90,21 +83,14 @@
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "variant": {
       "type": "enum",
       "description": "Visual variant. 'default' is the inline radio, 'card' renders each item as a full-width clickable card with the radio tucked inside.",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "card"
-      ]
+      "values": ["default", "card"]
     },
     "wrapperClassName": {
       "type": "string",
@@ -114,6 +100,11 @@
     "groupClassName": {
       "type": "string",
       "description": "Class name for the inner radio group element",
+      "required": false
+    },
+    "groupId": {
+      "type": "string",
+      "description": "ID for the inner element with role=radiogroup; the inherited id remains on the outer field wrapper",
       "required": false
     },
     "children": {
@@ -213,19 +204,14 @@
       "error: boolean | string - error styling and message",
       "disabled: boolean - disable all options",
       "wrapperClassName/groupClassName - explicit styling targets for wrapper and group",
+      "groupId: string - ID forwarded to the inner radiogroup while id remains on the wrapper",
       "RadioGroup.Item supports helperText (preferred) and description (legacy alias) plus controlClassName/contentClassName for item-level styling"
     ],
-    "a11yRules": [
-      "A11Y_RADIO_GROUP",
-      "A11Y_LABEL_REQUIRED",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_RADIO_GROUP", "A11Y_LABEL_REQUIRED", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Item"
-    ]
+    "subComponents": ["Item"]
   },
   "provenance": {
     "source": "migrated",

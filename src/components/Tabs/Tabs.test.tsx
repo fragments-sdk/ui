@@ -1,7 +1,8 @@
+import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { ComponentDefaultsProvider } from "../ComponentDefaults";
-import { Tabs } from "./index";
+import { Tabs, type TabsChangeEventDetails } from "./index";
 
 function renderTabs(props: Partial<React.ComponentProps<typeof Tabs>> = {}) {
   return render(
@@ -79,6 +80,78 @@ describe("Tabs", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("tab", { name: /tab two/i }));
     expect(onValueChange).toHaveBeenCalled();
+    expect(onValueChange.mock.calls[0][0]).toBe("tab2");
+  });
+
+  it("does not move an uncontrolled selection when the change is canceled", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn((_value: string, details: TabsChangeEventDetails) => {
+      details.cancel();
+    });
+
+    render(
+      <Tabs defaultValue="tab1" onValueChange={onValueChange}>
+        <Tabs.List>
+          <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+          <Tabs.Tab value="tab2">Tab Two</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="tab1">Panel One</Tabs.Panel>
+        <Tabs.Panel value="tab2">Panel Two</Tabs.Panel>
+      </Tabs>
+    );
+
+    const tabOne = screen.getByRole("tab", { name: /tab one/i });
+    const tabTwo = screen.getByRole("tab", { name: /tab two/i });
+    await user.click(tabTwo);
+
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(tabOne).toHaveAttribute("aria-selected", "true");
+    expect(tabTwo).toHaveAttribute("aria-selected", "false");
+    expect(screen.getByText("Panel One")).toBeInTheDocument();
+    expect(screen.queryByText("Panel Two")).not.toBeInTheDocument();
+  });
+
+  it("keeps a suspending panel selected until it resolves", async () => {
+    let resolvePanel: ((value: string) => void) | undefined;
+    const panelPromise = new Promise<string>((resolve) => {
+      resolvePanel = resolve;
+    });
+
+    function SuspendingPanel() {
+      return <div>{React.use(panelPromise)}</div>;
+    }
+
+    const onValueChange = vi.fn();
+    render(
+      <React.Suspense fallback={<div>Loading panel</div>}>
+        <Tabs defaultValue="tab1" onValueChange={onValueChange}>
+          <Tabs.List>
+            <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+            <Tabs.Tab value="tab2">Tab Two</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="tab1">Panel One</Tabs.Panel>
+          <Tabs.Panel value="tab2">
+            <SuspendingPanel />
+          </Tabs.Panel>
+        </Tabs>
+      </React.Suspense>
+    );
+
+    const tabTwo = screen.getByRole("tab", { name: /tab two/i });
+    await act(async () => {
+      tabTwo.click();
+    });
+
+    expect(await screen.findByText("Loading panel")).toBeInTheDocument();
+
+    await act(async () => {
+      resolvePanel?.("Panel Two");
+      await panelPromise;
+    });
+
+    expect(await screen.findByText("Panel Two")).toBeInTheDocument();
+    expect(tabTwo).toHaveAttribute("aria-selected", "true");
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange.mock.calls[0][0]).toBe("tab2");
   });
 
