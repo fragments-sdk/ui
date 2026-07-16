@@ -185,13 +185,9 @@
     "remark-gfm": ">=4.0.0",
     "shiki": ">=1.0.0"
   },
-  "scarfSettings": {
-    "defaultOptIn": true
-  },
   "dependencies": {
     "@base-ui/react": "1.6.0",
-    "@phosphor-icons/react": "^2.1.10",
-    "@scarf/scarf": "^1.4.0"
+    "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
     "@usefragments/core": "workspace:*",
