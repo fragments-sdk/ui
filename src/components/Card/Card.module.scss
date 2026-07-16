@@ -129,15 +129,15 @@
   margin-bottom: var(--fui-space-2, $fui-space-2);
 }
 
-// Full-bleed panel-header bar: fixed 40px rail with horizontal padding and a
-// hairline bottom divider. No trailing margin — it sits flush above the
+// Full-bleed panel-header region with a 40px minimum height, canonical inset,
+// and a hairline bottom divider. No trailing margin — it sits flush above the
 // panel body, which manages its own padding. Use inside `variant="panel"`.
 .headerDivided {
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
   min-height: 2.857rem; // 40px
-  padding: 0 var(--fui-space-2, $fui-space-2);
+  padding: var(--fui-space-2, $fui-space-2);
   margin-bottom: 0;
   border-bottom: 1px solid var(--fui-border, $fui-border);
 }

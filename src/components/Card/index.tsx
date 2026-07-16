@@ -34,9 +34,9 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, "chil
 
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Renders the header as a divided bar: fixed height, horizontal padding,
-   * hairline bottom border, no trailing margin. Used with `variant="panel"`
-   * for dashboard-style panel headers. */
+  /** Renders the header as a divided region with a minimum height, canonical
+   * inset, hairline bottom border, and no trailing margin. Used with
+   * `variant="panel"` for dashboard-style panel headers. */
   divided?: boolean;
 }
 
