@@ -1,5 +1,38 @@
 # @usefragments/ui
 
+## 1.1.0
+
+### Minor Changes
+
+- [#324](https://github.com/fragments-sdk/fragments/pull/324) [`824a306`](https://github.com/fragments-sdk/fragments/commit/824a306f9b8d3d8f2ebd80c973f3a573e7d655b3) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add polymorphic Header brand composition, scroll elevation, centered page-width navigation, and mobile action layout.
+
+- [#331](https://github.com/fragments-sdk/fragments/pull/331) [`0888488`](https://github.com/fragments-sdk/fragments/commit/08884882b4dc0cd785b7cdcfe7fb570e1703dd49) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add FragmentsWordmark asset and refresh token palettes/seeds/variables plus Alert, Button, CodeBlock, Popover, TableOfContents, Toast, and ToggleGroup styles for the promoted docs/landing skin.
+
+- [#334](https://github.com/fragments-sdk/fragments/pull/334) [`8c4e9d5`](https://github.com/fragments-sdk/fragments/commit/8c4e9d50e963aeb7572d1726358260b4fa38dcbe) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Upgrade the canonical component implementation to Base UI 1.6. Forward the
+  supported Base control props through `Field`, restore form, focus, swipe,
+  find-in-page, AppShell, DataTable, and Menu behavior, and add public Button and
+  CodeBlock theme hooks. Add `RadioGroup.groupId` for the Base 1.6 group-ID path
+  without moving the wrapper's existing `id`, and add `DataTable.getRowProps` so
+  row ARIA/interaction semantics no longer require post-render DOM mutation. Add
+  `IconButton` contract metadata so the regenerated Fragments catalog can expose
+  the already-exported component.
+
+### Patch Changes
+
+- [#336](https://github.com/fragments-sdk/fragments/pull/336) [`7e621c7`](https://github.com/fragments-sdk/fragments/commit/7e621c7810250b0bf705560fff21bf6dac29736f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Make first-run governance activation truthful and reproducible: install and
+  verify the exact local CLI before hooks, gate Ready on Doctor, pin generated
+  workflows and hook fallbacks, keep Cloud policy authoritative for connected
+  scans, and limit automatic component rewrites to confirmed mappings with
+  collision-safe imports and complete, explicitly mapped prop compatibility.
+  Verify versioned Cloud FCID preimages before connected scans, negotiate the
+  capability across staggered Cloud/CLI rollouts, and refuse malformed identity
+  proofs before scanning or reporting.
+  Normalize authenticated Cloud workspace measures and restore canonical
+  Card header/body spacing so panel composition stays consistent and accessible.
+  Upgrade the packaged esbuild runtime beyond the vulnerable 0.24.x development
+  server range, and remove unused default-on install telemetry from the public
+  packages and READMEs.
+
 ## 1.0.2
 
 ### Patch Changes
