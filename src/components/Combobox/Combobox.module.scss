@@ -197,7 +197,7 @@
   border-color: var(--fui-form-group-border, $fui-border);
 
   // Item height derived from text-base font + vertical padding
-  --_item-h: calc(
+  --_combobox-item-h: calc(
     var(--fui-font-size-sm, #{$fui-font-size-sm}) *
       var(--fui-line-height-normal, #{$fui-line-height-normal}) +
       var(--fui-space-2, #{$fui-space-2}) * 2
@@ -207,7 +207,8 @@
   // Show N items + half-peek scroll hint (default 4.5 items)
   // !important needed to override Base UI's inline max-height: 100%
   max-height: calc(
-    var(--_item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) * 2
+    var(--_combobox-item-h) * var(--fui-select-max-items, 4.5) +
+      var(--fui-space-1, #{$fui-space-1}) * 2
   ) !important;
   overflow-y: auto !important;
 

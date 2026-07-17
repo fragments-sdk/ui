@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // ============================================
 // Listbox container
@@ -10,7 +10,7 @@
   @include popup-container;
 
   // Item height derived from text-base font + vertical padding (matches Select/Combobox)
-  --_item-h: calc(
+  --_listbox-item-h: calc(
     var(--fui-font-size-sm, #{$fui-font-size-sm}) *
       var(--fui-line-height-normal, #{$fui-line-height-normal}) +
       var(--fui-space-2, #{$fui-space-2}) * 2
@@ -19,7 +19,8 @@
   min-width: 12rem;
   // Show N items + half-peek scroll hint (default 4.5 items)
   max-height: calc(
-    var(--_item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) * 2
+    var(--_listbox-item-h) * var(--fui-select-max-items, 4.5) +
+      var(--fui-space-1, #{$fui-space-1}) * 2
   );
   overflow-y: auto;
   border-color: var(--fui-form-group-border, $fui-border);

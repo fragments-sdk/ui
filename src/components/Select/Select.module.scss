@@ -1,5 +1,5 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 
 // Form field wrapper (label + helper + error)
 @include form-field-wrapper;
@@ -10,7 +10,7 @@
   @include interactive-base;
   @include text-base;
   @include field-shell;
-  @include control-size('md', 'input');
+  @include control-size("md", "input");
 
   display: inline-flex;
   align-items: center;
@@ -27,11 +27,11 @@
 
 // Trigger size variants
 .triggerSm {
-  @include control-size('sm', 'input');
+  @include control-size("sm", "input");
 }
 
 .triggerLg {
-  @include control-size('lg', 'input');
+  @include control-size("lg", "input");
 }
 
 // Value display
@@ -86,17 +86,18 @@
   border-color: var(--fui-form-group-border, $fui-border);
 
   // Item height derived from text-base font + vertical padding
-  --_item-h: calc(
-    var(--fui-font-size-sm, #{$fui-font-size-sm}) * var(--fui-line-height-normal, #{$fui-line-height-normal}) +
-    var(--fui-space-2, #{$fui-space-2}) * 2
+  --_select-item-h: calc(
+    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
+      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
+      var(--fui-space-2, #{$fui-space-2}) * 2
   );
 
   min-width: var(--anchor-width);
   // Show N items + half-peek scroll hint (default 4.5 items)
   // !important needed to override Base UI's inline max-height: 100%
   max-height: calc(
-    var(--_item-h) * var(--fui-select-max-items, 4.5) +
-    var(--fui-space-1, #{$fui-space-1}) * 2
+    var(--_select-item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) *
+      2
   ) !important;
   overflow-y: auto !important;
 
@@ -214,12 +215,12 @@
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
   border: 1px solid var(--fui-border, $fui-border);
 
-  &[data-side='top'] {
+  &[data-side="top"] {
     border-top: none;
     border-left: none;
   }
 
-  &[data-side='bottom'] {
+  &[data-side="bottom"] {
     border-bottom: none;
     border-right: none;
   }
