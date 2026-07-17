@@ -1,5 +1,19 @@
 # @usefragments/ui
 
+## 1.1.1
+
+### Patch Changes
+
+- [#347](https://github.com/fragments-sdk/fragments/pull/347) [`fc000ff`](https://github.com/fragments-sdk/fragments/commit/fc000ff6fcd352ffc93dd1898eab901c96a125fa) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Engine warnings now say where. Tailwind v4 theme-conflict warnings carry
+  `file:line:column`, and token-definition conflicts gained an optional
+  location on `TokenDefinitionFact` populated from the design-token source
+  (locations are ignored when comparing logical definitions, so identical
+  values never false-conflict). The warning that exposed it is also fixed:
+  the private `--_item-h` custom property was declared with different calc()
+  expressions in Listbox, Combobox, and Select — each is now component-scoped
+  (`--_listbox-item-h`, `--_combobox-item-h`, `--_select-item-h`) with
+  rendered values unchanged.
+
 ## 1.1.0
 
 ### Minor Changes
