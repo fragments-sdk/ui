@@ -3,14 +3,7 @@
   "name": "Chip",
   "description": "Interactive pill-shaped element for filtering, selecting, and tagging. Supports single and multi-select via Chip.Group.",
   "category": "forms",
-  "tags": [
-    "chip",
-    "tag",
-    "filter",
-    "selection",
-    "multi-select",
-    "action"
-  ],
+  "tags": ["chip", "tag", "filter", "selection", "multi-select", "action"],
   "status": "stable",
   "sourcePath": "src/components/Chip/index.tsx",
   "exportName": "Chip",
@@ -37,24 +30,14 @@
       "description": "Visual style variant",
       "default": "filled",
       "required": false,
-      "values": [
-        "filled",
-        "outlined",
-        "outline",
-        "soft"
-      ]
+      "values": ["filled", "outlined", "outline", "soft"]
     },
     "size": {
       "type": "enum",
       "description": "Chip size",
       "default": "md",
       "required": false,
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["xs", "sm", "md", "lg"]
     },
     "selected": {
       "type": "boolean",
@@ -135,7 +118,7 @@
     {
       "name": "Selected",
       "description": "Chip in selected state across variants",
-      "code": "<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>\n  <Chip selected>Filled</Chip>\n  <Chip variant=\"outlined\" selected>Outlined</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</div>"
+      "code": "<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Filled</Chip>\n  <Chip variant=\"outlined\" selected>Outlined</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</Stack>"
     },
     {
       "name": "With Avatar",
@@ -146,6 +129,11 @@
       "name": "With Remove",
       "description": "Removable chip with dismiss button",
       "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip onRemove={() => {}}>React</Chip>\n  <Chip onRemove={() => {}}>TypeScript</Chip>\n  <Chip onRemove={() => {}}>SCSS</Chip>\n</div>"
+    },
+    {
+      "name": "Selected Removable",
+      "description": "Selected removable chips retain the shared selection treatment across variants",
+      "code": "<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected onRemove={() => {}}>Filled</Chip>\n  <Chip variant=\"outlined\" selected onRemove={() => {}}>Outlined</Chip>\n  <Chip variant=\"soft\" selected onRemove={() => {}}>Soft</Chip>\n</Stack>"
     },
     {
       "name": "Chip Group",
@@ -192,16 +180,11 @@
       "Chip.Group forwards DOM props (id, role, aria-*, data-*, handlers)",
       "Chip.Group: non-string chip labels should set an explicit value"
     ],
-    "a11yRules": [
-      "A11Y_CHIP_SELECTION",
-      "A11Y_CHIP_DISMISS"
-    ]
+    "a11yRules": ["A11Y_CHIP_SELECTION", "A11Y_CHIP_DISMISS"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Group"
-    ]
+    "subComponents": ["Group"]
   },
   "provenance": {
     "source": "migrated",

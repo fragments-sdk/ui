@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Combobox } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Combobox } from ".";
 
 /**
  * Searchable select that filters a dropdown of options as you type.
@@ -7,32 +7,32 @@ import { Combobox } from '.';
  * Supports single and multiple selection, groups, and an empty state.
  */
 const meta = {
-  title: 'Forms/Combobox',
+  title: "Forms/Combobox",
   component: Combobox,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Searchable select that filters options as you type.',
+        component: "Searchable select that filters options as you type.",
       },
     },
   },
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Size variant',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size variant",
     },
-    multiple: { control: 'boolean', description: 'Allow multiple selections' },
+    multiple: { control: "boolean", description: "Allow multiple selections" },
     autoHighlight: {
-      control: 'boolean',
-      description: 'Auto-highlight first match while filtering',
+      control: "boolean",
+      description: "Auto-highlight first match while filtering",
     },
-    disabled: { control: 'boolean' },
+    disabled: { control: "boolean" },
   },
   args: {
-    size: 'md',
-    placeholder: 'Select a fruit',
+    size: "md",
+    placeholder: "Select a fruit",
     children: (
       <>
         <Combobox.Input />
@@ -65,7 +65,7 @@ export const Default: Story = {
 };
 
 export const Multiple: Story = {
-  args: { multiple: true, placeholder: 'Select fruits...' },
+  args: { multiple: true, placeholder: "Select fruits..." },
   render: (args) => (
     <Combobox {...args}>
       <Combobox.Input />
@@ -81,9 +81,9 @@ export const Multiple: Story = {
 
 export const WithLabel: Story = {
   args: {
-    label: 'Assignee',
-    placeholder: 'Search assignees...',
-    helperText: 'Type to filter the list of available assignees.',
+    label: "Assignee",
+    placeholder: "Search assignees...",
+    helperText: "Type to filter the list of available assignees.",
   },
   render: (args) => (
     <Combobox {...args}>
@@ -99,28 +99,31 @@ export const WithLabel: Story = {
 };
 
 export const WithGroups: Story = {
-  args: { placeholder: 'Search countries...' },
+  args: { placeholder: "Search countries..." },
   render: (args) => (
     <Combobox {...args}>
       <Combobox.Input />
       <Combobox.Content>
-        <Combobox.Group>
-          <Combobox.GroupLabel>North America</Combobox.GroupLabel>
-          <Combobox.Item value="us">United States</Combobox.Item>
-          <Combobox.Item value="ca">Canada</Combobox.Item>
-        </Combobox.Group>
-        <Combobox.Group>
-          <Combobox.GroupLabel>Europe</Combobox.GroupLabel>
-          <Combobox.Item value="uk">United Kingdom</Combobox.Item>
-          <Combobox.Item value="de">Germany</Combobox.Item>
-        </Combobox.Group>
+        <>
+          <Combobox.Group>
+            <Combobox.GroupLabel>North America</Combobox.GroupLabel>
+            <Combobox.Item value="us">United States</Combobox.Item>
+            <Combobox.Item value="ca">Canada</Combobox.Item>
+          </Combobox.Group>
+          <Combobox.Group>
+            <Combobox.GroupLabel>Europe</Combobox.GroupLabel>
+            <Combobox.Item value="uk">United Kingdom</Combobox.Item>
+            <Combobox.Item value="de">Germany</Combobox.Item>
+          </Combobox.Group>
+          <Combobox.Empty>No matching country</Combobox.Empty>
+        </>
       </Combobox.Content>
     </Combobox>
   ),
 };
 
 export const ErrorState: Story = {
-  args: { label: 'Reviewer', placeholder: 'Search reviewers...' },
+  args: { label: "Reviewer", placeholder: "Search reviewers..." },
   render: (args) => (
     <Combobox {...args} error="Please select a reviewer">
       <Combobox.Input />

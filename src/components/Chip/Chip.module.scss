@@ -1,5 +1,19 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+
+@mixin selected-surface {
+  background-color: var(--fui-field-selection-bg, $fui-bg-hover);
+  color: var(--fui-field-selection-color, $fui-text-primary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
+    box-shadow: inset 0 0 0 1px var(--fui-field-selection-border, $fui-border-strong);
+  }
+}
 
 .chip {
   @include button-reset;
@@ -61,16 +75,7 @@
   }
 
   &.selected {
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-color-on-accent, $fui-color-on-accent);
-
-    &:hover:not(:disabled) {
-      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-    }
-
-    &:active:not(:disabled) {
-      background-color: var(--fui-color-accent-active, $fui-color-accent-active);
-    }
+    @include selected-surface;
   }
 }
 
@@ -89,19 +94,8 @@
   }
 
   &.selected {
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-color-on-accent, $fui-color-on-accent);
-    border-color: var(--fui-color-accent, $fui-color-accent);
-
-    &:hover:not(:disabled) {
-      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-      border-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-    }
-
-    &:active:not(:disabled) {
-      background-color: var(--fui-color-accent-active, $fui-color-accent-active);
-      border-color: var(--fui-color-accent-active, $fui-color-accent-active);
-    }
+    @include selected-surface;
+    border-color: var(--fui-field-selection-border, $fui-border-strong);
   }
 }
 
@@ -118,16 +112,7 @@
   }
 
   &.selected {
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-color-on-accent, $fui-color-on-accent);
-
-    &:hover:not(:disabled) {
-      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-    }
-
-    &:active:not(:disabled) {
-      background-color: var(--fui-color-accent-active, $fui-color-accent-active);
-    }
+    @include selected-surface;
   }
 }
 
@@ -244,17 +229,8 @@
 }
 
 .selected + .remove {
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-color-on-accent, $fui-color-on-accent);
+  @include selected-surface;
   border-left-color: transparent;
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--fui-color-accent-active, $fui-color-accent-active);
-  }
 }
 
 // Chip.Group

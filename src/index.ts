@@ -389,6 +389,9 @@ export {
   type ResponsiveGap,
 } from "./components/Stack";
 
+// Main
+export { Main, type MainProps, type MainRegionProps, type MainMeasure } from "./components/Main";
+
 // Text
 export { Text, type TextProps } from "./components/Text";
 

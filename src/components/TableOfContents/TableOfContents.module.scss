@@ -2,21 +2,17 @@
 @use "../../tokens/mixins" as *;
 
 // ============================================
-// Single-rail "snake" geometry
+// Dormant single-rail geometry
 // ============================================
 //
-// All <li>s are siblings in one flat <ul>. Each carries data-depth, which
-// sets the X of its per-row rail (drawn as `::before`). At depth-0 → depth-1
-// transitions an opening elbow is drawn via `::after` on the depth-1 item;
-// at depth-1 → depth-0 transitions a closing elbow is drawn via `::after`
-// on the depth-0 item. Active items paint their rail in accent; the curves
-// into and out of an active depth-1 also flip to accent so the section
-// reads as one continuous coloured snake.
+// The public default is the quiet, flush index disabled below. These values
+// retain the existing optional rail geometry without making its inset part of
+// the default list contract.
 
 $rail-x-0: 7px;
 $rail-indent: 14px;
 $rail-x-1: 21px; // = $rail-x-0 + $rail-indent
-$rail-pad: 18px; // <ul> padding-left
+$rail-pad: 18px; // optional rail inset; never default <ul> padding
 $rail-curve: 14px;
 $rail-thickness: 1px;
 $rail-active-thickness: 1px;
@@ -44,11 +40,13 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
   padding: 0 var(--fui-space-2, $fui-space-2);
 }
 
+// Plain index (the design-system default, see below) draws no rail, so the
+// list is flush — its links/group headers share the same inline inset as
+// .title. A future rail variant must reinstate its own $rail-pad inset.
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
-  padding-left: $rail-pad;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -210,9 +208,8 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
   }
 }
 
-// Depth-1 link sits to the right of the rail (which lives at x=3px from li edge).
-// Margin pushes the link's hover/active background past the rail so it doesn't
-// paint over the line. Reduced padding-left keeps the text in the same x-position.
+// Depth-1 links carry the hierarchy indent while the top-level index remains
+// flush with the title and group headers.
 [data-depth="1"] .link {
   margin-left: var(--fui-space-2, $fui-space-2);
   padding-left: $rail-indent;

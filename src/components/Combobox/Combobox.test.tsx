@@ -175,8 +175,10 @@ describe("Combobox", () => {
     const input = screen.getByRole("combobox");
     await user.click(input);
     await user.type(input, "rea");
-    // React should be visible, Vue/Angular may be filtered out
     expect(await screen.findByRole("option", { name: "React" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Vue" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Angular" })).not.toBeInTheDocument();
+    expect(screen.queryByText("No results found")).not.toBeInTheDocument();
   });
 
   it("does not re-render mounted items when typing keeps the result set unchanged", async () => {
@@ -203,13 +205,82 @@ describe("Combobox", () => {
     });
     recordItemCommit.mockClear();
 
-    // Every row still matches each intermediate query. Fragments uses Base's
-    // manually composed item path (not the items-array path optimized in 1.6),
-    // so this guards the wrapper's existing zero-commit hot-path contract.
     await user.type(screen.getByRole("combobox"), "Row ");
 
     expect(screen.getAllByRole("option")).toHaveLength(rows.length);
     expect(recordItemCommit).not.toHaveBeenCalled();
+  });
+
+  it("shows Empty only when no static child matches", async () => {
+    const user = userEvent.setup();
+    renderCombobox();
+
+    const input = screen.getByRole("combobox");
+    await user.click(input);
+    expect(screen.queryByText("No results found")).not.toBeInTheDocument();
+
+    await user.type(input, "svelte");
+
+    expect(await screen.findByText("No results found")).toBeInTheDocument();
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+  });
+
+  it("filters static items and Empty through transparent wrappers", async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox placeholder="Search">
+        <Combobox.Input />
+        <Combobox.Content>
+          <>
+            <Combobox.Item value="react">React</Combobox.Item>
+            <Combobox.Item value="vue">Vue</Combobox.Item>
+            <Combobox.Empty>No wrapped results</Combobox.Empty>
+          </>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    const input = screen.getByRole("combobox");
+    await user.click(input);
+    await user.type(input, "rea");
+
+    expect(await screen.findByRole("option", { name: "React" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Vue" })).not.toBeInTheDocument();
+    expect(screen.queryByText("No wrapped results")).not.toBeInTheDocument();
+
+    await user.clear(input);
+    await user.type(input, "svelte");
+
+    expect(await screen.findByText("No wrapped results")).toBeInTheDocument();
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+  });
+
+  it("hides groups whose static children do not match", async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox placeholder="Search">
+        <Combobox.Input />
+        <Combobox.Content>
+          <>
+            <Combobox.Group>
+              <Combobox.GroupLabel>Frameworks</Combobox.GroupLabel>
+              <Combobox.Item value="react">React</Combobox.Item>
+            </Combobox.Group>
+            <Combobox.Group>
+              <Combobox.GroupLabel>Languages</Combobox.GroupLabel>
+              <Combobox.Item value="typescript">TypeScript</Combobox.Item>
+            </Combobox.Group>
+            <Combobox.Empty>No results found</Combobox.Empty>
+          </>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    await user.click(screen.getByRole("combobox"));
+    await user.type(screen.getByRole("combobox"), "react");
+
+    expect(await screen.findByText("Frameworks")).toBeInTheDocument();
+    expect(screen.queryByText("Languages")).not.toBeInTheDocument();
   });
 
   it("renders groups and group labels", async () => {
@@ -263,6 +334,28 @@ describe("Combobox", () => {
     const option = await screen.findByRole("option", { name: "React" });
     await user.click(option);
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it("keeps selected chip labels while their options are filtered out", async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox multiple defaultValue={["react"]} placeholder="Search frameworks">
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+          <Combobox.Item value="vue">Vue</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+
+    const input = screen.getByRole("combobox");
+    await user.click(input);
+    await user.type(input, "vue");
+
+    expect(await screen.findByRole("option", { name: "Vue" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "React" })).not.toBeInTheDocument();
+    expect(screen.getByText("React")).toBeInTheDocument();
+    expect(screen.queryByText("react")).not.toBeInTheDocument();
   });
 
   it("uses text content for non-string item labels", async () => {
@@ -375,6 +468,32 @@ describe("Combobox", () => {
 
       // React should be visible after filtering
       expect(await screen.findByRole("option", { name: "React" })).toBeInTheDocument();
+    });
+
+    it("selects the remaining wrapped option with the keyboard after filtering", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+      render(
+        <Combobox onValueChange={onValueChange} placeholder="Search frameworks">
+          <Combobox.Input />
+          <Combobox.Content>
+            <>
+              <Combobox.Item value="react">React</Combobox.Item>
+              <Combobox.Item value="vue">Vue</Combobox.Item>
+            </>
+          </Combobox.Content>
+        </Combobox>
+      );
+
+      const input = screen.getByRole("combobox");
+      await user.click(input);
+      await user.type(input, "vue");
+      const option = await screen.findByRole("option", { name: "Vue" });
+      await user.keyboard("{ArrowDown}");
+      await waitFor(() => expect(option).toHaveAttribute("data-highlighted"));
+      await user.keyboard("{Enter}");
+
+      expect(onValueChange).toHaveBeenLastCalledWith("vue");
     });
 
     it("Escape after filtering closes the dropdown", async () => {

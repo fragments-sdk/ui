@@ -224,6 +224,8 @@
   },
   "files": [
     "src",
+    "!src/**/.fragments/**",
+    "!src/**/.impeccable/**",
     "!src/**/*.test.ts",
     "!src/**/*.test.tsx",
     "!src/test/",

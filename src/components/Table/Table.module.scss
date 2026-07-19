@@ -108,14 +108,24 @@
 
 // Body
 .tbody {
+  .td {
+    padding-top: var(--fui-space-2, $fui-space-2);
+    padding-bottom: var(--fui-space-2, $fui-space-2);
+  }
 }
 
 .row {
-  --fui-table-row-base-bg: var(--fui-table-bg, var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary})));
+  --fui-table-row-base-bg: var(
+    --fui-table-bg,
+    var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
+  );
   --fui-table-row-bg: var(--fui-table-row-base-bg);
 
   border-bottom: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
-  background-color: var(--fui-table-row-bg);
+  background-color: var(
+    --fui-table-row-bg,
+    var(--fui-table-row-base-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
+  );
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:last-child {
@@ -128,11 +138,18 @@
 }
 
 .selected {
-  --fui-table-row-bg: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent));
-  box-shadow: inset 1px 0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
+  --fui-table-row-bg: var(
+    --fui-table-row-selected-bg,
+    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
+  );
+  box-shadow: inset 1px 0 0
+    var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
 
   &:hover {
-    --fui-table-row-bg: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent));
+    --fui-table-row-bg: var(
+      --fui-table-row-selected-bg,
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent)
+    );
   }
 }
 

@@ -168,6 +168,7 @@ interface ComboboxContextValue {
   placeholder?: string;
   multiple?: boolean;
   selectedValues: string[];
+  staticLabels: ReadonlyMap<string, string>;
   itemsRef: React.MutableRefObject<Map<string, string>>;
   itemsVersion: number;
   incrementItemsVersion: () => void;
@@ -178,8 +179,11 @@ interface ComboboxContextValue {
   inputId?: string;
 }
 
+const EMPTY_STATIC_LABELS = new Map<string, string>();
+
 const ComboboxContext = React.createContext<ComboboxContextValue>({
   selectedValues: [],
+  staticLabels: EMPTY_STATIC_LABELS,
   itemsRef: { current: new Map() },
   itemsVersion: 0,
   incrementItemsVersion: () => {},
@@ -188,6 +192,16 @@ const ComboboxContext = React.createContext<ComboboxContextValue>({
   size: "md",
 });
 
+const EMPTY_FILTERED_ITEM_INDICES = new Map<string, number>();
+const ComboboxFilteredItemIndexContext = React.createContext<ReadonlyMap<string, number>>(
+  EMPTY_FILTERED_ITEM_INDICES
+);
+
+function itemIndicesFromSerializedValues(serializedValues: string): ReadonlyMap<string, number> {
+  const values = JSON.parse(serializedValues) as string[];
+  return new Map(values.map((value, index) => [value, index]));
+}
+
 function getNodeText(node: React.ReactNode): string {
   if (node == null || typeof node === "boolean") return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
@@ -195,6 +209,84 @@ function getNodeText(node: React.ReactNode): string {
   if (React.isValidElement(node))
     return getNodeText((node.props as { children?: React.ReactNode }).children);
   return "";
+}
+
+interface ComboboxStaticItem {
+  label: string;
+  value: string;
+}
+
+function collectStaticItems(node: React.ReactNode): ComboboxStaticItem[] {
+  const items: ComboboxStaticItem[] = [];
+
+  React.Children.forEach(node, (child) => {
+    if (!React.isValidElement(child)) return;
+    if (child.type === ComboboxItem) {
+      const props = child.props as ComboboxItemProps;
+      items.push({
+        label: getNodeText(props.children).trim() || props.value,
+        value: props.value,
+      });
+      return;
+    }
+    collectStaticItems((child.props as { children?: React.ReactNode }).children).forEach((item) =>
+      items.push(item)
+    );
+  });
+
+  return items;
+}
+
+interface FilterStaticChildrenResult {
+  children: React.ReactNode;
+  visibleItemCount: number;
+  changed: boolean;
+}
+
+function filterStaticChildren(
+  node: React.ReactNode,
+  visibleValues: ReadonlySet<string>
+): FilterStaticChildrenResult {
+  let visibleItemCount = 0;
+  let changed = false;
+
+  const filteredChildren = React.Children.map(node, (child) => {
+    if (!React.isValidElement(child)) return child;
+    if (child.type === ComboboxItem) {
+      const props = child.props as ComboboxItemProps;
+      if (visibleValues.has(props.value)) {
+        visibleItemCount += 1;
+        return child;
+      }
+      changed = true;
+      return null;
+    }
+
+    const props = child.props as { children?: React.ReactNode };
+    if (props.children === undefined) return child;
+
+    const nested = filterStaticChildren(props.children, visibleValues);
+    visibleItemCount += nested.visibleItemCount;
+
+    if (child.type === ComboboxGroup && nested.visibleItemCount === 0) {
+      changed = true;
+      return null;
+    }
+    if (!nested.changed) return child;
+
+    changed = true;
+    return React.cloneElement(
+      child as React.ReactElement<{ children?: React.ReactNode }>,
+      undefined,
+      nested.children
+    );
+  });
+
+  return {
+    children: changed ? filteredChildren : node,
+    visibleItemCount,
+    changed,
+  };
 }
 
 // ============================================
@@ -230,6 +322,12 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
   ref
 ) {
   const size = useResolvedControlSize(sizeProp);
+  const staticItems = React.useMemo(() => collectStaticItems(children), [children]);
+  const staticValues = React.useMemo(() => staticItems.map((item) => item.value), [staticItems]);
+  const staticLabels = React.useMemo(
+    () => new Map(staticItems.map((item) => [item.value, item.label])),
+    [staticItems]
+  );
   // Track selected values for chip rendering
   const [internalValue, setInternalValue] = React.useState<string | string[] | null>(
     value ?? defaultValue ?? (multiple ? [] : null)
@@ -262,9 +360,11 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
   );
 
   // Convert value → label for input display
-  const itemToStringLabel = React.useCallback((itemValue: string) => {
-    return itemsRef.current.get(itemValue) ?? itemValue;
-  }, []);
+  const itemToStringLabel = React.useCallback(
+    (itemValue: string) =>
+      staticLabels.get(itemValue) ?? itemsRef.current.get(itemValue) ?? itemValue,
+    [staticLabels]
+  );
 
   // Derive selected values array for chip rendering
   const currentValue = value !== undefined ? value : internalValue;
@@ -292,6 +392,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       placeholder,
       multiple,
       selectedValues,
+      staticLabels,
       itemsRef,
       itemsVersion,
       incrementItemsVersion,
@@ -304,6 +405,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       placeholder,
       multiple,
       selectedValues,
+      staticLabels,
       itemsVersion,
       incrementItemsVersion,
       explicitTriggerCount,
@@ -347,6 +449,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       <ComboboxContext.Provider value={contextValue}>
         {wrapperContent(
           <BaseCombobox.Root<string, true>
+            items={staticValues}
             value={controlledValue}
             defaultValue={uncontrolledValue}
             onValueChange={handleValueChange}
@@ -391,6 +494,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     <ComboboxContext.Provider value={contextValue}>
       {wrapperContent(
         <BaseCombobox.Root<string, false>
+          items={staticValues}
           value={controlledValue}
           defaultValue={uncontrolledValue ?? null}
           onValueChange={handleValueChange}
@@ -450,7 +554,9 @@ function ComboboxInput({
             {context.selectedValues.map((chipValue) => (
               <BaseCombobox.Chip key={chipValue} className={styles.chip}>
                 <span className={styles.chipLabel}>
-                  {context.itemsRef.current.get(chipValue) ?? chipValue}
+                  {context.staticLabels.get(chipValue) ??
+                    context.itemsRef.current.get(chipValue) ??
+                    chipValue}
                 </span>
                 <BaseCombobox.ChipRemove className={styles.chipRemove}>
                   <XIcon />
@@ -512,6 +618,17 @@ function ComboboxContent({
   ...htmlProps
 }: ComboboxContentProps) {
   const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
+  const filteredItems = BaseCombobox.useFilteredItems() as string[];
+  const serializedFilteredItems = JSON.stringify(filteredItems);
+  const filteredItemIndices = React.useMemo(
+    () => itemIndicesFromSerializedValues(serializedFilteredItems),
+    [serializedFilteredItems]
+  );
+  const visibleValues = React.useMemo(() => new Set(filteredItems), [filteredItems]);
+  const filteredContent = React.useMemo(
+    () => filterStaticChildren(children, visibleValues),
+    [children, visibleValues]
+  );
 
   const popupStyle =
     maxVisibleItems != null
@@ -530,7 +647,9 @@ function ComboboxContent({
         className={styles.positioner}
       >
         <BaseCombobox.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
-          {children}
+          <ComboboxFilteredItemIndexContext.Provider value={filteredItemIndices}>
+            {filteredContent.children}
+          </ComboboxFilteredItemIndexContext.Provider>
         </BaseCombobox.Popup>
       </BaseCombobox.Positioner>
     </BaseCombobox.Portal>
@@ -539,6 +658,7 @@ function ComboboxContent({
 
 function ComboboxItem({ children, value, disabled, className, ...htmlProps }: ComboboxItemProps) {
   const { itemsRef, incrementItemsVersion } = React.useContext(ComboboxContext);
+  const filteredItemIndices = React.useContext(ComboboxFilteredItemIndexContext);
   const classes = [styles.item, className].filter(Boolean).join(" ");
 
   // Register this item's label in the registry so the input can display it
@@ -555,7 +675,13 @@ function ComboboxItem({ children, value, disabled, className, ...htmlProps }: Co
   }, [itemsRef, incrementItemsVersion, value, label]);
 
   return (
-    <BaseCombobox.Item {...htmlProps} value={value} disabled={disabled} className={classes}>
+    <BaseCombobox.Item
+      {...htmlProps}
+      value={value}
+      index={filteredItemIndices.get(value)}
+      disabled={disabled}
+      className={classes}
+    >
       {children}
       <BaseCombobox.ItemIndicator className={styles.itemIndicator}>
         <CheckIcon />

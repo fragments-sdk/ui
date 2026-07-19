@@ -1,7 +1,18 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Field } from "../Field";
 import { Checkbox } from "./index";
+
+const checkboxStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Checkbox/Checkbox.module.scss"),
+  "utf8"
+);
+const componentProperties = readFileSync(
+  resolve(process.cwd(), "src/tokens/_component-properties.scss"),
+  "utf8"
+);
 
 describe("Checkbox", () => {
   it("renders a checkbox role", () => {
@@ -178,5 +189,34 @@ describe("Checkbox", () => {
   it("has no accessibility violations", async () => {
     const { container } = render(<Checkbox label="Accessible checkbox" />);
     await expectNoA11yViolations(container);
+  });
+
+  it("uses the published component-owned radius for control anatomy", () => {
+    const radiusUses = checkboxStyles.match(
+      /border-radius:\s*var\(--fui-checkbox-radius,\s*\$fui-checkbox-radius\);/g
+    );
+
+    expect(componentProperties).toContain("--fui-checkbox-radius: 0.25rem;");
+    expect(checkboxStyles).not.toMatch(/\.checkbox\s*\{[\s\S]*?--fui-checkbox-radius\s*:/);
+    expect(radiusUses).toHaveLength(2);
+    expect(checkboxStyles).toContain("border-radius: var(--fui-radius-md, $fui-radius-md);");
+  });
+
+  it("allows an application ancestor to override the public control radius", () => {
+    render(
+      <div data-testid="radius-scope" style={{ "--fui-checkbox-radius": "0.75rem" }}>
+        <Checkbox aria-label="Rounded control" data-testid="rounded-control" />
+      </div>
+    );
+
+    expect(screen.getByTestId("radius-scope")).toHaveStyle({
+      "--fui-checkbox-radius": "0.75rem",
+    });
+    expect(screen.getByTestId("rounded-control")).not.toHaveStyle({
+      "--fui-checkbox-radius": "0.75rem",
+    });
+    expect(checkboxStyles).toContain(
+      "border-radius: var(--fui-checkbox-radius, $fui-checkbox-radius);"
+    );
   });
 });

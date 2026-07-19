@@ -1,83 +1,120 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Chip } from './index';
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Chip } from "./index";
 
-describe('Chip', () => {
-  it('renders with correct text', () => {
+const chipStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Chip/Chip.module.scss"),
+  "utf8"
+);
+
+describe("Chip", () => {
+  it("renders with correct text", () => {
     render(<Chip>Tag</Chip>);
-    expect(screen.getByRole('button', { name: 'Tag' })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Tag" })).toBeInTheDocument();
   });
 
-  it('applies variant classes', () => {
+  it("applies variant classes", () => {
     render(<Chip variant="outlined">Outlined</Chip>);
-    expect(screen.getByRole('button', { name: 'Outlined' })).toHaveClass('outlined');
+    expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("outlined");
   });
 
-  it('sets aria-pressed for selected state', () => {
+  it("sets aria-pressed for selected state", () => {
     const { rerender } = render(<Chip selected>Active</Chip>);
-    expect(screen.getByRole('button', { name: 'Active' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole("button", { name: "Active" })).toHaveAttribute("aria-pressed", "true");
 
     rerender(<Chip selected={false}>Active</Chip>);
-    expect(screen.getByRole('button', { name: 'Active' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole("button", { name: "Active" })).toHaveAttribute("aria-pressed", "false");
   });
 
-  it('renders remove button with aria-label when onRemove is provided', () => {
+  it("renders remove button with aria-label when onRemove is provided", () => {
     const handleRemove = vi.fn();
     render(<Chip onRemove={handleRemove}>Removable</Chip>);
-    expect(screen.getByRole('button', { name: /remove removable/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /remove removable/i })).toBeInTheDocument();
   });
 
-  it('fires onRemove when remove button is clicked', async () => {
+  it("fires onRemove when remove button is clicked", async () => {
     const handleRemove = vi.fn();
     const user = userEvent.setup();
     render(<Chip onRemove={handleRemove}>Delete me</Chip>);
-    await user.click(screen.getByRole('button', { name: /remove delete me/i }));
+    await user.click(screen.getByRole("button", { name: /remove delete me/i }));
     expect(handleRemove).toHaveBeenCalledTimes(1);
   });
 
-  it('fires onClick callback', async () => {
+  it("keeps selected removable controls adjacent for the shared selection surface", () => {
+    render(
+      <Chip selected onRemove={() => {}}>
+        Selected
+      </Chip>
+    );
+
+    const chip = screen.getByRole("button", { name: "Selected" });
+    const remove = screen.getByRole("button", { name: /remove selected/i });
+    expect(chip).toHaveAttribute("aria-pressed", "true");
+    expect(chip.nextElementSibling).toBe(remove);
+  });
+
+  it("fires onClick callback", async () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
     render(<Chip onClick={handleClick}>Clickable</Chip>);
-    await user.click(screen.getByRole('button', { name: 'Clickable' }));
+    await user.click(screen.getByRole("button", { name: "Clickable" }));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
   it('resolves variant="outline" to "outlined"', () => {
     render(<Chip variant="outline">Outline</Chip>);
-    expect(screen.getByRole('button', { name: 'Outline' })).toHaveClass('outlined');
+    expect(screen.getByRole("button", { name: "Outline" })).toHaveClass("outlined");
   });
 
-  it('Chip.Group supports non-string chip children without value collisions', async () => {
+  it("Chip.Group supports non-string chip children without value collisions", async () => {
     const user = userEvent.setup();
     render(
       <Chip.Group>
-        <Chip><span>Alpha</span></Chip>
-        <Chip><span>Beta</span></Chip>
+        <Chip>
+          <span>Alpha</span>
+        </Chip>
+        <Chip>
+          <span>Beta</span>
+        </Chip>
       </Chip.Group>
     );
 
-    const alpha = screen.getByRole('button', { name: 'Alpha' });
-    const beta = screen.getByRole('button', { name: 'Beta' });
+    const alpha = screen.getByRole("button", { name: "Alpha" });
+    const beta = screen.getByRole("button", { name: "Beta" });
 
     await user.click(alpha);
     await user.click(beta);
 
-    expect(alpha).toHaveAttribute('aria-pressed', 'true');
-    expect(beta).toHaveAttribute('aria-pressed', 'true');
+    expect(alpha).toHaveAttribute("aria-pressed", "true");
+    expect(beta).toHaveAttribute("aria-pressed", "true");
   });
 
-  it('Chip.Group forwards DOM props to the group root', () => {
+  it("Chip.Group forwards DOM props to the group root", () => {
     render(
       <Chip.Group data-testid="chip-group" aria-label="Filters">
         <Chip value="one">One</Chip>
       </Chip.Group>
     );
-    expect(screen.getByTestId('chip-group')).toHaveAttribute('aria-label', 'Filters');
+    expect(screen.getByTestId("chip-group")).toHaveAttribute("aria-label", "Filters");
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(<Chip>Accessible chip</Chip>);
     await expectNoA11yViolations(container);
+  });
+
+  it("uses only the published field-selection token family for selected surfaces", () => {
+    expect(chipStyles).toContain("--fui-field-selection-bg");
+    expect(chipStyles).toContain("--fui-field-selection-bg-hover");
+    expect(chipStyles).toContain("--fui-field-selection-border");
+    expect(chipStyles).toContain("--fui-field-selection-color");
+    expect(chipStyles).not.toContain("--fui-color-accent-tint");
+    expect(chipStyles).not.toMatch(/\$fui-color-success-/);
+    expect(chipStyles).toMatch(
+      /&:active:not\(:disabled\)\s*\{\s*background-color:\s*var\(--fui-field-selection-bg-hover,\s*\$fui-bg-hover\);/
+    );
+    expect(chipStyles).not.toContain("var(--fui-field-selection-bg-hover, $fui-bg-active)");
   });
 });

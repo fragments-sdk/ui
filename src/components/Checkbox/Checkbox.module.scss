@@ -1,6 +1,8 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 
+$fui-checkbox-radius: 0.25rem !default;
+
 // Wrapper for checkbox + label
 .wrapper {
   display: inline-flex;
@@ -34,7 +36,7 @@
   margin-top: 0;
   background-color: var(--fui-field-bg, $fui-bg-elevated);
   border: 1px solid var(--fui-field-border, $fui-border-strong);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  border-radius: var(--fui-checkbox-radius, $fui-checkbox-radius);
   cursor: inherit;
 
   &:hover:not([data-disabled]) {
@@ -87,7 +89,7 @@
 .sm {
   width: var(--fui-icon-xs, $fui-icon-xs);
   height: var(--fui-icon-xs, $fui-icon-xs);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  border-radius: var(--fui-checkbox-radius, $fui-checkbox-radius);
 }
 
 .md {

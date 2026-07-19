@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './TableOfContents.module.scss';
-import { Text } from '../Text';
+import * as React from "react";
+import styles from "./TableOfContents.module.scss";
+import { Text } from "../Text";
 
 // ============================================
 // Types
@@ -18,7 +18,10 @@ export interface TableOfContentsProps extends React.HTMLAttributes<HTMLElement> 
   hideTitle?: boolean;
 }
 
-export interface TableOfContentsItemProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> {
+export interface TableOfContentsItemProps extends Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  "children"
+> {
   children: React.ReactNode;
   /** The heading ID to link to */
   id: string;
@@ -89,14 +92,14 @@ function ChevronIcon() {
 
 function TableOfContentsRoot({
   children,
-  label = 'Table of contents',
-  title = 'On This Page',
+  label = "Table of contents",
+  title = "On This Page",
   hideTitle = false,
   className,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
   ...htmlProps
 }: TableOfContentsProps) {
-  const classes = [styles.root, className].filter(Boolean).join(' ');
+  const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
     <nav {...htmlProps} aria-label={ariaLabel ?? label} className={classes}>
@@ -127,11 +130,7 @@ function TableOfContentsItem({
   const { depth } = React.useContext(TocContext);
   const effectiveDepth = depth > 0 ? depth : indent ? 1 : 0;
 
-  const linkClasses = [
-    styles.link,
-    active && styles.active,
-    className,
-  ].filter(Boolean).join(' ');
+  const linkClasses = [styles.link, active && styles.active, className].filter(Boolean).join(" ");
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
@@ -140,23 +139,19 @@ function TableOfContentsItem({
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-      window.history.replaceState(null, '', `#${id}`);
+      el.scrollIntoView({ behavior: "smooth" });
+      window.history.replaceState(null, "", `#${id}`);
     }
   };
 
   return (
-    <li
-      className={styles.item}
-      data-depth={effectiveDepth}
-      data-active={active || undefined}
-    >
+    <li className={styles.item} data-depth={effectiveDepth} data-active={active || undefined}>
       <a
         {...htmlProps}
         href={`#${id}`}
         className={linkClasses}
         onClick={handleClick}
-        aria-current={active ? 'location' : undefined}
+        aria-current={active ? "location" : undefined}
       >
         {leading != null && <span className={styles.leading}>{leading}</span>}
         <span className={styles.linkLabel}>{children}</span>
@@ -169,7 +164,7 @@ function TableOfContentsItem({
 function useControlledOpen(
   controlled: boolean | undefined,
   defaultValue: boolean,
-  onChange: ((open: boolean) => void) | undefined,
+  onChange: ((open: boolean) => void) | undefined
 ): [boolean, (next: boolean) => void] {
   const [internal, setInternal] = React.useState(defaultValue);
   const isControlled = controlled !== undefined;
@@ -179,14 +174,14 @@ function useControlledOpen(
       if (!isControlled) setInternal(next);
       onChange?.(next);
     },
-    [isControlled, onChange],
+    [isControlled, onChange]
   );
   return [value, setValue];
 }
 
-// Group renders a Fragment: its header <li> and its children become direct
-// siblings in the parent <ul>, which lets CSS adjacency selectors detect
-// depth transitions and draw the opening/closing elbows.
+// Group renders a Fragment so its header <li> and children remain direct
+// siblings in the parent <ul>. This preserves list semantics and depth-based
+// indentation without adding a nested list inset.
 function TableOfContentsGroup({
   children,
   label,
@@ -209,7 +204,9 @@ function TableOfContentsGroup({
     styles.groupHeader,
     isToggleable && styles.groupHeaderInteractive,
     active && styles.groupHeaderActive,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const headerContent = (
     <>
@@ -226,11 +223,7 @@ function TableOfContentsGroup({
 
   return (
     <>
-      <li
-        className={styles.groupHeaderRow}
-        data-depth={depth}
-        data-active={active || undefined}
-      >
+      <li className={styles.groupHeaderRow} data-depth={depth} data-active={active || undefined}>
         {isToggleable ? (
           <button
             type="button"
@@ -244,11 +237,7 @@ function TableOfContentsGroup({
           <div className={headerClasses}>{headerContent}</div>
         )}
       </li>
-      {isOpen && (
-        <TocContext.Provider value={{ depth: depth + 1 }}>
-          {children}
-        </TocContext.Provider>
-      )}
+      {isOpen && <TocContext.Provider value={{ depth: depth + 1 }}>{children}</TocContext.Provider>}
     </>
   );
 }

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "Main",
+  "description": "Canonical page composition owning gutter, measure, and vertical rhythm.",
+  "category": "layout",
+  "tags": ["main", "page", "layout", "compound"],
+  "status": "stable",
+  "sourcePath": "src/components/Main/index.tsx",
+  "exportName": "Main",
+  "propsSummary": [
+    "children: node (required)",
+    "measure: full|narrow (default: full)",
+    "as: semantic element (default: main)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Page regions composed from Main.Header, Main.Description, Main.Content, and Main.Footer",
+      "required": true
+    },
+    "measure": {
+      "type": "enum",
+      "description": "Maximum width applied to the page composition",
+      "default": "full",
+      "required": false,
+      "values": ["full", "narrow"]
+    },
+    "as": {
+      "type": "enum",
+      "description": "Semantic HTML element rendered by the root",
+      "default": "main",
+      "required": false,
+      "values": [
+        "div",
+        "section",
+        "nav",
+        "article",
+        "aside",
+        "header",
+        "footer",
+        "main",
+        "ul",
+        "ol"
+      ]
+    }
+  },
+  "usage": {
+    "when": ["Composing a page header, description, content, and footer"],
+    "whenNot": ["Application shell navigation (use AppShell)"],
+    "guidelines": [
+      "Use one Main gutter owner per page",
+      "Compose page regions with Main.Header, Main.Description, Main.Content, and Main.Footer"
+    ],
+    "accessibility": [
+      "Use the default main element unless an existing shell already owns the main landmark"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Full Measure",
+      "description": "Page composition that uses the full available canvas",
+      "code": "<Main measure=\"full\">\n  <Main.Header>Page statement</Main.Header>\n  <Main.Description>Supporting page context.</Main.Description>\n  <Main.Content>Page content</Main.Content>\n  <Main.Footer>Page actions</Main.Footer>\n</Main>"
+    },
+    {
+      "name": "Narrow Measure",
+      "description": "Readable page composition constrained to the canonical 800px measure",
+      "code": "<Main measure=\"narrow\">\n  <Main.Header>Settings</Main.Header>\n  <Main.Description>Manage the workspace contract.</Main.Description>\n  <Main.Content>Settings content</Main.Content>\n  <Main.Footer>Save changes</Main.Footer>\n</Main>"
+    }
+  ],
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Header", "Description", "Content", "Footer"]
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": true,
+    "frameworkSupport": "native"
+  }
+}

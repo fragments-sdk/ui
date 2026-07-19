@@ -3,13 +3,7 @@
   "name": "Checkbox",
   "description": "Binary toggle for form fields. Use for options that require explicit submission, unlike Switch which takes effect immediately.",
   "category": "forms",
-  "tags": [
-    "checkbox",
-    "form",
-    "boolean",
-    "selection",
-    "input"
-  ],
+  "tags": ["checkbox", "form", "boolean", "selection", "input"],
   "status": "stable",
   "sourcePath": "src/components/Checkbox/index.tsx",
   "exportName": "Checkbox",
@@ -78,21 +72,14 @@
       "description": "Checkbox size",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "variant": {
       "type": "enum",
       "description": "Visual variant. 'default' is the inline checkbox, 'card' renders as a full-width clickable card with the checkbox tucked inside.",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "card"
-      ]
+      "values": ["default", "card"]
     },
     "label": {
       "type": "string",
@@ -235,17 +222,11 @@
       "description: string - deprecated alias for helperText",
       "controlClassName/contentClassName - explicit styling targets for control and content"
     ],
-    "a11yRules": [
-      "A11Y_CHECKBOX_LABEL",
-      "A11Y_CHECKBOX_FOCUS",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_CHECKBOX_LABEL", "A11Y_CHECKBOX_FOCUS", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

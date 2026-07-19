@@ -3,7 +3,10 @@
 
 .wrapper {
   --fui-data-table-bg: var(--fui-table-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  --fui-data-table-header-bg: var(--fui-table-header-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent));
+  --fui-data-table-header-bg: var(
+    --fui-table-header-bg,
+    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
+  );
 
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -69,7 +72,10 @@
   user-select: none;
   // Opaque so the sticky header doesn't let rows bleed through on scroll,
   // while inheriting the table surface instead of forcing the page background.
-  background: var(--fui-data-table-header-bg);
+  background: var(
+    --fui-data-table-header-bg,
+    var(--fui-data-table-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
+  );
 
   &:first-child {
     border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
@@ -142,6 +148,10 @@
 
 // Body
 .tbody {
+  .td {
+    padding-top: var(--fui-space-2, $fui-space-2);
+    padding-bottom: var(--fui-space-2, $fui-space-2);
+  }
 }
 
 .row {
@@ -174,11 +184,18 @@
 }
 
 .selected {
-  background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent));
-  box-shadow: inset 1px 0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
+  background-color: var(
+    --fui-table-row-selected-bg,
+    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
+  );
+  box-shadow: inset 1px 0 0
+    var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
 
   &:hover {
-    background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent));
+    background-color: var(
+      --fui-table-row-selected-bg,
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent)
+    );
   }
 }
 
@@ -204,10 +221,16 @@
   }
 
   .selected {
-    background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent));
+    background-color: var(
+      --fui-table-row-selected-bg,
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
+    );
 
     &:hover {
-      background-color: var(--fui-table-row-selected-bg, color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent));
+      background-color: var(
+        --fui-table-row-selected-bg,
+        color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent)
+      );
     }
   }
 }
@@ -216,7 +239,7 @@
 .bordered {
   border: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  background: var(--fui-data-table-bg);
+  background: var(--fui-data-table-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
   overflow: hidden;
 }
 

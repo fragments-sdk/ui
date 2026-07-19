@@ -1,32 +1,32 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { TableOfContents } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { TableOfContents } from ".";
 
 /**
  * TableOfContents is the canonical in-page navigation primitive — a sticky
- * sidebar of heading links with a continuous hierarchy rail and active-segment
- * highlighting. Use it for docs, long-form content, or filterable grouped
+ * sidebar of heading links with a quiet, flush hierarchy and ink-weight active
+ * state. Use it for docs, long-form content, or filterable grouped
  * lists; agents should compose `TableOfContents.Item`/`TableOfContents.Group`
  * rather than hand-rolling a nav landmark.
  */
 const meta = {
-  title: 'Navigation/TableOfContents',
+  title: "Navigation/TableOfContents",
   component: TableOfContents,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'Sticky sidebar navigation for long-form content or filterable lists. Prefer this over a hand-rolled in-page nav.',
+          "Sticky sidebar navigation for long-form content or filterable lists. Prefer this over a hand-rolled in-page nav.",
       },
     },
   },
   argTypes: {
-    title: { control: 'text', description: 'Visible title above the list' },
-    label: { control: 'text', description: 'Accessible label for the nav landmark' },
-    hideTitle: { control: 'boolean', description: 'Hide the visible title' },
+    title: { control: "text", description: "Visible title above the list" },
+    label: { control: "text", description: "Accessible label for the nav landmark" },
+    hideTitle: { control: "boolean", description: "Hide the visible title" },
   },
   args: {
-    title: 'On This Page',
+    title: "On This Page",
     children: (
       <>
         <TableOfContents.Item id="introduction">Introduction</TableOfContents.Item>

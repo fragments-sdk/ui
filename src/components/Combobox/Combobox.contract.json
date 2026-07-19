@@ -3,15 +3,7 @@
   "name": "Combobox",
   "description": "Searchable select input that filters a dropdown list of options as you type. Supports single and multiple selection with chips.",
   "category": "forms",
-  "tags": [
-    "combobox",
-    "autocomplete",
-    "search",
-    "select",
-    "typeahead",
-    "form",
-    "multiselect"
-  ],
+  "tags": ["combobox", "autocomplete", "search", "select", "typeahead", "form", "multiselect"],
   "status": "stable",
   "sourcePath": "src/components/Combobox/index.tsx",
   "exportName": "Combobox",
@@ -110,11 +102,7 @@
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "className": {
       "type": "string",
@@ -163,6 +151,7 @@
       "Use helperText for guidance and error for validation messages",
       "Provide an empty state message when no results match",
       "Group related options with Combobox.Group for large lists",
+      "Static items may be composed through fragments and groups; filtering preserves wrapper composition",
       "Keep option text concise and searchable",
       "Use multiple prop for multi-select with chip display"
     ],
@@ -198,7 +187,7 @@
     {
       "name": "With Groups",
       "description": "Options organized into groups",
-      "code": "<StatefulCombobox placeholder=\"Search countries...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Group>\n      <Combobox.GroupLabel>North America</Combobox.GroupLabel>\n      <Combobox.Item value=\"us\">United States</Combobox.Item>\n      <Combobox.Item value=\"ca\">Canada</Combobox.Item>\n      <Combobox.Item value=\"mx\">Mexico</Combobox.Item>\n    </Combobox.Group>\n    <Combobox.Group>\n      <Combobox.GroupLabel>Europe</Combobox.GroupLabel>\n      <Combobox.Item value=\"uk\">United Kingdom</Combobox.Item>\n      <Combobox.Item value=\"de\">Germany</Combobox.Item>\n      <Combobox.Item value=\"fr\">France</Combobox.Item>\n    </Combobox.Group>\n  </Combobox.Content>\n</StatefulCombobox>"
+      "code": "<StatefulCombobox placeholder=\"Search countries...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <>\n      <Combobox.Group>\n        <Combobox.GroupLabel>North America</Combobox.GroupLabel>\n        <Combobox.Item value=\"us\">United States</Combobox.Item>\n        <Combobox.Item value=\"ca\">Canada</Combobox.Item>\n        <Combobox.Item value=\"mx\">Mexico</Combobox.Item>\n      </Combobox.Group>\n      <Combobox.Group>\n        <Combobox.GroupLabel>Europe</Combobox.GroupLabel>\n        <Combobox.Item value=\"uk\">United Kingdom</Combobox.Item>\n        <Combobox.Item value=\"de\">Germany</Combobox.Item>\n        <Combobox.Item value=\"fr\">France</Combobox.Item>\n      </Combobox.Group>\n      <Combobox.Empty>No matching country</Combobox.Empty>\n    </>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "With Empty State",
@@ -260,11 +249,7 @@
       "Combobox.Input showTrigger: boolean - hide built-in trigger when using Combobox.Trigger explicitly",
       "maxVisibleItems: number - max visible options before scrolling (default 4)"
     ],
-    "a11yRules": [
-      "A11Y_COMBOBOX_KEYBOARD",
-      "A11Y_COMBOBOX_LABEL",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_COMBOBOX_KEYBOARD", "A11Y_COMBOBOX_LABEL", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
@@ -278,10 +263,7 @@
       "Group",
       "GroupLabel"
     ],
-    "requiredChildren": [
-      "Input",
-      "Content"
-    ],
+    "requiredChildren": ["Input", "Content"],
     "commonPatterns": [
       "<Combobox placeholder=\"Search...\"><Combobox.Input /><Combobox.Content><Combobox.Item value=\"opt1\">{label1}</Combobox.Item><Combobox.Item value=\"opt2\">{label2}</Combobox.Item></Combobox.Content></Combobox>",
       "<Combobox multiple placeholder=\"Select items...\"><Combobox.Input /><Combobox.Content><Combobox.Item value=\"opt1\">{label1}</Combobox.Item><Combobox.Item value=\"opt2\">{label2}</Combobox.Item></Combobox.Content></Combobox>",
