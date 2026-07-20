@@ -1,6 +1,6 @@
 {
   "name": "@usefragments/ui",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
@@ -233,7 +233,10 @@
     "!src/**/*.block.ts",
     "!src/blocks/",
     "!src/assets/*.svg",
+    "!src/**/*.stories.tsx",
+    "!src/components/Cloud/",
     "dist",
+    "!dist/components/Cloud/",
     "fragments.json"
   ]
 }

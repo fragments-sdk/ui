@@ -1,5 +1,20 @@
 # @usefragments/ui
 
+## 1.2.0
+
+### Minor Changes
+
+- [#354](https://github.com/fragments-sdk/fragments/pull/354) [`149666d`](https://github.com/fragments-sdk/fragments/commit/149666da5626a4066ea5f46c1c4347c5908c2edb) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add the canonical `Main` page-composition primitive and refine Checkbox radius
+  overrides, static Combobox filtering, selected Chip surfaces, and
+  TableOfContents alignment. Exclude local design-tool caches from the published
+  UI package.
+
+### Patch Changes
+
+- [`4f15c8c`](https://github.com/fragments-sdk/fragments/commit/4f15c8cb478708baa66969b7dfc9047866c4a875) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Increase vertical padding on `Table` and `DataTable` body cells for easier scanning, and add background and surface fallbacks so rows and selected states render correctly without a theme provider.
+
+- [`4f15c8c`](https://github.com/fragments-sdk/fragments/commit/4f15c8cb478708baa66969b7dfc9047866c4a875) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Stop shipping Storybook stories and internal Cloud dashboard prototypes inside the published package. The tarball now carries only the documented component surface, which cuts install size.
+
 ## 1.1.1
 
 ### Patch Changes
