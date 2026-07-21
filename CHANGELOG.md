@@ -1,5 +1,14 @@
 # @usefragments/ui
 
+## 1.3.2
+
+### Patch Changes
+
+- [#374](https://github.com/fragments-sdk/fragments/pull/374) [`8b78551`](https://github.com/fragments-sdk/fragments/commit/8b785518735cf6c17465e36d233291081b5044d8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix the published package install floor for Next.js App Router and theming:
+  - Preserve `"use client"` / `'use client'` directives in the Vite `preserveModules` build (via `rollup-plugin-preserve-directives`) so App Router consumers no longer hit server-component errors on client primitives.
+  - Make `import '@usefragments/ui/styles'` include default-seed token definitions (`:root`, `--fui-*`, dark mode) by compiling `globals.scss` into the shipped `dist/assets/ui.css`. The `sass` export condition still resolves to `globals.scss` for seed overrides.
+  - Correct the package README: only `react` and `react-dom` are required peers; heavy peers remain optional.
+
 ## 1.3.1
 
 ### Patch Changes
