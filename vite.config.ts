@@ -1,9 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import preserveDirectives from 'rollup-plugin-preserve-directives';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Exclude stylesheets — the plugin parses module AST and blows up on SCSS.
+    preserveDirectives({ exclude: ["**/*.{scss,css,sass}"] }),
+  ],
   build: {
     lib: {
       entry: {
@@ -28,6 +33,12 @@ export default defineConfig({
       cssFileName: 'ui',
     },
     rollupOptions: {
+      onwarn(warning, warn) {
+        // Directives are preserved by rollup-plugin-preserve-directives; Rollup
+        // still emits MODULE_LEVEL_DIRECTIVE noise for every "use client" file.
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+        warn(warning);
+      },
       external: (id) =>
         /^(react|react-dom|react\/jsx-runtime|@base-ui\/react|@phosphor-icons\/react|@floating-ui|use-sync-external-store|react-markdown|recharts|remark-gfm|react-day-picker|date-fns|shiki|react-colorful|@tanstack\/|@tiptap)/.test(id),
       output: {

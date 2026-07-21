@@ -175,7 +175,7 @@
   },
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "vite build && tsc -p tsconfig.build.json",
+    "build": "vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json",
     "lint": "eslint src",
     "test": "vitest run",
     "build-storybook": "storybook build",
@@ -241,7 +241,6 @@
     "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
-    "@usefragments/core": "workspace:*",
     "@storybook/addon-a11y": "^8",
     "@storybook/addon-essentials": "^8",
     "@storybook/react": "^8",
@@ -257,6 +256,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@usefragments/core": "workspace:*",
     "@vitejs/plugin-react": "^4.3.0",
     "chromatic": "^17.1.0",
     "date-fns": "^4.0.0",
@@ -265,6 +265,7 @@
     "react-colorful": "^5.6.1",
     "react-day-picker": "^9.0.0",
     "react-dom": "^19.0.0",
+    "rollup-plugin-preserve-directives": "0.4.0",
     "sass": "^1.83.0",
     "shiki": "^3.0.0",
     "storybook": "^8",

@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { join, relative, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
@@ -11,11 +11,14 @@ type PackageManifest = {
   };
 };
 
+const packageRoot = process.cwd();
 const manifest = JSON.parse(
-  readFileSync(resolve(process.cwd(), "package.json"), "utf8")
+  readFileSync(resolve(packageRoot, "package.json"), "utf8")
 ) as PackageManifest;
 
-const indexSource = readFileSync(resolve(process.cwd(), "src/index.ts"), "utf8");
+const indexSource = readFileSync(resolve(packageRoot, "src/index.ts"), "utf8");
+
+const USE_CLIENT_RE = /^['"]use client['"]\s*;?/m;
 
 // Every heavy peer that must be marked optional so a Button-only consumer can
 // `npm install @usefragments/ui` without also installing charting/editor/table deps.
@@ -33,6 +36,37 @@ const OPTIONAL_HEAVY_PEERS = [
   "remark-gfm",
   "shiki",
 ];
+
+function walkFiles(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) {
+      if (name === "node_modules" || name === "dist" || name === "Cloud") continue;
+      walkFiles(full, out);
+      continue;
+    }
+    if (/\.(tsx?|jsx?)$/.test(name) && !/\.test\.(tsx?|jsx?)$/.test(name)) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+function srcFilesWithUseClient(): string[] {
+  const srcRoot = resolve(packageRoot, "src");
+  return walkFiles(srcRoot).filter((file) =>
+    USE_CLIENT_RE.test(readFileSync(file, "utf8"))
+  );
+}
+
+/** Map src/foo/bar.tsx → dist/foo/bar.js (preserveModulesRoot: src). */
+function distEsmPathForSrc(srcFile: string): string {
+  const rel = relative(resolve(packageRoot, "src"), srcFile).replace(
+    /\.(tsx|ts|jsx|js)$/,
+    ".js"
+  );
+  return resolve(packageRoot, "dist", rel);
+}
 
 describe("optional heavy peer dependencies (#7a)", () => {
   it("marks every heavy peer optional in peerDependenciesMeta", () => {
@@ -72,4 +106,89 @@ describe("style entrypoints carry a types condition (#7b)", () => {
       expect(Object.keys(entry ?? {})[0]).toBe("types");
     });
   }
+});
+
+describe("published dist preserves use client directives (P0 packaging)", () => {
+  it("keeps the directive in every matching dist ESM module", () => {
+    const srcHits = srcFilesWithUseClient();
+    expect(srcHits.length).toBeGreaterThan(0);
+
+    const stripped: string[] = [];
+
+    for (const srcFile of srcHits) {
+      const distFile = distEsmPathForSrc(srcFile);
+      if (!existsSync(distFile)) {
+        // Not every src file is an emitted module (stories, internal helpers
+        // pulled only as types, etc.). Only assert on files Vite actually emitted.
+        continue;
+      }
+      const distSource = readFileSync(distFile, "utf8");
+      if (!USE_CLIENT_RE.test(distSource)) {
+        stripped.push(relative(packageRoot, distFile));
+      }
+    }
+
+    // At least the known client entrypoints must have been emitted + preserved.
+    // If dist is missing entirely, fail loudly (run `pnpm build` first).
+    expect(
+      existsSync(resolve(packageRoot, "dist/components/Button/index.js")),
+      "dist missing — run `pnpm --filter @usefragments/ui build` before packaging tests"
+    ).toBe(true);
+
+    expect(stripped, `stripped use client in:\n${stripped.join("\n")}`).toEqual(
+      []
+    );
+  });
+
+  it("keeps the directive on named lib entries and CJS Button", () => {
+    // Vite lib entry names land at dist/<entry>.js (not under components/).
+    const namedEntries = [
+      "chart.js",
+      "codeblock.js",
+      "colorpicker.js",
+      "data-table.js",
+      "data-table-virtual.js",
+      "datepicker.js",
+      "editor.js",
+      "markdown.js",
+      "table.js",
+    ];
+    for (const name of namedEntries) {
+      const file = resolve(packageRoot, "dist", name);
+      expect(existsSync(file), `missing ${name}`).toBe(true);
+      expect(
+        USE_CLIENT_RE.test(readFileSync(file, "utf8")),
+        `${name} missing use client`
+      ).toBe(true);
+    }
+
+    const buttonCjs = resolve(packageRoot, "dist/components/Button/index.cjs");
+    expect(existsSync(buttonCjs)).toBe(true);
+    expect(USE_CLIENT_RE.test(readFileSync(buttonCjs, "utf8"))).toBe(true);
+  });
+});
+
+describe("published ./styles default CSS includes tokens (P0 packaging)", () => {
+  it("sass condition still points at globals.scss", () => {
+    for (const key of ["./styles", "./globals"]) {
+      const entry = manifest.publishConfig?.exports?.[key] as
+        | Record<string, string>
+        | undefined;
+      expect(entry?.sass).toBe("./src/styles/globals.scss");
+    }
+  });
+
+  it("default CSS defines :root tokens including --fui-text-primary", () => {
+    const entry = manifest.publishConfig?.exports?.["./styles"] as
+      | Record<string, string>
+      | undefined;
+    expect(entry?.default).toBeTruthy();
+    const cssPath = resolve(packageRoot, entry!.default!);
+    expect(existsSync(cssPath), `missing styles target ${cssPath}`).toBe(true);
+    const css = readFileSync(cssPath, "utf8");
+    expect(css).toMatch(/:root\b/);
+    expect(css).toMatch(/--fui-text-primary\s*:/);
+    // Dark-mode surface (data-theme and/or .dark) must ship in the default sheet.
+    expect(css).toMatch(/\[data-theme=["']dark["']\]|\.dark\b/);
+  });
 });

@@ -18,30 +18,31 @@ pnpm add @usefragments/ui
 # or: npm install @usefragments/ui
 ```
 
-The root export includes the advanced table, editor, markdown, chart, date,
-color, and code components. Their libraries are therefore required peers rather
-than optional peers. npm and pnpm install them automatically by default. If peer
-auto-install is disabled, install the full peer set explicitly:
+**Required peers:** `react` and `react-dom` only.
+
+Heavy libraries used by optional advanced components (charts, editor, markdown,
+data table, date picker, etc.) are declared as **optional** peers via
+`peerDependenciesMeta`. Install them only when you use those components:
 
 ```bash
-npm install react react-dom @tanstack/react-table @tanstack/react-virtual \
-  @tiptap/extension-link @tiptap/react @tiptap/starter-kit date-fns \
-  react-colorful react-day-picker react-markdown recharts remark-gfm shiki
+# Examples — install only what you need:
+npm install recharts                 # Chart
+npm install @tanstack/react-table    # DataTable
+npm install react-day-picker date-fns  # DatePicker
 ```
 
 ## Setup
 
-**Quick start (no SCSS)** — import the prebuilt CSS in your app entry point. This loads component styles with default tokens:
+**Quick start (no SCSS)** — import the prebuilt CSS in your app entry point. This loads **default design tokens** (including dark mode) plus component styles:
 
 ```tsx
 import "@usefragments/ui/styles";
 ```
 
-**Custom theming (SCSS)** — create a `.scss` file with `@use '@usefragments/ui/styles' with (...)` to set your seed values, then import both:
+**Custom theming (SCSS)** — create a `.scss` file with `@use '@usefragments/ui/styles' with (...)` to set your seed values, then import your SCSS (and skip the prebuilt CSS, or load tokens only via SCSS):
 
 ```tsx
-import "@usefragments/ui/styles"; // component styles (ui.css)
-import "./styles/globals.scss"; // your seed overrides
+import "./styles/globals.scss"; // your @use … with (…) seed overrides
 ```
 
 **Next.js users** — add `transpilePackages` to your `next.config.js`:
