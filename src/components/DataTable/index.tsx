@@ -5,13 +5,40 @@ import styles from "./DataTable.module.scss";
 import { Checkbox } from "../Checkbox";
 import { ExpandIcon, SortAscIcon, SortDescIcon, SortIcon } from "./DataTable.icons";
 import { DataTableSkeletonRows, useArrowKeyRowNav } from "./DataTable.support";
-import {
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+
+// ============================================
+// Dependency (@tanstack/react-table) — lazy-required
+// ============================================
+// `@tanstack/react-table` is an optional peer dependency. It is pulled in via a
+// synchronous `require()` (mirroring Chart/Editor) rather than a static ESM
+// import so a bundler's dep-optimizer (e.g. Vite dev) does not create a static
+// import edge for consumers who only use, say, `{ Button }`. `require` resolves
+// synchronously, so `useReactTable` (a hook) is available before the first hook
+// call and hook order stays stable across renders. When the peer is absent the
+// component throws a friendly install message on first render.
+
+type ReactTableModule = {
+  flexRender: (...args: any[]) => React.ReactNode;
+  getCoreRowModel: (...args: any[]) => any;
+  getExpandedRowModel: (...args: any[]) => any;
+  getSortedRowModel: (...args: any[]) => any;
+  useReactTable: (options: any) => any;
+};
+
+let _reactTable: ReactTableModule | null = null;
+let _reactTableLoaded = false;
+let _reactTableFailed = false;
+
+function loadReactTable() {
+  if (_reactTableLoaded) return;
+  _reactTableLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    _reactTable = require("@tanstack/react-table") as ReactTableModule;
+  } catch {
+    _reactTableFailed = true;
+  }
+}
 
 /** Horizontal alignment for a column's header + cells. */
 export type ColumnAlign = "left" | "right" | "center";
@@ -49,15 +76,6 @@ export type DataTableRowClickEvent =
   | React.KeyboardEvent<HTMLTableRowElement>;
 
 export type DataTableColumn<T> = ColumnDef<T, unknown>;
-
-// ============================================
-// Dependency (@tanstack/react-table)
-// ============================================
-// Statically imported (ESM) so DataTable works in every bundler, including
-// browser SPAs (Vite) where `require` is unavailable. `useReactTable` is a
-// hook and must resolve synchronously on first render. The package is an
-// optional peer dep + `sideEffects: false`, so this import is tree-shaken
-// out of bundles that never import DataTable.
 
 export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLTableElement>, "onClick"> {
   /** Column definitions */
@@ -186,6 +204,16 @@ function DataTableRoot<T>({
   "aria-describedby": ariaDescribedBy,
   ...htmlProps
 }: DataTableProps<T>) {
+  loadReactTable();
+  if (_reactTableFailed || !_reactTable) {
+    throw new Error(
+      "[@usefragments/ui] DataTable: @tanstack/react-table is not installed. " +
+        "Install it with: npm install @tanstack/react-table"
+    );
+  }
+  const { flexRender, getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } =
+    _reactTable;
+
   const tableRef = React.useRef<HTMLTableElement>(null);
   useArrowKeyRowNav(tableRef, !!onRowClick);
 

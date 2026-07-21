@@ -257,15 +257,14 @@ export {
   type ExpandedState,
 } from "./components/DataTable";
 
-// DataTable row virtualization (opt-in; requires @tanstack/react-virtual)
-export {
-  DataTableVirtual,
-  useTableVirtualizer,
-  type DataTableVirtualProps,
-  type UseTableVirtualizerOptions,
-  type UseTableVirtualizerResult,
-  type VirtualTableRow,
-} from "./components/DataTable/DataTable.virtual";
+// DataTable row virtualization (opt-in; requires @tanstack/react-virtual).
+// Intentionally NOT re-exported from the main barrel: `useTableVirtualizer`
+// wraps a hook that must resolve synchronously, so — unlike DataTable/Chart/
+// Editor — it cannot be lazy-required. Re-exporting it here (or routing it
+// through the `./data-table` subpath, which the main barrel imports) would
+// statically pull @tanstack/react-virtual into every consumer's Button-only
+// build. It lives behind its own dedicated subpath the barrel never imports:
+//   import { DataTableVirtual, useTableVirtualizer } from "@usefragments/ui/data-table-virtual";
 
 // EmptyState
 export {

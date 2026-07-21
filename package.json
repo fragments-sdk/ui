@@ -27,6 +27,7 @@
     "./colorpicker": "./src/components/ColorPicker/index.tsx",
     "./table": "./src/components/Table/index.tsx",
     "./data-table": "./src/components/DataTable/index.tsx",
+    "./data-table-virtual": "./src/components/DataTable/DataTable.virtual.tsx",
     "./editor": "./src/components/Editor/index.tsx",
     "./styles": "./src/styles/globals.scss",
     "./globals": "./src/styles/globals.scss",
@@ -135,6 +136,16 @@
           "default": "./dist/data-table.cjs"
         }
       },
+      "./data-table-virtual": {
+        "import": {
+          "types": "./dist/components/DataTable/DataTable.virtual.d.ts",
+          "default": "./dist/data-table-virtual.js"
+        },
+        "require": {
+          "types": "./dist/components/DataTable/DataTable.virtual.d.ts",
+          "default": "./dist/data-table-virtual.cjs"
+        }
+      },
       "./editor": {
         "import": {
           "types": "./dist/components/Editor/index.d.ts",
@@ -146,10 +157,12 @@
         }
       },
       "./styles": {
+        "types": "./src/styles/styles.d.ts",
         "sass": "./src/styles/globals.scss",
         "default": "./dist/assets/ui.css"
       },
       "./globals": {
+        "types": "./src/styles/styles.d.ts",
         "sass": "./src/styles/globals.scss",
         "default": "./dist/assets/ui.css"
       },
@@ -184,6 +197,44 @@
     "recharts": ">=2.0.0 || >=3.0.0",
     "remark-gfm": ">=4.0.0",
     "shiki": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-table": {
+      "optional": true
+    },
+    "@tanstack/react-virtual": {
+      "optional": true
+    },
+    "@tiptap/extension-link": {
+      "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "date-fns": {
+      "optional": true
+    },
+    "react-colorful": {
+      "optional": true
+    },
+    "react-day-picker": {
+      "optional": true
+    },
+    "react-markdown": {
+      "optional": true
+    },
+    "recharts": {
+      "optional": true
+    },
+    "remark-gfm": {
+      "optional": true
+    },
+    "shiki": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@base-ui/react": "1.6.0",

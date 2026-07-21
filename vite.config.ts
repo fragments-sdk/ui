@@ -18,6 +18,10 @@ export default defineConfig({
           __dirname,
           'src/components/DataTable/index.tsx',
         ),
+        'data-table-virtual': resolve(
+          __dirname,
+          'src/components/DataTable/DataTable.virtual.tsx',
+        ),
         editor: resolve(__dirname, 'src/components/Editor/index.tsx'),
       },
       formats: ['es', 'cjs'],
