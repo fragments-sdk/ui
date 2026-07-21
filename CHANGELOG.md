@@ -1,5 +1,24 @@
 # @usefragments/ui
 
+## 1.3.0
+
+### Minor Changes
+
+- [#370](https://github.com/fragments-sdk/fragments/pull/370) [`8cb7390`](https://github.com/fragments-sdk/fragments/commit/8cb739095cb633e83ad78dae271f022b883445cd) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Vite / TypeScript 6 developer experience (cold-start friction P0 sweep):
+  - Heavy peer dependencies (recharts, `@tanstack/*`, tiptap, react-day-picker, …) are now declared **optional** via `peerDependenciesMeta`, so an app that only uses a few primitives no longer errors on install for packages it does not use.
+  - `DataTable` now lazy-loads `@tanstack/react-table` (matching `Chart`/`Editor`), removing the static `@tanstack` import edge that broke Button-only Vite builds. It throws a clear "install @tanstack/react-table" message at render time if the peer is absent.
+  - Added type declarations for the `./styles` and `./globals` side-effect imports, fixing `TS2882` under `tsc` on TypeScript 6.
+  - Regenerated token metadata no longer emits malformed category names derived from prose comments.
+
+  **Breaking:** `DataTableVirtual` and `useTableVirtualizer` are no longer exported from the package root — the virtualizer wraps a hook that must resolve synchronously, so it cannot be lazy-loaded without re-introducing the static peer edge. Import them from the new dedicated subpath instead:
+
+  ```ts
+  // before
+  import { DataTableVirtual, useTableVirtualizer } from "@usefragments/ui";
+  // after
+  import { DataTableVirtual, useTableVirtualizer } from "@usefragments/ui/data-table-virtual";
+  ```
+
 ## 1.2.0
 
 ### Minor Changes
