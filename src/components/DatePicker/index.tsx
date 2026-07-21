@@ -2,8 +2,6 @@
 
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui/react/popover";
-import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
-import { format as formatDateWithPattern } from "date-fns";
 import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./DatePicker.module.scss";
@@ -186,15 +184,30 @@ function useDatePickerContext() {
 // ============================================
 // Default formatters
 // ============================================
+//
+// Zero-dependency `Intl.DateTimeFormat` so the default trigger label needs no
+// optional peer. `date-fns` remains an optional peer only for consumers who pass
+// their own `formatDate`/`formatRange`; the default path never imports it, so a
+// bundler that pulls DatePicker into the graph does not fail on a missing peer.
+const longDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+const mediumDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "2-digit",
+  year: "numeric",
+});
 
 function defaultFormatDate(date: Date): string {
-  return formatDateWithPattern(date, "PPP");
+  return longDateFormatter.format(date);
 }
 
 function defaultFormatRange(range: DateRange): string {
   if (!range.from) return "";
-  if (!range.to) return formatDateWithPattern(range.from, "LLL dd, y");
-  return `${formatDateWithPattern(range.from, "LLL dd, y")} - ${formatDateWithPattern(range.to, "LLL dd, y")}`;
+  if (!range.to) return mediumDateFormatter.format(range.from);
+  return `${mediumDateFormatter.format(range.from)} - ${mediumDateFormatter.format(range.to)}`;
 }
 
 function formatDateForHiddenInput(date?: Date): string {
@@ -206,10 +219,47 @@ function formatDateForHiddenInput(date?: Date): string {
 }
 
 // ============================================
+// Lazy-loaded dependency (react-day-picker)
+// ============================================
+//
+// Loaded on demand via require() so the barrel never statically references the
+// optional `react-day-picker` peer. Importing anything else from
+// @usefragments/ui must not drag the calendar (or its transitive `date-fns`
+// dependency) into a consumer's build graph. Mirrors the Chart/recharts pattern.
+
+type DayPickerComponent = React.ComponentType<Record<string, unknown>>;
+type RdpEnum = Record<string, string>;
+
+let _DayPicker: DayPickerComponent | null = null;
+let _UI: RdpEnum | null = null;
+let _SelectionState: RdpEnum | null = null;
+let _DayFlag: RdpEnum | null = null;
+let _rdpLoaded = false;
+let _rdpFailed = false;
+
+function loadDayPickerDeps(): void {
+  if (_rdpLoaded) return;
+  _rdpLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const rdp = require("react-day-picker");
+    _DayPicker = rdp.DayPicker as DayPickerComponent;
+    _UI = rdp.UI as RdpEnum;
+    _SelectionState = rdp.SelectionState as RdpEnum;
+    _DayFlag = rdp.DayFlag as RdpEnum;
+  } catch {
+    _rdpFailed = true;
+  }
+}
+
+// ============================================
 // ClassNames mapping (built lazily)
 // ============================================
 
 function getCalendarClassNames() {
+  const UI = _UI!;
+  const SelectionState = _SelectionState!;
+  const DayFlag = _DayFlag!;
   return {
     [UI.Root]: styles.calendar,
     [UI.Months]: styles.months,
@@ -516,6 +566,15 @@ function DatePickerCalendar({
     }),
     []
   );
+
+  loadDayPickerDeps();
+  if (_rdpFailed || !_DayPicker || !_UI) {
+    // react-day-picker is an optional peer: render nothing rather than crash
+    // when a consumer mounts <DatePicker> without installing the calendar dep.
+    return null;
+  }
+  const DayPicker = _DayPicker;
+  const UI = _UI;
 
   const calendarClassNames = getCalendarClassNames();
 

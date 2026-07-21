@@ -1,5 +1,15 @@
 # @usefragments/ui
 
+## 1.3.1
+
+### Patch Changes
+
+- [`baec848`](https://github.com/fragments-sdk/fragments/commit/baec8480838cf5a67895ea35a67aa5ba8d782fc6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Stop `DatePicker` from breaking consumer builds that never use it.
+
+  `DatePicker` statically imported its optional peers (`react-day-picker` and `date-fns`), and the package barrel re-exports `DatePicker` — so importing _anything_ from `@usefragments/ui` dragged both peers into the consumer's build graph. A production `vite build` (Rolldown) then failed with `MISSING_EXPORT` for any project that had not installed them, including a freshly scaffolded app whose demo does not use the calendar at all.
+
+  `DatePicker` now lazy-loads `react-day-picker` on first render via the same `require()` pattern the library already uses for Chart/recharts, and its default date formatting uses `Intl.DateTimeFormat` instead of `date-fns`. The built barrel no longer references either peer, so consumers build cleanly whether or not they use the date picker. Passing your own `formatDate`/`formatRange` is unchanged; the default label format drops the ordinal suffix (e.g. "April 29, 2026" rather than "April 29th, 2026").
+
 ## 1.3.0
 
 ### Minor Changes
