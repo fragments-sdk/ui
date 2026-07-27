@@ -194,23 +194,13 @@
   @include surface-elevated;
   @include popup-container;
 
+  @include popup-scroll-viewport;
+
   border-color: var(--fui-form-group-border, $fui-border);
-
-  // Item height derived from the popup item font + vertical padding — the same
-  // token `popup-item` sets, so the two cannot disagree.
-  --_combobox-item-h: calc(
-    var(--fui-popup-item-font-size, #{$fui-popup-item-font-size}) *
-      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
-      var(--fui-space-2, #{$fui-space-2}) * 2
-  );
-
   min-width: var(--anchor-width);
-  // Show N items + half-peek scroll hint (default 4.5 items)
+  // Show N items + half-peek scroll hint (default 4.5 items).
   // !important needed to override Base UI's inline max-height: 100%
-  max-height: calc(
-    var(--_combobox-item-h) * var(--fui-select-max-items, 4.5) +
-      var(--fui-space-1, #{$fui-space-1}) * 2
-  ) !important;
+  max-height: var(--_popup-scroll-max-h) !important;
   overflow-y: auto !important;
 
   // Animation

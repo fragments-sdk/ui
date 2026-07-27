@@ -119,6 +119,20 @@ $fui-space-10: computed.$computed-space-10 !default;
 $fui-space-12: computed.$computed-space-12 !default;
 
 // --------------------------------------------
+// Popup geometry
+// --------------------------------------------
+// The insets a popup list and its rows carry. Named rather than inlined because
+// Select, Listbox and Combobox size their scroll viewport from these exact
+// numbers to show N rows plus a half-peek hint. Left as literals in the mixin,
+// the two sides drifted: the height calcs charged $fui-space-2 of vertical
+// padding for a row `popup-item` pads with $fui-space-1, so every one of those
+// popups peeked further than its own "4.5 items" comment promised.
+$fui-popup-padding: $fui-space-1 !default; // container inset
+$fui-popup-row-gap: 1px !default; // flex gap between rows
+$fui-popup-item-padding-block: $fui-space-1 !default;
+$fui-popup-item-padding-inline: $fui-space-2 !default;
+
+// --------------------------------------------
 // Border Radius (derived from radius-style seed)
 // --------------------------------------------
 $fui-radius-sm: computed.$computed-radius-sm !default;
@@ -435,6 +449,13 @@ $fui-code-selection-bg: color-mix(
     --fui-space-8: #{$fui-space-8};
     --fui-space-10: #{$fui-space-10};
     --fui-space-12: #{$fui-space-12};
+
+    // Popup geometry — the numbers Select/Listbox/Combobox derive their scroll
+    // viewport from. Override these and the peek height follows.
+    --fui-popup-padding: #{$fui-popup-padding};
+    --fui-popup-row-gap: #{$fui-popup-row-gap};
+    --fui-popup-item-padding-block: #{$fui-popup-item-padding-block};
+    --fui-popup-item-padding-inline: #{$fui-popup-item-padding-inline};
 
     // Border radius
     --fui-radius-sm: #{$fui-radius-sm};
