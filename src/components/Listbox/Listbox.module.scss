@@ -9,9 +9,11 @@
   @include surface-elevated;
   @include popup-container;
 
-  // Item height derived from text-base font + vertical padding (matches Select/Combobox)
+  // Item height derived from the popup item font + vertical padding (matches
+  // Select/Combobox). Reads the same token `popup-item` sets, so the half-peek
+  // scroll hint stays honest if that size ever moves again.
   --_listbox-item-h: calc(
-    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
+    var(--fui-popup-item-font-size, #{$fui-popup-item-font-size}) *
       var(--fui-line-height-normal, #{$fui-line-height-normal}) +
       var(--fui-space-2, #{$fui-space-2}) * 2
   );

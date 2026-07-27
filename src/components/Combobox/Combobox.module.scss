@@ -196,9 +196,10 @@
 
   border-color: var(--fui-form-group-border, $fui-border);
 
-  // Item height derived from text-base font + vertical padding
+  // Item height derived from the popup item font + vertical padding — the same
+  // token `popup-item` sets, so the two cannot disagree.
   --_combobox-item-h: calc(
-    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
+    var(--fui-popup-item-font-size, #{$fui-popup-item-font-size}) *
       var(--fui-line-height-normal, #{$fui-line-height-normal}) +
       var(--fui-space-2, #{$fui-space-2}) * 2
   );

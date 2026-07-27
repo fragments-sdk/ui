@@ -136,11 +136,15 @@
 // `&[data-highlighted] { @include popup-item-highlight; }` covers both. Custom popups
 // should map `&:hover, &.<active>, &[data-highlighted]` to the same mixin.
 
-// Dropdown/popup item base. Includes button-reset and text-base.
+// Dropdown/popup item base. Includes button-reset and text-base, then steps the
+// size down to the popup scale — see $fui-popup-item-font-size. Select, Listbox
+// and Combobox size their scroll viewport from the same token, so read it there
+// too rather than re-deriving an item height from the body size.
 @mixin popup-item {
   @include button-reset;
   @include text-base;
 
+  font-size: var(--fui-popup-item-font-size, #{$fui-popup-item-font-size});
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, #{$fui-space-1});
