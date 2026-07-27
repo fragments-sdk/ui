@@ -3,13 +3,7 @@
   "name": "Progress",
   "description": "Visual indicator of task completion or loading state. Available in linear and circular variants.",
   "category": "feedback",
-  "tags": [
-    "progress",
-    "loading",
-    "indicator",
-    "percentage",
-    "status"
-  ],
+  "tags": ["progress", "loading", "indicator", "percentage", "status"],
   "status": "stable",
   "sourcePath": "src/components/Progress/index.tsx",
   "exportName": "Progress",
@@ -18,7 +12,8 @@
     "min: number (default: 0)",
     "max: number (default: 100)",
     "size: sm|md|lg (default: md)",
-    "variant: default|success|warning|danger (default: default)",
+    "variant: default|neutral|success|warning|danger (default: default)",
+    "role: progressbar|meter (default: progressbar)",
     "label: string",
     "showValue: boolean (default: false)",
     "formatValue: function"
@@ -47,23 +42,14 @@
       "description": "Size of the progress bar",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "variant": {
       "type": "enum",
       "description": "Color variant",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "success",
-        "warning",
-        "danger"
-      ]
+      "values": ["default", "neutral", "success", "warning", "danger"]
     },
     "label": {
       "type": "string",
@@ -99,10 +85,12 @@
       "Use indeterminate for unknown durations",
       "Include a label for context when the purpose isnt obvious",
       "Use appropriate color variants for success/warning/danger states",
+      "Use variant=\"neutral\" with role=\"meter\" for magnitude or distribution values where reaching the maximum is not a success state",
       "Determinate values are clamped to the min/max range for display"
     ],
     "accessibility": [
       "Uses role=\"progressbar\" with aria-valuenow",
+      "Accepts role=\"meter\" for scalar measurements within a known range",
       "Label is associated with the progress bar",
       "State changes are announced to screen readers"
     ]
@@ -155,17 +143,11 @@
       "showValue: boolean - display percentage",
       "Determinate display values are clamped (and invalid min/max ranges render as 0%)"
     ],
-    "a11yRules": [
-      "A11Y_PROGRESS_ROLE",
-      "A11Y_PROGRESS_VALUE"
-    ]
+    "a11yRules": ["A11Y_PROGRESS_ROLE", "A11Y_PROGRESS_VALUE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root",
-      "Circular"
-    ]
+    "subComponents": ["Root", "Circular"]
   },
   "provenance": {
     "source": "migrated",

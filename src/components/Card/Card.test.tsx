@@ -73,6 +73,11 @@ describe("Card", () => {
     expect(screen.getByText("Footer")).toHaveClass("footer");
   });
 
+  it("allows nested cards to select the correct title heading level", () => {
+    render(<Card.Title as="h4">Nested panel</Card.Title>);
+    expect(screen.getByRole("heading", { level: 4, name: "Nested panel" })).toBeInTheDocument();
+  });
+
   it("applies body padding classes", () => {
     render(
       <Card>

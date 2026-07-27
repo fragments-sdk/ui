@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Progress as BaseProgress } from '@base-ui/react/progress';
-import styles from './Progress.module.scss';
+import * as React from "react";
+import { Progress as BaseProgress } from "@base-ui/react/progress";
+import styles from "./Progress.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
+export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
   /** Current progress value (0-100). Null for indeterminate. */
   value?: number | null;
   /** Minimum value */
@@ -16,9 +16,9 @@ export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   /** Maximum value */
   max?: number;
   /** Size of the progress bar */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Color variant */
-  variant?: 'default' | 'success' | 'warning' | 'danger';
+  variant?: "default" | "neutral" | "success" | "warning" | "danger";
   /** Label text */
   label?: string;
   /** Show percentage value */
@@ -31,9 +31,9 @@ export interface CircularProgressProps extends React.HTMLAttributes<HTMLDivEleme
   /** Current progress value (0-100). Null for indeterminate. */
   value?: number | null;
   /** Size of the circular progress */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Color variant */
-  variant?: 'default' | 'success' | 'warning' | 'danger';
+  variant?: "default" | "success" | "warning" | "danger";
   /** Show percentage in center */
   showValue?: boolean;
   /** Stroke width */
@@ -48,52 +48,51 @@ function ProgressRoot({
   value = null,
   min = 0,
   max = 100,
-  size = 'md',
-  variant = 'default',
+  size = "md",
+  variant = "default",
   label,
   showValue = false,
   formatValue,
   className,
-  'aria-label': ariaLabel,
-  'aria-valuetext': ariaValueText,
+  role,
+  "aria-label": ariaLabel,
+  "aria-valuetext": ariaValueText,
   ...htmlProps
 }: ProgressProps) {
   const isIndeterminate = value === null;
   const range = max - min;
-  const normalizedPercentage = isIndeterminate
-    ? 0
-    : range <= 0
-      ? 0
-      : ((value - min) / range) * 100;
+  const normalizedPercentage = isIndeterminate ? 0 : range <= 0 ? 0 : ((value - min) / range) * 100;
   const percentage = isIndeterminate
     ? 0
     : Math.round(Math.min(100, Math.max(0, normalizedPercentage)));
 
   const trackClasses = [
     styles.track,
-    size === 'sm' && styles.trackSm,
-    size === 'md' && styles.trackMd,
-    size === 'lg' && styles.trackLg,
-  ].filter(Boolean).join(' ');
+    size === "sm" && styles.trackSm,
+    size === "md" && styles.trackMd,
+    size === "lg" && styles.trackLg,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const indicatorClasses = [
     styles.indicator,
-    variant === 'success' && styles.indicatorSuccess,
-    variant === 'warning' && styles.indicatorWarning,
-    variant === 'danger' && styles.indicatorDanger,
+    variant === "neutral" && styles.indicatorNeutral,
+    variant === "success" && styles.indicatorSuccess,
+    variant === "warning" && styles.indicatorWarning,
+    variant === "danger" && styles.indicatorDanger,
     isIndeterminate && styles.indicatorIndeterminate,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const rootClasses = [styles.root, className].filter(Boolean).join(' ');
+  const rootClasses = [styles.root, className].filter(Boolean).join(" ");
 
-  const displayValue = formatValue
-    ? formatValue(percentage)
-    : `${percentage}%`;
+  const displayValue = formatValue ? formatValue(percentage) : `${percentage}%`;
 
   // Default value text for screen readers
-  const effectiveValueText = ariaValueText || (
-    isIndeterminate ? 'Loading' : `${percentage} percent`
-  );
+  const effectiveValueText =
+    ariaValueText || (isIndeterminate ? "Loading" : `${percentage} percent`);
 
   return (
     <BaseProgress.Root
@@ -102,20 +101,15 @@ function ProgressRoot({
       min={min}
       max={max}
       className={rootClasses}
-      aria-label={ariaLabel || (label ? undefined : 'Progress')}
+      role={role ?? "progressbar"}
+      aria-label={ariaLabel || (label ? undefined : "Progress")}
       aria-valuetext={effectiveValueText}
       aria-busy={isIndeterminate}
     >
       {(label || showValue) && (
         <div className={styles.header}>
-          {label && (
-            <BaseProgress.Label className={styles.label}>
-              {label}
-            </BaseProgress.Label>
-          )}
-          {showValue && !isIndeterminate && (
-            <span className={styles.value}>{displayValue}</span>
-          )}
+          {label && <BaseProgress.Label className={styles.label}>{label}</BaseProgress.Label>}
+          {showValue && !isIndeterminate && <span className={styles.value}>{displayValue}</span>}
         </div>
       )}
       <BaseProgress.Track className={trackClasses}>
@@ -140,14 +134,14 @@ const CIRCLE_SIZES = {
 
 function CircularProgressRoot({
   value = null,
-  size = 'md',
-  variant = 'default',
+  size = "md",
+  variant = "default",
   showValue = false,
   strokeWidth: customStrokeWidth,
   className,
-  'aria-label': ariaLabel,
-  'aria-labelledby': ariaLabelledBy,
-  'aria-valuetext': ariaValueText,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-valuetext": ariaValueText,
   ...htmlProps
 }: CircularProgressProps) {
   const isIndeterminate = value === null;
@@ -160,26 +154,24 @@ function CircularProgressRoot({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
 
-  const sizeClass = size === 'sm' ? styles.circularSm
-    : size === 'lg' ? styles.circularLg
-    : styles.circularMd;
+  const sizeClass =
+    size === "sm" ? styles.circularSm : size === "lg" ? styles.circularLg : styles.circularMd;
 
   const indicatorClasses = [
     styles.circularIndicator,
-    variant === 'success' && styles.circularIndicatorSuccess,
-    variant === 'warning' && styles.circularIndicatorWarning,
-    variant === 'danger' && styles.circularIndicatorDanger,
+    variant === "success" && styles.circularIndicatorSuccess,
+    variant === "warning" && styles.circularIndicatorWarning,
+    variant === "danger" && styles.circularIndicatorDanger,
     isIndeterminate && styles.circularIndicatorIndeterminate,
-  ].filter(Boolean).join(' ');
-
-  const rootClasses = [styles.circular, sizeClass, className]
+  ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
+
+  const rootClasses = [styles.circular, sizeClass, className].filter(Boolean).join(" ");
 
   // Default value text for screen readers
-  const effectiveValueText = ariaValueText || (
-    isIndeterminate ? 'Loading' : `${Math.round(percentage)} percent`
-  );
+  const effectiveValueText =
+    ariaValueText || (isIndeterminate ? "Loading" : `${Math.round(percentage)} percent`);
 
   return (
     <BaseProgress.Root
@@ -220,11 +212,13 @@ function CircularProgressRoot({
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={isIndeterminate ? undefined : offset}
-          style={isIndeterminate ? { transformOrigin: 'center' } : undefined}
+          style={isIndeterminate ? { transformOrigin: "center" } : undefined}
         />
       </svg>
       {showValue && !isIndeterminate && (
-        <span className={styles.circularValue} aria-hidden="true">{Math.round(percentage)}%</span>
+        <span className={styles.circularValue} aria-hidden="true">
+          {Math.round(percentage)}%
+        </span>
       )}
     </BaseProgress.Root>
   );

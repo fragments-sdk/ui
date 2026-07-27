@@ -78,6 +78,11 @@
   },
   "examples": [
     {
+      "name": "Nested Heading",
+      "description": "Select the heading level required by the surrounding document outline",
+      "code": "<Card variant=\"panel\" padding=\"none\">\n  <Card.Header divided>\n    <Card.Title as=\"h4\">Nested panel</Card.Title>\n  </Card.Header>\n  <Card.Body padding=\"md\">Panel content</Card.Body>\n</Card>"
+    },
+    {
       "name": "Default",
       "description": "Standard quiet card surface",
       "code": "<Card>\n  <Card.Header>\n    <Card.Title>Card Title</Card.Title>\n    <Card.Description>A brief description</Card.Description>\n  </Card.Header>\n  <Card.Body>Card content goes here.</Card.Body>\n</Card>"

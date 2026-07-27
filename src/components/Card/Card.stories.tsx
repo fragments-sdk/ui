@@ -122,6 +122,19 @@ export const Panel: Story = {
   ),
 };
 
+export const NestedHeading: Story = {
+  render: () => (
+    <Card variant="panel" padding="none" style={{ width: 360 }}>
+      <Card.Header divided>
+        <Card.Title as="h4">Nested panel</Card.Title>
+      </Card.Header>
+      <Card.Body padding="md">
+        Select the title level that preserves the surrounding document outline.
+      </Card.Body>
+    </Card>
+  ),
+};
+
 export const WithFooter: Story = {
   render: () => (
     <Card>

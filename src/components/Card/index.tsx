@@ -42,6 +42,9 @@ export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: React.ReactNode;
+  /** Semantic heading level.
+   * @default "h3" */
+  as?: "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
 export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
@@ -179,12 +182,12 @@ function CardHeader({ children, divided, className, ...htmlProps }: CardHeaderPr
   );
 }
 
-function CardTitle({ children, className, ...htmlProps }: CardTitleProps) {
+function CardTitle({ children, as: Component = "h3", className, ...htmlProps }: CardTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(" ");
   return (
-    <h3 {...htmlProps} className={classes}>
+    <Component {...htmlProps} className={classes}>
       {children}
-    </h3>
+    </Component>
   );
 }
 
