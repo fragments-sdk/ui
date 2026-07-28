@@ -10,6 +10,13 @@
     "recharts"
   ],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "recharts",
+      "version": ">=2.0.0 || >=3.0.0",
+      "reason": "Optional — powers Chart.Tooltip and Chart.Legend; both render nothing until it is installed."
+    }
+  ],
   "sourcePath": "src/components/Chart/index.tsx",
   "exportName": "ChartContainer",
   "propsSummary": [

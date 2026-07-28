@@ -1,64 +1,46 @@
-import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
 
-import { render } from "../../test/utils";
-import { DataTable } from "./index";
+import { render, screen } from "../../test/utils";
+import { DataTable, createColumns } from "./index";
 
-// vitest's module mocker does not intercept CommonJS `require()` (DataTable
-// lazy-requires its optional peer), so simulate absence at Node's resolver:
-// force `require("@tanstack/react-table")` to fail the way a missing install
-// does. This drives DataTable's lazy loader into its failure branch. The file
-// is isolated from DataTable.test.tsx so the module-level load cache is fresh.
-function withMissingReactTable<T>(run: () => T): T {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const NodeModule = require("node:module") as {
-    _resolveFilename: (request: string, ...rest: unknown[]) => string;
-  };
-  const original = NodeModule._resolveFilename;
-  NodeModule._resolveFilename = function (request: string, ...rest: unknown[]) {
-    if (request === "@tanstack/react-table") {
-      throw new Error("Cannot find module '@tanstack/react-table'");
-    }
-    return original.call(this, request, ...rest);
-  };
-  try {
-    return run();
-  } finally {
-    NodeModule._resolveFilename = original;
-  }
-}
+// Simulate a consumer who never installed the optional peer: the lazy
+// `import("@tanstack/react-table")` must reject, driving the loader into its
+// failure branch. The file is isolated from DataTable.test.tsx so the
+// module-level load cache is fresh.
+vi.mock("@tanstack/react-table", () => {
+  throw new Error("Cannot find module '@tanstack/react-table'");
+});
 
-class ErrorBoundary extends React.Component<
-  { onError: (error: Error) => void; children: React.ReactNode },
-  { hasError: boolean }
-> {
-  state = { hasError: false };
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  componentDidCatch(error: Error) {
-    this.props.onError(error);
-  }
-  render() {
-    return this.state.hasError ? null : this.props.children;
-  }
-}
+type Person = { id: string; name: string; age: number };
+
+const columns = createColumns<Person>([
+  { key: "name", header: "Name" },
+  { key: "age", header: "Age" },
+]);
+
+const data: Person[] = [
+  { id: "1", name: "Alice", age: 30 },
+  { id: "2", name: "Bob", age: 25 },
+];
 
 describe("DataTable without @tanstack/react-table", () => {
-  it("throws a friendly install message when the peer is absent", () => {
-    // React logs the caught render error; suppress that noise for this assertion.
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
-    let captured: Error | undefined;
-    withMissingReactTable(() => {
-      render(
-        <ErrorBoundary onError={(error) => (captured = error)}>
-          <DataTable columns={[]} data={[]} aria-label="People" />
-        </ErrorBoundary>
-      );
-    });
-    spy.mockRestore();
+  it("renders a static fallback table instead of throwing", async () => {
+    render(<DataTable columns={columns} data={data} aria-label="People" />);
 
-    expect(captured).toBeDefined();
-    expect(captured?.message).toMatch(/@tanstack\/react-table is not installed/);
+    // Once the failed load settles, the static fallback shows headers + data.
+    expect(await screen.findByText("Alice")).toBeInTheDocument();
+    expect(screen.getByRole("table", { name: "People" })).toBeInTheDocument();
+    const headers = screen.getAllByRole("columnheader");
+    expect(headers.map((h) => h.textContent)).toEqual(["Name", "Age"]);
+    expect(screen.getByText("Bob")).toBeInTheDocument();
+
+    // Degraded mode: no sort buttons, no checkboxes, nothing interactive.
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+  });
+
+  it("shows the empty state when there is no data", async () => {
+    render(<DataTable columns={columns} data={[]} aria-label="Empty" />);
+    expect(await screen.findByText("No data available")).toBeInTheDocument();
   });
 });

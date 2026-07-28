@@ -7,15 +7,14 @@ import { ExpandIcon, SortAscIcon, SortDescIcon, SortIcon } from "./DataTable.ico
 import { DataTableSkeletonRows, useArrowKeyRowNav } from "./DataTable.support";
 
 // ============================================
-// Dependency (@tanstack/react-table) — lazy-required
+// Dependency (@tanstack/react-table) — lazy import()
 // ============================================
-// `@tanstack/react-table` is an optional peer dependency. It is pulled in via a
-// synchronous `require()` (mirroring Chart/Editor) rather than a static ESM
-// import so a bundler's dep-optimizer (e.g. Vite dev) does not create a static
-// import edge for consumers who only use, say, `{ Button }`. `require` resolves
-// synchronously, so `useReactTable` (a hook) is available before the first hook
-// call and hook order stays stable across renders. When the peer is absent the
-// component throws a friendly install message on first render.
+// `@tanstack/react-table` is an optional peer dependency, resolved with a
+// dynamic `import()` rather than `require()`: browser ESM bundles have no
+// `require`, so the synchronous shape failed even with the peer installed
+// (same lazy-ESM shape as CodeBlock's shiki loader). While the module resolves
+// the table renders skeleton rows; if it is genuinely missing, a static
+// fallback table renders instead of throwing.
 
 type ReactTableModule = {
   flexRender: (...args: any[]) => React.ReactNode;
@@ -26,18 +25,43 @@ type ReactTableModule = {
 };
 
 let _reactTable: ReactTableModule | null = null;
-let _reactTableLoaded = false;
+let _reactTableLoadPromise: Promise<void> | null = null;
 let _reactTableFailed = false;
 
-function loadReactTable() {
-  if (_reactTableLoaded) return;
-  _reactTableLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    _reactTable = require("@tanstack/react-table") as ReactTableModule;
-  } catch {
-    _reactTableFailed = true;
+function loadReactTable(): Promise<void> {
+  if (!_reactTableLoadPromise) {
+    _reactTableLoadPromise = (async () => {
+      try {
+        _reactTable = (await import("@tanstack/react-table")) as unknown as ReactTableModule;
+      } catch {
+        _reactTableFailed = true;
+        if (process.env.NODE_ENV === "development") {
+          console.warn(
+            "[@usefragments/ui] DataTable: @tanstack/react-table is not installed. " +
+              "Rendering a static table without sorting, selection, or expansion. " +
+              "Install it with: npm install @tanstack/react-table"
+          );
+        }
+      }
+    })();
   }
+  return _reactTableLoadPromise;
+}
+
+/** Kick off the lazy load on mount and re-render once it settles. */
+function useReactTableDeps(): "ready" | "pending" | "failed" {
+  const [, rerender] = React.useReducer((n: number) => n + 1, 0);
+  React.useEffect(() => {
+    if (_reactTable || _reactTableFailed) return;
+    let active = true;
+    void loadReactTable().then(() => {
+      if (active) rerender();
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  return _reactTable ? "ready" : _reactTableFailed ? "failed" : "pending";
 }
 
 /** Horizontal alignment for a column's header + cells. */
@@ -156,6 +180,48 @@ function getColumnSizeStyle(column: {
   };
 }
 
+function computeTableClasses(opts: {
+  size: "sm" | "md";
+  density?: DataTableDensity;
+  striped: boolean;
+  bordered: boolean;
+  hasExplicitColumnSizing: boolean;
+  className?: string;
+  wrapperClassName?: string;
+  wrapperPropsClassName?: string;
+}): { rootClasses: string; wrapperClasses: string } {
+  const densityClass =
+    opts.density === "condensed"
+      ? styles.densityCondensed
+      : opts.density === "regular"
+        ? styles.densityRegular
+        : opts.density === "relaxed"
+          ? styles.densityRelaxed
+          : undefined;
+
+  const rootClasses = [
+    styles.table,
+    opts.hasExplicitColumnSizing && styles.fixedLayout,
+    styles[opts.size],
+    densityClass,
+    opts.striped && styles.striped,
+    opts.className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const wrapperClasses = [
+    styles.wrapper,
+    opts.bordered && styles.bordered,
+    opts.wrapperClassName,
+    opts.wrapperPropsClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return { rootClasses, wrapperClasses };
+}
+
 function isInteractiveTarget(target: EventTarget | null, currentTarget: HTMLTableRowElement) {
   if (!(target instanceof Element)) return false;
 
@@ -170,7 +236,7 @@ function isInteractiveTarget(target: EventTarget | null, currentTarget: HTMLTabl
   );
 }
 
-function DataTableRoot<T>({
+function DataTableLive<T>({
   columns: userColumns,
   data,
   getRowId,
@@ -204,15 +270,10 @@ function DataTableRoot<T>({
   "aria-describedby": ariaDescribedBy,
   ...htmlProps
 }: DataTableProps<T>) {
-  loadReactTable();
-  if (_reactTableFailed || !_reactTable) {
-    throw new Error(
-      "[@usefragments/ui] DataTable: @tanstack/react-table is not installed. " +
-        "Install it with: npm install @tanstack/react-table"
-    );
-  }
+  // Only rendered once useReactTableDeps() reports "ready", so the module is
+  // guaranteed here and hook order stays stable for this component's lifetime.
   const { flexRender, getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } =
-    _reactTable;
+    _reactTable as ReactTableModule;
 
   const tableRef = React.useRef<HTMLTableElement>(null);
   useArrowKeyRowNav(tableRef, !!onRowClick);
@@ -298,34 +359,17 @@ function DataTableRoot<T>({
   });
 
   const isEmpty = !loading && data.length === 0;
-  const densityClass =
-    density === "condensed"
-      ? styles.densityCondensed
-      : density === "regular"
-        ? styles.densityRegular
-        : density === "relaxed"
-          ? styles.densityRelaxed
-          : undefined;
-
-  const rootClasses = [
-    styles.table,
-    hasExplicitColumnSizing && styles.fixedLayout,
-    styles[size],
-    densityClass,
-    striped && styles.striped,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
   const { className: wrapperPropsClassName, ...restWrapperProps } = wrapperProps ?? {};
-  const wrapperClasses = [
-    styles.wrapper,
-    bordered && styles.bordered,
+  const { rootClasses, wrapperClasses } = computeTableClasses({
+    size,
+    density,
+    striped,
+    bordered,
+    hasExplicitColumnSizing,
+    className,
     wrapperClassName,
     wrapperPropsClassName,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  });
 
   if (isEmpty) {
     return (
@@ -542,6 +586,191 @@ function DataTableRoot<T>({
   );
 }
 
+// ============================================
+// Static fallback (peer resolving or missing)
+// ============================================
+
+function staticColumnSizeStyle<T>(col: DataTableColumn<T>): React.CSSProperties | undefined {
+  const { size, minSize, maxSize } = col;
+  if (size === undefined && minSize === undefined && maxSize === undefined) return undefined;
+  const resolved = size ?? minSize ?? maxSize;
+  return { width: resolved, minWidth: minSize ?? resolved, maxWidth: maxSize ?? resolved };
+}
+
+function staticCellContent<T>(col: DataTableColumn<T>, row: T, index: number): React.ReactNode {
+  const raw = col.accessorFn
+    ? col.accessorFn(row)
+    : col.accessorKey
+      ? (row as Record<string, unknown>)[col.accessorKey]
+      : undefined;
+  if (typeof col.cell === "function") {
+    try {
+      return col.cell({
+        row: { original: row, id: String(index), index, depth: 0 },
+        getValue: () => raw,
+        column: { id: col.id ?? col.accessorKey ?? "" },
+      });
+    } catch {
+      // Cell renderers that depend on TanStack row APIs fall back to the raw value.
+    }
+  }
+  return typeof raw === "string" || typeof raw === "number" ? raw : null;
+}
+
+/**
+ * Rendered while @tanstack/react-table resolves (skeleton rows) and when it is
+ * not installed (a plain, non-interactive table of the data). Sorting,
+ * selection, expansion, and row interactivity require the peer.
+ */
+function DataTableStatic<T>({
+  pending,
+  columns,
+  data,
+  getRowId,
+  emptyMessage = "No data available",
+  emptyState,
+  loading = false,
+  skeletonRows = 6,
+  density,
+  hideHeader = false,
+  size = "md",
+  className,
+  caption,
+  captionHidden = false,
+  striped = false,
+  bordered = false,
+  wrapperClassName,
+  wrapperProps,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedBy,
+  // Interactive props are inert without the peer — accepted but unused.
+  sortable: _sortable,
+  sorting: _sorting,
+  onSortingChange: _onSortingChange,
+  selectable: _selectable,
+  showCheckbox: _showCheckbox,
+  rowSelection: _rowSelection,
+  onRowSelectionChange: _onRowSelectionChange,
+  onRowClick: _onRowClick,
+  getRowProps: _getRowProps,
+  getSubRows: _getSubRows,
+  expanded: _expanded,
+  onExpandedChange: _onExpandedChange,
+  ...htmlProps
+}: DataTableProps<T> & { pending: boolean }) {
+  const hasExplicitColumnSizing = columns.some(
+    (column) =>
+      column.size !== undefined || column.minSize !== undefined || column.maxSize !== undefined
+  );
+  const { className: wrapperPropsClassName, ...restWrapperProps } = wrapperProps ?? {};
+  const { rootClasses, wrapperClasses } = computeTableClasses({
+    size,
+    density,
+    striped,
+    bordered,
+    hasExplicitColumnSizing,
+    className,
+    wrapperClassName,
+    wrapperPropsClassName,
+  });
+
+  const showSkeleton = pending || loading;
+  const isEmpty = !showSkeleton && data.length === 0;
+  const columnCount = Math.max(columns.length, 1);
+
+  return (
+    <div {...restWrapperProps} className={wrapperClasses}>
+      <table
+        {...htmlProps}
+        className={rootClasses}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
+        aria-busy={showSkeleton || undefined}
+      >
+        {caption && (
+          <caption className={captionHidden ? styles.captionHidden : styles.caption}>
+            {caption}
+          </caption>
+        )}
+        {!hideHeader && !isEmpty && (
+          <thead className={styles.thead}>
+            <tr className={styles.headerRow}>
+              {columns.map((col, colIndex) => (
+                <th
+                  key={col.id ?? col.accessorKey ?? colIndex}
+                  className={styles.th}
+                  style={staticColumnSizeStyle(col)}
+                  scope="col"
+                  data-align={col.align}
+                >
+                  <div className={styles.headerContent}>
+                    {typeof col.header === "string" ? col.header : (col.id ?? col.accessorKey ?? "")}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+        <tbody className={styles.tbody}>
+          {showSkeleton ? (
+            <DataTableSkeletonRows
+              rowCount={skeletonRows}
+              columnCount={columnCount}
+              rowClassName={styles.row}
+              cellClassName={styles.td}
+              barClassName={styles.skeletonBar}
+            />
+          ) : isEmpty ? (
+            <tr className={styles.row}>
+              <td className={styles.td} colSpan={columnCount}>
+                <div className={styles.emptyState}>
+                  {emptyState ?? <span className={styles.emptyMessage}>{emptyMessage}</span>}
+                </div>
+              </td>
+            </tr>
+          ) : (
+            data.map((row, rowIndex) => {
+              const rowKey = getRowId?.(row) ?? rowIndex;
+              return (
+                <tr key={rowKey} className={styles.row}>
+                  {columns.map((col, colIndex) => {
+                    const content = staticCellContent(col, row, rowIndex);
+                    return (
+                      <td
+                        key={col.id ?? col.accessorKey ?? colIndex}
+                        className={[styles.td, col.truncate && styles.truncate]
+                          .filter(Boolean)
+                          .join(" ")}
+                        data-align={col.align}
+                        title={typeof content === "string" ? content : undefined}
+                        style={staticColumnSizeStyle(col)}
+                      >
+                        {content}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================
+// Root — picks live vs static by dependency state
+// ============================================
+
+function DataTableRoot<T>(props: DataTableProps<T>) {
+  const deps = useReactTableDeps();
+  // Distinct component types per state: the live table calls useReactTable, so
+  // it must only ever mount once the module is resolved.
+  if (deps === "ready") return <DataTableLive {...props} />;
+  return <DataTableStatic {...props} pending={deps === "pending"} />;
+}
+
 // Helper to create simple columns without TanStack's createColumnHelper
 export function createColumns<T>(
   columns: Array<{
@@ -565,4 +794,6 @@ export function createColumns<T>(
 export const DataTable = Object.assign(DataTableRoot, {
   Root: DataTableRoot,
   Columns: createColumns,
+  /** Start resolving @tanstack/react-table before first render (optional). */
+  preload: loadReactTable,
 });

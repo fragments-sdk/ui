@@ -13,6 +13,23 @@
     "content"
   ],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "@tiptap/react",
+      "version": ">=2.0.0",
+      "reason": "Optional — enables rich-text mode; without TipTap the editor falls back to a markdown textarea."
+    },
+    {
+      "name": "@tiptap/starter-kit",
+      "version": ">=2.0.0",
+      "reason": "Optional — TipTap extension bundle used by rich-text mode."
+    },
+    {
+      "name": "@tiptap/extension-link",
+      "version": ">=2.0.0",
+      "reason": "Optional — link formatting in rich-text mode."
+    }
+  ],
   "sourcePath": "src/components/Editor/index.tsx",
   "exportName": "Editor",
   "propsSummary": [
@@ -251,7 +268,8 @@
       "Separator",
       "StatusIndicator",
       "Content",
-      "StatusBar"
+      "StatusBar",
+      "preload"
     ]
   },
   "provenance": {

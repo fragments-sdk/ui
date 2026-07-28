@@ -1,8 +1,14 @@
 import * as React from "react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { DatePicker } from "./index";
 import type { DateRange } from "./index";
+
+// react-day-picker resolves through a lazy import(); preloading it makes the
+// calendar render synchronously when the popover opens.
+beforeAll(async () => {
+  await DatePicker.preload();
+});
 
 function renderDatePicker(
   props: {

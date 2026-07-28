@@ -168,6 +168,48 @@ describe("published dist preserves use client directives (P0 packaging)", () => 
   });
 });
 
+describe("dist ESM contains no bare require() calls (P0 packaging)", () => {
+  // Bare `require(` in the ESM output breaks browser builds: `require` is
+  // undefined there, so optional-peer detection always failed (and DataTable
+  // threw). Optional peers must be loaded with dynamic import() instead.
+  // Matches `require(` unless preceded by a word char / $ / . — so
+  // `createRequire(`, `__require(`, and `foo.require(` don't false-positive.
+  const BARE_REQUIRE_RE = /(?<![\w$.])require\s*\(/;
+
+  function walkDistEsm(dir: string, out: string[] = []): string[] {
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name);
+      if (statSync(full).isDirectory()) {
+        walkDistEsm(full, out);
+        continue;
+      }
+      // Only .js (ESM) output — .cjs is CommonJS where require() is legitimate.
+      if (name.endsWith(".js")) out.push(full);
+    }
+    return out;
+  }
+
+  it("has no bare require( in any dist .js module", () => {
+    const distRoot = resolve(packageRoot, "dist");
+    expect(
+      existsSync(distRoot),
+      "dist missing — run `pnpm --filter @usefragments/ui build` before packaging tests"
+    ).toBe(true);
+
+    const offenders: string[] = [];
+    for (const file of walkDistEsm(distRoot)) {
+      if (BARE_REQUIRE_RE.test(readFileSync(file, "utf8"))) {
+        offenders.push(relative(packageRoot, file));
+      }
+    }
+
+    expect(
+      offenders,
+      `bare require( found in ESM dist (use dynamic import() for optional peers):\n${offenders.join("\n")}`
+    ).toEqual([]);
+  });
+});
+
 describe("published ./styles default CSS includes tokens (P0 packaging)", () => {
   it("sass condition still points at globals.scss", () => {
     for (const key of ["./styles", "./globals"]) {

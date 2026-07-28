@@ -5,6 +5,13 @@
   "category": "forms",
   "tags": ["date", "picker", "calendar", "range", "form", "input"],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "react-day-picker",
+      "version": ">=9.0.0",
+      "reason": "Optional — renders the calendar popup; the trigger and form field work without it."
+    }
+  ],
   "sourcePath": "src/components/DatePicker/index.tsx",
   "exportName": "DatePicker",
   "propsSummary": [
@@ -267,7 +274,7 @@
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": ["Trigger", "Content", "Calendar", "Preset"],
+    "subComponents": ["Trigger", "Content", "Calendar", "Preset", "preload"],
     "requiredChildren": ["Trigger", "Content"],
     "commonPatterns": [
       "<DatePicker size=\"sm\" selected={date} onSelect={setDate}><DatePicker.Trigger placeholder=\"Pick a date\" /><DatePicker.Content><DatePicker.Calendar /></DatePicker.Content></DatePicker>",
