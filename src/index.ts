@@ -567,6 +567,7 @@ export {
 
 // Chart
 export {
+  Chart,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
