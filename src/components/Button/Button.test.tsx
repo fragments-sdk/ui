@@ -39,6 +39,11 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveClass("link");
   });
 
+  it("applies quiet variant class", () => {
+    render(<Button variant="quiet">main</Button>);
+    expect(screen.getByRole("button")).toHaveClass("quiet");
+  });
+
   it("applies size classes", () => {
     render(<Button size="lg">Btn</Button>);
     expect(screen.getByRole("button")).toHaveClass("lg");

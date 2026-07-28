@@ -12,6 +12,7 @@
     "variant: default|success|warning|error|info|outline|label|dim (default: default)",
     "size: sm|md|lg (default: md)",
     "dot: boolean (default: false)",
+    "dotPulse: boolean (default: false)",
     "dotColor: string",
     "icon: node",
     "active: boolean (default: false)",
@@ -42,6 +43,12 @@
     "dot": {
       "type": "boolean",
       "description": "Show a colored dot indicator before the label",
+      "default": "false",
+      "required": false
+    },
+    "dotPulse": {
+      "type": "boolean",
+      "description": "Breathe the status dot, for a state that is still happening rather than one that has settled. Opacity only, and honours prefers-reduced-motion",
       "default": "false",
       "required": false
     },
@@ -165,6 +172,7 @@
       "variant: default|success|warning|error|info|outline|label|dim - visual style",
       "size: sm|md|lg - badge size",
       "dot: boolean - show status dot indicator",
+      "dotPulse: boolean - breathe the dot for an in-progress state (respects prefers-reduced-motion)",
       "dotColor: string - color for the leading status dot",
       "active: boolean - marks variant=\"dim\" as the selected filter",
       "onRemove: () => void - makes badge removable",

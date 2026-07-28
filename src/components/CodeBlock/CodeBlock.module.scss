@@ -318,9 +318,14 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
     word-break: break-word;
   }
 
+  // `display: block` here would double-space every wrapped block: shiki emits a
+  // newline between each `.line`, and under `pre-wrap` that newline becomes a
+  // line box of its own the moment the lines stop being inline. The base rule's
+  // `inline-block` keeps it in the inline flow, and a full-width inline-block
+  // still wraps and still grows taller, which is all this variant needs.
   :global(.line) {
-    display: block;
-    width: auto;
+    display: inline-block;
+    width: 100%;
   }
 }
 

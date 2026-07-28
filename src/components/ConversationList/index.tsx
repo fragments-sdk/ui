@@ -13,6 +13,8 @@ export type AutoScrollBehavior = boolean | 'smart';
 export interface ConversationListProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Message components */
   children: React.ReactNode;
+  /** Show avatars for messages and typing indicators in this conversation */
+  showAvatars?: boolean;
   /** Auto-scroll behavior: true (always), false (never), or 'smart' (only when near bottom) */
   autoScroll?: AutoScrollBehavior;
   /** Callback when user scrolls to top (for loading history) */
@@ -47,12 +49,17 @@ export interface TypingIndicatorProps extends React.HTMLAttributes<HTMLDivElemen
 
 interface ConversationListContextValue {
   scrollToBottom: () => void;
+  showAvatars: boolean;
 }
 
 const ConversationListContext = React.createContext<ConversationListContextValue | null>(null);
 
+export function useOptionalConversationList() {
+  return React.useContext(ConversationListContext);
+}
+
 export function useConversationList() {
-  const context = React.useContext(ConversationListContext);
+  const context = useOptionalConversationList();
   if (!context) {
     throw new Error('useConversationList must be used within a ConversationList');
   }
@@ -113,11 +120,16 @@ function TypingIndicator({
   className,
   ...htmlProps
 }: TypingIndicatorProps) {
-  const classes = [styles.typingIndicator, className].filter(Boolean).join(' ');
+  const showAvatar = (useOptionalConversationList()?.showAvatars ?? true) && Boolean(avatar);
+  const classes = [
+    styles.typingIndicator,
+    !showAvatar && styles.withoutAvatar,
+    className,
+  ].filter(Boolean).join(' ');
 
   return (
-    <div {...htmlProps} className={classes} aria-label={`${name} is typing`}>
-      {avatar && <div className={styles.typingAvatar}>{avatar}</div>}
+    <div {...htmlProps} className={classes} role="status" aria-label={`${name} is typing`}>
+      {showAvatar && <div className={styles.typingAvatar}>{avatar}</div>}
       <div className={styles.typingContent}>
         <span className={styles.typingDot} />
         <span className={styles.typingDot} />
@@ -133,6 +145,7 @@ function TypingIndicator({
 
 function ConversationListRoot({
   children,
+  showAvatars = true,
   autoScroll = 'smart',
   onScrollTop,
   loadingHistory = false,
@@ -145,7 +158,6 @@ function ConversationListRoot({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const isNearBottomRef = React.useRef(true);
-  const prevChildrenCountRef = React.useRef(0);
   const userOnScroll = htmlProps.onScroll;
 
   // Check if user is near the bottom
@@ -185,31 +197,33 @@ function ConversationListRoot({
     }
   }, [checkIsNearBottom, onScrollTop, scrollTopThreshold, userOnScroll]);
 
-  // Auto-scroll on new messages
+  // Keep the reader at the newest content as the conversation grows.
+  //
+  // Child count is the wrong signal for this. A list whose messages are wrapped
+  // in a single element — a measured column, a virtualiser, a fragment the
+  // caller maps into — never changes count, so the list would pin once on mount
+  // and never again. And even when the count does change, the height keeps
+  // moving afterwards: markdown reflows, images decode, syntax highlighting
+  // lands, a streaming reply grows a character at a time. Rendered height is
+  // what actually moves the bottom of the list, so that is what this watches.
   React.useEffect(() => {
-    const childrenCount = React.Children.count(children);
-    const hasNewMessages = childrenCount > prevChildrenCountRef.current;
-    prevChildrenCountRef.current = childrenCount;
+    const content = contentRef.current;
+    if (!content || !autoScroll) return;
 
-    if (!hasNewMessages) return;
-
-    if (autoScroll === true) {
-      scrollToBottom();
-    } else if (autoScroll === 'smart' && isNearBottomRef.current) {
-      scrollToBottom();
-    }
-  }, [children, autoScroll, scrollToBottom]);
-
-  // Initial scroll to bottom
-  React.useEffect(() => {
-    if (autoScroll) {
-      scrollToBottom('instant');
-    }
+    // Instant, not smooth: while a reply streams this fires on every frame of
+    // growth, and overlapping smooth scrolls fight each other into a stutter.
+    // The context's scrollToBottom() stays smooth for deliberate jumps.
+    const observer = new ResizeObserver(() => {
+      if (autoScroll === true || isNearBottomRef.current) scrollToBottom('instant');
+    });
+    observer.observe(content);
+    return () => observer.disconnect();
   }, [autoScroll, scrollToBottom]);
 
-  const contextValue: ConversationListContextValue = {
+  const contextValue = React.useMemo<ConversationListContextValue>(() => ({
     scrollToBottom,
-  };
+    showAvatars,
+  }), [scrollToBottom, showAvatars]);
 
   const hasChildren = React.Children.count(children) > 0;
 

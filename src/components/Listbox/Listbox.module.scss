@@ -9,19 +9,11 @@
   @include surface-elevated;
   @include popup-container;
 
-  // Item height derived from text-base font + vertical padding (matches Select/Combobox)
-  --_listbox-item-h: calc(
-    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
-      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
-      var(--fui-space-2, #{$fui-space-2}) * 2
-  );
+  @include popup-scroll-viewport;
 
   min-width: 12rem;
-  // Show N items + half-peek scroll hint (default 4.5 items)
-  max-height: calc(
-    var(--_listbox-item-h) * var(--fui-select-max-items, 4.5) +
-      var(--fui-space-1, #{$fui-space-1}) * 2
-  );
+  // Show N items + half-peek scroll hint (default 4.5 items).
+  max-height: var(--_popup-scroll-max-h);
   overflow-y: auto;
   border-color: var(--fui-form-group-border, $fui-border);
 

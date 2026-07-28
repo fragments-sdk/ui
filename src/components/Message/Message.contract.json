@@ -80,6 +80,9 @@
     "guidelines": [
       "Always provide a role prop to determine styling",
       "Use status prop to show message state (sending, streaming, error)",
+      "Pass avatar={null}, or set showAvatars={false} on the parent ConversationList, to hide avatars; avatarless assistant content is flush while the user's own bubble keeps compact space-1/space-2 padding",
+      "User message bubbles are capped at 80% of the available inline measure so they remain visually distinct from assistant responses",
+      "User and assistant message chrome uses neutral surface tokens with the primary text foreground; reserve brand accent for actions or semantic state",
       "Consider showing timestamps for longer conversations",
       "Provide hover actions for assistant messages (copy, regenerate)"
     ],

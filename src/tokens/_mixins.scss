@@ -114,9 +114,39 @@
 @mixin popup-container {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  padding: var(--fui-space-1, #{$fui-space-1});
+  gap: var(--fui-popup-row-gap, #{$fui-popup-row-gap});
+  padding: var(--fui-popup-padding, #{$fui-popup-padding});
   box-shadow: var(--fui-shadow-md, #{$fui-shadow-md});
+}
+
+// Scroll viewport for the popups that peek — Select, Listbox, Combobox. Sets
+// `--_popup-scroll-max-h`; the consumer applies it, because Base UI puts an
+// inline `max-height: 100%` on some of these popups that only `!important` beats.
+//
+// Row *pitch*, not row height: `popup-container` is a flex column, so N rows
+// occupy N pitches less the trailing gap. (A grouped popup nests its rows one
+// level down, where that gap does not reach, so the peek there runs a few
+// pixels shy of half a row — visible only as a slightly smaller sliver.)
+// Every term here reads the token that actually draws it — which is the point.
+// Written out longhand in three separate stylesheets, this calc billed
+// $fui-space-2 of vertical padding for a row `popup-item` pads with
+// $fui-space-1, deriving a 46px row against a real 32px one, so all three
+// popups outgrew their own content and never scrolled at all.
+@mixin popup-scroll-viewport {
+  --_popup-row-h: calc(
+    var(--fui-popup-item-font-size, #{$fui-popup-item-font-size}) *
+      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
+      var(--fui-popup-item-padding-block, #{$fui-popup-item-padding-block}) * 2 +
+      var(--fui-popup-row-gap, #{$fui-popup-row-gap})
+  );
+
+  // The + 2px is the 1px border `surface-elevated` draws top and bottom: these
+  // popups are border-box, so max-height pays for the frame before the rows.
+  --_popup-scroll-max-h: calc(
+    var(--_popup-row-h) *
+      var(--fui-select-max-items, 4.5) - var(--fui-popup-row-gap, #{$fui-popup-row-gap}) +
+      var(--fui-popup-padding, #{$fui-popup-padding}) * 2 + 2px
+  );
 }
 
 // ============================================
@@ -136,16 +166,21 @@
 // `&[data-highlighted] { @include popup-item-highlight; }` covers both. Custom popups
 // should map `&:hover, &.<active>, &[data-highlighted]` to the same mixin.
 
-// Dropdown/popup item base. Includes button-reset and text-base.
+// Dropdown/popup item base. Includes button-reset and text-base, then steps the
+// size down to the popup scale — see $fui-popup-item-font-size. Select, Listbox
+// and Combobox size their scroll viewport from the same token, so read it there
+// too rather than re-deriving an item height from the body size.
 @mixin popup-item {
   @include button-reset;
   @include text-base;
 
+  font-size: var(--fui-popup-item-font-size, #{$fui-popup-item-font-size});
   display: flex;
   align-items: center;
   gap: var(--fui-space-1, #{$fui-space-1});
   width: 100%;
-  padding: var(--fui-space-1, #{$fui-space-1}) var(--fui-space-2, #{$fui-space-2});
+  padding: var(--fui-popup-item-padding-block, #{$fui-popup-item-padding-block})
+    var(--fui-popup-item-padding-inline, #{$fui-popup-item-padding-inline});
   border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
   cursor: pointer;
   outline: none;

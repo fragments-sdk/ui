@@ -32,6 +32,17 @@ describe('Text', () => {
     expect(screen.getByText('Muted text')).toHaveClass('color-muted');
   });
 
+  it('applies semantic color classes', () => {
+    const { rerender } = render(<Text color="warning">Over budget</Text>);
+    expect(screen.getByText('Over budget')).toHaveClass('color-warning');
+
+    rerender(<Text color="danger">Expired</Text>);
+    expect(screen.getByText('Expired')).toHaveClass('color-danger');
+
+    rerender(<Text color="success">Passing</Text>);
+    expect(screen.getByText('Passing')).toHaveClass('color-success');
+  });
+
   it('applies md size class (alias for base)', () => {
     render(<Text size="md">Medium text</Text>);
     expect(screen.getByText('Medium text')).toHaveClass('size-md');

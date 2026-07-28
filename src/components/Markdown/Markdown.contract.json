@@ -64,6 +64,7 @@
       "Install react-markdown and remark-gfm as peer dependencies",
       "Use the components prop to override default element rendering",
       "Content is sanitized by react-markdown by default",
+      "The parser is loaded on demand, so the first render on a page is the plain-text fallback and parsed output arrives a tick later; call Markdown.preload() at startup to skip that frame",
       "Falls back to plain text paragraphs if react-markdown is not installed",
       "Standard div props (id, style, aria-*, data-*) are forwarded to the Markdown wrapper"
     ],

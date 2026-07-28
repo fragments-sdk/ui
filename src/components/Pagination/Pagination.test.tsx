@@ -1,6 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
 import { Pagination } from './index';
+
+const paginationStyles = readFileSync(
+  resolve(process.cwd(), 'src/components/Pagination/Pagination.module.scss'),
+  'utf8'
+);
 
 function renderPagination(props: Partial<React.ComponentProps<typeof Pagination>> = {}) {
   return render(
@@ -13,6 +20,17 @@ function renderPagination(props: Partial<React.ComponentProps<typeof Pagination>
 }
 
 describe('Pagination', () => {
+  it('uses body text and a neutral active surface instead of brand accent', () => {
+    expect(paginationStyles).toContain(
+      'background-color: var(--fui-bg-active, $fui-bg-active);'
+    );
+    expect(paginationStyles).toContain(
+      'color: var(--fui-text-primary, $fui-text-primary);'
+    );
+    expect(paginationStyles).not.toContain('--fui-color-accent');
+    expect(paginationStyles).not.toContain('--fui-color-on-accent');
+  });
+
   it('renders correct page range', () => {
     renderPagination({ totalPages: 5 });
 

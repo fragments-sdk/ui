@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  color: var(--fui-text-primary, $fui-text-primary);
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -25,6 +26,13 @@
   gap: var(--fui-space-2, $fui-space-2);
   padding: var(--fui-space-3, $fui-space-3);
   min-height: 100%;
+  // Own the full height of the conversation. As a shrinkable flex item it was
+  // squashed to the height of the scroll port while its messages overflowed
+  // past it — the list still scrolled, because the overflow lands on the
+  // scroller, but this element reported a constant height no matter how much
+  // was in it. Anything measuring the conversation, auto-scroll included, was
+  // measuring the window rather than the content.
+  flex-shrink: 0;
 }
 
 // ============================================
@@ -93,6 +101,10 @@
   align-items: center;
   gap: var(--fui-space-2, $fui-space-2);
   padding: var(--fui-space-2, $fui-space-2);
+}
+
+.withoutAvatar {
+  padding-inline: 0;
 }
 
 .typingAvatar {

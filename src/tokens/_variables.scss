@@ -73,6 +73,14 @@ $fui-font-size-2xl: 2.143rem !default; // 30px (large display)
 $fui-font-size-3xl: 2.571rem !default; // 36px (h1, page title)
 $fui-font-size-4xl: 3.429rem !default; // 48px (hero display)
 
+// Dropdown/popup list items — menus, selects, comboboxes, listboxes, command
+// palettes. One step below chrome text: a popup is a dense list scanned against
+// the trigger that opened it, and matching the trigger's own size made the list
+// read heavier than the control. Named rather than inlined because Select,
+// Listbox and Combobox derive their scroll height from this exact number; a
+// literal in the mixin would let the height calcs drift out of step with it.
+$fui-popup-item-font-size: $fui-font-size-xs !default; // 12px
+
 $fui-font-weight-normal: 400 !default;
 $fui-font-weight-medium: 500 !default;
 $fui-font-weight-semibold: 600 !default;
@@ -109,6 +117,20 @@ $fui-space-6: computed.$computed-space-6 !default;
 $fui-space-8: computed.$computed-space-8 !default;
 $fui-space-10: computed.$computed-space-10 !default;
 $fui-space-12: computed.$computed-space-12 !default;
+
+// --------------------------------------------
+// Popup geometry
+// --------------------------------------------
+// The insets a popup list and its rows carry. Named rather than inlined because
+// Select, Listbox and Combobox size their scroll viewport from these exact
+// numbers to show N rows plus a half-peek hint. Left as literals in the mixin,
+// the two sides drifted: the height calcs charged $fui-space-2 of vertical
+// padding for a row `popup-item` pads with $fui-space-1, so every one of those
+// popups peeked further than its own "4.5 items" comment promised.
+$fui-popup-padding: $fui-space-1 !default; // container inset
+$fui-popup-row-gap: 1px !default; // flex gap between rows
+$fui-popup-item-padding-block: $fui-space-1 !default;
+$fui-popup-item-padding-inline: $fui-space-2 !default;
 
 // --------------------------------------------
 // Border Radius (derived from radius-style seed)
@@ -397,6 +419,7 @@ $fui-code-selection-bg: color-mix(
     --fui-font-size-2xl: #{$fui-font-size-2xl};
     --fui-font-size-3xl: #{$fui-font-size-3xl};
     --fui-font-size-4xl: #{$fui-font-size-4xl};
+    --fui-popup-item-font-size: #{$fui-popup-item-font-size};
     --fui-font-weight-normal: #{$fui-font-weight-normal};
     --fui-font-weight-medium: #{$fui-font-weight-medium};
     --fui-font-weight-semibold: #{$fui-font-weight-semibold};
@@ -426,6 +449,13 @@ $fui-code-selection-bg: color-mix(
     --fui-space-8: #{$fui-space-8};
     --fui-space-10: #{$fui-space-10};
     --fui-space-12: #{$fui-space-12};
+
+    // Popup geometry — the numbers Select/Listbox/Combobox derive their scroll
+    // viewport from. Override these and the peek height follows.
+    --fui-popup-padding: #{$fui-popup-padding};
+    --fui-popup-row-gap: #{$fui-popup-row-gap};
+    --fui-popup-item-padding-block: #{$fui-popup-item-padding-block};
+    --fui-popup-item-padding-inline: #{$fui-popup-item-padding-inline};
 
     // Border radius
     --fui-radius-sm: #{$fui-radius-sm};

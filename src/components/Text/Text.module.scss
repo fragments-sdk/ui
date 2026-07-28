@@ -88,6 +88,24 @@
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
+// Semantic colours, for a run of text that carries a state on its own — a
+// count going over budget, an inline "expired", a figure in the red. Where
+// there is a component for the job (Badge, Alert, Callout) use that instead:
+// this is for the cases where the state is one word inside a line, and
+// wrapping it in a box would be more chrome than the fact is worth. Colour is
+// never the only carrier — the words still have to say it.
+.color-success {
+  color: var(--fui-color-success, $fui-color-success);
+}
+
+.color-warning {
+  color: var(--fui-color-warning, $fui-color-warning);
+}
+
+.color-danger {
+  color: var(--fui-color-danger, $fui-color-danger);
+}
+
 // Font family
 .mono {
   font-family: var(--fui-font-mono, $fui-font-mono);

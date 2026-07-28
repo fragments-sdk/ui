@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import styles from './Message.module.scss';
+import { useOptionalConversationList } from '../ConversationList';
 import { Markdown } from '../Markdown';
 
 // ============================================
@@ -239,6 +240,10 @@ function MessageRoot({
   className,
   ...htmlProps
 }: MessageProps) {
+  const conversationList = useOptionalConversationList();
+  const showAvatar = conversationList?.showAvatars !== false
+    && avatar !== null
+    && avatar !== false;
   const contextValue: MessageContextValue = {
     role,
     status,
@@ -250,6 +255,7 @@ function MessageRoot({
     styles[role],
     status === 'error' && styles.error,
     status === 'sending' && styles.sending,
+    !showAvatar && styles.withoutAvatar,
     className,
   ].filter(Boolean).join(' ');
 
@@ -261,7 +267,7 @@ function MessageRoot({
         data-role={role}
         data-status={status}
       >
-        {avatar !== undefined ? avatar : <MessageAvatar />}
+        {showAvatar && (avatar !== undefined ? avatar : <MessageAvatar />)}
         <div className={styles.body}>
           {children}
           {actions && <MessageActions>{actions}</MessageActions>}

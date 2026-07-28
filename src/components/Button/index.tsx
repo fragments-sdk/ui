@@ -29,9 +29,19 @@ type ButtonBaseProps = {
    * @see https://usefragments.com/components/button#variants
    * @remarks
    * - `"link"` — accent-coloured, transparent; for tertiary CTAs like "View all →"
+   * - `"quiet"` — neutral text button with no box and no height floor; for meta lines and footnotes
    * - `"icon"` — convenience alias for outlined + icon-only layout
    * - `"outline"` — alias for `"outlined"` */
-  variant?: "primary" | "secondary" | "ghost" | "link" | "danger" | "outlined" | "outline" | "icon";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "ghost"
+    | "link"
+    | "quiet"
+    | "danger"
+    | "outlined"
+    | "outline"
+    | "icon";
   /** Button size. `"xs"` is for inline row-action controls (accept/dismiss, table-row icons) where `"sm"` is too tall.
    * @default "md"
    * @see https://usefragments.com/components/button#sizes */

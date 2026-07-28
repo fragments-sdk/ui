@@ -58,11 +58,12 @@
 
 // Active page
 .itemActive {
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-color-on-accent, $fui-color-on-accent);
+  background-color: var(--fui-bg-active, $fui-bg-active);
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    background-color: var(--fui-bg-active, $fui-bg-active);
   }
 }
 
@@ -105,7 +106,7 @@
 
 @media (prefers-contrast: more) {
   .itemActive {
-    outline: 2px solid var(--fui-color-accent, $fui-color-accent);
+    outline: 2px solid var(--fui-text-primary, $fui-text-primary);
     outline-offset: -2px;
   }
 }

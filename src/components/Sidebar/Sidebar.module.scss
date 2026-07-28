@@ -388,6 +388,16 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   padding-top: 0.071rem;
 }
 
+// A row whose label is a block rather than a link: a title over a status line,
+// a name over an address, a subject over a preview. The single-line ellipsis is
+// right for navigation and wrong here, so it comes off — but the label keeps
+// bounding itself, so anything inside it that truncates still truncates against
+// the rail's width instead of widening it.
+.itemMultiline .itemLabel {
+  white-space: normal;
+  min-width: 0;
+}
+
 .itemBadge {
   display: flex;
   align-items: center;

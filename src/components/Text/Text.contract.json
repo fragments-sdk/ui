@@ -19,7 +19,7 @@
     "variant: section-label",
     "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl",
     "weight: normal|medium|semibold|bold (default: \"normal\")",
-    "color: primary|secondary|tertiary|muted (default: \"primary\")",
+    "color: primary|secondary|tertiary|muted|success|warning|danger (default: \"primary\")",
     "font: sans|mono (default: sans)",
     "truncate: boolean",
     "lineClamp: number",
@@ -102,14 +102,17 @@
     },
     "color": {
       "type": "enum",
-      "description": "Text color (muted is an alias for tertiary)",
+      "description": "Text color (muted is an alias for tertiary; success/warning/danger are for a run of text that carries a state on its own \u2014 prefer Badge or Alert when the state deserves a container)",
       "default": "\"primary\"",
       "required": false,
       "values": [
         "primary",
         "secondary",
         "tertiary",
-        "muted"
+        "muted",
+        "success",
+        "warning",
+        "danger"
       ]
     },
     "font": {
@@ -216,7 +219,7 @@
       "as: string - HTML element",
       "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl - font size (px: 10/12/14/14/15/20/24/30/36/48)",
       "weight: normal|medium|semibold|bold - font weight",
-      "color: primary|secondary|tertiary|muted - text color (muted = tertiary)",
+      "color: primary|secondary|tertiary|muted|success|warning|danger - text color (muted = tertiary; semantic colours for inline state)",
       "font: sans|mono - font family",
       "truncate: boolean - enable truncation",
       "lineClamp: number - max lines"

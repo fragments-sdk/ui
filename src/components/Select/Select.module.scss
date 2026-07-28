@@ -34,6 +34,74 @@
   @include control-size("lg", "input");
 }
 
+// Ghost trigger — the same control with the field shell taken off, for
+// toolbars and dense rows where a bordered field would read as a form rather
+// than as a setting. Deliberately identical in padding, radius, type scale and
+// hover to the other compact controls that share those rows, so a select sits
+// among them as a sibling instead of a fourth vocabulary.
+//
+// Must be declared after `.trigger` and the size variants: it unsets what they
+// set, and they are all single-class selectors.
+.triggerGhost {
+  width: auto;
+  min-width: 0;
+  // No block padding: the control is exactly the target size tall and centres
+  // its own contents, the way a button does. Padding here instead would add to
+  // the line box and leave a ghost taller than every other control in the row
+  // — and taller again wherever the surface has scaled the target down.
+  height: auto;
+  gap: var(--fui-space-1, $fui-space-1);
+  padding: 0 var(--fui-space-2, $fui-space-2);
+  border: none;
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+
+  &:hover:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:active:not(:disabled):not([data-disabled]) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+
+  // Open is a held state, not a hover: the control stays lit while the popup
+  // it owns is on screen.
+  &[data-popup-open] {
+    border-color: transparent;
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  // No shell to fill, so disabled reads as recession rather than as a
+  // greyed-out box.
+  &:disabled,
+  &[data-disabled] {
+    background-color: transparent;
+    opacity: 0.5;
+  }
+}
+
+// Ghost sizes to its content and may shrink; the wrapper has to allow both or
+// the trigger measures against its label and escapes a tight row.
+.wrapperGhost {
+  display: inline-flex;
+  min-width: 0;
+}
+
+// Leading adornment on the trigger
+.triggerIcon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
 // Value display
 .value {
   flex: 1;
@@ -52,6 +120,14 @@
 // Placeholder text
 .placeholder {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
+// The qualifier on an option — recessed, because it tells you which one this is
+// rather than being the thing you are choosing.
+.hint {
+  margin-inline-start: var(--fui-space-1, $fui-space-1);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
 }
 
 // Chevron icon
@@ -83,22 +159,13 @@
   @include surface-elevated;
   @include popup-container;
 
+  @include popup-scroll-viewport;
+
   border-color: var(--fui-form-group-border, $fui-border);
-
-  // Item height derived from text-base font + vertical padding
-  --_select-item-h: calc(
-    var(--fui-font-size-sm, #{$fui-font-size-sm}) *
-      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
-      var(--fui-space-2, #{$fui-space-2}) * 2
-  );
-
   min-width: var(--anchor-width);
-  // Show N items + half-peek scroll hint (default 4.5 items)
+  // Show N items + half-peek scroll hint (default 4.5 items).
   // !important needed to override Base UI's inline max-height: 100%
-  max-height: calc(
-    var(--_select-item-h) * var(--fui-select-max-items, 4.5) + var(--fui-space-1, #{$fui-space-1}) *
-      2
-  ) !important;
+  max-height: var(--_popup-scroll-max-h) !important;
   overflow-y: auto !important;
 
   // Animation
