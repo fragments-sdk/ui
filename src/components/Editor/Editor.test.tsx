@@ -1,8 +1,14 @@
 import type { ReactNode } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, expectNoA11yViolations, act } from '../../test/utils';
 import { Editor } from './index';
 import { Button } from '../Button';
+
+// TipTap resolves through a lazy import(); preloading it pins these tests to
+// one deterministic mode from the first render.
+beforeAll(async () => {
+  await Editor.preload();
+});
 
 function renderEditor(
   props: {

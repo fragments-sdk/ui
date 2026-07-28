@@ -1,6 +1,12 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { DataTable, createColumns } from "./index";
+
+// @tanstack/react-table resolves through a lazy import(); preloading it makes
+// every render below synchronous, so assertions can stay synchronous too.
+beforeAll(async () => {
+  await DataTable.preload();
+});
 
 type Person = { id: string; name: string; age: number };
 

@@ -27,27 +27,63 @@ let _useEditor: ((config: Record<string, unknown>) => unknown) | null = null;
 let _EditorContent: React.ComponentType<Record<string, unknown>> | null = null;
 let _StarterKit: unknown = null;
 let _LinkExtension: unknown = null;
-let _tiptapLoaded = false;
+let _tiptapLoadPromise: Promise<void> | null = null;
 let _tiptapFailed = false;
 
-function loadTipTapDeps() {
-  if (_tiptapLoaded) return;
-  _tiptapLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const tiptapReact = require('@tiptap/react');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const starterKit = require('@tiptap/starter-kit');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const linkExt = require('@tiptap/extension-link');
+// Resolved with import() rather than require(): browser ESM bundles have no
+// `require`, so the synchronous shape forced markdown mode even with TipTap installed.
+function loadTipTapDeps(): Promise<void> {
+  if (!_tiptapLoadPromise) {
+    _tiptapLoadPromise = (async () => {
+      try {
+        const [tiptapReact, starterKit, linkExt] = await Promise.all([
+          import('@tiptap/react'),
+          import('@tiptap/starter-kit'),
+          import('@tiptap/extension-link'),
+        ]);
 
-    _useEditor = tiptapReact.useEditor;
-    _EditorContent = tiptapReact.EditorContent;
-    _StarterKit = starterKit.default ?? starterKit.StarterKit ?? starterKit;
-    _LinkExtension = linkExt.default ?? linkExt.Link ?? linkExt;
-  } catch {
-    _tiptapFailed = true;
+        _useEditor = tiptapReact.useEditor as unknown as (
+          config: Record<string, unknown>,
+        ) => unknown;
+        _EditorContent = tiptapReact.EditorContent as unknown as React.ComponentType<
+          Record<string, unknown>
+        >;
+        _StarterKit =
+          (starterKit as { default?: unknown; StarterKit?: unknown }).default ??
+          (starterKit as { StarterKit?: unknown }).StarterKit ??
+          starterKit;
+        _LinkExtension =
+          (linkExt as { default?: unknown; Link?: unknown }).default ??
+          (linkExt as { Link?: unknown }).Link ??
+          linkExt;
+      } catch {
+        _tiptapFailed = true;
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(
+            '[@usefragments/ui] Editor: TipTap is not installed; falling back to markdown mode. ' +
+            'Install it with: npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-link'
+          );
+        }
+      }
+    })();
   }
+  return _tiptapLoadPromise;
+}
+
+/** Kick off the lazy TipTap load on mount and re-render once it settles. */
+function useTipTapDeps(): boolean {
+  const [, rerender] = React.useReducer((n: number) => n + 1, 0);
+  React.useEffect(() => {
+    if ((_useEditor && _EditorContent && _StarterKit) || _tiptapFailed) return;
+    let active = true;
+    void loadTipTapDeps().then(() => {
+      if (active) rerender();
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  return !_tiptapFailed && !!_useEditor && !!_EditorContent && !!_StarterKit;
 }
 
 // ============================================
@@ -376,7 +412,16 @@ function countWords(text: string): number {
 // Components
 // ============================================
 
-function EditorRoot({
+function EditorRoot(props: EditorProps) {
+  const hasTipTap = useTipTapDeps();
+  // The rich implementation calls TipTap's useEditor hook, so an instance's
+  // mode must never change mid-lifetime. Keying by mode remounts the
+  // implementation exactly once, when the lazy TipTap load resolves.
+  return <EditorImpl key={hasTipTap ? 'rich' : 'markdown'} hasTipTap={hasTipTap} {...props} />;
+}
+
+function EditorImpl({
+  hasTipTap,
   children,
   value: controlledValue,
   defaultValue = '',
@@ -394,7 +439,7 @@ function EditorRoot({
   toolbarIcons,
   className,
   ...htmlProps
-}: EditorProps) {
+}: EditorProps & { hasTipTap: boolean }) {
   const contentRef = React.useRef<HTMLTextAreaElement>(null);
 
   const [value, setValue] = useControllableState(
@@ -405,9 +450,6 @@ function EditorRoot({
 
   const [saveStatus, setSaveStatus] = React.useState<EditorSaveStatus>('idle');
 
-  // Try loading TipTap
-  loadTipTapDeps();
-  const hasTipTap = !_tiptapFailed && _useEditor && _EditorContent && _StarterKit;
   const mode: EditorMode = hasTipTap ? 'rich' : 'markdown';
 
   // TipTap editor instance (only when available)
@@ -843,6 +885,8 @@ function EditorStatusBar({ showWordCount = true, showCharCount = true, className
 // ============================================
 
 export const Editor = Object.assign(EditorRoot, {
+  /** Start resolving TipTap before first render (optional). */
+  preload: loadTipTapDeps,
   Toolbar: EditorToolbar,
   ToolbarGroup: EditorToolbarGroup,
   ToolbarButton: EditorToolbarButton,

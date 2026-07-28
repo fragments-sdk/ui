@@ -60,20 +60,46 @@ type RechartsLegendProps = Record<string, unknown>;
 
 let _RechartsTooltip: React.ComponentType<Record<string, unknown>> | null = null;
 let _RechartsLegend: React.ComponentType<Record<string, unknown>> | null = null;
-let _chartLoaded = false;
+let _chartLoadPromise: Promise<void> | null = null;
 let _chartFailed = false;
 
-function loadChartDeps() {
-  if (_chartLoaded) return;
-  _chartLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const rc = require('recharts');
-    _RechartsTooltip = rc.Tooltip as React.ComponentType<Record<string, unknown>>;
-    _RechartsLegend = rc.Legend as React.ComponentType<Record<string, unknown>>;
-  } catch {
-    _chartFailed = true;
+// Resolved with import() rather than require(): browser ESM bundles have no
+// `require`, so the synchronous shape disabled recharts even when installed.
+function loadChartDeps(): Promise<void> {
+  if (!_chartLoadPromise) {
+    _chartLoadPromise = (async () => {
+      try {
+        const rc = await import('recharts');
+        _RechartsTooltip = rc.Tooltip as unknown as React.ComponentType<Record<string, unknown>>;
+        _RechartsLegend = rc.Legend as unknown as React.ComponentType<Record<string, unknown>>;
+      } catch {
+        _chartFailed = true;
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(
+            '[@usefragments/ui] Chart: recharts is not installed. ' +
+            'Install it with: npm install recharts'
+          );
+        }
+      }
+    })();
   }
+  return _chartLoadPromise;
+}
+
+/** Kick off the lazy recharts load on mount and re-render once it settles. */
+function useChartDeps(): boolean {
+  const [, rerender] = React.useReducer((n: number) => n + 1, 0);
+  React.useEffect(() => {
+    if (_RechartsTooltip || _chartFailed) return;
+    let active = true;
+    void loadChartDeps().then(() => {
+      if (active) rerender();
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  return _RechartsTooltip !== null;
 }
 
 
@@ -252,7 +278,7 @@ export function ChartTooltip({
   content,
   ...props
 }: ChartTooltipProps) {
-  loadChartDeps();
+  const chartReady = useChartDeps();
 
   const defaultContent = React.useCallback(
 
@@ -269,13 +295,8 @@ export function ChartTooltip({
     [indicator, hideLabel, hideIndicator, labelFormatter, valueFormatter],
   );
 
-  if (_chartFailed || !_RechartsTooltip) {
-    if (_chartFailed && process.env.NODE_ENV === 'development') {
-      console.warn(
-        '[@usefragments/ui] Chart: recharts is not installed. ' +
-        'Install it with: npm install recharts'
-      );
-    }
+  // Nothing until recharts resolves; nothing at all if it is not installed.
+  if (!chartReady || !_RechartsTooltip) {
     return null;
   }
 
@@ -330,19 +351,13 @@ type ChartLegendProps = RechartsLegendProps & {
 };
 
 export function ChartLegend({ content, ...props }: ChartLegendProps) {
-  loadChartDeps();
+  const chartReady = useChartDeps();
 
   const defaultContent = (legendProps: Record<string, unknown>) => (
     <ChartLegendContent {...(legendProps as ChartLegendContentProps)} />
   );
 
-  if (_chartFailed || !_RechartsLegend) {
-    if (_chartFailed && process.env.NODE_ENV === 'development') {
-      console.warn(
-        '[@usefragments/ui] Chart: recharts is not installed. ' +
-        'Install it with: npm install recharts'
-      );
-    }
+  if (!chartReady || !_RechartsLegend) {
     return null;
   }
 
@@ -362,4 +377,6 @@ export const Chart = Object.assign(ChartContainer, {
   TooltipContent: ChartTooltipContent,
   Legend: ChartLegend,
   LegendContent: ChartLegendContent,
+  /** Start resolving recharts before first render (optional). */
+  preload: loadChartDeps,
 });

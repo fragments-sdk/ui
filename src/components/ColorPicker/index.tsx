@@ -7,20 +7,48 @@ import { Popover as BasePopover } from "@base-ui/react/popover";
 // Lazy-loaded dependency (react-colorful)
 // ============================================
 
-let _HexColorPicker: any = null;
-let _colorfulLoaded = false;
+let _HexColorPicker: React.ComponentType<{
+  color: string;
+  onChange: (color: string) => void;
+}> | null = null;
+let _colorfulLoadPromise: Promise<void> | null = null;
 let _colorfulFailed = false;
 
-function loadColorfulDeps() {
-  if (_colorfulLoaded) return;
-  _colorfulLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const rc = require("react-colorful");
-    _HexColorPicker = rc.HexColorPicker;
-  } catch {
-    _colorfulFailed = true;
+// Resolved with import() rather than require(): browser ESM bundles have no
+// `require`, so the synchronous shape hid the picker even when installed.
+function loadColorfulDeps(): Promise<void> {
+  if (!_colorfulLoadPromise) {
+    _colorfulLoadPromise = (async () => {
+      try {
+        const rc = await import("react-colorful");
+        _HexColorPicker = rc.HexColorPicker;
+      } catch {
+        _colorfulFailed = true;
+        if (process.env.NODE_ENV === "development") {
+          console.warn(
+            "[@usefragments/ui] ColorPicker: react-colorful is not installed. " +
+              "Install it with: npm install react-colorful"
+          );
+        }
+      }
+    })();
   }
+  return _colorfulLoadPromise;
+}
+
+/** Kick off the lazy react-colorful load on mount and re-render once it settles. */
+function useColorfulDeps(): void {
+  const [, rerender] = React.useReducer((n: number) => n + 1, 0);
+  React.useEffect(() => {
+    if (_HexColorPicker || _colorfulFailed) return;
+    let active = true;
+    void loadColorfulDeps().then(() => {
+      if (active) rerender();
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 }
 import { Field } from "@base-ui/react/field";
 import { useResolvedControlSize } from "../ComponentDefaults";
@@ -75,7 +103,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(funct
 ) {
   const size = useResolvedControlSize(sizeProp);
   const resolvedHelperText = helperText ?? description;
-  loadColorfulDeps();
+  useColorfulDeps();
   const [internalValue, setInternalValue] = React.useState(defaultValue);
   const [inputValue, setInputValue] = React.useState(value ?? defaultValue);
   const displayValue = value !== undefined ? value : internalValue;
@@ -179,4 +207,6 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(funct
 
 export const ColorPicker = Object.assign(ColorPickerRoot, {
   Root: ColorPickerRoot,
+  /** Start resolving react-colorful before first render (optional). */
+  preload: loadColorfulDeps,
 });

@@ -222,10 +222,10 @@ function formatDateForHiddenInput(date?: Date): string {
 // Lazy-loaded dependency (react-day-picker)
 // ============================================
 //
-// Loaded on demand via require() so the barrel never statically references the
-// optional `react-day-picker` peer. Importing anything else from
-// @usefragments/ui must not drag the calendar (or its transitive `date-fns`
-// dependency) into a consumer's build graph. Mirrors the Chart/recharts pattern.
+// Loaded on demand via import() so the barrel never statically references the
+// optional `react-day-picker` peer (or its transitive `date-fns` dependency),
+// and — unlike require(), which browser ESM bundles do not define — the
+// calendar actually resolves when the peer is installed.
 
 type DayPickerComponent = React.ComponentType<Record<string, unknown>>;
 type RdpEnum = Record<string, string>;
@@ -234,22 +234,46 @@ let _DayPicker: DayPickerComponent | null = null;
 let _UI: RdpEnum | null = null;
 let _SelectionState: RdpEnum | null = null;
 let _DayFlag: RdpEnum | null = null;
-let _rdpLoaded = false;
+let _rdpLoadPromise: Promise<void> | null = null;
 let _rdpFailed = false;
 
-function loadDayPickerDeps(): void {
-  if (_rdpLoaded) return;
-  _rdpLoaded = true;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const rdp = require("react-day-picker");
-    _DayPicker = rdp.DayPicker as DayPickerComponent;
-    _UI = rdp.UI as RdpEnum;
-    _SelectionState = rdp.SelectionState as RdpEnum;
-    _DayFlag = rdp.DayFlag as RdpEnum;
-  } catch {
-    _rdpFailed = true;
+function loadDayPickerDeps(): Promise<void> {
+  if (!_rdpLoadPromise) {
+    _rdpLoadPromise = (async () => {
+      try {
+        const rdp = await import("react-day-picker");
+        _DayPicker = rdp.DayPicker as unknown as DayPickerComponent;
+        _UI = rdp.UI as unknown as RdpEnum;
+        _SelectionState = rdp.SelectionState as unknown as RdpEnum;
+        _DayFlag = rdp.DayFlag as unknown as RdpEnum;
+      } catch {
+        _rdpFailed = true;
+        if (process.env.NODE_ENV === "development") {
+          console.warn(
+            "[@usefragments/ui] DatePicker: react-day-picker is not installed. " +
+              "Install it with: npm install react-day-picker"
+          );
+        }
+      }
+    })();
   }
+  return _rdpLoadPromise;
+}
+
+/** Kick off the lazy react-day-picker load on mount and re-render once it settles. */
+function useDayPickerDeps(): boolean {
+  const [, rerender] = React.useReducer((n: number) => n + 1, 0);
+  React.useEffect(() => {
+    if (_DayPicker || _rdpFailed) return;
+    let active = true;
+    void loadDayPickerDeps().then(() => {
+      if (active) rerender();
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  return _DayPicker !== null;
 }
 
 // ============================================
@@ -321,7 +345,10 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
   ref
 ) {
   const size = useResolvedControlSize(sizeProp);
-  // Load deps eagerly so date formatters are available in the trigger
+  // Warm the calendar dependency while the popover is still closed.
+  React.useEffect(() => {
+    void loadDayPickerDeps();
+  }, []);
   const [internalSelected, setInternalSelected] = React.useState<Date | null>(selectedProp ?? null);
   const [internalRange, setInternalRange] = React.useState<DateRange | null>(
     selectedRangeProp ?? null
@@ -567,10 +594,10 @@ function DatePickerCalendar({
     []
   );
 
-  loadDayPickerDeps();
-  if (_rdpFailed || !_DayPicker || !_UI) {
-    // react-day-picker is an optional peer: render nothing rather than crash
-    // when a consumer mounts <DatePicker> without installing the calendar dep.
+  const rdpReady = useDayPickerDeps();
+  if (!rdpReady || !_DayPicker || !_UI) {
+    // react-day-picker is an optional peer: render nothing while it resolves,
+    // and nothing at all when a consumer mounts <DatePicker> without it.
     return null;
   }
   const DayPicker = _DayPicker;
@@ -665,6 +692,8 @@ export const DatePicker = Object.assign(DatePickerRoot, {
   Content: DatePickerContent,
   Calendar: DatePickerCalendar,
   Preset: DatePickerPreset,
+  /** Start resolving react-day-picker before first render (optional). */
+  preload: loadDayPickerDeps,
 });
 
 // Re-export individual components
