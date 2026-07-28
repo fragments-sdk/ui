@@ -111,6 +111,61 @@ describe('CodeBlock', () => {
 />`);
   });
 
+  it('keeps the first indentation level in YAML, whose meaning depends on it', async () => {
+    // The JSX heuristic excludes line 0 from the common-indent calculation.
+    // normalizeCode trims first, so line 0 is always at column 0 by then, which
+    // used to strip one real level off any single-root YAML block and publish an
+    // invalid file. `image` must stay nested under the job, not become a sibling.
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <CodeBlock
+        language="yaml"
+        code={`fragments_governance:
+  image: node:22
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json`}
+      />
+    );
+    await user.click(screen.getByRole('button', { name: /copy code/i }));
+
+    expect(writeText).toHaveBeenCalledWith(`fragments_governance:
+  image: node:22
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json`);
+  });
+
+  it('still dedents inline JSX whose body carries the source file indentation', async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <CodeBlock
+        code={`<Card>
+      <Card.Header>Title</Card.Header>
+    </Card>`}
+      />
+    );
+    await user.click(screen.getByRole('button', { name: /copy code/i }));
+
+    expect(writeText).toHaveBeenCalledWith(`<Card>
+  <Card.Header>Title</Card.Header>
+</Card>`);
+  });
+
   it('supports collapsible mode', async () => {
     const user = userEvent.setup();
     const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join('\n');

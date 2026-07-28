@@ -250,23 +250,55 @@ function dedent(str: string): string {
 }
 
 /**
- * Normalize indentation while handling JSX where first line is already at column 0.
+ * Languages where leading whitespace carries meaning, so the first line has to
+ * take part in the common-indent calculation like any other.
  */
-function normalizeIndentation(str: string): string {
+const INDENTATION_SIGNIFICANT_LANGUAGES = new Set<CodeBlockLanguage>([
+  "yaml",
+  "yml",
+  "json",
+  "python",
+  "py",
+]);
+
+/**
+ * Normalize indentation while handling JSX where first line is already at column 0.
+ *
+ * The JSX case this exists for is a snippet authored inline, where the body
+ * carries the source file's indentation but the opening tag does not:
+ *
+ *     code={`<Card>
+ *           <Card.Header>Title</Card.Header>
+ *         </Card>`}
+ *
+ * Excluding line 0 from the minimum is what renders that correctly. But
+ * `normalizeCode` trims first, so line 0 has always had its indentation removed
+ * by the time we get here — which means the same rule strips one real level off
+ * any snippet with a single root and an indented body:
+ *
+ *     job:              job:
+ *       image: node  →  image: node   (now a sibling key, not a child)
+ *
+ * For YAML, JSON and Python that is not cosmetic: the rendered snippet is
+ * invalid, and copying it gives you a broken file. Those languages count line 0,
+ * which is plain dedent. Everything else keeps the JSX-friendly heuristic.
+ */
+function normalizeIndentation(str: string, language: CodeBlockLanguage): string {
   const lines = str.split("\n");
   if (lines.length <= 1) return str;
 
+  const firstLineCounts = INDENTATION_SIGNIFICANT_LANGUAGES.has(language);
   let minIndent = Infinity;
   const firstLineIndent = lines[0].match(/^(\s*)/)?.[1].length ?? 0;
 
-  for (let i = 1; i < lines.length; i += 1) {
+  for (let i = firstLineCounts ? 0 : 1; i < lines.length; i += 1) {
     const line = lines[i];
     if (line.trim().length === 0) continue;
     const indent = line.match(/^(\s*)/)?.[1].length ?? 0;
     minIndent = Math.min(minIndent, indent);
   }
 
-  if (firstLineIndent > 0) {
+  if (!firstLineCounts && firstLineIndent > 0) {
     minIndent = Math.min(minIndent, firstLineIndent);
   }
 
@@ -431,11 +463,11 @@ function formatLongJsxTags(code: string): string {
     .join("\n");
 }
 
-function normalizeCode(code: string): string {
+function normalizeCode(code: string, language: CodeBlockLanguage): string {
   const trimmed = code.trim();
   if (trimmed.length === 0) return "";
 
-  const normalized = normalizeIndentation(trimmed);
+  const normalized = normalizeIndentation(trimmed, language);
   const dedented = dedent(normalized);
   const withoutTrailingWhitespace = trimTrailingWhitespace(dedented);
   return formatLongJsxTags(withoutTrailingWhitespace);
@@ -562,7 +594,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   const [highlight, setHighlight] = useState<{ html: string; loading: boolean }>({ html: '', loading: true });
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
-  const trimmedCode = useMemo(() => normalizeCode(code), [code]);
+  const trimmedCode = useMemo(() => normalizeCode(code, language), [code, language]);
   const codeLines = trimmedCode.split("\n");
   const totalLines = codeLines.length;
   const shouldShowCollapse = collapsible && totalLines > collapsedLines;
