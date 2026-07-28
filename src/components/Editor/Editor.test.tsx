@@ -238,6 +238,9 @@ describe('Editor', () => {
 
   it('has no accessibility violations', async () => {
     const { container } = renderEditor();
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
     await expectNoA11yViolations(container);
   });
 });

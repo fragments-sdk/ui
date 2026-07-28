@@ -9,6 +9,10 @@ vi.mock('shiki', () => ({
   ),
 }));
 
+async function waitForHighlight(container: HTMLElement) {
+  await waitFor(() => expect(container.querySelector('pre.shiki')).toBeInTheDocument());
+}
+
 describe('CodeBlock', () => {
   it('renders pre and code elements', async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
@@ -17,20 +21,23 @@ describe('CodeBlock', () => {
     expect(container.querySelector('code')).toBeInTheDocument();
   });
 
-  it('renders a copy button by default', () => {
-    render(<CodeBlock code="const x = 1;" />);
+  it('renders a copy button by default', async () => {
+    const { container } = render(<CodeBlock code="const x = 1;" />);
     expect(screen.getByRole('button', { name: /copy code/i })).toBeInTheDocument();
+    await waitForHighlight(container);
   });
 
-  it('uses overlay copy placement by default when filename is not provided', () => {
+  it('uses overlay copy placement by default when filename is not provided', async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     expect(container.querySelector(`.${styles.header}`)).not.toBeInTheDocument();
     expect(container.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
+    await waitForHighlight(container);
   });
 
-  it('hides copy button when showCopy is false', () => {
-    render(<CodeBlock code="const x = 1;" showCopy={false} />);
+  it('hides copy button when showCopy is false', async () => {
+    const { container } = render(<CodeBlock code="const x = 1;" showCopy={false} />);
     expect(screen.queryByRole('button', { name: /copy/i })).not.toBeInTheDocument();
+    await waitForHighlight(container);
   });
 
   it('shows language-highlighted content after shiki resolves', async () => {
@@ -43,20 +50,24 @@ describe('CodeBlock', () => {
     });
   });
 
-  it('renders title and caption when provided', () => {
-    render(<CodeBlock code="x = 1" title="Example" caption="A simple example" />);
+  it('renders title and caption when provided', async () => {
+    const { container } = render(
+      <CodeBlock code="x = 1" title="Example" caption="A simple example" />
+    );
     expect(screen.getByText('Example')).toBeInTheDocument();
     expect(screen.getByText('A simple example')).toBeInTheDocument();
+    await waitForHighlight(container);
   });
 
-  it('renders filename in header', () => {
+  it('renders filename in header', async () => {
     const { container } = render(<CodeBlock code="x = 1" filename="app.ts" />);
     expect(screen.getByText('app.ts')).toBeInTheDocument();
     expect(container.querySelector(`.${styles.header}`)).toBeInTheDocument();
     expect(container.querySelector(`.${styles.copyOverlay}`)).not.toBeInTheDocument();
+    await waitForHighlight(container);
   });
 
-  it('supports explicit copy placement variants', () => {
+  it('supports explicit copy placement variants', async () => {
     const { container: headerContainer } = render(
       <CodeBlock code="const x = 1;" copyPlacement="header" />
     );
@@ -68,6 +79,8 @@ describe('CodeBlock', () => {
     );
     expect(overlayContainer.querySelector(`.${styles.header}`)).toBeInTheDocument();
     expect(overlayContainer.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
+    await waitForHighlight(headerContainer);
+    await waitForHighlight(overlayContainer);
   });
 
   it('copies code to clipboard on copy button click', async () => {
@@ -203,6 +216,7 @@ describe('CodeBlock', () => {
 
   it('has no accessibility violations', async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
+    await waitForHighlight(container);
     await expectNoA11yViolations(container);
   });
 });

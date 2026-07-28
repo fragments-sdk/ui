@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { act, render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { ComponentDefaultsProvider } from "../ComponentDefaults";
 import { Input } from "./index";
 
@@ -127,9 +127,11 @@ describe("Input", () => {
     expect(document.activeElement).not.toBe(input);
 
     // Simulate pressing ⌘K (Meta+K)
-    document.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true })
-    );
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true })
+      );
+    });
 
     expect(document.activeElement).toBe(input);
   });
@@ -138,9 +140,11 @@ describe("Input", () => {
     render(<Input aria-label="Search" shortcut="⌘K" shortcutBehavior="focus-input" />);
     const input = screen.getByRole("textbox");
 
-    document.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true })
-    );
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true })
+      );
+    });
 
     expect(document.activeElement).toBe(input);
   });
@@ -149,9 +153,11 @@ describe("Input", () => {
     render(<Input aria-label="Search" shortcut="⌘K" shortcutBehavior="focus-input" />);
     const input = screen.getByRole("textbox");
 
-    document.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "j", metaKey: true, bubbles: true })
-    );
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "j", metaKey: true, bubbles: true })
+      );
+    });
 
     expect(document.activeElement).not.toBe(input);
   });

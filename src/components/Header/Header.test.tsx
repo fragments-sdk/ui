@@ -133,7 +133,7 @@ describe('Header', () => {
       <Header>
         <Header.Nav aria-label="Main">
           <Header.NavItem asChild onClick={parentClick} data-testid="nav-item-link">
-            <a href="/docs" onClick={childClick}>Docs</a>
+            <a href="#docs" onClick={childClick}>Docs</a>
           </Header.NavItem>
         </Header.Nav>
       </Header>

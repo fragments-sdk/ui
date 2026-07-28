@@ -70,6 +70,7 @@ describe("Chip", () => {
 
   it("Chip.Group supports non-string chip children without value collisions", async () => {
     const user = userEvent.setup();
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     render(
       <Chip.Group>
         <Chip>
@@ -89,6 +90,10 @@ describe("Chip", () => {
 
     expect(alpha).toHaveAttribute("aria-pressed", "true");
     expect(beta).toHaveAttribute("aria-pressed", "true");
+    expect(warning).toHaveBeenCalledWith(
+      "Chip.Group: Chips with non-string children should provide a `value` prop."
+    );
+    warning.mockRestore();
   });
 
   it("Chip.Group forwards DOM props to the group root", () => {
