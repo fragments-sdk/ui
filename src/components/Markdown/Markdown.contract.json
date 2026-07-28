@@ -12,6 +12,18 @@
     "chat"
   ],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "react-markdown",
+      "version": ">=9.0.0",
+      "reason": "Optional — parses markdown; without it content renders as plain paragraphs."
+    },
+    {
+      "name": "remark-gfm",
+      "version": ">=4.0.0",
+      "reason": "Optional — adds GitHub-flavored markdown (tables, strikethrough, task lists)."
+    }
+  ],
   "sourcePath": "src/components/Markdown/index.tsx",
   "exportName": "Markdown",
   "propsSummary": [
@@ -115,7 +127,8 @@
   "ai": {
     "compositionPattern": "compound",
     "subComponents": [
-      "Root"
+      "Root",
+      "preload"
     ]
   },
   "provenance": {

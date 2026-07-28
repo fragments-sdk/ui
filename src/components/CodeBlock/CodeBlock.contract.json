@@ -12,6 +12,13 @@
     "diff"
   ],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "shiki",
+      "version": ">=1.0.0",
+      "reason": "Optional — provides syntax highlighting; without it code renders unhighlighted."
+    }
+  ],
   "sourcePath": "src/components/CodeBlock/index.tsx",
   "exportName": "CodeBlock",
   "propsSummary": [

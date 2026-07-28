@@ -12,6 +12,13 @@
     "theme"
   ],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "react-colorful",
+      "version": ">=5.0.0",
+      "reason": "Optional — renders the visual picker surface; the swatch and hex input work without it."
+    }
+  ],
   "sourcePath": "src/components/ColorPicker/index.tsx",
   "exportName": "ColorPicker",
   "propsSummary": [
@@ -200,7 +207,8 @@
   "ai": {
     "compositionPattern": "compound",
     "subComponents": [
-      "Root"
+      "Root",
+      "preload"
     ]
   },
   "provenance": {

@@ -5,6 +5,13 @@
   "category": "display",
   "tags": ["table", "data", "grid", "list", "sorting", "tanstack"],
   "status": "stable",
+  "dependencies": [
+    {
+      "name": "@tanstack/react-table",
+      "version": ">=8.0.0",
+      "reason": "Optional — powers sorting, selection, and expansion; without it DataTable renders a static, non-interactive table."
+    }
+  ],
   "sourcePath": "src/components/DataTable/index.tsx",
   "exportName": "DataTable",
   "propsSummary": [
@@ -281,7 +288,7 @@
   },
   "ai": {
     "compositionPattern": "simple",
-    "subComponents": ["Root", "Columns"],
+    "subComponents": ["Root", "Columns", "preload"],
     "commonPatterns": [
       "<DataTable columns={createColumns([{key:\"name\",header:\"Name\"},{key:\"status\",header:\"Status\"}])} data={[{name:\"Item 1\",status:\"Active\"}]} />"
     ]

@@ -9,10 +9,12 @@
   "exportName": "Badge",
   "propsSummary": [
     "children: node (required)",
-    "variant: default|success|warning|error|info|outline (default: default)",
+    "variant: default|success|warning|error|info|outline|label|dim (default: default)",
     "size: sm|md|lg (default: md)",
     "dot: boolean (default: false)",
+    "dotColor: string",
     "icon: node",
+    "active: boolean (default: false)",
     "onRemove: function",
     "announce: boolean (default: false)",
     "role: union"
@@ -25,10 +27,10 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual style indicating severity or category",
+      "description": "Visual style indicating severity or category. `label` is a hairline-bordered metadata pill (pair with dotColor); `dim` is transparent filter-pill chrome (pair with active).",
       "default": "default",
       "required": false,
-      "values": ["default", "success", "warning", "error", "info", "outline"]
+      "values": ["default", "success", "warning", "error", "info", "outline", "label", "dim"]
     },
     "size": {
       "type": "enum",
@@ -43,9 +45,20 @@
       "default": "false",
       "required": false
     },
+    "dotColor": {
+      "type": "string",
+      "description": "Color for the leading status dot. Applies to variant=\"label\" (and the generic dot prop). Accepts any CSS color including CSS custom properties.",
+      "required": false
+    },
     "icon": {
       "type": "node",
       "description": "Optional icon element before the text",
+      "required": false
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Marks variant=\"dim\" as the currently selected filter. Has no effect on other variants.",
+      "default": "false",
       "required": false
     },
     "onRemove": {
@@ -149,9 +162,11 @@
   "contract": {
     "propsSummary": [
       "children: ReactNode - badge label (required)",
-      "variant: default|success|warning|error|info|outline - visual style",
-      "size: sm|md - badge size",
+      "variant: default|success|warning|error|info|outline|label|dim - visual style",
+      "size: sm|md|lg - badge size",
       "dot: boolean - show status dot indicator",
+      "dotColor: string - color for the leading status dot",
+      "active: boolean - marks variant=\"dim\" as the selected filter",
       "onRemove: () => void - makes badge removable",
       "announce: boolean - opt into role=\"status\" + auto status aria-label"
     ],
