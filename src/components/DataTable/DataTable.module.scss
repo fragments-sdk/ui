@@ -2,6 +2,11 @@
 @use "../../tokens/mixins" as *;
 
 .wrapper {
+  // Tables may have a larger intrinsic width than a narrow flex or grid
+  // column. Keep that width inside this scroll container instead of allowing
+  // the container itself to widen the page.
+  min-width: 0;
+  max-width: 100%;
   --fui-data-table-bg: var(--fui-table-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
   --fui-data-table-header-bg: var(
     --fui-table-header-bg,

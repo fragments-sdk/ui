@@ -16,6 +16,7 @@
   "exportName": "ConversationList",
   "propsSummary": [
     "children: node (required)",
+    "showAvatars: boolean (default: true)",
     "autoScroll: union (default: smart)",
     "onScrollTop: function",
     "loadingHistory: boolean (default: false)",
@@ -28,6 +29,12 @@
       "type": "node",
       "description": "Message components",
       "required": true
+    },
+    "showAvatars": {
+      "type": "boolean",
+      "description": "Show avatars for messages and typing indicators in this conversation",
+      "default": "true",
+      "required": false
     },
     "autoScroll": {
       "type": "union",
@@ -78,6 +85,8 @@
     ],
     "guidelines": [
       "Use autoScroll=\"smart\" for best UX (only auto-scrolls when near bottom)",
+      "Set showAvatars={false} for avatarless transcripts; messages remove their outer inline inset automatically",
+      "Conversation chrome uses neutral surfaces and the body foreground; reserve brand accent for actions or semantic state",
       "Implement onScrollTop for loading older messages",
       "ConversationList composes your onScroll handler with internal auto-scroll/history logic",
       "Provide an emptyState for new conversations",
@@ -85,7 +94,7 @@
     ],
     "accessibility": [
       "Uses proper ARIA roles for separators",
-      "Typing indicator has aria-label",
+      "Typing indicator uses a status role with an aria-label",
       "Smooth scroll respects reduced motion preferences",
       "Keyboard navigation works within scrollable container"
     ]
@@ -100,6 +109,11 @@
       "name": "With Date Separators",
       "description": "Messages grouped by date",
       "code": "<ConversationList>\n  <ConversationList.DateSeparator date={new Date(Date.now() - 86400000)} />\n  <Message role=\"user\">\n    <Message.Content>A message from yesterday</Message.Content>\n  </Message>\n  <ConversationList.DateSeparator date={new Date()} />\n  <Message role=\"assistant\">\n    <Message.Content>And a message from today!</Message.Content>\n  </Message>\n</ConversationList>"
+    },
+    {
+      "name": "Without Avatars",
+      "description": "Compact transcript without message or typing-indicator avatars",
+      "code": "<ConversationList showAvatars={false}>\n  <Message role=\"user\">\n    <Message.Content>Hello!</Message.Content>\n  </Message>\n  <Message role=\"assistant\">\n    <Message.Content>How can I help?</Message.Content>\n  </Message>\n</ConversationList>"
     },
     {
       "name": "With Typing Indicator",
@@ -132,6 +146,7 @@
   "contract": {
     "propsSummary": [
       "children: ReactNode - Message components",
+      "showAvatars: boolean - show message and typing-indicator avatars (default: true)",
       "autoScroll: boolean | \"smart\" - scroll behavior (default: \"smart\")",
       "onScrollTop: (event?) => void - callback for loading history (receives scroll event)",
       "loadingHistory: boolean - show history loading spinner",

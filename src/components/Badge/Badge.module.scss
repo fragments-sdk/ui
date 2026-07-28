@@ -116,6 +116,27 @@ $fui-badge-dot-md: 6px !default;
   }
 }
 
+// "Still happening", as distinct from "is in this state". A live badge and a
+// settled one are otherwise the same object, and the difference between them is
+// the one thing a status board is scanned for — so it is carried by the only
+// motion the component has. Opacity only: nothing reflows, and a reader who has
+// asked for less motion loses the breathing and keeps the badge.
+.dotPulse {
+  animation: fui-badge-dot-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes fui-badge-dot-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dotPulse {
+    animation: none;
+  }
+}
+
 .icon {
   display: flex;
   align-items: center;

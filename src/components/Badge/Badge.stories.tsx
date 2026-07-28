@@ -32,6 +32,10 @@ const meta = {
       control: "boolean",
       description: "Show a colored dot indicator before the label",
     },
+    dotPulse: {
+      control: "boolean",
+      description: "Breathe the dot for a state that is still happening",
+    },
     announce: {
       control: "boolean",
       description: 'Opt into role="status" live announcement semantics',
@@ -81,6 +85,18 @@ export const SemanticStatus: Story = {
 
 export const WithDot: Story = {
   args: { variant: "success", dot: true, children: "Online" },
+};
+
+export const PulsingDot: Story = {
+  args: { variant: "info", dot: true, dotPulse: true, announce: true, children: "Running" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Two badges of the same colour can mean very different things — one state a board is waiting on, one it has finished with. The pulse is what separates them at a glance. Opacity only, so nothing reflows, and it stops for prefers-reduced-motion.",
+      },
+    },
+  },
 };
 
 export const Outline: Story = {

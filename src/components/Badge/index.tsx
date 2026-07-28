@@ -26,6 +26,9 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: "sm" | "md" | "lg";
   /** Show a status dot before the label */
   dot?: boolean;
+  /** Breathe the status dot, for a state that is still happening rather than
+   * one that has settled. Respects `prefers-reduced-motion`. */
+  dotPulse?: boolean;
   /** Color for the leading status dot. Applies to `variant="label"` (and the
    * generic `dot` prop). Accepts any CSS color including CSS custom properties. */
   dotColor?: string;
@@ -47,6 +50,7 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     variant = "default",
     size = "md",
     dot = false,
+    dotPulse = false,
     dotColor,
     icon,
     active = false,
@@ -90,7 +94,12 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       role={role ?? (announce ? "status" : undefined)}
       aria-label={effectiveAriaLabel}
     >
-      {dot && <span className={styles.dot} aria-hidden="true" />}
+      {dot && (
+        <span
+          className={[styles.dot, dotPulse && styles.dotPulse].filter(Boolean).join(" ")}
+          aria-hidden="true"
+        />
+      )}
       {icon && (
         <span className={styles.icon} aria-hidden="true">
           {icon}

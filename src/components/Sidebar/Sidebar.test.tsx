@@ -173,6 +173,23 @@ describe('Sidebar', () => {
     expect(onItemClick.mock.calls[0][0]).toBeDefined();
   });
 
+  it('marks a multiline item so its label stops truncating', () => {
+    const { container } = render(
+      <Sidebar aria-label="Test sidebar">
+        <Sidebar.Nav aria-label="Main">
+          <Sidebar.Section label="Section">
+            <Sidebar.Item multiline onClick={() => {}}>
+              <span>Title</span>
+              <span>Status · 2h ago</span>
+            </Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+
+    expect(container.querySelector('.itemMultiline')).toBeInTheDocument();
+  });
+
   it('passes event object to Sidebar.SubItem onClick', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();

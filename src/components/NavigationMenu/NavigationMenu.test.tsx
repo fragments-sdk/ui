@@ -413,8 +413,8 @@ describe('NavigationMenu', () => {
         <NavigationMenu>
           <NavigationMenu.List>
             <NavigationMenu.Item>
-              <NavigationMenu.Link href="/blog" asChild onClick={() => {}}>
-                <a href="/blog" onClick={childClick}>
+              <NavigationMenu.Link href="#blog" asChild onClick={() => {}}>
+                <a href="#blog" onClick={childClick}>
                   Blog
                 </a>
               </NavigationMenu.Link>

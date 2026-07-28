@@ -24,7 +24,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary", "ghost", "link", "danger", "outlined", "icon"],
+      options: ["primary", "secondary", "ghost", "link", "quiet", "danger", "outlined", "icon"],
       description: "Visual style variant",
     },
     size: {
@@ -57,6 +57,18 @@ export const Secondary: Story = {
 
 export const Ghost: Story = {
   args: { variant: "ghost", children: "Dismiss" },
+};
+
+export const Quiet: Story = {
+  args: { variant: "quiet", size: "xs", children: "feature/agent-composer" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A button that reads as text. No box, no height floor — it sits on whatever line it is in, which is what makes it usable in a meta row of 12px type where even a ghost button would be the tallest thing there.",
+      },
+    },
+  },
 };
 
 export const Danger: Story = {

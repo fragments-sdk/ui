@@ -45,7 +45,9 @@ import "@usefragments/ui/styles";
 import "./styles/globals.scss"; // your @use … with (…) seed overrides
 ```
 
-**Next.js users** — add `transpilePackages` to your `next.config.js`:
+**Next.js compatibility** — current releases can consume the package directly.
+If your Next.js version reports an untranspiled-package error or omits the
+stylesheet, add `transpilePackages` to `next.config.js`:
 
 ```js
 // next.config.js

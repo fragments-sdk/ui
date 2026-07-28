@@ -15,7 +15,7 @@
   "propsSummary": [
     "as: button|a",
     "children: node (required)",
-    "variant: primary|secondary|ghost|link|danger|outlined|outline|icon (default: \"primary\")",
+    "variant: primary|secondary|ghost|link|quiet|danger|outlined|outline|icon (default: \"primary\")",
     "size: xs|sm|md|lg (default: \"md\")",
     "icon: boolean",
     "fullWidth: boolean",
@@ -39,7 +39,7 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual style variant (\"icon\" is a convenience alias for outlined + icon-only layout, \"link\" is accent-coloured + transparent for tertiary CTAs)",
+      "description": "Visual style variant (\"icon\" is a convenience alias for outlined + icon-only layout, \"link\" is accent-coloured + transparent for tertiary CTAs, \"quiet\" is a neutral text button with no box and no height floor for meta lines and footnotes)",
       "default": "\"primary\"",
       "required": false,
       "values": [
@@ -47,6 +47,7 @@
         "secondary",
         "ghost",
         "link",
+        "quiet",
         "danger",
         "outlined",
         "outline",
@@ -135,6 +136,11 @@
       "code": "<Button variant=\"link\">View all →</Button>"
     },
     {
+      "name": "Quiet",
+      "description": "Neutral text button with no box and no height floor, for meta lines and footnotes",
+      "code": "<Button variant=\"quiet\" size=\"xs\">main</Button>"
+    },
+    {
       "name": "Danger",
       "description": "Destructive action requiring attention",
       "code": "<Button variant=\"danger\">Delete Item</Button>"
@@ -184,7 +190,7 @@
   ],
   "contract": {
     "propsSummary": [
-      "variant: primary|secondary|ghost|link|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only, link = accent transparent)",
+      "variant: primary|secondary|ghost|link|quiet|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only, link = accent transparent, quiet = neutral text button, no box)",
       "size: xs|sm|md|lg (default: md, xs for inline row-action controls)",
       "disabled: boolean - disables interaction",
       "type: button|submit|reset (default: button)",

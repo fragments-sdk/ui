@@ -8,9 +8,26 @@
 .markdown {
   @include text-base;
   word-wrap: break-word;
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  // Prose colour is a hook, not a constant. Markdown is routinely rendered on a
+  // surface that carries its own foreground — a Message bubble on the accent
+  // fill, an Alert, a Callout — and a fixed grey there is unreadable rather than
+  // quiet. Those surfaces point the hook at `currentColor`; on a plain page it
+  // still resolves to the secondary ramp prose has always used.
+  color: var(--fui-markdown-text, var(--fui-text-secondary, #{$fui-text-secondary}));
   font-size: var(--fui-font-size-md, $fui-font-size-md);
   line-height: var(--fui-line-height-prose, $fui-line-height-prose);
+
+  // Outer spacing belongs to whatever holds the prose — a Message bubble's
+  // padding, a Card's, a page's rhythm. The block's own first and last margins
+  // would add to it, or collapse through it, and either way the container ends
+  // up looking mis-padded through no fault of its own.
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
 
   // ----------------------------------------
   // Headings

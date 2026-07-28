@@ -19,9 +19,11 @@ export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'colo
   /** Font weight.
    * @default "normal" */
   weight?: 'normal' | 'medium' | 'semibold' | 'bold';
-  /** Text color. `"muted"` is an alias for `"tertiary"`.
+  /** Text color. `"muted"` is an alias for `"tertiary"`. `"success" | "warning" | "danger"`
+   * are for a run of text that carries a state on its own; prefer Badge or Alert when the
+   * state deserves a container.
    * @default "primary" */
-  color?: 'primary' | 'secondary' | 'tertiary' | 'muted';
+  color?: 'primary' | 'secondary' | 'tertiary' | 'muted' | 'success' | 'warning' | 'danger';
   /** Font family.
    * @default "sans" */
   font?: 'sans' | 'mono';

@@ -21,6 +21,7 @@
     "placeholder: string",
     "options: array",
     "size: sm|md|lg (default: md)",
+    "variant: field|ghost (default: field)",
     "className: string",
     "label: string",
     "helperText: string",
@@ -95,6 +96,13 @@
       "default": "md",
       "required": false,
       "values": ["sm", "md", "lg"]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Visual treatment. \"ghost\" drops the field shell for a compact borderless control, for toolbars and dense rows. Pair with size=\"sm\".",
+      "default": "field",
+      "required": false,
+      "values": ["field", "ghost"]
     },
     "className": {
       "type": "string",
@@ -225,8 +233,10 @@
       "placeholder: string - placeholder text",
       "disabled: boolean - disable select",
       "size: sm|md|lg (default: md)",
+      "variant: field|ghost (default: field) - ghost is borderless, for toolbars",
       "options: SelectOption[] - convenience API for simple option lists",
-      "maxVisibleItems: number - max visible options before scrolling (default 4)"
+      "maxVisibleItems: number - max visible options before scrolling (default 4)",
+      "Select.Trigger accepts an icon prop for a leading adornment"
     ],
     "a11yRules": ["A11Y_SELECT_KEYBOARD", "A11Y_SELECT_LABEL"]
   },
