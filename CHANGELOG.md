@@ -1,5 +1,78 @@
 # @usefragments/ui
 
+## 1.4.0
+
+### Minor Changes
+
+- [#406](https://github.com/fragments-sdk/fragments/pull/406) [`dc6d0ba`](https://github.com/fragments-sdk/fragments/commit/dc6d0ba60a1ecd1faa7e7f3ee5364a79783e1de2) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Agent-composer primitives, and fixes found building one.
+
+  **`Prompt` gains an `appearance` axis.** `appearance="seamless"` makes the whole card one writing surface: the toolbar stops painting a filled footer over it, the rule between the two goes, the border and the animated beam go with them, and the textarea takes the room a first line of prose deserves. One gutter runs down the card, so the placeholder, the first glyph in the toolbar and any attachment chip all sit on the same line. Its controls share the dense 32px token scale with body-sized labels and standard glyphs, keeping selects, attach and submit affordances optically aligned without making the composer feel like a form. Secondary controls keep their hit areas but not visible button boxes across hover, open and pointer-focus states; keyboard focus uses a restrained baseline, while Submit remains the one persistent shape. Submit mirrors the Attach glyph's ink gutter at the opposite edge, balancing the two visible affordances across the toolbar. `appearance="panel"` is the default and is exactly today's look, so nothing changes for existing consumers. The axis is separate from `variant`, which stays about positioning.
+
+  **`Prompt.Attach` and `Prompt.Attachments`,** plus an `onFiles` prop on the root. Files reach a composer three ways — the attach button, a pasted screenshot, a drop anywhere on the card — and all three arrive through the one callback, so a consumer writes a single handler. `Prompt.Attachments` renders what is attached as removable chips above the message, with a thumbnail for images, because a screenshot is recognised by its picture rather than by `Screenshot 2026-07-24 at 22.06.09.png`. A pasted image arrives from the clipboard unnamed, so it is given a stable one. Dropping lights the whole card rather than opening a dashed rectangle inside it: the target is the composer, not a region of it.
+
+  **`SelectOption` gains `hint`** — a dimmed qualifier rendered after the label in both the trigger and the list, for when the label alone is ambiguous but the qualifier is not what you are choosing by: a tier beside a model, a path beside a filename.
+
+  **`Prompt.Select`** — a choice that scopes the submission: model, agent, tone, which project this runs against. `ModeButton` covers a setting you toggle; this covers one you pick from a list, which every non-trivial composer ends up needing. It is a `Select` throughout, so the popup, keyboard handling and selection state are the ones the rest of the library already uses. The trigger shows the current choice rather than a field label, because in a toolbar the choice is the only part worth the width.
+
+  **`Select` gains `variant="ghost"`** and a `Select.Trigger` `icon` prop. Ghost is the same control with the field shell taken off — for toolbars and dense rows, where a bordered field reads as a form rather than as a setting. It matches the padding, radius, type scale and hover of the other compact controls that share those rows. This lives on `Select` rather than on each consumer so the styling wins inside its own stylesheet, instead of depending on which CSS module a bundler happens to inject last.
+
+  **`Button` gains `variant="quiet"`** — the neutral sibling of `link`. Transparent at rest and on hover, with only the foreground moving, and the one variant that drops the 32px interactive floor, because a text button has no box to hold open. That floor is right for anything that looks like a control and wrong for a branch name in a 12px meta row, which is otherwise the moment every product stops using the library and writes its own `<button>`.
+
+  **`Text` gains `color="success" | "warning" | "danger"`.** The neutral ramp was the only thing on offer, so a figure that goes red past a threshold — a context meter, a countdown, a delta — had to reach past the component for a semantic token. The words still carry the meaning; the colour only reinforces it, and anything that deserves a container should still be a `Badge` or an `Alert`.
+
+  **`Badge` gains `dotPulse` and `Sidebar.Item` gains `multiline`** — the two places a status board reached past the library. A live status and a settled one are the same badge in the same colour, and the pulse is what separates them at a glance; a sidebar row that is a list entry rather than a nav link needs a title over a status line, which the single-line ellipsis forbids. Both were previously only reachable by writing a selector against the library's own class names, which breaks the next time those names change.
+
+  **`ConversationList` gains `showAvatars`.** It defaults to the existing avatar-on presentation and lets compact transcripts hide message and typing-indicator avatars in one place. Avatarless messages also drop their outer inline inset, including a standalone `Message` whose `avatar` is `null`, so hiding the glyph does not leave its layout behind. In that compact presentation assistant content is flush with the transcript measure, while the user's own bubble keeps `space-1`/`space-2` padding so authorship remains visible. User bubbles are capped at 80% of the available inline measure, keeping them visibly distinct from assistant responses even when the prompt is long.
+
+  **Neutral transcript and submit surfaces.** `Message` uses the neutral tertiary surface and primary text, while `Prompt.Submit` uses a neutral inverse treatment. In a product whose accent carries state — a live dot, a progress bar, a running badge — spending it again on every message the reader wrote and on a permanently visible send button leaves the eye no way to tell a state from a surface.
+
+  **Fixes**
+  - `Markdown` never rendered markdown in a browser bundle. It resolved react-markdown with `require()`, which is not defined in ESM output, so the ReferenceError hit its own catch, `loadFailed` went true, and every render fell through to the plain-text fallback — you got literal asterisks and backticks, with no error and a warning that blamed a missing dependency that was installed. It now uses the same lazy `import()` shape as `CodeBlock`'s shiki loader, plus `Markdown.preload()` for apps that would rather not show the fallback for the first frame. A test now asserts a real heading element, which the fallback cannot produce.
+  - `CodeBlock` with `wordWrap` was double-spaced. The variant switched `.line` to `display: block`, which under `white-space: pre-wrap` promotes the newline shiki emits between lines into a line box of its own. Wrapped blocks now keep the code rhythm.
+  - `Markdown` hardcoded the prose grey, so a Markdown body inside a `Message` bubble sat at roughly 2:1 against the accent fill. Its colour is now the `--fui-markdown-text` hook, defaulting to the same secondary ramp as before; `Message.Content` points the hook at `currentColor` so prose takes the bubble's own foreground.
+  - `ConversationList` auto-scroll only fired when the number of its **direct** children grew. A list whose messages are wrapped in a single element — a measured column, a virtualiser, a fragment the caller maps into — pinned once on mount and never again, so a streaming reply scrolled out from under the reader. And even when the count did change, height kept moving afterwards as markdown reflowed and syntax highlighting landed. It now watches rendered height, which is what actually moves the bottom of the list.
+  - `ConversationList.TypingIndicator` put its accessible label on a generic `div`, where current ARIA rules prohibit it. The indicator now carries `role="status"`, matching the live state it communicates.
+  - Conversation chrome, user messages and Pagination's current page no longer spend the brand accent on passive surfaces. ConversationList pins inherited prose to the body foreground, Message uses neutral user surfaces and text (including its default user avatar), and Pagination uses body text over the neutral active surface while retaining semantic focus, error and info colors.
+
+- [#406](https://github.com/fragments-sdk/fragments/pull/406) [`6cd94c1`](https://github.com/fragments-sdk/fragments/commit/6cd94c142a12f718b4eb6f5259aab885367e572b) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Dropdown and menu items step down to 12px.
+
+  Every popup list — `Menu`, `Select`, `Combobox`, `Listbox`, `Command`, `DatePicker`, `NavigationMenu` — shared the body text size through the `popup-item` mixin, which put an open list a size above the compact trigger that opened it. A popup is a dense list scanned against its trigger, so it now sits one step below chrome text at `--fui-font-size-xs`.
+
+  The size is named: `$fui-popup-item-font-size` / `--fui-popup-item-font-size`. It has to be, because `Select`, `Listbox` and `Combobox` each derive their scroll viewport height from the same number to show N items plus a half-peek scroll hint. Those three now read the token the mixin sets, so the item height and the item can no longer disagree — previously the coupling was a comment ("derived from text-base font") and nothing else. Override the custom property to retheme every popup surface at once.
+
+  `Menu`'s check indicator shrinks from `1rem` to `0.75rem`, sized to the text beside it rather than to an icon slot. Every row in a checkable menu reserves that column so labels stay aligned, which makes its width pure indent on every unchecked row; at `1rem` against the smaller text it read as a margin rather than a marker.
+
+### Patch Changes
+
+- [#406](https://github.com/fragments-sdk/fragments/pull/406) [`f7e8072`](https://github.com/fragments-sdk/fragments/commit/f7e8072eebfca536a338106b745eceaa32a2fe26) Thanks [@ConanMcN](https://github.com/ConanMcN)! - `Select`, `Combobox` and `Listbox` show the number of rows they claim to.
+
+  Each of the three computed its scroll viewport from a row height it worked out
+  longhand, and all three charged `$fui-space-2` of vertical padding for a row
+  that `popup-item` pads with `$fui-space-1`. The derived row came out at 46px
+  against a real 32px, so "4.5 items" was really closer to six and a half — and
+  any popup with six or seven options simply grew past its own content and never
+  scrolled, losing the half-row peek that tells you there is more below.
+
+  The maths now lives in one place, `popup-scroll-viewport`, and every term reads
+  the token that draws it: `--fui-popup-padding`, `--fui-popup-row-gap`,
+  `--fui-popup-item-padding-block` and `--fui-popup-item-padding-inline` are new
+  custom properties, set on `:root` and consumed by `popup-container` and
+  `popup-item` themselves. Change the padding and the peek follows; the two can no
+  longer disagree. The calc also now accounts for the flex gap between rows and
+  the 1px border these popups draw, both of which it previously ignored.
+
+  Visible effect: a popup with more options than fit is now taller than four rows
+  and shorter than five, with the fifth clipped in half. Restyling the popup scale
+  through the new properties moves that boundary correctly.
+
+- [#408](https://github.com/fragments-sdk/fragments/pull/408) [`3cf2bcd`](https://github.com/fragments-sdk/fragments/commit/3cf2bcd34f327a419bf0f49328d50e202f59ace6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix optional peer detection in browser ESM builds. DataTable, Chart, DatePicker, ColorPicker, Editor, and Markdown loaded their optional peers with `require()`, which is undefined in browser ESM bundles — so an installed peer was never picked up, and DataTable crashed the page outright. All six now resolve their peers with a dynamic `import()`.
+  - DataTable never throws again when `@tanstack/react-table` is absent: it renders skeleton rows while the peer resolves, and a static, non-interactive table when it is not installed.
+  - Chart tooltips and legends, the DatePicker calendar, the ColorPicker surface, Editor rich-text mode, and Markdown parsing now activate once their peer resolves, and keep their existing graceful fallbacks when it is missing.
+  - Each of these components gains an optional `preload()` helper to resolve its peer before first render and skip the brief fallback frame.
+  - The compound `Chart` component is now exported from the package root, alongside the `ChartContainer`/`ChartTooltip`/`ChartLegend` parts.
+  - Component contracts now document each optional install requirement (for example `npm install recharts` for Chart), so the docs Setup section lists what to install up front.
+  - The Badge contract now documents the `label` and `dim` variants and the `dotColor` and `active` props.
+
 ## 1.3.3
 
 ### Patch Changes
