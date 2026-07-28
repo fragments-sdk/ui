@@ -5,6 +5,13 @@ import * as axeMatchers from 'vitest-axe/matchers';
 expect.extend(jestDomMatchers);
 expect.extend(axeMatchers);
 
+// axe-core requests pseudo-element styles while auditing. jsdom logs a noisy
+// "not implemented" error for that optional second argument, then falls back
+// to the element's own style. Make that fallback explicit in tests.
+const jsdomGetComputedStyle = window.getComputedStyle.bind(window);
+window.getComputedStyle = (element: Element, _pseudoElement?: string | null): CSSStyleDeclaration =>
+  jsdomGetComputedStyle(element);
+
 // Polyfill PointerEvent for Base UI >=1.3.0 click handling in jsdom
 if (typeof global.PointerEvent === 'undefined') {
   // @ts-expect-error — minimal polyfill sufficient for Base UI's instanceof check

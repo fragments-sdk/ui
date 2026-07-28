@@ -215,6 +215,12 @@ describe("Tabs", () => {
 
   it("has no accessibility violations", async () => {
     const { container } = renderTabs();
+    await waitFor(() =>
+      expect(screen.getByRole("tab", { name: /tab one/i })).toHaveAttribute(
+        "aria-selected",
+        "true"
+      )
+    );
     await expectNoA11yViolations(container);
   });
 

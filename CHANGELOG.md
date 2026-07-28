@@ -1,5 +1,17 @@
 # @usefragments/ui
 
+## 1.3.3
+
+### Patch Changes
+
+- [#402](https://github.com/fragments-sdk/fragments/pull/402) [`19a7c9b`](https://github.com/fragments-sdk/fragments/commit/19a7c9b8e31e0fb9aee0b31a6ad4540413b3b081) Thanks [@ConanMcN](https://github.com/ConanMcN)! - `CodeBlock` no longer strips an indentation level from YAML, JSON and Python samples.
+
+  Indentation is normalized before highlighting, and that step deliberately excludes the first line from the common-indent calculation so an inline JSX snippet whose body carries the surrounding file's indentation still renders flush. But the code is trimmed first, which puts the first line at column 0 every time — so for any block with a single root and an indented body, one real level was removed. A published YAML job rendered its keys as siblings of the job name instead of children, which is not a cosmetic difference: copying the block gave you an invalid file.
+
+  Languages where whitespace carries meaning (`yaml`, `yml`, `json`, `python`, `py`) now count the first line like any other. JSX and TypeScript blocks are unchanged, and both behaviours are covered by tests.
+
+- [`1707b18`](https://github.com/fragments-sdk/fragments/commit/1707b183720ab9eacbd96a48d45c5c2bd04f9127) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Keep data tables inside their horizontal scroll container on narrow layouts.
+
 ## 1.3.2
 
 ### Patch Changes
