@@ -144,6 +144,11 @@ export interface SidebarItemProps extends Omit<React.HTMLAttributes<HTMLElement>
   href?: string;
   /** Click handler (renders as button) */
   onClick?: React.MouseEventHandler<HTMLElement>;
+  /**
+   * Let the label be a block instead of one truncating line — a title over a
+   * status line, a subject over a preview. For list rows rather than nav links.
+   */
+  multiline?: boolean;
   /** Whether this item has a submenu */
   hasSubmenu?: boolean;
   /** Whether submenu is expanded (controlled) */
@@ -774,6 +779,7 @@ function SidebarItem({
   badge,
   href,
   onClick,
+  multiline = false,
   hasSubmenu = false,
   expanded: controlledExpanded,
   defaultExpanded = false,
@@ -796,6 +802,7 @@ function SidebarItem({
     styles.item,
     active && styles.itemActive,
     disabled && styles.itemDisabled,
+    multiline && styles.itemMultiline,
     hasSubmenu && styles.itemHasSubmenu,
     expanded && styles.itemExpanded,
     className,

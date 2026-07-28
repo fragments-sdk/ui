@@ -67,7 +67,7 @@ const meta = {
     },
     color: {
       control: 'select',
-      options: ['primary', 'secondary', 'tertiary', 'muted'],
+      options: ['primary', 'secondary', 'tertiary', 'muted', 'success', 'warning', 'danger'],
       description: 'Text color (muted is an alias for tertiary)',
     },
     font: {
@@ -117,6 +117,18 @@ export const Bold: Story = {
 
 export const Secondary: Story = {
   args: { color: 'secondary', children: 'Secondary color text' },
+};
+
+export const SemanticColor: Story = {
+  args: { size: 'xs', color: 'warning', children: '91% of context used' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'For a run of text that carries a state on its own. Reach for Badge or Alert when the state deserves a container — this is for when it is one figure inside a line and a box would be more chrome than the fact is worth. The words still have to carry the meaning; the colour only reinforces it.',
+      },
+    },
+  },
 };
 
 export const Monospace: Story = {

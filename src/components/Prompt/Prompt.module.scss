@@ -114,6 +114,198 @@
 }
 
 // ============================================
+// Seamless appearance
+// ============================================
+
+// One continuous writing surface instead of a field with a footer.
+//
+// The whole point is that nothing inside the card announces itself: no rule
+// under the toolbar, no stroke around the edge, no animated border. What is
+// left is a single quiet sheet, lighter than the page, with the controls
+// resting on it — which is what makes the text you are writing the only thing
+// with any weight. Each selector below is one class deeper than the rule it
+// replaces, so this wins wherever the stylesheet happens to land.
+//
+// One gutter runs down the card. `--_gutter` is the distance from the card's
+// edge to the ink of everything in it, and every child is padded from it
+// rather than given a number of its own, so the placeholder, the first glyph
+// in the toolbar and any attachment chip all sit on the same line.
+.seamless {
+  --_gutter: var(--fui-space-3, #{$fui-space-3});
+  // Every band is inset by its own children's padding, so what lands on the
+  // gutter is the ink — the first character of the placeholder, the first glyph
+  // in the toolbar, the first pixel of a thumbnail — and not the invisible box
+  // around it. Controls and chips carry different padding, so each band
+  // subtracts its own.
+  --_control-padding: var(--fui-space-2, #{$fui-space-2});
+  --_chip-padding: var(--fui-space-1, #{$fui-space-1});
+
+  // Composer controls are compact, but still need enough visual weight to read
+  // as one deliberate toolbar. The xs button token is the dense 32px control
+  // height in every density preset; scoping all three inputs to it keeps
+  // selects, attach, action and submit controls on one optical grid without a
+  // one-off dimension.
+  --fui-target-size-min: var(--fui-button-height-xs, #{$fui-button-height-xs});
+  --fui-button-height-sm: var(--fui-button-height-xs, #{$fui-button-height-xs});
+  --fui-input-height-sm: var(--fui-button-height-xs, #{$fui-button-height-xs});
+
+  border-color: transparent;
+  border-radius: var(--fui-radius-xl, $fui-radius-xl);
+
+  // The beam draws a 1px animated border by painting a gradient and masking
+  // out everything but the edge. Seamless has no edge to draw, so both layers
+  // go and the card paints its own surface instead of borrowing the mask's.
+  &::before,
+  &::after {
+    display: none;
+  }
+
+  // Focus lives in the caret and in the fact that the surface is the thing you
+  // are typing on. A ring here would be the loudest object on the page.
+  &:focus-within {
+    border-color: transparent;
+  }
+
+  .toolbar {
+    background-color: transparent;
+    border-top: none;
+    padding: 0 calc(var(--_gutter) - var(--_control-padding)) var(--_gutter);
+  }
+
+  // The message is the content of the card, not a field in it. The bottom is
+  // tight because the toolbar below is part of the same surface rather than a
+  // footer under it, and the top is tight for the same reason when a scope
+  // band sits above.
+  .textarea {
+    padding: var(--_gutter) var(--_gutter) var(--fui-space-1, $fui-space-1);
+  }
+
+  .attachments {
+    padding: var(--_gutter) calc(var(--_gutter) - var(--_chip-padding)) 0;
+    gap: var(--fui-space-1, $fui-space-1);
+  }
+
+  // Two bands in a row would otherwise stack their gutters into a gap twice
+  // the size of the one at the card's edge.
+  .attachments + .textarea,
+  .tabs + .attachments {
+    padding-top: var(--fui-space-1, $fui-space-1);
+  }
+
+  // In a panel the tabs are a strip the card is docked to, so they are centred
+  // and bordered like a folder tab. Seamless has no card edge for them to dock
+  // against, so they become the top band of the one surface: left-aligned on
+  // the gutter with the rest of it, and stripped of the chrome that only made
+  // sense as an edge.
+  .tabs {
+    margin-bottom: 0;
+    justify-content: flex-start;
+    padding: var(--_gutter) calc(var(--_gutter) - var(--_control-padding)) 0;
+  }
+
+  .tabsInner {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    gap: var(--fui-space-1, $fui-space-1);
+  }
+
+  // The band above already sets the top of the card, so the message starts
+  // from the tighter of the two spacings rather than adding a second gutter.
+  .tabs + .textarea {
+    padding-top: var(--fui-space-1, $fui-space-1);
+  }
+
+  // A centred glyph in a square box puts its ink half a box in from the
+  // gutter, which reads as the one thing in the card that is out of line.
+  // Giving it the same inline padding as its neighbours puts the glyph where
+  // the placeholder above it starts, and costs only a wider hover.
+  .attach {
+    width: auto;
+    padding-inline: var(--_control-padding);
+
+    svg {
+      width: var(--fui-icon-md, $fui-icon-md);
+      height: var(--fui-icon-md, $fui-icon-md);
+    }
+  }
+
+  // Labels and glyphs share the body scale inside a seamless composer. The
+  // trigger still truncates at its cap, but no longer looks like caption text
+  // floating between larger attach and submit affordances.
+  .select,
+  .modeButton {
+    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  }
+
+  .select {
+    svg {
+      width: var(--fui-icon-md, $fui-icon-md);
+      height: var(--fui-icon-md, $fui-icon-md);
+    }
+  }
+
+  // These are settings on the message, not a row of buttons. Preserve their
+  // full target boxes for hit testing, but keep those boxes visually absent.
+  // Send remains the only persistent shape in the composer.
+  .select,
+  .attach,
+  .modeButton {
+    &:hover:not(:disabled):not([data-disabled]),
+    &:active:not(:disabled):not([data-disabled]) {
+      background-color: transparent;
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    // Keyboard focus still needs a visible location, but a restrained baseline
+    // reads as focus on inline content rather than another rounded button.
+    &:focus-visible {
+      outline: none;
+      box-shadow: inset 0 calc(var(--fui-space-px, #{$fui-space-px}) * -2) 0
+        var(--fui-text-primary, #{$fui-text-primary});
+    }
+  }
+
+  .select {
+    // Opening a menu identifies the active choice through its popup and text
+    // color. A held surface behind the trigger is unnecessary visual chrome.
+    &[data-popup-open] {
+      border-color: transparent;
+      background-color: transparent;
+      box-shadow: none;
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    // Pointer focus must not inherit the field shell's accent treatment.
+    &:focus:not(:focus-visible) {
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  // Round affordances track the scoped target size rather than the 2rem they
+  // are given for a form.
+  .submit,
+  .actionButton {
+    width: var(--fui-target-size-min);
+    height: var(--fui-target-size-min);
+
+    svg {
+      width: var(--fui-icon-md, $fui-icon-md);
+      height: var(--fui-icon-md, $fui-icon-md);
+    }
+  }
+
+  // Attach's glyph reaches the leading ink gutter through its own control
+  // padding. Give the filled Submit shape the same inset at the trailing edge
+  // so the two visible affordances balance across the toolbar.
+  .submit {
+    margin-inline-end: var(--_control-padding);
+  }
+}
+
+// ============================================
 // Textarea
 // ============================================
 
@@ -293,6 +485,159 @@
 }
 
 // ============================================
+// Attach (bare icon control)
+// ============================================
+
+// A `+` with nothing around it. ActionButton is a filled circle, which is the
+// right weight for a primary affordance in the bar; attaching a file is not
+// one — it should be findable and otherwise silent, so this is the mode button
+// with a square footprint and no label.
+.attach {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  // The target size rather than a spacing step, so it tracks whatever scale
+  // the surface around it has established.
+  width: var(--fui-target-size-min, $fui-target-size-min);
+  height: var(--fui-target-size-min, $fui-target-size-min);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  background-color: transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--fui-bg-active, $fui-bg-active);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: var(--fui-icon-sm, $fui-icon-sm);
+    height: var(--fui-icon-sm, $fui-icon-sm);
+  }
+}
+
+// ============================================
+// Attachments strip
+// ============================================
+
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fui-space-1, $fui-space-1);
+  margin: 0;
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3) 0;
+  list-style: none;
+}
+
+// What is attached, stated once and removable. Sits above the message rather
+// than below the toolbar, because it is part of what you are sending, not a
+// setting on the sending.
+// Sized off the same target as everything else in the bar, so a chip and a
+// control are the same height and the card has one horizontal rhythm.
+.attachment {
+  --_chip-height: var(--fui-target-size-min, #{$fui-target-size-min});
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  height: var(--_chip-height);
+  max-width: 15rem;
+  padding-inline: var(--fui-space-1, $fui-space-1);
+  // Outlined rather than filled. A chip sits on whatever surface the prompt is
+  // using, and on an elevated card the raised fill is the same value as the
+  // card itself — so the object would disappear exactly where it is most
+  // likely to be used. An edge reads on any of them.
+  border: 1px solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}
+
+// A screenshot is recognised by its picture, not by "Screenshot 2026-07-24 at
+// 22.06.09.png", so an image attachment leads with a thumbnail. It fills the
+// chip's height less the padding, which keeps it square without a second
+// number to keep in step.
+.attachmentThumb {
+  width: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
+  height: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
+  flex-shrink: 0;
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  object-fit: cover;
+}
+
+// The name is the only part worth the width, so it is the only part that grows
+// — and the only part that gives way when there is none.
+.attachmentName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachmentSize {
+  flex-shrink: 0;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.attachmentRemove {
+  @include button-reset;
+  @include interactive-base;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
+  height: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background-color: transparent;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+
+  &:hover {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  svg {
+    width: var(--fui-icon-xs, $fui-icon-xs);
+    height: var(--fui-icon-xs, $fui-icon-xs);
+  }
+}
+
+// Dropping a file anywhere on the card counts. The whole surface lights rather
+// than a dashed rectangle appearing inside it, because the target is the
+// composer, not some region of it.
+.dragging {
+  background-color: var(--fui-bg-hover, $fui-bg-hover);
+}
+
+// ============================================
+// Select (ghost Select, sized for the toolbar)
+// ============================================
+
+// The chosen value can be arbitrarily long — a model name, a file path — and
+// must not push the submit button off the row. Select's ghost trigger already
+// allows shrinking and ellipsises its value; this only caps how far it grows.
+.select {
+  max-width: 15rem;
+}
+
+// ============================================
 // Usage indicator
 // ============================================
 
@@ -315,15 +660,17 @@
   width: 2rem;
   height: 2rem;
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-color-on-accent, $fui-color-on-accent);
+  // A neutral inverse keeps send visibly primary without spending the product
+  // accent, which may already encode agent state.
+  background-color: var(--fui-text-primary, #{$fui-text-primary});
+  color: var(--fui-bg-elevated, #{$fui-bg-elevated});
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    background-color: var(--fui-text-secondary, #{$fui-text-secondary});
   }
 
   &:active:not(:disabled) {
-    background-color: var(--fui-color-accent-active, $fui-color-accent-active);
+    background-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
   }
 
   &:disabled {

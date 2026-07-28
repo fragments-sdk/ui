@@ -1,6 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { render, screen, expectNoA11yViolations } from '../../test/utils';
 import { Message } from './index';
+
+const messageStyles = readFileSync(
+  resolve(process.cwd(), 'src/components/Message/Message.module.scss'),
+  'utf8'
+);
 
 describe('Message', () => {
   it('renders with data-role attribute', () => {
@@ -29,6 +36,41 @@ describe('Message', () => {
     );
     // Default avatar renders an SVG
     expect(container.querySelector('svg')).toBeInTheDocument();
+  });
+
+  it('marks avatarless assistant and user messages for compact role-aware spacing', () => {
+    const { container } = render(
+      <>
+        <Message role="assistant" avatar={null}>
+          <Message.Content>Avatarless assistant</Message.Content>
+        </Message>
+        <Message role="user" avatar={null}>
+          <Message.Content>Avatarless user</Message.Content>
+        </Message>
+      </>
+    );
+
+    expect(container.querySelector('svg')).not.toBeInTheDocument();
+    expect(container.querySelector('[data-role="assistant"]')).toHaveClass('withoutAvatar');
+    expect(container.querySelector('[data-role="user"]')).toHaveClass('withoutAvatar');
+  });
+
+  it('caps only the user bubble width', () => {
+    expect(messageStyles).toMatch(
+      /\.user\s*\{[\s\S]*?\.content\s*\{[\s\S]*?max-inline-size:\s*80%;/
+    );
+    expect(messageStyles.match(/max-inline-size:\s*80%;/g)).toHaveLength(1);
+  });
+
+  it('uses neutral message chrome instead of brand accent', () => {
+    expect(messageStyles).toContain(
+      'background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);'
+    );
+    expect(messageStyles).toContain(
+      'color: var(--fui-text-primary, $fui-text-primary);'
+    );
+    expect(messageStyles).not.toContain('--fui-color-accent');
+    expect(messageStyles).not.toContain('--fui-color-on-accent');
   });
 
   it('sets data-status attribute', () => {

@@ -12,9 +12,15 @@ import styles from "./Select.module.scss";
 
 export type SelectValue = string;
 
+export type SelectVariant = "field" | "ghost";
+
 export interface SelectOption {
   value: SelectValue;
   label: string;
+  /** A dimmed qualifier after the label, in the trigger as well as the list —
+   * a tier beside a model, a path beside a filename. Use it when the label
+   * alone is ambiguous but the qualifier is not what you are choosing by. */
+  hint?: string;
   disabled?: boolean;
 }
 
@@ -58,6 +64,11 @@ export interface SelectProps extends FormFieldProps {
   /** Size variant.
    * @default "md" */
   size?: "sm" | "md" | "lg";
+  /** Visual treatment. `ghost` drops the field shell for a compact, borderless
+   * control — for toolbars and dense rows, where a bordered field reads as a
+   * form. Pair with `size="sm"`.
+   * @default "field" */
+  variant?: SelectVariant;
   /** Wrapper class name */
   className?: string;
 }
@@ -65,10 +76,15 @@ export interface SelectProps extends FormFieldProps {
 export interface SelectTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   placeholder?: string;
+  /** Leading adornment shown before the value — usually says what the choice is
+   * about, so the visible text can be the choice itself. Ignored when you pass
+   * your own `children`. */
+  icon?: React.ReactNode;
 }
 
 export interface SelectContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  /** Omit to render the items the root's `options` prop describes. */
+  children?: React.ReactNode;
   sideOffset?: number;
   align?: "start" | "center" | "end";
   /** Maximum number of visible options before scrolling. Shows half of the next item as a scroll hint. @default 4 */
@@ -142,6 +158,12 @@ interface SelectContextValue {
   registerItem: (value: SelectValue, content: React.ReactNode) => void;
   unregisterItem: (value: SelectValue) => void;
   size: "sm" | "md" | "lg";
+  variant: SelectVariant;
+  /** Items built from the `options` prop, so a custom composition can put the
+   * trigger where it wants without having to re-render the list itself — and
+   * without losing whatever the root knows about an option that a bare label
+   * does not carry. */
+  optionItems: React.ReactNode;
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
@@ -149,7 +171,21 @@ const SelectContext = React.createContext<SelectContextValue>({
   registerItem: () => {},
   unregisterItem: () => {},
   size: "md",
+  variant: "field",
+  optionItems: null,
 });
+
+// Label and qualifier as one node, so the trigger and the list render the same
+// thing and the registry has a single entry to hand back.
+function renderOptionLabel(option: SelectOption): React.ReactNode {
+  if (!option.hint) return option.label;
+  return (
+    <>
+      {option.label}
+      <span className={styles.hint}>{option.hint}</span>
+    </>
+  );
+}
 
 // Walk the declared Select children at render time to build a value→label map.
 // The trigger reads this so a preselected value renders its label immediately,
@@ -194,6 +230,7 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     helperText,
     error,
     size: sizeProp,
+    variant = "field",
     className,
   }: SelectProps,
   ref
@@ -235,7 +272,7 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     () =>
       options?.map((option) => (
         <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
-          {option.label}
+          {renderOptionLabel(option)}
         </SelectItem>
       )) ?? null,
     [options]
@@ -267,7 +304,7 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
   // registry, which still wins for items that register dynamically.
   const declaredItems = React.useMemo(() => {
     const map = new Map<SelectValue, React.ReactNode>();
-    options?.forEach((option) => map.set(option.value, option.label));
+    options?.forEach((option) => map.set(option.value, renderOptionLabel(option)));
     collectDeclaredItems(children, map);
     return map;
   }, [children, options]);
@@ -287,8 +324,19 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
       registerItem,
       unregisterItem,
       size,
+      variant,
+      optionItems,
     }),
-    [placeholder, selectedValue, resolvedItems, registerItem, unregisterItem, size]
+    [
+      placeholder,
+      selectedValue,
+      resolvedItems,
+      registerItem,
+      unregisterItem,
+      size,
+      variant,
+      optionItems,
+    ]
   );
 
   const { helperId, errorId, hasError, errorMessage } = useFormFieldIds("select", {
@@ -297,7 +345,13 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     error,
   });
 
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
+  const wrapperClasses = [
+    styles.wrapper,
+    variant === "ghost" && styles.wrapperGhost,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
 
   return (
@@ -337,7 +391,13 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
   );
 });
 
-function SelectTrigger({ children, placeholder, className, ...htmlProps }: SelectTriggerProps) {
+function SelectTrigger({
+  children,
+  placeholder,
+  icon,
+  className,
+  ...htmlProps
+}: SelectTriggerProps) {
   const context = React.useContext(SelectContext);
   const placeholderText = placeholder ?? context.placeholder;
 
@@ -345,6 +405,10 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
     styles.trigger,
     context.size === "sm" && styles.triggerSm,
     context.size === "lg" && styles.triggerLg,
+    // Ghost unsets the field shell and the size mixin's box. Both are single
+    // classes like this one, so it wins on being declared after them in
+    // Select.module.scss — the one place that ordering is guaranteed.
+    context.variant === "ghost" && styles.triggerGhost,
     className,
   ]
     .filter(Boolean)
@@ -362,6 +426,7 @@ function SelectTrigger({ children, placeholder, className, ...htmlProps }: Selec
     <BaseSelect.Trigger {...htmlProps} className={classes}>
       {children ?? (
         <>
+          {icon && <span className={styles.triggerIcon}>{icon}</span>}
           <span className={styles.value}>{displayContent}</span>
           <BaseSelect.Icon className={styles.icon}>
             <ChevronDownIcon />
@@ -380,6 +445,7 @@ function SelectContent({
   maxVisibleItems,
   ...htmlProps
 }: SelectContentProps) {
+  const { optionItems } = React.useContext(SelectContext);
   const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
 
   const popupStyle =
@@ -394,7 +460,7 @@ function SelectContent({
     <BaseSelect.Portal>
       <BaseSelect.Positioner sideOffset={sideOffset} align={align} className={styles.positioner}>
         <BaseSelect.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
-          {children}
+          {children ?? optionItems}
         </BaseSelect.Popup>
       </BaseSelect.Positioner>
     </BaseSelect.Portal>

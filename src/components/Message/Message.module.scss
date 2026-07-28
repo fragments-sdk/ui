@@ -25,6 +25,25 @@
   }
 }
 
+.withoutAvatar {
+  padding-inline: 0;
+
+  // Avatarless assistant prose is part of the transcript rather than a bubble,
+  // so it should sit flush with the shared measure. The user's own turn remains
+  // a compact bubble to preserve authorship and alignment at a glance.
+  &.assistant {
+    .content {
+      padding: 0;
+    }
+  }
+
+  &.user {
+    .content {
+      padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
+    }
+  }
+}
+
 // Role-based styles
 .user {
   flex-direction: row-reverse;
@@ -34,9 +53,13 @@
     align-items: flex-end;
   }
 
+  // Alignment, measure and the neutral surface distinguish the user's turn.
+  // Brand accent is reserved for actions and semantic state, not transcript
+  // chrome.
   .content {
-    background-color: var(--fui-color-accent, $fui-color-accent);
-    color: var(--fui-color-on-accent, $fui-color-on-accent);
+    max-inline-size: 80%;
+    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 }
 
@@ -98,8 +121,8 @@
 }
 
 .avatarUser {
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  color: var(--fui-color-on-accent, $fui-color-on-accent);
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .avatarAssistant {
@@ -145,6 +168,12 @@
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   word-wrap: break-word;
+
+  // A bubble sets its own foreground per role — primary text for the user, the
+  // danger ramp for an error. Anything rendered inside it has to take that
+  // colour rather than the page's, so a Markdown body dropped in here inherits
+  // instead of holding on to the prose grey.
+  --fui-markdown-text: currentColor;
 
   // Prose styling for markdown content
   p {

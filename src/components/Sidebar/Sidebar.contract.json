@@ -129,6 +129,7 @@
       "Use SidebarProvider to enable external triggers and keyboard shortcuts",
       "Use asChild with routing libraries (Next.js Link, React Router NavLink)",
       "Sidebar.Item and Sidebar.SubItem onClick handlers receive the click event object",
+      "Use `multiline` on Sidebar.Item when the row is a list entry rather than a nav link — a title over a status or preview line. Without it the label is one truncating line",
       "Use Sidebar.MenuSkeleton while loading navigation data"
     ],
     "accessibility": [

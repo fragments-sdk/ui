@@ -1,4 +1,4 @@
-export { render, screen, within, act, waitFor } from '@testing-library/react';
+export { render, screen, within, act, waitFor, fireEvent } from '@testing-library/react';
 export { default as userEvent } from '@testing-library/user-event';
 import { expect } from 'vitest';
 import { axe } from 'vitest-axe';

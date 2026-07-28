@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Prompt } from '.';
+import { Prompt, type PromptAttachment } from '.';
 
 /**
  * Prompt is a multi-line input with toolbar for AI and chat interfaces.
@@ -22,6 +23,11 @@ const meta = {
       control: 'select',
       options: ['default', 'fixed', 'sticky'],
       description: 'Visual/positioning variant',
+    },
+    appearance: {
+      control: 'inline-radio',
+      options: ['panel', 'seamless'],
+      description: 'Toolbar as a filled footer, or one continuous writing surface',
     },
     disabled: { control: 'boolean', description: 'Disable the entire prompt' },
     loading: { control: 'boolean', description: 'Show loading state' },
@@ -82,6 +88,74 @@ export const WithActions: Story = {
       </Prompt.Toolbar>
     </Prompt>
   ),
+};
+
+/**
+ * The shape an agent composer wants: no footer, no rule across the card, and
+ * everything that scopes the run chosen on the same surface you are writing on.
+ * Attach, paste or drop a file — all three arrive through `onFiles`.
+ */
+export const AgentComposer: Story = {
+  args: {
+    appearance: 'seamless',
+    minRows: 3,
+    submitOnEnter: false,
+    placeholder: 'What should be true when this is done?',
+  },
+  render: function AgentComposerStory(args) {
+    const [files, setFiles] = useState<PromptAttachment[]>([]);
+
+    return (
+      <Prompt
+        {...args}
+        onSubmit={(value) => console.log(value, files)}
+        accept="image/*,text/*"
+        onFiles={(added) =>
+          setFiles((current) => [
+            ...current,
+            ...added.map((file) => ({
+              id: `${file.name}-${current.length}`,
+              name: file.name,
+              size: file.size,
+              previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+            })),
+          ])
+        }
+      >
+        <Prompt.Attachments
+          items={files}
+          onRemove={(id) => setFiles((current) => current.filter((file) => file.id !== id))}
+        />
+        <Prompt.Textarea />
+        <Prompt.Toolbar>
+          <Prompt.Actions>
+            <Prompt.Attach />
+            <Prompt.Select
+              aria-label="Model"
+              defaultValue="claude-opus-4-8"
+              options={[
+                { value: 'claude-opus-4-8', label: 'Opus 4.8' },
+                { value: 'claude-sonnet-5', label: 'Sonnet 5' },
+                { value: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5' },
+              ]}
+            />
+            <Prompt.Select
+              aria-label="Working tree"
+              defaultValue="worktree"
+              options={[
+                { value: 'worktree', label: 'New worktree' },
+                { value: 'main', label: 'Mainline' },
+              ]}
+            />
+          </Prompt.Actions>
+          <Prompt.Info>
+            <Prompt.Usage>⌘↩ to send</Prompt.Usage>
+            <Prompt.Submit />
+          </Prompt.Info>
+        </Prompt.Toolbar>
+      </Prompt>
+    );
+  },
 };
 
 export const Loading: Story = {

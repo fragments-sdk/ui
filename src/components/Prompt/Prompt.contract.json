@@ -27,7 +27,10 @@
     "maxRows: number (default: 8)",
     "autoResize: boolean (default: true)",
     "submitOnEnter: boolean (default: true)",
-    "variant: default|fixed|sticky (default: default)"
+    "variant: default|fixed|sticky (default: default)",
+    "appearance: panel|seamless (default: panel)",
+    "onFiles: function",
+    "accept: string"
   ],
   "props": {
     "children": {
@@ -108,6 +111,26 @@
         "fixed",
         "sticky"
       ]
+    },
+    "onFiles": {
+      "type": "function",
+      "description": "Called with files added by the attach button, a paste, or a drop anywhere on the card. Providing it enables all three.",
+      "required": false
+    },
+    "accept": {
+      "type": "string",
+      "description": "accept filter for the attach button's picker, e.g. \"image/*\"",
+      "required": false
+    },
+    "appearance": {
+      "type": "enum",
+      "description": "How the card is divided up. \"panel\" keeps the toolbar as a filled footer under a rule; \"seamless\" makes the whole card one writing surface with the controls floating on it.",
+      "default": "panel",
+      "required": false,
+      "values": [
+        "panel",
+        "seamless"
+      ]
     }
   },
   "usage": {
@@ -126,6 +149,14 @@
       "Use loading state during API calls",
       "Prompt.Textarea forwards native textarea props (autoComplete, inputMode, aria-*, data-*, handlers)",
       "Prompt.Textarea composes your onChange/onKeyDown handlers with built-in submit and auto-resize behavior",
+      "Use appearance=\"seamless\" for agent composers where the controls should float on the writing surface rather than sit in a footer",
+      "Seamless controls share the dense 32px token scale with body-sized labels and standard glyphs so mixed Prompt.Select, Prompt.Attach and Prompt.Submit rows remain optically aligned",
+      "Seamless secondary controls keep transparent hover and open states so they read as inline tools; only Prompt.Submit carries a persistent filled shape",
+      "Seamless Prompt.Submit mirrors the trailing ink gutter established by Prompt.Attach at the leading edge",
+      "Prompt.Submit uses a neutral inverse surface by default so the primary action stays visible without consuming semantic brand color",
+      "Use Prompt.ModeButton for a setting you toggle and Prompt.Select for one you pick from a list",
+      "Wire onFiles once: the attach button, pasting a screenshot and dropping on the card all go through it",
+      "Render Prompt.Attachments above Prompt.Textarea — attachments are part of the message, not a setting on it",
       "Consider showing usage/token limits for AI contexts"
     ],
     "accessibility": [
@@ -149,6 +180,11 @@
       "name": "With Usage",
       "description": "Shows token usage indicator",
       "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton active>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Usage>52% used</Prompt.Usage>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "Agent Composer",
+      "description": "Seamless surface with the scope of the run chosen on the toolbar",
+      "code": "<Prompt\n  appearance=\"seamless\"\n  submitOnEnter={false}\n  minRows={3}\n  onSubmit={(value) => console.log(value)}\n>\n  <Prompt.Textarea placeholder=\"What should be true when this is done?\" />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.Select\n        aria-label=\"Model\"\n        defaultValue=\"claude-opus-4-8\"\n        options={[{ value: 'claude-opus-4-8', label: 'Opus 4.8' }, { value: 'claude-sonnet-5', label: 'Sonnet 5' }]}\n      />\n      <Prompt.ModeButton>Plan</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
       "name": "Loading State",
@@ -200,6 +236,9 @@
       "Info",
       "ActionButton",
       "ModeButton",
+      "Select",
+      "Attach",
+      "Attachments",
       "Usage",
       "Submit"
     ]

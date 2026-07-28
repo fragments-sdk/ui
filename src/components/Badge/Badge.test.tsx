@@ -20,6 +20,14 @@ describe('Badge', () => {
     expect(badge).toHaveClass('sm');
   });
 
+  it('pulses the dot only when asked', () => {
+    const { container, rerender } = render(<Badge dot>Idle</Badge>);
+    expect(container.querySelector('.dot')).not.toHaveClass('dotPulse');
+
+    rerender(<Badge dot dotPulse>Working</Badge>);
+    expect(container.querySelector('.dot')).toHaveClass('dotPulse');
+  });
+
   it('renders dot with aria-hidden', () => {
     const { container } = render(<Badge dot>Status</Badge>);
     const dot = container.querySelector('.dot');

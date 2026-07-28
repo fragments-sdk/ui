@@ -180,6 +180,40 @@
   --_button-shadow-active: none;
 }
 
+// Quiet: a button that reads as text. The neutral sibling of `link` — nothing
+// but the foreground changes on hover, because in a meta line, a breadcrumb or
+// a footnote a box would be the loudest thing on the row for the least
+// important one. It is also the one variant that drops the interactive height
+// floor: there is no box to hold open, so it sits on the line it is in and
+// takes its hit target from the text and the row's own padding. That makes it
+// the wrong choice for a standalone action — reach for `ghost` there.
+.quiet {
+  --_button-bg: transparent;
+  --_button-bg-hover: transparent;
+  --_button-bg-active: transparent;
+  --_button-border: transparent;
+  --_button-border-hover: transparent;
+  --_button-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  --_button-shadow: none;
+  --_button-shadow-hover: none;
+  --_button-shadow-active: none;
+
+  min-height: 0;
+  padding: 0;
+  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+
+  // Only the custom property is restated: `color` reads it on .button, so the
+  // foreground follows without a second `color` declaration to keep in step.
+  &:hover:not(:disabled):not([data-disabled]) {
+    --_button-color: var(--fui-text-secondary, #{$fui-text-secondary});
+  }
+
+  &:active:not(:disabled):not([data-disabled]),
+  &[data-pressed] {
+    --_button-color: var(--fui-text-primary, #{$fui-text-primary});
+  }
+}
+
 .danger {
   // Flat danger fill — no gradient. Hover/active darken the solid colour.
   --_button-bg: var(--fui-color-danger, #{$fui-color-danger});

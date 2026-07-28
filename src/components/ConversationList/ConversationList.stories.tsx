@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ConversationList } from '.';
+import { Message } from '../Message';
 
 /**
  * Scrollable message container with auto-scroll and history loading.
@@ -20,6 +21,10 @@ const meta = {
     },
   },
   argTypes: {
+    showAvatars: {
+      control: 'boolean',
+      description: 'Show avatars for messages and typing indicators',
+    },
     loadingHistory: {
       control: 'boolean',
       description: 'Show loading spinner at top while loading history',
@@ -27,6 +32,7 @@ const meta = {
   },
   args: {
     autoScroll: 'smart',
+    showAvatars: true,
     loadingHistory: false,
     children: (
       <>
@@ -58,6 +64,23 @@ export const WithDateSeparators: Story = {
       <div>A message from yesterday</div>
       <ConversationList.DateSeparator date={new Date()} />
       <div>And a message from today!</div>
+    </ConversationList>
+  ),
+};
+
+export const WithoutAvatars: Story = {
+  args: { showAvatars: false },
+  render: (args) => (
+    <ConversationList {...args} style={{ height: 280 }}>
+      <Message role="user">
+        <Message.Content>
+          Can this transcript be more compact without letting my message run across the full
+          conversation measure?
+        </Message.Content>
+      </Message>
+      <Message role="assistant">
+        <Message.Content>Yes. Hide avatars at the conversation level.</Message.Content>
+      </Message>
     </ConversationList>
   ),
 };
