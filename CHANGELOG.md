@@ -1,5 +1,12 @@
 # @usefragments/ui
 
+## 1.5.0
+
+### Minor Changes
+
+- [#410](https://github.com/fragments-sdk/fragments/pull/410) [`d89d4d1`](https://github.com/fragments-sdk/fragments/commit/d89d4d17a0c6845835de6accc1db34282f1980c6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add a neutral `Progress` meter treatment, semantic heading selection for
+  `Card.Title`, and the compound `Chart` export to the package root.
+
 ## 1.4.0
 
 ### Minor Changes
