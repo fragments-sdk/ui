@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 1.5.3
+
+### Patch Changes
+
+- Republish with no source changes so the release cohort stays byte-verifiable (see the release pipeline issue about already-released versions in a cohort).
+
 ## 1.5.2
 
 ### Patch Changes
