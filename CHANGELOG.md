@@ -1,5 +1,13 @@
 # @usefragments/ui
 
+## 1.5.1
+
+### Patch Changes
+
+- Regenerated compiled fragments manifest (new generator hash and refreshed
+  bundle measurements) following the compiler's loader migration. No component
+  API changes.
+
 ## 1.5.0
 
 ### Minor Changes
