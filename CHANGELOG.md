@@ -1,5 +1,15 @@
 # @usefragments/ui
 
+## 1.5.2
+
+### Patch Changes
+
+- Roll-forward republish: release run 30596755876 published 1.9.0/1.8.0/1.5.1
+  to the `next` tag and then failed at post-publish registry verification on a
+  propagation flake, before cohort evidence and `latest` promotion. Builds are
+  not byte-reproducible, so the same versions cannot be retried; these patch
+  versions carry identical source. No code changes.
+
 ## 1.5.1
 
 ### Patch Changes
