@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 1.5.4
+
+### Patch Changes
+
+- [#460](https://github.com/fragments-sdk/fragments/pull/460) [`a1f2967`](https://github.com/fragments-sdk/fragments/commit/a1f2967ef8c25fdc0c5c5ad59abd93e238a39611) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Republish with no source changes so the release cohort stays byte-verifiable while publisher preflight still requires a full public cohort (#457).
+
 ## 1.5.3
 
 ### Patch Changes
