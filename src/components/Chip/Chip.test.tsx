@@ -12,7 +12,12 @@ const chipStyles = readFileSync(
 describe("Chip", () => {
   it("renders with correct text", () => {
     render(<Chip>Tag</Chip>);
-    expect(screen.getByRole("button", { name: "Tag" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Tag" })).toHaveClass("xs");
+  });
+
+  it("keeps explicit sizes available", () => {
+    render(<Chip size="lg">Large tag</Chip>);
+    expect(screen.getByRole("button", { name: "Large tag" })).toHaveClass("lg");
   });
 
   it("applies variant classes", () => {

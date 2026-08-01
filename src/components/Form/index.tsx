@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Form as BaseForm } from '@base-ui/react/form';
-import styles from './Form.module.scss';
+import * as React from "react";
+import { Form as BaseForm } from "@base-ui/react/form";
+import styles from "./Form.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
+export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
   children: React.ReactNode;
   errors?: Record<string, string | string[]>;
   /** Standard form submit handler */
@@ -16,7 +16,11 @@ export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement
   /** @deprecated Use onSubmit */
   onFormSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   onClearErrors?: (name: string) => void;
-  validationMode?: 'onSubmit' | 'onBlur' | 'onChange';
+  validationMode?: "onSubmit" | "onBlur" | "onChange";
+}
+
+export interface FormActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
 }
 
 // ============================================
@@ -33,7 +37,7 @@ function FormRoot({
   className,
   ...htmlProps
 }: FormProps) {
-  const classes = [styles.root, className].filter(Boolean).join(' ');
+  const classes = [styles.root, className].filter(Boolean).join(" ");
   const submitHandler = onSubmit ?? onFormSubmit;
 
   return (
@@ -49,6 +53,17 @@ function FormRoot({
   );
 }
 
+function FormActions({ children, className, ...htmlProps }: FormActionsProps) {
+  const classes = [styles.actions, className].filter(Boolean).join(" ");
+
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
+}
+
 export const Form = Object.assign(FormRoot, {
   Root: FormRoot,
+  Actions: FormActions,
 });

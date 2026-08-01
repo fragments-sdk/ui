@@ -314,7 +314,7 @@ export {
 } from "./components/Fieldset";
 
 // Form
-export { Form, type FormProps } from "./components/Form";
+export { Form, type FormActionsProps, type FormProps } from "./components/Form";
 
 // Sidebar
 export {

@@ -32,7 +32,7 @@ const meta = {
     selected: { control: "boolean", description: "Selection state" },
     disabled: { control: "boolean" },
   },
-  args: { variant: "filled", size: "md", children: "Default" },
+  args: { variant: "filled", size: "xs", children: "Default" },
 } satisfies Meta<typeof Chip>;
 
 export default meta;

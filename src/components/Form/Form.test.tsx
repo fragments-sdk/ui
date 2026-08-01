@@ -1,7 +1,15 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Field } from "../Field";
 import { Form } from "./index";
+
+const formStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Form/Form.module.scss"),
+  "utf8"
+);
+const overlayRecipe = readFileSync(resolve(process.cwd(), "src/recipes/_overlay.scss"), "utf8");
 
 describe("Form", () => {
   it("renders a form element", () => {
@@ -28,6 +36,21 @@ describe("Form", () => {
       </Form>
     );
     expect(screen.getByText("Child content")).toBeInTheDocument();
+  });
+
+  it("provides the shared right-aligned action slot used by forms and modal footers", () => {
+    render(
+      <Form aria-label="Action form">
+        <Form.Actions data-testid="form-actions">
+          <button type="button">Cancel</button>
+          <button type="submit">Save</button>
+        </Form.Actions>
+      </Form>
+    );
+
+    expect(screen.getByTestId("form-actions")).toHaveClass("actions");
+    expect(formStyles).toMatch(/\.actions\s*\{[\s\S]*justify-content:\s*flex-end;/);
+    expect(overlayRecipe).toMatch(/@mixin footer\s*\{[\s\S]*justify-content:\s*flex-end;/);
   });
 
   it("does not submit while a required field is invalid", async () => {

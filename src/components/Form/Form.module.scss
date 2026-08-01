@@ -3,3 +3,11 @@
   flex-direction: column;
   gap: var(--fui-raw-space-16, 16px);
 }
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--fui-raw-space-8, 8px);
+}
