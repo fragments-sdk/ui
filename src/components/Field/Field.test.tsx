@@ -133,6 +133,24 @@ describe("Field", () => {
     expect(Field.Description).toBeDefined();
     expect(Field.Error).toBeDefined();
     expect(Field.Validity).toBeDefined();
+    expect(Field.Required).toBeDefined();
+  });
+
+  it("applies the resolved field size and renders a decorative required marker", () => {
+    render(
+      <Field size="sm" data-testid="field">
+        <Field.Label>
+          Email <Field.Required />
+        </Field.Label>
+        <Field.Control>
+          <input required />
+        </Field.Control>
+      </Field>
+    );
+
+    expect(screen.getByTestId("field")).toHaveAttribute("data-size", "sm");
+    expect(screen.getByText("*")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("textbox")).toHaveAccessibleName("Email");
   });
 
   it("has no accessibility violations", async () => {

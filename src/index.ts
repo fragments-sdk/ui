@@ -302,6 +302,7 @@ export {
   type FieldDescriptionProps,
   type FieldErrorProps,
   type FieldValidityProps,
+  type FieldRequiredProps,
 } from "./components/Field";
 
 // Fieldset

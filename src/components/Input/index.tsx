@@ -179,7 +179,6 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
     styles[size],
     error && styles.error,
     success && styles.success,
-    shortcut && styles.hasShortcut,
     inputClassName,
   ]
     .filter(Boolean)
@@ -194,7 +193,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
     .join(" ");
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
-  const labelClasses = [styles.label, size === "sm" && styles.labelSm].filter(Boolean).join(" ");
+  const labelClasses = styles.label;
 
   const sharedInputProps = {
     ...nativeInputProps,

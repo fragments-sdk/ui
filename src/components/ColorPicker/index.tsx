@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui/react/popover";
+import { POPUP_OFFSET_PX } from "../../recipes/popup";
 
 // ============================================
 // Lazy-loaded dependency (react-colorful)
@@ -171,7 +172,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(funct
             <BasePopover.Positioner
               side="bottom"
               align="start"
-              sideOffset={4}
+              sideOffset={POPUP_OFFSET_PX}
               className={styles.positioner}
             >
               <BasePopover.Popup

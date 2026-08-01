@@ -1,8 +1,24 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/field";
 
-// Form field wrapper (label + helper + error)
-@include form-field-wrapper;
+.wrapper {
+  @include field.wrapper;
+}
+
+.label {
+  @include field.label;
+}
+
+.helper {
+  @include field.helper;
+}
+
+.helperError,
+.errorMessage {
+  @include field.error;
+}
 
 // ============================================
 // Trigger
@@ -11,13 +27,12 @@
 .trigger {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
-  @include field-shell;
-  @include control-size("md", "input");
+  @include field.size("md");
+  @include field.shell;
 
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: action.gap("md");
   width: 100%;
   min-width: 10rem;
   text-align: left;
@@ -28,11 +43,15 @@
 }
 
 .triggerSm {
-  @include control-size("sm", "input");
+  @include field.size("sm");
+
+  gap: action.gap("sm");
 }
 
 .triggerLg {
-  @include control-size("lg", "input");
+  @include field.size("lg");
+
+  gap: action.gap("lg");
 }
 
 .triggerIcon {
@@ -42,9 +61,16 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("md");
   }
+}
+
+.triggerSm .triggerIcon svg {
+  @include action.glyph("sm");
+}
+
+.triggerLg .triggerIcon svg {
+  @include action.glyph("lg");
 }
 
 .triggerValue {
@@ -77,7 +103,7 @@
   @include surface-elevated;
 
   border-color: var(--fui-form-group-border, $fui-border);
-  padding: var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-surface-inset-compact, 12px);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation

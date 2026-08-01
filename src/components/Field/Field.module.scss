@@ -1,14 +1,11 @@
-@use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
+@use "../../recipes/field";
 
 .root {
-  display: flex;
-  flex-direction: column;
+  @include field.wrapper;
 }
 
 .label {
-  @include label-text;
-  margin-bottom: var(--fui-space-1, $fui-space-1);
+  @include field.label;
 
   &[data-disabled] {
     opacity: 0.5;
@@ -20,12 +17,13 @@
 }
 
 .description {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
+  @include field.helper;
 }
 
 .error {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
+  @include field.error;
+}
+
+.required {
+  margin-inline-start: var(--fui-raw-space-2, 2px);
 }
