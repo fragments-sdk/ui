@@ -133,7 +133,7 @@
   .item {
     border-color: var(--fui-text-primary, $fui-text-primary);
     outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: -2px;
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
   }
 }
 

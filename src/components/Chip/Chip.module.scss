@@ -70,7 +70,7 @@
 .outlined {
   background-color: transparent;
   color: var(--fui-text-primary, $fui-text-primary);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -154,7 +154,7 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   background-color: transparent;
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   border-left-color: var(--fui-border, $fui-border);
 
   .removableChip[data-size="xs"] & {

@@ -133,75 +133,75 @@
   background-color: var(--fui-border, $fui-border);
 
   &[data-orientation="horizontal"] {
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
     width: 100%;
   }
 
   &[data-orientation="vertical"] {
-    width: 1px;
+    width: var(--fui-stroke-hairline, 1px);
     align-self: stretch;
   }
 }
 
 .directionResponsive[data-direction-base="row"] > .separator {
-  width: 1px;
+  width: var(--fui-stroke-hairline, 1px);
   height: auto;
   align-self: stretch;
 }
 
 .directionResponsive[data-direction-base="column"] > .separator {
   width: 100%;
-  height: 1px;
+  height: var(--fui-stroke-hairline, 1px);
 }
 
 @media (min-width: 640px) {
   .directionResponsive[data-direction-sm="row"] > .separator {
-    width: 1px;
+    width: var(--fui-stroke-hairline, 1px);
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-sm="column"] > .separator {
     width: 100%;
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
   }
 }
 
 @media (min-width: 768px) {
   .directionResponsive[data-direction-md="row"] > .separator {
-    width: 1px;
+    width: var(--fui-stroke-hairline, 1px);
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-md="column"] > .separator {
     width: 100%;
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
   }
 }
 
 @media (min-width: 1024px) {
   .directionResponsive[data-direction-lg="row"] > .separator {
-    width: 1px;
+    width: var(--fui-stroke-hairline, 1px);
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-lg="column"] > .separator {
     width: 100%;
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
   }
 }
 
 @media (min-width: 1280px) {
   .directionResponsive[data-direction-xl="row"] > .separator {
-    width: 1px;
+    width: var(--fui-stroke-hairline, 1px);
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-xl="column"] > .separator {
     width: 100%;
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
   }
 }

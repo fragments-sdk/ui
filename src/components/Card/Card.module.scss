@@ -155,7 +155,7 @@
     min-height: var(--fui-control-track-md, 32px);
     padding: #{surface.inset("compact")};
     margin-bottom: 0;
-    border-bottom: 1px solid var(--fui-border, $fui-border);
+    border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
     // Multi-line copy: top-align trailing controls with the title line.
     &:has(.description) {
@@ -206,7 +206,7 @@
     gap: var(--fui-raw-space-8, 8px);
     margin-top: var(--fui-raw-space-16, 16px);
     padding-top: var(--fui-raw-space-16, 16px);
-    border-top: 1px solid var(--fui-border, $fui-border);
+    border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   }
 
   // ============================================
@@ -237,7 +237,7 @@
     .card {
       border-color: var(--fui-text-primary, $fui-text-primary);
       outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-      outline-offset: -2px;
+      outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
     }
 
     .footer {

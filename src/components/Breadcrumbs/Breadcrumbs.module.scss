@@ -88,7 +88,7 @@
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   cursor: pointer;

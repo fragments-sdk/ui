@@ -428,7 +428,7 @@
   }
 
   .dayButton {
-    border: 1px solid transparent;
+    border: var(--fui-stroke-hairline, 1px) solid transparent;
 
     &:focus-visible {
       border-color: var(--fui-text-primary, $fui-text-primary);

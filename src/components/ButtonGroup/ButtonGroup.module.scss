@@ -14,7 +14,7 @@
   }
 
   > *:not(:first-child) {
-    margin-left: -1px;
+    margin-inline-start: calc(-1 * var(--fui-stroke-hairline, 1px));
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }

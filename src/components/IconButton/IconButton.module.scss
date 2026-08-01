@@ -10,7 +10,7 @@
 
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   background-color: transparent;
   flex-shrink: 0;
 

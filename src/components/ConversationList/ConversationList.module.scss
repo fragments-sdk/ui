@@ -64,7 +64,7 @@
 
 .dateSeparatorLine {
   flex: 1;
-  height: 1px;
+  height: var(--fui-stroke-hairline, 1px);
   background-color: var(--fui-border, $fui-border);
 }
 

@@ -96,7 +96,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: var(--fui-stroke-hairline, 1px);
   position: absolute;
   left: 0;
   top: 0;
@@ -236,7 +236,7 @@
 
 .linkFeatured {
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
   &:hover {
     @include popup.highlight-state;
@@ -251,7 +251,7 @@
 .indicator {
   position: absolute;
   bottom: 0;
-  height: 2px;
+  height: var(--fui-stroke-default, 2px);
   background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   transition:
@@ -372,7 +372,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--fui-space-4, $fui-space-4);
-  border-bottom: 1px solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   min-height: var(--fui-appshell-header-height, $fui-appshell-header-height);
 }
 

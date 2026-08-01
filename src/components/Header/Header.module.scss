@@ -346,7 +346,7 @@
   z-index: 99;
   width: min(320px, 85vw);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border-left: 1px solid var(--fui-border, $fui-border);
+  border-left: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   display: flex;
   flex-direction: column;
   animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal) ease;
@@ -357,7 +357,7 @@
   align-items: center;
   justify-content: flex-end;
   padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
-  border-bottom: 1px solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 
 .mobileNavClose {
@@ -445,7 +445,7 @@
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   color: var(--fui-text-primary, $fui-text-primary);
-  border: 2px solid var(--fui-color-accent, $fui-color-accent);
+  border: var(--fui-stroke-default, 2px) solid var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   text-decoration: none;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);

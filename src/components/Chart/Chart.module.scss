@@ -42,7 +42,7 @@
   @include representation.chart-tooltip;
 
   background: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 }

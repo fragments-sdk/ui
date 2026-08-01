@@ -35,7 +35,7 @@
 
   .item {
     background-color: transparent;
-    border: 1px solid transparent;
+    border: var(--fui-stroke-hairline, 1px) solid transparent;
     // Match the container's radius (form-group-surface = --fui-radius-lg),
     // less its 1px inset border, so the selected fill nests inside the
     // container corners instead of poking past them.
@@ -56,7 +56,7 @@
 .pills {
   .item {
     background-color: var(--fui-field-bg, $fui-bg-elevated);
-    border: 1px solid var(--fui-form-group-border, $fui-border);
+    border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
     border-radius: var(--fui-radius-md, $fui-radius-md);
 
     &:hover:not(:disabled):not(.selected) {
@@ -79,7 +79,7 @@
 .outline {
   .item {
     background-color: transparent;
-    border: 1px solid var(--fui-field-border, $fui-border);
+    border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border);
     border-radius: var(--fui-radius-md, $fui-radius-md);
 
     &:hover:not(:disabled):not(.selected) {

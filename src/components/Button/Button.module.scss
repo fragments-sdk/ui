@@ -17,7 +17,7 @@
   --_button-shadow-hover: var(--_button-shadow);
   --_button-shadow-active: var(--_button-shadow);
 
-  border: 1px solid var(--_button-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_button-border);
   border-radius: var(--fui-button-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
   background: var(--_button-bg);
   box-shadow: var(--_button-shadow);

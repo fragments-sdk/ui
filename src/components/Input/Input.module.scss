@@ -200,7 +200,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--fui-kbd-color, var(--fui-text-tertiary, #{$fui-text-tertiary}));
   background: var(--fui-kbd-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: 1px solid var(--fui-kbd-border, var(--fui-border, #{$fui-border}));
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-kbd-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-kbd-radius, var(--fui-radius-sm, #{$fui-radius-sm}));
   box-shadow: var(--fui-kbd-shadow, none);
   pointer-events: none;

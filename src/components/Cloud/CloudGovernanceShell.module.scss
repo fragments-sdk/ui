@@ -29,7 +29,7 @@
   place-items: center;
   color: var(--fui-text-primary);
   background: var(--fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong);
   border-radius: var(--fui-radius-md);
 }
 

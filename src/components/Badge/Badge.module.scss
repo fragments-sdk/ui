@@ -63,18 +63,18 @@
 .outline {
   background-color: transparent;
   color: var(--fui-text-primary, $fui-text-primary);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
 }
 
 .label {
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
 .dim {
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);

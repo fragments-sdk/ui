@@ -63,7 +63,7 @@
   box-sizing: border-box;
   margin-block-start: var(--_fui-boolean-mark-offset, 0);
   background-color: var(--fui-field-bg, $fui-bg-elevated);
-  border: 1px solid var(--fui-field-border, $fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border-strong);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: inherit;
 
@@ -173,7 +173,7 @@
 .itemWrapperCard {
   width: 100%;
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  border: 1px solid var(--fui-border-default, $fui-border-default);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-default, $fui-border-default);
   background: transparent;
   transition:
     background var(--fui-transition-fast, $fui-transition-fast),
@@ -230,7 +230,7 @@
   .radio {
     border-color: var(--fui-text-primary, $fui-text-primary);
     outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: -2px;
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
 
     &[data-checked] {
       border-color: var(--fui-button-primary-base, $fui-color-accent);

@@ -113,7 +113,7 @@
 
 @media (prefers-contrast: more) {
   .itemActive {
-    outline: 2px solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: -2px;
+    outline: var(--fui-stroke-default, 2px) solid var(--fui-text-primary, $fui-text-primary);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
   }
 }

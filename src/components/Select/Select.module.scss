@@ -292,7 +292,7 @@
   height: var(--fui-raw-space-10, 10px);
   transform: rotate(45deg);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
   &[data-side="top"] {
     border-top: none;

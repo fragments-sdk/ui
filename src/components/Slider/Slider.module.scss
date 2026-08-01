@@ -67,7 +67,7 @@
   @include target.hit-area("compact");
 
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: 1px solid var(--fui-field-selection-border, $fui-color-accent);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-selection-border, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
   cursor: grab;
@@ -117,7 +117,7 @@
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background: var(--fui-form-group-bg, $fui-bg-secondary);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  border: 1px solid var(--fui-form-group-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
   @include typography.role("ui-compact");
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
 }
@@ -133,7 +133,7 @@
 
 @media (prefers-contrast: more) {
   .track {
-    border: 1px solid var(--fui-text-primary, $fui-text-primary);
+    border: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
   }
 
   .thumb {

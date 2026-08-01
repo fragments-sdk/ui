@@ -198,21 +198,21 @@
 
 // Border
 .border {
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 
 // Directional borders
 .borderTop {
-  border-top: 1px solid var(--fui-border, $fui-border);
+  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 .borderBottom {
-  border-bottom: 1px solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 .borderLeft {
-  border-left: 1px solid var(--fui-border, $fui-border);
+  border-left: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 .borderRight {
-  border-right: 1px solid var(--fui-border, $fui-border);
+  border-right: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 
 // Border color
