@@ -29,14 +29,28 @@ describe("Icon", () => {
 
   it.each([
     ["xs", 12],
-    ["sm", 16],
-    ["md", 20],
-    ["lg", 24],
-    ["xl", 32],
+    ["sm", 14],
+    ["md", 16],
+    ["lg", 20],
+    ["xl", 24],
+    ["2xl", 32],
   ] as const)("passes the generated %s pixel size to the icon", (size, pixels) => {
     const { container } = render(<Icon icon={MockIcon} size={size} />);
     const svg = container.querySelector('[data-testid="mock-icon"]');
     expect(svg).toHaveAttribute("data-size", String(pixels));
+  });
+
+  it.each(["xs", "sm", "md", "lg", "xl"] as const)(
+    "applies the %s representation class to the outer box",
+    (size) => {
+      const { container } = render(<Icon icon={MockIcon} size={size} />);
+      expect(container.firstChild).toHaveClass(size);
+    }
+  );
+
+  it("applies an internal CSS-safe class for the public 2xl size", () => {
+    const { container } = render(<Icon icon={MockIcon} size="2xl" />);
+    expect(container.firstChild).toHaveClass("size2xl");
   });
 
   it("applies variant color class", () => {

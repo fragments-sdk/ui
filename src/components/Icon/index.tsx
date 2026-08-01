@@ -14,7 +14,7 @@ export type IconProps<TIcon extends AnyIconComponent = AnyIconComponent> = Omit<
   /** The icon component to render */
   icon: TIcon;
   /** Size of the icon */
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   /** Optional style/weight hint forwarded when the icon component supports a `weight` prop */
   weight?: string;
   /** Semantic color variant */
@@ -33,17 +33,8 @@ export type IconProps<TIcon extends AnyIconComponent = AnyIconComponent> = Omit<
   iconProps?: Partial<IconComponentProps<TIcon>>;
 };
 
-// Icon's public names predate the canonical target names and intentionally skip
-// the 14px target. Resolve that compatibility mapping through the generated
-// projection so component TypeScript never owns a second numeric ladder.
 const iconTargets = MEASUREMENT_PROFILES.targets.icon;
-const sizeMap: Record<NonNullable<IconProps["size"]>, number> = {
-  xs: measurementPx(iconTargets.xs, "targets.icon.xs"),
-  sm: measurementPx(iconTargets.md, "targets.icon.md"),
-  md: measurementPx(iconTargets.lg, "targets.icon.lg"),
-  lg: measurementPx(iconTargets.xl, "targets.icon.xl"),
-  xl: measurementPx(iconTargets["2xl"], "targets.icon.2xl"),
-};
+type IconSize = NonNullable<IconProps["size"]>;
 
 const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
   {
@@ -64,6 +55,7 @@ const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
 
   const classes = [
     styles.icon,
+    size === "2xl" ? styles.size2xl : styles[size as Exclude<IconSize, "2xl">],
     colorVariant && colorVariant !== "default" && styles[colorVariant],
     className,
   ]
@@ -76,7 +68,7 @@ const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
 
   // Provide sensible defaults for icon libraries that support common props.
   if (!("size" in resolvedIconProps)) {
-    resolvedIconProps.size = sizeMap[size];
+    resolvedIconProps.size = measurementPx(iconTargets[size], `targets.icon.${size}`);
   }
   if (weight && !("weight" in resolvedIconProps)) {
     resolvedIconProps.weight = weight;

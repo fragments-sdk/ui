@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './ConversationList.module.scss';
-import { Loading } from '../Loading';
+import * as React from "react";
+import styles from "./ConversationList.module.scss";
+import { Loading } from "../Loading";
 
 // ============================================
 // Types
 // ============================================
 
-export type AutoScrollBehavior = boolean | 'smart';
+export type AutoScrollBehavior = boolean | "smart";
 
 export interface ConversationListProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Message components */
@@ -61,7 +61,7 @@ export function useOptionalConversationList() {
 export function useConversationList() {
   const context = useOptionalConversationList();
   if (!context) {
-    throw new Error('useConversationList must be used within a ConversationList');
+    throw new Error("useConversationList must be used within a ConversationList");
   }
   return context;
 }
@@ -77,19 +77,18 @@ function formatDateSeparator(date: Date): string {
   const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
   if (dateOnly.getTime() === today.getTime()) {
-    return 'Today';
+    return "Today";
   }
   if (dateOnly.getTime() === yesterday.getTime()) {
-    return 'Yesterday';
+    return "Yesterday";
   }
 
   return date.toLocaleDateString(undefined, {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
+    weekday: "long",
+    month: "long",
+    day: "numeric",
   });
 }
-
 
 // ============================================
 // Sub-components
@@ -103,7 +102,7 @@ function DateSeparator({
 }: DateSeparatorProps) {
   const formatted = customFormat ? customFormat(date) : formatDateSeparator(date);
 
-  const classes = [styles.dateSeparator, className].filter(Boolean).join(' ');
+  const classes = [styles.dateSeparator, className].filter(Boolean).join(" ");
 
   return (
     <div {...htmlProps} className={classes} role="separator">
@@ -115,25 +114,28 @@ function DateSeparator({
 }
 
 function TypingIndicator({
-  name = 'Assistant',
+  name = "Assistant",
   avatar,
   className,
   ...htmlProps
 }: TypingIndicatorProps) {
   const showAvatar = (useOptionalConversationList()?.showAvatars ?? true) && Boolean(avatar);
-  const classes = [
-    styles.typingIndicator,
-    !showAvatar && styles.withoutAvatar,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.typingIndicator, !showAvatar && styles.withoutAvatar, className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div {...htmlProps} className={classes} role="status" aria-label={`${name} is typing`}>
       {showAvatar && <div className={styles.typingAvatar}>{avatar}</div>}
       <div className={styles.typingContent}>
-        <span className={styles.typingDot} />
-        <span className={styles.typingDot} />
-        <span className={styles.typingDot} />
+        <Loading
+          size="sm"
+          variant="dots"
+          color="muted"
+          label=""
+          role="presentation"
+          aria-hidden="true"
+        />
       </div>
     </div>
   );
@@ -146,7 +148,7 @@ function TypingIndicator({
 function ConversationListRoot({
   children,
   showAvatars = true,
-  autoScroll = 'smart',
+  autoScroll = "smart",
   onScrollTop,
   loadingHistory = false,
   emptyState,
@@ -170,7 +172,7 @@ function ConversationListRoot({
   }, [scrollBottomThreshold]);
 
   // Scroll to bottom
-  const scrollToBottom = React.useCallback((behavior: ScrollBehavior = 'smooth') => {
+  const scrollToBottom = React.useCallback((behavior: ScrollBehavior = "smooth") => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -181,21 +183,24 @@ function ConversationListRoot({
   }, []);
 
   // Handle scroll events
-  const handleScroll = React.useCallback((event: React.UIEvent<HTMLDivElement>) => {
-    userOnScroll?.(event);
-    if (event.defaultPrevented) return;
+  const handleScroll = React.useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      userOnScroll?.(event);
+      if (event.defaultPrevented) return;
 
-    const container = containerRef.current;
-    if (!container) return;
+      const container = containerRef.current;
+      if (!container) return;
 
-    // Update near-bottom status for smart scroll
-    isNearBottomRef.current = checkIsNearBottom();
+      // Update near-bottom status for smart scroll
+      isNearBottomRef.current = checkIsNearBottom();
 
-    // Check for scroll-to-top (history loading)
-    if (onScrollTop && container.scrollTop <= scrollTopThreshold) {
-      onScrollTop(event);
-    }
-  }, [checkIsNearBottom, onScrollTop, scrollTopThreshold, userOnScroll]);
+      // Check for scroll-to-top (history loading)
+      if (onScrollTop && container.scrollTop <= scrollTopThreshold) {
+        onScrollTop(event);
+      }
+    },
+    [checkIsNearBottom, onScrollTop, scrollTopThreshold, userOnScroll]
+  );
 
   // Keep the reader at the newest content as the conversation grows.
   //
@@ -214,32 +219,27 @@ function ConversationListRoot({
     // growth, and overlapping smooth scrolls fight each other into a stutter.
     // The context's scrollToBottom() stays smooth for deliberate jumps.
     const observer = new ResizeObserver(() => {
-      if (autoScroll === true || isNearBottomRef.current) scrollToBottom('instant');
+      if (autoScroll === true || isNearBottomRef.current) scrollToBottom("instant");
     });
     observer.observe(content);
     return () => observer.disconnect();
   }, [autoScroll, scrollToBottom]);
 
-  const contextValue = React.useMemo<ConversationListContextValue>(() => ({
-    scrollToBottom,
-    showAvatars,
-  }), [scrollToBottom, showAvatars]);
+  const contextValue = React.useMemo<ConversationListContextValue>(
+    () => ({
+      scrollToBottom,
+      showAvatars,
+    }),
+    [scrollToBottom, showAvatars]
+  );
 
   const hasChildren = React.Children.count(children) > 0;
 
-  const classes = [
-    styles.conversationList,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.conversationList, className].filter(Boolean).join(" ");
 
   return (
     <ConversationListContext.Provider value={contextValue}>
-      <div
-        {...htmlProps}
-        ref={containerRef}
-        className={classes}
-        onScroll={handleScroll}
-      >
+      <div {...htmlProps} ref={containerRef} className={classes} onScroll={handleScroll}>
         {loadingHistory && (
           <div className={styles.loadingHistory}>
             <Loading size="md" variant="spinner" color="muted" label="Loading history" />
@@ -264,8 +264,4 @@ export const ConversationList = Object.assign(ConversationListRoot, {
   TypingIndicator,
 });
 
-export {
-  ConversationListRoot,
-  DateSeparator,
-  TypingIndicator,
-};
+export { ConversationListRoot, DateSeparator, TypingIndicator };

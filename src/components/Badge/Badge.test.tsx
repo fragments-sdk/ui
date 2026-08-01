@@ -1,72 +1,92 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Badge } from './index';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Badge } from "./index";
 
-describe('Badge', () => {
-  it('renders with children', () => {
+describe("Badge", () => {
+  it("renders with children", () => {
     render(<Badge>New</Badge>);
-    expect(screen.getByText('New')).toBeInTheDocument();
+    expect(screen.getByText("New")).toBeInTheDocument();
   });
 
-  it('applies variant classes', () => {
+  it("applies variant classes", () => {
     const { container } = render(<Badge variant="success">OK</Badge>);
     const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveClass('success');
+    expect(badge).toHaveClass("success");
   });
 
-  it('applies size classes', () => {
+  it("applies size classes", () => {
     const { container } = render(<Badge size="sm">Small</Badge>);
     const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveClass('sm');
+    expect(badge).toHaveClass("sm");
   });
 
-  it('pulses the dot only when asked', () => {
+  it.each(["label", "dim"] as const)(
+    "keeps the explicit size class when using the %s emphasis variant",
+    (variant) => {
+      const { container } = render(
+        <Badge variant={variant} size="sm">
+          Compact
+        </Badge>
+      );
+      expect(container.firstChild).toHaveClass("sm", variant);
+    }
+  );
+
+  it("pulses the dot only when asked", () => {
     const { container, rerender } = render(<Badge dot>Idle</Badge>);
-    expect(container.querySelector('.dot')).not.toHaveClass('dotPulse');
+    expect(container.querySelector(".dot")).not.toHaveClass("dotPulse");
 
-    rerender(<Badge dot dotPulse>Working</Badge>);
-    expect(container.querySelector('.dot')).toHaveClass('dotPulse');
+    rerender(
+      <Badge dot dotPulse>
+        Working
+      </Badge>
+    );
+    expect(container.querySelector(".dot")).toHaveClass("dotPulse");
   });
 
-  it('renders dot with aria-hidden', () => {
+  it("renders dot with aria-hidden", () => {
     const { container } = render(<Badge dot>Status</Badge>);
-    const dot = container.querySelector('.dot');
+    const dot = container.querySelector(".dot");
     expect(dot).toBeInTheDocument();
-    expect(dot).toHaveAttribute('aria-hidden', 'true');
+    expect(dot).toHaveAttribute("aria-hidden", "true");
   });
 
-  it('renders icon with aria-hidden', () => {
+  it("renders icon with aria-hidden", () => {
     const { container } = render(<Badge icon={<svg data-testid="icon" />}>Info</Badge>);
-    const iconWrapper = container.querySelector('.icon');
-    expect(iconWrapper).toHaveAttribute('aria-hidden', 'true');
-    expect(screen.getByTestId('icon')).toBeInTheDocument();
+    const iconWrapper = container.querySelector(".icon");
+    expect(iconWrapper).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByTestId("icon")).toBeInTheDocument();
   });
 
-  it('renders remove button with aria-label', async () => {
+  it("renders remove button with aria-label", async () => {
     const user = userEvent.setup();
     const onRemove = vi.fn();
     render(<Badge onRemove={onRemove}>Tag</Badge>);
-    const removeBtn = screen.getByRole('button', { name: 'Remove Tag' });
+    const removeBtn = screen.getByRole("button", { name: "Remove Tag" });
     expect(removeBtn).toBeInTheDocument();
     await user.click(removeBtn);
     expect(onRemove).toHaveBeenCalledOnce();
   });
 
-  it('does not implicitly announce status variants', () => {
+  it("does not implicitly announce status variants", () => {
     const { container } = render(<Badge variant="error">Failed</Badge>);
     const badge = container.firstChild as HTMLElement;
-    expect(badge).not.toHaveAttribute('role');
-    expect(badge).not.toHaveAttribute('aria-label', 'error: Failed');
+    expect(badge).not.toHaveAttribute("role");
+    expect(badge).not.toHaveAttribute("aria-label", "error: Failed");
   });
 
-  it('announces badge content when announce is enabled', () => {
-    const { container } = render(<Badge variant="error" announce>Failed</Badge>);
+  it("announces badge content when announce is enabled", () => {
+    const { container } = render(
+      <Badge variant="error" announce>
+        Failed
+      </Badge>
+    );
     const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveAttribute('role', 'status');
-    expect(badge).toHaveAttribute('aria-label', 'error: Failed');
+    expect(badge).toHaveAttribute("role", "status");
+    expect(badge).toHaveAttribute("aria-label", "error: Failed");
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(<Badge>Accessible</Badge>);
     await expectNoA11yViolations(container);
   });

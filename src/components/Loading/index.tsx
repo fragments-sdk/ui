@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Loading.module.scss';
+import * as React from "react";
+import styles from "./Loading.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type LoadingSize = 'sm' | 'md' | 'lg' | 'xl';
-export type LoadingVariant = 'spinner' | 'dots' | 'pulse';
+export type LoadingSize = "sm" | "md" | "lg" | "xl";
+export type LoadingVariant = "spinner" | "dots" | "pulse";
 
 export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Size of the loading indicator */
@@ -24,12 +24,12 @@ export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Whether to show the loading indicator with a backdrop overlay */
   overlay?: boolean;
   /** Color variant - uses accent color by default, 'current' inherits text color */
-  color?: 'accent' | 'current' | 'muted';
+  color?: "accent" | "current" | "muted";
 }
 
 export interface LoadingInlineProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** Size of the loading indicator */
-  size?: 'sm' | 'md';
+  size?: "sm" | "md";
   /** Accessible label */
   label?: string;
 }
@@ -90,90 +90,76 @@ function PulseAnimation({ className }: { className?: string }) {
 // Components
 // ============================================
 
-const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(
-  function LoadingRoot(
-    {
-      size = 'md',
-      variant = 'spinner',
-      label = 'Loading...',
-      centered = false,
-      fill = false,
-      overlay = false,
-      color = 'accent',
-      className,
-      ...htmlProps
-    },
-    ref
-  ) {
-    const classes = [
-      styles.loading,
-      styles[size],
-      styles[variant],
-      styles[`color-${color}`],
-      centered && styles.centered,
-      fill && styles.fill,
-      overlay && styles.overlay,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function LoadingRoot(
+  {
+    size = "md",
+    variant = "spinner",
+    label = "Loading...",
+    centered = false,
+    fill = false,
+    overlay = false,
+    color = "accent",
+    className,
+    ...htmlProps
+  },
+  ref
+) {
+  const classes = [
+    styles.loading,
+    styles[size],
+    styles[variant],
+    styles[`color-${color}`],
+    centered && styles.centered,
+    fill && styles.fill,
+    overlay && styles.overlay,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const animation = variant === 'dots'
-      ? <DotsAnimation className={styles.dots} />
-      : variant === 'pulse'
-        ? <PulseAnimation className={styles.pulse} />
-        : <SpinnerIcon className={styles.spinnerIcon} />;
-
-    const content = (
-      <div
-        ref={ref}
-        className={classes}
-        role="status"
-        aria-label={label}
-        aria-live="polite"
-        {...htmlProps}
-      >
-        {animation}
-      </div>
+  const animation =
+    variant === "dots" ? (
+      <DotsAnimation className={styles.dots} />
+    ) : variant === "pulse" ? (
+      <PulseAnimation className={styles.pulse} />
+    ) : (
+      <SpinnerIcon className={styles.spinnerIcon} />
     );
 
-    if (overlay) {
-      return (
-        <div className={styles.overlayBackdrop}>
-          {content}
-        </div>
-      );
-    }
+  const content = (
+    <div
+      ref={ref}
+      className={classes}
+      role="status"
+      aria-label={label}
+      aria-live="polite"
+      {...htmlProps}
+    >
+      {animation}
+    </div>
+  );
 
-    return content;
+  if (overlay) {
+    return <div className={styles.overlayBackdrop}>{content}</div>;
   }
-);
+
+  return content;
+});
 
 // ============================================
 // Loading.Inline - Inline text loading indicator
 // ============================================
 
 function LoadingInline({
-  size = 'sm',
-  label = 'Loading...',
+  size = "sm",
+  label = "Loading...",
   className,
   ...htmlProps
 }: LoadingInlineProps) {
-  const classes = [
-    styles.inline,
-    styles[`inline-${size}`],
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const classes = [styles.inline, styles[`inline-${size}`], className].filter(Boolean).join(" ");
 
   return (
-    <span
-      className={classes}
-      role="status"
-      aria-label={label}
-      {...htmlProps}
-    >
+    <span className={classes} role="status" aria-label={label} {...htmlProps}>
       <SpinnerIcon className={styles.inlineSpinner} />
     </span>
   );
@@ -184,28 +170,17 @@ function LoadingInline({
 // ============================================
 
 function LoadingScreen({
-  size = 'lg',
-  variant = 'spinner',
-  label = 'Loading...',
+  size = "lg",
+  variant = "spinner",
+  label = "Loading...",
   showLabel = false,
   className,
   ...htmlProps
 }: LoadingScreenProps) {
-  const classes = [
-    styles.screen,
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const classes = [styles.screen, className].filter(Boolean).join(" ");
 
   return (
-    <div
-      className={classes}
-      role="status"
-      aria-label={label}
-      aria-live="polite"
-      {...htmlProps}
-    >
+    <div className={classes} role="status" aria-label={label} aria-live="polite" {...htmlProps}>
       <LoadingRoot size={size} variant={variant} label={label} />
       {showLabel && <span className={styles.screenLabel}>{label}</span>}
     </div>
@@ -222,8 +197,4 @@ export const Loading = Object.assign(LoadingRoot, {
 });
 
 // Re-export individual components for tree-shaking
-export {
-  LoadingRoot,
-  LoadingInline,
-  LoadingScreen,
-};
+export { LoadingRoot, LoadingInline, LoadingScreen };

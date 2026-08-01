@@ -1,5 +1,7 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/representation" as representation;
+@use "../../recipes/typography" as typography;
 
 // ============================================
 // Thinking Indicator Root
@@ -8,25 +10,25 @@
 .thinkingIndicator {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("sm");
+  padding: layout.gap("sm");
 }
 
 .main {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("sm");
 }
 
 .label {
-  @include text-base;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include typography.role("body-compact");
+
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
 .elapsed {
-  @include helper-text;
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include typography.role("caption");
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   font-variant-numeric: tabular-nums;
 }
@@ -42,17 +44,18 @@
 .steps {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding-left: var(--fui-space-4, $fui-space-4);
-  border-left: 2px solid var(--fui-border, $fui-border);
-  margin-left: var(--fui-space-1, $fui-space-1); // 7px — align with center of animation
+  gap: layout.gap("xs");
+  margin-inline-start: calc(representation.activity-size("sm") / 2);
+  padding-inline-start: layout.gap("lg");
+  border-inline-start: var(--fui-stroke-default, 2px) solid var(--fui-border, $fui-border);
 }
 
 .step {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  gap: layout.gap("sm");
+  @include typography.role("caption");
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
@@ -60,14 +63,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--fui-icon-md, $fui-icon-md); // 16px
-  height: var(--fui-icon-md, $fui-icon-md);
-  flex-shrink: 0;
+  @include representation.glyph("md");
+
+  > svg {
+    @include representation.glyph("xs");
+  }
 }
 
 .stepDot {
-  width: 6px;
-  height: 6px;
+  inline-size: var(--fui-raw-space-8, 8px);
+  block-size: var(--fui-raw-space-8, 8px);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: var(--fui-text-tertiary, $fui-text-tertiary);
   opacity: 0.5;
