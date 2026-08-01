@@ -382,8 +382,7 @@ $fui-button-height-xs: $fui-control-height-xs !default;
 $fui-button-height-sm: $fui-control-height-sm !default;
 $fui-button-height-md: $fui-control-height-md !default;
 $fui-button-height-lg: $fui-control-height-lg !default;
-$fui-button-outlined-shadow: inset 0 1px 0
-  light-dark(color-mix(in srgb, white 72%, transparent), color-mix(in srgb, white 5%, transparent)) !default;
+$fui-button-outlined-shadow: none !default;
 
 $fui-input-height-sm: measurements.target-value("fieldTrack", "sm") !default;
 $fui-input-height: measurements.target-value("fieldTrack", "md") !default;
@@ -672,10 +671,9 @@ $fui-code-selection-bg: color-mix(
     --fui-kbd-radius: var(--fui-radius-sm);
     --fui-kbd-reserved-width: 2.714rem; // 38px, enough for "⌘K"
 
-    // Button chrome. Primary fill = pine. Border/color are shared; the fill
-    // treatment and radius branch on the brand: the Fragments default renders a
-    // FLAT solid pill (hybrid-skin), while consumer-branded builds keep the
-    // raised-gradient recipe with crisp border, top highlight, and pressed inset.
+    // Button chrome. Every theme uses flat fills: hierarchy comes from colour,
+    // border, and state contrast rather than a second raised/gradient material.
+    // Radius remains brand-aware for compatibility with consumer themes.
     --fui-button-primary-base: light-dark(#006b57, #006b57);
     --fui-button-primary-hover: light-dark(#187762, #187762);
     --fui-button-primary-active: light-dark(#005f4c, #005f4c);
@@ -692,76 +690,28 @@ $fui-code-selection-bg: color-mix(
     --fui-button-primary-color: #fff;
 
     @if $fui-brand-is-default {
-      // Flat solid pill — hybrid-skin treatment.
       --fui-button-radius: var(--fui-radius-full);
-      --fui-button-primary-bg: var(--fui-button-primary-base);
-      --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
-      --fui-button-primary-bg-active: var(--fui-button-primary-active);
-      --fui-button-primary-shadow: none;
-      --fui-button-primary-shadow-active: inset
-        0
-        1px
-        2px
-        color-mix(in srgb, black 22%, transparent);
     } @else {
-      // Raised-gradient recipe for consumer-branded builds.
       --fui-button-radius: var(--fui-radius-lg);
-      --fui-button-primary-bg: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--fui-button-primary-base) 78%, white 22%) 0%,
-        var(--fui-button-primary-base) 52%,
-        color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 100%
-      );
-      --fui-button-primary-bg-hover: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--fui-button-primary-hover) 76%, white 24%) 0%,
-        var(--fui-button-primary-hover) 52%,
-        color-mix(in srgb, var(--fui-button-primary-active) 84%, black 16%) 100%
-      );
-      --fui-button-primary-bg-active: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 0%,
-        var(--fui-button-primary-active) 100%
-      );
-      --fui-button-primary-shadow:
-        inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
-        inset 0 -1px 0 color-mix(in srgb, black 18%, transparent),
-        0 1px 1px color-mix(in srgb, black 16%, transparent);
-      --fui-button-primary-shadow-active:
-        inset 0 1px 2px color-mix(in srgb, black 30%, transparent),
-        0 1px 0 color-mix(in srgb, white 8%, transparent);
     }
 
-    --fui-button-neutral-bg: linear-gradient(
-      to bottom,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 97%, var(--fui-text-primary) 3%),
-          color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%)
-        )
-        0%,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%),
-          color-mix(in srgb, var(--fui-bg-elevated) 96%, var(--fui-text-primary) 4%)
-        )
-        100%
+    --fui-button-primary-bg: var(--fui-button-primary-base);
+    --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
+    --fui-button-primary-bg-active: var(--fui-button-primary-active);
+    --fui-button-primary-shadow: none;
+    --fui-button-primary-shadow-active: none;
+
+    --fui-button-neutral-bg: light-dark(
+      color-mix(in srgb, var(--fui-bg-elevated) 94%, var(--fui-text-primary) 6%),
+      color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%)
     );
-    --fui-button-neutral-bg-hover: linear-gradient(
-      to bottom,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 99%, var(--fui-text-primary) 1%),
-          color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%)
-        )
-        0%,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%),
-          color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%)
-        )
-        100%
+    --fui-button-neutral-bg-hover: light-dark(
+      color-mix(in srgb, var(--fui-bg-elevated) 90%, var(--fui-text-primary) 10%),
+      color-mix(in srgb, var(--fui-bg-elevated) 86%, var(--fui-text-primary) 14%)
     );
-    --fui-button-neutral-bg-active: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%) 0%,
-      color-mix(in srgb, var(--fui-bg-elevated) 90%, var(--fui-text-primary) 10%) 100%
+    --fui-button-neutral-bg-active: light-dark(
+      color-mix(in srgb, var(--fui-bg-elevated) 84%, var(--fui-text-primary) 16%),
+      color-mix(in srgb, var(--fui-bg-elevated) 80%, var(--fui-text-primary) 20%)
     );
     --fui-button-neutral-border: color-mix(
       in srgb,
@@ -774,18 +724,9 @@ $fui-code-selection-bg: color-mix(
       var(--fui-text-primary) 42%
     );
     --fui-button-neutral-color: var(--fui-text-primary);
-    --fui-button-outlined-shadow: #{$fui-button-outlined-shadow};
-    --fui-button-neutral-shadow:
-      inset 0 1px 0
-        light-dark(
-          color-mix(in srgb, white 88%, transparent),
-          color-mix(in srgb, white 7%, transparent)
-        ),
-      inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary) 7%, transparent),
-      0 1px 1px color-mix(in srgb, black 12%, transparent);
-    --fui-button-neutral-shadow-active:
-      inset 0 1px 2px color-mix(in srgb, black 16%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, var(--fui-text-primary) 6%, transparent);
+    --fui-button-outlined-shadow: none;
+    --fui-button-neutral-shadow: none;
+    --fui-button-neutral-shadow-active: none;
 
     --fui-code-bg: #{$fui-code-bg};
     --fui-code-selection-bg: #{$fui-code-selection-bg};
