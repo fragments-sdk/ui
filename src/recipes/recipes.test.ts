@@ -65,7 +65,9 @@ describe("geometry recipes", () => {
     expect(css).toContain("--_fui-boolean-mark-size: var(--fui-icon-sm, 14px)");
     expect(css).toContain("min-block-size: var(--fui-field-track-lg, 40px)");
     expect(css).toContain("--_fui-switch-inline-size: var(--fui-control-track-md, 32px)");
-    expect(css).toContain("--_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))");
+    expect(css).toContain(
+      "--_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))"
+    );
     expect(css).toContain("--_fui-switch-thumb-size: var(--fui-icon-sm, 14px)");
     expect(css).toContain("block-size: var(--fui-raw-space-4, 4px)");
     expect(css).toContain("inline-size: var(--fui-icon-md, 16px)");
@@ -90,6 +92,21 @@ describe("geometry recipes", () => {
     expect(css).toContain("inline-size: var(--fui-navigation-sidebar-collapsed-width, 56px)");
   });
 
+  it("compiles the closed surface inset roles", () => {
+    const css = compile(`
+      @use "recipes/surface";
+      .panel { @include surface.apply-inset("panel"); }
+      .compact { @include surface.apply-inset("compact"); }
+      .default { @include surface.apply-inset("default"); }
+      .roomy { @include surface.apply-inset("roomy"); }
+    `);
+
+    expect(css).toContain("padding: var(--fui-surface-inset-panel, 0)");
+    expect(css).toContain("padding: var(--fui-surface-inset-compact, 12px)");
+    expect(css).toContain("padding: var(--fui-surface-inset-default, 16px)");
+    expect(css).toContain("padding: var(--fui-surface-inset-roomy, 24px)");
+  });
+
   it.each([
     ['@use "recipes/action"; .x { @include action.size("xl"); }', "Unknown action role"],
     ['@use "recipes/field"; .x { @include field.size("xs"); }', "Unknown field size"],
@@ -101,6 +118,10 @@ describe("geometry recipes", () => {
     [
       '@use "recipes/navigation"; .x { @include navigation.active-indicator("middle"); }',
       "Unknown navigation indicator placement",
+    ],
+    [
+      '@use "recipes/surface"; .x { @include surface.apply-inset("hero"); }',
+      "Unknown surface inset role",
     ],
   ])("rejects an unsupported closed recipe role", (source, message) => {
     expect(() => compile(source)).toThrow(message);

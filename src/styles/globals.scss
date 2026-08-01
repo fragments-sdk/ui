@@ -60,7 +60,7 @@ $fui-info: #7fa6c4 !default;
 // Consumer styles outside any @layer always win over layered styles.
 // Within layers: tokens < base < components (declared first = lowest priority).
 // Browser support: ~97% (Chrome 99+, Firefox 97+, Safari 15.4+)
-@layer fui.tokens, fui.base;
+@layer fui.tokens, fui.base, fui.components;
 
 // Output typed @property registrations (must be top-level, can't be in @layer)
 @include prop-reg.fui-property-registrations;
