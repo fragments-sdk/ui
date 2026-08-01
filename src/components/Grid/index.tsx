@@ -1,5 +1,6 @@
-import * as React from 'react';
-import styles from './Grid.module.scss';
+import * as React from "react";
+import { resolveLayoutGap } from "../../utils/layout-spacing";
+import styles from "./Grid.module.scss";
 
 // ============================================
 // Types
@@ -26,7 +27,10 @@ export interface ResponsiveColumns {
  * CSS Grid layout component with responsive columns.
  * @see https://usefragments.com/components/grid
  */
-export interface GridProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'style' | 'className'> {
+export interface GridProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "children" | "style" | "className"
+> {
   children?: React.ReactNode;
   /**
    * Number of columns.
@@ -34,31 +38,34 @@ export interface GridProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'c
    * - An object for responsive columns: `{ base: 1, md: 2, lg: 3 }`
    * - `"auto"` for responsive auto-fill based on minChildWidth
    */
-  columns?: ColumnCount | ResponsiveColumns | 'auto';
+  columns?: ColumnCount | ResponsiveColumns | "auto";
   /** Minimum width for auto-fill columns (only used with columns="auto") */
   minChildWidth?: string;
   /** Gap between grid items. Accepts string tokens or numbers (1-8) mapping to the spacing scale */
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | GapScale;
+  gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | GapScale;
   /** Vertical alignment of items within their cells */
-  alignItems?: 'start' | 'center' | 'end' | 'stretch';
+  alignItems?: "start" | "center" | "end" | "stretch";
   /** Horizontal alignment of items within their cells */
-  justifyItems?: 'start' | 'center' | 'end' | 'stretch';
+  justifyItems?: "start" | "center" | "end" | "stretch";
   /** Padding inside the grid container */
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: "none" | "sm" | "md" | "lg";
   /** Additional class name */
   className?: string;
   /** Inline styles */
   style?: React.CSSProperties;
 }
 
-export interface GridItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'className'> {
+export interface GridItemProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "children" | "className"
+> {
   children?: React.ReactNode;
   /** Number of columns this item spans */
-  colSpan?: ColumnCount | 'full';
+  colSpan?: ColumnCount | "full";
   /** Number of rows this item spans */
   rowSpan?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Override alignment for this item */
-  alignSelf?: 'start' | 'center' | 'end' | 'stretch';
+  alignSelf?: "start" | "center" | "end" | "stretch";
   /**
    * Enable CSS subgrid so children align to parent grid tracks.
    * - `true` or `"rows"` — children align to parent row tracks
@@ -66,7 +73,7 @@ export interface GridItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
    * - `"both"` — children align to both row and column tracks
    * Requires the item to span multiple rows/columns for visible effect.
    */
-  subgrid?: boolean | 'rows' | 'columns' | 'both';
+  subgrid?: boolean | "rows" | "columns" | "both";
   /** Additional class name */
   className?: string;
   style?: React.CSSProperties;
@@ -76,22 +83,11 @@ export interface GridItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 // Helpers
 // ============================================
 
-function isResponsiveColumns(
-  columns: GridProps['columns']
-): columns is ResponsiveColumns {
-  return typeof columns === 'object' && columns !== null;
+function isResponsiveColumns(columns: GridProps["columns"]): columns is ResponsiveColumns {
+  return typeof columns === "object" && columns !== null;
 }
 
-const gapClasses: Record<Exclude<NonNullable<GridProps['gap']>, GapScale>, string> = {
-  none: styles.gapNone,
-  xs: styles.gapXs,
-  sm: styles.gapSm,
-  md: styles.gapMd,
-  lg: styles.gapLg,
-  xl: styles.gapXl,
-};
-
-const paddingClasses: Record<NonNullable<GridProps['padding']>, string> = {
+const paddingClasses: Record<NonNullable<GridProps["padding"]>, string> = {
   none: styles.paddingNone,
   sm: styles.paddingSm,
   md: styles.paddingMd,
@@ -102,70 +98,67 @@ const paddingClasses: Record<NonNullable<GridProps['padding']>, string> = {
 // Grid Component
 // ============================================
 
-export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  function Grid(
-    {
-      children,
-      columns = 1,
-      minChildWidth,
-      gap = 'md',
-      alignItems,
-      justifyItems,
-      padding = 'none',
-      className,
-      style,
-      ...htmlProps
-    },
-    ref
-  ) {
-    // Determine classes and style based on columns type
-    let columnsClass: string;
-    let inlineStyle: React.CSSProperties | undefined;
+export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
+  {
+    children,
+    columns = 1,
+    minChildWidth,
+    gap = "md",
+    alignItems,
+    justifyItems,
+    padding = "none",
+    className,
+    style,
+    ...htmlProps
+  },
+  ref
+) {
+  // Determine classes and style based on columns type
+  let columnsClass: string;
+  let inlineStyle: React.CSSProperties | undefined;
 
-    if (columns === 'auto') {
-      columnsClass = styles.columnsAuto;
-      if (minChildWidth) {
-        inlineStyle = { '--fui-grid-min-child-width': minChildWidth } as React.CSSProperties;
-      }
-    } else if (isResponsiveColumns(columns)) {
-      columnsClass = styles.columnsResponsive;
-      const vars: Record<string, string> = {};
-      if (columns.base) vars['--fui-grid-cols'] = String(columns.base);
-      if (columns.sm) vars['--fui-grid-cols-sm'] = String(columns.sm);
-      if (columns.md) vars['--fui-grid-cols-md'] = String(columns.md);
-      if (columns.lg) vars['--fui-grid-cols-lg'] = String(columns.lg);
-      if (columns.xl) vars['--fui-grid-cols-xl'] = String(columns.xl);
-      inlineStyle = vars as unknown as React.CSSProperties;
-    } else {
-      columnsClass = styles[`columns${columns}`];
+  if (columns === "auto") {
+    columnsClass = styles.columnsAuto;
+    if (minChildWidth) {
+      inlineStyle = { "--fui-grid-min-child-width": minChildWidth } as React.CSSProperties;
     }
-
-    // Handle numeric gap via inline style
-    if (typeof gap === 'number') {
-      inlineStyle = { ...inlineStyle, gap: `var(--fui-space-${gap})` } as React.CSSProperties;
-    }
-
-    const classes = [
-      styles.grid,
-      columnsClass,
-      typeof gap === 'number' ? undefined : gapClasses[gap],
-      paddingClasses[padding],
-      alignItems && styles[`align${cap(alignItems)}`],
-      justifyItems && styles[`justify${cap(justifyItems)}`],
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
-
-    return (
-      <div {...htmlProps} ref={ref} className={classes} style={mergedStyle}>
-        {children}
-      </div>
-    );
+  } else if (isResponsiveColumns(columns)) {
+    columnsClass = styles.columnsResponsive;
+    const vars: Record<string, string> = {};
+    if (columns.base) vars["--fui-grid-cols"] = String(columns.base);
+    if (columns.sm) vars["--fui-grid-cols-sm"] = String(columns.sm);
+    if (columns.md) vars["--fui-grid-cols-md"] = String(columns.md);
+    if (columns.lg) vars["--fui-grid-cols-lg"] = String(columns.lg);
+    if (columns.xl) vars["--fui-grid-cols-xl"] = String(columns.xl);
+    inlineStyle = vars as unknown as React.CSSProperties;
+  } else {
+    columnsClass = styles[`columns${columns}`];
   }
-) as GridComponent;
+
+  inlineStyle = {
+    ...inlineStyle,
+    "--_fui-grid-gap": resolveLayoutGap(gap),
+  } as React.CSSProperties;
+
+  const classes = [
+    styles.grid,
+    columnsClass,
+    paddingClasses[padding],
+    alignItems && styles[`align${cap(alignItems)}`],
+    justifyItems && styles[`justify${cap(justifyItems)}`],
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
+
+  return (
+    <div {...htmlProps} ref={ref} className={classes} style={mergedStyle}>
+      {children}
+    </div>
+  );
+}) as GridComponent;
 
 // ============================================
 // Grid.Item Sub-component
@@ -177,42 +170,29 @@ const subgridClasses: Record<string, string> = {
   both: styles.subgridBoth,
 };
 
-const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
-  function GridItem(
-    {
-      children,
-      colSpan,
-      rowSpan,
-      alignSelf,
-      subgrid,
-      className,
-      style,
-      ...htmlProps
-    },
-    ref
-  ) {
-    const subgridClass = subgrid
-      ? subgridClasses[subgrid === true ? 'rows' : subgrid]
-      : undefined;
+const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(function GridItem(
+  { children, colSpan, rowSpan, alignSelf, subgrid, className, style, ...htmlProps },
+  ref
+) {
+  const subgridClass = subgrid ? subgridClasses[subgrid === true ? "rows" : subgrid] : undefined;
 
-    const classes = [
-      styles.item,
-      colSpan && (colSpan === 'full' ? styles.colSpanFull : styles[`colSpan${colSpan}`]),
-      rowSpan && styles[`rowSpan${rowSpan}`],
-      alignSelf && styles[`selfAlign${cap(alignSelf)}`],
-      subgridClass,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const classes = [
+    styles.item,
+    colSpan && (colSpan === "full" ? styles.colSpanFull : styles[`colSpan${colSpan}`]),
+    rowSpan && styles[`rowSpan${rowSpan}`],
+    alignSelf && styles[`selfAlign${cap(alignSelf)}`],
+    subgridClass,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    return (
-      <div {...htmlProps} ref={ref} className={classes} style={style}>
-        {children}
-      </div>
-    );
-  }
-);
+  return (
+    <div {...htmlProps} ref={ref} className={classes} style={style}>
+      {children}
+    </div>
+  );
+});
 
 // ============================================
 // Utilities
@@ -226,8 +206,9 @@ function cap(s: string): string {
 // Compound component type
 // ============================================
 
-interface GridComponent
-  extends React.ForwardRefExoticComponent<GridProps & React.RefAttributes<HTMLDivElement>> {
+interface GridComponent extends React.ForwardRefExoticComponent<
+  GridProps & React.RefAttributes<HTMLDivElement>
+> {
   Item: typeof GridItem;
 }
 

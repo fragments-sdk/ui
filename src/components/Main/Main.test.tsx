@@ -97,7 +97,7 @@ describe("Main", () => {
     const narrow = classDeclarations(mainStyles, "narrow");
 
     expect(mainStyles).toContain("$fui-main-measure-narrow: 57.143rem !default;");
-    expect(root).toContain("padding: var(--fui-space-3, $fui-space-3);");
+    expect(root).toContain("padding: layout.page-gutter();");
     expect(root).not.toMatch(/\bbackground(?:-color)?:/);
     expect(narrow).toContain("max-width: $fui-main-measure-narrow;");
   });

@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Separator as BaseSeparator } from '@base-ui/react/separator';
-import styles from './Separator.module.scss';
+import * as React from "react";
+import { Separator as BaseSeparator } from "@base-ui/react/separator";
+import styles from "./Separator.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export interface SeparatorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface SeparatorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   /** Orientation of the separator */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   /** Spacing around the separator */
-  spacing?: 'none' | 'sm' | 'md' | 'lg';
+  spacing?: "none" | "sm" | "md" | "lg";
   /** Softer visual appearance */
   soft?: boolean;
   /** Optional label text (creates a labeled divider) */
@@ -34,63 +34,67 @@ const spacingClasses = {
 // Component
 // ============================================
 
-const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(
-  function Separator(
-    {
-      orientation = 'horizontal',
-      spacing = 'none',
-      soft = false,
-      label,
-      className,
-      style,
-      ...htmlProps
-    },
-    ref
-  ) {
-    // Labeled separator (horizontal only)
-    if (label && orientation === 'horizontal') {
-      const classes = [
-        styles.separator,
-        styles.withLabel,
-        spacingClasses[spacing],
-        soft && styles.soft,
-        className,
-      ].filter(Boolean).join(' ');
-
-      return (
-        <div
-          ref={ref}
-          role="separator"
-          aria-orientation="horizontal"
-          className={classes}
-          style={style}
-          {...htmlProps}
-        >
-          <span className={styles.label}>{label}</span>
-        </div>
-      );
-    }
-
-    // Standard separator
+const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(function Separator(
+  {
+    orientation = "horizontal",
+    spacing = "none",
+    soft = false,
+    label,
+    className,
+    style,
+    ...htmlProps
+  },
+  ref
+) {
+  // Labeled separator (horizontal only)
+  if (label && orientation === "horizontal") {
     const classes = [
       styles.separator,
-      orientation === 'horizontal' ? styles.horizontal : styles.vertical,
+      styles.withLabel,
       spacingClasses[spacing],
       soft && styles.soft,
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return (
-      <BaseSeparator
+      <div
         ref={ref}
-        orientation={orientation}
+        role="separator"
+        aria-orientation="horizontal"
         className={classes}
         style={style}
         {...htmlProps}
-      />
+      >
+        <span className={styles.label}>{label}</span>
+      </div>
     );
   }
-);
+
+  // Standard separator
+  const classes = [
+    styles.separator,
+    orientation === "horizontal" ? styles.horizontal : styles.vertical,
+    spacingClasses[spacing],
+    soft && styles.soft,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <BaseSeparator
+      ref={ref}
+      orientation={orientation}
+      className={classes}
+      style={style}
+      {...htmlProps}
+    >
+      <span className={styles.line} aria-hidden="true" />
+    </BaseSeparator>
+  );
+});
 
 export const Separator = Object.assign(SeparatorRoot, {
   Root: SeparatorRoot,
