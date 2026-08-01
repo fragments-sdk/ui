@@ -107,7 +107,7 @@
   }
 
   .root:focus-visible & {
-    @include field-shell-focus;
+    @include field.focus-state;
   }
 }
 

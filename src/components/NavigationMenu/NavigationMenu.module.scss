@@ -1,9 +1,9 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-@use '../../recipes/action' as action;
-@use '../../recipes/navigation' as navigation;
-@use '../../recipes/popup' as popup;
-@use '../../recipes/typography' as typography;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
+@use "../../recipes/navigation" as navigation;
+@use "../../recipes/popup" as popup;
+@use "../../recipes/typography" as typography;
 
 // ============================================
 // Root
@@ -75,7 +75,7 @@
     background-color: var(--fui-bg-active, $fui-bg-active);
   }
 
-  &[data-state='open'] {
+  &[data-state="open"] {
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }
@@ -84,7 +84,7 @@
   transition: transform var(--fui-transition-fast, $fui-transition-fast);
   flex-shrink: 0;
 
-  [data-state='open'] > & {
+  [data-state="open"] > & {
     transform: rotate(180deg);
   }
 }
@@ -104,16 +104,16 @@
   min-width: 180px;
 
   // Motion direction for directional slide
-  &[data-motion='from-start'] {
+  &[data-motion="from-start"] {
     animation: slideFromStart var(--fui-transition-normal, $fui-transition-normal) ease forwards;
   }
-  &[data-motion='from-end'] {
+  &[data-motion="from-end"] {
     animation: slideFromEnd var(--fui-transition-normal, $fui-transition-normal) ease forwards;
   }
-  &[data-motion='to-start'] {
+  &[data-motion="to-start"] {
     animation: slideToStart var(--fui-transition-normal, $fui-transition-normal) ease forwards;
   }
-  &[data-motion='to-end'] {
+  &[data-motion="to-end"] {
     animation: slideToEnd var(--fui-transition-normal, $fui-transition-normal) ease forwards;
   }
 }
@@ -200,7 +200,7 @@
   min-height: auto;
 
   &:hover {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 }
 
@@ -239,7 +239,7 @@
   border: 1px solid var(--fui-border, $fui-border);
 
   &:hover {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
     border-color: var(--fui-border-strong, $fui-border-strong);
   }
 }
@@ -277,11 +277,10 @@
 
   width: var(--fui-navmenu-viewport-width);
   height: var(--fui-navmenu-viewport-height);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast);
+  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
 
   // Hidden when no item is open
-  &[data-state='closed'] {
+  &[data-state="closed"] {
     opacity: 0;
     pointer-events: none;
     // Collapse to avoid layout space
@@ -290,7 +289,7 @@
     overflow: hidden;
   }
 
-  &[data-state='open'] {
+  &[data-state="open"] {
     opacity: 1;
   }
 
@@ -451,7 +450,7 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
   flex-shrink: 0;
 
-  &[data-open='true'] {
+  &[data-open="true"] {
     transform: rotate(90deg);
   }
 }
@@ -465,18 +464,30 @@
 // ============================================
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 // ============================================

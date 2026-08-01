@@ -258,14 +258,10 @@
 
 // Empty state
 .empty {
-  @include text-base;
+  @include popup.row;
 
-  display: flex;
-  align-items: center;
   justify-content: center;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
 // Group container

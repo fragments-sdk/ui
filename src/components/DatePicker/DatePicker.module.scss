@@ -2,6 +2,8 @@
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
 @use "../../recipes/field";
+@use "../../recipes/popup";
+@use "../../recipes/typography";
 
 .wrapper {
   @include field.wrapper;
@@ -131,10 +133,12 @@
 // ============================================
 
 .calendar {
-  @include text-base;
+  @include typography.role("body-compact");
 
   // Square size shared by weekday headers + day cells/buttons (32px grid).
-  --_day-size: var(--fui-icon-2xl, #{$fui-icon-2xl});
+  --_day-size: #{action.track("md")};
+
+  color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .months {
@@ -177,12 +181,9 @@
 .navButton {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("sm");
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-button-height-sm, $fui-button-height-sm);
-  height: var(--fui-button-height-sm, $fui-button-height-sm);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
 
@@ -192,8 +193,7 @@
   }
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("sm");
   }
 }
 
@@ -215,13 +215,11 @@
 }
 
 .weekday {
-  @include text-base;
+  @include typography.role("ui-compact");
 
   width: var(--_day-size);
   height: var(--_day-size);
   padding: 0;
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
   vertical-align: middle;
@@ -282,7 +280,7 @@
 }
 
 .selected > .dayButton {
-  @include popup-item-selected;
+  @include popup.selected-state;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &:hover {
@@ -352,7 +350,7 @@
   > .dayButton {
     position: relative;
     z-index: 1;
-    @include popup-item-selected;
+    @include popup.selected-state;
     font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
     &:hover {
@@ -382,7 +380,7 @@
   > .dayButton {
     position: relative;
     z-index: 1;
-    @include popup-item-selected;
+    @include popup.selected-state;
     font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
     &:hover {
@@ -397,14 +395,10 @@
 
 .preset {
   @include button-reset;
-  @include text-base;
+  @include popup.row;
 
-  display: flex;
-  align-items: center;
   width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-primary, $fui-text-primary);
   white-space: nowrap;
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);

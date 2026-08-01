@@ -5,7 +5,6 @@
 .button {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
   @include action.base;
 
   --_button-bg: transparent;
