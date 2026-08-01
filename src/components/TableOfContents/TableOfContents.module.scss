@@ -1,5 +1,7 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/navigation" as navigation;
+@use "../../recipes/typography" as typography;
 
 // ============================================
 // Dormant single-rail geometry
@@ -21,6 +23,9 @@ $rail-from-item-0: $rail-x-0 - $rail-pad; // -11px
 $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
 
 .root {
+  @include navigation.properties;
+  @include typography.role("body-compact");
+
   // Solid rail color that adapts to light/dark and tracks the page background.
   // 18% mix gives clearly-visible contrast against bg-primary at 1px width
   // (subtler --fui-bg-tertiary blends into the bg at this thickness).
@@ -29,9 +34,6 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
     var(--fui-bg-primary, #{$fui-bg-primary}),
     var(--fui-text-primary, #{$fui-text-primary}) 18%
   );
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
@@ -184,15 +186,12 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
 }
 
 .link {
+  @include navigation.row;
+
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-  letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
   text-decoration: none;
   transition:
     background-color var(--fui-transition-fast, $fui-transition-fast),
@@ -230,9 +229,14 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
   flex-shrink: 0;
 }
 
+.leading {
+  @include navigation.leading;
+}
+
 .trailing {
+  @include typography.role("caption");
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
   font-variant-numeric: tabular-nums;
 }
 
@@ -246,17 +250,13 @@ $rail-from-item-1: $rail-x-1 - $rail-pad; //  3px
 // ============================================
 
 .groupHeader {
+  @include navigation.section-row;
+
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
   width: 100%;
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  min-height: 32px;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
   text-transform: uppercase;
   background: transparent;
   border: 0;

@@ -120,6 +120,11 @@ for (const [role, record] of Object.entries(generated.measurements.typography)) 
 }
 assert.doesNotMatch(css, /--fui-type-[\w-]+-family\s*:/);
 
+for (const [name, value] of Object.entries(generated.measurements.legacy.navigation)) {
+  const property = name.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
+  assert.equal(cssDeclaration(".fixed", `--fui-navigation-${property}`), value);
+}
+
 for (const [name, profile] of Object.entries(generated.measurements.density)) {
   const selector = `.density-${name}`;
   const baseFontSize = Number.parseFloat(profile.baseFontSize);

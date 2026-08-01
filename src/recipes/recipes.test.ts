@@ -71,6 +71,25 @@ describe("geometry recipes", () => {
     expect(css).toContain("inline-size: var(--fui-icon-md, 16px)");
   });
 
+  it("compiles fixed navigation rows and optical anatomy", () => {
+    const css = compile(`
+      @use "recipes/navigation";
+      .row { @include navigation.row; }
+      .section { @include navigation.section-row; }
+      .leading { @include navigation.leading; }
+      .active { @include navigation.active-indicator("end"); }
+      .collapsed { @include navigation.collapsed-shell; }
+    `);
+
+    expect(css).toContain("--fui-navigation-row-track: var(");
+    expect(css).toContain("--fui-control-track-md");
+    expect(css).toContain("--fui-navigation-gutter: var(--fui-navigation-sidebar-gutter, 8px)");
+    expect(css).toContain("min-block-size: var(--fui-navigation-row-track)");
+    expect(css).toContain("inline-size: var(--fui-navigation-leading-box)");
+    expect(css).toContain("inline-size: var(--fui-navigation-active-dot)");
+    expect(css).toContain("inline-size: var(--fui-navigation-sidebar-collapsed-width, 56px)");
+  });
+
   it.each([
     ['@use "recipes/action"; .x { @include action.size("xl"); }', "Unknown action role"],
     ['@use "recipes/field"; .x { @include field.size("xs"); }', "Unknown field size"],
@@ -78,6 +97,10 @@ describe("geometry recipes", () => {
     [
       '@use "recipes/boolean-range" as boolean; .x { @include boolean.mark("xl"); }',
       "Unknown boolean size",
+    ],
+    [
+      '@use "recipes/navigation"; .x { @include navigation.active-indicator("middle"); }',
+      "Unknown navigation indicator placement",
     ],
   ])("rejects an unsupported closed recipe role", (source, message) => {
     expect(() => compile(source)).toThrow(message);

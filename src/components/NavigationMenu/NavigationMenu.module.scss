@@ -1,11 +1,16 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
+@use '../../recipes/action' as action;
+@use '../../recipes/navigation' as navigation;
+@use '../../recipes/popup' as popup;
+@use '../../recipes/typography' as typography;
 
 // ============================================
 // Root
 // ============================================
 
 .root {
+  @include navigation.properties;
   // Container query context: children respond to nav menu width, not viewport
   @include container(fui-navmenu);
 
@@ -51,16 +56,14 @@
 .trigger {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
+  @include action.base;
+  @include action.size("md");
 
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
-  min-height: var(--fui-button-height-md, $fui-button-height-md);
   cursor: pointer;
 
   &:hover {
@@ -164,13 +167,13 @@
 // ============================================
 
 .link {
-  @include popup-item;
+  @include popup.row;
 
   text-decoration: none;
   white-space: nowrap;
 
   &:hover {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 
   // Links are real tab stops, so keep the focus ring on top of the highlight.
@@ -220,16 +223,15 @@
 }
 
 .linkTitle {
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  @include typography.role("ui-standard");
+
   color: var(--fui-text-primary, $fui-text-primary);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
 }
 
 .linkDescription {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include typography.role("caption");
+
   color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
 .linkFeatured {
@@ -263,13 +265,12 @@
 // ============================================
 
 .viewport {
-  @include surface-elevated;
+  @include popup.container;
 
   position: absolute;
   top: calc(100% + var(--fui-space-1, #{$fui-space-1}));
   left: var(--fui-navmenu-viewport-left, 0);
   overflow: hidden;
-  padding: var(--fui-space-1, $fui-space-1);
   border-color: var(--fui-border-strong, $fui-border-strong);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 1);
@@ -306,12 +307,12 @@
 .hamburger {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("lg");
 
   display: none;
   align-items: center;
   justify-content: center;
-  width: var(--fui-touch-lg, $fui-touch-lg);
-  height: var(--fui-touch-lg, $fui-touch-lg);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-primary, $fui-text-primary);
   flex-shrink: 0;
@@ -321,8 +322,7 @@
   }
 
   svg {
-    width: var(--fui-icon-xl, $fui-icon-xl);
-    height: var(--fui-icon-xl, $fui-icon-xl);
+    @include action.glyph("lg");
   }
 
   // Keep viewport visibility in sync with JS mobile mode.
@@ -380,12 +380,12 @@
 .drawerClose {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("md");
 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--fui-touch-md, $fui-touch-md);
-  height: var(--fui-touch-md, $fui-touch-md);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
 
@@ -408,24 +408,22 @@
 
 .drawerLink {
   @include button-reset;
-  @include text-base;
+  @include navigation.row;
 
   display: flex;
   align-items: center;
   width: 100%;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
-  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 }
 
 .drawerSectionLabel {
-  @include section-label-text;
+  @include navigation.section-row;
 
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4)
     var(--fui-space-1, $fui-space-1);
@@ -433,16 +431,14 @@
 
 .drawerCollapsibleTrigger {
   @include button-reset;
-  @include text-base;
+  @include navigation.row;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {

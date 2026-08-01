@@ -77,6 +77,11 @@ describe('Sidebar', () => {
     expect(activeItem).toHaveAttribute('aria-current', 'page');
   });
 
+  it('exposes the selected active-indicator placement', () => {
+    renderSidebar({ activeIndicator: 'end' });
+    expect(document.querySelector('aside')).toHaveAttribute('data-active-indicator', 'end');
+  });
+
   it('disables items with disabled prop', () => {
     renderSidebar();
     const disabledItem = screen.getByText('Disabled').closest('button');
@@ -123,7 +128,9 @@ describe('Sidebar', () => {
   it('uses icon collapse width when collapsed with icons', () => {
     renderSidebar({ collapsed: true });
     const aside = document.querySelector('aside');
-    expect(aside).toHaveStyle('--sidebar-effective-collapsed-width: 56px');
+    expect(aside).toHaveStyle(
+      '--sidebar-effective-collapsed-width: var(--fui-navigation-sidebar-collapsed-width, 56px)'
+    );
     expect(aside).toHaveAttribute('data-icon-collapse', 'icons');
   });
 

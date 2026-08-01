@@ -96,6 +96,11 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   position?: 'left' | 'right';
   /** Collapse behavior: 'icon' (default), 'offcanvas', or 'none' */
   collapsible?: SidebarCollapsible;
+  /**
+   * Where the active-item affordance paints. `start` is the default rail;
+   * `end` is a trailing status dot for product shells that prefer that language.
+   */
+  activeIndicator?: 'start' | 'end';
 }
 
 export interface SidebarHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -304,7 +309,7 @@ function useSidebar() {
       isMobile: false,
       position: 'left' as const,
       width: '240px',
-      collapsedWidth: '56px',
+      collapsedWidth: 'var(--fui-navigation-sidebar-collapsed-width, 56px)',
       collapsible: 'icon' as SidebarCollapsible,
       hasIcons: true,
       toggleSidebar: () => {},
@@ -414,7 +419,7 @@ function SidebarProvider({
   defaultOpen = false,
   onOpenChange,
   width = '240px',
-  collapsedWidth = '56px',
+  collapsedWidth = 'var(--fui-navigation-sidebar-collapsed-width, 56px)',
   position = 'left',
   collapsible = 'icon',
   enableKeyboardShortcut = true,
@@ -510,9 +515,10 @@ function SidebarRoot({
   defaultOpen = false,
   onOpenChange,
   width = '240px',
-  collapsedWidth = '56px',
+  collapsedWidth = 'var(--fui-navigation-sidebar-collapsed-width, 56px)',
   position = 'left',
   collapsible = 'icon',
+  activeIndicator = 'start',
   className,
   style: styleProp,
   'aria-label': ariaLabel,
@@ -644,6 +650,7 @@ function SidebarRoot({
       data-state={isMobile ? (open ? 'open' : 'closed') : (collapsed ? 'collapsed' : 'expanded')}
       data-position={resolvedPosition}
       data-collapsible={resolvedCollapsible}
+      data-active-indicator={activeIndicator}
       data-icon-collapse={resolvedCollapsible === 'icon' ? (hasIcons ? 'icons' : 'none') : undefined}
     >
       {children}

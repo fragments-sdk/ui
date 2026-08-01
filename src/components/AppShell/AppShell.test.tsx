@@ -76,6 +76,19 @@ describe("AppShell", () => {
     expect(screen.getByText("Main Content")).toBeInTheDocument();
   });
 
+  it("forwards active-indicator placement to the sidebar", () => {
+    render(
+      <AppShell>
+        <AppShell.Sidebar activeIndicator="end">
+          Sidebar
+        </AppShell.Sidebar>
+        <AppShell.Main>Main</AppShell.Main>
+      </AppShell>
+    );
+
+    expect(document.querySelector("aside")).toHaveAttribute("data-active-indicator", "end");
+  });
+
   it("renders aside slot when visible", () => {
     render(
       <AppShell>

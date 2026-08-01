@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/navigation" as navigation;
 
 // ============================================
 // AppShell Root - CSS Grid Layout
@@ -10,6 +11,8 @@
 // Visual treatment (floating) is controlled per-slot via `variant` props.
 
 .root {
+  @include navigation.properties;
+
   display: grid;
   min-height: 100vh;
   min-height: 100dvh;

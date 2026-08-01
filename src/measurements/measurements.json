@@ -285,7 +285,8 @@
       "sidebarLeadingBox": "16px",
       "sidebarDot": "6px",
       "sidebarRail": "2px",
-      "sidebarLabelOffset": "1px"
+      "sidebarLabelOffset": "1px",
+      "sidebarCollapsedWidth": "56px"
     },
     "docsDensity": {
       "compact": {
