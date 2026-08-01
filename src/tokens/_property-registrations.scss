@@ -11,7 +11,7 @@
 // Usage: @include fui-property-registrations; (before fui-css-variables)
 // ============================================
 
-@use 'variables' as *;
+@use "variables" as *;
 
 // ============================================
 // Color Tokens
@@ -19,7 +19,7 @@
 
 @mixin register-color($name, $initial) {
   @property --fui-#{$name} {
-    syntax: '<color>';
+    syntax: "<color>";
     initial-value: #{$initial};
     inherits: true;
   }
@@ -31,7 +31,7 @@
 
 @mixin register-length($name, $initial) {
   @property --fui-#{$name} {
-    syntax: '<length>';
+    syntax: "<length>";
     initial-value: #{$initial};
     inherits: true;
   }
@@ -43,7 +43,7 @@
 
 @mixin register-number($name, $initial) {
   @property --fui-#{$name} {
-    syntax: '<number>';
+    syntax: "<number>";
     initial-value: #{$initial};
     inherits: true;
   }
@@ -58,154 +58,158 @@
   // Seed Colors — configurable brand/semantic seeds
   // Runtime derivation via relative color syntax operates in OKLCH space.
   // ------------------------------------------
-  @include register-color('seed-brand', $fui-color-accent);
-  @include register-color('seed-danger', $fui-color-danger);
-  @include register-color('seed-success', $fui-color-success);
-  @include register-color('seed-warning', $fui-color-warning);
-  @include register-color('seed-info', $fui-color-info);
+  @include register-color("seed-brand", $fui-color-accent);
+  @include register-color("seed-danger", $fui-color-danger);
+  @include register-color("seed-success", $fui-color-success);
+  @include register-color("seed-warning", $fui-color-warning);
+  @include register-color("seed-info", $fui-color-info);
 
   // ------------------------------------------
   // Colors — Accent (animatable for theme transitions)
   // ------------------------------------------
-  @include register-color('color-accent', $fui-color-accent);
-  @include register-color('color-accent-hover', $fui-color-accent-hover);
-  @include register-color('color-accent-active', $fui-color-accent-active);
+  @include register-color("color-accent", $fui-color-accent);
+  @include register-color("color-accent-hover", $fui-color-accent-hover);
+  @include register-color("color-accent-active", $fui-color-accent-active);
 
   // ------------------------------------------
   // Colors — Semantic
   // ------------------------------------------
-  @include register-color('color-danger', $fui-color-danger);
-  @include register-color('color-danger-hover', $fui-color-danger-hover);
-  @include register-color('color-success', $fui-color-success);
-  @include register-color('color-warning', $fui-color-warning);
-  @include register-color('color-info', $fui-color-info);
+  @include register-color("color-danger", $fui-color-danger);
+  @include register-color("color-danger-hover", $fui-color-danger-hover);
+  @include register-color("color-success", $fui-color-success);
+  @include register-color("color-warning", $fui-color-warning);
+  @include register-color("color-info", $fui-color-info);
 
   // ------------------------------------------
   // Colors — Semantic Backgrounds
   // ------------------------------------------
-  @include register-color('color-danger-bg', $fui-color-danger-bg);
-  @include register-color('color-success-bg', $fui-color-success-bg);
-  @include register-color('color-warning-bg', $fui-color-warning-bg);
-  @include register-color('color-info-bg', $fui-color-info-bg);
+  @include register-color("color-danger-bg", $fui-color-danger-bg);
+  @include register-color("color-success-bg", $fui-color-success-bg);
+  @include register-color("color-warning-bg", $fui-color-warning-bg);
+  @include register-color("color-info-bg", $fui-color-info-bg);
 
   // ------------------------------------------
   // Colors — Semantic Text
   // ------------------------------------------
-  @include register-color('color-danger-text', $fui-color-danger-text);
-  @include register-color('color-success-text', $fui-color-success-text);
-  @include register-color('color-warning-text', $fui-color-warning-text);
-  @include register-color('color-info-text', $fui-color-info-text);
+  @include register-color("color-danger-text", $fui-color-danger-text);
+  @include register-color("color-success-text", $fui-color-success-text);
+  @include register-color("color-warning-text", $fui-color-warning-text);
+  @include register-color("color-info-text", $fui-color-info-text);
 
   // ------------------------------------------
   // Colors — Surfaces
   // ------------------------------------------
-  @include register-color('bg-primary', $fui-bg-primary);
-  @include register-color('bg-secondary', $fui-bg-secondary);
-  @include register-color('bg-tertiary', $fui-bg-tertiary);
-  @include register-color('bg-elevated', $fui-bg-elevated);
-  @include register-color('bg-subtle', $fui-bg-subtle);
-  @include register-color('bg-hover', $fui-bg-hover);
-  @include register-color('bg-active', $fui-bg-active);
-  @include register-color('body-bg', $fui-body-bg);
-  @include register-color('main-bg', $fui-main-bg);
+  @include register-color("bg-primary", $fui-bg-primary);
+  @include register-color("bg-secondary", $fui-bg-secondary);
+  @include register-color("bg-tertiary", $fui-bg-tertiary);
+  @include register-color("bg-elevated", $fui-bg-elevated);
+  @include register-color("bg-subtle", $fui-bg-subtle);
+  @include register-color("bg-hover", $fui-bg-hover);
+  @include register-color("bg-active", $fui-bg-active);
+  @include register-color("body-bg", $fui-body-bg);
+  @include register-color("main-bg", $fui-main-bg);
 
   // ------------------------------------------
   // Colors — Text
   // ------------------------------------------
-  @include register-color('text-primary', $fui-text-primary);
-  @include register-color('text-secondary', $fui-text-secondary);
-  @include register-color('text-tertiary', $fui-text-tertiary);
-  @include register-color('text-inverse', $fui-text-inverse);
+  @include register-color("text-primary", $fui-text-primary);
+  @include register-color("text-secondary", $fui-text-secondary);
+  @include register-color("text-tertiary", $fui-text-tertiary);
+  @include register-color("text-inverse", $fui-text-inverse);
 
   // ------------------------------------------
   // Colors — Borders
   // ------------------------------------------
-  @include register-color('border', $fui-border);
-  @include register-color('border-default', $fui-border-default);
-  @include register-color('border-strong', $fui-border-strong);
+  @include register-color("border", $fui-border);
+  @include register-color("border-default", $fui-border-default);
+  @include register-color("border-strong", $fui-border-strong);
 
   // ------------------------------------------
   // Colors — Focus
   // ------------------------------------------
-  @include register-color('focus-ring-color', $fui-focus-ring-color);
+  @include register-color("focus-ring-color", $fui-focus-ring-color);
 
   // ------------------------------------------
   // Colors — Scrollbar
   // ------------------------------------------
-  @include register-color('scrollbar-track', $fui-scrollbar-track);
-  @include register-color('scrollbar-thumb', $fui-scrollbar-thumb);
-  @include register-color('scrollbar-thumb-hover', $fui-scrollbar-thumb-hover);
+  @include register-color("scrollbar-track", $fui-scrollbar-track);
+  @include register-color("scrollbar-thumb", $fui-scrollbar-thumb);
+  @include register-color("scrollbar-thumb-hover", $fui-scrollbar-thumb-hover);
 
   // ------------------------------------------
   // Spacing — Lengths
   // ------------------------------------------
-  @include register-length('space-px', $fui-space-px);
-  @include register-length('space-0-5', $fui-space-0-5);
-  @include register-length('space-0-75', $fui-space-0-75);
-  @include register-length('space-1', $fui-space-1);
-  @include register-length('space-2', $fui-space-2);
-  @include register-length('space-3', $fui-space-3);
-  @include register-length('space-4', $fui-space-4);
-  @include register-length('space-5', $fui-space-5);
-  @include register-length('space-6', $fui-space-6);
-  @include register-length('space-8', $fui-space-8);
-  @include register-length('space-10', $fui-space-10);
-  @include register-length('space-12', $fui-space-12);
+  @include register-length("space-px", $fui-space-px);
+  @include register-length("space-0-5", $fui-space-0-5);
+  @include register-length("space-0-75", $fui-space-0-75);
+  @include register-length("space-1", $fui-space-1);
+  @include register-length("space-2", $fui-space-2);
+  @include register-length("space-3", $fui-space-3);
+  @include register-length("space-4", $fui-space-4);
+  @include register-length("space-5", $fui-space-5);
+  @include register-length("space-6", $fui-space-6);
+  @include register-length("space-8", $fui-space-8);
+  @include register-length("space-10", $fui-space-10);
+  @include register-length("space-12", $fui-space-12);
 
   // ------------------------------------------
   // Border Radius — Lengths
   // ------------------------------------------
-  @include register-length('radius-sm', $fui-radius-sm);
-  @include register-length('radius-md', $fui-radius-md);
-  @include register-length('radius-lg', $fui-radius-lg);
-  @include register-length('radius-xl', $fui-radius-xl);
-  @include register-length('radius-full', $fui-radius-full);
+  @include register-length("radius-sm", $fui-radius-sm);
+  @include register-length("radius-md", $fui-radius-md);
+  @include register-length("radius-lg", $fui-radius-lg);
+  @include register-length("radius-xl", $fui-radius-xl);
+  @include register-length("radius-full", $fui-radius-full);
 
   // ------------------------------------------
   // Component Heights — Lengths
   // ------------------------------------------
-  @include register-length('button-height-xs', $fui-button-height-xs);
-  @include register-length('button-height-sm', $fui-button-height-sm);
-  @include register-length('button-height-md', $fui-button-height-md);
-  @include register-length('button-height-lg', $fui-button-height-lg);
-  @include register-length('input-height', $fui-input-height);
-  @include register-length('input-height-sm', $fui-input-height-sm);
-  @include register-length('input-height-lg', $fui-input-height-lg);
-  @include register-length('target-size-min', $fui-target-size-min);
+  @include register-length("control-height-xs", $fui-control-height-xs);
+  @include register-length("control-height-sm", $fui-control-height-sm);
+  @include register-length("control-height-md", $fui-control-height-md);
+  @include register-length("control-height-lg", $fui-control-height-lg);
+  @include register-length("button-height-xs", $fui-button-height-xs);
+  @include register-length("button-height-sm", $fui-button-height-sm);
+  @include register-length("button-height-md", $fui-button-height-md);
+  @include register-length("button-height-lg", $fui-button-height-lg);
+  @include register-length("input-height", $fui-input-height);
+  @include register-length("input-height-sm", $fui-input-height-sm);
+  @include register-length("input-height-lg", $fui-input-height-lg);
+  @include register-length("target-size-min", $fui-target-size-min);
 
   // ------------------------------------------
   // Focus Ring — Lengths
   // ------------------------------------------
-  @include register-length('focus-ring-offset', $fui-focus-ring-offset);
-  @include register-length('focus-ring-width', $fui-focus-ring-width);
-  @include register-length('scrollbar-width', $fui-scrollbar-width);
+  @include register-length("focus-ring-offset", $fui-focus-ring-offset);
+  @include register-length("focus-ring-width", $fui-focus-ring-width);
+  @include register-length("scrollbar-width", $fui-scrollbar-width);
 
   // ------------------------------------------
   // Typography — Numbers (unitless, animatable)
   // ------------------------------------------
-  @include register-number('font-weight-normal', $fui-font-weight-normal);
-  @include register-number('font-weight-medium', $fui-font-weight-medium);
-  @include register-number('font-weight-semibold', $fui-font-weight-semibold);
-  @include register-number('font-weight-bold', $fui-font-weight-bold);
-  @include register-number('line-height-tight', $fui-line-height-tight);
-  @include register-number('line-height-normal', $fui-line-height-normal);
-  @include register-number('line-height-relaxed', $fui-line-height-relaxed);
-  @include register-number('line-height-display', $fui-line-height-display);
-  @include register-number('line-height-prose', $fui-line-height-prose);
+  @include register-number("font-weight-normal", $fui-font-weight-normal);
+  @include register-number("font-weight-medium", $fui-font-weight-medium);
+  @include register-number("font-weight-semibold", $fui-font-weight-semibold);
+  @include register-number("font-weight-bold", $fui-font-weight-bold);
+  @include register-number("line-height-tight", $fui-line-height-tight);
+  @include register-number("line-height-normal", $fui-line-height-normal);
+  @include register-number("line-height-relaxed", $fui-line-height-relaxed);
+  @include register-number("line-height-display", $fui-line-height-display);
+  @include register-number("line-height-prose", $fui-line-height-prose);
 
   // ------------------------------------------
   // Typography — Font Sizes (lengths)
   // ------------------------------------------
-  @include register-length('font-size-2xs', $fui-font-size-2xs);
-  @include register-length('font-size-xs', $fui-font-size-xs);
-  @include register-length('font-size-sm', $fui-font-size-sm);
-  @include register-length('font-size-base', $fui-font-size-base);
-  @include register-length('font-size-md', $fui-font-size-md);
-  @include register-length('font-size-lg', $fui-font-size-lg);
-  @include register-length('font-size-xl', $fui-font-size-xl);
-  @include register-length('font-size-2xl', $fui-font-size-2xl);
-  @include register-length('font-size-3xl', $fui-font-size-3xl);
-  @include register-length('font-size-4xl', $fui-font-size-4xl);
+  @include register-length("font-size-2xs", $fui-font-size-2xs);
+  @include register-length("font-size-xs", $fui-font-size-xs);
+  @include register-length("font-size-sm", $fui-font-size-sm);
+  @include register-length("font-size-base", $fui-font-size-base);
+  @include register-length("font-size-md", $fui-font-size-md);
+  @include register-length("font-size-lg", $fui-font-size-lg);
+  @include register-length("font-size-xl", $fui-font-size-xl);
+  @include register-length("font-size-2xl", $fui-font-size-2xl);
+  @include register-length("font-size-3xl", $fui-font-size-3xl);
+  @include register-length("font-size-4xl", $fui-font-size-4xl);
 
   // ------------------------------------------
   // Note: The following tokens are NOT registered because @property

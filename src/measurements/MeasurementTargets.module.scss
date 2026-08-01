@@ -1,0 +1,229 @@
+@use "../recipes/typography";
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+
+.lineup {
+  display: grid;
+  gap: var(--fui-raw-space-24, #{measurements.raw-space("24")});
+  min-inline-size: 0;
+  padding: var(--fui-raw-space-24, #{measurements.raw-space("24")});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  background: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
+}
+
+.header,
+.section,
+.specimenList,
+.specimenRow,
+.typographySpecimen {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.header {
+  gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
+}
+
+.eyebrow,
+.specimenName {
+  @include typography.role("ui-compact");
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
+  text-transform: uppercase;
+}
+
+.title {
+  @include typography.role("title-lg");
+
+  margin: 0;
+}
+
+.description {
+  @include typography.role("body-compact");
+
+  margin: 0;
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+}
+
+.context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
+}
+
+.contextValue,
+.specimenValue {
+  @include typography.role("code");
+}
+
+.contextValue {
+  padding: var(--fui-raw-space-4, #{measurements.raw-space("4")})
+    var(--fui-raw-space-8, #{measurements.raw-space("8")});
+  border-radius: var(--fui-radius-sm, #{tokens.$fui-radius-sm});
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  background: var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary});
+}
+
+.section {
+  gap: var(--fui-raw-space-16, #{measurements.raw-space("16")});
+  padding: var(--fui-raw-space-16, #{measurements.raw-space("16")});
+  border-radius: var(--fui-radius-lg, #{tokens.$fui-radius-lg});
+  background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+  box-shadow: var(--fui-shadow-sm, #{tokens.$fui-shadow-sm});
+}
+
+.sectionTitle {
+  @include typography.role("title-sm");
+
+  margin: 0;
+}
+
+.specimenList {
+  gap: var(--fui-raw-space-12, #{measurements.raw-space("12")});
+}
+
+.specimenRow {
+  gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
+}
+
+.specimenMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fui-raw-space-12, #{measurements.raw-space("12")});
+}
+
+.specimenName,
+.specimenValue {
+  margin: 0;
+}
+
+.specimenName {
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+}
+
+.specimenValue {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
+}
+
+.controlTrack,
+.fieldTrack {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.controlTrack {
+  @include typography.role("ui-compact");
+
+  inline-size: fit-content;
+  justify-content: center;
+  padding-inline: var(--fui-raw-space-12, #{measurements.raw-space("12")});
+  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
+  color: var(--fui-color-on-accent, #{tokens.$fui-color-on-accent});
+  background: var(--fui-color-accent, #{tokens.$fui-color-accent});
+}
+
+.controlTrackMicro {
+  block-size: var(--fui-control-track-micro, #{measurements.target-value("controlTrack", "micro")});
+}
+
+.controlTrackSm {
+  block-size: var(--fui-control-track-sm, #{measurements.target-value("controlTrack", "sm")});
+}
+
+.controlTrackMd {
+  block-size: var(--fui-control-track-md, #{measurements.target-value("controlTrack", "md")});
+}
+
+.controlTrackLg {
+  block-size: var(--fui-control-track-lg, #{measurements.target-value("controlTrack", "lg")});
+}
+
+.fieldTrack {
+  @include typography.role("ui-standard");
+
+  inline-size: 100%;
+  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  background: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
+}
+
+.fieldTrackSm {
+  block-size: var(--fui-field-track-sm, #{measurements.target-value("fieldTrack", "sm")});
+  padding-inline: var(
+    --fui-field-inline-inset-sm,
+    #{measurements.target-value("fieldInlineInset", "sm")}
+  );
+}
+
+.fieldTrackMd {
+  block-size: var(--fui-field-track-md, #{measurements.target-value("fieldTrack", "md")});
+  padding-inline: var(
+    --fui-field-inline-inset-md,
+    #{measurements.target-value("fieldInlineInset", "md")}
+  );
+}
+
+.fieldTrackLg {
+  block-size: var(--fui-field-track-lg, #{measurements.target-value("fieldTrack", "lg")});
+  padding-inline: var(
+    --fui-field-inline-inset-lg,
+    #{measurements.target-value("fieldInlineInset", "lg")}
+  );
+}
+
+.typographySpecimen {
+  gap: var(--fui-raw-space-4, #{measurements.raw-space("4")});
+  padding-block: var(--fui-raw-space-4, #{measurements.raw-space("4")});
+}
+
+.typographySample {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.caption {
+  @include typography.role("caption");
+}
+
+.uiCompact {
+  @include typography.role("ui-compact");
+}
+
+.uiStandard {
+  @include typography.role("ui-standard");
+}
+
+.bodyCompact {
+  @include typography.role("body-compact");
+}
+
+.bodyRelaxed {
+  @include typography.role("body-relaxed");
+}
+
+.titleSm {
+  @include typography.role("title-sm");
+}
+
+.titleMd {
+  @include typography.role("title-md");
+}
+
+.titleLg {
+  @include typography.role("title-lg");
+}
+
+.code {
+  @include typography.role("code");
+}

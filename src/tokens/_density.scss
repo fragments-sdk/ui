@@ -2,109 +2,43 @@
 // @usefragments/ui Density Scales
 // ============================================
 //
-// Defines 3 density presets that control spacing and sizing.
-// Each preset uses a different base unit to scale all spacing.
+// Compatibility adapter over the generated Measurement Module. Existing Sass
+// callers keep their flat map/function API, while measurements.json remains the
+// only editable numeric owner.
 //
 // ============================================
 
-@use "sass:math";
 @use "sass:map";
+@use "sass:math";
+@use "measurements.generated" as measurements;
 
-// --------------------------------------------
-// Density Definitions
-// --------------------------------------------
-// Each density includes:
-// - base-unit: The fundamental spacing unit
-// - multipliers: Scale factors for spacing tokens
+@function _adapt-density($name) {
+  @return (
+    base-unit: measurements.density-value($name, "baseUnit"),
+    base-font-size: measurements.density-value($name, "baseFontSize"),
+    spacing-multipliers: measurements.density-value($name, "spacingMultipliers"),
+    control-height-xs: measurements.density-nested-value($name, "controlHeight", "xs"),
+    control-height-sm: measurements.density-nested-value($name, "controlHeight", "sm"),
+    control-height-md: measurements.density-nested-value($name, "controlHeight", "md"),
+    control-height-lg: measurements.density-nested-value($name, "controlHeight", "lg"),
+    touch-sm: measurements.density-nested-value($name, "touch", "sm"),
+    touch-md: measurements.density-nested-value($name, "touch", "md"),
+    touch-lg: measurements.density-nested-value($name, "touch", "lg"),
+    sidebar-item-height: measurements.density-value($name, "sidebarItemHeight")
+  );
+}
 
-$density-compact: (
-  base-unit: 6px,
-  base-font-size: 14px,
-  // Button heights (compact, with a 32px interactive floor)
-  button-height-xs: 32px,
-  button-height-sm: 32px,
-  button-height-md: 32px,
-  button-height-lg: 36px,
-  // 6 units
-  // Input height
-  input-height: 32px,
-  input-height-sm: 32px,
-  input-height-lg: 36px,
-  // 6 units
-  // Touch targets
-  touch-sm: 32px,
-  touch-md: 32px,
-  touch-lg: 40px,
-  // Sidebar navigation
-  sidebar-item-height: 32px,
-);
+$density-compact: _adapt-density("compact");
+$density-default: _adapt-density("default");
+$density-relaxed: _adapt-density("relaxed");
 
-$density-default: (
-  base-unit: 7px,
-  base-font-size: 14px,
-  // Button heights align with field heights at each size
-  button-height-xs: 32px,
-  button-height-sm: 32px,
-  button-height-md: 40px,
-  button-height-lg: 44px,
-  // ~6 units
-  // Input height
-  input-height: 40px,
-  // ~6 units
-  input-height-sm: 32px,
-  // ~4.5 units
-  input-height-lg: 44px,
-  // ~6 units
-  // Touch targets (baseline)
-  touch-sm: 32px,
-  touch-md: 32px,
-  touch-lg: 44px,
-  // WCAG AAA recommended
-  // Sidebar navigation
-  sidebar-item-height: 32px,
-);
-
-$density-relaxed: (
-  base-unit: 8px,
-  base-font-size: 14px,
-  // Button heights align with field heights at each size
-  button-height-xs: 32px,
-  button-height-sm: 32px,
-  button-height-md: 44px,
-  button-height-lg: 48px,
-  // 6 units
-  // Input height
-  input-height: 44px,
-  // ~5.5 units
-  input-height-sm: 32px,
-  // 4 units
-  input-height-lg: 48px,
-  // 6 units
-  // Touch targets (proportional from default, not blown out)
-  touch-sm: 32px,
-  touch-md: 40px,
-  touch-lg: 48px,
-  // +9% from default (unchanged)
-  // Sidebar navigation
-  sidebar-item-height: 36px,
-);
-
-// --------------------------------------------
-// Density Map for Dynamic Access
-// --------------------------------------------
 $densities: (
   "compact": $density-compact,
   "default": $density-default,
   "relaxed": $density-relaxed,
 );
 
-// --------------------------------------------
-// Helper Functions
-// --------------------------------------------
-
-/// Get a density configuration by name
-/// @param {String} $name - Density name (compact, default, relaxed)
-/// @return {Map} The density configuration map
+/// Get a density configuration by name.
 @function get-density($name) {
   @if not map.has-key($densities, $name) {
     @warn "Unknown density '#{$name}'. Using 'default' as fallback.";
@@ -113,10 +47,7 @@ $densities: (
   @return map.get($densities, $name);
 }
 
-/// Get a specific value from a density configuration
-/// @param {Map} $density - A density configuration map
-/// @param {String} $key - The key to retrieve
-/// @return {*} The value
+/// Get a specific value from a density configuration.
 @function density-value($density, $key) {
   @if not map.has-key($density, $key) {
     @warn "Unknown density key '#{$key}'.";
@@ -125,52 +56,30 @@ $densities: (
   @return map.get($density, $key);
 }
 
-/// Derive spacing scale from base unit
-/// Returns a map with spacing tokens
-/// @param {Map} $density - A density configuration map
-/// @return {Map} Spacing tokens
+/// Derive the legacy density-responsive spacing map from generated values.
 @function derive-spacing($density) {
   $base: map.get($density, base-unit);
   $font-size: map.get($density, base-font-size);
-
-  // Convert to rem based on font size
-  // 1 unit = base-unit / font-size * 1rem
   $unit-rem: math.div($base, $font-size) * 1rem;
+  $multipliers: map.get($density, spacing-multipliers);
 
   @return (
-    // Micro spacing (pixel-precise for tiny alignments)
-    px: 1px,
-    0-5: $unit-rem * 0.3,
-    // ~2px for 7px base
-    0-75: $unit-rem * 0.43,
-
-    // ~3px for 7px base
-    // Standard spacing scale
-    1: $unit-rem,
-    // 1 unit
-    2: $unit-rem * 2,
-    // 2 units
-    3: $unit-rem * 3,
-    // 3 units
-    4: $unit-rem * 4,
-    // 4 units
-    5: $unit-rem * 5,
-    // 5 units
-    6: $unit-rem * 6,
-    // 6 units
-    8: $unit-rem * 8,
-    // 8 units
-    10: $unit-rem * 10,
-    // 10 units
-    12: $unit-rem * 12 // 12 units
+    px: map.get($multipliers, "px"),
+    0-5: $unit-rem * map.get($multipliers, "0-5"),
+    0-75: $unit-rem * map.get($multipliers, "0-75"),
+    1: $unit-rem * map.get($multipliers, "1"),
+    2: $unit-rem * map.get($multipliers, "2"),
+    3: $unit-rem * map.get($multipliers, "3"),
+    4: $unit-rem * map.get($multipliers, "4"),
+    5: $unit-rem * map.get($multipliers, "5"),
+    6: $unit-rem * map.get($multipliers, "6"),
+    8: $unit-rem * map.get($multipliers, "8"),
+    10: $unit-rem * map.get($multipliers, "10"),
+    12: $unit-rem * map.get($multipliers, "12")
   );
 }
 
-/// Convert pixel value to rem based on density
-/// @param {Map} $density - A density configuration map
-/// @param {Number} $px - Pixel value to convert
-/// @return {Number} Value in rem
+/// Convert a pixel value to rem based on a density profile.
 @function px-to-rem($density, $px) {
-  $font-size: map.get($density, base-font-size);
-  @return math.div($px, $font-size) * 1rem;
+  @return math.div($px, map.get($density, base-font-size)) * 1rem;
 }

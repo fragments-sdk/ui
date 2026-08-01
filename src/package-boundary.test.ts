@@ -36,7 +36,7 @@ describe("public package boundary", () => {
 
   it("builds explicitly and never rebuilds during credential-bearing publication", () => {
     expect(manifest.scripts?.build).toBe(
-      "vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json",
+      "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json"
     );
     expect(manifest.scripts).not.toHaveProperty("build:dist");
     for (const lifecycle of [

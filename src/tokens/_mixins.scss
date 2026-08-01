@@ -426,44 +426,49 @@
 // Size Variant Mixins
 // ============================================
 
-/// Control size mixin for standardized sizing across buttons, inputs, selects
+/// Field horizontal padding for bordered inputs/selects/date triggers.
+/// Height lives on `control-size` — keep pad separate so actions can diverge.
 /// @param {String} $size - Size variant: 'sm', 'md', or 'lg'
-/// @param {String} $component - Component type: 'button', 'input', or 'select'
-@mixin control-size($size, $component: "button") {
+@mixin field-padding($size) {
+  @if $size == "sm" {
+    padding: 0 var(--fui-space-2, #{$fui-space-2});
+  } @else if $size == "md" {
+    padding: 0 var(--fui-space-3, #{$fui-space-3});
+  } @else if $size == "lg" {
+    padding: 0 var(--fui-space-4, #{$fui-space-4});
+  } @else {
+    @error "field-padding: unknown size '#{$size}'. Expected sm, md, or lg.";
+  }
+}
+
+/// Control height + type scale from the shared control-height ladder.
+/// Padding is not applied — use `field-padding` for fields, or local pad on actions.
+/// @param {String} $size - Size variant: 'xs', 'sm', 'md', or 'lg'
+/// @param {String | null} $component - Deprecated. When `"input"`/`"select"`, also
+///   applies `field-padding` so existing call sites keep working.
+@mixin control-size($size, $component: null) {
   // Global accessibility floor: component-specific height tokens may be customized,
   // but controls should not shrink below the minimum target size.
   min-height: var(--fui-target-size-min, #{$fui-target-size-min});
 
-  @if $size == "sm" {
-    @if $component == "input" {
-      height: var(--fui-input-height-sm, #{$fui-input-height-sm});
-      padding: 0 var(--fui-space-2, #{$fui-space-2});
-      font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
-    } @else {
-      height: var(--fui-button-height-sm, #{$fui-button-height-sm});
-      padding: 0 var(--fui-space-2, #{$fui-space-2});
-      font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
-    }
+  @if $size == "xs" {
+    height: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
+  } @else if $size == "sm" {
+    height: var(--fui-control-height-sm, #{$fui-control-height-sm});
+    font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});
   } @else if $size == "md" {
-    @if $component == "input" {
-      height: var(--fui-input-height, #{$fui-input-height});
-      padding: 0 var(--fui-space-3, #{$fui-space-3});
-      font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
-    } @else {
-      height: var(--fui-button-height-md, #{$fui-button-height-md});
-      padding: 0 var(--fui-space-4, #{$fui-space-4});
-      font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
-    }
+    height: var(--fui-control-height-md, #{$fui-control-height-md});
+    font-size: var(--fui-font-size-sm, #{$fui-font-size-sm});
   } @else if $size == "lg" {
-    @if $component == "input" {
-      height: var(--fui-input-height-lg, #{$fui-input-height-lg});
-      padding: 0 var(--fui-space-4, #{$fui-space-4});
-      font-size: var(--fui-font-size-base, #{$fui-font-size-base});
-    } @else {
-      height: var(--fui-button-height-lg, #{$fui-button-height-lg});
-      padding: 0 var(--fui-space-5, #{$fui-space-5});
-      font-size: var(--fui-font-size-base, #{$fui-font-size-base});
-    }
+    height: var(--fui-control-height-lg, #{$fui-control-height-lg});
+    font-size: var(--fui-font-size-base, #{$fui-font-size-base});
+  } @else {
+    @error "control-size: unknown size '#{$size}'. Expected xs, sm, md, or lg.";
+  }
+
+  @if $component == "input" or $component == "select" {
+    @include field-padding($size);
   }
 }
 

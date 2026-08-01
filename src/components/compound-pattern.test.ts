@@ -1,19 +1,25 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
 
 const COMPONENTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 // Accept Object.assign(...) and typed static assignment patterns (e.g. Grid.Item = ...).
-const COMPOUND_EXPORT_PATTERN = /Object\.assign\s*\(|\(\s*[A-Za-z0-9_]+\s+as\s+[A-Za-z0-9_]+\s*\)\.[A-Z][A-Za-z0-9_]*\s*=/;
+const COMPOUND_EXPORT_PATTERN =
+  /Object\.assign\s*\(|\(\s*[A-Za-z0-9_]+\s+as\s+[A-Za-z0-9_]+\s*\)\.[A-Z][A-Za-z0-9_]*\s*=/;
 
 // Provider/utility modules that live under components/ but are intentionally not
 // compound components (context providers, hooks, shared infrastructure).
-const NON_COMPOUND_MODULES = new Set(['ComponentDefaults']);
+const NON_COMPOUND_MODULES = new Set([
+  "ComponentDefaults",
+  // Physical ownership seam for Theme.Toggle. Its public compound identity
+  // remains on Theme rather than minting a second compound root.
+  "ThemeToggle",
+]);
 
-describe('component export pattern', () => {
-  it('keeps component exports compound across the UI library', () => {
+describe("component export pattern", () => {
+  it("keeps component exports compound across the UI library", () => {
     const componentDirs = readdirSync(COMPONENTS_DIR).filter((entry) => {
       if (NON_COMPOUND_MODULES.has(entry)) return false;
       const fullPath = path.join(COMPONENTS_DIR, entry);
@@ -23,11 +29,11 @@ describe('component export pattern', () => {
     const offenders: string[] = [];
 
     for (const componentDir of componentDirs) {
-      const indexFilePath = path.join(COMPONENTS_DIR, componentDir, 'index.tsx');
+      const indexFilePath = path.join(COMPONENTS_DIR, componentDir, "index.tsx");
 
       let source: string | null = null;
       try {
-        source = readFileSync(indexFilePath, 'utf8');
+        source = readFileSync(indexFilePath, "utf8");
       } catch {
         // Skip directories without an index.tsx entrypoint.
       }
@@ -39,7 +45,7 @@ describe('component export pattern', () => {
 
     expect(
       offenders,
-      `Expected every component to use a compound export pattern. Missing in: ${offenders.join(', ')}`
+      `Expected every component to use a compound export pattern. Missing in: ${offenders.join(", ")}`
     ).toEqual([]);
   });
 });

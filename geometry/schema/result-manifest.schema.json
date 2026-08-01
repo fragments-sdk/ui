@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:result-manifest",
+  "title": "Geometry result manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "runnerVersion",
+    "source",
+    "environment",
+    "hashes",
+    "filters",
+    "expected",
+    "executed",
+    "finalCss",
+    "aggregate",
+    "cases",
+    "artifacts"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "runnerVersion": { "type": "integer", "const": 1 },
+    "source": {
+      "type": "object",
+      "required": ["revision", "dirty"],
+      "properties": {
+        "revision": {
+          "oneOf": [{ "type": "null" }, { "type": "string", "pattern": "^[0-9a-f]{40}$" }]
+        },
+        "dirty": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "platform",
+        "architecture",
+        "runnerImage",
+        "nodeVersion",
+        "playwrightVersion",
+        "browsers",
+        "fonts"
+      ],
+      "properties": {
+        "platform": { "type": "string", "minLength": 1 },
+        "architecture": { "type": "string", "minLength": 1 },
+        "runnerImage": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "nodeVersion": { "type": "string", "minLength": 1 },
+        "playwrightVersion": { "const": "1.58.2" },
+        "browsers": {
+          "type": "object",
+          "required": ["chromium", "firefox", "webkit"],
+          "properties": {
+            "chromium": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+            "firefox": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+            "webkit": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] }
+          },
+          "additionalProperties": false
+        },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": { "$ref": "#/$defs/repositoryPath" },
+              "sha256": { "$ref": "#/$defs/sha256" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "hashes": {
+      "type": "object",
+      "required": [
+        "storybookTreeSha256",
+        "runnerTreeSha256",
+        "schemaSetSha256",
+        "catalogMapSha256"
+      ],
+      "properties": {
+        "storybookTreeSha256": { "$ref": "#/$defs/nullableSha256" },
+        "runnerTreeSha256": { "$ref": "#/$defs/nullableSha256" },
+        "schemaSetSha256": { "$ref": "#/$defs/nullableSha256" },
+        "catalogMapSha256": { "$ref": "#/$defs/nullableSha256" }
+      },
+      "additionalProperties": false
+    },
+    "filters": {
+      "type": "object",
+      "required": ["casePrefix", "authoritative"],
+      "properties": {
+        "casePrefix": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "authoritative": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "expected": {
+      "type": "object",
+      "required": [
+        "foundation",
+        "viewport",
+        "condition",
+        "engine",
+        "catalog",
+        "automated",
+        "manual",
+        "total"
+      ],
+      "properties": {
+        "foundation": { "type": "integer", "minimum": 0 },
+        "viewport": { "type": "integer", "minimum": 0 },
+        "condition": { "type": "integer", "minimum": 0 },
+        "engine": { "type": "integer", "minimum": 0 },
+        "catalog": { "type": "integer", "minimum": 0 },
+        "automated": { "type": "integer", "minimum": 0 },
+        "manual": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "executed": {
+      "type": "object",
+      "required": ["automated", "manualValidated", "total"],
+      "properties": {
+        "automated": { "type": "integer", "minimum": 0 },
+        "manualValidated": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "finalCss": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["path", "sha256", "bytes", "gzipBytes"],
+          "properties": {
+            "path": { "const": "libs/ui/dist/assets/ui.css" },
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "bytes": { "type": "integer", "minimum": 0 },
+            "gzipBytes": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "aggregate": { "enum": ["passed", "failed"] },
+    "cases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/caseResult" }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/repositoryPath" }
+    }
+  },
+  "additionalProperties": false,
+  "unevaluatedProperties": false,
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "nullableSha256": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }]
+    },
+    "repositoryPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "caseResult": {
+      "type": "object",
+      "required": [
+        "caseId",
+        "status",
+        "code",
+        "op",
+        "index",
+        "message",
+        "expectedHash",
+        "actualHash",
+        "diffRatio",
+        "ledgerIds",
+        "artifacts"
+      ],
+      "properties": {
+        "caseId": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "pattern": "^geometry/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:compact|default|relaxed|na)/[a-z0-9]+(?:-[a-z0-9]+)*/(?:light|dark|forced)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+            }
+          ]
+        },
+        "status": { "enum": ["passed", "failed", "manual", "skipped"] },
+        "code": { "oneOf": [{ "type": "null" }, { "type": "string", "pattern": "^GEO_[A-Z0-9_]+$" }] },
+        "op": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "index": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 0 }] },
+        "message": { "oneOf": [{ "type": "null" }, { "type": "string", "maxLength": 2000 }] },
+        "expectedHash": { "$ref": "#/$defs/nullableSha256" },
+        "actualHash": { "$ref": "#/$defs/nullableSha256" },
+        "diffRatio": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "number", "minimum": 0, "maximum": 1 }
+          ]
+        },
+        "ledgerIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

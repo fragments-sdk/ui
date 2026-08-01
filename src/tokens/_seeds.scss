@@ -1,4 +1,5 @@
-@use 'sass:list';
+@use "sass:list";
+@use "measurements.generated" as measurements;
 
 // ============================================
 // @usefragments/ui Design Token Seeds
@@ -53,12 +54,12 @@ $_valid-neutrals: "carbon", "stone", "mono", "ice", "earth", "sand", "fire", "fr
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
 }
 
-$_valid-densities: "compact", "default", "relaxed";
+$_valid-densities: measurements.$density-profile-names;
 @if not list.index($_valid-densities, $fui-density) {
   @error "Invalid $fui-density: '#{$fui-density}'. Must be one of: #{$_valid-densities}";
 }
 
-$_valid-radii: "sharp", "subtle", "default", "rounded", "pill";
+$_valid-radii: measurements.$radius-profile-names;
 @if not list.index($_valid-radii, $fui-radius-style) {
   @error "Invalid $fui-radius-style: '#{$fui-radius-style}'. Must be one of: #{$_valid-radii}";
 }
