@@ -134,8 +134,8 @@
 
 .thumb {
   position: absolute;
-  top: var(--_fui-switch-inset);
-  left: var(--_fui-switch-inset);
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
   box-sizing: border-box;
   width: var(--_fui-switch-thumb-size);
   height: var(--_fui-switch-thumb-size);
@@ -146,6 +146,7 @@
   box-shadow:
     0 1px 1px color-mix(in srgb, black 18%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
   transition:
     transform var(--fui-transition-normal, $fui-transition-normal),
     background-color var(--fui-transition-normal, $fui-transition-normal),
@@ -153,13 +154,17 @@
     box-shadow var(--fui-transition-fast, $fui-transition-fast);
 
   .root[data-checked] & {
-    transform: translateX(var(--_fui-switch-travel));
+    transform: translate(var(--_fui-switch-travel), -50%);
     background-color: var(--fui-button-primary-color, #fff);
     border-color: color-mix(
       in srgb,
       var(--fui-button-primary-active, #{$fui-color-accent}) 28%,
       transparent
     );
+  }
+
+  .root:dir(rtl)[data-checked] & {
+    transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
   }
 
   .root:active:not([data-disabled]) & {

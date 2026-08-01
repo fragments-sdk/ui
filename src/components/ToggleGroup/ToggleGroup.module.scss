@@ -10,6 +10,7 @@
 .group {
   display: inline-flex;
   align-items: stretch;
+  isolation: isolate;
 }
 
 // Gap variants
@@ -22,80 +23,6 @@
 }
 
 // ============================================
-// Default variant (connected buttons)
-// ============================================
-
-.default {
-  @include form-group-surface;
-
-  border: 0;
-  padding: 0;
-  gap: 0;
-  box-shadow: inset 0 0 0 1px var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-
-  .item {
-    background-color: transparent;
-    border: var(--fui-stroke-hairline, 1px) solid transparent;
-    // Match the container's radius (form-group-surface = --fui-radius-lg),
-    // less its 1px inset border, so the selected fill nests inside the
-    // container corners instead of poking past them.
-    border-radius: calc(var(--fui-radius-lg, #{$fui-radius-lg}) - 1px);
-
-    &.selected {
-      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-toggle-group-selected-border, transparent);
-      box-shadow: var(--fui-toggle-group-selected-shadow, none);
-    }
-  }
-}
-
-// ============================================
-// Pills variant (separate pill buttons)
-// ============================================
-
-.pills {
-  .item {
-    background-color: var(--fui-field-bg, $fui-bg-elevated);
-    border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-      border-color: var(--fui-field-border-hover, $fui-text-tertiary);
-    }
-
-    &.selected {
-      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-toggle-group-selected-border, transparent);
-      box-shadow: var(--fui-toggle-group-selected-shadow, none);
-    }
-  }
-}
-
-// ============================================
-// Outline variant (bordered buttons)
-// ============================================
-
-.outline {
-  .item {
-    background-color: transparent;
-    border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border);
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-      border-color: var(--fui-field-border-hover, $fui-text-tertiary);
-    }
-
-    &.selected {
-      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-toggle-group-selected-border, transparent);
-      box-shadow: var(--fui-toggle-group-selected-shadow, none);
-    }
-  }
-}
-
-// ============================================
 // Item base styles
 // ============================================
 
@@ -104,6 +31,8 @@
   @include interactive-base;
 
   color: var(--fui-text-secondary, $fui-text-secondary);
+  position: relative;
+  border: 0;
   white-space: nowrap;
   user-select: none;
   transition:
@@ -114,6 +43,10 @@
 
   &.selected {
     color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:focus-visible {
+    z-index: 1;
   }
 
   &.disabled {
@@ -158,6 +91,117 @@
 
     svg {
       @include segmented.glyph("lg");
+    }
+  }
+}
+
+// ============================================
+// Default variant: inset tonal selection
+// ============================================
+
+.default {
+  gap: 0;
+  padding: var(--fui-raw-space-2, 2px);
+  background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+
+  .item {
+    min-block-size: calc(
+      var(--_fui-segmented-track) - var(--fui-raw-space-2, 2px) - var(--fui-raw-space-2, 2px)
+    );
+    background-color: transparent;
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+
+    &.selected {
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-selection-bg));
+      box-shadow:
+        inset 0 0 0 var(--fui-stroke-hairline, 1px)
+          var(--fui-toggle-group-selected-border, transparent),
+        var(--fui-toggle-group-selected-shadow, none);
+    }
+  }
+}
+
+// ============================================
+// Pills variant: open cluster with soft selected pills
+// ============================================
+
+.pills {
+  .item {
+    background-color: transparent;
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px) transparent;
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+
+    &.selected {
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-selection-bg));
+      box-shadow:
+        inset 0 0 0 var(--fui-stroke-hairline, 1px)
+          var(--fui-toggle-group-selected-border, transparent),
+        var(--fui-toggle-group-selected-shadow, none);
+    }
+  }
+}
+
+// ============================================
+// Outline variant: connected transparent segments
+// ============================================
+
+.outline {
+  gap: 0;
+  background-color: transparent;
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+
+  .item {
+    background-color: transparent;
+    border-radius: 0;
+
+    &:first-child {
+      border-start-start-radius: var(--fui-radius-lg, $fui-radius-lg);
+      border-end-start-radius: var(--fui-radius-lg, $fui-radius-lg);
+    }
+
+    &:last-child {
+      border-start-end-radius: var(--fui-radius-lg, $fui-radius-lg);
+      border-end-end-radius: var(--fui-radius-lg, $fui-radius-lg);
+    }
+
+    & + .item::before {
+      content: "";
+      position: absolute;
+      inset-block: var(--fui-raw-space-6, 6px);
+      inset-inline-start: 0;
+      inline-size: var(--fui-stroke-hairline, 1px);
+      background-color: var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+      transition: opacity var(--fui-transition-fast, $fui-transition-fast);
+    }
+
+    &.selected::before,
+    &.selected + .item::before {
+      opacity: 0;
+    }
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+
+    &.selected {
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-selection-bg));
+      box-shadow:
+        inset 0 0 0 var(--fui-stroke-hairline, 1px)
+          var(--fui-toggle-group-selected-border, transparent),
+        var(--fui-toggle-group-selected-shadow, none);
     }
   }
 }

@@ -802,8 +802,12 @@ $fui-code-selection-bg: color-mix(
     --fui-tabs-pill-active-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
     --fui-tabs-pill-active-border: transparent;
     --fui-tabs-pill-active-shadow: none;
-    --fui-toggle-group-selected-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
-    --fui-toggle-group-selected-border: transparent;
+    --fui-toggle-group-selected-bg: var(--fui-selection-bg);
+    --fui-toggle-group-selected-border: color-mix(
+      in srgb,
+      var(--fui-color-accent) 42%,
+      transparent
+    );
     --fui-toggle-group-selected-shadow: none;
 
     // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)

@@ -30,7 +30,8 @@ export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Size.
    * @default "md" */
   size?: "sm" | "md" | "lg";
-  /** Gap between items (for pills/outline variants) */
+  /** Gap between items in the pills variant. Defaults to `xs` for pills and
+   * is intentionally removed from connected variants. */
   gap?: "none" | "xs" | "sm";
   /** Selection mode for this control. Currently only single-select is supported.
    * @default "single" */
@@ -84,13 +85,14 @@ function ToggleGroupRoot({
   children,
   variant = "default",
   size: sizeProp,
-  gap = "xs",
+  gap,
   selectionMode = "single",
   className,
   ...htmlProps
 }: ToggleGroupProps) {
   const size = useResolvedControlSize(sizeProp);
   const normalizedVariant = variant === "outlined" ? "outline" : variant;
+  const resolvedGap = normalizedVariant === "pills" ? (gap ?? "xs") : "none";
   const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
   const isControlled = value !== undefined;
   const currentValue = isControlled ? (value ?? "") : internalValue;
@@ -107,7 +109,7 @@ function ToggleGroupRoot({
     styles.group,
     styles[normalizedVariant],
     styles[`size-${size}`],
-    gap !== "none" && styles[`gap-${gap}`],
+    resolvedGap !== "none" && styles[`gap-${resolvedGap}`],
     className,
   ]
     .filter(Boolean)
