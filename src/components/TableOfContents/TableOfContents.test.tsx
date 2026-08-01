@@ -166,17 +166,16 @@ describe("TableOfContents", () => {
     expect(items[1]).toHaveAttribute("data-depth", "1");
   });
 
-  it("keeps the default index flush and suppresses optional rail decoration", () => {
+  it("keeps the index flush and contains no unreachable rail implementation", () => {
     const list = classDeclarations(tableOfContentsStyles, "list");
 
     expect(list).toContain("padding: 0;");
     expect(list).not.toContain("padding-left:");
-    expect(tableOfContentsStyles).toMatch(
-      /\.root \[data-depth\]::before,[\s\S]*?\.root \[data-depth\]::after\s*\{[\s\S]*?content:\s*none;/
-    );
-    expect(tableOfContentsStyles).toContain("$rail-pad: 18px;");
-    expect(tableOfContentsStyles).toContain("$rail-from-item-0: $rail-x-0 - $rail-pad;");
-    expect(tableOfContentsStyles).toContain("$rail-from-item-1: $rail-x-1 - $rail-pad;");
+    expect(list).toContain("gap: var(--fui-stroke-hairline, 1px);");
+    expect(tableOfContentsStyles).not.toContain("$rail-");
+    expect(tableOfContentsStyles).not.toContain("--toc-rail");
+    expect(tableOfContentsStyles).toContain("@include navigation.row;");
+    expect(tableOfContentsStyles).toContain("@include navigation.section-row;");
   });
 
   it("has no accessibility violations", async () => {
