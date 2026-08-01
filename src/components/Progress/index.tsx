@@ -2,6 +2,11 @@
 
 import * as React from "react";
 import { Progress as BaseProgress } from "@base-ui/react/progress";
+import {
+  CIRCULAR_PROGRESS_GEOMETRY,
+  resolveCircularStrokeWidth,
+  type ProgressSize,
+} from "./geometry";
 import styles from "./Progress.module.scss";
 
 // ============================================
@@ -16,7 +21,7 @@ export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   /** Maximum value */
   max?: number;
   /** Size of the progress bar */
-  size?: "sm" | "md" | "lg";
+  size?: ProgressSize;
   /** Color variant */
   variant?: "default" | "neutral" | "success" | "warning" | "danger";
   /** Label text */
@@ -31,7 +36,7 @@ export interface CircularProgressProps extends React.HTMLAttributes<HTMLDivEleme
   /** Current progress value (0-100). Null for indeterminate. */
   value?: number | null;
   /** Size of the circular progress */
-  size?: "sm" | "md" | "lg";
+  size?: ProgressSize;
   /** Color variant */
   variant?: "default" | "success" | "warning" | "danger";
   /** Show percentage in center */
@@ -61,7 +66,13 @@ function ProgressRoot({
 }: ProgressProps) {
   const isIndeterminate = value === null;
   const range = max - min;
-  const normalizedPercentage = isIndeterminate ? 0 : range <= 0 ? 0 : ((value - min) / range) * 100;
+  const clampedValue = isIndeterminate
+    ? null
+    : !Number.isFinite(value) || range <= 0
+      ? min
+      : Math.min(max, Math.max(min, value));
+  const normalizedPercentage =
+    clampedValue === null || range <= 0 ? 0 : ((clampedValue - min) / range) * 100;
   const percentage = isIndeterminate
     ? 0
     : Math.round(Math.min(100, Math.max(0, normalizedPercentage)));
@@ -97,7 +108,7 @@ function ProgressRoot({
   return (
     <BaseProgress.Root
       {...htmlProps}
-      value={value}
+      value={clampedValue}
       min={min}
       max={max}
       className={rootClasses}
@@ -115,7 +126,7 @@ function ProgressRoot({
       <BaseProgress.Track className={trackClasses}>
         <BaseProgress.Indicator
           className={indicatorClasses}
-          style={isIndeterminate ? undefined : { width: `${percentage}%` }}
+          style={isIndeterminate ? undefined : { inlineSize: `${percentage}%` }}
         />
       </BaseProgress.Track>
     </BaseProgress.Root>
@@ -126,12 +137,6 @@ function ProgressRoot({
 // Circular Progress
 // ============================================
 
-const CIRCLE_SIZES = {
-  sm: { size: 32, strokeWidth: 3 },
-  md: { size: 48, strokeWidth: 4 },
-  lg: { size: 64, strokeWidth: 5 },
-};
-
 function CircularProgressRoot({
   value = null,
   size = "md",
@@ -139,23 +144,22 @@ function CircularProgressRoot({
   showValue = false,
   strokeWidth: customStrokeWidth,
   className,
+  style: styleProp,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   "aria-valuetext": ariaValueText,
   ...htmlProps
 }: CircularProgressProps) {
   const isIndeterminate = value === null;
-  const percentage = isIndeterminate ? 0 : Math.min(100, Math.max(0, value));
+  const percentage =
+    isIndeterminate || !Number.isFinite(value) ? 0 : Math.min(100, Math.max(0, value));
 
-  const { size: svgSize, strokeWidth: defaultStrokeWidth } = CIRCLE_SIZES[size];
-  const strokeWidth = customStrokeWidth ?? defaultStrokeWidth;
+  const geometry = CIRCULAR_PROGRESS_GEOMETRY[size];
+  const strokeWidth = resolveCircularStrokeWidth(geometry, customStrokeWidth);
 
-  const radius = (svgSize - strokeWidth) / 2;
+  const radius = (geometry.diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
-
-  const sizeClass =
-    size === "sm" ? styles.circularSm : size === "lg" ? styles.circularLg : styles.circularMd;
 
   const indicatorClasses = [
     styles.circularIndicator,
@@ -167,20 +171,27 @@ function CircularProgressRoot({
     .filter(Boolean)
     .join(" ");
 
-  const rootClasses = [styles.circular, sizeClass, className].filter(Boolean).join(" ");
+  const rootClasses = [styles.circular, className].filter(Boolean).join(" ");
 
   // Default value text for screen readers
   const effectiveValueText =
     ariaValueText || (isIndeterminate ? "Loading" : `${Math.round(percentage)} percent`);
+  const circularStyle = {
+    "--_progress-diameter": `${geometry.diameter}px`,
+    "--_progress-dash-full": circumference,
+    "--_progress-dash-quarter": circumference / 4,
+    ...styleProp,
+  } as React.CSSProperties;
 
   return (
     <BaseProgress.Root
       {...htmlProps}
-      value={value}
+      value={isIndeterminate ? null : percentage}
       min={0}
       max={100}
       className={rootClasses}
-      aria-label={ariaLabel}
+      style={circularStyle}
+      aria-label={ariaLabel ?? (ariaLabelledBy ? undefined : "Progress")}
       aria-labelledby={ariaLabelledBy}
       aria-valuenow={isIndeterminate ? undefined : percentage}
       aria-valuemin={0}
@@ -190,33 +201,36 @@ function CircularProgressRoot({
     >
       <svg
         className={styles.circularSvg}
-        width={svgSize}
-        height={svgSize}
-        viewBox={`0 0 ${svgSize} ${svgSize}`}
+        viewBox={`0 0 ${geometry.diameter} ${geometry.diameter}`}
         aria-hidden="true"
       >
         {/* Track circle */}
         <circle
           className={styles.circularTrack}
-          cx={svgSize / 2}
-          cy={svgSize / 2}
+          cx={geometry.diameter / 2}
+          cy={geometry.diameter / 2}
           r={radius}
           strokeWidth={strokeWidth}
         />
         {/* Indicator circle */}
         <circle
           className={indicatorClasses}
-          cx={svgSize / 2}
-          cy={svgSize / 2}
+          cx={geometry.diameter / 2}
+          cy={geometry.diameter / 2}
           r={radius}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={isIndeterminate ? undefined : offset}
-          style={isIndeterminate ? { transformOrigin: "center" } : undefined}
         />
       </svg>
       {showValue && !isIndeterminate && (
-        <span className={styles.circularValue} aria-hidden="true">
+        <span
+          className={[
+            styles.circularValue,
+            size === "sm" ? styles.circularValueCompact : styles.circularValueStandard,
+          ].join(" ")}
+          aria-hidden="true"
+        >
           {Math.round(percentage)}%
         </span>
       )}
