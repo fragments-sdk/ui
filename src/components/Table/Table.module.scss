@@ -1,135 +1,72 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/table-chrome" as table-chrome;
 
 .wrapper {
+  min-inline-size: 0;
+  max-inline-size: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @include table-chrome.root;
+
+  @each $density in ("compact", "regular", "relaxed") {
+    &[data-density="#{$density}"] {
+      @include table-chrome.density($density);
+    }
+  }
 }
 
-// Caption for accessibility
 .caption {
-  padding: var(--fui-space-3, $fui-space-3) 0;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-align: left;
-  caption-side: top;
+  @include table-chrome.caption;
 }
 
-// Visually hidden caption (screen readers only)
 .captionHidden {
   @include visually-hidden;
 }
 
-// Size variants
-.sm {
-  .th,
-  .td {
-    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  }
-}
-
-.md {
-  .th,
-  .td {
-    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  }
-}
-
-// Dashboard-dense rows — 36px tall, 14px horizontal padding, 12px text.
-// Hairline dividers only; no striping. Header sits flush on the same rail
-// as rows so it reads as part of the list, not a separate band.
-.compact {
-  .th,
-  .td {
-    padding: 0 var(--fui-space-2, $fui-space-2);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-    height: 2.571rem; // 36px
-    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
-  }
-
-  .th {
-    font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
-    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  }
-}
-
-// Tabular numerals on a cell — digits align in columns so updating numbers
-// don't jitter. Essential for numeric columns, timestamps, currencies.
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
-// Header
 .thead {
   position: sticky;
-  top: 0;
+  inset-block-start: 0;
   z-index: 1;
 
   > tr {
-    border-bottom: 1px solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
+    @include table-chrome.row;
   }
 }
 
 .th {
-  text-align: left;
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  @include table-chrome.header-cell;
+
   white-space: nowrap;
-  vertical-align: middle;
-
-  &:first-child {
-    border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
-  }
-
-  &:last-child {
-    border-top-right-radius: var(--fui-radius-md, $fui-radius-md);
-  }
 }
 
 .headerContent {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-}
-
-// Body
-.tbody {
-  .td {
-    padding-top: var(--fui-space-2, $fui-space-2);
-    padding-bottom: var(--fui-space-2, $fui-space-2);
-  }
+  gap: var(--fui-raw-space-4);
 }
 
 .row {
+  @include table-chrome.row;
+
   --fui-table-row-base-bg: var(
     --fui-table-bg,
     var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
   );
   --fui-table-row-bg: var(--fui-table-row-base-bg);
 
-  border-bottom: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
-  background-color: var(
-    --fui-table-row-bg,
-    var(--fui-table-row-base-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
-  );
+  background-color: var(--fui-table-row-bg);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:last-child {
-    border-bottom: none;
+    border-block-end: 0;
   }
 
   &:hover {
@@ -137,39 +74,32 @@
   }
 }
 
+.td {
+  @include table-chrome.body-cell;
+}
+
 .selected {
   --fui-table-row-bg: var(
     --fui-table-row-selected-bg,
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
   );
-  box-shadow: inset 1px 0 0
-    var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
 
-  &:hover {
-    --fui-table-row-bg: var(
-      --fui-table-row-selected-bg,
-      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent)
-    );
+  .td:first-child {
+    box-shadow: inset var(--fui-table-divider-size) 0 0
+      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
+  }
+
+  &:dir(rtl) .td:first-child {
+    box-shadow: inset calc(-1 * var(--fui-table-divider-size)) 0 0
+      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
   }
 }
 
-.td {
-  color: var(--fui-text-primary, $fui-text-primary);
-  vertical-align: middle;
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-}
-
-// Footer
 .tfoot {
-  border-top: 1px solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
-
-  .td,
-  .th {
-    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  }
+  border-block-start: var(--fui-table-divider-size) solid
+    var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
 }
 
-// Striped rows
 .striped {
   .tbody .row:nth-child(even),
   .tbody .row[data-band="alt"] {
@@ -181,40 +111,19 @@
   }
 }
 
-// Bordered
 .bordered {
-  border: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-radius-md, $fui-radius-md);
   overflow: hidden;
+  border: var(--fui-table-divider-size, var(--fui-stroke-hairline)) solid
+    var(--fui-table-border, var(--fui-border, #{$fui-border}));
+  border-radius: var(--fui-radius-md, $fui-radius-md);
 }
-
-// Responsive: allow horizontal scroll on small screens
-@include below-sm {
-  .wrapper {
-    margin-left: calc(-1 * var(--fui-space-4, $fui-space-4));
-    margin-right: calc(-1 * var(--fui-space-4, $fui-space-4));
-    padding-left: var(--fui-space-4, $fui-space-4);
-    padding-right: var(--fui-space-4, $fui-space-4);
-  }
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
 
 @media (prefers-contrast: more) {
+  .row,
   .thead > tr {
-    border-bottom-width: 2px;
-  }
-
-  .row {
-    border-bottom-width: 2px;
+    border-block-end-color: CanvasText;
   }
 }
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
   .row {

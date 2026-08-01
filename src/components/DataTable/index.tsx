@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { resolveTableDensity, type TableDensityInput } from "../../recipes/table-chrome";
 import styles from "./DataTable.module.scss";
 import { Checkbox } from "../Checkbox";
 import { ExpandIcon, SortAscIcon, SortDescIcon, SortIcon } from "./DataTable.icons";
@@ -66,8 +67,8 @@ function useReactTableDeps(): "ready" | "pending" | "failed" {
 
 /** Horizontal alignment for a column's header + cells. */
 export type ColumnAlign = "left" | "right" | "center";
-/** Row density preset — condensed 40px / regular 48px / relaxed 56px. */
-export type DataTableDensity = "condensed" | "regular" | "relaxed";
+/** Row density preset. `condensed` is retained as an alias for `compact`. */
+export type DataTableDensity = TableDensityInput;
 
 // ============================================
 // Types (self-owned — no external dependency for types)
@@ -140,11 +141,11 @@ export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLTableEl
   loading?: boolean;
   /** Number of skeleton rows to show while loading (default 6). */
   skeletonRows?: number;
-  /** Row density preset — condensed 40 / regular 48 / relaxed 56. */
+  /** Canonical row density. `condensed` is a deprecated alias for `compact`. */
   density?: DataTableDensity;
   /** Hide the column header row (e.g. stacked per-group tables share one). */
   hideHeader?: boolean;
-  /** Size variant (cell padding). */
+  /** @deprecated Use density. Retained until the next major-version review. */
   size?: "sm" | "md";
   /** Visible caption for the table (recommended for accessibility) */
   caption?: string;
@@ -181,8 +182,6 @@ function getColumnSizeStyle(column: {
 }
 
 function computeTableClasses(opts: {
-  size: "sm" | "md";
-  density?: DataTableDensity;
   striped: boolean;
   bordered: boolean;
   hasExplicitColumnSizing: boolean;
@@ -190,20 +189,9 @@ function computeTableClasses(opts: {
   wrapperClassName?: string;
   wrapperPropsClassName?: string;
 }): { rootClasses: string; wrapperClasses: string } {
-  const densityClass =
-    opts.density === "condensed"
-      ? styles.densityCondensed
-      : opts.density === "regular"
-        ? styles.densityRegular
-        : opts.density === "relaxed"
-          ? styles.densityRelaxed
-          : undefined;
-
   const rootClasses = [
     styles.table,
     opts.hasExplicitColumnSizing && styles.fixedLayout,
-    styles[opts.size],
-    densityClass,
     opts.striped && styles.striped,
     opts.className,
   ]
@@ -360,9 +348,8 @@ function DataTableLive<T>({
 
   const isEmpty = !loading && data.length === 0;
   const { className: wrapperPropsClassName, ...restWrapperProps } = wrapperProps ?? {};
+  const resolvedDensity = resolveTableDensity({ density, size });
   const { rootClasses, wrapperClasses } = computeTableClasses({
-    size,
-    density,
     striped,
     bordered,
     hasExplicitColumnSizing,
@@ -377,6 +364,7 @@ function DataTableLive<T>({
         <table
           {...htmlProps}
           className={rootClasses}
+          data-density={resolvedDensity}
           aria-label={ariaLabel}
           aria-describedby={ariaDescribedBy}
         >
@@ -405,6 +393,7 @@ function DataTableLive<T>({
         {...htmlProps}
         ref={tableRef}
         className={rootClasses}
+        data-density={resolvedDensity}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
         aria-busy={loading || undefined}
@@ -545,15 +534,19 @@ function DataTableLive<T>({
                     return (
                       <td
                         key={cell.id}
-                        className={[styles.td, truncate && styles.truncate]
+                        className={[
+                          styles.td,
+                          isFirstDataCell && styles.treeCell,
+                          truncate && styles.truncate,
+                        ]
                           .filter(Boolean)
                           .join(" ")}
                         data-align={colDef.align}
                         title={typeof rawValue === "string" ? rawValue : undefined}
                         style={{
                           ...getColumnSizeStyle(cell.column),
-                          ...(isFirstDataCell && depth > 0
-                            ? { paddingLeft: `${depth * 24 + 12}px` }
+                          ...(isFirstDataCell
+                            ? ({ "--_fui-table-tree-depth": depth } as React.CSSProperties)
                             : undefined),
                         }}
                       >
@@ -663,9 +656,8 @@ function DataTableStatic<T>({
       column.size !== undefined || column.minSize !== undefined || column.maxSize !== undefined
   );
   const { className: wrapperPropsClassName, ...restWrapperProps } = wrapperProps ?? {};
+  const resolvedDensity = resolveTableDensity({ density, size });
   const { rootClasses, wrapperClasses } = computeTableClasses({
-    size,
-    density,
     striped,
     bordered,
     hasExplicitColumnSizing,
@@ -683,6 +675,7 @@ function DataTableStatic<T>({
       <table
         {...htmlProps}
         className={rootClasses}
+        data-density={resolvedDensity}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
         aria-busy={showSkeleton || undefined}
@@ -704,7 +697,9 @@ function DataTableStatic<T>({
                   data-align={col.align}
                 >
                   <div className={styles.headerContent}>
-                    {typeof col.header === "string" ? col.header : (col.id ?? col.accessorKey ?? "")}
+                    {typeof col.header === "string"
+                      ? col.header
+                      : (col.id ?? col.accessorKey ?? "")}
                   </div>
                 </th>
               ))}

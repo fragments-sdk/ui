@@ -312,6 +312,9 @@ describe("DataTable", () => {
     const childRows = screen.getAllByRole("row").filter((r) => r.getAttribute("data-depth"));
     expect(childRows).toHaveLength(2);
     expect(childRows[0]).toHaveAttribute("data-depth", "1");
+    const treeCell = childRows[0].querySelector("td");
+    expect(treeCell).toHaveStyle("--_fui-table-tree-depth: 1");
+    expect(treeCell?.getAttribute("style")).not.toContain("padding-left");
   });
 
   it("applies per-column alignment via data-align", () => {
@@ -329,11 +332,16 @@ describe("DataTable", () => {
     expect(headers[1]).toHaveAttribute("data-align", "right");
   });
 
-  it("applies a density preset class", () => {
-    const { container } = render(
-      <DataTable columns={columns} data={data} density="condensed" aria-label="People" />
+  it("maps the deprecated density alias to the canonical attribute", () => {
+    render(<DataTable columns={columns} data={data} density="condensed" aria-label="People" />);
+    expect(screen.getByRole("table")).toHaveAttribute("data-density", "compact");
+  });
+
+  it("gives canonical density explicit precedence over legacy size", () => {
+    render(
+      <DataTable columns={columns} data={data} density="relaxed" size="sm" aria-label="People" />
     );
-    expect(container.querySelector("table")?.className).toMatch(/density/i);
+    expect(screen.getByRole("table")).toHaveAttribute("data-density", "relaxed");
   });
 
   it("renders skeleton rows while loading and marks the table busy", () => {
