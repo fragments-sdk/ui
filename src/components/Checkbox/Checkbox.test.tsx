@@ -20,6 +20,11 @@ describe("Checkbox", () => {
     expect(screen.getByRole("checkbox")).toBeInTheDocument();
   });
 
+  it("exposes its resolved geometry size", () => {
+    render(<Checkbox aria-label="Accept" size="lg" />);
+    expect(screen.getByRole("checkbox")).toHaveAttribute("data-size", "lg");
+  });
+
   it("toggles checked state on click", async () => {
     const user = userEvent.setup();
     render(<Checkbox aria-label="Accept" defaultChecked={false} />);
@@ -198,7 +203,7 @@ describe("Checkbox", () => {
 
     expect(componentProperties).toContain("--fui-checkbox-radius: 0.25rem;");
     expect(checkboxStyles).not.toMatch(/\.checkbox\s*\{[\s\S]*?--fui-checkbox-radius\s*:/);
-    expect(radiusUses).toHaveLength(2);
+    expect(radiusUses).toHaveLength(1);
     expect(checkboxStyles).toContain("border-radius: var(--fui-radius-md, $fui-radius-md);");
   });
 

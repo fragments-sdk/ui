@@ -9,6 +9,11 @@ describe("Switch", () => {
     expect(screen.getByRole("switch")).toBeInTheDocument();
   });
 
+  it("exposes its resolved geometry size", () => {
+    render(<Switch aria-label="Dark mode" size="lg" />);
+    expect(screen.getByRole("switch")).toHaveAttribute("data-size", "lg");
+  });
+
   it("is unchecked by default", () => {
     render(<Switch aria-label="Dark mode" />);
     expect(screen.getByRole("switch")).not.toBeChecked();

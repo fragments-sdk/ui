@@ -167,14 +167,6 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
     .filter(Boolean)
     .join(" ");
 
-  const labelClasses = [
-    styles.label,
-    size === "sm" && styles.labelSm,
-    size === "lg" && styles.labelLg,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   const wrapperClasses = [styles.wrapper, variant === "card" && styles.wrapperCard, className]
     .filter(Boolean)
     .join(" ");
@@ -204,6 +196,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
+        data-size={size}
         className={[checkboxClasses, className].filter(Boolean).join(" ")}
       >
         <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
@@ -219,6 +212,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
       className={wrapperClasses}
       data-disabled={disabled || undefined}
       data-has-description={resolvedHelperText ? true : undefined}
+      data-size={size}
     >
       <BaseCheckbox.Root
         ref={ref}
@@ -239,6 +233,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
         aria-label={ariaLabel}
         aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
         aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
+        data-size={size}
         className={checkboxClasses}
       >
         <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
@@ -246,7 +241,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
         </BaseCheckbox.Indicator>
       </BaseCheckbox.Root>
       <div className={[styles.content, contentClassName].filter(Boolean).join(" ")}>
-        <span id={labelId} className={labelClasses}>
+        <span id={labelId} className={styles.label}>
           {label}
         </span>
         {resolvedHelperText && (

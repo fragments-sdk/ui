@@ -1,0 +1,124 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "field";
+@use "typography";
+
+@function _raw($step) {
+  @return var(--fui-raw-space-#{$step}, #{measurements.raw-space($step)});
+}
+
+@function mark-size($size) {
+  @if $size == "sm" or $size == "md" or $size == "lg" {
+    @return var(--fui-icon-#{$size}, #{measurements.target-value("icon", $size)});
+  }
+
+  @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@function label-gap($size) {
+  @if $size == "sm" {
+    @return _raw(6);
+  } @else if $size == "md" {
+    @return _raw(8);
+  } @else if $size == "lg" {
+    @return _raw(10);
+  }
+
+  @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@function card-track($size) {
+  @return field.track($size);
+}
+
+@function switch-inline-size($size) {
+  @if $size == "sm" or $size == "md" or $size == "lg" {
+    @return var(
+      --fui-control-track-#{$size},
+      #{measurements.target-value("controlTrack", $size)}
+    );
+  }
+
+  @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@function switch-block-size($size) {
+  @if $size == "sm" {
+    @return var(--fui-icon-md, #{measurements.target-value("icon", "md")});
+  } @else if $size == "md" {
+    @return calc(#{_raw(16)} + #{_raw(2)});
+  } @else if $size == "lg" {
+    @return calc(#{_raw(20)} + #{_raw(2)});
+  }
+
+  @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@function switch-thumb-size($size) {
+  @if $size == "sm" {
+    @return var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+  } @else if $size == "md" {
+    @return var(--fui-icon-sm, #{measurements.target-value("icon", "sm")});
+  } @else if $size == "lg" {
+    @return calc(#{_raw(16)} + #{_raw(2)});
+  }
+
+  @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@mixin row($size) {
+  $type-role: "ui-standard";
+
+  @if $size == "sm" {
+    $type-role: "ui-compact";
+  } @else if $size != "md" and $size != "lg" {
+    @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
+  }
+
+  --_fui-boolean-mark-size: #{mark-size($size)};
+  --_fui-boolean-label-gap: #{label-gap($size)};
+  --_fui-boolean-mark-offset: calc(
+    (#{typography.line-height($type-role)} - #{mark-size($size)}) / 2
+  );
+
+  display: grid;
+  grid-template-columns: var(--_fui-boolean-mark-size) minmax(0, 1fr);
+  column-gap: var(--_fui-boolean-label-gap);
+  align-items: start;
+  @include typography.role($type-role);
+}
+
+@mixin mark($size) {
+  inline-size: mark-size($size);
+  block-size: mark-size($size);
+}
+
+@mixin card($size) {
+  min-block-size: card-track($size);
+  padding-inline: field.inline-inset($size);
+  box-sizing: border-box;
+}
+
+@mixin switch-track($size) {
+  --_fui-switch-inline-size: #{switch-inline-size($size)};
+  --_fui-switch-block-size: #{switch-block-size($size)};
+  --_fui-switch-thumb-size: #{switch-thumb-size($size)};
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    #{measurements.target-value("stroke", "default")}
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+}
+
+@mixin slider-track {
+  block-size: _raw(4);
+}
+
+@mixin slider-thumb {
+  inline-size: var(--fui-icon-md, #{measurements.target-value("icon", "md")});
+  block-size: var(--fui-icon-md, #{measurements.target-value("icon", "md")});
+}

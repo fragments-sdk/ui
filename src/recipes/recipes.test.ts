@@ -52,10 +52,33 @@ describe("geometry recipes", () => {
     expect(css).toContain("--_fui-popup-effective-row-pitch: var(--fui-raw-space-48, 48px)");
   });
 
+  it("compiles boolean marks, card rows, switches, and range anatomy", () => {
+    const css = compile(`
+      @use "recipes/boolean-range" as boolean;
+      .checkbox { @include boolean.row("sm"); @include boolean.mark("sm"); }
+      .card { @include boolean.card("lg"); }
+      .switch { @include boolean.switch-track("md"); }
+      .rail { @include boolean.slider-track; }
+      .thumb { @include boolean.slider-thumb; }
+    `);
+
+    expect(css).toContain("--_fui-boolean-mark-size: var(--fui-icon-sm, 14px)");
+    expect(css).toContain("min-block-size: var(--fui-field-track-lg, 40px)");
+    expect(css).toContain("--_fui-switch-inline-size: var(--fui-control-track-md, 32px)");
+    expect(css).toContain("--_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))");
+    expect(css).toContain("--_fui-switch-thumb-size: var(--fui-icon-sm, 14px)");
+    expect(css).toContain("block-size: var(--fui-raw-space-4, 4px)");
+    expect(css).toContain("inline-size: var(--fui-icon-md, 16px)");
+  });
+
   it.each([
     ['@use "recipes/action"; .x { @include action.size("xl"); }', "Unknown action role"],
     ['@use "recipes/field"; .x { @include field.size("xs"); }', "Unknown field size"],
     ['@use "recipes/target"; .x { @include target.hit-area("small"); }', "Unknown hit-target role"],
+    [
+      '@use "recipes/boolean-range" as boolean; .x { @include boolean.mark("xl"); }',
+      "Unknown boolean size",
+    ],
   ])("rejects an unsupported closed recipe role", (source, message) => {
     expect(() => compile(source)).toThrow(message);
   });

@@ -4,7 +4,7 @@ import * as React from "react";
 import { Switch as BaseSwitch } from "@base-ui/react/switch";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds } from "../../utils/aria";
-import styles from "./Toggle.module.scss";
+import styles from "./Switch.module.scss";
 
 /**
  * Binary on/off switch for settings and preferences.
@@ -39,8 +39,6 @@ export interface SwitchProps {
   "aria-labelledby"?: string;
   "aria-describedby"?: string;
 }
-
-export type ToggleProps = SwitchProps;
 
 const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Switch(
   {
@@ -80,19 +78,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
 
   const thumbClasses = styles.thumb;
 
-  const labelClasses = [
-    styles.label,
-    size === "sm" && styles.labelSm,
-    size === "lg" && styles.labelLg,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const helperClasses = [styles.helper, size === "sm" && styles.helperSm].filter(Boolean).join(" ");
-
-  const rootClasses = [styles.root, resolvedHelperText && styles.rootWithHelper, className]
-    .filter(Boolean)
-    .join(" ");
+  const rootClasses = [styles.root, className].filter(Boolean).join(" ");
 
   return (
     <BaseSwitch.Root
@@ -110,6 +96,7 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
       uncheckedValue={uncheckedValue}
       inputRef={inputRef}
       className={rootClasses}
+      data-size={size}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
@@ -120,9 +107,9 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
 
       {(label || resolvedHelperText) && (
         <div className={styles.content}>
-          {label && <span className={labelClasses}>{label}</span>}
+          {label && <span className={styles.label}>{label}</span>}
           {resolvedHelperText && (
-            <span id={helperId} className={helperClasses}>
+            <span id={helperId} className={styles.helper}>
               {resolvedHelperText}
             </span>
           )}
@@ -135,6 +122,3 @@ const SwitchRoot = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
 export const Switch = Object.assign(SwitchRoot, {
   Root: SwitchRoot,
 });
-
-/** @deprecated Use `Switch` instead. */
-export const Toggle = Switch;

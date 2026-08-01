@@ -132,14 +132,6 @@ function RadioItem({
     .filter(Boolean)
     .join(" ");
 
-  const labelClasses = [
-    styles.label,
-    size === "sm" && styles.labelSm,
-    size === "lg" && styles.labelLg,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   const wrapperClasses = [
     styles.itemWrapper,
     variant === "card" && styles.itemWrapperCard,
@@ -157,6 +149,7 @@ function RadioItem({
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
+        data-size={size}
         className={[radioClasses, className].filter(Boolean).join(" ")}
       >
         <BaseRadio.Indicator className={styles.indicator} />
@@ -169,6 +162,7 @@ function RadioItem({
       className={wrapperClasses}
       data-disabled={disabled || undefined}
       data-has-description={resolvedHelperText ? true : undefined}
+      data-size={size}
     >
       <BaseRadio.Root
         value={value}
@@ -176,12 +170,13 @@ function RadioItem({
         aria-label={ariaLabel}
         aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
         aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
+        data-size={size}
         className={radioClasses}
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
       <div className={[styles.content, contentClassName].filter(Boolean).join(" ")}>
-        <span id={labelId} className={labelClasses}>
+        <span id={labelId} className={styles.label}>
           {label}
         </span>
         {resolvedHelperText && (
@@ -248,6 +243,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
           ref={ref}
           {...htmlProps}
           className={[styles.wrapper, wrapperClassName].filter(Boolean).join(" ")}
+          data-size={size}
         >
           {label && (
             <span id={labelId} className={styles.groupLabel}>
@@ -268,6 +264,8 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
             aria-label={ariaLabel}
             aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
             aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
+            data-size={size}
+            data-invalid={hasError || undefined}
             className={groupClasses}
           >
             {children}
