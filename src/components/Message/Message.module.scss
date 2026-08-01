@@ -1,61 +1,35 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
-
-// ============================================
-// Message Root
-// ============================================
+@use "../../recipes/layout" as layout;
+@use "../../recipes/prose" as prose;
+@use "../../recipes/typography" as typography;
 
 .message {
   display: flex;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("md");
+  padding: layout.gap("md");
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
-  &:hover {
-    .actions {
-      opacity: 1;
-    }
-  }
-
-  &:focus-within {
-    .actions {
-      opacity: 1;
-    }
+  &:hover .actions,
+  &:focus-within .actions {
+    opacity: 1;
   }
 }
 
 .withoutAvatar {
-  padding-inline: 0;
-
-  // Avatarless assistant prose is part of the transcript rather than a bubble,
-  // so it should sit flush with the shared measure. The user's own turn remains
-  // a compact bubble to preserve authorship and alignment at a glance.
-  &.assistant {
-    .content {
-      padding: 0;
-    }
-  }
-
-  &.user {
-    .content {
-      padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-    }
+  &.assistant .content {
+    background: transparent;
   }
 }
 
-// Role-based styles
 .user {
   flex-direction: row-reverse;
-  margin-left: auto;
+  margin-inline-start: auto;
 
   .body {
     align-items: flex-end;
   }
 
-  // Alignment, measure and the neutral surface distinguish the user's turn.
-  // Brand accent is reserved for actions and semantic state, not transcript
-  // chrome.
   .content {
     max-inline-size: 80%;
     background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
@@ -63,21 +37,18 @@
   }
 }
 
-.assistant {
-  .content {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
+.assistant .content {
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .system {
-  max-width: 100%;
+  max-inline-size: 100%;
   justify-content: center;
 
   .content {
     background-color: var(--fui-color-info-bg, $fui-color-info-bg);
     color: var(--fui-text-secondary, $fui-text-secondary);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
     text-align: center;
   }
 
@@ -86,45 +57,21 @@
   }
 }
 
-// Status styles
-.error {
-  .content {
-    background: var(--fui-color-danger-bg, $fui-color-danger-bg);
-    border: 1px solid var(--fui-color-danger-border, $fui-color-danger-border);
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
-  }
+.error .content {
+  border: var(--fui-stroke-hairline) solid var(--fui-color-danger-border, $fui-color-danger-border);
+  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 .sending {
   opacity: 0.7;
 }
 
-// ============================================
-// Avatar
-// ============================================
-
 .avatar {
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
 }
 
-.avatarUser {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
+.avatarUser,
 .avatarAssistant {
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   color: var(--fui-text-primary, $fui-text-primary);
@@ -137,91 +84,65 @@
 
 .avatarImage {
   padding: 0;
-  overflow: hidden;
 }
-
-.avatarImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-// ============================================
-// Body (content container)
-// ============================================
 
 .body {
   display: flex;
-  flex-direction: column;
-  gap: var(--fui-space-1, $fui-space-1);
-  min-width: 0;
   flex: 1;
+  flex-direction: column;
+  gap: layout.gap("xs");
+  min-inline-size: 0;
 }
 
-// ============================================
-// Content
-// ============================================
-
 .content {
-  @include text-base;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-  word-wrap: break-word;
+  @include prose.root;
 
-  // A bubble sets its own foreground per role — primary text for the user, the
-  // danger ramp for an error. Anything rendered inside it has to take that
-  // colour rather than the page's, so a Markdown body dropped in here inherits
-  // instead of holding on to the prose grey.
   --fui-markdown-text: currentColor;
 
-  // Prose styling for markdown content
-  p {
-    margin: 0;
+  padding-block: layout.gap("sm");
+  padding-inline: layout.gap("md");
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  overflow-wrap: anywhere;
 
-    & + p {
-      margin-top: var(--fui-space-2, $fui-space-2);
-    }
+  p {
+    @include prose.paragraph;
   }
 
   code {
-    font-family: var(--fui-font-mono, $fui-font-mono);
-    font-size: 0.9em;
-    padding: 0.125em 0.375em;
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
-    background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+    @include prose.inline-code;
   }
 
   pre {
-    margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-space-2, $fui-space-2);
+    @include prose.code-block("compact");
+
     border-radius: var(--fui-radius-md, $fui-radius-md);
     background-color: var(--fui-bg-subtle, $fui-bg-subtle);
-    overflow-x: auto;
 
     code {
       padding: 0;
       background: none;
+      font: inherit;
+      letter-spacing: inherit;
     }
   }
 
-  ul,
+  ul {
+    @include prose.list("disc");
+  }
+
   ol {
-    margin: var(--fui-space-2, $fui-space-2) 0;
-    padding-left: var(--fui-space-4, $fui-space-4);
+    @include prose.list("decimal");
   }
 }
 
-.streaming {
-  &::after {
-    content: "";
-    display: inline-block;
-    width: 0.5em;
-    height: 1em;
-    margin-left: 2px;
-    background-color: currentColor;
-    animation: blink 1s step-end infinite;
-  }
+.streaming::after {
+  content: "";
+  display: inline-block;
+  inline-size: 0.5em;
+  block-size: 1em;
+  margin-inline-start: var(--fui-raw-space-2);
+  background-color: currentColor;
+  animation: blink 1s step-end infinite;
 }
 
 @keyframes blink {
@@ -229,36 +150,25 @@
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
 }
 
-// ============================================
-// Actions
-// ============================================
-
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: layout.gap("xs");
   opacity: 0;
   transition: opacity var(--fui-transition-fast, $fui-transition-fast);
 }
 
-// ============================================
-// Timestamp
-// ============================================
-
 .timestamp {
-  @include helper-text;
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  @include typography.role("caption");
+
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
-
-// ============================================
-// Reduced Motion
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
   .streaming::after {

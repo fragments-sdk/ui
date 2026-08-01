@@ -1,77 +1,63 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-
-// Local component tokens (code blocks always dark — no light variant).
-// Background and selection stay global so apps can theme CodeBlock and
-// Markdown consistently without replacing either component.
-$fui-code-text: #e2e2e5 !default;
-$fui-code-text-muted: #8a8a9a !default;
-$fui-code-border: rgba(255, 255, 255, 0.06) !default;
-$fui-code-tab-text: $fui-code-text-muted !default;
-$fui-code-tab-text-active: #e2e2e5 !default;
-$fui-code-copy-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-code-copy-bg-hover: rgba(255, 255, 255, 0.12) !default;
-$fui-code-highlight-bg: rgba(255, 255, 255, 0.06) !default;
-$fui-code-scrollbar-track: transparent !default;
-$fui-code-scrollbar-thumb: rgba(255, 255, 255, 0.1) !default;
-$fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
+@use "../../recipes/action" as action;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/prose" as prose;
+@use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
 
 .container {
-  width: 100%;
+  --_fui-code-inline-inset: var(--fui-raw-space-16);
+
+  inline-size: 100%;
 }
 
-// External title label (above the code block)
-.title {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+.title,
+.caption {
+  @include typography.role("caption");
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
-  margin-bottom: var(--fui-space-1, $fui-space-1);
 }
 
-// Code blocks always use dark theme styling (same in light and dark mode)
-// --fui-code-bg can be overridden inline via the `bg` prop
+.title {
+  margin-block-end: layout.gap("xs");
+  text-transform: uppercase;
+}
+
 .wrapper {
   position: relative;
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
   overflow: hidden;
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
   background-color: var(--fui-code-bg, $fui-code-bg);
+  color: var(--fui-code-text, var(--fui-text-primary, #{$fui-text-primary}));
 }
 
-// ============================================
-// Header bar (filename and optional copy icon)
-// ============================================
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--fui-space-4, $fui-space-4);
-  background-color: transparent;
-  border-bottom: 1px solid var(--fui-code-border, $fui-code-border);
-  min-height: var(--fui-input-height, $fui-input-height);
+  min-block-size: action.track("md");
+  padding-inline: layout.gap("lg");
+  border-block-end: var(--fui-stroke-hairline) solid
+    var(--fui-code-border, var(--fui-border, #{$fui-border}));
 }
 
 .filename {
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-  color: var(--fui-code-text-muted, $fui-code-text-muted);
-  letter-spacing: 0.01em;
+  @include typography.role("code");
+
+  color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
 }
 
-// Copy button - icon-only for header or overlay placements
 .copyButton {
   @include button-reset;
-  @include touch-target;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--fui-space-1, $fui-space-1);
-  color: var(--fui-code-text-muted, $fui-code-text-muted);
-  background: transparent;
-  border: none;
+  @include action.base;
+  @include action.icon-only("sm");
+  @include target.hit-area("compact");
+
+  border: 0;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background: transparent;
+  color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
   cursor: pointer;
   transition:
     background var(--fui-transition-fast, $fui-transition-fast),
@@ -79,8 +65,8 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
     opacity var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
-    background: var(--fui-code-copy-bg-hover, $fui-code-copy-bg-hover);
+    background: var(--fui-code-copy-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
+    color: var(--fui-code-tab-text-active, var(--fui-text-primary, #{$fui-text-primary}));
   }
 
   &:focus-visible {
@@ -95,176 +81,129 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
 
 .copyOverlay {
   position: absolute;
-  top: var(--fui-space-2, $fui-space-2);
-  right: var(--fui-space-2, $fui-space-2);
+  inset-block-start: layout.gap("sm");
+  inset-inline-end: layout.gap("sm");
   z-index: 2;
-  background: var(--fui-code-copy-bg, $fui-code-copy-bg);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  background: var(--fui-code-copy-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   opacity: 0;
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    background var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
 }
 
 .withCopyOverlay {
-  // Reveal copy button on container hover
   &:hover .copyOverlay,
-  .copyOverlay:focus-visible {
-    opacity: 1;
-  }
-
-  // Also reveal when copied (feedback must be visible)
+  .copyOverlay:focus-visible,
   .copyOverlay.copied {
     opacity: 1;
   }
 
   .codeContainer :global(.shiki),
   .loading pre {
-    padding-right: calc(
-      var(--fui-space-4, #{$fui-space-4}) + var(--fui-target-size-min, #{$fui-target-size-min}) +
-        var(--fui-space-3, #{$fui-space-3})
+    padding-inline-end: calc(
+      var(--_fui-code-inline-inset) + #{action.track("sm")} + var(--fui-raw-space-12)
     );
   }
 }
 
 .icon {
-  flex-shrink: 0;
+  @include action.glyph("sm");
 }
 
 .persistentCopy {
-  top: 50%;
+  inset-block-start: 50%;
   transform: translateY(-50%);
   opacity: 1;
 }
 
-.persistentCopyWrapper {
-  .copyOverlay {
-    opacity: 1;
-  }
+.persistentCopyWrapper .copyOverlay {
+  opacity: 1;
 }
 
-.loading {
-  pre {
-    margin: 0;
-    padding: var(--fui-space-4, $fui-space-4);
-    background-color: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    font-family: var(--fui-font-mono, $fui-font-mono);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-    color: var(--fui-code-text, $fui-code-text);
-    overflow-x: auto;
-  }
+.loading pre,
+.codeContainer :global(.shiki) {
+  @include prose.code-block("default");
 
-  code {
-    background: none !important;
-    padding: 0;
-    border: none;
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-  }
+  margin: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  color: inherit;
+}
+
+.loading code,
+.codeContainer :global(.shiki) code {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none !important;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
 }
 
 .codeContainer {
-  // Shiki output styling - always dark theme
-  :global(.shiki) {
-    background-color: transparent !important;
-    margin: 0;
-    padding: var(--fui-space-4, $fui-space-4);
-    border: none !important;
-    border-radius: 0 !important;
-    font-family: var(--fui-font-mono, $fui-font-mono);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-    overflow-x: auto;
-    tab-size: 2;
-
-    code {
-      background: none !important;
-      padding: 0;
-      border: none;
-      border-radius: 0;
-      font-family: inherit;
-      font-size: inherit;
-      counter-reset: line;
-    }
+  :global(.shiki) code {
+    counter-reset: line;
   }
 
-  // Line styles
   :global(.line) {
     display: inline-block;
-    width: 100%;
-    // Match the code line-height so empty lines keep the code rhythm.
-    min-height: calc(var(--fui-line-height-normal, #{$fui-line-height-normal}) * 1em);
+    inline-size: 100%;
+    min-block-size: var(--fui-type-code-line);
 
     &:global(.highlighted) {
-      background-color: var(--fui-code-highlight-bg, $fui-code-highlight-bg);
-      margin: 0 calc(-1 * var(--fui-space-4, $fui-space-4));
-      padding: 0 var(--fui-space-4, $fui-space-4);
-      border-left: 2px solid var(--fui-color-info-text, $fui-color-info-text);
+      margin-inline: calc(-1 * var(--_fui-code-inline-inset));
+      padding-inline: var(--_fui-code-inline-inset);
+      border-inline-start: var(--fui-stroke-default) solid
+        var(--fui-color-info-text, $fui-color-info-text);
+      background-color: var(--fui-code-highlight-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
     }
   }
 
-  // Line numbers
   :global(.line-number) {
     display: inline-block;
-    width: 2.5em;
-    padding-right: 1em;
-    text-align: right;
-    color: var(--fui-code-text-muted, $fui-code-text-muted);
+    inline-size: 2.5em;
+    padding-inline-end: 1em;
+    color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
+    text-align: end;
     user-select: none;
     opacity: 0.6;
   }
 
-  // Custom selection highlight for better visibility
   *::selection {
     background: var(--fui-code-selection-bg, $fui-code-selection-bg);
-    color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
+    color: var(--fui-code-tab-text-active, var(--fui-text-primary, #{$fui-text-primary}));
   }
 
-  // Custom scrollbar for code blocks
   :global(.shiki)::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  :global(.shiki)::-webkit-scrollbar-track {
-    background: transparent;
+    block-size: var(--fui-raw-space-4);
   }
 
   :global(.shiki)::-webkit-scrollbar-thumb {
-    background: var(--fui-code-scrollbar-thumb, $fui-code-scrollbar-thumb);
     border-radius: var(--fui-radius-full, $fui-radius-full);
-
-    &:hover {
-      background: var(--fui-code-scrollbar-thumb-hover, $fui-code-scrollbar-thumb-hover);
-    }
+    background: var(--fui-code-scrollbar-thumb, var(--fui-border-strong, #{$fui-border-strong}));
   }
 }
 
-// Line numbers variant
-.withLineNumbers {
-  .codeContainer :global(.shiki) {
-    padding-left: var(--fui-space-2, $fui-space-2);
-  }
+.withLineNumbers .codeContainer :global(.shiki) {
+  padding-inline-start: var(--fui-raw-space-8);
 }
 
-// Diff styling
 .withDiff {
   :global(.diff-marker) {
     display: inline-block;
-    width: 1.5em;
+    inline-size: 1.5em;
+    color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
     text-align: center;
     user-select: none;
-    color: var(--fui-code-text-muted, $fui-code-text-muted);
+  }
+
+  :global(.diff-added),
+  :global(.diff-removed) {
+    margin-inline: calc(-1 * var(--_fui-code-inline-inset));
+    padding-inline: var(--_fui-code-inline-inset);
   }
 
   :global(.diff-added) {
     background-color: var(--fui-color-success-bg, $fui-color-success-bg);
-    margin: 0 calc(-1 * var(--fui-space-4, $fui-space-4));
-    padding: 0 var(--fui-space-4, $fui-space-4);
 
     :global(.diff-marker) {
       color: var(--fui-color-success-text, $fui-color-success-text);
@@ -273,8 +212,6 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
 
   :global(.diff-removed) {
     background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
-    margin: 0 calc(-1 * var(--fui-space-4, $fui-space-4));
-    padding: 0 var(--fui-space-4, $fui-space-4);
 
     :global(.diff-marker) {
       color: var(--fui-color-danger-text, $fui-color-danger-text);
@@ -282,103 +219,53 @@ $fui-code-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2) !default;
   }
 }
 
-// Compact variant — reduced padding
 .compact {
+  --_fui-code-inline-inset: var(--fui-raw-space-12);
+
   .wrapper {
     border-radius: var(--fui-radius-md, $fui-radius-md);
   }
 
   .codeContainer :global(.shiki),
   .loading pre {
-    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
-  }
-
-  .codeContainer :global(.line) {
-    min-height: calc(var(--fui-line-height-tight, #{$fui-line-height-tight}) * 1em);
-  }
-
-  .withCopyOverlay {
-    .codeContainer :global(.shiki),
-    .loading pre {
-      padding-right: calc(
-        var(--fui-space-3, #{$fui-space-3}) + var(--fui-target-size-min, #{$fui-target-size-min}) +
-          var(--fui-space-3, #{$fui-space-3})
-      );
-    }
+    @include prose.code-block("compact");
   }
 }
 
-// Word wrap
 .wordWrap {
   .codeContainer :global(.shiki),
   .loading pre {
     white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  // `display: block` here would double-space every wrapped block: shiki emits a
-  // newline between each `.line`, and under `pre-wrap` that newline becomes a
-  // line box of its own the moment the lines stop being inline. The base rule's
-  // `inline-block` keeps it in the inline flow, and a full-width inline-block
-  // still wraps and still grows taller, which is all this variant needs.
-  :global(.line) {
-    display: inline-block;
-    width: 100%;
+    overflow-wrap: anywhere;
   }
 }
 
-// Caption below code block
 .caption {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  margin-top: var(--fui-space-2, $fui-space-2);
+  margin-block-start: layout.gap("sm");
 }
 
-// Collapse/expand button with gradient fade
 .collapseButton {
   @include button-reset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  color: var(--fui-code-text-muted, $fui-code-text-muted);
+  @include action.base;
+  @include action.size("sm");
+
+  inline-size: 100%;
+  border-block-start: 0;
   background: linear-gradient(to bottom, transparent, var(--fui-code-bg, $fui-code-bg) 40%);
-  border-top: none;
+  color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
   cursor: pointer;
-  transition: color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    color: var(--fui-code-tab-text-active, $fui-code-tab-text-active);
+    color: var(--fui-code-tab-text-active, var(--fui-text-primary, #{$fui-text-primary}));
   }
 
   &:focus-visible {
-    // Inset outline (not the box-shadow focus-ring mixin) because the wrapper
-    // clips overflow — a box-shadow ring would be hidden.
     outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
       var(--fui-focus-ring-color, $fui-focus-ring-color);
     outline-offset: calc(-1 * var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}));
   }
 }
 
-// Responsive
-@media (max-width: $fui-breakpoint-md) {
-  .codeContainer :global(.shiki) {
-    font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-    padding: var(--fui-space-3, $fui-space-3);
-  }
-}
-
-// ============================================
-// Tabbed Code Block
-// ============================================
-
 .tabbedPanel {
-  margin-top: 0;
+  margin-block-start: 0;
 }

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, expectNoA11yViolations } from '../../test/utils';
 import { Text } from './index';
@@ -51,6 +52,33 @@ describe('Text', () => {
   it('applies section-label variant class', () => {
     render(<Text variant="section-label">Label</Text>);
     expect(screen.getByText('Label')).toHaveClass('variant-section-label');
+  });
+
+  it.each([
+    'caption',
+    'ui-compact',
+    'ui-standard',
+    'body-compact',
+    'body-relaxed',
+    'title-sm',
+    'title-md',
+    'title-lg',
+    'code',
+  ] as const)('applies the semantic %s role deterministically', (role) => {
+    render(<Text role={role}>{role}</Text>);
+    expect(screen.getByText(role)).toHaveClass(`role-${role}`);
+  });
+
+  it('warns and ignores legacy type selectors when an untyped spread supplies a role', () => {
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const UnsafeText = Text as React.ComponentType<Record<string, unknown>>;
+
+    render(<UnsafeText role="body-relaxed" size="lg">Semantic copy</UnsafeText>);
+
+    expect(screen.getByText('Semantic copy')).toHaveClass('role-body-relaxed');
+    expect(screen.getByText('Semantic copy')).not.toHaveClass('size-lg');
+    expect(warning).toHaveBeenCalledOnce();
+    warning.mockRestore();
   });
 
   it('applies truncate class', () => {

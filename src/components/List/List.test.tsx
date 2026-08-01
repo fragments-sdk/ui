@@ -45,6 +45,18 @@ describe('List', () => {
     expect(screen.getByText('Starred')).toBeInTheDocument();
   });
 
+  it.each(['none', 'xs', 'sm', 'md', 'lg'] as const)(
+    'retains the public %s gap role',
+    (gap) => {
+      render(
+        <List gap={gap}>
+          <List.Item>{gap}</List.Item>
+        </List>
+      );
+      expect(screen.getByRole('list')).toHaveClass(`gap-${gap}`);
+    }
+  );
+
   it('has no accessibility violations', async () => {
     const { container } = render(
       <List>

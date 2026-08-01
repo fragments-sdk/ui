@@ -1,0 +1,174 @@
+@use "typography" as typography;
+
+@mixin root {
+  @include typography.role("body-relaxed");
+
+  > * {
+    margin-block: 0;
+  }
+
+  > * + * {
+    margin-block-start: var(--fui-raw-space-12);
+  }
+
+  > * + :is(h1, h2, h3, h4, h5, h6) {
+    margin-block-start: var(--fui-raw-space-24);
+  }
+}
+
+@mixin paragraph {
+  @include typography.role("body-relaxed");
+
+  margin: 0;
+}
+
+@mixin heading($level) {
+  @if $level == 1 {
+    @include typography.role("title-lg");
+  } @else if $level == 2 {
+    @include typography.role("title-md");
+  } @else if $level == 3 {
+    @include typography.role("title-sm");
+  } @else if $level == 4 or $level == 5 or $level == 6 {
+    @include typography.role("ui-standard");
+  } @else {
+    @error "Unknown prose heading '#{$level}'. Expected 1 through 6.";
+  }
+
+  margin: 0;
+}
+
+@mixin list($kind) {
+  @include typography.role("body-relaxed");
+
+  margin: 0;
+  padding: 0;
+
+  @if $kind == "none" {
+    display: grid;
+    list-style: none;
+  } @else if $kind == "disc" or $kind == "decimal" or $kind == "icon" {
+    display: grid;
+    grid-template-columns: minmax(var(--fui-raw-space-12), max-content) minmax(0, 1fr);
+    column-gap: var(--fui-raw-space-8);
+    list-style: none;
+
+    > li {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      min-inline-size: 0;
+    }
+
+    > li::before,
+    > li > :first-child:is([class*="iconWrapper"]) {
+      grid-column: 1;
+      align-self: start;
+      justify-self: end;
+    }
+
+    > li > :not([class*="iconWrapper"]),
+    > li::after {
+      grid-column: 2;
+      min-inline-size: 0;
+    }
+
+    > li > :is(ul, ol) {
+      grid-column: 1 / -1;
+      margin-block-start: var(--fui-raw-space-8);
+    }
+
+    @if $kind == "disc" {
+      > li::before {
+        content: "•";
+      }
+    } @else if $kind == "decimal" {
+      counter-reset: fui-prose-list;
+
+      > li {
+        counter-increment: fui-prose-list;
+      }
+
+      > li::before {
+        content: counter(fui-prose-list) ".";
+        font-variant-numeric: tabular-nums;
+      }
+    }
+  } @else {
+    @error "Unknown prose list '#{$kind}'. Expected none, disc, decimal, or icon.";
+  }
+}
+
+@mixin inline-code {
+  @include typography.role("code");
+
+  padding-block: var(--fui-raw-space-2);
+  padding-inline: var(--fui-raw-space-4);
+  border-radius: var(--fui-radius-sm);
+  background: var(--fui-bg-tertiary);
+  overflow-wrap: anywhere;
+}
+
+@mixin code-block($density) {
+  @include typography.role("code");
+
+  @if $density == "compact" {
+    padding-block: var(--fui-raw-space-8);
+    padding-inline: var(--fui-raw-space-12);
+  } @else if $density == "default" {
+    padding-block: var(--fui-raw-space-12);
+    padding-inline: var(--fui-raw-space-16);
+  } @else {
+    @error "Unknown code-block density '#{$density}'. Expected compact or default.";
+  }
+
+  tab-size: 2;
+  max-inline-size: 100%;
+  overflow: auto;
+  white-space: pre;
+}
+
+@mixin blockquote {
+  @include typography.role("body-relaxed");
+
+  margin: 0;
+  padding-inline-start: var(--fui-raw-space-16);
+  border-inline-start: var(--fui-raw-space-2) solid var(--fui-border-strong);
+}
+
+@mixin table {
+  @include typography.role("body-compact");
+
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+
+  :is(th, td) {
+    padding-block: var(--fui-raw-space-8);
+    padding-inline: var(--fui-raw-space-12);
+  }
+}
+
+@mixin link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: var(--fui-raw-space-2);
+  overflow-wrap: anywhere;
+
+  &:focus-visible {
+    outline: var(--fui-stroke-default) solid var(--fui-focus-ring);
+    outline-offset: var(--fui-stroke-default);
+  }
+}
+
+@mixin rule {
+  block-size: var(--fui-stroke-hairline);
+  margin-block: var(--fui-raw-space-24);
+  border: 0;
+  background: var(--fui-border);
+}
+
+@mixin media {
+  max-inline-size: 100%;
+  block-size: auto;
+}

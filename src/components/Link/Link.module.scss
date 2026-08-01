@@ -1,13 +1,14 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-@use '../../recipes/action';
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/prose";
 
 .link {
   @include interactive-base;
   @include action.inline;
+  @include prose.link;
 
   display: inline;
-  text-decoration: none;
   cursor: pointer;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
 
@@ -44,7 +45,7 @@
 // Underline styles
 .underline-always {
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--fui-raw-space-2);
 }
 
 .underline-hover {
@@ -52,7 +53,7 @@
 
   &:hover {
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: var(--fui-raw-space-2);
   }
 }
 
