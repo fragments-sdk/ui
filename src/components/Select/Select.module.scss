@@ -2,6 +2,7 @@
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
 @use "../../recipes/field";
+@use "../../recipes/layout";
 @use "../../recipes/popup";
 
 .wrapper {
@@ -33,7 +34,7 @@
   justify-content: space-between;
   gap: action.gap("md");
   width: 100%;
-  min-width: 10rem;
+  min-width: layout.measure("field-minimum");
   text-align: left;
 
   &[data-popup-open] {

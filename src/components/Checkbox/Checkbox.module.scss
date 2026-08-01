@@ -4,8 +4,6 @@
 @use "../../recipes/field" as field;
 @use "../../recipes/target" as target;
 
-$fui-checkbox-radius: 0.25rem !default;
-
 // Wrapper for checkbox + label
 .wrapper {
   cursor: pointer;
@@ -42,7 +40,7 @@ $fui-checkbox-radius: 0.25rem !default;
   margin-block-start: var(--_fui-boolean-mark-offset, 0);
   background-color: var(--fui-field-bg, $fui-bg-elevated);
   border: 1px solid var(--fui-field-border, $fui-border-strong);
-  border-radius: var(--fui-checkbox-radius, $fui-checkbox-radius);
+  border-radius: var(--fui-checkbox-radius, var(--fui-radius-sm, #{$fui-radius-sm}));
   cursor: inherit;
 
   &:hover:not([data-disabled]) {

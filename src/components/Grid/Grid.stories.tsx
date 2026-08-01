@@ -96,7 +96,7 @@ export const Responsive: Story = {
 export const AutoFill: Story = {
   args: {
     columns: 'auto',
-    minChildWidth: '12rem',
+    minChildWidth: 'var(--fui-layout-measure-compact-content)',
     gap: 'md',
     children: (
       <>

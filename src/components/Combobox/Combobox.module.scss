@@ -2,6 +2,7 @@
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
 @use "../../recipes/field";
+@use "../../recipes/layout";
 @use "../../recipes/popup";
 @use "../../recipes/target";
 
@@ -35,7 +36,7 @@
   flex-wrap: wrap;
   gap: action.gap("sm");
   width: 100%;
-  min-width: 10rem;
+  min-width: layout.measure("field-minimum");
   padding-inline-end: var(--fui-raw-space-4, 4px);
 
   &:focus-within {
@@ -64,7 +65,7 @@
 // Text input
 .input {
   flex: 1;
-  min-width: 4rem;
+  min-width: layout.measure("inline-floor");
   min-block-size: 0;
   padding: 0;
   background: transparent;
@@ -106,7 +107,7 @@
   border-radius: var(--fui-radius-full, $fui-radius-full);
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
-  max-width: 12rem;
+  max-width: layout.measure("compact-content");
 }
 
 .chipLabel {

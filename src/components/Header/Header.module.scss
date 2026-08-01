@@ -1,6 +1,7 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
 @use '../../recipes/action' as action;
+@use '../../recipes/layout' as layout;
 @use '../../recipes/navigation' as navigation;
 @use '../../recipes/popup' as popup;
 
@@ -193,7 +194,7 @@
 .navMenuPopup {
   @include popup.container;
 
-  min-width: 10rem;
+  min-width: layout.measure("field-minimum");
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   opacity: 0;

@@ -47,3 +47,21 @@
 @function page-gutter() {
   @return _raw(24);
 }
+
+@function measure($role) {
+  @if
+    $role == "field-minimum" or
+    $role == "inline-floor" or
+    $role == "compact-content" or
+    $role == "grid-cell" or
+    $role == "composer-item" or
+    $role == "page-narrow"
+  {
+    @return var(
+      --fui-layout-measure-#{$role},
+      #{measurements.target-value("layoutMeasure", $role)}
+    );
+  }
+
+  @error "Unknown layout measure '#{$role}'.";
+}

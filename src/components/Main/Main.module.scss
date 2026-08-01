@@ -1,7 +1,5 @@
 @use "../../recipes/layout";
 
-$fui-main-measure-narrow: 57.143rem !default;
-
 .root {
   box-sizing: border-box;
   width: 100%;
@@ -16,7 +14,7 @@ $fui-main-measure-narrow: 57.143rem !default;
 }
 
 .narrow {
-  max-width: $fui-main-measure-narrow;
+  max-width: layout.measure("page-narrow");
 }
 
 .header,

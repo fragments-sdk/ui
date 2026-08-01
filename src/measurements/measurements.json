@@ -176,6 +176,14 @@
       "hairline": "1px",
       "default": "2px",
       "strong": "3px"
+    },
+    "layoutMeasure": {
+      "field-minimum": "140px",
+      "inline-floor": "56px",
+      "compact-content": "168px",
+      "grid-cell": "224px",
+      "composer-item": "210px",
+      "page-narrow": "800px"
     }
   },
   "typography": {

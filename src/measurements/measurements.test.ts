@@ -74,11 +74,12 @@ describe("measurement generation", () => {
     }
   });
 
-  it("keeps dormant fixed targets out of production component sources", () => {
-    const forbiddenTarget =
-      /--fui-(?:raw-space|control-track|field-track|field-inline-inset|surface-inset|type-)/;
+  it("keeps numeric fixed-target declarations in the generated authority", () => {
+    const forbiddenDeclaration =
+      /--fui-(?:raw-space|control-track|field-track|field-inline-inset|surface-inset|layout-measure|type-)[\w-]*:\s*-?(?:\d|\.\d)/;
     const consumers = sourceFiles(resolve(process.cwd(), "src/components"))
-      .filter((path) => forbiddenTarget.test(readFileSync(path, "utf8")))
+      .filter((path) => path.endsWith(".module.scss"))
+      .filter((path) => forbiddenDeclaration.test(readFileSync(path, "utf8")))
       .map((path) => path.replace(`${process.cwd()}/`, ""));
 
     expect(consumers).toEqual([]);
