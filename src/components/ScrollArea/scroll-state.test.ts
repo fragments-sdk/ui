@@ -125,8 +125,17 @@ describe('ScrollArea geometry source', () => {
   it('intersects independent inline and block masks', () => {
     expect(styles).toContain('mask-composite: intersect');
     expect(styles).toContain('-webkit-mask-composite: source-in');
-    expect(styles).toContain("[data-scroll-x='both']");
-    expect(styles).toContain("[data-scroll-y='both']");
+    expect(styles).toContain(".viewport[data-scroll-x='both']");
+    expect(styles).toContain(".viewport[data-scroll-y='both']");
+  });
+
+  it('anchors every scroll-state selector to the local viewport class', () => {
+    const stateSelectors = styles.match(/^.*\[data-scroll-[xy]='(?:start|both|end)'\].*\{/gm) ?? [];
+
+    expect(stateSelectors).toHaveLength(8);
+    expect(stateSelectors.every((selector) => selector.trimStart().startsWith('.viewport'))).toBe(
+      true
+    );
   });
 
   it('gives every public custom-property read a fallback', () => {
