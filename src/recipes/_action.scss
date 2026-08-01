@@ -1,0 +1,138 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "typography";
+
+@function _raw($step) {
+  @return var(--fui-raw-space-#{$step}, #{measurements.raw-space($step)});
+}
+
+@function track($role) {
+  @if $role == "micro" {
+    @return var(--fui-control-track-micro, #{measurements.target-value("controlTrack", "micro")});
+  } @else if $role == "sm" or $role == "md" or $role == "lg" {
+    @return var(--fui-control-track-#{$role}, #{measurements.target-value("controlTrack", $role)});
+  }
+
+  @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+}
+
+@function icon-size($role) {
+  $icon-role: null;
+
+  @if $role == "micro" {
+    $icon-role: "xs";
+  } @else if $role == "sm" {
+    $icon-role: "sm";
+  } @else if $role == "md" {
+    $icon-role: "md";
+  } @else if $role == "lg" {
+    $icon-role: "lg";
+  } @else {
+    @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+  }
+
+  @return var(--fui-icon-#{$icon-role}, #{measurements.target-value("icon", $icon-role)});
+}
+
+@function gap($role) {
+  @if $role == "micro" or $role == "sm" {
+    @return _raw(4);
+  } @else if $role == "md" {
+    @return _raw(6);
+  } @else if $role == "lg" {
+    @return _raw(8);
+  }
+
+  @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+}
+
+@function inline-inset($role) {
+  @if $role == "micro" {
+    @return _raw(8);
+  } @else if $role == "sm" {
+    @return _raw(10);
+  } @else if $role == "md" {
+    @return _raw(12);
+  } @else if $role == "lg" {
+    @return _raw(16);
+  }
+
+  @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+}
+
+@function icon-side-inset($role) {
+  @if $role == "micro" {
+    @return _raw(6);
+  } @else if $role == "sm" {
+    @return _raw(8);
+  } @else if $role == "md" {
+    @return _raw(10);
+  } @else if $role == "lg" {
+    @return _raw(12);
+  }
+
+  @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+}
+
+@mixin base {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_fui-action-gap, #{gap("md")});
+  min-block-size: var(--_fui-action-track, #{track("md")});
+  padding-inline: var(--_fui-action-inline-inset, #{inline-inset("md")});
+  font-size: var(--_fui-action-type-size, #{typography.font-size("ui-standard")});
+  line-height: var(--_fui-action-type-line, #{typography.line-height("ui-standard")});
+  font-weight: var(--_fui-action-type-weight, #{typography.weight("ui-standard")});
+  letter-spacing: var(--_fui-action-type-tracking, #{typography.tracking("ui-standard")});
+  font-family: var(--_fui-action-type-family, #{typography.font-family("ui-standard")});
+}
+
+@mixin typography($role) {
+  @if $role == "micro" or $role == "sm" {
+    --_fui-action-type-size: #{typography.font-size("ui-compact")};
+    --_fui-action-type-line: #{typography.line-height("ui-compact")};
+    --_fui-action-type-weight: #{typography.weight("ui-compact")};
+    --_fui-action-type-tracking: #{typography.tracking("ui-compact")};
+    --_fui-action-type-family: #{typography.font-family("ui-compact")};
+  } @else if $role == "md" or $role == "lg" {
+    --_fui-action-type-size: #{typography.font-size("ui-standard")};
+    --_fui-action-type-line: #{typography.line-height("ui-standard")};
+    --_fui-action-type-weight: #{typography.weight("ui-standard")};
+    --_fui-action-type-tracking: #{typography.tracking("ui-standard")};
+    --_fui-action-type-family: #{typography.font-family("ui-standard")};
+  } @else {
+    @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+  }
+}
+
+@mixin size($role) {
+  --_fui-action-track: #{track($role)};
+  --_fui-action-icon-size: #{icon-size($role)};
+  --_fui-action-gap: #{gap($role)};
+  --_fui-action-inline-inset: #{inline-inset($role)};
+
+  @include typography($role);
+}
+
+@mixin icon-only($role) {
+  @include size($role);
+
+  inline-size: var(--_fui-action-track);
+  block-size: var(--_fui-action-track);
+  min-block-size: var(--_fui-action-track);
+  padding-inline: 0;
+}
+
+@mixin glyph($role) {
+  inline-size: icon-size($role);
+  block-size: icon-size($role);
+  flex: 0 0 auto;
+}
+
+@mixin inline {
+  min-block-size: auto;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}

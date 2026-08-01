@@ -1,0 +1,98 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+@use "typography";
+
+@function track($size) {
+  @if $size == "sm" or $size == "md" or $size == "lg" {
+    @return var(--fui-field-track-#{$size}, #{measurements.target-value("fieldTrack", $size)});
+  }
+
+  @error "Unknown field size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@function inline-inset($size) {
+  @if $size == "sm" or $size == "md" or $size == "lg" {
+    @return var(
+      --fui-field-inline-inset-#{$size},
+      #{measurements.target-value("fieldInlineInset", $size)}
+    );
+  }
+
+  @error "Unknown field size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@function stroke() {
+  @return var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")});
+}
+
+@mixin size($size) {
+  --_fui-field-track: #{track($size)};
+  --_fui-field-inline-inset: #{inline-inset($size)};
+  --_fui-field-stroke: #{stroke()};
+
+  @if $size == "sm" {
+    @include typography.role("ui-compact");
+  } @else if $size == "md" or $size == "lg" {
+    @include typography.role("body-compact");
+  } @else {
+    @error "Unknown field size '#{$size}'. Expected sm, md, or lg.";
+  }
+}
+
+@mixin wrapper {
+  --fui-field-label-gap: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+  --fui-field-message-gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@mixin label {
+  @include typography.role("ui-standard");
+
+  margin-block-end: var(--fui-field-label-gap);
+}
+
+@mixin helper {
+  @include typography.role("caption");
+
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+}
+
+@mixin error {
+  @include typography.role("caption");
+
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-color-danger-text, #{tokens.$fui-color-danger-text});
+}
+
+@mixin shell {
+  box-sizing: border-box;
+  min-block-size: var(--_fui-field-track);
+  padding-inline: var(--_fui-field-inline-inset);
+  border: var(--_fui-field-stroke) solid var(--fui-border, #{tokens.$fui-border});
+  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
+  background: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+}
+
+@mixin focus-state {
+  border-color: var(--fui-color-accent, #{tokens.$fui-color-accent});
+  outline: var(--fui-focus-ring-width, #{tokens.$fui-focus-ring-width}) solid
+    color-mix(in srgb, var(--fui-focus-ring-color, #{tokens.$fui-focus-ring-color}) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, #{tokens.$fui-focus-ring-offset});
+}
+
+@mixin invalid-state {
+  border-color: var(--fui-color-danger, #{tokens.$fui-color-danger});
+}
+
+@mixin disabled-state {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@mixin readonly-state {
+  background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useResolvedControlSize } from '../ComponentDefaults';
 import styles from './Pagination.module.scss';
 
 // ============================================
@@ -21,6 +22,8 @@ export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>,
   edgeCount?: number;
   /** Number of pages shown around current: default 1 */
   siblingCount?: number;
+  /** Visible action size. Resolves through ComponentDefaults when omitted. */
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export interface PaginationItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -191,10 +194,12 @@ function PaginationRoot({
   onPageChange,
   edgeCount = 1,
   siblingCount = 1,
+  size: sizeProp,
   className,
   'aria-label': ariaLabel,
   ...htmlProps
 }: PaginationProps) {
+  const size = useResolvedControlSize(sizeProp);
   const totalPages = Math.max(0, Math.floor(rawTotalPages));
   const [uncontrolledPage, setUncontrolledPage] = React.useState(() =>
     totalPages > 0 ? clamp(defaultPage, 1, totalPages) : 1
@@ -228,7 +233,7 @@ function PaginationRoot({
       <nav
         {...htmlProps}
         aria-label={ariaLabel ?? 'Pagination'}
-        className={[styles.pagination, className].filter(Boolean).join(' ')}
+        className={[styles.pagination, styles[size], className].filter(Boolean).join(' ')}
       />
     );
   }
@@ -238,7 +243,7 @@ function PaginationRoot({
       <nav
         {...htmlProps}
         aria-label={ariaLabel ?? 'Pagination'}
-        className={[styles.pagination, className].filter(Boolean).join(' ')}
+        className={[styles.pagination, styles[size], className].filter(Boolean).join(' ')}
       >
         <ul className={styles.list}>
           {children}

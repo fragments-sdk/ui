@@ -1,14 +1,12 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
+@use '../../recipes/action';
 
 .link {
   @include interactive-base;
+  @include action.inline;
 
   display: inline;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
   text-decoration: none;
   cursor: pointer;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);

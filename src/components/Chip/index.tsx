@@ -110,7 +110,11 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   }
 
   return (
-    <span className={styles.removableChip} data-disabled={disabled || undefined}>
+    <span
+      className={styles.removableChip}
+      data-disabled={disabled || undefined}
+      data-size={size}
+    >
       {chipButton}
       <button
         type="button"

@@ -1,25 +1,24 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/layout";
+@use "../../recipes/segmented";
 
 // ============================================
 // Group Container
 // ============================================
 
 .group {
-  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
-
   display: inline-flex;
   align-items: stretch;
-  min-height: var(--fui-toggle-group-height);
 }
 
 // Gap variants
 .gap-xs {
-  gap: var(--fui-space-0-5, $fui-space-0-5);
+  gap: layout.gap("xs");
 }
 
 .gap-sm {
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: layout.gap("sm");
 }
 
 // ============================================
@@ -104,11 +103,6 @@
   @include button-reset;
   @include interactive-base;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
   user-select: none;
@@ -133,31 +127,37 @@
 // ============================================
 
 .size-sm {
-  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+  @include segmented.rail("sm");
 
   .item {
-    min-height: var(--fui-toggle-group-height);
-    padding: 0 var(--fui-space-2, $fui-space-2);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+    @include segmented.item("sm");
+
+    svg {
+      @include segmented.glyph("sm");
+    }
   }
 }
 
 .size-md {
-  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+  @include segmented.rail("md");
 
   .item {
-    min-height: var(--fui-toggle-group-height);
-    padding: 0 var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+    @include segmented.item("md");
+
+    svg {
+      @include segmented.glyph("md");
+    }
   }
 }
 
 .size-lg {
-  --fui-toggle-group-height: var(--fui-button-height-lg, #{$fui-button-height-lg});
+  @include segmented.rail("lg");
 
   .item {
-    min-height: var(--fui-toggle-group-height);
-    padding: 0 var(--fui-space-4, $fui-space-4);
-    font-size: var(--fui-font-size-base, $fui-font-size-base);
+    @include segmented.item("lg");
+
+    svg {
+      @include segmented.glyph("lg");
+    }
   }
 }

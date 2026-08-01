@@ -1,0 +1,31 @@
+@use "../tokens/measurements.generated" as measurements;
+
+@function hit-size($role) {
+  @if $role == "micro" {
+    @return var(--fui-control-track-micro, #{measurements.target-value("controlTrack", "micro")});
+  } @else if $role == "compact" {
+    @return var(--fui-control-track-md, #{measurements.target-value("controlTrack", "md")});
+  } @else if $role == "touch" {
+    @return var(--fui-raw-space-48, #{measurements.raw-space(48)});
+  }
+
+  @error "Unknown hit-target role '#{$role}'. Expected micro, compact, or touch.";
+}
+
+@mixin hit-area($role) {
+  --_fui-target-hit-size: #{hit-size($role)};
+
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: max(100%, var(--_fui-target-hit-size));
+    block-size: max(100%, var(--_fui-target-hit-size));
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+  }
+}

@@ -1,0 +1,92 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+@use "typography";
+
+@mixin properties {
+  --fui-popup-container-inset: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  --fui-popup-row-pitch: var(--fui-raw-space-32, #{measurements.raw-space(32)});
+  --fui-popup-row-block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  --fui-popup-row-inline-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  --fui-popup-row-content-gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  --fui-popup-row-gap: var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")});
+  --fui-popup-indicator-box: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+  --fui-popup-separator-size: var(
+    --fui-stroke-hairline,
+    #{measurements.target-value("stroke", "hairline")}
+  );
+  --fui-popup-separator-gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  --fui-popup-offset: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  --fui-popup-viewport-rows: 4.5;
+  --_fui-popup-effective-row-pitch: var(--fui-popup-row-pitch);
+
+  @media (pointer: coarse) {
+    --_fui-popup-effective-row-pitch: var(--fui-raw-space-48, #{measurements.raw-space(48)});
+  }
+}
+
+@mixin container {
+  @include properties;
+
+  box-sizing: border-box;
+  padding: var(--fui-popup-container-inset);
+  border: var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")}) solid
+    var(--fui-border, #{tokens.$fui-border});
+  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
+  background: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
+}
+
+@mixin viewport {
+  box-sizing: border-box;
+  max-block-size: calc(
+    2 * var(--fui-popup-container-inset) + 2 *
+      var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")}) +
+      var(--fui-popup-viewport-rows) * var(--_fui-popup-effective-row-pitch) +
+      (var(--fui-popup-viewport-rows) - 0.5) * var(--fui-popup-row-gap)
+  );
+  overflow-y: auto;
+}
+
+@mixin row {
+  @include typography.role("ui-compact");
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-block-size: var(--_fui-popup-effective-row-pitch);
+  padding-block: var(--fui-popup-row-block-inset);
+  padding-inline: var(--fui-popup-row-inline-inset);
+  gap: var(--fui-popup-row-content-gap);
+}
+
+@mixin highlight-state {
+  background: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
+}
+
+@mixin selected-state {
+  background: var(--fui-bg-active, #{tokens.$fui-bg-active});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+}
+
+@mixin disabled-state {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@mixin group-label {
+  @include typography.role("ui-compact");
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-block-size: var(--_fui-popup-effective-row-pitch);
+  padding-inline: var(--fui-popup-row-inline-inset);
+  color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
+}
+
+@mixin group-separator {
+  block-size: var(--fui-popup-separator-size);
+  margin-block: var(--fui-popup-separator-gap);
+  background: var(--fui-border, #{tokens.$fui-border});
+}

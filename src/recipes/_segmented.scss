@@ -1,0 +1,26 @@
+@use "action";
+
+@function track($size) {
+  @return action.track($size);
+}
+
+@mixin rail($size) {
+  --_fui-segmented-track: #{action.track($size)};
+  --_fui-segmented-inline-inset: #{action.inline-inset($size)};
+  --_fui-segmented-gap: #{action.gap($size)};
+  --_fui-segmented-icon-size: #{action.icon-size($size)};
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  min-block-size: var(--_fui-segmented-track);
+}
+
+@mixin item($size) {
+  @include action.base;
+  @include action.size($size);
+}
+
+@mixin glyph($size) {
+  @include action.glyph($size);
+}

@@ -186,19 +186,20 @@ describe("ThemeToggle", () => {
     expect(screen.getByRole("group", { name: "Theme toggle" })).toHaveClass("sizeSm");
   });
 
-  it("preserves the 32/32/40 button boxes and 12/14/18 icons", () => {
+  it("uses the fixed 28/32/40 action boxes and governed icon scale", () => {
     const expectedGeometry = [
-      ["Sm", "32px", "12px"],
-      ["Md", "32px", "14px"],
-      ["Lg", "40px", "18px"],
+      ["Sm", "28px", "14px"],
+      ["Md", "32px", "16px"],
+      ["Lg", "40px", "20px"],
     ] as const;
 
     for (const [size, box, icon] of expectedGeometry) {
       const prefix = size.toLowerCase();
-      expect(compiledStyles).toContain(`width: var(--fui-theme-toggle-${prefix}-width, ${box});`);
-      expect(compiledStyles).toContain(`height: var(--fui-theme-toggle-${prefix}-height, ${box});`);
-      expect(compiledStyles).toContain(`width: var(--fui-theme-toggle-${prefix}-icon, ${icon});`);
-      expect(compiledStyles).toContain(`height: var(--fui-theme-toggle-${prefix}-icon, ${icon});`);
+      expect(compiledStyles).toContain(
+        `--_fui-action-track: var(--fui-control-track-${prefix}, ${box});`
+      );
+      expect(compiledStyles).toContain(`inline-size: var(--fui-icon-${prefix}, ${icon});`);
+      expect(compiledStyles).toContain(`block-size: var(--fui-icon-${prefix}, ${icon});`);
       expect(compiledStyles).toContain(`.size${size} .toggleButton`);
       expect(compiledStyles).toContain(`.size${size} .toggleButton svg`);
     }
