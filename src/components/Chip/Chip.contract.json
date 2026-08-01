@@ -173,7 +173,7 @@
     "propsSummary": [
       "children: ReactNode - chip label (required)",
       "variant: filled|outlined|outline|soft - visual style",
-      "size: sm|md - chip size",
+      "size: xs|sm|md|lg - chip size (xs by default)",
       "selected: boolean - selection state",
       "icon/avatar: ReactNode - leading visual",
       "onRemove: () => void - makes chip removable",

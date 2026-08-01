@@ -160,7 +160,7 @@
       "onChange: (value: string) => void - change handler (or onValueChange)",
       "children: ToggleGroup.Item[] - toggle items",
       "variant: default|pills|outline|outlined - visual style (outlined aliases outline)",
-      "size: sm|md - size variant",
+      "size: sm|md|lg - size variant",
       "gap: none|xs|sm - pills spacing (xs by default; connected variants remain gapless)",
       "selectionMode: single (default: single)"
     ],
