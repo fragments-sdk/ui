@@ -192,24 +192,31 @@ describe("measurements public subpath", () => {
     for (const [density, profile] of Object.entries(MEASUREMENT_PROFILES.density)) {
       const selector = `[data-fui-density=${density}]`;
       expect(declaration(selector, "--fui-base-unit")).toBe(profile.baseUnit);
-      const baseFontSize = Number.parseFloat(profile.baseFontSize);
-      for (const [size, value] of Object.entries(profile.controlHeight)) {
-        const actual = Number.parseFloat(
-          declaration(selector, `--fui-control-height-${size}`) ?? "NaN"
+      for (const [size, targetSize] of [
+        ["xs", "micro"],
+        ["sm", "sm"],
+        ["md", "md"],
+        ["lg", "lg"],
+      ] as const) {
+        const property =
+          targetSize === "micro"
+            ? "--fui-control-track-micro"
+            : `--fui-control-track-${targetSize}`;
+        expect(declaration(selector, `--fui-control-height-${size}`)).toBe(
+          `var(${property}, ${MEASUREMENT_PROFILES.targets.controlTrack[targetSize]})`
         );
-        expect(actual).toBeCloseTo(Number.parseFloat(value) / baseFontSize, 9);
       }
-      for (const [alias, target] of [
-        ["--fui-button-height-xs", "--fui-control-height-xs"],
-        ["--fui-button-height-sm", "--fui-control-height-sm"],
-        ["--fui-button-height-md", "--fui-control-height-md"],
-        ["--fui-button-height-lg", "--fui-control-height-lg"],
-        ["--fui-input-height-sm", "--fui-control-height-sm"],
-        ["--fui-input-height", "--fui-control-height-md"],
-        ["--fui-input-height-lg", "--fui-control-height-lg"],
-        ["--fui-target-size-min", "--fui-touch-sm"],
-      ]) {
-        expect(declaration(selector, alias)).toBe(`var(${target})`);
+      for (const [alias, expected] of [
+        ["--fui-button-height-xs", "var(--fui-control-height-xs)"],
+        ["--fui-button-height-sm", "var(--fui-control-height-sm)"],
+        ["--fui-button-height-md", "var(--fui-control-height-md)"],
+        ["--fui-button-height-lg", "var(--fui-control-height-lg)"],
+        ["--fui-input-height-sm", "var(--fui-field-track-sm, 28px)"],
+        ["--fui-input-height", "var(--fui-field-track-md, 32px)"],
+        ["--fui-input-height-lg", "var(--fui-field-track-lg, 40px)"],
+        ["--fui-target-size-min", "var(--fui-touch-sm)"],
+      ] as const) {
+        expect(declaration(selector, alias)).toBe(expected);
       }
     }
 
@@ -222,7 +229,7 @@ describe("measurements public subpath", () => {
     }
 
     expect(declaration(":root", "--fui-button-height-md")).toBe("var(--fui-control-height-md)");
-    expect(declaration(":root", "--fui-input-height")).toBe("var(--fui-control-height-md)");
+    expect(declaration(":root", "--fui-input-height")).toBe("var(--fui-field-track-md)");
   });
 
   it("ships ESM, CommonJS, and literal declarations with symbol parity", async () => {

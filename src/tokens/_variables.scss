@@ -370,11 +370,12 @@ $fui-breakpoint-xl: 1280px !default;
 // Component-specific tokens
 // --------------------------------------------
 
-// Interactive control heights (canonical density ladder)
-$fui-control-height-xs: computed.$computed-control-height-xs !default;
-$fui-control-height-sm: computed.$computed-control-height-sm !default;
-$fui-control-height-md: computed.$computed-control-height-md !default;
-$fui-control-height-lg: computed.$computed-control-height-lg !default;
+// Interactive control heights are fixed geometry. Density still governs
+// composition spacing, but it cannot resize a named control.
+$fui-control-height-xs: measurements.target-value("controlTrack", "micro") !default;
+$fui-control-height-sm: measurements.target-value("controlTrack", "sm") !default;
+$fui-control-height-md: measurements.target-value("controlTrack", "md") !default;
+$fui-control-height-lg: measurements.target-value("controlTrack", "lg") !default;
 
 // Legacy aliases — prefer --fui-control-height-* in new code
 $fui-button-height-xs: $fui-control-height-xs !default;
@@ -384,9 +385,9 @@ $fui-button-height-lg: $fui-control-height-lg !default;
 $fui-button-outlined-shadow: inset 0 1px 0
   light-dark(color-mix(in srgb, white 72%, transparent), color-mix(in srgb, white 5%, transparent)) !default;
 
-$fui-input-height-sm: $fui-control-height-sm !default;
-$fui-input-height: $fui-control-height-md !default;
-$fui-input-height-lg: $fui-control-height-lg !default;
+$fui-input-height-sm: measurements.target-value("fieldTrack", "sm") !default;
+$fui-input-height: measurements.target-value("fieldTrack", "md") !default;
+$fui-input-height-lg: measurements.target-value("fieldTrack", "lg") !default;
 
 // Touch targets (derived from density seed)
 $fui-touch-sm: computed.$computed-touch-sm !default;
@@ -883,7 +884,7 @@ $fui-code-selection-bg: color-mix(
       #{$fui-dark-scrollbar-thumb-hover}
     );
 
-    // Component heights (density-responsive) — canonical ladder + legacy aliases
+    // Fixed component tracks plus compatibility aliases.
     --fui-control-height-xs: #{$fui-control-height-xs};
     --fui-control-height-sm: #{$fui-control-height-sm};
     --fui-control-height-md: #{$fui-control-height-md};
@@ -892,9 +893,9 @@ $fui-code-selection-bg: color-mix(
     --fui-button-height-sm: var(--fui-control-height-sm);
     --fui-button-height-md: var(--fui-control-height-md);
     --fui-button-height-lg: var(--fui-control-height-lg);
-    --fui-input-height-sm: var(--fui-control-height-sm);
-    --fui-input-height: var(--fui-control-height-md);
-    --fui-input-height-lg: var(--fui-control-height-lg);
+    --fui-input-height-sm: var(--fui-field-track-sm);
+    --fui-input-height: var(--fui-field-track-md);
+    --fui-input-height-lg: var(--fui-field-track-lg);
 
     // Touch targets (density-responsive, Fragments control floor: ≥32px)
     --fui-touch-sm: #{$fui-touch-sm};

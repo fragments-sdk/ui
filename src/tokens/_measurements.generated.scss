@@ -548,29 +548,17 @@ $legacy: (
   --fui-space-8: #{density-spacing($name, "8")};
   --fui-space-10: #{density-spacing($name, "10")};
   --fui-space-12: #{density-spacing($name, "12")};
-  --fui-control-height-xs: #{density-px-to-rem(
-      $name,
-      density-nested-value($name, "controlHeight", "xs")
-    )};
-  --fui-control-height-sm: #{density-px-to-rem(
-      $name,
-      density-nested-value($name, "controlHeight", "sm")
-    )};
-  --fui-control-height-md: #{density-px-to-rem(
-      $name,
-      density-nested-value($name, "controlHeight", "md")
-    )};
-  --fui-control-height-lg: #{density-px-to-rem(
-      $name,
-      density-nested-value($name, "controlHeight", "lg")
-    )};
+  --fui-control-height-xs: var(--fui-control-track-micro, #{target-value("controlTrack", "micro")});
+  --fui-control-height-sm: var(--fui-control-track-sm, #{target-value("controlTrack", "sm")});
+  --fui-control-height-md: var(--fui-control-track-md, #{target-value("controlTrack", "md")});
+  --fui-control-height-lg: var(--fui-control-track-lg, #{target-value("controlTrack", "lg")});
   --fui-button-height-xs: var(--fui-control-height-xs);
   --fui-button-height-sm: var(--fui-control-height-sm);
   --fui-button-height-md: var(--fui-control-height-md);
   --fui-button-height-lg: var(--fui-control-height-lg);
-  --fui-input-height-sm: var(--fui-control-height-sm);
-  --fui-input-height: var(--fui-control-height-md);
-  --fui-input-height-lg: var(--fui-control-height-lg);
+  --fui-input-height-sm: var(--fui-field-track-sm, #{target-value("fieldTrack", "sm")});
+  --fui-input-height: var(--fui-field-track-md, #{target-value("fieldTrack", "md")});
+  --fui-input-height-lg: var(--fui-field-track-lg, #{target-value("fieldTrack", "lg")});
   --fui-touch-sm: #{density-px-to-rem($name, density-nested-value($name, "touch", "sm"))};
   --fui-touch-md: #{density-px-to-rem($name, density-nested-value($name, "touch", "md"))};
   --fui-touch-lg: #{density-px-to-rem($name, density-nested-value($name, "touch", "lg"))};

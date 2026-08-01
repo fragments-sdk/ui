@@ -441,16 +441,12 @@
   }
 }
 
-/// Control height + type scale from the shared control-height ladder.
+/// Compatibility control height + type scale from the fixed control ladder.
 /// Padding is not applied — use `field-padding` for fields, or local pad on actions.
 /// @param {String} $size - Size variant: 'xs', 'sm', 'md', or 'lg'
 /// @param {String | null} $component - Deprecated. When `"input"`/`"select"`, also
 ///   applies `field-padding` so existing call sites keep working.
 @mixin control-size($size, $component: null) {
-  // Global accessibility floor: component-specific height tokens may be customized,
-  // but controls should not shrink below the minimum target size.
-  min-height: var(--fui-target-size-min, #{$fui-target-size-min});
-
   @if $size == "xs" {
     height: var(--fui-control-height-xs, #{$fui-control-height-xs});
     font-size: var(--fui-font-size-xs, #{$fui-font-size-xs});

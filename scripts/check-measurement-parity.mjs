@@ -123,12 +123,18 @@ assert.doesNotMatch(css, /--fui-type-[\w-]+-family\s*:/);
 for (const [name, profile] of Object.entries(generated.measurements.density)) {
   const selector = `.density-${name}`;
   const baseFontSize = Number.parseFloat(profile.baseFontSize);
-  for (const [size, value] of Object.entries(profile.controlHeight)) {
-    const expected = `${Number.parseFloat(value) / baseFontSize}rem`;
-    const actual = cssDeclaration(selector, `--fui-control-height-${size}`);
-    assert.ok(
-      Math.abs(Number.parseFloat(actual) - Number.parseFloat(expected)) < 1e-9,
-      `${name} control ${size}: expected ${expected}, received ${actual}`
+  for (const [size, targetSize] of [
+    ["xs", "micro"],
+    ["sm", "sm"],
+    ["md", "md"],
+    ["lg", "lg"],
+  ]) {
+    const value = generated.measurements.targets.controlTrack[targetSize];
+    const property =
+      targetSize === "micro" ? "--fui-control-track-micro" : `--fui-control-track-${targetSize}`;
+    assert.equal(
+      cssDeclaration(selector, `--fui-control-height-${size}`),
+      `var(${property}, ${value})`
     );
   }
   for (const [size, value] of Object.entries(profile.touch)) {
@@ -139,17 +145,17 @@ for (const [name, profile] of Object.entries(generated.measurements.density)) {
       `${name} touch ${size}: expected ${expected}, received ${actual}`
     );
   }
-  for (const [alias, target] of [
-    ["--fui-button-height-xs", "--fui-control-height-xs"],
-    ["--fui-button-height-sm", "--fui-control-height-sm"],
-    ["--fui-button-height-md", "--fui-control-height-md"],
-    ["--fui-button-height-lg", "--fui-control-height-lg"],
-    ["--fui-input-height-sm", "--fui-control-height-sm"],
-    ["--fui-input-height", "--fui-control-height-md"],
-    ["--fui-input-height-lg", "--fui-control-height-lg"],
-    ["--fui-target-size-min", "--fui-touch-sm"],
+  for (const [alias, expected] of [
+    ["--fui-button-height-xs", "var(--fui-control-height-xs)"],
+    ["--fui-button-height-sm", "var(--fui-control-height-sm)"],
+    ["--fui-button-height-md", "var(--fui-control-height-md)"],
+    ["--fui-button-height-lg", "var(--fui-control-height-lg)"],
+    ["--fui-input-height-sm", "var(--fui-field-track-sm, 28px)"],
+    ["--fui-input-height", "var(--fui-field-track-md, 32px)"],
+    ["--fui-input-height-lg", "var(--fui-field-track-lg, 40px)"],
+    ["--fui-target-size-min", "var(--fui-touch-sm)"],
   ]) {
-    assert.equal(cssDeclaration(selector, alias), `var(${target})`);
+    assert.equal(cssDeclaration(selector, alias), expected);
   }
 }
 
