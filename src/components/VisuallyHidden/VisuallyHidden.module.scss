@@ -2,9 +2,12 @@
 // Based on the widely-used sr-only pattern
 .visuallyHidden {
   position: absolute;
+  /* fragments-allow FUI2004 reason="Accessibility clipping box must remain exactly one CSS pixel" expires="2027-08-01" */
   width: 1px;
+  /* fragments-allow FUI2004 reason="Accessibility clipping box must remain exactly one CSS pixel" expires="2027-08-01" */
   height: 1px;
   padding: 0;
+  /* fragments-allow FUI2004 reason="Negative offset keeps the clipping box outside visual layout" expires="2027-08-01" */
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
