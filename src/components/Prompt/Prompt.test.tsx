@@ -132,13 +132,16 @@ describe('Prompt', () => {
     expect(container.firstChild).toHaveAttribute('data-appearance', 'seamless');
   });
 
-  it('keeps seamless controls on one tokenized optical grid', () => {
-    expect(promptStyles).toContain(
-      '--fui-target-size-min: var(--fui-button-height-xs, #{$fui-button-height-xs})'
-    );
-    expect(promptStyles).toContain(
-      '--fui-button-height-sm: var(--fui-button-height-xs, #{$fui-button-height-xs})'
-    );
+  it('composes shared action roles without subtree measurement overrides', () => {
+    expect(promptStyles).toContain('@include action.icon-only("md")');
+    expect(promptStyles).toContain('@include action.size("sm")');
+    expect(promptStyles).toContain('@include action.icon-only("sm")');
+    expect(promptStyles).toContain('@include action.icon-only("micro")');
+    expect(promptStyles).toContain('@include target.hit-area("compact")');
+    expect(promptStyles).not.toContain('--fui-target-size-min:');
+    expect(promptStyles).not.toContain('--fui-button-height-sm:');
+    expect(promptStyles).not.toContain('--fui-input-height-sm:');
+    expect(promptStyles).not.toMatch(/(?:width|height):\s*(?:1|2)rem/);
     expect(promptStyles).toContain('font-size: var(--fui-font-size-sm, $fui-font-size-sm)');
     expect(promptStyles).toContain('width: var(--fui-icon-md, $fui-icon-md)');
     expect(promptStyles).toContain('&[data-popup-open]');

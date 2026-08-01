@@ -1,5 +1,7 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
+@use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
 // ============================================
@@ -145,15 +147,6 @@
   --_control-padding: var(--fui-space-2, #{$fui-space-2});
   --_chip-padding: var(--fui-space-1, #{$fui-space-1});
 
-  // Composer controls are compact, but still need enough visual weight to read
-  // as one deliberate toolbar. The xs button token is the dense 32px control
-  // height in every density preset; scoping all three inputs to it keeps
-  // selects, attach, action and submit controls on one optical grid without a
-  // one-off dimension.
-  --fui-target-size-min: var(--fui-button-height-xs, #{$fui-button-height-xs});
-  --fui-button-height-sm: var(--fui-button-height-xs, #{$fui-button-height-xs});
-  --fui-input-height-sm: var(--fui-button-height-xs, #{$fui-button-height-xs});
-
   border-color: transparent;
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
 
@@ -289,19 +282,6 @@
     }
   }
 
-  // Round affordances track the scoped target size rather than the 2rem they
-  // are given for a form.
-  .submit,
-  .actionButton {
-    width: var(--fui-target-size-min);
-    height: var(--fui-target-size-min);
-
-    svg {
-      width: var(--fui-icon-md, $fui-icon-md);
-      height: var(--fui-icon-md, $fui-icon-md);
-    }
-  }
-
   // Attach's glyph reaches the leading ink gutter through its own control
   // padding. Give the filled Submit shape the same inset at the trailing edge
   // so the two visible affordances balance across the toolbar.
@@ -367,14 +347,10 @@
 
 .tabButton {
   @include button-reset;
+  @include action.base;
+  @include action.size("sm");
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0 0;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
@@ -430,16 +406,12 @@
 .actionButton {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("md");
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   color: var(--fui-text-primary, $fui-text-primary);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -450,8 +422,7 @@
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    @include action.glyph("md");
   }
 }
 
@@ -462,16 +433,13 @@
 .modeButton {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.size("sm");
+  @include target.hit-area("compact");
 
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -499,15 +467,11 @@
 .attach {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("sm");
+  @include target.hit-area("compact");
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-  // The target size rather than a spacing step, so it tracks whatever scale
-  // the surface around it has established.
-  width: var(--fui-target-size-min, $fui-target-size-min);
-  height: var(--fui-target-size-min, $fui-target-size-min);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);
@@ -527,8 +491,7 @@
   }
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("sm");
   }
 }
 
@@ -551,7 +514,7 @@
 // Sized off the same target as everything else in the bar, so a chip and a
 // control are the same height and the card has one horizontal rhythm.
 .attachment {
-  --_chip-height: var(--fui-target-size-min, #{$fui-target-size-min});
+  --_chip-height: #{action.track("sm")};
 
   display: inline-flex;
   align-items: center;
@@ -601,13 +564,11 @@
 .attachmentRemove {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("micro");
+  @include target.hit-area("compact");
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-  width: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
-  height: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;
   color: var(--fui-text-tertiary, $fui-text-tertiary);
@@ -618,8 +579,7 @@
   }
 
   svg {
-    width: var(--fui-icon-xs, $fui-icon-xs);
-    height: var(--fui-icon-xs, $fui-icon-xs);
+    @include action.glyph("micro");
   }
 }
 
@@ -659,12 +619,9 @@
 .submit {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("md");
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
   border-radius: var(--fui-radius-full, $fui-radius-full);
   // A neutral inverse keeps send visibly primary without spending the product
   // accent, which may already encode agent state.
@@ -685,8 +642,7 @@
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    @include action.glyph("md");
   }
 }
 
