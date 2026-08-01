@@ -2,6 +2,12 @@
 
 import * as React from 'react';
 import styles from './ScrollArea.module.scss';
+import {
+  detectRtlScrollModel,
+  readScrollAxes,
+  type ScrollAxesState,
+  type ScrollOrientation,
+} from './scroll-state';
 
 // ============================================
 // Types
@@ -10,7 +16,7 @@ import styles from './ScrollArea.module.scss';
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Scroll direction */
-  orientation?: 'horizontal' | 'vertical' | 'both';
+  orientation?: ScrollOrientation;
   /** Scrollbar visibility behavior */
   scrollbarVisibility?: 'auto' | 'always' | 'hover';
   /** Whether to show fade indicators at scroll edges */
@@ -35,78 +41,90 @@ function ScrollAreaRoot({
   scrollbarVisibility = 'auto',
   showFades = false,
   className,
+  dir,
   ...htmlProps
 }: ScrollAreaProps) {
   const viewportRef = React.useRef<HTMLDivElement>(null);
-  const [canScrollStart, setCanScrollStart] = React.useState(false);
-  const [canScrollEnd, setCanScrollEnd] = React.useState(false);
-
-  const updateScrollState = React.useCallback(() => {
-    const el = viewportRef.current;
-    if (!el || !showFades) return;
-
-    if (orientation === 'horizontal') {
-      setCanScrollStart(el.scrollLeft > 1);
-      setCanScrollEnd(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
-    } else {
-      setCanScrollStart(el.scrollTop > 1);
-      setCanScrollEnd(el.scrollTop < el.scrollHeight - el.clientHeight - 1);
-    }
-  }, [orientation, showFades]);
+  const [axes, setAxes] = React.useState<ScrollAxesState>({ x: 'none', y: 'none' });
 
   React.useEffect(() => {
-    const el = viewportRef.current;
-    if (!el || !showFades) return;
+    const viewport = viewportRef.current;
+    if (!viewport || !showFades) return;
 
-    // Defer initial check to ensure children have laid out
-    const raf = requestAnimationFrame(updateScrollState);
+    let frame: number | null = null;
+    const observedChildren = new Set<Element>();
 
-    el.addEventListener('scroll', updateScrollState, { passive: true });
+    const readAndCommit = () => {
+      frame = null;
+      const view = viewport.ownerDocument.defaultView;
+      const computedDirection = view?.getComputedStyle(viewport).direction;
+      const direction = (computedDirection || dir) === 'rtl' ? 'rtl' : 'ltr';
+      const nextAxes = readScrollAxes(viewport, {
+        orientation,
+        direction,
+        rtlModel: direction === 'rtl' ? detectRtlScrollModel(viewport.ownerDocument) : undefined,
+      });
 
-    // Observe both the viewport AND its children for size changes
-    // (viewport size stays constant when children overflow — only scrollWidth changes)
-    const observer = new ResizeObserver(updateScrollState);
-    observer.observe(el);
-    Array.from(el.children).forEach(child => observer.observe(child));
+      setAxes((currentAxes) =>
+        currentAxes.x === nextAxes.x && currentAxes.y === nextAxes.y ? currentAxes : nextAxes
+      );
+    };
+
+    const schedule = () => {
+      if (frame === null) frame = requestAnimationFrame(readAndCommit);
+    };
+
+    const resizeObserver = new ResizeObserver(schedule);
+    const syncObservedChildren = () => {
+      const currentChildren = new Set(Array.from(viewport.children));
+      observedChildren.forEach((child) => {
+        if (!currentChildren.has(child)) {
+          resizeObserver.unobserve(child);
+          observedChildren.delete(child);
+        }
+      });
+      currentChildren.forEach((child) => {
+        if (!observedChildren.has(child)) {
+          resizeObserver.observe(child);
+          observedChildren.add(child);
+        }
+      });
+    };
+
+    const mutationObserver = new MutationObserver(() => {
+      syncObservedChildren();
+      schedule();
+    });
+
+    resizeObserver.observe(viewport);
+    syncObservedChildren();
+    mutationObserver.observe(viewport, { childList: true, subtree: true });
+    viewport.addEventListener('scroll', schedule, { passive: true });
+    schedule();
 
     return () => {
-      cancelAnimationFrame(raf);
-      el.removeEventListener('scroll', updateScrollState);
-      observer.disconnect();
+      if (frame !== null) cancelAnimationFrame(frame);
+      viewport.removeEventListener('scroll', schedule);
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      observedChildren.clear();
     };
-  }, [showFades, updateScrollState]);
+  }, [dir, orientation, showFades]);
 
-  const rootClasses = [
-    styles.root,
-    className,
-  ].filter(Boolean).join(' ');
+  const rootClasses = [styles.root, className].filter(Boolean).join(' ');
+  const visibleAxes = showFades ? axes : { x: 'none' as const, y: 'none' as const };
 
-  // Determine which fade mask to apply to the viewport
-  const fadeMask = showFades
-    ? canScrollStart && canScrollEnd
-      ? styles.fadeMaskBoth
-      : canScrollStart
-        ? styles.fadeMaskStart
-        : canScrollEnd
-          ? styles.fadeMaskEnd
-          : undefined
-    : undefined;
-
-  const viewportClasses = [
-    styles.viewport,
-    styles[orientation],
-    scrollbarVisibility === 'always' && styles.scrollbarAlways,
-    scrollbarVisibility === 'hover' && styles.scrollbarHover,
-    fadeMask,
-  ].filter(Boolean).join(' ');
+  const viewportClasses = [styles.viewport, styles[orientation]].filter(Boolean).join(' ');
 
   return (
-    <div
-      {...htmlProps}
-      className={rootClasses}
-      data-orientation={orientation}
-    >
-      <div ref={viewportRef} className={viewportClasses}>
+    <div {...htmlProps} className={rootClasses} data-orientation={orientation} dir={dir}>
+      <div
+        ref={viewportRef}
+        className={viewportClasses}
+        data-scroll-x={visibleAxes.x}
+        data-scroll-y={visibleAxes.y}
+        data-scrollbar-visibility={scrollbarVisibility}
+      >
         {children}
       </div>
     </div>

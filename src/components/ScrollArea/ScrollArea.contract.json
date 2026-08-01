@@ -3,13 +3,7 @@
   "name": "ScrollArea",
   "description": "A styled scrollable container with thin scrollbars and optional fade indicators.",
   "category": "layout",
-  "tags": [
-    "scroll",
-    "overflow",
-    "scrollbar",
-    "container",
-    "layout"
-  ],
+  "tags": ["scroll", "overflow", "scrollbar", "container", "layout"],
   "status": "stable",
   "sourcePath": "src/components/ScrollArea/index.tsx",
   "exportName": "ScrollArea",
@@ -31,22 +25,14 @@
       "description": "Scroll direction",
       "default": "vertical",
       "required": false,
-      "values": [
-        "horizontal",
-        "vertical",
-        "both"
-      ]
+      "values": ["horizontal", "vertical", "both"]
     },
     "scrollbarVisibility": {
       "type": "enum",
       "description": "When to show the scrollbar",
       "default": "auto",
       "required": false,
-      "values": [
-        "auto",
-        "always",
-        "hover"
-      ]
+      "values": ["auto", "always", "hover"]
     },
     "showFades": {
       "type": "boolean",
@@ -74,11 +60,11 @@
     "guidelines": [
       "Use `orientation` to constrain scroll direction",
       "Use `showFades` to hint at hidden content beyond the viewport",
-      "The `hover` scrollbar visibility keeps the UI clean until the user interacts",
+      "The `auto` and `hover` modes keep the thumb quiet until hover or keyboard focus without changing track geometry",
       "Combine with `orientation=\"horizontal\"` for tab bars and chip rows"
     ],
     "accessibility": [
-      "Preserves native scroll behavior and keyboard support",
+      "Preserves native scroll behavior and keyboard support across both axes",
       "Scrollbar is visible on focus for keyboard users",
       "Respects prefers-reduced-motion for fade transitions"
     ]
@@ -96,12 +82,12 @@
     },
     {
       "name": "With Fades",
-      "description": "Fade indicators show when content is scrollable in either direction.",
+      "description": "Fade indicators independently show the available logical direction on each scrollable axis.",
       "code": "<ScrollArea orientation=\"horizontal\" showFades>\n  {/* Overflowing content */}\n</ScrollArea>"
     },
     {
       "name": "Hover Scrollbar",
-      "description": "Scrollbar is hidden until the user hovers over the scroll area.",
+      "description": "Scrollbar thumb paint appears on hover or keyboard focus without changing track dimensions.",
       "code": "<ScrollArea scrollbarVisibility=\"hover\" style={{ height: '200px' }}>\n  {/* Content */}\n</ScrollArea>"
     }
   ],
@@ -114,9 +100,7 @@
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ],
+    "subComponents": ["Root"],
     "commonPatterns": [
       "<ScrollArea orientation=\"horizontal\"><div style={{ display: \"flex\", gap: 8 }}>{items}</div></ScrollArea>",
       "<ScrollArea style={{ height: 300 }}>{longContent}</ScrollArea>"
