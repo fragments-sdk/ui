@@ -129,6 +129,30 @@ describe("geometry recipes", () => {
     expect(css).toContain("bottom: var(--fui-feedback-viewport-inset-bottom");
   });
 
+  it("compiles modal, anchored, tooltip, and safe viewport geometry", () => {
+    const css = compile(`
+      @use "recipes/overlay";
+      .viewport { @include overlay.safe-viewport; }
+      .modal { @include overlay.modal-shell; }
+      .header { @include overlay.header; }
+      .body { @include overlay.body; }
+      .footer { @include overlay.footer; }
+      .close { @include overlay.close; }
+      .anchored { @include overlay.anchored-surface("lg"); }
+      .arrow { @include overlay.arrow-box; }
+      .tooltip { @include overlay.tooltip; }
+    `);
+
+    expect(css).toContain("--_fui-overlay-safe-inline: calc(");
+    expect(css).toContain("padding-inline: var(--fui-overlay-inline-inset");
+    expect(css).toContain("--_fui-action-track: var(--fui-control-track-sm, 28px)");
+    expect(css).toContain("max-inline-size: var(--fui-overlay-popover-max-inline-lg, 512px)");
+    expect(css).toContain(
+      "inline-size: var(--fui-overlay-arrow-size, var(--fui-raw-space-10, 10px))"
+    );
+    expect(css).toContain("max-inline-size: var(--fui-overlay-tooltip-max-inline, 320px)");
+  });
+
   it.each([
     ['@use "recipes/action"; .x { @include action.size("xl"); }', "Unknown action role"],
     ['@use "recipes/field"; .x { @include field.size("xs"); }', "Unknown field size"],
@@ -152,6 +176,14 @@ describe("geometry recipes", () => {
     [
       '@use "recipes/feedback"; .x { @include feedback.viewport-stack("middle"); }',
       "Unknown feedback viewport position",
+    ],
+    [
+      '@use "recipes/overlay"; .x { @include overlay.anchored-surface("xl"); }',
+      "Unknown anchored overlay size",
+    ],
+    [
+      '@use "recipes/overlay"; .x { max-width: overlay.dialog-max("full"); }',
+      "Unknown dialog overlay size",
     ],
   ])("rejects an unsupported closed recipe role", (source, message) => {
     expect(() => compile(source)).toThrow(message);

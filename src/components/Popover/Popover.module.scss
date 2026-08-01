@@ -1,26 +1,17 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
+@use "../../recipes/overlay" as overlay;
 
-// Local component tokens
-$fui-arrow-size: 10px !default;
-
-// Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
-  z-index: 52;
+  z-index: var(--fui-overlay-layer-anchored, 52);
   outline: none;
 }
 
-// Popup container
 .popup {
-  @include surface-elevated;
-  @include text-base;
+  @include overlay.anchored-surface("md");
 
-  min-width: 12rem;
-  max-width: 24rem;
-  padding: var(--fui-space-2, $fui-space-2);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-
-  // Animation
+  position: relative;
   opacity: 0;
   transform: scale(0.95) translateY(-$fui-anim-offset-sm);
   transform-origin: var(--transform-origin);
@@ -43,7 +34,6 @@ $fui-arrow-size: 10px !default;
     transform: scale(0.95) translateY($fui-anim-offset-sm);
   }
 
-  // Adjust animation direction based on side
   &[data-side="top"] {
     &[data-starting-style] {
       transform: scale(0.95) translateY($fui-anim-offset-sm);
@@ -63,49 +53,33 @@ $fui-arrow-size: 10px !default;
   }
 }
 
-// Size variants
 .sm {
-  padding: var(--fui-space-3, $fui-space-3);
-  max-width: 16rem;
-}
-
-.md {
-  // Default styles
+  @include overlay.anchored-size("sm");
 }
 
 .lg {
-  padding: var(--fui-space-6, $fui-space-6);
-  max-width: 32rem;
+  @include overlay.anchored-size("lg");
 }
 
-// Title
 .title {
-  margin: 0 0 var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  @include overlay.anchored-title;
+
+  margin: 0 0 var(--fui-feedback-text-gap, var(--fui-raw-space-4, 4px));
   color: var(--fui-text-primary, $fui-text-primary);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
 }
 
-// Description
 .description {
+  @include overlay.description;
+
   margin: 0;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
-// Close button
 .close {
   @include button-reset;
   @include interactive-base;
-  @include touch-target;
+  @include overlay.close;
 
-  position: absolute;
-  top: var(--fui-space-2, $fui-space-2);
-  right: var(--fui-space-2, $fui-space-2);
-  width: 1.5rem;
-  height: 1.5rem;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 
@@ -115,18 +89,22 @@ $fui-arrow-size: 10px !default;
   }
 
   svg {
-    width: 0.875rem;
-    height: 0.875rem;
+    inline-size: action.icon-size("sm");
+    block-size: action.icon-size("sm");
   }
 }
 
-// Arrow
+.popup:has(.close) .title {
+  padding-inline-end: calc(
+    #{action.track("sm")} + var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px))
+  );
+}
+
 .arrow {
-  width: $fui-arrow-size;
-  height: $fui-arrow-size;
-  transform: rotate(45deg);
+  @include overlay.arrow-box;
+
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
   &[data-side="top"] {
     border-top: none;
@@ -134,56 +112,42 @@ $fui-arrow-size: 10px !default;
   }
 
   &[data-side="bottom"] {
-    border-bottom: none;
     border-right: none;
+    border-bottom: none;
   }
 
   &[data-side="left"] {
-    border-left: none;
     border-bottom: none;
+    border-left: none;
   }
 
   &[data-side="right"] {
-    border-right: none;
     border-top: none;
+    border-right: none;
   }
 }
 
-// Body content area
 .body {
-  margin-top: var(--fui-space-3, $fui-space-3);
+  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
 }
 
-// Footer for actions
 .footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--fui-space-2, $fui-space-2);
-  margin-top: var(--fui-space-4, $fui-space-4);
-  padding-top: var(--fui-space-3, $fui-space-3);
-  border-top: 1px solid var(--fui-border, $fui-border);
+  gap: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
+  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
+  padding-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
+  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 }
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
 @media (prefers-reduced-motion: reduce) {
-  .popup {
+  .popup,
+  .popup[data-starting-style],
+  .popup[data-ending-style],
+  .popup[data-side="top"][data-starting-style],
+  .popup[data-side="top"][data-ending-style] {
     transition: none;
     transform: none;
-
-    &[data-starting-style],
-    &[data-ending-style] {
-      transform: none;
-    }
-
-    &[data-side="top"] {
-      &[data-starting-style],
-      &[data-ending-style] {
-        transform: none;
-      }
-    }
   }
 }
