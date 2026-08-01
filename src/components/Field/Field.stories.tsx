@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Field } from '.';
-import { Input } from '../Input';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Field } from ".";
+import { Input } from "../Input";
 
 /**
  * Field is a compositional form-field wrapper providing validation, labels,
@@ -9,40 +9,31 @@ import { Input } from '../Input';
  * root. Field.Control connects any form control to the field context.
  */
 const meta = {
-  title: 'Forms/Field',
+  title: "Forms/Field",
   component: Field,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component:
-          'Form field wrapper providing labels, descriptions, validation, and error messages.',
+          "Form field wrapper providing labels, descriptions, validation, and error messages.",
       },
     },
   },
   argTypes: {
     disabled: {
-      control: 'boolean',
-      description: 'Disables the field and its control',
+      control: "boolean",
+      description: "Disables the field and its control",
     },
-    invalid: { control: 'boolean', description: 'Marks the field as invalid' },
+    invalid: { control: "boolean", description: "Marks the field as invalid" },
     validationMode: {
-      control: 'select',
-      options: ['onSubmit', 'onBlur', 'onChange'],
-      description: 'When to trigger validation',
+      control: "select",
+      options: ["onSubmit", "onBlur", "onChange"],
+      description: "When to trigger validation",
     },
   },
   args: {
-    name: 'email',
-    children: (
-      <>
-        <Field.Label>Email address</Field.Label>
-        <Field.Control>
-          <Input type="email" placeholder="jane@example.com" />
-        </Field.Control>
-        <Field.Description>We will never share your email.</Field.Description>
-      </>
-    ),
+    name: "email",
   },
 } satisfies Meta<typeof Field>;
 
@@ -80,7 +71,7 @@ export const CustomValidation: Story = {
       name="age"
       validate={(value) => {
         const num = Number(value);
-        if (isNaN(num) || num < 18) return 'Must be 18 or older';
+        if (isNaN(num) || num < 18) return "Must be 18 or older";
         return null;
       }}
       validationMode="onChange"

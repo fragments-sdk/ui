@@ -28,25 +28,6 @@ const meta = {
       description: "When field validation should run",
     },
   },
-  args: {
-    children: (
-      <>
-        <Grid columns={1} gap="md">
-          <Field name="email">
-            <Field.Label>Email</Field.Label>
-            <Field.Control>
-              <Input type="email" placeholder="jane@example.com" />
-            </Field.Control>
-          </Field>
-        </Grid>
-        <Form.Actions>
-          <Button type="submit" variant="primary">
-            Submit
-          </Button>
-        </Form.Actions>
-      </>
-    ),
-  },
 } satisfies Meta<typeof Form>;
 
 export default meta;

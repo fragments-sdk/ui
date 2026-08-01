@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Drawer } from '.';
-import { Button } from '../Button';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Drawer } from ".";
+import { Button } from "../Button";
 
 /**
  * Drawer is a panel that slides in from a screen edge, extending the Dialog
@@ -9,49 +9,29 @@ import { Button } from '../Button';
  * Drawer.Body, and Drawer.Footer inside the root.
  */
 const meta = {
-  title: 'Feedback/Drawer',
+  title: "Feedback/Drawer",
   component: Drawer,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Slide-in panel for navigation, forms, or supplementary content.',
+        component: "Slide-in panel for navigation, forms, or supplementary content.",
       },
     },
   },
   argTypes: {
-    open: { control: 'boolean', description: 'Controlled open state' },
+    open: { control: "boolean", description: "Controlled open state" },
     defaultOpen: {
-      control: 'boolean',
-      description: 'Default open state (uncontrolled)',
+      control: "boolean",
+      description: "Default open state (uncontrolled)",
     },
     modal: {
-      control: 'boolean',
-      description: 'Whether the drawer blocks interaction with the page',
+      control: "boolean",
+      description: "Whether the drawer blocks interaction with the page",
     },
   },
   args: {
     modal: true,
-    children: (
-      <>
-        <Drawer.Trigger asChild>
-          <Button>Open Drawer</Button>
-        </Drawer.Trigger>
-        <Drawer.Content>
-          <Drawer.Close />
-          <Drawer.Header>
-            <Drawer.Title>Drawer Title</Drawer.Title>
-            <Drawer.Description>
-              A panel sliding in from the right.
-            </Drawer.Description>
-          </Drawer.Header>
-          <Drawer.Body>
-            <p>Drawer content goes here.</p>
-          </Drawer.Body>
-        </Drawer.Content>
-      </>
-    ),
   },
 } satisfies Meta<typeof Drawer>;
 
@@ -69,9 +49,7 @@ export const Default: Story = {
         <Drawer.Close />
         <Drawer.Header>
           <Drawer.Title>Drawer Title</Drawer.Title>
-          <Drawer.Description>
-            A panel sliding in from the right.
-          </Drawer.Description>
+          <Drawer.Description>A panel sliding in from the right.</Drawer.Description>
         </Drawer.Header>
         <Drawer.Body>
           <p>Drawer content goes here.</p>

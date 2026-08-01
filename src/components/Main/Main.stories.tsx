@@ -8,27 +8,31 @@ const meta = {
   tags: ["autodocs", "canonical"],
   args: {
     measure: "full",
-    children: (
-      <>
-        <Main.Header>
-          <Text as="h1" size="2xl" weight="semibold">
-            Page statement
-          </Text>
-        </Main.Header>
-        <Main.Description>
-          <Text color="secondary">Supporting page context.</Text>
-        </Main.Description>
-        <Main.Content>
-          <Text>Page content</Text>
-        </Main.Content>
-        <Main.Footer>Page actions</Main.Footer>
-      </>
-    ),
   },
 } satisfies Meta<typeof Main>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-export const NarrowMeasure: Story = { args: { measure: "narrow" } };
+const renderMain: Story["render"] = (args) => (
+  <Main {...args}>
+    <Main.Header>
+      <Text as="h1" size="2xl" weight="semibold">
+        Page statement
+      </Text>
+    </Main.Header>
+    <Main.Description>
+      <Text color="secondary">Supporting page context.</Text>
+    </Main.Description>
+    <Main.Content>
+      <Text>Page content</Text>
+    </Main.Content>
+    <Main.Footer>Page actions</Main.Footer>
+  </Main>
+);
+
+export const Default: Story = { render: renderMain };
+export const NarrowMeasure: Story = {
+  args: { measure: "narrow" },
+  render: renderMain,
+};

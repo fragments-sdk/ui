@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Header } from '.';
-import { Button } from '../Button';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Header } from ".";
+import { Button } from "../Button";
 
 /**
  * Header is a composable header with slots for brand, navigation, search, and
@@ -9,43 +9,25 @@ import { Button } from '../Button';
  * for use within AppShell with responsive mobile support.
  */
 const meta = {
-  title: 'Navigation/Header',
+  title: "Navigation/Header",
   component: Header,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Composable header with slots for brand, navigation, search, and actions.',
+        component: "Composable header with slots for brand, navigation, search, and actions.",
       },
     },
   },
   argTypes: {
     position: {
-      control: 'select',
-      options: ['static', 'fixed', 'sticky'],
-      description: 'Position behavior (usually controlled by AppShell)',
+      control: "select",
+      options: ["static", "fixed", "sticky"],
+      description: "Position behavior (usually controlled by AppShell)",
     },
   },
   args: {
-    position: 'static',
-    children: (
-      <>
-        <Header.Brand href="/">MyApp</Header.Brand>
-        <Header.Nav>
-          <Header.NavItem href="/dashboard" active>
-            Dashboard
-          </Header.NavItem>
-          <Header.NavItem href="/projects">Projects</Header.NavItem>
-        </Header.Nav>
-        <Header.Spacer />
-        <Header.Actions>
-          <Button variant="secondary" size="sm">
-            Sign In
-          </Button>
-        </Header.Actions>
-      </>
-    ),
+    position: "static",
   },
 } satisfies Meta<typeof Header>;
 
@@ -85,9 +67,7 @@ export const WithDropdownNav: Story = {
         </Header.NavItem>
         <Header.NavItem href="/blocks">Blocks</Header.NavItem>
         <Header.NavMenu label="Docs">
-          <Header.NavMenuItem href="/getting-started">
-            Getting Started
-          </Header.NavMenuItem>
+          <Header.NavMenuItem href="/getting-started">Getting Started</Header.NavMenuItem>
           <Header.NavMenuItem href="/cli">CLI Reference</Header.NavMenuItem>
           <Header.NavMenuItem href="/mcp">MCP Tools</Header.NavMenuItem>
         </Header.NavMenu>
