@@ -109,13 +109,7 @@ function SizeRow({ size, expected }: { size: ControlSize; expected: string }) {
         </Sample>
 
         <Sample label="IconButton">
-          <IconButton
-            className={styles.compactControl}
-            size={size}
-            variant="outlined"
-            aria-label="Settings"
-            data-control-size={size}
-          >
+          <IconButton size={size} variant="outlined" aria-label="Settings" data-control-size={size}>
             <Gear />
           </IconButton>
         </Sample>
