@@ -1,36 +1,24 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
+@use "../../recipes/popup" as popup;
+@use "../../recipes/typography" as typography;
 
-// Local component tokens — arrow size shared with Popover/Tooltip
-$fui-arrow-size: 10px !default;
-
-// Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
-  z-index: 52;
+  z-index: var(--fui-overlay-layer-anchored, 52);
   outline: none;
   pointer-events: auto;
 }
 
-// Popup container
 .popup {
-  @include surface-elevated;
-  @include popup-container;
+  @include popup.container;
 
-  list-style: none;
+  min-inline-size: var(--fui-menu-min-inline, 192px);
   margin: 0;
-  min-width: 12rem;
-
-  // Menus must be fully hit-testable as soon as they open. A fade/scale
-  // entrance can let fast clicks pass through to page links under the portal.
+  list-style: none;
   opacity: 1;
   transform: none;
   transform-origin: var(--transform-origin);
 
-  &[data-open] {
-    opacity: 1;
-    transform: none;
-  }
-
+  &[data-open],
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 1;
@@ -38,27 +26,24 @@ $fui-arrow-size: 10px !default;
   }
 }
 
-// Viewport — enables content transition animations
 .viewport {
-  overflow: hidden;
-  transition: height var(--fui-transition-fast, $fui-transition-fast);
+  @include popup.viewport;
+
+  transition: block-size var(--fui-transition-fast, $fui-transition-fast);
 }
 
-// Menu item (shared base)
 .item {
-  @include popup-item;
+  @include popup.row;
 
-  // Base UI sets [data-highlighted] on pointer-hover AND keyboard nav → one indicator.
   &[data-highlighted] {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 
   &[data-disabled] {
-    @include popup-item-disabled;
+    @include popup.disabled-state;
   }
 }
 
-// Danger variant for destructive actions
 .itemDanger {
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 
@@ -68,13 +53,18 @@ $fui-arrow-size: 10px !default;
   }
 }
 
-// Item with icon
-.itemIcon {
+.itemIcon,
+.checkIndicator,
+.radioIndicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
+  inline-size: var(--fui-popup-indicator-box);
+  block-size: var(--fui-popup-indicator-box);
+  flex: 0 0 auto;
+}
+
+.itemIcon {
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   .itemDanger & {
@@ -82,142 +72,67 @@ $fui-arrow-size: 10px !default;
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    inline-size: 100%;
+    block-size: 100%;
   }
 }
 
-// Item label (main text)
 .itemLabel {
   flex: 1;
+  min-inline-size: 0;
 }
 
-// Item shortcut (keyboard shortcut hint)
 .itemShortcut {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include typography.role("caption");
+
+  margin-inline-start: auto;
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  margin-left: auto;
 }
 
-// Check indicator (checkmark icon for checked items)
-//
-// Sized to the text it sits beside rather than to a 16px icon slot. Every item
-// in a checkable menu reserves this column so labels stay aligned whether or not
-// they are checked — which means its width is pure indent on every unchecked
-// row, and at 1rem against 12px text it read as a margin rather than a marker.
 .checkIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 0.75rem;
-  height: 0.75rem;
-  flex-shrink: 0;
   color: var(--fui-color-accent, $fui-color-accent);
 
   svg {
-    width: 100%;
-    height: 100%;
+    inline-size: var(--fui-raw-space-12, 12px);
+    block-size: var(--fui-raw-space-12, 12px);
   }
 }
 
-// Checkbox item
-.checkboxItem {
-  // Uses .checkIndicator for checked state visual
-}
-
-// Radio indicator (still uses icon)
 .radioIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
   visibility: hidden;
 
   svg {
-    width: 0.75rem;
-    height: 0.75rem;
+    inline-size: var(--fui-raw-space-12, 12px);
+    block-size: var(--fui-raw-space-12, 12px);
   }
 }
 
-// Radio item states
-.radioItem {
-  &[data-checked] .radioIndicator {
-    visibility: visible;
-    color: var(--fui-color-accent, $fui-color-accent);
-  }
+.radioItem[data-checked] .radioIndicator {
+  visibility: visible;
+  color: var(--fui-color-accent, $fui-color-accent);
 }
 
-// Separator
 .separator {
-  height: 1px;
-  margin: var(--fui-space-1, $fui-space-1) 0;
-  background-color: var(--fui-border, $fui-border);
+  @include popup.group-separator;
 }
 
-// Group container
-.group {
-  // No specific styles needed
-}
-
-// Group label
 .groupLabel {
-  @include popup-group-label;
+  @include popup.group-label;
 }
 
-// Arrow
-.arrow {
-  width: $fui-arrow-size;
-  height: $fui-arrow-size;
-  transform: rotate(45deg);
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
-
-  &[data-side="top"] {
-    border-top: none;
-    border-left: none;
-  }
-
-  &[data-side="bottom"] {
-    border-bottom: none;
-    border-right: none;
-  }
-
-  &[data-side="left"] {
-    border-left: none;
-    border-bottom: none;
-  }
-
-  &[data-side="right"] {
-    border-right: none;
-    border-top: none;
-  }
+.submenuTrigger::after {
+  content: "";
+  inline-size: 0;
+  block-size: 0;
+  margin-inline-start: auto;
+  border-style: solid;
+  border-width: var(--fui-menu-submenu-caret-block, 4px) 0 var(--fui-menu-submenu-caret-block, 4px)
+    var(--fui-menu-submenu-caret-inline, 6px);
+  border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
 }
-
-// Submenu trigger (has arrow on right)
-.submenuTrigger {
-  &::after {
-    content: "";
-    margin-left: auto;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 4px 0 4px 6px;
-    border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
-  }
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
-  .popup {
-    transform: none;
-
-    &[data-starting-style],
-    &[data-ending-style] {
-      transform: none;
-    }
+  .viewport {
+    transition: none;
   }
 }
