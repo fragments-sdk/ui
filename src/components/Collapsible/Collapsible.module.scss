@@ -1,25 +1,22 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/feedback" as feedback;
 
 .root {
   width: 100%;
 }
 
 .trigger {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: var(--fui-space-1, $fui-space-1);
-  background: transparent;
-  border: none;
+  @include button-reset;
+  @include interactive-base;
+  @include feedback.disclosure-row;
+
+  inline-size: 100%;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-primary, $fui-text-primary);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-  gap: var(--fui-space-2, $fui-space-2);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -37,13 +34,12 @@
 
 .triggerContent {
   flex: 1;
-  min-width: 0;
+  min-inline-size: 0;
 }
 
 .chevron {
-  flex-shrink: 0;
-  width: var(--fui-icon-md, $fui-icon-md);
-  height: var(--fui-icon-md, $fui-icon-md);
+  @include feedback.disclosure-glyph;
+
   color: var(--fui-text-secondary, $fui-text-secondary);
   transition: transform var(--fui-transition-normal, $fui-transition-normal);
 }
@@ -53,67 +49,37 @@
 }
 
 .content {
+  display: grid;
+  grid-template-rows: 0fr;
   overflow: hidden;
+  opacity: 0;
   transition:
-    max-height var(--fui-transition-normal, $fui-transition-normal),
+    grid-template-rows var(--fui-transition-normal, $fui-transition-normal),
     opacity var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .contentOpen {
-  max-height: 2000px; // Large enough for most content
+  grid-template-rows: 1fr;
   opacity: 1;
 }
 
-.contentClosed {
-  max-height: 0;
-  opacity: 0;
-}
-
 .contentInner {
-  padding-top: var(--fui-space-1, $fui-space-1);
+  @include feedback.disclosure-panel;
+
+  min-block-size: 0;
+  overflow: hidden;
+  color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
-.disabled {
-  .trigger {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+.disabled .trigger {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-// Animation variant using CSS animation instead of max-height
-// Can be used with forceMount for smoother animations
-.root[data-animated='true'] {
-  // Duration + easing come from --fui-transition-normal (matches the
-  // max-height/opacity transition above); fill-mode keeps the end state.
-  .contentOpen {
-    animation: collapsibleSlideDown var(--fui-transition-normal, $fui-transition-normal)
-      forwards;
-  }
-
-  .contentClosed {
-    animation: collapsibleSlideUp var(--fui-transition-normal, $fui-transition-normal)
-      forwards;
-  }
-}
-
-@keyframes collapsibleSlideDown {
-  from {
-    max-height: 0;
-    opacity: 0;
-  }
-  to {
-    max-height: var(--collapsible-content-height, 2000px);
-    opacity: 1;
-  }
-}
-
-@keyframes collapsibleSlideUp {
-  from {
-    max-height: var(--collapsible-content-height, 2000px);
-    opacity: 1;
-  }
-  to {
-    max-height: 0;
-    opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .trigger,
+  .chevron,
+  .content {
+    transition: none;
   }
 }

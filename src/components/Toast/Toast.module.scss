@@ -1,19 +1,25 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-
-// ============================================
-// Toast Container
-// ============================================
+@use "../../recipes/feedback" as feedback;
 
 .container {
   position: fixed;
-  // Sits above all overlays (Dialog/Drawer 50-51, Menu/Popover 52, Tooltip 60).
-  z-index: 70;
+  z-index: var(--fui-feedback-toast-layer, 70);
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-2, $fui-space-2);
-  max-width: 420px;
-  width: calc(100% - var(--fui-space-4, $fui-space-4) * 2);
+  gap: var(--fui-feedback-stack-gap, var(--fui-raw-space-8, 8px));
+  inline-size: min(
+    var(--fui-feedback-toast-max-inline, 400px),
+    calc(
+      100% - var(
+          --fui-feedback-viewport-inset-left,
+          max(var(--fui-raw-space-16, 16px), env(safe-area-inset-left))
+        ) - var(
+          --fui-feedback-viewport-inset-right,
+          max(var(--fui-raw-space-16, 16px), env(safe-area-inset-right))
+        )
+    )
+  );
   pointer-events: none;
 
   > * {
@@ -21,65 +27,40 @@
   }
 }
 
-// Position variants
 .topleft {
-  top: var(--fui-space-4, $fui-space-4);
-  left: var(--fui-space-4, $fui-space-4);
+  @include feedback.viewport-stack("top-left");
 }
 
 .topcenter {
-  top: var(--fui-space-4, $fui-space-4);
-  left: 50%;
-  transform: translateX(-50%);
+  @include feedback.viewport-stack("top-center");
 }
 
 .topright {
-  top: var(--fui-space-4, $fui-space-4);
-  right: var(--fui-space-4, $fui-space-4);
+  @include feedback.viewport-stack("top-right");
 }
 
 .bottomleft {
-  bottom: var(--fui-space-4, $fui-space-4);
-  left: var(--fui-space-4, $fui-space-4);
-  flex-direction: column-reverse;
+  @include feedback.viewport-stack("bottom-left");
 }
 
 .bottomcenter {
-  bottom: var(--fui-space-4, $fui-space-4);
-  left: 50%;
-  transform: translateX(-50%);
-  flex-direction: column-reverse;
+  @include feedback.viewport-stack("bottom-center");
 }
 
 .bottomright {
-  bottom: var(--fui-space-4, $fui-space-4);
-  right: var(--fui-space-4, $fui-space-4);
-  flex-direction: column-reverse;
+  @include feedback.viewport-stack("bottom-right");
 }
 
-// ============================================
-// Toast Item
-// ============================================
-
 .toast {
-  display: flex;
-  // Single-line toasts (title only) read best vertically centered; toasts
-  // with a description are multi-line and top-align — see `:has(.description)`.
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  @include feedback.transient;
+
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-  font-family: var(--fui-font-sans, $fui-font-sans);
-
-  // Animation
   animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
 }
 
-// With a description the toast is multi-line: top-align icon/close to the
-// first line rather than the block centre.
 .toast:has(.description) {
   align-items: flex-start;
 }
@@ -89,35 +70,23 @@
     opacity: 0;
     transform: translateY($fui-anim-offset-md) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-// ============================================
-// Variant Styles
-// ============================================
-
-.default {
-  .icon {
-    color: var(--fui-text-secondary, $fui-text-secondary);
-  }
+.default .icon {
+  color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
 .success {
   background: var(--fui-color-success-bg, $fui-color-success-bg);
   border-color: var(--fui-color-success-border, $fui-color-success-border);
 
-  .title {
-    color: var(--fui-color-success-text, $fui-color-success-text);
-  }
-
-  .description {
-    color: var(--fui-color-success-text, $fui-color-success-text);
-    opacity: 0.8;
-  }
-
+  .title,
+  .description,
   .icon {
     color: var(--fui-color-success-text, $fui-color-success-text);
   }
@@ -127,15 +96,8 @@
   background: var(--fui-color-danger-bg, $fui-color-danger-bg);
   border-color: var(--fui-color-danger-border, $fui-color-danger-border);
 
-  .title {
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
-  }
-
-  .description {
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
-    opacity: 0.8;
-  }
-
+  .title,
+  .description,
   .icon {
     color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
@@ -145,15 +107,8 @@
   background: var(--fui-color-warning-bg, $fui-color-warning-bg);
   border-color: var(--fui-color-warning-border, $fui-color-warning-border);
 
-  .title {
-    color: var(--fui-color-warning-text, $fui-color-warning-text);
-  }
-
-  .description {
-    color: var(--fui-color-warning-text, $fui-color-warning-text);
-    opacity: 0.8;
-  }
-
+  .title,
+  .description,
   .icon {
     color: var(--fui-color-warning-text, $fui-color-warning-text);
   }
@@ -163,78 +118,59 @@
   background: var(--fui-color-info-bg, $fui-color-info-bg);
   border-color: var(--fui-color-info-border, $fui-color-info-border);
 
-  .title {
-    color: var(--fui-color-info-text, $fui-color-info-text);
-  }
-
-  .description {
-    color: var(--fui-color-info-text, $fui-color-info-text);
-    opacity: 0.8;
-  }
-
+  .title,
+  .description,
   .icon {
     color: var(--fui-color-info-text, $fui-color-info-text);
   }
 }
 
-// ============================================
-// Toast Parts
-// ============================================
+.success .description,
+.error .description,
+.warning .description,
+.info .description {
+  opacity: 0.8;
+}
 
 .icon {
-  flex-shrink: 0;
-  width: 1.25rem;
-  height: 1.25rem;
+  @include feedback.icon;
 
   svg {
-    width: 100%;
-    height: 100%;
+    inline-size: 100%;
+    block-size: 100%;
   }
 }
 
-// Nudge the icon to meet the first line only in multi-line toasts; centered
-// single-line toasts need no offset.
 .toast:has(.description) .icon {
-  margin-top: 1px;
+  margin-block-start: var(--fui-stroke-hairline, 1px);
 }
 
 .content {
+  display: grid;
   flex: 1;
-  min-width: 0;
+  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, 4px));
+  min-inline-size: 0;
 }
 
 .title {
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  @include feedback.title;
+
   color: var(--fui-text-primary, $fui-text-primary);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
 }
 
 .description {
-  margin-top: 2px;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include feedback.body;
+
   color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
-// ============================================
-// Action Button
-// ============================================
-
 .action {
-  flex-shrink: 0;
-  @include min-target-size;
+  @include button-reset;
+  @include feedback.compact-action;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-color-accent, $fui-color-accent);
-  background: transparent;
-  border: none;
+  flex-shrink: 0;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-color-accent, $fui-color-accent);
   cursor: pointer;
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
@@ -247,20 +183,11 @@
   }
 }
 
-// ============================================
-// Close Button
-// ============================================
-
 .close {
-  flex-shrink: 0;
-  @include touch-target;
+  @include button-reset;
+  @include feedback.close;
 
-  width: 1.5rem;
-  height: 1.5rem;
-  margin: -2px -4px -2px 0;
-  padding: 0;
-  background: transparent;
-  border: none;
+  flex-shrink: 0;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   cursor: pointer;
@@ -269,8 +196,8 @@
     color var(--fui-transition-fast, $fui-transition-fast);
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    inline-size: var(--_fui-action-icon-size);
+    block-size: var(--_fui-action-icon-size);
   }
 
   &:hover {
@@ -282,10 +209,6 @@
     @include focus-ring;
   }
 }
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
   .toast {

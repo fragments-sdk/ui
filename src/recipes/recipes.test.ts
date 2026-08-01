@@ -107,6 +107,28 @@ describe("geometry recipes", () => {
     expect(css).toContain("padding: var(--fui-surface-inset-roomy, 24px)");
   });
 
+  it("compiles feedback, disclosure, empty-state, and viewport geometry", () => {
+    const css = compile(`
+      @use "recipes/feedback";
+      .alert { @include feedback.contextual; }
+      .toast { @include feedback.transient; }
+      .row { @include feedback.disclosure-row; }
+      .panel { @include feedback.disclosure-panel; }
+      .close { @include feedback.close; }
+      .empty { @include feedback.empty-state("lg"); }
+      .viewport { @include feedback.viewport-stack("bottom-right"); }
+    `);
+
+    expect(css).toContain("padding: var(--fui-surface-inset-default, 16px)");
+    expect(css).toContain("padding: var(--fui-surface-inset-compact, 12px)");
+    expect(css).toContain("min-block-size: var(--fui-control-track-md, 32px)");
+    expect(css).toContain("--_fui-target-hit-size: var(--fui-control-track-md, 32px)");
+    expect(css).toContain(
+      "--_fui-feedback-empty-icon-size: var(--fui-feedback-empty-icon-lg, 40px)"
+    );
+    expect(css).toContain("bottom: var(--fui-feedback-viewport-inset-bottom");
+  });
+
   it.each([
     ['@use "recipes/action"; .x { @include action.size("xl"); }', "Unknown action role"],
     ['@use "recipes/field"; .x { @include field.size("xs"); }', "Unknown field size"],
@@ -122,6 +144,14 @@ describe("geometry recipes", () => {
     [
       '@use "recipes/surface"; .x { @include surface.apply-inset("hero"); }',
       "Unknown surface inset role",
+    ],
+    [
+      '@use "recipes/feedback"; .x { @include feedback.empty-state("xl"); }',
+      "Unknown empty-state size",
+    ],
+    [
+      '@use "recipes/feedback"; .x { @include feedback.viewport-stack("middle"); }',
+      "Unknown feedback viewport position",
     ],
   ])("rejects an unsupported closed recipe role", (source, message) => {
     expect(() => compile(source)).toThrow(message);

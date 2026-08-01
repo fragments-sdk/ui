@@ -1,0 +1,171 @@
+@use "action" as action;
+@use "surface" as surface;
+@use "target" as target;
+@use "typography" as typography;
+
+@function _raw($step, $fallback) {
+  @return var(--fui-raw-space-#{$step}, $fallback);
+}
+
+@mixin icon {
+  inline-size: var(--fui-icon-lg, 20px);
+  block-size: var(--fui-icon-lg, 20px);
+  flex: 0 0 auto;
+}
+
+@mixin title {
+  @include typography.role("ui-standard");
+}
+
+@mixin body {
+  @include typography.role("body-compact");
+}
+
+@mixin contextual {
+  @include surface.apply-inset("default");
+  @include body;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-feedback-content-gap, #{_raw(12, 12px)});
+}
+
+@mixin transient {
+  @include surface.apply-inset("compact");
+  @include body;
+
+  display: flex;
+  align-items: center;
+  gap: var(--fui-feedback-transient-gap, #{_raw(8, 8px)});
+}
+
+@mixin disclosure-row {
+  @include typography.role("ui-standard");
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: _raw(8, 8px);
+  min-block-size: action.track("md");
+  padding-block: 0;
+  padding-inline: _raw(8, 8px);
+}
+
+@mixin disclosure-glyph {
+  inline-size: var(--fui-icon-md, 16px);
+  block-size: var(--fui-icon-md, 16px);
+  flex: 0 0 auto;
+}
+
+@mixin disclosure-panel {
+  @include body;
+
+  padding-block-end: _raw(12, 12px);
+  padding-inline: _raw(8, 8px);
+}
+
+@mixin close {
+  @include action.base;
+  @include action.icon-only("micro");
+  @include target.hit-area("compact");
+}
+
+@mixin compact-action {
+  @include action.base;
+  @include action.size("sm");
+  @include target.hit-area("compact");
+}
+
+@mixin empty-state($size) {
+  @if $size == "sm" {
+    --_fui-feedback-empty-icon-size: var(--fui-icon-xl, 24px);
+    --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-sm, 240px);
+    --_fui-feedback-empty-title-size: #{typography.font-size("ui-standard")};
+    --_fui-feedback-empty-title-line: #{typography.line-height("ui-standard")};
+    --_fui-feedback-empty-title-weight: #{typography.weight("ui-standard")};
+    --_fui-feedback-empty-title-tracking: #{typography.tracking("ui-standard")};
+    --_fui-feedback-empty-copy-size: #{typography.font-size("caption")};
+    --_fui-feedback-empty-copy-line: #{typography.line-height("caption")};
+    --_fui-feedback-empty-copy-weight: #{typography.weight("caption")};
+    --_fui-feedback-empty-copy-tracking: #{typography.tracking("caption")};
+
+    padding-block: _raw(24, 24px);
+    padding-inline: _raw(16, 16px);
+  } @else if $size == "md" {
+    --_fui-feedback-empty-icon-size: var(--fui-icon-2xl, 32px);
+    --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-md, 320px);
+    --_fui-feedback-empty-title-size: #{typography.font-size("ui-standard")};
+    --_fui-feedback-empty-title-line: #{typography.line-height("ui-standard")};
+    --_fui-feedback-empty-title-weight: #{typography.weight("ui-standard")};
+    --_fui-feedback-empty-title-tracking: #{typography.tracking("ui-standard")};
+    --_fui-feedback-empty-copy-size: #{typography.font-size("body-compact")};
+    --_fui-feedback-empty-copy-line: #{typography.line-height("body-compact")};
+    --_fui-feedback-empty-copy-weight: #{typography.weight("body-compact")};
+    --_fui-feedback-empty-copy-tracking: #{typography.tracking("body-compact")};
+
+    padding-block: _raw(32, 32px);
+    padding-inline: _raw(24, 24px);
+  } @else if $size == "lg" {
+    --_fui-feedback-empty-icon-size: var(--fui-feedback-empty-icon-lg, 40px);
+    --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-lg, 400px);
+    --_fui-feedback-empty-title-size: #{typography.font-size("title-md")};
+    --_fui-feedback-empty-title-line: #{typography.line-height("title-md")};
+    --_fui-feedback-empty-title-weight: #{typography.weight("title-md")};
+    --_fui-feedback-empty-title-tracking: #{typography.tracking("title-md")};
+    --_fui-feedback-empty-copy-size: #{typography.font-size("body-compact")};
+    --_fui-feedback-empty-copy-line: #{typography.line-height("body-compact")};
+    --_fui-feedback-empty-copy-weight: #{typography.weight("body-compact")};
+    --_fui-feedback-empty-copy-tracking: #{typography.tracking("body-compact")};
+
+    padding-block: _raw(48, 48px);
+    padding-inline: _raw(32, 32px);
+  } @else {
+    @error "Unknown empty-state size '#{$size}'. Expected sm, md, or lg.";
+  }
+}
+
+@mixin viewport-stack($position) {
+  $top: var(
+    --fui-feedback-viewport-inset-top,
+    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-top))
+  );
+  $bottom: var(
+    --fui-feedback-viewport-inset-bottom,
+    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-bottom))
+  );
+  $left: var(
+    --fui-feedback-viewport-inset-left,
+    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-left))
+  );
+  $right: var(
+    --fui-feedback-viewport-inset-right,
+    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-right))
+  );
+
+  @if $position == "top-left" {
+    top: $top;
+    left: $left;
+  } @else if $position == "top-center" {
+    top: $top;
+    left: 50%;
+    transform: translateX(-50%);
+  } @else if $position == "top-right" {
+    top: $top;
+    right: $right;
+  } @else if $position == "bottom-left" {
+    bottom: $bottom;
+    left: $left;
+    flex-direction: column-reverse;
+  } @else if $position == "bottom-center" {
+    bottom: $bottom;
+    left: 50%;
+    flex-direction: column-reverse;
+    transform: translateX(-50%);
+  } @else if $position == "bottom-right" {
+    right: $right;
+    bottom: $bottom;
+    flex-direction: column-reverse;
+  } @else {
+    @error "Unknown feedback viewport position '#{$position}'.";
+  }
+}
