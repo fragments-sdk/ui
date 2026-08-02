@@ -225,7 +225,7 @@ function DrawerContent({
           data-side={side}
           className={popupClasses}
         >
-          <BaseDrawer.Content>{children}</BaseDrawer.Content>
+          <BaseDrawer.Content className={styles.content}>{children}</BaseDrawer.Content>
         </BaseDrawer.Popup>
       </BaseDrawer.Viewport>
     </BaseDrawer.Portal>

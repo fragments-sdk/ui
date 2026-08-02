@@ -53,6 +53,13 @@
   }
 }
 
+.content {
+  display: flex;
+  min-block-size: 0;
+  block-size: 100%;
+  flex-direction: column;
+}
+
 .side-right {
   inset-block: var(--_fui-overlay-safe-top) var(--_fui-overlay-safe-bottom);
   inset-inline-end: var(--_fui-overlay-safe-right);
@@ -184,6 +191,7 @@
 .body {
   @include overlay.body;
 
+  min-block-size: 0;
   flex: 1;
   overflow: auto;
 }
