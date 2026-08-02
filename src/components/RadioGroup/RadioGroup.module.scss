@@ -1,21 +1,22 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/boolean-range" as boolean;
+@use "../../recipes/field" as field;
+@use "../../recipes/target" as target;
 
 // Container wrapper
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-space-1, $fui-space-1);
+  @include field.wrapper;
 }
 
 .groupLabel {
-  @include label-text;
+  @include field.label;
 }
 
 // Radio group
 .group {
   display: flex;
-  gap: var(--fui-space-3, $fui-space-3);
+  gap: var(--fui-raw-space-12, 12px);
 }
 
 .vertical {
@@ -29,14 +30,18 @@
 
 // Individual item wrapper
 .itemWrapper {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
   cursor: pointer;
-  font-family: var(--fui-font-sans, $fui-font-sans);
 
-  &[data-has-description] {
-    align-items: flex-start;
+  &[data-size="sm"] {
+    @include boolean.row("sm");
+  }
+
+  &[data-size="md"] {
+    @include boolean.row("md");
+  }
+
+  &[data-size="lg"] {
+    @include boolean.row("lg");
   }
 
   &[data-disabled] {
@@ -48,18 +53,17 @@
 // The radio circle
 .radio {
   @include interactive-base;
+  @include boolean.mark("md");
+  @include target.hit-area("micro");
 
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   box-sizing: border-box;
-  width: var(--fui-icon-sm, $fui-icon-sm);
-  height: var(--fui-icon-sm, $fui-icon-sm);
-  margin-top: 0;
+  margin-block-start: var(--_fui-boolean-mark-offset, 0);
   background-color: var(--fui-field-bg, $fui-bg-elevated);
-  border: 1px solid var(--fui-field-border, $fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border-strong);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: inherit;
 
@@ -91,26 +95,16 @@
     border-color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: var(--fui-target-size-min, $fui-target-size-min);
-    height: var(--fui-target-size-min, $fui-target-size-min);
-    transform: translate(-50%, -50%);
-  }
 }
 
 // Size variants
 .radioSm {
-  width: var(--fui-icon-xs, $fui-icon-xs);
-  height: var(--fui-icon-xs, $fui-icon-xs);
+  @include boolean.mark("sm");
 }
 
 .radioLg {
-  width: 1.25rem;
-  height: 1.25rem;
+  @include boolean.mark("lg");
+  @include target.hit-area("compact");
 }
 
 // The indicator dot - use absolute positioning for perfect centering
@@ -118,8 +112,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: var(--fui-raw-space-8, 8px);
+  height: var(--fui-raw-space-8, 8px);
   background-color: var(--fui-button-primary-base, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 
@@ -137,48 +131,33 @@
 }
 
 .radioSm .indicator {
-  width: 0.375rem;
-  height: 0.375rem;
+  width: var(--fui-raw-space-6, 6px);
+  height: var(--fui-raw-space-6, 6px);
 }
 
 .radioLg .indicator {
-  width: 0.625rem;
-  height: 0.625rem;
+  width: var(--fui-raw-space-10, 10px);
+  height: var(--fui-raw-space-10, 10px);
 }
 
 // Label content
 .content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-space-0-5, $fui-space-0-5);
+  min-inline-size: 0;
 }
 
 .label {
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   user-select: none;
 }
 
-.labelSm {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-}
-
-.labelLg {
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
-}
-
 .helper {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  display: block;
+  @include field.helper;
 }
 
 // Error message
 .error {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
+  @include field.error;
 }
 
 // ============================================
@@ -192,18 +171,9 @@
 // as a deliberate state change rather than a small shift between two grey
 // surfaces. Mirrors the pattern used by the Checkbox card variant.
 .itemWrapperCard {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-3, $fui-space-3);
   width: 100%;
-  height: var(
-    --fui-input-height,
-    $fui-input-height
-  ); // matches Input size="md" so radio cards align with form fields
-  box-sizing: border-box;
-  padding: 0 var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  border: 1px solid var(--fui-border-default, $fui-border-default);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-default, $fui-border-default);
   background: transparent;
   transition:
     background var(--fui-transition-fast, $fui-transition-fast),
@@ -235,11 +205,21 @@
       color-mix(in srgb, var(--fui-button-primary-base, #{$fui-color-accent}) 28%, transparent);
   }
 
-  // Inline with the input field convention rather than the lifted card
-  // headline weight — the label sits at base-size, tight against the radio.
-  .label {
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  &[data-size="sm"] {
+    @include boolean.card("sm");
   }
+
+  &[data-size="md"] {
+    @include boolean.card("md");
+  }
+
+  &[data-size="lg"] {
+    @include boolean.card("lg");
+  }
+}
+
+.group[data-invalid] .radio {
+  border-color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // ============================================
@@ -248,8 +228,9 @@
 
 @media (prefers-contrast: more) {
   .radio {
-    border-width: 2px;
     border-color: var(--fui-text-primary, $fui-text-primary);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
 
     &[data-checked] {
       border-color: var(--fui-button-primary-base, $fui-color-accent);

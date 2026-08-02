@@ -1,14 +1,13 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
+@use "../../recipes/overlay" as overlay;
 
-// Backdrop overlay
 .backdrop {
   position: fixed;
+  z-index: var(--fui-overlay-layer-backdrop, 50);
   inset: 0;
   background-color: var(--fui-backdrop, $fui-backdrop);
-  z-index: 50;
-
-  // Animation
   opacity: 0;
   transition: opacity var(--fui-transition-normal, $fui-transition-normal);
 
@@ -22,11 +21,12 @@
   }
 }
 
-// Viewport positioning container
 .viewport {
+  @include overlay.safe-viewport;
+
   position: fixed;
+  z-index: var(--fui-overlay-layer-modal, 51);
   inset: 0;
-  z-index: 51;
   pointer-events: none;
 
   &[data-open] {
@@ -34,24 +34,18 @@
   }
 }
 
-// The popup panel
 .popup {
-  @include surface-elevated;
-  @include text-base;
+  @include overlay.modal-shell;
 
   position: fixed;
-  z-index: 51;
+  z-index: var(--fui-overlay-layer-modal, 51);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-  overflow-y: auto;
   pointer-events: auto;
-
-  // Animation
+  opacity: 0;
   transition:
     opacity var(--fui-transition-normal, $fui-transition-normal),
     transform var(--fui-transition-normal, $fui-transition-normal);
-  opacity: 0;
 
   &[data-open] {
     opacity: 1;
@@ -59,14 +53,16 @@
   }
 }
 
-// ============================================
-// Side positioning — swipe-aware transforms
-// ============================================
+.content {
+  display: flex;
+  min-block-size: 0;
+  block-size: 100%;
+  flex-direction: column;
+}
 
 .side-right {
-  top: 0;
-  right: 0;
-  bottom: 0;
+  inset-block: var(--_fui-overlay-safe-top) var(--_fui-overlay-safe-bottom);
+  inset-inline-end: var(--_fui-overlay-safe-right);
   transform: translateX(calc(100% + var(--drawer-swipe-movement-x, 0px)));
 
   &[data-open] {
@@ -80,9 +76,8 @@
 }
 
 .side-left {
-  top: 0;
-  left: 0;
-  bottom: 0;
+  inset-block: var(--_fui-overlay-safe-top) var(--_fui-overlay-safe-bottom);
+  inset-inline-start: var(--_fui-overlay-safe-left);
   transform: translateX(calc(-100% + var(--drawer-swipe-movement-x, 0px)));
 
   &[data-open] {
@@ -96,9 +91,8 @@
 }
 
 .side-top {
-  top: 0;
-  left: 0;
-  right: 0;
+  inset-block-start: var(--_fui-overlay-safe-top);
+  inset-inline: var(--_fui-overlay-safe-left) var(--_fui-overlay-safe-right);
   transform: translateY(calc(-100% + var(--drawer-swipe-movement-y, 0px)));
 
   &[data-open] {
@@ -112,9 +106,8 @@
 }
 
 .side-bottom {
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset-block-end: var(--_fui-overlay-safe-bottom);
+  inset-inline: var(--_fui-overlay-safe-left) var(--_fui-overlay-safe-right);
   transform: translateY(calc(100% + var(--drawer-swipe-movement-y, 0px)));
 
   &[data-open] {
@@ -127,95 +120,97 @@
   }
 }
 
-// Disable transition during active swipe for instant feedback
 .popup[data-swiping] {
   transition-duration: 0s;
 }
 
-// ============================================
-// Size variants — width for left/right, height for top/bottom
-// ============================================
-
-// Left/Right: size maps to width
 .side-left,
 .side-right {
-  &.size-sm { width: 20rem; }
-  &.size-md { width: 24rem; }
-  &.size-lg { width: 32rem; }
-  &.size-xl { width: 48rem; }
-  &.size-full { width: 100vw; }
+  &.size-sm {
+    inline-size: min(#{overlay.drawer-inline("sm")}, var(--_fui-overlay-safe-inline));
+  }
+
+  &.size-md {
+    inline-size: min(#{overlay.drawer-inline("md")}, var(--_fui-overlay-safe-inline));
+  }
+
+  &.size-lg {
+    inline-size: min(#{overlay.drawer-inline("lg")}, var(--_fui-overlay-safe-inline));
+  }
+
+  &.size-xl {
+    inline-size: min(#{overlay.drawer-inline("xl")}, var(--_fui-overlay-safe-inline));
+  }
+
+  &.size-full {
+    inline-size: var(--_fui-overlay-safe-inline);
+  }
 }
 
-// Top/Bottom: size maps to height
 .side-top,
 .side-bottom {
-  &.size-sm { height: 25vh; }
-  &.size-md { height: 40vh; }
-  &.size-lg { height: 60vh; }
-  &.size-xl { height: 80vh; }
-  &.size-full { height: 100vh; }
+  &.size-sm {
+    block-size: min(#{overlay.drawer-block("sm")}, var(--_fui-overlay-safe-block));
+  }
+
+  &.size-md {
+    block-size: min(#{overlay.drawer-block("md")}, var(--_fui-overlay-safe-block));
+  }
+
+  &.size-lg {
+    block-size: min(#{overlay.drawer-block("lg")}, var(--_fui-overlay-safe-block));
+  }
+
+  &.size-xl {
+    block-size: min(#{overlay.drawer-block("xl")}, var(--_fui-overlay-safe-block));
+  }
+
+  &.size-full {
+    block-size: var(--_fui-overlay-safe-block);
+  }
 }
 
-// ============================================
-// Content sections (mirror Dialog)
-// ============================================
-
-// Header area
 .header {
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
+  @include overlay.header;
 }
 
-// Title
 .title {
+  @include overlay.modal-title;
+
   margin: 0;
-  font-size: var(--fui-font-size-lg, $fui-font-size-lg);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
   color: var(--fui-text-primary, $fui-text-primary);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
 }
 
-// Description
 .description {
-  margin: var(--fui-space-1, $fui-space-1) 0 0;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include overlay.description;
+
+  margin: 0;
   color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
 }
 
-// Body content
 .body {
+  @include overlay.body;
+
+  min-block-size: 0;
   flex: 1;
-  padding: 0 var(--fui-space-4, $fui-space-4) var(--fui-space-3, $fui-space-3);
-  overflow-y: auto;
+  overflow: auto;
 }
 
-// Footer for actions
 .footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
-  border-top: 1px solid var(--fui-border, $fui-border);
+  @include overlay.footer;
+
+  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 }
 
-// Close button (X in corner)
 .close {
   @include button-reset;
   @include interactive-base;
+  @include overlay.close;
 
-  position: absolute;
-  top: var(--fui-space-3, $fui-space-3);
-  right: var(--fui-space-3, $fui-space-3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  z-index: 1;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  z-index: 1;
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -223,33 +218,32 @@
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    inline-size: action.icon-size("sm");
+    block-size: action.icon-size("sm");
   }
 }
 
-// SwipeArea — invisible gesture zone at screen edge
+.popup:has(.close) .header {
+  padding-inline-end: calc(
+    var(--fui-overlay-close-inset, var(--fui-raw-space-12, 12px)) + #{action.track("sm")} +
+      var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px))
+  );
+}
+
 .swipeArea {
   position: fixed;
-  z-index: 49;
+  z-index: var(--fui-overlay-layer-swipe, 49);
 }
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
 @media (prefers-reduced-motion: reduce) {
-  .backdrop {
+  .backdrop,
+  .popup {
     transition: none;
   }
 
-  .popup {
-    transition: none;
+  .popup,
+  .popup[data-starting-style],
+  .popup[data-ending-style] {
     transform: none;
-
-    &[data-starting-style],
-    &[data-ending-style] {
-      transform: none;
-    }
   }
 }

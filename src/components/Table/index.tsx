@@ -1,6 +1,11 @@
 "use client";
 
 import * as React from "react";
+import {
+  resolveTableDensity,
+  type LegacyTableSize,
+  type TableDensity,
+} from "../../recipes/table-chrome";
 import styles from "./Table.module.scss";
 
 // ============================================
@@ -8,10 +13,10 @@ import styles from "./Table.module.scss";
 // ============================================
 
 export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
-  /** Size variant. `compact` gives dense 36px-row dashboard lists with 12px
-   * text and hairline dividers — use when the table is a status surface,
-   * not a reading experience. */
-  size?: "sm" | "md" | "compact";
+  /** Canonical row density. */
+  density?: TableDensity;
+  /** @deprecated Use density. Retained until the next major-version review. */
+  size?: LegacyTableSize;
   /** Show alternating row backgrounds */
   striped?: boolean;
   /** Wrap table in a bordered container */
@@ -158,6 +163,7 @@ function TableCaption({
 
 function TableRoot({
   size = "md",
+  density,
   striped = false,
   bordered = false,
   wrapperClassName,
@@ -166,7 +172,8 @@ function TableRoot({
   children,
   ...htmlProps
 }: TableProps) {
-  const tableClasses = [styles.table, styles[size], striped && styles.striped, className]
+  const resolvedDensity = resolveTableDensity({ density, size });
+  const tableClasses = [styles.table, striped && styles.striped, className]
     .filter(Boolean)
     .join(" ");
 
@@ -182,7 +189,7 @@ function TableRoot({
         .filter(Boolean)
         .join(" ")}
     >
-      <table className={tableClasses} {...htmlProps}>
+      <table className={tableClasses} {...htmlProps} data-density={resolvedDensity}>
         {children}
       </table>
     </div>

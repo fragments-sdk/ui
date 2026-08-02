@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import styles from './Message.module.scss';
+import { Avatar } from '../Avatar';
 import { useOptionalConversationList } from '../ConversationList';
 import { Markdown } from '../Markdown';
 
@@ -215,14 +216,23 @@ function MessageAvatar({ children, src, alt, className, ...htmlProps }: MessageA
       ? <AssistantIcon />
       : <SystemIcon />;
 
-  const content = children ?? (src
-    ? <img src={src} alt={alt ?? role} className={styles.avatarImg} />
-    : defaultIcon);
+  if (children !== undefined) {
+    return (
+      <div {...htmlProps} className={classes}>
+        {children}
+      </div>
+    );
+  }
 
   return (
-    <div {...htmlProps} className={classes}>
-      {content}
-    </div>
+    <Avatar
+      {...htmlProps}
+      src={src}
+      alt={alt ?? role}
+      size="sm"
+      fallback={defaultIcon}
+      className={classes}
+    />
   );
 }
 

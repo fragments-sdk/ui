@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Form } from '.';
-import { Field } from '../Field';
-import { Input } from '../Input';
-import { Grid } from '../Grid';
-import { Button } from '../Button';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Form } from ".";
+import { Field } from "../Field";
+import { Input } from "../Input";
+import { Grid } from "../Grid";
+import { Button } from "../Button";
 
 /**
  * Form is a wrapper that handles server-side error distribution to Field
@@ -11,38 +11,22 @@ import { Button } from '../Button';
  * validation, and renders a semantic form element.
  */
 const meta = {
-  title: 'Forms/Form',
+  title: "Forms/Form",
   component: Form,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Form wrapper that distributes server-side errors to Field components.',
+        component: "Form wrapper that distributes server-side errors to Field components.",
       },
     },
   },
   argTypes: {
     validationMode: {
-      control: 'select',
-      options: ['onSubmit', 'onBlur', 'onChange'],
-      description: 'When field validation should run',
+      control: "select",
+      options: ["onSubmit", "onBlur", "onChange"],
+      description: "When field validation should run",
     },
-  },
-  args: {
-    children: (
-      <Grid columns={1} gap="md">
-        <Field name="email">
-          <Field.Label>Email</Field.Label>
-          <Field.Control>
-            <Input type="email" placeholder="jane@example.com" />
-          </Field.Control>
-        </Field>
-        <Button type="submit" variant="primary">
-          Submit
-        </Button>
-      </Grid>
-    ),
   },
 } satisfies Meta<typeof Form>;
 
@@ -72,17 +56,15 @@ export const SignUp: Story = {
             <Field.Control>
               <Input type="email" placeholder="jane@example.com" />
             </Field.Control>
-            <Field.Error match="typeMismatch">
-              Enter a valid email address
-            </Field.Error>
+            <Field.Error match="typeMismatch">Enter a valid email address</Field.Error>
           </Field>
         </Grid.Item>
-        <Grid.Item colSpan="full">
-          <Button type="submit" variant="primary">
-            Create Account
-          </Button>
-        </Grid.Item>
       </Grid>
+      <Form.Actions>
+        <Button type="submit" variant="primary">
+          Create Account
+        </Button>
+      </Form.Actions>
     </Form>
   ),
 };
@@ -91,8 +73,8 @@ export const WithServerErrors: Story = {
   render: () => (
     <Form
       errors={{
-        username: 'Username is already taken',
-        email: 'Email is already registered',
+        username: "Username is already taken",
+        email: "Email is already registered",
       }}
     >
       <Grid columns={2} gap="md">
@@ -110,12 +92,12 @@ export const WithServerErrors: Story = {
           </Field.Control>
           <Field.Error match="customError" />
         </Field>
-        <Grid.Item colSpan="full">
-          <Button type="submit" variant="primary">
-            Submit
-          </Button>
-        </Grid.Item>
       </Grid>
+      <Form.Actions>
+        <Button type="submit" variant="primary">
+          Submit
+        </Button>
+      </Form.Actions>
     </Form>
   ),
 };
@@ -129,14 +111,14 @@ export const ValidateOnBlur: Story = {
           <Field.Control>
             <Input type="email" placeholder="you@example.com" />
           </Field.Control>
-          <Field.Error match="typeMismatch">
-            Enter a valid email address
-          </Field.Error>
+          <Field.Error match="typeMismatch">Enter a valid email address</Field.Error>
         </Field>
+      </Grid>
+      <Form.Actions>
         <Button type="submit" variant="primary">
           Submit
         </Button>
-      </Grid>
+      </Form.Actions>
     </Form>
   ),
 };

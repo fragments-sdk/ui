@@ -1,0 +1,920 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "caseId": "geometry/accessibility/visually-hidden/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/button-group/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/button/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/chip/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/icon-button/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/link/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/pagination/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/actions/prompt/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/activity/loading/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/activity/progress/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/activity/thinking-indicator/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/boolean-range/checkbox/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/boolean-range/radio-group/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/boolean-range/slider/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/boolean-range/switch/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/data/data-table/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/data/table/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/feedback/alert/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/feedback/toast/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/color-picker/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/combobox/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/date-picker/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/field/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/fieldset/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/form/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/input/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/select/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/fields/textarea/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/micro/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/micro/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/compact/sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/md/light/rest-320",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/md/light/rest-390",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/micro/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/micro/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/default/sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/micro/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/micro/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/control-track/relaxed/sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/compact/lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/compact/lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/compact/md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/compact/md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/compact/sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/compact/sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/md/light/manual-zoom-200",
+      "status": "manual-pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/md/light/rest-320",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/md/light/rest-390",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/default/sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/relaxed/lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/relaxed/lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/relaxed/md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/relaxed/md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/relaxed/sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/field-track/relaxed/sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/theme/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/body-compact/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/body-compact/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/body-relaxed/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/body-relaxed/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/caption/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/caption/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/code/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/code/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/title-lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/title-lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/title-md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/title-md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/title-sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/title-sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/ui-compact/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/ui-compact/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/ui-standard/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/compact/ui-standard/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/body-compact/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/body-compact/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/body-relaxed/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/body-relaxed/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/caption/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/caption/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/code/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/code/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/title-lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/title-lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/title-md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/title-md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/title-sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/title-sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-compact/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-compact/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-standard/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-standard/light/manual-zoom-200",
+      "status": "manual-pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-standard/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-standard/light/rest-320",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/ui-standard/light/rest-390",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/body-compact/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/body-compact/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/body-relaxed/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/body-relaxed/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/caption/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/caption/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/code/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/code/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/title-lg/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/title-lg/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/title-md/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/title-md/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/title-sm/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/title-sm/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/ui-compact/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/ui-compact/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/ui-standard/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/relaxed/ui-standard/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/forced/forced-colors-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/coarse-pointer-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/focus-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/manual-zoom-200",
+      "status": "manual-pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/reduced-motion-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/reflow-320",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/rtl-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/smoke-chromium-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/smoke-firefox-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/harness/control-sizing/default/md/light/smoke-webkit-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/layout/box/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/layout/grid/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/layout/main/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/layout/scroll-area/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/layout/separator/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/layout/stack/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/navigation/app-shell/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/navigation/breadcrumbs/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/navigation/header/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/navigation/navigation-menu/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/navigation/sidebar/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/navigation/table-of-contents/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/overlays/dialog/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/overlays/drawer/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/overlays/popover/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/overlays/tooltip/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/popups/command/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/popups/listbox/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/popups/menu/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/prose/code-block/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/prose/editor/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/prose/list/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/prose/markdown/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/prose/message/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/prose/text/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/avatar/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/badge/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/chart/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/conversation-list/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/icon/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/image/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/representation/skeleton/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/segmented/tabs/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/segmented/toggle-group/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/surfaces/accordion/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/surfaces/bento-grid/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/surfaces/card/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/surfaces/collapsible/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/surfaces/empty-state/default/na/light/catalog-smoke-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    }
+  ],
+  "manualZoomCaseIds": [
+    "geometry/foundations/field-track/default/md/light/manual-zoom-200",
+    "geometry/foundations/typography/default/ui-standard/light/manual-zoom-200",
+    "geometry/harness/control-sizing/default/md/light/manual-zoom-200"
+  ]
+}

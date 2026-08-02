@@ -6,6 +6,7 @@ import {
   type FieldControlProps as BaseFieldControlProps,
   type FieldValidityState,
 } from "@base-ui/react/field";
+import { useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
 import styles from "./Field.module.scss";
 
 // ============================================
@@ -20,6 +21,7 @@ export interface FieldProps extends React.HTMLAttributes<HTMLDivElement> {
   validate?: (value: unknown) => string | string[] | null | Promise<string | string[] | null>;
   validationMode?: "onSubmit" | "onBlur" | "onChange";
   validationDebounceTime?: number;
+  size?: ControlSize;
 }
 
 export interface FieldLabelProps {
@@ -57,6 +59,10 @@ export interface FieldValidityProps {
   children: (state: FieldValidityState) => React.ReactNode;
 }
 
+export interface FieldRequiredProps extends React.HTMLAttributes<HTMLSpanElement> {
+  children?: React.ReactNode;
+}
+
 export type { FieldValidityState };
 
 // ============================================
@@ -71,9 +77,11 @@ function FieldRoot({
   validate,
   validationMode,
   validationDebounceTime,
+  size: sizeProp,
   className,
   ...htmlProps
 }: FieldProps) {
+  const size = useResolvedControlSize(sizeProp);
   const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
@@ -85,6 +93,7 @@ function FieldRoot({
       validate={validate}
       validationMode={validationMode}
       validationDebounceTime={validationDebounceTime}
+      data-size={size}
       className={classes}
     >
       {children}
@@ -129,6 +138,14 @@ function FieldValidity({ children }: FieldValidityProps) {
   return <BaseField.Validity>{children}</BaseField.Validity>;
 }
 
+function FieldRequired({ children = "*", className, ...htmlProps }: FieldRequiredProps) {
+  return (
+    <span {...htmlProps} className={[styles.required, className].filter(Boolean).join(" ")} aria-hidden>
+      {children}
+    </span>
+  );
+}
+
 // ============================================
 // Export compound component
 // ============================================
@@ -139,6 +156,15 @@ export const Field = Object.assign(FieldRoot, {
   Description: FieldDescription,
   Error: FieldError,
   Validity: FieldValidity,
+  Required: FieldRequired,
 });
 
-export { FieldRoot, FieldLabel, FieldControl, FieldDescription, FieldError, FieldValidity };
+export {
+  FieldRoot,
+  FieldLabel,
+  FieldControl,
+  FieldDescription,
+  FieldError,
+  FieldValidity,
+  FieldRequired,
+};

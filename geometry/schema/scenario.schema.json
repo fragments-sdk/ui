@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:scenario",
+  "title": "Geometry scenario",
+  "type": "object",
+  "required": [
+    "engine",
+    "viewport",
+    "colorScheme",
+    "direction",
+    "pointer",
+    "forcedColors",
+    "reducedMotion",
+    "initialState",
+    "actions",
+    "assertions"
+  ],
+  "properties": {
+    "engine": { "enum": ["chromium", "firefox", "webkit"] },
+    "viewport": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": { "width": { "const": 1440 }, "height": { "const": 900 } },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": { "width": { "const": 390 }, "height": { "const": 844 } },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": { "width": { "const": 320 }, "height": { "const": 800 } },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "colorScheme": { "enum": ["light", "dark"] },
+    "direction": { "enum": ["ltr", "rtl"] },
+    "pointer": { "enum": ["fine", "coarse"] },
+    "forcedColors": { "enum": ["none", "active"] },
+    "reducedMotion": { "enum": ["no-preference", "reduce"] },
+    "initialState": {
+      "enum": [
+        "rest",
+        "hover",
+        "pressed",
+        "focus-visible",
+        "selected",
+        "checked",
+        "open",
+        "invalid",
+        "disabled",
+        "loading",
+        "readonly"
+      ]
+    },
+    "actions": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "urn:ui-geometry:v1:action" }
+    },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": { "$ref": "urn:ui-geometry:v1:assertion" }
+    }
+  },
+  "additionalProperties": false,
+  "unevaluatedProperties": false
+}

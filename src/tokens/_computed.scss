@@ -70,21 +70,21 @@ $computed-radius-full: radius.radius-full();
 // Computed: Component Heights (from density)
 // --------------------------------------------
 
-$computed-button-height-xs: density.px-to-rem($_density, map.get($_density, button-height-xs));
-$computed-button-height-sm: density.px-to-rem($_density, map.get($_density, button-height-sm));
-$computed-button-height-md: density.px-to-rem($_density, map.get($_density, button-height-md));
-$computed-button-height-lg: density.px-to-rem($_density, map.get($_density, button-height-lg));
-
-$computed-input-height: density.px-to-rem($_density, map.get($_density, input-height));
-$computed-input-height-sm: density.px-to-rem($_density, map.get($_density, input-height-sm));
-$computed-input-height-lg: density.px-to-rem($_density, map.get($_density, input-height-lg));
+// Canonical interactive control ladder
+$computed-control-height-xs: density.px-to-rem($_density, map.get($_density, control-height-xs));
+$computed-control-height-sm: density.px-to-rem($_density, map.get($_density, control-height-sm));
+$computed-control-height-md: density.px-to-rem($_density, map.get($_density, control-height-md));
+$computed-control-height-lg: density.px-to-rem($_density, map.get($_density, control-height-lg));
 
 $computed-touch-sm: density.px-to-rem($_density, map.get($_density, touch-sm));
 $computed-touch-md: density.px-to-rem($_density, map.get($_density, touch-md));
 $computed-touch-lg: density.px-to-rem($_density, map.get($_density, touch-lg));
 
 // Sidebar navigation (from density)
-$computed-sidebar-item-height: density.px-to-rem($_density, map.get($_density, sidebar-item-height));
+$computed-sidebar-item-height: density.px-to-rem(
+  $_density,
+  map.get($_density, sidebar-item-height)
+);
 
 // --------------------------------------------
 // Computed: Colors - Light Mode

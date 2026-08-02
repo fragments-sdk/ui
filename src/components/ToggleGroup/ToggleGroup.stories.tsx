@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ToggleGroup } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ToggleGroup } from ".";
 
 /**
  * ToggleGroup is the canonical segmented single-select control. Use it to switch
@@ -8,43 +8,43 @@ import { ToggleGroup } from '.';
  * rather than building a custom segmented control.
  */
 const meta = {
-  title: 'Forms/ToggleGroup',
+  title: "Forms/ToggleGroup",
   component: ToggleGroup,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'A group of toggle buttons where only one can be selected at a time. Prefer this over a hand-rolled segmented control for switching views or modes.',
+          "A group of toggle buttons where only one can be selected at a time. Prefer this over a hand-rolled segmented control for switching views or modes.",
       },
     },
   },
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'pills', 'outline', 'outlined'],
-      description: 'Visual style',
+      control: "select",
+      options: ["default", "pills", "outline", "outlined"],
+      description: "Visual style",
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Size variant',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size variant",
     },
     gap: {
-      control: 'select',
-      options: ['sm', 'none', 'xs'],
-      description: 'Gap between items (pills/outline variants)',
+      control: "select",
+      options: ["sm", "none", "xs"],
+      description: "Pills spacing; connected variants remain gapless",
     },
     selectionMode: {
-      control: 'select',
-      options: ['single'],
-      description: 'Selection behavior',
+      control: "select",
+      options: ["single"],
+      description: "Selection behavior",
     },
   },
   args: {
-    variant: 'default',
-    size: 'md',
-    defaultValue: 'center',
+    variant: "default",
+    size: "md",
+    defaultValue: "center",
     children: (
       <>
         <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
@@ -70,7 +70,7 @@ export const Default: Story = {
 };
 
 export const PillsVariant: Story = {
-  args: { variant: 'pills' },
+  args: { variant: "pills" },
   render: (args) => (
     <ToggleGroup {...args} defaultValue="all">
       <ToggleGroup.Item value="all">All</ToggleGroup.Item>
@@ -81,7 +81,7 @@ export const PillsVariant: Story = {
 };
 
 export const OutlineVariant: Story = {
-  args: { variant: 'outlined' },
+  args: { variant: "outlined" },
   render: (args) => (
     <ToggleGroup {...args} defaultValue="week">
       <ToggleGroup.Item value="day">Day</ToggleGroup.Item>
@@ -92,7 +92,7 @@ export const OutlineVariant: Story = {
 };
 
 export const Small: Story = {
-  args: { size: 'sm' },
+  args: { size: "sm" },
   render: (args) => (
     <ToggleGroup {...args} defaultValue="grid">
       <ToggleGroup.Item value="grid">Grid</ToggleGroup.Item>

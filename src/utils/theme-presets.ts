@@ -8,6 +8,8 @@
 
 import {
   type SeedConfig,
+  type DensityPreset,
+  type RadiusStyle,
   PALETTES,
   RADIUS_STYLES,
   getSemanticColors,
@@ -21,7 +23,7 @@ import {
   deriveSemanticText,
   deriveSemanticBg,
   deriveSemanticHover,
-} from './seed-derivation';
+} from "./seed-derivation";
 
 // ============================================
 // Theme Output Types
@@ -108,7 +110,8 @@ export interface ThemeConfig {
   radius?: ThemeRadius;
   shadows?: ThemeShadows;
   dark?: ThemeDarkMode;
-  density?: string;
+  density?: DensityPreset;
+  radiusStyle?: RadiusStyle;
 }
 
 // ============================================
@@ -157,8 +160,9 @@ export function seedsToTheme(seeds: SeedConfig): ThemeConfig {
   const infoTextDark = deriveSemanticText(info, true);
 
   return {
-    name: 'Custom',
+    name: "Custom",
     density: seeds.density,
+    radiusStyle: seeds.radiusStyle,
     colors: {
       accent: seeds.brand,
       accentHover: deriveAccentHover(seeds.brand, false),
@@ -199,7 +203,7 @@ export function seedsToTheme(seeds: SeedConfig): ThemeConfig {
       sm: radius.sm,
       md: radius.md,
       lg: radius.lg,
-      full: '9999px',
+      full: "9999px",
     },
     shadows: {
       sm: lightShadows.sm,
@@ -239,7 +243,7 @@ export function seedsToTheme(seeds: SeedConfig): ThemeConfig {
       successBg: deriveSemanticBg(success, true),
       warningBg: deriveSemanticBg(warning, true),
       infoBg: deriveSemanticBg(info, true),
-      backdrop: 'rgba(0, 0, 0, 0.8)',
+      backdrop: "rgba(0, 0, 0, 0.8)",
     },
   };
 }
@@ -257,55 +261,79 @@ export interface PresetDefinition {
 
 const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
   default: {
-    name: 'Default',
-    seeds: { brand: '#18181b', neutral: 'stone', density: 'default', radiusStyle: 'default' },
+    name: "Default",
+    seeds: { brand: "#18181b", neutral: "stone", density: "default", radiusStyle: "default" },
   },
   neutral: {
-    name: 'Neutral',
-    seeds: { brand: '#71717a', neutral: 'stone', density: 'default', radiusStyle: 'default' },
+    name: "Neutral",
+    seeds: { brand: "#71717a", neutral: "stone", density: "default", radiusStyle: "default" },
   },
   slate: {
-    name: 'Slate',
-    seeds: { brand: '#64748b', neutral: 'stone', density: 'default', radiusStyle: 'default' },
+    name: "Slate",
+    seeds: { brand: "#64748b", neutral: "stone", density: "default", radiusStyle: "default" },
     overrides: {
-      surfaces: { bgSecondary: '#f1f5f9', bgTertiary: '#e2e8f0' },
-      dark: { surfaces: { bgSecondary: '#1e293b', bgTertiary: '#334155' } },
+      surfaces: { bgSecondary: "#f1f5f9", bgTertiary: "#e2e8f0" },
+      dark: { surfaces: { bgSecondary: "#1e293b", bgTertiary: "#334155" } },
     },
   },
   emerald: {
-    name: 'Emerald',
-    seeds: { brand: '#10b981', neutral: 'stone', density: 'default', radiusStyle: 'default' },
+    name: "Emerald",
+    seeds: { brand: "#10b981", neutral: "stone", density: "default", radiusStyle: "default" },
   },
   rose: {
-    name: 'Rose',
-    seeds: { brand: '#f43f5e', neutral: 'stone', density: 'default', radiusStyle: 'default' },
+    name: "Rose",
+    seeds: { brand: "#f43f5e", neutral: "stone", density: "default", radiusStyle: "default" },
   },
   classic: {
-    name: 'Classic',
+    name: "Classic",
     seeds: {
-      brand: '#1e40af', neutral: 'stone', density: 'default', radiusStyle: 'default',
-      danger: '#b91c1c', success: '#15803d', warning: '#a16207', info: '#0369a1',
+      brand: "#1e40af",
+      neutral: "stone",
+      density: "default",
+      radiusStyle: "default",
+      danger: "#b91c1c",
+      success: "#15803d",
+      warning: "#a16207",
+      info: "#0369a1",
     },
   },
   bold: {
-    name: 'Bold',
+    name: "Bold",
     seeds: {
-      brand: '#7c3aed', neutral: 'stone', density: 'default', radiusStyle: 'default',
-      danger: '#dc2626', success: '#16a34a', warning: '#ea580c', info: '#2563eb',
+      brand: "#7c3aed",
+      neutral: "stone",
+      density: "default",
+      radiusStyle: "default",
+      danger: "#dc2626",
+      success: "#16a34a",
+      warning: "#ea580c",
+      info: "#2563eb",
     },
   },
   neon: {
-    name: 'Neon',
+    name: "Neon",
     seeds: {
-      brand: '#06b6d4', neutral: 'stone', density: 'default', radiusStyle: 'default',
-      danger: '#f43f5e', success: '#4ade80', warning: '#fbbf24', info: '#a78bfa',
+      brand: "#06b6d4",
+      neutral: "stone",
+      density: "default",
+      radiusStyle: "default",
+      danger: "#f43f5e",
+      success: "#4ade80",
+      warning: "#fbbf24",
+      info: "#a78bfa",
     },
   },
   minimal: {
-    name: 'Minimal',
+    name: "Minimal",
     seeds: {
-      brand: '#525252', neutral: 'stone', density: 'default', radiusStyle: 'default',
-      danger: '#78716c', success: '#65a30d', warning: '#ca8a04', info: '#64748b',
+      brand: "#525252",
+      neutral: "stone",
+      density: "default",
+      radiusStyle: "default",
+      danger: "#78716c",
+      success: "#65a30d",
+      warning: "#ca8a04",
+      info: "#64748b",
     },
   },
 };
@@ -315,7 +343,7 @@ const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
 // ============================================
 
 function isPlainObject(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null && !Array.isArray(val);
+  return typeof val === "object" && val !== null && !Array.isArray(val);
 }
 
 function deepMergeObjects(

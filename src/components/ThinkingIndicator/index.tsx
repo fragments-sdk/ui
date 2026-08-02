@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './ThinkingIndicator.module.scss';
-import { Loading } from '../Loading';
+import * as React from "react";
+import styles from "./ThinkingIndicator.module.scss";
+import { Loading } from "../Loading";
 
 // ============================================
 // Types
 // ============================================
 
-export type ThinkingVariant = 'dots' | 'pulse' | 'spinner';
-export type StepStatus = 'pending' | 'active' | 'complete' | 'error';
+export type ThinkingVariant = "dots" | "pulse" | "spinner";
+export type StepStatus = "pending" | "active" | "complete" | "error";
 
 export interface ThinkingStep {
   id: string;
@@ -55,7 +55,9 @@ const ThinkingIndicatorContext = React.createContext<ThinkingIndicatorContextVal
 function useThinkingIndicatorContext() {
   const context = React.useContext(ThinkingIndicatorContext);
   if (!context) {
-    throw new Error('ThinkingIndicator compound components must be used within a ThinkingIndicator');
+    throw new Error(
+      "ThinkingIndicator compound components must be used within a ThinkingIndicator"
+    );
   }
   return context;
 }
@@ -82,7 +84,7 @@ function useElapsedTime(active: boolean): string {
     return () => clearInterval(interval);
   }, [active]);
 
-  if (elapsed < 1000) return '';
+  if (elapsed < 1000) return "";
 
   const seconds = Math.floor(elapsed / 1000);
   if (seconds < 60) return `${seconds}s`;
@@ -100,8 +102,6 @@ function CheckIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -119,8 +119,6 @@ function ErrorIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -140,7 +138,7 @@ function ErrorIcon() {
 // ============================================
 
 function ThinkingSteps({ children, className, ...htmlProps }: ThinkingStepsProps) {
-  const classes = [styles.steps, className].filter(Boolean).join(' ');
+  const classes = [styles.steps, className].filter(Boolean).join(" ");
 
   return (
     <div {...htmlProps} className={classes}>
@@ -149,25 +147,31 @@ function ThinkingSteps({ children, className, ...htmlProps }: ThinkingStepsProps
   );
 }
 
-function ThinkingStep({
-  label,
-  status = 'pending',
-  className,
-  ...htmlProps
-}: ThinkingStepProps) {
+function ThinkingStep({ label, status = "pending", className, ...htmlProps }: ThinkingStepProps) {
   const classes = [
     styles.step,
     styles[`step${status.charAt(0).toUpperCase() + status.slice(1)}`],
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div {...htmlProps} className={classes}>
       <span className={styles.stepIndicator}>
-        {status === 'complete' && <CheckIcon />}
-        {status === 'error' && <ErrorIcon />}
-        {status === 'active' && <Loading size="sm" variant="spinner" color="current" label="" />}
-        {status === 'pending' && <span className={styles.stepDot} />}
+        {status === "complete" && <CheckIcon />}
+        {status === "error" && <ErrorIcon />}
+        {status === "active" && (
+          <Loading
+            size="sm"
+            variant="spinner"
+            color="current"
+            label=""
+            role="presentation"
+            aria-hidden="true"
+          />
+        )}
+        {status === "pending" && <span className={styles.stepDot} />}
       </span>
       <span className={styles.stepLabel}>{label}</span>
     </div>
@@ -180,8 +184,8 @@ function ThinkingStep({
 
 function ThinkingIndicatorRoot({
   active = true,
-  label = 'Thinking...',
-  variant = 'dots',
+  label = "Thinking...",
+  variant = "dots",
   showElapsed = false,
   steps,
   className,
@@ -196,41 +200,31 @@ function ThinkingIndicatorRoot({
 
   if (!active) return null;
 
-  const classes = [
-    styles.thinkingIndicator,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.thinkingIndicator, className].filter(Boolean).join(" ");
 
   // Map ThinkingIndicator variants to Loading variants
-  const loadingVariant = variant === 'dots' ? 'dots'
-    : variant === 'pulse' ? 'pulse'
-    : 'spinner';
+  const loadingVariant = variant === "dots" ? "dots" : variant === "pulse" ? "pulse" : "spinner";
 
   return (
     <ThinkingIndicatorContext.Provider value={contextValue}>
-      <div
-        {...htmlProps}
-        className={classes}
-        role="status"
-        aria-label={label}
-        aria-live="polite"
-      >
+      <div {...htmlProps} className={classes} role="status" aria-label={label} aria-live="polite">
         <div className={styles.main}>
-          <Loading size="sm" variant={loadingVariant} color="muted" label="" />
+          <Loading
+            size="sm"
+            variant={loadingVariant}
+            color="muted"
+            label=""
+            role="presentation"
+            aria-hidden="true"
+          />
           <span className={styles.label}>{label}</span>
-          {showElapsed && elapsedTime && (
-            <span className={styles.elapsed}>{elapsedTime}</span>
-          )}
+          {showElapsed && elapsedTime && <span className={styles.elapsed}>{elapsedTime}</span>}
         </div>
 
         {steps && steps.length > 0 && (
           <ThinkingSteps>
             {steps.map((step) => (
-              <ThinkingStep
-                key={step.id}
-                label={step.label}
-                status={step.status}
-              />
+              <ThinkingStep key={step.id} label={step.label} status={step.status} />
             ))}
           </ThinkingSteps>
         )}
@@ -248,10 +242,6 @@ export const ThinkingIndicator = Object.assign(ThinkingIndicatorRoot, {
   Step: ThinkingStep,
 });
 
-export {
-  ThinkingIndicatorRoot,
-  ThinkingSteps,
-  ThinkingStep,
-};
+export { ThinkingIndicatorRoot, ThinkingSteps, ThinkingStep };
 
 export { useThinkingIndicatorContext };

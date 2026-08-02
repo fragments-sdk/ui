@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:catalog-map",
+  "title": "Geometry catalog map",
+  "type": "object",
+  "required": ["schemaVersion", "storyId", "entries"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "storyId": { "const": "cloud-geometry-evidence--catalog-smoke" },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "additionalProperties": false,
+  "unevaluatedProperties": false,
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["catalogName", "family", "primitive", "caseId", "selectorValue"],
+      "properties": {
+        "catalogName": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+        "family": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+        "primitive": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+        "caseId": {
+          "type": "string",
+          "pattern": "^geometry/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/default/na/light/catalog-smoke-1440$"
+        },
+        "selectorValue": {
+          "type": "string",
+          "pattern": "^catalog-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

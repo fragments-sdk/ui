@@ -1,0 +1,361 @@
+{
+  "$schema": "https://usefragments.com/schemas/ui-measurements.v1.json",
+  "schemaVersion": 1,
+  "density": {
+    "compact": {
+      "baseUnit": "6px",
+      "baseFontSize": "14px",
+      "spacingMultipliers": {
+        "px": "1px",
+        "0-5": 0.3,
+        "0-75": 0.43,
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "8": 8,
+        "10": 10,
+        "12": 12
+      },
+      "controlHeight": {
+        "xs": "32px",
+        "sm": "32px",
+        "md": "32px",
+        "lg": "36px"
+      },
+      "touch": {
+        "sm": "32px",
+        "md": "32px",
+        "lg": "40px"
+      },
+      "sidebarItemHeight": "32px"
+    },
+    "default": {
+      "baseUnit": "7px",
+      "baseFontSize": "14px",
+      "spacingMultipliers": {
+        "px": "1px",
+        "0-5": 0.3,
+        "0-75": 0.43,
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "8": 8,
+        "10": 10,
+        "12": 12
+      },
+      "controlHeight": {
+        "xs": "32px",
+        "sm": "32px",
+        "md": "40px",
+        "lg": "44px"
+      },
+      "touch": {
+        "sm": "32px",
+        "md": "32px",
+        "lg": "44px"
+      },
+      "sidebarItemHeight": "32px"
+    },
+    "relaxed": {
+      "baseUnit": "8px",
+      "baseFontSize": "14px",
+      "spacingMultipliers": {
+        "px": "1px",
+        "0-5": 0.3,
+        "0-75": 0.43,
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "8": 8,
+        "10": 10,
+        "12": 12
+      },
+      "controlHeight": {
+        "xs": "32px",
+        "sm": "32px",
+        "md": "44px",
+        "lg": "48px"
+      },
+      "touch": {
+        "sm": "32px",
+        "md": "40px",
+        "lg": "48px"
+      },
+      "sidebarItemHeight": "36px"
+    }
+  },
+  "radius": {
+    "sharp": {
+      "sm": "0",
+      "md": "0",
+      "lg": "0",
+      "xl": "0"
+    },
+    "subtle": {
+      "sm": "0.125rem",
+      "md": "0.25rem",
+      "lg": "0.375rem",
+      "xl": "0.5rem"
+    },
+    "default": {
+      "sm": "0.25rem",
+      "md": "0.429rem",
+      "lg": "0.571rem",
+      "xl": "0.857rem"
+    },
+    "rounded": {
+      "sm": "0.375rem",
+      "md": "0.5rem",
+      "lg": "0.75rem",
+      "xl": "1rem"
+    },
+    "pill": {
+      "sm": "0.5rem",
+      "md": "0.75rem",
+      "lg": "1rem",
+      "xl": "1.5rem"
+    }
+  },
+  "rawSpace": {
+    "0": "0",
+    "2": "2px",
+    "4": "4px",
+    "6": "6px",
+    "8": "8px",
+    "10": "10px",
+    "12": "12px",
+    "16": "16px",
+    "20": "20px",
+    "24": "24px",
+    "32": "32px",
+    "40": "40px",
+    "48": "48px",
+    "64": "64px"
+  },
+  "targets": {
+    "controlTrack": {
+      "micro": "24px",
+      "sm": "28px",
+      "md": "32px",
+      "lg": "40px"
+    },
+    "fieldTrack": {
+      "sm": "28px",
+      "md": "32px",
+      "lg": "40px"
+    },
+    "fieldInlineInset": {
+      "sm": "10px",
+      "md": "12px",
+      "lg": "16px"
+    },
+    "surfaceInset": {
+      "panel": "0",
+      "compact": "12px",
+      "default": "16px",
+      "roomy": "24px"
+    },
+    "icon": {
+      "xs": "12px",
+      "sm": "14px",
+      "md": "16px",
+      "lg": "20px",
+      "xl": "24px",
+      "2xl": "32px"
+    },
+    "stroke": {
+      "hairline": "1px",
+      "default": "2px",
+      "strong": "3px"
+    },
+    "layoutMeasure": {
+      "field-minimum": "140px",
+      "inline-floor": "56px",
+      "compact-content": "168px",
+      "grid-cell": "224px",
+      "composer-item": "210px",
+      "page-narrow": "800px"
+    }
+  },
+  "typography": {
+    "caption": {
+      "size": "12px",
+      "line": "16px",
+      "weight": 400,
+      "tracking": "0"
+    },
+    "ui-compact": {
+      "size": "12px",
+      "line": "16px",
+      "weight": 500,
+      "tracking": "-0.01em"
+    },
+    "ui-standard": {
+      "size": "14px",
+      "line": "20px",
+      "weight": 500,
+      "tracking": "-0.01em"
+    },
+    "body-compact": {
+      "size": "14px",
+      "line": "20px",
+      "weight": 400,
+      "tracking": "0"
+    },
+    "body-relaxed": {
+      "size": "16px",
+      "line": "24px",
+      "weight": 400,
+      "tracking": "0"
+    },
+    "title-sm": {
+      "size": "16px",
+      "line": "24px",
+      "weight": 600,
+      "tracking": "-0.01em"
+    },
+    "title-md": {
+      "size": "20px",
+      "line": "28px",
+      "weight": 600,
+      "tracking": "-0.02em"
+    },
+    "title-lg": {
+      "size": "24px",
+      "line": "32px",
+      "weight": 600,
+      "tracking": "-0.02em"
+    },
+    "code": {
+      "size": "14px",
+      "line": "20px",
+      "weight": 400,
+      "tracking": "0"
+    }
+  },
+  "legacy": {
+    "typography": {
+      "fontSize": {
+        "2xs": "0.714rem",
+        "xs": "0.857rem",
+        "sm": "1rem",
+        "base": "1rem",
+        "md": "1.071rem",
+        "lg": "1.429rem",
+        "xl": "1.714rem",
+        "2xl": "2.143rem",
+        "3xl": "2.571rem",
+        "4xl": "3.429rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": 1.25,
+        "normal": 1.5,
+        "relaxed": 1.625,
+        "display": 1.1,
+        "prose": 1.7
+      },
+      "letterSpacing": {
+        "tight": "0",
+        "normal": "normal",
+        "display": "0",
+        "wide": "0.05em"
+      }
+    },
+    "icon": {
+      "xs": "0.857rem",
+      "sm": "1rem",
+      "md": "1.143rem",
+      "lg": "1.429rem",
+      "xl": "1.714rem",
+      "2xl": "2.286rem"
+    },
+    "touch": {
+      "minimum": "2.286rem"
+    },
+    "navigation": {
+      "appShellHeaderHeight": "56px",
+      "sidebarGutter": "8px",
+      "sidebarLeadingBox": "16px",
+      "sidebarDot": "6px",
+      "sidebarRail": "2px",
+      "sidebarLabelOffset": "1px",
+      "sidebarCollapsedWidth": "56px"
+    },
+    "docsDensity": {
+      "compact": {
+        "baseUnit": 6,
+        "baseFontSize": 14,
+        "buttonHeights": [24, 30, 36],
+        "inputHeights": [24, 32, 36],
+        "touchTargets": [24, 28, 38],
+        "sidebarItemHeight": 30
+      },
+      "default": {
+        "baseUnit": 7,
+        "baseFontSize": 14,
+        "buttonHeights": [28, 36, 44],
+        "inputHeights": [28, 40, 44],
+        "touchTargets": [24, 32, 44],
+        "sidebarItemHeight": 35
+      },
+      "relaxed": {
+        "baseUnit": 8,
+        "baseFontSize": 14,
+        "buttonHeights": [32, 40, 48],
+        "inputHeights": [32, 44, 48],
+        "touchTargets": [28, 36, 48],
+        "sidebarItemHeight": 38
+      }
+    }
+  },
+  "compatibility": {
+    "aliases": [
+      {
+        "id": "legacy-control-heights",
+        "patterns": ["--fui-control-height-*", "--fui-button-height-*", "--fui-input-height*"],
+        "finalOwner": "22"
+      },
+      {
+        "id": "legacy-density-spacing",
+        "patterns": ["--fui-space-*"],
+        "finalOwner": "22"
+      },
+      {
+        "id": "legacy-touch-targets",
+        "patterns": ["--fui-touch-*", "--fui-target-size-*"],
+        "finalOwner": "22"
+      },
+      {
+        "id": "legacy-navigation",
+        "patterns": ["--fui-sidebar-*", "--fui-appshell-header-height"],
+        "finalOwner": "22"
+      },
+      {
+        "id": "legacy-type-icon-radius",
+        "patterns": [
+          "--fui-font-*",
+          "--fui-line-height-*",
+          "--fui-letter-spacing-*",
+          "--fui-icon-*",
+          "--fui-radius-*"
+        ],
+        "finalOwner": "22"
+      }
+    ]
+  }
+}

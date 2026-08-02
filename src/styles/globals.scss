@@ -31,7 +31,7 @@ $fui-radius-style: "default" !default;
 // Status seeds tuned to sit in one family with the sage brand (see
 // tokens/_seeds.scss): danger is sage's warm complement, warning its
 // split-complement, info a cool teal-adjacent slate — all muted to match.
-$fui-danger: #d97066 !default;
+$fui-danger: #a54f46 !default;
 $fui-success: #7fc9b3 !default;
 $fui-warning: #e0aa5c !default;
 $fui-info: #7fa6c4 !default;
@@ -60,7 +60,7 @@ $fui-info: #7fa6c4 !default;
 // Consumer styles outside any @layer always win over layered styles.
 // Within layers: tokens < base < components (declared first = lowest priority).
 // Browser support: ~97% (Chrome 99+, Firefox 97+, Safari 15.4+)
-@layer fui.tokens, fui.base;
+@layer fui.tokens, fui.base, fui.components;
 
 // Output typed @property registrations (must be top-level, can't be in @layer)
 @include prop-reg.fui-property-registrations;

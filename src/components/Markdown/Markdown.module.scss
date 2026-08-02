@@ -1,250 +1,102 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-
-// ============================================
-// Markdown Prose Container
-// ============================================
+@use "../../tokens/variables" as *;
+@use "../../recipes/prose" as prose;
 
 .markdown {
-  @include text-base;
-  word-wrap: break-word;
-  // Prose colour is a hook, not a constant. Markdown is routinely rendered on a
-  // surface that carries its own foreground — a Message bubble on the accent
-  // fill, an Alert, a Callout — and a fixed grey there is unreadable rather than
-  // quiet. Those surfaces point the hook at `currentColor`; on a plain page it
-  // still resolves to the secondary ramp prose has always used.
+  @include prose.root;
+
+  overflow-wrap: anywhere;
   color: var(--fui-markdown-text, var(--fui-text-secondary, #{$fui-text-secondary}));
-  font-size: var(--fui-font-size-md, $fui-font-size-md);
-  line-height: var(--fui-line-height-prose, $fui-line-height-prose);
-
-  // Outer spacing belongs to whatever holds the prose — a Message bubble's
-  // padding, a Card's, a page's rhythm. The block's own first and last margins
-  // would add to it, or collapse through it, and either way the container ends
-  // up looking mis-padded through no fault of its own.
-  > :first-child {
-    margin-top: 0;
-  }
-
-  > :last-child {
-    margin-bottom: 0;
-  }
-
-  // ----------------------------------------
-  // Headings
-  // ----------------------------------------
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin-top: var(--fui-space-4, $fui-space-4);
-    margin-bottom: var(--fui-space-2, $fui-space-2);
-    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
-    color: var(--fui-text-primary, $fui-text-primary);
-
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-
-  h1 {
-    font-size: var(--fui-font-size-3xl, $fui-font-size-3xl);
-    line-height: var(--fui-line-height-display, $fui-line-height-display);
-    letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
-  }
-
-  h2 {
-    font-size: var(--fui-font-size-xl, $fui-font-size-xl);
-    letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
-    margin-top: var(--fui-space-8, $fui-space-8);
-  }
-
-  h3 {
-    font-size: var(--fui-font-size-lg, $fui-font-size-lg);
-    letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
-    line-height: var(--fui-line-height-tight, $fui-line-height-tight);
-  }
-
-  h4 {
-    font-size: var(--fui-font-size-md, $fui-font-size-md);
-  }
-
-  h5,
-  h6 {
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  }
-
-  // ----------------------------------------
-  // Paragraphs
-  // ----------------------------------------
 
   p {
-    margin: 0;
-    line-height: var(--fui-line-height-prose, $fui-line-height-prose);
+    @include prose.paragraph;
+  }
 
-    & + p {
-      margin-top: var(--fui-space-3, $fui-space-3);
+  @for $level from 1 through 6 {
+    h#{$level} {
+      @include prose.heading($level);
+
+      color: var(--fui-text-primary, $fui-text-primary);
     }
   }
 
-  // ----------------------------------------
-  // Links
-  // ----------------------------------------
-
   a {
+    @include prose.link;
+
     color: var(--fui-color-accent, $fui-color-accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
 
     &:hover {
       opacity: 0.8;
     }
   }
 
-  // ----------------------------------------
-  // Lists
-  // ----------------------------------------
+  ul {
+    @include prose.list("disc");
+  }
 
-  ul,
   ol {
-    margin: var(--fui-space-2, $fui-space-2) 0;
-    padding-left: var(--fui-space-4, $fui-space-4);
+    @include prose.list("decimal");
   }
 
-  li {
-    margin-bottom: var(--fui-space-1, $fui-space-1);
-    line-height: var(--fui-line-height-prose, $fui-line-height-prose);
-
-    &:last-child {
-      margin-bottom: 0;
-    }
+  li + li {
+    margin-block-start: var(--fui-raw-space-4);
   }
-
-  // Nested lists
-  li > ul,
-  li > ol {
-    margin-top: var(--fui-space-1, $fui-space-1);
-    margin-bottom: 0;
-  }
-
-  // ----------------------------------------
-  // Inline Code
-  // ----------------------------------------
 
   code {
-    font-family: var(--fui-font-mono, $fui-font-mono);
-    font-size: 0.9em;
-    padding: 0.125em 0.375em;
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    @include prose.inline-code;
   }
 
-  // ----------------------------------------
-  // Code Blocks
-  // ----------------------------------------
-
   pre {
-    margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-space-2);
+    @include prose.code-block("default");
+
     border-radius: var(--fui-radius-md, $fui-radius-md);
     background-color: var(--fui-code-bg, $fui-code-bg);
-    overflow-x: auto;
 
     code {
       padding: 0;
       background: none;
-      font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+      font: inherit;
+      letter-spacing: inherit;
     }
   }
-
-  // Only target the immediate parent wrapper of a <pre> block
-  div:has(> div > div > pre) {
-    margin: var(--fui-space-3, $fui-space-3) 0;
-  }
-
-  // ----------------------------------------
-  // Blockquotes
-  // ----------------------------------------
 
   blockquote {
-    margin: var(--fui-space-2, $fui-space-2) 0;
-    padding: var(--fui-space-1) var(--fui-space-3);
-    border-left: 3px solid var(--fui-border, $fui-border);
+    @include prose.blockquote;
+
     color: var(--fui-text-secondary, $fui-text-secondary);
-
-    p {
-      margin: 0;
-    }
   }
-
-  // ----------------------------------------
-  // Horizontal Rule
-  // ----------------------------------------
 
   hr {
-    margin: var(--fui-space-4, $fui-space-4) 0;
-    border: none;
-    border-top: 1px solid var(--fui-border, $fui-border);
+    @include prose.rule;
   }
 
-  // ----------------------------------------
-  // Tables (GFM)
-  // ----------------------------------------
-
   table {
-    width: 100%;
-    margin: var(--fui-space-2, $fui-space-2) 0;
+    @include prose.table;
+
+    inline-size: 100%;
     border-collapse: collapse;
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   }
 
   th,
   td {
-    padding: var(--fui-space-1) var(--fui-space-2);
-    border: 1px solid var(--fui-border, $fui-border);
-    text-align: left;
+    border: var(--fui-stroke-hairline) solid var(--fui-border, $fui-border);
+    text-align: start;
   }
 
   th {
-    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
     background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   }
 
-  // ----------------------------------------
-  // Images
-  // ----------------------------------------
-
   img {
-    max-width: 100%;
-    height: auto;
+    @include prose.media;
+
     border-radius: var(--fui-radius-md, $fui-radius-md);
   }
 
-  // ----------------------------------------
-  // Task Lists (GFM)
-  // ----------------------------------------
-
-  input[type='checkbox'] {
-    margin-right: var(--fui-space-1, $fui-space-1);
+  input[type="checkbox"] {
+    margin-inline-end: var(--fui-raw-space-4);
   }
-
-  // ----------------------------------------
-  // Strong & Emphasis
-  // ----------------------------------------
 
   strong {
     font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  }
-
-  // Remove top margin from first child and bottom margin from last child
-  > *:first-child {
-    margin-top: 0;
-  }
-
-  > *:last-child {
-    margin-bottom: 0;
   }
 }

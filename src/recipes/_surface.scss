@@ -1,0 +1,13 @@
+@use "../tokens/measurements.generated" as measurements;
+
+@function inset($role) {
+  @if $role == "panel" or $role == "compact" or $role == "default" or $role == "roomy" {
+    @return var(--fui-surface-inset-#{$role}, #{measurements.target-value("surfaceInset", $role)});
+  }
+
+  @error "Unknown surface inset role '#{$role}'. Expected panel, compact, default, or roomy.";
+}
+
+@mixin apply-inset($role) {
+  padding: inset($role);
+}

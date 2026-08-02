@@ -1,11 +1,12 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
+@use '../../recipes/action' as action;
+@use '../../recipes/target' as target;
+@use '../../recipes/typography' as typography;
 
 // Root nav wrapper
 .root {
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  @include typography.role("body-compact");
 }
 
 // Ordered list container
@@ -29,6 +30,8 @@
 
 // Link styling
 .link {
+  @include target.hit-area("micro");
+
   display: inline-flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
@@ -39,8 +42,6 @@
   text-overflow: ellipsis;
   max-width: 200px;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-1, $fui-space-1);
-  margin: calc(-1 * var(--fui-space-0-5, $fui-space-0-5)) calc(-1 * var(--fui-space-1, $fui-space-1));
   transition: color var(--fui-transition-fast, $fui-transition-fast),
     background-color var(--fui-transition-fast, $fui-transition-fast);
 
@@ -79,20 +80,18 @@
 
 // Ellipsis button for collapsed items
 .ellipsis {
-  @include touch-target;
+  @include action.base;
+  @include action.icon-only("micro");
+  @include target.hit-area("compact");
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   cursor: pointer;
-  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
-  font-family: inherit;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  line-height: 1;
   transition: color var(--fui-transition-fast, $fui-transition-fast),
     background-color var(--fui-transition-fast, $fui-transition-fast);
 

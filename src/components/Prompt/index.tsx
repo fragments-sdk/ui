@@ -437,9 +437,6 @@ function PromptTextarea({
     onFiles,
   } = usePromptContext();
 
-  const lineHeight = 1.5;
-  const padding = 12; // top + bottom padding in pixels
-
   const adjustHeight = React.useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea || !autoResize) return;
@@ -450,8 +447,12 @@ function PromptTextarea({
     // Calculate min and max heights based on rows
     const computedStyle = window.getComputedStyle(textarea);
     const fontSize = parseFloat(computedStyle.fontSize);
-    const minHeight = minRows * fontSize * lineHeight + padding;
-    const maxHeight = maxRows * fontSize * lineHeight + padding;
+    const computedLineHeight = parseFloat(computedStyle.lineHeight);
+    const lineHeight = Number.isFinite(computedLineHeight) ? computedLineHeight : fontSize * 1.5;
+    const paddingBlock =
+      parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
+    const minHeight = minRows * lineHeight + paddingBlock;
+    const maxHeight = maxRows * lineHeight + paddingBlock;
 
     // Set the height, clamped to min/max
     const newHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);

@@ -1,119 +1,83 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
+@use "../../recipes/table-chrome" as table-chrome;
+@use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
 
 .wrapper {
-  // Tables may have a larger intrinsic width than a narrow flex or grid
-  // column. Keep that width inside this scroll container instead of allowing
-  // the container itself to widen the page.
-  min-width: 0;
-  max-width: 100%;
   --fui-data-table-bg: var(--fui-table-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
   --fui-data-table-header-bg: var(
     --fui-table-header-bg,
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
   );
 
+  min-inline-size: 0;
+  max-inline-size: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @include table-chrome.root;
+
+  @each $density in ("compact", "regular", "relaxed") {
+    &[data-density="#{$density}"] {
+      @include table-chrome.density($density);
+    }
+  }
 }
 
-// Caption for accessibility
 .caption {
-  padding: var(--fui-space-3, $fui-space-3) 0;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-align: left;
-  caption-side: top;
+  @include table-chrome.caption;
 }
 
-// Visually hidden caption (screen readers only)
 .captionHidden {
   @include visually-hidden;
 }
 
-// Size variants
-.sm {
-  .th,
-  .td {
-    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  }
-}
-
-.md {
-  .th,
-  .td {
-    padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  }
-}
-
-// Header
 .thead {
   position: sticky;
-  top: 0;
+  inset-block-start: 0;
   z-index: 1;
 }
 
+.headerRow,
+.row {
+  @include table-chrome.row;
+}
+
 .headerRow {
-  border-bottom: 1px solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
+  border-block-end-color: var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
 }
 
 .th {
-  text-align: left;
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  white-space: nowrap;
-  vertical-align: middle;
-  user-select: none;
-  // Opaque so the sticky header doesn't let rows bleed through on scroll,
-  // while inheriting the table surface instead of forcing the page background.
+  @include table-chrome.header-cell;
+
   background: var(
     --fui-data-table-header-bg,
     var(--fui-data-table-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
   );
-
-  &:first-child {
-    border-top-left-radius: var(--fui-radius-md, $fui-radius-md);
-  }
-
-  &:last-child {
-    border-top-right-radius: var(--fui-radius-md, $fui-radius-md);
-  }
+  white-space: nowrap;
+  user-select: none;
 }
 
-.headerContent {
+.headerContent,
+.sortButton {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-}
-
-// Sortable header cell (for focus styles)
-.thSortable {
-  padding: 0;
+  gap: var(--fui-raw-space-4);
 }
 
 .sortButton {
   @include button-reset;
   @include interactive-base;
 
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: var(--fui-space-1, $fui-space-1);
-  width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
+  inline-size: 100%;
+  padding: 0;
   color: inherit;
-  text-align: left;
+  text-align: start;
   transition: color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
@@ -126,21 +90,15 @@
   align-items: center;
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   flex-shrink: 0;
-
-  svg {
-    width: var(--fui-icon-xs, $fui-icon-xs);
-    height: var(--fui-icon-xs, $fui-icon-xs);
-  }
-  // Quiet by default; the neutral glyph appears on hover/focus, and the
-  // active direction arrow stays visible (revealed via aria-sort below).
   opacity: 0;
   transition: opacity var(--fui-transition-fast, $fui-transition-fast);
 
-  .sortButton:hover & {
-    color: var(--fui-text-secondary, $fui-text-secondary);
-    opacity: 1;
+  svg {
+    inline-size: var(--fui-icon-xs, $fui-icon-xs);
+    block-size: var(--fui-icon-xs, $fui-icon-xs);
   }
 
+  .sortButton:hover &,
   .sortButton:focus-visible & {
     opacity: 1;
   }
@@ -151,33 +109,28 @@
   opacity: 1;
 }
 
-// Body
-.tbody {
-  .td {
-    padding-top: var(--fui-space-2, $fui-space-2);
-    padding-bottom: var(--fui-space-2, $fui-space-2);
-  }
-}
-
 .row {
-  border-bottom: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:last-child {
-    border-bottom: none;
+    border-block-end: 0;
   }
 
   &:hover {
     background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
+}
+
+.td {
+  @include table-chrome.body-cell;
+}
+
+.treeCell {
+  @include table-chrome.tree-cell;
 }
 
 .clickable {
   cursor: pointer;
-
-  &:hover {
-    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
 
   &:focus-visible {
     @include focus-ring;
@@ -193,36 +146,25 @@
     --fui-table-row-selected-bg,
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
   );
-  box-shadow: inset 1px 0 0
-    var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
 
-  &:hover {
-    background-color: var(
-      --fui-table-row-selected-bg,
-      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent)
-    );
+  .td:first-child {
+    box-shadow: inset var(--fui-table-divider-size) 0 0
+      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
+  }
+
+  &:dir(rtl) .td:first-child {
+    box-shadow: inset calc(-1 * var(--fui-table-divider-size)) 0 0
+      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
   }
 }
 
-.td {
-  color: var(--fui-text-primary, $fui-text-primary);
-  vertical-align: middle;
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-}
-
-// Striped rows
 .striped {
   .row:nth-child(even) {
     background-color: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
   }
 
-  // Hover and selected override stripe
   .clickable:hover {
     background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-
-  .clickable:active {
-    background-color: var(--fui-table-row-active-bg, var(--fui-bg-active, #{$fui-bg-active}));
   }
 
   .selected {
@@ -230,55 +172,24 @@
       --fui-table-row-selected-bg,
       color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
     );
-
-    &:hover {
-      background-color: var(
-        --fui-table-row-selected-bg,
-        color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 10%, transparent)
-      );
-    }
   }
 }
 
-// Bordered
 .bordered {
-  border: 1px solid var(--fui-table-border, var(--fui-border, #{$fui-border}));
+  overflow: hidden;
+  border: var(--fui-table-divider-size, var(--fui-stroke-hairline)) solid
+    var(--fui-table-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background: var(--fui-data-table-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
-  overflow: hidden;
 }
 
-// Fixed layout for explicit column sizes
 .fixedLayout {
   table-layout: fixed;
 }
 
-// ============================================
-// Density presets — condensed / regular / relaxed
-// ============================================
-
-// Fixed density rails. Off the 7px spacing grid by design (no row-height
-// token set exists yet); kept as literals so the three steps stay an even
-// 40/48/56 ladder. Snap to row-height tokens once they land.
-.densityCondensed .row {
-  height: 40px;
-}
-
-.densityRegular .row {
-  height: 48px;
-}
-
-.densityRelaxed .row {
-  height: 56px;
-}
-
-// ============================================
-// Per-column alignment (numbers align right)
-// ============================================
-
 .th[data-align="right"],
 .td[data-align="right"] {
-  text-align: right;
+  text-align: end;
 }
 
 .th[data-align="right"] .headerContent,
@@ -296,23 +207,15 @@
   justify-content: center;
 }
 
-// ============================================
-// Truncation (single line + ellipsis; pairs with a column width)
-// ============================================
-
 .truncate {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-// ============================================
-// Loading skeleton
-// ============================================
-
 .skeletonBar {
   display: block;
-  height: 10px;
+  block-size: var(--fui-raw-space-10);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background: linear-gradient(
     90deg,
@@ -328,53 +231,36 @@
   from {
     background-position: 200% 0;
   }
+
   to {
     background-position: -200% 0;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .skeletonBar {
-    animation: none;
-  }
-
-  .sortIndicator {
-    transition: none;
-  }
-}
-
-// Checkbox column
 .checkboxCell {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-// Expandable rows
 .expandCell {
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: var(--fui-raw-space-4);
 }
 
 .expandButton {
   @include button-reset;
+  @include action.base;
+  @include action.icon-only("sm");
+  @include target.hit-area("compact");
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-icon-lg, $fui-icon-lg);
-  height: var(--fui-icon-lg, $fui-icon-lg);
-  flex-shrink: 0;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
     background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 
   &:focus-visible {
@@ -383,8 +269,8 @@
 }
 
 .expandIcon {
-  width: var(--fui-icon-xs, $fui-icon-xs);
-  height: var(--fui-icon-xs, $fui-icon-xs);
+  @include action.glyph("sm");
+
   transition: transform var(--fui-transition-fast, $fui-transition-fast);
 }
 
@@ -394,64 +280,38 @@
 
 .subRow {
   background-color: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
-
-  &:hover {
-    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
 }
 
-// Empty state
 .emptyState {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--fui-space-12, $fui-space-12) var(--fui-space-6, $fui-space-6);
+  padding-block: var(--fui-raw-space-48);
+  padding-inline: var(--fui-raw-space-24);
 }
 
 .emptyMessage {
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include typography.role("body-compact");
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
-// Responsive: allow horizontal scroll on small screens
-@include below-sm {
-  .wrapper {
-    margin-left: calc(-1 * var(--fui-space-4, $fui-space-4));
-    margin-right: calc(-1 * var(--fui-space-4, $fui-space-4));
-    padding-left: var(--fui-space-4, $fui-space-4);
-    padding-right: var(--fui-space-4, $fui-space-4);
-  }
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
 @media (prefers-contrast: more) {
-  .headerRow {
-    border-bottom-width: 2px;
-  }
-
+  .headerRow,
   .row {
-    border-bottom-width: 2px;
-  }
-
-  .sortButton:focus-visible {
-    outline-width: 3px;
+    border-block-end-color: CanvasText;
   }
 }
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
-  .row {
+  .row,
+  .sortButton,
+  .sortIndicator,
+  .expandIcon {
     transition: none;
   }
 
-  .sortButton {
-    transition: none;
+  .skeletonBar {
+    animation: none;
   }
 }

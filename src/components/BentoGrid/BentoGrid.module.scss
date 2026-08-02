@@ -1,5 +1,7 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/surface" as surface;
 
 // ============================================
 // BentoGrid Container
@@ -49,22 +51,22 @@
 // ============================================
 
 .gapNone {
-  gap: 0;
+  gap: layout.gap("none");
 }
 .gapXs {
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: layout.gap("xs");
 }
 .gapSm {
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("sm");
 }
 .gapMd {
-  gap: var(--fui-space-3, $fui-space-3);
+  gap: layout.gap("md");
 }
 .gapLg {
-  gap: var(--fui-space-4, $fui-space-4);
+  gap: layout.gap("lg");
 }
 .gapXl {
-  gap: var(--fui-space-6, $fui-space-6);
+  gap: layout.gap("xl");
 }
 
 // ============================================
@@ -73,19 +75,9 @@
 
 .item {
   @include surface-elevated;
+  @include surface.apply-inset("compact");
 
   min-width: 0;
-  padding: var(--fui-space-2, $fui-space-2);
-  transition:
-    box-shadow var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    border-color: var(--fui-border-strong, $fui-border-strong);
-    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-    transform: translateY(-2px);
-  }
 
   // ---- Responsive span cascade ----
   --_col-span: var(--bento-col-span, 1);
@@ -134,27 +126,14 @@
 }
 
 // ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
-  .item {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
-}
-
-// ============================================
 // Accessibility: High Contrast Mode
 // ============================================
 
 @media (prefers-contrast: more) {
   .item {
-    border-width: 2px;
     border-color: var(--fui-text-primary, $fui-text-primary);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
   }
 }
 

@@ -1,212 +1,248 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/surface" as surface;
+@use "../../recipes/typography" as typography;
 
-.card {
-  @include surface-elevated;
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  color: var(--fui-text-primary, $fui-text-primary);
-  background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-card-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-  box-shadow: var(--fui-card-shadow, none);
-  transition:
-    box-shadow var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-}
+@layer fui.components {
+  .card {
+    @include surface-elevated;
+    @include typography.role("body-compact");
 
-// Variants
-.default {
-  background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
-  box-shadow: var(--fui-card-shadow, none);
-}
+    padding: var(
+      --_card-root-forced-inset,
+      var(--_card-root-requested-inset, #{surface.inset("default")})
+    );
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+    border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
+    border-radius: var(--fui-card-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
+    box-shadow: var(--fui-card-shadow, none);
+    transition:
+      box-shadow var(--fui-transition-fast, $fui-transition-fast),
+      border-color var(--fui-transition-fast, $fui-transition-fast),
+      background-color var(--fui-transition-fast, $fui-transition-fast),
+      transform var(--fui-transition-fast, $fui-transition-fast);
+  }
 
-.outlined {
-  background-color: transparent;
-  border-color: var(
-    --fui-card-outlined-border,
-    var(--fui-card-border, var(--fui-border-strong, #{$fui-border-strong}))
-  );
-  box-shadow: none;
-}
+  // Variants
+  .default {
+    background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+    border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
+    box-shadow: var(--fui-card-shadow, none);
+  }
 
-.elevated {
-  background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
-  box-shadow: var(--fui-card-elevated-shadow, var(--fui-card-shadow, none));
-}
-
-// Compact metric tile for dashboard grids. It uses the same card radius and
-// hairline model as panels, with a quieter fill so adjacent metric tiles read
-// as one dashboard system rather than separate hero cards.
-.stat {
-  background-color: var(
-    --fui-card-stat-bg,
-    var(
-      --fui-card-bg,
-      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
-    )
-  );
-  border-color: var(
-    --fui-card-stat-border,
-    var(--fui-card-border, var(--fui-border, #{$fui-border}))
-  );
-  box-shadow: var(--fui-card-stat-shadow, var(--fui-card-shadow, none));
-}
-
-// Hairline-bordered panel with no own padding — designed for compound use
-// with `Card.Header divided` + `Card.Body` inside dashboards. Each region
-// owns its spacing so panel headers can be full-bleed with a hairline
-// divider underneath. Uses the same surface-agnostic overlay as `.stat`.
-// Padding is forced to 0 here so the variant works regardless of the
-// `padding` prop — children manage their own spacing inside a panel.
-.panel {
-  background-color: var(
-    --fui-panel-bg,
-    var(
-      --fui-card-bg,
-      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
-    )
-  );
-  border-color: var(--fui-panel-border, var(--fui-card-border, var(--fui-border, #{$fui-border})));
-  box-shadow: var(--fui-card-panel-shadow, var(--fui-card-shadow, none));
-  overflow: hidden;
-  padding: 0;
-}
-
-// Padding
-.paddingNone {
-  padding: 0;
-}
-
-// Canonical spacing scale (shared with Box/Stack/Grid/BentoGrid/List): sm=2 md=3 lg=4
-.paddingSm {
-  padding: var(--fui-space-2, $fui-space-2);
-}
-
-.paddingMd {
-  padding: var(--fui-space-3, $fui-space-3);
-}
-
-.paddingLg {
-  padding: var(--fui-space-4, $fui-space-4);
-}
-
-// Interactive card (when onClick is provided).
-// Card renders as an `article`/`div`/`section` (never a real `<button>`), so
-// applying `button-reset` here was gratuitous — and it was silently wiping
-// out variant-applied borders and backgrounds (the reset sets
-// `border: none; background: transparent`). Keep only the clickable
-// affordances; variants keep their surface and border untouched.
-.interactive {
-  @include interactive-base;
-
-  display: block;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  font: inherit;
-  color: inherit;
-
-  &:hover {
-    background-color: var(--fui-card-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-    border-color: var(--fui-card-hover-border, var(--fui-border-strong, #{$fui-border-strong}));
+  .outlined {
+    background-color: transparent;
+    border-color: var(
+      --fui-card-outlined-border,
+      var(--fui-card-border, var(--fui-border-strong, #{$fui-border-strong}))
+    );
     box-shadow: none;
   }
 
-  &:active {
-    background-color: var(--fui-card-active-bg, var(--fui-bg-active, $fui-bg-active));
-    box-shadow: var(
-      --fui-card-active-shadow,
-      inset 0 1px 2px color-mix(in srgb, black 12%, transparent)
+  .elevated {
+    background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+    border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
+    box-shadow: var(--fui-card-elevated-shadow, var(--fui-card-shadow, none));
+  }
+
+  // Compact metric tile for dashboard grids. It uses the same card radius and
+  // hairline model as panels, with a quieter fill so adjacent metric tiles read
+  // as one dashboard system rather than separate hero cards.
+  .stat {
+    background-color: var(
+      --fui-card-stat-bg,
+      var(
+        --fui-card-bg,
+        color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
+      )
     );
-  }
-}
-
-.header {
-  margin-bottom: var(--fui-space-2, $fui-space-2);
-}
-
-// Full-bleed panel-header region with a 40px minimum height, canonical inset,
-// and a hairline bottom divider. No trailing margin — it sits flush above the
-// panel body, which manages its own padding. Use inside `variant="panel"`.
-.headerDivided {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  min-height: 2.857rem; // 40px
-  padding: var(--fui-space-2, $fui-space-2);
-  margin-bottom: 0;
-  border-bottom: 1px solid var(--fui-border, $fui-border);
-}
-
-.title {
-  margin: 0;
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  color: var(--fui-text-primary, $fui-text-primary);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
-}
-
-.description {
-  margin: 0 0 var(--fui-space-1, $fui-space-1) 0;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.body {
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-}
-
-.footer {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  margin-top: var(--fui-space-2, $fui-space-2);
-  padding-top: var(--fui-space-2, $fui-space-2);
-  border-top: 1px solid var(--fui-border, $fui-border);
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
-  .card {
-    transition: none;
+    border-color: var(
+      --fui-card-stat-border,
+      var(--fui-card-border, var(--fui-border, #{$fui-border}))
+    );
+    box-shadow: var(--fui-card-stat-shadow, var(--fui-card-shadow, none));
   }
 
+  // Hairline-bordered panel with no root inset — designed for compound use
+  // with `Card.Header divided` + `Card.Body` inside dashboards. Each region
+  // owns its spacing so panel headers can be full-bleed with a hairline
+  // divider underneath. Uses the same surface-agnostic overlay as `.stat`.
+  // The private forced-inset channel makes this deterministic regardless of the
+  // `padding` prop or DOM class order.
+  .panel {
+    --_card-root-forced-inset: #{surface.inset("panel")};
+
+    background-color: var(
+      --fui-panel-bg,
+      var(
+        --fui-card-bg,
+        color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
+      )
+    );
+    border-color: var(
+      --fui-panel-border,
+      var(--fui-card-border, var(--fui-border, #{$fui-border}))
+    );
+    box-shadow: var(--fui-card-panel-shadow, var(--fui-card-shadow, none));
+    overflow: hidden;
+  }
+
+  // Padding
+  .paddingNone {
+    --_card-root-requested-inset: #{surface.inset("panel")};
+  }
+
+  .paddingSm {
+    --_card-root-requested-inset: #{surface.inset("compact")};
+  }
+
+  .paddingMd {
+    --_card-root-requested-inset: #{surface.inset("default")};
+  }
+
+  .paddingLg {
+    --_card-root-requested-inset: #{surface.inset("roomy")};
+  }
+
+  // Interactive card (when onClick is provided).
+  // Card renders as an `article`/`div`/`section` (never a real `<button>`), so
+  // applying `button-reset` here was gratuitous — and it was silently wiping
+  // out variant-applied borders and backgrounds (the reset sets
+  // `border: none; background: transparent`). Keep only the clickable
+  // affordances; variants keep their surface and border untouched.
   .interactive {
+    @include interactive-base;
+
+    display: block;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+
     &:hover {
-      transform: none;
+      background-color: var(--fui-card-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+      border-color: var(--fui-card-hover-border, var(--fui-border-strong, #{$fui-border-strong}));
+      box-shadow: none;
     }
 
     &:active {
-      transform: none;
+      background-color: var(--fui-card-active-bg, var(--fui-bg-active, $fui-bg-active));
+      box-shadow: var(
+        --fui-card-active-shadow,
+        inset 0 1px 2px color-mix(in srgb, black 12%, transparent)
+      );
     }
   }
-}
 
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
+  .header {
+    display: grid;
+    gap: var(--fui-raw-space-4, 4px);
+    margin-bottom: var(--fui-raw-space-16, 16px);
+  }
 
-@media (prefers-contrast: more) {
-  .card {
-    border-width: 2px;
-    border-color: var(--fui-text-primary, $fui-text-primary);
+  // Full-bleed panel-header region on the control-md track, canonical inset,
+  // and a hairline bottom divider. No trailing margin — it sits flush above the
+  // panel body, which manages its own padding. Use inside `variant="panel"`.
+  // Title cluster (left) and trailing controls (right) pin to opposite edges —
+  // wrap Title + Description in a stack so space-between has two children.
+  .headerDivided {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--fui-raw-space-12, 12px);
+    min-height: var(--fui-control-track-md, 32px);
+    padding: #{surface.inset("compact")};
+    margin-bottom: 0;
+    border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+
+    // Multi-line copy: top-align trailing controls with the title line.
+    &:has(.description) {
+      align-items: flex-start;
+    }
+  }
+
+  .title {
+    @include typography.role("title-sm");
+
+    margin: 0;
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  .description {
+    @include typography.role("body-compact");
+
+    margin: 0;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+
+  .body {
+    @include typography.role("body-compact");
+
+    padding: var(--_card-body-inset, 0);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  .body.paddingNone {
+    --_card-body-inset: #{surface.inset("panel")};
+  }
+
+  .body.paddingSm {
+    --_card-body-inset: #{surface.inset("compact")};
+  }
+
+  .body.paddingMd {
+    --_card-body-inset: #{surface.inset("default")};
+  }
+
+  .body.paddingLg {
+    --_card-body-inset: #{surface.inset("roomy")};
   }
 
   .footer {
-    border-top-width: 2px;
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-8, 8px);
+    margin-top: var(--fui-raw-space-16, 16px);
+    padding-top: var(--fui-raw-space-16, 16px);
+    border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  }
+
+  // ============================================
+  // Accessibility: Reduced Motion
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .card {
+      transition: none;
+    }
+
+    .interactive {
+      &:hover {
+        transform: none;
+      }
+
+      &:active {
+        transform: none;
+      }
+    }
+  }
+
+  // ============================================
+  // Accessibility: High Contrast Mode
+  // ============================================
+
+  @media (prefers-contrast: more) {
+    .card {
+      border-color: var(--fui-text-primary, $fui-text-primary);
+      outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
+      outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+    }
+
+    .footer {
+      box-shadow: inset 0 var(--fui-stroke-hairline, 1px) 0
+        var(--fui-text-primary, $fui-text-primary);
+    }
   }
 }

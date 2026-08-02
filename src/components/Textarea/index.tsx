@@ -127,17 +127,10 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(functi
     .filter(Boolean)
     .join(" ");
 
-  // Calculate min/max height based on rows: N text lines (line-height-normal)
-  // plus the field's vertical padding (space-3 total ≈ 1.5rem at the 14px root).
-  const rowLine = "var(--fui-line-height-normal, 1.5) * 1em";
-  const rowPad = "var(--fui-space-3, 1.5rem)";
-  const textareaInlineStyle: React.CSSProperties = {};
-  if (minRows) {
-    textareaInlineStyle.minHeight = `calc(${minRows} * ${rowLine} + ${rowPad})`;
-  }
-  if (maxRows) {
-    textareaInlineStyle.maxHeight = `calc(${maxRows} * ${rowLine} + ${rowPad})`;
-  }
+  const textareaInlineStyle = {
+    "--_fui-textarea-min-rows": minRows ?? 1,
+    "--_fui-textarea-max-rows": maxRows ?? 9999,
+  } as React.CSSProperties;
 
   return (
     <div
@@ -177,7 +170,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(functi
         onBlur={(e) => onBlur?.(e)}
         onFocus={(e) => onFocus?.(e)}
         className={textareaClasses}
-        style={Object.keys(textareaInlineStyle).length > 0 ? textareaInlineStyle : undefined}
+        style={textareaInlineStyle}
       />
       <div className={styles.footer}>
         {helperText && (

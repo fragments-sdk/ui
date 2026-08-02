@@ -1,0 +1,8 @@
+// Deliberately unlayered: this proves ordinary consumer CSS can customize a
+// layered Card without specificity escalation or priority hacks.
+.consumerOverride {
+  --fui-card-consumer-fixture: 1;
+
+  padding: 29px;
+  background-color: rgb(9 87 73);
+}

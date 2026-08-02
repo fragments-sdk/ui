@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui/react/popover";
 import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import { POPUP_OFFSET_PX } from "../../recipes/popup";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./DatePicker.module.scss";
 
@@ -557,7 +558,7 @@ function DatePickerTrigger({
 function DatePickerContent({
   children,
   className,
-  sideOffset = 4,
+  sideOffset = POPUP_OFFSET_PX,
   align = "start",
   ...htmlProps
 }: DatePickerContentProps) {

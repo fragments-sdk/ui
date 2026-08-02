@@ -23,7 +23,9 @@
 
 // Import computed values from seed system
 @use "sass:string";
+@use "sass:map";
 @use "computed" as computed;
+@use "measurements.generated" as measurements;
 
 // --------------------------------------------
 // Base Configuration
@@ -55,23 +57,18 @@ $fui-font-sans:
 $fui-font-mono:
   "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace !default;
 
-// Font sizes (rem based on 14px root).
-// Scale ladder tuned for industry-leading docs hierarchy:
-//   - UI chrome stays dense at 14px (sm/base).
-//   - `md` (15px) is the prose body size — comfortable reading.
-//   - `lg`/`xl`/`2xl` step 20 / 24 / 30 for h3 / h2 / large display.
-//   - `3xl`/`4xl` (36 / 48) land page-title and hero sizes without
-//     per-page clamps.
-$fui-font-size-2xs: 0.714rem !default; // 10px
-$fui-font-size-xs: 0.857rem !default; // 12px
-$fui-font-size-sm: 1rem !default; // 14px (base)
-$fui-font-size-base: 1rem !default; // 14px (= sm, body base)
-$fui-font-size-md: 1.071rem !default; // 15px (prose body — longer reading)
-$fui-font-size-lg: 1.429rem !default; // 20px (h3, dialog/drawer/alert title)
-$fui-font-size-xl: 1.714rem !default; // 24px (h2, section heading)
-$fui-font-size-2xl: 2.143rem !default; // 30px (large display)
-$fui-font-size-3xl: 2.571rem !default; // 36px (h1, page title)
-$fui-font-size-4xl: 3.429rem !default; // 48px (hero display)
+// Legacy public typography variables are generated compatibility views. New
+// component work uses the semantic typography recipe.
+$fui-font-size-2xs: map.get(measurements.$legacy, "typography", "fontSize", "2xs") !default;
+$fui-font-size-xs: map.get(measurements.$legacy, "typography", "fontSize", "xs") !default;
+$fui-font-size-sm: map.get(measurements.$legacy, "typography", "fontSize", "sm") !default;
+$fui-font-size-base: map.get(measurements.$legacy, "typography", "fontSize", "base") !default;
+$fui-font-size-md: map.get(measurements.$legacy, "typography", "fontSize", "md") !default;
+$fui-font-size-lg: map.get(measurements.$legacy, "typography", "fontSize", "lg") !default;
+$fui-font-size-xl: map.get(measurements.$legacy, "typography", "fontSize", "xl") !default;
+$fui-font-size-2xl: map.get(measurements.$legacy, "typography", "fontSize", "2xl") !default;
+$fui-font-size-3xl: map.get(measurements.$legacy, "typography", "fontSize", "3xl") !default;
+$fui-font-size-4xl: map.get(measurements.$legacy, "typography", "fontSize", "4xl") !default;
 
 // Dropdown/popup list items — menus, selects, comboboxes, listboxes, command
 // palettes. One step below chrome text: a popup is a dense list scanned against
@@ -81,23 +78,73 @@ $fui-font-size-4xl: 3.429rem !default; // 48px (hero display)
 // literal in the mixin would let the height calcs drift out of step with it.
 $fui-popup-item-font-size: $fui-font-size-xs !default; // 12px
 
-$fui-font-weight-normal: 400 !default;
-$fui-font-weight-medium: 500 !default;
-$fui-font-weight-semibold: 600 !default;
-$fui-font-weight-bold: 700 !default;
+$fui-font-weight-normal: map.get(
+  measurements.$legacy,
+  "typography",
+  "fontWeight",
+  "normal"
+) !default;
+$fui-font-weight-medium: map.get(
+  measurements.$legacy,
+  "typography",
+  "fontWeight",
+  "medium"
+) !default;
+$fui-font-weight-semibold: map.get(
+  measurements.$legacy,
+  "typography",
+  "fontWeight",
+  "semibold"
+) !default;
+$fui-font-weight-bold: map.get(measurements.$legacy, "typography", "fontWeight", "bold") !default;
 
-$fui-line-height-tight: 1.25 !default;
-$fui-line-height-normal: 1.5 !default;
-$fui-line-height-relaxed: 1.625 !default;
-$fui-line-height-display: 1.1 !default; // h1/hero — tight for large type
-$fui-line-height-prose: 1.7 !default; // p/li inside long-form reading columns
+$fui-line-height-tight: map.get(measurements.$legacy, "typography", "lineHeight", "tight") !default;
+$fui-line-height-normal: map.get(
+  measurements.$legacy,
+  "typography",
+  "lineHeight",
+  "normal"
+) !default;
+$fui-line-height-relaxed: map.get(
+  measurements.$legacy,
+  "typography",
+  "lineHeight",
+  "relaxed"
+) !default;
+$fui-line-height-display: map.get(
+  measurements.$legacy,
+  "typography",
+  "lineHeight",
+  "display"
+) !default;
+$fui-line-height-prose: map.get(measurements.$legacy, "typography", "lineHeight", "prose") !default;
 
 // Letter spacing — keep neutral by default so dense product chrome, headings,
 // and generated app surfaces do not drift into separate typographic systems.
-$fui-letter-spacing-tight: 0 !default; // for xl+ headings
-$fui-letter-spacing-normal: normal !default;
-$fui-letter-spacing-display: 0 !default; // for h1/display
-$fui-letter-spacing-wide: 0.05em !default; // uppercase micro-labels (section headings, table/column headers)
+$fui-letter-spacing-tight: map.get(
+  measurements.$legacy,
+  "typography",
+  "letterSpacing",
+  "tight"
+) !default;
+$fui-letter-spacing-normal: map.get(
+  measurements.$legacy,
+  "typography",
+  "letterSpacing",
+  "normal"
+) !default;
+$fui-letter-spacing-display: map.get(
+  measurements.$legacy,
+  "typography",
+  "letterSpacing",
+  "display"
+) !default;
+$fui-letter-spacing-wide: map.get(
+  measurements.$legacy,
+  "typography",
+  "letterSpacing",
+  "wide"
+) !default;
 
 // --------------------------------------------
 // Spacing (derived from density seed)
@@ -323,19 +370,23 @@ $fui-breakpoint-xl: 1280px !default;
 // Component-specific tokens
 // --------------------------------------------
 
-// Button heights (derived from density seed)
-$fui-button-height-xs: computed.$computed-button-height-xs !default;
-$fui-button-height-sm: computed.$computed-button-height-sm !default;
-$fui-button-height-md: computed.$computed-button-height-md !default;
-$fui-button-height-lg: computed.$computed-button-height-lg !default;
-$fui-button-outlined-shadow: inset 0 1px 0
-  light-dark(color-mix(in srgb, white 72%, transparent), color-mix(in srgb, white 5%, transparent)) !default;
+// Interactive control heights are fixed geometry. Density still governs
+// composition spacing, but it cannot resize a named control.
+$fui-control-height-xs: measurements.target-value("controlTrack", "micro") !default;
+$fui-control-height-sm: measurements.target-value("controlTrack", "sm") !default;
+$fui-control-height-md: measurements.target-value("controlTrack", "md") !default;
+$fui-control-height-lg: measurements.target-value("controlTrack", "lg") !default;
 
-// Input heights (derived from density seed)
-// Note: These are dedicated input tokens, not reusing button heights
-$fui-input-height: computed.$computed-input-height !default;
-$fui-input-height-sm: computed.$computed-input-height-sm !default;
-$fui-input-height-lg: computed.$computed-input-height-lg !default;
+// Legacy aliases — prefer --fui-control-height-* in new code
+$fui-button-height-xs: $fui-control-height-xs !default;
+$fui-button-height-sm: $fui-control-height-sm !default;
+$fui-button-height-md: $fui-control-height-md !default;
+$fui-button-height-lg: $fui-control-height-lg !default;
+$fui-button-outlined-shadow: none !default;
+
+$fui-input-height-sm: measurements.target-value("fieldTrack", "sm") !default;
+$fui-input-height: measurements.target-value("fieldTrack", "md") !default;
+$fui-input-height-lg: measurements.target-value("fieldTrack", "lg") !default;
 
 // Touch targets (derived from density seed)
 $fui-touch-sm: computed.$computed-touch-sm !default;
@@ -346,16 +397,17 @@ $fui-touch-lg: computed.$computed-touch-lg !default;
 // Keep this token globally available to preserve a product-control floor for
 // touch/pointer targets. WCAG 2.2 allows 24px, but Fragments uses 32px so
 // field controls, toolbar buttons, tabs, and picker triggers align.
-$fui-target-size-min: 2.286rem !default; // 32px
+$fui-target-size-min: map.get(measurements.$legacy, "touch", "minimum") !default;
 $fui-target-size-comfortable: $fui-touch-md !default;
 
-// Icon sizes (standard conventions)
-$fui-icon-xs: 0.857rem !default; // 12px (inline/caption glyphs)
-$fui-icon-sm: 1rem !default; // 14px (2 units)
-$fui-icon-md: 1.143rem !default; // 16px (standard small icon)
-$fui-icon-lg: 1.429rem !default; // 20px (standard medium icon)
-$fui-icon-xl: 1.714rem !default; // 24px (standard large icon)
-$fui-icon-2xl: 2.286rem !default; // 32px (display/empty-state/loading)
+// Fixed icon geometry. The legacy rem records remain frozen for compatibility
+// auditing, while active Sass and runtime values project the accepted px targets.
+$fui-icon-xs: measurements.target-value("icon", "xs") !default;
+$fui-icon-sm: measurements.target-value("icon", "sm") !default;
+$fui-icon-md: measurements.target-value("icon", "md") !default;
+$fui-icon-lg: measurements.target-value("icon", "lg") !default;
+$fui-icon-xl: measurements.target-value("icon", "xl") !default;
+$fui-icon-2xl: measurements.target-value("icon", "2xl") !default;
 
 // Animation offsets
 $fui-anim-offset-sm: 4px !default; // Small slide animation
@@ -365,7 +417,11 @@ $fui-anim-offset-md: 8px !default; // Medium slide animation
 $fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact/default: 32px, relaxed: 36px)
 
 // AppShell Layout
-$fui-appshell-header-height: 56px !default;
+$fui-appshell-header-height: map.get(
+  measurements.$legacy,
+  "navigation",
+  "appShellHeaderHeight"
+) !default;
 $fui-header-z-index: 40 !default;
 
 // CodeBlock background — shared with Markdown's <pre> prose styling — and
@@ -394,6 +450,7 @@ $fui-code-selection-bg: color-mix(
     // Base configuration
     font-size: #{$fui-base-font-size};
     --fui-base-unit: #{$fui-base-unit};
+    @include measurements.emit-fixed-custom-properties;
 
     // Seed colors — the 5 configurable seeds exposed as custom properties.
     // Tracks SCSS seed variables, so compile-time customization is reflected.
@@ -614,10 +671,9 @@ $fui-code-selection-bg: color-mix(
     --fui-kbd-radius: var(--fui-radius-sm);
     --fui-kbd-reserved-width: 2.714rem; // 38px, enough for "⌘K"
 
-    // Button chrome. Primary fill = pine. Border/color are shared; the fill
-    // treatment and radius branch on the brand: the Fragments default renders a
-    // FLAT solid pill (hybrid-skin), while consumer-branded builds keep the
-    // raised-gradient recipe with crisp border, top highlight, and pressed inset.
+    // Button chrome. Every theme uses flat fills: hierarchy comes from colour,
+    // border, and state contrast rather than a second raised/gradient material.
+    // Radius remains brand-aware for compatibility with consumer themes.
     --fui-button-primary-base: light-dark(#006b57, #006b57);
     --fui-button-primary-hover: light-dark(#187762, #187762);
     --fui-button-primary-active: light-dark(#005f4c, #005f4c);
@@ -634,76 +690,28 @@ $fui-code-selection-bg: color-mix(
     --fui-button-primary-color: #fff;
 
     @if $fui-brand-is-default {
-      // Flat solid pill — hybrid-skin treatment.
       --fui-button-radius: var(--fui-radius-full);
-      --fui-button-primary-bg: var(--fui-button-primary-base);
-      --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
-      --fui-button-primary-bg-active: var(--fui-button-primary-active);
-      --fui-button-primary-shadow: none;
-      --fui-button-primary-shadow-active: inset
-        0
-        1px
-        2px
-        color-mix(in srgb, black 22%, transparent);
     } @else {
-      // Raised-gradient recipe for consumer-branded builds.
       --fui-button-radius: var(--fui-radius-lg);
-      --fui-button-primary-bg: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--fui-button-primary-base) 78%, white 22%) 0%,
-        var(--fui-button-primary-base) 52%,
-        color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 100%
-      );
-      --fui-button-primary-bg-hover: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--fui-button-primary-hover) 76%, white 24%) 0%,
-        var(--fui-button-primary-hover) 52%,
-        color-mix(in srgb, var(--fui-button-primary-active) 84%, black 16%) 100%
-      );
-      --fui-button-primary-bg-active: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--fui-button-primary-active) 88%, black 12%) 0%,
-        var(--fui-button-primary-active) 100%
-      );
-      --fui-button-primary-shadow:
-        inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
-        inset 0 -1px 0 color-mix(in srgb, black 18%, transparent),
-        0 1px 1px color-mix(in srgb, black 16%, transparent);
-      --fui-button-primary-shadow-active:
-        inset 0 1px 2px color-mix(in srgb, black 30%, transparent),
-        0 1px 0 color-mix(in srgb, white 8%, transparent);
     }
 
-    --fui-button-neutral-bg: linear-gradient(
-      to bottom,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 97%, var(--fui-text-primary) 3%),
-          color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%)
-        )
-        0%,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%),
-          color-mix(in srgb, var(--fui-bg-elevated) 96%, var(--fui-text-primary) 4%)
-        )
-        100%
+    --fui-button-primary-bg: var(--fui-button-primary-base);
+    --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
+    --fui-button-primary-bg-active: var(--fui-button-primary-active);
+    --fui-button-primary-shadow: none;
+    --fui-button-primary-shadow-active: none;
+
+    --fui-button-neutral-bg: light-dark(
+      color-mix(in srgb, var(--fui-bg-elevated) 94%, var(--fui-text-primary) 6%),
+      color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%)
     );
-    --fui-button-neutral-bg-hover: linear-gradient(
-      to bottom,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 99%, var(--fui-text-primary) 1%),
-          color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%)
-        )
-        0%,
-      light-dark(
-          color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%),
-          color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%)
-        )
-        100%
+    --fui-button-neutral-bg-hover: light-dark(
+      color-mix(in srgb, var(--fui-bg-elevated) 90%, var(--fui-text-primary) 10%),
+      color-mix(in srgb, var(--fui-bg-elevated) 86%, var(--fui-text-primary) 14%)
     );
-    --fui-button-neutral-bg-active: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%) 0%,
-      color-mix(in srgb, var(--fui-bg-elevated) 90%, var(--fui-text-primary) 10%) 100%
+    --fui-button-neutral-bg-active: light-dark(
+      color-mix(in srgb, var(--fui-bg-elevated) 84%, var(--fui-text-primary) 16%),
+      color-mix(in srgb, var(--fui-bg-elevated) 80%, var(--fui-text-primary) 20%)
     );
     --fui-button-neutral-border: color-mix(
       in srgb,
@@ -716,18 +724,9 @@ $fui-code-selection-bg: color-mix(
       var(--fui-text-primary) 42%
     );
     --fui-button-neutral-color: var(--fui-text-primary);
-    --fui-button-outlined-shadow: #{$fui-button-outlined-shadow};
-    --fui-button-neutral-shadow:
-      inset 0 1px 0
-        light-dark(
-          color-mix(in srgb, white 88%, transparent),
-          color-mix(in srgb, white 7%, transparent)
-        ),
-      inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary) 7%, transparent),
-      0 1px 1px color-mix(in srgb, black 12%, transparent);
-    --fui-button-neutral-shadow-active:
-      inset 0 1px 2px color-mix(in srgb, black 16%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, var(--fui-text-primary) 6%, transparent);
+    --fui-button-outlined-shadow: none;
+    --fui-button-neutral-shadow: none;
+    --fui-button-neutral-shadow-active: none;
 
     --fui-code-bg: #{$fui-code-bg};
     --fui-code-selection-bg: #{$fui-code-selection-bg};
@@ -803,8 +802,12 @@ $fui-code-selection-bg: color-mix(
     --fui-tabs-pill-active-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
     --fui-tabs-pill-active-border: transparent;
     --fui-tabs-pill-active-shadow: none;
-    --fui-toggle-group-selected-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
-    --fui-toggle-group-selected-border: transparent;
+    --fui-toggle-group-selected-bg: var(--fui-selection-bg);
+    --fui-toggle-group-selected-border: color-mix(
+      in srgb,
+      var(--fui-color-accent) 42%,
+      transparent
+    );
     --fui-toggle-group-selected-shadow: none;
 
     // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
@@ -826,14 +829,18 @@ $fui-code-selection-bg: color-mix(
       #{$fui-dark-scrollbar-thumb-hover}
     );
 
-    // Component heights (density-responsive)
-    --fui-button-height-xs: #{$fui-button-height-xs};
-    --fui-button-height-sm: #{$fui-button-height-sm};
-    --fui-button-height-md: #{$fui-button-height-md};
-    --fui-button-height-lg: #{$fui-button-height-lg};
-    --fui-input-height-sm: #{$fui-input-height-sm};
-    --fui-input-height: #{$fui-input-height};
-    --fui-input-height-lg: #{$fui-input-height-lg};
+    // Fixed component tracks plus compatibility aliases.
+    --fui-control-height-xs: #{$fui-control-height-xs};
+    --fui-control-height-sm: #{$fui-control-height-sm};
+    --fui-control-height-md: #{$fui-control-height-md};
+    --fui-control-height-lg: #{$fui-control-height-lg};
+    --fui-button-height-xs: var(--fui-control-height-xs);
+    --fui-button-height-sm: var(--fui-control-height-sm);
+    --fui-button-height-md: var(--fui-control-height-md);
+    --fui-button-height-lg: var(--fui-control-height-lg);
+    --fui-input-height-sm: var(--fui-field-track-sm);
+    --fui-input-height: var(--fui-field-track-md);
+    --fui-input-height-lg: var(--fui-field-track-lg);
 
     // Touch targets (density-responsive, Fragments control floor: ≥32px)
     --fui-touch-sm: #{$fui-touch-sm};
@@ -847,14 +854,22 @@ $fui-code-selection-bg: color-mix(
     // AppShell Layout
     --fui-appshell-header-height: #{$fui-appshell-header-height};
     --fui-header-z-index: #{$fui-header-z-index};
+  }
 
-    // Icon sizes (single source of truth — components must not hardcode SVG box sizes)
-    --fui-icon-xs: #{$fui-icon-xs};
-    --fui-icon-sm: #{$fui-icon-sm};
-    --fui-icon-md: #{$fui-icon-md};
-    --fui-icon-lg: #{$fui-icon-lg};
-    --fui-icon-xl: #{$fui-icon-xl};
-    --fui-icon-2xl: #{$fui-icon-2xl};
+  // Named runtime selectors use the same generated profiles as compile-time
+  // Sass seeds. Attribute specificity intentionally matches :root so these
+  // later rules can override the compiled default on either the document root
+  // or a scoped provider without inline numeric maps.
+  @each $density in measurements.$density-profile-names {
+    [data-fui-density="#{$density}"] {
+      @include measurements.emit-density-profile($density);
+    }
+  }
+
+  @each $radius-style in measurements.$radius-profile-names {
+    [data-fui-radius-style="#{$radius-style}"] {
+      @include measurements.emit-radius-profile($radius-style);
+    }
   }
 
   // Dark mode via data-theme attribute (manual toggle).

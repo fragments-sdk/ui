@@ -1,22 +1,35 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../recipes/layout";
+@use "../../recipes/typography";
+@use "../../tokens/variables" as *;
 
 .separator {
   flex-shrink: 0;
-  background-color: var(--fui-border, $fui-border);
+  background-color: transparent;
 }
 
 // Horizontal (default)
 .horizontal {
   width: 100%;
-  height: 1px;
+
+  .line {
+    display: block;
+    width: 100%;
+    height: var(--fui-stroke-hairline, 1px);
+    background-color: var(--fui-border, $fui-border);
+  }
 }
 
 // Vertical
 .vertical {
-  width: 1px;
   height: auto;
   align-self: stretch;
+
+  .line {
+    display: block;
+    width: var(--fui-stroke-hairline, 1px);
+    height: 100%;
+    background-color: var(--fui-border, $fui-border);
+  }
 }
 
 // With label
@@ -28,61 +41,58 @@
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     flex: 1;
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
     background-color: var(--fui-border, $fui-border);
   }
 }
 
 .label {
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  @include typography.role("ui-compact");
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-transform: uppercase;
-  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
   white-space: nowrap;
 }
 
 // Spacing variants
 .spacingNone {
-  margin: 0;
+  padding: 0;
 }
 
 .spacingSm {
   &.horizontal {
-    margin: var(--fui-space-2, $fui-space-2) 0;
+    padding-block: layout.gap("sm");
   }
 
   &.vertical {
-    margin: 0 var(--fui-space-2, $fui-space-2);
+    padding-inline: layout.gap("sm");
   }
 }
 
 .spacingMd {
   &.horizontal {
-    margin: var(--fui-space-4, $fui-space-4) 0;
+    padding-block: layout.gap("md");
   }
 
   &.vertical {
-    margin: 0 var(--fui-space-4, $fui-space-4);
+    padding-inline: layout.gap("md");
   }
 }
 
 .spacingLg {
   &.horizontal {
-    margin: var(--fui-space-6, $fui-space-6) 0;
+    padding-block: layout.gap("lg");
   }
 
   &.vertical {
-    margin: 0 var(--fui-space-6, $fui-space-6);
+    padding-inline: layout.gap("lg");
   }
 }
 
 // Soft variant (lighter color)
 .soft {
-  background-color: var(--fui-border, $fui-border);
   opacity: 0.5;
 
   &.withLabel::before,

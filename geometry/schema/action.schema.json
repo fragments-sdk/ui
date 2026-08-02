@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:action",
+  "title": "Geometry action",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/hover" },
+    { "$ref": "#/$defs/focus" },
+    { "$ref": "#/$defs/click" },
+    { "$ref": "#/$defs/press" },
+    { "$ref": "#/$defs/fill" },
+    { "$ref": "#/$defs/check" },
+    { "$ref": "#/$defs/waitForState" }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "target": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "hover": {
+      "type": "object",
+      "required": ["op", "target"],
+      "properties": {
+        "op": { "const": "hover" },
+        "target": { "$ref": "#/$defs/target" }
+      },
+      "additionalProperties": false
+    },
+    "focus": {
+      "type": "object",
+      "required": ["op", "target"],
+      "properties": {
+        "op": { "const": "focus" },
+        "target": { "$ref": "#/$defs/target" }
+      },
+      "additionalProperties": false
+    },
+    "click": {
+      "type": "object",
+      "required": ["op", "target"],
+      "properties": {
+        "op": { "const": "click" },
+        "target": { "$ref": "#/$defs/target" }
+      },
+      "additionalProperties": false
+    },
+    "press": {
+      "type": "object",
+      "required": ["op", "target", "key"],
+      "properties": {
+        "op": { "const": "press" },
+        "target": { "$ref": "#/$defs/target" },
+        "key": {
+          "enum": [
+            "Tab",
+            "Shift+Tab",
+            "Enter",
+            "Space",
+            "Escape",
+            "ArrowUp",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            "Home",
+            "End",
+            "PageUp",
+            "PageDown"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "fill": {
+      "type": "object",
+      "required": ["op", "target", "value"],
+      "properties": {
+        "op": { "const": "fill" },
+        "target": { "$ref": "#/$defs/target" },
+        "value": { "type": "string", "maxLength": 1024 }
+      },
+      "additionalProperties": false
+    },
+    "check": {
+      "type": "object",
+      "required": ["op", "target", "checked"],
+      "properties": {
+        "op": { "const": "check" },
+        "target": { "$ref": "#/$defs/target" },
+        "checked": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "waitForState": {
+      "type": "object",
+      "required": ["op", "target", "state"],
+      "properties": {
+        "op": { "const": "wait-for-state" },
+        "target": { "$ref": "#/$defs/target" },
+        "state": { "enum": ["visible", "hidden", "attached", "detached"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

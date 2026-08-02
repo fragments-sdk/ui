@@ -1,20 +1,13 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-
-// ============================================
-// Listbox container
-// ============================================
+@use "../../recipes/popup" as popup;
+@use "../../recipes/typography" as typography;
 
 .listbox {
-  @include surface-elevated;
-  @include popup-container;
+  @include popup.container;
+  @include popup.viewport;
 
-  @include popup-scroll-viewport;
-
-  min-width: 12rem;
-  // Show N items + half-peek scroll hint (default 4.5 items).
-  max-height: var(--_popup-scroll-max-h);
-  overflow-y: auto;
+  min-inline-size: var(--fui-listbox-min-inline, 192px);
   border-color: var(--fui-form-group-border, $fui-border);
 
   &:focus-visible {
@@ -22,85 +15,64 @@
   }
 }
 
-// ============================================
-// Listbox item
-// ============================================
-
 .item {
-  @include popup-item;
+  @include popup.row;
 
-  text-align: left;
+  text-align: start;
 
-  // Pointer-hover and keyboard-active share the one neutral highlight (see _mixins).
   &:hover,
   &[data-highlighted] {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 
-  // Listbox items are individually focusable, so keep the keyboard ring on top.
   &:focus-visible {
     @include focus-ring;
   }
 }
 
-.itemSelected {
-  @include popup-item-selected;
-}
-
 .itemActive {
-  &:not(.itemSelected) {
-    @include popup-item-highlight;
-  }
+  @include popup.highlight-state;
 }
 
-.itemActive.itemSelected {
-  @include popup-item-selected;
+.itemSelected {
+  @include popup.selected-state;
 }
 
 .itemDisabled {
-  @include popup-item-disabled;
+  @include popup.disabled-state;
 }
 
-// ============================================
-// Group
-// ============================================
+.group:not(:first-child)::before {
+  @include popup.group-separator;
 
-.group {
-  &:not(:first-child) {
-    margin-top: var(--fui-space-1, $fui-space-1);
-    padding-top: var(--fui-space-1, $fui-space-1);
-    border-top: 1px solid var(--fui-border, $fui-border);
-  }
+  content: "";
+  display: block;
 }
 
 .groupLabel {
-  @include popup-group-label;
+  @include popup.group-label;
 }
 
-// ============================================
-// Empty state
-// ============================================
-
 .empty {
-  @include text-base;
+  @include typography.role("body-compact");
 
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  padding-block: var(--fui-popup-row-block-inset);
+  padding-inline: var(--fui-popup-row-inline-inset);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
 }
 
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
 @media (prefers-contrast: more) {
   .listbox {
-    border-width: 2px;
+    border-color: var(--fui-text-primary, $fui-text-primary);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
   }
 
   .itemSelected,
   .itemActive {
-    outline: 2px solid var(--fui-color-accent, $fui-color-accent);
-    outline-offset: -2px;
+    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
+      var(--fui-color-accent, $fui-color-accent);
+    outline-offset: calc(-1 * var(--fui-focus-ring-width, $fui-focus-ring-width));
   }
 }

@@ -1,31 +1,46 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/field";
+@use "../../recipes/layout";
+@use "../../recipes/popup";
+@use "../../recipes/target";
 
-// Form field wrapper (label + helper + error)
-@include form-field-wrapper;
+.wrapper {
+  @include field.wrapper;
+}
+
+.label {
+  @include field.label;
+}
+
+.helper {
+  @include field.helper;
+}
+
+.helperError,
+.errorMessage {
+  @include field.error;
+}
 
 // Input + trigger wrapper.
-// --_field-h is the single field-height source (same input-height tokens that
-// control-size() uses for Select/DatePicker); the inner text input + chevron
-// trigger derive from it. Declared before the size variants so those win the
-// --_field-h override. min-height (not height) preserves chip wrapping.
+// --_field-h is the shared control-height track (same ladder as Input/Select).
+// Inner text + chips fill the content box after wrapper pad only.
+// min-height (not height) preserves chip wrapping.
 .inputWrapper {
-  @include field-shell;
-
-  --_field-h: var(--fui-input-height, #{$fui-input-height});
+  @include field.size("md");
+  @include field.shell;
 
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: action.gap("sm");
   width: 100%;
-  min-width: 10rem;
-  min-height: var(--_field-h);
-  padding: calc(var(--fui-space-px, $fui-space-px) * 2);
-  padding-right: var(--fui-space-1, $fui-space-1);
+  min-width: layout.measure("field-minimum");
+  padding-inline-end: var(--fui-raw-space-4, 4px);
 
   &:focus-within {
-    @include field-shell-focus;
+    @include field.focus-state;
   }
 
   &:has([data-disabled]) {
@@ -36,35 +51,23 @@
 
 // Size variants for input wrapper — override --_field-h.
 .inputWrapperSm {
-  --_field-h: var(--fui-input-height-sm, #{$fui-input-height-sm});
+  @include field.size("sm");
 }
 
 .inputWrapperMd {
-  // Default — inherits from .inputWrapper
+  @include field.size("md");
 }
 
 .inputWrapperLg {
-  --_field-h: var(--fui-input-height-lg, #{$fui-input-height-lg});
-}
-
-// Size variants for text input
-.inputSm {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-}
-
-.inputLg {
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
+  @include field.size("lg");
 }
 
 // Text input
 .input {
-  @include text-base;
-
   flex: 1;
-  min-width: 4rem;
-  // Inner text row sits inside the field with vertical breathing room.
-  height: calc(var(--_field-h) - var(--fui-space-2, #{$fui-space-2}));
-  padding: 0 var(--fui-space-2, $fui-space-2);
+  min-width: layout.measure("inline-floor");
+  min-block-size: 0;
+  padding: 0;
   background: transparent;
   border: none;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
@@ -96,19 +99,15 @@
 
 // Individual chip (multi-select) — matches Chip component outlined xs
 .chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-0-5, $fui-space-0-5);
-  height: var(--fui-target-size-min, $fui-target-size-min);
-  padding: 0 var(--fui-space-2, $fui-space-2);
+  @include action.base;
+  @include action.size("micro");
+
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border: 1px solid var(--fui-form-group-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  line-height: 1;
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
-  max-width: 12rem;
+  max-width: layout.measure("compact-content");
 }
 
 .chipLabel {
@@ -120,14 +119,14 @@
 // Chip remove button — round icon button inside the pill
 .chipRemove {
   @include button-reset;
-  @include touch-target;
+  @include target.hit-area("micro");
 
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: var(--fui-icon-sm, $fui-icon-sm);
-  height: var(--fui-icon-sm, $fui-icon-sm);
+  width: action.icon-size("sm");
+  height: action.icon-size("sm");
   border-radius: var(--fui-radius-full, $fui-radius-full);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   cursor: pointer;
@@ -151,8 +150,8 @@
   flex-shrink: 0;
   min-width: 0;
   min-height: 0;
-  width: calc(var(--_field-h) - var(--fui-space-2, #{$fui-space-2}));
-  height: calc(var(--_field-h) - var(--fui-space-2, #{$fui-space-2}));
+  width: action.track("micro");
+  height: action.track("micro");
   margin-left: auto;
   color: var(--fui-text-secondary, $fui-text-secondary);
   cursor: pointer;
@@ -160,7 +159,7 @@
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
     background-color var(--fui-transition-fast, $fui-transition-fast);
-  margin-inline-end: calc(var(--fui-space-px, $fui-space-px) * 2);
+  margin-inline-end: var(--fui-raw-space-2, 2px);
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);
@@ -173,8 +172,7 @@
   }
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("sm");
     transition: transform var(--fui-transition-fast, $fui-transition-fast);
   }
 
@@ -191,17 +189,10 @@
 
 // Popup container
 .popup {
-  @include surface-elevated;
-  @include popup-container;
+  @include popup.container;
+  @include popup.viewport;
 
-  @include popup-scroll-viewport;
-
-  border-color: var(--fui-form-group-border, $fui-border);
   min-width: var(--anchor-width);
-  // Show N items + half-peek scroll hint (default 4.5 items).
-  // !important needed to override Base UI's inline max-height: 100%
-  max-height: var(--_popup-scroll-max-h) !important;
-  overflow-y: auto !important;
 
   // Animation
   opacity: 0;
@@ -225,18 +216,18 @@
 
 // Individual option
 .item {
-  @include popup-item;
+  @include popup.row;
 
   // Base UI Combobox sets [data-highlighted] on KEYBOARD nav only — it does NOT add it
   // on pointer hover (verified in-browser) — so :hover is required for mouse users.
   // Both map to the one shared neutral highlight.
   &:hover,
   &[data-highlighted] {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 
   &[data-selected] {
-    @include popup-item-selected;
+    @include popup.selected-state;
 
     // Selected + active: stronger accent-tinted wash so it still reads as selected.
     &:hover,
@@ -246,7 +237,7 @@
   }
 
   &[data-disabled] {
-    @include popup-item-disabled;
+    @include popup.disabled-state;
   }
 }
 
@@ -268,28 +259,24 @@
 
 // Empty state
 .empty {
-  @include text-base;
+  @include popup.row;
 
-  display: flex;
-  align-items: center;
   justify-content: center;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
 // Group container
 .group {
-  &:not(:first-child) {
-    margin-top: var(--fui-space-1, $fui-space-1);
-    padding-top: var(--fui-space-1, $fui-space-1);
-    border-top: 1px solid var(--fui-border, $fui-border);
+  &:not(:first-child)::before {
+    content: "";
+    display: block;
+    @include popup.group-separator;
   }
 }
 
 // Group label
 .groupLabel {
-  @include popup-group-label;
+  @include popup.group-label;
 }
 
 // ============================================

@@ -1,7 +1,15 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { Drawer } from "./index";
+import styles from "./Drawer.module.scss";
+
+const drawerStyleSource = readFileSync(
+  resolve(process.cwd(), "src/components/Drawer/Drawer.module.scss"),
+  "utf8"
+);
 
 function renderDrawer(
   props: Partial<React.ComponentProps<typeof Drawer>> = {},
@@ -177,6 +185,20 @@ describe("Drawer", () => {
       expect(screen.getByText("Body content")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
     });
+  });
+
+  it("gives the body the drawer's remaining height so the footer stays at the panel edge", async () => {
+    renderDrawer({ defaultOpen: true });
+
+    const dialog = await screen.findByRole("dialog");
+    const content = dialog.firstElementChild;
+
+    expect(styles.content).toBeTruthy();
+    expect(content).toHaveClass(styles.content);
+    expect(drawerStyleSource).toMatch(
+      /\.content\s*\{[^}]*display:\s*flex;[^}]*block-size:\s*100%;[^}]*flex-direction:\s*column;/s
+    );
+    expect(drawerStyleSource).toMatch(/\.body\s*\{[^}]*min-block-size:\s*0;/s);
   });
 
   it("defaults the content side and swipe direction to right", async () => {

@@ -1,37 +1,37 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
-
-// Local component tokens
-$fui-badge-dot-sm: 5px !default;
-$fui-badge-dot-md: 6px !default;
+@use "../../recipes/action" as action;
+@use "../../recipes/representation" as representation;
+@use "../../recipes/target" as target;
 
 .badge {
   display: inline-flex;
   align-items: center;
-  width: max-content;
-  gap: var(--fui-space-1, $fui-space-1);
+  box-sizing: border-box;
+  inline-size: max-content;
+  gap: var(--fui-raw-space-4, 4px);
+  padding-block: 0;
   border: 0;
   border-radius: var(--fui-badge-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  line-height: 1;
   white-space: nowrap;
 }
 
 // Sizes
 .sm {
-  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  @include representation.badge("sm");
+
+  padding-inline: var(--fui-raw-space-4, 4px);
 }
 
 .md {
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include representation.badge("md");
+
+  padding-inline: var(--fui-raw-space-6, 6px);
 }
 
 .lg {
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include representation.badge("lg");
+
+  padding-inline: var(--fui-raw-space-8, 8px);
 }
 
 // Variants
@@ -63,34 +63,21 @@ $fui-badge-dot-md: 6px !default;
 .outline {
   background-color: transparent;
   color: var(--fui-text-primary, $fui-text-primary);
-  border: 1px solid var(--fui-border-strong, $fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
 }
 
-// Compact hairline-bordered label for dense dashboard metadata rows.
-// Overrides the base pill radius and padding — squared corners read as
-// data metadata rather than status chrome.
 .label {
-  height: var(--fui-target-size-min, $fui-target-size-min); // 32px control floor
-  padding: 0 calc(var(--fui-space-1, $fui-space-1) - var(--fui-space-px, $fui-space-px)); // ~6px
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }
 
-// Dim filter-chip chrome for toolbar segmented controls. Transparent at
-// rest, panel-surface + hairline when marked active.
 .dim {
-  height: var(--fui-button-height-sm, $fui-button-height-sm); // 32px small control height
-  padding: 0 calc(var(--fui-space-1, $fui-space-1) + var(--fui-space-0-5, $fui-space-0-5)); // ~9px
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background-color: transparent;
   color: var(--fui-text-secondary, $fui-text-secondary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
     border-color var(--fui-transition-fast, $fui-transition-fast),
@@ -104,15 +91,15 @@ $fui-badge-dot-md: 6px !default;
 }
 
 .dot {
-  width: $fui-badge-dot-md;
-  height: $fui-badge-dot-md;
+  inline-size: var(--fui-raw-space-6, 6px);
+  block-size: var(--fui-raw-space-6, 6px);
   border-radius: 50%;
   background-color: var(--fui-badge-dot-color, currentColor);
   flex-shrink: 0;
 
   .sm & {
-    width: $fui-badge-dot-sm;
-    height: $fui-badge-dot-sm;
+    inline-size: var(--fui-raw-space-4, 4px);
+    block-size: var(--fui-raw-space-4, 4px);
   }
 }
 
@@ -138,28 +125,46 @@ $fui-badge-dot-md: 6px !default;
 }
 
 .icon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+
+  .sm & {
+    @include representation.glyph("xs");
+  }
+
+  .md & {
+    @include representation.glyph("sm");
+  }
+
+  .lg & {
+    @include representation.glyph("md");
+  }
+
+  > svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
 }
 
-// Asymmetric padding when removable — tighter on right side near the × button
 .badge:has(.remove) {
-  padding: var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-1, $fui-space-1)
-    var(--fui-space-0-5, $fui-space-0-5) var(--fui-space-2, $fui-space-2);
+  padding-inline-end: var(--fui-raw-space-4, 4px);
 }
 
 .remove {
-  @include button-reset;
-  @include interactive-base;
-  @include touch-target;
+  @include action.base;
+  @include action.inline;
+  @include target.hit-area("compact");
 
-  margin-left: calc(-1 * var(--fui-space-0-5, $fui-space-0-5));
+  inline-size: 1em;
+  block-size: 1em;
+  margin-inline-start: calc(-1 * var(--fui-raw-space-2, 2px));
   padding: 0;
-  font-size: inherit;
+  border: 0;
+  background: transparent;
   color: inherit;
   opacity: 0.6;
-  line-height: 1;
   border-radius: var(--fui-radius-full, $fui-radius-full);
+  cursor: pointer;
 
   &:hover {
     opacity: 1;

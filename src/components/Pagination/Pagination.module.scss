@@ -1,5 +1,7 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
+@use '../../recipes/action';
+@use '../../recipes/layout';
 
 // ============================================
 // Navigation wrapper
@@ -18,7 +20,7 @@
 .list {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: layout.gap("xs");
   list-style: none;
   margin: 0;
   padding: 0;
@@ -30,17 +32,9 @@
 
 .item {
   @include button-reset;
-  @include text-base;
+  @include action.base;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--fui-touch-md, $fui-touch-md);
-  height: var(--fui-touch-md, $fui-touch-md);
-  padding: 0 var(--fui-space-2, $fui-space-2);
   border-radius: var(--fui-radius-md, $fui-radius-md);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
   cursor: pointer;
   transition:
@@ -78,26 +72,39 @@
 // Nav buttons (Previous/Next)
 // ============================================
 
-.navButton {
-  svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
-  }
-}
-
 // ============================================
 // Ellipsis
 // ============================================
 
 .ellipsis {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--fui-touch-md, $fui-touch-md);
-  height: var(--fui-touch-md, $fui-touch-md);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include action.base;
+
   color: var(--fui-text-secondary, $fui-text-secondary);
   user-select: none;
+}
+
+.sm :is(.item, .ellipsis) {
+  @include action.icon-only("sm");
+}
+
+.md :is(.item, .ellipsis) {
+  @include action.icon-only("md");
+}
+
+.lg :is(.item, .ellipsis) {
+  @include action.icon-only("lg");
+}
+
+.sm .navButton svg {
+  @include action.glyph("sm");
+}
+
+.md .navButton svg {
+  @include action.glyph("md");
+}
+
+.lg .navButton svg {
+  @include action.glyph("lg");
 }
 
 // ============================================
@@ -106,7 +113,7 @@
 
 @media (prefers-contrast: more) {
   .itemActive {
-    outline: 2px solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: -2px;
+    outline: var(--fui-stroke-default, 2px) solid var(--fui-text-primary, $fui-text-primary);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
   }
 }

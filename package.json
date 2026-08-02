@@ -1,6 +1,6 @@
 {
   "name": "@usefragments/ui",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
@@ -20,6 +20,7 @@
   ],
   "exports": {
     ".": "./src/index.ts",
+    "./measurements": "./src/measurements/index.ts",
     "./datepicker": "./src/components/DatePicker/index.tsx",
     "./chart": "./src/components/Chart/index.tsx",
     "./markdown": "./src/components/Markdown/index.tsx",
@@ -64,6 +65,16 @@
         "require": {
           "types": "./dist/index.d.ts",
           "default": "./dist/index.cjs"
+        }
+      },
+      "./measurements": {
+        "import": {
+          "types": "./dist/measurements/index.d.ts",
+          "default": "./dist/measurements.js"
+        },
+        "require": {
+          "types": "./dist/measurements/index.d.ts",
+          "default": "./dist/measurements.cjs"
         }
       },
       "./datepicker": {
@@ -175,9 +186,14 @@
   },
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json",
-    "lint": "eslint src",
+    "generate:measurements": "node scripts/generate-measurements.mjs",
+    "check:measurements": "node scripts/generate-measurements.mjs --check && node scripts/check-measurement-parity.mjs",
+    "build": "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json",
+    "lint": "eslint src geometry",
     "test": "vitest run",
+    "test:geometry": "node geometry/run.mjs",
+    "test:geometry:self": "node --test geometry/__tests__/*.test.mjs",
+    "test:geometry:types": "tsc -p geometry/tsconfig.json --noEmit",
     "build-storybook": "storybook build",
     "chromatic": "chromatic",
     "chromatic:ci": "chromatic --build-script-name build-storybook"
@@ -241,6 +257,9 @@
     "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
+    "@fontsource-variable/inter": "5.2.8",
+    "@fontsource-variable/jetbrains-mono": "5.2.8",
+    "@playwright/test": "1.58.2",
     "@storybook/addon-a11y": "^8",
     "@storybook/addon-essentials": "^8",
     "@storybook/react": "^8",
@@ -258,6 +277,7 @@
     "@types/react-dom": "^19.0.0",
     "@usefragments/core": "workspace:*",
     "@vitejs/plugin-react": "^4.3.0",
+    "ajv": "8.17.1",
     "chromatic": "^17.1.0",
     "date-fns": "^4.0.0",
     "jsdom": "^25.0.0",

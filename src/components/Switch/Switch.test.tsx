@@ -1,12 +1,24 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Field } from "../Field";
 import { Switch } from "./index";
 
+const switchStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Switch/Switch.module.scss"),
+  "utf8"
+);
+
 describe("Switch", () => {
   it("renders a switch role", () => {
     render(<Switch aria-label="Dark mode" />);
     expect(screen.getByRole("switch")).toBeInTheDocument();
+  });
+
+  it("exposes its resolved geometry size", () => {
+    render(<Switch aria-label="Dark mode" size="lg" />);
+    expect(screen.getByRole("switch")).toHaveAttribute("data-size", "lg");
   });
 
   it("is unchecked by default", () => {
@@ -17,6 +29,15 @@ describe("Switch", () => {
   it("renders as checked when checked prop is true", () => {
     render(<Switch aria-label="Dark mode" checked onChange={() => {}} />);
     expect(screen.getByRole("switch")).toBeChecked();
+  });
+
+  it("keeps the thumb optically centered for both switch states", () => {
+    expect(switchStyles).toMatch(/\.thumb\s*\{[\s\S]*inset-block-start:\s*50%;/);
+    expect(switchStyles).toMatch(/\.thumb\s*\{[\s\S]*transform:\s*translateY\(-50%\);/);
+    expect(switchStyles).toMatch(
+      /\.root\[data-checked\]\s*&\s*\{[\s\S]*transform:\s*translate\(var\(--_fui-switch-travel\), -50%\);/
+    );
+    expect(switchStyles).not.toMatch(/top:\s*var\(--_fui-switch-inset\)/);
   });
 
   it("renders label text", () => {

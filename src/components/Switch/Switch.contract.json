@@ -11,7 +11,7 @@
     "preference"
   ],
   "status": "stable",
-  "sourcePath": "src/components/Toggle/index.tsx",
+  "sourcePath": "src/components/Switch/index.tsx",
   "exportName": "Switch",
   "propsSummary": [
     "checked: boolean",

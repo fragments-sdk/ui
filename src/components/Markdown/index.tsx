@@ -79,11 +79,11 @@ function loadDeps(): Promise<void> {
 function FallbackRenderer({ content }: { content: string }) {
   const paragraphs = content.split(/\n{2,}/);
   return (
-    <div>
+    <>
       {paragraphs.map((p) => (
         <p key={p}>{p}</p>
       ))}
-    </div>
+    </>
   );
 }
 

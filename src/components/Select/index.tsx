@@ -4,6 +4,10 @@ import * as React from "react";
 import { Select as BaseSelect } from "@base-ui/react/select";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import {
+  POPUP_OFFSET_PX,
+  resolvePopupViewportRows,
+} from "../../recipes/popup";
 import styles from "./Select.module.scss";
 
 // ============================================
@@ -440,7 +444,7 @@ function SelectTrigger({
 function SelectContent({
   children,
   className,
-  sideOffset = 4,
+  sideOffset = POPUP_OFFSET_PX,
   align = "start",
   maxVisibleItems,
   ...htmlProps
@@ -451,7 +455,7 @@ function SelectContent({
   const popupStyle =
     maxVisibleItems != null
       ? ({
-          "--fui-select-max-items": maxVisibleItems + 0.5,
+          "--fui-popup-viewport-rows": resolvePopupViewportRows(maxVisibleItems),
           ...htmlProps.style,
         } as React.CSSProperties)
       : htmlProps.style;

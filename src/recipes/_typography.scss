@@ -1,0 +1,38 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+
+@function font-size($role) {
+  @return var(--fui-type-#{$role}-size, #{measurements.typography-value($role, "size")});
+}
+
+@function line-height($role) {
+  @return var(--fui-type-#{$role}-line, #{measurements.typography-value($role, "line")});
+}
+
+@function weight($role) {
+  @return var(--fui-type-#{$role}-weight, #{measurements.typography-value($role, "weight")});
+}
+
+@function tracking($role) {
+  @return var(--fui-type-#{$role}-tracking, #{measurements.typography-value($role, "tracking")});
+}
+
+@function font-family($role) {
+  // Reuse the generated lookup as the closed-role assertion. Families remain
+  // a semantic choice here rather than a numeric generated property.
+  $_validated-role: measurements.typography-value($role, "size");
+
+  @if $role == "code" {
+    @return var(--fui-font-mono, #{tokens.$fui-font-mono});
+  }
+
+  @return var(--fui-font-sans, #{tokens.$fui-font-sans});
+}
+
+@mixin role($role) {
+  font-size: font-size($role);
+  line-height: line-height($role);
+  font-weight: weight($role);
+  letter-spacing: tracking($role);
+  font-family: font-family($role);
+}

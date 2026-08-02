@@ -34,6 +34,18 @@ describe("RadioGroup", () => {
     expect(screen.getAllByRole("radio")).toHaveLength(2);
   });
 
+  it("propagates the resolved size and invalid state to visible geometry", () => {
+    render(
+      <RadioGroup label="Color" size="sm" error="Choose a color">
+        <RadioGroup.Item value="red" label="Red" />
+      </RadioGroup>
+    );
+
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("data-size", "sm");
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("data-invalid", "true");
+    expect(screen.getByRole("radio")).toHaveAttribute("data-size", "sm");
+  });
+
   it("renders helperText on radio items (preferred API)", () => {
     render(
       <RadioGroup label="Shipping">

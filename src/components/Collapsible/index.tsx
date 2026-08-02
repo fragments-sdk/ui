@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useId, createContext, useContext } from 'react';
-import styles from './Collapsible.module.scss';
+import React, { useState, useCallback, useId, createContext, useContext } from "react";
+import styles from "./Collapsible.module.scss";
 
 function composeEventHandlers<E extends { defaultPrevented: boolean }>(
   userHandler: ((event: E) => void) | undefined,
@@ -28,7 +28,7 @@ const CollapsibleContext = createContext<CollapsibleContextValue | null>(null);
 function useCollapsibleContext() {
   const context = useContext(CollapsibleContext);
   if (!context) {
-    throw new Error('Collapsible compound components must be used within Collapsible.Root');
+    throw new Error("Collapsible compound components must be used within Collapsible.Root");
   }
   return context;
 }
@@ -89,8 +89,8 @@ function CollapsibleRoot({
     <CollapsibleContext.Provider value={contextValue}>
       <div
         {...htmlProps}
-        className={`${styles.root} ${isOpen ? styles.open : ''} ${disabled ? styles.disabled : ''} ${className || ''}`}
-        data-state={isOpen ? 'open' : 'closed'}
+        className={`${styles.root} ${isOpen ? styles.open : ""} ${disabled ? styles.disabled : ""} ${className || ""}`}
+        data-state={isOpen ? "open" : "closed"}
         data-disabled={disabled || undefined}
       >
         {children}
@@ -105,7 +105,7 @@ export interface CollapsibleTriggerProps extends React.ButtonHTMLAttributes<HTML
   /** Show chevron indicator */
   showChevron?: boolean;
   /** Chevron position */
-  chevronPosition?: 'start' | 'end';
+  chevronPosition?: "start" | "end";
   /** Render as child element (for custom triggers) */
   asChild?: boolean;
 }
@@ -114,7 +114,7 @@ function CollapsibleTrigger({
   children,
   className,
   showChevron = true,
-  chevronPosition = 'end',
+  chevronPosition = "end",
   asChild = false,
   onClick,
   onKeyDown,
@@ -123,7 +123,7 @@ function CollapsibleTrigger({
   const { isOpen, toggle, contentId, triggerId, disabled } = useCollapsibleContext();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       toggle();
     }
@@ -135,7 +135,7 @@ function CollapsibleTrigger({
 
   const chevronIcon = showChevron && (
     <svg
-      className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
+      className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden="true"
@@ -160,9 +160,9 @@ function CollapsibleTrigger({
     return React.cloneElement(children as React.ReactElement<any>, {
       ...htmlProps,
       id: (htmlProps.id as string | undefined) ?? triggerId,
-      'aria-expanded': isOpen,
-      'aria-controls': contentId,
-      'aria-disabled': disabled || undefined,
+      "aria-expanded": isOpen,
+      "aria-controls": contentId,
+      "aria-disabled": disabled || undefined,
       onClick: composeEventHandlers(
         (event: React.MouseEvent<HTMLElement>) => {
           childProps.onClick?.(event);
@@ -177,7 +177,7 @@ function CollapsibleTrigger({
         },
         (event) => handleKeyDown(event as unknown as React.KeyboardEvent)
       ),
-      className: [className, childProps.className].filter(Boolean).join(' '),
+      className: [styles.trigger, className, childProps.className].filter(Boolean).join(" "),
     });
   }
 
@@ -186,7 +186,7 @@ function CollapsibleTrigger({
       {...htmlProps}
       type="button"
       id={(htmlProps.id as string | undefined) ?? triggerId}
-      className={`${styles.trigger} ${className || ''}`}
+      className={`${styles.trigger} ${className || ""}`}
       aria-expanded={isOpen}
       aria-controls={contentId}
       aria-disabled={disabled || undefined}
@@ -194,9 +194,9 @@ function CollapsibleTrigger({
       onKeyDown={composeEventHandlers(onKeyDown, handleKeyDown)}
       disabled={disabled}
     >
-      {chevronPosition === 'start' && chevronIcon}
+      {chevronPosition === "start" && chevronIcon}
       <span className={styles.triggerContent}>{children}</span>
-      {chevronPosition === 'end' && chevronIcon}
+      {chevronPosition === "end" && chevronIcon}
     </button>
   );
 }
@@ -227,9 +227,10 @@ function CollapsibleContent({
       id={(htmlProps.id as string | undefined) ?? contentId}
       role="region"
       aria-labelledby={triggerId}
-      className={`${styles.content} ${isOpen ? styles.contentOpen : styles.contentClosed} ${className || ''}`}
-      data-state={isOpen ? 'open' : 'closed'}
-      hidden={!isOpen && !forceMount}
+      aria-hidden={!isOpen || undefined}
+      inert={!isOpen || undefined}
+      className={`${styles.content} ${isOpen ? styles.contentOpen : styles.contentClosed} ${className || ""}`}
+      data-state={isOpen ? "open" : "closed"}
     >
       <div className={styles.contentInner}>{children}</div>
     </div>
@@ -244,11 +245,6 @@ export const Collapsible = Object.assign(CollapsibleRoot, {
 });
 
 // Named exports for direct imports
-export {
-  CollapsibleRoot,
-  CollapsibleTrigger,
-  CollapsibleContent,
-  useCollapsibleContext,
-};
+export { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent, useCollapsibleContext };
 
 export type CollapsibleProps = CollapsibleRootProps;

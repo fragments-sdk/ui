@@ -1,19 +1,19 @@
-import * as React from 'react';
-import styles from './Skeleton.module.scss';
+import * as React from "react";
+import styles from "./Skeleton.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
 export type SkeletonVariant =
-  | 'text'      // Single line of text, height: 1em
-  | 'heading'   // Heading text, height: 1.5em
-  | 'avatar'    // Circular, uses size prop
-  | 'button'    // Button shape, uses size prop
-  | 'input'     // Form input height
-  | 'rect';     // Rectangle, requires explicit dimensions or fill
+  | "text" // Single line of text, height: 1em
+  | "heading" // Heading text, height: 1.5em
+  | "avatar" // Circular, uses size prop
+  | "button" // Button shape, uses size prop
+  | "input" // Form input height
+  | "rect"; // Rectangle, requires explicit dimensions or fill
 
-export type SkeletonSize = 'sm' | 'md' | 'lg';
+export type SkeletonSize = "sm" | "md" | "lg";
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -22,7 +22,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   variant?: SkeletonVariant;
   /**
-   * Size variant for avatar/button. Ignored for text/heading/input.
+   * Size variant for avatar, button, and input placeholders.
    * @default 'md'
    */
   size?: SkeletonSize;
@@ -42,7 +42,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Border radius override. Auto-determined for most variants.
    */
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
+  radius?: "none" | "sm" | "md" | "lg" | "full";
   /**
    * Disable animation for reduced motion preference.
    * @default false
@@ -50,7 +50,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   static?: boolean;
 }
 
-export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   /** Number of text lines to render */
   lines?: number;
   /**
@@ -60,59 +60,60 @@ export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElem
    */
   lastLineWidth?: number;
   /** Gap between lines. Uses spacing tokens. */
-  gap?: 'sm' | 'md';
+  gap?: "sm" | "md";
 }
 
 // ============================================
 // Component
 // ============================================
 
-const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(
-  function SkeletonBase(
-    {
-      variant = 'rect',
-      size = 'md',
-      width,
-      height,
-      fill = false,
-      radius,
-      static: isStatic = false,
-      className,
-      ...htmlProps
-    },
-    ref
-  ) {
-    const classes = [
-      styles.skeleton,
-      styles[variant],
-      variant === 'avatar' && styles[`avatar-${size}`],
-      variant === 'button' && styles[`button-${size}`],
-      fill && styles.fill,
-      radius && styles[`radius-${radius}`],
-      isStatic && styles.static,
-      className,
-    ].filter(Boolean).join(' ');
+const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonBase(
+  {
+    variant = "rect",
+    size = "md",
+    width,
+    height,
+    fill = false,
+    radius,
+    static: isStatic = false,
+    className,
+    ...htmlProps
+  },
+  ref
+) {
+  const classes = [
+    styles.skeleton,
+    styles[variant],
+    variant === "avatar" && styles[`avatar-${size}`],
+    variant === "button" && styles[`button-${size}`],
+    variant === "input" && styles[`input-${size}`],
+    fill && styles.fill,
+    radius && styles[`radius-${radius}`],
+    isStatic && styles.static,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const style: React.CSSProperties = {};
+  const style: React.CSSProperties = {};
 
-    if (width !== undefined) {
-      style.width = typeof width === 'number' ? `${width}px` : width;
-    }
-    if (height !== undefined) {
-      style.height = typeof height === 'number' ? `${height}px` : height;
-    }
-
-    return (
-      <div
-        ref={ref}
-        {...htmlProps}
-        className={classes}
-        style={Object.keys(style).length > 0 ? style : undefined}
-        aria-hidden="true"
-      />
-    );
+  if (width !== undefined) {
+    style.width = typeof width === "number" ? `${width}px` : width;
   }
-);
+  if (height !== undefined) {
+    style.height = typeof height === "number" ? `${height}px` : height;
+  }
+
+  return (
+    <div
+      ref={ref}
+      {...htmlProps}
+      className={classes}
+      style={Object.keys(style).length > 0 ? style : undefined}
+      aria-hidden="true"
+    />
+  );
+});
 
 // ============================================
 // Skeleton.Text - Multi-line text skeleton
@@ -121,15 +122,13 @@ const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(
 function SkeletonText({
   lines = 3,
   lastLineWidth = 80,
-  gap = 'sm',
+  gap = "sm",
   className,
   ...htmlProps
 }: SkeletonTextProps) {
-  const containerClasses = [
-    styles.textContainer,
-    styles[`gap-${gap}`],
-    className,
-  ].filter(Boolean).join(' ');
+  const containerClasses = [styles.textContainer, styles[`gap-${gap}`], className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div {...htmlProps} className={containerClasses} aria-hidden="true">
@@ -152,21 +151,15 @@ function SkeletonText({
 // ============================================
 
 function SkeletonCircle({
-  size = 'md',
+  size = "md",
   className,
 }: {
   size?: SkeletonSize | number;
   className?: string;
 }) {
-  if (typeof size === 'number') {
+  if (typeof size === "number") {
     return (
-      <SkeletonBase
-        variant="rect"
-        width={size}
-        height={size}
-        radius="full"
-        className={className}
-      />
+      <SkeletonBase variant="rect" width={size} height={size} radius="full" className={className} />
     );
   }
   return <SkeletonBase variant="avatar" size={size} className={className} />;

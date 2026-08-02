@@ -1,33 +1,32 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/typography" as typography;
 
 // Root container
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-1, $fui-space-1);
-  width: 100%;
-  font-family: var(--fui-font-sans, $fui-font-sans);
+  gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  inline-size: 100%;
 }
 
 // Header with label and value
 .header {
+  @include typography.role("ui-standard");
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 }
 
 // Label text
 .label {
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
 }
 
 // Value display
 .value {
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   font-variant-numeric: tabular-nums;
 }
@@ -35,31 +34,40 @@
 // Track (background bar)
 .track {
   position: relative;
-  width: 100%;
+  inline-size: 100%;
+  block-size: var(--_progress-track-size);
   overflow: hidden;
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 }
 
-// Size variants for track (using closest 7px grid values)
 .trackSm {
-  height: calc(var(--fui-space-1, $fui-space-1) / 2); // ~3.5px
+  --_progress-track-size: var(
+    --fui-progress-track-sm,
+    var(--fui-raw-space-4, #{measurements.raw-space(4)})
+  );
 }
 
 .trackMd {
-  height: var(--fui-space-1, $fui-space-1); // 7px
+  --_progress-track-size: var(
+    --fui-progress-track-md,
+    var(--fui-raw-space-6, #{measurements.raw-space(6)})
+  );
 }
 
 .trackLg {
-  height: var(--fui-space-2, $fui-space-2); // 14px
+  --_progress-track-size: var(
+    --fui-progress-track-lg,
+    var(--fui-raw-space-8, #{measurements.raw-space(8)})
+  );
 }
 
 // Indicator (filled portion)
 .indicator {
-  height: 100%;
+  block-size: 100%;
   background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  transition: width var(--fui-transition-normal, $fui-transition-normal);
+  transition: inline-size var(--fui-transition-normal, $fui-transition-normal);
 }
 
 // Color variants
@@ -81,7 +89,7 @@
 
 // Indeterminate animation
 .indicatorIndeterminate {
-  width: 50% !important;
+  inline-size: 50%;
   animation: indeterminate 1.5s ease-in-out infinite;
 }
 
@@ -97,20 +105,19 @@
   }
 }
 
-// Complete state
-.root[data-complete] .indicator:not(.indicatorNeutral) {
-  background-color: var(--fui-color-success-text, $fui-color-success-text);
-}
-
 // Circular progress variant
 .circular {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  inline-size: var(--_progress-diameter);
+  block-size: var(--_progress-diameter);
 }
 
 .circularSvg {
+  inline-size: 100%;
+  block-size: 100%;
   transform: rotate(-90deg);
 }
 
@@ -123,6 +130,7 @@
   stroke: var(--fui-color-accent, $fui-color-accent);
   fill: none;
   stroke-linecap: round;
+  transform-origin: center;
   transition: stroke-dashoffset var(--fui-transition-normal, $fui-transition-normal);
 }
 
@@ -144,46 +152,58 @@
 
 @keyframes circularIndeterminate {
   0% {
-    stroke-dashoffset: 280;
+    stroke-dashoffset: var(--_progress-dash-full);
     transform: rotate(0deg);
   }
   50% {
-    stroke-dashoffset: 70;
+    stroke-dashoffset: var(--_progress-dash-quarter);
   }
   100% {
-    stroke-dashoffset: 280;
+    stroke-dashoffset: var(--_progress-dash-full);
     transform: rotate(360deg);
   }
 }
 
 .circularValue {
   position: absolute;
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
   font-variant-numeric: tabular-nums;
 }
 
-// Size variants for circular (using closest 7px grid values)
-.circularSm {
-  width: var(--fui-space-4, $fui-space-4); // 28px
-  height: var(--fui-space-4, $fui-space-4);
+.circularValueCompact {
+  @include typography.role("ui-compact");
+}
 
-  .circularValue {
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+.circularValueStandard {
+  @include typography.role("ui-standard");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .circularIndicator {
+    transition: none;
+  }
+
+  .indicatorIndeterminate,
+  .circularIndicatorIndeterminate {
+    animation: none;
   }
 }
 
-.circularMd {
-  width: var(--fui-space-6, $fui-space-6); // 42px
-  height: var(--fui-space-6, $fui-space-6);
-}
+@media (forced-colors: active) {
+  .track {
+    background-color: GrayText;
+  }
 
-.circularLg {
-  width: var(--fui-space-8, $fui-space-8); // 56px
-  height: var(--fui-space-8, $fui-space-8);
+  .indicator {
+    background-color: Highlight;
+  }
 
-  .circularValue {
-    font-size: var(--fui-font-size-base, $fui-font-size-base);
+  .circularTrack {
+    stroke: GrayText;
+  }
+
+  .circularIndicator {
+    stroke: Highlight;
   }
 }

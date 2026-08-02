@@ -1,5 +1,13 @@
 # @usefragments/ui
 
+## 1.6.0
+
+### Minor Changes
+
+- [`07300f6`](https://github.com/fragments-sdk/fragments/commit/07300f64a653dc3aeeaf56fea370da5b20641dfe) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Standardize component geometry, density, spacing, optical alignment, action treatments, form composition, overlays, navigation, feedback, and responsive containment across the UI library. Add the public measurement-target export and preserve the legacy toggle import through a compatibility alias.
+
+  Harden SCSS token serialization and improve governance scanning, repository identity reporting, local canonical discovery, agent-worktree containment, and hook round-trip diagnosis.
+
 ## 1.5.4
 
 ### Patch Changes

@@ -1,5 +1,7 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/layout";
 
 @mixin selected-surface {
   background-color: var(--fui-field-selection-bg, $fui-bg-hover);
@@ -18,14 +20,9 @@
 .chip {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
 
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  line-height: 1;
   white-space: nowrap;
   user-select: none;
 }
@@ -37,28 +34,19 @@
 
 // Sizes
 .xs {
-  min-height: var(--fui-target-size-min, $fui-target-size-min);
-  padding: 0 var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-  gap: var(--fui-space-0-5, $fui-space-0-5);
+  @include action.size("micro");
 }
 
 .sm {
-  min-height: var(--fui-button-height-sm, $fui-button-height-sm);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include action.size("sm");
 }
 
 .md {
-  min-height: var(--fui-button-height-md, $fui-button-height-md);
-  padding: 0 var(--fui-space-3, $fui-space-3);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include action.size("md");
 }
 
 .lg {
-  min-height: var(--fui-button-height-lg, $fui-button-height-lg);
-  padding: 0 var(--fui-space-4, $fui-space-4);
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
+  @include action.size("lg");
 }
 
 // Variants
@@ -82,7 +70,7 @@
 .outlined {
   background-color: transparent;
   color: var(--fui-text-primary, $fui-text-primary);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -120,7 +108,6 @@
 .avatar {
   display: flex;
   align-items: center;
-  margin-left: calc(-1 * var(--fui-space-1, $fui-space-1));
 
   img {
     width: var(--fui-icon-md, $fui-icon-md);
@@ -159,29 +146,31 @@
 .remove {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  line-height: 1;
   border-top-right-radius: var(--fui-radius-full, $fui-radius-full);
   border-bottom-right-radius: var(--fui-radius-full, $fui-radius-full);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   background-color: transparent;
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   border-left-color: var(--fui-border, $fui-border);
 
-  .xs & {
-    font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-    padding: 0 var(--fui-space-0-5, $fui-space-0-5);
+  .removableChip[data-size="xs"] & {
+    @include action.icon-only("micro");
   }
 
-  .sm & {
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  .removableChip[data-size="sm"] & {
+    @include action.icon-only("sm");
+  }
+
+  .removableChip[data-size="md"] & {
+    @include action.icon-only("md");
+  }
+
+  .removableChip[data-size="lg"] & {
+    @include action.icon-only("lg");
   }
 
   &:hover:not(:disabled) {
@@ -237,5 +226,5 @@
 .group {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("sm");
 }

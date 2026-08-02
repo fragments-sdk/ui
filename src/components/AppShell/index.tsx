@@ -71,7 +71,7 @@ export interface AppShellSidebarProps extends React.HTMLAttributes<HTMLDivElemen
   children: React.ReactNode;
   /** Width of expanded sidebar (default: '240px') */
   width?: string;
-  /** Width when collapsed (default: '64px') */
+  /** Width when collapsed (default: '56px') */
   collapsedWidth?: string;
   /** Collapse behavior */
   collapsible?: SidebarCollapsible;
@@ -79,6 +79,8 @@ export interface AppShellSidebarProps extends React.HTMLAttributes<HTMLDivElemen
   position?: "left" | "right";
   /** Default collapsed state */
   defaultCollapsed?: boolean;
+  /** Forwarded to Sidebar — where the active-item affordance paints */
+  activeIndicator?: "start" | "end";
   /** Visual treatment: `'floating'` blends sidebar with the shell background */
   variant?: AppShellSlotVariant;
   /** Background color override (accepts any CSS color value or token) */
@@ -156,7 +158,7 @@ const AppShellContext = React.createContext<AppShellContextValue>({
   structure: "default",
   headerHeight: "56px",
   sidebarWidth: "240px",
-  sidebarCollapsedWidth: "64px",
+  sidebarCollapsedWidth: "var(--fui-navigation-sidebar-collapsed-width, 56px)",
   asideWidth: "280px",
   asideVisible: false,
 });
@@ -204,7 +206,7 @@ function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
   const config: ExtractedConfig = {
     headerHeight: "56px",
     sidebarWidth: "240px",
-    sidebarCollapsedWidth: "64px",
+    sidebarCollapsedWidth: "var(--fui-navigation-sidebar-collapsed-width, 56px)",
     sidebarCollapsible: "icon",
     sidebarDefaultCollapsed: false,
     asideWidth: "280px",
@@ -384,10 +386,11 @@ function AppShellHeader({
 function AppShellSidebar({
   children,
   width = "240px",
-  collapsedWidth = "64px",
+  collapsedWidth = "var(--fui-navigation-sidebar-collapsed-width, 56px)",
   collapsible = "icon",
   position = "left",
   defaultCollapsed = false,
+  activeIndicator = "start",
   variant,
   bg,
   "aria-label": ariaLabel,
@@ -420,6 +423,7 @@ function AppShellSidebar({
         position={position}
         collapsible={collapsible}
         defaultCollapsed={defaultCollapsed}
+        activeIndicator={activeIndicator}
         aria-label={ariaLabel}
         style={bg ? { backgroundColor: bg } : undefined}
       >

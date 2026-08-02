@@ -1,0 +1,73 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+
+// ============================================
+// Theme Toggle - Fragmented Button Group
+// ============================================
+
+.toggleGroup {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+}
+
+.toggleButton {
+  @include button-reset;
+  @include interactive-base;
+  @include action.base;
+
+  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+  background-color: transparent;
+
+  &:hover:not(.toggleButtonActive) {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  // Keyboard focus ring is supplied by @include interactive-base.
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.toggleButtonActive {
+  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  color: var(--fui-text-primary, $fui-text-primary);
+  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+}
+
+// Size variants
+.sizeSm {
+  .toggleButton {
+    @include action.icon-only("sm");
+
+    svg {
+      @include action.glyph("sm");
+    }
+  }
+}
+
+.sizeMd {
+  .toggleButton {
+    @include action.icon-only("md");
+
+    svg {
+      @include action.glyph("md");
+    }
+  }
+}
+
+.sizeLg {
+  .toggleButton {
+    @include action.icon-only("lg");
+
+    svg {
+      @include action.glyph("lg");
+    }
+  }
+}

@@ -1,5 +1,7 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/representation" as representation;
+@use "../../recipes/typography" as typography;
 
 // Container
 .container {
@@ -37,66 +39,63 @@
 
 // Tooltip
 .tooltip {
+  @include representation.chart-tooltip;
+
   background: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
-  font-family: var(--fui-font-sans, $fui-font-sans);
 }
 
 .tooltipLabel {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  @include typography.role("ui-standard");
+
   color: var(--fui-text-primary, $fui-text-primary);
-  margin-bottom: var(--fui-space-1, $fui-space-1);
+  margin-block-end: var(--fui-raw-space-4, 4px);
 }
 
 .tooltipItems {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--fui-space-px, $fui-space-px) * 2);
+  gap: var(--_fui-chart-tooltip-item-gap);
 }
 
 .tooltipItem {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: var(--_fui-chart-tooltip-item-gap);
   justify-content: space-between;
-  min-width: 100px;
 }
 
 .tooltipIndicator {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
+  @include representation.chart-marker("dot");
+
   flex-shrink: 0;
 
   &.tooltipIndicatorLine {
-    width: 12px;
-    height: 2px;
+    @include representation.chart-marker("line");
+
     border-radius: var(--fui-radius-full, $fui-radius-full);
   }
 
   &.tooltipIndicatorDashed {
-    width: 12px;
-    height: 0;
-    border-top: 2px dashed;
+    @include representation.chart-marker("dashed");
+
+    box-sizing: border-box;
+    border-top: var(--fui-chart-marker-stroke, var(--fui-raw-space-2, 2px)) dashed;
     border-radius: 0;
   }
 }
 
 .tooltipItemLabel {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
 .tooltipItemValue {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-primary, $fui-text-primary);
   font-variant-numeric: tabular-nums;
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 // Legend
@@ -105,24 +104,24 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--fui-space-3, $fui-space-3);
-  padding-top: var(--fui-space-2, $fui-space-2);
+  gap: var(--fui-raw-space-12, 12px);
+  padding-block-start: var(--fui-raw-space-8, 8px);
 }
 
 .legendItem {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: var(--fui-raw-space-4, 4px);
 }
 
 .legendDot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
+  @include representation.chart-marker("dot");
+
   flex-shrink: 0;
 }
 
 .legendLabel {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include typography.role("ui-compact");
+
   color: var(--fui-text-secondary, $fui-text-secondary);
 }

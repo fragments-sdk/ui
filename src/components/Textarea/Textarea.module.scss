@@ -1,64 +1,87 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/field";
+@use "../../recipes/layout";
+@use "../../recipes/typography";
 
-// Form field wrapper (label + helper + error)
-@include form-field-wrapper;
+.wrapper {
+  @include field.wrapper;
+}
+
+.label {
+  @include field.label;
+}
+
+.required {
+  margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
+}
+
+.helper {
+  @include field.helper;
+}
+
+.helperError,
+.errorMessage {
+  @include field.error;
+}
 
 .textarea {
-  @include text-base;
   @include interactive-base;
-  @include field-shell;
+  @include field.shell;
 
   display: block;
   width: 100%;
-  min-height: var(--fui-input-height, $fui-input-height);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
-  font-family: inherit;
+  min-block-size: max(
+    var(--_fui-field-track),
+    calc(
+      var(--_fui-textarea-min-rows) * 1lh + 2 * var(--_fui-textarea-block-inset) + 2 *
+        var(--_fui-field-stroke)
+    )
+  );
+  max-block-size: calc(
+    var(--_fui-textarea-max-rows) * 1lh + 2 * var(--_fui-textarea-block-inset) + 2 *
+      var(--_fui-field-stroke)
+  );
+  padding-block: var(--_fui-textarea-block-inset);
 
   &::placeholder {
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
   &:focus-visible {
-    @include field-shell-focus;
+    @include field.focus-state;
   }
 
+  // Single-line: same track as Input — height lock, horizontal pad only.
   &[rows="1"] {
-    height: var(--fui-input-height, $fui-input-height);
-    min-height: var(--fui-input-height, $fui-input-height);
-    padding-block: var(--fui-space-2, $fui-space-2);
+    block-size: var(--_fui-field-track);
+    min-block-size: var(--_fui-field-track);
+    padding-block: calc(
+      (var(--_fui-field-track) - 1lh - 2 * var(--_fui-field-stroke)) / 2
+    );
     overflow-y: hidden;
   }
 }
 
 // Size variants
 .sm {
-  min-height: var(--fui-input-height-sm, $fui-input-height-sm);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include field.size("sm");
 
-  &[rows="1"] {
-    height: var(--fui-input-height-sm, $fui-input-height-sm);
-    min-height: var(--fui-input-height-sm, $fui-input-height-sm);
-    padding-block: var(--fui-space-1, $fui-space-1);
-  }
+  --_fui-textarea-block-inset: var(--fui-raw-space-6, #{measurements.raw-space(6)});
 }
 
 .md {
-  // Default size
+  @include field.size("md");
+
+  --_fui-textarea-block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 }
 
 .lg {
-  min-height: var(--fui-input-height-lg, $fui-input-height-lg);
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
+  @include field.size("lg");
 
-  &[rows="1"] {
-    height: var(--fui-input-height-lg, $fui-input-height-lg);
-    min-height: var(--fui-input-height-lg, $fui-input-height-lg);
-    padding-block: var(--fui-space-2, $fui-space-2);
-  }
+  --_fui-textarea-block-inset: var(--fui-raw-space-10, #{measurements.raw-space(10)});
 }
 
 // Resize variants
@@ -81,7 +104,7 @@
 // Error state via aria-invalid attribute (replaces JS class toggle: `error && styles.error`)
 .error,
 .textarea[aria-invalid] {
-  border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+  @include field.invalid-state;
 
   &:focus-visible {
     border-color: var(--fui-color-danger-text, $fui-color-danger-text);
@@ -115,12 +138,8 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: var(--fui-space-2, $fui-space-2);
-  min-height: calc(
-    var(--fui-font-size-xs, #{$fui-font-size-xs}) *
-      var(--fui-line-height-normal, #{$fui-line-height-normal}) +
-      var(--fui-space-1, #{$fui-space-1})
-  );
+  gap: layout.gap("sm");
+  min-block-size: typography.line-height("caption");
 
   &:empty {
     display: none;
@@ -129,9 +148,10 @@
 
 // Character counter
 .charCount {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
-  margin-left: auto;
+  @include typography.role("caption");
+
+  margin-block-start: var(--fui-field-message-gap);
+  margin-inline-start: auto;
   font-family: var(--fui-font-mono, $fui-font-mono);
   white-space: nowrap;
 }

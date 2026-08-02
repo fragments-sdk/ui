@@ -38,9 +38,9 @@ type Story = StoryObj<typeof meta>;
 type ControlSize = "sm" | "md" | "lg";
 
 const sizes = [
-  { size: "sm", expected: "32px" },
-  { size: "md", expected: "40px" },
-  { size: "lg", expected: "44px" },
+  { size: "sm", expected: "28px" },
+  { size: "md", expected: "32px" },
+  { size: "lg", expected: "40px" },
 ] as const satisfies Array<{ size: ControlSize; expected: string }>;
 
 const selectOptions = [
@@ -68,6 +68,7 @@ function SizeRow({ size, expected }: { size: ControlSize; expected: string }) {
       align="start"
       className={styles.sizeRow}
       data-size-row={size}
+      data-geometry-id={size === "md" ? "manual-control-md" : undefined}
     >
       <Stack gap="xs" className={styles.sizeMeta}>
         <Text size="xs" color="tertiary" weight="medium">
@@ -101,19 +102,14 @@ function SizeRow({ size, expected }: { size: ControlSize; expected: string }) {
             size={size}
             variant="secondary"
             data-control-size={size}
+            data-geometry-id={size === "md" ? "control-sizing-md" : undefined}
           >
             Create PR
           </Button>
         </Sample>
 
         <Sample label="IconButton">
-          <IconButton
-            className={styles.compactControl}
-            size={size}
-            variant="outlined"
-            aria-label="Settings"
-            data-control-size={size}
-          >
+          <IconButton size={size} variant="outlined" aria-label="Settings" data-control-size={size}>
             <Gear />
           </IconButton>
         </Sample>
@@ -206,8 +202,8 @@ export const ControlSizing: Story = {
             Control sizing
           </Text>
           <Text color="secondary">
-            Small controls share a 32px floor. Default and large controls align field and action
-            heights through the same density scale.
+            Small, default, and large controls share the 28px, 32px, and 40px canonical tracks.
+            Fields and actions align through the same fixed measurement scale.
           </Text>
         </Stack>
 
@@ -223,9 +219,9 @@ export const ControlSizing: Story = {
 
         <Card className={styles.section}>
           <Card.Header>
-            <Card.Title>Shared 32px controls</Card.Title>
+            <Card.Title>Shared compact controls</Card.Title>
             <Card.Description>
-              Components without a full size scale still use the shared small-control rhythm.
+              Components without a full size scale still use the shared compact-control rhythm.
             </Card.Description>
           </Card.Header>
           <Card.Body>

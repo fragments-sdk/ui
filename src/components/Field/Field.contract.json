@@ -145,7 +145,8 @@
       "Control",
       "Description",
       "Error",
-      "Validity"
+      "Validity",
+      "Required"
     ]
   },
   "provenance": {

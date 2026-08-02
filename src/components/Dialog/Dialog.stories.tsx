@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Dialog } from '.';
-import { Button } from '../Button';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Dialog } from ".";
+import { Button } from "../Button";
 
 /**
  * Modal overlay for focused user interactions such as confirmations and
@@ -8,42 +8,26 @@ import { Button } from '../Button';
  * Dialog.Footer, and Dialog.Close. Supports controlled open and modal mode.
  */
 const meta = {
-  title: 'Feedback/Dialog',
+  title: "Feedback/Dialog",
   component: Dialog,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Modal overlay for focused user interactions.',
+        component: "Modal overlay for focused user interactions.",
       },
     },
   },
   argTypes: {
-    defaultOpen: { control: 'boolean', description: 'Default open state' },
+    defaultOpen: { control: "boolean", description: "Default open state" },
     modal: {
-      control: 'boolean',
-      description: 'Block interaction with the rest of the page',
+      control: "boolean",
+      description: "Block interaction with the rest of the page",
     },
   },
   args: {
     modal: true,
     defaultOpen: false,
-    children: (
-      <>
-        <Dialog.Trigger asChild>
-          <Button>Open Dialog</Button>
-        </Dialog.Trigger>
-        <Dialog.Content>
-          <Dialog.Close />
-          <Dialog.Header>
-            <Dialog.Title>Dialog Title</Dialog.Title>
-            <Dialog.Description>
-              A brief description of what this dialog is for.
-            </Dialog.Description>
-          </Dialog.Header>
-        </Dialog.Content>
-      </>
-    ),
   },
 } satisfies Meta<typeof Dialog>;
 
@@ -61,9 +45,7 @@ export const Default: Story = {
         <Dialog.Close />
         <Dialog.Header>
           <Dialog.Title>Dialog Title</Dialog.Title>
-          <Dialog.Description>
-            A brief description of what this dialog is for.
-          </Dialog.Description>
+          <Dialog.Description>A brief description of what this dialog is for.</Dialog.Description>
         </Dialog.Header>
         <Dialog.Body>
           <p>Dialog content goes here.</p>
@@ -113,9 +95,7 @@ export const Large: Story = {
         <Dialog.Close />
         <Dialog.Header>
           <Dialog.Title>Settings</Dialog.Title>
-          <Dialog.Description>
-            Configure your application preferences.
-          </Dialog.Description>
+          <Dialog.Description>Configure your application preferences.</Dialog.Description>
         </Dialog.Header>
         <Dialog.Body>
           <p>This dialog has more space for complex forms or layouts.</p>
@@ -139,9 +119,7 @@ export const OpenByDefault: Story = {
         <Dialog.Close />
         <Dialog.Header>
           <Dialog.Title>Welcome</Dialog.Title>
-          <Dialog.Description>
-            This dialog is open when the story first renders.
-          </Dialog.Description>
+          <Dialog.Description>This dialog is open when the story first renders.</Dialog.Description>
         </Dialog.Header>
         <Dialog.Footer>
           <Dialog.Close asChild>

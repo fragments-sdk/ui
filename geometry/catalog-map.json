@@ -1,0 +1,482 @@
+{
+  "schemaVersion": 1,
+  "storyId": "cloud-geometry-evidence--catalog-smoke",
+  "entries": [
+    {
+      "catalogName": "Accordion",
+      "family": "surfaces",
+      "primitive": "accordion",
+      "caseId": "geometry/surfaces/accordion/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-accordion"
+    },
+    {
+      "catalogName": "Alert",
+      "family": "feedback",
+      "primitive": "alert",
+      "caseId": "geometry/feedback/alert/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-alert"
+    },
+    {
+      "catalogName": "AppShell",
+      "family": "navigation",
+      "primitive": "app-shell",
+      "caseId": "geometry/navigation/app-shell/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-app-shell"
+    },
+    {
+      "catalogName": "Avatar",
+      "family": "representation",
+      "primitive": "avatar",
+      "caseId": "geometry/representation/avatar/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-avatar"
+    },
+    {
+      "catalogName": "Badge",
+      "family": "representation",
+      "primitive": "badge",
+      "caseId": "geometry/representation/badge/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-badge"
+    },
+    {
+      "catalogName": "BentoGrid",
+      "family": "surfaces",
+      "primitive": "bento-grid",
+      "caseId": "geometry/surfaces/bento-grid/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-bento-grid"
+    },
+    {
+      "catalogName": "Box",
+      "family": "layout",
+      "primitive": "box",
+      "caseId": "geometry/layout/box/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-box"
+    },
+    {
+      "catalogName": "Breadcrumbs",
+      "family": "navigation",
+      "primitive": "breadcrumbs",
+      "caseId": "geometry/navigation/breadcrumbs/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-breadcrumbs"
+    },
+    {
+      "catalogName": "Button",
+      "family": "actions",
+      "primitive": "button",
+      "caseId": "geometry/actions/button/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-button"
+    },
+    {
+      "catalogName": "ButtonGroup",
+      "family": "actions",
+      "primitive": "button-group",
+      "caseId": "geometry/actions/button-group/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-button-group"
+    },
+    {
+      "catalogName": "Card",
+      "family": "surfaces",
+      "primitive": "card",
+      "caseId": "geometry/surfaces/card/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-card"
+    },
+    {
+      "catalogName": "Chart",
+      "family": "representation",
+      "primitive": "chart",
+      "caseId": "geometry/representation/chart/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-chart"
+    },
+    {
+      "catalogName": "Checkbox",
+      "family": "boolean-range",
+      "primitive": "checkbox",
+      "caseId": "geometry/boolean-range/checkbox/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-checkbox"
+    },
+    {
+      "catalogName": "Chip",
+      "family": "actions",
+      "primitive": "chip",
+      "caseId": "geometry/actions/chip/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-chip"
+    },
+    {
+      "catalogName": "CodeBlock",
+      "family": "prose",
+      "primitive": "code-block",
+      "caseId": "geometry/prose/code-block/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-code-block"
+    },
+    {
+      "catalogName": "Collapsible",
+      "family": "surfaces",
+      "primitive": "collapsible",
+      "caseId": "geometry/surfaces/collapsible/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-collapsible"
+    },
+    {
+      "catalogName": "ColorPicker",
+      "family": "fields",
+      "primitive": "color-picker",
+      "caseId": "geometry/fields/color-picker/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-color-picker"
+    },
+    {
+      "catalogName": "Combobox",
+      "family": "fields",
+      "primitive": "combobox",
+      "caseId": "geometry/fields/combobox/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-combobox"
+    },
+    {
+      "catalogName": "Command",
+      "family": "popups",
+      "primitive": "command",
+      "caseId": "geometry/popups/command/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-command"
+    },
+    {
+      "catalogName": "ConversationList",
+      "family": "representation",
+      "primitive": "conversation-list",
+      "caseId": "geometry/representation/conversation-list/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-conversation-list"
+    },
+    {
+      "catalogName": "DataTable",
+      "family": "data",
+      "primitive": "data-table",
+      "caseId": "geometry/data/data-table/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-data-table"
+    },
+    {
+      "catalogName": "DatePicker",
+      "family": "fields",
+      "primitive": "date-picker",
+      "caseId": "geometry/fields/date-picker/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-date-picker"
+    },
+    {
+      "catalogName": "Dialog",
+      "family": "overlays",
+      "primitive": "dialog",
+      "caseId": "geometry/overlays/dialog/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-dialog"
+    },
+    {
+      "catalogName": "Drawer",
+      "family": "overlays",
+      "primitive": "drawer",
+      "caseId": "geometry/overlays/drawer/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-drawer"
+    },
+    {
+      "catalogName": "Editor",
+      "family": "prose",
+      "primitive": "editor",
+      "caseId": "geometry/prose/editor/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-editor"
+    },
+    {
+      "catalogName": "EmptyState",
+      "family": "surfaces",
+      "primitive": "empty-state",
+      "caseId": "geometry/surfaces/empty-state/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-empty-state"
+    },
+    {
+      "catalogName": "Field",
+      "family": "fields",
+      "primitive": "field",
+      "caseId": "geometry/fields/field/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-field"
+    },
+    {
+      "catalogName": "Fieldset",
+      "family": "fields",
+      "primitive": "fieldset",
+      "caseId": "geometry/fields/fieldset/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-fieldset"
+    },
+    {
+      "catalogName": "Form",
+      "family": "fields",
+      "primitive": "form",
+      "caseId": "geometry/fields/form/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-form"
+    },
+    {
+      "catalogName": "Grid",
+      "family": "layout",
+      "primitive": "grid",
+      "caseId": "geometry/layout/grid/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-grid"
+    },
+    {
+      "catalogName": "Header",
+      "family": "navigation",
+      "primitive": "header",
+      "caseId": "geometry/navigation/header/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-header"
+    },
+    {
+      "catalogName": "Icon",
+      "family": "representation",
+      "primitive": "icon",
+      "caseId": "geometry/representation/icon/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-icon"
+    },
+    {
+      "catalogName": "IconButton",
+      "family": "actions",
+      "primitive": "icon-button",
+      "caseId": "geometry/actions/icon-button/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-icon-button"
+    },
+    {
+      "catalogName": "Image",
+      "family": "representation",
+      "primitive": "image",
+      "caseId": "geometry/representation/image/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-image"
+    },
+    {
+      "catalogName": "Input",
+      "family": "fields",
+      "primitive": "input",
+      "caseId": "geometry/fields/input/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-input"
+    },
+    {
+      "catalogName": "Link",
+      "family": "actions",
+      "primitive": "link",
+      "caseId": "geometry/actions/link/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-link"
+    },
+    {
+      "catalogName": "List",
+      "family": "prose",
+      "primitive": "list",
+      "caseId": "geometry/prose/list/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-list"
+    },
+    {
+      "catalogName": "Listbox",
+      "family": "popups",
+      "primitive": "listbox",
+      "caseId": "geometry/popups/listbox/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-listbox"
+    },
+    {
+      "catalogName": "Loading",
+      "family": "activity",
+      "primitive": "loading",
+      "caseId": "geometry/activity/loading/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-loading"
+    },
+    {
+      "catalogName": "Main",
+      "family": "layout",
+      "primitive": "main",
+      "caseId": "geometry/layout/main/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-main"
+    },
+    {
+      "catalogName": "Markdown",
+      "family": "prose",
+      "primitive": "markdown",
+      "caseId": "geometry/prose/markdown/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-markdown"
+    },
+    {
+      "catalogName": "Menu",
+      "family": "popups",
+      "primitive": "menu",
+      "caseId": "geometry/popups/menu/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-menu"
+    },
+    {
+      "catalogName": "Message",
+      "family": "prose",
+      "primitive": "message",
+      "caseId": "geometry/prose/message/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-message"
+    },
+    {
+      "catalogName": "NavigationMenu",
+      "family": "navigation",
+      "primitive": "navigation-menu",
+      "caseId": "geometry/navigation/navigation-menu/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-navigation-menu"
+    },
+    {
+      "catalogName": "Pagination",
+      "family": "actions",
+      "primitive": "pagination",
+      "caseId": "geometry/actions/pagination/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-pagination"
+    },
+    {
+      "catalogName": "Popover",
+      "family": "overlays",
+      "primitive": "popover",
+      "caseId": "geometry/overlays/popover/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-popover"
+    },
+    {
+      "catalogName": "Progress",
+      "family": "activity",
+      "primitive": "progress",
+      "caseId": "geometry/activity/progress/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-progress"
+    },
+    {
+      "catalogName": "Prompt",
+      "family": "actions",
+      "primitive": "prompt",
+      "caseId": "geometry/actions/prompt/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-prompt"
+    },
+    {
+      "catalogName": "RadioGroup",
+      "family": "boolean-range",
+      "primitive": "radio-group",
+      "caseId": "geometry/boolean-range/radio-group/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-radio-group"
+    },
+    {
+      "catalogName": "ScrollArea",
+      "family": "layout",
+      "primitive": "scroll-area",
+      "caseId": "geometry/layout/scroll-area/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-scroll-area"
+    },
+    {
+      "catalogName": "Select",
+      "family": "fields",
+      "primitive": "select",
+      "caseId": "geometry/fields/select/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-select"
+    },
+    {
+      "catalogName": "Separator",
+      "family": "layout",
+      "primitive": "separator",
+      "caseId": "geometry/layout/separator/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-separator"
+    },
+    {
+      "catalogName": "Sidebar",
+      "family": "navigation",
+      "primitive": "sidebar",
+      "caseId": "geometry/navigation/sidebar/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-sidebar"
+    },
+    {
+      "catalogName": "Skeleton",
+      "family": "representation",
+      "primitive": "skeleton",
+      "caseId": "geometry/representation/skeleton/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-skeleton"
+    },
+    {
+      "catalogName": "Slider",
+      "family": "boolean-range",
+      "primitive": "slider",
+      "caseId": "geometry/boolean-range/slider/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-slider"
+    },
+    {
+      "catalogName": "Stack",
+      "family": "layout",
+      "primitive": "stack",
+      "caseId": "geometry/layout/stack/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-stack"
+    },
+    {
+      "catalogName": "Switch",
+      "family": "boolean-range",
+      "primitive": "switch",
+      "caseId": "geometry/boolean-range/switch/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-switch"
+    },
+    {
+      "catalogName": "Table",
+      "family": "data",
+      "primitive": "table",
+      "caseId": "geometry/data/table/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-table"
+    },
+    {
+      "catalogName": "TableOfContents",
+      "family": "navigation",
+      "primitive": "table-of-contents",
+      "caseId": "geometry/navigation/table-of-contents/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-table-of-contents"
+    },
+    {
+      "catalogName": "Tabs",
+      "family": "segmented",
+      "primitive": "tabs",
+      "caseId": "geometry/segmented/tabs/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-tabs"
+    },
+    {
+      "catalogName": "Text",
+      "family": "prose",
+      "primitive": "text",
+      "caseId": "geometry/prose/text/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-text"
+    },
+    {
+      "catalogName": "Textarea",
+      "family": "fields",
+      "primitive": "textarea",
+      "caseId": "geometry/fields/textarea/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-textarea"
+    },
+    {
+      "catalogName": "Theme",
+      "family": "foundations",
+      "primitive": "theme",
+      "caseId": "geometry/foundations/theme/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-theme"
+    },
+    {
+      "catalogName": "ThinkingIndicator",
+      "family": "activity",
+      "primitive": "thinking-indicator",
+      "caseId": "geometry/activity/thinking-indicator/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-thinking-indicator"
+    },
+    {
+      "catalogName": "Toast",
+      "family": "feedback",
+      "primitive": "toast",
+      "caseId": "geometry/feedback/toast/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-toast"
+    },
+    {
+      "catalogName": "ToggleGroup",
+      "family": "segmented",
+      "primitive": "toggle-group",
+      "caseId": "geometry/segmented/toggle-group/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-toggle-group"
+    },
+    {
+      "catalogName": "Tooltip",
+      "family": "overlays",
+      "primitive": "tooltip",
+      "caseId": "geometry/overlays/tooltip/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-tooltip"
+    },
+    {
+      "catalogName": "VisuallyHidden",
+      "family": "accessibility",
+      "primitive": "visually-hidden",
+      "caseId": "geometry/accessibility/visually-hidden/default/na/light/catalog-smoke-1440",
+      "selectorValue": "catalog-visually-hidden"
+    }
+  ]
+}

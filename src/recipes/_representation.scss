@@ -1,0 +1,193 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "action" as action;
+@use "typography" as typography;
+
+@function _raw($step) {
+  @return var(--fui-raw-space-#{$step}, #{measurements.raw-space($step)});
+}
+
+@function avatar-size($size) {
+  $step: null;
+
+  @if $size == "xs" {
+    $step: 24;
+  } @else if $size == "sm" {
+    $step: 32;
+  } @else if $size == "md" {
+    $step: 40;
+  } @else if $size == "lg" {
+    $step: 48;
+  } @else if $size == "xl" {
+    $step: 64;
+  } @else {
+    @error "Unknown avatar size '#{$size}'. Expected xs, sm, md, lg, or xl.";
+  }
+
+  @return var(--fui-avatar-size-#{$size}, #{_raw($step)});
+}
+
+@function avatar-overlap($size) {
+  $step: null;
+
+  @if $size == "xs" {
+    $step: 6;
+  } @else if $size == "sm" {
+    $step: 8;
+  } @else if $size == "md" {
+    $step: 10;
+  } @else if $size == "lg" {
+    $step: 12;
+  } @else if $size == "xl" {
+    $step: 16;
+  } @else {
+    @error "Unknown avatar overlap '#{$size}'. Expected xs, sm, md, lg, or xl.";
+  }
+
+  @return var(--fui-avatar-overlap-#{$size}, #{_raw($step)});
+}
+
+@function icon-size($size) {
+  @if $size ==
+    "xs" or
+    $size ==
+    "sm" or
+    $size ==
+    "md" or
+    $size ==
+    "lg" or
+    $size ==
+    "xl" or
+    $size ==
+    "2xl"
+  {
+    @return var(--fui-icon-#{$size}, #{measurements.target-value("icon", $size)});
+  }
+
+  @error "Unknown icon size '#{$size}'. Expected xs, sm, md, lg, xl, or 2xl.";
+}
+
+@function activity-size($size) {
+  @if $size == "sm" {
+    @return icon-size("md");
+  } @else if $size == "md" {
+    @return icon-size("lg");
+  } @else if $size == "lg" {
+    @return icon-size("xl");
+  } @else if $size == "xl" {
+    @return icon-size("2xl");
+  }
+
+  @error "Unknown activity size '#{$size}'. Expected sm, md, lg, or xl.";
+}
+
+@function badge-track($size) {
+  @if $size == "sm" {
+    @return var(--fui-badge-track-sm, #{_raw(20)});
+  } @else if $size == "md" {
+    @return var(--fui-badge-track-md, #{_raw(24)});
+  } @else if $size == "lg" {
+    @return var(--fui-badge-track-lg, #{action.track("sm")});
+  }
+
+  @error "Unknown badge size '#{$size}'. Expected sm, md, or lg.";
+}
+
+@mixin avatar($size) {
+  $type-role: "ui-standard";
+
+  @if $size == "xs" or $size == "sm" {
+    $type-role: "ui-compact";
+  } @else if $size == "xl" {
+    $type-role: "title-md";
+  }
+
+  @include typography.role($type-role);
+
+  inline-size: avatar-size($size);
+  block-size: avatar-size($size);
+  overflow: hidden;
+  border-radius: var(--fui-radius-full);
+}
+
+@mixin avatar-group-item($size) {
+  margin-inline-start: calc(-1 * #{avatar-overlap($size)});
+  border: var(--fui-stroke-default, #{measurements.target-value("stroke", "default")}) solid
+    var(--fui-bg-primary);
+}
+
+@mixin glyph($size) {
+  inline-size: icon-size($size);
+  block-size: icon-size($size);
+  flex: 0 0 auto;
+}
+
+@mixin activity($size) {
+  --_fui-activity-size: #{activity-size($size)};
+
+  inline-size: var(--_fui-activity-size);
+  block-size: var(--_fui-activity-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+@mixin skeleton($kind, $size) {
+  @if $kind == "avatar" {
+    @if $size == "sm" {
+      inline-size: avatar-size("sm");
+      block-size: avatar-size("sm");
+    } @else if $size == "md" {
+      inline-size: avatar-size("md");
+      block-size: avatar-size("md");
+    } @else if $size == "lg" {
+      inline-size: avatar-size("lg");
+      block-size: avatar-size("lg");
+    } @else {
+      @error "Unknown skeleton size '#{$size}'. Expected sm, md, or lg.";
+    }
+  } @else if $kind == "button" or $kind == "field" {
+    @if $size == "sm" or $size == "md" or $size == "lg" {
+      block-size: action.track($size);
+    } @else {
+      @error "Unknown skeleton size '#{$size}'. Expected sm, md, or lg.";
+    }
+  } @else {
+    @error "Unknown skeleton kind '#{$kind}'. Expected avatar, button, or field.";
+  }
+}
+
+@mixin badge($size) {
+  @if $size == "sm" {
+    @include typography.role("ui-compact");
+  } @else if $size == "md" or $size == "lg" {
+    @include typography.role("ui-standard");
+  } @else {
+    @error "Unknown badge size '#{$size}'. Expected sm, md, or lg.";
+  }
+
+  min-block-size: badge-track($size);
+}
+
+@mixin chart-marker($kind) {
+  @if $kind == "dot" {
+    inline-size: var(--fui-chart-marker-dot, #{_raw(8)});
+    block-size: var(--fui-chart-marker-dot, #{_raw(8)});
+    border-radius: var(--fui-radius-full);
+  } @else if $kind == "line" or $kind == "dashed" {
+    inline-size: var(--fui-chart-marker-inline, #{_raw(12)});
+    block-size: var(--fui-chart-marker-stroke, #{_raw(2)});
+  } @else {
+    @error "Unknown chart marker '#{$kind}'. Expected dot, line, or dashed.";
+  }
+}
+
+@mixin chart-tooltip {
+  @include typography.role("body-compact");
+
+  --_fui-chart-tooltip-item-gap: #{_raw(8)};
+
+  min-inline-size: var(--fui-chart-tooltip-min-inline, 100px);
+  padding-block: _raw(8);
+  padding-inline: _raw(12);
+}

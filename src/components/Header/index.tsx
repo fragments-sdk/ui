@@ -8,6 +8,7 @@ import { useFocusTrap } from '../../utils/a11y';
 import { ScrollArea } from '../ScrollArea';
 import styles from './Header.module.scss';
 import { useSidebar } from '../Sidebar';
+import { POPUP_OFFSET_PX } from '../../recipes/popup';
 
 // ============================================
 // Types
@@ -495,7 +496,7 @@ function HeaderNavMenu({
             : <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />}
         </BaseMenu.Trigger>
         <BaseMenu.Portal>
-          <BaseMenu.Positioner side="bottom" align="start" sideOffset={4} className={styles.navMenuPositioner}>
+          <BaseMenu.Positioner side="bottom" align="start" sideOffset={POPUP_OFFSET_PX} className={styles.navMenuPositioner}>
             <BaseMenu.Popup className={styles.navMenuPopup}>
               {children}
             </BaseMenu.Popup>

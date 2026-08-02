@@ -1,10 +1,11 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action";
 
 .button {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
+  @include action.base;
 
   --_button-bg: transparent;
   --_button-bg-hover: var(--fui-bg-hover, #{$fui-bg-hover});
@@ -16,11 +17,7 @@
   --_button-shadow-hover: var(--_button-shadow);
   --_button-shadow-active: var(--_button-shadow);
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  border: 1px solid var(--_button-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_button-border);
   border-radius: var(--fui-button-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
   background: var(--_button-bg);
   box-shadow: var(--_button-shadow);
@@ -65,33 +62,36 @@
   }
 }
 
-// Sizes
-// Note: Button padding intentionally diverges from the control-size mixin
-// (md: space-3 vs mixin's space-4, lg: space-4 vs mixin's space-5).
-// Buttons need tighter horizontal padding than inputs for visual balance,
-// since button text is typically shorter than input content.
 .xs {
-  min-height: var(--fui-button-height-xs, $fui-button-height-xs);
-  padding: 0 var(--fui-space-1, $fui-space-1);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include action.size("micro");
+
+  > svg {
+    @include action.glyph("micro");
+  }
 }
 
 .sm {
-  min-height: var(--fui-button-height-sm, $fui-button-height-sm);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+  @include action.size("sm");
+
+  > svg {
+    @include action.glyph("sm");
+  }
 }
 
 .md {
-  min-height: var(--fui-button-height-md, $fui-button-height-md);
-  padding: 0 var(--fui-space-3, $fui-space-3);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include action.size("md");
+
+  > svg {
+    @include action.glyph("md");
+  }
 }
 
 .lg {
-  min-height: var(--fui-button-height-lg, $fui-button-height-lg);
-  padding: 0 var(--fui-space-4, $fui-space-4);
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
+  @include action.size("lg");
+
+  > svg {
+    @include action.glyph("lg");
+  }
 }
 
 // ============================================
@@ -101,20 +101,29 @@
 // uneven. When an icon leads or trails text, reduce padding on the icon
 // side so the content appears optically centered.
 //
-// Uses :has() + :first-child/:last-child to detect icon position without
-// JS. The negative margin pulls the icon into the padding zone, compensating
-// for the icon's inherent visual whitespace.
-
-.button:not(.icon) {
-  > svg:first-child:not(:last-child) {
-    // Leading icon: pull left to optically balance
-    margin-left: calc(var(--fui-space-1, $fui-space-1) * -0.5);
-  }
-
-  > svg:last-child:not(:first-child) {
-    // Trailing icon: pull right to optically balance
-    margin-right: calc(var(--fui-space-1, $fui-space-1) * -0.5);
-  }
+.xs:not(.icon):has(> svg:first-child:not(:last-child)) {
+  padding-inline-start: action.icon-side-inset("micro");
+}
+.xs:not(.icon):has(> svg:last-child:not(:first-child)) {
+  padding-inline-end: action.icon-side-inset("micro");
+}
+.sm:not(.icon):has(> svg:first-child:not(:last-child)) {
+  padding-inline-start: action.icon-side-inset("sm");
+}
+.sm:not(.icon):has(> svg:last-child:not(:first-child)) {
+  padding-inline-end: action.icon-side-inset("sm");
+}
+.md:not(.icon):has(> svg:first-child:not(:last-child)) {
+  padding-inline-start: action.icon-side-inset("md");
+}
+.md:not(.icon):has(> svg:last-child:not(:first-child)) {
+  padding-inline-end: action.icon-side-inset("md");
+}
+.lg:not(.icon):has(> svg:first-child:not(:last-child)) {
+  padding-inline-start: action.icon-side-inset("lg");
+}
+.lg:not(.icon):has(> svg:last-child:not(:first-child)) {
+  padding-inline-end: action.icon-side-inset("lg");
 }
 
 // Variants
@@ -188,6 +197,8 @@
 // takes its hit target from the text and the row's own padding. That makes it
 // the wrong choice for a standalone action — reach for `ghost` there.
 .quiet {
+  @include action.inline;
+
   --_button-bg: transparent;
   --_button-bg-hover: transparent;
   --_button-bg-active: transparent;
@@ -198,8 +209,6 @@
   --_button-shadow-hover: none;
   --_button-shadow-active: none;
 
-  min-height: 0;
-  padding: 0;
   font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
 
   // Only the custom property is restated: `color` reads it on .button, so the
@@ -257,24 +266,10 @@
 
 // Icon-only button (square aspect ratio)
 .icon {
-  aspect-ratio: 1;
-  padding: 0;
-
-  &.xs {
-    width: var(--fui-button-height-xs, $fui-button-height-xs);
-  }
-
-  &.sm {
-    width: var(--fui-button-height-sm, $fui-button-height-sm);
-  }
-
-  &.md {
-    width: var(--fui-button-height-md, $fui-button-height-md);
-  }
-
-  &.lg {
-    width: var(--fui-button-height-lg, $fui-button-height-lg);
-  }
+  inline-size: var(--_fui-action-track);
+  block-size: var(--_fui-action-track);
+  min-block-size: var(--_fui-action-track);
+  padding-inline: 0;
 }
 
 // Full width

@@ -10,7 +10,7 @@
   "propsSummary": [
     "children: node (required)",
     "variant: filled|outlined|outline|soft (default: filled)",
-    "size: xs|sm|md|lg (default: md)",
+    "size: xs|sm|md|lg (default: xs)",
     "selected: boolean (default: false)",
     "icon: node",
     "avatar: node",
@@ -35,7 +35,7 @@
     "size": {
       "type": "enum",
       "description": "Chip size",
-      "default": "md",
+      "default": "xs",
       "required": false,
       "values": ["xs", "sm", "md", "lg"]
     },
@@ -93,6 +93,7 @@
     "guidelines": [
       "Keep chip labels short (1-3 words)",
       "Use Chip.Group for multi-select sets with shared state",
+      "Keep the default micro size for filters and tags; opt into a larger size only when the surrounding control track requires it",
       "Use onRemove only when users should be able to dismiss the chip",
       "Pair avatar chips with user-related selections (assignees, reviewers)",
       "Provide an explicit value on Chip when using non-string/custom JSX children inside Chip.Group"
@@ -172,7 +173,7 @@
     "propsSummary": [
       "children: ReactNode - chip label (required)",
       "variant: filled|outlined|outline|soft - visual style",
-      "size: sm|md - chip size",
+      "size: xs|sm|md|lg - chip size (xs by default)",
       "selected: boolean - selection state",
       "icon/avatar: ReactNode - leading visual",
       "onRemove: () => void - makes chip removable",

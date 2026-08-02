@@ -36,6 +36,19 @@ describe('Message', () => {
     );
     // Default avatar renders an SVG
     expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(container.querySelector('[class*="avatar"]')).toHaveClass('sm');
+  });
+
+  it('uses the public avatar image fallback seam when an image fails', () => {
+    const { container } = render(
+      <Message role="assistant">
+        <Message.Avatar src="/missing.png" alt="Assistant" />
+        <Message.Content>Hi</Message.Content>
+      </Message>
+    );
+
+    expect(container.querySelector('img')).toHaveAttribute('alt', 'Assistant');
+    expect(container.querySelector('[class*="avatar"]')).toHaveClass('sm');
   });
 
   it('marks avatarless assistant and user messages for compact role-aware spacing', () => {

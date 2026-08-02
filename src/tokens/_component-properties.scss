@@ -5,8 +5,8 @@
 // doing so would override each component's fallback/inheritance behavior.
 // Governance reads this file as the explicit vocabulary for dynamic values.
 @mixin fui-component-property-contract {
-  --fui-checkbox-radius: 0.25rem;
-  --fui-grid-min-child-width: 16rem;
+  --fui-checkbox-radius: var(--fui-radius-sm);
+  --fui-grid-min-child-width: var(--fui-layout-measure-grid-cell);
   --fui-line-clamp: 2;
   --fui-navmenu-viewport-height: 0px;
   --fui-navmenu-viewport-left: 0px;

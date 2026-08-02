@@ -1,0 +1,67 @@
+@use "../tokens/measurements.generated" as measurements;
+
+@function _raw($step) {
+  @return var(--fui-raw-space-#{$step}, #{measurements.raw-space($step)});
+}
+
+@function gap($name) {
+  @if $name == "none" {
+    @return _raw(0);
+  } @else if $name == "xs" {
+    @return _raw(4);
+  } @else if $name == "sm" {
+    @return _raw(8);
+  } @else if $name == "md" {
+    @return _raw(12);
+  } @else if $name == "lg" {
+    @return _raw(16);
+  } @else if $name == "xl" {
+    @return _raw(24);
+  }
+
+  @error "Unknown layout gap '#{$name}'. Expected none, xs, sm, md, lg, or xl.";
+}
+
+@function numeric-gap($step) {
+  @if $step == 1 {
+    @return _raw(4);
+  } @else if $step == 2 {
+    @return _raw(8);
+  } @else if $step == 3 {
+    @return _raw(12);
+  } @else if $step == 4 {
+    @return _raw(16);
+  } @else if $step == 5 {
+    @return _raw(20);
+  } @else if $step == 6 {
+    @return _raw(24);
+  } @else if $step == 7 {
+    @return _raw(32);
+  } @else if $step == 8 {
+    @return _raw(40);
+  }
+
+  @error "Unknown numeric layout gap '#{$step}'. Expected an integer from 1 through 8.";
+}
+
+@function page-gutter() {
+  @return _raw(24);
+}
+
+@function measure($role) {
+  @if
+    $role == "field-minimum" or
+    $role == "inline-floor" or
+    $role == "compact-content" or
+    $role == "grid-cell" or
+    $role == "composer-item" or
+    $role == "page-narrow"
+  {
+    @return var(
+      --fui-layout-measure-#{$role},
+      #{measurements.target-value("layoutMeasure", $role)}
+    );
+  }
+
+  @error "Unknown layout measure '#{$role}'.";
+}

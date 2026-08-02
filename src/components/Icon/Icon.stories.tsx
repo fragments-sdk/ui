@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Heart, Star, Check, Warning, Info } from '@phosphor-icons/react';
-import { Icon } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Heart, Star, Check, Warning, Info } from "@phosphor-icons/react";
+import { Icon } from ".";
 
 /**
  * Icon is a wrapper for icon components with consistent sizing and semantic
@@ -9,48 +9,47 @@ import { Icon } from '.';
  * for meaning.
  */
 const meta = {
-  title: 'Display/Icon',
+  title: "Display/Icon",
   component: Icon,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Wrapper for icon components with consistent sizing and semantic colors.',
+        component: "Wrapper for icon components with consistent sizing and semantic colors.",
       },
     },
   },
   argTypes: {
     size: {
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Icon size',
+      control: "select",
+      options: ["xs", "sm", "md", "lg", "xl", "2xl"],
+      description: "Icon size",
     },
     weight: {
-      control: 'select',
-      options: ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'],
-      description: 'Optional icon style/weight hint',
+      control: "select",
+      options: ["thin", "light", "regular", "bold", "fill", "duotone"],
+      description: "Optional icon style/weight hint",
     },
     variant: {
-      control: 'select',
+      control: "select",
       options: [
-        'default',
-        'primary',
-        'secondary',
-        'tertiary',
-        'accent',
-        'success',
-        'warning',
-        'error',
+        "default",
+        "primary",
+        "secondary",
+        "tertiary",
+        "accent",
+        "success",
+        "warning",
+        "error",
       ],
-      description: 'Semantic color variant',
+      description: "Semantic color variant",
     },
   },
   args: {
     icon: Heart,
-    size: 'md',
-    weight: 'regular',
-    variant: 'default',
+    size: "md",
+    weight: "regular",
+    variant: "default",
   },
 } satisfies Meta<typeof Icon>;
 
@@ -63,18 +62,18 @@ export const Default: Story = {
 };
 
 export const Large: Story = {
-  args: { icon: Star, size: 'xl' },
+  args: { icon: Star, size: "2xl" },
 };
 
 export const Success: Story = {
-  args: { icon: Check, variant: 'success' },
+  args: { icon: Check, variant: "success" },
 };
 
 export const Warning_: Story = {
-  name: 'Warning',
-  args: { icon: Warning, variant: 'warning' },
+  name: "Warning",
+  args: { icon: Warning, variant: "warning" },
 };
 
 export const Accent: Story = {
-  args: { icon: Info, variant: 'accent', weight: 'fill' },
+  args: { icon: Info, variant: "accent", weight: "fill" },
 };

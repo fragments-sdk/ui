@@ -3,14 +3,7 @@
   "name": "ToggleGroup",
   "description": "A group of toggle buttons where only one can be selected at a time. Useful for switching between views, modes, or options.",
   "category": "forms",
-  "tags": [
-    "toggle",
-    "group",
-    "fragmented",
-    "control",
-    "tabs",
-    "switch"
-  ],
+  "tags": ["toggle", "group", "fragmented", "control", "tabs", "switch"],
   "status": "stable",
   "sourcePath": "src/components/ToggleGroup/index.tsx",
   "exportName": "ToggleGroup",
@@ -22,7 +15,7 @@
     "children: node (required)",
     "variant: default|pills|outline|outlined (default: default)",
     "size: sm|md|lg (default: md)",
-    "gap: sm|none|xs (default: xs)",
+    "gap: sm|none|xs (default: xs for pills; none otherwise)",
     "selectionMode: single (default: single)"
   ],
   "props": {
@@ -56,43 +49,27 @@
       "description": "Visual style",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "pills",
-        "outline",
-        "outlined"
-      ]
+      "values": ["default", "pills", "outline", "outlined"]
     },
     "size": {
       "type": "enum",
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "gap": {
       "type": "enum",
-      "description": "Gap between items (pills/outline variants)",
-      "default": "xs",
+      "description": "Gap between items in the pills variant. Connected variants intentionally ignore gaps.",
       "required": false,
-      "values": [
-        "sm",
-        "none",
-        "xs"
-      ]
+      "values": ["sm", "none", "xs"]
     },
     "selectionMode": {
       "type": "enum",
       "description": "Selection behavior",
       "default": "single",
       "required": false,
-      "values": [
-        "single"
-      ]
+      "values": ["single"]
     }
   },
   "usage": {
@@ -112,6 +89,7 @@
       "Keep options to 2-5 items for clarity",
       "Use clear, concise labels",
       "Consider icons for common actions (grid/list view)",
+      "Use default for an inset tonal rail, pills for an open filter cluster, and outline for connected bordered segments",
       "Ensure adequate touch targets on mobile"
     ],
     "accessibility": [
@@ -182,20 +160,15 @@
       "onChange: (value: string) => void - change handler (or onValueChange)",
       "children: ToggleGroup.Item[] - toggle items",
       "variant: default|pills|outline|outlined - visual style (outlined aliases outline)",
-      "size: sm|md - size variant",
-      "gap: none|xs|sm - spacing",
+      "size: sm|md|lg - size variant",
+      "gap: none|xs|sm - pills spacing (xs by default; connected variants remain gapless)",
       "selectionMode: single (default: single)"
     ],
-    "a11yRules": [
-      "A11Y_GROUP_ROLE",
-      "A11Y_KEYBOARD_ACCESSIBLE"
-    ]
+    "a11yRules": ["A11Y_GROUP_ROLE", "A11Y_KEYBOARD_ACCESSIBLE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Item"
-    ]
+    "subComponents": ["Item"]
   },
   "provenance": {
     "source": "migrated",

@@ -1,64 +1,66 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
-import preserveDirectives from 'rollup-plugin-preserve-directives';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { resolve } from "path";
+import preserveDirectives from "rollup-plugin-preserve-directives";
 
 export default defineConfig({
   plugins: [
     react(),
-    // Exclude stylesheets — the plugin parses module AST and blows up on SCSS.
-    preserveDirectives({ exclude: ["**/*.{scss,css,sass}"] }),
+    // This library-only parser is also present when Storybook merges the Vite
+    // config. Keep its transform surface to JavaScript/TypeScript so HTML and
+    // stylesheets never reach Rollup's module parser.
+    preserveDirectives({
+      include: ["**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"],
+      exclude: ["**/*.{scss,css,sass}"],
+    }),
   ],
   build: {
     lib: {
       entry: {
-        index: resolve(__dirname, 'src/index.ts'),
-        datepicker: resolve(__dirname, 'src/components/DatePicker/index.tsx'),
-        chart: resolve(__dirname, 'src/components/Chart/index.tsx'),
-        markdown: resolve(__dirname, 'src/components/Markdown/index.tsx'),
-        codeblock: resolve(__dirname, 'src/components/CodeBlock/index.tsx'),
-        colorpicker: resolve(__dirname, 'src/components/ColorPicker/index.tsx'),
-        table: resolve(__dirname, 'src/components/Table/index.tsx'),
-        'data-table': resolve(
-          __dirname,
-          'src/components/DataTable/index.tsx',
-        ),
-        'data-table-virtual': resolve(
-          __dirname,
-          'src/components/DataTable/DataTable.virtual.tsx',
-        ),
-        editor: resolve(__dirname, 'src/components/Editor/index.tsx'),
+        index: resolve(__dirname, "src/index.ts"),
+        measurements: resolve(__dirname, "src/measurements/index.ts"),
+        datepicker: resolve(__dirname, "src/components/DatePicker/index.tsx"),
+        chart: resolve(__dirname, "src/components/Chart/index.tsx"),
+        markdown: resolve(__dirname, "src/components/Markdown/index.tsx"),
+        codeblock: resolve(__dirname, "src/components/CodeBlock/index.tsx"),
+        colorpicker: resolve(__dirname, "src/components/ColorPicker/index.tsx"),
+        table: resolve(__dirname, "src/components/Table/index.tsx"),
+        "data-table": resolve(__dirname, "src/components/DataTable/index.tsx"),
+        "data-table-virtual": resolve(__dirname, "src/components/DataTable/DataTable.virtual.tsx"),
+        editor: resolve(__dirname, "src/components/Editor/index.tsx"),
       },
-      formats: ['es', 'cjs'],
-      cssFileName: 'ui',
+      formats: ["es", "cjs"],
+      cssFileName: "ui",
     },
     rollupOptions: {
       onwarn(warning, warn) {
         // Directives are preserved by rollup-plugin-preserve-directives; Rollup
         // still emits MODULE_LEVEL_DIRECTIVE noise for every "use client" file.
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") return;
         warn(warning);
       },
       external: (id) =>
-        /^(react|react-dom|react\/jsx-runtime|@base-ui\/react|@phosphor-icons\/react|@floating-ui|use-sync-external-store|react-markdown|recharts|remark-gfm|react-day-picker|date-fns|shiki|react-colorful|@tanstack\/|@tiptap)/.test(id),
+        /^(react|react-dom|react\/jsx-runtime|@base-ui\/react|@phosphor-icons\/react|@floating-ui|use-sync-external-store|react-markdown|recharts|remark-gfm|react-day-picker|date-fns|shiki|react-colorful|@tanstack\/|@tiptap)/.test(
+          id
+        ),
       output: {
         preserveModules: true,
-        preserveModulesRoot: 'src',
-        assetFileNames: 'assets/[name][extname]',
+        preserveModulesRoot: "src",
+        assetFileNames: "assets/[name][extname]",
       },
     },
     cssCodeSplit: false,
     sourcemap: false,
     minify: false,
-    outDir: 'dist',
+    outDir: "dist",
   },
   css: {
     modules: {
-      localsConvention: 'camelCase',
+      localsConvention: "camelCase",
     },
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
+        api: "modern-compiler",
       },
     },
   },

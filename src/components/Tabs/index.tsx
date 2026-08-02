@@ -65,7 +65,7 @@ export interface TabsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 const TabsVariantContext = React.createContext<"underline" | "pills">("underline");
-const TabsSizeContext = React.createContext<ControlSize>("sm");
+const TabsSizeContext = React.createContext<ControlSize>("md");
 
 // ============================================
 // Components
@@ -82,7 +82,7 @@ function TabsRoot({
   className,
   ...htmlProps
 }: TabsProps) {
-  const size = useResolvedControlSize(sizeProp, "sm");
+  const size = useResolvedControlSize(sizeProp);
   const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (

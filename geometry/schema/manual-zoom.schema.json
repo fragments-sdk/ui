@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:manual-zoom",
+  "title": "Manual browser zoom evidence",
+  "type": "object",
+  "required": ["schemaVersion", "records"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "records": {
+      "type": "array",
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/record" }
+    }
+  },
+  "additionalProperties": false,
+  "unevaluatedProperties": false,
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "identity": {
+      "type": "object",
+      "required": ["provider", "userId", "login"],
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "userId": { "type": "string", "minLength": 1 },
+        "login": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "dimensions": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "caseId",
+        "storyId",
+        "route",
+        "selectorValue",
+        "captureMethod",
+        "browserZoomPercent",
+        "browserName",
+        "browserVersion",
+        "os",
+        "architecture",
+        "deviceScaleFactor",
+        "cssViewport",
+        "windowInner",
+        "overflow",
+        "screenshotPath",
+        "screenshotSha256",
+        "sourceRevision",
+        "dirty",
+        "capturedAt",
+        "operator",
+        "reviewer",
+        "decision",
+        "reviewedAt",
+        "caseExecutionSha256",
+        "storybookTreeSha256",
+        "reviewBundleSha256",
+        "notes"
+      ],
+      "properties": {
+        "caseId": {
+          "enum": [
+            "geometry/harness/control-sizing/default/md/light/manual-zoom-200",
+            "geometry/foundations/field-track/default/md/light/manual-zoom-200",
+            "geometry/foundations/typography/default/ui-standard/light/manual-zoom-200"
+          ]
+        },
+        "storyId": {
+          "enum": [
+            "cloud-control-sizing--control-sizing",
+            "foundations-measurement-targets--target-lineup"
+          ]
+        },
+        "route": { "type": "string", "pattern": "^/iframe\\.html\\?id=[a-z0-9-]+--[a-z0-9-]+$" },
+        "selectorValue": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
+        "captureMethod": { "const": "browser-ui" },
+        "browserZoomPercent": { "const": 200 },
+        "browserName": { "type": "string", "minLength": 1 },
+        "browserVersion": { "type": "string", "minLength": 1 },
+        "os": { "type": "string", "minLength": 1 },
+        "architecture": { "type": "string", "minLength": 1 },
+        "deviceScaleFactor": { "type": "number", "exclusiveMinimum": 0 },
+        "cssViewport": { "$ref": "#/$defs/dimensions" },
+        "windowInner": { "$ref": "#/$defs/dimensions" },
+        "overflow": {
+          "type": "object",
+          "required": ["horizontal", "vertical"],
+          "properties": {
+            "horizontal": { "type": "boolean" },
+            "vertical": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "screenshotPath": { "$ref": "#/$defs/repositoryPath" },
+        "screenshotSha256": { "$ref": "#/$defs/sha256" },
+        "sourceRevision": { "$ref": "#/$defs/revision" },
+        "dirty": { "type": "boolean" },
+        "capturedAt": { "$ref": "#/$defs/timestamp" },
+        "operator": { "$ref": "#/$defs/identity" },
+        "reviewer": { "$ref": "#/$defs/identity" },
+        "decision": { "enum": ["pending", "approved", "rejected"] },
+        "reviewedAt": { "$ref": "#/$defs/timestamp" },
+        "caseExecutionSha256": { "$ref": "#/$defs/sha256" },
+        "storybookTreeSha256": { "$ref": "#/$defs/sha256" },
+        "reviewBundleSha256": { "$ref": "#/$defs/sha256" },
+        "notes": { "type": "string", "maxLength": 4000 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "decision": { "const": "approved" } }, "required": ["decision"] },
+          "then": { "properties": { "dirty": { "const": false } } }
+        }
+      ],
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    }
+  }
+}

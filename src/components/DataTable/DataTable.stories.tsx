@@ -59,10 +59,15 @@ const meta = {
     },
   },
   argTypes: {
+    density: {
+      control: 'select',
+      options: ['compact', 'regular', 'relaxed'],
+      description: 'Canonical row density',
+    },
     size: {
       control: 'select',
       options: ['sm', 'md'],
-      description: 'Table density',
+      description: 'Deprecated density alias',
     },
     sortable: { control: 'boolean', description: 'Enable column sorting' },
     selectable: { control: 'boolean', description: 'Enable row selection' },
@@ -74,7 +79,7 @@ const meta = {
     bordered: { control: 'boolean', description: 'Bordered container' },
     captionHidden: { control: 'boolean' },
   },
-  args: { columns, data, size: 'md' },
+  args: { columns, data, density: 'regular' },
 } satisfies Meta<DataTableProps<User>>;
 
 export default meta;

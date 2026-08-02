@@ -1,80 +1,46 @@
+@use '../../tokens/measurements.generated' as measurements;
 @use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-
-// ============================================
-// ScrollArea Root
-// ============================================
 
 .root {
+  --fui-scrollarea-track-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+  --fui-scrollarea-inline-fade: var(--fui-raw-space-48, #{measurements.raw-space(48)});
+  --fui-scrollarea-block-fade: var(--fui-raw-space-32, #{measurements.raw-space(32)});
+  --_fui-scrollarea-track-size: var(
+    --fui-scrollarea-track-size,
+    var(--fui-raw-space-6, #{measurements.raw-space(6)})
+  );
+  --_fui-scrollarea-inline-fade: var(
+    --fui-scrollarea-inline-fade,
+    var(--fui-raw-space-48, #{measurements.raw-space(48)})
+  );
+  --_fui-scrollarea-block-fade: var(
+    --fui-scrollarea-block-fade,
+    var(--fui-raw-space-32, #{measurements.raw-space(32)})
+  );
+
   position: relative;
   overflow: hidden;
 }
 
-// ============================================
-// Fade masks — applied to the viewport via CSS mask-image.
-// This fades out the actual content at the edges, which is
-// far more visible than overlaying a gradient pseudo-element.
-// ============================================
-
-.fadeMaskEnd {
-  &.horizontal {
-    mask-image: linear-gradient(to right, black calc(100% - 48px), transparent 100%);
-  }
-
-  &.vertical {
-    mask-image: linear-gradient(to bottom, black calc(100% - 32px), transparent 100%);
-  }
-
-  &.both {
-    mask-image: linear-gradient(to right, black calc(100% - 48px), transparent 100%);
-  }
-}
-
-.fadeMaskStart {
-  &.horizontal {
-    mask-image: linear-gradient(to left, black calc(100% - 48px), transparent 100%);
-  }
-
-  &.vertical {
-    mask-image: linear-gradient(to top, black calc(100% - 32px), transparent 100%);
-  }
-
-  &.both {
-    mask-image: linear-gradient(to left, black calc(100% - 48px), transparent 100%);
-  }
-}
-
-.fadeMaskBoth {
-  &.horizontal {
-    mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent 100%);
-  }
-
-  &.vertical {
-    mask-image: linear-gradient(to bottom, transparent, black 32px, black calc(100% - 32px), transparent 100%);
-  }
-
-  &.both {
-    mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent 100%);
-  }
-}
-
-// ============================================
-// Viewport (scrollable area)
-// ============================================
-
 .viewport {
-  width: 100%;
-  height: 100%;
+  --_fui-scrollarea-inline-mask: linear-gradient(black, black);
+  --_fui-scrollarea-block-mask: linear-gradient(black, black);
+
+  inline-size: 100%;
+  block-size: 100%;
   overflow: hidden;
-  // Reserve gutter space so the thumb revealing on hover doesn't shift
-  // content; transparent at rest gives the overlay-scrollbar look.
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
+  mask-image: var(--_fui-scrollarea-inline-mask), var(--_fui-scrollarea-block-mask);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  mask-composite: intersect;
+  -webkit-mask-image: var(--_fui-scrollarea-inline-mask), var(--_fui-scrollarea-block-mask);
+  -webkit-mask-composite: source-in;
 
-  // Webkit custom scrollbar
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: var(--_fui-scrollarea-track-size);
+    height: var(--_fui-scrollarea-track-size);
   }
 
   &::-webkit-scrollbar-track {
@@ -82,27 +48,26 @@
   }
 
   &::-webkit-scrollbar-thumb {
+    border-radius: var(--fui-radius-full, #{$fui-radius-full});
     background-color: transparent;
-    border-radius: var(--fui-radius-full, $fui-radius-full);
-    transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+    transition: background-color var(--fui-transition-fast, #{$fui-transition-fast});
   }
 
-  // Reveal thumb while the viewport is hovered
-  &:hover {
-    scrollbar-color: var(--fui-border-strong, $fui-border-strong) transparent;
+  &:hover,
+  &:focus-within,
+  &[data-scrollbar-visibility='always'] {
+    scrollbar-color: var(--fui-border-strong, #{$fui-border-strong}) transparent;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--fui-border-strong, #{$fui-border-strong});
+    }
   }
 
-  &:hover::-webkit-scrollbar-thumb {
-    background-color: var(--fui-border-strong, $fui-border-strong);
-  }
-
-  // Darker when hovering the thumb itself
   &::-webkit-scrollbar-thumb:hover {
-    background-color: var(--fui-text-tertiary, $fui-text-tertiary);
+    background-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
   }
 }
 
-// Orientation variants
 .horizontal {
   overflow-x: auto;
   overflow-y: hidden;
@@ -117,33 +82,94 @@
   overflow: auto;
 }
 
-// ============================================
-// Scrollbar visibility modes
-// ============================================
+.horizontal:not([data-scroll-x='none']),
+.both:not([data-scroll-x='none']) {
+  scroll-padding-inline: var(--_fui-scrollarea-inline-fade);
+}
 
-// Always show scrollbar
-.scrollbarAlways {
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--fui-border-strong, $fui-border-strong);
+.vertical:not([data-scroll-y='none']),
+.both:not([data-scroll-y='none']) {
+  scroll-padding-block: var(--_fui-scrollarea-block-fade);
+}
+
+.viewport[data-scroll-x='end'] {
+  --_fui-scrollarea-inline-mask: linear-gradient(
+    to right,
+    black calc(100% - var(--_fui-scrollarea-inline-fade)),
+    transparent
+  );
+}
+
+.viewport[data-scroll-x='start'] {
+  --_fui-scrollarea-inline-mask: linear-gradient(
+    to right,
+    transparent,
+    black var(--_fui-scrollarea-inline-fade)
+  );
+}
+
+.viewport[data-scroll-x='both'] {
+  --_fui-scrollarea-inline-mask: linear-gradient(
+    to right,
+    transparent,
+    black var(--_fui-scrollarea-inline-fade),
+    black calc(100% - var(--_fui-scrollarea-inline-fade)),
+    transparent
+  );
+}
+
+.viewport[data-scroll-x='end']:dir(rtl) {
+  --_fui-scrollarea-inline-mask: linear-gradient(
+    to right,
+    transparent,
+    black var(--_fui-scrollarea-inline-fade)
+  );
+}
+
+.viewport[data-scroll-x='start']:dir(rtl) {
+  --_fui-scrollarea-inline-mask: linear-gradient(
+    to right,
+    black calc(100% - var(--_fui-scrollarea-inline-fade)),
+    transparent
+  );
+}
+
+.viewport[data-scroll-y='end'] {
+  --_fui-scrollarea-block-mask: linear-gradient(
+    to bottom,
+    black calc(100% - var(--_fui-scrollarea-block-fade)),
+    transparent
+  );
+}
+
+.viewport[data-scroll-y='start'] {
+  --_fui-scrollarea-block-mask: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--_fui-scrollarea-block-fade)
+  );
+}
+
+.viewport[data-scroll-y='both'] {
+  --_fui-scrollarea-block-mask: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--_fui-scrollarea-block-fade),
+    black calc(100% - var(--_fui-scrollarea-block-fade)),
+    transparent
+  );
+}
+
+@media (forced-colors: active) {
+  .viewport {
+    scrollbar-color: CanvasText Canvas;
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 }
 
-// Only show scrollbar on hover
-.scrollbarHover {
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-
-  &:hover {
-    scrollbar-width: thin;
-
-    &::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .viewport::-webkit-scrollbar-thumb {
+    transition: none;
   }
 }
-

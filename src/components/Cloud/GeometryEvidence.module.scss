@@ -1,0 +1,27 @@
+.frame {
+  min-height: 100vh;
+  background: var(--fui-app-main-bg, var(--fui-bg-primary));
+}
+
+.intro {
+  display: grid;
+  gap: var(--fui-space-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--fui-space-12) * 5), 1fr));
+  gap: var(--fui-space-4);
+  align-items: start;
+}
+
+.specimen {
+  contain: layout paint style;
+  min-width: 0;
+  height: calc(var(--fui-space-12) * 3);
+}
+
+.label {
+  display: block;
+  margin-block-end: var(--fui-space-3);
+}

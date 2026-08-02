@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:exception-ledger",
+  "title": "Geometry exception ledger",
+  "type": "object",
+  "required": ["schemaVersion", "ledgerKind", "entries"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "ledgerKind": { "enum": ["optical", "cascade"] },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "additionalProperties": false,
+  "unevaluatedProperties": false,
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+    },
+    "identity": {
+      "type": "object",
+      "required": ["provider", "userId", "login"],
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "userId": { "type": "string", "minLength": 1 },
+        "login": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "approvalId",
+        "decision",
+        "approvedBy",
+        "approvedAt",
+        "reviewBundleSha256",
+        "designDecisionId"
+      ],
+      "properties": {
+        "approvalId": { "type": "string", "minLength": 1 },
+        "decision": { "const": "approved" },
+        "approvedBy": { "$ref": "#/$defs/identity" },
+        "approvedAt": { "$ref": "#/$defs/timestamp" },
+        "reviewBundleSha256": { "$ref": "#/$defs/sha256" },
+        "designDecisionId": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "required": [
+        "exceptionId",
+        "ownerBrief",
+        "reason",
+        "dependency",
+        "caseId",
+        "expiresWhen",
+        "approval"
+      ],
+      "properties": {
+        "exceptionId": {
+          "type": "string",
+          "pattern": "^geometry-exception/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/v[0-9]+$"
+        },
+        "ownerBrief": { "type": "string", "pattern": "^[0-9]{2}$" },
+        "reason": { "type": "string", "minLength": 1 },
+        "dependency": { "type": "string", "minLength": 1 },
+        "caseId": {
+          "type": "string",
+          "pattern": "^geometry/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:compact|default|relaxed|na)/[a-z0-9]+(?:-[a-z0-9]+)*/(?:light|dark|forced)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "expiresWhen": { "type": "string", "minLength": 1 },
+        "approval": { "$ref": "#/$defs/approval" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

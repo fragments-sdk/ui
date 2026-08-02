@@ -1,4 +1,4 @@
-@use "../../tokens/variables" as *;
+@use "../../recipes/layout";
 
 .group {
   display: flex;
@@ -14,7 +14,7 @@
   }
 
   > *:not(:first-child) {
-    margin-left: -1px;
+    margin-inline-start: calc(-1 * var(--fui-stroke-hairline, 1px));
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -31,15 +31,15 @@
 }
 
 .gap-xs {
-  gap: var(--fui-space-1, $fui-space-1);
+  gap: layout.gap("xs");
 }
 
 .gap-sm {
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("sm");
 }
 
 .gap-md {
-  gap: var(--fui-space-3, $fui-space-3);
+  gap: layout.gap("md");
 }
 
 // Wrap

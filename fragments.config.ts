@@ -24,10 +24,26 @@ export function publicUiPrimitiveNames(
 const config: FragmentsConfig = {
   include: ["src/**/*.contract.json"],
   exclude: ["**/node_modules/**"],
-  components: ["src/**/index.tsx", "src/**/*.tsx"],
+  components: [
+    "src/**/index.tsx",
+    "src/**/*.tsx",
+    // ThemeToggle remains a physical module behind the public Theme identity.
+    // Scope this exception to component discovery so its stylesheet still
+    // participates in governance source discovery.
+    "!src/components/ThemeToggle/**",
+  ],
   framework: "react",
   performance: "standard",
   tokens: {
+    // The authored-contract compiler still consumes tokens.include rather than
+    // the richer governance sources below. Keep the curated catalog on shared
+    // public authorities; component-local custom properties remain scan inputs
+    // but must not be promoted into the public token vocabulary.
+    include: [
+      "src/tokens/_variables.scss",
+      "src/tokens/_component-properties.scss",
+      "src/tokens/_measurements.catalog.generated.css",
+    ],
     sources: [
       {
         path: "src/tokens/_variables.scss",
@@ -36,6 +52,13 @@ const config: FragmentsConfig = {
       {
         path: "src/tokens/_component-properties.scss",
         format: "scss",
+      },
+      {
+        // Governance sources take precedence over tokens.include. Keep the
+        // generated fixed roles in both projections so the undefined-token
+        // gate validates the same public vocabulary as the catalog.
+        path: "src/tokens/_measurements.catalog.generated.css",
+        format: "css",
       },
       {
         path: "src/components/**/*.module.scss",

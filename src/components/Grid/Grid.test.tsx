@@ -1,47 +1,46 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, expectNoA11yViolations } from '../../test/utils';
-import { Grid } from './index';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, expectNoA11yViolations } from "../../test/utils";
+import { Grid } from "./index";
 
-describe('Grid', () => {
-  it('renders children', () => {
+describe("Grid", () => {
+  it("renders children", () => {
     render(
       <Grid>
         <div>Item 1</div>
         <div>Item 2</div>
       </Grid>
     );
-    expect(screen.getByText('Item 1')).toBeInTheDocument();
-    expect(screen.getByText('Item 2')).toBeInTheDocument();
+    expect(screen.getByText("Item 1")).toBeInTheDocument();
+    expect(screen.getByText("Item 2")).toBeInTheDocument();
   });
 
-  it('applies fixed column class', () => {
+  it("applies fixed column class", () => {
     const { container } = render(<Grid columns={3}>Content</Grid>);
-    expect(container.firstChild).toHaveClass('columns3');
+    expect(container.firstChild).toHaveClass("columns3");
   });
 
-  it('applies responsive column CSS variables', () => {
-    const { container } = render(
-      <Grid columns={{ base: 1, md: 2, lg: 3 }}>Content</Grid>
-    );
+  it("applies responsive column CSS variables", () => {
+    const { container } = render(<Grid columns={{ base: 1, md: 2, lg: 3 }}>Content</Grid>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toHaveClass('columnsResponsive');
-    expect(el.style.getPropertyValue('--fui-grid-cols')).toBe('1');
-    expect(el.style.getPropertyValue('--fui-grid-cols-md')).toBe('2');
-    expect(el.style.getPropertyValue('--fui-grid-cols-lg')).toBe('3');
+    expect(el).toHaveClass("columnsResponsive");
+    expect(el.style.getPropertyValue("--fui-grid-cols")).toBe("1");
+    expect(el.style.getPropertyValue("--fui-grid-cols-md")).toBe("2");
+    expect(el.style.getPropertyValue("--fui-grid-cols-lg")).toBe("3");
   });
 
-  it('applies gap classes', () => {
+  it("maps named gaps to the fixed layout recipe", () => {
     const { container } = render(<Grid gap="lg">Content</Grid>);
-    expect(container.firstChild).toHaveClass('gapLg');
+    const el = container.firstChild as HTMLElement;
+    expect(el.style.getPropertyValue("--_fui-grid-gap")).toBe("var(--fui-raw-space-16, 16px)");
   });
 
-  it('forwards ref', () => {
+  it("forwards ref", () => {
     const ref = vi.fn();
     render(<Grid ref={ref}>Content</Grid>);
     expect(ref).toHaveBeenCalled();
   });
 
-  it('renders Grid.Item with colSpan', () => {
+  it("renders Grid.Item with colSpan", () => {
     const { container } = render(
       <Grid columns={3}>
         <Grid.Item colSpan={2}>Wide</Grid.Item>
@@ -49,16 +48,16 @@ describe('Grid', () => {
       </Grid>
     );
     // The item that contains "Wide" should have colSpan class
-    expect(container.querySelector('.colSpan2')).toBeInTheDocument();
+    expect(container.querySelector(".colSpan2")).toBeInTheDocument();
   });
 
-  it('applies inline style for numeric gap values', () => {
-    const { container } = render(<Grid gap={3}>Content</Grid>);
+  it("maps every numeric gap, including seven, to the fixed layout recipe", () => {
+    const { container } = render(<Grid gap={7}>Content</Grid>);
     const el = container.firstChild as HTMLElement;
-    expect(el.style.gap).toBe('var(--fui-space-3)');
+    expect(el.style.getPropertyValue("--_fui-grid-gap")).toBe("var(--fui-raw-space-32, 32px)");
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <Grid columns={2}>
         <Grid.Item>A</Grid.Item>

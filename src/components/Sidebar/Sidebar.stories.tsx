@@ -29,6 +29,11 @@ const meta = {
       options: ['icon', 'offcanvas', 'none'],
       description: 'Collapse behavior mode',
     },
+    activeIndicator: {
+      control: 'select',
+      options: ['start', 'end'],
+      description: 'Placement of the active-item affordance',
+    },
     defaultCollapsed: { control: 'boolean', description: 'Initial collapsed state' },
   },
   args: {
@@ -81,6 +86,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const EndActiveIndicator: Story = {
+  args: { activeIndicator: 'end' },
+};
 
 export const WithBadges: Story = {
   render: (args) => (

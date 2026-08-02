@@ -1,9 +1,14 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { createRequire } from "node:module";
 import { join, relative, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
+import { MEASUREMENT_PROFILES } from "./measurements";
+
 type PackageManifest = {
+  exports?: Record<string, unknown>;
   peerDependencies?: Record<string, string>;
   peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   publishConfig?: {
@@ -17,6 +22,7 @@ const manifest = JSON.parse(
 ) as PackageManifest;
 
 const indexSource = readFileSync(resolve(packageRoot, "src/index.ts"), "utf8");
+const nodeRequire = createRequire(import.meta.url);
 
 const USE_CLIENT_RE = /^['"]use client['"]\s*;?/m;
 
@@ -54,17 +60,12 @@ function walkFiles(dir: string, out: string[] = []): string[] {
 
 function srcFilesWithUseClient(): string[] {
   const srcRoot = resolve(packageRoot, "src");
-  return walkFiles(srcRoot).filter((file) =>
-    USE_CLIENT_RE.test(readFileSync(file, "utf8"))
-  );
+  return walkFiles(srcRoot).filter((file) => USE_CLIENT_RE.test(readFileSync(file, "utf8")));
 }
 
 /** Map src/foo/bar.tsx → dist/foo/bar.js (preserveModulesRoot: src). */
 function distEsmPathForSrc(srcFile: string): string {
-  const rel = relative(resolve(packageRoot, "src"), srcFile).replace(
-    /\.(tsx|ts|jsx|js)$/,
-    ".js"
-  );
+  const rel = relative(resolve(packageRoot, "src"), srcFile).replace(/\.(tsx|ts|jsx|js)$/, ".js");
   return resolve(packageRoot, "dist", rel);
 }
 
@@ -97,15 +98,171 @@ describe("main barrel does not statically pull @tanstack/react-virtual (#7a)", (
 describe("style entrypoints carry a types condition (#7b)", () => {
   for (const key of ["./styles", "./globals"]) {
     it(`publishConfig.exports['${key}'] declares types first`, () => {
-      const entry = manifest.publishConfig?.exports?.[key] as
-        | Record<string, string>
-        | undefined;
+      const entry = manifest.publishConfig?.exports?.[key] as Record<string, string> | undefined;
       expect(entry, `${key} export condition object`).toBeTypeOf("object");
       expect(entry?.types, `${key} types condition`).toBeTruthy();
       // `types` must precede sass/default per Node/TS condition-order rules.
       expect(Object.keys(entry ?? {})[0]).toBe("types");
     });
   }
+});
+
+describe("measurements public subpath", () => {
+  const developmentEntry = manifest.exports?.["./measurements"];
+  const publishedEntry = manifest.publishConfig?.exports?.["./measurements"] as
+    | {
+        import?: Record<string, string>;
+        require?: Record<string, string>;
+      }
+    | undefined;
+
+  it("declares matching development and published exports", () => {
+    expect(developmentEntry).toBe("./src/measurements/index.ts");
+    expect(publishedEntry).toBeTypeOf("object");
+    expect(Object.keys(publishedEntry?.import ?? {})[0]).toBe("types");
+    expect(Object.keys(publishedEntry?.require ?? {})[0]).toBe("types");
+    expect(publishedEntry?.import).toEqual({
+      types: "./dist/measurements/index.d.ts",
+      default: "./dist/measurements.js",
+    });
+    expect(publishedEntry?.require).toEqual({
+      types: "./dist/measurements/index.d.ts",
+      default: "./dist/measurements.cjs",
+    });
+  });
+
+  it("keeps the source entry framework-free and off the root barrel", () => {
+    const entrySource = readFileSync(resolve(packageRoot, "src/measurements/index.ts"), "utf8");
+    const generatedSource = readFileSync(
+      resolve(packageRoot, "src/measurements/generated.ts"),
+      "utf8"
+    );
+
+    expect(entrySource).not.toMatch(USE_CLIENT_RE);
+    expect(generatedSource).not.toMatch(USE_CLIENT_RE);
+    expect(entrySource).not.toMatch(/\breact\b/i);
+    expect(generatedSource).not.toMatch(/\breact\b/i);
+
+    for (const symbol of [
+      "MEASUREMENT_PROFILES",
+      "applyMeasurementSelection",
+      "measurementPx",
+      "MeasurementDensity",
+      "MeasurementRadiusStyle",
+      "MeasurementSelection",
+    ]) {
+      expect(indexSource).not.toContain(symbol);
+    }
+  });
+
+  it("wires generated profiles and fixed targets into the built stylesheet", () => {
+    const css = readFileSync(resolve(packageRoot, "dist/assets/ui.css"), "utf8");
+    const declaration = (selector: string, property: string) => {
+      const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const match = css.match(
+        new RegExp(`${escape(selector)}\\s*\\{[^}]*${escape(property)}:\\s*([^;]+);`, "s")
+      );
+      expect(match, `missing ${property} in ${selector}`).not.toBeNull();
+      return match?.[1].trim();
+    };
+
+    for (const [step, value] of Object.entries(MEASUREMENT_PROFILES.rawSpace)) {
+      const property = `--fui-raw-space-${step}`;
+      expect(declaration(":root", property)).toBe(value);
+      expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
+    }
+
+    for (const [group, values] of Object.entries(MEASUREMENT_PROFILES.targets)) {
+      const groupName = group.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
+      for (const [name, value] of Object.entries(values)) {
+        const property = `--fui-${groupName}-${name}`;
+        expect(declaration(":root", property)).toBe(value);
+        expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
+      }
+    }
+
+    for (const [role, record] of Object.entries(MEASUREMENT_PROFILES.typography)) {
+      for (const [name, value] of Object.entries(record)) {
+        const property = `--fui-type-${role}-${name}`;
+        expect(declaration(":root", property)).toBe(String(value));
+        expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
+      }
+    }
+
+    for (const [density, profile] of Object.entries(MEASUREMENT_PROFILES.density)) {
+      const selector = `[data-fui-density=${density}]`;
+      expect(declaration(selector, "--fui-base-unit")).toBe(profile.baseUnit);
+      for (const [size, targetSize] of [
+        ["xs", "micro"],
+        ["sm", "sm"],
+        ["md", "md"],
+        ["lg", "lg"],
+      ] as const) {
+        const property =
+          targetSize === "micro"
+            ? "--fui-control-track-micro"
+            : `--fui-control-track-${targetSize}`;
+        expect(declaration(selector, `--fui-control-height-${size}`)).toBe(
+          `var(${property}, ${MEASUREMENT_PROFILES.targets.controlTrack[targetSize]})`
+        );
+      }
+      for (const [alias, expected] of [
+        ["--fui-button-height-xs", "var(--fui-control-height-xs)"],
+        ["--fui-button-height-sm", "var(--fui-control-height-sm)"],
+        ["--fui-button-height-md", "var(--fui-control-height-md)"],
+        ["--fui-button-height-lg", "var(--fui-control-height-lg)"],
+        ["--fui-input-height-sm", "var(--fui-field-track-sm, 28px)"],
+        ["--fui-input-height", "var(--fui-field-track-md, 32px)"],
+        ["--fui-input-height-lg", "var(--fui-field-track-lg, 40px)"],
+        ["--fui-target-size-min", "var(--fui-touch-sm)"],
+      ] as const) {
+        expect(declaration(selector, alias)).toBe(expected);
+      }
+    }
+
+    for (const [radiusStyle, profile] of Object.entries(MEASUREMENT_PROFILES.radius)) {
+      for (const [size, value] of Object.entries(profile)) {
+        expect(declaration(`[data-fui-radius-style=${radiusStyle}]`, `--fui-radius-${size}`)).toBe(
+          value
+        );
+      }
+    }
+
+    expect(declaration(":root", "--fui-button-height-md")).toBe("var(--fui-control-height-md)");
+    expect(declaration(":root", "--fui-input-height")).toBe("var(--fui-field-track-md)");
+  });
+
+  it("ships ESM, CommonJS, and literal declarations with symbol parity", async () => {
+    const esmPath = resolve(packageRoot, "dist/measurements.js");
+    const cjsPath = resolve(packageRoot, "dist/measurements.cjs");
+    const declarationPath = resolve(packageRoot, "dist/measurements/index.d.ts");
+
+    for (const file of [esmPath, cjsPath, declarationPath]) {
+      expect(existsSync(file), `missing ${relative(packageRoot, file)}`).toBe(true);
+    }
+
+    const esm = (await import(pathToFileURL(esmPath).href)) as Record<string, unknown>;
+    const cjs = nodeRequire(cjsPath) as Record<string, unknown>;
+    for (const symbol of ["MEASUREMENT_PROFILES", "applyMeasurementSelection", "measurementPx"]) {
+      expect(esm[symbol], `ESM missing ${symbol}`).toBeDefined();
+      expect(cjs[symbol], `CJS missing ${symbol}`).toBeDefined();
+      expect(typeof esm[symbol]).toBe(typeof cjs[symbol]);
+    }
+
+    const declarations = readFileSync(declarationPath, "utf8");
+    expect(declarations).toContain("MeasurementDensity");
+    expect(declarations).toContain("MeasurementRadiusStyle");
+    expect(declarations).toContain("MeasurementSelection");
+    expect(declarations).toContain("applyMeasurementSelection");
+    expect(declarations).toContain("measurementPx");
+
+    const rootEsm = (await import(
+      pathToFileURL(resolve(packageRoot, "dist/index.js")).href
+    )) as Record<string, unknown>;
+    expect(rootEsm).not.toHaveProperty("MEASUREMENT_PROFILES");
+    expect(rootEsm).not.toHaveProperty("applyMeasurementSelection");
+    expect(rootEsm).not.toHaveProperty("measurementPx");
+  });
 });
 
 describe("published dist preserves use client directives (P0 packaging)", () => {
@@ -135,9 +292,7 @@ describe("published dist preserves use client directives (P0 packaging)", () => 
       "dist missing — run `pnpm --filter @usefragments/ui build` before packaging tests"
     ).toBe(true);
 
-    expect(stripped, `stripped use client in:\n${stripped.join("\n")}`).toEqual(
-      []
-    );
+    expect(stripped, `stripped use client in:\n${stripped.join("\n")}`).toEqual([]);
   });
 
   it("keeps the directive on named lib entries and CJS Button", () => {
@@ -156,10 +311,9 @@ describe("published dist preserves use client directives (P0 packaging)", () => 
     for (const name of namedEntries) {
       const file = resolve(packageRoot, "dist", name);
       expect(existsSync(file), `missing ${name}`).toBe(true);
-      expect(
-        USE_CLIENT_RE.test(readFileSync(file, "utf8")),
-        `${name} missing use client`
-      ).toBe(true);
+      expect(USE_CLIENT_RE.test(readFileSync(file, "utf8")), `${name} missing use client`).toBe(
+        true
+      );
     }
 
     const buttonCjs = resolve(packageRoot, "dist/components/Button/index.cjs");
@@ -213,9 +367,7 @@ describe("dist ESM contains no bare require() calls (P0 packaging)", () => {
 describe("published ./styles default CSS includes tokens (P0 packaging)", () => {
   it("sass condition still points at globals.scss", () => {
     for (const key of ["./styles", "./globals"]) {
-      const entry = manifest.publishConfig?.exports?.[key] as
-        | Record<string, string>
-        | undefined;
+      const entry = manifest.publishConfig?.exports?.[key] as Record<string, string> | undefined;
       expect(entry?.sass).toBe("./src/styles/globals.scss");
     }
   });

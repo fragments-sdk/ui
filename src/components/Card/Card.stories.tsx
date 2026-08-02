@@ -3,6 +3,7 @@ import { Card } from ".";
 import { Progress } from "../Progress";
 import { Stack } from "../Stack";
 import { Text } from "../Text";
+import fixtureStyles from "./Card.consumer-fixture.module.scss";
 
 /**
  * Card is a container for grouping related content into a distinct surface. It
@@ -122,6 +123,23 @@ export const Panel: Story = {
   ),
 };
 
+export const PanelWithAside: Story = {
+  render: () => (
+    <Card variant="panel" padding="none" style={{ width: 420 }}>
+      <Card.Header divided>
+        <Stack gap="none">
+          <Card.Title>Adoption</Card.Title>
+          <Card.Description>Trailing controls pin to the end edge.</Card.Description>
+        </Stack>
+        <Text as="span" size="xs" color="secondary">
+          3m
+        </Text>
+      </Card.Header>
+      <Card.Body padding="md">Panel body</Card.Body>
+    </Card>
+  ),
+};
+
 export const NestedHeading: Story = {
   render: () => (
     <Card variant="panel" padding="none" style={{ width: 360 }}>
@@ -153,5 +171,37 @@ export const ContentOnly: Story = {
     <Card>
       <Card.Body>Just content, no header or footer.</Card.Body>
     </Card>
+  ),
+};
+
+export const GeometryMatrix: Story = {
+  render: () => (
+    <Stack gap="md" data-geometry-family="surfaces/card">
+      {(["none", "sm", "md", "lg"] as const).map((padding) => (
+        <Card key={padding} padding={padding} data-geometry-size={padding}>
+          <Card.Title>{padding}</Card.Title>
+          <Card.Body>Inset reference</Card.Body>
+        </Card>
+      ))}
+      <Card variant="panel" padding="lg" data-geometry-scenario="panel-forced-inset">
+        <Card.Header divided>
+          <Card.Title>A localized heading that may wrap without clipping</Card.Title>
+        </Card.Header>
+        <Card.Body padding="md">Independent body inset</Card.Body>
+      </Card>
+    </Stack>
+  ),
+};
+
+export const CascadeFixture: Story = {
+  render: () => (
+    <Stack gap="md" data-geometry-family="surfaces/card-cascade">
+      <Card padding="lg" className={fixtureStyles.consumerOverride}>
+        Unlayered consumer override
+      </Card>
+      <Card padding="lg" style={{ padding: 31, backgroundColor: "rgb(12, 34, 56)" }}>
+        Inline override
+      </Card>
+    </Stack>
   ),
 };

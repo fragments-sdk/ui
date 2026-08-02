@@ -1,7 +1,9 @@
-@use '../../tokens/variables' as *;
+@use "../../recipes/layout";
+@use "../../tokens/variables" as *;
 
 .stack {
   display: flex;
+  gap: var(--fui-stack-gap, #{layout.gap("md")});
 }
 
 // Direction
@@ -22,42 +24,39 @@
   }
 
   @media (min-width: 768px) {
-    flex-direction: var(--fui-stack-direction-md, var(--fui-stack-direction-sm, var(--fui-stack-direction, column)));
+    flex-direction: var(
+      --fui-stack-direction-md,
+      var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
+    );
   }
 
   @media (min-width: 1024px) {
-    flex-direction: var(--fui-stack-direction-lg, var(--fui-stack-direction-md, var(--fui-stack-direction-sm, var(--fui-stack-direction, column))));
+    flex-direction: var(
+      --fui-stack-direction-lg,
+      var(
+        --fui-stack-direction-md,
+        var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
+      )
+    );
   }
 
   @media (min-width: 1280px) {
-    flex-direction: var(--fui-stack-direction-xl, var(--fui-stack-direction-lg, var(--fui-stack-direction-md, var(--fui-stack-direction-sm, var(--fui-stack-direction, column)))));
+    flex-direction: var(
+      --fui-stack-direction-xl,
+      var(
+        --fui-stack-direction-lg,
+        var(
+          --fui-stack-direction-md,
+          var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
+        )
+      )
+    );
   }
-}
-
-// Gap sizes
-.gap-xs {
-  gap: var(--fui-space-1, $fui-space-1);
-}
-
-.gap-sm {
-  gap: var(--fui-space-2, $fui-space-2);
-}
-
-.gap-md {
-  gap: var(--fui-space-3, $fui-space-3);
-}
-
-.gap-lg {
-  gap: var(--fui-space-4, $fui-space-4);
-}
-
-.gap-xl {
-  gap: var(--fui-space-6, $fui-space-6);
 }
 
 // Responsive gap
 .gapResponsive {
-  gap: var(--fui-stack-gap, 0);
+  gap: var(--fui-stack-gap, #{layout.gap("none")});
 
   @media (min-width: 640px) {
     gap: var(--fui-stack-gap-sm, var(--fui-stack-gap, 0));
@@ -68,11 +67,20 @@
   }
 
   @media (min-width: 1024px) {
-    gap: var(--fui-stack-gap-lg, var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0))));
+    gap: var(
+      --fui-stack-gap-lg,
+      var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))
+    );
   }
 
   @media (min-width: 1280px) {
-    gap: var(--fui-stack-gap-xl, var(--fui-stack-gap-lg, var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))));
+    gap: var(
+      --fui-stack-gap-xl,
+      var(
+        --fui-stack-gap-lg,
+        var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))
+      )
+    );
   }
 }
 
@@ -125,12 +133,75 @@
   background-color: var(--fui-border, $fui-border);
 
   &[data-orientation="horizontal"] {
-    height: 1px;
+    height: var(--fui-stroke-hairline, 1px);
     width: 100%;
   }
 
   &[data-orientation="vertical"] {
-    width: 1px;
+    width: var(--fui-stroke-hairline, 1px);
     align-self: stretch;
+  }
+}
+
+.directionResponsive[data-direction-base="row"] > .separator {
+  width: var(--fui-stroke-hairline, 1px);
+  height: auto;
+  align-self: stretch;
+}
+
+.directionResponsive[data-direction-base="column"] > .separator {
+  width: 100%;
+  height: var(--fui-stroke-hairline, 1px);
+}
+
+@media (min-width: 640px) {
+  .directionResponsive[data-direction-sm="row"] > .separator {
+    width: var(--fui-stroke-hairline, 1px);
+    height: auto;
+    align-self: stretch;
+  }
+
+  .directionResponsive[data-direction-sm="column"] > .separator {
+    width: 100%;
+    height: var(--fui-stroke-hairline, 1px);
+  }
+}
+
+@media (min-width: 768px) {
+  .directionResponsive[data-direction-md="row"] > .separator {
+    width: var(--fui-stroke-hairline, 1px);
+    height: auto;
+    align-self: stretch;
+  }
+
+  .directionResponsive[data-direction-md="column"] > .separator {
+    width: 100%;
+    height: var(--fui-stroke-hairline, 1px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .directionResponsive[data-direction-lg="row"] > .separator {
+    width: var(--fui-stroke-hairline, 1px);
+    height: auto;
+    align-self: stretch;
+  }
+
+  .directionResponsive[data-direction-lg="column"] > .separator {
+    width: 100%;
+    height: var(--fui-stroke-hairline, 1px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .directionResponsive[data-direction-xl="row"] > .separator {
+    width: var(--fui-stroke-hairline, 1px);
+    height: auto;
+    align-self: stretch;
+  }
+
+  .directionResponsive[data-direction-xl="column"] > .separator {
+    width: 100%;
+    height: var(--fui-stroke-hairline, 1px);
   }
 }

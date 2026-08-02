@@ -1,4 +1,5 @@
-@use 'sass:list';
+@use "sass:list";
+@use "measurements.generated" as measurements;
 
 // ============================================
 // @usefragments/ui Design Token Seeds
@@ -53,12 +54,12 @@ $_valid-neutrals: "carbon", "stone", "mono", "ice", "earth", "sand", "fire", "fr
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
 }
 
-$_valid-densities: "compact", "default", "relaxed";
+$_valid-densities: measurements.$density-profile-names;
 @if not list.index($_valid-densities, $fui-density) {
   @error "Invalid $fui-density: '#{$fui-density}'. Must be one of: #{$_valid-densities}";
 }
 
-$_valid-radii: "sharp", "subtle", "default", "rounded", "pill";
+$_valid-radii: measurements.$radius-profile-names;
 @if not list.index($_valid-radii, $fui-radius-style) {
   @error "Invalid $fui-radius-style: '#{$fui-radius-style}'. Must be one of: #{$_valid-radii}";
 }
@@ -70,13 +71,13 @@ $_valid-radii: "sharp", "subtle", "default", "rounded", "pill";
 // If not overridden, they use sensible defaults.
 
 // The status seeds below are tuned to sit in one family with the sage brand
-// (`$fui-brand` / success `#7fc9b3`): soft, muted, ~60% lightness rather than
-// neon. Danger is the warm complement of sage, warning its split-complement,
+// (`$fui-brand` / success `#7fc9b3`): muted and mineral rather than neon.
+// Danger is the deep clay complement of sage, warning its split-complement,
 // info a cool teal-adjacent slate — so they read as one palette, not bolted-on.
 
-/// Danger/error color — muted coral-terracotta, sage's warm complement.
+/// Danger/error color — deep muted clay, sage's warm complement.
 /// @type Color
-$fui-danger: #d97066 !default;
+$fui-danger: #a54f46 !default;
 
 /// Success color (Fragments brand default — sage; green means "contract passing")
 /// @type Color

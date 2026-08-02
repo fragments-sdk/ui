@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ConversationList } from '.';
-import { Message } from '../Message';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ConversationList } from ".";
+import { Avatar } from "../Avatar";
+import { Message } from "../Message";
 
 /**
  * Scrollable message container with auto-scroll and history loading.
@@ -9,29 +10,28 @@ import { Message } from '../Message';
  * ConversationList.TypingIndicator subcomponents.
  */
 const meta = {
-  title: 'Ai/ConversationList',
+  title: "Ai/ConversationList",
   component: ConversationList,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Scrollable message container with auto-scroll and history loading.',
+        component: "Scrollable message container with auto-scroll and history loading.",
       },
     },
   },
   argTypes: {
     showAvatars: {
-      control: 'boolean',
-      description: 'Show avatars for messages and typing indicators',
+      control: "boolean",
+      description: "Show avatars for messages and typing indicators",
     },
     loadingHistory: {
-      control: 'boolean',
-      description: 'Show loading spinner at top while loading history',
+      control: "boolean",
+      description: "Show loading spinner at top while loading history",
     },
   },
   args: {
-    autoScroll: 'smart',
+    autoScroll: "smart",
     showAvatars: true,
     loadingHistory: false,
     children: (
@@ -89,7 +89,10 @@ export const WithTypingIndicator: Story = {
   render: (args) => (
     <ConversationList {...args} style={{ height: 280 }}>
       <div>What is TypeScript?</div>
-      <ConversationList.TypingIndicator name="Assistant" />
+      <ConversationList.TypingIndicator
+        name="Assistant"
+        avatar={<Avatar size="sm" name="Assistant" />}
+      />
     </ConversationList>
   ),
 };

@@ -1,23 +1,40 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/field";
+@use "../../recipes/layout";
+@use "../../recipes/popup";
 
-// Form field wrapper (label + helper + error)
-@include form-field-wrapper;
+.wrapper {
+  @include field.wrapper;
+}
+
+.label {
+  @include field.label;
+}
+
+.helper {
+  @include field.helper;
+}
+
+.helperError,
+.errorMessage {
+  @include field.error;
+}
 
 // Trigger button
 .trigger {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
-  @include field-shell;
-  @include control-size("md", "input");
+  @include field.size("md");
+  @include field.shell;
 
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: action.gap("md");
   width: 100%;
-  min-width: 10rem;
+  min-width: layout.measure("field-minimum");
   text-align: left;
 
   &[data-popup-open] {
@@ -27,11 +44,15 @@
 
 // Trigger size variants
 .triggerSm {
-  @include control-size("sm", "input");
+  @include field.size("sm");
+
+  gap: action.gap("sm");
 }
 
 .triggerLg {
-  @include control-size("lg", "input");
+  @include field.size("lg");
+
+  gap: action.gap("lg");
 }
 
 // Ghost trigger — the same control with the field shell taken off, for
@@ -45,20 +66,11 @@
 .triggerGhost {
   width: auto;
   min-width: 0;
-  // No block padding: the control is exactly the target size tall and centres
-  // its own contents, the way a button does. Padding here instead would add to
-  // the line box and leave a ghost taller than every other control in the row
-  // — and taller again wherever the surface has scaled the target down.
-  height: auto;
-  gap: var(--fui-space-1, $fui-space-1);
-  padding: 0 var(--fui-space-2, $fui-space-2);
   border: none;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background-color: transparent;
   box-shadow: none;
   color: var(--fui-text-secondary, $fui-text-secondary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &:hover:not(:disabled):not([data-disabled]) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -143,9 +155,16 @@
   }
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("md");
   }
+}
+
+.triggerSm :is(.triggerIcon, .icon) svg {
+  @include action.glyph("sm");
+}
+
+.triggerLg :is(.triggerIcon, .icon) svg {
+  @include action.glyph("lg");
 }
 
 // Positioner — z-index must exceed Dialog positioner (51)
@@ -156,17 +175,10 @@
 
 // Popup container
 .popup {
-  @include surface-elevated;
-  @include popup-container;
+  @include popup.container;
+  @include popup.viewport;
 
-  @include popup-scroll-viewport;
-
-  border-color: var(--fui-form-group-border, $fui-border);
   min-width: var(--anchor-width);
-  // Show N items + half-peek scroll hint (default 4.5 items).
-  // !important needed to override Base UI's inline max-height: 100%
-  max-height: var(--_popup-scroll-max-h) !important;
-  overflow-y: auto !important;
 
   // Animation
   opacity: 0;
@@ -190,15 +202,15 @@
 
 // Individual option
 .item {
-  @include popup-item;
+  @include popup.row;
 
   // Base UI sets [data-highlighted] on pointer-hover AND keyboard nav → one indicator.
   &[data-highlighted] {
-    @include popup-item-highlight;
+    @include popup.highlight-state;
   }
 
   &[data-selected] {
-    @include popup-item-selected;
+    @include popup.selected-state;
 
     // Selected + active: stronger accent-tinted wash so it still reads as selected.
     &[data-highlighted] {
@@ -207,7 +219,7 @@
   }
 
   &[data-disabled] {
-    @include popup-item-disabled;
+    @include popup.disabled-state;
   }
 }
 
@@ -229,16 +241,16 @@
 
 // Group container
 .group {
-  &:not(:first-child) {
-    margin-top: var(--fui-space-1, $fui-space-1);
-    padding-top: var(--fui-space-1, $fui-space-1);
-    border-top: 1px solid var(--fui-border, $fui-border);
+  &:not(:first-child)::before {
+    content: "";
+    display: block;
+    @include popup.group-separator;
   }
 }
 
 // Group label
 .groupLabel {
-  @include popup-group-label;
+  @include popup.group-label;
 }
 
 // ============================================
@@ -276,11 +288,11 @@
 
 // Arrow
 .arrow {
-  width: 10px;
-  height: 10px;
+  width: var(--fui-raw-space-10, 10px);
+  height: var(--fui-raw-space-10, 10px);
   transform: rotate(45deg);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
   &[data-side="top"] {
     border-top: none;

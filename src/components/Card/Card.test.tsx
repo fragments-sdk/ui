@@ -108,4 +108,18 @@ describe("Card", () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  it("pins divided header children to opposite edges", () => {
+    const { container } = render(
+      <Card variant="panel" padding="none">
+        <Card.Header divided data-testid="divided-header">
+          <Card.Title>Adoption</Card.Title>
+          <span>aside</span>
+        </Card.Header>
+      </Card>,
+    );
+    expect(container.querySelector("[data-testid='divided-header']")).toHaveClass(
+      "headerDivided",
+    );
+  });
 });

@@ -146,8 +146,8 @@ describe("Table", () => {
     expect(container.querySelector(".bordered")).toBeInTheDocument();
   });
 
-  it("applies sm size class", () => {
-    const { container } = render(
+  it("maps legacy size to the canonical density attribute", () => {
+    render(
       <Table size="sm" aria-label="Test">
         <Table.Body>
           <Table.Row>
@@ -157,7 +157,21 @@ describe("Table", () => {
       </Table>
     );
 
-    expect(container.querySelector(".sm")).toBeInTheDocument();
+    expect(screen.getByRole("table")).toHaveAttribute("data-density", "compact");
+  });
+
+  it("gives the canonical density explicit precedence over legacy size", () => {
+    render(
+      <Table density="relaxed" size="sm" aria-label="Test">
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>A</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
+    expect(screen.getByRole("table")).toHaveAttribute("data-density", "relaxed");
   });
 
   it("applies selected state on Row", () => {

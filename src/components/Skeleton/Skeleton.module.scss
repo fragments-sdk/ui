@@ -1,4 +1,5 @@
-@use '../../tokens/variables' as *;
+@use "../../tokens/variables" as *;
+@use "../../recipes/representation" as representation;
 
 // ============================================
 // Skeleton Component Styles
@@ -6,7 +7,8 @@
 
 // Animation
 @keyframes skeleton-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -56,20 +58,10 @@
   border-radius: var(--fui-radius-full, #{$fui-radius-full});
 }
 
-// Avatar sizes (rem on a 14px root: 1rem = 14px)
-.avatar-sm {
-  width: var(--fui-space-4, #{$fui-space-4});   // 28px
-  height: var(--fui-space-4, #{$fui-space-4});
-}
-
-.avatar-md {
-  width: 2.5rem; // 35px (no clean ladder step between space-4=28 and space-6=42)
-  height: 2.5rem;
-}
-
-.avatar-lg {
-  width: var(--fui-space-6, #{$fui-space-6});   // 42px
-  height: var(--fui-space-6, #{$fui-space-6});
+@each $size in ("sm", "md", "lg") {
+  .avatar-#{$size} {
+    @include representation.skeleton("avatar", $size);
+  }
 }
 
 // Button - matches button heights
@@ -77,26 +69,34 @@
   border-radius: var(--fui-radius-md, #{$fui-radius-md});
 }
 
+@each $size in ("sm", "md", "lg") {
+  .button-#{$size} {
+    @include representation.skeleton("button", $size);
+  }
+}
+
 .button-sm {
-  height: var(--fui-button-height-sm, #{$fui-button-height-sm});
-  width: 5rem;  // 70px default width
+  inline-size: var(--fui-raw-space-64, 64px);
 }
 
 .button-md {
-  height: var(--fui-button-height-md, #{$fui-button-height-md});
-  width: 6rem;  // 84px default width
+  inline-size: calc(var(--fui-raw-space-64, 64px) + var(--fui-raw-space-16, 16px));
 }
 
 .button-lg {
-  height: var(--fui-button-height-lg, #{$fui-button-height-lg});
-  width: 7rem;  // 98px default width
+  inline-size: calc(var(--fui-raw-space-64, 64px) + var(--fui-raw-space-32, 32px));
 }
 
 // Input - matches input field height
 .input {
-  height: var(--fui-input-height, #{$fui-input-height});
-  width: 100%;
+  inline-size: 100%;
   border-radius: var(--fui-radius-md, #{$fui-radius-md});
+}
+
+@each $size in ("sm", "md", "lg") {
+  .input-#{$size} {
+    @include representation.skeleton("field", $size);
+  }
 }
 
 // Rect - generic rectangle (no preset dimensions)
@@ -139,11 +139,11 @@
 }
 
 .gap-sm {
-  gap: var(--fui-space-2, #{$fui-space-2}); // 14px
+  gap: var(--fui-raw-space-8, 8px);
 }
 
 .gap-md {
-  gap: var(--fui-space-3, #{$fui-space-3}); // 21px
+  gap: var(--fui-raw-space-12, 12px);
 }
 
 .textLine {

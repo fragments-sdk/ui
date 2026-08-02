@@ -1,8 +1,27 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/field";
+@use "../../recipes/layout";
+@use "../../recipes/popup";
+@use "../../recipes/typography";
 
-// Form field wrapper (label + helper + error)
-@include form-field-wrapper;
+.wrapper {
+  @include field.wrapper;
+}
+
+.label {
+  @include field.label;
+}
+
+.helper {
+  @include field.helper;
+}
+
+.helperError,
+.errorMessage {
+  @include field.error;
+}
 
 // ============================================
 // Trigger
@@ -11,15 +30,14 @@
 .trigger {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
-  @include field-shell;
-  @include control-size("md", "input");
+  @include field.size("md");
+  @include field.shell;
 
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
+  gap: action.gap("md");
   width: 100%;
-  min-width: 10rem;
+  min-width: layout.measure("field-minimum");
   text-align: left;
 
   &[data-popup-open] {
@@ -28,11 +46,15 @@
 }
 
 .triggerSm {
-  @include control-size("sm", "input");
+  @include field.size("sm");
+
+  gap: action.gap("sm");
 }
 
 .triggerLg {
-  @include control-size("lg", "input");
+  @include field.size("lg");
+
+  gap: action.gap("lg");
 }
 
 .triggerIcon {
@@ -42,9 +64,16 @@
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("md");
   }
+}
+
+.triggerSm .triggerIcon svg {
+  @include action.glyph("sm");
+}
+
+.triggerLg .triggerIcon svg {
+  @include action.glyph("lg");
 }
 
 .triggerValue {
@@ -77,7 +106,7 @@
   @include surface-elevated;
 
   border-color: var(--fui-form-group-border, $fui-border);
-  padding: var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-surface-inset-compact, 12px);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   // Animation
@@ -105,10 +134,12 @@
 // ============================================
 
 .calendar {
-  @include text-base;
+  @include typography.role("body-compact");
 
   // Square size shared by weekday headers + day cells/buttons (32px grid).
-  --_day-size: var(--fui-icon-2xl, #{$fui-icon-2xl});
+  --_day-size: #{action.track("md")};
+
+  color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .months {
@@ -151,12 +182,9 @@
 .navButton {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("sm");
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-button-height-sm, $fui-button-height-sm);
-  height: var(--fui-button-height-sm, $fui-button-height-sm);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
 
@@ -166,8 +194,7 @@
   }
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("sm");
   }
 }
 
@@ -189,13 +216,11 @@
 }
 
 .weekday {
-  @include text-base;
+  @include typography.role("ui-compact");
 
   width: var(--_day-size);
   height: var(--_day-size);
   padding: 0;
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
   vertical-align: middle;
@@ -256,7 +281,7 @@
 }
 
 .selected > .dayButton {
-  @include popup-item-selected;
+  @include popup.selected-state;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &:hover {
@@ -326,7 +351,7 @@
   > .dayButton {
     position: relative;
     z-index: 1;
-    @include popup-item-selected;
+    @include popup.selected-state;
     font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
     &:hover {
@@ -356,7 +381,7 @@
   > .dayButton {
     position: relative;
     z-index: 1;
-    @include popup-item-selected;
+    @include popup.selected-state;
     font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
     &:hover {
@@ -371,14 +396,10 @@
 
 .preset {
   @include button-reset;
-  @include text-base;
+  @include popup.row;
 
-  display: flex;
-  align-items: center;
   width: 100%;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-3, $fui-space-3);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-primary, $fui-text-primary);
   white-space: nowrap;
   transition: background-color var(--fui-transition-fast, $fui-transition-fast);
@@ -407,7 +428,7 @@
   }
 
   .dayButton {
-    border: 1px solid transparent;
+    border: var(--fui-stroke-hairline, 1px) solid transparent;
 
     &:focus-visible {
       border-color: var(--fui-text-primary, $fui-text-primary);

@@ -1,99 +1,25 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/layout";
+@use "../../recipes/segmented";
 
 // ============================================
 // Group Container
 // ============================================
 
 .group {
-  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
-
   display: inline-flex;
   align-items: stretch;
-  min-height: var(--fui-toggle-group-height);
+  isolation: isolate;
 }
 
 // Gap variants
 .gap-xs {
-  gap: var(--fui-space-0-5, $fui-space-0-5);
+  gap: layout.gap("xs");
 }
 
 .gap-sm {
-  gap: var(--fui-space-1, $fui-space-1);
-}
-
-// ============================================
-// Default variant (connected buttons)
-// ============================================
-
-.default {
-  @include form-group-surface;
-
-  border: 0;
-  padding: 0;
-  gap: 0;
-  box-shadow: inset 0 0 0 1px var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-
-  .item {
-    background-color: transparent;
-    border: 1px solid transparent;
-    // Match the container's radius (form-group-surface = --fui-radius-lg),
-    // less its 1px inset border, so the selected fill nests inside the
-    // container corners instead of poking past them.
-    border-radius: calc(var(--fui-radius-lg, #{$fui-radius-lg}) - 1px);
-
-    &.selected {
-      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-toggle-group-selected-border, transparent);
-      box-shadow: var(--fui-toggle-group-selected-shadow, none);
-    }
-  }
-}
-
-// ============================================
-// Pills variant (separate pill buttons)
-// ============================================
-
-.pills {
-  .item {
-    background-color: var(--fui-field-bg, $fui-bg-elevated);
-    border: 1px solid var(--fui-form-group-border, $fui-border);
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-      border-color: var(--fui-field-border-hover, $fui-text-tertiary);
-    }
-
-    &.selected {
-      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-toggle-group-selected-border, transparent);
-      box-shadow: var(--fui-toggle-group-selected-shadow, none);
-    }
-  }
-}
-
-// ============================================
-// Outline variant (bordered buttons)
-// ============================================
-
-.outline {
-  .item {
-    background-color: transparent;
-    border: 1px solid var(--fui-field-border, $fui-border);
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-      border-color: var(--fui-field-border-hover, $fui-text-tertiary);
-    }
-
-    &.selected {
-      background-color: var(--fui-toggle-group-selected-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-toggle-group-selected-border, transparent);
-      box-shadow: var(--fui-toggle-group-selected-shadow, none);
-    }
-  }
+  gap: layout.gap("sm");
 }
 
 // ============================================
@@ -104,12 +30,9 @@
   @include button-reset;
   @include interactive-base;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   color: var(--fui-text-secondary, $fui-text-secondary);
+  position: relative;
+  border: 0;
   white-space: nowrap;
   user-select: none;
   transition:
@@ -120,6 +43,10 @@
 
   &.selected {
     color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:focus-visible {
+    z-index: 1;
   }
 
   &.disabled {
@@ -133,31 +60,148 @@
 // ============================================
 
 .size-sm {
-  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+  @include segmented.rail("sm");
 
   .item {
-    min-height: var(--fui-toggle-group-height);
-    padding: 0 var(--fui-space-2, $fui-space-2);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+    @include segmented.item("sm");
+
+    svg {
+      @include segmented.glyph("sm");
+    }
   }
 }
 
 .size-md {
-  --fui-toggle-group-height: var(--fui-button-height-sm, #{$fui-button-height-sm});
+  @include segmented.rail("md");
 
   .item {
-    min-height: var(--fui-toggle-group-height);
-    padding: 0 var(--fui-space-3, $fui-space-3);
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+    @include segmented.item("md");
+
+    svg {
+      @include segmented.glyph("md");
+    }
   }
 }
 
 .size-lg {
-  --fui-toggle-group-height: var(--fui-button-height-lg, #{$fui-button-height-lg});
+  @include segmented.rail("lg");
 
   .item {
-    min-height: var(--fui-toggle-group-height);
-    padding: 0 var(--fui-space-4, $fui-space-4);
-    font-size: var(--fui-font-size-base, $fui-font-size-base);
+    @include segmented.item("lg");
+
+    svg {
+      @include segmented.glyph("lg");
+    }
+  }
+}
+
+// ============================================
+// Default variant: inset tonal selection
+// ============================================
+
+.default {
+  gap: 0;
+  padding: var(--fui-raw-space-2, 2px);
+  background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+
+  .item {
+    min-block-size: calc(
+      var(--_fui-segmented-track) - var(--fui-raw-space-2, 2px) - var(--fui-raw-space-2, 2px)
+    );
+    background-color: transparent;
+    border-radius: var(--fui-radius-md, $fui-radius-md);
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+
+    &.selected {
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-selection-bg));
+      box-shadow:
+        inset 0 0 0 var(--fui-stroke-hairline, 1px)
+          var(--fui-toggle-group-selected-border, transparent),
+        var(--fui-toggle-group-selected-shadow, none);
+    }
+  }
+}
+
+// ============================================
+// Pills variant: open cluster with soft selected pills
+// ============================================
+
+.pills {
+  .item {
+    background-color: transparent;
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px) transparent;
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+
+    &.selected {
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-selection-bg));
+      box-shadow:
+        inset 0 0 0 var(--fui-stroke-hairline, 1px)
+          var(--fui-toggle-group-selected-border, transparent),
+        var(--fui-toggle-group-selected-shadow, none);
+    }
+  }
+}
+
+// ============================================
+// Outline variant: connected transparent segments
+// ============================================
+
+.outline {
+  gap: 0;
+  background-color: transparent;
+  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+
+  .item {
+    background-color: transparent;
+    border-radius: 0;
+
+    &:first-child {
+      border-start-start-radius: var(--fui-radius-lg, $fui-radius-lg);
+      border-end-start-radius: var(--fui-radius-lg, $fui-radius-lg);
+    }
+
+    &:last-child {
+      border-start-end-radius: var(--fui-radius-lg, $fui-radius-lg);
+      border-end-end-radius: var(--fui-radius-lg, $fui-radius-lg);
+    }
+
+    & + .item::before {
+      content: "";
+      position: absolute;
+      inset-block: var(--fui-raw-space-6, 6px);
+      inset-inline-start: 0;
+      inline-size: var(--fui-stroke-hairline, 1px);
+      background-color: var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+      transition: opacity var(--fui-transition-fast, $fui-transition-fast);
+    }
+
+    &.selected::before,
+    &.selected + .item::before {
+      opacity: 0;
+    }
+
+    &:hover:not(:disabled):not(.selected) {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+    }
+
+    &.selected {
+      background-color: var(--fui-toggle-group-selected-bg, var(--fui-selection-bg));
+      box-shadow:
+        inset 0 0 0 var(--fui-stroke-hairline, 1px)
+          var(--fui-toggle-group-selected-border, transparent),
+        var(--fui-toggle-group-selected-shadow, none);
+    }
   }
 }

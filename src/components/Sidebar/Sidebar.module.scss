@@ -1,21 +1,20 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-
-// Local component tokens
-$fui-sidebar-indicator-width: 2px !default;
-$fui-sidebar-indicator-height: 1.143rem !default; // 16px
-$fui-sidebar-rail-width: 1.143rem !default; // 16px
-$fui-sidebar-rail-indicator-width: 4px !default;
-$fui-sidebar-rail-indicator-height: 2.857rem !default; // 40px
-$fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
+@use "../../recipes/action" as action;
+@use "../../recipes/navigation" as navigation;
+@use "../../recipes/target" as target;
 
 .root {
-  --fui-sidebar-row-height: var(--fui-sidebar-item-height, #{$fui-sidebar-item-height});
+  @include navigation.properties;
+
+  --fui-sidebar-row-height: var(--fui-navigation-row-track);
   --fui-sidebar-row-radius: var(--fui-radius-md, #{$fui-radius-md});
-  // 8px: de-facto sidebar gutter, 1px above the 7px space-1 grid step.
-  --fui-sidebar-row-gap: 0.571rem;
-  --fui-sidebar-row-padding-x: 0.571rem;
+  --fui-sidebar-gutter: var(--fui-navigation-gutter);
+  --fui-sidebar-row-gap: var(--fui-navigation-content-gap);
+  --fui-sidebar-row-padding-x: var(--fui-navigation-inline-inset);
   --fui-sidebar-icon-size: var(--fui-icon-md, #{$fui-icon-md});
+  --fui-sidebar-leading-size: var(--fui-navigation-leading-box);
+  --fui-sidebar-active-dot-size: var(--fui-navigation-active-dot);
   --fui-sidebar-muted: var(
     --fui-sidebar-item-color,
     var(--fui-text-secondary, #{$fui-text-secondary})
@@ -38,7 +37,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   height: 100%;
   max-height: 100vh;
   background: var(--fui-sidebar-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
-  border-inline-end: 1px solid
+  border-inline-end: var(--fui-stroke-hairline, 1px) solid
     var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
   transition: width var(--fui-transition-normal, $fui-transition-normal);
   overflow: hidden;
@@ -54,7 +53,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 }
 
 .positionRight {
-  border-inline-start: 1px solid
+  border-inline-start: var(--fui-stroke-hairline, 1px) solid
     var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
   border-inline-end: 0;
 }
@@ -65,7 +64,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   .header,
   .nav,
   .footer {
-    padding: var(--fui-space-1, $fui-space-1);
+    padding: var(--fui-navigation-gutter);
   }
 
   .header,
@@ -149,10 +148,10 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .header {
   display: flex;
   align-items: center;
-  gap: 0.429rem;
-  padding: 0.857rem 0.857rem 0.714rem;
+  gap: 0;
+  padding: var(--fui-sidebar-gutter) var(--fui-sidebar-gutter) 0;
   flex-shrink: 0;
-  min-height: 3rem;
+  min-height: 0;
 }
 
 .nav {
@@ -161,7 +160,8 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0.286rem 0.571rem 0.857rem;
+  padding: var(--fui-sidebar-gutter) var(--fui-sidebar-gutter)
+    var(--fui-space-3, $fui-space-3);
 }
 
 .navScrollArea {
@@ -170,15 +170,15 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 }
 
 .section:not(:first-child) {
-  margin-top: 1.286rem;
+  margin-top: var(--fui-raw-space-16, 16px);
 }
 
 .sectionHeader {
+  @include navigation.section-row;
+
   display: flex;
   align-items: center;
-  gap: 0.286rem;
-  min-height: 1.714rem;
-  padding: 0 0.571rem 0.286rem;
+  padding-block-end: var(--fui-raw-space-4, 4px);
 }
 
 .sectionTrigger {
@@ -188,14 +188,9 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 // Override section-label-text inheritance — sidebar groups read as quiet
 // title-case headings, not shouty all-caps labels.
 .sectionLabel {
-  @include section-label-text;
   flex: 1;
   min-width: 0;
-  font-size: 0.857rem;
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   text-transform: none;
-  letter-spacing: 0;
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   color: var(--fui-sidebar-faint);
 }
 
@@ -206,12 +201,10 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .sectionAction {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("micro");
+  @include target.hit-area("compact");
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.714rem;
-  height: 1.714rem;
   border-radius: var(--fui-sidebar-row-radius);
   color: var(--fui-sidebar-faint);
 
@@ -221,8 +214,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   }
 
   svg {
-    width: var(--fui-sidebar-icon-size);
-    height: var(--fui-sidebar-icon-size);
+    @include action.glyph("micro");
   }
 }
 
@@ -233,16 +225,16 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.143rem;
+  gap: var(--fui-raw-space-2, 2px);
 }
 
 .sectionCollapsible .sectionTrigger {
+  @include navigation.section-row;
+
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.286rem;
   width: 100%;
-  min-height: 1.714rem;
   padding: 0;
   border-radius: var(--fui-sidebar-row-radius);
   background: transparent;
@@ -261,8 +253,8 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
   // Trailing caret reads as a quiet disclosure twistie.
   svg {
-    width: 10px;
-    height: 10px;
+    width: var(--fui-raw-space-10, 10px);
+    height: var(--fui-raw-space-10, 10px);
     color: var(--fui-sidebar-faint);
   }
 }
@@ -280,22 +272,18 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .item {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
+  @include navigation.row;
 
   position: relative;
   display: flex;
   align-items: center;
   width: 100%;
-  gap: var(--fui-sidebar-row-gap);
-  padding: 0 var(--fui-sidebar-row-padding-x);
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   border-radius: var(--fui-sidebar-row-radius);
   color: var(--fui-sidebar-muted);
   text-decoration: none;
-  min-height: var(--fui-sidebar-row-height);
   font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
-  outline-offset: -1px;
+  outline-offset: calc(-1 * var(--fui-stroke-hairline, 1px));
   transition:
     background-color var(--fui-transition-fast, $fui-transition-fast),
     border-color var(--fui-transition-fast, $fui-transition-fast),
@@ -315,38 +303,54 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 // Alpha-overlay active state reads as a depression on any surface,
 // adapting cleanly across light and dark themes.
 .itemActive {
+  @include navigation.active-indicator("start");
+
   background-color: var(--fui-sidebar-active-bg);
   border-color: var(--fui-sidebar-active-border);
   color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &::before {
-    content: "";
-    position: absolute;
-    left: -0.571rem;
-    top: 0.286rem;
-    bottom: 0.286rem;
-    width: 2px;
-    border-radius: 0 2px 2px 0;
+    border-start-end-radius: var(--fui-navigation-active-rail);
+    border-end-end-radius: var(--fui-navigation-active-rail);
     background: var(
       --fui-sidebar-item-active-indicator,
       var(--fui-color-accent, #{$fui-color-accent})
     );
   }
 
-  &:hover,
-  &:active {
-    background-color: var(--fui-sidebar-active-bg) !important;
-    border-color: var(--fui-sidebar-active-border) !important;
+  &.item:hover,
+  &.item:active {
+    background-color: var(--fui-sidebar-active-bg);
+    border-color: var(--fui-sidebar-active-border);
     color: var(
       --fui-sidebar-item-active-color,
       var(--fui-text-primary, #{$fui-text-primary})
-    ) !important;
+    );
     text-decoration: none;
   }
 
   .itemIcon {
     color: inherit;
+  }
+}
+
+// Trailing active dot (product shells that prefer end-affordance over the
+// start rail). Set data-active-indicator="end" on Sidebar root.
+.root[data-active-indicator="end"] .itemActive {
+  @include navigation.active-indicator("end");
+
+  padding-inline-end: calc(var(--fui-navigation-inline-inset) * 2 + var(--fui-navigation-active-dot));
+
+  &::before {
+    content: none;
+  }
+
+  &::after {
+    background: var(
+      --fui-sidebar-item-active-indicator,
+      var(--fui-color-accent, #{$fui-color-accent})
+    );
   }
 }
 
@@ -357,17 +361,16 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 }
 
 .itemIcon {
+  @include navigation.leading;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--fui-sidebar-icon-size);
-  height: var(--fui-sidebar-icon-size);
-  flex-shrink: 0;
   color: var(--fui-sidebar-faint);
 
   svg {
-    width: var(--fui-sidebar-icon-size);
-    height: var(--fui-sidebar-icon-size);
+    width: var(--fui-sidebar-leading-size);
+    height: var(--fui-sidebar-leading-size);
   }
 
   .item:hover:not(.itemDisabled) & {
@@ -385,7 +388,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-top: 0.071rem;
+  transform: translateY(var(--fui-navigation-label-optical-y));
 }
 
 // A row whose label is a block rather than a link: a title over a status line,
@@ -426,39 +429,41 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 }
 
 .submenu {
-  padding-left: 1.714rem;
+  padding-inline-start: var(--fui-raw-space-24, 24px);
+  min-height: 0;
   overflow: hidden;
-  max-height: 0;
-  transition: max-height var(--fui-transition-normal, $fui-transition-normal);
 }
 
-.itemExpanded + .submenuWrapper .submenu {
-  max-height: 500px;
+.submenuWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--fui-transition-normal, $fui-transition-normal);
+}
+
+.itemExpanded + .submenuWrapper {
+  grid-template-rows: 1fr;
 }
 
 .subItem {
   @include button-reset;
   @include interactive-base;
-  @include text-base;
+  @include navigation.row;
 
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--fui-sidebar-row-padding-x);
   border-radius: var(--fui-sidebar-row-radius);
   color: var(--fui-sidebar-muted);
   text-decoration: none;
-  min-height: var(--fui-sidebar-row-height);
-  line-height: var(--fui-line-height-tight, $fui-line-height-tight);
   position: relative;
 
   &::before {
     content: "";
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: $fui-sidebar-indicator-width;
-    height: $fui-sidebar-indicator-height;
+    width: var(--fui-navigation-active-rail);
+    height: var(--fui-navigation-leading-box);
     background-color: transparent;
     border-radius: var(--fui-radius-full, $fui-radius-full);
     transition: background-color var(--fui-transition-fast, $fui-transition-fast);
@@ -490,11 +495,11 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .footer {
   display: flex;
   flex-direction: column;
-  gap: 0.571rem;
-  padding: 0.857rem;
+  gap: var(--fui-sidebar-row-gap);
+  padding: var(--fui-sidebar-gutter);
   margin-top: auto;
   flex-shrink: 0;
-  border-top: 1px solid
+  border-top: var(--fui-stroke-hairline, 1px) solid
     var(
       --fui-sidebar-footer-border,
       color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent)
@@ -504,12 +509,12 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .trigger {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("lg");
 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: $fui-touch-lg;
-  height: $fui-touch-lg;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-primary, $fui-text-primary);
 
@@ -518,8 +523,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   }
 
   svg {
-    width: $fui-icon-xl;
-    height: $fui-icon-xl;
+    @include action.glyph("lg");
   }
 }
 
@@ -539,12 +543,12 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 .collapseToggle {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
+  @include action.icon-only("md");
 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: $fui-touch-md;
-  height: $fui-touch-md;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   margin-left: auto;
@@ -555,8 +559,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   }
 
   svg {
-    width: $fui-icon-lg;
-    height: $fui-icon-lg;
+    @include action.glyph("md");
   }
 }
 
@@ -567,7 +570,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   z-index: 20;
   margin: 0;
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: 1px solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
 
   .positionRight & {
@@ -582,7 +585,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   position: absolute;
   top: 0;
   right: 0;
-  width: $fui-sidebar-rail-width;
+  width: var(--fui-navigation-leading-box);
   height: 100%;
   z-index: 10;
 
@@ -596,9 +599,9 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: $fui-sidebar-rail-indicator-width;
-    width: $fui-sidebar-rail-indicator-width;
-    height: $fui-sidebar-rail-indicator-height;
+    right: var(--fui-raw-space-4, 4px);
+    width: var(--fui-raw-space-4, 4px);
+    height: #{action.track("lg")};
     border-radius: var(--fui-radius-full, $fui-radius-full);
     background-color: var(--fui-border, $fui-border);
     opacity: 0;
@@ -609,7 +612,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 
     .positionRight & {
       right: auto;
-      left: $fui-sidebar-rail-indicator-width;
+      left: var(--fui-raw-space-4, 4px);
     }
   }
 
@@ -620,7 +623,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   }
 
   &:hover::before {
-    height: $fui-sidebar-rail-indicator-height-hover;
+    height: var(--fui-navigation-sidebar-collapsed-width, 56px);
   }
 }
 
@@ -636,11 +639,10 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
 }
 
 .skeletonItem {
+  @include navigation.row;
+
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: 0 var(--fui-space-2, $fui-space-2);
-  min-height: var(--fui-sidebar-item-height, $fui-sidebar-item-height);
 }
 
 .skeletonLabel {
@@ -651,7 +653,7 @@ $fui-sidebar-rail-indicator-height-hover: 4rem !default; // 56px
   .root,
   .mobile,
   .overlay,
-  .submenu,
+  .submenuWrapper,
   .itemChevron,
   .rail::before,
   .subItem::before {

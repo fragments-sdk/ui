@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ButtonGroup } from '.';
-import { Button } from '../Button';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ButtonGroup } from ".";
+import { Button } from "../Button";
 
 /**
  * ButtonGroup groups related buttons together with consistent spacing and
@@ -8,40 +8,34 @@ import { Button } from '../Button';
  * It expects Button children.
  */
 const meta = {
-  title: 'Forms/ButtonGroup',
+  title: "Forms/ButtonGroup",
   component: ButtonGroup,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Groups related buttons together with consistent spacing and alignment.',
+        component: "Groups related buttons together with consistent spacing and alignment.",
       },
     },
   },
   argTypes: {
     gap: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md'],
-      description: 'Spacing between buttons',
+      control: "select",
+      options: ["none", "xs", "sm", "md"],
+      description: "Spacing between buttons",
     },
     align: {
-      control: 'select',
-      options: ['start', 'center', 'end'],
-      description: 'Alignment of buttons',
+      control: "select",
+      options: ["start", "center", "end"],
+      description: "Alignment of buttons",
     },
     wrap: {
-      control: 'boolean',
-      description: 'Allow buttons to wrap to next line',
+      control: "boolean",
+      description: "Allow buttons to wrap to next line",
     },
   },
   args: {
-    gap: 'sm',
-    children: (
-      <>
-        <Button variant="secondary">Cancel</Button>
-        <Button variant="primary">Save</Button>
-      </>
-    ),
+    gap: "sm",
   },
 } satisfies Meta<typeof ButtonGroup>;
 

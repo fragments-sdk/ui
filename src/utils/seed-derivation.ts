@@ -9,13 +9,19 @@
  * the @usefragments/ui barrel export.
  */
 
+import {
+  MEASUREMENT_PROFILES,
+  type MeasurementDensity,
+  type MeasurementRadiusStyle,
+} from "../measurements";
+
 // ============================================
 // Types
 // ============================================
 
-export type NeutralPalette = 'stone' | 'ice' | 'sand' | 'earth' | 'fire' | 'fragments';
-export type DensityPreset = 'compact' | 'default' | 'relaxed';
-export type RadiusStyle = 'sharp' | 'subtle' | 'default' | 'rounded' | 'pill';
+export type NeutralPalette = "stone" | "ice" | "sand" | "earth" | "fire" | "fragments";
+export type DensityPreset = MeasurementDensity;
+export type RadiusStyle = MeasurementRadiusStyle;
 
 export interface SeedConfig {
   brand: string;
@@ -56,92 +62,92 @@ interface RadiusConfig {
 export const PALETTES: Record<NeutralPalette, PaletteShades> = {
   // Stone - Muted cool neutrals (default, balanced)
   stone: {
-    50: '#fafafa',
-    100: '#f4f4f5',
-    200: '#e4e4e7',
-    300: '#d4d4d8',
-    400: '#a1a1aa',
-    500: '#71717a',
-    600: '#52525b',
-    700: '#3f3f46',
-    800: '#27272a',
-    900: '#18181b',
-    950: '#09090b',
+    50: "#fafafa",
+    100: "#f4f4f5",
+    200: "#e4e4e7",
+    300: "#d4d4d8",
+    400: "#a1a1aa",
+    500: "#71717a",
+    600: "#52525b",
+    700: "#3f3f46",
+    800: "#27272a",
+    900: "#18181b",
+    950: "#09090b",
   },
   // Ice - Cool blue tones (professional, tech)
   // Dark shades are muted for comfortable dark mode backgrounds
   ice: {
-    50: '#f0f9ff',
-    100: '#e0f2fe',
-    200: '#bae6fd',
-    300: '#7dd3fc',
-    400: '#38bdf8',
-    500: '#0ea5e9',
-    600: '#0284c7',
-    700: '#0369a1',
-    800: '#0f2d3d',  // Darkened and desaturated for dark mode
-    900: '#0a1f2c',  // Darkened and desaturated for dark mode
-    950: '#06141c',  // Very dark blue-gray for dark mode bg
+    50: "#f0f9ff",
+    100: "#e0f2fe",
+    200: "#bae6fd",
+    300: "#7dd3fc",
+    400: "#38bdf8",
+    500: "#0ea5e9",
+    600: "#0284c7",
+    700: "#0369a1",
+    800: "#0f2d3d", // Darkened and desaturated for dark mode
+    900: "#0a1f2c", // Darkened and desaturated for dark mode
+    950: "#06141c", // Very dark blue-gray for dark mode bg
   },
   // Sand - Warm brown/terracotta tones (organic, earthy)
   // Dark shades are muted for comfortable dark mode backgrounds
   sand: {
-    50: '#fdf8f3',
-    100: '#f5ebe0',
-    200: '#e8d5c4',
-    300: '#d4b89c',
-    400: '#c19a6b',
-    500: '#a67c52',
-    600: '#8b5e34',
-    700: '#6f4518',
-    800: '#231a12',  // Darkened and desaturated for dark mode
-    900: '#181210',  // Darkened and desaturated for dark mode
-    950: '#0f0c09',  // Very dark warm gray for dark mode bg
+    50: "#fdf8f3",
+    100: "#f5ebe0",
+    200: "#e8d5c4",
+    300: "#d4b89c",
+    400: "#c19a6b",
+    500: "#a67c52",
+    600: "#8b5e34",
+    700: "#6f4518",
+    800: "#231a12", // Darkened and desaturated for dark mode
+    900: "#181210", // Darkened and desaturated for dark mode
+    950: "#0f0c09", // Very dark warm gray for dark mode bg
   },
   // Earth - Green/olive tones (natural, growth)
   // Dark shades are muted for comfortable dark mode backgrounds
   earth: {
-    50: '#f5f7f2',
-    100: '#e8ede3',
-    200: '#d1dbc6',
-    300: '#b3c4a0',
-    400: '#8fa872',
-    500: '#6b8c4e',
-    600: '#517035',
-    700: '#3d5527',
-    800: '#1a2316',  // Darkened and desaturated for dark mode
-    900: '#121810',  // Darkened and desaturated for dark mode
-    950: '#0a0f08',  // Very dark green-gray for dark mode bg
+    50: "#f5f7f2",
+    100: "#e8ede3",
+    200: "#d1dbc6",
+    300: "#b3c4a0",
+    400: "#8fa872",
+    500: "#6b8c4e",
+    600: "#517035",
+    700: "#3d5527",
+    800: "#1a2316", // Darkened and desaturated for dark mode
+    900: "#121810", // Darkened and desaturated for dark mode
+    950: "#0a0f08", // Very dark green-gray for dark mode bg
   },
   // Fire - Warm red/orange tones (energy, passion)
   // Dark shades are muted for comfortable dark mode backgrounds
   fire: {
-    50: '#fff7ed',
-    100: '#ffedd5',
-    200: '#fed7aa',
-    300: '#fdba74',
-    400: '#fb923c',
-    500: '#f97316',
-    600: '#ea580c',
-    700: '#c2410c',
-    800: '#2d1810',  // Darkened and desaturated for dark mode
-    900: '#1c100a',  // Darkened and desaturated for dark mode
-    950: '#120a06',  // Very dark warm gray for dark mode bg
+    50: "#fff7ed",
+    100: "#ffedd5",
+    200: "#fed7aa",
+    300: "#fdba74",
+    400: "#fb923c",
+    500: "#f97316",
+    600: "#ea580c",
+    700: "#c2410c",
+    800: "#2d1810", // Darkened and desaturated for dark mode
+    900: "#1c100a", // Darkened and desaturated for dark mode
+    950: "#120a06", // Very dark warm gray for dark mode bg
   },
   // Fragments - Rich saturated green tones (the Fragments brand palette)
   // Dark shades anchor to the Fragments marketing aesthetic
   fragments: {
-    50: '#f0f7f3',
-    100: '#dceee3',
-    200: '#b8ddc6',
-    300: '#88c5a0',
-    400: '#5aaa7a',
-    500: '#3d8f60',
-    600: '#2d7049',
-    700: '#235536',
-    800: '#1a3025',  // Dark card surface
-    900: '#142318',  // Dark surface
-    950: '#0d1f17',  // Darkest bg
+    50: "#f0f7f3",
+    100: "#dceee3",
+    200: "#b8ddc6",
+    300: "#88c5a0",
+    400: "#5aaa7a",
+    500: "#3d8f60",
+    600: "#2d7049",
+    700: "#235536",
+    800: "#1a3025", // Dark card surface
+    900: "#142318", // Dark surface
+    950: "#0d1f17", // Darkest bg
   },
 };
 
@@ -163,45 +169,45 @@ interface SemanticColors {
 export const PALETTE_SEMANTIC_COLORS: Record<NeutralPalette, SemanticColors> = {
   // Stone - Standard semantic colors (vibrant, universal)
   stone: {
-    success: '#22c55e', // Green 500
-    warning: '#f59e0b', // Amber 500
-    danger: '#ef4444',  // Red 500
-    info: '#3b82f6',    // Blue 500
+    success: "#22c55e", // Green 500
+    warning: "#f59e0b", // Amber 500
+    danger: "#ef4444", // Red 500
+    info: "#3b82f6", // Blue 500
   },
   // Ice - Cool blue-shifted semantic colors
   ice: {
-    success: '#10b981', // Emerald 500 (cooler green)
-    warning: '#f59e0b', // Amber 500
-    danger: '#f43f5e',  // Rose 500 (cooler red)
-    info: '#0ea5e9',    // Sky 500 (matches palette)
+    success: "#10b981", // Emerald 500 (cooler green)
+    warning: "#f59e0b", // Amber 500
+    danger: "#f43f5e", // Rose 500 (cooler red)
+    info: "#0ea5e9", // Sky 500 (matches palette)
   },
   // Earth - Natural, muted semantic colors
   earth: {
-    success: '#22c55e', // Green 500 (natural)
-    warning: '#d97706', // Amber 600 (earthier)
-    danger: '#dc2626',  // Red 600 (deeper)
-    info: '#0284c7',    // Sky 600 (muted)
+    success: "#22c55e", // Green 500 (natural)
+    warning: "#d97706", // Amber 600 (earthier)
+    danger: "#dc2626", // Red 600 (deeper)
+    info: "#0284c7", // Sky 600 (muted)
   },
   // Sand - Warm, terracotta-shifted semantic colors
   sand: {
-    success: '#16a34a', // Green 600 (warmer)
-    warning: '#ea580c', // Orange 600 (warm)
-    danger: '#dc2626',  // Red 600
-    info: '#2563eb',    // Blue 600
+    success: "#16a34a", // Green 600 (warmer)
+    warning: "#ea580c", // Orange 600 (warm)
+    danger: "#dc2626", // Red 600
+    info: "#2563eb", // Blue 600
   },
   // Fire - Warm, vibrant semantic colors
   fire: {
-    success: '#16a34a', // Green 600
-    warning: '#f59e0b', // Amber 500
-    danger: '#dc2626',  // Red 600 (complements orange)
-    info: '#2563eb',    // Blue 600
+    success: "#16a34a", // Green 600
+    warning: "#f59e0b", // Amber 500
+    danger: "#dc2626", // Red 600 (complements orange)
+    info: "#2563eb", // Blue 600
   },
   // Fragments - Brand-complementary semantic colors
   fragments: {
-    success: '#39d98a', // Vibrant green (brand signature)
-    warning: '#f59e0b', // Amber 500
-    danger: '#ef4444',  // Red 500
-    info: '#3b82f6',    // Blue 500
+    success: "#39d98a", // Vibrant green (brand signature)
+    warning: "#f59e0b", // Amber 500
+    danger: "#ef4444", // Red 500
+    info: "#3b82f6", // Blue 500
   },
 };
 
@@ -225,38 +231,7 @@ export function getSemanticColors(
 // Radius Styles
 // ============================================
 
-export const RADIUS_STYLES: Record<RadiusStyle, RadiusConfig> = {
-  sharp: {
-    sm: '0',
-    md: '0',
-    lg: '0',
-    xl: '0',
-  },
-  subtle: {
-    sm: '0.125rem',
-    md: '0.25rem',
-    lg: '0.375rem',
-    xl: '0.5rem',
-  },
-  default: {
-    sm: '0.25rem',
-    md: '0.429rem',
-    lg: '0.571rem',
-    xl: '0.857rem',
-  },
-  rounded: {
-    sm: '0.375rem',
-    md: '0.5rem',
-    lg: '0.75rem',
-    xl: '1rem',
-  },
-  pill: {
-    sm: '0.5rem',
-    md: '0.75rem',
-    lg: '1rem',
-    xl: '1.5rem',
-  },
-};
+export const RADIUS_STYLES: Record<RadiusStyle, RadiusConfig> = MEASUREMENT_PROFILES.radius;
 
 // ============================================
 // Color Utility Functions
@@ -283,7 +258,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 function rgbToHex(r: number, g: number, b: number): string {
   const toHex = (n: number) => {
     const clamped = Math.max(0, Math.min(255, Math.round(n)));
-    return clamped.toString(16).padStart(2, '0');
+    return clamped.toString(16).padStart(2, "0");
   };
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
@@ -294,11 +269,7 @@ function rgbToHex(r: number, g: number, b: number): string {
 function lighten(hex: string, percent: number): string {
   const { r, g, b } = hexToRgb(hex);
   const factor = percent / 100;
-  return rgbToHex(
-    r + (255 - r) * factor,
-    g + (255 - g) * factor,
-    b + (255 - b) * factor
-  );
+  return rgbToHex(r + (255 - r) * factor, g + (255 - g) * factor, b + (255 - b) * factor);
 }
 
 /**
@@ -318,11 +289,7 @@ function mixColors(color1: string, color2: string, weight: number): string {
   const c2 = hexToRgb(color2);
   const w = weight / 100;
 
-  return rgbToHex(
-    c1.r * w + c2.r * (1 - w),
-    c1.g * w + c2.g * (1 - w),
-    c1.b * w + c2.b * (1 - w)
-  );
+  return rgbToHex(c1.r * w + c2.r * (1 - w), c1.g * w + c2.g * (1 - w), c1.b * w + c2.b * (1 - w));
 }
 
 // ============================================
@@ -407,7 +374,7 @@ export function deriveDarkAccent(brand: string): string {
 
   // For grayscale/neutral brands (like #18181b), use light gray
   if (saturation < 0.15) {
-    return '#f2f2f2';
+    return "#f2f2f2";
   }
 
   // For bright, saturated colors (like pure red #ff0000), they're already
@@ -433,10 +400,7 @@ export function deriveDarkAccent(brand: string): string {
 /**
  * Interpolate between two shades for half-steps
  */
-function interpolateShade(
-  palette: PaletteShades,
-  level: number
-): string {
+function interpolateShade(palette: PaletteShades, level: number): string {
   const levels = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
   // If it's a standard level, return directly
@@ -468,7 +432,7 @@ function interpolateShade(
 export function deriveSurfaces(
   palette: PaletteShades,
   isDark: boolean,
-  paletteName: NeutralPalette = 'stone'
+  paletteName: NeutralPalette = "stone"
 ): {
   primary: string;
   secondary: string;
@@ -479,7 +443,7 @@ export function deriveSurfaces(
   active: string;
 } {
   // Stone palette uses neutral backgrounds (white in light, dark grays in dark)
-  const isColorful = paletteName !== 'stone';
+  const isColorful = paletteName !== "stone";
 
   if (isDark) {
     return {
@@ -488,8 +452,8 @@ export function deriveSurfaces(
       tertiary: palette[800],
       elevated: interpolateShade(palette, 875),
       subtle: interpolateShade(palette, 925),
-      hover: 'rgba(255, 255, 255, 0.05)',
-      active: 'rgba(255, 255, 255, 0.08)',
+      hover: "rgba(255, 255, 255, 0.05)",
+      active: "rgba(255, 255, 255, 0.08)",
     };
   }
 
@@ -499,22 +463,22 @@ export function deriveSurfaces(
       primary: palette[50],
       secondary: palette[100],
       tertiary: palette[200],
-      elevated: '#ffffff',
+      elevated: "#ffffff",
       subtle: palette[50],
-      hover: 'rgba(0, 0, 0, 0.04)',
-      active: 'rgba(0, 0, 0, 0.06)',
+      hover: "rgba(0, 0, 0, 0.04)",
+      active: "rgba(0, 0, 0, 0.06)",
     };
   }
 
   // Stone palette: neutral white backgrounds
   return {
-    primary: '#ffffff',
+    primary: "#ffffff",
     secondary: palette[100],
     tertiary: palette[100],
-    elevated: '#ffffff',
+    elevated: "#ffffff",
     subtle: palette[50],
-    hover: 'rgba(0, 0, 0, 0.04)',
-    active: 'rgba(0, 0, 0, 0.06)',
+    hover: "rgba(0, 0, 0, 0.04)",
+    active: "rgba(0, 0, 0, 0.06)",
   };
 }
 
@@ -529,7 +493,7 @@ export function deriveSurfaces(
 export function deriveText(
   palette: PaletteShades,
   isDark: boolean,
-  paletteName: NeutralPalette = 'stone'
+  paletteName: NeutralPalette = "stone"
 ): {
   primary: string;
   secondary: string;
@@ -548,7 +512,7 @@ export function deriveText(
   }
 
   // Light mode background — stone uses white, colorful palettes use palette[50]
-  const bgPrimary = paletteName === 'stone' ? '#ffffff' : palette[50];
+  const bgPrimary = paletteName === "stone" ? "#ffffff" : palette[50];
   const aaaTarget = 7.0;
 
   return {
@@ -571,14 +535,14 @@ export function deriveBorders(
 } {
   if (isDark) {
     return {
-      default: 'rgba(255, 255, 255, 0.08)',
-      strong: 'rgba(255, 255, 255, 0.14)',
+      default: "rgba(255, 255, 255, 0.08)",
+      strong: "rgba(255, 255, 255, 0.14)",
     };
   }
 
   return {
-    default: 'rgba(0, 0, 0, 0.08)',
-    strong: 'rgba(0, 0, 0, 0.14)',
+    default: "rgba(0, 0, 0, 0.08)",
+    strong: "rgba(0, 0, 0, 0.14)",
   };
 }
 
@@ -592,16 +556,16 @@ export function deriveShadows(isDark: boolean): {
 } {
   if (isDark) {
     return {
-      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.2)',
-      md: '0 2px 4px -1px rgba(0, 0, 0, 0.25), 0 1px 3px -2px rgba(0, 0, 0, 0.2)',
-      lg: '0 8px 12px -3px rgba(0, 0, 0, 0.35), 0 3px 5px -4px rgba(0, 0, 0, 0.25)',
+      sm: "0 1px 2px 0 rgba(0, 0, 0, 0.2)",
+      md: "0 2px 4px -1px rgba(0, 0, 0, 0.25), 0 1px 3px -2px rgba(0, 0, 0, 0.2)",
+      lg: "0 8px 12px -3px rgba(0, 0, 0, 0.35), 0 3px 5px -4px rgba(0, 0, 0, 0.25)",
     };
   }
 
   return {
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
-    md: '0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 3px -2px rgba(0, 0, 0, 0.04)',
-    lg: '0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 3px 5px -4px rgba(0, 0, 0, 0.05)',
+    sm: "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+    md: "0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 3px -2px rgba(0, 0, 0, 0.04)",
+    lg: "0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 3px 5px -4px rgba(0, 0, 0, 0.05)",
   };
 }
 
@@ -614,9 +578,7 @@ export function deriveShadows(isDark: boolean): {
  */
 function srgbLinearize(channel: number): number {
   const srgb = channel / 255;
-  return srgb <= 0.04045
-    ? srgb / 12.92
-    : Math.pow((srgb + 0.055) / 1.055, 2.4);
+  return srgb <= 0.04045 ? srgb / 12.92 : Math.pow((srgb + 0.055) / 1.055, 2.4);
 }
 
 /**
@@ -662,7 +624,7 @@ function ensureContrast(fg: string, bg: string, targetRatio: number): string {
  */
 export function deriveSemanticText(color: string, isDark: boolean): string {
   const target = isDark ? 7.5 : 7.0;
-  const bg = isDark ? '#0a0a0a' : '#ffffff';
+  const bg = isDark ? "#0a0a0a" : "#ffffff";
   let adjusted = color;
 
   for (let i = 0; i < 40; i++) {
@@ -698,9 +660,9 @@ export function deriveSemanticHover(color: string): string {
 // ============================================
 
 export const DEFAULT_SEEDS: SeedConfig = {
-  brand: '#18181b',
-  neutral: 'stone',
-  density: 'default',
-  radiusStyle: 'default',
+  brand: "#18181b",
+  neutral: "stone",
+  density: "default",
+  radiusStyle: "default",
   // Semantic colors omitted - will use palette defaults from PALETTE_SEMANTIC_COLORS
 };

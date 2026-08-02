@@ -1,50 +1,48 @@
-@use '../../tokens/variables' as *;
+@use "../../tokens/variables" as *;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/prose" as prose;
 
 .list {
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
 }
 
 // Variants
 .none {
-  list-style: none;
+  @include prose.list("none");
 }
 
 .disc {
-  list-style: disc;
-  padding-left: var(--fui-space-2, $fui-space-2);
+  @include prose.list("disc");
 }
 
 .decimal {
-  list-style: decimal;
-  padding-left: var(--fui-space-2, $fui-space-2);
+  @include prose.list("decimal");
 }
 
 .icon {
-  list-style: none;
+  @include prose.list("icon");
 }
 
 // Gap variants
 .gap-none {
-  gap: 0;
+  row-gap: layout.gap("none");
 }
 
 .gap-xs {
-  gap: var(--fui-space-1, $fui-space-1);
+  row-gap: layout.gap("xs");
 }
 
 .gap-sm {
-  gap: var(--fui-space-2, $fui-space-2);
+  row-gap: layout.gap("sm");
 }
 
 .gap-md {
-  gap: var(--fui-space-3, $fui-space-3);
+  row-gap: layout.gap("md");
 }
 
 .gap-lg {
-  gap: var(--fui-space-4, $fui-space-4);
+  row-gap: layout.gap("lg");
 }
 
 // List item
@@ -53,19 +51,16 @@
 }
 
 .iconItem {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--fui-space-2, $fui-space-2);
+  align-items: start;
 }
 
 .iconWrapper {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  line-height: var(--fui-line-height-normal, $fui-line-height-normal);
+  min-inline-size: var(--fui-raw-space-12);
 }
 
 .itemContent {
-  flex: 1;
+  min-inline-size: 0;
 }

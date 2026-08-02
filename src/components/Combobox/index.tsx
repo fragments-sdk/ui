@@ -4,6 +4,10 @@ import * as React from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
+import {
+  POPUP_OFFSET_PX,
+  resolvePopupViewportRows,
+} from "../../recipes/popup";
 import styles from "./Combobox.module.scss";
 
 // ============================================
@@ -532,15 +536,13 @@ function ComboboxInput({
   ...htmlProps
 }: ComboboxInputProps) {
   const context = React.useContext(ComboboxContext);
-  const inputSizeClass =
-    context.size === "sm" ? styles.inputSm : context.size === "lg" ? styles.inputLg : undefined;
   const wrapperSizeClass =
     context.size === "sm"
       ? styles.inputWrapperSm
       : context.size === "lg"
         ? styles.inputWrapperLg
         : undefined;
-  const classes = [styles.input, inputSizeClass, className].filter(Boolean).join(" ");
+  const classes = [styles.input, className].filter(Boolean).join(" ");
   const wrapperClasses = [styles.inputWrapper, wrapperSizeClass].filter(Boolean).join(" ");
   const renderTrigger = showTrigger && context.explicitTriggerCount === 0;
   const inputId = context.inputId ?? htmlProps.id;
@@ -612,7 +614,7 @@ function ComboboxTrigger({ children, className, ...htmlProps }: ComboboxTriggerP
 function ComboboxContent({
   children,
   className,
-  sideOffset = 4,
+  sideOffset = POPUP_OFFSET_PX,
   align = "start",
   maxVisibleItems,
   ...htmlProps
@@ -633,7 +635,7 @@ function ComboboxContent({
   const popupStyle =
     maxVisibleItems != null
       ? ({
-          "--fui-select-max-items": maxVisibleItems + 0.5,
+          "--fui-popup-viewport-rows": resolvePopupViewportRows(maxVisibleItems),
           ...htmlProps.style,
         } as React.CSSProperties)
       : htmlProps.style;

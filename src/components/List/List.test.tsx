@@ -35,6 +35,22 @@ describe('List', () => {
     expect(items[0]).toHaveTextContent('Alpha');
   });
 
+  it('keeps prose in the shrinkable content column', () => {
+    render(
+      <List>
+        <List.Item>
+          Refresh <code>.fragments/agent-context.md</code> from the active preset.
+        </List.Item>
+      </List>
+    );
+
+    const item = screen.getByRole('listitem');
+    expect(item.firstElementChild).toHaveClass('itemContent');
+    expect(item.firstElementChild).toHaveTextContent(
+      'Refresh .fragments/agent-context.md from the active preset.'
+    );
+  });
+
   it('renders icon items when variant is "icon"', () => {
     render(
       <List variant="icon">
@@ -44,6 +60,18 @@ describe('List', () => {
     expect(screen.getByTestId('star')).toBeInTheDocument();
     expect(screen.getByText('Starred')).toBeInTheDocument();
   });
+
+  it.each(['none', 'xs', 'sm', 'md', 'lg'] as const)(
+    'retains the public %s gap role',
+    (gap) => {
+      render(
+        <List gap={gap}>
+          <List.Item>{gap}</List.Item>
+        </List>
+      );
+      expect(screen.getByRole('list')).toHaveClass(`gap-${gap}`);
+    }
+  );
 
   it('has no accessibility violations', async () => {
     const { container } = render(

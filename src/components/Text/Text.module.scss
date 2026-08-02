@@ -1,5 +1,6 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/typography" as typography;
 
 .text {
   font-family: var(--fui-font-sans, $fui-font-sans);
@@ -9,7 +10,25 @@
 
 // Variants
 .variant-section-label {
-  @include section-label-text;
+  @include typography.role("ui-compact");
+}
+
+@each $role
+  in (
+    "caption",
+    "ui-compact",
+    "ui-standard",
+    "body-compact",
+    "body-relaxed",
+    "title-sm",
+    "title-md",
+    "title-lg",
+    "code"
+  )
+{
+  .role-#{$role} {
+    @include typography.role($role);
+  }
 }
 
 // Font sizes

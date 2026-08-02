@@ -1,8 +1,9 @@
-import * as React from 'react';
-import styles from './Stack.module.scss';
+import * as React from "react";
+import { resolveLayoutGap } from "../../utils/layout-spacing";
+import styles from "./Stack.module.scss";
 
-type Direction = 'row' | 'column';
-type GapToken = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type Direction = "row" | "column";
+type GapToken = "none" | "xs" | "sm" | "md" | "lg" | "xl";
 /** Gap accepts string tokens or numbers (1-8) mapping to the spacing scale */
 type GapScale = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type Gap = GapToken | GapScale;
@@ -39,7 +40,10 @@ export interface ResponsiveGap {
  * Flexbox layout component for vertical or horizontal stacking with consistent spacing.
  * @see https://usefragments.com/components/stack
  */
-export interface StackProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'style' | 'className'> {
+export interface StackProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  "children" | "style" | "className"
+> {
   children: React.ReactNode;
   /**
    * Stack direction.
@@ -53,8 +57,8 @@ export interface StackProps extends Omit<React.HTMLAttributes<HTMLElement>, 'chi
    * - An object for responsive gap: `{ base: "sm", md: "lg" }`
    */
   gap?: Gap | ResponsiveGap;
-  align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
-  justify?: 'start' | 'center' | 'end' | 'between';
+  align?: "start" | "center" | "end" | "stretch" | "baseline";
+  justify?: "start" | "center" | "end" | "between";
   wrap?: boolean;
   /**
    * Render a separator between each child.
@@ -62,145 +66,171 @@ export interface StackProps extends Omit<React.HTMLAttributes<HTMLElement>, 'chi
    * - A ReactNode renders custom content between children
    */
   separator?: boolean | React.ReactNode;
-  as?: 'div' | 'section' | 'nav' | 'article' | 'aside' | 'header' | 'footer' | 'main' | 'ul' | 'ol';
+  as?: "div" | "section" | "nav" | "article" | "aside" | "header" | "footer" | "main" | "ul" | "ol";
   className?: string;
   style?: React.CSSProperties;
 }
 
 function isResponsiveDirection(
-  direction: StackProps['direction']
+  direction: StackProps["direction"]
 ): direction is ResponsiveDirection {
-  return typeof direction === 'object' && direction !== null;
+  return typeof direction === "object" && direction !== null;
 }
 
-function isResponsiveGap(gap: StackProps['gap']): gap is ResponsiveGap {
-  return typeof gap === 'object' && gap !== null;
+function isResponsiveGap(gap: StackProps["gap"]): gap is ResponsiveGap {
+  return typeof gap === "object" && gap !== null;
 }
 
-function isNumericGap(gap: StackProps['gap']): gap is GapScale {
-  return typeof gap === 'number';
+function isNumericGap(gap: StackProps["gap"]): gap is GapScale {
+  return typeof gap === "number";
 }
 
-const StackRoot = React.forwardRef<HTMLElement, StackProps>(
-  function Stack(
-    {
-      children,
-      direction = 'column',
-      gap = 'md',
-      align,
-      justify,
-      wrap = false,
-      separator,
-      as: Component = 'div',
-      className,
-      style,
-      ...htmlProps
-    },
-    ref
-  ) {
-    let directionClass: string;
-    let gapClass: string | false;
-    let inlineStyle: React.CSSProperties | undefined;
+const StackRoot = React.forwardRef<HTMLElement, StackProps>(function Stack(
+  {
+    children,
+    direction = "column",
+    gap = "md",
+    align,
+    justify,
+    wrap = false,
+    separator,
+    as: Component = "div",
+    className,
+    style,
+    ...htmlProps
+  },
+  ref
+) {
+  let directionClass: string;
+  let gapClass: string | false;
+  let inlineStyle: React.CSSProperties | undefined;
 
-    // Handle responsive direction
-    if (isResponsiveDirection(direction)) {
-      directionClass = styles.directionResponsive;
-      const vars: Record<string, string> = {};
-      if (direction.base) vars['--fui-stack-direction'] = direction.base;
-      if (direction.sm) vars['--fui-stack-direction-sm'] = direction.sm;
-      if (direction.md) vars['--fui-stack-direction-md'] = direction.md;
-      if (direction.lg) vars['--fui-stack-direction-lg'] = direction.lg;
-      if (direction.xl) vars['--fui-stack-direction-xl'] = direction.xl;
-      inlineStyle = vars as unknown as React.CSSProperties;
-    } else {
-      directionClass = styles[direction];
-    }
+  // Handle responsive direction
+  if (isResponsiveDirection(direction)) {
+    directionClass = styles.directionResponsive;
+    const vars: Record<string, string> = {};
+    const baseDirection = direction.base ?? "column";
+    const smDirection = direction.sm ?? baseDirection;
+    const mdDirection = direction.md ?? smDirection;
+    const lgDirection = direction.lg ?? mdDirection;
+    const xlDirection = direction.xl ?? lgDirection;
+    vars["--fui-stack-direction"] = baseDirection;
+    vars["--fui-stack-direction-sm"] = smDirection;
+    vars["--fui-stack-direction-md"] = mdDirection;
+    vars["--fui-stack-direction-lg"] = lgDirection;
+    vars["--fui-stack-direction-xl"] = xlDirection;
+    inlineStyle = vars as unknown as React.CSSProperties;
+  } else {
+    directionClass = styles[direction];
+  }
 
-    // Handle responsive gap
-    if (isResponsiveGap(gap)) {
-      gapClass = styles.gapResponsive;
-      const gapVars: Record<string, string> = {};
-      if (gap.base && gap.base !== 'none') gapVars['--fui-stack-gap'] = `var(--fui-space-${gapToSpace(gap.base)})`;
-      if (gap.sm && gap.sm !== 'none') gapVars['--fui-stack-gap-sm'] = `var(--fui-space-${gapToSpace(gap.sm)})`;
-      if (gap.md && gap.md !== 'none') gapVars['--fui-stack-gap-md'] = `var(--fui-space-${gapToSpace(gap.md)})`;
-      if (gap.lg && gap.lg !== 'none') gapVars['--fui-stack-gap-lg'] = `var(--fui-space-${gapToSpace(gap.lg)})`;
-      if (gap.xl && gap.xl !== 'none') gapVars['--fui-stack-gap-xl'] = `var(--fui-space-${gapToSpace(gap.xl)})`;
-      inlineStyle = { ...inlineStyle, ...gapVars } as React.CSSProperties;
-    } else if (isNumericGap(gap)) {
-      // Numeric gap: maps to space scale tokens (e.g. gap={2} → var(--fui-space-2))
-      gapClass = false;
-      inlineStyle = { ...inlineStyle, gap: `var(--fui-space-${gap})` } as React.CSSProperties;
-    } else {
-      gapClass = gap !== 'none' && styles[`gap-${gap}`];
-    }
+  // Handle responsive gap
+  if (isResponsiveGap(gap)) {
+    gapClass = styles.gapResponsive;
+    const gapVars: Record<string, string> = {};
+    if (gap.base) gapVars["--fui-stack-gap"] = resolveLayoutGap(gap.base);
+    if (gap.sm) gapVars["--fui-stack-gap-sm"] = resolveLayoutGap(gap.sm);
+    if (gap.md) gapVars["--fui-stack-gap-md"] = resolveLayoutGap(gap.md);
+    if (gap.lg) gapVars["--fui-stack-gap-lg"] = resolveLayoutGap(gap.lg);
+    if (gap.xl) gapVars["--fui-stack-gap-xl"] = resolveLayoutGap(gap.xl);
+    inlineStyle = { ...inlineStyle, ...gapVars } as React.CSSProperties;
+  } else if (isNumericGap(gap)) {
+    gapClass = false;
+    inlineStyle = {
+      ...inlineStyle,
+      "--fui-stack-gap": resolveLayoutGap(gap),
+    } as React.CSSProperties;
+  } else {
+    gapClass = false;
+    inlineStyle = {
+      ...inlineStyle,
+      "--fui-stack-gap": resolveLayoutGap(gap),
+    } as React.CSSProperties;
+  }
 
-    const classes = [
-      styles.stack,
-      directionClass,
-      gapClass,
-      align && styles[`align-${align}`],
-      justify && styles[`justify-${justify}`],
-      wrap && styles.wrap,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const classes = [
+    styles.stack,
+    directionClass,
+    gapClass,
+    align && styles[`align-${align}`],
+    justify && styles[`justify-${justify}`],
+    wrap && styles.wrap,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-    const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
+  const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
 
-    // Interleave separator between children when provided
-    let content: React.ReactNode = children;
-    if (separator) {
-      const validChildren = React.Children.toArray(children).filter(Boolean);
-      if (validChildren.length > 1) {
-        const resolvedDir = isResponsiveDirection(direction) ? (direction.base ?? 'column') : direction;
-        const separatorEl = separator === true ? (
+  // Interleave separator between children when provided
+  let content: React.ReactNode = children;
+  if (separator) {
+    const validChildren = React.Children.toArray(children).filter(Boolean);
+    if (validChildren.length > 1) {
+      const responsiveDirection = isResponsiveDirection(direction);
+      const resolvedDir = responsiveDirection ? (direction.base ?? "column") : direction;
+      const separatorEl =
+        separator === true ? (
           <div
             className={styles.separator}
-            data-orientation={resolvedDir === 'row' ? 'vertical' : 'horizontal'}
-            role="separator"
+            data-orientation={resolvedDir === "row" ? "vertical" : "horizontal"}
+            role={responsiveDirection ? undefined : "separator"}
+            aria-hidden={responsiveDirection ? true : undefined}
           />
-        ) : separator;
+        ) : (
+          separator
+        );
 
-        const items: React.ReactNode[] = [];
-        validChildren.forEach((child, idx) => {
-          items.push(child);
-          if (idx < validChildren.length - 1) {
-            const childKey = React.isValidElement(child) && child.key != null ? child.key : `idx-${idx}`;
-            items.push(
-              <React.Fragment key={`sep-${childKey}`}>{separatorEl}</React.Fragment>
-            );
-          }
-        });
-        content = items;
-      }
+      const items: React.ReactNode[] = [];
+      validChildren.forEach((child, idx) => {
+        items.push(child);
+        if (idx < validChildren.length - 1) {
+          const childKey =
+            React.isValidElement(child) && child.key != null ? child.key : `idx-${idx}`;
+          items.push(<React.Fragment key={`sep-${childKey}`}>{separatorEl}</React.Fragment>);
+        }
+      });
+      content = items;
     }
-
-    return (
-      <Component
-        {...htmlProps}
-        ref={ref as React.Ref<never>}
-        className={classes}
-        style={mergedStyle}
-      >
-        {content}
-      </Component>
-    );
   }
-);
 
-// Map gap prop values to space variable numbers
-function gapToSpace(gap: GapToken): string {
-  const map: Record<GapToken, string> = {
-    none: '0',
-    xs: '1',
-    sm: '2',
-    md: '3',
-    lg: '4',
-    xl: '6',
-  };
-  return map[gap];
-}
+  return (
+    <Component
+      {...htmlProps}
+      ref={ref as React.Ref<never>}
+      className={classes}
+      style={mergedStyle}
+      data-direction-base={
+        isResponsiveDirection(direction) ? (direction.base ?? "column") : direction
+      }
+      data-direction-sm={
+        isResponsiveDirection(direction) ? (direction.sm ?? direction.base ?? "column") : direction
+      }
+      data-direction-md={
+        isResponsiveDirection(direction)
+          ? (direction.md ?? direction.sm ?? direction.base ?? "column")
+          : direction
+      }
+      data-direction-lg={
+        isResponsiveDirection(direction)
+          ? (direction.lg ?? direction.md ?? direction.sm ?? direction.base ?? "column")
+          : direction
+      }
+      data-direction-xl={
+        isResponsiveDirection(direction)
+          ? (direction.xl ??
+            direction.lg ??
+            direction.md ??
+            direction.sm ??
+            direction.base ??
+            "column")
+          : direction
+      }
+    >
+      {content}
+    </Component>
+  );
+});
 
 export const Stack = Object.assign(StackRoot, {
   Root: StackRoot,

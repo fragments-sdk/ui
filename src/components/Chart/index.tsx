@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { mergeAriaIds } from '../../utils/aria';
-import styles from './Chart.module.scss';
+import * as React from "react";
+import { mergeAriaIds } from "../../utils/aria";
+import styles from "./Chart.module.scss";
 
 // ============================================
 // Types (self-owned — no external dependency for types)
@@ -36,10 +36,10 @@ export interface ChartTooltipContentProps {
     payload?: Record<string, unknown>;
   }[];
   label?: string;
-  indicator?: 'dot' | 'line' | 'dashed';
+  indicator?: "dot" | "line" | "dashed";
   hideLabel?: boolean;
   hideIndicator?: boolean;
-  labelFormatter?: (label: string, payload: ChartTooltipContentProps['payload']) => React.ReactNode;
+  labelFormatter?: (label: string, payload: ChartTooltipContentProps["payload"]) => React.ReactNode;
   valueFormatter?: (value: number | string) => string;
 }
 
@@ -69,15 +69,15 @@ function loadChartDeps(): Promise<void> {
   if (!_chartLoadPromise) {
     _chartLoadPromise = (async () => {
       try {
-        const rc = await import('recharts');
+        const rc = await import("recharts");
         _RechartsTooltip = rc.Tooltip as unknown as React.ComponentType<Record<string, unknown>>;
         _RechartsLegend = rc.Legend as unknown as React.ComponentType<Record<string, unknown>>;
       } catch {
         _chartFailed = true;
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.warn(
-            '[@usefragments/ui] Chart: recharts is not installed. ' +
-            'Install it with: npm install recharts'
+            "[@usefragments/ui] Chart: recharts is not installed. " +
+              "Install it with: npm install recharts"
           );
         }
       }
@@ -102,7 +102,6 @@ function useChartDeps(): boolean {
   return _RechartsTooltip !== null;
 }
 
-
 // ============================================
 // Context
 // ============================================
@@ -112,7 +111,7 @@ const ChartConfigContext = React.createContext<ChartConfig | null>(null);
 export function useChartConfig() {
   const ctx = React.useContext(ChartConfigContext);
   if (!ctx) {
-    throw new Error('useChartConfig must be used within a <ChartContainer>');
+    throw new Error("useChartConfig must be used within a <ChartContainer>");
   }
   return ctx;
 }
@@ -128,8 +127,8 @@ export function ChartContainer({
   style,
   summary,
   dataTable,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedBy,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedBy,
   ...htmlProps
 }: ChartContainerProps) {
   const chartId = React.useId();
@@ -145,17 +144,17 @@ export function ChartContainer({
     return vars;
   }, [config]);
 
-  const rootClasses = [styles.container, className].filter(Boolean).join(' ');
+  const rootClasses = [styles.container, className].filter(Boolean).join(" ");
 
   // Inject sizing props into the chart child (recharts API).
   // Only pass `responsive` for custom component types to avoid leaking the
   // prop to intrinsic DOM nodes in test/demo usage.
   const chartChildProps: Record<string, unknown> = {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   };
 
-  if (typeof children.type !== 'string') {
+  if (typeof children.type !== "string") {
     chartChildProps.responsive = true;
   }
 
@@ -171,12 +170,8 @@ export function ChartContainer({
         className={rootClasses}
         style={{ ...cssVars, ...style }}
         role="img"
-        aria-label={ariaLabel || 'Chart'}
-        aria-describedby={mergeAriaIds(
-          ariaDescribedBy,
-          summaryId,
-          dataTableId
-        )}
+        aria-label={ariaLabel || "Chart"}
+        aria-describedby={mergeAriaIds(ariaDescribedBy, summaryId, dataTableId)}
       >
         {chartChild}
         {summaryId && (
@@ -202,7 +197,7 @@ export function ChartTooltipContent({
   active,
   payload,
   label,
-  indicator = 'dot',
+  indicator = "dot",
   hideLabel = false,
   hideIndicator = false,
   labelFormatter,
@@ -212,15 +207,11 @@ export function ChartTooltipContent({
 
   if (!active || !payload?.length) return null;
 
-  const formattedLabel = labelFormatter
-    ? labelFormatter(String(label), payload)
-    : label;
+  const formattedLabel = labelFormatter ? labelFormatter(String(label), payload) : label;
 
   return (
     <div className={styles.tooltip}>
-      {!hideLabel && formattedLabel && (
-        <div className={styles.tooltipLabel}>{formattedLabel}</div>
-      )}
+      {!hideLabel && formattedLabel && <div className={styles.tooltipLabel}>{formattedLabel}</div>}
       <div className={styles.tooltipItems}>
         {payload.map((entry, i) => {
           const key = String(entry.dataKey ?? entry.name ?? i);
@@ -229,20 +220,25 @@ export function ChartTooltipContent({
           const color = entry.color ?? configEntry?.color;
           const displayValue = valueFormatter
             ? valueFormatter(entry.value ?? 0)
-            : String(entry.value ?? '');
+            : String(entry.value ?? "");
 
           const indicatorClass = [
             styles.tooltipIndicator,
-            indicator === 'line' && styles.tooltipIndicatorLine,
-            indicator === 'dashed' && styles.tooltipIndicatorDashed,
-          ].filter(Boolean).join(' ');
+            indicator === "line" && styles.tooltipIndicatorLine,
+            indicator === "dashed" && styles.tooltipIndicatorDashed,
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           return (
             <div key={key} className={styles.tooltipItem}>
               {!hideIndicator && (
                 <span
                   className={indicatorClass}
-                  style={{ backgroundColor: indicator === 'dashed' ? undefined : color, borderColor: color }}
+                  style={{
+                    backgroundColor: indicator === "dashed" ? undefined : color,
+                    borderColor: color,
+                  }}
                 />
               )}
               <span className={styles.tooltipItemLabel}>{displayLabel}</span>
@@ -260,11 +256,11 @@ export function ChartTooltipContent({
 // ============================================
 
 type ChartTooltipProps = {
-  indicator?: 'dot' | 'line' | 'dashed';
+  indicator?: "dot" | "line" | "dashed";
   hideLabel?: boolean;
   hideIndicator?: boolean;
-  labelFormatter?: ChartTooltipContentProps['labelFormatter'];
-  valueFormatter?: ChartTooltipContentProps['valueFormatter'];
+  labelFormatter?: ChartTooltipContentProps["labelFormatter"];
+  valueFormatter?: ChartTooltipContentProps["valueFormatter"];
   content?: React.ReactNode | ((tooltipProps: Record<string, unknown>) => React.ReactNode);
   [key: string]: unknown;
 };
@@ -281,7 +277,6 @@ export function ChartTooltip({
   const chartReady = useChartDeps();
 
   const defaultContent = React.useCallback(
-
     (tooltipProps: Record<string, unknown>) => (
       <ChartTooltipContent
         {...(tooltipProps as ChartTooltipContentProps)}
@@ -292,7 +287,7 @@ export function ChartTooltip({
         valueFormatter={valueFormatter}
       />
     ),
-    [indicator, hideLabel, hideIndicator, labelFormatter, valueFormatter],
+    [indicator, hideLabel, hideIndicator, labelFormatter, valueFormatter]
   );
 
   // Nothing until recharts resolves; nothing at all if it is not installed.
@@ -304,7 +299,7 @@ export function ChartTooltip({
 
   return (
     <RechartsTooltipComponent
-      cursor={{ stroke: 'var(--fui-border)' }}
+      cursor={{ stroke: "var(--fui-border)" }}
       content={content ?? defaultContent}
       {...props}
     />
@@ -323,17 +318,14 @@ export function ChartLegendContent({ payload }: ChartLegendContentProps) {
   return (
     <div className={styles.legend}>
       {payload.map((entry) => {
-        const key = String(entry.dataKey ?? entry.value ?? '');
+        const key = String(entry.dataKey ?? entry.value ?? "");
         const configEntry = config?.[key];
         const label = configEntry?.label ?? entry.value ?? key;
         const color = entry.color ?? configEntry?.color;
 
         return (
           <div key={key} className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ backgroundColor: color }}
-            />
+            <span className={styles.legendDot} style={{ backgroundColor: color }} />
             <span className={styles.legendLabel}>{label}</span>
           </div>
         );
@@ -363,12 +355,7 @@ export function ChartLegend({ content, ...props }: ChartLegendProps) {
 
   const RechartsLegendComponent = _RechartsLegend;
 
-  return (
-    <RechartsLegendComponent
-      content={content ?? defaultContent}
-      {...props}
-    />
-  );
+  return <RechartsLegendComponent content={content ?? defaultContent} {...props} />;
 }
 
 export const Chart = Object.assign(ChartContainer, {

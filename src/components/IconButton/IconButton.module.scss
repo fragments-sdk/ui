@@ -1,17 +1,16 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
+@use '../../recipes/action';
+@use '../../recipes/target';
 
 .iconButton {
   @include button-reset;
   @include interactive-base;
+  @include action.base;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1 / 1;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  border: 1px solid transparent;
+  border: var(--fui-stroke-hairline, 1px) solid transparent;
   background-color: transparent;
   flex-shrink: 0;
 
@@ -24,37 +23,28 @@
   }
 }
 
-// Sizes — square targets share the Button height ladder so an IconButton
-// lines up with its sibling Buttons in toolbars. Icon sizing is driven by
-// the button height so a single <IconButton size="sm"><Icon /></> always
-// renders a correctly-scaled glyph without consumer math.
 .sm {
-  width: var(--fui-button-height-sm, $fui-button-height-sm);
-  height: var(--fui-button-height-sm, $fui-button-height-sm);
+  @include action.icon-only("sm");
+  @include target.hit-area("compact");
 
   svg {
-    width: var(--fui-icon-sm, $fui-icon-sm);
-    height: var(--fui-icon-sm, $fui-icon-sm);
+    @include action.glyph("sm");
   }
 }
 
 .md {
-  width: var(--fui-button-height-md, $fui-button-height-md);
-  height: var(--fui-button-height-md, $fui-button-height-md);
+  @include action.icon-only("md");
 
   svg {
-    width: var(--fui-icon-md, $fui-icon-md);
-    height: var(--fui-icon-md, $fui-icon-md);
+    @include action.glyph("md");
   }
 }
 
 .lg {
-  width: var(--fui-button-height-lg, $fui-button-height-lg);
-  height: var(--fui-button-height-lg, $fui-button-height-lg);
+  @include action.icon-only("lg");
 
   svg {
-    width: var(--fui-icon-lg, $fui-icon-lg);
-    height: var(--fui-icon-lg, $fui-icon-lg);
+    @include action.glyph("lg");
   }
 }
 

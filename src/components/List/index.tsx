@@ -79,18 +79,12 @@ function ListItem({ children, icon, className, style, ...htmlProps }: ListItemPr
     .filter(Boolean)
     .join(' ');
 
-  if (variant === 'icon' && icon) {
-    return (
-      <li {...htmlProps} className={classes} style={style}>
-        <span className={styles.iconWrapper}>{icon}</span>
-        <span className={styles.itemContent}>{children}</span>
-      </li>
-    );
-  }
-
   return (
     <li {...htmlProps} className={classes} style={style}>
-      {children}
+      {variant === 'icon' && icon ? (
+        <span className={styles.iconWrapper}>{icon}</span>
+      ) : null}
+      <span className={styles.itemContent}>{children}</span>
     </li>
   );
 }

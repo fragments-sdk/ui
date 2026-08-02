@@ -1,8 +1,13 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { ComponentDefaultsProvider } from "../ComponentDefaults";
 import { ThemeProvider } from "../Theme";
 import { Button } from "./index";
+
+const tokenStyles = readFileSync(resolve(process.cwd(), "src/tokens/_variables.scss"), "utf8");
+const seedStyles = readFileSync(resolve(process.cwd(), "src/tokens/_seeds.scss"), "utf8");
 
 describe("Button", () => {
   it("renders with children", () => {
@@ -32,6 +37,19 @@ describe("Button", () => {
 
     rerender(<Button variant="danger">Btn</Button>);
     expect(screen.getByRole("button")).toHaveClass("danger");
+  });
+
+  it("keeps every boxed button treatment flat and the default danger seed muted", () => {
+    const buttonTokenSection = tokenStyles.slice(
+      tokenStyles.indexOf("// Button chrome."),
+      tokenStyles.indexOf("--fui-code-bg:")
+    );
+
+    expect(buttonTokenSection).not.toContain("linear-gradient");
+    expect(buttonTokenSection).toContain("--fui-button-primary-shadow: none");
+    expect(buttonTokenSection).toContain("--fui-button-neutral-shadow: none");
+    expect(buttonTokenSection).toContain("--fui-button-outlined-shadow: none");
+    expect(seedStyles).toContain("$fui-danger: #a54f46 !default");
   });
 
   it("applies link variant class", () => {
@@ -72,11 +90,7 @@ describe("Button", () => {
     });
 
     render(
-      <ThemeProvider
-        defaultMode="light"
-        storageKey=""
-        componentDefaults={{ controlSize: "sm" }}
-      >
+      <ThemeProvider defaultMode="light" storageKey="" componentDefaults={{ controlSize: "sm" }}>
         <Button>Btn</Button>
       </ThemeProvider>
     );

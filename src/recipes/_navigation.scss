@@ -1,0 +1,110 @@
+@use "../tokens/measurements.generated" as measurements;
+@use "typography";
+
+@function _navigation($role) {
+  @if $role == "appShellHeaderHeight" {
+    @return var(--fui-navigation-app-shell-header-height, #{measurements.navigation-value($role)});
+  } @else if $role == "sidebarGutter" {
+    @return var(--fui-navigation-sidebar-gutter, #{measurements.navigation-value($role)});
+  } @else if $role == "sidebarLeadingBox" {
+    @return var(--fui-navigation-sidebar-leading-box, #{measurements.navigation-value($role)});
+  } @else if $role == "sidebarDot" {
+    @return var(--fui-navigation-sidebar-dot, #{measurements.navigation-value($role)});
+  } @else if $role == "sidebarRail" {
+    @return var(--fui-navigation-sidebar-rail, #{measurements.navigation-value($role)});
+  } @else if $role == "sidebarLabelOffset" {
+    @return var(--fui-navigation-sidebar-label-offset, #{measurements.navigation-value($role)});
+  } @else if $role == "sidebarCollapsedWidth" {
+    @return var(--fui-navigation-sidebar-collapsed-width, #{measurements.navigation-value($role)});
+  }
+
+  @error "Unknown navigation measurement '#{$role}'.";
+}
+
+@mixin properties {
+  --fui-navigation-row-track: var(
+    --fui-control-track-md,
+    #{measurements.target-value("controlTrack", "md")}
+  );
+  --fui-navigation-section-track: var(
+    --fui-control-track-micro,
+    #{measurements.target-value("controlTrack", "micro")}
+  );
+  --fui-navigation-gutter: #{_navigation("sidebarGutter")};
+  --fui-navigation-inline-inset: #{_navigation("sidebarGutter")};
+  --fui-navigation-content-gap: #{_navigation("sidebarGutter")};
+  --fui-navigation-leading-box: #{_navigation("sidebarLeadingBox")};
+  --fui-navigation-active-rail: #{_navigation("sidebarRail")};
+  --fui-navigation-active-dot: #{_navigation("sidebarDot")};
+  --fui-navigation-label-optical-y: #{_navigation("sidebarLabelOffset")};
+}
+
+@mixin row {
+  @include properties;
+  @include typography.role("ui-compact");
+
+  box-sizing: border-box;
+  min-block-size: var(--fui-navigation-row-track);
+  padding-inline: var(--fui-navigation-inline-inset);
+  gap: var(--fui-navigation-content-gap);
+}
+
+@mixin section-row {
+  @include properties;
+  @include typography.role("caption");
+
+  box-sizing: border-box;
+  min-block-size: var(--fui-navigation-section-track);
+  padding-inline: var(--fui-navigation-inline-inset);
+  gap: var(--fui-navigation-content-gap);
+}
+
+@mixin leading {
+  @include properties;
+
+  inline-size: var(--fui-navigation-leading-box);
+  block-size: var(--fui-navigation-leading-box);
+  flex: 0 0 var(--fui-navigation-leading-box);
+
+  > svg,
+  > img {
+    inline-size: var(--fui-icon-md, #{measurements.target-value("icon", "md")});
+    block-size: var(--fui-icon-md, #{measurements.target-value("icon", "md")});
+  }
+}
+
+@mixin active-indicator($placement) {
+  @include properties;
+
+  position: relative;
+
+  @if $placement == "start" {
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+      inset-inline-start: calc(-1 * var(--fui-navigation-gutter));
+      inline-size: var(--fui-navigation-active-rail);
+    }
+  } @else if $placement == "end" {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-end: var(--fui-navigation-inline-inset);
+      inline-size: var(--fui-navigation-active-dot);
+      block-size: var(--fui-navigation-active-dot);
+      border-radius: 999px;
+      transform: translateY(-50%);
+    }
+  } @else {
+    @error "Unknown navigation indicator placement '#{$placement}'. Expected start or end.";
+  }
+}
+
+@mixin collapsed-shell {
+  @include properties;
+
+  inline-size: #{_navigation("sidebarCollapsedWidth")};
+  justify-items: center;
+}

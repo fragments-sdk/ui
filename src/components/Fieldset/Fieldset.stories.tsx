@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Fieldset } from '.';
-import { Field } from '../Field';
-import { Input } from '../Input';
-import { Grid } from '../Grid';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Fieldset } from ".";
+import { Field } from "../Field";
+import { Input } from "../Input";
+import { Grid } from "../Grid";
 
 /**
  * Fieldset groups related form fields with an accessible legend. It is a
@@ -10,35 +10,21 @@ import { Grid } from '../Grid';
  * the root, alongside the grouped Field components.
  */
 const meta = {
-  title: 'Forms/Fieldset',
+  title: "Forms/Fieldset",
   component: Fieldset,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Groups related form fields with an accessible legend.',
+        component: "Groups related form fields with an accessible legend.",
       },
     },
   },
   argTypes: {
     disabled: {
-      control: 'boolean',
-      description: 'Disables all fields within the fieldset',
+      control: "boolean",
+      description: "Disables all fields within the fieldset",
     },
-  },
-  args: {
-    children: (
-      <>
-        <Fieldset.Legend>Personal Information</Fieldset.Legend>
-        <Field name="firstName">
-          <Field.Label>First Name</Field.Label>
-          <Field.Control>
-            <Input placeholder="Jane" />
-          </Field.Control>
-        </Field>
-      </>
-    ),
   },
 } satisfies Meta<typeof Fieldset>;
 
@@ -80,9 +66,7 @@ export const WithDescription: Story = {
   render: () => (
     <Fieldset>
       <Fieldset.Legend>Account Details</Fieldset.Legend>
-      <Fieldset.Description>
-        Choose how others will see you on the platform.
-      </Fieldset.Description>
+      <Fieldset.Description>Choose how others will see you on the platform.</Fieldset.Description>
       <Field name="displayName">
         <Field.Label>Display Name</Field.Label>
         <Field.Control>

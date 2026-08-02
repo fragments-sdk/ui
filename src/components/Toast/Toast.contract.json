@@ -3,12 +3,7 @@
   "name": "Toast",
   "description": "Brief, non-blocking notification messages",
   "category": "feedback",
-  "tags": [
-    "notification",
-    "alert",
-    "message",
-    "feedback"
-  ],
+  "tags": ["notification", "alert", "message", "feedback"],
   "status": "stable",
   "sourcePath": "src/components/Toast/index.tsx",
   "exportName": "Toast",
@@ -44,18 +39,12 @@
       "description": "Visual variant indicating message type",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "success",
-        "error",
-        "warning",
-        "info"
-      ]
+      "values": ["default", "success", "error", "warning", "info"]
     },
     "duration": {
       "type": "number",
       "description": "Auto-dismiss duration in ms (0 = no auto-dismiss)",
-      "default": 5000,
+      "default": 8000,
       "required": false
     },
     "action": {
@@ -161,16 +150,11 @@
       "ToastInput (useToast): optional id for deterministic creation/replacement flows",
       "useToast().success/error/warning/info: (title, description?) or ({ title, description, action, duration, id })"
     ],
-    "a11yRules": [
-      "A11Y_ALERT_ROLE",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_ALERT_ROLE", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Provider"
-    ]
+    "subComponents": ["Provider"]
   },
   "provenance": {
     "source": "migrated",

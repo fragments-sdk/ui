@@ -34,7 +34,7 @@
   place-items: center;
   color: var(--fui-text-primary);
   background: var(--fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong);
   border-radius: var(--fui-radius-md);
 }
 
@@ -150,7 +150,7 @@
       transparent
     ),
     var(--fui-bg-subtle);
-  border-block-start: 1px solid var(--fui-border-subtle);
+  border-block-start: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .driftChart {
@@ -181,7 +181,7 @@
 .prDetailSummary {
   min-width: 0;
   padding-block-end: var(--fui-space-3);
-  border-block-end: 1px solid var(--fui-border-subtle);
+  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prTable {
@@ -200,7 +200,7 @@
 .prIdHeader {
   min-width: 0;
   padding-block-end: var(--fui-space-3);
-  border-block-end: 1px solid var(--fui-border-subtle);
+  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prIdTabs {
@@ -208,7 +208,7 @@
   gap: var(--fui-space-3);
   align-items: center;
   overflow-x: auto;
-  border-block-end: 1px solid var(--fui-border-subtle);
+  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prIdTabs span {
@@ -217,7 +217,7 @@
   align-items: center;
   min-height: var(--fui-target-size-min);
   color: var(--fui-text-secondary);
-  border-block-end: 2px solid transparent;
+  border-block-end: var(--fui-stroke-default, 2px) solid transparent;
   white-space: nowrap;
 }
 
@@ -252,7 +252,7 @@
   place-items: center;
   color: var(--fui-text-primary);
   background: var(--fui-bg-elevated);
-  border: 1px solid var(--fui-border-strong);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong);
   border-radius: var(--fui-radius-full);
   font-size: var(--fui-font-size-xs);
   font-weight: var(--fui-font-weight-semibold);
@@ -272,7 +272,7 @@
 .prIdCommentBox {
   overflow: hidden;
   background: var(--fui-bg-elevated);
-  border: 1px solid var(--fui-border-subtle);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
   border-radius: var(--fui-radius-md);
 }
 
@@ -285,7 +285,7 @@
   min-width: 0;
   padding: var(--fui-space-2) var(--fui-space-3);
   background: var(--fui-bg-subtle);
-  border-block-end: 1px solid var(--fui-border-subtle);
+  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prIdCommentBody {
@@ -296,7 +296,7 @@
 .prIdPrBodyTable,
 .prIdReportTable {
   overflow: hidden;
-  border: 1px solid var(--fui-border-subtle);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
   border-radius: var(--fui-radius-md);
 }
 
@@ -306,7 +306,7 @@
   gap: var(--fui-space-2);
   align-items: center;
   padding: var(--fui-space-2) var(--fui-space-3);
-  border-block-end: 1px solid var(--fui-border-subtle);
+  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prIdSummaryRow {
@@ -323,7 +323,7 @@
 }
 
 .prIdFileHeader {
-  border: 1px solid var(--fui-border-subtle);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
   border-end-start-radius: 0;
   border-end-end-radius: 0;
   border-start-start-radius: var(--fui-radius-md);
@@ -339,14 +339,14 @@
   position: sticky;
   top: var(--fui-space-4);
   min-width: 0;
-  border-block-start: 1px solid var(--fui-border-subtle);
+  border-block-start: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prIdSidebarSection {
   display: grid;
   gap: var(--fui-space-2);
   padding-block: var(--fui-space-3);
-  border-block-end: 1px solid var(--fui-border-subtle);
+  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-border-subtle);
 }
 
 .prIdSidebarRow,

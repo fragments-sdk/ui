@@ -1,32 +1,32 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-
-// Local component tokens
-$fui-slider-track-height: 4px !default;
-$fui-slider-thumb-size: $fui-target-size-min !default;
+@use "../../recipes/boolean-range" as boolean;
+@use "../../recipes/field" as field;
+@use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
+  @include field.wrapper;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--fui-space-1, $fui-space-1);
+  margin-bottom: var(--fui-raw-space-8, 8px);
 }
 
 .label {
-  @include label-text;
+  @include typography.role("ui-standard");
 }
 
 .value {
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
+  @include typography.role("ui-compact");
+
   color: var(--fui-text-secondary, $fui-text-secondary);
-  min-width: 60px;
+  min-width: max-content;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .root {
@@ -40,8 +40,9 @@ $fui-slider-thumb-size: $fui-target-size-min !default;
 }
 
 .track {
+  @include boolean.slider-track;
+
   position: relative;
-  height: var(--fui-slider-track-height, $fui-slider-track-height);
   width: 100%;
   background-color: var(--fui-form-group-bg, $fui-bg-secondary);
   box-shadow: inset 0 0 0 1px var(--fui-form-group-border, $fui-border);
@@ -62,13 +63,11 @@ $fui-slider-thumb-size: $fui-target-size-min !default;
 }
 
 .thumb {
-  @include min-target-size;
+  @include boolean.slider-thumb;
+  @include target.hit-area("compact");
 
-  position: relative;
-  width: var(--fui-slider-thumb-size, $fui-slider-thumb-size);
-  height: var(--fui-slider-thumb-size, $fui-slider-thumb-size);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: 1px solid var(--fui-field-selection-border, $fui-color-accent);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-selection-border, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
   cursor: grab;
@@ -93,11 +92,14 @@ $fui-slider-thumb-size: $fui-target-size-min !default;
     cursor: not-allowed;
     opacity: 0.5;
   }
+
+  @media (pointer: coarse) {
+    --_fui-target-hit-size: #{target.hit-size("touch")};
+  }
 }
 
 .helper {
-  @include helper-text;
-  margin-top: var(--fui-space-1, $fui-space-1);
+  @include field.helper;
 }
 
 .helperError {
@@ -115,11 +117,14 @@ $fui-slider-thumb-size: $fui-target-size-min !default;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background: var(--fui-form-group-bg, $fui-bg-secondary);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  border: 1px solid var(--fui-form-group-border, $fui-border);
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  line-height: 1;
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
+  @include typography.role("ui-compact");
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+}
+
+.wrapper[data-invalid] .track {
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // ============================================
@@ -128,11 +133,12 @@ $fui-slider-thumb-size: $fui-target-size-min !default;
 
 @media (prefers-contrast: more) {
   .track {
-    border: 1px solid var(--fui-text-primary, $fui-text-primary);
+    border: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
   }
 
   .thumb {
-    border-width: 3px;
+    outline: var(--fui-stroke-default, 2px) solid var(--fui-text-primary, $fui-text-primary);
+    outline-offset: var(--fui-stroke-hairline, 1px);
   }
 }
 

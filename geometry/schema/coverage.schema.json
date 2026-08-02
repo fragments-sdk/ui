@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:coverage",
+  "title": "Geometry coverage ledger",
+  "type": "object",
+  "required": ["schemaVersion", "entries", "manualZoomCaseIds"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["caseId", "status", "resultManifestPath"],
+        "properties": {
+          "caseId": { "$ref": "#/$defs/caseId" },
+          "status": {
+            "enum": ["pending", "passed", "failed", "manual-pending", "manual-approved"]
+          },
+          "resultManifestPath": {
+            "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/repositoryPath" }]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "manualZoomCaseIds": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/caseId" }
+    }
+  },
+  "additionalProperties": false,
+  "unevaluatedProperties": false,
+  "$defs": {
+    "caseId": {
+      "type": "string",
+      "pattern": "^geometry/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:compact|default|relaxed|na)/[a-z0-9]+(?:-[a-z0-9]+)*/(?:light|dark|forced)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    }
+  }
+}

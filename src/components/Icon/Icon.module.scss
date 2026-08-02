@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../recipes/representation" as representation;
 
 .icon {
   display: inline-flex;
@@ -6,6 +7,21 @@
   justify-content: center;
   color: currentColor;
   line-height: 1;
+
+  > svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+}
+
+@each $size in ("xs", "sm", "md", "lg", "xl") {
+  .#{$size} {
+    @include representation.glyph($size);
+  }
+}
+
+.size2xl {
+  @include representation.glyph("2xl");
 }
 
 // Color variants (matching Badge/Alert pattern)

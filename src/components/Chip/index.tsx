@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./Chip.module.scss";
 
 /**
@@ -15,7 +14,7 @@ export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonEle
    * @see https://usefragments.com/components/chip#variants */
   variant?: "filled" | "outlined" | "outline" | "soft";
   /** Chip size.
-   * @default "md" */
+   * @default "xs" */
   size?: "xs" | "sm" | "md" | "lg";
   /** Whether the chip is selected */
   selected?: boolean;
@@ -59,7 +58,7 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   },
   ref
 ) {
-  const size = useResolvedControlSize(sizeProp);
+  const size = sizeProp ?? "xs";
   // Resolve alias: "outline" → "outlined"
   const variant = variantProp === "outline" ? "outlined" : variantProp;
 
@@ -110,7 +109,7 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   }
 
   return (
-    <span className={styles.removableChip} data-disabled={disabled || undefined}>
+    <span className={styles.removableChip} data-disabled={disabled || undefined} data-size={size}>
       {chipButton}
       <button
         type="button"

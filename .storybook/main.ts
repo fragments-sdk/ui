@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from "@storybook/react-vite";
 
 /**
  * Storybook config for the Fragments UI library.
@@ -9,14 +9,17 @@ import type { StorybookConfig } from '@storybook/react-vite';
  * design-system catalog. See `@repo/engine/extract` `parseStorybookConfigContent`.
  */
 const config: StorybookConfig = {
-  stories: ['../src/components/**/*.stories.@(ts|tsx)'],
-  addons: ['@storybook/addon-essentials', '@storybook/addon-a11y'],
+  stories: [
+    "../src/components/**/*.stories.@(ts|tsx)",
+    "../src/measurements/**/*.stories.@(ts|tsx)",
+  ],
+  addons: ["@storybook/addon-essentials", "@storybook/addon-a11y"],
   framework: {
-    name: '@storybook/react-vite',
+    name: "@storybook/react-vite",
     options: {},
   },
   core: {
-    builder: '@storybook/builder-vite',
+    builder: "@storybook/builder-vite",
   },
 };
 

@@ -1,7 +1,14 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
 import { Badge } from '../Badge';
 import { Sidebar } from './index';
+
+const sidebarStyles = readFileSync(
+  resolve(process.cwd(), 'src/components/Sidebar/Sidebar.module.scss'),
+  'utf8'
+);
 
 function mockMatchMedia(matches: boolean) {
   Object.defineProperty(window, 'matchMedia', {
@@ -77,6 +84,23 @@ describe('Sidebar', () => {
     expect(activeItem).toHaveAttribute('aria-current', 'page');
   });
 
+  it('exposes the selected active-indicator placement', () => {
+    renderSidebar({ activeIndicator: 'end' });
+    expect(document.querySelector('aside')).toHaveAttribute('data-active-indicator', 'end');
+  });
+
+  it('derives optical rails and disclosure height from shared geometry', () => {
+    expect(sidebarStyles).not.toMatch(/\d+(?:\.\d+)?rem/);
+    expect(sidebarStyles).not.toContain('max-height: 500px');
+    expect(sidebarStyles).toContain('grid-template-rows: 0fr;');
+    expect(sidebarStyles).toContain('grid-template-rows: 1fr;');
+    expect(sidebarStyles).toContain('width: var(--fui-navigation-active-rail);');
+    expect(sidebarStyles).toContain('height: #{action.track("lg")};');
+    expect(sidebarStyles).toContain(
+      'height: var(--fui-navigation-sidebar-collapsed-width, 56px);'
+    );
+  });
+
   it('disables items with disabled prop', () => {
     renderSidebar();
     const disabledItem = screen.getByText('Disabled').closest('button');
@@ -123,7 +147,9 @@ describe('Sidebar', () => {
   it('uses icon collapse width when collapsed with icons', () => {
     renderSidebar({ collapsed: true });
     const aside = document.querySelector('aside');
-    expect(aside).toHaveStyle('--sidebar-effective-collapsed-width: 56px');
+    expect(aside).toHaveStyle(
+      '--sidebar-effective-collapsed-width: var(--fui-navigation-sidebar-collapsed-width, 56px)'
+    );
     expect(aside).toHaveAttribute('data-icon-collapse', 'icons');
   });
 

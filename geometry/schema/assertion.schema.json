@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ui-geometry:v1:assertion",
+  "title": "Geometry assertion",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/box" },
+    { "$ref": "#/$defs/boxLedgered" },
+    { "$ref": "#/$defs/style" },
+    { "$ref": "#/$defs/relation" },
+    { "$ref": "#/$defs/relationLedgered" },
+    { "$ref": "#/$defs/attribute" },
+    { "$ref": "#/$defs/media" },
+    { "$ref": "#/$defs/screenshot" }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "target": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "ledgerId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[-/][a-z0-9]+)*$"
+    },
+    "box": {
+      "type": "object",
+      "required": ["op", "target", "metric", "expected", "tolerance", "unit"],
+      "properties": {
+        "op": { "const": "box" },
+        "target": { "$ref": "#/$defs/target" },
+        "metric": { "enum": ["x", "y", "width", "height", "top", "right", "bottom", "left"] },
+        "expected": { "type": "number" },
+        "tolerance": { "enum": [0, 0.5] },
+        "unit": { "const": "css-px" }
+      },
+      "additionalProperties": false
+    },
+    "boxLedgered": {
+      "type": "object",
+      "required": ["op", "target", "metric", "expected", "tolerance", "unit", "ledgerId"],
+      "properties": {
+        "op": { "const": "box" },
+        "target": { "$ref": "#/$defs/target" },
+        "metric": { "enum": ["x", "y", "width", "height", "top", "right", "bottom", "left"] },
+        "expected": { "type": "number" },
+        "tolerance": { "const": 1 },
+        "unit": { "const": "css-px" },
+        "ledgerId": { "$ref": "#/$defs/ledgerId" }
+      },
+      "additionalProperties": false
+    },
+    "style": {
+      "type": "object",
+      "required": ["op", "target", "property", "expected"],
+      "properties": {
+        "op": { "const": "style" },
+        "target": { "$ref": "#/$defs/target" },
+        "property": {
+          "enum": [
+            "width",
+            "height",
+            "min-width",
+            "min-height",
+            "padding-block-start",
+            "padding-block-end",
+            "padding-inline-start",
+            "padding-inline-end",
+            "gap",
+            "font-size",
+            "line-height",
+            "font-weight",
+            "letter-spacing",
+            "font-family",
+            "border-top-width",
+            "border-right-width",
+            "border-bottom-width",
+            "border-left-width",
+            "display",
+            "align-items",
+            "justify-content"
+          ]
+        },
+        "expected": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "relation": {
+      "type": "object",
+      "required": [
+        "op",
+        "target",
+        "targetEdge",
+        "reference",
+        "referenceEdge",
+        "expectedDelta",
+        "tolerance",
+        "unit"
+      ],
+      "properties": {
+        "op": { "const": "relation" },
+        "target": { "$ref": "#/$defs/target" },
+        "targetEdge": { "$ref": "#/$defs/relationEdge" },
+        "reference": { "$ref": "#/$defs/target" },
+        "referenceEdge": { "$ref": "#/$defs/relationEdge" },
+        "expectedDelta": { "type": "number" },
+        "tolerance": { "enum": [0, 0.5] },
+        "unit": { "const": "css-px" }
+      },
+      "additionalProperties": false
+    },
+    "relationLedgered": {
+      "type": "object",
+      "required": [
+        "op",
+        "target",
+        "targetEdge",
+        "reference",
+        "referenceEdge",
+        "expectedDelta",
+        "tolerance",
+        "unit",
+        "ledgerId"
+      ],
+      "properties": {
+        "op": { "const": "relation" },
+        "target": { "$ref": "#/$defs/target" },
+        "targetEdge": { "$ref": "#/$defs/relationEdge" },
+        "reference": { "$ref": "#/$defs/target" },
+        "referenceEdge": { "$ref": "#/$defs/relationEdge" },
+        "expectedDelta": { "type": "number" },
+        "tolerance": { "const": 1 },
+        "unit": { "const": "css-px" },
+        "ledgerId": { "$ref": "#/$defs/ledgerId" }
+      },
+      "additionalProperties": false
+    },
+    "relationEdge": {
+      "enum": ["left", "right", "top", "bottom", "center-x", "center-y", "baseline"]
+    },
+    "attribute": {
+      "type": "object",
+      "required": ["op", "target", "name", "expected"],
+      "properties": {
+        "op": { "const": "attribute" },
+        "target": { "$ref": "#/$defs/target" },
+        "name": {
+          "anyOf": [
+            {
+              "enum": ["role", "tabindex", "disabled", "checked", "readonly", "required", "data-state"]
+            },
+            { "type": "string", "pattern": "^aria-[a-z][a-z0-9-]*$" }
+          ]
+        },
+        "expected": {
+          "anyOf": [{ "type": "string" }, { "type": "boolean" }, { "type": "null" }]
+        }
+      },
+      "additionalProperties": false
+    },
+    "media": {
+      "type": "object",
+      "required": ["op", "query", "expected"],
+      "properties": {
+        "op": { "const": "media" },
+        "query": {
+          "enum": [
+            "(pointer: coarse)",
+            "(forced-colors: active)",
+            "(prefers-reduced-motion: reduce)"
+          ]
+        },
+        "expected": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "screenshot": {
+      "type": "object",
+      "required": ["op", "target"],
+      "properties": {
+        "op": { "const": "screenshot" },
+        "target": { "$ref": "#/$defs/target" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

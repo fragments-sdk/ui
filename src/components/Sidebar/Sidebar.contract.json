@@ -25,6 +25,7 @@
     "collapsedWidth: string (default: 56px)",
     "position: left|right (default: left)",
     "collapsible: icon|offcanvas|none (default: icon)",
+    "activeIndicator: start|end (default: start)",
     "style: object"
   ],
   "props": {
@@ -98,6 +99,16 @@
         "none"
       ]
     },
+    "activeIndicator": {
+      "type": "enum",
+      "description": "Placement of the active-item affordance",
+      "default": "start",
+      "required": false,
+      "values": [
+        "start",
+        "end"
+      ]
+    },
     "style": {
       "type": "object",
       "description": "",
@@ -124,6 +135,7 @@
       "Place most frequently used items at the top",
       "Use badges sparingly for notifications or counts",
       "The `active` prop on items should be controlled by your app based on current route",
+      "Use activeIndicator=\"end\" when the product language calls for a trailing status dot instead of the default start rail",
       "Use `collapsedContent` on Header to show just a logo icon when collapsed",
       "Submenus are hidden when collapsed - use tooltips for navigation hints instead",
       "Use SidebarProvider to enable external triggers and keyboard shortcuts",

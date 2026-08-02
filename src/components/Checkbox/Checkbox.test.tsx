@@ -20,6 +20,11 @@ describe("Checkbox", () => {
     expect(screen.getByRole("checkbox")).toBeInTheDocument();
   });
 
+  it("exposes its resolved geometry size", () => {
+    render(<Checkbox aria-label="Accept" size="lg" />);
+    expect(screen.getByRole("checkbox")).toHaveAttribute("data-size", "lg");
+  });
+
   it("toggles checked state on click", async () => {
     const user = userEvent.setup();
     render(<Checkbox aria-label="Accept" defaultChecked={false} />);
@@ -193,30 +198,30 @@ describe("Checkbox", () => {
 
   it("uses the published component-owned radius for control anatomy", () => {
     const radiusUses = checkboxStyles.match(
-      /border-radius:\s*var\(--fui-checkbox-radius,\s*\$fui-checkbox-radius\);/g
+      /border-radius:\s*var\(--fui-checkbox-radius,\s*var\(--fui-radius-sm,\s*#\{\$fui-radius-sm\}\)\);/g
     );
 
-    expect(componentProperties).toContain("--fui-checkbox-radius: 0.25rem;");
+    expect(componentProperties).toContain("--fui-checkbox-radius: var(--fui-radius-sm);");
     expect(checkboxStyles).not.toMatch(/\.checkbox\s*\{[\s\S]*?--fui-checkbox-radius\s*:/);
-    expect(radiusUses).toHaveLength(2);
+    expect(radiusUses).toHaveLength(1);
     expect(checkboxStyles).toContain("border-radius: var(--fui-radius-md, $fui-radius-md);");
   });
 
   it("allows an application ancestor to override the public control radius", () => {
     render(
-      <div data-testid="radius-scope" style={{ "--fui-checkbox-radius": "0.75rem" }}>
+      <div data-testid="radius-scope" style={{ "--fui-checkbox-radius": "12px" }}>
         <Checkbox aria-label="Rounded control" data-testid="rounded-control" />
       </div>
     );
 
     expect(screen.getByTestId("radius-scope")).toHaveStyle({
-      "--fui-checkbox-radius": "0.75rem",
+      "--fui-checkbox-radius": "12px",
     });
     expect(screen.getByTestId("rounded-control")).not.toHaveStyle({
-      "--fui-checkbox-radius": "0.75rem",
+      "--fui-checkbox-radius": "12px",
     });
     expect(checkboxStyles).toContain(
-      "border-radius: var(--fui-checkbox-radius, $fui-checkbox-radius);"
+      "border-radius: var(--fui-checkbox-radius, var(--fui-radius-sm, #{$fui-radius-sm}));"
     );
   });
 });

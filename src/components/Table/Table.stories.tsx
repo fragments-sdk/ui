@@ -20,16 +20,21 @@ const meta = {
     },
   },
   argTypes: {
+    density: {
+      control: 'select',
+      options: ['compact', 'regular', 'relaxed'],
+      description: 'Canonical row density',
+    },
     size: {
       control: 'select',
       options: ['sm', 'md'],
-      description: 'Table density',
+      description: 'Deprecated density alias',
     },
     striped: { control: 'boolean', description: 'Show alternating row backgrounds' },
     bordered: { control: 'boolean', description: 'Wrap table in a bordered container' },
   },
   args: {
-    size: 'md',
+    density: 'regular',
     striped: false,
     bordered: false,
   },

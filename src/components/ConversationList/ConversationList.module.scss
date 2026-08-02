@@ -1,5 +1,7 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
+@use "../../tokens/variables" as *;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/representation" as representation;
+@use "../../recipes/typography" as typography;
 
 // ============================================
 // Conversation List Root
@@ -23,8 +25,8 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-3, $fui-space-3);
+  gap: layout.gap("md");
+  padding: layout.gap("lg");
   min-height: 100%;
   // Own the full height of the conversation. As a shrinkable flex item it was
   // squashed to the height of the scroll port while its messages overflowed
@@ -43,27 +45,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-3, $fui-space-3);
+  gap: layout.gap("sm");
+  padding: layout.gap("md");
   color: var(--fui-text-secondary, $fui-text-secondary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  @include typography.role("caption");
 }
 
 // ============================================
@@ -73,19 +58,19 @@
 .dateSeparator {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2, $fui-space-2) 0;
+  gap: layout.gap("sm");
+  padding-block: layout.gap("sm");
 }
 
 .dateSeparatorLine {
   flex: 1;
-  height: 1px;
+  height: var(--fui-stroke-hairline, 1px);
   background-color: var(--fui-border, $fui-border);
 }
 
 .dateSeparatorText {
-  @include helper-text;
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
+  @include typography.role("ui-compact");
+
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
   text-transform: uppercase;
@@ -99,8 +84,8 @@
 .typingIndicator {
   display: flex;
   align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2, $fui-space-2);
+  gap: layout.gap("sm");
+  padding: layout.gap("sm");
 }
 
 .withoutAvatar {
@@ -112,61 +97,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  inline-size: representation.avatar-size("sm");
+  block-size: representation.avatar-size("sm");
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   color: var(--fui-text-secondary, $fui-text-secondary);
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
 }
 
 .typingContent {
   display: flex;
   align-items: center;
-  gap: calc(var(--fui-space-px, $fui-space-px) * 4);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
+  padding-block: layout.gap("sm");
+  padding-inline: layout.gap("md");
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
-}
-
-.typingDot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  animation: bounce 1.4s ease-in-out infinite;
-
-  &:nth-child(1) {
-    animation-delay: 0s;
-  }
-
-  &:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 0.6;
-  }
-}
-
-@keyframes bounce {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.4;
-  }
-  30% {
-    transform: translateY(-$fui-anim-offset-sm);
-    opacity: 1;
-  }
 }
