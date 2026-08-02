@@ -28,6 +28,16 @@ describe("Tabs", () => {
     expect(screen.getAllByRole("tab")).toHaveLength(3);
   });
 
+  it("exposes stable styling slots and the resolved list variant", () => {
+    renderTabs({ variant: "pills", "data-testid": "tabs-example" });
+
+    expect(screen.getByTestId("tabs-example")).toHaveAttribute("data-slot", "tabs");
+    expect(screen.getByRole("tablist")).toHaveAttribute("data-slot", "tabs-list");
+    expect(screen.getByRole("tablist")).toHaveAttribute("data-variant", "pills");
+    expect(screen.getAllByRole("tab")[0]).toHaveAttribute("data-slot", "tabs-tab");
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("data-slot", "tabs-panel");
+  });
+
   it("renders tabpanel role for active panel", () => {
     renderTabs();
     expect(screen.getByRole("tabpanel")).toBeInTheDocument();
@@ -216,10 +226,7 @@ describe("Tabs", () => {
   it("has no accessibility violations", async () => {
     const { container } = renderTabs();
     await waitFor(() =>
-      expect(screen.getByRole("tab", { name: /tab one/i })).toHaveAttribute(
-        "aria-selected",
-        "true"
-      )
+      expect(screen.getByRole("tab", { name: /tab one/i })).toHaveAttribute("aria-selected", "true")
     );
     await expectNoA11yViolations(container);
   });

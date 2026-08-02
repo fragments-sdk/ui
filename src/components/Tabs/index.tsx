@@ -95,6 +95,7 @@ function TabsRoot({
           onValueChange={onValueChange}
           orientation={orientation}
           className={classes}
+          data-slot="tabs"
         >
           {children}
         </BaseTabs.Root>
@@ -114,7 +115,12 @@ function TabsList({ children, variant, size: sizeProp, className, ...htmlProps }
   return (
     <TabsVariantContext.Provider value={resolvedVariant}>
       <TabsSizeContext.Provider value={size}>
-        <BaseTabs.List {...htmlProps} className={classes}>
+        <BaseTabs.List
+          {...htmlProps}
+          className={classes}
+          data-slot="tabs-list"
+          data-variant={resolvedVariant}
+        >
           {children}
           {resolvedVariant === "underline" && <BaseTabs.Indicator className={styles.indicator} />}
         </BaseTabs.List>
@@ -131,7 +137,7 @@ function Tab({ children, value, disabled, className }: TabProps) {
   const classes = [styles.tab, sizeClass, variantClass, className].filter(Boolean).join(" ");
 
   return (
-    <BaseTabs.Tab value={value} disabled={disabled} className={classes}>
+    <BaseTabs.Tab value={value} disabled={disabled} className={classes} data-slot="tabs-tab">
       {children}
     </BaseTabs.Tab>
   );
@@ -148,7 +154,13 @@ function TabsPanel({
   const classes = [styles.panel, flush && styles.panelFlush, className].filter(Boolean).join(" ");
 
   return (
-    <BaseTabs.Panel {...htmlProps} value={value} keepMounted={keepMounted} className={classes}>
+    <BaseTabs.Panel
+      {...htmlProps}
+      value={value}
+      keepMounted={keepMounted}
+      className={classes}
+      data-slot="tabs-panel"
+    >
       {children}
     </BaseTabs.Panel>
   );

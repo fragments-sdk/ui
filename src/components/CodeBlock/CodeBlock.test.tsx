@@ -1,73 +1,83 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { CodeBlock } from './index';
-import styles from './CodeBlock.module.scss';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { CodeBlock } from "./index";
+import styles from "./CodeBlock.module.scss";
 
-vi.mock('shiki', () => ({
-  codeToHtml: vi.fn(
-    async (code: string) => `<pre class="shiki"><code>${code}</code></pre>`
-  ),
+vi.mock("shiki", () => ({
+  codeToHtml: vi.fn(async (code: string) => `<pre class="shiki"><code>${code}</code></pre>`),
 }));
 
 async function waitForHighlight(container: HTMLElement) {
-  await waitFor(() => expect(container.querySelector('pre.shiki')).toBeInTheDocument());
+  await waitFor(() => expect(container.querySelector("pre.shiki")).toBeInTheDocument());
 }
 
-describe('CodeBlock', () => {
-  it('renders pre and code elements', async () => {
+describe("CodeBlock", () => {
+  it("renders pre and code elements", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     // Initially shows loading state with pre/code
-    expect(container.querySelector('pre')).toBeInTheDocument();
-    expect(container.querySelector('code')).toBeInTheDocument();
+    expect(container.querySelector("pre")).toBeInTheDocument();
+    expect(container.querySelector("code")).toBeInTheDocument();
   });
 
-  it('renders a copy button by default', async () => {
-    const { container } = render(<CodeBlock code="const x = 1;" />);
-    expect(screen.getByRole('button', { name: /copy code/i })).toBeInTheDocument();
+  it("exposes stable styling slots without adding public props", async () => {
+    const { container } = render(
+      <CodeBlock code="const x = 1;" title="Example" data-testid="code-example" />
+    );
+
+    const root = screen.getByTestId("code-example");
+    expect(root).toHaveAttribute("data-slot", "code-block");
+    expect(root).toContainElement(container.querySelector('[data-slot="code-block-frame"]'));
+    expect(root).toContainElement(container.querySelector('[data-slot="code-block-title"]'));
     await waitForHighlight(container);
   });
 
-  it('uses overlay copy placement by default when filename is not provided', async () => {
+  it("renders a copy button by default", async () => {
+    const { container } = render(<CodeBlock code="const x = 1;" />);
+    expect(screen.getByRole("button", { name: /copy code/i })).toBeInTheDocument();
+    await waitForHighlight(container);
+  });
+
+  it("uses overlay copy placement by default when filename is not provided", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     expect(container.querySelector(`.${styles.header}`)).not.toBeInTheDocument();
     expect(container.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
     await waitForHighlight(container);
   });
 
-  it('hides copy button when showCopy is false', async () => {
+  it("hides copy button when showCopy is false", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" showCopy={false} />);
-    expect(screen.queryByRole('button', { name: /copy/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /copy/i })).not.toBeInTheDocument();
     await waitForHighlight(container);
   });
 
-  it('shows language-highlighted content after shiki resolves', async () => {
+  it("shows language-highlighted content after shiki resolves", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" language="typescript" />);
     await waitFor(() => {
       // shiki wraps output in a pre.shiki element with syntax-highlighted spans
-      const shikiPre = container.querySelector('pre.shiki');
+      const shikiPre = container.querySelector("pre.shiki");
       expect(shikiPre).toBeInTheDocument();
-      expect(shikiPre?.querySelector('code')).toBeInTheDocument();
+      expect(shikiPre?.querySelector("code")).toBeInTheDocument();
     });
   });
 
-  it('renders title and caption when provided', async () => {
+  it("renders title and caption when provided", async () => {
     const { container } = render(
       <CodeBlock code="x = 1" title="Example" caption="A simple example" />
     );
-    expect(screen.getByText('Example')).toBeInTheDocument();
-    expect(screen.getByText('A simple example')).toBeInTheDocument();
+    expect(screen.getByText("Example")).toBeInTheDocument();
+    expect(screen.getByText("A simple example")).toBeInTheDocument();
     await waitForHighlight(container);
   });
 
-  it('renders filename in header', async () => {
+  it("renders filename in header", async () => {
     const { container } = render(<CodeBlock code="x = 1" filename="app.ts" />);
-    expect(screen.getByText('app.ts')).toBeInTheDocument();
+    expect(screen.getByText("app.ts")).toBeInTheDocument();
     expect(container.querySelector(`.${styles.header}`)).toBeInTheDocument();
     expect(container.querySelector(`.${styles.copyOverlay}`)).not.toBeInTheDocument();
     await waitForHighlight(container);
   });
 
-  it('supports explicit copy placement variants', async () => {
+  it("supports explicit copy placement variants", async () => {
     const { container: headerContainer } = render(
       <CodeBlock code="const x = 1;" copyPlacement="header" />
     );
@@ -83,24 +93,24 @@ describe('CodeBlock', () => {
     await waitForHighlight(overlayContainer);
   });
 
-  it('copies code to clipboard on copy button click', async () => {
+  it("copies code to clipboard on copy button click", async () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', {
+    Object.defineProperty(navigator, "clipboard", {
       value: { writeText },
       writable: true,
       configurable: true,
     });
 
     render(<CodeBlock code="const x = 1;" />);
-    await user.click(screen.getByRole('button', { name: /copy code/i }));
-    expect(writeText).toHaveBeenCalledWith('const x = 1;');
+    await user.click(screen.getByRole("button", { name: /copy code/i }));
+    expect(writeText).toHaveBeenCalledWith("const x = 1;");
   });
 
-  it('normalizes indentation and wraps long JSX tags before copying', async () => {
+  it("normalizes indentation and wraps long JSX tags before copying", async () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', {
+    Object.defineProperty(navigator, "clipboard", {
       value: { writeText },
       writable: true,
       configurable: true,
@@ -113,7 +123,7 @@ describe('CodeBlock', () => {
         `}
       />
     );
-    await user.click(screen.getByRole('button', { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: /copy code/i }));
 
     expect(writeText).toHaveBeenCalledWith(`<Chart
   data={data}
@@ -124,14 +134,14 @@ describe('CodeBlock', () => {
 />`);
   });
 
-  it('keeps the first indentation level in YAML, whose meaning depends on it', async () => {
+  it("keeps the first indentation level in YAML, whose meaning depends on it", async () => {
     // The JSX heuristic excludes line 0 from the common-indent calculation.
     // normalizeCode trims first, so line 0 is always at column 0 by then, which
     // used to strip one real level off any single-root YAML block and publish an
     // invalid file. `image` must stay nested under the job, not become a sibling.
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', {
+    Object.defineProperty(navigator, "clipboard", {
       value: { writeText },
       writable: true,
       configurable: true,
@@ -147,7 +157,7 @@ describe('CodeBlock', () => {
       codequality: gl-code-quality-report.json`}
       />
     );
-    await user.click(screen.getByRole('button', { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: /copy code/i }));
 
     expect(writeText).toHaveBeenCalledWith(`fragments_governance:
   image: node:22
@@ -156,10 +166,10 @@ describe('CodeBlock', () => {
       codequality: gl-code-quality-report.json`);
   });
 
-  it('still dedents inline JSX whose body carries the source file indentation', async () => {
+  it("still dedents inline JSX whose body carries the source file indentation", async () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', {
+    Object.defineProperty(navigator, "clipboard", {
       value: { writeText },
       writable: true,
       configurable: true,
@@ -172,28 +182,28 @@ describe('CodeBlock', () => {
     </Card>`}
       />
     );
-    await user.click(screen.getByRole('button', { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: /copy code/i }));
 
     expect(writeText).toHaveBeenCalledWith(`<Card>
   <Card.Header>Title</Card.Header>
 </Card>`);
   });
 
-  it('supports collapsible mode', async () => {
+  it("supports collapsible mode", async () => {
     const user = userEvent.setup();
-    const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join('\n');
+    const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join("\n");
     render(<CodeBlock code={longCode} collapsible defaultCollapsed collapsedLines={5} />);
     // Should show expand button
-    const expandBtn = screen.getByRole('button', { name: /expand code/i });
+    const expandBtn = screen.getByRole("button", { name: /expand code/i });
     expect(expandBtn).toBeInTheDocument();
-    expect(expandBtn).toHaveAttribute('aria-expanded', 'false');
+    expect(expandBtn).toHaveAttribute("aria-expanded", "false");
 
     await user.click(expandBtn);
-    const collapseBtn = screen.getByRole('button', { name: /collapse code/i });
-    expect(collapseBtn).toHaveAttribute('aria-expanded', 'true');
+    const collapseBtn = screen.getByRole("button", { name: /collapse code/i });
+    expect(collapseBtn).toHaveAttribute("aria-expanded", "true");
   });
 
-  it('supports controlled tabbed mode with explicit tab values', async () => {
+  it("supports controlled tabbed mode with explicit tab values", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
@@ -202,19 +212,19 @@ describe('CodeBlock', () => {
         value="js"
         onValueChange={onValueChange}
         tabs={[
-          { label: 'Example', value: 'ts', language: 'typescript', code: 'const tsValue = 1;' },
-          { label: 'Example', value: 'js', language: 'javascript', code: 'const jsValue = 1;' },
+          { label: "Example", value: "ts", language: "typescript", code: "const tsValue = 1;" },
+          { label: "Example", value: "js", language: "javascript", code: "const jsValue = 1;" },
         ]}
       />
     );
 
-    expect(screen.getByText('const jsValue = 1;')).toBeInTheDocument();
-    const tabs = screen.getAllByRole('tab', { name: 'Example' });
+    expect(screen.getByText("const jsValue = 1;")).toBeInTheDocument();
+    const tabs = screen.getAllByRole("tab", { name: "Example" });
     await user.click(tabs[0]);
     expect(onValueChange).toHaveBeenCalled();
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     await waitForHighlight(container);
     await expectNoA11yViolations(container);

@@ -591,7 +591,10 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   ref
 ) {
   const [copied, setCopied] = useState(false);
-  const [highlight, setHighlight] = useState<{ html: string; loading: boolean }>({ html: '', loading: true });
+  const [highlight, setHighlight] = useState<{ html: string; loading: boolean }>({
+    html: "",
+    loading: true,
+  });
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
   const trimmedCode = useMemo(() => normalizeCode(code, language), [code, language]);
@@ -714,9 +717,13 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     : undefined;
 
   return (
-    <div ref={ref} {...htmlProps} className={classNames} data-theme="dark">
-      {title && <div className={styles.title}>{title}</div>}
-      <div className={wrapperClasses} style={wrapperStyle}>
+    <div ref={ref} {...htmlProps} className={classNames} data-slot="code-block" data-theme="dark">
+      {title && (
+        <div className={styles.title} data-slot="code-block-title">
+          {title}
+        </div>
+      )}
+      <div className={wrapperClasses} style={wrapperStyle} data-slot="code-block-frame">
         {shouldRenderHeader && (
           <div className={styles.header}>
             <span className={styles.filename}>{filename ?? ""}</span>
@@ -864,28 +871,33 @@ function TabbedCodeBlock({
           {tabs.map((tab, index) => {
             const tabValue = tab.value ?? tab.label;
             return (
-            <Tab key={`${tabValue}-${index}`} value={tabValue}>
-              {tab.label}
-            </Tab>
+              <Tab key={`${tabValue}-${index}`} value={tabValue}>
+                {tab.label}
+              </Tab>
             );
           })}
         </TabsList>
         {tabs.map((tab, index) => {
           const tabValue = tab.value ?? tab.label;
           return (
-          <TabsPanel key={`${tabValue}-panel-${index}`} value={tabValue} flush className={styles.tabbedPanel}>
-            <CodeBlockBase
-              code={tab.code}
-              language={tab.language}
-              theme={theme}
-              showCopy={showCopy}
-              copyPlacement={copyPlacement}
-              showLineNumbers={showLineNumbers}
-              wordWrap={wordWrap}
-              maxHeight={maxHeight}
-              onCopy={onCopy ? () => onCopy(tab.label) : undefined}
-            />
-          </TabsPanel>
+            <TabsPanel
+              key={`${tabValue}-panel-${index}`}
+              value={tabValue}
+              flush
+              className={styles.tabbedPanel}
+            >
+              <CodeBlockBase
+                code={tab.code}
+                language={tab.language}
+                theme={theme}
+                showCopy={showCopy}
+                copyPlacement={copyPlacement}
+                showLineNumbers={showLineNumbers}
+                wordWrap={wordWrap}
+                maxHeight={maxHeight}
+                onCopy={onCopy ? () => onCopy(tab.label) : undefined}
+              />
+            </TabsPanel>
           );
         })}
       </TabsRoot>
