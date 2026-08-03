@@ -1,4 +1,7 @@
 import { defineFragment } from "@usefragments/core";
+import { Input } from "../Input";
+import { Stack } from "../Stack";
+import { Table } from "../Table";
 import { DataTable } from "./index";
 
 export default defineFragment(DataTable, {
@@ -136,8 +139,8 @@ export default defineFragment(DataTable, {
     },
     "With Filters": {
       render: (
-        <div>
-          <input aria-label="Search users" placeholder="Search..." />
+        <Stack gap="sm">
+          <Input aria-label="Search users" placeholder="Search..." withFieldWrapper={false} />
           <DataTable
             columns={[
               { accessorKey: "name", header: "Name" },
@@ -149,7 +152,7 @@ export default defineFragment(DataTable, {
             emptyMessage="No users match the current filters"
             aria-label="Filtered team members"
           />
-        </div>
+        </Stack>
       ),
       note: "Combine with search input and menu dropdowns for filtered views",
     },
@@ -260,10 +263,20 @@ export default defineFragment(DataTable, {
         reason: "Do not use DataTable for a simple static comparison.",
         bad: "<DataTable />",
         good: (
-          <DataTable
-            columns={[{ accessorKey: "name", header: "Name" }]}
-            data={[{ name: "Item 1" }]}
-          />
+          <Table aria-label="Plan comparison">
+            <Table.Head>
+              <Table.Row>
+                <Table.HeaderCell>Plan</Table.HeaderCell>
+                <Table.HeaderCell>Price</Table.HeaderCell>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>Starter</Table.Cell>
+                <Table.Cell>$0</Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
         ),
       },
     ],

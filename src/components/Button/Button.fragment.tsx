@@ -1,4 +1,5 @@
 import { defineFragment } from "@usefragments/core";
+import { Link } from "../Link";
 import { Button } from "./index";
 
 export default defineFragment(Button, {
@@ -108,11 +109,7 @@ export default defineFragment(Button, {
       {
         reason: "Do not use a Button for plain navigation.",
         bad: '<Button href="/settings">Settings</Button>',
-        good: (
-          <Button as="a" href="/settings">
-            Settings
-          </Button>
-        ),
+        good: <Link href="/settings">Settings</Link>,
       },
     ],
   },

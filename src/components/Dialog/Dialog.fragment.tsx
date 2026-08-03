@@ -1,4 +1,5 @@
 import { defineFragment } from "@usefragments/core";
+import { Alert } from "../Alert";
 import { Dialog } from "./index";
 import { Button } from "../Button";
 
@@ -159,9 +160,24 @@ export default defineFragment(Dialog, {
         reason: "Do not use a Dialog for a non-blocking notification.",
         bad: "<Dialog>Saved</Dialog>",
         good: (
+          <Alert severity="success">
+            <Alert.Icon />
+            <Alert.Body>
+              <Alert.Title>Changes saved</Alert.Title>
+              <Alert.Content>Your settings are up to date.</Alert.Content>
+            </Alert.Body>
+          </Alert>
+        ),
+      },
+      {
+        reason: "Do not omit an accessible title and explicit close action from a Dialog.",
+        bad: "<Dialog><Dialog.Content>Focused task</Dialog.Content></Dialog>",
+        good: (
           <Dialog defaultOpen>
             <Dialog.Content>
-              <Dialog.Body>Focused task</Dialog.Body>
+              <Dialog.Title>Account settings</Dialog.Title>
+              <Dialog.Body>Update your workspace preferences.</Dialog.Body>
+              <Dialog.Close>Close</Dialog.Close>
             </Dialog.Content>
           </Dialog>
         ),
