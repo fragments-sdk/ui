@@ -1,5 +1,6 @@
 import { defineFragment } from "@usefragments/core";
 import { Dialog } from "./index";
+import { Button } from "../Button";
 
 export default defineFragment(Dialog, {
   meta: {
@@ -13,15 +14,21 @@ export default defineFragment(Dialog, {
   states: {
     Default: {
       render: (
-        <Dialog defaultOpen>
+        <Dialog>
+          <Dialog.Trigger asChild>
+            <Button>Open dialog</Button>
+          </Dialog.Trigger>
           <Dialog.Content>
+            <Dialog.Close />
             <Dialog.Header>
               <Dialog.Title>Dialog title</Dialog.Title>
               <Dialog.Description>Focused supporting content.</Dialog.Description>
             </Dialog.Header>
             <Dialog.Body>Dialog body</Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close>Close</Dialog.Close>
+              <Dialog.Close asChild>
+                <Button variant="secondary">Close</Button>
+              </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
@@ -31,15 +38,22 @@ export default defineFragment(Dialog, {
     },
     Confirmation: {
       render: (
-        <Dialog defaultOpen>
+        <Dialog>
+          <Dialog.Trigger asChild>
+            <Button variant="danger">Delete item</Button>
+          </Dialog.Trigger>
           <Dialog.Content>
             <Dialog.Header>
               <Dialog.Title>Delete item?</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>This action cannot be undone.</Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close>Cancel</Dialog.Close>
-              <Dialog.Close>Delete</Dialog.Close>
+              <Dialog.Close asChild>
+                <Button variant="secondary">Cancel</Button>
+              </Dialog.Close>
+              <Dialog.Close asChild>
+                <Button variant="danger">Delete</Button>
+              </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
@@ -48,23 +62,30 @@ export default defineFragment(Dialog, {
     },
     Large: {
       render: (
-        <Dialog defaultOpen>
+        <Dialog>
+          <Dialog.Trigger asChild>
+            <Button>Open large dialog</Button>
+          </Dialog.Trigger>
           <Dialog.Content size="lg">
+            <Dialog.Close />
             <Dialog.Header>
               <Dialog.Title>Detailed settings</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>Complex content</Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close asChild>
+                <Button variant="secondary">Close</Button>
+              </Dialog.Close>
+            </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
       ),
       note: "Large dialog for complex content",
     },
-    "Link Trigger + No Initial Focus": {
+    "Button Trigger + No Initial Focus": {
       render: (
         <Dialog>
-          <Dialog.Trigger asChild>
-            <a href="#settings">Open settings</a>
-          </Dialog.Trigger>
+          <Dialog.Trigger>Open settings</Dialog.Trigger>
           <Dialog.Content initialFocus={false}>
             <Dialog.Header>
               <Dialog.Title>Settings</Dialog.Title>
@@ -77,7 +98,33 @@ export default defineFragment(Dialog, {
           </Dialog.Content>
         </Dialog>
       ),
-      note: "Use asChild with a link trigger and disable automatic initial focus when needed",
+      note: "Use the native trigger and disable automatic initial focus when needed",
+    },
+    "Long Title": {
+      render: (
+        <Dialog>
+          <Dialog.Trigger asChild>
+            <Button>Open long title dialog</Button>
+          </Dialog.Trigger>
+          <Dialog.Content>
+            <Dialog.Close />
+            <Dialog.Header>
+              <Dialog.Title>
+                Confirm the localized account recovery policy for every workspace administrator
+              </Dialog.Title>
+              <Dialog.Description>
+                The title wraps while the close affordance and recovery action remain reachable.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Footer>
+              <Dialog.Close asChild>
+                <Button variant="secondary">Close</Button>
+              </Dialog.Close>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog>
+      ),
+      note: "Long localized titles wrap without obscuring dialog controls",
     },
   },
   guidance: {
@@ -99,7 +146,7 @@ export default defineFragment(Dialog, {
       "Use descriptive title that explains the purpose",
       "Allow dismissal via backdrop click or close button for non-critical dialogs",
       "Trap focus within the dialog for accessibility",
-      "Dialog.Trigger and Dialog.Close support asChild for buttons, links, and router link components",
+      "Use Dialog.Trigger's native button or asChild with a button-compatible control",
     ],
     accessibility: [
       "Automatically traps focus within the dialog",
@@ -153,8 +200,8 @@ export default defineFragment(Dialog, {
     ],
     requiredChildren: ["Content"],
     commonPatterns: [
-      '<Dialog><Dialog.Trigger><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
-      '<Dialog><Dialog.Trigger asChild><a href="/settings">Open settings</a></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger asChild><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close asChild><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger>Open settings</Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
     ],
   },
   contract: {

@@ -127,6 +127,27 @@ export default defineFragment(Card, {
       ),
       note: "Card with just body content",
     },
+    "Long Content": {
+      render: (
+        <Card>
+          <Card.Header>
+            <Card.Title>
+              A detailed localized account recovery policy for administrators across multiple
+              workspaces
+            </Card.Title>
+            <Card.Description>
+              Supporting content remains readable when translated strings take substantially more
+              space than the English source.
+            </Card.Description>
+          </Card.Header>
+          <Card.Body>
+            Recovery settings apply to every affected administrator and retain an auditable history
+            of the notification decision.
+          </Card.Body>
+        </Card>
+      ),
+      note: "Long titles and dense supporting content wrap inside the card",
+    },
   },
   guidance: {
     when: [

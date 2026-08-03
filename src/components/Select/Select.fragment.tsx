@@ -142,6 +142,20 @@ export default defineFragment(Select, {
       ),
       note: "Convenience API for simple lists without manual Select.Item composition",
     },
+    "Long Localized Option": {
+      render: (
+        <Select label="Workspace region" placeholder="Choose a workspace region">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="eu-central">
+              Central European workspace with localized administrator recovery requirements
+            </Select.Item>
+            <Select.Item value="us-east">United States East</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Long localized options remain readable in the bounded list",
+    },
   },
   guidance: {
     when: [

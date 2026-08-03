@@ -70,6 +70,14 @@ export default defineFragment(Button, {
       ),
       note: "Compose button styles onto another interactive element while preserving forwarded props",
     },
+    "Long Label": {
+      render: (
+        <Button>
+          Save the localized account preferences and notify every affected workspace administrator
+        </Button>
+      ),
+      note: "Long localized action labels wrap without hiding the action",
+    },
   },
   guidance: {
     when: [

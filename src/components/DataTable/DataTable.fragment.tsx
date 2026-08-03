@@ -205,6 +205,26 @@ export default defineFragment(DataTable, {
       ),
       note: "Display when no data matches the current filters",
     },
+    "Long Cell Content": {
+      render: (
+        <DataTable
+          columns={[
+            { accessorKey: "name", header: "Administrator" },
+            { accessorKey: "status", header: "Recovery policy" },
+          ]}
+          data={[
+            {
+              name: "A very long localized administrator identity that remains distinguishable",
+              status:
+                "Pending confirmation of the detailed workspace recovery policy and notification workflow",
+            },
+          ]}
+          bordered
+          aria-label="Long localized team member data"
+        />
+      ),
+      note: "Long localized cell values remain visible without widening the page",
+    },
   },
   guidance: {
     when: [
