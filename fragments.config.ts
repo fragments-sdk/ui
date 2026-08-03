@@ -22,7 +22,9 @@ export function publicUiPrimitiveNames(
 }
 
 const config: FragmentsConfig = {
-  include: ["src/**/*.contract.json"],
+  // The compiler always retains brownfield `.contract.json` discovery. This
+  // authored glob is the v3 source surface as components migrate one at a time.
+  include: ["src/**/*.fragment.tsx"],
   exclude: ["**/node_modules/**"],
   components: [
     "src/**/index.tsx",
