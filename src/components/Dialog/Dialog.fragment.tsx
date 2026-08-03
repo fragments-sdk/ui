@@ -20,6 +20,9 @@ export default defineFragment(Dialog, {
               <Dialog.Description>Focused supporting content.</Dialog.Description>
             </Dialog.Header>
             <Dialog.Body>Dialog body</Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close>Close</Dialog.Close>
+            </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
       ),
@@ -55,6 +58,26 @@ export default defineFragment(Dialog, {
         </Dialog>
       ),
       note: "Large dialog for complex content",
+    },
+    "Link Trigger + No Initial Focus": {
+      render: (
+        <Dialog>
+          <Dialog.Trigger asChild>
+            <a href="#settings">Open settings</a>
+          </Dialog.Trigger>
+          <Dialog.Content initialFocus={false}>
+            <Dialog.Header>
+              <Dialog.Title>Settings</Dialog.Title>
+              <Dialog.Description>Choose a settings area to edit.</Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>Settings content</Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close>Close</Dialog.Close>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog>
+      ),
+      note: "Use asChild with a link trigger and disable automatic initial focus when needed",
     },
   },
   guidance: {
@@ -129,6 +152,10 @@ export default defineFragment(Dialog, {
       "Footer",
     ],
     requiredChildren: ["Content"],
+    commonPatterns: [
+      '<Dialog><Dialog.Trigger><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger asChild><a href="/settings">Open settings</a></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
+    ],
   },
   contract: {
     propsSummary: [

@@ -23,13 +23,52 @@ export default defineFragment(Button, {
       render: <Button variant="ghost">Learn more</Button>,
       note: "Minimal visual weight for subtle actions",
     },
+    Link: {
+      render: <Button variant="link">View all →</Button>,
+      note: "Accent-coloured transparent button for tertiary CTAs",
+    },
+    Quiet: {
+      render: <Button variant="quiet" size="xs">Manage preferences</Button>,
+      note: "Neutral text button with no box and no height floor, for meta lines and footnotes",
+    },
     Danger: {
       render: <Button variant="danger">Delete item</Button>,
       note: "Destructive action requiring attention",
     },
+    Outline: {
+      render: <Button variant="outline">View details</Button>,
+      note: "Bordered button with transparent background",
+    },
+    Icon: {
+      render: (
+        <Button variant="icon" aria-label="Add item">
+          <span aria-hidden>+</span>
+        </Button>
+      ),
+      note: "Convenience icon-only button alias (ghost + square icon sizing)",
+    },
+    Sizes: {
+      render: (
+        <div>
+          <Button size="xs">Extra small</Button>
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large</Button>
+        </div>
+      ),
+      note: "Available size options",
+    },
     Disabled: {
       render: <Button disabled>Unavailable</Button>,
       note: "Non-interactive state",
+    },
+    "As Child": {
+      render: (
+        <Button asChild variant="outlined" aria-label="Open billing settings">
+          <a href="#billing-settings">Billing settings</a>
+        </Button>
+      ),
+      note: "Compose button styles onto another interactive element while preserving forwarded props",
     },
   },
   guidance: {

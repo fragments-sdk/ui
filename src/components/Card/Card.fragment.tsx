@@ -10,9 +10,24 @@ export default defineFragment(Card, {
     tags: ["container", "layout", "surface"],
   },
   states: {
+    "Nested Heading": {
+      render: (
+        <Card variant="panel" padding="none">
+          <Card.Header divided>
+            <Card.Title as="h4">Nested panel</Card.Title>
+          </Card.Header>
+          <Card.Body padding="md">Panel content</Card.Body>
+        </Card>
+      ),
+      note: "Select the heading level required by the surrounding document outline",
+    },
     Default: {
       render: (
         <Card>
+          <Card.Header>
+            <Card.Title>Card title</Card.Title>
+            <Card.Description>A brief description</Card.Description>
+          </Card.Header>
           <Card.Body>Related content</Card.Body>
         </Card>
       ),
@@ -27,6 +42,17 @@ export default defineFragment(Card, {
       ),
       note: "Card with border instead of shadow",
     },
+    Outline: {
+      render: (
+        <Card variant="outline">
+          <Card.Header>
+            <Card.Title>Outline card</Card.Title>
+          </Card.Header>
+          <Card.Body>Uses the outline alias.</Card.Body>
+        </Card>
+      ),
+      note: "Card with border, using the \"outline\" alias for \"outlined\"",
+    },
     Elevated: {
       render: (
         <Card variant="elevated">
@@ -34,6 +60,17 @@ export default defineFragment(Card, {
         </Card>
       ),
       note: "Card with prominent shadow for emphasis",
+    },
+    Stat: {
+      render: (
+        <Card variant="stat">
+          <Card.Body>
+            <strong>94%</strong>
+            <p>Component coverage</p>
+          </Card.Body>
+        </Card>
+      ),
+      note: "Compact metric tile for dashboard grids",
     },
     Panel: {
       render: (
@@ -45,6 +82,50 @@ export default defineFragment(Card, {
         </Card>
       ),
       note: "Dashboard panel with a divided header and body-owned spacing",
+    },
+    Interactive: {
+      render: (
+        <Card as="section" onClick={() => undefined}>
+          <Card.Header>
+            <Card.Title>Open details</Card.Title>
+            <Card.Description>This card is interactive</Card.Description>
+          </Card.Header>
+          <Card.Body>Activate the card to view more.</Card.Body>
+        </Card>
+      ),
+      note: "Clickable card surface (root stays a semantic container)",
+    },
+    "Section Root": {
+      render: (
+        <Card as="section" aria-labelledby="billing-card-title">
+          <Card.Header>
+            <Card.Title id="billing-card-title">Billing summary</Card.Title>
+          </Card.Header>
+          <Card.Body>Section semantics support the surrounding document outline.</Card.Body>
+        </Card>
+      ),
+      note: "Use the as prop to match the surrounding document semantics",
+    },
+    "With Footer": {
+      render: (
+        <Card>
+          <Card.Header>
+            <Card.Title>Card with footer</Card.Title>
+            <Card.Description>Complete card layout</Card.Description>
+          </Card.Header>
+          <Card.Body>Main content area.</Card.Body>
+          <Card.Footer>Footer actions go here</Card.Footer>
+        </Card>
+      ),
+      note: "Card with header, body, and footer",
+    },
+    "Content Only": {
+      render: (
+        <Card>
+          <Card.Body>Just content, no header or footer.</Card.Body>
+        </Card>
+      ),
+      note: "Card with just body content",
     },
   },
   guidance: {
@@ -107,6 +188,7 @@ export default defineFragment(Card, {
     commonPatterns: [
       "<Card><Card.Body>{content}</Card.Body></Card>",
       "<Card><Card.Header><Card.Title>{title}</Card.Title></Card.Header><Card.Body>{content}</Card.Body></Card>",
+      "<Card><Card.Header><Card.Title>{title}</Card.Title><Card.Description>{desc}</Card.Description></Card.Header><Card.Body>{content}</Card.Body><Card.Footer>{actions}</Card.Footer></Card>",
     ],
   },
   contract: {

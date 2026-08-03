@@ -1,12 +1,6 @@
 import { defineFragment } from "@usefragments/core";
 import { Select } from "./index";
 
-const options = [
-  { value: "design", label: "Design" },
-  { value: "engineering", label: "Engineering" },
-  { value: "product", label: "Product" },
-];
-
 export default defineFragment(Select, {
   meta: {
     name: "Select",
@@ -18,37 +12,135 @@ export default defineFragment(Select, {
   },
   states: {
     Default: {
-      render: <Select label="Team" placeholder="Choose a team" options={options} />,
-      note: "Basic select dropdown",
-      canonical: true,
-    },
-    Error: {
       render: (
-        <Select
-          label="Team"
-          placeholder="Choose a team"
-          options={options}
-          error="Choose a team before continuing"
-        />
-      ),
-      note: "Validation error with message",
-    },
-    Disabled: {
-      render: <Select label="Team" placeholder="Choose a team" options={options} disabled />,
-      note: "Disabled select",
-    },
-    Scrollable: {
-      render: (
-        <Select label="Team">
-          <Select.Trigger placeholder="Choose a team" />
-          <Select.Content maxVisibleItems={2}>
+        <Select label="Team" placeholder="Choose a team">
+          <Select.Trigger />
+          <Select.Content>
             <Select.Item value="design">Design</Select.Item>
             <Select.Item value="engineering">Engineering</Select.Item>
             <Select.Item value="product">Product</Select.Item>
           </Select.Content>
         </Select>
       ),
-      note: "Long option list remains bounded and scrollable",
+      note: "Basic select dropdown",
+      canonical: true,
+    },
+    "With Groups": {
+      render: (
+        <Select placeholder="Choose a country">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Group>
+              <Select.GroupLabel>Americas</Select.GroupLabel>
+              <Select.Item value="us">United States</Select.Item>
+              <Select.Item value="ca">Canada</Select.Item>
+            </Select.Group>
+            <Select.Group>
+              <Select.GroupLabel>Europe</Select.GroupLabel>
+              <Select.Item value="uk">United Kingdom</Select.Item>
+              <Select.Item value="de">Germany</Select.Item>
+            </Select.Group>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Options organized into groups",
+    },
+    "With Label and Helper Text": {
+      render: (
+        <Select label="Timezone" helperText="Used for reminders and calendar notifications.">
+          <Select.Trigger placeholder="Select a timezone" />
+          <Select.Content>
+            <Select.Item value="pt">Pacific Time</Select.Item>
+            <Select.Item value="mt">Mountain Time</Select.Item>
+            <Select.Item value="ct">Central Time</Select.Item>
+            <Select.Item value="et">Eastern Time</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Select with built-in label and helper text",
+    },
+    "Error State": {
+      render: (
+        <Select label="Team" placeholder="Choose a team" error="Choose a team before continuing">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="design">Design</Select.Item>
+            <Select.Item value="engineering">Engineering</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Validation error with message",
+    },
+    "With Disabled Options": {
+      render: (
+        <Select placeholder="Select a plan">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="free">Free</Select.Item>
+            <Select.Item value="pro">Pro</Select.Item>
+            <Select.Item value="enterprise" disabled>
+              Enterprise (contact sales)
+            </Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Some options are disabled",
+    },
+    "Scrollable List": {
+      render: (
+        <Select placeholder="Select a timezone">
+          <Select.Trigger />
+          <Select.Content maxVisibleItems={4}>
+            <Select.Item value="utc-8">Pacific Time (UTC-8)</Select.Item>
+            <Select.Item value="utc-7">Mountain Time (UTC-7)</Select.Item>
+            <Select.Item value="utc-6">Central Time (UTC-6)</Select.Item>
+            <Select.Item value="utc-5">Eastern Time (UTC-5)</Select.Item>
+            <Select.Item value="utc-4">Atlantic Time (UTC-4)</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Long list with scroll hint — shows 4 items with half-peek of the 5th to indicate more",
+    },
+    "Custom Max Visible Items": {
+      render: (
+        <Select placeholder="Select a color">
+          <Select.Trigger />
+          <Select.Content maxVisibleItems={6}>
+            <Select.Item value="red">Red</Select.Item>
+            <Select.Item value="orange">Orange</Select.Item>
+            <Select.Item value="yellow">Yellow</Select.Item>
+            <Select.Item value="green">Green</Select.Item>
+            <Select.Item value="blue">Blue</Select.Item>
+            <Select.Item value="indigo">Indigo</Select.Item>
+            <Select.Item value="violet">Violet</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Show 6 items before scrolling with half-peek scroll hint",
+    },
+    Disabled: {
+      render: (
+        <Select disabled placeholder="Select an option">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="one">Option 1</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Disabled select",
+    },
+    "Options Prop": {
+      render: (
+        <Select
+          placeholder="Select a team"
+          options={[
+            { value: "engineering", label: "Engineering" },
+            { value: "design", label: "Design" },
+            { value: "product", label: "Product" },
+          ]}
+        />
+      ),
+      note: "Convenience API for simple lists without manual Select.Item composition",
     },
   },
   guidance: {
@@ -81,7 +173,9 @@ export default defineFragment(Select, {
       {
         reason: "Do not use Select for a list of actions.",
         bad: "<Select>Delete</Select>",
-        good: <Select label="Choose a value" options={options} />,
+        good: (
+          <Select label="Choose a value" options={[{ value: "design", label: "Design" }]} />
+        ),
       },
     ],
   },
@@ -107,8 +201,8 @@ export default defineFragment(Select, {
     subComponents: ["Trigger", "Content", "Item", "Group", "GroupLabel"],
     requiredChildren: ["Trigger", "Content"],
     commonPatterns: [
-      "<Select placeholder=\"Select option\" options={[{ value: 'opt1', label: 'Option 1' }]} />",
-      '<Select placeholder="Select option"><Select.Trigger /><Select.Content><Select.Item value="opt1">Option 1</Select.Item></Select.Content></Select>',
+      "<Select placeholder=\"Select option\" options={[{ value: 'opt1', label: 'Option 1' }, { value: 'opt2', label: 'Option 2' }]} />",
+      '<Select placeholder="Select option"><Select.Trigger /><Select.Content><Select.Item value="opt1">{label1}</Select.Item><Select.Item value="opt2">{label2}</Select.Item></Select.Content></Select>',
     ],
   },
   contract: {
@@ -125,6 +219,7 @@ export default defineFragment(Select, {
       "variant: field|ghost (default: field) - ghost is borderless, for toolbars",
       "options: SelectOption[] - convenience API for simple option lists",
       "maxVisibleItems: number - max visible options before scrolling (default 4)",
+      "Select.Trigger accepts an icon prop for a leading adornment",
     ],
     a11yRules: ["A11Y_SELECT_KEYBOARD", "A11Y_SELECT_LABEL"],
   },
