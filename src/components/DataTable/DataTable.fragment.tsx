@@ -36,6 +36,21 @@ export default defineFragment(DataTable, {
       note: "Basic data table with status badges and role columns",
       canonical: true,
     },
+    Loading: {
+      render: (
+        <DataTable
+          columns={[
+            { accessorKey: "name", header: "Name" },
+            { accessorKey: "status", header: "Status" },
+          ]}
+          data={[]}
+          loading
+          skeletonRows={3}
+          aria-label="Loading team members"
+        />
+      ),
+      note: "Skeleton rows preserve the table footprint while data loads",
+    },
     "Rich Cells": {
       render: (
         <DataTable
@@ -235,7 +250,7 @@ export default defineFragment(DataTable, {
   },
   matrix: {
     axes: { size: "auto", theme: ["light", "dark"] },
-    forced: ["loading", "error", "empty", "focus"],
+    forced: ["loading", "empty", "focus"],
     worstCase: {
       data: "Long localized cell values and enough rows to require horizontal and vertical overflow handling",
     },
