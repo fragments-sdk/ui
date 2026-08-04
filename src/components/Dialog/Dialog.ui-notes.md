@@ -76,3 +76,11 @@
   stale-lock fixture's same-process fan-out and restoring two record-integrity findings. Dialog source,
   UI/runtime behavior, generated catalog bytes, and prior Browser observations remain unchanged, so the prior
   D-124 direct smoke is retained without another UI interaction; fresh Gate V/Gate R own regression proof.
+- After PR #482 merged, the fresh Brief 11A parent renewal bound `6550c77d` to Bundle base `0ae700f4` at
+  snapshot `f9e0a425…`. Direct Browser reconfirmed Dialog deep-link/refresh, five authored preview groups,
+  long-title containment at `1280px` dark, `390px` dark (`16–374px`), and `320px` light (`16–304px`), plus
+  one-modal focus/close/trigger-return lifecycle and zero Console warnings or errors. The Browser's synthesized
+  Enter still opened no modal and remains explicit under D-129's carried D-123 boundary; same-server raw native Enter passed 3/3 with
+  `keydown` → `keypress` → `click` (`detail=0`) → `keyup`, every event `defaultPrevented=false`, exactly one
+  `Detailed settings` dialog, `Close dialog` focus, Escape closure, and trigger-focus return. The clean tagged
+  Docs suite passed 15/15 in 34.5 seconds on runner-owned port `34186`.
