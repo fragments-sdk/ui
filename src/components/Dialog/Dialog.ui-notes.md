@@ -27,3 +27,8 @@
   one named modal from Enter with its close control focused, restored trigger focus after Escape,
   retained the long-title fixture at exact desktop/390px/320px widths across both themes, and produced
   zero Browser Console warnings or errors.
+- After child #481 landed on the Brief 11A parent, clean head `83938e21` independently passed C01–C24
+  against the brief-declared Bundle 01 base snapshot `d39ed67c…` on owned port `34179`. Dialog began
+  closed, opened one named modal from Enter with its close control focused, restored trigger focus
+  after Escape, retained the long-title fixture at exact desktop/390px/320px widths across both themes,
+  and produced zero Browser Console warnings or errors.
