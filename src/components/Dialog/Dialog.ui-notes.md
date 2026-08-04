@@ -58,9 +58,10 @@
   `Detailed settings` dialog, `Close dialog` focus, Escape closure, and returned trigger focus. The tagged
   Docs E2E suite passed 15/15 in 53.1s, and the completed direct Browser Console audit contained zero
   warnings and zero errors. Both earlier FAIL rounds remain in the Browser record history.
-- D-124 renewed the reusable binary snapshot at test-fixture head `d029109a` to `af716edf…` without
-  changing Dialog source, generated catalog bytes, or rendered behavior. A snapshot-only direct Browser
+- D-124 renewed the reusable binary snapshot at final records/ledger head `9ed83b84` to `a6e5e54e…`
+  without changing Dialog source, generated catalog bytes, or rendered behavior. A snapshot-only direct Browser
   smoke on owned port `34212` reconfirmed the canonical Dialog deep link, five preview groups, exact
   unique `Open large dialog` trigger, one `Detailed settings` modal, and active `Close dialog` control.
   Browser-wrapper Escape again followed D-123's documented adapter limitation before the modal closed;
-  this smoke does not promote the historical `41f0acac` C01–C24 result to a new behavioral round.
+  this smoke does not promote the historical `41f0acac` C01–C24 result to a new behavioral round. The final
+  rebind followed canonical signed identity-ledger capture only and required no second UI interaction.
