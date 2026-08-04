@@ -32,3 +32,7 @@
   closed, opened one named modal from Enter with its close control focused, restored trigger focus
   after Escape, retained the long-title fixture at exact desktop/390px/320px widths across both themes,
   and produced zero Browser Console warnings or errors.
+- Brief 11C is an evidence-record reconciliation only: it changes no Dialog runtime, fragment,
+  generated-catalog, or rendered-state bytes. This note records that provenance boundary; its required
+  fresh Browser result belongs to the independent Brief 11C Browser Gate rather than this implementation
+  pass.
