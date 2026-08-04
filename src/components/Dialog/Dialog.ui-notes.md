@@ -84,3 +84,10 @@
   `keydown` → `keypress` → `click` (`detail=0`) → `keyup`, every event `defaultPrevented=false`, exactly one
   `Detailed settings` dialog, `Close dialog` focus, Escape closure, and trigger-focus return. The clean tagged
   Docs suite passed 15/15 in 34.5 seconds on runner-owned port `34186`.
+- After PR #480 merged, the fresh integrated Bundle renewal bound `cd4c6d44` to current main base
+  `aa417fae` at snapshot `2616e7d3…`. Direct Browser reconfirmed the Dialog deep link, five authored
+  preview groups, the full localized title, and containment at desktop, 390px (`16–374px`), and 320px
+  (`16–304px`). Direct click opened one `Detailed settings` modal with Close focus; Escape closed it and
+  settled focus back on `Open large dialog`. Synthesized Browser Enter still opened zero dialogs and
+  remains explicit under D-129; same-server native Enter passed 3/3 with the required event order and
+  lifecycle. Console remained 0/0 and the isolated tagged suite passed 15/15 in 33.1 seconds.
