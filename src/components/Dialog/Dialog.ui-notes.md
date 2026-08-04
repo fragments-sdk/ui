@@ -72,3 +72,7 @@
   test files, adding sixth-authoring's targeted timeout, and correcting one stale CLI confidence fixture.
   Dialog source, UI/runtime behavior, generated catalog bytes, and prior Browser observations remain unchanged,
   so the prior D-124 direct smoke is retained without another UI interaction; fresh Gate V/Gate R own regression proof.
+- D-128 rebound the snapshot at test/evidence head `2c967827` to `63111a9d…` after reducing only one CLI
+  stale-lock fixture's same-process fan-out and restoring two record-integrity findings. Dialog source,
+  UI/runtime behavior, generated catalog bytes, and prior Browser observations remain unchanged, so the prior
+  D-124 direct smoke is retained without another UI interaction; fresh Gate V/Gate R own regression proof.
