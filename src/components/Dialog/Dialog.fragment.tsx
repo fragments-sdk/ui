@@ -216,7 +216,7 @@ export default defineFragment(Dialog, {
     ],
     requiredChildren: ["Content"],
     commonPatterns: [
-      '<Dialog><Dialog.Trigger asChild><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close asChild><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
       '<Dialog><Dialog.Trigger>Open settings</Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
     ],
   },
