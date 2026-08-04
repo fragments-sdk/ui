@@ -68,3 +68,7 @@
 - D-125 rebound the final snapshot at test-harness head `5045dba0` to `68ef98a1…` after raising only the
   five-pilot Engine integration test's explicit timeout. Dialog source, catalog bytes, prior Browser behavior,
   and every assertion remain unchanged, so this timeout-only move required no additional UI interaction.
+- D-126/D-127 rebound the snapshot at test/evidence head `e2db8516` to `c29d8765…` after serializing Engine
+  test files, adding sixth-authoring's targeted timeout, and correcting one stale CLI confidence fixture.
+  Dialog source, UI/runtime behavior, generated catalog bytes, and prior Browser observations remain unchanged,
+  so the prior D-124 direct smoke is retained without another UI interaction; fresh Gate V/Gate R own regression proof.
