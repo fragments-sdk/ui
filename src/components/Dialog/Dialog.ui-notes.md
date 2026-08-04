@@ -11,3 +11,6 @@
   path began closed, opened exactly one named modal from Enter, focused its close control, restored the
   trigger after Escape, and rendered the long-title case without desktop, 390px, or 320px overflow.
   See `docs/fragment-workshop/browser/01-contract-pilot.md` for the owned-server record.
+- The repair at `b1458c1b` received a second independent PASS against snapshot `b6c7377a…`: C01–C24
+  were re-executed on owned port `34175`, the Dialog open/close/focus and long-title paths remained
+  correct at desktop, 390px, and 320px, and the fresh Console audit contained zero warnings or errors.
