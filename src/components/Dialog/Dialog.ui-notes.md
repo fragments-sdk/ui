@@ -65,3 +65,6 @@
   Browser-wrapper Escape again followed D-123's documented adapter limitation before the modal closed;
   this smoke does not promote the historical `41f0acac` C01–C24 result to a new behavioral round. The final
   rebind followed canonical signed identity-ledger capture only and required no second UI interaction.
+- D-125 rebound the final snapshot at test-harness head `5045dba0` to `68ef98a1…` after raising only the
+  five-pilot Engine integration test's explicit timeout. Dialog source, catalog bytes, prior Browser behavior,
+  and every assertion remain unchanged, so this timeout-only move required no additional UI interaction.
