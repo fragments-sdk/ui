@@ -33,6 +33,28 @@
   after Escape, retained the long-title fixture at exact desktop/390px/320px widths across both themes,
   and produced zero Browser Console warnings or errors.
 - Brief 11C is an evidence-record reconciliation only: it changes no Dialog runtime, fragment,
-  generated-catalog, or rendered-state bytes. This note records that provenance boundary; its required
-  fresh Browser result belongs to the independent Brief 11C Browser Gate rather than this implementation
-  pass.
+  generated-catalog, or rendered-state bytes. Independent verifier `/root/browser_11c` bound implementation
+  `327f5e44` to base `2887f459` and snapshot `6b52e175…` on owned port `34180`, but the direct Browser Gate
+  failed at C18 when ArrowRight focused the first Button `Code` tab and Enter left it unselected. Per the
+  stop-on-first-failure rule, C03, C12, C16–C17, C22, and the full-matrix C23 Console audit were not run, so
+  this renewal makes no fresh claim about Dialog modal, focus-return, long-title, or responsive behavior.
+  The separate tagged Docs E2E suite passed 15/15 in 42.8s, and the partial Browser log contained zero
+  warnings and zero errors; see `docs/fragment-workshop/browser/01-contract-pilot.md` for the exact conflict
+  and cleanup record.
+- Brief 11C round-2 verifier `/root/browser_11c_round2` bound implementation `53161576` to base
+  `2887f459` and snapshot `868b696e…` on owned port `34182`. Direct Browser checks passed the Dialog
+  deep-link/refresh and long-title cases, including containment at `1280px` dark, `390px` dark, and
+  `320px` light. D-122's C18-only raw Enter adapter passed exactly as authorized, but C22 failed:
+  with `Open large dialog` focused, neither locator Enter nor Browser CUA Enter opened a modal. No raw
+  fallback was used because D-122 does not cover Dialog, so the matrix stopped and C23 remained `NOT RUN`.
+  The tagged Docs E2E suite passed 15/15 in 45.5s and the completed partial Browser run had zero warnings
+  and zero errors; the Browser record retains both the 11:08 C18 failure and this later C22 failure.
+- Brief 11C round-3 verifier `/root/browser_11c_round3` bound implementation `41f0acac` to base
+  `2887f459` and snapshot `1dd14008…` on owned port `34184`. The fresh C01–C24 matrix passed under
+  D-123: direct Browser reconfirmed Dialog deep-link/refresh, long-title containment at `1280px` dark,
+  `390px` dark (`16–374px`), and `320px` light (`16–304px`). For C22 it uniquely identified the exact
+  focused `Open large dialog` target; same-server raw native Enter passed 3/3 with
+  `keydown` → `keypress` → `click` (`detail=0`) → `keyup`, all `defaultPrevented=false`, exactly one
+  `Detailed settings` dialog, `Close dialog` focus, Escape closure, and returned trigger focus. The tagged
+  Docs E2E suite passed 15/15 in 53.1s, and the completed direct Browser Console audit contained zero
+  warnings and zero errors. Both earlier FAIL rounds remain in the Browser record history.
