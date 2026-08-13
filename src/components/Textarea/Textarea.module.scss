@@ -58,9 +58,7 @@
   &[rows="1"] {
     block-size: var(--_fui-field-track);
     min-block-size: var(--_fui-field-track);
-    padding-block: calc(
-      (var(--_fui-field-track) - 1lh - 2 * var(--_fui-field-stroke)) / 2
-    );
+    padding-block: calc((var(--_fui-field-track) - 1lh - 2 * var(--_fui-field-stroke)) / 2);
     overflow-y: hidden;
   }
 }

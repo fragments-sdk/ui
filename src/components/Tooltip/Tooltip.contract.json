@@ -3,13 +3,7 @@
   "name": "Tooltip",
   "description": "Contextual help text that appears on hover or focus. Perfect for explaining icons, truncated text, or providing additional context.",
   "category": "feedback",
-  "tags": [
-    "tooltip",
-    "hint",
-    "help",
-    "hover",
-    "contextual"
-  ],
+  "tags": ["tooltip", "hint", "help", "hover", "contextual"],
   "status": "stable",
   "sourcePath": "src/components/Tooltip/index.tsx",
   "exportName": "Tooltip",
@@ -45,23 +39,14 @@
       "description": "Which side to show the tooltip",
       "default": "top",
       "required": false,
-      "values": [
-        "top",
-        "bottom",
-        "left",
-        "right"
-      ]
+      "values": ["top", "bottom", "left", "right"]
     },
     "align": {
       "type": "enum",
       "description": "Alignment along the side",
       "default": "center",
       "required": false,
-      "values": [
-        "start",
-        "center",
-        "end"
-      ]
+      "values": ["start", "center", "end"]
     },
     "sideOffset": {
       "type": "number",
@@ -193,17 +178,11 @@
       "arrow: boolean - show arrow (default: true)",
       "contentProps: HTMLAttributes<HTMLDivElement> - popup element props"
     ],
-    "a11yRules": [
-      "A11Y_TOOLTIP_FOCUS",
-      "A11Y_TOOLTIP_ROLE"
-    ]
+    "a11yRules": ["A11Y_TOOLTIP_FOCUS", "A11Y_TOOLTIP_ROLE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root",
-      "Provider"
-    ]
+    "subComponents": ["Root", "Provider"]
   },
   "provenance": {
     "source": "migrated",

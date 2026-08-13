@@ -3,20 +3,11 @@
   "name": "EmptyState",
   "description": "Placeholder for empty content areas. Provides context, guidance, and actions when no data is available.",
   "category": "feedback",
-  "tags": [
-    "empty",
-    "placeholder",
-    "no-data",
-    "zero-state",
-    "blank-slate"
-  ],
+  "tags": ["empty", "placeholder", "no-data", "zero-state", "blank-slate"],
   "status": "stable",
   "sourcePath": "src/components/EmptyState/index.tsx",
   "exportName": "EmptyState",
-  "propsSummary": [
-    "children: node (required)",
-    "size: sm|md|lg (default: md)"
-  ],
+  "propsSummary": ["children: node (required)", "size: sm|md|lg (default: md)"],
   "props": {
     "children": {
       "type": "node",
@@ -28,11 +19,7 @@
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     }
   },
   "usage": {
@@ -104,21 +91,12 @@
       "Sub-components: EmptyState.Icon, EmptyState.Title, EmptyState.Description, EmptyState.Actions",
       "Compound sub-components forward DOM props to their rendered elements"
     ],
-    "a11yRules": [
-      "A11Y_EMPTY_STATE_CONTENT"
-    ]
+    "a11yRules": ["A11Y_EMPTY_STATE_CONTENT"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Icon",
-      "Title",
-      "Description",
-      "Actions"
-    ],
-    "requiredChildren": [
-      "Title"
-    ],
+    "subComponents": ["Icon", "Title", "Description", "Actions"],
+    "requiredChildren": ["Title"],
     "commonPatterns": [
       "<EmptyState><EmptyState.Title>{title}</EmptyState.Title><EmptyState.Description>{description}</EmptyState.Description></EmptyState>",
       "<EmptyState><EmptyState.Icon>{icon}</EmptyState.Icon><EmptyState.Title>{title}</EmptyState.Title><EmptyState.Description>{description}</EmptyState.Description><EmptyState.Actions><Button>{action}</Button></EmptyState.Actions></EmptyState>"

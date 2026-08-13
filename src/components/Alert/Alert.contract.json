@@ -3,13 +3,7 @@
   "name": "Alert",
   "description": "Contextual feedback messages for user actions or system status. Supports multiple severity levels with optional actions and dismissibility.",
   "category": "feedback",
-  "tags": [
-    "notification",
-    "message",
-    "feedback",
-    "banner",
-    "toast"
-  ],
+  "tags": ["notification", "message", "feedback", "banner", "toast"],
   "status": "stable",
   "sourcePath": "src/components/Alert/index.tsx",
   "exportName": "Alert",
@@ -28,12 +22,7 @@
       "description": "Visual severity level",
       "default": "info",
       "required": false,
-      "values": [
-        "info",
-        "success",
-        "warning",
-        "error"
-      ]
+      "values": ["info", "success", "warning", "error"]
     }
   },
   "usage": {
@@ -130,18 +119,8 @@
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Icon",
-      "Body",
-      "Title",
-      "Content",
-      "Actions",
-      "Action",
-      "Close"
-    ],
-    "requiredChildren": [
-      "Body"
-    ],
+    "subComponents": ["Icon", "Body", "Title", "Content", "Actions", "Action", "Close"],
+    "requiredChildren": ["Body"],
     "commonPatterns": [
       "<Alert severity=\"info\"><Alert.Icon /><Alert.Body><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
       "<Alert severity=\"warning\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",

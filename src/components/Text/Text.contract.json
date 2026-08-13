@@ -3,13 +3,7 @@
   "name": "Text",
   "description": "Typography component for rendering text with consistent styling. Supports various sizes, weights, colors, and semantic elements.",
   "category": "display",
-  "tags": [
-    "text",
-    "typography",
-    "heading",
-    "paragraph",
-    "font"
-  ],
+  "tags": ["text", "typography", "heading", "paragraph", "font"],
   "status": "stable",
   "sourcePath": "src/components/Text/index.tsx",
   "exportName": "Text",
@@ -67,63 +61,34 @@
       "type": "enum",
       "description": "Preset text variant",
       "required": false,
-      "values": [
-        "section-label"
-      ]
+      "values": ["section-label"]
     },
     "size": {
       "type": "enum",
       "description": "Font size. 2xs (10), xs (12), sm/base (14), md (15 prose body), lg (20), xl (24), 2xl (30), 3xl (36 page title), 4xl (48 hero).",
       "required": false,
-      "values": [
-        "2xs",
-        "xs",
-        "sm",
-        "base",
-        "md",
-        "lg",
-        "xl",
-        "2xl",
-        "3xl",
-        "4xl"
-      ]
+      "values": ["2xs", "xs", "sm", "base", "md", "lg", "xl", "2xl", "3xl", "4xl"]
     },
     "weight": {
       "type": "enum",
       "description": "Font weight",
       "default": "\"normal\"",
       "required": false,
-      "values": [
-        "normal",
-        "medium",
-        "semibold",
-        "bold"
-      ]
+      "values": ["normal", "medium", "semibold", "bold"]
     },
     "color": {
       "type": "enum",
       "description": "Text color (muted is an alias for tertiary; success/warning/danger are for a run of text that carries a state on its own \u2014 prefer Badge or Alert when the state deserves a container)",
       "default": "\"primary\"",
       "required": false,
-      "values": [
-        "primary",
-        "secondary",
-        "tertiary",
-        "muted",
-        "success",
-        "warning",
-        "danger"
-      ]
+      "values": ["primary", "secondary", "tertiary", "muted", "success", "warning", "danger"]
     },
     "font": {
       "type": "enum",
       "description": "Font family",
       "default": "sans",
       "required": false,
-      "values": [
-        "sans",
-        "mono"
-      ]
+      "values": ["sans", "mono"]
     },
     "truncate": {
       "type": "boolean",
@@ -224,16 +189,11 @@
       "truncate: boolean - enable truncation",
       "lineClamp: number - max lines"
     ],
-    "a11yRules": [
-      "A11Y_HEADING_HIERARCHY",
-      "A11Y_SEMANTIC_ELEMENTS"
-    ]
+    "a11yRules": ["A11Y_HEADING_HIERARCHY", "A11Y_SEMANTIC_ELEMENTS"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

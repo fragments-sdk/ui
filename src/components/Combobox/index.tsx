@@ -4,10 +4,7 @@ import * as React from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
-import {
-  POPUP_OFFSET_PX,
-  resolvePopupViewportRows,
-} from "../../recipes/popup";
+import { POPUP_OFFSET_PX, resolvePopupViewportRows } from "../../recipes/popup";
 import styles from "./Combobox.module.scss";
 
 // ============================================

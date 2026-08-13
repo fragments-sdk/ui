@@ -3,12 +3,7 @@
   "name": "Tabs",
   "description": "Organize content into switchable panels. Use for related content that benefits from a compact, navigable layout.",
   "category": "navigation",
-  "tags": [
-    "tabs",
-    "navigation",
-    "panels",
-    "content-switcher"
-  ],
+  "tags": ["tabs", "navigation", "panels", "content-switcher"],
   "status": "stable",
   "sourcePath": "src/components/Tabs/index.tsx",
   "exportName": "Tabs",
@@ -46,20 +41,14 @@
       "description": "Tab list orientation",
       "default": "horizontal",
       "required": false,
-      "values": [
-        "horizontal",
-        "vertical"
-      ]
+      "values": ["horizontal", "vertical"]
     },
     "variant": {
       "type": "enum",
       "description": "Default visual style for Tabs.List (can be overridden on Tabs.List)",
       "default": "underline",
       "required": false,
-      "values": [
-        "underline",
-        "pills"
-      ]
+      "values": ["underline", "pills"]
     }
   },
   "usage": {
@@ -130,22 +119,12 @@
       "variant: underline|pills - default style for Tabs.List",
       "Tabs.List variant?: underline|pills - optional per-list override"
     ],
-    "a11yRules": [
-      "A11Y_TABS_KEYBOARD",
-      "A11Y_TABS_LABELS"
-    ]
+    "a11yRules": ["A11Y_TABS_KEYBOARD", "A11Y_TABS_LABELS"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "List",
-      "Tab",
-      "Panel"
-    ],
-    "requiredChildren": [
-      "List",
-      "Panel"
-    ],
+    "subComponents": ["List", "Tab", "Panel"],
+    "requiredChildren": ["List", "Panel"],
     "commonPatterns": [
       "<Tabs defaultValue=\"tab1\"><Tabs.List><Tabs.Tab value=\"tab1\">{label1}</Tabs.Tab><Tabs.Tab value=\"tab2\">{label2}</Tabs.Tab></Tabs.List><Tabs.Panel value=\"tab1\">{content1}</Tabs.Panel><Tabs.Panel value=\"tab2\">{content2}</Tabs.Panel></Tabs>"
     ]

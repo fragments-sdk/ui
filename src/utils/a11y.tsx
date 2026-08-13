@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 
 // ============================================
 // Unique ID Generator
@@ -27,7 +27,7 @@ export function useId(prefix?: string): string {
 
   const [id] = React.useState(() => {
     if (reactId) return reactId;
-    return `${prefix ? `${prefix}-` : 'fui-'}${++idCounter}`;
+    return `${prefix ? `${prefix}-` : "fui-"}${++idCounter}`;
   });
 
   return id;
@@ -55,45 +55,45 @@ export function useId(prefix?: string): string {
  * ```
  */
 export function useAnnounce(): {
-  announce: (message: string, priority?: 'polite' | 'assertive') => void;
+  announce: (message: string, priority?: "polite" | "assertive") => void;
 } {
   const politeRef = React.useRef<HTMLDivElement | null>(null);
   const assertiveRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     // Create live regions on mount
-    const polite = document.createElement('div');
-    polite.setAttribute('aria-live', 'polite');
-    polite.setAttribute('aria-atomic', 'true');
-    polite.setAttribute('role', 'status');
+    const polite = document.createElement("div");
+    polite.setAttribute("aria-live", "polite");
+    polite.setAttribute("aria-atomic", "true");
+    polite.setAttribute("role", "status");
     Object.assign(polite.style, {
-      position: 'absolute',
-      width: '1px',
-      height: '1px',
-      padding: '0',
-      margin: '-1px',
-      overflow: 'hidden',
-      clip: 'rect(0, 0, 0, 0)',
-      whiteSpace: 'nowrap',
-      border: '0',
+      position: "absolute",
+      width: "1px",
+      height: "1px",
+      padding: "0",
+      margin: "-1px",
+      overflow: "hidden",
+      clip: "rect(0, 0, 0, 0)",
+      whiteSpace: "nowrap",
+      border: "0",
     });
     document.body.appendChild(polite);
     politeRef.current = polite;
 
-    const assertive = document.createElement('div');
-    assertive.setAttribute('aria-live', 'assertive');
-    assertive.setAttribute('aria-atomic', 'true');
-    assertive.setAttribute('role', 'alert');
+    const assertive = document.createElement("div");
+    assertive.setAttribute("aria-live", "assertive");
+    assertive.setAttribute("aria-atomic", "true");
+    assertive.setAttribute("role", "alert");
     Object.assign(assertive.style, {
-      position: 'absolute',
-      width: '1px',
-      height: '1px',
-      padding: '0',
-      margin: '-1px',
-      overflow: 'hidden',
-      clip: 'rect(0, 0, 0, 0)',
-      whiteSpace: 'nowrap',
-      border: '0',
+      position: "absolute",
+      width: "1px",
+      height: "1px",
+      padding: "0",
+      margin: "-1px",
+      overflow: "hidden",
+      clip: "rect(0, 0, 0, 0)",
+      whiteSpace: "nowrap",
+      border: "0",
     });
     document.body.appendChild(assertive);
     assertiveRef.current = assertive;
@@ -106,11 +106,11 @@ export function useAnnounce(): {
   }, []);
 
   const announce = React.useCallback(
-    (message: string, priority: 'polite' | 'assertive' = 'polite') => {
-      const region = priority === 'assertive' ? assertiveRef.current : politeRef.current;
+    (message: string, priority: "polite" | "assertive" = "polite") => {
+      const region = priority === "assertive" ? assertiveRef.current : politeRef.current;
       if (region) {
         // Clear and re-set to ensure announcement
-        region.textContent = '';
+        region.textContent = "";
         // Use requestAnimationFrame to ensure the clear is processed
         requestAnimationFrame(() => {
           region.textContent = message;
@@ -146,20 +146,20 @@ export function usePrefersReducedMotion(): boolean {
   const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
 
   React.useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const handleChange = (event: MediaQueryListEvent) => {
       setPrefersReducedMotion(event.matches);
     };
 
     // Modern browsers
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
 
     // Set initial value
     setPrefersReducedMotion(mediaQuery.matches);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.removeEventListener("change", handleChange);
     };
   }, []);
 
@@ -183,17 +183,17 @@ export function usePrefersContrast(): boolean {
   const [prefersContrast, setPrefersContrast] = React.useState(false);
 
   React.useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-contrast: more)');
+    const mediaQuery = window.matchMedia("(prefers-contrast: more)");
 
     const handleChange = (event: MediaQueryListEvent) => {
       setPrefersContrast(event.matches);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
     setPrefersContrast(mediaQuery.matches);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.removeEventListener("change", handleChange);
     };
   }, []);
 
@@ -219,10 +219,7 @@ export function usePrefersContrast(): boolean {
  * return <div ref={dialogRef}>...</div>;
  * ```
  */
-export function useFocusTrap(
-  ref: React.RefObject<HTMLElement | null>,
-  active: boolean
-): void {
+export function useFocusTrap(ref: React.RefObject<HTMLElement | null>, active: boolean): void {
   const previousActiveElement = React.useRef<Element | null>(null);
 
   React.useEffect(() => {
@@ -238,7 +235,7 @@ export function useFocusTrap(
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Tab') return;
+      if (event.key !== "Tab") return;
 
       const focusable = getFocusableElements(container);
       if (focusable.length === 0) return;
@@ -261,10 +258,10 @@ export function useFocusTrap(
       }
     };
 
-    container.addEventListener('keydown', handleKeyDown);
+    container.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      container.removeEventListener('keydown', handleKeyDown);
+      container.removeEventListener("keydown", handleKeyDown);
 
       // Restore focus when trap is deactivated
       if (previousActiveElement.current instanceof HTMLElement) {
@@ -315,11 +312,11 @@ export function handleArrowNavigation(
   items: readonly unknown[],
   currentIndex: number,
   options: {
-    orientation?: 'horizontal' | 'vertical' | 'both';
+    orientation?: "horizontal" | "vertical" | "both";
     loop?: boolean;
   } = {}
 ): number | undefined {
-  const { orientation = 'vertical', loop = true } = options;
+  const { orientation = "vertical", loop = true } = options;
   const length = items.length;
 
   if (length === 0) return undefined;
@@ -327,8 +324,8 @@ export function handleArrowNavigation(
   let newIndex: number | undefined;
 
   switch (event.key) {
-    case 'ArrowDown':
-      if (orientation === 'horizontal') return undefined;
+    case "ArrowDown":
+      if (orientation === "horizontal") return undefined;
       event.preventDefault();
       newIndex = currentIndex + 1;
       if (newIndex >= length) {
@@ -336,8 +333,8 @@ export function handleArrowNavigation(
       }
       break;
 
-    case 'ArrowUp':
-      if (orientation === 'horizontal') return undefined;
+    case "ArrowUp":
+      if (orientation === "horizontal") return undefined;
       event.preventDefault();
       newIndex = currentIndex - 1;
       if (newIndex < 0) {
@@ -345,8 +342,8 @@ export function handleArrowNavigation(
       }
       break;
 
-    case 'ArrowRight':
-      if (orientation === 'vertical') return undefined;
+    case "ArrowRight":
+      if (orientation === "vertical") return undefined;
       event.preventDefault();
       newIndex = currentIndex + 1;
       if (newIndex >= length) {
@@ -354,8 +351,8 @@ export function handleArrowNavigation(
       }
       break;
 
-    case 'ArrowLeft':
-      if (orientation === 'vertical') return undefined;
+    case "ArrowLeft":
+      if (orientation === "vertical") return undefined;
       event.preventDefault();
       newIndex = currentIndex - 1;
       if (newIndex < 0) {
@@ -363,12 +360,12 @@ export function handleArrowNavigation(
       }
       break;
 
-    case 'Home':
+    case "Home":
       event.preventDefault();
       newIndex = 0;
       break;
 
-    case 'End':
+    case "End":
       event.preventDefault();
       newIndex = length - 1;
       break;
@@ -408,19 +405,22 @@ export interface VisuallyHiddenProps {
  * </VisuallyHidden>
  * ```
  */
-export function VisuallyHidden({ children, focusable = false }: VisuallyHiddenProps): React.ReactElement {
+export function VisuallyHidden({
+  children,
+  focusable = false,
+}: VisuallyHiddenProps): React.ReactElement {
   const style: React.CSSProperties = focusable
     ? {}
     : {
-        position: 'absolute',
-        width: '1px',
-        height: '1px',
-        padding: '0',
-        margin: '-1px',
-        overflow: 'hidden',
-        clip: 'rect(0, 0, 0, 0)',
-        whiteSpace: 'nowrap',
-        border: '0',
+        position: "absolute",
+        width: "1px",
+        height: "1px",
+        padding: "0",
+        margin: "-1px",
+        overflow: "hidden",
+        clip: "rect(0, 0, 0, 0)",
+        whiteSpace: "nowrap",
+        border: "0",
       };
 
   return (

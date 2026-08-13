@@ -107,7 +107,7 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(function Stack(
 
   // Handle responsive direction
   if (isResponsiveDirection(direction)) {
-    directionClass = styles.directionResponsive;
+    directionClass = styles.directionResponsive ?? "";
     const vars: Record<string, string> = {};
     const baseDirection = direction.base ?? "column";
     const smDirection = direction.sm ?? baseDirection;
@@ -121,12 +121,12 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(function Stack(
     vars["--fui-stack-direction-xl"] = xlDirection;
     inlineStyle = vars as unknown as React.CSSProperties;
   } else {
-    directionClass = styles[direction];
+    directionClass = styles[direction] ?? "";
   }
 
   // Handle responsive gap
   if (isResponsiveGap(gap)) {
-    gapClass = styles.gapResponsive;
+    gapClass = styles.gapResponsive ?? false;
     const gapVars: Record<string, string> = {};
     if (gap.base) gapVars["--fui-stack-gap"] = resolveLayoutGap(gap.base);
     if (gap.sm) gapVars["--fui-stack-gap-sm"] = resolveLayoutGap(gap.sm);

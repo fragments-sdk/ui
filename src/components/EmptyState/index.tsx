@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './EmptyState.module.scss';
+import * as React from "react";
+import styles from "./EmptyState.module.scss";
 
 // ============================================
 // Types
@@ -9,7 +9,7 @@ import styles from './EmptyState.module.scss';
 
 export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 export interface EmptyStateIconProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -33,7 +33,7 @@ export interface EmptyStateActionsProps extends React.HTMLAttributes<HTMLDivElem
 // ============================================
 
 interface EmptyStateContextValue {
-  size: 'sm' | 'md' | 'lg';
+  size: "sm" | "md" | "lg";
 }
 
 const EmptyStateContext = React.createContext<EmptyStateContextValue | null>(null);
@@ -41,7 +41,7 @@ const EmptyStateContext = React.createContext<EmptyStateContextValue | null>(nul
 function useEmptyStateContext() {
   const context = React.useContext(EmptyStateContext);
   if (!context) {
-    throw new Error('EmptyState compound components must be used within an EmptyState');
+    throw new Error("EmptyState compound components must be used within an EmptyState");
   }
   return context;
 }
@@ -50,47 +50,54 @@ function useEmptyStateContext() {
 // Components
 // ============================================
 
-function EmptyStateRoot({
-  children,
-  size = 'md',
-  className,
-  ...htmlProps
-}: EmptyStateProps) {
-  const classes = [styles.emptyState, styles[size], className]
-    .filter(Boolean)
-    .join(' ');
+function EmptyStateRoot({ children, size = "md", className, ...htmlProps }: EmptyStateProps) {
+  const classes = [styles.emptyState, styles[size], className].filter(Boolean).join(" ");
 
   const contextValue: EmptyStateContextValue = { size };
 
   return (
     <EmptyStateContext.Provider value={contextValue}>
-      <div {...htmlProps} className={classes}>{children}</div>
+      <div {...htmlProps} className={classes}>
+        {children}
+      </div>
     </EmptyStateContext.Provider>
   );
 }
 
 function EmptyStateIcon({ children, className, ...htmlProps }: EmptyStateIconProps) {
-  const classes = [styles.icon, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.icon, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function EmptyStateTitle({ children, className, ...htmlProps }: EmptyStateTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <h3 {...htmlProps} className={classes}>{children}</h3>;
+  const classes = [styles.title, className].filter(Boolean).join(" ");
+  return (
+    <h3 {...htmlProps} className={classes}>
+      {children}
+    </h3>
+  );
 }
 
-function EmptyStateDescription({
-  children,
-  className,
-  ...htmlProps
-}: EmptyStateDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(' ');
-  return <p {...htmlProps} className={classes}>{children}</p>;
+function EmptyStateDescription({ children, className, ...htmlProps }: EmptyStateDescriptionProps) {
+  const classes = [styles.description, className].filter(Boolean).join(" ");
+  return (
+    <p {...htmlProps} className={classes}>
+      {children}
+    </p>
+  );
 }
 
 function EmptyStateActions({ children, className, ...htmlProps }: EmptyStateActionsProps) {
-  const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.actions, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 // ============================================

@@ -3,13 +3,7 @@
   "name": "Sidebar",
   "description": "Responsive navigation sidebar with collapsible desktop mode and mobile drawer behavior.",
   "category": "navigation",
-  "tags": [
-    "sidebar",
-    "navigation",
-    "drawer",
-    "menu",
-    "layout"
-  ],
+  "tags": ["sidebar", "navigation", "drawer", "menu", "layout"],
   "status": "stable",
   "sourcePath": "src/components/Sidebar/index.tsx",
   "exportName": "Sidebar",
@@ -83,31 +77,21 @@
       "description": "Sidebar position",
       "default": "left",
       "required": false,
-      "values": [
-        "left",
-        "right"
-      ]
+      "values": ["left", "right"]
     },
     "collapsible": {
       "type": "enum",
       "description": "Collapse behavior mode",
       "default": "icon",
       "required": false,
-      "values": [
-        "icon",
-        "offcanvas",
-        "none"
-      ]
+      "values": ["icon", "offcanvas", "none"]
     },
     "activeIndicator": {
       "type": "enum",
       "description": "Placement of the active-item affordance",
       "default": "start",
       "required": false,
-      "values": [
-        "start",
-        "end"
-      ]
+      "values": ["start", "end"]
     },
     "style": {
       "type": "object",
@@ -232,11 +216,7 @@
       "active: boolean - set on Sidebar.Item to mark current page (app-controlled)",
       "Sidebar.Item/SubItem onClick: (event) => void - click handler receives mouse event"
     ],
-    "a11yRules": [
-      "A11Y_NAV_LANDMARK",
-      "A11Y_FOCUS_TRAP",
-      "A11Y_ESCAPE_CLOSE"
-    ]
+    "a11yRules": ["A11Y_NAV_LANDMARK", "A11Y_FOCUS_TRAP", "A11Y_ESCAPE_CLOSE"]
   },
   "ai": {
     "compositionPattern": "compound",
@@ -255,9 +235,7 @@
       "Rail",
       "MenuSkeleton"
     ],
-    "requiredChildren": [
-      "Nav"
-    ],
+    "requiredChildren": ["Nav"],
     "commonPatterns": [
       "<Sidebar><Sidebar.Header>{logo}</Sidebar.Header><Sidebar.Nav><Sidebar.Section><Sidebar.Item icon={icon} active>{label}</Sidebar.Item></Sidebar.Section></Sidebar.Nav><Sidebar.Footer><Sidebar.CollapseToggle /></Sidebar.Footer></Sidebar>"
     ]

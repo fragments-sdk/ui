@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 // ============================================
 // Keyboard Shortcuts Registry
@@ -20,7 +20,7 @@
 //   configureShortcuts({ SIDEBAR_TOGGLE: null })  // disable
 //
 
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from "react";
 
 // ============================================
 // Types
@@ -46,7 +46,7 @@ export interface KeyboardShortcut {
    * - 'global': Listens on document (e.g., sidebar toggle)
    * - 'component': Only active when component is focused/mounted
    */
-  scope: 'global' | 'component';
+  scope: "global" | "component";
 }
 
 // ============================================
@@ -56,176 +56,176 @@ export interface KeyboardShortcut {
 export const KEYBOARD_SHORTCUTS = {
   // ----- Sidebar -----
   SIDEBAR_TOGGLE: {
-    key: 'b',
+    key: "b",
     meta: true,
-    label: 'Ctrl+B',
-    component: 'Sidebar',
-    description: 'Toggle sidebar collapse/expand',
-    scope: 'global',
+    label: "Ctrl+B",
+    component: "Sidebar",
+    description: "Toggle sidebar collapse/expand",
+    scope: "global",
   },
   SIDEBAR_CLOSE_MOBILE: {
-    key: 'Escape',
-    label: 'Escape',
-    component: 'Sidebar',
-    description: 'Close mobile sidebar drawer',
-    scope: 'global',
+    key: "Escape",
+    label: "Escape",
+    component: "Sidebar",
+    description: "Close mobile sidebar drawer",
+    scope: "global",
   },
 
   // ----- Editor (TipTap handles these natively, metadata for display) -----
   EDITOR_BOLD: {
-    key: 'b',
+    key: "b",
     meta: true,
-    label: 'Ctrl+B',
-    component: 'Editor',
-    description: 'Toggle bold formatting',
-    scope: 'component',
+    label: "Ctrl+B",
+    component: "Editor",
+    description: "Toggle bold formatting",
+    scope: "component",
   },
   EDITOR_ITALIC: {
-    key: 'i',
+    key: "i",
     meta: true,
-    label: 'Ctrl+I',
-    component: 'Editor',
-    description: 'Toggle italic formatting',
-    scope: 'component',
+    label: "Ctrl+I",
+    component: "Editor",
+    description: "Toggle italic formatting",
+    scope: "component",
   },
   EDITOR_STRIKETHROUGH: {
-    key: 's',
+    key: "s",
     meta: true,
     shift: true,
-    label: 'Ctrl+Shift+S',
-    component: 'Editor',
-    description: 'Toggle strikethrough formatting',
-    scope: 'component',
+    label: "Ctrl+Shift+S",
+    component: "Editor",
+    description: "Toggle strikethrough formatting",
+    scope: "component",
   },
   EDITOR_LINK: {
-    key: 'k',
+    key: "k",
     meta: true,
-    label: 'Ctrl+K',
-    component: 'Editor',
-    description: 'Insert or edit link',
-    scope: 'component',
+    label: "Ctrl+K",
+    component: "Editor",
+    description: "Insert or edit link",
+    scope: "component",
   },
   EDITOR_CODE: {
-    key: 'e',
+    key: "e",
     meta: true,
-    label: 'Ctrl+E',
-    component: 'Editor',
-    description: 'Toggle inline code',
-    scope: 'component',
+    label: "Ctrl+E",
+    component: "Editor",
+    description: "Toggle inline code",
+    scope: "component",
   },
   EDITOR_BULLET_LIST: {
-    key: '8',
+    key: "8",
     meta: true,
     shift: true,
-    label: 'Ctrl+Shift+8',
-    component: 'Editor',
-    description: 'Toggle bullet list',
-    scope: 'component',
+    label: "Ctrl+Shift+8",
+    component: "Editor",
+    description: "Toggle bullet list",
+    scope: "component",
   },
   EDITOR_ORDERED_LIST: {
-    key: '7',
+    key: "7",
     meta: true,
     shift: true,
-    label: 'Ctrl+Shift+7',
-    component: 'Editor',
-    description: 'Toggle ordered list',
-    scope: 'component',
+    label: "Ctrl+Shift+7",
+    component: "Editor",
+    description: "Toggle ordered list",
+    scope: "component",
   },
   EDITOR_HEADING1: {
-    key: '1',
+    key: "1",
     meta: true,
     alt: true,
-    label: 'Ctrl+Alt+1',
-    component: 'Editor',
-    description: 'Toggle heading level 1',
-    scope: 'component',
+    label: "Ctrl+Alt+1",
+    component: "Editor",
+    description: "Toggle heading level 1",
+    scope: "component",
   },
   EDITOR_HEADING2: {
-    key: '2',
+    key: "2",
     meta: true,
     alt: true,
-    label: 'Ctrl+Alt+2',
-    component: 'Editor',
-    description: 'Toggle heading level 2',
-    scope: 'component',
+    label: "Ctrl+Alt+2",
+    component: "Editor",
+    description: "Toggle heading level 2",
+    scope: "component",
   },
   EDITOR_HEADING3: {
-    key: '3',
+    key: "3",
     meta: true,
     alt: true,
-    label: 'Ctrl+Alt+3',
-    component: 'Editor',
-    description: 'Toggle heading level 3',
-    scope: 'component',
+    label: "Ctrl+Alt+3",
+    component: "Editor",
+    description: "Toggle heading level 3",
+    scope: "component",
   },
   EDITOR_BLOCKQUOTE: {
-    key: 'b',
+    key: "b",
     meta: true,
     shift: true,
-    label: 'Ctrl+Shift+B',
-    component: 'Editor',
-    description: 'Toggle blockquote',
-    scope: 'component',
+    label: "Ctrl+Shift+B",
+    component: "Editor",
+    description: "Toggle blockquote",
+    scope: "component",
   },
   EDITOR_UNDO: {
-    key: 'z',
+    key: "z",
     meta: true,
-    label: 'Ctrl+Z',
-    component: 'Editor',
-    description: 'Undo last action',
-    scope: 'component',
+    label: "Ctrl+Z",
+    component: "Editor",
+    description: "Undo last action",
+    scope: "component",
   },
   EDITOR_REDO: {
-    key: 'z',
+    key: "z",
     meta: true,
     shift: true,
-    label: 'Ctrl+Shift+Z',
-    component: 'Editor',
-    description: 'Redo last undone action',
-    scope: 'component',
+    label: "Ctrl+Shift+Z",
+    component: "Editor",
+    description: "Redo last undone action",
+    scope: "component",
   },
 
   // ----- Prompt -----
   PROMPT_SUBMIT: {
-    key: 'Enter',
-    label: 'Enter',
-    component: 'Prompt',
-    description: 'Submit prompt (when submitOnEnter is true)',
-    scope: 'component',
+    key: "Enter",
+    label: "Enter",
+    component: "Prompt",
+    description: "Submit prompt (when submitOnEnter is true)",
+    scope: "component",
   },
 
   // ----- NavigationMenu -----
   NAV_TOGGLE: {
-    key: 'Enter',
-    label: 'Enter',
-    component: 'NavigationMenu',
-    description: 'Toggle menu item open/closed',
-    scope: 'component',
+    key: "Enter",
+    label: "Enter",
+    component: "NavigationMenu",
+    description: "Toggle menu item open/closed",
+    scope: "component",
   },
   NAV_CLOSE: {
-    key: 'Escape',
-    label: 'Escape',
-    component: 'NavigationMenu',
-    description: 'Close menu and return focus to trigger',
-    scope: 'component',
+    key: "Escape",
+    label: "Escape",
+    component: "NavigationMenu",
+    description: "Close menu and return focus to trigger",
+    scope: "component",
   },
 
   // ----- Command -----
   COMMAND_SELECT: {
-    key: 'Enter',
-    label: 'Enter',
-    component: 'Command',
-    description: 'Select active command item',
-    scope: 'component',
+    key: "Enter",
+    label: "Enter",
+    component: "Command",
+    description: "Select active command item",
+    scope: "component",
   },
 
   // ----- Collapsible -----
   COLLAPSIBLE_TOGGLE: {
-    key: 'Enter',
-    label: 'Enter',
-    component: 'Collapsible',
-    description: 'Toggle collapsible open/closed',
-    scope: 'component',
+    key: "Enter",
+    label: "Enter",
+    component: "Collapsible",
+    description: "Toggle collapsible open/closed",
+    scope: "component",
   },
 } as const satisfies Record<string, KeyboardShortcut>;
 
@@ -268,17 +268,17 @@ export function matchesShortcut(event: KeyboardEvent, shortcut: KeyboardShortcut
  * Returns "⌘B" on Mac, "Ctrl+B" elsewhere.
  */
 export function getShortcutLabel(shortcut: KeyboardShortcut): string {
-  if (typeof navigator === 'undefined') return shortcut.label;
+  if (typeof navigator === "undefined") return shortcut.label;
 
-  const isMac = navigator.platform?.includes('Mac') || navigator.userAgent?.includes('Mac');
+  const isMac = navigator.platform?.includes("Mac") || navigator.userAgent?.includes("Mac");
   if (!isMac) return shortcut.label;
 
   const parts: string[] = [];
-  if (shortcut.meta) parts.push('⌘');
-  if (shortcut.shift) parts.push('⇧');
-  if (shortcut.alt) parts.push('⌥');
+  if (shortcut.meta) parts.push("⌘");
+  if (shortcut.shift) parts.push("⇧");
+  if (shortcut.alt) parts.push("⌥");
   parts.push(shortcut.key.toUpperCase());
-  return parts.join('');
+  return parts.join("");
 }
 
 /**
@@ -303,7 +303,10 @@ export function findConflicts(name: ShortcutName): KeyboardShortcut[] {
 /**
  * Get all registered shortcuts, optionally filtered by component or scope.
  */
-export function getShortcuts(filter?: { component?: string; scope?: 'global' | 'component' }): KeyboardShortcut[] {
+export function getShortcuts(filter?: {
+  component?: string;
+  scope?: "global" | "component";
+}): KeyboardShortcut[] {
   return (Object.values(KEYBOARD_SHORTCUTS) as KeyboardShortcut[]).filter((shortcut) => {
     if (filter?.component && shortcut.component !== filter.component) return false;
     if (filter?.scope && shortcut.scope !== filter.scope) return false;
@@ -316,25 +319,23 @@ export function getShortcuts(filter?: { component?: string; scope?: 'global' | '
 // ============================================
 
 /** Text-like input types where typing shortcuts should not fire global handlers */
-const TEXT_INPUT_TYPES = new Set([
-  'text', 'search', 'url', 'tel', 'email', 'password', 'number',
-]);
+const TEXT_INPUT_TYPES = new Set(["text", "search", "url", "tel", "email", "password", "number"]);
 
 /**
  * Check if an element is an editable area (input, textarea, contenteditable, role="textbox").
  * Global shortcuts should skip firing when the user is typing in one of these.
  */
 export function isEditableElement(element: Element | null): boolean {
-  if (!element || !('tagName' in element)) return false;
+  if (!element || !("tagName" in element)) return false;
 
   const tag = element.tagName;
 
   // <textarea>
-  if (tag === 'TEXTAREA') return true;
+  if (tag === "TEXTAREA") return true;
 
   // <input> with text-like type
-  if (tag === 'INPUT') {
-    const type = (element as HTMLInputElement).type?.toLowerCase() || 'text';
+  if (tag === "INPUT") {
+    const type = (element as HTMLInputElement).type?.toLowerCase() || "text";
     return TEXT_INPUT_TYPES.has(type);
   }
 
@@ -343,10 +344,11 @@ export function isEditableElement(element: Element | null): boolean {
   if (htmlEl.isContentEditable) return true;
   // Fallback: check attribute directly (isContentEditable can be unreliable for detached elements)
   const ceAttr = htmlEl.contentEditable;
-  if (ceAttr === 'true' || ceAttr === '') return true;
+  if (ceAttr === "true" || ceAttr === "") return true;
 
   // role="textbox" (TipTap uses this)
-  if (typeof element.getAttribute === 'function' && element.getAttribute('role') === 'textbox') return true;
+  if (typeof element.getAttribute === "function" && element.getAttribute("role") === "textbox")
+    return true;
 
   // Check ancestors for contenteditable (e.g., a <p> inside a [contenteditable] div)
   // Walk up manually because jsdom's closest doesn't reliably match property-set contentEditable
@@ -354,7 +356,7 @@ export function isEditableElement(element: Element | null): boolean {
   while (ancestor) {
     if ((ancestor as HTMLElement).isContentEditable) return true;
     const ancestorCe = (ancestor as HTMLElement).contentEditable;
-    if (ancestorCe === 'true' || ancestorCe === '') return true;
+    if (ancestorCe === "true" || ancestorCe === "") return true;
     ancestor = ancestor.parentElement;
   }
 
@@ -390,7 +392,10 @@ const shortcutOverrides = new Map<ShortcutName, Partial<KeyboardShortcut> | null
 export function configureShortcuts(
   overrides: Partial<Record<ShortcutName, Partial<KeyboardShortcut> | null>>
 ): void {
-  for (const [name, value] of Object.entries(overrides) as [ShortcutName, Partial<KeyboardShortcut> | null][]) {
+  for (const [name, value] of Object.entries(overrides) as [
+    ShortcutName,
+    Partial<KeyboardShortcut> | null,
+  ][]) {
     if (!(name in KEYBOARD_SHORTCUTS)) continue;
     if (value === undefined) continue;
     shortcutOverrides.set(name, value);
@@ -440,7 +445,7 @@ export interface UseKeyboardShortcutOptions {
    * - 'component': listens on `ref` element only
    * If omitted, uses the scope from the shortcut definition.
    */
-  scope?: 'global' | 'component';
+  scope?: "global" | "component";
   /** Required when scope is 'component' — the element to attach the listener to */
   ref?: RefObject<Element | null>;
 }
@@ -487,16 +492,16 @@ export function useKeyboardShortcut({
       if (!matchesShortcut(e, resolved)) return;
 
       // Global shortcuts skip editable elements
-      if (effectiveScope === 'global' && isEditableElement(e.target as Element)) return;
+      if (effectiveScope === "global" && isEditableElement(e.target as Element)) return;
 
       e.preventDefault();
       handlerRef.current();
     };
 
-    const target = effectiveScope === 'component' ? ref?.current : document;
+    const target = effectiveScope === "component" ? ref?.current : document;
     if (!target) return;
 
-    target.addEventListener('keydown', handleKeyDown as EventListener);
-    return () => target.removeEventListener('keydown', handleKeyDown as EventListener);
+    target.addEventListener("keydown", handleKeyDown as EventListener);
+    return () => target.removeEventListener("keydown", handleKeyDown as EventListener);
   }, [name, enabled, scopeOverride, ref]);
 }

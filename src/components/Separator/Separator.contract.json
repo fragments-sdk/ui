@@ -3,13 +3,7 @@
   "name": "Separator",
   "description": "Visual divider between content sections. Use to create clear visual boundaries and improve content organization.",
   "category": "layout",
-  "tags": [
-    "separator",
-    "divider",
-    "hr",
-    "line",
-    "layout"
-  ],
+  "tags": ["separator", "divider", "hr", "line", "layout"],
   "status": "stable",
   "sourcePath": "src/components/Separator/index.tsx",
   "exportName": "Separator",
@@ -26,22 +20,14 @@
       "description": "Direction of the separator",
       "default": "horizontal",
       "required": false,
-      "values": [
-        "horizontal",
-        "vertical"
-      ]
+      "values": ["horizontal", "vertical"]
     },
     "spacing": {
       "type": "enum",
       "description": "Margin around the separator",
       "default": "none",
       "required": false,
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["none", "sm", "md", "lg"]
     },
     "soft": {
       "type": "boolean",
@@ -124,15 +110,11 @@
       "soft: boolean - lighter appearance",
       "label: string - centered label text"
     ],
-    "a11yRules": [
-      "A11Y_SEPARATOR_ROLE"
-    ]
+    "a11yRules": ["A11Y_SEPARATOR_ROLE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

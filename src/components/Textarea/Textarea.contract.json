@@ -3,12 +3,7 @@
   "name": "Textarea",
   "description": "Multi-line text input for longer form content",
   "category": "forms",
-  "tags": [
-    "input",
-    "text",
-    "form",
-    "multiline"
-  ],
+  "tags": ["input", "text", "form", "multiline"],
   "status": "stable",
   "sourcePath": "src/components/Textarea/index.tsx",
   "exportName": "Textarea",
@@ -78,23 +73,14 @@
       "description": "Resize behavior",
       "default": "vertical",
       "required": false,
-      "values": [
-        "none",
-        "vertical",
-        "horizontal",
-        "both"
-      ]
+      "values": ["none", "vertical", "horizontal", "both"]
     },
     "size": {
       "type": "enum",
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "disabled": {
       "type": "boolean",
@@ -289,15 +275,11 @@
       "rootProps: HTMLAttributes<HTMLDivElement> - wrapper element props",
       "...native textarea attributes are supported (readOnly, autoComplete, maxLength, onKeyDown, etc.)"
     ],
-    "a11yRules": [
-      "A11Y_LABEL_REQUIRED"
-    ]
+    "a11yRules": ["A11Y_LABEL_REQUIRED"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

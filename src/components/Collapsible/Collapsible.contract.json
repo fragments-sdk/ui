@@ -3,13 +3,7 @@
   "name": "Collapsible",
   "description": "An interactive component that expands/collapses to show or hide content",
   "category": "layout",
-  "tags": [
-    "collapsible",
-    "expandable",
-    "accordion",
-    "disclosure",
-    "toggle"
-  ],
+  "tags": ["collapsible", "expandable", "accordion", "disclosure", "toggle"],
   "status": "stable",
   "sourcePath": "src/components/Collapsible/index.tsx",
   "exportName": "Collapsible",
@@ -131,19 +125,11 @@
       "onOpenChange: (open: boolean) => void - state change callback",
       "disabled: boolean - prevents interaction"
     ],
-    "a11yRules": [
-      "A11Y_EXPANDED_STATE",
-      "A11Y_REGION_LABEL",
-      "A11Y_KEYBOARD_NAV"
-    ]
+    "a11yRules": ["A11Y_EXPANDED_STATE", "A11Y_REGION_LABEL", "A11Y_KEYBOARD_NAV"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root",
-      "Trigger",
-      "Content"
-    ]
+    "subComponents": ["Root", "Trigger", "Content"]
   },
   "provenance": {
     "source": "migrated",

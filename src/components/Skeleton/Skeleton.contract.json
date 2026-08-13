@@ -3,12 +3,7 @@
   "name": "Skeleton",
   "description": "Placeholder loading state for content",
   "category": "feedback",
-  "tags": [
-    "loading",
-    "placeholder",
-    "skeleton",
-    "shimmer"
-  ],
+  "tags": ["loading", "placeholder", "skeleton", "shimmer"],
   "status": "stable",
   "sourcePath": "src/components/Skeleton/index.tsx",
   "exportName": "Skeleton",
@@ -27,25 +22,14 @@
       "description": "Semantic variant that auto-sizes",
       "default": "rect",
       "required": false,
-      "values": [
-        "text",
-        "heading",
-        "avatar",
-        "button",
-        "input",
-        "rect"
-      ]
+      "values": ["text", "heading", "avatar", "button", "input", "rect"]
     },
     "size": {
       "type": "enum",
       "description": "Size for avatar/button variants",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "width": {
       "type": "union",
@@ -67,13 +51,7 @@
       "type": "enum",
       "description": "Border radius override",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg",
-        "none",
-        "full"
-      ]
+      "values": ["sm", "md", "lg", "none", "full"]
     },
     "static": {
       "type": "boolean",
@@ -152,10 +130,7 @@
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Text",
-      "Circle"
-    ]
+    "subComponents": ["Text", "Circle"]
   },
   "provenance": {
     "source": "migrated",

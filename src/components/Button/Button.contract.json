@@ -3,12 +3,7 @@
   "name": "Button",
   "description": "Interactive element for user actions and form submissions",
   "category": "forms",
-  "tags": [
-    "action",
-    "button",
-    "form",
-    "interactive"
-  ],
+  "tags": ["action", "button", "form", "interactive"],
   "status": "stable",
   "sourcePath": "src/components/Button/index.tsx",
   "exportName": "Button",
@@ -27,10 +22,7 @@
       "description": "Render as a native button or anchor element",
       "default": "button",
       "required": false,
-      "values": [
-        "button",
-        "a"
-      ]
+      "values": ["button", "a"]
     },
     "children": {
       "type": "node",
@@ -53,21 +45,14 @@
         "outline",
         "icon"
       ],
-      "constraints": [
-        "Only one primary button per context"
-      ]
+      "constraints": ["Only one primary button per context"]
     },
     "size": {
       "type": "enum",
       "description": "Button size (\"xs\" is for inline row-action controls where \"sm\" is too tall)",
       "default": "\"md\"",
       "required": false,
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["xs", "sm", "md", "lg"]
     },
     "icon": {
       "type": "boolean",
@@ -198,16 +183,11 @@
       "asChild: boolean - composes styles/props onto a child element (links/router links)",
       "icon: boolean - icon-only square layout (can be combined with visual variants)"
     ],
-    "a11yRules": [
-      "A11Y_BTN_LABEL",
-      "A11Y_BTN_FOCUS"
-    ]
+    "a11yRules": ["A11Y_BTN_LABEL", "A11Y_BTN_FOCUS"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

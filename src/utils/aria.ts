@@ -1,11 +1,11 @@
-import * as React from 'react';
+import * as React from "react";
 
 /**
  * Merge multiple aria ID values into a single space-separated string.
  * Filters out undefined/empty values. Returns undefined if no valid IDs.
  */
 export function mergeAriaIds(...ids: Array<string | undefined>): string | undefined {
-  const merged = ids.filter(Boolean).join(' ').trim();
+  const merged = ids.filter(Boolean).join(" ").trim();
   return merged.length > 0 ? merged : undefined;
 }
 
@@ -19,7 +19,7 @@ export function normalizeError(error?: boolean | string): {
 } {
   return {
     hasError: !!error,
-    errorMessage: typeof error === 'string' ? error : undefined,
+    errorMessage: typeof error === "string" ? error : undefined,
   };
 }
 

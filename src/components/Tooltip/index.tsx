@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import styles from './Tooltip.module.scss';
+import * as React from "react";
+import { Tooltip as BaseTooltip } from "@base-ui/react/tooltip";
+import styles from "./Tooltip.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type TooltipSide = 'top' | 'bottom' | 'left' | 'right';
-export type TooltipAlign = 'start' | 'center' | 'end';
+export type TooltipSide = "top" | "bottom" | "left" | "right";
+export type TooltipAlign = "start" | "center" | "end";
 
-export interface TooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'content' | 'defaultChecked'> {
+export interface TooltipProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "content" | "defaultChecked"
+> {
   /** The element that triggers the tooltip */
   children: React.ReactElement;
   /** Content to display in the tooltip */
@@ -76,8 +79,8 @@ const TooltipProviderContext = React.createContext(false);
 function TooltipRoot({
   children,
   content,
-  side = 'top',
-  align = 'center',
+  side = "top",
+  align = "center",
   sideOffset = 6,
   delay,
   closeDelay,
@@ -101,9 +104,9 @@ function TooltipRoot({
       for (const [key, triggerHandler] of Object.entries(triggerProps)) {
         const childHandler = childProps[key];
         if (
-          key.startsWith('on') &&
-          typeof triggerHandler === 'function' &&
-          typeof childHandler === 'function'
+          key.startsWith("on") &&
+          typeof triggerHandler === "function" &&
+          typeof childHandler === "function"
         ) {
           mergedProps[key] = (...args: unknown[]) => {
             (childHandler as (...event: unknown[]) => void)(...args);
@@ -114,7 +117,7 @@ function TooltipRoot({
 
       return React.cloneElement(children, mergedProps);
     },
-    [children],
+    [children]
   );
 
   if (disabled || !children) {
@@ -128,11 +131,7 @@ function TooltipRoot({
   } = contentProps ?? {};
 
   const tooltipNode = (
-    <BaseTooltip.Root
-      open={open}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
-    >
+    <BaseTooltip.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <BaseTooltip.Trigger closeOnClick={closeOnClick} render={renderTrigger} />
       <BaseTooltip.Portal>
         <BaseTooltip.Positioner
@@ -144,7 +143,7 @@ function TooltipRoot({
           <BaseTooltip.Popup
             {...htmlProps}
             {...contentHtmlProps}
-            className={[styles.popup, className, contentClassName].filter(Boolean).join(' ')}
+            className={[styles.popup, className, contentClassName].filter(Boolean).join(" ")}
             style={{ ...(style ?? {}), ...(contentStyle ?? {}) }}
           >
             {content}
@@ -192,11 +191,7 @@ export function TooltipProvider({
 
   return (
     <TooltipProviderContext.Provider value={true}>
-      <BaseTooltip.Provider
-        delay={resolvedDelay}
-        closeDelay={closeDelay}
-        timeout={resolvedTimeout}
-      >
+      <BaseTooltip.Provider delay={resolvedDelay} closeDelay={closeDelay} timeout={resolvedTimeout}>
         {children}
       </BaseTooltip.Provider>
     </TooltipProviderContext.Provider>

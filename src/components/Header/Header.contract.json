@@ -3,14 +3,7 @@
   "name": "Header",
   "description": "Composable header with slots for brand, navigation, search, and actions. Supports dropdown nav groups via Header.NavMenu. Designed for use within AppShell with responsive mobile support.",
   "category": "navigation",
-  "tags": [
-    "header",
-    "navigation",
-    "navbar",
-    "brand",
-    "layout",
-    "dropdown"
-  ],
+  "tags": ["header", "navigation", "navbar", "brand", "layout", "dropdown"],
   "status": "stable",
   "sourcePath": "src/components/Header/index.tsx",
   "exportName": "Header",
@@ -41,11 +34,7 @@
       "description": "Position behavior (usually controlled by AppShell)",
       "default": "static",
       "required": false,
-      "values": [
-        "static",
-        "fixed",
-        "sticky"
-      ]
+      "values": ["static", "fixed", "sticky"]
     },
     "elevatedOnScroll": {
       "type": "boolean|object",
@@ -197,12 +186,7 @@
       "Header.NavMenu provides dropdown groups via Base UI Menu",
       "Header.MobileNavActions provides an action row inside the mobile drawer"
     ],
-    "a11yRules": [
-      "A11Y_HEADER_LANDMARK",
-      "A11Y_NAV_LABEL",
-      "A11Y_SKIP_LINK",
-      "A11Y_BUTTON_LABEL"
-    ]
+    "a11yRules": ["A11Y_HEADER_LANDMARK", "A11Y_NAV_LABEL", "A11Y_SKIP_LINK", "A11Y_BUTTON_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",

@@ -3,13 +3,7 @@
   "name": "Dialog",
   "description": "Modal overlay for focused user interactions. Use for confirmations, forms, or content requiring full attention.",
   "category": "feedback",
-  "tags": [
-    "modal",
-    "dialog",
-    "overlay",
-    "popup",
-    "confirmation"
-  ],
+  "tags": ["modal", "dialog", "overlay", "popup", "confirmation"],
   "status": "stable",
   "sourcePath": "src/components/Dialog/index.tsx",
   "exportName": "Dialog",
@@ -124,11 +118,7 @@
       "Dialog.Content initialFocus?: boolean - control auto-focus on open (default: true)",
       "Dialog.Content size: sm|md|lg|xl|full - dialog width"
     ],
-    "a11yRules": [
-      "A11Y_DIALOG_FOCUS",
-      "A11Y_DIALOG_ESCAPE",
-      "A11Y_DIALOG_LABEL"
-    ]
+    "a11yRules": ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",
@@ -142,9 +132,7 @@
       "Body",
       "Footer"
     ],
-    "requiredChildren": [
-      "Content"
-    ],
+    "requiredChildren": ["Content"],
     "commonPatterns": [
       "<Dialog><Dialog.Trigger><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close><Button variant=\"secondary\">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>",
       "<Dialog><Dialog.Trigger asChild><a href=\"/settings\">Open settings</a></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>"

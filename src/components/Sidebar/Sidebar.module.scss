@@ -160,8 +160,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: var(--fui-sidebar-gutter) var(--fui-sidebar-gutter)
-    var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-sidebar-gutter) var(--fui-sidebar-gutter) var(--fui-space-3, $fui-space-3);
 }
 
 .navScrollArea {
@@ -323,10 +322,7 @@
   &.item:active {
     background-color: var(--fui-sidebar-active-bg);
     border-color: var(--fui-sidebar-active-border);
-    color: var(
-      --fui-sidebar-item-active-color,
-      var(--fui-text-primary, #{$fui-text-primary})
-    );
+    color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
     text-decoration: none;
   }
 
@@ -340,7 +336,9 @@
 .root[data-active-indicator="end"] .itemActive {
   @include navigation.active-indicator("end");
 
-  padding-inline-end: calc(var(--fui-navigation-inline-inset) * 2 + var(--fui-navigation-active-dot));
+  padding-inline-end: calc(
+    var(--fui-navigation-inline-inset) * 2 + var(--fui-navigation-active-dot)
+  );
 
   &::before {
     content: none;

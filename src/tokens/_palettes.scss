@@ -7,16 +7,16 @@
 //
 // ============================================
 
-@use 'sass:color';
-@use 'sass:map';
-@use 'sass:math';
+@use "sass:color";
+@use "sass:map";
+@use "sass:math";
 
 // --------------------------------------------
 // Stone - Muted cool neutrals (Default)
 // Subtle, balanced feel - matches current zinc-like palette
 // --------------------------------------------
 $palette-stone: (
-  50:  #fafafa,
+  50: #fafafa,
   100: #f4f4f5,
   200: #e4e4e7,
   300: #d4d4d8,
@@ -26,7 +26,7 @@ $palette-stone: (
   700: #3f3f46,
   800: #27272a,
   900: #18181b,
-  950: #09090b
+  950: #09090b,
 );
 
 // --------------------------------------------
@@ -35,7 +35,7 @@ $palette-stone: (
 // unified, not like separate panels pasted onto a grey shell.
 // --------------------------------------------
 $palette-mono: (
-  50:  #fafafa,
+  50: #fafafa,
   100: #f5f5f5,
   200: #e5e5e5,
   300: #d4d4d4,
@@ -45,7 +45,7 @@ $palette-mono: (
   700: #404040,
   800: #171717,
   900: #0a0a0a,
-  950: #000000
+  950: #000000,
 );
 
 // --------------------------------------------
@@ -53,7 +53,7 @@ $palette-mono: (
 // Professional, tech feel
 // --------------------------------------------
 $palette-ice: (
-  50:  #f0f9ff,
+  50: #f0f9ff,
   100: #e0f2fe,
   200: #bae6fd,
   300: #7dd3fc,
@@ -61,9 +61,11 @@ $palette-ice: (
   500: #0ea5e9,
   600: #0284c7,
   700: #0369a1,
-  800: #0f2d3d,  // Darkened and desaturated for dark mode
-  900: #0a1f2c,  // Darkened and desaturated for dark mode
-  950: #06141c   // Very dark blue-gray for dark mode bg
+  800: #0f2d3d,
+  // Darkened and desaturated for dark mode
+  900: #0a1f2c,
+  // Darkened and desaturated for dark mode
+  950: #06141c, // Very dark blue-gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -71,7 +73,7 @@ $palette-ice: (
 // Organic, earthy feel
 // --------------------------------------------
 $palette-sand: (
-  50:  #fdf8f3,
+  50: #fdf8f3,
   100: #f5ebe0,
   200: #e8d5c4,
   300: #d4b89c,
@@ -79,9 +81,11 @@ $palette-sand: (
   500: #a67c52,
   600: #8b5e34,
   700: #6f4518,
-  800: #231a12,  // Darkened and desaturated for dark mode
-  900: #181210,  // Darkened and desaturated for dark mode
-  950: #0f0c09   // Very dark warm gray for dark mode bg
+  800: #231a12,
+  // Darkened and desaturated for dark mode
+  900: #181210,
+  // Darkened and desaturated for dark mode
+  950: #0f0c09, // Very dark warm gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -89,7 +93,7 @@ $palette-sand: (
 // Natural, growth feel
 // --------------------------------------------
 $palette-earth: (
-  50:  #f5f7f2,
+  50: #f5f7f2,
   100: #e8ede3,
   200: #d1dbc6,
   300: #b3c4a0,
@@ -97,9 +101,11 @@ $palette-earth: (
   500: #6b8c4e,
   600: #517035,
   700: #3d5527,
-  800: #1a2316,  // Darkened and desaturated for dark mode
-  900: #121810,  // Darkened and desaturated for dark mode
-  950: #0a0f08   // Very dark green-gray for dark mode bg
+  800: #1a2316,
+  // Darkened and desaturated for dark mode
+  900: #121810,
+  // Darkened and desaturated for dark mode
+  950: #0a0f08, // Very dark green-gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -107,7 +113,7 @@ $palette-earth: (
 // The Fragments brand palette — deep forest greens
 // --------------------------------------------
 $palette-fragments: (
-  50:  #f0f7f3,
+  50: #f0f7f3,
   100: #dceee3,
   200: #b8ddc6,
   300: #88c5a0,
@@ -115,9 +121,11 @@ $palette-fragments: (
   500: #3d8f60,
   600: #2d7049,
   700: #235536,
-  800: #1a3025,  // Dark card surface
-  900: #142318,  // Dark surface
-  950: #0d1f17   // Darkest bg
+  800: #1a3025,
+  // Dark card surface
+  900: #142318,
+  // Dark surface
+  950: #0d1f17, // Darkest bg
 );
 
 // --------------------------------------------
@@ -130,17 +138,21 @@ $palette-fragments: (
 // 950 = recessed surface, 800 = hairline, 700 = strong border, 500 = faint text.
 // --------------------------------------------
 $palette-carbon: (
-  50:  #fafafa,
+  50: #fafafa,
   100: #f4f4f4,
   200: #e4e4e4,
   300: #d1d1d1,
   400: #b0b0b0,
-  500: #8f8f8f,  // faint / placeholder text
+  500: #8f8f8f,
+  // faint / placeholder text
   600: #5a5a5a,
-  700: #4b4b4b,  // strong border
-  800: #323232,  // hairline / default border
-  900: #212121,  // page / body background
-  950: #171717   // recessed surface (cards, panels, code wells)
+  700: #4b4b4b,
+  // strong border
+  800: #323232,
+  // hairline / default border
+  900: #212121,
+  // page / body background
+  950: #171717, // recessed surface (cards, panels, code wells)
 );
 
 // --------------------------------------------
@@ -148,7 +160,7 @@ $palette-carbon: (
 // Energy, passion feel
 // --------------------------------------------
 $palette-fire: (
-  50:  #fff7ed,
+  50: #fff7ed,
   100: #ffedd5,
   200: #fed7aa,
   300: #fdba74,
@@ -156,9 +168,11 @@ $palette-fire: (
   500: #f97316,
   600: #ea580c,
   700: #c2410c,
-  800: #2d1810,  // Darkened and desaturated for dark mode
-  900: #1c100a,  // Darkened and desaturated for dark mode
-  950: #120a06   // Very dark warm gray for dark mode bg
+  800: #2d1810,
+  // Darkened and desaturated for dark mode
+  900: #1c100a,
+  // Darkened and desaturated for dark mode
+  950: #120a06, // Very dark warm gray for dark mode bg
 );
 
 // --------------------------------------------
@@ -173,7 +187,7 @@ $palettes: (
   "fire": $palette-fire,
   "fragments": $palette-fragments,
   "carbon": $palette-carbon,
-  "wind": $palette-stone  // Legacy alias — "wind" was renamed to "stone"
+  "wind": $palette-stone, // Legacy alias — "wind" was renamed to "stone"
 );
 
 // --------------------------------------------
