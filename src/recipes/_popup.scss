@@ -8,7 +8,10 @@
   --fui-popup-row-block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   --fui-popup-row-inline-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   --fui-popup-row-content-gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  --fui-popup-row-gap: var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")});
+  --fui-popup-row-gap: var(
+    --fui-stroke-hairline,
+    #{measurements.target-value("stroke", "hairline")}
+  );
   --fui-popup-indicator-box: var(--fui-raw-space-16, #{measurements.raw-space(16)});
   --fui-popup-separator-size: var(
     --fui-stroke-hairline,

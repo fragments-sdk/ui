@@ -32,10 +32,7 @@
 
 @function switch-inline-size($size) {
   @if $size == "sm" or $size == "md" or $size == "lg" {
-    @return var(
-      --fui-control-track-#{$size},
-      #{measurements.target-value("controlTrack", $size)}
-    );
+    @return var(--fui-control-track-#{$size}, #{measurements.target-value("controlTrack", $size)});
   }
 
   @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
@@ -102,13 +99,8 @@
   --_fui-switch-inline-size: #{switch-inline-size($size)};
   --_fui-switch-block-size: #{switch-block-size($size)};
   --_fui-switch-thumb-size: #{switch-thumb-size($size)};
-  --_fui-switch-inset: var(
-    --fui-stroke-default,
-    #{measurements.target-value("stroke", "default")}
-  );
-  --_fui-switch-travel: calc(
-    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
-  );
+  --_fui-switch-inset: var(--fui-stroke-default, #{measurements.target-value("stroke", "default")});
+  --_fui-switch-travel: calc(var(--_fui-switch-inline-size) - var(--_fui-switch-block-size));
 
   inline-size: var(--_fui-switch-inline-size);
   block-size: var(--_fui-switch-block-size);
