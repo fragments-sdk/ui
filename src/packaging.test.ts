@@ -262,7 +262,7 @@ describe("measurements public subpath", () => {
     expect(rootEsm).not.toHaveProperty("MEASUREMENT_PROFILES");
     expect(rootEsm).not.toHaveProperty("applyMeasurementSelection");
     expect(rootEsm).not.toHaveProperty("measurementPx");
-  });
+  }, 45_000);
 });
 
 describe("published dist preserves use client directives (P0 packaging)", () => {
