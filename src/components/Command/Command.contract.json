@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Command",
-  "description": "A searchable command palette for quick actions. Combines an input with a filterable, keyboard-navigable list of actions.",
+  "description": "Combines search with a keyboard-navigable list of actions.",
   "category": "navigation",
   "tags": [
     "command",

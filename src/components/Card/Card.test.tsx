@@ -1,6 +1,13 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Card } from "./index";
+
+const cardStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Card/Card.module.scss"),
+  "utf8"
+);
 
 describe("Card", () => {
   it("renders as <article> by default", () => {
@@ -116,10 +123,9 @@ describe("Card", () => {
           <Card.Title>Adoption</Card.Title>
           <span>aside</span>
         </Card.Header>
-      </Card>,
+      </Card>
     );
-    expect(container.querySelector("[data-testid='divided-header']")).toHaveClass(
-      "headerDivided",
-    );
+    expect(container.querySelector("[data-testid='divided-header']")).toHaveClass("headerDivided");
+    expect(cardStyles).toContain("--fui-card-header-bg");
   });
 });

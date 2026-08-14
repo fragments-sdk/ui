@@ -85,7 +85,7 @@
   // it owns is on screen.
   &[data-popup-open] {
     border-color: transparent;
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    background-color: var(--fui-control-selected-bg, $fui-bg-active);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 

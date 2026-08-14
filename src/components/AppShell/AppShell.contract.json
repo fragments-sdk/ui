@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "AppShell",
-  "description": "Full layout wrapper integrating sidebar, header, main content, and optional aside panel. Two structural layouts (default, sidebar) combine with per-slot variant=\"floating\" for full flexibility.",
+  "description": "Composes a responsive application shell from header, sidebar, main, and optional aside regions.",
   "category": "layout",
   "tags": [
     "layout",

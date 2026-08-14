@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Header",
-  "description": "Composable header with slots for brand, navigation, search, and actions. Supports dropdown nav groups via Header.NavMenu. Designed for use within AppShell with responsive mobile support.",
+  "description": "Composes brand, navigation, search, and actions in a responsive application header.",
   "category": "navigation",
   "tags": [
     "header",

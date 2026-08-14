@@ -1,6 +1,6 @@
-import { act, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ScrollArea } from '.';
+import { act, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ScrollArea } from ".";
 
 type FrameCallback = (time: number) => void;
 
@@ -27,8 +27,8 @@ class FakeMutationObserver {
 }
 
 function viewport(container: HTMLElement): HTMLDivElement {
-  const element = container.querySelector('[data-scroll-x]');
-  if (!(element instanceof HTMLDivElement)) throw new Error('ScrollArea viewport was not found');
+  const element = container.querySelector("[data-scroll-x]");
+  if (!(element instanceof HTMLDivElement)) throw new Error("ScrollArea viewport was not found");
   return element;
 }
 
@@ -36,7 +36,7 @@ function setMetrics(
   element: HTMLElement,
   values: Partial<
     Record<
-      'clientWidth' | 'clientHeight' | 'scrollWidth' | 'scrollHeight' | 'scrollLeft' | 'scrollTop',
+      "clientWidth" | "clientHeight" | "scrollWidth" | "scrollHeight" | "scrollLeft" | "scrollTop",
       number
     >
   >
@@ -57,45 +57,56 @@ beforeEach(() => {
   frameCallbacks = new Map();
   resizeObservers = [];
   mutationObservers = [];
-  vi.stubGlobal('requestAnimationFrame', (callback: FrameCallback) => {
+  vi.stubGlobal("requestAnimationFrame", (callback: FrameCallback) => {
     nextFrameId += 1;
     frameCallbacks.set(nextFrameId, callback);
     return nextFrameId;
   });
-  vi.stubGlobal('cancelAnimationFrame', (id: number) => frameCallbacks.delete(id));
-  vi.stubGlobal('ResizeObserver', FakeResizeObserver);
-  vi.stubGlobal('MutationObserver', FakeMutationObserver);
+  vi.stubGlobal("cancelAnimationFrame", (id: number) => frameCallbacks.delete(id));
+  vi.stubGlobal("ResizeObserver", FakeResizeObserver);
+  vi.stubGlobal("MutationObserver", FakeMutationObserver);
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('ScrollArea', () => {
-  it('renders children and preserves root attributes', () => {
+describe("ScrollArea", () => {
+  it("renders children and preserves root attributes", () => {
     const { container } = render(
       <ScrollArea orientation="horizontal" className="custom-class" data-testid="scroll-area">
         Test content
       </ScrollArea>
     );
 
-    expect(screen.getByText('Test content')).toBeInTheDocument();
-    expect(screen.getByTestId('scroll-area')).toHaveClass('custom-class');
-    expect(container.firstChild).toHaveAttribute('data-orientation', 'horizontal');
+    expect(screen.getByText("Test content")).toBeInTheDocument();
+    expect(screen.getByTestId("scroll-area")).toHaveClass("custom-class");
+    expect(container.firstChild).toHaveAttribute("data-orientation", "horizontal");
   });
 
-  it('defaults to vertical with inert state attributes and no observers', () => {
+  it("defaults to vertical with inert state attributes and no observers", () => {
     const { container } = render(<ScrollArea>Content</ScrollArea>);
 
-    expect(container.firstChild).toHaveAttribute('data-orientation', 'vertical');
-    expect(viewport(container)).toHaveAttribute('data-scroll-x', 'none');
-    expect(viewport(container)).toHaveAttribute('data-scroll-y', 'none');
+    expect(container.firstChild).toHaveAttribute("data-orientation", "vertical");
+    expect(viewport(container)).toHaveAttribute("data-scroll-x", "none");
+    expect(viewport(container)).toHaveAttribute("data-scroll-y", "none");
     expect(resizeObservers).toHaveLength(0);
     expect(mutationObservers).toHaveLength(0);
     expect(frameCallbacks.size).toBe(0);
   });
 
-  it('reads both axes independently on the scheduled layout frame', () => {
+  it("enables fade indicators explicitly", () => {
+    const { container } = render(<ScrollArea showFades>Content</ScrollArea>);
+
+    expect(container.firstChild).toHaveAttribute("data-orientation", "vertical");
+    expect(viewport(container)).toHaveAttribute("data-scroll-x", "none");
+    expect(viewport(container)).toHaveAttribute("data-scroll-y", "none");
+    expect(resizeObservers).toHaveLength(1);
+    expect(mutationObservers).toHaveLength(1);
+    expect(frameCallbacks.size).toBe(1);
+  });
+
+  it("reads both axes independently on the scheduled layout frame", () => {
     const { container } = render(
       <ScrollArea orientation="both" showFades>
         <div>Wide and tall content</div>
@@ -113,18 +124,18 @@ describe('ScrollArea', () => {
 
     flushFrame();
 
-    expect(element).toHaveAttribute('data-scroll-x', 'end');
-    expect(element).toHaveAttribute('data-scroll-y', 'both');
+    expect(element).toHaveAttribute("data-scroll-x", "end");
+    expect(element).toHaveAttribute("data-scroll-y", "both");
   });
 
-  it('coalesces scroll and resize notifications into one frame', () => {
+  it("coalesces scroll and resize notifications into one frame", () => {
     const { container } = render(<ScrollArea showFades>Content</ScrollArea>);
     const element = viewport(container);
     flushFrame();
 
     act(() => {
-      element.dispatchEvent(new Event('scroll'));
-      element.dispatchEvent(new Event('scroll'));
+      element.dispatchEvent(new Event("scroll"));
+      element.dispatchEvent(new Event("scroll"));
       resizeObservers[0].callback([], resizeObservers[0] as unknown as ResizeObserver);
     });
 
@@ -133,7 +144,7 @@ describe('ScrollArea', () => {
     expect(frameCallbacks.size).toBe(0);
   });
 
-  it('resubscribes direct children after nested mutations', () => {
+  it("resubscribes direct children after nested mutations", () => {
     const { container, rerender } = render(
       <ScrollArea showFades>
         <div key="first" data-testid="first-child">
@@ -143,7 +154,7 @@ describe('ScrollArea', () => {
     );
     flushFrame();
     const resizeObserver = resizeObservers[0];
-    const firstChild = screen.getByTestId('first-child');
+    const firstChild = screen.getByTestId("first-child");
 
     rerender(
       <ScrollArea showFades>
@@ -157,18 +168,18 @@ describe('ScrollArea', () => {
     });
 
     expect(resizeObserver.unobserve).toHaveBeenCalledWith(firstChild);
-    expect(resizeObserver.observe).toHaveBeenCalledWith(screen.getByTestId('second-child'));
+    expect(resizeObserver.observe).toHaveBeenCalledWith(screen.getByTestId("second-child"));
     expect(frameCallbacks.size).toBe(1);
     expect(viewport(container)).toBeInTheDocument();
   });
 
-  it('forwards direction and schedules a fresh read when orientation changes', () => {
+  it("forwards direction and schedules a fresh read when orientation changes", () => {
     const { container, rerender } = render(
       <ScrollArea orientation="horizontal" dir="rtl" showFades>
         Content
       </ScrollArea>
     );
-    expect(container.firstChild).toHaveAttribute('dir', 'rtl');
+    expect(container.firstChild).toHaveAttribute("dir", "rtl");
     flushFrame();
 
     rerender(
@@ -182,7 +193,7 @@ describe('ScrollArea', () => {
     expect(mutationObservers[0].disconnect).toHaveBeenCalledOnce();
   });
 
-  it('cancels queued work and disconnects observers on cleanup', () => {
+  it("cancels queued work and disconnects observers on cleanup", () => {
     const { unmount } = render(<ScrollArea showFades>Content</ScrollArea>);
     const resizeObserver = resizeObservers[0];
     const mutationObserver = mutationObservers[0];

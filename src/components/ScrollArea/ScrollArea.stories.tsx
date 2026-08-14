@@ -1,44 +1,44 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ScrollArea } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ScrollArea } from ".";
 
 /**
  * ScrollArea is a styled scrollable container with thin scrollbars and
  * optional fade indicators. Use orientation to constrain scroll direction
- * and showFades to hint at content beyond the viewport.
+ * and showFades to communicate overflow when no other affordance does.
  */
 const meta = {
-  title: 'Layout/ScrollArea',
+  title: "Layout/ScrollArea",
   component: ScrollArea,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Styled scrollable container with thin scrollbars and optional fade indicators.',
+        component: "Styled scrollable container with thin scrollbars and optional edge fades.",
       },
     },
   },
   argTypes: {
     orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical', 'both'],
-      description: 'Scroll direction',
+      control: "select",
+      options: ["horizontal", "vertical", "both"],
+      description: "Scroll direction",
     },
     scrollbarVisibility: {
-      control: 'select',
-      options: ['auto', 'always', 'hover'],
-      description: 'When to show the scrollbar',
+      control: "select",
+      options: ["auto", "always", "hover"],
+      description: "When to show the scrollbar",
     },
     showFades: {
-      control: 'boolean',
-      description: 'Show gradient fade indicators at scroll edges',
+      control: "boolean",
+      description: "Show gradient fade indicators at scroll edges",
     },
   },
   args: {
-    orientation: 'vertical',
-    scrollbarVisibility: 'auto',
+    orientation: "vertical",
+    scrollbarVisibility: "auto",
     showFades: false,
     children: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 8 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 8 }}>
         {Array.from({ length: 20 }, (_, i) => (
           <div key={i}>Row {i + 1}</div>
         ))}
@@ -47,7 +47,7 @@ const meta = {
   },
   render: (args) => (
     <ScrollArea {...args} style={{ height: 160, width: 280 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 8 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 8 }}>
         {Array.from({ length: 20 }, (_, i) => (
           <div key={i}>Row {i + 1}</div>
         ))}
@@ -63,12 +63,12 @@ type Story = StoryObj<typeof meta>;
 export const Vertical: Story = {};
 
 export const Horizontal: Story = {
-  args: { orientation: 'horizontal' },
+  args: { orientation: "horizontal" },
   render: (args) => (
     <ScrollArea {...args} style={{ width: 280 }}>
-      <div style={{ display: 'flex', gap: 8, padding: 8 }}>
+      <div style={{ display: "flex", gap: 8, padding: 8 }}>
         {Array.from({ length: 20 }, (_, i) => (
-          <div key={i} style={{ flex: '0 0 auto' }}>
+          <div key={i} style={{ flex: "0 0 auto" }}>
             Chip {i + 1}
           </div>
         ))}
@@ -78,12 +78,12 @@ export const Horizontal: Story = {
 };
 
 export const WithFades: Story = {
-  args: { orientation: 'horizontal', showFades: true },
+  args: { orientation: "horizontal", showFades: true },
   render: (args) => (
     <ScrollArea {...args} style={{ width: 280 }}>
-      <div style={{ display: 'flex', gap: 8, padding: 8 }}>
+      <div style={{ display: "flex", gap: 8, padding: 8 }}>
         {Array.from({ length: 20 }, (_, i) => (
-          <div key={i} style={{ flex: '0 0 auto' }}>
+          <div key={i} style={{ flex: "0 0 auto" }}>
             Item {i + 1}
           </div>
         ))}
@@ -93,11 +93,11 @@ export const WithFades: Story = {
 };
 
 export const HoverScrollbar: Story = {
-  args: { scrollbarVisibility: 'hover' },
+  args: { scrollbarVisibility: "hover" },
 };
 
 const geometryContent = Array.from({ length: 18 }, (_, index) => (
-  <button key={index} type="button" style={{ flex: '0 0 auto' }}>
+  <button key={index} type="button" style={{ flex: "0 0 auto" }}>
     Item {index + 1}
   </button>
 ));
@@ -108,9 +108,9 @@ export const GeometryMatrix: Story = {
   render: () => (
     <div
       data-geometry-root="scroll-area"
-      style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 24 }}
+      style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 24 }}
     >
-      {(['auto', 'always', 'hover'] as const).map((visibility) => (
+      {(["auto", "always", "hover"] as const).map((visibility) => (
         <ScrollArea
           key={visibility}
           orientation="horizontal"
@@ -118,30 +118,30 @@ export const GeometryMatrix: Story = {
           showFades
           style={{ width: 280, height: 96 }}
         >
-          <div style={{ display: 'flex', gap: 8, padding: 8 }}>{geometryContent}</div>
+          <div style={{ display: "flex", gap: 8, padding: 8 }}>{geometryContent}</div>
         </ScrollArea>
       ))}
 
       <ScrollArea orientation="vertical" showFades style={{ width: 280, height: 160 }}>
-        <div style={{ display: 'grid', gap: 8, padding: 8 }}>{geometryContent}</div>
+        <div style={{ display: "grid", gap: 8, padding: 8 }}>{geometryContent}</div>
       </ScrollArea>
 
       <ScrollArea orientation="both" showFades style={{ width: 280, height: 160 }}>
-        <div style={{ display: 'grid', gap: 8, padding: 8, width: 560 }}>{geometryContent}</div>
+        <div style={{ display: "grid", gap: 8, padding: 8, width: 560 }}>{geometryContent}</div>
       </ScrollArea>
 
       <ScrollArea orientation="both" dir="rtl" showFades style={{ width: 280, height: 160 }}>
-        <div style={{ display: 'grid', gap: 8, padding: 8, width: 560 }}>{geometryContent}</div>
+        <div style={{ display: "grid", gap: 8, padding: 8, width: 560 }}>{geometryContent}</div>
       </ScrollArea>
 
       <ScrollArea orientation="vertical" showFades style={{ width: 280, height: 160 }}>
-        <div style={{ display: 'grid', gap: 8, padding: 8 }}>
+        <div style={{ display: "grid", gap: 8, padding: 8 }}>
           <span>Nested same-axis area</span>
           <ScrollArea orientation="vertical" showFades style={{ height: 96 }}>
-            <div style={{ display: 'grid', gap: 8, padding: 8 }}>{geometryContent}</div>
+            <div style={{ display: "grid", gap: 8, padding: 8 }}>{geometryContent}</div>
           </ScrollArea>
           <ScrollArea orientation="horizontal" showFades>
-            <div style={{ display: 'flex', gap: 8, padding: 8 }}>{geometryContent}</div>
+            <div style={{ display: "flex", gap: 8, padding: 8 }}>{geometryContent}</div>
           </ScrollArea>
         </div>
       </ScrollArea>

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Card",
-  "description": "Container for grouping related content",
+  "description": "Groups related content in a structured surface.",
   "category": "layout",
   "tags": ["container", "layout", "surface"],
   "status": "stable",

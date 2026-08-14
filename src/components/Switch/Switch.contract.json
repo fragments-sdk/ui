@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Switch",
-  "description": "Binary on/off switch for settings and preferences. Provides immediate visual feedback and is ideal for options that take effect instantly.",
+  "description": "Toggles a setting that takes effect immediately.",
   "category": "forms",
   "tags": [
     "switch",

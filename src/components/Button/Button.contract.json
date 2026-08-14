@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Button",
-  "description": "Interactive element for user actions and form submissions",
+  "description": "Triggers user actions and submits forms.",
   "category": "forms",
   "tags": [
     "action",

@@ -84,9 +84,8 @@
   }
 }
 
-// Pressed (for toggle-style affordances) — sits on the active surface even
-// while idle so the "on" state reads clearly.
+// Pressed is a persistent toggle selection, not the pointer-down state.
 .pressed {
-  background-color: var(--fui-bg-active, $fui-bg-active);
+  background-color: var(--fui-control-selected-bg, $fui-bg-active);
   color: var(--fui-text-primary, $fui-text-primary);
 }

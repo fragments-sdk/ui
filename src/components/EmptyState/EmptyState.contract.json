@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "EmptyState",
-  "description": "Placeholder for empty content areas. Provides context, guidance, and actions when no data is available.",
+  "description": "Explains an empty content area and offers a useful next action.",
   "category": "feedback",
   "tags": [
     "empty",

@@ -44,7 +44,7 @@ describe("typography recipe", () => {
         expect(body).toContain("JetBrains Mono Variable");
       } else {
         expect(body).toContain("font-family: var(--fui-font-sans");
-        expect(body).toContain("Inter Variable");
+        expect(body).toContain("Instrument Sans Variable");
       }
     }
   });

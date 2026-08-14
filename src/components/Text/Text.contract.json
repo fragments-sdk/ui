@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Text",
-  "description": "Typography component for rendering text with consistent styling. Supports various sizes, weights, colors, and semantic elements.",
+  "description": "Applies consistent typography to semantic text elements.",
   "category": "display",
   "tags": [
     "text",

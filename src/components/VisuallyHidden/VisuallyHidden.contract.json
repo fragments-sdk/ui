@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "VisuallyHidden",
-  "description": "Hides content visually while keeping it accessible to screen readers. Essential for accessible icon-only buttons and supplementary text.",
+  "description": "Keeps supporting text available to assistive technology without displaying it visually.",
   "category": "navigation",
   "tags": [
     "accessibility",

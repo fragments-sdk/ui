@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Sidebar",
-  "description": "Responsive navigation sidebar with collapsible desktop mode and mobile drawer behavior.",
+  "description": "Presents responsive navigation with collapsible desktop and mobile drawer modes.",
   "category": "navigation",
   "tags": [
     "sidebar",

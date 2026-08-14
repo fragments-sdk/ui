@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Dialog",
-  "description": "Modal overlay for focused user interactions. Use for confirmations, forms, or content requiring full attention.",
+  "description": "Presents focused content in a modal window that makes the page inert.",
   "category": "feedback",
   "tags": [
     "modal",

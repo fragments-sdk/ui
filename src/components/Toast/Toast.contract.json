@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Toast",
-  "description": "Brief, non-blocking notification messages",
+  "description": "Displays a brief, non-blocking notification about application activity.",
   "category": "feedback",
   "tags": ["notification", "alert", "message", "feedback"],
   "status": "stable",

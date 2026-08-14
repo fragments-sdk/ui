@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Drawer",
-  "description": "A panel that slides in from screen edges. Extends the Dialog pattern with slide animations and edge positioning.",
+  "description": "Presents contextual content in a panel that slides from a screen edge.",
   "category": "feedback",
   "tags": [
     "drawer",

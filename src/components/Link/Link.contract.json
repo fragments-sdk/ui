@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Link",
-  "description": "Styled anchor element for navigation. Supports internal and external links with consistent visual treatment.",
+  "description": "Navigates to internal or external destinations with consistent styling.",
   "category": "navigation",
   "tags": [
     "link",
@@ -16,7 +16,7 @@
   "propsSummary": [
     "children: node (required)",
     "variant: default|subtle|muted (default: default)",
-    "underline: always|hover|none (default: hover)",
+    "underline: always|hover|none|dotted (default: hover)",
     "external: boolean (default: false)",
     "asChild: boolean (default: false)",
     "className: string",
@@ -49,7 +49,8 @@
       "values": [
         "always",
         "hover",
-        "none"
+        "none",
+        "dotted"
       ]
     },
     "external": {
@@ -156,7 +157,7 @@
       "children: ReactNode - link text (required)",
       "href: string - destination URL",
       "variant: default|subtle|muted - visual style",
-      "underline: always|hover|none - underline behavior",
+      "underline: always|hover|none|dotted - underline behavior",
       "external: boolean - opens in new tab",
       "asChild: boolean - polymorphic child rendering with merged styles and composed event handlers"
     ],

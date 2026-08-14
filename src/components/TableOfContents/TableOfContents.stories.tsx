@@ -24,9 +24,14 @@ const meta = {
     title: { control: "text", description: "Visible title above the list" },
     label: { control: "text", description: "Accessible label for the nav landmark" },
     hideTitle: { control: "boolean", description: "Hide the visible title" },
+    hideSubItems: {
+      control: "boolean",
+      description: "Hide indented items and nested groups",
+    },
   },
   args: {
     title: "On This Page",
+    hideSubItems: false,
     children: (
       <>
         <TableOfContents.Item id="introduction">Introduction</TableOfContents.Item>
@@ -60,7 +65,7 @@ export const Default: Story = {
 
 export const NestedGroups: Story = {
   render: () => (
-    <TableOfContents title="Components">
+    <TableOfContents title="Components" hideSubItems={false}>
       <TableOfContents.Item id="all" active>
         All
       </TableOfContents.Item>
@@ -79,7 +84,7 @@ export const NestedGroups: Story = {
 
 export const WithActiveItem: Story = {
   render: () => (
-    <TableOfContents>
+    <TableOfContents hideSubItems={false}>
       <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
       <TableOfContents.Item id="setup" active>
         Setup
@@ -91,6 +96,21 @@ export const WithActiveItem: Story = {
         Advanced
       </TableOfContents.Item>
       <TableOfContents.Item id="props">Props</TableOfContents.Item>
+      <TableOfContents.Item id="accessibility">Accessibility</TableOfContents.Item>
+    </TableOfContents>
+  ),
+};
+
+export const TopLevelOnly: Story = {
+  render: () => (
+    <TableOfContents hideSubItems>
+      <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
+      <TableOfContents.Item id="basic-usage" indent>
+        Basic usage
+      </TableOfContents.Item>
+      <TableOfContents.Item id="advanced-usage" indent>
+        Advanced usage
+      </TableOfContents.Item>
       <TableOfContents.Item id="accessibility">Accessibility</TableOfContents.Item>
     </TableOfContents>
   ),

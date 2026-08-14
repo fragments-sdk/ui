@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Textarea",
-  "description": "Multi-line text input for longer form content",
+  "description": "Collects multi-line text for longer form content.",
   "category": "forms",
   "tags": [
     "input",

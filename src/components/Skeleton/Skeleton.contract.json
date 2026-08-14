@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Skeleton",
-  "description": "Placeholder loading state for content",
+  "description": "Reserves layout space while content loads.",
   "category": "feedback",
   "tags": [
     "loading",

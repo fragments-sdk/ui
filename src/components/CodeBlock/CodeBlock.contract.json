@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "CodeBlock",
-  "description": "Syntax-highlighted code display with copy functionality, theming, diff view, and collapsible sections",
+  "description": "Displays syntax-highlighted code with copying, diffs, and collapsible sections.",
   "category": "display",
   "tags": [
     "code",

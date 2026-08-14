@@ -1,11 +1,11 @@
-import React from 'react';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { fireEvent, act, waitFor, within } from '@testing-library/react';
-import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
-import { NavigationMenu } from '.';
+import React from "react";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { fireEvent, act, waitFor, within } from "@testing-library/react";
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from "vitest";
+import { NavigationMenu } from ".";
 
 function setMatchMedia(matches: boolean) {
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({
       matches,
@@ -63,51 +63,51 @@ function renderBasicMenu(props: Record<string, unknown> = {}) {
 // Rendering
 // ============================================
 
-describe('NavigationMenu', () => {
-  describe('Rendering', () => {
-    it('renders a nav element', () => {
+describe("NavigationMenu", () => {
+  describe("Rendering", () => {
+    it("renders a nav element", () => {
       renderBasicMenu();
-      expect(screen.getByRole('navigation')).toBeInTheDocument();
+      expect(screen.getByRole("navigation")).toBeInTheDocument();
     });
 
-    it('renders with default aria-label', () => {
+    it("renders with default aria-label", () => {
       renderBasicMenu();
-      expect(screen.getByRole('navigation')).toHaveAttribute('aria-label', 'Main navigation');
+      expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Main navigation");
     });
 
-    it('renders with custom aria-label', () => {
-      renderBasicMenu({ 'aria-label': 'Site navigation' });
-      expect(screen.getByRole('navigation')).toHaveAttribute('aria-label', 'Site navigation');
+    it("renders with custom aria-label", () => {
+      renderBasicMenu({ "aria-label": "Site navigation" });
+      expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Site navigation");
     });
 
-    it('renders trigger buttons', () => {
+    it("renders trigger buttons", () => {
       renderBasicMenu();
-      expect(screen.getByText('Learn')).toBeInTheDocument();
-      expect(screen.getByText('Community')).toBeInTheDocument();
+      expect(screen.getByText("Learn")).toBeInTheDocument();
+      expect(screen.getByText("Community")).toBeInTheDocument();
     });
 
-    it('renders custom trigger chevron icon from icons prop', () => {
+    it("renders custom trigger chevron icon from icons prop", () => {
       renderBasicMenu({
         icons: {
           triggerChevron: <span data-testid="navmenu-trigger-chevron" aria-hidden />,
         },
       });
-      expect(screen.getAllByTestId('navmenu-trigger-chevron').length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId("navmenu-trigger-chevron").length).toBeGreaterThan(0);
     });
 
-    it('renders direct links', () => {
+    it("renders direct links", () => {
       renderBasicMenu();
-      expect(screen.getByText('Blog')).toBeInTheDocument();
+      expect(screen.getByText("Blog")).toBeInTheDocument();
     });
 
-    it('renders viewport', () => {
+    it("renders viewport", () => {
       renderBasicMenu();
-      expect(screen.getByRole('presentation')).toBeInTheDocument();
+      expect(screen.getByRole("presentation")).toBeInTheDocument();
     });
 
-    it('accepts data-orientation attribute', () => {
-      renderBasicMenu({ orientation: 'vertical' });
-      expect(screen.getByRole('navigation')).toHaveAttribute('data-orientation', 'vertical');
+    it("accepts data-orientation attribute", () => {
+      renderBasicMenu({ orientation: "vertical" });
+      expect(screen.getByRole("navigation")).toHaveAttribute("data-orientation", "vertical");
     });
   });
 
@@ -115,68 +115,68 @@ describe('NavigationMenu', () => {
   // Trigger
   // ============================================
 
-  describe('Trigger', () => {
-    it('has aria-expanded=false when closed', () => {
+  describe("Trigger", () => {
+    it("has aria-expanded=false when closed", () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      const trigger = screen.getByText("Learn");
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
     });
 
-    it('has aria-expanded=true when open', async () => {
+    it("has aria-expanded=true when open", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
       await userEvent.click(trigger);
-      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
     });
 
-    it('toggles content on click', async () => {
+    it("toggles content on click", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
 
       // Click to open
       await userEvent.click(trigger);
-      expect(screen.getByText('Documentation')).toBeInTheDocument();
+      expect(screen.getByText("Documentation")).toBeInTheDocument();
 
       // Click to close
       await userEvent.click(trigger);
       await waitFor(() => {
-        expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+        expect(screen.queryByText("Documentation")).not.toBeInTheDocument();
       });
     });
 
-    it('does not reopen after a close click with a pending hover timer', () => {
+    it("does not reopen after a close click with a pending hover timer", () => {
       vi.useFakeTimers();
       try {
         renderBasicMenu({ delayDuration: 50 });
-        const trigger = screen.getByText('Learn');
+        const trigger = screen.getByText("Learn");
 
         fireEvent.click(trigger);
-        expect(screen.getByText('Documentation')).toBeInTheDocument();
+        expect(screen.getByText("Documentation")).toBeInTheDocument();
 
         fireEvent.pointerEnter(trigger);
         fireEvent.click(trigger);
-        expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+        expect(screen.queryByText("Documentation")).not.toBeInTheDocument();
 
         act(() => {
           vi.advanceTimersByTime(50);
         });
-        expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+        expect(screen.queryByText("Documentation")).not.toBeInTheDocument();
       } finally {
         vi.useRealTimers();
       }
     });
 
-    it('shows content panel with structured links', async () => {
+    it("shows content panel with structured links", async () => {
       renderBasicMenu();
-      await userEvent.click(screen.getByText('Learn'));
-      expect(screen.getByText('Documentation')).toBeInTheDocument();
-      expect(screen.getByText('Start building.')).toBeInTheDocument();
+      await userEvent.click(screen.getByText("Learn"));
+      expect(screen.getByText("Documentation")).toBeInTheDocument();
+      expect(screen.getByText("Start building.")).toBeInTheDocument();
     });
 
-    it('has aria-controls pointing to content', async () => {
+    it("has aria-controls pointing to content", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
-      const controlsId = trigger.getAttribute('aria-controls');
+      const trigger = screen.getByText("Learn");
+      const controlsId = trigger.getAttribute("aria-controls");
       expect(controlsId).toBeTruthy();
 
       await userEvent.click(trigger);
@@ -189,7 +189,7 @@ describe('NavigationMenu', () => {
   // Hover behavior
   // ============================================
 
-  describe('Hover', () => {
+  describe("Hover", () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });
@@ -198,22 +198,22 @@ describe('NavigationMenu', () => {
       vi.useRealTimers();
     });
 
-    it('opens on pointer enter after delay', () => {
+    it("opens on pointer enter after delay", () => {
       renderBasicMenu({ delayDuration: 100 });
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
 
       fireEvent.pointerEnter(trigger);
-      expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+      expect(screen.queryByText("Documentation")).not.toBeInTheDocument();
 
       act(() => {
         vi.advanceTimersByTime(100);
       });
-      expect(screen.getByText('Documentation')).toBeInTheDocument();
+      expect(screen.getByText("Documentation")).toBeInTheDocument();
     });
 
-    it('cancels open when pointer leaves before delay', () => {
+    it("cancels open when pointer leaves before delay", () => {
       renderBasicMenu({ delayDuration: 200 });
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
 
       fireEvent.pointerEnter(trigger);
       act(() => {
@@ -224,22 +224,22 @@ describe('NavigationMenu', () => {
       act(() => {
         vi.advanceTimersByTime(200);
       });
-      expect(screen.queryByText('Documentation')).not.toBeInTheDocument();
+      expect(screen.queryByText("Documentation")).not.toBeInTheDocument();
     });
 
-    it('keeps open when pointer enters content panel', () => {
+    it("keeps open when pointer enters content panel", () => {
       renderBasicMenu({ delayDuration: 50 });
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
 
       // Open via click for simplicity
       fireEvent.click(trigger);
-      expect(screen.getByText('Documentation')).toBeInTheDocument();
+      expect(screen.getByText("Documentation")).toBeInTheDocument();
 
       // Leave trigger — starts close timer
       fireEvent.pointerLeave(trigger);
 
       // Enter content — should cancel close
-      const content = screen.getByRole('region');
+      const content = screen.getByRole("region");
       fireEvent.pointerEnter(content);
 
       act(() => {
@@ -247,7 +247,7 @@ describe('NavigationMenu', () => {
       });
 
       // Should still be open
-      expect(screen.getByText('Documentation')).toBeInTheDocument();
+      expect(screen.getByText("Documentation")).toBeInTheDocument();
     });
   });
 
@@ -255,74 +255,74 @@ describe('NavigationMenu', () => {
   // Keyboard
   // ============================================
 
-  describe('Keyboard', () => {
-    it('opens content on Enter', async () => {
+  describe("Keyboard", () => {
+    it("opens content on Enter", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
       trigger.focus();
-      await userEvent.keyboard('{Enter}');
-      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await userEvent.keyboard("{Enter}");
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
     });
 
-    it('opens content on Space', async () => {
+    it("opens content on Space", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
       trigger.focus();
-      await userEvent.keyboard(' ');
-      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await userEvent.keyboard(" ");
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
     });
 
-    it('closes content on Escape', async () => {
+    it("closes content on Escape", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
       await userEvent.click(trigger);
-      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
 
-      await userEvent.keyboard('{Escape}');
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.keyboard("{Escape}");
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
     });
 
-    it('navigates between triggers with arrow keys', () => {
+    it("navigates between triggers with arrow keys", () => {
       renderBasicMenu();
-      const learnTrigger = screen.getByText('Learn');
-      const communityTrigger = screen.getByText('Community');
+      const learnTrigger = screen.getByText("Learn");
+      const communityTrigger = screen.getByText("Community");
 
       learnTrigger.focus();
       expect(document.activeElement).toBe(learnTrigger);
 
       // ArrowRight moves to next trigger
-      fireEvent.keyDown(learnTrigger.closest('ul')!, { key: 'ArrowRight' });
+      fireEvent.keyDown(learnTrigger.closest("ul")!, { key: "ArrowRight" });
       expect(document.activeElement).toBe(communityTrigger);
     });
 
-    it('navigates based on focused trigger even when another item is open', async () => {
+    it("navigates based on focused trigger even when another item is open", async () => {
       renderBasicMenu();
-      const learnTrigger = screen.getByText('Learn');
-      const communityTrigger = screen.getByText('Community');
+      const learnTrigger = screen.getByText("Learn");
+      const communityTrigger = screen.getByText("Community");
 
       await userEvent.click(learnTrigger);
       communityTrigger.focus();
-      fireEvent.keyDown(communityTrigger.closest('ul')!, { key: 'ArrowRight' });
+      fireEvent.keyDown(communityTrigger.closest("ul")!, { key: "ArrowRight" });
       expect(document.activeElement).toBe(learnTrigger);
     });
 
-    it('navigates to first trigger on Home', () => {
+    it("navigates to first trigger on Home", () => {
       renderBasicMenu();
-      const communityTrigger = screen.getByText('Community');
-      const learnTrigger = screen.getByText('Learn');
+      const communityTrigger = screen.getByText("Community");
+      const learnTrigger = screen.getByText("Learn");
 
       communityTrigger.focus();
-      fireEvent.keyDown(communityTrigger.closest('ul')!, { key: 'Home' });
+      fireEvent.keyDown(communityTrigger.closest("ul")!, { key: "Home" });
       expect(document.activeElement).toBe(learnTrigger);
     });
 
-    it('navigates to last trigger on End', () => {
+    it("navigates to last trigger on End", () => {
       renderBasicMenu();
-      const learnTrigger = screen.getByText('Learn');
-      const communityTrigger = screen.getByText('Community');
+      const learnTrigger = screen.getByText("Learn");
+      const communityTrigger = screen.getByText("Community");
 
       learnTrigger.focus();
-      fireEvent.keyDown(learnTrigger.closest('ul')!, { key: 'End' });
+      fireEvent.keyDown(learnTrigger.closest("ul")!, { key: "End" });
       expect(document.activeElement).toBe(communityTrigger);
     });
   });
@@ -331,22 +331,22 @@ describe('NavigationMenu', () => {
   // Link
   // ============================================
 
-  describe('Link', () => {
-    it('renders simple link', () => {
+  describe("Link", () => {
+    it("renders simple link", () => {
       renderBasicMenu();
-      const blogLink = screen.getByText('Blog');
-      expect(blogLink).toHaveAttribute('href', '/blog');
+      const blogLink = screen.getByText("Blog");
+      expect(blogLink).toHaveAttribute("href", "/blog");
     });
 
-    it('renders structured link with title and description', async () => {
+    it("renders structured link with title and description", async () => {
       renderBasicMenu();
-      await userEvent.click(screen.getByText('Learn'));
+      await userEvent.click(screen.getByText("Learn"));
 
-      expect(screen.getByText('Documentation')).toBeInTheDocument();
-      expect(screen.getByText('Start building.')).toBeInTheDocument();
+      expect(screen.getByText("Documentation")).toBeInTheDocument();
+      expect(screen.getByText("Start building.")).toBeInTheDocument();
     });
 
-    it('sets aria-current=page when active', () => {
+    it("sets aria-current=page when active", () => {
       render(
         <NavigationMenu>
           <NavigationMenu.List>
@@ -359,10 +359,10 @@ describe('NavigationMenu', () => {
         </NavigationMenu>
       );
 
-      expect(screen.getByText('Blog')).toHaveAttribute('aria-current', 'page');
+      expect(screen.getByText("Blog")).toHaveAttribute("aria-current", "page");
     });
 
-    it('renders featured link with featured styles', async () => {
+    it("renders featured link with featured styles", async () => {
       render(
         <NavigationMenu>
           <NavigationMenu.List>
@@ -382,12 +382,12 @@ describe('NavigationMenu', () => {
         </NavigationMenu>
       );
 
-      await userEvent.click(screen.getByText('Test'));
-      const featuredLink = screen.getByText('Featured').closest('a');
-      expect(featuredLink?.className).toContain('Featured');
+      await userEvent.click(screen.getByText("Test"));
+      const featuredLink = screen.getByText("Featured").closest("a");
+      expect(featuredLink?.className).toContain("Featured");
     });
 
-    it('renders as child when asChild=true', () => {
+    it("renders as child when asChild=true", () => {
       render(
         <NavigationMenu>
           <NavigationMenu.List>
@@ -402,10 +402,10 @@ describe('NavigationMenu', () => {
         </NavigationMenu>
       );
 
-      expect(screen.getByTestId('custom-link')).toBeInTheDocument();
+      expect(screen.getByTestId("custom-link")).toBeInTheDocument();
     });
 
-    it('composes asChild link click handlers', async () => {
+    it("composes asChild link click handlers", async () => {
       const user = userEvent.setup();
       const childClick = vi.fn();
 
@@ -423,7 +423,7 @@ describe('NavigationMenu', () => {
         </NavigationMenu>
       );
 
-      await user.click(screen.getByRole('link', { name: 'Blog' }));
+      await user.click(screen.getByRole("link", { name: "Blog" }));
       expect(childClick).toHaveBeenCalled();
     });
   });
@@ -432,8 +432,8 @@ describe('NavigationMenu', () => {
   // Controlled
   // ============================================
 
-  describe('Controlled', () => {
-    it('respects controlled value', () => {
+  describe("Controlled", () => {
+    it("respects controlled value", () => {
       render(
         <NavigationMenu value="learn">
           <NavigationMenu.List>
@@ -448,11 +448,11 @@ describe('NavigationMenu', () => {
         </NavigationMenu>
       );
 
-      expect(screen.getByText('Learn')).toHaveAttribute('aria-expanded', 'true');
-      expect(screen.getByText('Docs')).toBeInTheDocument();
+      expect(screen.getByText("Learn")).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Docs")).toBeInTheDocument();
     });
 
-    it('calls onValueChange when trigger is clicked', async () => {
+    it("calls onValueChange when trigger is clicked", async () => {
       const onValueChange = vi.fn();
       render(
         <NavigationMenu value="" onValueChange={onValueChange}>
@@ -468,8 +468,8 @@ describe('NavigationMenu', () => {
         </NavigationMenu>
       );
 
-      await userEvent.click(screen.getByText('Learn'));
-      expect(onValueChange).toHaveBeenCalledWith('learn');
+      await userEvent.click(screen.getByText("Learn"));
+      expect(onValueChange).toHaveBeenCalledWith("learn");
     });
   });
 
@@ -477,20 +477,20 @@ describe('NavigationMenu', () => {
   // Content region
   // ============================================
 
-  describe('Content region', () => {
-    it('has role=region', async () => {
+  describe("Content region", () => {
+    it("has role=region", async () => {
       renderBasicMenu();
-      await userEvent.click(screen.getByText('Learn'));
-      expect(screen.getByRole('region')).toBeInTheDocument();
+      await userEvent.click(screen.getByText("Learn"));
+      expect(screen.getByRole("region")).toBeInTheDocument();
     });
 
-    it('has aria-labelledby pointing to trigger', async () => {
+    it("has aria-labelledby pointing to trigger", async () => {
       renderBasicMenu();
-      const trigger = screen.getByText('Learn');
+      const trigger = screen.getByText("Learn");
       await userEvent.click(trigger);
 
-      const region = screen.getByRole('region');
-      expect(region).toHaveAttribute('aria-labelledby', trigger.id);
+      const region = screen.getByRole("region");
+      expect(region).toHaveAttribute("aria-labelledby", trigger.id);
     });
   });
 
@@ -498,15 +498,15 @@ describe('NavigationMenu', () => {
   // Accessibility
   // ============================================
 
-  describe('Accessibility', () => {
-    it('has no axe violations when closed', async () => {
+  describe("Accessibility", () => {
+    it("has no axe violations when closed", async () => {
       const { container } = renderBasicMenu();
       await expectNoA11yViolations(container);
     });
 
-    it('has no axe violations when open', async () => {
+    it("has no axe violations when open", async () => {
       const { container } = renderBasicMenu();
-      await userEvent.click(screen.getByText('Learn'));
+      await userEvent.click(screen.getByText("Learn"));
       await expectNoA11yViolations(container);
     });
   });
@@ -515,8 +515,8 @@ describe('NavigationMenu', () => {
   // MobileContent + MobileSection
   // ============================================
 
-  describe('MobileContent', () => {
-    it('renders nothing on desktop', () => {
+  describe("MobileContent", () => {
+    it("renders nothing on desktop", () => {
       render(
         <NavigationMenu>
           <NavigationMenu.List>
@@ -534,11 +534,43 @@ describe('NavigationMenu', () => {
 
       // MobileContent renders nothing in the tree (it registers children in context)
       // On desktop, hamburger is hidden, drawer is not rendered
-      expect(screen.queryByText('Extra')).not.toBeInTheDocument();
+      expect(screen.queryByText("Extra")).not.toBeInTheDocument();
+    });
+
+    it("renders MobileContent links with drawer geometry when the drawer is open", async () => {
+      setMatchMedia(true);
+
+      render(
+        <NavigationMenu>
+          <NavigationMenu.List>
+            <NavigationMenu.Item>
+              <NavigationMenu.Link href="/blog">Blog</NavigationMenu.Link>
+            </NavigationMenu.Item>
+          </NavigationMenu.List>
+          <NavigationMenu.MobileContent>
+            <NavigationMenu.MobileSection label="Governance">
+              <NavigationMenu.Link href="/governance" active>
+                Overview
+              </NavigationMenu.Link>
+            </NavigationMenu.MobileSection>
+          </NavigationMenu.MobileContent>
+        </NavigationMenu>
+      );
+
+      await userEvent.click(await screen.findByLabelText("Toggle navigation"));
+
+      const drawer = await screen.findByRole("dialog", { name: "Navigation" });
+      expect(within(drawer).getByText("Governance")).toBeInTheDocument();
+
+      const overview = within(drawer).getByRole("link", { name: "Overview" });
+      expect(overview.className).toMatch(/drawerLink/);
+      expect(overview.className).toMatch(/drawerLinkActive/);
+      // Desktop popup-panel class should not be applied in the drawer.
+      expect(overview.className.split(/\s+/).some((c) => /__link$/.test(c))).toBe(false);
     });
   });
 
-  describe('Mobile drawer', () => {
+  describe("Mobile drawer", () => {
     beforeEach(() => {
       setMatchMedia(true);
     });
@@ -547,18 +579,26 @@ describe('NavigationMenu', () => {
       setMatchMedia(false);
     });
 
-    it('includes direct link items in auto-converted drawer navigation', async () => {
-      renderBasicMenu();
+    it("supports an lg drawer breakpoint for persistent-rail shells", async () => {
+      renderBasicMenu({ mobileBreakpoint: "lg" });
 
-      const toggle = await screen.findByLabelText('Toggle navigation');
-      await userEvent.click(toggle);
-
-      const drawer = await screen.findByRole('dialog', { name: 'Navigation' });
-      const blogLink = within(drawer).getByRole('link', { name: 'Blog' });
-      expect(blogLink).toHaveAttribute('href', '/blog');
+      expect(window.matchMedia).toHaveBeenCalledWith("(max-width: 1023px)");
+      expect(screen.getByRole("navigation")).toHaveAttribute("data-mobile", "true");
+      expect(await screen.findByLabelText("Toggle navigation")).toBeInTheDocument();
     });
 
-    it('renders custom mobile hamburger and drawer close icons from icons prop', async () => {
+    it("includes direct link items in auto-converted drawer navigation", async () => {
+      renderBasicMenu();
+
+      const toggle = await screen.findByLabelText("Toggle navigation");
+      await userEvent.click(toggle);
+
+      const drawer = await screen.findByRole("dialog", { name: "Navigation" });
+      const blogLink = within(drawer).getByRole("link", { name: "Blog" });
+      expect(blogLink).toHaveAttribute("href", "/blog");
+    });
+
+    it("renders custom mobile hamburger and drawer close icons from icons prop", async () => {
       renderBasicMenu({
         icons: {
           mobileMenu: <span data-testid="navmenu-mobile-menu-icon" aria-hidden />,
@@ -567,14 +607,14 @@ describe('NavigationMenu', () => {
         },
       });
 
-      const toggle = await screen.findByLabelText('Toggle navigation');
-      expect(within(toggle).getByTestId('navmenu-mobile-menu-icon')).toBeInTheDocument();
+      const toggle = await screen.findByLabelText("Toggle navigation");
+      expect(within(toggle).getByTestId("navmenu-mobile-menu-icon")).toBeInTheDocument();
 
       await userEvent.click(toggle);
 
-      expect(within(toggle).getByTestId('navmenu-mobile-close-icon')).toBeInTheDocument();
-      const drawer = await screen.findByRole('dialog', { name: 'Navigation' });
-      expect(within(drawer).getByTestId('navmenu-drawer-close-icon')).toBeInTheDocument();
+      expect(within(toggle).getByTestId("navmenu-mobile-close-icon")).toBeInTheDocument();
+      const drawer = await screen.findByRole("dialog", { name: "Navigation" });
+      expect(within(drawer).getByTestId("navmenu-drawer-close-icon")).toBeInTheDocument();
     });
   });
 });

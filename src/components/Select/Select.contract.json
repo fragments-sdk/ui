@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Select",
-  "description": "Dropdown for choosing from a list of options. Use when there are more than 4-5 choices that would clutter the UI.",
+  "description": "Chooses one option from a compact dropdown list.",
   "category": "forms",
   "tags": ["select", "dropdown", "form", "options", "picker"],
   "status": "stable",

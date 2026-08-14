@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Breadcrumbs",
-  "description": "Breadcrumb navigation showing the current page location within a hierarchy. Helps users navigate back through parent pages.",
+  "description": "Shows the current location in a hierarchy and links to parent pages.",
   "category": "navigation",
   "tags": [
     "breadcrumbs",

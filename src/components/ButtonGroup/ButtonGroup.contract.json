@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ButtonGroup",
-  "description": "Groups related buttons together with consistent spacing and alignment. Useful for action bars, toolbars, and related button sets.",
+  "description": "Groups related buttons with consistent spacing and alignment.",
   "category": "forms",
   "tags": [
     "button",

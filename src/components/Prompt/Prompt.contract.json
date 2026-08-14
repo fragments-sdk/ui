@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Prompt",
-  "description": "Multi-line input with toolbar for AI/chat interfaces",
+  "description": "Collects multi-line input for AI and chat interfaces.",
   "category": "ai",
   "tags": [
     "prompt",

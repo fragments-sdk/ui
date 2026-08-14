@@ -1210,7 +1210,7 @@ async function packageVersion(specifier) {
 
 async function fontEnvironment() {
   const entries = [
-    ["@fontsource-variable/inter", "files/inter-latin-wght-normal.woff2"],
+    ["@fontsource-variable/instrument-sans", "files/instrument-sans-latin-wght-normal.woff2"],
     ["@fontsource-variable/jetbrains-mono", "files/jetbrains-mono-latin-wght-normal.woff2"],
   ];
   const result = [];

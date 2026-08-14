@@ -74,6 +74,11 @@ describe("ToggleGroup", () => {
     const group = screen.getByRole("radiogroup");
     expect(group.className).toContain("default");
     expect(group.className).not.toMatch(/gap-/);
+    // Adjacent items share a flush edge; only outer corners are rounded.
+    expect(toggleGroupStyles).toMatch(/\.default\s*\{[\s\S]*\.item\s*\{[\s\S]*border-radius:\s*0/);
+    expect(toggleGroupStyles).toMatch(
+      /\.default\s*\{[\s\S]*&:first-child\s*\{[\s\S]*border-start-start-radius/
+    );
   });
 
   it("gives the open pills variant compact spacing by default", () => {
@@ -92,11 +97,11 @@ describe("ToggleGroup", () => {
 
   it("uses the shared selection tone across all visual variants", () => {
     expect(toggleGroupStyles).toMatch(
-      /\.default\s*\{[\s\S]*var\(--fui-toggle-group-selected-bg, var\(--fui-selection-bg\)\)/
+      /\.default\s*\{[\s\S]*--fui-toggle-group-selected-bg,[\s\S]*--fui-control-selected-bg/
     );
     expect(toggleGroupStyles).toMatch(/\.pills\s*\{[\s\S]*border-radius:\s*var\(--fui-radius-full/);
     expect(toggleGroupStyles).toMatch(
-      /\.outline\s*\{[\s\S]*var\(--fui-toggle-group-selected-bg, var\(--fui-selection-bg\)\)/
+      /\.outline\s*\{[\s\S]*--fui-toggle-group-selected-bg,[\s\S]*--fui-control-selected-bg/
     );
   });
 

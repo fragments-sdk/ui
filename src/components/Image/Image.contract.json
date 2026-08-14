@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Image",
-  "description": "Responsive image component with aspect ratio control, loading states, and error fallbacks. Handles image display with consistent styling.",
+  "description": "Displays responsive images with aspect ratios, loading states, and error fallbacks.",
   "category": "display",
   "tags": [
     "image",

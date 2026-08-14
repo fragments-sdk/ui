@@ -16,6 +16,8 @@ export interface TableOfContentsProps extends React.HTMLAttributes<HTMLElement> 
   title?: string;
   /** Hide the title */
   hideTitle?: boolean;
+  /** Hide indented items and nested groups. Defaults to false. */
+  hideSubItems?: boolean;
 }
 
 export interface TableOfContentsItemProps extends Omit<
@@ -63,9 +65,10 @@ export interface TableOfContentsGroupProps {
 
 interface TocContextValue {
   depth: number;
+  hideSubItems: boolean;
 }
 
-const TocContext = React.createContext<TocContextValue>({ depth: 0 });
+const TocContext = React.createContext<TocContextValue>({ depth: 0, hideSubItems: false });
 
 // ============================================
 // Icons
@@ -95,6 +98,7 @@ function TableOfContentsRoot({
   label = "Table of contents",
   title = "On This Page",
   hideTitle = false,
+  hideSubItems = false,
   className,
   "aria-label": ariaLabel,
   ...htmlProps
@@ -108,7 +112,7 @@ function TableOfContentsRoot({
           {title}
         </Text>
       )}
-      <TocContext.Provider value={{ depth: 0 }}>
+      <TocContext.Provider value={{ depth: 0, hideSubItems }}>
         <ul className={styles.list}>{children}</ul>
       </TocContext.Provider>
     </nav>
@@ -127,8 +131,10 @@ function TableOfContentsItem({
   href: _href,
   ...htmlProps
 }: TableOfContentsItemProps) {
-  const { depth } = React.useContext(TocContext);
+  const { depth, hideSubItems } = React.useContext(TocContext);
   const effectiveDepth = depth > 0 ? depth : indent ? 1 : 0;
+
+  if (hideSubItems && effectiveDepth > 0) return null;
 
   const linkClasses = [styles.link, active && styles.active, className].filter(Boolean).join(" ");
 
@@ -139,7 +145,10 @@ function TableOfContentsItem({
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      const prefersReducedMotion =
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
       window.history.replaceState(null, "", `#${id}`);
     }
   };
@@ -194,8 +203,10 @@ function TableOfContentsGroup({
   disabled = false,
   active = false,
 }: TableOfContentsGroupProps) {
-  const { depth } = React.useContext(TocContext);
+  const { depth, hideSubItems } = React.useContext(TocContext);
   const [open, setOpen] = useControlledOpen(controlledOpen, defaultOpen, onOpenChange);
+
+  if (hideSubItems) return null;
 
   const isToggleable = collapsible && !disabled;
   const isOpen = isToggleable ? open : true;
@@ -237,7 +248,11 @@ function TableOfContentsGroup({
           <div className={headerClasses}>{headerContent}</div>
         )}
       </li>
-      {isOpen && <TocContext.Provider value={{ depth: depth + 1 }}>{children}</TocContext.Provider>}
+      {isOpen && (
+        <TocContext.Provider value={{ depth: depth + 1, hideSubItems }}>
+          {children}
+        </TocContext.Provider>
+      )}
     </>
   );
 }

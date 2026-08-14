@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "IconButton",
-  "description": "Compact square button for icon-only actions in dense toolbars, top bars, and row controls.",
+  "description": "Triggers an icon-only action in compact interface chrome.",
   "category": "forms",
   "tags": ["action", "button", "icon", "toolbar", "interactive"],
   "status": "stable",

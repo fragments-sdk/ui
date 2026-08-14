@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Stack",
-  "description": "Flexible layout component for arranging children in rows or columns with consistent spacing. Supports responsive direction and gap.",
+  "description": "Arranges children in a row or column with consistent responsive spacing.",
   "category": "layout",
   "tags": [
     "stack",

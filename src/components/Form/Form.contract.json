@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Form",
-  "description": "Form wrapper that handles server-side error distribution to Field components. Pairs with Field for complete form validation.",
+  "description": "Distributes server-side validation errors to its Field components.",
   "category": "forms",
   "tags": ["form", "validation", "errors", "submit", "server"],
   "status": "stable",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "List",
-  "description": "Compound component for rendering ordered or unordered lists with consistent styling. Supports bullet, numbered, and icon-prefixed items.",
+  "description": "Renders ordered, unordered, or icon-led items with consistent spacing.",
   "category": "display",
   "tags": [
     "list",

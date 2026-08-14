@@ -364,7 +364,7 @@
 }
 
 .tabButtonActive {
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  background-color: var(--fui-control-selected-bg, $fui-bg-active);
   color: var(--fui-text-primary, $fui-text-primary);
 }
 
@@ -454,7 +454,7 @@
 
 .modeButtonActive {
   color: var(--fui-text-primary, $fui-text-primary);
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  background-color: var(--fui-control-selected-bg, $fui-bg-active);
 }
 
 // ============================================

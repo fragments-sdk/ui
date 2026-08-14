@@ -94,13 +94,6 @@
   .copyOverlay.copied {
     opacity: 1;
   }
-
-  .codeContainer :global(.shiki),
-  .loading pre {
-    padding-inline-end: calc(
-      var(--_fui-code-inline-inset) + #{action.track("sm")} + var(--fui-raw-space-12)
-    );
-  }
 }
 
 .icon {
@@ -115,6 +108,18 @@
 
 .persistentCopyWrapper .copyOverlay {
   opacity: 1;
+}
+
+// Overlay + persistent copy both sit absolute — reserve trailing space so
+// content-sized blocks don't collide with the control.
+.withCopyOverlay,
+.persistentCopyWrapper {
+  .codeContainer :global(.shiki),
+  .loading pre {
+    padding-inline-end: calc(
+      var(--_fui-code-inline-inset) + #{action.track("sm")} + var(--fui-raw-space-12)
+    );
+  }
 }
 
 .loading pre,

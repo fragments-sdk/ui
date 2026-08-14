@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Slider",
-  "description": "Range input control for selecting a numeric value within a defined range. Supports labels, value display, and custom step intervals.",
+  "description": "Selects a numeric value within a defined range.",
   "category": "forms",
   "tags": [
     "slider",

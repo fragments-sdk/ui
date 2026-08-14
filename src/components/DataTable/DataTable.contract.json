@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "DataTable",
-  "description": "Data table with sorting, selection, and column management. Powered by TanStack Table.",
+  "description": "Displays sortable, selectable data with configurable columns.",
   "category": "display",
   "tags": ["table", "data", "grid", "list", "sorting", "tanstack"],
   "status": "stable",

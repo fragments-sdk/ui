@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ScrollArea",
-  "description": "A styled scrollable container with thin scrollbars and optional fade indicators.",
+  "description": "Contains overflowing content with styled scrollbars and fade indicators.",
   "category": "layout",
   "tags": ["scroll", "overflow", "scrollbar", "container", "layout"],
   "status": "stable",
@@ -59,7 +59,7 @@
     ],
     "guidelines": [
       "Use `orientation` to constrain scroll direction",
-      "Use `showFades` to hint at hidden content beyond the viewport",
+      "Use `showFades` to hint at hidden content when no other overflow cue exists",
       "The `auto` and `hover` modes keep the thumb quiet until hover or keyboard focus without changing track geometry",
       "Combine with `orientation=\"horizontal\"` for tab bars and chip rows"
     ],

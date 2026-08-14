@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ToggleGroup",
-  "description": "A group of toggle buttons where only one can be selected at a time. Useful for switching between views, modes, or options.",
+  "description": "Selects one state from a compact group of toggle buttons.",
   "category": "forms",
   "tags": ["toggle", "group", "fragmented", "control", "tabs", "switch"],
   "status": "stable",

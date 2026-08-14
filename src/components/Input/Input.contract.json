@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Input",
-  "description": "Text input field for single-line user data entry",
+  "description": "Collects a single line of user-entered text.",
   "category": "forms",
   "tags": ["form", "input", "text"],
   "status": "stable",

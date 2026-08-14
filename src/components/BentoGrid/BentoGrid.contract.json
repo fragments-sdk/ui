@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "BentoGrid",
-  "description": "Asymmetric grid layout with responsive spans and built-in surface styling for bento-style feature sections",
+  "description": "Arranges feature content in an asymmetric responsive grid with built-in surfaces.",
   "category": "layout",
   "tags": [
     "bento",

@@ -610,7 +610,7 @@ function HeaderMobileNav({ children, className }: HeaderMobileNavProps) {
             {closeIcon ?? <X size={20} aria-hidden />}
           </button>
         </div>
-        <ScrollArea orientation="vertical" className={styles.mobileNavBody}>
+        <ScrollArea orientation="vertical" showFades className={styles.mobileNavBody}>
           {children}
         </ScrollArea>
       </div>

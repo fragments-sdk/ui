@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Field",
-  "description": "Compositional form field wrapper providing validation, labels, descriptions, and error messages. Use for advanced form needs beyond baked-in Input/Textarea props.",
+  "description": "Composes labels, descriptions, validation, and errors around a form control.",
   "category": "forms",
   "tags": [
     "form",

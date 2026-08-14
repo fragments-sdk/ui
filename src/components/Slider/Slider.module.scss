@@ -58,7 +58,7 @@
 .indicator {
   position: absolute;
   height: 100%;
-  background-color: var(--fui-field-selection-border, $fui-color-accent);
+  background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 }
 
@@ -67,7 +67,7 @@
   @include target.hit-area("compact");
 
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-selection-border, $fui-color-accent);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
   cursor: grab;

@@ -2372,7 +2372,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2451,7 +2451,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2530,7 +2530,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2609,7 +2609,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2688,7 +2688,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2767,7 +2767,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2846,7 +2846,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -2925,7 +2925,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3004,7 +3004,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3083,7 +3083,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3162,7 +3162,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3241,7 +3241,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3320,7 +3320,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3399,7 +3399,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3478,7 +3478,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3557,7 +3557,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3794,7 +3794,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3873,7 +3873,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -3952,7 +3952,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4031,7 +4031,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4110,7 +4110,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4189,7 +4189,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4268,7 +4268,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4347,7 +4347,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4426,7 +4426,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4505,7 +4505,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4584,7 +4584,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4663,7 +4663,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4742,7 +4742,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4821,7 +4821,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4900,7 +4900,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -4979,7 +4979,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5216,7 +5216,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5295,7 +5295,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5374,7 +5374,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5453,7 +5453,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5532,7 +5532,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5611,7 +5611,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5690,7 +5690,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5769,7 +5769,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5848,7 +5848,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -5927,7 +5927,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6006,7 +6006,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6085,7 +6085,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6164,7 +6164,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6243,7 +6243,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6322,7 +6322,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6401,7 +6401,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6740,7 +6740,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",
@@ -6921,7 +6921,7 @@
           "op": "style",
           "target": "root",
           "property": "font-family",
-          "expected": "\"Inter Variable\", Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
+          "expected": "\"Instrument Sans Variable\", \"Instrument Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", system-ui, sans-serif"
         },
         {
           "op": "attribute",

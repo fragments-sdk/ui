@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "TableOfContents",
-  "description": "Sticky sidebar navigation for long-form content or filterable lists. Renders a quiet, flush index with nested indentation and an ink-weight active state.",
+  "description": "Indexes long-form content with nested links and a visible active state.",
   "category": "navigation",
   "tags": [
     "toc",
@@ -20,7 +20,8 @@
     "children: node (required)",
     "label: string (default: Table of contents)",
     "title: string (default: On This Page)",
-    "hideTitle: boolean (default: false)"
+    "hideTitle: boolean (default: false)",
+    "hideSubItems: boolean (default: false)"
   ],
   "props": {
     "children": {
@@ -45,6 +46,12 @@
       "description": "Hide the visible title",
       "default": "false",
       "required": false
+    },
+    "hideSubItems": {
+      "type": "boolean",
+      "description": "Hide indented items and nested groups",
+      "default": "false",
+      "required": false
     }
   },
   "usage": {
@@ -61,6 +68,7 @@
     ],
     "guidelines": [
       "Pair with a scroll spy hook (e.g., IntersectionObserver) to track active heading",
+      "Sub-items are shown by default; pass `hideSubItems` when a compact top-level index is more useful",
       "Use TableOfContents.Group to nest items under a labeled, optionally-collapsible parent",
       "The legacy `indent` boolean on Item is preserved for back-compat; prefer Group for new code",
       "Place in a sticky aside for best UX",
@@ -81,6 +89,11 @@
       "name": "Default",
       "description": "Basic table of contents with section links",
       "code": "<TableOfContents>\n  <TableOfContents.Item id=\"introduction\">Introduction</TableOfContents.Item>\n  <TableOfContents.Item id=\"getting-started\">Getting Started</TableOfContents.Item>\n  <TableOfContents.Item id=\"installation\" indent>Installation</TableOfContents.Item>\n  <TableOfContents.Item id=\"configuration\" indent>Configuration</TableOfContents.Item>\n  <TableOfContents.Item id=\"api-reference\">API Reference</TableOfContents.Item>\n  <TableOfContents.Item id=\"examples\">Examples</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "Top-level Only",
+      "description": "Hide indented page sections when a compact index is more useful",
+      "code": "<TableOfContents hideSubItems>\n  <TableOfContents.Item id=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Item id=\"basic-usage\" indent>Basic usage</TableOfContents.Item>\n  <TableOfContents.Item id=\"advanced-usage\" indent>Advanced usage</TableOfContents.Item>\n  <TableOfContents.Item id=\"accessibility\">Accessibility</TableOfContents.Item>\n</TableOfContents>"
     },
     {
       "name": "Nested Groups",
@@ -124,6 +137,7 @@
     "propsSummary": [
       "title: string - visible heading (default \"On This Page\")",
       "hideTitle: boolean - hide the title",
+      "hideSubItems: boolean - hide indented items and nested groups (default false)",
       "label: string - aria-label for nav landmark",
       "TableOfContents.Item id: string - heading ID to link to",
       "TableOfContents.Item active: boolean - highlight the current item with ink and weight",

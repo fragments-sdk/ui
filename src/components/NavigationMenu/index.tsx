@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { createPortal } from 'react-dom';
-import { CaretDown, List, X } from '@phosphor-icons/react';
-import { handleArrowNavigation, useFocusTrap } from '../../utils/a11y';
-import { Collapsible } from '../Collapsible';
-import { ScrollArea } from '../ScrollArea';
+import * as React from "react";
+import { createPortal } from "react-dom";
+import { CaretDown, List, X } from "@phosphor-icons/react";
+import { handleArrowNavigation, useFocusTrap } from "../../utils/a11y";
+import { Collapsible } from "../Collapsible";
+import { ScrollArea } from "../ScrollArea";
 import {
   NavigationMenuContext,
   NavigationMenuItemContext,
@@ -15,9 +15,9 @@ import {
   type NavigationMenuIcons,
   type NavigationMenuIconRenderState,
   type NavigationMenuIconSlot,
-} from './NavigationMenuContext';
-import { useNavigationMenu } from './useNavigationMenu';
-import styles from './NavigationMenu.module.scss';
+} from "./NavigationMenuContext";
+import { useNavigationMenu } from "./useNavigationMenu";
+import styles from "./NavigationMenu.module.scss";
 
 // ============================================
 // Types
@@ -32,13 +32,19 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
   /** Callback when open item changes */
   onValueChange?: (value: string) => void;
   /** Menu orientation */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   /** Delay before opening on hover (ms) */
   delayDuration?: number;
   /** Duration to skip delays between triggers (ms) */
   skipDelayDuration?: number;
   /** Optional icon overrides for trigger chevrons and mobile drawer controls */
   icons?: NavigationMenuIcons;
+  /**
+   * Viewport width where the canonical drawer replaces desktop navigation.
+   * `md` preserves the default 768px switch; `lg` lets rail-based shells
+   * retire their sidebar and desktop navigation together below 1024px.
+   */
+  mobileBreakpoint?: "md" | "lg";
 }
 
 export interface NavigationMenuListProps {
@@ -65,7 +71,7 @@ export interface NavigationMenuContentProps {
 
 export interface NavigationMenuLinkProps extends Omit<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  'title'
+  "title"
 > {
   /** Simple mode: children as text content */
   children?: React.ReactNode;
@@ -120,19 +126,20 @@ export interface NavigationMenuMobileSectionProps {
 // Hooks
 // ============================================
 
-function useIsMobile() {
+function useIsMobile(breakpoint: "md" | "lg") {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mq = window.matchMedia('(max-width: 767px)');
+    const maxWidth = breakpoint === "lg" ? 1023 : 767;
+    const mq = window.matchMedia(`(max-width: ${maxWidth}px)`);
     setIsMobile(mq.matches);
 
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, [breakpoint]);
 
   return isMobile;
 }
@@ -142,7 +149,7 @@ function renderNavigationMenuIcon(
   state: NavigationMenuIconRenderState
 ): React.ReactNode {
   if (slot === undefined) return undefined;
-  return typeof slot === 'function' ? slot(state) : slot;
+  return typeof slot === "function" ? slot(state) : slot;
 }
 
 // ============================================
@@ -154,16 +161,17 @@ function NavigationMenuRoot({
   value: controlledValue,
   defaultValue,
   onValueChange,
-  orientation = 'horizontal',
+  orientation = "horizontal",
   delayDuration = 200,
   skipDelayDuration = 300,
   icons,
+  mobileBreakpoint = "md",
   className,
-  'aria-label': ariaLabel = 'Main navigation',
+  "aria-label": ariaLabel = "Main navigation",
   ...htmlProps
 }: NavigationMenuProps) {
   const rootId = React.useId();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(mobileBreakpoint);
 
   const state = useNavigationMenu({
     value: controlledValue,
@@ -173,9 +181,9 @@ function NavigationMenuRoot({
     skipDelayDuration,
   });
 
-  const classes = [styles.root, orientation === 'vertical' && styles.rootVertical, className]
+  const classes = [styles.root, orientation === "vertical" && styles.rootVertical, className]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   const contextValue = React.useMemo(
     () => ({
@@ -190,7 +198,13 @@ function NavigationMenuRoot({
 
   return (
     <NavigationMenuContext.Provider value={contextValue}>
-      <nav {...htmlProps} className={classes} aria-label={ariaLabel} data-orientation={orientation}>
+      <nav
+        {...htmlProps}
+        className={classes}
+        aria-label={ariaLabel}
+        data-orientation={orientation}
+        data-mobile={isMobile || undefined}
+      >
         {children}
         {isMobile && <MobileHamburger />}
         {isMobile && state.mobileOpen && <MobileDrawer />}
@@ -211,13 +225,13 @@ function NavigationMenuList({ children, className }: NavigationMenuListProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const order = triggerOrder.current;
     const focusedValue = (document.activeElement as HTMLElement | null)?.getAttribute(
-      'data-navmenu-value'
+      "data-navmenu-value"
     );
     const currentValue = focusedValue || value;
     const currentIdx = order.indexOf(currentValue);
 
     const newIdx = handleArrowNavigation(e, order, currentIdx >= 0 ? currentIdx : 0, {
-      orientation: orientation === 'horizontal' ? 'horizontal' : 'vertical',
+      orientation: orientation === "horizontal" ? "horizontal" : "vertical",
       loop: true,
     });
 
@@ -228,9 +242,9 @@ function NavigationMenuList({ children, className }: NavigationMenuListProps) {
     }
   };
 
-  const classes = [styles.list, orientation === 'vertical' && styles.listVertical, className]
+  const classes = [styles.list, orientation === "vertical" && styles.listVertical, className]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <ul
@@ -265,7 +279,7 @@ function NavigationMenuItem({ children, value: valueProp, className }: Navigatio
     if (!existing) {
       rootCtx.itemInfoMap.current.set(autoValue, {
         value: autoValue,
-        triggerLabel: '',
+        triggerLabel: "",
         contentChildren: null,
       });
     }
@@ -321,12 +335,12 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
 
   // Register item info for mobile drawer
   React.useEffect(() => {
-    const label = typeof children === 'string' ? children : '';
+    const label = typeof children === "string" ? children : "";
     const existing = ctx.itemInfoMap.current.get(itemCtx.value);
     ctx.itemInfoMap.current.set(itemCtx.value, {
       ...existing,
       value: itemCtx.value,
-      triggerLabel: label || existing?.triggerLabel || '',
+      triggerLabel: label || existing?.triggerLabel || "",
     } as NavigationMenuItemInfo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemCtx.value, children]);
@@ -340,7 +354,7 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
       clearTimeout(ctx.closeTimerRef.current);
       ctx.closeTimerRef.current = null;
     }
-    ctx.setValue(isOpen ? '' : itemCtx.value);
+    ctx.setValue(isOpen ? "" : itemCtx.value);
   };
 
   const handlePointerEnter = () => {
@@ -367,25 +381,25 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
     }
 
     ctx.closeTimerRef.current = setTimeout(() => {
-      ctx.setValue('');
+      ctx.setValue("");
     }, ctx.delayDuration);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      ctx.setValue(isOpen ? '' : itemCtx.value);
+      ctx.setValue(isOpen ? "" : itemCtx.value);
     }
-    if (e.key === 'Escape' && isOpen) {
+    if (e.key === "Escape" && isOpen) {
       e.preventDefault();
-      ctx.setValue('');
+      ctx.setValue("");
       triggerRef.current?.focus();
     }
   };
 
-  const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const classes = [styles.trigger, className].filter(Boolean).join(" ");
   const chevronOverride = renderNavigationMenuIcon(ctx.icons?.triggerChevron, {
-    slot: 'triggerChevron',
+    slot: "triggerChevron",
     open: isOpen,
     isMobile: ctx.isMobile,
   });
@@ -399,7 +413,7 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
       data-navmenu-value={itemCtx.value}
       aria-expanded={isOpen}
       aria-controls={itemCtx.contentId}
-      data-state={isOpen ? 'open' : 'closed'}
+      data-state={isOpen ? "open" : "closed"}
       onClick={handleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -433,7 +447,7 @@ function NavigationMenuContent({ children, className }: NavigationMenuContentPro
     ctx.itemInfoMap.current.set(itemCtx.value, {
       ...existing,
       value: itemCtx.value,
-      triggerLabel: existing?.triggerLabel || '',
+      triggerLabel: existing?.triggerLabel || "",
       contentChildren: children,
     } as NavigationMenuItemInfo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -471,7 +485,7 @@ function NavigationMenuContent({ children, className }: NavigationMenuContentPro
   const currentIdx = triggerOrder.indexOf(itemCtx.value);
   let motion: string | undefined;
   if (isOpen && prevValue && prevValue !== itemCtx.value) {
-    motion = currentIdx > prevIdx ? 'from-end' : 'from-start';
+    motion = currentIdx > prevIdx ? "from-end" : "from-start";
   }
 
   // Update previousValue when this content becomes active
@@ -484,7 +498,7 @@ function NavigationMenuContent({ children, className }: NavigationMenuContentPro
 
   if (!isOpen) return null;
 
-  const classes = [styles.content, className].filter(Boolean).join(' ');
+  const classes = [styles.content, className].filter(Boolean).join(" ");
 
   const handlePointerEnter = () => {
     if (ctx.closeTimerRef.current) {
@@ -495,7 +509,7 @@ function NavigationMenuContent({ children, className }: NavigationMenuContentPro
 
   const handlePointerLeave = () => {
     ctx.closeTimerRef.current = setTimeout(() => {
-      ctx.setValue('');
+      ctx.setValue("");
     }, ctx.delayDuration);
   };
 
@@ -548,22 +562,22 @@ function NavigationMenuLink({
 
     const existing = ctx.itemInfoMap.current.get(itemCtx.value);
     const fallbackLabel =
-      typeof children === 'string'
+      typeof children === "string"
         ? children
-        : typeof title === 'string'
+        : typeof title === "string"
           ? title
           : React.Children.toArray(title ?? children)
               .filter(
                 (node): node is string | number =>
-                  typeof node === 'string' || typeof node === 'number'
+                  typeof node === "string" || typeof node === "number"
               )
-              .join('');
-    const resolvedHref = typeof href === 'string' ? href : existing?.linkHref;
+              .join("");
+    const resolvedHref = typeof href === "string" ? href : existing?.linkHref;
 
     ctx.itemInfoMap.current.set(itemCtx.value, {
       ...existing,
       value: itemCtx.value,
-      triggerLabel: existing?.triggerLabel || fallbackLabel || '',
+      triggerLabel: existing?.triggerLabel || fallbackLabel || "",
       contentChildren: existing?.contentChildren ?? null,
       linkHref: resolvedHref,
     });
@@ -578,27 +592,31 @@ function NavigationMenuLink({
     }
     // Close desktop menu
     if (ctx) {
-      ctx.setValue('');
+      ctx.setValue("");
     }
   };
+
+  // MobileContent portals into the drawer; use drawer geometry there instead of
+  // the desktop popup-panel link styles.
+  const inMobileDrawer = Boolean(ctx?.isMobile && ctx?.mobileOpen);
 
   // Structured mode (title + description + icon)
   if (isStructured) {
     const classes = [
-      styles.link,
-      styles.linkStructured,
-      active && styles.linkActive,
-      featured && styles.linkFeatured,
+      inMobileDrawer ? styles.drawerLink : styles.link,
+      !inMobileDrawer && styles.linkStructured,
+      active && (inMobileDrawer ? styles.drawerLinkActive : styles.linkActive),
+      !inMobileDrawer && featured && styles.linkFeatured,
       className,
     ]
       .filter(Boolean)
-      .join(' ');
+      .join(" ");
 
     const linkProps = {
       ...htmlProps,
       className: classes,
       href,
-      'aria-current': active ? ('page' as const) : undefined,
+      "aria-current": active ? ("page" as const) : undefined,
       onClick: handleClick,
     };
 
@@ -610,7 +628,7 @@ function NavigationMenuLink({
       return React.cloneElement(children, {
         ...linkProps,
         onClick: composeNavMenuClickHandlers(childProps.onClick, handleClick),
-        className: [classes, childProps.className].filter(Boolean).join(' '),
+        className: [classes, childProps.className].filter(Boolean).join(" "),
         children: (
           <>
             {icon && <span className={styles.linkIcon}>{icon}</span>}
@@ -635,13 +653,19 @@ function NavigationMenuLink({
   }
 
   // Simple link mode
-  const classes = [styles.link, active && styles.linkActive, className].filter(Boolean).join(' ');
+  const classes = [
+    inMobileDrawer ? styles.drawerLink : styles.link,
+    active && (inMobileDrawer ? styles.drawerLinkActive : styles.linkActive),
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const linkProps = {
     ...htmlProps,
     className: classes,
     href,
-    'aria-current': active ? ('page' as const) : undefined,
+    "aria-current": active ? ("page" as const) : undefined,
     onClick: handleClick,
   };
 
@@ -653,7 +677,7 @@ function NavigationMenuLink({
     return React.cloneElement(children, {
       ...linkProps,
       onClick: composeNavMenuClickHandlers(childProps.onClick, handleClick),
-      className: [classes, childProps.className].filter(Boolean).join(' '),
+      className: [classes, childProps.className].filter(Boolean).join(" "),
     } as React.HTMLAttributes<HTMLElement>);
   }
 
@@ -675,7 +699,7 @@ function NavigationMenuIndicator({ className }: NavigationMenuIndicatorProps) {
     }
     const trigger = triggerRefs.current.get(value);
     if (trigger) {
-      const parent = trigger.closest('ul');
+      const parent = trigger.closest("ul");
       if (parent) {
         const parentRect = parent.getBoundingClientRect();
         const triggerRect = trigger.getBoundingClientRect();
@@ -688,7 +712,7 @@ function NavigationMenuIndicator({ className }: NavigationMenuIndicatorProps) {
     }
   }, [value, triggerRefs]);
 
-  const classes = [styles.indicator, className].filter(Boolean).join(' ');
+  const classes = [styles.indicator, className].filter(Boolean).join(" ");
 
   return <div className={classes} style={style} aria-hidden />;
 }
@@ -719,9 +743,9 @@ function NavigationMenuViewport({ className }: NavigationMenuViewportProps) {
   }, [isOpen, value, triggerRefs, viewportRef]);
 
   const cssVars = {
-    '--fui-navmenu-viewport-width': isOpen ? `${viewportSize.width}px` : '0px',
-    '--fui-navmenu-viewport-height': isOpen ? `${viewportSize.height}px` : '0px',
-    '--fui-navmenu-viewport-left': `${triggerLeft}px`,
+    "--fui-navmenu-viewport-width": isOpen ? `${viewportSize.width}px` : "0px",
+    "--fui-navmenu-viewport-height": isOpen ? `${viewportSize.height}px` : "0px",
+    "--fui-navmenu-viewport-left": `${triggerLeft}px`,
   } as React.CSSProperties;
 
   // Mark skip-delay state
@@ -739,14 +763,14 @@ function NavigationMenuViewport({ className }: NavigationMenuViewportProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const classes = [styles.viewport, className].filter(Boolean).join(' ');
+  const classes = [styles.viewport, className].filter(Boolean).join(" ");
 
   return (
     <div
       ref={viewportRef}
       className={classes}
       style={cssVars}
-      data-state={isOpen ? 'open' : 'closed'}
+      data-state={isOpen ? "open" : "closed"}
       role="presentation"
     />
   );
@@ -809,7 +833,7 @@ function MobileHamburger() {
   const iconOverride = renderNavigationMenuIcon(
     mobileOpen ? ctx.icons?.mobileClose : ctx.icons?.mobileMenu,
     {
-      slot: mobileOpen ? 'mobileClose' : 'mobileMenu',
+      slot: mobileOpen ? "mobileClose" : "mobileMenu",
       open: mobileOpen,
       isMobile: true,
     }
@@ -840,21 +864,21 @@ function MobileDrawer() {
 
   // Lock body scroll
   React.useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, []);
 
   // Handle Escape
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         ctx.setMobileOpen(false);
       }
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [ctx]);
 
   // Build auto-converted nav items from item info registry
@@ -887,13 +911,13 @@ function MobileDrawer() {
             aria-label="Close navigation"
           >
             {renderNavigationMenuIcon(ctx.icons?.drawerClose, {
-              slot: 'drawerClose',
+              slot: "drawerClose",
               open: ctx.mobileOpen,
               isMobile: true,
             }) ?? <X size={20} aria-hidden />}
           </button>
         </div>
-        <ScrollArea orientation="vertical" className={styles.drawerBody}>
+        <ScrollArea orientation="vertical" showFades className={styles.drawerBody}>
           {/* When MobileContent is provided, it takes full control of the drawer nav.
               Otherwise, auto-convert registered Trigger+Content items. */}
           {ctx.mobileContentChildren ? (
@@ -927,7 +951,7 @@ function MobileDrawer() {
     </>
   );
 
-  if (typeof document === 'undefined') return null;
+  if (typeof document === "undefined") return null;
   return createPortal(drawerContent, document.body);
 }
 
@@ -952,7 +976,7 @@ function MobileCollapsibleSection({
           className={styles.drawerCollapsibleContent}
           onClick={onLinkClick}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') onLinkClick();
+            if (e.key === "Enter") onLinkClick();
           }}
           role="group"
         >
@@ -998,4 +1022,4 @@ export type {
   NavigationMenuIcons,
   NavigationMenuIconSlot,
   NavigationMenuIconRenderState,
-} from './NavigationMenuContext';
+} from "./NavigationMenuContext";

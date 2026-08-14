@@ -646,6 +646,7 @@ function SidebarRoot({
       role={isMobile ? 'dialog' : undefined}
       aria-modal={isMobile && open ? true : undefined}
       aria-hidden={isMobile && !open ? true : undefined}
+      inert={isMobile && !open ? true : undefined}
       aria-label={isMobile ? (ariaLabel || 'Sidebar navigation') : ariaLabel}
       data-state={isMobile ? (open ? 'open' : 'closed') : (collapsed ? 'collapsed' : 'expanded')}
       data-position={resolvedPosition}

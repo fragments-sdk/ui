@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Alert",
-  "description": "Contextual feedback messages for user actions or system status. Supports multiple severity levels with optional actions and dismissibility.",
+  "description": "Displays contextual feedback about user actions or system status.",
   "category": "feedback",
   "tags": [
     "notification",

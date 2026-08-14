@@ -47,8 +47,8 @@ $fui-base-unit: computed.$computed-base-unit !default;
 // Typography
 // --------------------------------------------
 $fui-font-sans:
-  "Inter Variable",
-  Inter,
+  "Instrument Sans Variable",
+  "Instrument Sans",
   -apple-system,
   BlinkMacSystemFont,
   "Segoe UI",
@@ -236,9 +236,10 @@ $fui-bg-elevated: computed.$computed-bg-elevated !default;
 $fui-bg-subtle: computed.$computed-bg-subtle !default;
 $fui-bg-hover: computed.$computed-bg-hover !default;
 $fui-bg-active: computed.$computed-bg-active !default;
-// The document canvas stays white in light mode. Component and app surfaces
-// continue to use the computed neutral palette.
-$fui-body-bg: #fff !default;
+// The document canvas is the derived "paper" tone in light mode (carbon 100).
+// Body and main stay on that shared plane; raised component roles provide the
+// contrast instead of consumer-specific page overrides.
+$fui-body-bg: computed.$computed-body-bg !default;
 $fui-main-bg: computed.$computed-main-bg !default;
 
 // Text colors (derived from $fui-neutral palette)
@@ -427,10 +428,13 @@ $fui-header-z-index: 40 !default;
 // CodeBlock background — shared with Markdown's <pre> prose styling — and
 // selection tint are runtime hooks so consuming apps can preserve their own
 // code-surface treatment without forking either component.
-$fui-code-bg: #171717 !default;
+$fui-code-bg: light-dark(#171717, #0d0d0d) !default;
+// Selection tint tracks the accent (pine light / sage dark), not the button
+// chrome — the ink-first default theme paints buttons with the inverse
+// surface, which would grey out code selection.
 $fui-code-selection-bg: color-mix(
   in srgb,
-  var(--fui-button-primary-base, #006b57) 30%,
+  var(--fui-color-accent, #006b57) 30%,
   transparent
 ) !default;
 
@@ -635,6 +639,21 @@ $fui-code-selection-bg: color-mix(
     );
     --fui-selection-color: var(--fui-text-primary);
 
+    // Persistent neutral selection for navigation, segmented controls, fields,
+    // and rows. Keep this separate from --fui-bg-active: active is the brief
+    // pointer-down state; selected must remain visible without dominating its
+    // surrounding surface.
+    --fui-control-selected-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
+
+    // Checked/value controls carry product meaning, so they follow the accent
+    // rather than button chrome. This keeps Checkbox, RadioGroup, and Switch
+    // stable when a consumer customizes primary actions independently.
+    --fui-control-checked-bg: var(--fui-color-accent);
+    --fui-control-checked-bg-hover: var(--fui-color-accent-hover);
+    --fui-control-checked-border: var(--fui-color-accent);
+    --fui-control-checked-border-hover: var(--fui-color-accent-hover);
+    --fui-control-checked-color: var(--fui-color-on-accent);
+
     // Form chrome (shared by Input, Textarea, Select, Combobox, DatePicker,
     // ColorPicker, Editor, and listbox-style controls).
     --fui-field-bg: color-mix(in srgb, var(--fui-bg-elevated) 72%, transparent);
@@ -646,7 +665,7 @@ $fui-code-selection-bg: color-mix(
       var(--fui-border-strong)
     );
     --fui-field-border-focus: var(--fui-text-primary);
-    --fui-field-selection-bg: color-mix(in srgb, var(--fui-text-primary) 8%, transparent);
+    --fui-field-selection-bg: var(--fui-control-selected-bg);
     --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-text-primary) 11%, transparent);
     --fui-field-selection-border: var(--fui-border-strong);
     --fui-field-selection-color: var(--fui-text-primary);
@@ -673,27 +692,35 @@ $fui-code-selection-bg: color-mix(
 
     // Button chrome. Every theme uses flat fills: hierarchy comes from colour,
     // border, and state contrast rather than a second raised/gradient material.
-    // Radius remains brand-aware for compatibility with consumer themes.
-    --fui-button-primary-base: light-dark(#006b57, #006b57);
-    --fui-button-primary-hover: light-dark(#187762, #187762);
-    --fui-button-primary-active: light-dark(#005f4c, #005f4c);
-    --fui-button-primary-border-hover: color-mix(
-      in srgb,
-      var(--fui-button-primary-active) 86%,
-      black 14%
-    );
-    --fui-button-primary-border: color-mix(
-      in srgb,
-      var(--fui-button-primary-active) 74%,
-      black 26%
-    );
-    --fui-button-primary-color: #fff;
-
+    //
+    // The Fragments default is ink-first: the primary action wears the inverse
+    // surface (near-black on paper, near-white on charcoal) with the accent
+    // reserved for meaning — links, selection, focus, "contract passing".
+    // A consumer-supplied $fui-brand switches primary chrome to the accent
+    // ramp so their brand colour actually paints their buttons (previously the
+    // chrome stayed pine regardless of seed).
     @if $fui-brand-is-default {
-      --fui-button-radius: var(--fui-radius-full);
+      --fui-button-primary-base: var(--fui-bg-inverse);
+      --fui-button-primary-hover: light-dark(
+        color-mix(in srgb, var(--fui-bg-inverse) 88%, white),
+        #ffffff
+      );
+      --fui-button-primary-active: light-dark(
+        color-mix(in srgb, var(--fui-bg-inverse) 92%, black),
+        color-mix(in srgb, var(--fui-bg-inverse) 94%, black)
+      );
+      --fui-button-primary-color: var(--fui-text-inverse);
+      --fui-button-radius: var(--fui-radius-xl);
     } @else {
+      --fui-button-primary-base: var(--fui-color-accent);
+      --fui-button-primary-hover: var(--fui-color-accent-hover);
+      --fui-button-primary-active: var(--fui-color-accent-active);
+      --fui-button-primary-color: var(--fui-color-on-accent);
       --fui-button-radius: var(--fui-radius-lg);
     }
+
+    --fui-button-primary-border: var(--fui-button-primary-base);
+    --fui-button-primary-border-hover: var(--fui-button-primary-hover);
 
     --fui-button-primary-bg: var(--fui-button-primary-base);
     --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
@@ -748,7 +775,7 @@ $fui-code-selection-bg: color-mix(
     --fui-sidebar-item-icon-color: var(--fui-text-tertiary);
     --fui-sidebar-item-hover-bg: var(--fui-bg-hover);
     --fui-sidebar-item-hover-color: var(--fui-text-primary);
-    --fui-sidebar-item-active-bg: color-mix(in srgb, var(--fui-text-primary) 8%, transparent);
+    --fui-sidebar-item-active-bg: var(--fui-control-selected-bg);
     --fui-sidebar-item-active-border: transparent;
     --fui-sidebar-item-active-color: var(--fui-text-primary);
     --fui-sidebar-item-active-indicator: transparent;
@@ -759,6 +786,11 @@ $fui-code-selection-bg: color-mix(
     --fui-badge-dot-color: currentColor;
     --fui-card-radius: var(--fui-radius-lg);
     --fui-card-bg: color-mix(in srgb, var(--fui-bg-elevated) 92%, transparent);
+    // Full-bleed card chrome (for example `Card.Header divided`) shares the
+    // raised-neutral plane with shell controls. Keep the semantic alias
+    // component-specific so consumers can tune card hierarchy without
+    // changing every subtle surface.
+    --fui-card-header-bg: var(--fui-bg-subtle);
     --fui-card-border: color-mix(in srgb, var(--fui-border-default) 86%, transparent);
     --fui-card-outlined-border: var(--fui-card-border);
     --fui-card-shadow: inset 0 1px 0
@@ -791,7 +823,7 @@ $fui-code-selection-bg: color-mix(
     --fui-table-header-border: var(--fui-border-strong);
     --fui-table-row-hover-bg: var(--fui-bg-hover);
     --fui-table-row-active-bg: var(--fui-bg-active);
-    --fui-table-row-selected-bg: color-mix(in srgb, var(--fui-text-primary) 8%, transparent);
+    --fui-table-row-selected-bg: var(--fui-control-selected-bg);
     --fui-table-row-selected-border: var(--fui-border-strong);
     --fui-table-subrow-bg: color-mix(in srgb, var(--fui-bg-secondary) 62%, transparent);
 
@@ -799,16 +831,17 @@ $fui-code-selection-bg: color-mix(
     --fui-tabs-pills-bg: color-mix(in srgb, var(--fui-text-primary) 5%, transparent);
     --fui-tabs-pills-border: var(--fui-border-default);
     --fui-tabs-pill-hover-bg: transparent;
-    --fui-tabs-pill-active-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
+    --fui-tabs-pill-active-bg: var(--fui-control-selected-bg);
     --fui-tabs-pill-active-border: transparent;
     --fui-tabs-pill-active-shadow: none;
-    --fui-toggle-group-selected-bg: var(--fui-selection-bg);
-    --fui-toggle-group-selected-border: color-mix(
-      in srgb,
-      var(--fui-color-accent) 42%,
-      transparent
-    );
+    --fui-toggle-group-selected-bg: var(--fui-control-selected-bg);
+    --fui-toggle-group-selected-border: transparent;
     --fui-toggle-group-selected-shadow: none;
+
+    // Header search is persistent shell chrome rather than a ghost action.
+    // One surface step above divided card headers keeps this global affordance
+    // easy to find in both themes without turning it into a selected control.
+    --fui-header-search-bg: var(--fui-bg-hover);
 
     // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
     --fui-shadow-sm: #{$fui-shadow-sm};

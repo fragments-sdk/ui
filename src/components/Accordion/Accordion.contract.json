@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Accordion",
-  "description": "Vertically stacked, collapsible content sections. Use for organizing related content that can be progressively disclosed.",
+  "description": "A set of collapsible sections for progressively disclosing related content.",
   "category": "layout",
   "tags": [
     "accordion",

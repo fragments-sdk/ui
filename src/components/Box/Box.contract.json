@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Box",
-  "description": "Primitive layout component for applying spacing, backgrounds, and borders. A flexible container for building custom layouts.",
+  "description": "Applies spacing, backgrounds, and borders to a flexible layout container.",
   "category": "layout",
   "tags": [
     "layout",

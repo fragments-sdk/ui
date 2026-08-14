@@ -17,6 +17,11 @@ describe('Link', () => {
     expect(link).toHaveClass('underline-always');
   });
 
+  it('applies the dotted underline class', () => {
+    render(<Link href="#" underline="dotted">Dotted</Link>);
+    expect(screen.getByRole('link')).toHaveClass('underline-dotted');
+  });
+
   it('adds external link attributes', () => {
     render(<Link href="https://example.com" external>External</Link>);
     const link = screen.getByRole('link');

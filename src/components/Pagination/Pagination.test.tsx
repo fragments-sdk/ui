@@ -22,7 +22,7 @@ function renderPagination(props: Partial<React.ComponentProps<typeof Pagination>
 describe('Pagination', () => {
   it('uses body text and a neutral active surface instead of brand accent', () => {
     expect(paginationStyles).toContain(
-      'background-color: var(--fui-bg-active, $fui-bg-active);'
+      'background-color: var(--fui-control-selected-bg, $fui-bg-active);'
     );
     expect(paginationStyles).toContain(
       'color: var(--fui-text-primary, $fui-text-primary);'
