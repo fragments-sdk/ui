@@ -67,3 +67,11 @@ every consumer — docs, Cloud, open-source installs — inherits it by default.
 - Carbon stop 100 is the light canvas and light `text-inverse` (CTA label
   colour). Keep its relationship to the dark plane deliberate when tuning the
   surface ladder.
+- **Dual fallbacks inside custom property declarations must be interpolated.**
+  Sass evaluates `$fui-*` in a normal declaration (`block-size: var(--fui-icon-md,
+$fui-icon-md)` → `16px`) but copies a custom property's value through
+  unparsed, so `--x: var(--fui-bg-elevated, $fui-bg-elevated)` emits the literal
+  text `$fui-bg-elevated`. The declaration is then invalid and the fallback does
+  nothing — the failure is silent and only visible when the token layer is
+  absent. Inside `--*:` always write `#{$fui-token}`. Gated by
+  `src/tokens/token-fallback-contract.test.ts`.

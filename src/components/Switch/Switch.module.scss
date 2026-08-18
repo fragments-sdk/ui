@@ -7,28 +7,72 @@
 
 .root {
   --_switch-off-bg: light-dark(
-    color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%),
-    color-mix(in srgb, var(--fui-bg-elevated) 82%, var(--fui-text-primary) 18%)
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #{$fui-bg-elevated}) 92%,
+      var(--fui-text-primary, #{$fui-text-primary}) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #{$fui-bg-elevated}) 82%,
+      var(--fui-text-primary, #{$fui-text-primary}) 18%
+    )
   );
   --_switch-off-bg-hover: light-dark(
-    color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 12%),
-    color-mix(in srgb, var(--fui-bg-elevated) 76%, var(--fui-text-primary) 24%)
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #{$fui-bg-elevated}) 88%,
+      var(--fui-text-primary, #{$fui-text-primary}) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #{$fui-bg-elevated}) 76%,
+      var(--fui-text-primary, #{$fui-text-primary}) 24%
+    )
   );
   --_switch-off-border: light-dark(
-    color-mix(in srgb, var(--fui-border-strong) 72%, var(--fui-text-primary) 28%),
-    color-mix(in srgb, var(--fui-border-strong) 58%, var(--fui-text-primary) 42%)
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, #{$fui-border-strong}) 72%,
+      var(--fui-text-primary, #{$fui-text-primary}) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, #{$fui-border-strong}) 58%,
+      var(--fui-text-primary, #{$fui-text-primary}) 42%
+    )
   );
   --_switch-off-border-hover: light-dark(
-    color-mix(in srgb, var(--fui-border-strong) 58%, var(--fui-text-primary) 42%),
-    color-mix(in srgb, var(--fui-border-strong) 44%, var(--fui-text-primary) 56%)
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, #{$fui-border-strong}) 58%,
+      var(--fui-text-primary, #{$fui-text-primary}) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, #{$fui-border-strong}) 44%,
+      var(--fui-text-primary, #{$fui-text-primary}) 56%
+    )
   );
   --_switch-thumb-bg: light-dark(
-    color-mix(in srgb, var(--fui-bg-primary) 98%, white 2%),
-    color-mix(in srgb, var(--fui-bg-primary) 56%, var(--fui-text-primary) 44%)
+    color-mix(in srgb, var(--fui-bg-primary, #{$fui-bg-primary}) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #{$fui-bg-primary}) 56%,
+      var(--fui-text-primary, #{$fui-text-primary}) 44%
+    )
   );
   --_switch-thumb-border: light-dark(
-    color-mix(in srgb, var(--fui-border-strong) 68%, var(--fui-text-primary) 32%),
-    color-mix(in srgb, var(--fui-border-strong) 45%, var(--fui-text-primary) 55%)
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, #{$fui-border-strong}) 68%,
+      var(--fui-text-primary, #{$fui-text-primary}) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, #{$fui-border-strong}) 45%,
+      var(--fui-text-primary, #{$fui-text-primary}) 55%
+    )
   );
 
   @include target.hit-area("compact");

@@ -113,7 +113,7 @@
 
 .separator {
   inline-size: var(--fui-stroke-hairline);
-  block-size: var(--fui-icon-md);
+  block-size: var(--fui-icon-md, $fui-icon-md);
   margin-inline: layout.gap("xs");
   background-color: var(--fui-form-group-border, $fui-border);
   flex-shrink: 0;
