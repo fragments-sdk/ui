@@ -146,8 +146,10 @@
   --_button-bg: var(--fui-button-neutral-bg);
   --_button-bg-hover: var(--fui-button-neutral-bg-hover);
   --_button-bg-active: var(--fui-button-neutral-bg-active);
-  --_button-border: var(--fui-button-neutral-border);
-  --_button-border-hover: var(--fui-button-neutral-border-hover);
+  // Secondary hierarchy comes from its fill. The transparent border preserves
+  // control geometry while leaving visible neutral borders to `.outlined`.
+  --_button-border: transparent;
+  --_button-border-hover: transparent;
   --_button-color: var(--fui-button-neutral-color, var(--fui-text-primary, #{$fui-text-primary}));
   --_button-shadow: var(--fui-button-neutral-shadow);
   --_button-shadow-hover: var(--fui-button-neutral-shadow);

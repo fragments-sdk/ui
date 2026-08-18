@@ -80,8 +80,8 @@ function FallbackRenderer({ content }: { content: string }) {
   const paragraphs = content.split(/\n{2,}/);
   return (
     <>
-      {paragraphs.map((p) => (
-        <p key={p}>{p}</p>
+      {paragraphs.map((p, index) => (
+        <p key={index}>{p}</p>
       ))}
     </>
   );

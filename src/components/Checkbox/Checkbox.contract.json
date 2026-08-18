@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Checkbox",
-  "description": "Binary toggle for form fields. Use for options that require explicit submission, unlike Switch which takes effect immediately.",
+  "description": "Selects options that take effect when a form is submitted.",
   "category": "forms",
   "tags": ["checkbox", "form", "boolean", "selection", "input"],
   "status": "stable",

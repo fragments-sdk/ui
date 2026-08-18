@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Collapsible",
-  "description": "An interactive component that expands/collapses to show or hide content",
+  "description": "Expands or collapses a single region of content.",
   "category": "layout",
   "tags": [
     "collapsible",

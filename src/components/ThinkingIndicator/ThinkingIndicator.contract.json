@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ThinkingIndicator",
-  "description": "Animated indicator showing AI is processing",
+  "description": "Shows that an AI response is being generated.",
   "category": "ai",
   "tags": [
     "thinking",

@@ -85,7 +85,7 @@
 
   &.active {
     border-color: var(--fui-border, $fui-border);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--fui-control-selected-bg, $fui-bg-active);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }

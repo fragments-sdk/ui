@@ -93,7 +93,14 @@ describe("CodeBlock", () => {
     await waitForHighlight(overlayContainer);
   });
 
-  it("copies code to clipboard on copy button click", async () => {
+  it('keeps persistent copy visible with a trailing content gutter', async () => {
+    const { container } = render(<CodeBlock code="npx @usefragments/cli init" persistentCopy />);
+    expect(container.querySelector(`.${styles.persistentCopyWrapper}`)).toBeInTheDocument();
+    expect(container.querySelector(`.${styles.persistentCopy}`)).toBeInTheDocument();
+    await waitForHighlight(container);
+  });
+
+  it('copies code to clipboard on copy button click', async () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {

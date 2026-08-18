@@ -1,41 +1,48 @@
-import { createRef } from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, waitFor, expectNoA11yViolations } from '../../test/utils';
-import { Header } from './index';
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { createRef } from "react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { Header } from "./index";
 
-describe('Header', () => {
-  it('renders as a banner landmark (header element)', () => {
+const headerStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Header/Header.module.scss"),
+  "utf8"
+);
+
+describe("Header", () => {
+  it("renders as a banner landmark (header element)", () => {
     render(
       <Header>
         <Header.Brand>Logo</Header.Brand>
       </Header>
     );
-    const header = screen.getByRole('banner');
+    const header = screen.getByRole("banner");
     expect(header).toBeInTheDocument();
-    expect(header).not.toHaveAttribute('data-scrolled');
+    expect(header).not.toHaveAttribute("data-scrolled");
     expect(header.className).not.toMatch(/elevatedOnScroll|navCentered|containerPage/);
   });
 
-  it('renders Brand slot content', () => {
+  it("renders Brand slot content", () => {
     render(
       <Header>
         <Header.Brand>My App</Header.Brand>
       </Header>
     );
-    expect(screen.getByText('My App')).toBeInTheDocument();
+    expect(screen.getByText("My App")).toBeInTheDocument();
   });
 
-  it('renders Brand as a link when href is provided', () => {
+  it("renders Brand as a link when href is provided", () => {
     render(
       <Header>
         <Header.Brand href="/">Home</Header.Brand>
       </Header>
     );
-    const link = screen.getByRole('link', { name: 'Home' });
-    expect(link).toHaveAttribute('href', '/');
+    const link = screen.getByRole("link", { name: "Home" });
+    expect(link).toHaveAttribute("href", "/");
   });
 
-  it('renders Brand asChild while preserving semantics, ref, classes, and handlers', async () => {
+  it("renders Brand asChild while preserving semantics, ref, classes, and handlers", async () => {
     const user = userEvent.setup();
     const ref = createRef<HTMLAnchorElement>();
     const parentClick = vi.fn();
@@ -57,21 +64,21 @@ describe('Header', () => {
       </Header>
     );
 
-    const link = screen.getByRole('link', { name: 'Fragments home' });
+    const link = screen.getByRole("link", { name: "Fragments home" });
     expect(ref.current).toBe(link);
-    expect(link).toHaveAttribute('href', '/');
+    expect(link).toHaveAttribute("href", "/");
     expect(link.className).toMatch(/brand/);
-    expect(link.className).toContain('parent-brand');
-    expect(link.className).toContain('child-brand');
+    expect(link.className).toContain("parent-brand");
+    expect(link.className).toContain("child-brand");
 
     await user.click(link);
     expect(childClick).toHaveBeenCalledOnce();
     expect(parentClick).toHaveBeenCalledOnce();
   });
 
-  it('applies page layout and scroll elevation options without changing initial markup', async () => {
-    const originalScrollY = Object.getOwnPropertyDescriptor(window, 'scrollY');
-    Object.defineProperty(window, 'scrollY', { configurable: true, value: 32 });
+  it("applies page layout and scroll elevation options without changing initial markup", async () => {
+    const originalScrollY = Object.getOwnPropertyDescriptor(window, "scrollY");
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 32 });
 
     try {
       render(
@@ -83,21 +90,21 @@ describe('Header', () => {
         </Header>
       );
 
-      const header = screen.getByRole('banner');
+      const header = screen.getByRole("banner");
       expect(header.className).toMatch(/elevatedOnScroll/);
       expect(header.className).toMatch(/navCentered/);
       expect(header.className).toMatch(/containerPage/);
-      await waitFor(() => expect(header).toHaveAttribute('data-scrolled', 'true'));
+      await waitFor(() => expect(header).toHaveAttribute("data-scrolled", "true"));
     } finally {
       if (originalScrollY) {
-        Object.defineProperty(window, 'scrollY', originalScrollY);
+        Object.defineProperty(window, "scrollY", originalScrollY);
       } else {
-        Reflect.deleteProperty(window, 'scrollY');
+        Reflect.deleteProperty(window, "scrollY");
       }
     }
   });
 
-  it('renders navigation with accessible label', () => {
+  it("renders navigation with accessible label", () => {
     render(
       <Header>
         <Header.Nav aria-label="Primary navigation">
@@ -106,25 +113,37 @@ describe('Header', () => {
         </Header.Nav>
       </Header>
     );
-    expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Contact' })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "About" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Contact" })).toBeInTheDocument();
   });
 
   it('marks active NavItem with aria-current="page"', () => {
     render(
       <Header>
         <Header.Nav>
-          <Header.NavItem href="/about" active>About</Header.NavItem>
+          <Header.NavItem href="/about" active>
+            About
+          </Header.NavItem>
           <Header.NavItem href="/contact">Contact</Header.NavItem>
         </Header.Nav>
       </Header>
     );
-    expect(screen.getByRole('link', { name: 'About' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: 'Contact' })).not.toHaveAttribute('aria-current');
+    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Contact" })).not.toHaveAttribute("aria-current");
   });
 
-  it('composes Header.NavItem asChild click handlers and forwards extra props', async () => {
+  it("uses the shared persistent-selection surface for active navigation", () => {
+    expect(headerStyles).toContain("--fui-control-selected-bg");
+    expect(headerStyles).not.toContain("background-color: var(--fui-bg-secondary");
+  });
+
+  it("gives the canonical search slot its semantic shell surface", () => {
+    expect(headerStyles).toContain("--fui-header-search-bg");
+    expect(headerStyles).toContain("var(--fui-bg-subtle");
+  });
+
+  it("composes Header.NavItem asChild click handlers and forwards extra props", async () => {
     const user = userEvent.setup();
     const parentClick = vi.fn();
     const childClick = vi.fn();
@@ -133,20 +152,22 @@ describe('Header', () => {
       <Header>
         <Header.Nav aria-label="Main">
           <Header.NavItem asChild onClick={parentClick} data-testid="nav-item-link">
-            <a href="#docs" onClick={childClick}>Docs</a>
+            <a href="#docs" onClick={childClick}>
+              Docs
+            </a>
           </Header.NavItem>
         </Header.Nav>
       </Header>
     );
 
-    const link = screen.getByRole('link', { name: 'Docs' });
-    expect(link).toHaveAttribute('data-testid', 'nav-item-link');
+    const link = screen.getByRole("link", { name: "Docs" });
+    expect(link).toHaveAttribute("data-testid", "nav-item-link");
     await user.click(link);
     expect(childClick).toHaveBeenCalled();
     expect(parentClick).toHaveBeenCalled();
   });
 
-  it('renders Actions slot', () => {
+  it("renders Actions slot", () => {
     render(
       <Header>
         <Header.Actions>
@@ -154,10 +175,10 @@ describe('Header', () => {
         </Header.Actions>
       </Header>
     );
-    expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sign In" })).toBeInTheDocument();
   });
 
-  it('renders mobile navigation actions with forwarded props and classes', () => {
+  it("renders mobile navigation actions with forwarded props and classes", () => {
     render(
       <Header>
         <Header.MobileNavActions className="custom-mobile-actions" data-testid="mobile-actions">
@@ -166,21 +187,21 @@ describe('Header', () => {
       </Header>
     );
 
-    const actions = screen.getByTestId('mobile-actions');
+    const actions = screen.getByTestId("mobile-actions");
     expect(actions.className).toMatch(/mobileNavActions/);
-    expect(actions.className).toContain('custom-mobile-actions');
-    expect(screen.getByRole('button', { name: 'Start free' })).toBeInTheDocument();
+    expect(actions.className).toContain("custom-mobile-actions");
+    expect(screen.getByRole("button", { name: "Start free" })).toBeInTheDocument();
   });
 
-  it('Header.Trigger composes onClick and forwards button props', async () => {
+  it("Header.Trigger composes onClick and forwards button props", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
     const originalMatchMedia = window.matchMedia;
-    Object.defineProperty(window, 'matchMedia', {
+    Object.defineProperty(window, "matchMedia", {
       writable: true,
       value: vi.fn().mockImplementation(() => ({
         matches: true,
-        media: '(max-width: 767px)',
+        media: "(max-width: 767px)",
         onchange: null,
         addListener: vi.fn(),
         removeListener: vi.fn(),
@@ -196,20 +217,20 @@ describe('Header', () => {
       </Header>
     );
 
-    const trigger = await screen.findByTestId('header-trigger');
+    const trigger = await screen.findByTestId("header-trigger");
     await user.click(trigger);
     expect(onClick).toHaveBeenCalled();
 
-    Object.defineProperty(window, 'matchMedia', { writable: true, value: originalMatchMedia });
+    Object.defineProperty(window, "matchMedia", { writable: true, value: originalMatchMedia });
   });
 
-  it('Header.Trigger renders custom icons from Header.icons', async () => {
+  it("Header.Trigger renders custom icons from Header.icons", async () => {
     const originalMatchMedia = window.matchMedia;
-    Object.defineProperty(window, 'matchMedia', {
+    Object.defineProperty(window, "matchMedia", {
       writable: true,
       value: vi.fn().mockImplementation(() => ({
         matches: true,
-        media: '(max-width: 767px)',
+        media: "(max-width: 767px)",
         onchange: null,
         addListener: vi.fn(),
         removeListener: vi.fn(),
@@ -220,17 +241,25 @@ describe('Header', () => {
     });
 
     render(
-      <Header icons={{ menu: <span data-testid="header-menu-icon" aria-hidden>Menu</span> }}>
+      <Header
+        icons={{
+          menu: (
+            <span data-testid="header-menu-icon" aria-hidden>
+              Menu
+            </span>
+          ),
+        }}
+      >
         <Header.Trigger />
       </Header>
     );
 
-    expect(await screen.findByTestId('header-menu-icon')).toBeInTheDocument();
+    expect(await screen.findByTestId("header-menu-icon")).toBeInTheDocument();
 
-    Object.defineProperty(window, 'matchMedia', { writable: true, value: originalMatchMedia });
+    Object.defineProperty(window, "matchMedia", { writable: true, value: originalMatchMedia });
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <Header>
         <Header.Brand>Logo</Header.Brand>
@@ -243,8 +272,8 @@ describe('Header', () => {
   });
 });
 
-describe('Header.NavMenu', () => {
-  it('renders a trigger button with the label', () => {
+describe("Header.NavMenu", () => {
+  it("renders a trigger button with the label", () => {
     render(
       <Header>
         <Header.Nav>
@@ -254,10 +283,10 @@ describe('Header.NavMenu', () => {
         </Header.Nav>
       </Header>
     );
-    expect(screen.getByRole('button', { name: /Docs/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Docs/ })).toBeInTheDocument();
   });
 
-  it('opens dropdown on click and shows menu items', async () => {
+  it("opens dropdown on click and shows menu items", async () => {
     const user = userEvent.setup();
     render(
       <Header>
@@ -270,14 +299,14 @@ describe('Header.NavMenu', () => {
       </Header>
     );
 
-    await user.click(screen.getByRole('button', { name: /Docs/ }));
+    await user.click(screen.getByRole("button", { name: /Docs/ }));
     await waitFor(() => {
-      expect(screen.getByText('CLI Reference')).toBeInTheDocument();
-      expect(screen.getByText('MCP Tools')).toBeInTheDocument();
+      expect(screen.getByText("CLI Reference")).toBeInTheDocument();
+      expect(screen.getByText("MCP Tools")).toBeInTheDocument();
     });
   });
 
-  it('applies active class to trigger when active prop is true', () => {
+  it("applies active class to trigger when active prop is true", () => {
     render(
       <Header>
         <Header.Nav>
@@ -287,11 +316,11 @@ describe('Header.NavMenu', () => {
         </Header.Nav>
       </Header>
     );
-    const trigger = screen.getByRole('button', { name: /Docs/ });
+    const trigger = screen.getByRole("button", { name: /Docs/ });
     expect(trigger.className).toMatch(/navItemActive/);
   });
 
-  it('renders custom nav menu chevron icon from Header.icons', () => {
+  it("renders custom nav menu chevron icon from Header.icons", () => {
     render(
       <Header icons={{ navMenuChevron: <span data-testid="header-navmenu-chevron" aria-hidden /> }}>
         <Header.Nav>
@@ -302,10 +331,10 @@ describe('Header.NavMenu', () => {
       </Header>
     );
 
-    expect(screen.getByTestId('header-navmenu-chevron')).toBeInTheDocument();
+    expect(screen.getByTestId("header-navmenu-chevron")).toBeInTheDocument();
   });
 
-  it('renders NavMenuItem with href as a link', async () => {
+  it("renders NavMenuItem with href as a link", async () => {
     const user = userEvent.setup();
     render(
       <Header>
@@ -317,34 +346,36 @@ describe('Header.NavMenu', () => {
       </Header>
     );
 
-    await user.click(screen.getByRole('button', { name: /Docs/ }));
+    await user.click(screen.getByRole("button", { name: /Docs/ }));
     await waitFor(() => {
-      const item = screen.getByText('Getting Started');
-      const link = item.closest('a') || item;
-      expect(link).toHaveAttribute('href', '/getting-started');
+      const item = screen.getByText("Getting Started");
+      const link = item.closest("a") || item;
+      expect(link).toHaveAttribute("href", "/getting-started");
     });
   });
 
-  it('applies active class to NavMenuItem when active', async () => {
+  it("applies active class to NavMenuItem when active", async () => {
     const user = userEvent.setup();
     render(
       <Header>
         <Header.Nav>
           <Header.NavMenu label="Docs">
-            <Header.NavMenuItem href="/cli" active>CLI</Header.NavMenuItem>
+            <Header.NavMenuItem href="/cli" active>
+              CLI
+            </Header.NavMenuItem>
           </Header.NavMenu>
         </Header.Nav>
       </Header>
     );
 
-    await user.click(screen.getByRole('button', { name: /Docs/ }));
+    await user.click(screen.getByRole("button", { name: /Docs/ }));
     await waitFor(() => {
-      const item = screen.getByText('CLI');
+      const item = screen.getByText("CLI");
       expect(item.className).toMatch(/navMenuItemActive/);
     });
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <Header>
         <Header.Nav aria-label="Main">
@@ -357,7 +388,7 @@ describe('Header.NavMenu', () => {
       </Header>
     );
     await expectNoA11yViolations(container, {
-      disabledRules: ['aria-command-name'],
+      disabledRules: ["aria-command-name"],
     });
   });
 });

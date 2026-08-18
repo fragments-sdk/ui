@@ -5,9 +5,14 @@ import { useResolvedControlSize } from "../ComponentDefaults";
 import { useTheme, type ThemeMode } from "../Theme/context";
 import styles from "./ThemeToggle.module.scss";
 
-export interface ThemeToggleProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ThemeToggleProps extends React.HTMLAttributes<HTMLElement> {
   /** Size of the toggle button */
   size?: "sm" | "md" | "lg";
+  /**
+   * `group` is the segmented light/dark control. `icon` is a single button
+   * that shows the current resolved theme and toggles light ↔ dark.
+   */
+  appearance?: "group" | "icon";
   /** Whether to include system mode option (default: false) */
   showSystem?: boolean;
   /** Controlled value for custom usage (bypasses theme context) */
@@ -71,6 +76,7 @@ function MonitorIcon({ size = 20 }: { size?: number }) {
  */
 export function ThemeToggle({
   size: sizeProp,
+  appearance = "group",
   showSystem = false,
   value: controlledValue,
   onValueChange,
@@ -79,10 +85,44 @@ export function ThemeToggle({
   ...htmlProps
 }: ThemeToggleProps) {
   const size = useResolvedControlSize(sizeProp);
-  const { mode: contextMode, setMode: setContextMode } = useTheme();
+  const {
+    mode: contextMode,
+    setMode: setContextMode,
+    resolvedMode,
+    toggleMode,
+  } = useTheme();
 
   const isControlled = controlledValue !== undefined;
   const currentMode = isControlled ? controlledValue : contextMode;
+  const sizeClass = styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}`];
+
+  if (appearance === "icon") {
+    const resolved = isControlled ? controlledValue : resolvedMode;
+    const nextMode = resolved === "dark" ? "light" : "dark";
+    const iconClasses = [styles.toggleButton, styles.iconButton, sizeClass, className]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      <button
+        {...(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        type="button"
+        className={iconClasses}
+        onClick={() => {
+          if (isControlled) {
+            onValueChange?.(nextMode);
+          } else {
+            toggleMode();
+          }
+        }}
+        aria-label={
+          ariaLabel ?? (resolved === "dark" ? "Switch to light mode" : "Switch to dark mode")
+        }
+      >
+        {resolved === "dark" ? <MoonIcon /> : <SunIcon />}
+      </button>
+    );
+  }
 
   const handleModeChange = (newMode: "light" | "dark") => {
     if (isControlled) {
@@ -92,11 +132,7 @@ export function ThemeToggle({
     }
   };
 
-  const groupClasses = [
-    styles.toggleGroup,
-    styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}`],
-    className,
-  ]
+  const groupClasses = [styles.toggleGroup, sizeClass, className]
     .filter(Boolean)
     .join(" ");
 

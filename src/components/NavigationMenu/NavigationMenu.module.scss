@@ -11,12 +11,29 @@
 
 .root {
   @include navigation.properties;
-  // Container query context: children respond to nav menu width, not viewport
-  @include container(fui-navmenu);
 
+  // Do not set container-type here. Size containment makes width:auto resolve as
+  // if the element were empty, so when the desktop list is display:none the nav
+  // collapses to 0px in a header flex row and the hamburger overflows onto the
+  // next slot (search). Mobile/desktop visibility uses viewport breakpoints.
   position: relative;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+}
+
+.root[data-mobile] {
+  // JS owns the breakpoint so hosts can retire a persistent rail at `lg`
+  // without forking the canonical drawer. These selectors keep the rendered
+  // desktop and mobile controls in lockstep with that resolved mode.
+  .list,
+  .viewport {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
 }
 
 .rootVertical {
@@ -315,6 +332,8 @@
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-primary, $fui-text-primary);
   flex-shrink: 0;
+  width: var(--fui-navigation-mobile-target, var(--_fui-action-track));
+  height: var(--fui-navigation-mobile-target, var(--_fui-action-track));
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -353,7 +372,8 @@
   z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 11);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  // Keep the header pinned; ScrollArea in .drawerBody owns vertical scroll.
+  overflow: hidden;
   animation: slideInLeft var(--fui-transition-normal, $fui-transition-normal) ease;
 
   @media (min-width: 480px) {
@@ -387,6 +407,8 @@
   justify-content: center;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
+  width: var(--fui-navigation-mobile-target, var(--_fui-action-track));
+  height: var(--fui-navigation-mobile-target, var(--_fui-action-track));
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -395,9 +417,14 @@
 }
 
 .drawerBody {
+  @include navigation.properties;
+
   flex: 1;
-  overflow-y: auto;
-  padding: var(--fui-space-2, $fui-space-2) 0;
+  // Flex item default min-height:auto prevents shrinking below content, which
+  // blocks ScrollArea from receiving a bounded height and scrolling.
+  min-height: 0;
+  // Match Sidebar.nav: outer gutter + row inset so links aren't flush to the edge.
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-navigation-gutter);
 }
 
 .drawerNav {
@@ -411,6 +438,7 @@
 
   display: flex;
   align-items: center;
+  min-block-size: var(--fui-navigation-mobile-row-track, var(--fui-navigation-row-track));
   width: 100%;
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -421,11 +449,26 @@
   }
 }
 
+.drawerLinkActive {
+  color: var(--fui-text-primary, $fui-text-primary);
+  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  background-color: var(--fui-control-selected-bg, $fui-bg-active);
+
+  &:hover {
+    background-color: var(--fui-control-selected-bg, $fui-bg-active);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
 .drawerSectionLabel {
   @include navigation.section-row;
 
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4)
-    var(--fui-space-1, $fui-space-1);
+  // Keep inline inset from navigation.section-row so labels align with .drawerLink.
+  // The previous shorthand padding used space-4 and made labels look more indented
+  // than their items (MobileContent links previously used popup-row geometry).
+  padding-block: var(--fui-space-3, $fui-space-3) var(--fui-space-1, $fui-space-1);
+  margin-block-start: var(--fui-space-2, $fui-space-2);
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
 .drawerCollapsibleTrigger {
@@ -434,6 +477,7 @@
 
   display: flex;
   align-items: center;
+  min-block-size: var(--fui-navigation-mobile-row-track, var(--fui-navigation-row-track));
   justify-content: space-between;
   width: 100%;
   color: var(--fui-text-primary, $fui-text-primary);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Progress",
-  "description": "Visual indicator of task completion or loading state. Available in linear and circular variants.",
+  "description": "Shows task completion or loading progress in a linear or circular form.",
   "category": "feedback",
   "tags": ["progress", "loading", "indicator", "percentage", "status"],
   "status": "stable",

@@ -170,7 +170,9 @@
 }
 
 .section:not(:first-child) {
-  margin-top: var(--fui-raw-space-16, 16px);
+  // Consumers with sparse, reading-oriented navigation (docs sites) can open
+  // this up via --fui-sidebar-section-gap without touching the raw scale.
+  margin-top: var(--fui-sidebar-section-gap, var(--fui-raw-space-16, 16px));
 }
 
 .sectionHeader {
@@ -191,7 +193,11 @@
   flex: 1;
   min-width: 0;
   text-transform: none;
-  color: var(--fui-sidebar-faint);
+  color: var(--fui-sidebar-section-label-color, var(--fui-sidebar-faint));
+  font-weight: var(
+    --fui-sidebar-section-label-weight,
+    var(--fui-font-weight-normal, #{$fui-font-weight-normal})
+  );
 }
 
 .sectionActionWrapper {
@@ -225,7 +231,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--fui-raw-space-2, 2px);
+  gap: var(--fui-sidebar-item-gap, var(--fui-raw-space-2, 2px));
 }
 
 .sectionCollapsible .sectionTrigger {
@@ -278,6 +284,8 @@
   display: flex;
   align-items: center;
   width: 100%;
+  font-size: var(--fui-sidebar-item-font-size, var(--fui-type-ui-compact-size, 12px));
+  line-height: var(--fui-sidebar-item-line-height, var(--fui-type-ui-compact-line, 16px));
   border: var(--fui-stroke-hairline, 1px) solid transparent;
   border-radius: var(--fui-sidebar-row-radius);
   color: var(--fui-sidebar-muted);

@@ -1,18 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "NavigationMenu",
-  "description": "Rich navigation menu for site headers with dropdown content panels, animated viewport transitions, and automatic mobile drawer. Supports structured links with titles, descriptions, and icons.",
+  "description": "Presents responsive site navigation with dropdown panels and a mobile drawer.",
   "category": "navigation",
-  "tags": [
-    "navigation",
-    "menu",
-    "header",
-    "dropdown",
-    "navbar",
-    "mobile",
-    "responsive",
-    "drawer"
-  ],
+  "tags": ["navigation", "menu", "header", "dropdown", "navbar", "mobile", "responsive", "drawer"],
   "status": "stable",
   "sourcePath": "src/components/NavigationMenu/index.tsx",
   "exportName": "NavigationMenu",
@@ -24,7 +15,8 @@
     "orientation: horizontal|vertical (default: horizontal)",
     "delayDuration: number (default: 200)",
     "skipDelayDuration: number (default: 300)",
-    "icons: object"
+    "icons: object",
+    "mobileBreakpoint: md|lg (default: md)"
   ],
   "props": {
     "children": {
@@ -53,10 +45,7 @@
       "description": "'horizontal' | 'vertical'",
       "default": "horizontal",
       "required": false,
-      "values": [
-        "horizontal",
-        "vertical"
-      ]
+      "values": ["horizontal", "vertical"]
     },
     "delayDuration": {
       "type": "number",
@@ -74,6 +63,13 @@
       "type": "object",
       "description": "Optional icon overrides for triggerChevron, mobileMenu, mobileClose, and drawerClose controls",
       "required": false
+    },
+    "mobileBreakpoint": {
+      "type": "enum",
+      "description": "Viewport breakpoint below which the mobile drawer replaces desktop navigation",
+      "default": "md",
+      "required": false,
+      "values": ["md", "lg"]
     }
   },
   "usage": {
@@ -97,7 +93,8 @@
       "Use simple NavigationMenu.Link for items without dropdown content",
       "NavigationMenu.Link asChild composes click handlers and respects event.preventDefault()",
       "Triggers open on hover (desktop) with configurable delay",
-      "Use the icons prop to replace trigger chevrons and mobile drawer controls with icons from any package"
+      "Use the icons prop to replace trigger chevrons and mobile drawer controls with icons from any package",
+      "Use mobileBreakpoint=\"lg\" when a rail-based shell retires its sidebar and desktop navigation together below 1024px"
     ],
     "accessibility": [
       "Uses disclosure pattern (not menu role) per W3C guidance",
@@ -163,15 +160,12 @@
       "orientation: horizontal | vertical — layout direction",
       "delayDuration: number — hover open delay (default: 200ms)",
       "icons: { triggerChevron?, mobileMenu?, mobileClose?, drawerClose? } — custom internal control icons",
+      "mobileBreakpoint: md | lg — mobile drawer breakpoint (default: md)",
       "NavigationMenu.Link: title + description + icon for structured links, or children for simple links",
       "NavigationMenu.Link asChild: composes child and menu click handlers (preventDefault keeps menu open)",
       "NavigationMenu.MobileContent: slot for extra mobile-only sections"
     ],
-    "a11yRules": [
-      "A11Y_DISCLOSURE_PATTERN",
-      "A11Y_KEYBOARD_NAV",
-      "A11Y_FOCUS_TRAP"
-    ]
+    "a11yRules": ["A11Y_DISCLOSURE_PATTERN", "A11Y_KEYBOARD_NAV", "A11Y_FOCUS_TRAP"]
   },
   "ai": {
     "compositionPattern": "compound",
@@ -187,9 +181,7 @@
       "MobileContent",
       "MobileSection"
     ],
-    "requiredChildren": [
-      "List"
-    ],
+    "requiredChildren": ["List"],
     "commonPatterns": [
       "<NavigationMenu><NavigationMenu.List><NavigationMenu.Item value=\"docs\"><NavigationMenu.Trigger>Docs</NavigationMenu.Trigger><NavigationMenu.Content><NavigationMenu.Link href=\"/guides\" title=\"Guides\" description=\"Learn the basics\" /></NavigationMenu.Content></NavigationMenu.Item></NavigationMenu.List><NavigationMenu.Viewport /></NavigationMenu>"
     ]

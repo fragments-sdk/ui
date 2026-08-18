@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ConversationList",
-  "description": "Scrollable message container with auto-scroll and history loading",
+  "description": "Displays scrollable messages with history loading and automatic scrolling.",
   "category": "ai",
   "tags": [
     "conversation",

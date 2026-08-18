@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Menu",
-  "description": "Dropdown menu for actions and commands. Supports submenus, check items, radio groups, and keyboard shortcuts.",
+  "description": "Presents actions and commands in a keyboard-accessible dropdown.",
   "category": "feedback",
   "tags": [
     "menu",

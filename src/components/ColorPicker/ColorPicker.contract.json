@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ColorPicker",
-  "description": "Color selection control with hex input and visual picker. Displays a swatch that opens a full color picker on click.",
+  "description": "Selects a color through a visual picker and hexadecimal input.",
   "category": "forms",
   "tags": [
     "color",

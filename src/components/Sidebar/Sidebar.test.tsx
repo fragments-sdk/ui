@@ -144,6 +144,20 @@ describe('Sidebar', () => {
     expect(aside).toHaveAttribute('data-state');
   });
 
+  it('makes the closed mobile drawer inert', async () => {
+    mockMatchMedia(true);
+    renderSidebar({ defaultOpen: false });
+
+    await vi.waitFor(() => {
+      const aside = document.querySelector('aside');
+      expect(aside).toHaveAttribute('aria-hidden', 'true');
+      expect(aside).toHaveAttribute('inert');
+      expect(aside).toHaveAttribute('data-state', 'closed');
+    });
+
+    mockMatchMedia(false);
+  });
+
   it('uses icon collapse width when collapsed with icons', () => {
     renderSidebar({ collapsed: true });
     const aside = document.querySelector('aside');

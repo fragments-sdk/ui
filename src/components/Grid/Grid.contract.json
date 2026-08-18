@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Grid",
-  "description": "Responsive grid layout for arranging items in columns with consistent spacing",
+  "description": "Arranges items in responsive columns with consistent spacing.",
   "category": "layout",
   "tags": [
     "grid",

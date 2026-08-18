@@ -258,7 +258,7 @@
     "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
-    "@fontsource-variable/inter": "5.2.8",
+    "@fontsource-variable/instrument-sans": "5.2.8",
     "@fontsource-variable/jetbrains-mono": "5.2.8",
     "@playwright/test": "1.58.2",
     "@storybook/addon-a11y": "^8",

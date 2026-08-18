@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Main",
-  "description": "Canonical page composition owning gutter, measure, and vertical rhythm.",
+  "description": "Controls page gutters, reading measure, and vertical rhythm.",
   "category": "layout",
   "tags": ["main", "page", "layout", "compound"],
   "status": "stable",

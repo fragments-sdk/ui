@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Avatar",
-  "description": "Visual representation of a user or entity",
+  "description": "Displays a visual representation of a user or entity.",
   "category": "display",
   "tags": [
     "user",

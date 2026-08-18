@@ -65,7 +65,10 @@
 }
 
 @mixin selected-state {
-  background: var(--fui-bg-active, #{tokens.$fui-bg-active});
+  background: var(
+    --fui-field-selection-bg,
+    var(--fui-control-selected-bg, #{tokens.$fui-bg-active})
+  );
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }
 

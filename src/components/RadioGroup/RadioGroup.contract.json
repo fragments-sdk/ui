@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "RadioGroup",
-  "description": "Single selection from a list of mutually exclusive options",
+  "description": "Selects one option from a mutually exclusive set.",
   "category": "forms",
   "tags": ["form", "radio", "selection", "options"],
   "status": "stable",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Listbox",
-  "description": "Controlled listbox for search results, autocomplete dropdowns, and command menus. Provides Menu-like styling without requiring a trigger.",
+  "description": "Displays a controlled list of selectable options without requiring a trigger.",
   "category": "forms",
   "tags": [
     "listbox",

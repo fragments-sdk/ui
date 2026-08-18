@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Combobox",
-  "description": "Searchable select input that filters a dropdown list of options as you type. Supports single and multiple selection with chips.",
+  "description": "Filters a list of options as the user types.",
   "category": "forms",
   "tags": ["combobox", "autocomplete", "search", "select", "typeahead", "form", "multiselect"],
   "status": "stable",

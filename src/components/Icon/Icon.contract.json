@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Icon",
-  "description": "Wrapper for icon components with consistent sizing and semantic colors. Provides standardized icon rendering across the design system.",
+  "description": "Standardizes icon sizing and semantic color.",
   "category": "display",
   "tags": [
     "icon",

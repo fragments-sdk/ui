@@ -1,9 +1,9 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-@use '../../recipes/action' as action;
-@use '../../recipes/layout' as layout;
-@use '../../recipes/navigation' as navigation;
-@use '../../recipes/popup' as popup;
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/navigation" as navigation;
+@use "../../recipes/popup" as popup;
 
 // ============================================
 // Header Root
@@ -18,7 +18,7 @@
   align-items: center;
   height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
   min-height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  background-color: var(--fui-main-bg, $fui-main-bg);
   padding: 0 var(--fui-space-4, $fui-space-4);
   z-index: var(--fui-header-z-index, $fui-header-z-index);
 }
@@ -152,14 +152,16 @@
 }
 
 .navItemActive {
-  // Match sidebar active state: secondary surface + primary text
+  // Persistent navigation selection shares the same neutral role as Sidebar
+  // and Tabs. Do not use --fui-bg-active here: that token is for the brief
+  // pointer-down state.
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
 
   &.navItem:hover,
   &.navItem:active {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }
@@ -236,13 +238,13 @@
 }
 
 .navMenuItemActive {
-  // Match active nav item treatment in both light and dark themes
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  // Match the persistent navigation treatment in both light and dark themes.
+  background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &[data-highlighted] {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }
@@ -269,6 +271,8 @@
 
 .search {
   display: none;
+  background-color: var(--fui-header-search-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
+  border-radius: var(--fui-button-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
 
   // Show search when header has enough space
   @include container-min($fui-breakpoint-md, fui-header) {
@@ -404,7 +408,7 @@
 
 .mobileNavLinkActive {
   color: var(--fui-text-primary, $fui-text-primary);
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
 }
 
 .mobileNavActions {
@@ -415,13 +419,21 @@
 }
 
 @keyframes mobileNavFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes mobileNavSlideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -19,10 +19,10 @@
 
 // Variants
 .default {
-  color: var(--fui-color-accent, $fui-color-accent);
+  color: var(--fui-link-color, var(--fui-color-accent, #{$fui-color-accent}));
 
   &:hover {
-    color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    color: var(--fui-link-color-hover, var(--fui-color-accent-hover, #{$fui-color-accent-hover}));
   }
 }
 
@@ -45,15 +45,32 @@
 // Underline styles
 .underline-always {
   text-decoration: underline;
+  text-decoration-style: var(--fui-link-underline-style, solid);
   text-underline-offset: var(--fui-raw-space-2);
 }
 
 .underline-hover {
-  text-decoration: none;
+  text-decoration-line: var(--fui-link-underline-line, none);
+  text-decoration-style: var(--fui-link-underline-style, solid);
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
 
   &:hover {
-    text-decoration: underline;
-    text-underline-offset: var(--fui-raw-space-2);
+    text-decoration-line: underline;
+    text-decoration-style: var(--fui-link-underline-style, solid);
+    text-decoration-color: currentColor;
+    text-underline-offset: 0.2em;
+  }
+}
+
+.underline-dotted {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+
+  &:hover {
+    text-decoration-color: currentColor;
   }
 }
 

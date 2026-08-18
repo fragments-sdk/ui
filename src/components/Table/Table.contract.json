@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Table",
-  "description": "Semantic HTML table with compound API. For data-rich tables with sorting and selection, use DataTable.",
+  "description": "Displays structured data in semantic rows and columns.",
   "category": "display",
   "tags": [
     "table",

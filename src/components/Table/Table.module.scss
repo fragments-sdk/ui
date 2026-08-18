@@ -112,7 +112,8 @@
 }
 
 .bordered {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: var(--fui-table-divider-size, var(--fui-stroke-hairline)) solid
     var(--fui-table-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-md, $fui-radius-md);

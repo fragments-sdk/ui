@@ -18,7 +18,7 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
   /** Visual variant */
   variant?: 'default' | 'subtle' | 'muted';
   /** Underline style */
-  underline?: 'always' | 'hover' | 'none';
+  underline?: 'always' | 'hover' | 'none' | 'dotted';
   /** Open in new tab (adds rel="noopener noreferrer") */
   external?: boolean;
   /**

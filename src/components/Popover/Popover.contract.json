@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Popover",
-  "description": "Rich content overlay anchored to a trigger element. Use for forms, detailed information, or interactive content that should stay in context.",
+  "description": "Presents interactive content beside its trigger without blocking the page.",
   "category": "feedback",
   "tags": [
     "popover",

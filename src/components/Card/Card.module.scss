@@ -155,6 +155,7 @@
     min-height: var(--fui-control-track-md, 32px);
     padding: #{surface.inset("compact")};
     margin-bottom: 0;
+    background-color: var(--fui-card-header-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
     border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
 
     // Multi-line copy: top-align trailing controls with the title line.

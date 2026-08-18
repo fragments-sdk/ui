@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Chart",
-  "description": "Composable chart wrapper for recharts with theme-aware tooltips, legends, and color integration.",
+  "description": "Wraps Recharts with theme-aware tooltips, legends, and colors.",
   "category": "display",
   "tags": [
     "chart",

@@ -11,7 +11,7 @@
   align-items: stretch;
   gap: 0;
   padding: 0;
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  background-color: var(--fui-theme-toggle-bg, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
   border-radius: var(--fui-radius-md, $fui-radius-md);
 }
 
@@ -36,14 +36,28 @@
 }
 
 .toggleButtonActive {
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+  background-color: var(
+    --fui-theme-toggle-active-bg,
+    var(--fui-control-selected-bg, #{$fui-bg-active})
+  );
   color: var(--fui-text-primary, $fui-text-primary);
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+  box-shadow: var(--fui-theme-toggle-active-shadow, none);
 }
 
-// Size variants
+.iconButton {
+  background-color: transparent;
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  }
+}
+
+// Size variants — nested for the group, same-element for appearance="icon"
 .sizeSm {
-  .toggleButton {
+  .toggleButton,
+  &.toggleButton {
     @include action.icon-only("sm");
 
     svg {
@@ -53,7 +67,8 @@
 }
 
 .sizeMd {
-  .toggleButton {
+  .toggleButton,
+  &.toggleButton {
     @include action.icon-only("md");
 
     svg {
@@ -63,7 +78,8 @@
 }
 
 .sizeLg {
-  .toggleButton {
+  .toggleButton,
+  &.toggleButton {
     @include action.icon-only("lg");
 
     svg {

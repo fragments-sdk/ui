@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Separator",
-  "description": "Visual divider between content sections. Use to create clear visual boundaries and improve content organization.",
+  "description": "Creates a visual boundary between related content sections.",
   "category": "layout",
   "tags": [
     "separator",

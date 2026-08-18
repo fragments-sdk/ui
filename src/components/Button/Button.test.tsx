@@ -8,6 +8,10 @@ import { Button } from "./index";
 
 const tokenStyles = readFileSync(resolve(process.cwd(), "src/tokens/_variables.scss"), "utf8");
 const seedStyles = readFileSync(resolve(process.cwd(), "src/tokens/_seeds.scss"), "utf8");
+const buttonStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Button/Button.module.scss"),
+  "utf8"
+);
 
 describe("Button", () => {
   it("renders with children", () => {
@@ -50,6 +54,24 @@ describe("Button", () => {
     expect(buttonTokenSection).toContain("--fui-button-neutral-shadow: none");
     expect(buttonTokenSection).toContain("--fui-button-outlined-shadow: none");
     expect(seedStyles).toContain("$fui-danger: #a54f46 !default");
+  });
+
+  it("keeps secondary fill-led and reserves a visible neutral border for outlined", () => {
+    const secondaryStyles = buttonStyles.slice(
+      buttonStyles.indexOf(".secondary {"),
+      buttonStyles.indexOf(".ghost {")
+    );
+    const outlinedStyles = buttonStyles.slice(
+      buttonStyles.indexOf(".outlined {"),
+      buttonStyles.indexOf("// Icon-only button")
+    );
+
+    expect(secondaryStyles).toContain("--_button-border: transparent");
+    expect(secondaryStyles).toContain("--_button-border-hover: transparent");
+    expect(outlinedStyles).toContain("--_button-border: var(--fui-button-neutral-border)");
+    expect(outlinedStyles).toContain(
+      "--_button-border-hover: var(--fui-button-neutral-border-hover)"
+    );
   });
 
   it("applies link variant class", () => {

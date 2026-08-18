@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Pagination",
-  "description": "Page navigation for paginated data. Supports controlled/uncontrolled, page counts, and edge/sibling customization.",
+  "description": "Navigates between pages in a larger data set.",
   "category": "navigation",
   "tags": [
     "pagination",

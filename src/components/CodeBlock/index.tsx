@@ -547,14 +547,22 @@ function processShikiHtml(html: string, options: ProcessOptions): string {
     const lineClass = lineClasses.join(" ");
     const diffMarker = isAdded ? "+" : isRemoved ? "-" : " ";
 
-    if (showLineNumbers || hasDiff) {
-      const lineNumHtml = showLineNumbers
-        ? `<span class="line-number">${displayLineNum}</span>`
+    const lineNumHtml =
+      showLineNumbers || hasDiff
+        ? `${showLineNumbers ? `<span class="line-number">${displayLineNum}</span>` : ""}${
+            hasDiff ? `<span class="diff-marker">${diffMarker}</span>` : ""
+          }`
         : "";
-      const diffMarkerHtml = hasDiff ? `<span class="diff-marker">${diffMarker}</span>` : "";
-      return `<span class="${lineClass}">${lineNumHtml}${diffMarkerHtml}${line}</span>`;
+
+    // Shiki already wraps each row in <span class="line">; merge into that span
+    // instead of nesting a second .line (which breaks the inline-block row layout).
+    if (/^<span class="line([^"]*)">/.test(line)) {
+      return line.replace(
+        /^<span class="line([^"]*)">/,
+        `<span class="${lineClass}$1">${lineNumHtml}`,
+      );
     }
-    return `<span class="${lineClass}">${line}</span>`;
+    return `<span class="${lineClass}">${lineNumHtml}${line}</span>`;
   });
 
   // Reconstruct the HTML

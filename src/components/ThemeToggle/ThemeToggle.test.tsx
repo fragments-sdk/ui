@@ -54,6 +54,22 @@ describe("ThemeToggle", () => {
     vi.clearAllMocks();
   });
 
+  it("renders a single icon button that toggles the resolved theme", async () => {
+    const user = userEvent.setup();
+    render(
+      <ThemeProvider defaultMode="light">
+        <ThemeToggle appearance="icon" />
+      </ThemeProvider>
+    );
+
+    const button = screen.getByRole("button", { name: "Switch to dark mode" });
+    expect(screen.queryByRole("group")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Light mode" })).not.toBeInTheDocument();
+
+    await user.click(button);
+    expect(screen.getByRole("button", { name: "Switch to light mode" })).toBeInTheDocument();
+  });
+
   it("preserves the group and button DOM contract", () => {
     render(
       <ThemeProvider defaultMode="light">

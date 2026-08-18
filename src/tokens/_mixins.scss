@@ -6,14 +6,9 @@
 
 // Focus ring for keyboard accessibility
 @mixin focus-ring {
-  outline: none;
-  box-shadow:
-    0 0 0 1px
-      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 28%, transparent),
-    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
-      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 12%, transparent),
-    0 10px 24px -16px
-      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 32%, transparent);
+  outline: var(--fui-focus-ring-width, #{$fui-focus-ring-width}) solid
+    var(--fui-focus-ring-color, #{$fui-focus-ring-color});
+  outline-offset: var(--fui-focus-ring-offset, #{$fui-focus-ring-offset});
 }
 
 // Reset button styles

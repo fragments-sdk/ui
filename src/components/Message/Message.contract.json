@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Message",
-  "description": "Individual chat message display with role-based styling",
+  "description": "Displays an individual chat message with role-based styling.",
   "category": "ai",
   "tags": [
     "message",

@@ -24,7 +24,7 @@ const meta = {
     },
     underline: {
       control: 'select',
-      options: ['always', 'hover', 'none'],
+      options: ['always', 'hover', 'none', 'dotted'],
       description: 'Underline behavior',
     },
     external: { control: 'boolean' },

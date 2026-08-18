@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Chip",
-  "description": "Interactive pill-shaped element for filtering, selecting, and tagging. Supports single and multi-select via Chip.Group.",
+  "description": "Filters, selects, or tags items with an interactive pill.",
   "category": "forms",
   "tags": ["chip", "tag", "filter", "selection", "multi-select", "action"],
   "status": "stable",

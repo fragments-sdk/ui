@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Fieldset",
-  "description": "Groups related form fields with an accessible legend. Use to organize forms into logical sections.",
+  "description": "Groups related form controls under an accessible legend.",
   "category": "forms",
   "tags": [
     "form",

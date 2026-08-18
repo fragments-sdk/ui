@@ -106,6 +106,40 @@ describe("TableOfContents", () => {
     document.body.removeChild(heading);
   });
 
+  it("disables smooth scrolling when reduced motion is requested", async () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: true,
+      media: "(prefers-reduced-motion: reduce)",
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    });
+    const scrollIntoViewMock = vi.fn();
+    const heading = document.createElement("h2");
+    heading.id = "reduced-motion";
+    heading.scrollIntoView = scrollIntoViewMock;
+    document.body.appendChild(heading);
+
+    try {
+      const user = userEvent.setup();
+      render(
+        <TableOfContents>
+          <TableOfContents.Item id="reduced-motion">Reduced motion</TableOfContents.Item>
+        </TableOfContents>
+      );
+
+      await user.click(screen.getByRole("link", { name: "Reduced motion" }));
+      expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: "auto" });
+    } finally {
+      document.body.removeChild(heading);
+      window.matchMedia = originalMatchMedia;
+    }
+  });
+
   it("allows item onClick to prevent smooth-scroll behavior", async () => {
     const scrollIntoViewMock = vi.fn();
     const heading = document.createElement("h2");
@@ -152,9 +186,47 @@ describe("TableOfContents", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
-  it("marks top-level items with data-depth=0 and indented items with data-depth=1", () => {
+  it("shows indented items and nested groups by default", () => {
     render(
       <TableOfContents>
+        <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
+        <TableOfContents.Item id="details" indent>
+          Details
+        </TableOfContents.Item>
+        <TableOfContents.Group label="Examples">
+          <TableOfContents.Item id="basic-example">Basic example</TableOfContents.Item>
+        </TableOfContents.Group>
+      </TableOfContents>
+    );
+
+    expect(screen.getByRole("link", { name: "Overview" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Details" })).toBeInTheDocument();
+    expect(screen.getByText("Examples")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Basic example" })).toBeInTheDocument();
+  });
+
+  it("hides indented items when hideSubItems is true", () => {
+    render(
+      <TableOfContents hideSubItems>
+        <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
+        <TableOfContents.Item id="details" indent>
+          Details
+        </TableOfContents.Item>
+        <TableOfContents.Group label="Examples">
+          <TableOfContents.Item id="basic-example">Basic example</TableOfContents.Item>
+        </TableOfContents.Group>
+      </TableOfContents>
+    );
+
+    expect(screen.getByRole("link", { name: "Overview" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Details" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Examples")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Basic example" })).not.toBeInTheDocument();
+  });
+
+  it("marks top-level items with data-depth=0 and indented items with data-depth=1", () => {
+    render(
+      <TableOfContents hideSubItems={false}>
         <TableOfContents.Item id="a">A</TableOfContents.Item>
         <TableOfContents.Item id="b" indent>
           B
@@ -168,19 +240,26 @@ describe("TableOfContents", () => {
 
   it("keeps the index flush and contains no unreachable rail implementation", () => {
     const list = classDeclarations(tableOfContentsStyles, "list");
+    const title = classDeclarations(tableOfContentsStyles, "title");
 
     expect(list).toContain("padding: 0;");
     expect(list).not.toContain("padding-left:");
     expect(list).toContain("gap: var(--fui-stroke-hairline, 1px);");
+    expect(title).toContain(
+      "padding-inline: var(--fui-toc-inline-inset, var(--fui-navigation-inline-inset));"
+    );
     expect(tableOfContentsStyles).not.toContain("$rail-");
     expect(tableOfContentsStyles).not.toContain("--toc-rail");
     expect(tableOfContentsStyles).toContain("@include navigation.row;");
     expect(tableOfContentsStyles).toContain("@include navigation.section-row;");
+    expect(tableOfContentsStyles).toContain("--fui-toc-row-track");
+    expect(tableOfContentsStyles).toContain("--fui-toc-title-gap");
+    expect(tableOfContentsStyles).toContain("--fui-toc-hover-bg");
   });
 
   it("has no accessibility violations", async () => {
     const { container } = render(
-      <TableOfContents>
+      <TableOfContents hideSubItems={false}>
         <TableOfContents.Item id="intro">Introduction</TableOfContents.Item>
         <TableOfContents.Item id="setup" active>
           Setup
@@ -197,7 +276,7 @@ describe("TableOfContents", () => {
   describe("Group", () => {
     it("renders the group label and nested items", () => {
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
           <TableOfContents.Group label="Primitives">
             <TableOfContents.Item id="button">Button</TableOfContents.Item>
@@ -213,7 +292,7 @@ describe("TableOfContents", () => {
     it("starts open by default and toggles closed on click", async () => {
       const user = userEvent.setup();
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Group label="Custom">
             <TableOfContents.Item id="features">Features</TableOfContents.Item>
           </TableOfContents.Group>
@@ -230,7 +309,7 @@ describe("TableOfContents", () => {
 
     it("respects defaultOpen=false", () => {
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Group label="Custom" defaultOpen={false}>
             <TableOfContents.Item id="features">Features</TableOfContents.Item>
           </TableOfContents.Group>
@@ -247,7 +326,7 @@ describe("TableOfContents", () => {
       const user = userEvent.setup();
       const onOpenChange = vi.fn();
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Group label="Custom" open={true} onOpenChange={onOpenChange}>
             <TableOfContents.Item id="features">Features</TableOfContents.Item>
           </TableOfContents.Group>
@@ -265,7 +344,7 @@ describe("TableOfContents", () => {
 
     it("renders a non-interactive header when collapsible=false", () => {
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Group label="Always Open" collapsible={false}>
             <TableOfContents.Item id="x">X</TableOfContents.Item>
           </TableOfContents.Group>
@@ -278,7 +357,7 @@ describe("TableOfContents", () => {
 
     it("inherits depth=1 for nested items inside a Group", () => {
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Group label="Primitives">
             <TableOfContents.Item id="button">Button</TableOfContents.Item>
           </TableOfContents.Group>
@@ -290,7 +369,7 @@ describe("TableOfContents", () => {
 
     it("renders trailing content (e.g., a count) on the group header", () => {
       render(
-        <TableOfContents hideTitle>
+        <TableOfContents hideTitle hideSubItems={false}>
           <TableOfContents.Group label="Custom" trailing={<span data-testid="count">140</span>}>
             <TableOfContents.Item id="x">X</TableOfContents.Item>
           </TableOfContents.Group>
@@ -301,7 +380,7 @@ describe("TableOfContents", () => {
 
     it("has no accessibility violations with nested groups", async () => {
       const { container } = render(
-        <TableOfContents>
+        <TableOfContents hideSubItems={false}>
           <TableOfContents.Item id="all" active>
             All
           </TableOfContents.Item>

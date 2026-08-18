@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Tooltip",
-  "description": "Contextual help text that appears on hover or focus. Perfect for explaining icons, truncated text, or providing additional context.",
+  "description": "Provides brief contextual help when a control receives hover or focus.",
   "category": "feedback",
   "tags": [
     "tooltip",

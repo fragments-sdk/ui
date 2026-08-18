@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Badge",
-  "description": "Compact label for status, counts, or categorization. Draws attention to metadata without dominating the layout.",
+  "description": "Labels a status, count, or category without dominating nearby content.",
   "category": "display",
   "tags": ["status", "label", "tag", "count", "chip"],
   "status": "stable",

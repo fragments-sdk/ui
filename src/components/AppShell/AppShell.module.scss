@@ -35,6 +35,10 @@
   // Smooth transition for sidebar collapse/expand
   transition: grid-template-columns var(--fui-transition-normal, $fui-transition-normal) ease;
 
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
   // Mobile: single column layout
   @include below-md {
     grid-template-areas:
@@ -80,10 +84,13 @@
     var(--fui-appshell-header-height, $fui-appshell-header-height)
   );
   z-index: var(--fui-header-z-index, $fui-header-z-index);
-  background-color: inherit;
+  // Match the reading pane, not the canvas. `inherit` painted the header with
+  // the shell's body-bg, so light mode matched the paper sidebar while dark
+  // mode happened to match main.
+  background-color: var(--fui-main-bg, $fui-main-bg);
 
   > header {
-    background-color: inherit;
+    background-color: var(--fui-main-bg, $fui-main-bg);
   }
 }
 

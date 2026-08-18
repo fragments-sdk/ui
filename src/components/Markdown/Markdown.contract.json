@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Markdown",
-  "description": "Renders markdown strings as styled prose using react-markdown and remark-gfm. Supports headings, lists, tables, code blocks, blockquotes, and more.",
+  "description": "Renders Markdown as styled headings, lists, tables, code, and blockquotes.",
   "category": "display",
   "tags": [
     "markdown",

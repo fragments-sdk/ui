@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Loading",
-  "description": "Versatile loading indicator with multiple variants for showing progress or waiting states",
+  "description": "Communicates progress or a waiting state.",
   "category": "feedback",
   "tags": [
     "loading",

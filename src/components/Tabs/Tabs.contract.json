@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Tabs",
-  "description": "Organize content into switchable panels. Use for related content that benefits from a compact, navigable layout.",
+  "description": "Switches between related content panels within the same context.",
   "category": "navigation",
   "tags": [
     "tabs",
