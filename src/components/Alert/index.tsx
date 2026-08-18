@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Button as BaseButton } from '@base-ui/react/button';
-import styles from './Alert.module.scss';
+import * as React from "react";
+import { Button as BaseButton } from "@base-ui/react/button";
+import styles from "./Alert.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type AlertSeverity = 'info' | 'success' | 'warning' | 'error';
+export type AlertSeverity = "info" | "success" | "warning" | "error";
 
 /**
  * Alert for contextual feedback messages (info, success, warning, error).
@@ -38,12 +38,18 @@ export interface AlertActionsProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface AlertActionProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
+export interface AlertActionProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "onClick"
+> {
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export interface AlertCloseProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+export interface AlertCloseProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   children?: React.ReactNode;
 }
 
@@ -67,7 +73,7 @@ const AlertContext = React.createContext<AlertContextValue | null>(null);
 function useAlertContext() {
   const context = React.useContext(AlertContext);
   if (!context) {
-    throw new Error('Alert compound components must be used within an Alert');
+    throw new Error("Alert compound components must be used within an Alert");
   }
   return context;
 }
@@ -88,22 +94,17 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
 // ============================================
 
 const severityIcons: Record<AlertSeverity, string> = {
-  info: 'i',
-  success: '\u2713',
-  warning: '!',
-  error: '\u2717',
+  info: "i",
+  success: "\u2713",
+  warning: "!",
+  error: "\u2717",
 };
 
 // ============================================
 // Components
 // ============================================
 
-function AlertRoot({
-  children,
-  severity = 'info',
-  className,
-  ...htmlProps
-}: AlertProps) {
+function AlertRoot({ children, severity = "info", className, ...htmlProps }: AlertProps) {
   const [dismissed, setDismissed] = React.useState(false);
   const titleId = React.useId();
   const descId = React.useId();
@@ -114,10 +115,8 @@ function AlertRoot({
 
   if (dismissed) return null;
 
-  const classes = [styles.alert, styles[severity], className]
-    .filter(Boolean)
-    .join(' ');
-  const role = severity === 'warning' || severity === 'error' ? 'alert' : 'status';
+  const classes = [styles.alert, styles[severity], className].filter(Boolean).join(" ");
+  const role = severity === "warning" || severity === "error" ? "alert" : "status";
 
   const contextValue: AlertContextValue = {
     severity,
@@ -143,7 +142,7 @@ function AlertRoot({
 
 function AlertIcon({ children, className, ...htmlProps }: AlertIconProps) {
   const { severity } = useAlertContext();
-  const classes = [styles.icon, className].filter(Boolean).join(' ');
+  const classes = [styles.icon, className].filter(Boolean).join(" ");
 
   return (
     <span {...htmlProps} className={classes} aria-hidden="true">
@@ -153,13 +152,17 @@ function AlertIcon({ children, className, ...htmlProps }: AlertIconProps) {
 }
 
 function AlertBody({ children, className, ...htmlProps }: AlertBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.body, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function AlertTitle({ children, className, ...htmlProps }: AlertTitleProps) {
   const { titleId } = useAlertContext();
-  const classes = [styles.title, className].filter(Boolean).join(' ');
+  const classes = [styles.title, className].filter(Boolean).join(" ");
   return (
     <div {...htmlProps} id={htmlProps.id ?? titleId} className={classes}>
       {children}
@@ -169,7 +172,7 @@ function AlertTitle({ children, className, ...htmlProps }: AlertTitleProps) {
 
 function AlertContent({ children, className, ...htmlProps }: AlertContentProps) {
   const { descId } = useAlertContext();
-  const classes = [styles.content, className].filter(Boolean).join(' ');
+  const classes = [styles.content, className].filter(Boolean).join(" ");
   return (
     <div {...htmlProps} id={htmlProps.id ?? descId} className={classes}>
       {children}
@@ -178,18 +181,22 @@ function AlertContent({ children, className, ...htmlProps }: AlertContentProps) 
 }
 
 function AlertActions({ children, className, ...htmlProps }: AlertActionsProps) {
-  const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.actions, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function AlertAction({
   children,
   onClick,
-  type = 'button',
+  type = "button",
   className,
   ...htmlProps
 }: AlertActionProps) {
-  const classes = [styles.action, className].filter(Boolean).join(' ');
+  const classes = [styles.action, className].filter(Boolean).join(" ");
   return (
     <BaseButton {...htmlProps} onClick={onClick} type={type} className={classes}>
       {children}
@@ -201,12 +208,12 @@ function AlertClose({
   children,
   className,
   onClick,
-  type = 'button',
-  'aria-label': ariaLabel = 'Dismiss alert',
+  type = "button",
+  "aria-label": ariaLabel = "Dismiss alert",
   ...htmlProps
 }: AlertCloseProps) {
   const { dismiss } = useAlertContext();
-  const classes = [styles.close, className].filter(Boolean).join(' ');
+  const classes = [styles.close, className].filter(Boolean).join(" ");
 
   return (
     <BaseButton
@@ -216,7 +223,7 @@ function AlertClose({
       aria-label={ariaLabel}
       className={classes}
     >
-      {children ?? '\u00D7'}
+      {children ?? "\u00D7"}
     </BaseButton>
   );
 }

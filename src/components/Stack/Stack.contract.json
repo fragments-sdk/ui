@@ -3,13 +3,7 @@
   "name": "Stack",
   "description": "Arranges children in a row or column with consistent responsive spacing.",
   "category": "layout",
-  "tags": [
-    "stack",
-    "layout",
-    "flex",
-    "spacing",
-    "responsive"
-  ],
+  "tags": ["stack", "layout", "flex", "spacing", "responsive"],
   "status": "stable",
   "sourcePath": "src/components/Stack/index.tsx",
   "exportName": "Stack",
@@ -47,24 +41,13 @@
       "type": "enum",
       "description": "Cross-axis alignment",
       "required": false,
-      "values": [
-        "start",
-        "center",
-        "end",
-        "stretch",
-        "baseline"
-      ]
+      "values": ["start", "center", "end", "stretch", "baseline"]
     },
     "justify": {
       "type": "enum",
       "description": "Main-axis alignment",
       "required": false,
-      "values": [
-        "start",
-        "center",
-        "end",
-        "between"
-      ]
+      "values": ["start", "center", "end", "between"]
     },
     "wrap": {
       "type": "boolean",
@@ -201,15 +184,11 @@
       "as: string - HTML element",
       "Pass-through DOM props supported on the root (id, role, aria-*, data-*, handlers)"
     ],
-    "a11yRules": [
-      "A11Y_SEMANTIC_ELEMENTS"
-    ]
+    "a11yRules": ["A11Y_SEMANTIC_ELEMENTS"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

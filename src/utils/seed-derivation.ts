@@ -245,10 +245,14 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
   if (!result) {
     throw new Error(`Invalid hex color: ${hex}`);
   }
+  const [, red, green, blue] = result;
+  if (!red || !green || !blue) {
+    throw new Error(`Invalid hex color: ${hex}`);
+  }
   return {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
+    r: parseInt(red, 16),
+    g: parseInt(green, 16),
+    b: parseInt(blue, 16),
   };
 }
 
@@ -409,12 +413,12 @@ function interpolateShade(palette: PaletteShades, level: number): string {
   }
 
   // Find surrounding levels
-  let lower = levels[0];
-  let upper = levels[levels.length - 1];
+  let lower = 50;
+  let upper = 950;
 
   for (const l of levels) {
     if (l < level) lower = l;
-    if (l > level && upper === levels[levels.length - 1]) upper = l;
+    if (l > level && upper === 950) upper = l;
   }
 
   const lowerColor = palette[lower as keyof PaletteShades];

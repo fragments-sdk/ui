@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Command.module.scss';
+import * as React from "react";
+import styles from "./Command.module.scss";
 
 // ============================================
 // Types
@@ -30,7 +30,7 @@ export interface CommandListProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export interface CommandItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
+export interface CommandItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSelect"> {
   children: React.ReactNode;
   /** Value used for filtering (falls back to text content) */
   value?: string;
@@ -78,13 +78,13 @@ function defaultFilter(value: string, search: string, keywords?: string[]): numb
 }
 
 function getTextContent(node: React.ReactNode): string {
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(getTextContent).join(' ');
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(getTextContent).join(" ");
   if (React.isValidElement(node)) {
     const childProps = node.props as { children?: React.ReactNode };
     return getTextContent(childProps.children);
   }
-  return '';
+  return "";
 }
 
 // ============================================
@@ -115,7 +115,7 @@ const CommandContext = React.createContext<CommandContextValue | null>(null);
 
 function useCommandContext() {
   const ctx = React.useContext(CommandContext);
-  if (!ctx) throw new Error('Command sub-components must be used within <Command>');
+  if (!ctx) throw new Error("Command sub-components must be used within <Command>");
   return ctx;
 }
 
@@ -150,7 +150,7 @@ function SearchIcon() {
 function CommandRoot({
   children,
   search: controlledSearch,
-  defaultSearch = '',
+  defaultSearch = "",
   onSearchChange,
   filter = defaultFilter,
   loop = true,
@@ -231,14 +231,25 @@ function CommandRoot({
       visibleCount,
       listId,
     }),
-    [search, setSearch, filter, scores, registerItem, unregisterItem, activeId, loop, visibleCount, listId]
+    [
+      search,
+      setSearch,
+      filter,
+      scores,
+      registerItem,
+      unregisterItem,
+      activeId,
+      loop,
+      visibleCount,
+      listId,
+    ]
   );
 
   return (
     <CommandContext.Provider value={contextValue}>
       <div
         {...htmlProps}
-        className={[styles.command, className].filter(Boolean).join(' ')}
+        className={[styles.command, className].filter(Boolean).join(" ")}
         role="search"
       >
         {children}
@@ -247,12 +258,7 @@ function CommandRoot({
   );
 }
 
-function CommandInput({
-  className,
-  onChange,
-  onKeyDown,
-  ...htmlProps
-}: CommandInputProps) {
+function CommandInput({ className, onChange, onKeyDown, ...htmlProps }: CommandInputProps) {
   const { search, setSearch, listRef, setActiveId, activeId, loop, listId } = useCommandContext();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -261,7 +267,7 @@ function CommandInput({
     if (!list) return [];
     return Array.from(
       list.querySelectorAll<HTMLElement>('[data-command-item]:not([data-disabled="true"])')
-    ).filter((el) => el.style.display !== 'none');
+    ).filter((el) => el.style.display !== "none");
   }, [listRef]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -270,45 +276,48 @@ function CommandInput({
 
     const items = getEnabledItems();
     if (items.length === 0) return;
+    const firstItem = items[0];
+    const lastItem = items.at(-1);
+    if (!firstItem || !lastItem) return;
 
-    const currentIndex = activeId
-      ? items.findIndex((item) => item.id === activeId)
-      : -1;
+    const currentIndex = activeId ? items.findIndex((item) => item.id === activeId) : -1;
 
     switch (event.key) {
-      case 'ArrowDown': {
+      case "ArrowDown": {
         event.preventDefault();
         if (currentIndex < 0) {
-          setActiveId(items[0].id);
+          setActiveId(firstItem.id);
         } else if (currentIndex < items.length - 1) {
-          setActiveId(items[currentIndex + 1].id);
+          const nextItem = items[currentIndex + 1];
+          if (nextItem) setActiveId(nextItem.id);
         } else if (loop) {
-          setActiveId(items[0].id);
+          setActiveId(firstItem.id);
         }
         break;
       }
-      case 'ArrowUp': {
+      case "ArrowUp": {
         event.preventDefault();
         if (currentIndex < 0) {
-          setActiveId(items[items.length - 1].id);
+          setActiveId(lastItem.id);
         } else if (currentIndex > 0) {
-          setActiveId(items[currentIndex - 1].id);
+          const previousItem = items[currentIndex - 1];
+          if (previousItem) setActiveId(previousItem.id);
         } else if (loop) {
-          setActiveId(items[items.length - 1].id);
+          setActiveId(lastItem.id);
         }
         break;
       }
-      case 'Home': {
+      case "Home": {
         event.preventDefault();
-        setActiveId(items[0].id);
+        setActiveId(firstItem.id);
         break;
       }
-      case 'End': {
+      case "End": {
         event.preventDefault();
-        setActiveId(items[items.length - 1].id);
+        setActiveId(lastItem.id);
         break;
       }
-      case 'Enter': {
+      case "Enter": {
         event.preventDefault();
         if (activeId) {
           const activeItem = items.find((item) => item.id === activeId);
@@ -343,7 +352,7 @@ function CommandInput({
           setSearch(e.target.value);
         }}
         onKeyDown={handleKeyDown}
-        className={[styles.input, className].filter(Boolean).join(' ')}
+        className={[styles.input, className].filter(Boolean).join(" ")}
       />
     </div>
   );
@@ -358,7 +367,7 @@ function CommandList({ children, className, ...htmlProps }: CommandListProps) {
       {...htmlProps}
       id={listId}
       role="listbox"
-      className={[styles.list, className].filter(Boolean).join(' ')}
+      className={[styles.list, className].filter(Boolean).join(" ")}
     >
       {children}
     </div>
@@ -402,11 +411,13 @@ function CommandItem({
   // Scroll active item into view
   React.useEffect(() => {
     if (isActive && itemRef.current) {
-      itemRef.current.scrollIntoView({ block: 'nearest' });
+      itemRef.current.scrollIntoView({ block: "nearest" });
     }
   }, [isActive]);
 
-  const activateItem = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+  const activateItem = (
+    event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>
+  ) => {
     if (disabled) return;
     onItemSelect?.(textValue, event);
   };
@@ -440,7 +451,7 @@ function CommandItem({
       onKeyDown={(e) => {
         onKeyDown?.(e);
         if (e.defaultPrevented) return;
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           activateItem(e);
         }
@@ -453,8 +464,8 @@ function CommandItem({
         className,
       ]
         .filter(Boolean)
-        .join(' ')}
-      style={{ ...style, display: isVisible ? undefined : 'none' }}
+        .join(" ")}
+      style={{ ...style, display: isVisible ? undefined : "none" }}
     >
       {children}
     </div>
@@ -470,8 +481,8 @@ function CommandGroup({ children, heading, className, ...htmlProps }: CommandGro
   // Check if any children are visible after each score update
   React.useEffect(() => {
     if (!groupRef.current) return;
-    const items = groupRef.current.querySelectorAll<HTMLElement>('[data-command-item]');
-    const anyVisible = Array.from(items).some((item) => item.style.display !== 'none');
+    const items = groupRef.current.querySelectorAll<HTMLElement>("[data-command-item]");
+    const anyVisible = Array.from(items).some((item) => item.style.display !== "none");
     setHasVisibleChildren(anyVisible);
   }, [scores]);
 
@@ -483,8 +494,8 @@ function CommandGroup({ children, heading, className, ...htmlProps }: CommandGro
       {...restHtmlProps}
       role="group"
       aria-labelledby={heading ? labelId : undefined}
-      className={[styles.group, className].filter(Boolean).join(' ')}
-      style={{ ...style, display: hasVisibleChildren ? undefined : 'none' }}
+      className={[styles.group, className].filter(Boolean).join(" ")}
+      style={{ ...style, display: hasVisibleChildren ? undefined : "none" }}
     >
       {heading && (
         <div id={labelId} className={styles.groupHeading}>
@@ -507,7 +518,7 @@ function CommandEmpty({ children, className, ...htmlProps }: CommandEmptyProps) 
       role="option"
       aria-disabled="true"
       aria-selected="false"
-      className={[styles.empty, className].filter(Boolean).join(' ')}
+      className={[styles.empty, className].filter(Boolean).join(" ")}
     >
       {children}
     </div>
@@ -519,7 +530,7 @@ function CommandSeparator({ className, ...htmlProps }: CommandSeparatorProps) {
     <div
       {...htmlProps}
       role="separator"
-      className={[styles.separator, className].filter(Boolean).join(' ')}
+      className={[styles.separator, className].filter(Boolean).join(" ")}
     />
   );
 }

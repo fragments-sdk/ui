@@ -3,13 +3,7 @@
   "name": "AppShell",
   "description": "Composes a responsive application shell from header, sidebar, main, and optional aside regions.",
   "category": "layout",
-  "tags": [
-    "layout",
-    "shell",
-    "scaffold",
-    "dashboard",
-    "app-layout"
-  ],
+  "tags": ["layout", "shell", "scaffold", "dashboard", "app-layout"],
   "status": "stable",
   "sourcePath": "src/components/AppShell/index.tsx",
   "exportName": "AppShell",
@@ -30,12 +24,7 @@
       "description": "Structural layout for CSS grid areas",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "sidebar",
-        "sidebar-floating",
-        "floating"
-      ]
+      "values": ["default", "sidebar", "sidebar-floating", "floating"]
     },
     "bg": {
       "type": "string",
@@ -139,12 +128,7 @@
   ],
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Header",
-      "Sidebar",
-      "Main",
-      "Aside"
-    ]
+    "subComponents": ["Header", "Sidebar", "Main", "Aside"]
   },
   "provenance": {
     "source": "migrated",

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import styles from './Dialog.module.scss';
+import * as React from "react";
+import { Dialog as BaseDialog } from "@base-ui/react/dialog";
+import styles from "./Dialog.module.scss";
 
 // ============================================
 // Types
@@ -30,17 +30,20 @@ export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement>
   /** Dialog width.
    * @default "md"
    * @see https://usefragments.com/components/dialog#sizes */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: "sm" | "md" | "lg" | "xl" | "full";
   /** Whether the dialog should autofocus content on open.
    * @default true */
   initialFocus?: boolean;
 }
 
-export interface DialogTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface DialogTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
 }
 
-export interface DialogDescriptionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface DialogDescriptionProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  "children"
+> {
   children: React.ReactNode;
 }
 
@@ -61,7 +64,7 @@ type DialogTriggerAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> 
   asChild?: false;
 };
 
-type DialogTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+type DialogTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, "children"> & {
   children: React.ReactElement;
   asChild: true;
 };
@@ -73,7 +76,7 @@ type DialogCloseAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & 
   asChild?: false;
 };
 
-type DialogCloseAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+type DialogCloseAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, "children"> & {
   children: React.ReactElement;
   asChild: true;
 };
@@ -108,13 +111,7 @@ function CloseIcon() {
 // Components
 // ============================================
 
-function DialogRoot({
-  children,
-  open,
-  defaultOpen,
-  onOpenChange,
-  modal = true,
-}: DialogProps) {
+function DialogRoot({ children, open, defaultOpen, onOpenChange, modal = true }: DialogProps) {
   return (
     <BaseDialog.Root
       open={open}
@@ -127,15 +124,14 @@ function DialogRoot({
   );
 }
 
-function DialogTrigger({
-  children,
-  asChild,
-  className,
-  ...htmlProps
-}: DialogTriggerProps) {
+function DialogTrigger({ children, asChild, className, ...htmlProps }: DialogTriggerProps) {
   if (asChild) {
     return (
-      <BaseDialog.Trigger {...htmlProps} className={className} render={children as React.ReactElement}>
+      <BaseDialog.Trigger
+        {...htmlProps}
+        className={className}
+        render={children as React.ReactElement}
+      >
         {null}
       </BaseDialog.Trigger>
     );
@@ -150,14 +146,12 @@ function DialogTrigger({
 
 function DialogContent({
   children,
-  size = 'md',
+  size = "md",
   initialFocus = true,
   className,
   ...htmlProps
 }: DialogContentProps) {
-  const popupClasses = [styles.popup, styles[size], className]
-    .filter(Boolean)
-    .join(' ');
+  const popupClasses = [styles.popup, styles[size], className].filter(Boolean).join(" ");
 
   return (
     <BaseDialog.Portal>
@@ -172,17 +166,25 @@ function DialogContent({
 }
 
 function DialogHeader({ children, className, ...htmlProps }: DialogHeaderProps) {
-  const classes = [styles.header, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.header, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function DialogTitle({ children, className, ...htmlProps }: DialogTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BaseDialog.Title {...htmlProps} className={classes}>{children}</BaseDialog.Title>;
+  const classes = [styles.title, className].filter(Boolean).join(" ");
+  return (
+    <BaseDialog.Title {...htmlProps} className={classes}>
+      {children}
+    </BaseDialog.Title>
+  );
 }
 
 function DialogDescription({ children, className, ...htmlProps }: DialogDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(' ');
+  const classes = [styles.description, className].filter(Boolean).join(" ");
   return (
     <BaseDialog.Description {...htmlProps} className={classes}>
       {children}
@@ -191,13 +193,21 @@ function DialogDescription({ children, className, ...htmlProps }: DialogDescript
 }
 
 function DialogBody({ children, className, ...htmlProps }: DialogBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.body, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function DialogFooter({ children, className, ...htmlProps }: DialogFooterProps) {
-  const classes = [styles.footer, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.footer, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 function DialogClose({ children, asChild, className, ...htmlProps }: DialogCloseProps) {
@@ -208,7 +218,7 @@ function DialogClose({ children, asChild, className, ...htmlProps }: DialogClose
         {...htmlProps}
         data-dialog-close
         aria-label="Close dialog"
-        className={[styles.close, className].filter(Boolean).join(' ')}
+        className={[styles.close, className].filter(Boolean).join(" ")}
       >
         <CloseIcon />
       </BaseDialog.Close>

@@ -3,14 +3,7 @@
   "name": "Menu",
   "description": "Presents actions and commands in a keyboard-accessible dropdown.",
   "category": "feedback",
-  "tags": [
-    "menu",
-    "dropdown",
-    "actions",
-    "context-menu",
-    "commands",
-    "submenu"
-  ],
+  "tags": ["menu", "dropdown", "actions", "context-menu", "commands", "submenu"],
   "status": "stable",
   "sourcePath": "src/components/Menu/index.tsx",
   "exportName": "Menu",
@@ -140,10 +133,7 @@
       "Menu.Item shortcut: string - keyboard shortcut text",
       "Menu.Item checked: boolean - check indicator for selection state"
     ],
-    "a11yRules": [
-      "A11Y_MENU_KEYBOARD",
-      "A11Y_MENU_ROLE"
-    ]
+    "a11yRules": ["A11Y_MENU_KEYBOARD", "A11Y_MENU_ROLE"]
   },
   "ai": {
     "compositionPattern": "compound",
@@ -160,10 +150,7 @@
       "Submenu",
       "SubmenuTrigger"
     ],
-    "requiredChildren": [
-      "Trigger",
-      "Content"
-    ],
+    "requiredChildren": ["Trigger", "Content"],
     "commonPatterns": [
       "<Menu><Menu.Trigger asChild><Button>Actions</Button></Menu.Trigger><Menu.Content><Menu.Item>{action1}</Menu.Item><Menu.Separator /><Menu.Item danger>{delete}</Menu.Item></Menu.Content></Menu>"
     ]

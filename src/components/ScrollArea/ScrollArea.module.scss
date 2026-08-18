@@ -1,5 +1,5 @@
-@use '../../tokens/measurements.generated' as measurements;
-@use '../../tokens/variables' as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../tokens/variables" as *;
 
 .root {
   --fui-scrollarea-track-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
@@ -55,7 +55,7 @@
 
   &:hover,
   &:focus-within,
-  &[data-scrollbar-visibility='always'] {
+  &[data-scrollbar-visibility="always"] {
     scrollbar-color: var(--fui-border-strong, #{$fui-border-strong}) transparent;
 
     &::-webkit-scrollbar-thumb {
@@ -82,17 +82,17 @@
   overflow: auto;
 }
 
-.horizontal:not([data-scroll-x='none']),
-.both:not([data-scroll-x='none']) {
+.horizontal:not([data-scroll-x="none"]),
+.both:not([data-scroll-x="none"]) {
   scroll-padding-inline: var(--_fui-scrollarea-inline-fade);
 }
 
-.vertical:not([data-scroll-y='none']),
-.both:not([data-scroll-y='none']) {
+.vertical:not([data-scroll-y="none"]),
+.both:not([data-scroll-y="none"]) {
   scroll-padding-block: var(--_fui-scrollarea-block-fade);
 }
 
-.viewport[data-scroll-x='end'] {
+.viewport[data-scroll-x="end"] {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     black calc(100% - var(--_fui-scrollarea-inline-fade)),
@@ -100,7 +100,7 @@
   );
 }
 
-.viewport[data-scroll-x='start'] {
+.viewport[data-scroll-x="start"] {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     transparent,
@@ -108,7 +108,7 @@
   );
 }
 
-.viewport[data-scroll-x='both'] {
+.viewport[data-scroll-x="both"] {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     transparent,
@@ -118,7 +118,7 @@
   );
 }
 
-.viewport[data-scroll-x='end']:dir(rtl) {
+.viewport[data-scroll-x="end"]:dir(rtl) {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     transparent,
@@ -126,7 +126,7 @@
   );
 }
 
-.viewport[data-scroll-x='start']:dir(rtl) {
+.viewport[data-scroll-x="start"]:dir(rtl) {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     black calc(100% - var(--_fui-scrollarea-inline-fade)),
@@ -134,7 +134,7 @@
   );
 }
 
-.viewport[data-scroll-y='end'] {
+.viewport[data-scroll-y="end"] {
   --_fui-scrollarea-block-mask: linear-gradient(
     to bottom,
     black calc(100% - var(--_fui-scrollarea-block-fade)),
@@ -142,7 +142,7 @@
   );
 }
 
-.viewport[data-scroll-y='start'] {
+.viewport[data-scroll-y="start"] {
   --_fui-scrollarea-block-mask: linear-gradient(
     to bottom,
     transparent,
@@ -150,7 +150,7 @@
   );
 }
 
-.viewport[data-scroll-y='both'] {
+.viewport[data-scroll-y="both"] {
   --_fui-scrollarea-block-mask: linear-gradient(
     to bottom,
     transparent,

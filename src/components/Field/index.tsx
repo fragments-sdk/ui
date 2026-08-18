@@ -140,7 +140,11 @@ function FieldValidity({ children }: FieldValidityProps) {
 
 function FieldRequired({ children = "*", className, ...htmlProps }: FieldRequiredProps) {
   return (
-    <span {...htmlProps} className={[styles.required, className].filter(Boolean).join(" ")} aria-hidden>
+    <span
+      {...htmlProps}
+      className={[styles.required, className].filter(Boolean).join(" ")}
+      aria-hidden
+    >
       {children}
     </span>
   );

@@ -3,14 +3,7 @@
   "name": "Command",
   "description": "Combines search with a keyboard-navigable list of actions.",
   "category": "navigation",
-  "tags": [
-    "command",
-    "palette",
-    "search",
-    "spotlight",
-    "quick-actions",
-    "cmdk"
-  ],
+  "tags": ["command", "palette", "search", "spotlight", "quick-actions", "cmdk"],
   "status": "stable",
   "sourcePath": "src/components/Command/index.tsx",
   "exportName": "Command",
@@ -132,26 +125,12 @@
       "Command.Item keywords: string[] - extra filter terms",
       "Command.Item onItemSelect: (value, event) => void - selection handler"
     ],
-    "a11yRules": [
-      "A11Y_COMBOBOX_ROLE",
-      "A11Y_LISTBOX_ROLE",
-      "A11Y_ACTIVE_DESCENDANT"
-    ]
+    "a11yRules": ["A11Y_COMBOBOX_ROLE", "A11Y_LISTBOX_ROLE", "A11Y_ACTIVE_DESCENDANT"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Input",
-      "List",
-      "Item",
-      "Group",
-      "Empty",
-      "Separator"
-    ],
-    "requiredChildren": [
-      "Input",
-      "List"
-    ],
+    "subComponents": ["Input", "List", "Item", "Group", "Empty", "Separator"],
+    "requiredChildren": ["Input", "List"],
     "commonPatterns": [
       "<Dialog><Dialog.Trigger><Button>Open Palette</Button></Dialog.Trigger><Dialog.Content size=\"sm\"><Command><Command.Input placeholder=\"Search...\" /><Command.List><Command.Group heading=\"Actions\"><Command.Item onItemSelect={() => {}}>Action 1</Command.Item></Command.Group><Command.Empty>No results.</Command.Empty></Command.List></Command></Dialog.Content></Dialog>"
     ]

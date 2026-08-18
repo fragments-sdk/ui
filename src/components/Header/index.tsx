@@ -1,33 +1,31 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { createPortal } from 'react-dom';
-import { Menu as BaseMenu } from '@base-ui/react/menu';
-import { CaretDown, List, X } from '@phosphor-icons/react';
-import { useFocusTrap } from '../../utils/a11y';
-import { ScrollArea } from '../ScrollArea';
-import styles from './Header.module.scss';
-import { useSidebar } from '../Sidebar';
-import { POPUP_OFFSET_PX } from '../../recipes/popup';
+import * as React from "react";
+import { createPortal } from "react-dom";
+import { Menu as BaseMenu } from "@base-ui/react/menu";
+import { CaretDown, List, X } from "@phosphor-icons/react";
+import { useFocusTrap } from "../../utils/a11y";
+import { ScrollArea } from "../ScrollArea";
+import styles from "./Header.module.scss";
+import { useSidebar } from "../Sidebar";
+import { POPUP_OFFSET_PX } from "../../recipes/popup";
 
 // ============================================
 // Types
 // ============================================
 
 export interface HeaderIconRenderState {
-  slot: 'menu' | 'close' | 'navMenuChevron' | 'mobileClose';
+  slot: "menu" | "close" | "navMenuChevron" | "mobileClose";
   open?: boolean;
   active?: boolean;
 }
 
-export type HeaderIconSlot =
-  | React.ReactNode
-  | ((state: HeaderIconRenderState) => React.ReactNode);
+export type HeaderIconSlot = React.ReactNode | ((state: HeaderIconRenderState) => React.ReactNode);
 
-export type HeaderIcons = Partial<Record<HeaderIconRenderState['slot'], HeaderIconSlot>>;
+export type HeaderIcons = Partial<Record<HeaderIconRenderState["slot"], HeaderIconSlot>>;
 
-export type HeaderNavAlign = 'start' | 'center';
-export type HeaderContainer = 'full' | 'page';
+export type HeaderNavAlign = "start" | "center";
+export type HeaderContainer = "full" | "page";
 
 export interface HeaderElevatedOnScrollOptions {
   /** Scroll offset before the elevated surface is applied */
@@ -39,7 +37,7 @@ export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   /** Header height (default: '56px') */
   height?: string;
   /** Position behavior */
-  position?: 'static' | 'fixed' | 'sticky';
+  position?: "static" | "fixed" | "sticky";
   /** Apply the elevated header surface after scroll */
   elevatedOnScroll?: boolean | HeaderElevatedOnScrollOptions;
   /** Navigation alignment inside the header */
@@ -61,10 +59,10 @@ export interface HeaderBrandProps extends React.HTMLAttributes<HTMLElement> {
 export interface HeaderNavProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   /** Accessible label for navigation */
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
-export interface HeaderNavItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onClick'> {
+export interface HeaderNavItemProps extends Omit<React.HTMLAttributes<HTMLElement>, "onClick"> {
   children: React.ReactNode;
   /** Whether this item is active/current */
   active?: boolean;
@@ -90,7 +88,7 @@ export interface HeaderTriggerProps extends React.ButtonHTMLAttributes<HTMLButto
   /** Custom trigger content */
   children?: React.ReactNode;
   /** Accessible label */
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 export interface HeaderNavMenuProps extends React.HTMLAttributes<HTMLLIElement> {
@@ -137,7 +135,7 @@ const HeaderContext = React.createContext<HeaderContextValue | null>(null);
 function useHeaderContext(): HeaderContextValue {
   const ctx = React.useContext(HeaderContext);
   if (!ctx) {
-    throw new Error('Header compound components must be used within a Header');
+    throw new Error("Header compound components must be used within a Header");
   }
   return ctx;
 }
@@ -152,14 +150,17 @@ function useHeaderIcons(): HeaderIcons | undefined {
   return React.useContext(HeaderIconContext);
 }
 
-function renderHeaderIcon(slot: HeaderIconSlot | undefined, state: HeaderIconRenderState): React.ReactNode {
+function renderHeaderIcon(
+  slot: HeaderIconSlot | undefined,
+  state: HeaderIconRenderState
+): React.ReactNode {
   if (slot === undefined) return undefined;
-  return typeof slot === 'function' ? slot(state) : slot;
+  return typeof slot === "function" ? slot(state) : slot;
 }
 
 function composeEventHandlers<E extends { defaultPrevented: boolean }>(
   userHandler: ((event: E) => void) | undefined,
-  internalHandler: (event: E) => void,
+  internalHandler: (event: E) => void
 ) {
   return (event: E) => {
     userHandler?.(event);
@@ -172,14 +173,14 @@ function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mq = window.matchMedia('(max-width: 767px)');
+    const mq = window.matchMedia("(max-width: 767px)");
     setIsMobile(mq.matches);
 
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
   return isMobile;
@@ -194,11 +195,11 @@ function useIsMobile() {
  */
 function HeaderRoot({
   children,
-  height = '56px',
-  position = 'static',
+  height = "56px",
+  position = "static",
   elevatedOnScroll = false,
-  navAlign = 'start',
-  container = 'full',
+  navAlign = "start",
+  container = "full",
   icons,
   className,
   style: styleProp,
@@ -208,30 +209,32 @@ function HeaderRoot({
   const [scrolled, setScrolled] = React.useState(false);
   const shouldElevateOnScroll = Boolean(elevatedOnScroll);
   const scrollThreshold =
-    typeof elevatedOnScroll === 'object' ? (elevatedOnScroll.threshold ?? 16) : 16;
+    typeof elevatedOnScroll === "object" ? (elevatedOnScroll.threshold ?? 16) : 16;
 
   React.useEffect(() => {
     if (!shouldElevateOnScroll) return;
 
     const updateScrolled = () => setScrolled(window.scrollY > scrollThreshold);
     updateScrolled();
-    window.addEventListener('scroll', updateScrolled, { passive: true });
-    return () => window.removeEventListener('scroll', updateScrolled);
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrolled);
   }, [scrollThreshold, shouldElevateOnScroll]);
 
   const classes = [
     styles.header,
-    position === 'fixed' && styles.fixed,
-    position === 'sticky' && styles.sticky,
+    position === "fixed" && styles.fixed,
+    position === "sticky" && styles.sticky,
     shouldElevateOnScroll && styles.elevatedOnScroll,
     shouldElevateOnScroll && scrolled && styles.scrolled,
-    navAlign === 'center' && styles.navCentered,
-    container === 'page' && styles.containerPage,
+    navAlign === "center" && styles.navCentered,
+    container === "page" && styles.containerPage,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const style: React.CSSProperties = {
-    '--header-height': height,
+    "--header-height": height,
     ...styleProp,
   } as React.CSSProperties;
 
@@ -250,9 +253,7 @@ function HeaderRoot({
           data-position={position}
           data-scrolled={shouldElevateOnScroll ? scrolled : undefined}
         >
-          <div className={styles.container}>
-            {children}
-          </div>
+          <div className={styles.container}>{children}</div>
         </header>
       </HeaderIconContext.Provider>
     </HeaderContext.Provider>
@@ -269,7 +270,7 @@ function HeaderBrand({
   className,
   ...htmlProps
 }: HeaderBrandProps) {
-  const classes = [styles.brand, className].filter(Boolean).join(' ');
+  const classes = [styles.brand, className].filter(Boolean).join(" ");
 
   if (asChild && React.isValidElement(children)) {
     const childProps = children.props as {
@@ -281,7 +282,7 @@ function HeaderBrand({
     return React.cloneElement(children, {
       ...restHtmlProps,
       ...(href ? { href } : {}),
-      className: [classes, childProps.className].filter(Boolean).join(' '),
+      className: [classes, childProps.className].filter(Boolean).join(" "),
       onClick: onClick ? composeEventHandlers(childProps.onClick, onClick) : childProps.onClick,
     } as React.HTMLAttributes<HTMLElement>);
   }
@@ -294,7 +295,11 @@ function HeaderBrand({
     );
   }
 
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -302,17 +307,15 @@ function HeaderBrand({
  */
 function HeaderNav({
   children,
-  'aria-label': ariaLabel = 'Main navigation',
+  "aria-label": ariaLabel = "Main navigation",
   className,
   ...htmlProps
 }: HeaderNavProps) {
-  const classes = [styles.nav, className].filter(Boolean).join(' ');
+  const classes = [styles.nav, className].filter(Boolean).join(" ");
 
   return (
     <nav {...htmlProps} className={classes} aria-label={ariaLabel}>
-      <ul className={styles.navList}>
-        {children}
-      </ul>
+      <ul className={styles.navList}>{children}</ul>
     </nav>
   );
 }
@@ -329,16 +332,14 @@ function HeaderNavItem({
   className,
   ...htmlProps
 }: HeaderNavItemProps) {
-  const classes = [
-    styles.navItem,
-    active && styles.navItemActive,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.navItem, active && styles.navItemActive, className]
+    .filter(Boolean)
+    .join(" ");
 
   const itemProps = {
     className: classes,
     onClick,
-    'aria-current': active ? 'page' as const : undefined,
+    "aria-current": active ? ("page" as const) : undefined,
   };
 
   if (asChild && React.isValidElement(children)) {
@@ -352,7 +353,7 @@ function HeaderNavItem({
           ...htmlProps,
           ...itemProps,
           onClick: composeEventHandlers(childProps.onClick, onClick ?? (() => {})),
-          className: [classes, childProps.className].filter(Boolean).join(' '),
+          className: [classes, childProps.className].filter(Boolean).join(" "),
         } as React.HTMLAttributes<HTMLElement>)}
       </li>
     );
@@ -386,21 +387,27 @@ function HeaderSearch({
   className,
   ...htmlProps
 }: HeaderSearchProps) {
-  const classes = [
-    styles.search,
-    expandable && styles.searchExpandable,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.search, expandable && styles.searchExpandable, className]
+    .filter(Boolean)
+    .join(" ");
 
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 /**
  * Header.Actions - Right-side actions container
  */
 function HeaderActions({ children, className, ...htmlProps }: HeaderActionsProps) {
-  const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  const classes = [styles.actions, className].filter(Boolean).join(" ");
+  return (
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -412,7 +419,7 @@ function HeaderActions({ children, className, ...htmlProps }: HeaderActionsProps
  */
 function HeaderTrigger({
   children,
-  'aria-label': ariaLabel = 'Toggle navigation',
+  "aria-label": ariaLabel = "Toggle navigation",
   className,
   onClick,
   ...htmlProps
@@ -428,18 +435,18 @@ function HeaderTrigger({
   }
 
   // Determine which state to use: sidebar (if available with a real provider) or header internal
-  const hasSidebarProvider = sidebar.open !== undefined && sidebar.setOpen !== undefined
-    && typeof sidebar.setOpen === 'function';
+  const hasSidebarProvider =
+    sidebar.open !== undefined &&
+    sidebar.setOpen !== undefined &&
+    typeof sidebar.setOpen === "function";
   const isUsingSidebar = hasSidebarProvider && sidebar.isMobile;
 
   const open = isUsingSidebar ? sidebar.open : (headerCtx?.mobileOpen ?? false);
-  const setOpen = isUsingSidebar
-    ? sidebar.setOpen
-    : (headerCtx?.setMobileOpen ?? (() => {}));
+  const setOpen = isUsingSidebar ? sidebar.setOpen : (headerCtx?.setMobileOpen ?? (() => {}));
 
-  const classes = [styles.trigger, className].filter(Boolean).join(' ');
+  const classes = [styles.trigger, className].filter(Boolean).join(" ");
   const iconSlot = open ? icons?.close : icons?.menu;
-  const iconState: HeaderIconRenderState = { slot: open ? 'close' : 'menu', open };
+  const iconState: HeaderIconRenderState = { slot: open ? "close" : "menu", open };
   const iconOverride = renderHeaderIcon(iconSlot, iconState);
 
   return (
@@ -451,7 +458,9 @@ function HeaderTrigger({
       aria-label={ariaLabel}
       aria-expanded={open}
     >
-      {children || iconOverride || (open ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
+      {children ||
+        iconOverride ||
+        (open ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
     </button>
   );
 }
@@ -460,7 +469,7 @@ function HeaderTrigger({
  * Header.Spacer - Flexible spacer to push items apart
  */
 function HeaderSpacer({ className }: { className?: string }) {
-  const classes = [styles.spacer, className].filter(Boolean).join(' ');
+  const classes = [styles.spacer, className].filter(Boolean).join(" ");
   return <div className={classes} />;
 }
 
@@ -480,9 +489,11 @@ function HeaderNavMenu({
     styles.navMenuTrigger,
     active && styles.navItemActive,
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
   const chevronIcon = renderHeaderIcon(icons?.navMenuChevron, {
-    slot: 'navMenuChevron',
+    slot: "navMenuChevron",
     active,
   });
 
@@ -491,15 +502,22 @@ function HeaderNavMenu({
       <BaseMenu.Root modal={false}>
         <BaseMenu.Trigger className={triggerClasses}>
           {label}
-          {chevronIcon
-            ? <span className={styles.navMenuChevron} aria-hidden>{chevronIcon}</span>
-            : <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />}
+          {chevronIcon ? (
+            <span className={styles.navMenuChevron} aria-hidden>
+              {chevronIcon}
+            </span>
+          ) : (
+            <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />
+          )}
         </BaseMenu.Trigger>
         <BaseMenu.Portal>
-          <BaseMenu.Positioner side="bottom" align="start" sideOffset={POPUP_OFFSET_PX} className={styles.navMenuPositioner}>
-            <BaseMenu.Popup className={styles.navMenuPopup}>
-              {children}
-            </BaseMenu.Popup>
+          <BaseMenu.Positioner
+            side="bottom"
+            align="start"
+            sideOffset={POPUP_OFFSET_PX}
+            className={styles.navMenuPositioner}
+          >
+            <BaseMenu.Popup className={styles.navMenuPopup}>{children}</BaseMenu.Popup>
           </BaseMenu.Positioner>
         </BaseMenu.Portal>
       </BaseMenu.Root>
@@ -518,19 +536,13 @@ function HeaderNavMenuItem({
   className,
   ...htmlProps
 }: HeaderNavMenuItemProps) {
-  const classes = [
-    styles.navMenuItem,
-    active && styles.navMenuItemActive,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.navMenuItem, active && styles.navMenuItemActive, className]
+    .filter(Boolean)
+    .join(" ");
 
   if (asChild && React.isValidElement(children)) {
     return (
-      <BaseMenu.Item
-        {...htmlProps}
-        className={classes}
-        render={children as React.ReactElement}
-      />
+      <BaseMenu.Item {...htmlProps} className={classes} render={children as React.ReactElement} />
     );
   }
 
@@ -564,38 +576,36 @@ function HeaderMobileNav({ children, className }: HeaderMobileNavProps) {
   // Lock body scroll when open
   React.useEffect(() => {
     if (!mobileOpen) return;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   // Handle Escape
   React.useEffect(() => {
     if (!mobileOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileOpen(false);
+      if (e.key === "Escape") setMobileOpen(false);
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [mobileOpen, setMobileOpen]);
 
   if (!mobileOpen) return null;
-  if (typeof document === 'undefined') return null;
+  if (typeof document === "undefined") return null;
 
   const closeIcon = renderHeaderIcon(icons?.mobileClose, {
-    slot: 'mobileClose',
+    slot: "mobileClose",
     open: true,
   });
 
   const drawerContent = (
     <>
-      <div
-        className={styles.mobileNavBackdrop}
-        onClick={() => setMobileOpen(false)}
-        aria-hidden
-      />
+      <div className={styles.mobileNavBackdrop} onClick={() => setMobileOpen(false)} aria-hidden />
       <div
         ref={drawerRef}
-        className={[styles.mobileNavDrawer, className].filter(Boolean).join(' ')}
+        className={[styles.mobileNavDrawer, className].filter(Boolean).join(" ")}
         role="dialog"
         aria-modal
         aria-label="Navigation"
@@ -634,11 +644,9 @@ function HeaderMobileNavLink({
 }: HeaderNavItemProps) {
   const { setMobileOpen } = useHeaderContext();
 
-  const classes = [
-    styles.mobileNavLink,
-    active && styles.mobileNavLinkActive,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.mobileNavLink, active && styles.mobileNavLinkActive, className]
+    .filter(Boolean)
+    .join(" ");
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     onClick?.(e);
@@ -652,7 +660,7 @@ function HeaderMobileNavLink({
     };
     return React.cloneElement(children, {
       ...htmlProps,
-      className: [classes, childProps.className].filter(Boolean).join(' '),
+      className: [classes, childProps.className].filter(Boolean).join(" "),
       onClick: composeEventHandlers(childProps.onClick, handleClick),
     } as React.HTMLAttributes<HTMLElement>);
   }
@@ -680,7 +688,7 @@ function HeaderMobileNavActions({
   className,
   ...htmlProps
 }: HeaderMobileNavActionsProps) {
-  const classes = [styles.mobileNavActions, className].filter(Boolean).join(' ');
+  const classes = [styles.mobileNavActions, className].filter(Boolean).join(" ");
 
   return (
     <div {...htmlProps} className={classes}>
@@ -693,15 +701,15 @@ function HeaderMobileNavActions({
  * Header.SkipLink - Skip to main content link (accessibility)
  */
 function HeaderSkipLink({
-  children = 'Skip to main content',
-  href = '#main-content',
+  children = "Skip to main content",
+  href = "#main-content",
   className,
 }: {
   children?: React.ReactNode;
   href?: string;
   className?: string;
 }) {
-  const classes = [styles.skipLink, className].filter(Boolean).join(' ');
+  const classes = [styles.skipLink, className].filter(Boolean).join(" ");
   return (
     <a href={href} className={classes}>
       {children}

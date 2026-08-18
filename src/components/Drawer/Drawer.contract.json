@@ -3,13 +3,7 @@
   "name": "Drawer",
   "description": "Presents contextual content in a panel that slides from a screen edge.",
   "category": "feedback",
-  "tags": [
-    "drawer",
-    "sheet",
-    "panel",
-    "sidebar",
-    "slide-over"
-  ],
+  "tags": ["drawer", "sheet", "panel", "sidebar", "slide-over"],
   "status": "stable",
   "sourcePath": "src/components/Drawer/index.tsx",
   "exportName": "Drawer",
@@ -126,11 +120,7 @@
       "Drawer.Content size: sm|md|lg|xl|full - panel size",
       "Drawer.Content initialFocus: boolean - auto-focus popup on open (default: true)"
     ],
-    "a11yRules": [
-      "A11Y_DIALOG_FOCUS",
-      "A11Y_DIALOG_ESCAPE",
-      "A11Y_DIALOG_LABEL"
-    ]
+    "a11yRules": ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",
@@ -145,9 +135,7 @@
       "Body",
       "Footer"
     ],
-    "requiredChildren": [
-      "Content"
-    ],
+    "requiredChildren": ["Content"],
     "commonPatterns": [
       "<Drawer><Drawer.Trigger><Button>Open</Button></Drawer.Trigger><Drawer.Content><Drawer.Close /><Drawer.Header><Drawer.Title>{title}</Drawer.Title></Drawer.Header><Drawer.Body>{content}</Drawer.Body><Drawer.Footer><Drawer.Close asChild><Button variant=\"secondary\">Cancel</Button></Drawer.Close><Button>Save</Button></Drawer.Footer></Drawer.Content></Drawer>"
     ]

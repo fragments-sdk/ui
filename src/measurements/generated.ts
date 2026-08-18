@@ -311,7 +311,7 @@ export function applyMeasurementSelection(
     if (cleaned) return;
     cleaned = true;
     for (let index = restore.length - 1; index >= 0; index -= 1) {
-      restore[index]();
+      restore[index]?.();
     }
   };
 }

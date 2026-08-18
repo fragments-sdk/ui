@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface FragmentsLogoProps {
   /** Size of the logo in pixels */
@@ -19,7 +19,7 @@ export function FragmentsLogo({ size = 20, className }: FragmentsLogoProps) {
       role="img"
       aria-label="Fragments"
       style={{
-        display: 'block',
+        display: "block",
       }}
     >
       <path

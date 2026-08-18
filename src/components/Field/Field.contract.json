@@ -3,15 +3,7 @@
   "name": "Field",
   "description": "Composes labels, descriptions, validation, and errors around a form control.",
   "category": "forms",
-  "tags": [
-    "form",
-    "field",
-    "validation",
-    "label",
-    "error",
-    "input",
-    "accessible"
-  ],
+  "tags": ["form", "field", "validation", "label", "error", "input", "accessible"],
   "status": "stable",
   "sourcePath": "src/components/Field/index.tsx",
   "exportName": "Field",
@@ -54,11 +46,7 @@
       "type": "enum",
       "description": "When to trigger validation",
       "required": false,
-      "values": [
-        "onSubmit",
-        "onBlur",
-        "onChange"
-      ]
+      "values": ["onSubmit", "onBlur", "onChange"]
     },
     "validationDebounceTime": {
       "type": "number",
@@ -132,22 +120,11 @@
       "Field.Control: wraps any form component (Input, Textarea, etc.)",
       "Field.Error match: valueMissing|typeMismatch|customError|... - granular errors"
     ],
-    "a11yRules": [
-      "A11Y_FIELD_LABEL",
-      "A11Y_FIELD_ERROR",
-      "A11Y_FIELD_DESCRIPTION"
-    ]
+    "a11yRules": ["A11Y_FIELD_LABEL", "A11Y_FIELD_ERROR", "A11Y_FIELD_DESCRIPTION"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Label",
-      "Control",
-      "Description",
-      "Error",
-      "Validity",
-      "Required"
-    ]
+    "subComponents": ["Label", "Control", "Description", "Error", "Validity", "Required"]
   },
   "provenance": {
     "source": "migrated",

@@ -3,20 +3,11 @@
   "name": "VisuallyHidden",
   "description": "Keeps supporting text available to assistive technology without displaying it visually.",
   "category": "navigation",
-  "tags": [
-    "accessibility",
-    "a11y",
-    "screen-reader",
-    "hidden",
-    "sr-only"
-  ],
+  "tags": ["accessibility", "a11y", "screen-reader", "hidden", "sr-only"],
   "status": "stable",
   "sourcePath": "src/components/VisuallyHidden/index.tsx",
   "exportName": "VisuallyHidden",
-  "propsSummary": [
-    "children: node (required)",
-    "as: span|div (default: span)"
-  ],
+  "propsSummary": ["children: node (required)", "as: span|div (default: span)"],
   "props": {
     "children": {
       "type": "node",
@@ -28,10 +19,7 @@
       "description": "HTML element to render",
       "default": "span",
       "required": false,
-      "values": [
-        "span",
-        "div"
-      ]
+      "values": ["span", "div"]
     }
   },
   "usage": {
@@ -96,16 +84,11 @@
       "as: span|div - HTML element",
       "Forwards standard DOM props (id, aria-*, data-*, className, handlers)"
     ],
-    "a11yRules": [
-      "A11Y_SR_ONLY",
-      "A11Y_ICON_LABEL"
-    ]
+    "a11yRules": ["A11Y_SR_ONLY", "A11Y_ICON_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

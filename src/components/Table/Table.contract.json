@@ -3,12 +3,7 @@
   "name": "Table",
   "description": "Displays structured data in semantic rows and columns.",
   "category": "display",
-  "tags": [
-    "table",
-    "semantic",
-    "html",
-    "layout"
-  ],
+  "tags": ["table", "semantic", "html", "layout"],
   "status": "stable",
   "sourcePath": "src/components/Table/index.tsx",
   "exportName": "Table",
@@ -26,10 +21,7 @@
       "description": "Table density",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md"
-      ]
+      "values": ["sm", "md"]
     },
     "striped": {
       "type": "boolean",
@@ -141,23 +133,11 @@
       "wrapperClassName/wrapperProps - customize outer scroll wrapper",
       "Table.Caption - caption with visuallyHidden prop (hidden is deprecated alias)"
     ],
-    "a11yRules": [
-      "A11Y_TABLE_HEADERS",
-      "A11Y_TABLE_CAPTION"
-    ]
+    "a11yRules": ["A11Y_TABLE_HEADERS", "A11Y_TABLE_CAPTION"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root",
-      "Head",
-      "Body",
-      "Footer",
-      "Row",
-      "Cell",
-      "HeaderCell",
-      "Caption"
-    ],
+    "subComponents": ["Root", "Head", "Body", "Footer", "Row", "Cell", "HeaderCell", "Caption"],
     "commonPatterns": [
       "<Table><Table.Head><Table.Row><Table.HeaderCell>Name</Table.HeaderCell></Table.Row></Table.Head><Table.Body><Table.Row><Table.Cell>Alice</Table.Cell></Table.Row></Table.Body></Table>"
     ]

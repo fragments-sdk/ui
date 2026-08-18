@@ -469,9 +469,9 @@ function DataTableLive<T>({
             <DataTableSkeletonRows
               rowCount={skeletonRows}
               columnCount={columns.length}
-              rowClassName={styles.row}
-              cellClassName={styles.td}
-              barClassName={styles.skeletonBar}
+              rowClassName={styles.row ?? ""}
+              cellClassName={styles.td ?? ""}
+              barClassName={styles.skeletonBar ?? ""}
             />
           ) : (
             table.getRowModel().rows.map((row: any) => {
@@ -711,9 +711,9 @@ function DataTableStatic<T>({
             <DataTableSkeletonRows
               rowCount={skeletonRows}
               columnCount={columnCount}
-              rowClassName={styles.row}
-              cellClassName={styles.td}
-              barClassName={styles.skeletonBar}
+              rowClassName={styles.row ?? ""}
+              cellClassName={styles.td ?? ""}
+              barClassName={styles.skeletonBar ?? ""}
             />
           ) : isEmpty ? (
             <tr className={styles.row}>

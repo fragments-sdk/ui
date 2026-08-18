@@ -5,24 +5,24 @@
 let hasChecked = false;
 
 export function checkCssLoaded(): void {
-  if (hasChecked || typeof window === 'undefined') return;
+  if (hasChecked || typeof window === "undefined") return;
   hasChecked = true;
 
   // Defer check to after styles have loaded
   requestAnimationFrame(() => {
     const root = document.documentElement;
-    const value = getComputedStyle(root).getPropertyValue('--fui-text-primary').trim();
+    const value = getComputedStyle(root).getPropertyValue("--fui-text-primary").trim();
 
     if (!value) {
       console.warn(
-        '[Fragments UI] Component styles not loaded. Components will render unstyled.\n\n' +
-          'Add this import to your app entry point (e.g., main.tsx, layout.tsx):\n\n' +
+        "[Fragments UI] Component styles not loaded. Components will render unstyled.\n\n" +
+          "Add this import to your app entry point (e.g., main.tsx, layout.tsx):\n\n" +
           "  import '@usefragments/ui/styles';\n\n" +
-          'Next.js users also need:\n\n' +
+          "Next.js users also need:\n\n" +
           "  // next.config.ts\n" +
           "  transpilePackages: ['@usefragments/ui']\n\n" +
-          'Or run: npx @usefragments/cli setup\n\n' +
-          'Docs: https://usefragments.com/getting-started'
+          "Or run: npx @usefragments/cli setup\n\n" +
+          "Docs: https://usefragments.com/getting-started"
       );
     }
   });

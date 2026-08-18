@@ -88,10 +88,10 @@ function isResponsiveColumns(columns: GridProps["columns"]): columns is Responsi
 }
 
 const paddingClasses: Record<NonNullable<GridProps["padding"]>, string> = {
-  none: styles.paddingNone,
-  sm: styles.paddingSm,
-  md: styles.paddingMd,
-  lg: styles.paddingLg,
+  none: styles.paddingNone ?? "",
+  sm: styles.paddingSm ?? "",
+  md: styles.paddingMd ?? "",
+  lg: styles.paddingLg ?? "",
 };
 
 // ============================================
@@ -118,12 +118,12 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
   let inlineStyle: React.CSSProperties | undefined;
 
   if (columns === "auto") {
-    columnsClass = styles.columnsAuto;
+    columnsClass = styles.columnsAuto ?? "";
     if (minChildWidth) {
       inlineStyle = { "--fui-grid-min-child-width": minChildWidth } as React.CSSProperties;
     }
   } else if (isResponsiveColumns(columns)) {
-    columnsClass = styles.columnsResponsive;
+    columnsClass = styles.columnsResponsive ?? "";
     const vars: Record<string, string> = {};
     if (columns.base) vars["--fui-grid-cols"] = String(columns.base);
     if (columns.sm) vars["--fui-grid-cols-sm"] = String(columns.sm);
@@ -132,7 +132,7 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
     if (columns.xl) vars["--fui-grid-cols-xl"] = String(columns.xl);
     inlineStyle = vars as unknown as React.CSSProperties;
   } else {
-    columnsClass = styles[`columns${columns}`];
+    columnsClass = styles[`columns${columns}`] ?? "";
   }
 
   inlineStyle = {
@@ -165,9 +165,9 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
 // ============================================
 
 const subgridClasses: Record<string, string> = {
-  rows: styles.subgridRows,
-  columns: styles.subgridColumns,
-  both: styles.subgridBoth,
+  rows: styles.subgridRows ?? "",
+  columns: styles.subgridColumns ?? "",
+  both: styles.subgridBoth ?? "",
 };
 
 const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(function GridItem(

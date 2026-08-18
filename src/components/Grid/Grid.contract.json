@@ -3,12 +3,7 @@
   "name": "Grid",
   "description": "Arranges items in responsive columns with consistent spacing.",
   "category": "layout",
-  "tags": [
-    "grid",
-    "layout",
-    "columns",
-    "responsive"
-  ],
+  "tags": ["grid", "layout", "columns", "responsive"],
   "status": "stable",
   "sourcePath": "src/components/Grid/index.tsx",
   "exportName": "Grid",
@@ -43,57 +38,33 @@
       "type": "string",
       "description": "Minimum width for auto-fill columns (e.g., \"16rem\", \"250px\")",
       "required": false,
-      "constraints": [
-        "Only applies when columns=\"auto\""
-      ]
+      "constraints": ["Only applies when columns=\"auto\""]
     },
     "gap": {
       "type": "union",
       "description": "Gap between grid items. Accepts string tokens or numbers (1-8) mapped to the spacing scale",
       "default": "md",
       "required": false,
-      "values": [
-        "none",
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ]
+      "values": ["none", "xs", "sm", "md", "lg", "xl"]
     },
     "alignItems": {
       "type": "enum",
       "description": "Vertical alignment of items within their cells",
       "required": false,
-      "values": [
-        "start",
-        "center",
-        "end",
-        "stretch"
-      ]
+      "values": ["start", "center", "end", "stretch"]
     },
     "justifyItems": {
       "type": "enum",
       "description": "Horizontal alignment of items within their cells",
       "required": false,
-      "values": [
-        "start",
-        "center",
-        "end",
-        "stretch"
-      ]
+      "values": ["start", "center", "end", "stretch"]
     },
     "padding": {
       "type": "enum",
       "description": "Internal padding of the grid container",
       "default": "none",
       "required": false,
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["none", "sm", "md", "lg"]
     },
     "className": {
       "type": "string",
