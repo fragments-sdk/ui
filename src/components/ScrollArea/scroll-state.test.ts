@@ -119,18 +119,18 @@ describe('ScrollArea geometry source', () => {
     expect(styles).not.toMatch(/scrollbar-width:\s*none/);
     expect(styles).not.toMatch(/(?:width|height):\s*0/);
     expect(styles).not.toContain('scrollbar-gutter');
-    expect(styles).toContain("[data-scrollbar-visibility='always']");
+    expect(styles).toContain('[data-scrollbar-visibility="always"]');
   });
 
   it('intersects independent inline and block masks', () => {
     expect(styles).toContain('mask-composite: intersect');
     expect(styles).toContain('-webkit-mask-composite: source-in');
-    expect(styles).toContain(".viewport[data-scroll-x='both']");
-    expect(styles).toContain(".viewport[data-scroll-y='both']");
+    expect(styles).toContain('.viewport[data-scroll-x="both"]');
+    expect(styles).toContain('.viewport[data-scroll-y="both"]');
   });
 
   it('anchors every scroll-state selector to the local viewport class', () => {
-    const stateSelectors = styles.match(/^.*\[data-scroll-[xy]='(?:start|both|end)'\].*\{/gm) ?? [];
+    const stateSelectors = styles.match(/^.*\[data-scroll-[xy]="(?:start|both|end)"\].*\{/gm) ?? [];
 
     expect(stateSelectors).toHaveLength(8);
     expect(stateSelectors.every((selector) => selector.trimStart().startsWith('.viewport'))).toBe(
