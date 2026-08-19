@@ -75,3 +75,6 @@ $fui-icon-md)` → `16px`) but copies a custom property's value through
   nothing — the failure is silent and only visible when the token layer is
   absent. Inside `--*:` always write `#{$fui-token}`. Gated by
   `src/tokens/token-fallback-contract.test.ts`.
+- **UI notes are not a published artifact.** `*.ui-notes.md` is excluded from
+  the `@usefragments/ui` tarball. Keep landmines here for in-repo agents; do
+  not teach consumers to import these files from `node_modules`.

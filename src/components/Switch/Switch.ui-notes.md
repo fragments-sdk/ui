@@ -30,3 +30,28 @@
   `src/tokens/token-fallback-contract.test.ts`, which gates both halves.
 - `Toggle` is a deprecated alias re-exporting this component. It asserts strict
   identity (`Toggle === Switch`), so do not wrap or re-implement the export.
+
+## 2026-08-18 — release verification
+
+### Public package treatment of UI notes
+
+- `*.ui-notes.md` files are in-repo agent session logs. They are excluded from
+  the published `@usefragments/ui` tarball (`package.json` `files` glob
+  `!src/**/*.ui-notes.md`). Do not add a public export or docs page for them.
+
+### Geometry evidence
+
+- The geometry runner always loads the Storybook token layer, so it cannot
+  prove the no-token-layer fallback this fix restores. Switch has one catalog
+  case (`geometry/boolean-range/switch/default/na/light/catalog-smoke-1440`)
+  still `pending`, with `baselines.json` empty. A09-01 remains unsatisfied;
+  macOS cannot mint the Linux-x64 PNG authority. Do not treat this CSS fix as
+  a new geometry baseline.
+
+### Chrome fixture
+
+- Compiled-CSS panels live at
+  `libs/ui/evidence/mvp-switch-fallback/fixture.html` (regenerate with
+  `node libs/ui/evidence/mvp-switch-fallback/generate-fixture.mjs`). Distinctive
+  tokens must paint neon off-tracks; the no-layer panel must stay opaque and
+  distinct from on.

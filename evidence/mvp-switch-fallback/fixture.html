@@ -1,0 +1,1964 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Switch token-fallback fixture</title>
+  <style>
+    body { font: 14px/1.4 system-ui, sans-serif; margin: 16px; background: #f4f4f4; color: #161616; }
+    h1 { font-size: 18px; }
+    .grid { display: grid; gap: 24px; }
+    @media (min-width: 1024px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
+    .panel { border: 1px solid #ccc; padding: 16px; background: #fff; }
+    .panel[data-theme="dark"] { background: #111; color: #f4f4f4; border-color: #333; }
+    .row { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .note { max-width: 72ch; margin-block-end: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Switch compiled-CSS fallback fixture</h1>
+  <p class="note">
+    Distinctive tokens must paint neon off-tracks. Paper/ink tokens must match
+    the published ladder. No token layer must still show an opaque off track
+    that is visually distinct from the on track — never transparent.
+  </p>
+  <div class="grid">
+    
+<section class="panel" data-panel="distinctive-light" data-theme="light" style="color-scheme:light">
+  <h2>Distinctive token layer · light</h2>
+  <style>
+:root {
+  --fui-bg-elevated: #39ff14;
+  --fui-bg-primary: #ffff00;
+  --fui-text-primary: #000080;
+  --fui-border-strong: #ff00ff;
+  --fui-control-checked-bg: #ff6b00;
+  --fui-control-checked-border: #ff6b00;
+  --fui-control-checked-bg-hover: #cc5500;
+  --fui-control-checked-border-hover: #cc5500;
+  --fui-control-checked-color: #ffffff;
+  --fui-color-accent: #ff6b00;
+  --fui-color-on-accent: #ffffff;
+  --fui-color-accent-hover: #cc5500;
+  --fui-radius-full: 999px;
+  --fui-stroke-hairline: 1px;
+  --fui-transition-normal: 0s;
+  --fui-transition-fast: 0s;
+  --fui-shadow-md: none;
+  --fui-focus-ring-width: 2px;
+  --fui-focus-ring-offset: 2px;
+  --fui-focus-ring-color: #000080;
+}
+.root {
+  --_switch-off-bg: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 92%,
+      var(--fui-text-primary, #161616) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 82%,
+      var(--fui-text-primary, #161616) 18%
+    )
+  );
+  --_switch-off-bg-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 88%,
+      var(--fui-text-primary, #161616) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 76%,
+      var(--fui-text-primary, #161616) 24%
+    )
+  );
+  --_switch-off-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 72%,
+      var(--fui-text-primary, #161616) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    )
+  );
+  --_switch-off-border-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 44%,
+      var(--fui-text-primary, #161616) 56%
+    )
+  );
+  --_switch-thumb-bg: light-dark(
+    color-mix(in srgb, var(--fui-bg-primary, #f4f4f4) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #f4f4f4) 56%,
+      var(--fui-text-primary, #161616) 44%
+    )
+  );
+  --_switch-thumb-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 68%,
+      var(--fui-text-primary, #161616) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 45%,
+      var(--fui-text-primary, #161616) 55%
+    )
+  );
+  --_fui-target-hit-size: var(--fui-control-track-md, 32px);
+  position: relative;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--_fui-target-hit-size));
+  block-size: max(100%, var(--_fui-target-hit-size));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.root {
+  display: grid;
+  align-items: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.root[data-size=sm] {
+  grid-template-columns: var(--fui-control-track-sm, 28px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-6, 6px);
+  font-size: var(--fui-type-ui-compact-size, 12px);
+  line-height: var(--fui-type-ui-compact-line, 16px);
+  font-weight: var(--fui-type-ui-compact-weight, 500);
+  letter-spacing: var(--fui-type-ui-compact-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=md] {
+  grid-template-columns: var(--fui-control-track-md, 32px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-8, 8px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=lg] {
+  grid-template-columns: var(--fui-control-track-lg, 40px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-10, 10px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (pointer: coarse) {
+  .root {
+    --_fui-target-hit-size: var(--fui-raw-space-48, 48px);
+  }
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: var(--fui-radius-full, 9999px);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
+  background-color: var(--_switch-off-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 26%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, #161616) 5%, transparent);
+  transition: background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1));
+}
+.root[data-checked] .track {
+  background-color: var(--fui-control-checked-bg, #006b57);
+  border-color: var(--fui-control-checked-border, #006b57);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+.root:not([data-disabled]):not([data-checked]) .track:hover {
+  background-color: var(--_switch-off-bg-hover);
+  border-color: var(--_switch-off-border-hover);
+}
+.root:not([data-disabled])[data-checked] .track:hover {
+  background-color: var(--fui-control-checked-bg-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+  border-color: var(--fui-control-checked-border-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+}
+.root:focus-visible .track {
+  border-color: var(--fui-color-accent, #006b57);
+  outline: var(--fui-focus-ring-width, 2px) solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}
+
+.trackSm {
+  --_fui-switch-inline-size: var(--fui-control-track-sm, 28px);
+  --_fui-switch-block-size: var(--fui-icon-md, 16px);
+  --_fui-switch-thumb-size: var(--fui-icon-xs, 12px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-compact-line, 16px) - var(--fui-icon-md, 16px)) / 2);
+}
+
+.trackLg {
+  --_fui-switch-inline-size: var(--fui-control-track-lg, 40px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.trackMd {
+  --_fui-switch-inline-size: var(--fui-control-track-md, 32px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: var(--fui-icon-sm, 14px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
+  box-sizing: border-box;
+  width: var(--_fui-switch-thumb-size);
+  height: var(--_fui-switch-thumb-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--_switch-thumb-bg);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 18%, transparent), inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
+  transition: transform var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-fast, 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+.root[data-checked] .thumb {
+  transform: translate(var(--_fui-switch-travel), -50%);
+  background-color: var(--fui-control-checked-color, #ffffff);
+  border-color: color-mix(in srgb, var(--fui-control-checked-border, #006b57) 28%, transparent);
+}
+.root:dir(rtl)[data-checked] .thumb {
+  transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+}
+.root:active:not([data-disabled]) .thumb {
+  box-shadow: var(--fui-shadow-md, 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03));
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--fui-text-primary, #161616);
+  user-select: none;
+}
+
+.helper {
+  display: block;
+  font-size: var(--fui-type-caption-size, 12px);
+  line-height: var(--fui-type-caption-line, 16px);
+  font-weight: var(--fui-type-caption-weight, 400);
+  letter-spacing: var(--fui-type-caption-tracking, 0);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, rgb(78.9983338398, 78.9983338398, 78.9983338398));
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    border-color: var(--fui-text-primary, #161616);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, #161616);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+  }
+  .root[data-checked] .track {
+    border-color: var(--fui-control-checked-border, #006b57);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+  .track {
+    transition: none;
+  }
+}</style>
+  <div class="row"><button class="root" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off md</span></div>
+    </button>
+<button class="root" data-size="md" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On md</span></div>
+    </button>
+<button class="root" data-size="md" data-disabled role="switch" aria-checked="false" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled off</span></div>
+    </button>
+<button class="root" data-size="md" data-checked data-disabled role="switch" aria-checked="true" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled on</span></div>
+    </button>
+<button class="root" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackSm" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off sm</span></div>
+    </button>
+<button class="root" data-size="lg" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackLg" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On lg</span></div>
+    </button>
+<button class="root js-focus" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Focus target</span></div>
+    </button></div>
+</section>
+    
+<section class="panel" data-panel="paper-light" data-theme="light" style="color-scheme:light">
+  <h2>Paper/ink token layer · light</h2>
+  <style>
+:root {
+  --fui-bg-elevated: #eaeaea;
+  --fui-bg-primary: #f4f4f4;
+  --fui-text-primary: #161616;
+  --fui-border-strong: rgba(0, 0, 0, 0.15);
+  --fui-control-checked-bg: #161616;
+  --fui-control-checked-border: #161616;
+  --fui-control-checked-bg-hover: #2e2e2e;
+  --fui-control-checked-border-hover: #2e2e2e;
+  --fui-control-checked-color: #ffffff;
+  --fui-color-accent: #161616;
+  --fui-color-on-accent: #ffffff;
+  --fui-color-accent-hover: #2e2e2e;
+  --fui-radius-full: 999px;
+  --fui-stroke-hairline: 1px;
+  --fui-transition-normal: 0s;
+  --fui-transition-fast: 0s;
+  --fui-shadow-md: none;
+  --fui-focus-ring-width: 2px;
+  --fui-focus-ring-offset: 2px;
+  --fui-focus-ring-color: #161616;
+}
+[data-theme="dark"] {
+  --fui-bg-elevated: #202020;
+  --fui-bg-primary: #161616;
+  --fui-text-primary: #f4f4f4;
+  --fui-border-strong: rgba(255, 255, 255, 0.18);
+  --fui-control-checked-bg: #f4f4f4;
+  --fui-control-checked-border: #f4f4f4;
+  --fui-control-checked-color: #161616;
+  --fui-color-accent: #f4f4f4;
+  --fui-color-on-accent: #161616;
+  --fui-focus-ring-color: #f4f4f4;
+}
+.root {
+  --_switch-off-bg: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 92%,
+      var(--fui-text-primary, #161616) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 82%,
+      var(--fui-text-primary, #161616) 18%
+    )
+  );
+  --_switch-off-bg-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 88%,
+      var(--fui-text-primary, #161616) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 76%,
+      var(--fui-text-primary, #161616) 24%
+    )
+  );
+  --_switch-off-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 72%,
+      var(--fui-text-primary, #161616) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    )
+  );
+  --_switch-off-border-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 44%,
+      var(--fui-text-primary, #161616) 56%
+    )
+  );
+  --_switch-thumb-bg: light-dark(
+    color-mix(in srgb, var(--fui-bg-primary, #f4f4f4) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #f4f4f4) 56%,
+      var(--fui-text-primary, #161616) 44%
+    )
+  );
+  --_switch-thumb-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 68%,
+      var(--fui-text-primary, #161616) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 45%,
+      var(--fui-text-primary, #161616) 55%
+    )
+  );
+  --_fui-target-hit-size: var(--fui-control-track-md, 32px);
+  position: relative;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--_fui-target-hit-size));
+  block-size: max(100%, var(--_fui-target-hit-size));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.root {
+  display: grid;
+  align-items: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.root[data-size=sm] {
+  grid-template-columns: var(--fui-control-track-sm, 28px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-6, 6px);
+  font-size: var(--fui-type-ui-compact-size, 12px);
+  line-height: var(--fui-type-ui-compact-line, 16px);
+  font-weight: var(--fui-type-ui-compact-weight, 500);
+  letter-spacing: var(--fui-type-ui-compact-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=md] {
+  grid-template-columns: var(--fui-control-track-md, 32px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-8, 8px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=lg] {
+  grid-template-columns: var(--fui-control-track-lg, 40px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-10, 10px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (pointer: coarse) {
+  .root {
+    --_fui-target-hit-size: var(--fui-raw-space-48, 48px);
+  }
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: var(--fui-radius-full, 9999px);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
+  background-color: var(--_switch-off-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 26%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, #161616) 5%, transparent);
+  transition: background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1));
+}
+.root[data-checked] .track {
+  background-color: var(--fui-control-checked-bg, #006b57);
+  border-color: var(--fui-control-checked-border, #006b57);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+.root:not([data-disabled]):not([data-checked]) .track:hover {
+  background-color: var(--_switch-off-bg-hover);
+  border-color: var(--_switch-off-border-hover);
+}
+.root:not([data-disabled])[data-checked] .track:hover {
+  background-color: var(--fui-control-checked-bg-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+  border-color: var(--fui-control-checked-border-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+}
+.root:focus-visible .track {
+  border-color: var(--fui-color-accent, #006b57);
+  outline: var(--fui-focus-ring-width, 2px) solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}
+
+.trackSm {
+  --_fui-switch-inline-size: var(--fui-control-track-sm, 28px);
+  --_fui-switch-block-size: var(--fui-icon-md, 16px);
+  --_fui-switch-thumb-size: var(--fui-icon-xs, 12px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-compact-line, 16px) - var(--fui-icon-md, 16px)) / 2);
+}
+
+.trackLg {
+  --_fui-switch-inline-size: var(--fui-control-track-lg, 40px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.trackMd {
+  --_fui-switch-inline-size: var(--fui-control-track-md, 32px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: var(--fui-icon-sm, 14px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
+  box-sizing: border-box;
+  width: var(--_fui-switch-thumb-size);
+  height: var(--_fui-switch-thumb-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--_switch-thumb-bg);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 18%, transparent), inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
+  transition: transform var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-fast, 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+.root[data-checked] .thumb {
+  transform: translate(var(--_fui-switch-travel), -50%);
+  background-color: var(--fui-control-checked-color, #ffffff);
+  border-color: color-mix(in srgb, var(--fui-control-checked-border, #006b57) 28%, transparent);
+}
+.root:dir(rtl)[data-checked] .thumb {
+  transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+}
+.root:active:not([data-disabled]) .thumb {
+  box-shadow: var(--fui-shadow-md, 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03));
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--fui-text-primary, #161616);
+  user-select: none;
+}
+
+.helper {
+  display: block;
+  font-size: var(--fui-type-caption-size, 12px);
+  line-height: var(--fui-type-caption-line, 16px);
+  font-weight: var(--fui-type-caption-weight, 400);
+  letter-spacing: var(--fui-type-caption-tracking, 0);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, rgb(78.9983338398, 78.9983338398, 78.9983338398));
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    border-color: var(--fui-text-primary, #161616);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, #161616);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+  }
+  .root[data-checked] .track {
+    border-color: var(--fui-control-checked-border, #006b57);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+  .track {
+    transition: none;
+  }
+}</style>
+  <div class="row"><button class="root" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off md</span></div>
+    </button>
+<button class="root" data-size="md" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On md</span></div>
+    </button>
+<button class="root" data-size="md" data-disabled role="switch" aria-checked="false" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled off</span></div>
+    </button>
+<button class="root" data-size="md" data-checked data-disabled role="switch" aria-checked="true" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled on</span></div>
+    </button>
+<button class="root" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackSm" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off sm</span></div>
+    </button>
+<button class="root" data-size="lg" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackLg" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On lg</span></div>
+    </button>
+<button class="root js-focus" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Focus target</span></div>
+    </button></div>
+</section>
+    
+<section class="panel" data-panel="none-light" data-theme="light" style="color-scheme:light">
+  <h2>No token layer · light</h2>
+  <style>.root {
+  --_switch-off-bg: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 92%,
+      var(--fui-text-primary, #161616) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 82%,
+      var(--fui-text-primary, #161616) 18%
+    )
+  );
+  --_switch-off-bg-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 88%,
+      var(--fui-text-primary, #161616) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 76%,
+      var(--fui-text-primary, #161616) 24%
+    )
+  );
+  --_switch-off-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 72%,
+      var(--fui-text-primary, #161616) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    )
+  );
+  --_switch-off-border-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 44%,
+      var(--fui-text-primary, #161616) 56%
+    )
+  );
+  --_switch-thumb-bg: light-dark(
+    color-mix(in srgb, var(--fui-bg-primary, #f4f4f4) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #f4f4f4) 56%,
+      var(--fui-text-primary, #161616) 44%
+    )
+  );
+  --_switch-thumb-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 68%,
+      var(--fui-text-primary, #161616) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 45%,
+      var(--fui-text-primary, #161616) 55%
+    )
+  );
+  --_fui-target-hit-size: var(--fui-control-track-md, 32px);
+  position: relative;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--_fui-target-hit-size));
+  block-size: max(100%, var(--_fui-target-hit-size));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.root {
+  display: grid;
+  align-items: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.root[data-size=sm] {
+  grid-template-columns: var(--fui-control-track-sm, 28px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-6, 6px);
+  font-size: var(--fui-type-ui-compact-size, 12px);
+  line-height: var(--fui-type-ui-compact-line, 16px);
+  font-weight: var(--fui-type-ui-compact-weight, 500);
+  letter-spacing: var(--fui-type-ui-compact-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=md] {
+  grid-template-columns: var(--fui-control-track-md, 32px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-8, 8px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=lg] {
+  grid-template-columns: var(--fui-control-track-lg, 40px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-10, 10px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (pointer: coarse) {
+  .root {
+    --_fui-target-hit-size: var(--fui-raw-space-48, 48px);
+  }
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: var(--fui-radius-full, 9999px);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
+  background-color: var(--_switch-off-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 26%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, #161616) 5%, transparent);
+  transition: background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1));
+}
+.root[data-checked] .track {
+  background-color: var(--fui-control-checked-bg, #006b57);
+  border-color: var(--fui-control-checked-border, #006b57);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+.root:not([data-disabled]):not([data-checked]) .track:hover {
+  background-color: var(--_switch-off-bg-hover);
+  border-color: var(--_switch-off-border-hover);
+}
+.root:not([data-disabled])[data-checked] .track:hover {
+  background-color: var(--fui-control-checked-bg-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+  border-color: var(--fui-control-checked-border-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+}
+.root:focus-visible .track {
+  border-color: var(--fui-color-accent, #006b57);
+  outline: var(--fui-focus-ring-width, 2px) solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}
+
+.trackSm {
+  --_fui-switch-inline-size: var(--fui-control-track-sm, 28px);
+  --_fui-switch-block-size: var(--fui-icon-md, 16px);
+  --_fui-switch-thumb-size: var(--fui-icon-xs, 12px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-compact-line, 16px) - var(--fui-icon-md, 16px)) / 2);
+}
+
+.trackLg {
+  --_fui-switch-inline-size: var(--fui-control-track-lg, 40px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.trackMd {
+  --_fui-switch-inline-size: var(--fui-control-track-md, 32px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: var(--fui-icon-sm, 14px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
+  box-sizing: border-box;
+  width: var(--_fui-switch-thumb-size);
+  height: var(--_fui-switch-thumb-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--_switch-thumb-bg);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 18%, transparent), inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
+  transition: transform var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-fast, 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+.root[data-checked] .thumb {
+  transform: translate(var(--_fui-switch-travel), -50%);
+  background-color: var(--fui-control-checked-color, #ffffff);
+  border-color: color-mix(in srgb, var(--fui-control-checked-border, #006b57) 28%, transparent);
+}
+.root:dir(rtl)[data-checked] .thumb {
+  transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+}
+.root:active:not([data-disabled]) .thumb {
+  box-shadow: var(--fui-shadow-md, 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03));
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--fui-text-primary, #161616);
+  user-select: none;
+}
+
+.helper {
+  display: block;
+  font-size: var(--fui-type-caption-size, 12px);
+  line-height: var(--fui-type-caption-line, 16px);
+  font-weight: var(--fui-type-caption-weight, 400);
+  letter-spacing: var(--fui-type-caption-tracking, 0);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, rgb(78.9983338398, 78.9983338398, 78.9983338398));
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    border-color: var(--fui-text-primary, #161616);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, #161616);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+  }
+  .root[data-checked] .track {
+    border-color: var(--fui-control-checked-border, #006b57);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+  .track {
+    transition: none;
+  }
+}</style>
+  <div class="row"><button class="root" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off md</span></div>
+    </button>
+<button class="root" data-size="md" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On md</span></div>
+    </button>
+<button class="root" data-size="md" data-disabled role="switch" aria-checked="false" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled off</span></div>
+    </button>
+<button class="root" data-size="md" data-checked data-disabled role="switch" aria-checked="true" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled on</span></div>
+    </button>
+<button class="root" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackSm" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off sm</span></div>
+    </button>
+<button class="root" data-size="lg" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackLg" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On lg</span></div>
+    </button>
+<button class="root js-focus" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Focus target</span></div>
+    </button></div>
+</section>
+    
+<section class="panel" data-panel="distinctive-dark" data-theme="dark" style="color-scheme:dark">
+  <h2>Distinctive token layer · dark</h2>
+  <style>
+:root {
+  --fui-bg-elevated: #39ff14;
+  --fui-bg-primary: #ffff00;
+  --fui-text-primary: #000080;
+  --fui-border-strong: #ff00ff;
+  --fui-control-checked-bg: #ff6b00;
+  --fui-control-checked-border: #ff6b00;
+  --fui-control-checked-bg-hover: #cc5500;
+  --fui-control-checked-border-hover: #cc5500;
+  --fui-control-checked-color: #ffffff;
+  --fui-color-accent: #ff6b00;
+  --fui-color-on-accent: #ffffff;
+  --fui-color-accent-hover: #cc5500;
+  --fui-radius-full: 999px;
+  --fui-stroke-hairline: 1px;
+  --fui-transition-normal: 0s;
+  --fui-transition-fast: 0s;
+  --fui-shadow-md: none;
+  --fui-focus-ring-width: 2px;
+  --fui-focus-ring-offset: 2px;
+  --fui-focus-ring-color: #000080;
+}
+.root {
+  --_switch-off-bg: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 92%,
+      var(--fui-text-primary, #161616) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 82%,
+      var(--fui-text-primary, #161616) 18%
+    )
+  );
+  --_switch-off-bg-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 88%,
+      var(--fui-text-primary, #161616) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 76%,
+      var(--fui-text-primary, #161616) 24%
+    )
+  );
+  --_switch-off-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 72%,
+      var(--fui-text-primary, #161616) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    )
+  );
+  --_switch-off-border-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 44%,
+      var(--fui-text-primary, #161616) 56%
+    )
+  );
+  --_switch-thumb-bg: light-dark(
+    color-mix(in srgb, var(--fui-bg-primary, #f4f4f4) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #f4f4f4) 56%,
+      var(--fui-text-primary, #161616) 44%
+    )
+  );
+  --_switch-thumb-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 68%,
+      var(--fui-text-primary, #161616) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 45%,
+      var(--fui-text-primary, #161616) 55%
+    )
+  );
+  --_fui-target-hit-size: var(--fui-control-track-md, 32px);
+  position: relative;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--_fui-target-hit-size));
+  block-size: max(100%, var(--_fui-target-hit-size));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.root {
+  display: grid;
+  align-items: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.root[data-size=sm] {
+  grid-template-columns: var(--fui-control-track-sm, 28px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-6, 6px);
+  font-size: var(--fui-type-ui-compact-size, 12px);
+  line-height: var(--fui-type-ui-compact-line, 16px);
+  font-weight: var(--fui-type-ui-compact-weight, 500);
+  letter-spacing: var(--fui-type-ui-compact-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=md] {
+  grid-template-columns: var(--fui-control-track-md, 32px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-8, 8px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=lg] {
+  grid-template-columns: var(--fui-control-track-lg, 40px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-10, 10px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (pointer: coarse) {
+  .root {
+    --_fui-target-hit-size: var(--fui-raw-space-48, 48px);
+  }
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: var(--fui-radius-full, 9999px);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
+  background-color: var(--_switch-off-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 26%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, #161616) 5%, transparent);
+  transition: background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1));
+}
+.root[data-checked] .track {
+  background-color: var(--fui-control-checked-bg, #006b57);
+  border-color: var(--fui-control-checked-border, #006b57);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+.root:not([data-disabled]):not([data-checked]) .track:hover {
+  background-color: var(--_switch-off-bg-hover);
+  border-color: var(--_switch-off-border-hover);
+}
+.root:not([data-disabled])[data-checked] .track:hover {
+  background-color: var(--fui-control-checked-bg-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+  border-color: var(--fui-control-checked-border-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+}
+.root:focus-visible .track {
+  border-color: var(--fui-color-accent, #006b57);
+  outline: var(--fui-focus-ring-width, 2px) solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}
+
+.trackSm {
+  --_fui-switch-inline-size: var(--fui-control-track-sm, 28px);
+  --_fui-switch-block-size: var(--fui-icon-md, 16px);
+  --_fui-switch-thumb-size: var(--fui-icon-xs, 12px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-compact-line, 16px) - var(--fui-icon-md, 16px)) / 2);
+}
+
+.trackLg {
+  --_fui-switch-inline-size: var(--fui-control-track-lg, 40px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.trackMd {
+  --_fui-switch-inline-size: var(--fui-control-track-md, 32px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: var(--fui-icon-sm, 14px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
+  box-sizing: border-box;
+  width: var(--_fui-switch-thumb-size);
+  height: var(--_fui-switch-thumb-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--_switch-thumb-bg);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 18%, transparent), inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
+  transition: transform var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-fast, 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+.root[data-checked] .thumb {
+  transform: translate(var(--_fui-switch-travel), -50%);
+  background-color: var(--fui-control-checked-color, #ffffff);
+  border-color: color-mix(in srgb, var(--fui-control-checked-border, #006b57) 28%, transparent);
+}
+.root:dir(rtl)[data-checked] .thumb {
+  transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+}
+.root:active:not([data-disabled]) .thumb {
+  box-shadow: var(--fui-shadow-md, 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03));
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--fui-text-primary, #161616);
+  user-select: none;
+}
+
+.helper {
+  display: block;
+  font-size: var(--fui-type-caption-size, 12px);
+  line-height: var(--fui-type-caption-line, 16px);
+  font-weight: var(--fui-type-caption-weight, 400);
+  letter-spacing: var(--fui-type-caption-tracking, 0);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, rgb(78.9983338398, 78.9983338398, 78.9983338398));
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    border-color: var(--fui-text-primary, #161616);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, #161616);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+  }
+  .root[data-checked] .track {
+    border-color: var(--fui-control-checked-border, #006b57);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+  .track {
+    transition: none;
+  }
+}</style>
+  <div class="row"><button class="root" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off md</span></div>
+    </button>
+<button class="root" data-size="md" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On md</span></div>
+    </button>
+<button class="root" data-size="md" data-disabled role="switch" aria-checked="false" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled off</span></div>
+    </button>
+<button class="root" data-size="md" data-checked data-disabled role="switch" aria-checked="true" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled on</span></div>
+    </button>
+<button class="root" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackSm" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off sm</span></div>
+    </button>
+<button class="root" data-size="lg" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackLg" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On lg</span></div>
+    </button>
+<button class="root js-focus" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Focus target</span></div>
+    </button></div>
+</section>
+    
+<section class="panel" data-panel="paper-dark" data-theme="dark" style="color-scheme:dark">
+  <h2>Paper/ink token layer · dark</h2>
+  <style>
+:root {
+  --fui-bg-elevated: #eaeaea;
+  --fui-bg-primary: #f4f4f4;
+  --fui-text-primary: #161616;
+  --fui-border-strong: rgba(0, 0, 0, 0.15);
+  --fui-control-checked-bg: #161616;
+  --fui-control-checked-border: #161616;
+  --fui-control-checked-bg-hover: #2e2e2e;
+  --fui-control-checked-border-hover: #2e2e2e;
+  --fui-control-checked-color: #ffffff;
+  --fui-color-accent: #161616;
+  --fui-color-on-accent: #ffffff;
+  --fui-color-accent-hover: #2e2e2e;
+  --fui-radius-full: 999px;
+  --fui-stroke-hairline: 1px;
+  --fui-transition-normal: 0s;
+  --fui-transition-fast: 0s;
+  --fui-shadow-md: none;
+  --fui-focus-ring-width: 2px;
+  --fui-focus-ring-offset: 2px;
+  --fui-focus-ring-color: #161616;
+}
+[data-theme="dark"] {
+  --fui-bg-elevated: #202020;
+  --fui-bg-primary: #161616;
+  --fui-text-primary: #f4f4f4;
+  --fui-border-strong: rgba(255, 255, 255, 0.18);
+  --fui-control-checked-bg: #f4f4f4;
+  --fui-control-checked-border: #f4f4f4;
+  --fui-control-checked-color: #161616;
+  --fui-color-accent: #f4f4f4;
+  --fui-color-on-accent: #161616;
+  --fui-focus-ring-color: #f4f4f4;
+}
+.root {
+  --_switch-off-bg: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 92%,
+      var(--fui-text-primary, #161616) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 82%,
+      var(--fui-text-primary, #161616) 18%
+    )
+  );
+  --_switch-off-bg-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 88%,
+      var(--fui-text-primary, #161616) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 76%,
+      var(--fui-text-primary, #161616) 24%
+    )
+  );
+  --_switch-off-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 72%,
+      var(--fui-text-primary, #161616) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    )
+  );
+  --_switch-off-border-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 44%,
+      var(--fui-text-primary, #161616) 56%
+    )
+  );
+  --_switch-thumb-bg: light-dark(
+    color-mix(in srgb, var(--fui-bg-primary, #f4f4f4) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #f4f4f4) 56%,
+      var(--fui-text-primary, #161616) 44%
+    )
+  );
+  --_switch-thumb-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 68%,
+      var(--fui-text-primary, #161616) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 45%,
+      var(--fui-text-primary, #161616) 55%
+    )
+  );
+  --_fui-target-hit-size: var(--fui-control-track-md, 32px);
+  position: relative;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--_fui-target-hit-size));
+  block-size: max(100%, var(--_fui-target-hit-size));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.root {
+  display: grid;
+  align-items: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.root[data-size=sm] {
+  grid-template-columns: var(--fui-control-track-sm, 28px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-6, 6px);
+  font-size: var(--fui-type-ui-compact-size, 12px);
+  line-height: var(--fui-type-ui-compact-line, 16px);
+  font-weight: var(--fui-type-ui-compact-weight, 500);
+  letter-spacing: var(--fui-type-ui-compact-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=md] {
+  grid-template-columns: var(--fui-control-track-md, 32px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-8, 8px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=lg] {
+  grid-template-columns: var(--fui-control-track-lg, 40px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-10, 10px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (pointer: coarse) {
+  .root {
+    --_fui-target-hit-size: var(--fui-raw-space-48, 48px);
+  }
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: var(--fui-radius-full, 9999px);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
+  background-color: var(--_switch-off-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 26%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, #161616) 5%, transparent);
+  transition: background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1));
+}
+.root[data-checked] .track {
+  background-color: var(--fui-control-checked-bg, #006b57);
+  border-color: var(--fui-control-checked-border, #006b57);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+.root:not([data-disabled]):not([data-checked]) .track:hover {
+  background-color: var(--_switch-off-bg-hover);
+  border-color: var(--_switch-off-border-hover);
+}
+.root:not([data-disabled])[data-checked] .track:hover {
+  background-color: var(--fui-control-checked-bg-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+  border-color: var(--fui-control-checked-border-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+}
+.root:focus-visible .track {
+  border-color: var(--fui-color-accent, #006b57);
+  outline: var(--fui-focus-ring-width, 2px) solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}
+
+.trackSm {
+  --_fui-switch-inline-size: var(--fui-control-track-sm, 28px);
+  --_fui-switch-block-size: var(--fui-icon-md, 16px);
+  --_fui-switch-thumb-size: var(--fui-icon-xs, 12px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-compact-line, 16px) - var(--fui-icon-md, 16px)) / 2);
+}
+
+.trackLg {
+  --_fui-switch-inline-size: var(--fui-control-track-lg, 40px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.trackMd {
+  --_fui-switch-inline-size: var(--fui-control-track-md, 32px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: var(--fui-icon-sm, 14px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
+  box-sizing: border-box;
+  width: var(--_fui-switch-thumb-size);
+  height: var(--_fui-switch-thumb-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--_switch-thumb-bg);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 18%, transparent), inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
+  transition: transform var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-fast, 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+.root[data-checked] .thumb {
+  transform: translate(var(--_fui-switch-travel), -50%);
+  background-color: var(--fui-control-checked-color, #ffffff);
+  border-color: color-mix(in srgb, var(--fui-control-checked-border, #006b57) 28%, transparent);
+}
+.root:dir(rtl)[data-checked] .thumb {
+  transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+}
+.root:active:not([data-disabled]) .thumb {
+  box-shadow: var(--fui-shadow-md, 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03));
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--fui-text-primary, #161616);
+  user-select: none;
+}
+
+.helper {
+  display: block;
+  font-size: var(--fui-type-caption-size, 12px);
+  line-height: var(--fui-type-caption-line, 16px);
+  font-weight: var(--fui-type-caption-weight, 400);
+  letter-spacing: var(--fui-type-caption-tracking, 0);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, rgb(78.9983338398, 78.9983338398, 78.9983338398));
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    border-color: var(--fui-text-primary, #161616);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, #161616);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+  }
+  .root[data-checked] .track {
+    border-color: var(--fui-control-checked-border, #006b57);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+  .track {
+    transition: none;
+  }
+}</style>
+  <div class="row"><button class="root" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off md</span></div>
+    </button>
+<button class="root" data-size="md" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On md</span></div>
+    </button>
+<button class="root" data-size="md" data-disabled role="switch" aria-checked="false" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled off</span></div>
+    </button>
+<button class="root" data-size="md" data-checked data-disabled role="switch" aria-checked="true" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled on</span></div>
+    </button>
+<button class="root" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackSm" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off sm</span></div>
+    </button>
+<button class="root" data-size="lg" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackLg" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On lg</span></div>
+    </button>
+<button class="root js-focus" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Focus target</span></div>
+    </button></div>
+</section>
+    
+<section class="panel" data-panel="none-dark" data-theme="dark" style="color-scheme:dark">
+  <h2>No token layer · dark</h2>
+  <style>.root {
+  --_switch-off-bg: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 92%,
+      var(--fui-text-primary, #161616) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 82%,
+      var(--fui-text-primary, #161616) 18%
+    )
+  );
+  --_switch-off-bg-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 88%,
+      var(--fui-text-primary, #161616) 12%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-bg-elevated, #eaeaea) 76%,
+      var(--fui-text-primary, #161616) 24%
+    )
+  );
+  --_switch-off-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 72%,
+      var(--fui-text-primary, #161616) 28%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    )
+  );
+  --_switch-off-border-hover: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 58%,
+      var(--fui-text-primary, #161616) 42%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 44%,
+      var(--fui-text-primary, #161616) 56%
+    )
+  );
+  --_switch-thumb-bg: light-dark(
+    color-mix(in srgb, var(--fui-bg-primary, #f4f4f4) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #f4f4f4) 56%,
+      var(--fui-text-primary, #161616) 44%
+    )
+  );
+  --_switch-thumb-border: light-dark(
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 68%,
+      var(--fui-text-primary, #161616) 32%
+    ),
+    color-mix(
+      in srgb,
+      var(--fui-border-strong, rgba(0, 0, 0, 0.15)) 45%,
+      var(--fui-text-primary, #161616) 55%
+    )
+  );
+  --_fui-target-hit-size: var(--fui-control-track-md, 32px);
+  position: relative;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: max(100%, var(--_fui-target-hit-size));
+  block-size: max(100%, var(--_fui-target-hit-size));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.root {
+  display: grid;
+  align-items: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.root[data-size=sm] {
+  grid-template-columns: var(--fui-control-track-sm, 28px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-6, 6px);
+  font-size: var(--fui-type-ui-compact-size, 12px);
+  line-height: var(--fui-type-ui-compact-line, 16px);
+  font-weight: var(--fui-type-ui-compact-weight, 500);
+  letter-spacing: var(--fui-type-ui-compact-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=md] {
+  grid-template-columns: var(--fui-control-track-md, 32px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-8, 8px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-size=lg] {
+  grid-template-columns: var(--fui-control-track-lg, 40px) minmax(0, 1fr);
+  column-gap: var(--fui-raw-space-10, 10px);
+  font-size: var(--fui-type-ui-standard-size, 14px);
+  line-height: var(--fui-type-ui-standard-line, 20px);
+  font-weight: var(--fui-type-ui-standard-weight, 500);
+  letter-spacing: var(--fui-type-ui-standard-tracking, -0.01em);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+}
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (pointer: coarse) {
+  .root {
+    --_fui-target-hit-size: var(--fui-raw-space-48, 48px);
+  }
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: var(--fui-radius-full, 9999px);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
+  background-color: var(--_switch-off-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 26%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, #161616) 5%, transparent);
+  transition: background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1));
+}
+.root[data-checked] .track {
+  background-color: var(--fui-control-checked-bg, #006b57);
+  border-color: var(--fui-control-checked-border, #006b57);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+.root:not([data-disabled]):not([data-checked]) .track:hover {
+  background-color: var(--_switch-off-bg-hover);
+  border-color: var(--_switch-off-border-hover);
+}
+.root:not([data-disabled])[data-checked] .track:hover {
+  background-color: var(--fui-control-checked-bg-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+  border-color: var(--fui-control-checked-border-hover, hsl(169.9771289871, 164.3448630261%, 13.7353127687%));
+}
+.root:focus-visible .track {
+  border-color: var(--fui-color-accent, #006b57);
+  outline: var(--fui-focus-ring-width, 2px) solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, 2px);
+}
+
+.trackSm {
+  --_fui-switch-inline-size: var(--fui-control-track-sm, 28px);
+  --_fui-switch-block-size: var(--fui-icon-md, 16px);
+  --_fui-switch-thumb-size: var(--fui-icon-xs, 12px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-compact-line, 16px) - var(--fui-icon-md, 16px)) / 2);
+}
+
+.trackLg {
+  --_fui-switch-inline-size: var(--fui-control-track-lg, 40px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.trackMd {
+  --_fui-switch-inline-size: var(--fui-control-track-md, 32px);
+  --_fui-switch-block-size: calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px));
+  --_fui-switch-thumb-size: var(--fui-icon-sm, 14px);
+  --_fui-switch-inset: var(
+    --fui-stroke-default,
+    2px
+  );
+  --_fui-switch-travel: calc(
+    var(--_fui-switch-inline-size) - var(--_fui-switch-block-size)
+  );
+  inline-size: var(--_fui-switch-inline-size);
+  block-size: var(--_fui-switch-block-size);
+  margin-block-start: calc((var(--fui-type-ui-standard-line, 20px) - calc(var(--fui-raw-space-16, 16px) + var(--fui-raw-space-2, 2px))) / 2);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_fui-switch-inset);
+  box-sizing: border-box;
+  width: var(--_fui-switch-thumb-size);
+  height: var(--_fui-switch-thumb-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--_switch-thumb-bg);
+  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  box-shadow: 0 1px 1px color-mix(in srgb, black 18%, transparent), inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  transform: translateY(-50%);
+  transition: transform var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), background-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--fui-transition-normal, 200ms cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--fui-transition-fast, 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+.root[data-checked] .thumb {
+  transform: translate(var(--_fui-switch-travel), -50%);
+  background-color: var(--fui-control-checked-color, #ffffff);
+  border-color: color-mix(in srgb, var(--fui-control-checked-border, #006b57) 28%, transparent);
+}
+.root:dir(rtl)[data-checked] .thumb {
+  transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+}
+.root:active:not([data-disabled]) .thumb {
+  box-shadow: var(--fui-shadow-md, 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -2px rgba(0, 0, 0, 0.03));
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--fui-text-primary, #161616);
+  user-select: none;
+}
+
+.helper {
+  display: block;
+  font-size: var(--fui-type-caption-size, 12px);
+  line-height: var(--fui-type-caption-line, 16px);
+  font-weight: var(--fui-type-caption-weight, 400);
+  letter-spacing: var(--fui-type-caption-tracking, 0);
+  font-family: var(--fui-font-sans, Instrument Sans Variable, Instrument Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif);
+  margin-block-start: var(--fui-field-message-gap);
+  color: var(--fui-text-secondary, rgb(78.9983338398, 78.9983338398, 78.9983338398));
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    border-color: var(--fui-text-primary, #161616);
+    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, #161616);
+    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
+  }
+  .root[data-checked] .track {
+    border-color: var(--fui-control-checked-border, #006b57);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+  .track {
+    transition: none;
+  }
+}</style>
+  <div class="row"><button class="root" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off md</span></div>
+    </button>
+<button class="root" data-size="md" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On md</span></div>
+    </button>
+<button class="root" data-size="md" data-disabled role="switch" aria-checked="false" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled off</span></div>
+    </button>
+<button class="root" data-size="md" data-checked data-disabled role="switch" aria-checked="true" aria-disabled="true" tabindex="-1">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Disabled on</span></div>
+    </button>
+<button class="root" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackSm" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Off sm</span></div>
+    </button>
+<button class="root" data-size="lg" data-checked role="switch" aria-checked="true" tabindex="0">
+      <span class="track trackLg" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">On lg</span></div>
+    </button>
+<button class="root js-focus" data-size="md" role="switch" aria-checked="false" tabindex="0">
+      <span class="track trackMd" aria-hidden="true"><span class="thumb"></span></span>
+      <div class="content"><span class="label">Focus target</span></div>
+    </button></div>
+</section>
+  </div>
+  <script>
+    for (const root of document.querySelectorAll(".js-focus")) {
+      root.addEventListener("click", (event) => {
+        event.preventDefault();
+        root.focus();
+      });
+    }
+    document.querySelector(".js-focus")?.focus();
+  </script>
+</body>
+</html>

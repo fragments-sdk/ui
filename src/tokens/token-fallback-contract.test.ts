@@ -121,4 +121,22 @@ describe("published component token references", () => {
       `Unevaluated SCSS variables reached compiled CSS:\n${violations.join("\n")}`
     ).toEqual([]);
   });
+
+  it("compiles Switch off-state surfaces to concrete color fallbacks", () => {
+    const compiled = sass.compile(join(COMPONENTS_DIR, "Switch", "Switch.module.scss"), {
+      loadPaths: [join(__dirname, "..")],
+      style: "expanded",
+    }).css;
+
+    expect(compiled).not.toMatch(/\$fui-[a-z0-9-]+/);
+    expect(compiled).toMatch(
+      /--_switch-off-bg:\s*light-dark\(\s*color-mix\(\s*in srgb,\s*var\(--fui-bg-elevated, #[0-9a-fA-F]+\)/
+    );
+    expect(compiled).toMatch(
+      /--_switch-off-bg:[\s\S]*var\(--fui-text-primary, #[0-9a-fA-F]+\)[\s\S]*;/,
+    );
+    expect(compiled).toMatch(
+      /--_switch-thumb-bg:[\s\S]*var\(--fui-bg-primary, #[0-9a-fA-F]+\)/,
+    );
+  });
 });
