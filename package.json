@@ -307,6 +307,7 @@
     "!src/blocks/",
     "!src/assets/*.svg",
     "!src/**/*.stories.tsx",
+    "!src/**/*.ui-notes.md",
     "!src/components/Cloud/",
     "dist",
     "!dist/components/Cloud/",
