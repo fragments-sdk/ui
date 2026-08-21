@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Box",
-  "description": "Applies spacing, backgrounds, and borders to a flexible layout container.",
+  "description": "Applies spacing, background, border, and radius to any element.",
   "category": "layout",
   "tags": ["layout", "container", "spacing", "primitive", "box"],
   "status": "stable",
@@ -201,23 +201,21 @@
   },
   "usage": {
     "when": [
-      "Applying consistent padding or margin to content sections",
-      "Creating bordered or elevated containers",
-      "Wrapping content with semantic HTML elements",
-      "Building custom layouts not covered by Stack or Grid"
+      "Padding or insetting a section of content",
+      "Bordered or elevated containers",
+      "Rendering a semantic element with design-system spacing"
     ],
     "whenNot": [
-      "Horizontal or vertical stacking (use Stack)",
-      "Grid-based layouts (use Grid)",
-      "Card-like containers with header/body/footer (use Card)",
-      "Simple text styling (use Text)"
+      "Spacing a row or column of siblings (use Stack)",
+      "Two-dimensional layouts (use Grid)",
+      "Header/body/footer surfaces (use Card)",
+      "Styling text alone (use Text)"
     ],
     "guidelines": [
-      "Use padding props instead of inline styles for consistency",
-      "Choose semantic HTML elements (section, article) where appropriate",
-      "Combine with Stack or Grid for complex layouts",
-      "Use background variants from the design system, not custom colors",
-      "Box forwards DOM props (id, role, aria-*, data-*, event handlers) to the rendered element"
+      "Use the padding and margin props, never inline styles",
+      "Set as=\"section\" or as=\"article\" so the markup stays semantic",
+      "Backgrounds come from the token scale — no custom colours",
+      "Reach for Stack or Grid before nesting Boxes for layout"
     ],
     "accessibility": [
       "Choose semantic as prop values for proper document structure",
@@ -228,43 +226,43 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic box with padding",
+      "description": "Padding, background, and radius in one element.",
       "code": "<Box padding=\"md\" background=\"secondary\" rounded=\"md\">\n  Content with padding and background\n</Box>"
     },
     {
       "name": "With Border",
-      "description": "Bordered container",
+      "description": "A hairline border instead of a filled background.",
       "code": "<Box padding=\"lg\" border rounded=\"md\">\n  Bordered content area\n</Box>"
     },
     {
       "name": "Directional Padding",
-      "description": "Different horizontal and vertical padding",
+      "description": "Horizontal and vertical padding set separately.",
       "code": "<Box paddingX=\"xl\" paddingY=\"sm\" background=\"tertiary\" rounded=\"sm\">\n  Wide horizontal padding, short vertical\n</Box>"
     },
     {
       "name": "Centered with Auto Margin",
-      "description": "Centered content using margin auto",
-      "code": "<Box padding=\"md\" marginX=\"auto\" background=\"elevated\" rounded=\"lg\" style={{ maxWidth: '300px' }}>\n  Centered content\n</Box>"
+      "description": "marginX=\"auto\" centres a fixed-width box in a wider parent.",
+      "code": "import { Box } from '@/components/Box';\n\n<Box width=\"100%\" border rounded=\"md\" padding=\"md\">\n  <Box padding=\"md\" marginX=\"auto\" width=\"240px\" background=\"elevated\" rounded=\"lg\">\n    Centred by auto margin\n  </Box>\n</Box>"
     },
     {
       "name": "Directional Borders",
-      "description": "Individual border sides",
+      "description": "Border on chosen sides only.",
       "code": "<Box padding=\"md\" borderTop borderBottom>\n  Top and bottom borders only\n</Box>"
     },
     {
       "name": "With Shadow",
-      "description": "Box with shadow elevation",
+      "description": "Shadow lifts the surface off the page.",
       "code": "<Box padding=\"lg\" rounded=\"md\" shadow=\"md\" background=\"primary\">\n  Elevated content with shadow\n</Box>"
     },
     {
       "name": "Overflow Hidden",
-      "description": "Content overflow clipped",
-      "code": "<Box padding=\"md\" overflow=\"hidden\" border rounded=\"md\" style={{ maxHeight: '60px' }}>\n  This box clips overflowing content. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n</Box>"
+      "description": "Content past the box's height is clipped, not scrolled.",
+      "code": "import { Box } from '@/components/Box';\n\n<Box padding=\"md\" overflow=\"hidden\" border rounded=\"md\" width=\"320px\" height=\"72px\">\n  This box clips its overflowing content. Lorem ipsum dolor sit amet, consectetur\n  adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna\n  aliqua, and this final sentence never becomes visible.\n</Box>"
     },
     {
       "name": "Text Colors",
-      "description": "Text color variants",
-      "code": "<Box padding=\"md\" display=\"flex\" style={{ gap: '16px' }}>\n  <Box color=\"primary\">Primary</Box>\n  <Box color=\"secondary\">Secondary</Box>\n  <Box color=\"tertiary\">Tertiary</Box>\n  <Box color=\"accent\">Accent</Box>\n</Box>"
+      "description": "Text colour tokens, from strongest to accent.",
+      "code": "import { Box } from '@/components/Box';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\">\n  <Box color=\"primary\">Primary</Box>\n  <Box color=\"secondary\">Secondary</Box>\n  <Box color=\"tertiary\">Tertiary</Box>\n  <Box color=\"accent\">Accent</Box>\n</Stack>"
     }
   ],
   "relations": [

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Text",
-  "description": "Applies consistent typography to semantic text elements.",
+  "description": "Applies the type scale to any text element, without hand-rolling font rules.",
   "category": "display",
   "tags": ["text", "typography", "heading", "paragraph", "font"],
   "status": "stable",
@@ -78,7 +78,7 @@
     },
     "color": {
       "type": "enum",
-      "description": "Text color (muted is an alias for tertiary; success/warning/danger are for a run of text that carries a state on its own \u2014 prefer Badge or Alert when the state deserves a container)",
+      "description": "Text color (muted is an alias for tertiary; success/warning/danger are for a run of text that carries a state on its own — prefer Badge or Alert when the state deserves a container)",
       "default": "\"primary\"",
       "required": false,
       "values": ["primary", "secondary", "tertiary", "muted", "success", "warning", "danger"]
@@ -108,57 +108,55 @@
   },
   "usage": {
     "when": [
-      "Displaying text with specific typography styles",
-      "Creating headings, paragraphs, or labels",
-      "Text that needs truncation or line clamping",
-      "Consistent typography across the application"
+      "Any text that should sit on the type scale",
+      "Headings and paragraphs that need real tags",
+      "Text that must truncate or clamp"
     ],
     "whenNot": [
-      "Complex rich text (use a rich text editor)",
-      "Code display (use CodeBlock)",
-      "Interactive text (use Link or Button)"
+      "Rich or authored content (use Markdown)",
+      "Code (use CodeBlock)",
+      "Anything clickable (use Link or Button)"
     ],
     "guidelines": [
-      "Use semantic elements (h1-h6, p) via the \"as\" prop",
-      "Maintain heading hierarchy for accessibility",
-      "Use color variants sparingly for visual hierarchy",
-      "Consider truncation for user-generated content"
+      "Pick the tag with as, the look with size — they are separate decisions",
+      "Never skip heading levels to get a smaller heading",
+      "Color is for hierarchy and state, not decoration",
+      "Truncated text needs the full string in title or a tooltip"
     ],
     "accessibility": [
-      "Use proper heading levels (h1-h6) for document structure",
-      "Semantic elements convey meaning to screen readers",
-      "Truncated text should have full content in title/tooltip"
+      "as keeps the document outline intact for screen readers",
+      "Clamped text still exposes its full content to assistive tech"
     ]
   },
   "examples": [
     {
       "name": "Sizes",
-      "description": "Different text sizes",
+      "description": "Ten steps from caption to hero, all on the same scale.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text size=\"2xs\">Extra extra small (2xs — 10px)</Text>\n  <Text size=\"xs\">Extra small (xs — 12px)</Text>\n  <Text size=\"sm\">Small (sm — 14px)</Text>\n  <Text size=\"base\">Base size (14px)</Text>\n  <Text size=\"md\">Medium prose body (md — 15px)</Text>\n  <Text size=\"lg\">Large (lg — 20px)</Text>\n  <Text size=\"xl\">Extra large (xl — 24px)</Text>\n  <Text size=\"2xl\">Extra extra large (2xl — 30px)</Text>\n  <Text size=\"3xl\">Page title (3xl — 36px)</Text>\n  <Text size=\"4xl\">Hero display (4xl — 48px)</Text>\n</div>"
     },
     {
       "name": "Weights",
-      "description": "Different font weights",
+      "description": "Four weights — reach past semibold only for real emphasis.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text weight=\"normal\">Normal weight</Text>\n  <Text weight=\"medium\">Medium weight</Text>\n  <Text weight=\"semibold\">Semibold weight</Text>\n  <Text weight=\"bold\">Bold weight</Text>\n</div>"
     },
     {
       "name": "Colors",
-      "description": "Different text colors",
+      "description": "Dimmer tones push text back; success and danger carry state.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text color=\"primary\">Primary color (default)</Text>\n  <Text color=\"secondary\">Secondary color</Text>\n  <Text color=\"tertiary\">Tertiary color</Text>\n  <Text color=\"muted\">Muted color (alias for tertiary)</Text>\n</div>"
     },
     {
       "name": "Semantic Elements",
-      "description": "Using appropriate HTML elements",
+      "description": "The as prop picks the tag, so the outline stays correct.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text as=\"h1\" size=\"3xl\" weight=\"semibold\">Heading 1</Text>\n  <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Heading 2</Text>\n  <Text as=\"h3\" size=\"lg\" weight=\"semibold\">Heading 3</Text>\n  <Text as=\"p\" size=\"md\" color=\"secondary\">\n    This is a paragraph of text that demonstrates the Text component\n    with semantic paragraph element.\n  </Text>\n</div>"
     },
     {
       "name": "Monospace",
-      "description": "Monospace font for code-like text",
+      "description": "Fixed width for IDs, keys, and anything meant to be compared.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text font=\"mono\" size=\"sm\">const greeting = \"Hello, World!\";</Text>\n  <Text font=\"mono\" size=\"sm\" color=\"secondary\">npm install @usefragments/ui</Text>\n</div>"
     },
     {
       "name": "Truncation",
-      "description": "Text truncation with ellipsis",
+      "description": "One line with an ellipsis, or clamp to a set number of lines.",
       "code": "<div style={{ width: '200px', display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text truncate>\n    This is a very long text that will be truncated with an ellipsis when it overflows.\n  </Text>\n  <Text truncate lineClamp={2}>\n    This text will be clamped to two lines. Any content beyond two lines\n    will be hidden and replaced with an ellipsis at the end.\n  </Text>\n</div>"
     }
   ],

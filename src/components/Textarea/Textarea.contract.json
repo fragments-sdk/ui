@@ -195,61 +195,61 @@
       "Selecting from predefined options (use Select)"
     ],
     "guidelines": [
-      "Set appropriate rows for expected content length",
-      "Use placeholder to show example format",
-      "Show character count when maxLength is set",
-      "Consider auto-resize for better UX"
+      "Set rows to match the expected answer length",
+      "Placeholder shows an example, not the label",
+      "Pair maxLength with showCharCount so the limit is visible",
+      "Use resize=\"none\" only when the layout truly cannot flex"
     ],
     "accessibility": [
-      "Always provide a visible label",
-      "Use helperText for format hints",
-      "Error messages should be descriptive"
+      "Give every textarea a visible label",
+      "Put format hints in helperText, not the placeholder",
+      "Error text says what to fix, not just that it failed"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic textarea with label",
+      "description": "Three rows, draggable from the bottom-right corner.",
       "code": "<Textarea\n  label=\"Description\"\n  placeholder=\"Enter a description...\"\n/>"
     },
     {
       "name": "With Helper Text",
-      "description": "Textarea with additional guidance",
+      "description": "Supporting text sits under the box.",
       "code": "<Textarea\n  label=\"Bio\"\n  placeholder=\"Tell us about yourself...\"\n  helperText=\"Max 500 characters\"\n  maxLength={500}\n/>"
     },
     {
       "name": "Error State",
-      "description": "Textarea showing validation error",
+      "description": "Red border, and helperText becomes the reason.",
       "code": "<Textarea\n  label=\"Comments\"\n  placeholder=\"Add your comments...\"\n  error\n  helperText=\"This field is required\"\n/>"
     },
     {
       "name": "Disabled",
-      "description": "Non-interactive textarea",
+      "description": "Dimmed and unfocusable.",
       "code": "<Textarea\n  label=\"Notes\"\n  placeholder=\"Cannot edit...\"\n  disabled\n/>"
     },
     {
       "name": "Custom Rows",
-      "description": "Textarea with more visible rows",
+      "description": "rows={6} doubles the visible height before scrolling.",
       "code": "<Textarea\n  label=\"Long Description\"\n  placeholder=\"Enter detailed information...\"\n  rows={6}\n/>"
     },
     {
       "name": "Sizes",
-      "description": "Available size variants",
+      "description": "Three heights: sm, md, lg.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px' }}>\n  <Textarea label=\"Small\" size=\"sm\" placeholder=\"Small textarea\" />\n  <Textarea label=\"Medium\" size=\"md\" placeholder=\"Medium textarea\" />\n  <Textarea label=\"Large\" size=\"lg\" placeholder=\"Large textarea\" />\n</div>"
     },
     {
-      "name": "With Root Props",
-      "description": "Pass wrapper attributes/styling via rootProps",
-      "code": "<Textarea\n  label=\"Notes\"\n  placeholder=\"Add notes...\"\n  rootProps={{ 'data-demo': 'textarea-wrapper' }}\n/>"
+      "name": "Fixed Height",
+      "description": "resize=\"none\" removes the drag handle so the box stays put.",
+      "code": "<Textarea\n  label=\"Notes\"\n  placeholder=\"Add notes...\"\n  resize=\"none\"\n/>"
     },
     {
       "name": "Success State",
-      "description": "Textarea showing validated/success styling",
+      "description": "Green border confirms the value passed validation.",
       "code": "<Textarea\n  label=\"Bio\"\n  value=\"A short bio about myself.\"\n  success\n  helperText=\"Looks great!\"\n/>"
     },
     {
       "name": "With Character Counter",
-      "description": "Textarea with character count and maxLength",
+      "description": "Live count against maxLength sits below the box.",
       "code": "<Textarea\n  label=\"Bio\"\n  placeholder=\"Tell us about yourself...\"\n  maxLength={200}\n  showCharCount\n/>"
     }
   ],

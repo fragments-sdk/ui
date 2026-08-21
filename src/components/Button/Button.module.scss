@@ -24,7 +24,6 @@
   color: var(--_button-color);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   white-space: nowrap;
-  user-select: none;
 
   // A composed link — `Button asChild` cloning an <a>, or an anchor rendered
   // as a child — must wear the button's own foreground, never the global
@@ -299,17 +298,17 @@
 
 @media (prefers-contrast: more) {
   .secondary {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
     border-color: var(--fui-text-primary, $fui-text-primary);
   }
 
   .outlined {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
     border-color: var(--fui-text-primary, $fui-text-primary);
   }
 
   .ghost {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
 
     &:hover:not(:disabled) {
       border-color: var(--fui-text-primary, $fui-text-primary);
@@ -317,7 +316,7 @@
   }
 
   .link {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
 
     &:hover:not(:disabled) {
       border-color: var(--fui-color-accent, $fui-color-accent);

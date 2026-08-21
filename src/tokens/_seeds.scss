@@ -11,7 +11,6 @@
 // Example:
 //   @use '@usefragments/ui/styles' with (
 //     $fui-brand: #0066ff,
-//     $fui-neutral: "ice",
 //     $fui-density: "compact",
 //     $fui-radius-style: "rounded"
 //   );
@@ -23,16 +22,17 @@
 // --------------------------------------------
 
 /// Primary brand color - derives accent colors, focus rings, etc.
-/// Default = Fragments "pine" (the fill/foreground accent). The out-of-box
-/// theme derives a sage foreground accent in dark mode from this seed.
+/// Default = Fragments "coral" — the vivid warm accent of the paper scheme.
+/// Dark mode preserves its chroma via the OKLCH derivation, so the accent
+/// stays coral on the warm charcoal plane.
 /// @type Color
-$fui-brand: #006b57 !default;
+$fui-brand: #f56138 !default;
 
 /// Neutral palette name for surfaces, text, and borders
-/// Options: "carbon" | "stone" | "mono" | "ice" | "earth" | "sand" | "fire" | "fragments"
-/// Default = "carbon" (the Fragments "Flight Recorder" near-black ramp).
+/// One neutral ramp ships: "paper" (warm cream canvas, white cards, warm
+/// charcoal dark mode) — one light theme, one dark theme.
 /// @type String
-$fui-neutral: "carbon" !default;
+$fui-neutral: "paper" !default;
 
 /// Density preset controlling spacing scale
 /// Options: "compact" | "default" | "relaxed"
@@ -49,7 +49,7 @@ $fui-radius-style: "default" !default;
 // --------------------------------------------
 // Fail fast at compile time if invalid seed values are provided.
 
-$_valid-neutrals: "carbon", "stone", "mono", "ice", "earth", "sand", "fire", "fragments";
+$_valid-neutrals: ("paper",);
 @if not list.index($_valid-neutrals, $fui-neutral) {
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
 }
@@ -70,23 +70,23 @@ $_valid-radii: measurements.$radius-profile-names;
 // Override these to customize semantic colors.
 // If not overridden, they use sensible defaults.
 
-// The status seeds below are tuned to sit in one family with the sage brand
-// (`$fui-brand` / success `#7fc9b3`): muted and mineral rather than neon.
-// Danger is the deep clay complement of sage, warning its split-complement,
-// info a cool teal-adjacent slate — so they read as one palette, not bolted-on.
+// The status seeds below are muted and mineral rather than neon so they sit
+// in one family beside the coral accent: danger a deep clay, success a sage
+// green ("green means contract passing"), warning honey amber, info a dusty
+// slate-blue — one palette, not bolted-on brights.
 
-/// Danger/error color — deep muted clay, sage's warm complement.
+/// Danger/error color — deep muted clay.
 /// @type Color
 $fui-danger: #a54f46 !default;
 
-/// Success color (Fragments brand default — sage; green means "contract passing")
+/// Success color — sage; green means "contract passing".
 /// @type Color
 $fui-success: #7fc9b3 !default;
 
-/// Warning color — honey amber, muted to match the sage family.
+/// Warning color — honey amber.
 /// @type Color
 $fui-warning: #e0aa5c !default;
 
-/// Info color — dusty slate-blue, a cool teal-adjacent tone (was flat grey).
+/// Info color — dusty slate-blue.
 /// @type Color
 $fui-info: #7fa6c4 !default;

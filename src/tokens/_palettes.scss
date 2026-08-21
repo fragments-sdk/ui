@@ -1,9 +1,10 @@
 // ============================================
-// @usefragments/ui Elemental Palettes
+// @usefragments/ui Neutral Palette
 // ============================================
 //
-// Defines 5 elemental palettes with 11 shades (50-950).
-// Each palette has a distinct tonal character.
+// One neutral ramp with 11 shades (50-950) powering one light theme and one
+// dark theme. Theme variation comes from the seeds ($fui-brand, $fui-density,
+// $fui-radius-style) — not from alternative neutral ramps.
 //
 // ============================================
 
@@ -12,182 +13,39 @@
 @use "sass:math";
 
 // --------------------------------------------
-// Stone - Muted cool neutrals (Default)
-// Subtle, balanced feel - matches current zinc-like palette
+// Paper - Warm cream neutral (the only ramp)
+// Gallery-paper ramp: a warm cream canvas with warm-grey ink. Light surfaces
+// sit on the #faf8f5 canvas with white cards floating above; dark mode moves
+// the same warmth onto a charcoal plane. Key stops:
+// 100 = light page canvas, 200 = tinted section band, 300 = warm chip/hover,
+// 900 = ink / primary action fill, 950 = dark page bg.
 // --------------------------------------------
-$palette-stone: (
-  50: #fafafa,
-  100: #f4f4f5,
-  200: #e4e4e7,
-  300: #d4d4d8,
-  400: #a1a1aa,
-  500: #71717a,
-  600: #52525b,
-  700: #3f3f46,
-  800: #27272a,
-  900: #18181b,
-  950: #09090b,
-);
-
-// --------------------------------------------
-// Mono - Restraint-first neutral palette
-// Dark mode is intentionally close to true black so product surfaces feel
-// unified, not like separate panels pasted onto a grey shell.
-// --------------------------------------------
-$palette-mono: (
-  50: #fafafa,
-  100: #f5f5f5,
-  200: #e5e5e5,
-  300: #d4d4d4,
-  400: #a3a3a3,
-  500: #737373,
-  600: #525252,
-  700: #404040,
-  800: #171717,
-  900: #0a0a0a,
-  950: #000000,
-);
-
-// --------------------------------------------
-// Ice - Cool blue tones
-// Professional, tech feel
-// --------------------------------------------
-$palette-ice: (
-  50: #f0f9ff,
-  100: #e0f2fe,
-  200: #bae6fd,
-  300: #7dd3fc,
-  400: #38bdf8,
-  500: #0ea5e9,
-  600: #0284c7,
-  700: #0369a1,
-  800: #0f2d3d,
-  // Darkened and desaturated for dark mode
-  900: #0a1f2c,
-  // Darkened and desaturated for dark mode
-  950: #06141c, // Very dark blue-gray for dark mode bg
-);
-
-// --------------------------------------------
-// Sand - Warm brown/terracotta tones
-// Organic, earthy feel
-// --------------------------------------------
-$palette-sand: (
-  50: #fdf8f3,
-  100: #f5ebe0,
-  200: #e8d5c4,
-  300: #d4b89c,
-  400: #c19a6b,
-  500: #a67c52,
-  600: #8b5e34,
-  700: #6f4518,
-  800: #231a12,
-  // Darkened and desaturated for dark mode
-  900: #181210,
-  // Darkened and desaturated for dark mode
-  950: #0f0c09, // Very dark warm gray for dark mode bg
-);
-
-// --------------------------------------------
-// Earth - Green/olive tones
-// Natural, growth feel
-// --------------------------------------------
-$palette-earth: (
-  50: #f5f7f2,
-  100: #e8ede3,
-  200: #d1dbc6,
-  300: #b3c4a0,
-  400: #8fa872,
-  500: #6b8c4e,
-  600: #517035,
-  700: #3d5527,
-  800: #1a2316,
-  // Darkened and desaturated for dark mode
-  900: #121810,
-  // Darkened and desaturated for dark mode
-  950: #0a0f08, // Very dark green-gray for dark mode bg
-);
-
-// --------------------------------------------
-// Fragments - Rich saturated green tones
-// The Fragments brand palette — deep forest greens
-// --------------------------------------------
-$palette-fragments: (
-  50: #f0f7f3,
-  100: #dceee3,
-  200: #b8ddc6,
-  300: #88c5a0,
-  400: #5aaa7a,
-  500: #3d8f60,
-  600: #2d7049,
-  700: #235536,
-  800: #1a3025,
-  // Dark card surface
-  900: #142318,
-  // Dark surface
-  950: #0d1f17, // Darkest bg
-);
-
-// --------------------------------------------
-// Carbon - Fragments brand neutral (DEFAULT)
-// The hybrid-skin charcoal ramp. Distinct from `mono` (true black) — carbon's
-// dark surfaces sit on a #161616 plane with restrained neutral interaction
-// chrome. Dark surface/text/border values are emitted explicitly by the
-// derive-* branches; light mode mirrors that plane from white. Key stops:
-// 100 = light page canvas, 900 = dark page bg,
-// 950 = recessed surface, 800 = hairline, 700 = strong border, 500 = faint text.
-// --------------------------------------------
-$palette-carbon: (
-  50: #fafafa,
-  100: #f4f4f4,
-  200: #eaeaea,
-  300: #dcdcdc,
-  400: #b0b0b0,
-  500: #8f8f8f,
+$palette-paper: (
+  50: #fdfcfa,
+  100: #faf8f5,
+  // light page canvas
+  200: #f2ede7,
+  // tinted section band
+  300: #e9e2da,
+  // warm chip / secondary action
+  400: #b3aca3,
+  500: #8d8780,
   // faint / placeholder text
-  600: #5a5a5a,
-  700: #4b4b4b,
-  // strong border
-  800: #323232,
-  // hairline / default border
-  900: #161616,
-  // page / body background
-  950: #101010, // recessed palette stop below the #161616 plane
-);
-
-// --------------------------------------------
-// Fire - Warm red/orange tones
-// Energy, passion feel
-// --------------------------------------------
-$palette-fire: (
-  50: #fff7ed,
-  100: #ffedd5,
-  200: #fed7aa,
-  300: #fdba74,
-  400: #fb923c,
-  500: #f97316,
-  600: #ea580c,
-  700: #c2410c,
-  800: #2d1810,
-  // Darkened and desaturated for dark mode
-  900: #1c100a,
-  // Darkened and desaturated for dark mode
-  950: #120a06, // Very dark warm gray for dark mode bg
+  600: #6a6560,
+  700: #4a4641,
+  // strong border (dark)
+  800: #343029,
+  // hairline (dark)
+  900: #1d1c1a,
+  // ink / primary action fill / dark elevated
+  950: #171614, // dark page background
 );
 
 // --------------------------------------------
 // Palette Map for Dynamic Access
 // --------------------------------------------
 $palettes: (
-  "stone": $palette-stone,
-  "mono": $palette-mono,
-  "ice": $palette-ice,
-  "sand": $palette-sand,
-  "earth": $palette-earth,
-  "fire": $palette-fire,
-  "fragments": $palette-fragments,
-  "carbon": $palette-carbon,
-  "wind": $palette-stone, // Legacy alias — "wind" was renamed to "stone"
+  "paper": $palette-paper,
 );
 
 // --------------------------------------------
@@ -195,12 +53,12 @@ $palettes: (
 // --------------------------------------------
 
 /// Get a palette map by name
-/// @param {String} $name - Palette name (stone, ice, sand, earth, fire, fragments)
+/// @param {String} $name - Palette name ("paper")
 /// @return {Map} The palette map with shades 50-950
 @function get-palette($name) {
   @if not map.has-key($palettes, $name) {
-    @warn "Unknown palette '#{$name}'. Using 'stone' as fallback.";
-    @return $palette-stone;
+    @warn "Unknown palette '#{$name}'. Using 'paper' as fallback.";
+    @return $palette-paper;
   }
   @return map.get($palettes, $name);
 }

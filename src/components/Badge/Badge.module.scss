@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/target" as target;
@@ -109,7 +110,7 @@
 // motion the component has. Opacity only: nothing reflows, and a reader who has
 // asked for less motion loses the breathing and keeps the badge.
 .dotPulse {
-  animation: fui-badge-dot-pulse 1.6s ease-in-out infinite;
+  animation: fui-badge-dot-pulse var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out infinite;
 }
 
 @keyframes fui-badge-dot-pulse {
@@ -167,6 +168,12 @@
   cursor: pointer;
 
   &:hover {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+
     opacity: 1;
   }
 }

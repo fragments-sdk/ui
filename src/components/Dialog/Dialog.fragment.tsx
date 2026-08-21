@@ -6,8 +6,7 @@ import { Button } from "../Button";
 export default defineFragment(Dialog, {
   meta: {
     name: "Dialog",
-    purpose:
-      "Modal overlay for focused user interactions. Use for confirmations, forms, or content requiring full attention.",
+    purpose: "Blocks the page with one focused task the user must finish or dismiss.",
     category: "feedback",
     status: "stable",
     tags: ["modal", "dialog", "overlay", "popup", "confirmation"],
@@ -34,7 +33,7 @@ export default defineFragment(Dialog, {
           </Dialog.Content>
         </Dialog>
       ),
-      note: "Basic dialog with header, body, and footer",
+      note: "Header, body, and footer in the standard layout.",
       canonical: true,
     },
     Confirmation: {
@@ -59,7 +58,7 @@ export default defineFragment(Dialog, {
           </Dialog.Content>
         </Dialog>
       ),
-      note: "Destructive action confirmation",
+      note: "Names the consequence before an irreversible action.",
     },
     Large: {
       render: (
@@ -81,12 +80,14 @@ export default defineFragment(Dialog, {
           </Dialog.Content>
         </Dialog>
       ),
-      note: "Large dialog for complex content",
+      note: "Wider surface for denser content.",
     },
-    "Button Trigger + No Initial Focus": {
+    "No Initial Focus": {
       render: (
         <Dialog>
-          <Dialog.Trigger>Open settings</Dialog.Trigger>
+          <Dialog.Trigger asChild>
+            <Button variant="secondary">Open settings</Button>
+          </Dialog.Trigger>
           <Dialog.Content initialFocus={false}>
             <Dialog.Header>
               <Dialog.Title>Settings</Dialog.Title>
@@ -94,12 +95,14 @@ export default defineFragment(Dialog, {
             </Dialog.Header>
             <Dialog.Body>Settings content</Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close>Close</Dialog.Close>
+              <Dialog.Close asChild>
+                <Button variant="secondary">Close</Button>
+              </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
       ),
-      note: "Use the native trigger and disable automatic initial focus when needed",
+      note: "Skips autofocus when you place focus yourself.",
     },
     "Long Title": {
       render: (
@@ -125,35 +128,34 @@ export default defineFragment(Dialog, {
           </Dialog.Content>
         </Dialog>
       ),
-      note: "Long localized titles wrap without obscuring dialog controls",
+      note: "A wrapping title keeps the close control reachable.",
     },
   },
   guidance: {
     when: [
-      "Confirming destructive actions (delete, discard changes)",
-      "Collecting focused input (forms, settings)",
-      "Displaying content that requires acknowledgment",
-      "Multi-step workflows that need isolation",
+      "Confirming something irreversible",
+      "Collecting input the user must finish in one pass",
+      "Content that needs acknowledgment before continuing",
+      "Isolating a step in a longer workflow",
     ],
     whenNot: [
-      "Simple tooltips or hints (use Tooltip)",
-      "Contextual menus (use Menu or Popover)",
-      "Non-blocking notifications (use Toast or Alert)",
-      "Simple confirmation that can be inline (use Alert)",
+      "A short hint (use Tooltip)",
+      "A list of actions (use Menu)",
+      "Contextual content that should not block (use Popover)",
+      "Feedback the user does not act on (use Toast or Alert)",
     ],
     guidelines: [
-      "Keep dialog content focused on a single task",
-      "Provide clear primary and secondary actions",
-      "Use descriptive title that explains the purpose",
-      "Allow dismissal via backdrop click or close button for non-critical dialogs",
-      "Trap focus within the dialog for accessibility",
-      "Use Dialog.Trigger's native button or asChild with a button-compatible control",
+      "One task per dialog",
+      "Title states the task; body states the consequence",
+      "Pair the primary action with an explicit cancel",
+      "Leave backdrop and Escape dismissal on unless the choice is destructive",
+      "Wrap the trigger with asChild around a real control — the bare trigger ships unstyled",
     ],
     accessibility: [
-      "Automatically traps focus within the dialog",
-      "Closes on Escape key press",
-      "Returns focus to trigger element on close",
-      'Uses role="dialog" with proper aria attributes',
+      "Traps focus while open",
+      "Escape closes",
+      "Focus returns to the trigger on close",
+      'role="dialog" with title and description wired to aria attributes',
     ],
     dont: [
       {
@@ -217,7 +219,7 @@ export default defineFragment(Dialog, {
     requiredChildren: ["Content"],
     commonPatterns: [
       '<Dialog><Dialog.Trigger asChild><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close asChild><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
-      "<Dialog><Dialog.Trigger>Open settings</Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>",
+      '<Dialog><Dialog.Trigger asChild><Button variant="secondary">Open settings</Button></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
     ],
   },
   contract: {

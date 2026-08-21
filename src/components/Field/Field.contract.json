@@ -56,42 +56,47 @@
   },
   "usage": {
     "when": [
-      "You need granular validation with match-based error messages",
-      "Custom form controls need accessible labels and descriptions",
-      "Server-side errors need to be distributed to specific fields",
-      "You need dirty/touched tracking or custom validation logic"
+      "One error message per failure reason, not one catch-all",
+      "A custom control needs a real label and description",
+      "Server errors must land on the field that caused them",
+      "You need dirty and touched tracking"
     ],
     "whenNot": [
-      "Simple inputs with basic label and helper text (use Input with label prop)",
-      "Standalone selects or textareas with built-in error display"
+      "A plain input with a label and helper text (use Input's own props)",
+      "A Select or Textarea whose built-in error display is enough"
     ],
     "guidelines": [
-      "Always provide a Field.Label for accessibility",
-      "Wrap any form control in Field.Control to connect it to the field context",
-      "Use match prop on Field.Error for granular native validation messages",
-      "Wrap in Form to enable server-side error distribution by field name"
+      "Every Field gets a Field.Label",
+      "Wrap the control in Field.Control so it joins the field context",
+      "Give each Field.Error a match so the message fits the failure",
+      "Nest inside Form to route server errors by field name"
     ],
     "accessibility": [
-      "Label automatically linked to control via aria-labelledby",
-      "Description linked via aria-describedby",
-      "Error messages announced to screen readers",
-      "Supports data-disabled and data-invalid attributes for styling"
+      "Label links to the control via aria-labelledby",
+      "Description links via aria-describedby",
+      "Errors are announced when they appear",
+      "data-disabled and data-invalid are available for styling"
     ]
   },
   "examples": [
     {
       "name": "Single field",
-      "description": "A single field with label, control, and description",
+      "description": "Label, control and description wired together automatically.",
       "code": "<Field name=\"email\">\n  <Field.Label>Email address</Field.Label>\n  <Field.Control>\n    <Input type=\"email\" placeholder=\"jane@example.com\" />\n  </Field.Control>\n  <Field.Description>We will never share your email.</Field.Description>\n</Field>"
     },
     {
       "name": "Two-column layout",
-      "description": "Fields arranged in a two-column grid",
+      "description": "Grid places two short fields side by side and one full-width.",
       "code": "<Grid columns={2} gap=\"md\">\n  <Field name=\"firstName\">\n    <Field.Label>First Name</Field.Label>\n    <Field.Control>\n      <Input placeholder=\"Jane\" />\n    </Field.Control>\n  </Field>\n  <Field name=\"lastName\">\n    <Field.Label>Last Name</Field.Label>\n    <Field.Control>\n      <Input placeholder=\"Doe\" />\n    </Field.Control>\n  </Field>\n  <Grid.Item colSpan=\"full\">\n    <Field name=\"email\">\n      <Field.Label>Email</Field.Label>\n      <Field.Control>\n        <Input type=\"email\" placeholder=\"jane@example.com\" />\n      </Field.Control>\n      <Field.Error match=\"typeMismatch\">Enter a valid email address</Field.Error>\n    </Field>\n  </Grid.Item>\n</Grid>"
     },
     {
+      "name": "Invalid",
+      "description": "invalid marks the field failed and reveals Field.Error.",
+      "code": "<Field name=\"username\" invalid>\n  <Field.Label>Username</Field.Label>\n  <Field.Control>\n    <Input value=\"ada lovelace\" error />\n  </Field.Control>\n  <Field.Error match>Usernames cannot contain spaces</Field.Error>\n</Field>"
+    },
+    {
       "name": "Custom validation",
-      "description": "Field with custom validate function",
+      "description": "validate runs on change and feeds Field.Error.",
       "code": "<Field\n  name=\"age\"\n  validate={(value) => {\n    const num = Number(value);\n    if (isNaN(num) || num < 18) return 'Must be 18 or older';\n    return null;\n  }}\n  validationMode=\"onChange\"\n  validationDebounceTime={500}\n>\n  <Field.Label>Age</Field.Label>\n  <Field.Control>\n    <Input type=\"number\" placeholder=\"18\" />\n  </Field.Control>\n  <Field.Description>You must be at least 18 years old.</Field.Description>\n  <Field.Error match=\"customError\" />\n</Field>"
     }
   ],

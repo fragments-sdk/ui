@@ -26,12 +26,16 @@
   flex-direction: row-reverse;
   margin-inline-start: auto;
 
+  // Cap against the conversation width, not the bubble's own shrink-wrapped
+  // width. On .content the percentage resolves against an already-collapsed
+  // parent and squeezes short messages until they break mid-word.
+  max-inline-size: 80%;
+
   .body {
     align-items: flex-end;
   }
 
   .content {
-    max-inline-size: 80%;
     background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
     color: var(--fui-text-primary, $fui-text-primary);
   }
@@ -58,7 +62,8 @@
 }
 
 .error .content {
-  border: var(--fui-stroke-hairline) solid var(--fui-color-danger-border, $fui-color-danger-border);
+  border: var(--fui-stroke-hairline, 1px) solid
+    var(--fui-color-danger-border, $fui-color-danger-border);
   background: var(--fui-color-danger-bg, $fui-color-danger-bg);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
@@ -102,7 +107,9 @@
   padding-block: layout.gap("sm");
   padding-inline: layout.gap("md");
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  overflow-wrap: anywhere;
+  // break-word, not anywhere: `anywhere` drops min-content to a single
+  // character, collapsing every shrink-to-fit ancestor around the bubble.
+  overflow-wrap: break-word;
 
   p {
     @include prose.paragraph;
@@ -140,9 +147,9 @@
   display: inline-block;
   inline-size: 0.5em;
   block-size: 1em;
-  margin-inline-start: var(--fui-raw-space-2);
+  margin-inline-start: var(--fui-raw-space-2, 2px);
   background-color: currentColor;
-  animation: blink 1s step-end infinite;
+  animation: blink var(--fui-duration-pulse, $fui-duration-pulse) step-end infinite;
 }
 
 @keyframes blink {

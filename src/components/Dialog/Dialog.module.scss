@@ -42,7 +42,7 @@
   inline-size: 100%;
   max-inline-size: overlay.dialog-max("md");
   opacity: 0;
-  transform: scale(0.95) translateY(-$fui-anim-offset-md);
+  transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-md, #{$fui-anim-offset-md})));
   transition:
     opacity var(--fui-transition-normal, $fui-transition-normal),
     transform var(--fui-transition-normal, $fui-transition-normal);
@@ -54,12 +54,12 @@
 
   &[data-starting-style] {
     opacity: 0;
-    transform: scale(0.95) translateY(-$fui-anim-offset-md);
+    transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-md, #{$fui-anim-offset-md})));
   }
 
   &[data-ending-style] {
     opacity: 0;
-    transform: scale(0.95) translateY($fui-anim-offset-md);
+    transform: scale(0.95) translateY(var(--fui-anim-offset-md, #{$fui-anim-offset-md}));
   }
 }
 

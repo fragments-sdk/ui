@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Progress",
-  "description": "Shows task completion or loading progress in a linear or circular form.",
+  "description": "Shows how far along a task is, as a bar or a ring.",
   "category": "feedback",
   "tags": ["progress", "loading", "indicator", "percentage", "status"],
   "status": "stable",
@@ -70,56 +70,60 @@
   },
   "usage": {
     "when": [
-      "Showing upload/download progress",
-      "Displaying task completion percentage",
-      "Form completion indicators",
-      "Loading states with known duration"
+      "Upload and download progress",
+      "Percentage of a task finished",
+      "How much of a form is filled in",
+      "Waits where you know the duration"
     ],
     "whenNot": [
-      "Unknown loading duration (use Spinner)",
-      "Step-based progress (use Stepper)",
-      "Status without percentage (use Badge)"
+      "You cannot say how long — use Loading",
+      "Discrete steps — use a stepper",
+      "Status with no number — use Badge"
     ],
     "guidelines": [
-      "Use determinate progress when you know the completion percentage",
-      "Use indeterminate for unknown durations",
-      "Include a label for context when the purpose isnt obvious",
-      "Use appropriate color variants for success/warning/danger states",
-      "Use variant=\"neutral\" with role=\"meter\" for magnitude or distribution values where reaching the maximum is not a success state",
-      "Determinate values are clamped to the min/max range for display"
+      "Pass a value when you know the percentage; pass null when you do not",
+      "Add a label whenever the bar alone leaves the purpose unclear",
+      "success, warning, and danger carry state, not decoration",
+      "variant=\"neutral\" with role=\"meter\" for a magnitude where full is not success",
+      "Values outside min and max are clamped before display"
     ],
     "accessibility": [
-      "Uses role=\"progressbar\" with aria-valuenow",
-      "Accepts role=\"meter\" for scalar measurements within a known range",
-      "Label is associated with the progress bar",
-      "State changes are announced to screen readers"
+      "Reports role=\"progressbar\" with aria-valuenow",
+      "role=\"meter\" is accepted for scalar readings inside a known range",
+      "The label is tied to the bar",
+      "Value changes are announced as they happen"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic progress bar with percentage",
-      "code": "<Progress value={60} label=\"Uploading...\" showValue />"
+      "description": "Determinate bar with its percentage spelled out.",
+      "code": "<Progress value={60} label=\"Uploading…\" showValue />"
     },
     {
       "name": "Variants",
-      "description": "Different color variants for different states",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '300px' }}>\n  <Progress value={75} variant=\"default\" label=\"Processing\" showValue />\n  <Progress value={100} variant=\"success\" label=\"Complete\" showValue />\n  <Progress value={80} variant=\"warning\" label=\"Almost full\" showValue />\n  <Progress value={95} variant=\"danger\" label=\"Storage critical\" showValue />\n</div>"
+      "description": "Colour carries state: normal, done, tight, critical.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <Progress value={75} variant=\"default\" label=\"Processing\" showValue />\n  <Progress value={100} variant=\"success\" label=\"Complete\" showValue />\n  <Progress value={80} variant=\"warning\" label=\"Almost full\" showValue />\n  <Progress value={95} variant=\"danger\" label=\"Storage critical\" showValue />\n</Stack>"
+    },
+    {
+      "name": "Meter",
+      "description": "A reading where hitting the top is not a win.",
+      "code": "<Progress\n  value={42}\n  variant=\"neutral\"\n  role=\"meter\"\n  label=\"Seats used\"\n  showValue\n/>"
     },
     {
       "name": "Sizes",
-      "description": "Different progress bar sizes",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '300px' }}>\n  <Progress value={50} size=\"sm\" label=\"Small\" />\n  <Progress value={50} size=\"md\" label=\"Medium\" />\n  <Progress value={50} size=\"lg\" label=\"Large\" />\n</div>"
+      "description": "Thin for table rows, thick when the bar is the point.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <Progress value={50} size=\"sm\" label=\"Small\" />\n  <Progress value={50} size=\"md\" label=\"Medium\" />\n  <Progress value={50} size=\"lg\" label=\"Large\" />\n</Stack>"
     },
     {
       "name": "Indeterminate",
-      "description": "Loading state with unknown duration",
-      "code": "<Progress value={null} label=\"Loading...\" />"
+      "description": "value={null} sweeps instead of filling.",
+      "code": "<Progress value={null} label=\"Loading…\" />"
     },
     {
       "name": "Circular",
-      "description": "Circular progress indicator",
-      "code": "<div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>\n  <CircularProgress value={25} size=\"sm\" />\n  <CircularProgress value={50} size=\"md\" showValue />\n  <CircularProgress value={75} size=\"lg\" showValue variant=\"success\" />\n  <CircularProgress value={null} size=\"md\" />\n</div>"
+      "description": "Same value in a ring, for tiles and compact chrome.",
+      "code": "import { CircularProgress } from '@/components/Progress';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"lg\" align=\"center\">\n  <CircularProgress value={25} size=\"sm\" />\n  <CircularProgress value={50} size=\"md\" showValue />\n  <CircularProgress value={75} size=\"lg\" showValue variant=\"success\" />\n  <CircularProgress value={null} size=\"md\" />\n</Stack>"
     }
   ],
   "relations": [

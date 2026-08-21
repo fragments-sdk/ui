@@ -58,7 +58,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-inline-size: var(--fui-raw-space-12);
+  min-inline-size: var(--fui-raw-space-12, 12px);
 }
 
 .itemContent {

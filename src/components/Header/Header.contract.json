@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Header",
-  "description": "Composes brand, navigation, search, and actions in a responsive application header.",
+  "description": "Composes brand, navigation, search, and actions into one responsive app bar.",
   "category": "navigation",
   "tags": ["header", "navigation", "navbar", "brand", "layout", "dropdown"],
   "status": "stable",
@@ -69,37 +69,22 @@
   },
   "usage": {
     "when": [
-      "Primary site or app header inside AppShell",
-      "Navigation bar with branding (default layout)",
-      "Search and actions bar (sidebar layout)",
-      "Header with responsive mobile menu trigger",
-      "Grouping related nav items under a dropdown menu"
+      "Top-level navigation for an app or site",
+      "Inside AppShell.Header",
+      "Anywhere brand, nav, and actions share one row"
     ],
     "whenNot": [
-      "Simple page titles (use heading elements)",
-      "Footer navigation (use Footer component)",
-      "Standalone sidebar navigation (use Sidebar directly)"
+      "Section headings inside a page (use a heading)",
+      "Toolbars scoped to one panel (use Toolbar)",
+      "Sidebar-only navigation (use Sidebar)"
     ],
     "guidelines": [
-      "Use Header.SkipLink for accessibility (skip to main content)",
-      "In default layout: include Header.Brand for logo",
-      "In sidebar layout: omit Header.Brand (logo in sidebar)",
-      "Header.Trigger integrates with SidebarProvider for mobile menus",
-      "Header.Trigger composes your onClick handler with sidebar toggle behavior",
-      "Header.Nav is hidden on mobile; use sidebar for mobile navigation",
-      "Use Header.Spacer to push items apart",
-      "Use Header.NavMenu to group related nav items under a dropdown",
-      "Use Header.NavMenuItem inside Header.NavMenu for dropdown items",
-      "Header sub-components forward DOM props (id, aria-*, data-*, handlers) to their rendered elements",
-      "Header.Brand asChild composes custom link components while preserving canonical brand styling",
-      "Header.NavItem asChild composes click handlers instead of overwriting the child handler",
-      "Use elevatedOnScroll on sticky marketing headers that need a boundary after scrolling",
-      "Use navAlign=\"center\" when navigation must stay centered independently of brand and actions",
-      "Use container=\"page\" when the header should share a bounded page gutter",
-      "Use Header.MobileNavActions for the primary action row inside Header.MobileNav",
-      "Use the Header icons prop to replace internal mobile trigger and dropdown chevron icons with any icon package",
-      "For rich dropdown content (titles, descriptions, icons), use NavigationMenu instead of Header.Nav",
-      "NavigationMenu also provides an automatic mobile drawer, replacing Header.Trigger + Sidebar for mobile nav"
+      "Header.Spacer pushes the actions cluster to the right",
+      "Omit Header.Brand when the sidebar already shows the logo",
+      "container=\"page\" caps the content at page width for marketing bars",
+      "elevatedOnScroll adds a bottom border once the page scrolls",
+      "Pair Header.Trigger with Header.MobileNav for small screens",
+      "Header.SkipLink should be the first child"
     ],
     "accessibility": [
       "Include Header.SkipLink for keyboard users",
@@ -112,43 +97,38 @@
   "examples": [
     {
       "name": "For Default Layout",
-      "description": "Header with brand, nav, and actions. Use with AppShell layout=\"default\".",
-      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/dashboard\" active>Dashboard</Header.NavItem>\n      <Header.NavItem href=\"/projects\">Projects</Header.NavItem>\n      <Header.NavItem href=\"/settings\">Settings</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"secondary\" size=\"sm\">Sign In</Button>\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+      "description": "Brand, nav, and actions for AppShell layout=\"default\".",
+      "code": "import { Box } from '@/components/Box';\nimport { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/dashboard\" active>Dashboard</Header.NavItem>\n      <Header.NavItem href=\"/projects\">Projects</Header.NavItem>\n      <Header.NavItem href=\"/settings\">Settings</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"secondary\" size=\"sm\">Sign In</Button>\n    </Header.Actions>\n  </Header>\n</Box>"
     },
     {
       "name": "Marketing Header",
-      "description": "Sticky, page-width marketing header with centered navigation, scroll elevation, custom link composition, and mobile actions.",
-      "code": "<Header position=\"sticky\" elevatedOnScroll navAlign=\"center\" container=\"page\">\n  <Header.SkipLink href=\"#main-content\" />\n  <Header.Brand asChild>\n    <a href=\"/\" aria-label=\"Home\">Logo</a>\n  </Header.Brand>\n  <Header.Nav aria-label=\"Main navigation\">\n    <Header.NavItem href=\"/docs\">Docs</Header.NavItem>\n  </Header.Nav>\n  <Header.Actions>\n    <Button size=\"sm\">Start free</Button>\n  </Header.Actions>\n  <Header.Trigger />\n  <Header.MobileNav>\n    <Header.MobileNavLink href=\"/docs\">Docs</Header.MobileNavLink>\n    <Header.MobileNavActions>\n      <Button size=\"sm\">Start free</Button>\n    </Header.MobileNavActions>\n  </Header.MobileNav>\n</Header>"
+      "description": "Sticky page-width bar that gains a border on scroll, with a mobile drawer.",
+      "code": "import { Box } from '@/components/Box';\nimport { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header position=\"sticky\" elevatedOnScroll navAlign=\"center\" container=\"page\">\n    <Header.SkipLink href=\"#main-content\" />\n    <Header.Brand asChild>\n      <a href=\"/\" aria-label=\"Home\">Logo</a>\n    </Header.Brand>\n    <Header.Nav aria-label=\"Main navigation\">\n      <Header.NavItem href=\"/docs\">Docs</Header.NavItem>\n      <Header.NavItem href=\"/pricing\">Pricing</Header.NavItem>\n    </Header.Nav>\n    <Header.Actions>\n      <Button size=\"sm\">Start free</Button>\n    </Header.Actions>\n    <Header.Trigger />\n    <Header.MobileNav>\n      <Header.MobileNavLink href=\"/docs\">Docs</Header.MobileNavLink>\n      <Header.MobileNavLink href=\"/pricing\">Pricing</Header.MobileNavLink>\n      <Header.MobileNavActions>\n        <Button size=\"sm\">Start free</Button>\n      </Header.MobileNavActions>\n    </Header.MobileNav>\n  </Header>\n</Box>"
     },
     {
       "name": "With Dropdown Nav",
-      "description": "Header with a dropdown menu grouping related navigation links.",
-      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/components\" active>Components</Header.NavItem>\n      <Header.NavItem href=\"/blocks\">Blocks</Header.NavItem>\n      <Header.NavMenu label=\"Docs\">\n        <Header.NavMenuItem href=\"/getting-started\">Getting Started</Header.NavMenuItem>\n        <Header.NavMenuItem href=\"/cli\">CLI Reference</Header.NavMenuItem>\n        <Header.NavMenuItem href=\"/mcp\">MCP Tools</Header.NavMenuItem>\n      </Header.NavMenu>\n      <Header.NavItem href=\"/blog\">Blog</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+      "description": "Header.NavMenu groups related links behind one trigger.",
+      "code": "import { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header>\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/components\" active>Components</Header.NavItem>\n      <Header.NavItem href=\"/blocks\">Blocks</Header.NavItem>\n      <Header.NavMenu label=\"Docs\">\n        <Header.NavMenuItem href=\"/getting-started\">Getting Started</Header.NavMenuItem>\n        <Header.NavMenuItem href=\"/cli\">CLI Reference</Header.NavMenuItem>\n        <Header.NavMenuItem href=\"/mcp\">MCP Tools</Header.NavMenuItem>\n      </Header.NavMenu>\n      <Header.NavItem href=\"/blog\">Blog</Header.NavItem>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</Box>"
     },
     {
       "name": "For Sidebar Layout",
-      "description": "Header without brand (logo is in sidebar). Use with AppShell layout=\"sidebar\" or \"sidebar-floating\".",
-      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Search>\n      <Input placeholder=\"Search...\" style={{ width: '240px' }} />\n    </Header.Search>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+      "description": "No brand — the logo lives in the sidebar instead.",
+      "code": "import { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { Input } from '@/components/Input';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header>\n    <Header.SkipLink />\n    <Header.Trigger />\n    <Header.Search>\n      <Input placeholder=\"Search...\" style={{ width: '240px' }} />\n    </Header.Search>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</Box>"
     },
     {
       "name": "Minimal",
-      "description": "Clean header with just trigger and actions",
-      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Trigger />\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
-    },
-    {
-      "name": "With Search",
-      "description": "Header featuring a prominent search input",
-      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Brand>Docs</Header.Brand>\n    <Header.Search>\n      <div style={{\n        display: 'flex',\n        alignItems: 'center',\n        gap: '8px',\n        padding: '8px 12px',\n        background: 'var(--fui-bg-secondary)',\n        borderRadius: '6px',\n        color: 'var(--fui-text-tertiary)',\n        fontSize: '14px',\n        width: '280px'\n      }}>\n        <MagnifyingGlass size={16} /> Search documentation...\n      </div>\n    </Header.Search>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+      "description": "Just the drawer trigger and actions.",
+      "code": "import { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header>\n    <Header.Trigger />\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n    </Header.Actions>\n  </Header>\n</Box>"
     },
     {
       "name": "With Skip Link",
-      "description": "Accessible header with skip link for keyboard navigation",
-      "code": "<Header>\n  <Header.SkipLink href=\"#main-content\">Skip to content</Header.SkipLink>\n  <Header.Brand>Accessible App</Header.Brand>\n  <Header.Nav>\n    <Header.NavItem href=\"/\" active>Home</Header.NavItem>\n    <Header.NavItem href=\"/about\">About</Header.NavItem>\n  </Header.Nav>\n</Header>"
+      "description": "Header.SkipLink gives keyboard users a jump to main content.",
+      "code": "import { Box } from '@/components/Box';\nimport { Header } from '@/components/Header';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header>\n    <Header.SkipLink href=\"#main-content\">Skip to content</Header.SkipLink>\n    <Header.Brand>Accessible App</Header.Brand>\n    <Header.Nav>\n      <Header.NavItem href=\"/\" active>Home</Header.NavItem>\n      <Header.NavItem href=\"/about\">About</Header.NavItem>\n    </Header.Nav>\n  </Header>\n</Box>"
     },
     {
       "name": "With NavigationMenu",
-      "description": "Header using NavigationMenu for rich dropdown content panels with titles, descriptions, and automatic mobile drawer.",
-      "code": "<ThemeProvider defaultMode=\"light\">\n  <Header>\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <NavigationMenu aria-label=\"Site navigation\">\n      <NavigationMenu.List>\n        <NavigationMenu.Item value=\"products\">\n          <NavigationMenu.Trigger>Products</NavigationMenu.Trigger>\n          <NavigationMenu.Content>\n            <div style={{ display: 'flex', flexDirection: 'column', padding: '4px', minWidth: '200px' }}>\n              <NavigationMenu.Link href=\"/analytics\" title=\"Analytics\" description=\"Track your metrics.\" />\n              <NavigationMenu.Link href=\"/automation\" title=\"Automation\" description=\"Automate workflows.\" />\n            </div>\n          </NavigationMenu.Content>\n        </NavigationMenu.Item>\n        <NavigationMenu.Item>\n          <NavigationMenu.Link href=\"/pricing\">Pricing</NavigationMenu.Link>\n        </NavigationMenu.Item>\n      </NavigationMenu.List>\n      <NavigationMenu.Viewport />\n    </NavigationMenu>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"primary\" size=\"sm\">Sign Up</Button>\n    </Header.Actions>\n  </Header>\n</ThemeProvider>"
+      "description": "Rich dropdown panels with titles and descriptions.",
+      "code": "import { Box } from '@/components/Box';\nimport { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\nimport { NavigationMenu } from '@/components/NavigationMenu';\nimport { Stack } from '@/components/Stack';\nimport { ThemeToggle } from '@/components/Theme';\n\n<Box width=\"100%\" border rounded=\"md\" overflow=\"hidden\">\n  <Header>\n    <Header.Brand href=\"/\">MyApp</Header.Brand>\n    <Header.Nav>\n      <NavigationMenu aria-label=\"Site navigation\">\n        <NavigationMenu.List>\n          <NavigationMenu.Item value=\"products\">\n            <NavigationMenu.Trigger>Products</NavigationMenu.Trigger>\n            <NavigationMenu.Content>\n              <Box padding=\"xs\" style={{ minWidth: '200px' }}>\n                <Stack gap=\"none\">\n                  <NavigationMenu.Link href=\"/analytics\" title=\"Analytics\" description=\"Track your metrics.\" />\n                  <NavigationMenu.Link href=\"/automation\" title=\"Automation\" description=\"Automate workflows.\" />\n                </Stack>\n              </Box>\n            </NavigationMenu.Content>\n          </NavigationMenu.Item>\n          <NavigationMenu.Item>\n            <NavigationMenu.Link href=\"/pricing\">Pricing</NavigationMenu.Link>\n          </NavigationMenu.Item>\n        </NavigationMenu.List>\n        <NavigationMenu.Viewport />\n      </NavigationMenu>\n    </Header.Nav>\n    <Header.Spacer />\n    <Header.Actions>\n      <ThemeToggle size=\"md\" />\n      <Button variant=\"primary\" size=\"sm\">Sign Up</Button>\n    </Header.Actions>\n  </Header>\n</Box>"
     }
   ],
   "relations": [

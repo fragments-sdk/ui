@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Command",
-  "description": "Combines search with a keyboard-navigable list of actions.",
+  "description": "Filters a list of actions as the user types.",
   "category": "navigation",
   "tags": ["command", "palette", "search", "spotlight", "quick-actions", "cmdk"],
   "status": "stable",
@@ -51,23 +51,22 @@
   },
   "usage": {
     "when": [
-      "Quick-access command palettes (Ctrl+K)",
-      "Searchable action menus",
-      "Inline command lists with filtering",
-      "Application-wide search interfaces"
+      "A keyboard shortcut that jumps anywhere",
+      "Action lists too long to scan",
+      "Inline lists that need filtering",
+      "Search across everything the app can do"
     ],
     "whenNot": [
-      "Simple dropdown menus (use Menu)",
-      "Form field selection (use Select or Combobox)",
-      "Static navigation (use Sidebar or Tabs)",
-      "Search with complex result types (build custom)"
+      "A handful of actions (use Menu)",
+      "Picking a value for a form (use Select or Combobox)",
+      "Fixed navigation (use Sidebar or Tabs)"
     ],
     "guidelines": [
-      "Compose inside Dialog for modal command palette usage",
-      "Use Command.Group to organize items by category",
-      "Provide Command.Empty for no-results feedback",
-      "Use keywords prop for items that should match on aliases",
-      "Keep item labels short and action-oriented"
+      "Wrap in Dialog for the summon-anywhere palette",
+      "Group by category once the list gets long",
+      "Always supply Command.Empty",
+      "Add keywords so aliases and synonyms match",
+      "Label rows with a verb"
     ],
     "accessibility": [
       "Uses combobox + listbox ARIA pattern",
@@ -79,22 +78,22 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Inline command list with search",
+      "description": "Search field over a flat list.",
       "code": "<div style={{ maxWidth: '400px', width: '100%' }}>\n  <Command>\n    <Command.Input placeholder=\"Type a command...\" />\n    <Command.List>\n      <Command.Item onItemSelect={() => {}}>Open File</Command.Item>\n      <Command.Item onItemSelect={() => {}}>Save Document</Command.Item>\n      <Command.Item onItemSelect={() => {}}>Print</Command.Item>\n      <Command.Empty>No results found.</Command.Empty>\n    </Command.List>\n  </Command>\n</div>"
     },
     {
       "name": "Dialog Command Palette",
-      "description": "Command palette inside a Dialog",
+      "description": "The same list summoned over the page.",
       "code": "<Dialog>\n  <Dialog.Trigger asChild>\n    <Button variant=\"secondary\">Open Command Palette</Button>\n  </Dialog.Trigger>\n  <Dialog.Content size=\"sm\">\n    <Command>\n      <Command.Input placeholder=\"Search commands...\" />\n      <Command.List>\n        <Command.Group heading=\"Actions\">\n          <Command.Item onItemSelect={() => {}}>New File</Command.Item>\n          <Command.Item onItemSelect={() => {}}>Open Recent</Command.Item>\n        </Command.Group>\n        <Command.Separator />\n        <Command.Group heading=\"Settings\">\n          <Command.Item onItemSelect={() => {}}>Preferences</Command.Item>\n          <Command.Item onItemSelect={() => {}}>Keyboard Shortcuts</Command.Item>\n        </Command.Group>\n        <Command.Empty>No results found.</Command.Empty>\n      </Command.List>\n    </Command>\n  </Dialog.Content>\n</Dialog>"
     },
     {
       "name": "With Groups",
-      "description": "Organized by category groups",
+      "description": "Category labels survive filtering.",
       "code": "<div style={{ maxWidth: '400px', width: '100%' }}>\n  <Command>\n    <Command.Input placeholder=\"Search...\" />\n    <Command.List>\n      <Command.Group heading=\"Suggestions\">\n        <Command.Item onItemSelect={() => {}}>Calendar</Command.Item>\n        <Command.Item onItemSelect={() => {}}>Calculator</Command.Item>\n      </Command.Group>\n      <Command.Separator />\n      <Command.Group heading=\"Settings\">\n        <Command.Item onItemSelect={() => {}}>Profile</Command.Item>\n        <Command.Item onItemSelect={() => {}}>Billing</Command.Item>\n        <Command.Item disabled onItemSelect={() => {}}>\n          Team (coming soon)\n        </Command.Item>\n      </Command.Group>\n      <Command.Empty>No results found.</Command.Empty>\n    </Command.List>\n  </Command>\n</div>"
     },
     {
       "name": "With Icons",
-      "description": "Items with leading icons",
+      "description": "Leading glyphs speed up scanning.",
       "code": "<div style={{ maxWidth: '400px', width: '100%' }}>\n  <Command>\n    <Command.Input placeholder=\"What do you need?\" />\n    <Command.List>\n      <Command.Item onItemSelect={() => {}}>\n        <span style={{ marginRight: '0.5rem', fontSize: '1rem' }}>+</span> New Document\n      </Command.Item>\n      <Command.Item onItemSelect={() => {}}>\n        <span style={{ marginRight: '0.5rem', fontSize: '1rem' }}>{'>'}</span> Open Folder\n      </Command.Item>\n      <Command.Item onItemSelect={() => {}}>\n        <span style={{ marginRight: '0.5rem', fontSize: '1rem' }}>?</span> Search\n      </Command.Item>\n      <Command.Empty>No results found.</Command.Empty>\n    </Command.List>\n  </Command>\n</div>"
     }
   ],

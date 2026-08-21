@@ -16,6 +16,9 @@
 
   display: flex;
   align-items: center;
+  // A header always spans its container. Without this it collapses to
+  // min-content when placed inside a flex/grid parent that centers its items.
+  width: 100%;
   height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
   min-height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
   background-color: var(--fui-main-bg, $fui-main-bg);
@@ -36,7 +39,7 @@
 }
 
 .elevatedOnScroll {
-  border-bottom: var(--fui-space-px, $fui-space-px) solid transparent;
+  border-bottom: var(--fui-stroke-hairline, 1px) solid transparent;
   transition: border-color var(--fui-transition-fast, $fui-transition-fast);
 }
 
@@ -339,7 +342,7 @@
   inset: 0;
   z-index: 98;
   background: var(--fui-backdrop, $fui-backdrop);
-  animation: mobileNavFadeIn var(--fui-transition-normal, $fui-transition-normal) ease;
+  animation: mobileNavFadeIn var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .mobileNavDrawer {
@@ -353,7 +356,7 @@
   border-left: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   display: flex;
   flex-direction: column;
-  animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal) ease;
+  animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .mobileNavHeader {

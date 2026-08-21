@@ -1,6 +1,6 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-@use '../../recipes/typography';
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/typography";
 
 .root {
   @include form-group-surface;
@@ -13,6 +13,13 @@
 
   &[data-disabled] {
     opacity: 0.5;
+  }
+
+  // Legend and description carry their own block margins, so spacing is added
+  // only between the remaining rows. Without this, sibling controls that render
+  // a single line (a bare Checkbox or Switch inside a Field) sit flush together.
+  > :not(.legend):not(.description) + :not(.legend):not(.description) {
+    margin-block-start: var(--fui-raw-space-16, 16px);
   }
 }
 

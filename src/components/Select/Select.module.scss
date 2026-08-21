@@ -259,7 +259,7 @@
 
 @media (prefers-contrast: more) {
   .trigger {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
     border-color: var(--fui-text-primary, $fui-text-primary);
 
     &[data-popup-open] {

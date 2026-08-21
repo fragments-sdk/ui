@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Toast",
-  "description": "Displays a brief, non-blocking notification about application activity.",
+  "description": "Briefly reports what just happened, without blocking the page.",
   "category": "feedback",
   "tags": ["notification", "alert", "message", "feedback"],
   "status": "stable",
@@ -70,62 +70,52 @@
   },
   "usage": {
     "when": [
-      "Providing feedback after an action",
-      "Showing success/error status of operations",
-      "Non-critical information that doesn't require action",
-      "Temporary messages that auto-dismiss"
+      "Confirming an action landed",
+      "Reporting whether an operation worked",
+      "News the user does not have to act on",
+      "Messages that can disappear on their own"
     ],
     "whenNot": [
-      "Critical errors requiring user action (use Dialog)",
-      "Persistent information (use Alert)",
-      "Inline validation (use form error states)",
-      "System-wide announcements (use Banner)"
+      "Errors the user must resolve — use Dialog",
+      "Anything that must stay on screen — use Alert",
+      "Field-level validation — use form error states",
+      "Site-wide notices — use a banner"
     ],
     "guidelines": [
-      "Keep messages brief and actionable",
-      "Use appropriate variant for the message type",
-      "Auto-dismiss after reasonable duration (3-5s)",
-      "Allow manual dismissal for longer messages",
-      "Limit number of simultaneous toasts",
-      "useToast() variant helpers accept either (title, description?) or an options object for action/duration/id"
+      "One sentence, plus a title if it helps",
+      "Match the variant to what actually happened",
+      "Auto-dismiss in three to five seconds",
+      "Anything with an action needs a manual dismiss too",
+      "Two or three on screen at once, no more",
+      "useToast() helpers take (title, description) or an options object for action, duration, and id"
     ],
     "accessibility": [
-      "Use role=\"alert\" for important messages",
-      "Ensure sufficient display time for reading",
-      "Don't rely solely on color for meaning",
-      "Provide dismiss button with accessible label"
+      "role=\"alert\" for anything the user must not miss",
+      "Leave enough time to read it",
+      "Never let colour be the only signal",
+      "Give the dismiss button a real label"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Interactive toast demo - click buttons to trigger toasts (includes helper object syntax example)",
-      "code": "<ToastDemoWrapper />"
+      "description": "Neutral message with a title and one line under it.",
+      "code": "<Toast\n  title=\"Draft saved\"\n  description=\"We will keep it until you publish.\"\n/>"
     },
     {
-      "name": "Success",
-      "description": "Success message variant",
-      "code": "<Toast\n  title=\"Success!\"\n  description=\"Your changes have been saved.\"\n  variant=\"success\"\n/>"
-    },
-    {
-      "name": "Error",
-      "description": "Error message variant",
-      "code": "<Toast\n  title=\"Error\"\n  description=\"Failed to save changes. Please try again.\"\n  variant=\"error\"\n/>"
-    },
-    {
-      "name": "Warning",
-      "description": "Warning message variant",
-      "code": "<Toast\n  title=\"Warning\"\n  description=\"This action cannot be undone.\"\n  variant=\"warning\"\n/>"
-    },
-    {
-      "name": "Info",
-      "description": "Informational message variant",
-      "code": "<Toast\n  title=\"New Update\"\n  description=\"Version 2.0 is now available.\"\n  variant=\"info\"\n/>"
+      "name": "Variants",
+      "description": "Icon and colour together carry the outcome.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"sm\">\n  <Toast\n    title=\"Success!\"\n    description=\"Your changes have been saved.\"\n    variant=\"success\"\n  />\n  <Toast\n    title=\"Error\"\n    description=\"Failed to save changes. Please try again.\"\n    variant=\"error\"\n  />\n  <Toast\n    title=\"Warning\"\n    description=\"This action cannot be undone.\"\n    variant=\"warning\"\n  />\n  <Toast\n    title=\"New update\"\n    description=\"Version 2.0 is now available.\"\n    variant=\"info\"\n  />\n</Stack>"
     },
     {
       "name": "With Action",
-      "description": "Toast with an action button",
-      "code": "<Toast\n  title=\"File deleted\"\n  description=\"The file has been moved to trash.\"\n  action={{\n    label: 'Undo',\n    onClick: () => console.log('Undo clicked'),\n  }}\n/>"
+      "description": "One-tap way back from something destructive.",
+      "code": "<Toast\n  title=\"File deleted\"\n  description=\"The file has been moved to trash.\"\n  action={{\n    label: 'Undo',\n    onClick: () => {},\n  }}\n/>"
+    },
+    {
+      "name": "Dismissible",
+      "description": "onDismiss adds a close button for longer messages.",
+      "code": "<Toast\n  title=\"Export running\"\n  description=\"We will email you when the file is ready.\"\n  variant=\"info\"\n  onDismiss={() => {}}\n/>"
     }
   ],
   "relations": [

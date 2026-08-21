@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Tabs",
-  "description": "Switches between related content panels within the same context.",
+  "description": "Swaps between sibling panels without leaving the page.",
   "category": "navigation",
   "tags": ["tabs", "navigation", "panels", "content-switcher"],
   "status": "stable",
@@ -53,23 +53,23 @@
   },
   "usage": {
     "when": [
-      "Organizing related content into sections",
-      "Reducing page scrolling by grouping content",
-      "Settings pages with multiple categories",
-      "Dashboard views with different data perspectives"
+      "Sibling sections of equal weight",
+      "Cutting scroll on a long page",
+      "Settings split by category",
+      "One data set seen several ways"
     ],
     "whenNot": [
-      "Primary navigation (use sidebar or header nav)",
-      "Sequential steps (use Stepper or wizard)",
-      "Comparing content side-by-side",
-      "Very long lists of options (use Select or Menu)"
+      "Moving between pages (use Sidebar or header navigation)",
+      "Steps in an order (use Stepper)",
+      "Content the user compares side by side",
+      "More options than fit in a row (use Select)"
     ],
     "guidelines": [
-      "Keep tab labels short (1-2 words)",
-      "Order tabs by usage frequency or logical sequence",
-      "Avoid more than 5-6 tabs; consider sub-navigation for more",
-      "Tab content should be roughly equivalent in scope",
-      "Use pills variant for contained sections, underline for page-level tabs"
+      "One or two words per label",
+      "Order by how often each panel is used",
+      "Past five or six tabs, split the page instead",
+      "Keep panels comparable in depth",
+      "Pills inside cards, underline at page level"
     ],
     "accessibility": [
       "Keyboard navigation with arrow keys",
@@ -80,22 +80,22 @@
   "examples": [
     {
       "name": "Underline",
-      "description": "Default underline style tabs",
+      "description": "A rule tracks the active panel.",
       "code": "<Tabs defaultValue=\"overview\" variant=\"underline\">\n  <Tabs.List>\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"analytics\">Analytics</Tabs.Tab>\n    <Tabs.Tab value=\"settings\">Settings</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Overview content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"analytics\">\n    <p>Analytics content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"settings\">\n    <p>Settings content goes here.</p>\n  </Tabs.Panel>\n</Tabs>"
     },
     {
       "name": "Pills",
-      "description": "Pill-style tabs for contained sections",
+      "description": "A filled track suits panels inside a card.",
       "code": "<Tabs defaultValue=\"all\" variant=\"pills\">\n  <Tabs.List>\n    <Tabs.Tab value=\"all\">All</Tabs.Tab>\n    <Tabs.Tab value=\"active\">Active</Tabs.Tab>\n    <Tabs.Tab value=\"archived\">Archived</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"all\">\n    <p>Showing all items.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"active\">\n    <p>Showing active items only.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"archived\">\n    <p>Showing archived items.</p>\n  </Tabs.Panel>\n</Tabs>"
     },
     {
       "name": "With Disabled",
-      "description": "Tabs with a disabled option",
+      "description": "An unavailable panel stays visible but unreachable.",
       "code": "<Tabs defaultValue=\"general\" variant=\"underline\">\n  <Tabs.List>\n    <Tabs.Tab value=\"general\">General</Tabs.Tab>\n    <Tabs.Tab value=\"security\">Security</Tabs.Tab>\n    <Tabs.Tab value=\"billing\" disabled>Billing</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"general\">\n    <p>General settings panel.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"security\">\n    <p>Security settings panel.</p>\n  </Tabs.Panel>\n</Tabs>"
     },
     {
       "name": "List Variant Override",
-      "description": "Tabs sets a default variant, and Tabs.List can override it per list",
+      "description": "One list can opt out of the root's style.",
       "code": "<Tabs defaultValue=\"overview\" variant=\"pills\">\n  <Tabs.List variant=\"underline\">\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"activity\">Activity</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Root sets pills, but this list overrides to underline.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"activity\">\n    <p>Per-list variant override example.</p>\n  </Tabs.Panel>\n</Tabs>"
     }
   ],

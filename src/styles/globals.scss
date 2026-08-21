@@ -7,7 +7,6 @@
 // Usage in SCSS (recommended):
 //   @use '@usefragments/ui/styles' with (
 //     $fui-brand: #6366f1,
-//     $fui-neutral: "earth",
 //     $fui-radius-style: "rounded"
 //   );
 //
@@ -24,13 +23,12 @@
 // Consumers set these via @use ... with().
 // Values are forwarded to the seed/token chain below.
 
-$fui-brand: #006b57 !default;
-$fui-neutral: "carbon" !default;
+$fui-brand: #f56138 !default;
+$fui-neutral: "paper" !default;
 $fui-density: "default" !default;
 $fui-radius-style: "default" !default;
-// Status seeds tuned to sit in one family with the sage brand (see
-// tokens/_seeds.scss): danger is sage's warm complement, warning its
-// split-complement, info a cool teal-adjacent slate — all muted to match.
+// Status seeds (see tokens/_seeds.scss): muted mineral tones that read as
+// one family next to the coral accent rather than bolted-on neon.
 $fui-danger: #a54f46 !default;
 $fui-success: #7fc9b3 !default;
 $fui-warning: #e0aa5c !default;
@@ -98,7 +96,7 @@ $fui-info: #7fa6c4 !default;
     font-size: inherit;
     font-family: var(
       --fui-font-sans,
-      "Instrument Sans",
+      "Onest",
       system-ui,
       -apple-system,
       BlinkMacSystemFont,
@@ -129,7 +127,7 @@ $fui-info: #7fa6c4 !default;
   :where(a:not([class]):not([style])) {
     color: var(--fui-color-accent, #{$fui-color-accent});
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: 0.2em;
     transition: color 0.15s ease;
 
     &:hover {
@@ -140,7 +138,7 @@ $fui-info: #7fa6c4 !default;
   ::selection {
     background-color: var(
       --fui-selection-bg,
-      color-mix(in srgb, var(--fui-color-accent, #7fc9b3) 18%, transparent)
+      color-mix(in srgb, var(--fui-color-accent, #f56138) 18%, transparent)
     );
     color: var(--fui-selection-color, var(--fui-text-primary, #171717));
   }
@@ -200,11 +198,11 @@ $fui-info: #7fa6c4 !default;
   }
 
   :where(:focus-visible) {
-    outline: 1px solid color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 24%, transparent);
+    outline: 1px solid color-mix(in srgb, var(--fui-focus-ring-color, #f56138) 24%, transparent);
     outline-offset: var(--fui-focus-ring-offset, 2px);
     box-shadow:
       0 0 0 calc(var(--fui-focus-ring-width, 2px) + 1px)
-        color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 10%, transparent),
-      0 10px 24px -16px color-mix(in srgb, var(--fui-focus-ring-color, #006b57) 18%, transparent);
+        color-mix(in srgb, var(--fui-focus-ring-color, #f56138) 10%, transparent),
+      0 10px 24px -16px color-mix(in srgb, var(--fui-focus-ring-color, #f56138) 18%, transparent);
   }
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Grid",
-  "description": "Arranges items in responsive columns with consistent spacing.",
+  "description": "Arranges items into responsive columns with one shared gap.",
   "category": "layout",
   "tags": ["grid", "layout", "columns", "responsive"],
   "status": "stable",
@@ -79,23 +79,21 @@
   },
   "usage": {
     "when": [
-      "Arranging cards, tiles, or media in a responsive grid",
-      "Building form layouts with multi-column fields",
-      "Creating dashboard layouts with widgets",
-      "Any content that should reflow across breakpoints"
+      "Cards, tiles, or media that reflow across breakpoints",
+      "Multi-column form layouts",
+      "Dashboard widget layouts"
     ],
     "whenNot": [
-      "Single-column stacked content (use a simple flex column or Stack)",
-      "Navigation bars or toolbars (use a dedicated nav component)",
-      "Content that must not wrap (use inline layout)"
+      "One-directional lists (use Stack)",
+      "Editorial mosaics with feature tiles (use BentoGrid)",
+      "Navigation bars (use Header)"
     ],
     "guidelines": [
-      "Use columns=\"auto\" with minChildWidth for grids that adapt without breakpoints",
-      "Use responsive object { base: 1, md: 2, lg: 3 } when you need explicit control per breakpoint",
-      "Use fixed column counts when exact column control is needed and responsiveness is not required",
-      "Use Grid.Item with colSpan to create asymmetric layouts within a fixed grid",
-      "Keep gap consistent within a context — md is the default and works for most cases",
-      "Pass DOM attributes (id, role, aria-*, data-*, event handlers) directly to Grid and Grid.Item roots when needed"
+      "columns=\"auto\" with minChildWidth adapts without breakpoints",
+      "Pass { base, md, lg } to columns for explicit per-breakpoint control",
+      "Numeric gaps (1-8) map to the same spacing scale as the tokens",
+      "Wrap a child in Grid.Item to span columns; colSpan=\"full\" spans the row",
+      "Keep source order equal to visual order — Grid does not reorder for screen readers"
     ],
     "accessibility": [
       "Grid is purely visual — it does not affect reading order or semantics",
@@ -105,33 +103,28 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic 3-column grid",
-      "code": "<Grid columns={3} gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Item 1</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Item 2</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Item 3</div>\n</Grid>"
+      "description": "A fixed count of equal columns.",
+      "code": "import { Box } from '@/components/Box';\nimport { Grid } from '@/components/Grid';\n\n<Box width=\"100%\">\n  <Grid columns={3} gap=\"md\">\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">One</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Two</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Three</Box>\n  </Grid>\n</Box>"
     },
     {
       "name": "Responsive",
-      "description": "1 column on mobile, 2 on tablet, 3 on desktop",
-      "code": "<Grid columns={{ base: 1, md: 2, lg: 3 }} gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 1</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 2</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 3</div>\n</Grid>"
+      "description": "Column count changes per breakpoint.",
+      "code": "import { Box } from '@/components/Box';\nimport { Grid } from '@/components/Grid';\n\n<Box width=\"100%\">\n  <Grid columns={{ base: 1, md: 2, lg: 3 }} gap=\"md\">\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 1</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 2</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 3</Box>\n  </Grid>\n</Box>"
     },
     {
       "name": "Auto-fill",
-      "description": "Responsive grid that auto-fills based on minimum child width",
-      "code": "<Grid columns=\"auto\" minChildWidth=\"12rem\" gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 1</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 2</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 3</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Card 4</div>\n</Grid>"
-    },
-    {
-      "name": "Numeric Gap",
-      "description": "Using number values (1-8) mapped to the spacing scale",
-      "code": "<Grid columns={3} gap={4}>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Gap 4</div>\n</Grid>"
+      "description": "Columns fit themselves to a minimum child width — no breakpoints needed.",
+      "code": "import { Box } from '@/components/Box';\nimport { Grid } from '@/components/Grid';\n\n<Box width=\"100%\">\n  <Grid columns=\"auto\" minChildWidth=\"10rem\" gap=\"md\">\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 1</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 2</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 3</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Card 4</Box>\n  </Grid>\n</Box>"
     },
     {
       "name": "With Spanning",
-      "description": "Grid items spanning multiple columns",
-      "code": "<Grid columns={4} gap=\"md\">\n  <Grid.Item colSpan={2}>\n    <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Spans 2 cols</div>\n  </Grid.Item>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>1 col</div>\n  <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>1 col</div>\n  <Grid.Item colSpan=\"full\">\n    <div style={{ padding: 'var(--fui-space-2)', background: 'var(--fui-bg-secondary)' }}>Full width</div>\n  </Grid.Item>\n</Grid>"
+      "description": "Grid.Item stretches a child across columns.",
+      "code": "import { Box } from '@/components/Box';\nimport { Grid } from '@/components/Grid';\n\n<Box width=\"100%\">\n  <Grid columns={4} gap=\"md\">\n    <Grid.Item colSpan={2}>\n      <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Spans 2 columns</Box>\n    </Grid.Item>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">1 col</Box>\n    <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">1 col</Box>\n    <Grid.Item colSpan=\"full\">\n      <Box background=\"secondary\" rounded=\"sm\" padding=\"sm\">Full width</Box>\n    </Grid.Item>\n  </Grid>\n</Box>"
     },
     {
       "name": "Form Layout",
-      "description": "Two-column form that collapses to single column on mobile",
-      "code": "<Grid columns={{ base: 1, md: 2 }} gap=\"md\">\n  <div style={{ padding: 'var(--fui-space-1)', background: 'var(--fui-bg-secondary)' }}>First Name</div>\n  <div style={{ padding: 'var(--fui-space-1)', background: 'var(--fui-bg-secondary)' }}>Last Name</div>\n  <Grid.Item colSpan=\"full\">\n    <div style={{ padding: 'var(--fui-space-1)', background: 'var(--fui-bg-secondary)' }}>Email Address</div>\n  </Grid.Item>\n</Grid>"
+      "description": "Paired fields with one full-width row.",
+      "code": "import { Box } from '@/components/Box';\nimport { Field } from '@/components/Field';\nimport { Grid } from '@/components/Grid';\nimport { Input } from '@/components/Input';\n\n<Box width=\"100%\">\n  <Grid columns={{ base: 1, md: 2 }} gap=\"md\">\n    <Field>\n      <Field.Label>First name</Field.Label>\n      <Input placeholder=\"Ada\" />\n    </Field>\n    <Field>\n      <Field.Label>Last name</Field.Label>\n      <Input placeholder=\"Lovelace\" />\n    </Field>\n    <Grid.Item colSpan=\"full\">\n      <Field>\n        <Field.Label>Email address</Field.Label>\n        <Input type=\"email\" placeholder=\"ada@example.com\" />\n      </Field>\n    </Grid.Item>\n  </Grid>\n</Box>"
     }
   ],
   "relations": [

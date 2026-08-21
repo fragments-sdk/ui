@@ -1,16 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "CodeBlock",
-  "description": "Displays syntax-highlighted code with copying, diffs, and collapsible sections.",
+  "description": "Shows code with syntax colors, a copy button, and diff or collapse when you need them.",
   "category": "display",
-  "tags": [
-    "code",
-    "syntax",
-    "highlighting",
-    "documentation",
-    "developer",
-    "diff"
-  ],
+  "tags": ["code", "syntax", "highlighting", "documentation", "developer", "diff"],
   "status": "stable",
   "dependencies": [
     {
@@ -207,11 +200,7 @@
       "description": "Where to place the copy button when not using persistentCopy",
       "default": "auto",
       "required": false,
-      "values": [
-        "auto",
-        "header",
-        "overlay"
-      ]
+      "values": ["auto", "header", "overlay"]
     },
     "bg": {
       "type": "string",
@@ -226,118 +215,97 @@
   },
   "usage": {
     "when": [
-      "Displaying code examples in documentation",
-      "Showing installation commands",
-      "Presenting configuration snippets",
-      "Teaching programming concepts",
-      "Showing code diffs or changes",
-      "Displaying long code files with collapse functionality"
+      "Code examples inside prose or docs",
+      "Install and config snippets",
+      "Showing what changed, as a diff"
     ],
     "whenNot": [
-      "User-editable code (use code editor)",
-      "Very short inline code (use <code> element)",
-      "Non-code content (use Text or Card)"
+      "The user needs to edit it (use an editor)",
+      "A couple of words inline (use a code element)"
     ],
     "guidelines": [
-      "Always specify the correct language for accurate highlighting",
-      "Use filename prop to show source file name in header bar",
-      "Use copyPlacement=\"auto\" to render copy in overlay mode when no filename is provided",
-      "Use title prop for external labels above the code block",
-      "Enable line numbers for longer code samples",
-      "Use highlightLines to draw attention to key lines",
-      "Use addedLines/removedLines for diff highlighting",
-      "Set maxHeight for very long code blocks to prevent layout issues",
-      "Use collapsible for code samples that users may want to skim",
-      "Choose a theme that matches your documentation style",
-      "Keep code examples concise and focused",
-      "Use CodeBlock.Tabbed for multi-language snippets; tabs support controlled value/onValueChange and explicit tab values"
+      "Set language every time — wrong highlighting is worse than none",
+      "filename for a real file, title for a label, caption for the aside",
+      "Line numbers earn their keep once you need to point at a line",
+      "highlightLines for emphasis; addedLines and removedLines for diffs",
+      "maxHeight or collapsible keeps a long file from swallowing the page",
+      "CodeBlock.Tabbed groups the same snippet across languages"
     ],
     "accessibility": [
-      "Code is presented in a semantic pre/code structure",
-      "Copy button has appropriate aria-label",
-      "Keyboard accessible copy functionality",
-      "Collapse button has aria-expanded state"
+      "Renders as semantic pre and code",
+      "The copy button is labelled and keyboard reachable",
+      "The collapse toggle reports aria-expanded"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic code block with syntax highlighting",
+      "description": "Pass code and language; highlighting and copy come free.",
       "code": "<CodeBlock code={`import { Button } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}`} language=\"tsx\" />"
     },
     {
       "name": "With Filename",
-      "description": "Code block with filename in header bar",
+      "description": "A header bar names the source file and holds the copy button.",
       "code": "<CodeBlock filename=\"app.tsx\" code={`import { Button, Card } from '@usefragments/ui';\n\nfunction App() {\n  return (\n    <Card>\n      <Card.Header>Welcome</Card.Header>\n      <Card.Content>\n        <Button>Get Started</Button>\n      </Card.Content>\n    </Card>\n  );\n}`} language=\"tsx\" />"
     },
     {
       "name": "With Title",
-      "description": "Code block with external title label",
+      "description": "A label above the block, outside the code surface.",
       "code": "<CodeBlock title=\"Installation\" code=\"npm install @usefragments/ui\" language=\"bash\" />"
     },
     {
       "name": "With Caption",
-      "description": "Code block with footer caption",
+      "description": "A footer line for the aside that does not belong in the code.",
       "code": "<CodeBlock\n  code={`const API_URL = process.env.NEXT_PUBLIC_API_URL;`}\n  language=\"typescript\"\n  caption=\"Environment variables must be prefixed with NEXT_PUBLIC_ to be available in the browser.\"\n/>"
     },
     {
       "name": "With Line Numbers",
-      "description": "Shows line numbers for reference",
+      "description": "Turn these on once a snippet is long enough to point at.",
       "code": "<CodeBlock code={`const greeting = \"Hello\";\nconst name = \"World\";\nconsole.log(\\`\\${greeting}, \\${name}!\\`);`} language=\"typescript\" showLineNumbers />"
     },
     {
       "name": "Custom Start Line",
-      "description": "Shows code excerpt starting from a specific line number",
+      "description": "Numbering starts where the excerpt actually starts in the file.",
       "code": "<CodeBlock\n  code={`  return (\n    <button onClick={() => setCount(c => c + 1)}>\n      Count: {count}\n    </button>\n  );\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  startLineNumber={15}\n  caption=\"Lines 15-20 from Counter.tsx\"\n/>"
     },
     {
       "name": "With Highlighted Lines",
-      "description": "Emphasizes specific lines of code",
+      "description": "Marks the lines the prose is talking about.",
       "code": "<CodeBlock code={`import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <button onClick={() => setCount(c => c + 1)}>\n      Count: {count}\n    </button>\n  );\n}`} language=\"tsx\" showLineNumbers highlightLines={[4, '7-9']} />"
     },
     {
       "name": "Diff View",
-      "description": "Shows added and removed lines in a diff-like format",
+      "description": "Added and removed lines, side by side with the rest.",
       "code": "<CodeBlock\n  code={`import { useState } from 'react';\nimport { useCallback } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const increment = () => setCount(c => c + 1);\n  const increment = useCallback(() => setCount(c => c + 1), []);\n\n  return <button onClick={increment}>Count: {count}</button>;\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  removedLines={[6]}\n  addedLines={[2, 7]}\n/>"
     },
     {
-      "name": "GitHub Dark Theme",
-      "description": "Using the GitHub Dark theme",
+      "name": "Custom Theme",
+      "description": "Any Shiki theme works — pass its name to theme.",
       "code": "<CodeBlock\n  code={`async function fetchUser(id: string) {\n  const response = await fetch(\\`/api/users/\\${id}\\`);\n  return response.json();\n}`}\n  language=\"typescript\"\n  theme=\"github-dark\"\n/>"
     },
     {
-      "name": "GitHub Light Theme",
-      "description": "Using the GitHub Light theme for light backgrounds",
-      "code": "<CodeBlock\n  code={`def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)`}\n  language=\"python\"\n  theme=\"github-light\"\n/>"
-    },
-    {
-      "name": "Dracula Theme",
-      "description": "Using the popular Dracula theme",
-      "code": "<CodeBlock\n  code={`fn main() {\n    println!(\"Hello, Rust!\");\n}`}\n  language=\"rust\"\n  theme=\"dracula\"\n/>"
-    },
-    {
       "name": "Word Wrap",
-      "description": "Long lines wrap instead of scrolling horizontally",
+      "description": "Long lines break instead of scrolling sideways.",
       "code": "<CodeBlock\n  code={`const longString = \"This is a very long string that would normally cause horizontal scrolling, but with word wrap enabled it will break to the next line instead.\";`}\n  language=\"typescript\"\n  wordWrap\n/>"
     },
     {
       "name": "Max Height with Scroll",
-      "description": "Constrains height with scrollable content",
+      "description": "Caps the height so one snippet cannot own the page.",
       "code": "<CodeBlock\n  code={`// This code block has a maximum height\nfunction processItems(items: string[]) {\n  const results = [];\n  for (const item of items) {\n    if (item.startsWith('_')) {\n      continue;\n    }\n    const processed = item.trim().toLowerCase();\n    if (processed.length > 0) {\n      results.push(processed);\n    }\n  }\n  return results;\n}\n\nexport default processItems;`}\n  language=\"typescript\"\n  maxHeight={150}\n  showLineNumbers\n/>"
     },
     {
       "name": "Collapsible",
-      "description": "Long code that can be expanded/collapsed",
+      "description": "Shows the opening lines and hides the rest behind a toggle.",
       "code": "<CodeBlock\n  code={`import React, { useState, useEffect } from 'react';\n\ninterface User {\n  id: string;\n  name: string;\n  email: string;\n  avatar?: string;\n}\n\nexport function UserProfile({ userId }: { userId: string }) {\n  const [user, setUser] = useState<User | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  useEffect(() => {\n    async function fetchUser() {\n      try {\n        setLoading(true);\n        const response = await fetch(\\`/api/users/\\${userId}\\`);\n        if (!response.ok) throw new Error('Failed to fetch');\n        const data = await response.json();\n        setUser(data);\n      } catch (err) {\n        setError(err instanceof Error ? err.message : 'Unknown error');\n      } finally {\n        setLoading(false);\n      }\n    }\n    fetchUser();\n  }, [userId]);\n\n  if (loading) return <div>Loading...</div>;\n  if (error) return <div>Error: {error}</div>;\n  if (!user) return null;\n\n  return (\n    <div>\n      <h1>{user.name}</h1>\n      <p>{user.email}</p>\n    </div>\n  );\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  collapsible\n  defaultCollapsed\n  collapsedLines={8}\n/>"
     },
     {
       "name": "JSON",
-      "description": "Configuration file example",
+      "description": "Config files highlight the same way source does.",
       "code": "<CodeBlock title=\"package.json\" code={`{\n  \"name\": \"my-app\",\n  \"dependencies\": {\n    \"@usefragments/ui\": \"^0.3.0\"\n  }\n}`} language=\"json\" />"
     },
     {
       "name": "Without Copy Button",
-      "description": "Minimal display without copy functionality",
+      "description": "Drop the copy button when the snippet is not meant to be reused.",
       "code": "<CodeBlock code=\"const simple = true;\" language=\"typescript\" showCopy={false} />"
     }
   ],
@@ -375,16 +343,11 @@
       "collapsedLines: number (default: 5)",
       "CodeBlock.Tabbed: tabs[] plus optional defaultTab/value/onValueChange for multi-language snippets"
     ],
-    "a11yRules": [
-      "A11Y_CODE_SEMANTIC",
-      "A11Y_BTN_LABEL"
-    ]
+    "a11yRules": ["A11Y_CODE_SEMANTIC", "A11Y_BTN_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Tabbed"
-    ]
+    "subComponents": ["Tabbed"]
   },
   "provenance": {
     "source": "migrated",

@@ -66,7 +66,7 @@
 .sortButton {
   display: flex;
   align-items: center;
-  gap: var(--fui-raw-space-4);
+  gap: var(--fui-raw-space-4, 4px);
 }
 
 .sortButton {
@@ -176,7 +176,10 @@
 }
 
 .bordered {
-  overflow: hidden;
+  /* Keep the rounded corners clipping the table, but never trap the
+     horizontal scroll the wrapper needs for wide tables. */
+  overflow-x: auto;
+  overflow-y: hidden;
   border: var(--fui-table-divider-size, var(--fui-stroke-hairline)) solid
     var(--fui-table-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-md, $fui-radius-md);
@@ -215,7 +218,7 @@
 
 .skeletonBar {
   display: block;
-  block-size: var(--fui-raw-space-10);
+  block-size: var(--fui-raw-space-10, 10px);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   background: linear-gradient(
     90deg,
@@ -224,7 +227,8 @@
     color-mix(in srgb, currentColor 8%, transparent) 75%
   );
   background-size: 200% 100%;
-  animation: dataTableShimmer 1.4s ease-in-out infinite;
+  animation: dataTableShimmer var(--fui-duration-shimmer, $fui-duration-shimmer) ease-in-out
+    infinite;
 }
 
 @keyframes dataTableShimmer {
@@ -246,7 +250,7 @@
 .expandCell {
   display: inline-flex;
   align-items: center;
-  gap: var(--fui-raw-space-4);
+  gap: var(--fui-raw-space-4, 4px);
 }
 
 .expandButton {
@@ -286,8 +290,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-block: var(--fui-raw-space-48);
-  padding-inline: var(--fui-raw-space-24);
+  padding-block: var(--fui-raw-space-48, 48px);
+  padding-inline: var(--fui-raw-space-24, 24px);
 }
 
 .emptyMessage {

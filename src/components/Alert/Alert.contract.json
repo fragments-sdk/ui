@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Alert",
-  "description": "Displays contextual feedback about user actions or system status.",
+  "description": "Tells the user what just happened, or what is about to.",
   "category": "feedback",
   "tags": ["notification", "message", "feedback", "banner", "toast"],
   "status": "stable",
@@ -27,63 +27,60 @@
   },
   "usage": {
     "when": [
-      "Communicating the result of a user action (success, error)",
-      "Warning about potential issues before they occur",
-      "Providing important contextual information inline",
-      "System status notifications that require attention"
+      "Reporting the outcome of something the user did",
+      "Flagging a risk before the user hits it",
+      "Standing status that must stay on screen"
     ],
     "whenNot": [
-      "Brief status labels (use Badge instead)",
-      "Transient notifications (use Toast/Snackbar)",
-      "Form-field-level errors (use Input error prop)",
-      "Confirmation before destructive actions (use Dialog)"
+      "A one-word status (use Badge)",
+      "A message that should fade away (use Toast)",
+      "An invalid field (use the Input error prop)",
+      "A decision the user must make first (use Dialog)"
     ],
     "guidelines": [
-      "Match severity to the actual importance: info for context, warning for potential issues, error for failures",
-      "Always provide actionable guidance in error alerts",
-      "Use Alert.Title for complex messages; skip titles for brief one-liners",
-      "Limit to one action per alert to avoid decision paralysis",
-      "Use Alert.Close only for non-critical information",
-      "Alert.Action and Alert.Close render buttons with type=\"button\" by default (safe inside forms)",
-      "Alert.Close composes your onClick handler with built-in dismiss behavior and respects preventDefault()",
-      "Alert sub-components forward DOM props (aria-*, data-*, id, handlers) to their rendered elements"
+      "Match severity to real stakes — an error that is not an error trains people to ignore you",
+      "Every error alert says what to do next",
+      "Add Alert.Title only when the message needs two lines",
+      "One action per alert",
+      "Only dismissible when losing the message costs nothing",
+      "Alert.Action and Alert.Close default to type=\"button\", so they are safe inside a form",
+      "Alert.Close runs your onClick and still respects preventDefault()"
     ],
     "accessibility": [
-      "Uses role=\"alert\" for screen reader announcement",
-      "Error and warning alerts are announced immediately by assistive technology",
-      "Alert.Close must have an accessible label",
-      "Color alone must not convey meaning - icons and text reinforce severity"
+      "role=\"alert\" means assistive tech announces it on arrival",
+      "Alert.Close needs its own label",
+      "Icon plus wording carry the severity — never color alone"
     ]
   },
   "examples": [
     {
       "name": "Info",
-      "description": "Informational context for the user",
+      "description": "Neutral context — nothing went wrong, nothing needs doing.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      Your session will expire in 15 minutes. Save your work to avoid losing changes.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Success",
-      "description": "Positive confirmation of completed action",
+      "description": "Confirms the thing the user just did actually landed.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"success\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Payment processed</Alert.Title>\n    <Alert.Content>\n      Your order #12345 has been confirmed. You will receive a confirmation email shortly.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Warning",
-      "description": "Caution about potential issues",
+      "description": "Nothing is broken yet — act before it is.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Storage almost full</Alert.Title>\n    <Alert.Content>\n      You have used 90% of your storage quota. Consider deleting unused files.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Error",
-      "description": "Error state requiring user attention",
+      "description": "Something failed; say what to do about it.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"error\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Upload failed</Alert.Title>\n    <Alert.Content>\n      The file could not be uploaded. Check your connection and try again.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "With Action",
-      "description": "Alert with an actionable button",
+      "description": "One button, one job — more than one stalls the reader.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Update available</Alert.Title>\n    <Alert.Content>\n      A new version is available with important security fixes.\n    </Alert.Content>\n    <Alert.Actions>\n      <Alert.Action onClick={() => {}}>Update now</Alert.Action>\n    </Alert.Actions>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Dismissible",
-      "description": "Alert that can be closed by the user",
+      "description": "A close button suits news the user can safely ignore.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      You can customize your notification preferences in Settings.\n    </Alert.Content>\n  </Alert.Body>\n  <Alert.Close />\n</Alert>"
     }
   ],

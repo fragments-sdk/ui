@@ -27,10 +27,10 @@ $_radius: radius.get-radius-style(seeds.$fui-radius-style);
 // Derive spacing from density
 $_spacing: density.derive-spacing($_density);
 
-// True when the brand seed is the Fragments default (pine). Lets the default
-// theme emit exact Flight Recorder accents (sage dark / pine light) while any
-// consumer-supplied $fui-brand keeps the full seed→accent derivation.
-$brand-is-fragments-default: seeds.$fui-brand == #006b57;
+// True when the brand seed is the Fragments default (coral). The default
+// theme uses the exact SCSS-computed accents; any consumer-supplied
+// $fui-brand keeps the full seed→accent derivation reactive at runtime.
+$brand-is-fragments-default: seeds.$fui-brand == #f56138;
 
 // --------------------------------------------
 // Computed: Base Configuration
@@ -95,9 +95,6 @@ $computed-color-accent: seeds.$fui-brand;
 // Default (pine) fill needs white text; contrast-color mis-scores mid-dark
 // brands, so pin on-accent to white for the Fragments default.
 $computed-color-on-accent: derive.contrast-color(seeds.$fui-brand);
-@if $brand-is-fragments-default {
-  $computed-color-on-accent: #ffffff;
-}
 $computed-color-accent-hover: derive.derive-accent-hover(seeds.$fui-brand, false);
 $computed-color-accent-active: derive.derive-accent-active(seeds.$fui-brand, false);
 
@@ -171,11 +168,7 @@ $computed-backdrop: derive.derive-backdrop(false);
 // --------------------------------------------
 
 // Accent colors — dark brands lightened for visibility; on-accent handles text contrast.
-// The Fragments default resolves to exact sage; overrides keep the chroma-aware lift.
 $computed-dark-color-accent: derive.derive-dark-accent(seeds.$fui-brand);
-@if $brand-is-fragments-default {
-  $computed-dark-color-accent: #7fc9b3;
-}
 $computed-dark-color-on-accent: derive.contrast-color($computed-dark-color-accent);
 $computed-dark-color-accent-hover: derive.derive-accent-hover($computed-dark-color-accent, true);
 $computed-dark-color-accent-active: derive.derive-accent-active($computed-dark-color-accent, true);
@@ -226,12 +219,8 @@ $computed-dark-shadow-sm: map.get($_shadows-dark, sm);
 $computed-dark-shadow-md: map.get($_shadows-dark, md);
 $computed-dark-shadow-lg: map.get($_shadows-dark, lg);
 
-// Focus ring (dark mode) — follows the dark accent. Pinned to sage for the
-// Fragments default (derive-focus-ring mis-scores the mid-dark pine brand).
+// Focus ring (dark mode) — follows the dark accent.
 $computed-dark-focus-ring-color: derive.derive-focus-ring(seeds.$fui-brand, true);
-@if $brand-is-fragments-default {
-  $computed-dark-focus-ring-color: #7fc9b3;
-}
 
 // Scrollbar (dark mode)
 $_scrollbar-dark: derive.derive-scrollbar($_palette, true, seeds.$fui-neutral);

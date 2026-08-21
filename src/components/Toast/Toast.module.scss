@@ -68,7 +68,7 @@
 @keyframes toastEnter {
   from {
     opacity: 0;
-    transform: translateY($fui-anim-offset-md) scale(0.96);
+    transform: translateY(var(--fui-anim-offset-md, #{$fui-anim-offset-md})) scale(0.95);
   }
 
   to {

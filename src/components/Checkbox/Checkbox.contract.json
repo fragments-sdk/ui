@@ -139,63 +139,63 @@
   },
   "usage": {
     "when": [
-      "Form fields requiring explicit submission",
-      "Multi-select from a list of options",
-      "Terms and conditions acceptance",
-      "Filter or preference checklists"
+      "Choices that apply only once the form is submitted",
+      "Picking several items from a list",
+      "Accepting terms",
+      "Filter and preference lists"
     ],
     "whenNot": [
-      "Immediate effect settings (use Switch)",
-      "Single selection from options (use RadioGroup)",
-      "Selecting from many options (use Select)"
+      "Settings that apply instantly (use Switch)",
+      "One choice from a few (use RadioGroup)",
+      "Many options (use Select)"
     ],
     "guidelines": [
-      "Always include a visible label",
-      "Use helperText for additional context when needed",
-      "Group related checkboxes visually",
-      "Use indeterminate state for parent/child relationships"
+      "Always show a label",
+      "Add helperText when the consequence is not obvious",
+      "Keep related boxes together",
+      "Use indeterminate for a parent whose children are partly checked"
     ],
     "accessibility": [
-      "Proper label association",
-      "Keyboard accessible (Space to toggle)",
-      "Visible focus indicator",
-      "Indeterminate state properly announced"
+      "Label is tied to the box",
+      "Space toggles it",
+      "Focus ring stays visible",
+      "Indeterminate is announced as mixed"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic checkbox with label",
+      "description": "One box, one label, off to start.",
       "code": "<StatefulCheckbox label=\"Accept terms and conditions\" />"
     },
     {
       "name": "With Helper Text",
-      "description": "Checkbox with helper text",
+      "description": "Second line spells out what opting in does.",
       "code": "<StatefulCheckbox\n  label=\"Email notifications\"\n  helperText=\"Receive email updates about your account activity\"\n/>"
     },
     {
       "name": "Checked",
-      "description": "Pre-checked checkbox",
+      "description": "Starts on.",
       "code": "<StatefulCheckbox defaultChecked label=\"Subscribe to newsletter\" />"
     },
     {
       "name": "Indeterminate",
-      "description": "Partial selection state",
+      "description": "A dash on the parent means only some children are on.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Checkbox indeterminate label=\"Select all\" />\n  <div style={{ marginLeft: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>\n    <StatefulCheckbox defaultChecked label=\"Option 1\" />\n    <StatefulCheckbox label=\"Option 2\" />\n    <StatefulCheckbox defaultChecked label=\"Option 3\" />\n  </div>\n</div>"
     },
     {
       "name": "Sizes",
-      "description": "Available size options",
+      "description": "Three box sizes: sm, md, lg.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <StatefulCheckbox size=\"sm\" label=\"Small checkbox\" />\n  <StatefulCheckbox size=\"md\" label=\"Medium checkbox\" />\n  <StatefulCheckbox size=\"lg\" label=\"Large checkbox\" />\n</div>"
     },
     {
       "name": "Disabled",
-      "description": "Non-interactive states",
+      "description": "Locked in both positions, on and off.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Checkbox disabled label=\"Disabled unchecked\" />\n  <Checkbox disabled checked label=\"Disabled checked\" />\n</div>"
     },
     {
       "name": "Custom Styling Targets",
-      "description": "Use explicit class targets for control vs content styling",
+      "description": "controlClassName styles the box, contentClassName the text.",
       "code": "<Checkbox\n  label=\"Styled checkbox\"\n  helperText=\"Control and content wrappers can be targeted independently\"\n  controlClassName=\"demo-checkbox-control\"\n  contentClassName=\"demo-checkbox-content\"\n/>"
     }
   ],

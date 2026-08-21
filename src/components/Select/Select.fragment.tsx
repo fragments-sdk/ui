@@ -4,8 +4,7 @@ import { Select } from "./index";
 export default defineFragment(Select, {
   meta: {
     name: "Select",
-    purpose:
-      "Dropdown for choosing from a list of options. Use when there are more than 4-5 choices that would clutter the UI.",
+    purpose: "Opens a list and returns the single option the user picks.",
     category: "forms",
     status: "stable",
     tags: ["select", "dropdown", "form", "options", "picker"],
@@ -22,7 +21,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Basic select dropdown",
+      note: "Label, placeholder, three options.",
       canonical: true,
     },
     "With Groups": {
@@ -43,7 +42,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Options organized into groups",
+      note: "Headed sections separate related options.",
     },
     "With Label and Helper Text": {
       render: (
@@ -57,7 +56,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Select with built-in label and helper text",
+      note: "Helper text explains what the choice affects.",
     },
     "Error State": {
       render: (
@@ -69,7 +68,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Validation error with message",
+      note: "Red border, and the message replaces helper text.",
     },
     "With Disabled Options": {
       render: (
@@ -84,7 +83,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Some options are disabled",
+      note: "Unavailable options stay visible but cannot be picked.",
     },
     "Scrollable List": {
       render: (
@@ -99,7 +98,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Long list with scroll hint — shows 4 items with half-peek of the 5th to indicate more",
+      note: "Caps at four rows and half-shows the fifth as a scroll hint.",
     },
     "Custom Max Visible Items": {
       render: (
@@ -116,7 +115,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Show 6 items before scrolling with half-peek scroll hint",
+      note: "maxVisibleItems raises the cap to six rows.",
     },
     Disabled: {
       render: (
@@ -127,7 +126,7 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Disabled select",
+      note: "Dimmed and cannot be opened.",
     },
     "Options Prop": {
       render: (
@@ -140,7 +139,7 @@ export default defineFragment(Select, {
           ]}
         />
       ),
-      note: "Convenience API for simple lists without manual Select.Item composition",
+      note: "The options array replaces hand-written Select.Item children.",
     },
     "Long Localized Option": {
       render: (
@@ -154,42 +153,39 @@ export default defineFragment(Select, {
           </Select.Content>
         </Select>
       ),
-      note: "Long localized options remain readable in the bounded list",
+      note: "The trigger grows to fit a long label instead of clipping it.",
     },
   },
   guidance: {
     when: [
-      "Choosing from a predefined list of options",
-      "More than 4-5 options that would clutter UI as radio buttons",
-      "Space-constrained forms",
-      "When users need to see all options at once",
+      "Picking one value from a known list",
+      "More than 4-5 options — radios would crowd the form",
+      "Tight forms where the list should stay collapsed",
     ],
     whenNot: [
-      "Very few options (2-3) - use radio buttons",
-      "Users might type custom values - use Combobox",
-      "Multiple selections needed - use Checkbox group or MultiSelect",
-      "Actions, not selection - use Menu",
+      "Two or three options (use RadioGroup)",
+      "Users may type their own value (use Combobox)",
+      "Multiple selections (use a Checkbox group)",
+      "Actions rather than values (use Menu)",
     ],
     guidelines: [
-      "Include a placeholder that explains what to select",
-      "Use label prop for accessible field labeling",
-      "Use helperText for guidance and error for validation messages",
-      "Group related options with SelectGroup",
-      "Keep option text concise",
-      "Order options logically (alphabetical, by frequency, or by category)",
+      'Placeholder names the decision, e.g. "Choose a team"',
+      "Set label so the field is announced",
+      "helperText for guidance, error for the failure reason",
+      "Group related options with Select.Group",
+      "Keep option text short",
+      "Order options predictably: alphabetical, by frequency, or by category",
     ],
     accessibility: [
-      "Full keyboard navigation support",
-      "Type-ahead search within options",
-      "Proper ARIA roles and attributes",
+      "Full keyboard navigation",
+      "Type-ahead jumps to matching options",
+      "Trigger and list carry the right ARIA roles",
     ],
     dont: [
       {
         reason: "Do not use Select for a list of actions.",
         bad: "<Select>Delete</Select>",
-        good: (
-          <Select label="Choose a value" options={[{ value: "design", label: "Design" }]} />
-        ),
+        good: <Select label="Choose a value" options={[{ value: "design", label: "Design" }]} />,
       },
     ],
   },

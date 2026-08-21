@@ -1,16 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Markdown",
-  "description": "Renders Markdown as styled headings, lists, tables, code, and blockquotes.",
+  "description": "Turns a Markdown string into styled headings, lists, tables, code, and quotes.",
   "category": "display",
-  "tags": [
-    "markdown",
-    "prose",
-    "content",
-    "text",
-    "ai",
-    "chat"
-  ],
+  "tags": ["markdown", "prose", "content", "text", "ai", "chat"],
   "status": "stable",
   "dependencies": [
     {
@@ -26,11 +19,7 @@
   ],
   "sourcePath": "src/components/Markdown/index.tsx",
   "exportName": "Markdown",
-  "propsSummary": [
-    "content: string (required)",
-    "components: object",
-    "className: string"
-  ],
+  "propsSummary": ["content: string (required)", "components: object", "className: string"],
   "props": {
     "content": {
       "type": "string",
@@ -50,50 +39,45 @@
   },
   "usage": {
     "when": [
-      "Rendering AI/LLM response content",
-      "Displaying user-authored markdown text",
-      "Showing documentation or readme content",
-      "Rich text display without a WYSIWYG editor"
+      "Rendering an LLM reply",
+      "Showing text a user wrote in Markdown",
+      "Docs or readme content inside the app"
     ],
     "whenNot": [
-      "Plain text without formatting (use Text)",
-      "Editing markdown (use a markdown editor component)",
-      "Rendering trusted HTML directly (use dangerouslySetInnerHTML)"
+      "The string has no formatting (use Text)",
+      "The user needs to edit it (use an editor)"
     ],
     "guidelines": [
-      "Install react-markdown and remark-gfm as peer dependencies",
-      "Use the components prop to override default element rendering",
-      "Content is sanitized by react-markdown by default",
-      "The parser is loaded on demand, so the first render on a page is the plain-text fallback and parsed output arrives a tick later; call Markdown.preload() at startup to skip that frame",
-      "Falls back to plain text paragraphs if react-markdown is not installed",
-      "Standard div props (id, style, aria-*, data-*) are forwarded to the Markdown wrapper"
+      "react-markdown and remark-gfm are peer dependencies — install both",
+      "The parser loads on demand, so the first frame is plain text; call Markdown.preload() at startup to skip it",
+      "Without react-markdown installed it degrades to plain paragraphs",
+      "components overrides how any element renders",
+      "react-markdown sanitises the content for you"
     ],
     "accessibility": [
-      "Rendered HTML follows semantic structure (headings, lists, tables)",
-      "Links are rendered as proper anchor elements",
-      "Images include alt text from markdown syntax",
-      "Tables use proper th/td structure for screen readers"
+      "Output is real headings, lists, and tables",
+      "Links render as anchors, images keep their alt text"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic markdown with headings, paragraphs, inline code, lists, and blockquote",
+      "description": "Headings, emphasis, lists, and quotes all pick up the type scale.",
       "code": "<Markdown content={`# Hello World\n\nThis is a paragraph with **bold text** and *italic text*.\n\nHere is some \\`inline code\\` within a sentence.\n\n- First item\n- Second item\n- Third item\n\n> A blockquote for emphasis.\n`} />"
     },
     {
       "name": "GFM Table",
-      "description": "GitHub Flavored Markdown with tables and task lists",
+      "description": "remark-gfm adds tables and checkbox items on top of the basics.",
       "code": "<Markdown content={`## Data Overview\n\n| Feature    | Status    | Priority |\n|------------|-----------|----------|\n| Markdown   | Done      | High     |\n| Tables     | Done      | Medium   |\n| Task Lists | Planned   | Low      |\n\nNotes:\n- [x] Support GFM tables\n- [x] Support task lists\n- [ ] Syntax highlighting\n`} />"
     },
     {
       "name": "Code Block",
-      "description": "Markdown with fenced code blocks and inline code",
-      "code": "<Markdown content={`## Code Example\\n\\nHere is a JavaScript function:\\n\\n```js\\nfunction greet(name) {\\n  return \\`Hello, ${name}!\\`;\\n}\\n```\\n\\nAnd some inline code: \\`const x = 42;\\``} />"
+      "description": "Fenced blocks get the same code surface as CodeBlock.",
+      "code": "<Markdown content={`## Code Example\n\nHere is a JavaScript function:\n\n```js\nfunction greet(name) {\n  return 'Hello, ' + name;\n}\n```\n\nAnd some inline code: \\`const x = 42;\\``} />"
     },
     {
       "name": "Mixed Content",
-      "description": "Complex markdown mixing headings, lists, tables, blockquotes, and task lists",
+      "description": "A realistic document — the worst case worth checking.",
       "code": "<Markdown content={`# Project Update\n\n## Summary\n\nThe project is progressing well. Here are the **key highlights**:\n\n1. Completed the *design system* components\n2. Added markdown rendering support\n3. Integrated with the documentation site\n\n### Performance Metrics\n\n| Metric      | Before | After |\n|-------------|--------|-------|\n| Bundle Size | 142kb  | 98kb  |\n| Load Time   | 1.2s   | 0.8s  |\n| Lighthouse  | 72     | 95    |\n\n> These improvements were achieved through tree-shaking and code splitting.\n\n### Next Steps\n\n- [ ] Add syntax highlighting\n- [ ] Support custom themes\n- [x] GFM table support\n`} />"
     }
   ],
@@ -121,16 +105,11 @@
       "className: string - Additional CSS class",
       "Forwards standard HTML div attributes to the wrapper element"
     ],
-    "a11yRules": [
-      "A11Y_SEMANTIC_HTML"
-    ]
+    "a11yRules": ["A11Y_SEMANTIC_HTML"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root",
-      "preload"
-    ]
+    "subComponents": ["Root", "preload"]
   },
   "provenance": {
     "source": "migrated",

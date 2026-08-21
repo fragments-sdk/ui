@@ -45,7 +45,7 @@
   position: relative;
   width: 100%;
   background-color: var(--fui-form-group-bg, $fui-bg-secondary);
-  box-shadow: inset 0 0 0 1px var(--fui-form-group-border, $fui-border);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px) var(--fui-form-group-border, $fui-border);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: pointer;
 

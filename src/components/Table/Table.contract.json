@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Table",
-  "description": "Displays structured data in semantic rows and columns.",
+  "description": "Renders tabular data as a real HTML table — headers, rows, footer.",
   "category": "display",
   "tags": ["table", "semantic", "html", "layout"],
   "status": "stable",
@@ -53,22 +53,19 @@
   },
   "usage": {
     "when": [
-      "Displaying simple tabular data with semantic HTML",
-      "Static data that does not need sorting or selection",
-      "Showing structured information with headers and rows",
-      "Tables with footers or captions"
+      "The data is static — read it, do not interact with it",
+      "You need real thead/tbody/tfoot semantics",
+      "The table needs a caption or a totals footer"
     ],
     "whenNot": [
-      "Data that needs sorting (use DataTable)",
-      "Data that needs row selection (use DataTable)",
-      "Data that needs clickable rows (use DataTable)",
-      "Simple lists (use List component)"
+      "Rows need sorting, selection, or clicking (use DataTable)",
+      "Content is a single column of items (use List)"
     ],
     "guidelines": [
-      "Use Table.HeaderCell for column headers (adds scope=\"col\" by default)",
-      "Use Table.Caption for table descriptions (can be visually hidden)",
-      "Keep tables simple — use DataTable for interactive features",
-      "Consider mobile responsiveness; table scrolls horizontally on small screens"
+      "Header cells go in Table.HeaderCell — it sets scope=\"col\" for you",
+      "Give every table a caption or aria-label; visuallyHidden keeps it off screen",
+      "Reach for density, not the deprecated size prop",
+      "Narrow viewports scroll the table sideways — keep column count low"
     ],
     "accessibility": [
       "Semantic HTML table elements (thead, tbody, tfoot, th, td)",
@@ -80,37 +77,42 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic semantic table",
+      "description": "Header row plus body rows, no extra styling.",
       "code": "<Table aria-label=\"Team members\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Role</Table.HeaderCell>\n      <Table.HeaderCell>Status</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Alice Johnson</Table.Cell>\n      <Table.Cell>Engineer</Table.Cell>\n      <Table.Cell>Active</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Bob Smith</Table.Cell>\n      <Table.Cell>Designer</Table.Cell>\n      <Table.Cell>Active</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Carol Williams</Table.Cell>\n      <Table.Cell>PM</Table.Cell>\n      <Table.Cell>Away</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
     },
     {
+      "name": "Empty",
+      "description": "Keep the headers and fill one full-width cell so the layout holds.",
+      "code": "<Table aria-label=\"Team members\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Role</Table.HeaderCell>\n      <Table.HeaderCell>Status</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell colSpan={3}>No team members yet.</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
       "name": "Striped",
-      "description": "Alternating row backgrounds for readability",
+      "description": "Row tint alternates so the eye tracks across wide rows.",
       "code": "<Table striped aria-label=\"Inventory\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Item</Table.HeaderCell>\n      <Table.HeaderCell>Category</Table.HeaderCell>\n      <Table.HeaderCell>Qty</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Widget A</Table.Cell>\n      <Table.Cell>Hardware</Table.Cell>\n      <Table.Cell>120</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Widget B</Table.Cell>\n      <Table.Cell>Software</Table.Cell>\n      <Table.Cell>85</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Widget C</Table.Cell>\n      <Table.Cell>Hardware</Table.Cell>\n      <Table.Cell>200</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Widget D</Table.Cell>\n      <Table.Cell>Software</Table.Cell>\n      <Table.Cell>50</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
     },
     {
       "name": "Bordered",
-      "description": "Table with bordered container",
+      "description": "A border wraps the data so it reads as one block on a busy page.",
       "code": "<Table bordered aria-label=\"Pricing\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Plan</Table.HeaderCell>\n      <Table.HeaderCell>Price</Table.HeaderCell>\n      <Table.HeaderCell>Features</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Basic</Table.Cell>\n      <Table.Cell>$9/mo</Table.Cell>\n      <Table.Cell>5 projects</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Pro</Table.Cell>\n      <Table.Cell>$29/mo</Table.Cell>\n      <Table.Cell>Unlimited</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
     },
     {
       "name": "Compact",
-      "description": "Small, dense table",
-      "code": "<Table size=\"sm\" aria-label=\"Shortcuts\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Key</Table.HeaderCell>\n      <Table.HeaderCell>Action</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Ctrl+S</Table.Cell>\n      <Table.Cell>Save</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Ctrl+Z</Table.Cell>\n      <Table.Cell>Undo</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Ctrl+C</Table.Cell>\n      <Table.Cell>Copy</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+      "description": "Tighter rows fit more data in the same height.",
+      "code": "<Table density=\"compact\" aria-label=\"Shortcuts\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Key</Table.HeaderCell>\n      <Table.HeaderCell>Action</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Ctrl+S</Table.Cell>\n      <Table.Cell>Save</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Ctrl+Z</Table.Cell>\n      <Table.Cell>Undo</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Ctrl+C</Table.Cell>\n      <Table.Cell>Copy</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
     },
     {
       "name": "With Caption",
-      "description": "Table with visible caption",
+      "description": "A visible caption titles the data for every reader.",
       "code": "<Table aria-label=\"Q1 results\">\n  <Table.Caption>Quarterly Results (Q1 2026)</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Metric</Table.HeaderCell>\n      <Table.HeaderCell>Value</Table.HeaderCell>\n      <Table.HeaderCell>Change</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Revenue</Table.Cell>\n      <Table.Cell>$1.2M</Table.Cell>\n      <Table.Cell>+15%</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Users</Table.Cell>\n      <Table.Cell>24,500</Table.Cell>\n      <Table.Cell>+8%</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
     },
     {
       "name": "Screen Reader Caption",
-      "description": "Visually hidden caption for screen-reader context while keeping visual UI compact",
-      "code": "<Table\n  aria-label=\"API keys\"\n  wrapperProps={{ 'data-demo': 'table-wrapper' }}\n  wrapperClassName=\"demo-table-wrapper\"\n>\n  <Table.Caption visuallyHidden>API keys and last-used timestamps</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Prefix</Table.HeaderCell>\n      <Table.HeaderCell>Last Used</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Deploy</Table.Cell>\n      <Table.Cell>frg_live_...</Table.Cell>\n      <Table.Cell>2 hours ago</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>CI</Table.Cell>\n      <Table.Cell>frg_test_...</Table.Cell>\n      <Table.Cell>Yesterday</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+      "description": "The caption reaches screen readers only; the layout stays tight.",
+      "code": "<Table aria-label=\"API keys\">\n  <Table.Caption visuallyHidden>API keys and last-used timestamps</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Prefix</Table.HeaderCell>\n      <Table.HeaderCell>Last Used</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Deploy</Table.Cell>\n      <Table.Cell>frg_live_...</Table.Cell>\n      <Table.Cell>2 hours ago</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>CI</Table.Cell>\n      <Table.Cell>frg_test_...</Table.Cell>\n      <Table.Cell>Yesterday</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
     },
     {
       "name": "With Footer",
-      "description": "Table with footer row for totals",
+      "description": "Totals sit in a footer that stays separate from the data.",
       "code": "<Table bordered aria-label=\"Expenses\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Category</Table.HeaderCell>\n      <Table.HeaderCell>Amount</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Marketing</Table.Cell>\n      <Table.Cell>$12,000</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Engineering</Table.Cell>\n      <Table.Cell>$45,000</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Operations</Table.Cell>\n      <Table.Cell>$8,000</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n  <Table.Footer>\n    <Table.Row>\n      <Table.Cell>Total</Table.Cell>\n      <Table.Cell>$65,000</Table.Cell>\n    </Table.Row>\n  </Table.Footer>\n</Table>"
     }
   ],

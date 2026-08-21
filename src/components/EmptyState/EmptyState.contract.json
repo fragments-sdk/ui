@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "EmptyState",
-  "description": "Explains an empty content area and offers a useful next action.",
+  "description": "Explains why an area is blank and offers the next step.",
   "category": "feedback",
   "tags": ["empty", "placeholder", "no-data", "zero-state", "blank-slate"],
   "status": "stable",
@@ -24,22 +24,21 @@
   },
   "usage": {
     "when": [
-      "Empty lists, tables, or search results",
-      "New user onboarding (no content yet)",
-      "Filtered views with no matches",
-      "Error states where content failed to load"
+      "Lists, tables, or search results with nothing to show",
+      "First-run screens before any content exists",
+      "Filtered views that matched nothing"
     ],
     "whenNot": [
-      "Loading states (use skeleton or spinner)",
-      "Error messages with retry (use Alert)",
-      "Temporary messages (use Toast)"
+      "Content still loading (use Skeleton)",
+      "Failures that need a retry (use Alert)",
+      "Transient confirmations (use Toast)"
     ],
     "guidelines": [
-      "Always explain why the area is empty",
-      "Provide a clear action to resolve the empty state",
-      "Use appropriate icons to reinforce the message",
-      "Keep messaging positive and actionable",
-      "EmptyState compound sub-components forward DOM props for ids, aria attributes, and handlers"
+      "Say why the area is empty, not just that it is",
+      "Give one clear action out of the state",
+      "Keep to two actions at most, primary first",
+      "Match the icon to the cause — search, inbox, folder",
+      "Use size=\"sm\" inline and size=\"lg\" for full-page states"
     ],
     "accessibility": [
       "Empty state content is accessible to screen readers",
@@ -49,27 +48,27 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic empty state with action",
+      "description": "First-run state: nothing exists yet, so offer the create action.",
       "code": "<EmptyState>\n  <EmptyState.Icon><FolderIcon /></EmptyState.Icon>\n  <EmptyState.Title>No projects yet</EmptyState.Title>\n  <EmptyState.Description>Get started by creating your first project.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Create Project</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     },
     {
       "name": "No Results",
-      "description": "Empty search results",
+      "description": "A filter or query matched nothing — offer a way back.",
       "code": "<EmptyState>\n  <EmptyState.Icon><SearchIcon /></EmptyState.Icon>\n  <EmptyState.Title>No results found</EmptyState.Title>\n  <EmptyState.Description>Try adjusting your search terms or filters.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button variant=\"secondary\">Clear Filters</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     },
     {
       "name": "With Secondary Action",
-      "description": "Empty state with two actions",
+      "description": "One primary action plus a quieter alternative.",
       "code": "<EmptyState>\n  <EmptyState.Icon><InboxIcon /></EmptyState.Icon>\n  <EmptyState.Title>Inbox is empty</EmptyState.Title>\n  <EmptyState.Description>You have no new messages.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Compose Message</Button>\n    <Button variant=\"secondary\">View Archive</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     },
     {
       "name": "Small",
-      "description": "Compact empty state for inline use",
+      "description": "Compact size for inline panels; no icon, no action.",
       "code": "<EmptyState size=\"sm\">\n  <EmptyState.Title>No items</EmptyState.Title>\n  <EmptyState.Description>Add items to see them here.</EmptyState.Description>\n</EmptyState>"
     },
     {
       "name": "Large",
-      "description": "Prominent empty state for full-page use",
+      "description": "Full-page size for a workspace or onboarding screen.",
       "code": "<EmptyState size=\"lg\">\n  <EmptyState.Icon><FolderIcon /></EmptyState.Icon>\n  <EmptyState.Title>Welcome to your workspace</EmptyState.Title>\n  <EmptyState.Description>\n    This is where your projects will appear. Create your first project to get started.\n  </EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Create Your First Project</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     }
   ],

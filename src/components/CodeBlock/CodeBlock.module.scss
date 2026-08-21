@@ -7,7 +7,7 @@
 @use "../../recipes/typography" as typography;
 
 .container {
-  --_fui-code-inline-inset: var(--fui-raw-space-16);
+  --_fui-code-inline-inset: var(--fui-raw-space-16, 16px);
 
   inline-size: 100%;
 }
@@ -117,7 +117,7 @@
   .codeContainer :global(.shiki),
   .loading pre {
     padding-inline-end: calc(
-      var(--_fui-code-inline-inset) + #{action.track("sm")} + var(--fui-raw-space-12)
+      var(--_fui-code-inline-inset) + #{action.track("sm")} + var(--fui-raw-space-12, 12px)
     );
   }
 }
@@ -179,7 +179,7 @@
   }
 
   :global(.shiki)::-webkit-scrollbar {
-    block-size: var(--fui-raw-space-4);
+    block-size: var(--fui-raw-space-4, 4px);
   }
 
   :global(.shiki)::-webkit-scrollbar-thumb {
@@ -189,7 +189,7 @@
 }
 
 .withLineNumbers .codeContainer :global(.shiki) {
-  padding-inline-start: var(--fui-raw-space-8);
+  padding-inline-start: var(--fui-raw-space-8, 8px);
 }
 
 .withDiff {
@@ -225,7 +225,7 @@
 }
 
 .compact {
-  --_fui-code-inline-inset: var(--fui-raw-space-12);
+  --_fui-code-inline-inset: var(--fui-raw-space-12, 12px);
 
   .wrapper {
     border-radius: var(--fui-radius-md, $fui-radius-md);

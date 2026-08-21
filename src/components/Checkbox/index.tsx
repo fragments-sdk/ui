@@ -93,7 +93,9 @@ function CheckIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <polyline points="20 6 9 17 4 12" />
+      {/* Point order = draw order: the mark draws short arm first, then the
+          long stroke. pathLength normalizes the dash budget for the CSS draw. */}
+      <polyline points="4 12 9 17 20 6" pathLength={24} />
     </svg>
   );
 }
@@ -110,7 +112,7 @@ function MinusIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <line x1="5" y1="12" x2="19" y2="12" />
+      <line x1="5" y1="12" x2="19" y2="12" pathLength={24} />
     </svg>
   );
 }

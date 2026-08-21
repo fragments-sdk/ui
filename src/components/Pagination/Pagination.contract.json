@@ -1,14 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Pagination",
-  "description": "Navigates between pages in a larger data set.",
+  "description": "Steps through content split across numbered pages.",
   "category": "navigation",
-  "tags": [
-    "pagination",
-    "paging",
-    "pages",
-    "navigation"
-  ],
+  "tags": ["pagination", "paging", "pages", "navigation"],
   "status": "stable",
   "sourcePath": "src/components/Pagination/index.tsx",
   "exportName": "Pagination",
@@ -63,25 +58,23 @@
   },
   "usage": {
     "when": [
-      "Navigating through paginated data sets",
-      "Table or list pagination controls",
-      "Search results with multiple pages",
-      "Any content split across multiple pages"
+      "Data sets served a page at a time",
+      "Tables and lists with a known total",
+      "Search results past the first screen"
     ],
     "whenNot": [
-      "Small lists that fit on one page",
-      "Infinite scroll patterns (use IntersectionObserver)",
-      "Tab-based navigation (use Tabs)",
-      "Step-by-step wizards (use Stepper)"
+      "Everything already fits on one page",
+      "Content that loads as the user scrolls",
+      "Switching between panels (use Tabs)",
+      "Steps in an order (use Stepper)"
     ],
     "guidelines": [
-      "Place below the content being paginated",
-      "Use edgeCount to always show first/last pages",
-      "Use siblingCount to control how many pages surround the current page",
-      "Pair with Table component for data table pagination",
-      "Keep page labels on the body foreground; the current page uses a neutral active surface rather than brand accent",
-      "Pagination forwards standard nav props (id, aria-*, data-*, event handlers) to the root <nav>",
-      "Previous/Next/Item buttons compose your onClick handlers; call event.preventDefault() to stop the page change"
+      "Sit it directly below what it pages",
+      "edgeCount keeps the first and last pages reachable",
+      "siblingCount sets how many neighbours show",
+      "The current page uses a neutral surface, not the brand accent",
+      "The root forwards id, aria-*, data-*, and handlers to <nav>",
+      "Your onClick runs first — call preventDefault() to stop the change"
     ],
     "accessibility": [
       "Uses nav element with aria-label=\"Pagination\"",
@@ -93,22 +86,22 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic pagination with 10 pages",
+      "description": "Neighbours around the current page, ends always reachable.",
       "code": "<Pagination totalPages={10} defaultPage={1}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
     },
     {
       "name": "With Edge Pages",
-      "description": "Shows 2 pages at each edge",
+      "description": "Two pages pinned at each end.",
       "code": "<Pagination totalPages={20} defaultPage={10} edgeCount={2} siblingCount={1}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
     },
     {
       "name": "Compact",
-      "description": "No siblings, minimal display",
+      "description": "Drops the neighbours when space is tight.",
       "code": "<Pagination totalPages={20} defaultPage={10} siblingCount={0}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
     },
     {
       "name": "Controlled",
-      "description": "Controlled pagination at page 3",
+      "description": "You hold the page number in state.",
       "code": "<Pagination totalPages={5} page={3}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
     }
   ],
@@ -134,23 +127,12 @@
       "siblingCount: number - pages around current (default: 1)",
       "Forwards standard HTML nav attributes to the root element"
     ],
-    "a11yRules": [
-      "A11Y_NAV_LABEL",
-      "A11Y_CURRENT_PAGE"
-    ]
+    "a11yRules": ["A11Y_NAV_LABEL", "A11Y_CURRENT_PAGE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Previous",
-      "Next",
-      "Items",
-      "Item",
-      "Ellipsis"
-    ],
-    "requiredChildren": [
-      "Items"
-    ],
+    "subComponents": ["Previous", "Next", "Items", "Item", "Ellipsis"],
+    "requiredChildren": ["Items"],
     "commonPatterns": [
       "<Pagination totalPages={totalPages} page={currentPage} onPageChange={setPage}><Pagination.Previous /><Pagination.Items /><Pagination.Next /></Pagination>"
     ]

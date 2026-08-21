@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "NavigationMenu",
-  "description": "Presents responsive site navigation with dropdown panels and a mobile drawer.",
+  "description": "Site navigation whose dropdowns become a drawer on small screens.",
   "category": "navigation",
   "tags": ["navigation", "menu", "header", "dropdown", "navbar", "mobile", "responsive", "drawer"],
   "status": "stable",
@@ -74,27 +74,26 @@
   },
   "usage": {
     "when": [
-      "Site-level header navigation with rich dropdown content",
-      "Navigation with titles, descriptions, and icons in dropdowns",
-      "Responsive navigation that converts to a mobile drawer automatically",
-      "Multi-section navigation requiring animated viewport transitions"
+      "Header navigation with more than links",
+      "Dropdowns carrying titles, descriptions, or icons",
+      "Navigation that must survive a phone screen",
+      "Several sections that animate between each other"
     ],
     "whenNot": [
-      "Simple flat navigation without dropdowns (use Header.Nav)",
-      "Application menus with actions like cut/paste (use Menu)",
-      "Sidebar navigation (use Sidebar)",
-      "Breadcrumb trail navigation (use Breadcrumbs)"
+      "Flat links with no dropdowns (use Header.Nav)",
+      "Application actions like cut and paste (use Menu)",
+      "Persistent side navigation (use Sidebar)",
+      "Showing where the user already is (use Breadcrumbs)"
     ],
     "guidelines": [
-      "Place inside Header component for site-level navigation",
-      "Use NavigationMenu.Viewport for animated content panel transitions",
-      "Use NavigationMenu.MobileContent to add extra sections to the mobile drawer",
-      "Use structured links (title + description) for rich dropdown content",
-      "Use simple NavigationMenu.Link for items without dropdown content",
-      "NavigationMenu.Link asChild composes click handlers and respects event.preventDefault()",
-      "Triggers open on hover (desktop) with configurable delay",
-      "Use the icons prop to replace trigger chevrons and mobile drawer controls with icons from any package",
-      "Use mobileBreakpoint=\"lg\" when a rail-based shell retires its sidebar and desktop navigation together below 1024px"
+      "Place it inside Header for site-level navigation",
+      "Add Viewport to animate between panels",
+      "Use MobileContent for sections that only make sense in the drawer",
+      "Title plus description for rich panels, plain Link for the rest",
+      "asChild on Link composes your handler and honours preventDefault()",
+      "Desktop triggers open on hover after a configurable delay",
+      "Point icons at your own icon package to replace the chevrons",
+      "Set mobileBreakpoint=\"lg\" when the shell drops its sidebar below 1024px"
     ],
     "accessibility": [
       "Uses disclosure pattern (not menu role) per W3C guidance",
@@ -107,27 +106,27 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Two trigger items with dropdown content and one direct link",
+      "description": "Two dropdowns beside one plain link.",
       "code": "<NavigationMenu>\n  <NavigationMenu.List>\n    <NavigationMenu.Item value=\"products\">\n      <NavigationMenu.Trigger>Products</NavigationMenu.Trigger>\n      <NavigationMenu.Content>\n        <NavigationMenu.Link href=\"/analytics\" title=\"Analytics\" description=\"Track your metrics and KPIs.\" />\n        <NavigationMenu.Link href=\"/automation\" title=\"Automation\" description=\"Automate your workflows.\" />\n      </NavigationMenu.Content>\n    </NavigationMenu.Item>\n    <NavigationMenu.Item value=\"resources\">\n      <NavigationMenu.Trigger>Resources</NavigationMenu.Trigger>\n      <NavigationMenu.Content>\n        <NavigationMenu.Link href=\"/docs\" title=\"Documentation\" description=\"Comprehensive API reference.\" />\n        <NavigationMenu.Link href=\"/blog\" title=\"Blog\" description=\"Latest news and updates.\" />\n      </NavigationMenu.Content>\n    </NavigationMenu.Item>\n    <NavigationMenu.Item>\n      <NavigationMenu.Link href=\"/pricing\">Pricing</NavigationMenu.Link>\n    </NavigationMenu.Item>\n  </NavigationMenu.List>\n  <NavigationMenu.Viewport />\n</NavigationMenu>"
     },
     {
       "name": "With Rich Content",
-      "description": "Grid layout with icons, titles, and descriptions",
+      "description": "A grid of icons, titles, and descriptions.",
       "code": "<NavigationMenu>\n  <NavigationMenu.List>\n    <NavigationMenu.Item value=\"platform\">\n      <NavigationMenu.Trigger>Platform</NavigationMenu.Trigger>\n      <NavigationMenu.Content>\n        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', padding: '8px', minWidth: '400px' }}>\n          <NavigationMenu.Link\n            href=\"/dashboard\"\n            title=\"Dashboard\"\n            description=\"Overview of your project metrics.\"\n          />\n          <NavigationMenu.Link\n            href=\"/analytics\"\n            title=\"Analytics\"\n            description=\"Deep dive into your data.\"\n          />\n          <NavigationMenu.Link\n            href=\"/reports\"\n            title=\"Reports\"\n            description=\"Generate custom reports.\"\n          />\n          <NavigationMenu.Link\n            href=\"/settings\"\n            title=\"Settings\"\n            description=\"Configure your workspace.\"\n          />\n        </div>\n      </NavigationMenu.Content>\n    </NavigationMenu.Item>\n  </NavigationMenu.List>\n  <NavigationMenu.Viewport />\n</NavigationMenu>"
     },
     {
       "name": "With Simple Links",
-      "description": "Mix of triggers with simple link lists and plain links",
+      "description": "Link lists where descriptions would be noise.",
       "code": "<NavigationMenu>\n  <NavigationMenu.List>\n    <NavigationMenu.Item value=\"company\">\n      <NavigationMenu.Trigger>Company</NavigationMenu.Trigger>\n      <NavigationMenu.Content>\n        <div style={{ display: 'flex', flexDirection: 'column', padding: '4px', minWidth: '160px' }}>\n          <NavigationMenu.Link href=\"/about\">About</NavigationMenu.Link>\n          <NavigationMenu.Link href=\"/careers\">Careers</NavigationMenu.Link>\n          <NavigationMenu.Link href=\"/contact\">Contact</NavigationMenu.Link>\n        </div>\n      </NavigationMenu.Content>\n    </NavigationMenu.Item>\n    <NavigationMenu.Item>\n      <NavigationMenu.Link href=\"/blog\">Blog</NavigationMenu.Link>\n    </NavigationMenu.Item>\n    <NavigationMenu.Item>\n      <NavigationMenu.Link href=\"/docs\">Docs</NavigationMenu.Link>\n    </NavigationMenu.Item>\n  </NavigationMenu.List>\n  <NavigationMenu.Viewport />\n</NavigationMenu>"
     },
     {
       "name": "With Featured Card",
-      "description": "Highlighted featured item alongside regular links",
+      "description": "One promoted item leads the panel.",
       "code": "<NavigationMenu>\n  <NavigationMenu.List>\n    <NavigationMenu.Item value=\"learn\">\n      <NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>\n      <NavigationMenu.Content>\n        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', padding: '8px', minWidth: '420px' }}>\n          <NavigationMenu.Link\n            href=\"/quickstart\"\n            title=\"Quick Start\"\n            description=\"Get up and running in 5 minutes with our getting started guide.\"\n            featured\n          />\n          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>\n            <NavigationMenu.Link href=\"/docs\" title=\"Documentation\" description=\"API reference and guides.\" />\n            <NavigationMenu.Link href=\"/examples\" title=\"Examples\" description=\"Browse example projects.\" />\n          </div>\n        </div>\n      </NavigationMenu.Content>\n    </NavigationMenu.Item>\n  </NavigationMenu.List>\n  <NavigationMenu.Viewport />\n</NavigationMenu>"
     },
     {
       "name": "Vertical",
-      "description": "Vertical orientation with content panels to the right",
+      "description": "Panels open to the side instead of below.",
       "code": "<div style={{ display: 'flex' }}>\n  <NavigationMenu orientation=\"vertical\">\n    <NavigationMenu.List>\n      <NavigationMenu.Item value=\"overview\">\n        <NavigationMenu.Trigger>Overview</NavigationMenu.Trigger>\n        <NavigationMenu.Content>\n          <div style={{ padding: '8px', minWidth: '200px' }}>\n            <NavigationMenu.Link href=\"/intro\" title=\"Introduction\" description=\"Learn the basics.\" />\n          </div>\n        </NavigationMenu.Content>\n      </NavigationMenu.Item>\n      <NavigationMenu.Item value=\"guides\">\n        <NavigationMenu.Trigger>Guides</NavigationMenu.Trigger>\n        <NavigationMenu.Content>\n          <div style={{ padding: '8px', minWidth: '200px' }}>\n            <NavigationMenu.Link href=\"/install\" title=\"Installation\" description=\"Get started quickly.\" />\n            <NavigationMenu.Link href=\"/config\" title=\"Configuration\" description=\"Customize your setup.\" />\n          </div>\n        </NavigationMenu.Content>\n      </NavigationMenu.Item>\n    </NavigationMenu.List>\n    <NavigationMenu.Viewport />\n  </NavigationMenu>\n</div>"
     }
   ],

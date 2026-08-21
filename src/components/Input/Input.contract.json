@@ -181,10 +181,9 @@
   },
   "usage": {
     "when": [
-      "Collecting single-line text data from users",
-      "Email, password, phone number, or URL input",
+      "Single-line answers: name, email, password, phone, URL",
       "Search fields",
-      "Short form fields (name, title, etc.)"
+      "Short free-form values a list cannot cover"
     ],
     "whenNot": [
       "Multi-line text (use Textarea)",
@@ -193,83 +192,78 @@
       "Date/time input (use DatePicker)"
     ],
     "guidelines": [
-      "Always provide a label for accessibility",
-      "Use appropriate input type for data validation",
-      "Show validation errors with error prop and helperText",
-      "Use placeholder for format hints, not labels",
-      "Use the shortcut prop for embedded keyboard hints instead of custom kbd markup around inputs",
-      "Shortcut hints are display-only by default; set shortcutBehavior=\"focus-input\" to opt into global hotkey focusing"
+      "Give every field a label",
+      "Match type to the data — it drives validation and mobile keyboards",
+      "Placeholder shows format; it never replaces the label",
+      "Pair error with helperText so the reason is announced",
+      "Use the shortcut prop for kbd hints instead of custom markup",
+      "shortcut is display-only; shortcutBehavior=\"focus-input\" adds the global hotkey"
     ],
     "accessibility": [
-      "Labels must be associated with inputs",
-      "Error messages should be announced to screen readers",
-      "Required fields should be indicated"
+      "Label is programmatically tied to the input",
+      "Error text is announced to screen readers",
+      "Required fields are marked"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic text input",
+      "description": "Label plus a placeholder that hints the format.",
       "code": "<Input label=\"Name\" placeholder=\"Enter your name\" />"
     },
     {
       "name": "With Value",
-      "description": "Input with pre-filled value",
+      "description": "Starts with a value already in the field.",
       "code": "<Input label=\"Email\" type=\"email\" value=\"user@example.com\" />"
     },
     {
       "name": "With Helper",
-      "description": "Input with helper text",
+      "description": "Supporting text sits under the field.",
       "code": "<Input\n  label=\"Password\"\n  type=\"password\"\n  placeholder=\"Create a password\"\n  helperText=\"Must be at least 8 characters\"\n/>"
     },
     {
       "name": "Error State",
-      "description": "Input showing validation error",
+      "description": "Red border, and helperText becomes the reason.",
       "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  value=\"invalid-email\"\n  error\n  helperText=\"Please enter a valid email address\"\n/>"
     },
     {
       "name": "Disabled",
-      "description": "Non-interactive input",
-      "code": "<Input label=\"Username\" value=\"readonly-user\" disabled />"
+      "description": "Dimmed, unfocusable, still shows its value.",
+      "code": "<Input label=\"Username\" value=\"ada.lovelace\" disabled />"
     },
     {
       "name": "Required",
-      "description": "Required field with asterisk indicator",
+      "description": "Asterisk marks the field as mandatory.",
       "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  placeholder=\"user@example.com\"\n  required\n/>"
     },
     {
       "name": "Sizes",
-      "description": "Available size variants",
+      "description": "Three heights: sm, md, lg.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '300px' }}>\n  <Input label=\"Small\" size=\"sm\" placeholder=\"Small input\" />\n  <Input label=\"Medium\" size=\"md\" placeholder=\"Medium input\" />\n  <Input label=\"Large\" size=\"lg\" placeholder=\"Large input\" />\n</div>"
     },
     {
       "name": "Bare Input (Field Composition)",
-      "description": "Disable the built-in wrapper for custom Field composition",
+      "description": "Drops the built-in label wrapper so Field owns the layout.",
       "code": "<Input\n  withFieldWrapper={false}\n  aria-label=\"Search\"\n  placeholder=\"Search...\"\n  rootProps={{ 'data-demo': 'bare-input-wrapper' }}\n/>"
     },
     {
-      "name": "Shortcut Focus Hotkey",
-      "description": "Display shortcut hint and opt into focus behavior",
-      "code": "<Input\n  label=\"Command Palette\"\n  placeholder=\"Search commands\"\n  shortcut=\"⌘K\"\n  shortcutBehavior=\"focus-input\"\n/>"
-    },
-    {
       "name": "Search With Shortcut",
-      "description": "Search input with a leading icon and embedded kbd hint",
+      "description": "Leading icon and a ⌘K hint that focuses the field.",
       "code": "<Input\n  aria-label=\"Search findings\"\n  placeholder=\"Search findings...\"\n  shortcut=\"⌘K\"\n  shortcutBehavior=\"focus-input\"\n  startAdornment={<MagnifyingGlass aria-hidden=\"true\" />}\n  withFieldWrapper={false}\n/>"
     },
     {
       "name": "Success State",
-      "description": "Input showing validated/success styling",
+      "description": "Green border confirms the value passed validation.",
       "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  value=\"user@example.com\"\n  success\n  helperText=\"Email verified\"\n/>"
     },
     {
       "name": "With Start Adornment",
-      "description": "Input with icon or prefix before the text",
+      "description": "Prefix sits inside the field, before the text.",
       "code": "<Input\n  label=\"Price\"\n  placeholder=\"0.00\"\n  startAdornment={<span>$</span>}\n/>"
     },
     {
       "name": "With End Adornment",
-      "description": "Input with icon or suffix after the text",
+      "description": "Suffix sits inside the field, after the text.",
       "code": "<Input\n  label=\"Weight\"\n  placeholder=\"0\"\n  endAdornment={<span>kg</span>}\n/>"
     }
   ],

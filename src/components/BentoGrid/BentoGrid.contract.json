@@ -1,16 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "BentoGrid",
-  "description": "Arranges feature content in an asymmetric responsive grid with built-in surfaces.",
+  "description": "Asymmetric feature grid where tiles span different widths and heights.",
   "category": "layout",
-  "tags": [
-    "bento",
-    "grid",
-    "layout",
-    "responsive",
-    "feature-grid",
-    "asymmetric"
-  ],
+  "tags": ["bento", "grid", "layout", "responsive", "feature-grid", "asymmetric"],
   "status": "stable",
   "sourcePath": "src/components/BentoGrid/index.tsx",
   "exportName": "BentoGrid",
@@ -31,25 +24,14 @@
       "description": "Number of columns — auto-collapses responsively (3→2→1)",
       "default": "3",
       "required": false,
-      "values": [
-        "2",
-        "3",
-        "4"
-      ]
+      "values": ["2", "3", "4"]
     },
     "gap": {
       "type": "enum",
       "description": "Gap between grid items, mapped to spacing tokens",
       "default": "md",
       "required": false,
-      "values": [
-        "none",
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ]
+      "values": ["none", "xs", "sm", "md", "lg", "xl"]
     },
     "style": {
       "type": "object",
@@ -59,22 +41,21 @@
   },
   "usage": {
     "when": [
-      "Asymmetric feature grids with hero + supporting items",
-      "Dashboard overviews where cards have different visual weight",
-      "Marketing pages with mixed-size content blocks",
-      "Any layout where items need per-breakpoint column/row spans"
+      "Feature grids with one hero tile and supporting tiles",
+      "Dashboards where cards carry different weight",
+      "Marketing sections with mixed-size blocks"
     ],
     "whenNot": [
-      "Uniform grids where all items are the same size (use Grid)",
-      "Form layouts with labeled fields (use Grid)",
-      "Simple stacked content (use Stack)"
+      "Uniform tiles of one size (use Grid)",
+      "Labelled form fields (use Grid)",
+      "A single column of content (use Stack)"
     ],
     "guidelines": [
-      "Use colSpan/rowSpan with responsive objects for layouts that adapt across breakpoints",
-      "The hero item typically uses colSpan={2} rowSpan={2} at lg and above",
-      "Items include built-in surface styling — no need to wrap children in Card",
-      "Grid auto-collapses: 3→2 columns below lg, all→1 column below sm",
-      "Root and Item forward DOM props (aria-*, data-*, handlers), and Item style merges with span CSS vars"
+      "colSpan and rowSpan take per-breakpoint objects",
+      "A hero tile is usually colSpan 2 and rowSpan 2 from lg up",
+      "Tiles carry their own surface — do not wrap them in Card",
+      "Columns collapse 3 to 2 below lg, and to 1 below sm",
+      "Keep source order equal to visual order for screen readers"
     ],
     "accessibility": [
       "Grid is purely visual — it does not affect reading order or semantics",
@@ -86,23 +67,18 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic 3-column uniform bento grid",
-      "code": "<BentoGrid columns={3} gap=\"md\">\n  <BentoGrid.Item>Item 1</BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item>Item 3</BentoGrid.Item>\n  <BentoGrid.Item>Item 4</BentoGrid.Item>\n  <BentoGrid.Item>Item 5</BentoGrid.Item>\n  <BentoGrid.Item>Item 6</BentoGrid.Item>\n</BentoGrid>"
+      "description": "Equal tiles, each on its own surface.",
+      "code": "import { BentoGrid } from '@/components/BentoGrid';\nimport { Box } from '@/components/Box';\n\n<Box width=\"100%\">\n  <BentoGrid columns={3} gap=\"md\">\n    <BentoGrid.Item>Item 1</BentoGrid.Item>\n    <BentoGrid.Item>Item 2</BentoGrid.Item>\n    <BentoGrid.Item>Item 3</BentoGrid.Item>\n    <BentoGrid.Item>Item 4</BentoGrid.Item>\n    <BentoGrid.Item>Item 5</BentoGrid.Item>\n    <BentoGrid.Item>Item 6</BentoGrid.Item>\n  </BentoGrid>\n</Box>"
     },
     {
       "name": "Hero Layout",
-      "description": "2×2 hero item with 4 supporting items in a 3-column grid",
-      "code": "<BentoGrid columns={3} gap=\"md\">\n  <BentoGrid.Item colSpan={{ base: 1, lg: 2 }} rowSpan={{ base: 1, lg: 2 }}>\n    Hero content\n  </BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item>Item 3</BentoGrid.Item>\n  <BentoGrid.Item>Item 4</BentoGrid.Item>\n  <BentoGrid.Item>Item 5</BentoGrid.Item>\n</BentoGrid>"
+      "description": "One tile takes two columns and two rows; the rest fill around it.",
+      "code": "import { BentoGrid } from '@/components/BentoGrid';\nimport { Box } from '@/components/Box';\n\n<Box width=\"100%\">\n  <BentoGrid columns={3} gap=\"md\">\n    <BentoGrid.Item colSpan={{ base: 1, lg: 2 }} rowSpan={{ base: 1, lg: 2 }}>\n      Hero content\n    </BentoGrid.Item>\n    <BentoGrid.Item>Item 2</BentoGrid.Item>\n    <BentoGrid.Item>Item 3</BentoGrid.Item>\n    <BentoGrid.Item>Item 4</BentoGrid.Item>\n    <BentoGrid.Item>Item 5</BentoGrid.Item>\n  </BentoGrid>\n</Box>"
     },
     {
       "name": "Two Column",
-      "description": "2-column bento with a wide item",
-      "code": "<BentoGrid columns={2} gap=\"md\">\n  <BentoGrid.Item>Item 1</BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item colSpan={2}>Wide item</BentoGrid.Item>\n  <BentoGrid.Item>Item 4</BentoGrid.Item>\n  <BentoGrid.Item>Item 5</BentoGrid.Item>\n</BentoGrid>"
-    },
-    {
-      "name": "Full-Width Banner",
-      "description": "3-column grid with a full-width item spanning all columns",
-      "code": "<BentoGrid columns={3} gap=\"md\">\n  <BentoGrid.Item>Item 1</BentoGrid.Item>\n  <BentoGrid.Item>Item 2</BentoGrid.Item>\n  <BentoGrid.Item>Item 3</BentoGrid.Item>\n  <BentoGrid.Item colSpan={3}>Full-width banner</BentoGrid.Item>\n</BentoGrid>"
+      "description": "colSpan stretches a tile across the whole row.",
+      "code": "import { BentoGrid } from '@/components/BentoGrid';\nimport { Box } from '@/components/Box';\n\n<Box width=\"100%\">\n  <BentoGrid columns={2} gap=\"md\">\n    <BentoGrid.Item>Item 1</BentoGrid.Item>\n    <BentoGrid.Item>Item 2</BentoGrid.Item>\n    <BentoGrid.Item colSpan={2}>Wide item</BentoGrid.Item>\n    <BentoGrid.Item>Item 4</BentoGrid.Item>\n    <BentoGrid.Item>Item 5</BentoGrid.Item>\n  </BentoGrid>\n</Box>"
     }
   ],
   "relations": [

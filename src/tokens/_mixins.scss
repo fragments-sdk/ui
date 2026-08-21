@@ -21,6 +21,10 @@
   font: inherit;
   color: inherit;
   cursor: pointer;
+  // Pressables are controls, not prose: no text selection on repeated or
+  // shift-clicks, no mobile tap flash.
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   &:disabled {
     cursor: not-allowed;

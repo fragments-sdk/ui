@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ToggleGroup",
-  "description": "Selects one state from a compact group of toggle buttons.",
+  "description": "Picks exactly one option from a short row of toggle buttons.",
   "category": "forms",
   "tags": ["toggle", "group", "fragmented", "control", "tabs", "switch"],
   "status": "stable",
@@ -75,64 +75,63 @@
   "usage": {
     "when": [
       "Switching between mutually exclusive views or modes",
-      "Selecting one option from a small set (2-5 options)",
-      "Fragmented controls like view switchers",
-      "Filter or sort options"
+      "Choosing one of two to five options",
+      "View switchers and segmented filters"
     ],
     "whenNot": [
-      "Multiple selections allowed (use Checkbox group)",
-      "Many options (use Select or RadioGroup)",
-      "Navigation between pages (use Tabs)",
-      "On/off toggle (use Switch component)"
+      "More than one can be picked — use a Checkbox group",
+      "More than five options — use Select or RadioGroup",
+      "Moving between pages — use Tabs",
+      "A single on/off — use Switch"
     ],
     "guidelines": [
-      "Keep options to 2-5 items for clarity",
-      "Use clear, concise labels",
-      "Consider icons for common actions (grid/list view)",
-      "Use default for an inset tonal rail, pills for an open filter cluster, and outline for connected bordered segments",
-      "Ensure adequate touch targets on mobile"
+      "Two to five items",
+      "Labels short enough to scan in one pass",
+      "Icons work for well-known modes like grid and list",
+      "default for an inset tonal rail, pills for an open filter cluster, outlined for connected segments",
+      "Keep targets at least 24px on touch"
     ],
     "accessibility": [
-      "Uses role=\"radiogroup\" for single-selection semantics",
-      "Each item has role=\"radio\" with aria-checked",
-      "Keyboard navigable with Tab and arrow keys",
-      "Focus visible on active item"
+      "The group is a radiogroup; each item is a radio with aria-checked",
+      "Arrow keys move between items, Tab enters and leaves the group",
+      "Icon-only items still need an aria-label",
+      "Focus stays visible on the selected item"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic toggle group",
+      "description": "Inset tonal rail; the selected segment lifts.",
       "code": "<ToggleGroup value={value} onChange={setValue}>\n  <ToggleGroup.Item value=\"left\">Left</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"center\">Center</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"right\">Right</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
-      "name": "Pills Variant",
-      "description": "Pill-shaped toggle buttons",
+      "name": "Pills",
+      "description": "Detached rounded buttons for open filter clusters.",
       "code": "<ToggleGroup value={value} onChange={setValue} variant=\"pills\">\n  <ToggleGroup.Item value=\"all\">All</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"active\">Active</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"completed\">Completed</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
-      "name": "Outline Variant",
-      "description": "Outlined toggle buttons",
+      "name": "Outlined",
+      "description": "Bordered segments sharing one continuous edge.",
       "code": "<ToggleGroup value={value} onChange={setValue} variant=\"outlined\">\n  <ToggleGroup.Item value=\"day\">Day</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"week\">Week</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"month\">Month</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
       "name": "Uncontrolled",
-      "description": "Use defaultValue for simple single-select state",
+      "description": "defaultValue when nothing outside needs the selection.",
       "code": "<ToggleGroup defaultValue=\"list\">\n  <ToggleGroup.Item value=\"grid\">Grid</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\">List</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
       "name": "Sizes",
-      "description": "Different size variants",
-      "code": "<ToggleGroup value={value} onChange={setValue} size=\"sm\">\n  <ToggleGroup.Item value=\"a\">Small</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"b\">Size</ToggleGroup.Item>\n</ToggleGroup>\n<ToggleGroup value={value} onChange={setValue} size=\"md\">\n  <ToggleGroup.Item value=\"a\">Medium</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"b\">Size</ToggleGroup.Item>\n</ToggleGroup>"
+      "description": "sm for toolbars, lg where the rail anchors a page.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\" align=\"start\">\n  <ToggleGroup defaultValue=\"a\" size=\"sm\">\n    <ToggleGroup.Item value=\"a\">Small</ToggleGroup.Item>\n    <ToggleGroup.Item value=\"b\">Rail</ToggleGroup.Item>\n  </ToggleGroup>\n  <ToggleGroup defaultValue=\"a\" size=\"md\">\n    <ToggleGroup.Item value=\"a\">Medium</ToggleGroup.Item>\n    <ToggleGroup.Item value=\"b\">Rail</ToggleGroup.Item>\n  </ToggleGroup>\n  <ToggleGroup defaultValue=\"a\" size=\"lg\">\n    <ToggleGroup.Item value=\"a\">Large</ToggleGroup.Item>\n    <ToggleGroup.Item value=\"b\">Rail</ToggleGroup.Item>\n  </ToggleGroup>\n</Stack>"
     },
     {
       "name": "View Switcher",
-      "description": "Common pattern for switching between views",
-      "code": "<ToggleGroup value={view} onChange={setView} size=\"sm\">\n  <ToggleGroup.Item value=\"grid\"><GridIcon /></ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\"><ListIcon /></ToggleGroup.Item>\n</ToggleGroup>"
+      "description": "Icon-only modes, each named for screen readers.",
+      "code": "import { SquaresFour as GridIcon, ListBullets as ListIcon } from '@phosphor-icons/react';\n\n<ToggleGroup value={view} onChange={setView} size=\"sm\">\n  <ToggleGroup.Item value=\"grid\" aria-label=\"Grid view\">\n    <GridIcon aria-hidden />\n  </ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\" aria-label=\"List view\">\n    <ListIcon aria-hidden />\n  </ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
-      "name": "With Disabled Item",
-      "description": "Toggle group with a disabled option",
+      "name": "Disabled Item",
+      "description": "One option locked out; the rest stay reachable.",
       "code": "<ToggleGroup value={value} onChange={setValue}>\n  <ToggleGroup.Item value=\"basic\">Basic</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"pro\">Pro</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"enterprise\" disabled>Enterprise</ToggleGroup.Item>\n</ToggleGroup>"
     }
   ],

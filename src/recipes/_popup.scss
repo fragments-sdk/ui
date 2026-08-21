@@ -55,6 +55,10 @@
   @include typography.role("ui-compact");
 
   box-sizing: border-box;
+  // Rows are pick targets: rapid pointer travel must never start a text
+  // selection, and touch taps get no highlight flash.
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
   min-block-size: var(--_fui-popup-effective-row-pitch);

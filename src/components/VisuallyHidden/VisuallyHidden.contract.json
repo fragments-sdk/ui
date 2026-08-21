@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "VisuallyHidden",
-  "description": "Keeps supporting text available to assistive technology without displaying it visually.",
+  "description": "Keeps text in the accessibility tree while taking it off the screen.",
   "category": "navigation",
   "tags": ["accessibility", "a11y", "screen-reader", "hidden", "sr-only"],
   "status": "stable",
@@ -24,45 +24,40 @@
   },
   "usage": {
     "when": [
-      "Providing accessible labels for icon-only buttons",
-      "Adding context that screen readers need but sighted users don't",
-      "Hiding decorative content while providing text alternatives",
-      "Skip links for keyboard navigation"
+      "An icon-only control needs a name",
+      "A link's text is vague out of context",
+      "A skip link needs to hide until focused"
     ],
     "whenNot": [
-      "Hiding content from everyone (use display: none or conditional render)",
-      "Content that should be visible on focus (use focus-visible styles)",
-      "Temporarily hidden content (use proper ARIA attributes)",
-      "Lazy-loaded content (use suspense or loading states)"
+      "Nobody should see or hear it (render nothing)",
+      "The content is just collapsed (use aria-expanded)"
     ],
     "guidelines": [
-      "Always use with icon-only interactive elements",
-      "Keep hidden text concise but descriptive",
-      "Test with screen readers to verify announcements",
-      "Don't overuse; visible text is often better",
-      "VisuallyHidden forwards DOM props and className to the rendered element"
+      "Every icon-only button gets one",
+      "Say the action, not the icon: \"Search\", not \"magnifier\"",
+      "Keep it short — it is read aloud",
+      "Visible text beats hidden text whenever there is room"
     ],
     "accessibility": [
-      "Content is announced by screen readers",
-      "Content is focusable if interactive elements are inside",
-      "Essential for WCAG 2.1 compliance with icon-only controls",
-      "Must convey equivalent information to visual content"
+      "Screen readers announce it; the layout never moves",
+      "Focusable children inside still receive focus",
+      "Required for WCAG 2.1 on icon-only controls"
     ]
   },
   "examples": [
     {
       "name": "Icon Button Label",
-      "description": "Accessible label for icon-only button",
+      "description": "The only thing telling a screen reader what this button does.",
       "code": "<button style={{\n  display: 'inline-flex',\n  alignItems: 'center',\n  justifyContent: 'center',\n  width: '40px',\n  height: '40px',\n  border: '1px solid var(--fui-border-default)',\n  borderRadius: '8px',\n  background: 'var(--fui-color-surface-primary)',\n  cursor: 'pointer'\n}}>\n  <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth=\"2\">\n    <path d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\" />\n  </svg>\n  <VisuallyHidden>Search</VisuallyHidden>\n</button>"
     },
     {
       "name": "Supplementary Text",
-      "description": "Additional context for screen readers",
+      "description": "Gives a vague link the context sighted readers get from layout.",
       "code": "<a href=\"#\" style={{ color: 'var(--fui-color-accent)' }}>\n  Read more\n  <VisuallyHidden> about our accessibility features</VisuallyHidden>\n</a>"
     },
     {
       "name": "Skip Link",
-      "description": "Navigation aid that becomes visible on focus",
+      "description": "Hidden until focused, then it jumps keyboard users past the nav.",
       "code": "<div>\n  <VisuallyHidden as=\"div\">\n    <a\n      href=\"#main-content\"\n      style={{\n        position: 'absolute',\n        padding: '8px 16px',\n        background: 'var(--fui-color-accent)',\n        color: 'white'\n      }}\n    >\n      Skip to main content\n    </a>\n  </VisuallyHidden>\n  <p style={{ color: 'var(--fui-color-text-tertiary)', fontSize: '14px' }}>\n    (Screen reader only: \"Skip to main content\" link)\n  </p>\n</div>"
     }
   ],

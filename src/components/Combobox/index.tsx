@@ -290,6 +290,27 @@ function filterStaticChildren(
   };
 }
 
+/**
+ * True when the consumer already supplied a `Combobox.Empty` slot anywhere in
+ * the content. Used to decide whether the built-in "no results" fallback is
+ * needed — without it an unmatched query renders an empty, collapsed popup.
+ */
+function containsEmptySlot(node: React.ReactNode): boolean {
+  let found = false;
+  React.Children.forEach(node, (child) => {
+    if (found || !React.isValidElement(child)) return;
+    if (child.type === ComboboxEmpty) {
+      found = true;
+      return;
+    }
+    const props = child.props as { children?: React.ReactNode };
+    if (props.children !== undefined && containsEmptySlot(props.children)) {
+      found = true;
+    }
+  });
+  return found;
+}
+
 // ============================================
 // Components
 // ============================================
@@ -628,6 +649,14 @@ function ComboboxContent({
     () => filterStaticChildren(children, visibleValues),
     [children, visibleValues]
   );
+  // No matches and no author-supplied empty slot would leave a bare, collapsed
+  // popup, so fall back to a readable "no results" row.
+  const popupChildren =
+    filteredContent.visibleItemCount === 0 && !containsEmptySlot(children) ? (
+      <ComboboxEmpty>No results found</ComboboxEmpty>
+    ) : (
+      filteredContent.children
+    );
 
   const popupStyle =
     maxVisibleItems != null
@@ -647,7 +676,7 @@ function ComboboxContent({
       >
         <BaseCombobox.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
           <ComboboxFilteredItemIndexContext.Provider value={filteredItemIndices}>
-            {filteredContent.children}
+            {popupChildren}
           </ComboboxFilteredItemIndexContext.Provider>
         </BaseCombobox.Popup>
       </BaseCombobox.Positioner>

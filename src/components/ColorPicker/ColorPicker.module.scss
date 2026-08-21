@@ -1,14 +1,19 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-@use '../../recipes/action';
-@use '../../recipes/field';
-@use '../../recipes/popup';
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../recipes/action";
+@use "../../recipes/field";
+@use "../../recipes/popup";
 
-// Local component tokens
+// Local component tokens.
+//
+// The raw pixel values in this file (200px here, and the 80px/120px hex-input
+// min-widths below) are deliberate, not missed tokens: react-colorful lays the
+// saturation/hue canvas out in fixed pixels, and the hex field has to stay wide
+// enough for a full "#rrggbb" string. Spacing tokens do not map onto either
+// constraint, so these stay literal.
 $fui-colorpicker-size: 200px !default; // react-colorful saturation/hue square
 $fui-colorpicker-hue-height: $fui-target-size-min !default;
 $fui-colorpicker-pointer-size: $fui-target-size-min !default;
-$fui-colorpicker-pointer-border: 2px !default;
 
 .wrapper {
   @include field.wrapper;
@@ -44,7 +49,6 @@ $fui-colorpicker-pointer-border: 2px !default;
     min-width: 80px;
     flex: 0 0 auto;
   }
-
 }
 
 .sizeMd {
@@ -75,7 +79,6 @@ $fui-colorpicker-pointer-border: 2px !default;
   .hexInput {
     min-width: 120px;
   }
-
 }
 
 .inputWrapper {
@@ -133,7 +136,7 @@ $fui-colorpicker-pointer-border: 2px !default;
   :global(.react-colorful__pointer) {
     width: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
     height: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
-    border: $fui-colorpicker-pointer-border solid var(--fui-text-inverse, $fui-text-inverse);
+    border: var(--fui-stroke-default, 2px) solid var(--fui-text-inverse, $fui-text-inverse);
     box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   }
 }
@@ -144,7 +147,7 @@ $fui-colorpicker-pointer-border: 2px !default;
 
 @media (prefers-contrast: more) {
   .swatch {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
     border-color: var(--fui-text-primary, $fui-text-primary);
   }
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Chip",
-  "description": "Filters, selects, or tags items with an interactive pill.",
+  "description": "Pill control for filtering, multi-select, and removable tags.",
   "category": "forms",
   "tags": ["chip", "tag", "filter", "selection", "multi-select", "action"],
   "status": "stable",
@@ -79,77 +79,70 @@
   },
   "usage": {
     "when": [
-      "Filtering content by categories or tags",
-      "Multi-select scenarios like choosing interests or skills",
-      "Toggling options in a compact pill-shaped control",
-      "Displaying removable user-applied filters"
+      "Filtering a list by tag or category",
+      "Multi-select from a compact set",
+      "Showing filters the user can dismiss"
     ],
     "whenNot": [
-      "Display-only status labels (use Badge)",
-      "Navigation between views (use Tabs)",
-      "Binary on/off state (use Switch)",
-      "Primary call-to-action (use Button)"
+      "Read-only status — use Badge",
+      "Switching views — use Tabs",
+      "On/off state — use Switch",
+      "A main call to action — use Button"
     ],
     "guidelines": [
-      "Keep chip labels short (1-3 words)",
-      "Use Chip.Group for multi-select sets with shared state",
-      "Keep the default micro size for filters and tags; opt into a larger size only when the surrounding control track requires it",
-      "Use onRemove only when users should be able to dismiss the chip",
-      "Pair avatar chips with user-related selections (assignees, reviewers)",
-      "Provide an explicit value on Chip when using non-string/custom JSX children inside Chip.Group"
+      "One to three words per chip",
+      "Chip.Group when chips share selection state",
+      "Keep xs for filters and tags; size up only to match a taller control track",
+      "onRemove only when the chip is genuinely dismissible",
+      "Pass an explicit value when children are custom JSX"
     ],
     "accessibility": [
-      "Chips are buttons and use aria-pressed for selection state",
-      "Chip.Group is a grouping wrapper; add role/aria-label when needed for assistive context",
-      "Remove buttons include descriptive aria-label with chip text",
-      "Disabled chips are properly excluded from interaction"
+      "Chips are buttons; selection is reported via aria-pressed",
+      "Add role and aria-label to Chip.Group when the set needs a name",
+      "Remove buttons carry the chip text in their aria-label",
+      "Disabled chips are skipped by keyboard and pointer"
     ]
   },
   "examples": [
     {
-      "name": "Default",
-      "description": "Basic filled chip",
-      "code": "<Chip>Default</Chip>"
+      "name": "Variants",
+      "description": "Tinted, hairline, and accent-soft chrome.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"filled\">Filled</Chip>\n  <Chip variant=\"outlined\">Outlined</Chip>\n  <Chip variant=\"soft\">Soft</Chip>\n</Stack>"
     },
     {
-      "name": "Outline",
-      "description": "Chip with border using the \"outline\" alias for \"outlined\"",
-      "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip variant=\"outline\">Outline</Chip>\n  <Chip variant=\"outline\" selected>Outline Selected</Chip>\n</div>"
+      "name": "Sizes",
+      "description": "xs for filter rows; larger sizes match taller field tracks.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Chip variant=\"outlined\" size=\"xs\">Extra small</Chip>\n  <Chip variant=\"outlined\" size=\"sm\">Small</Chip>\n  <Chip variant=\"outlined\" size=\"md\">Medium</Chip>\n  <Chip variant=\"outlined\" size=\"lg\">Large</Chip>\n</Stack>"
     },
     {
       "name": "Selected",
-      "description": "Chip in selected state across variants",
-      "code": "<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Filled</Chip>\n  <Chip variant=\"outlined\" selected>Outlined</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</Stack>"
+      "description": "All three variants share one selection treatment.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Filled</Chip>\n  <Chip variant=\"outlined\" selected>Outlined</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</Stack>"
     },
     {
       "name": "With Avatar",
-      "description": "Chip with a leading avatar image",
+      "description": "Leading face, for people-shaped selections.",
       "code": "<Chip avatar={<img src=\"https://i.pravatar.cc/32?u=chip\" alt=\"\" />}>\n  Jane Doe\n</Chip>"
     },
     {
       "name": "With Remove",
-      "description": "Removable chip with dismiss button",
-      "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip onRemove={() => {}}>React</Chip>\n  <Chip onRemove={() => {}}>TypeScript</Chip>\n  <Chip onRemove={() => {}}>SCSS</Chip>\n</div>"
-    },
-    {
-      "name": "Selected Removable",
-      "description": "Selected removable chips retain the shared selection treatment across variants",
-      "code": "<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected onRemove={() => {}}>Filled</Chip>\n  <Chip variant=\"outlined\" selected onRemove={() => {}}>Outlined</Chip>\n  <Chip variant=\"soft\" selected onRemove={() => {}}>Soft</Chip>\n</Stack>"
+      "description": "Trailing dismiss button clears the tag.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outlined\" onRemove={() => {}}>React</Chip>\n  <Chip variant=\"outlined\" selected onRemove={() => {}}>TypeScript</Chip>\n  <Chip variant=\"soft\" onRemove={() => {}}>SCSS</Chip>\n</Stack>"
     },
     {
       "name": "Chip Group",
-      "description": "Multi-select chip set with shared state",
+      "description": "Selection state is held by the group, not each chip.",
       "code": "<Chip.Group defaultValue={['react']}>\n  <Chip value=\"react\">React</Chip>\n  <Chip value=\"vue\">Vue</Chip>\n  <Chip value=\"angular\">Angular</Chip>\n  <Chip value=\"svelte\">Svelte</Chip>\n</Chip.Group>"
     },
     {
       "name": "Chip Group with Custom Labels",
-      "description": "Use explicit values when chip labels are custom JSX",
+      "description": "Custom JSX children need an explicit value.",
       "code": "<Chip.Group aria-label=\"Assignees\">\n  <Chip value=\"jane\">\n    <span>Jane Doe</span>\n  </Chip>\n  <Chip value=\"sam\">\n    <span>Sam Lee</span>\n  </Chip>\n</Chip.Group>"
     },
     {
       "name": "Disabled",
-      "description": "Chip in disabled state",
-      "code": "<div style={{ display: 'flex', gap: '8px' }}>\n  <Chip disabled>Disabled</Chip>\n  <Chip disabled selected>Disabled Selected</Chip>\n</div>"
+      "description": "Dimmed and unreachable, selected or not.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outlined\" disabled>Disabled</Chip>\n  <Chip variant=\"outlined\" disabled selected>Disabled selected</Chip>\n</Stack>"
     }
   ],
   "relations": [

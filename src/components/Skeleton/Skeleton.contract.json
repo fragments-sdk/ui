@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Skeleton",
-  "description": "Reserves layout space while content loads.",
+  "description": "Holds the shape of content that has not arrived yet.",
   "category": "feedback",
   "tags": ["loading", "placeholder", "skeleton", "shimmer"],
   "status": "stable",
@@ -62,54 +62,53 @@
   },
   "usage": {
     "when": [
-      "Content is loading asynchronously",
-      "Preventing layout shift during data fetching",
-      "Providing visual feedback that content is coming",
-      "Improving perceived performance"
+      "Content is still being fetched",
+      "You want to stop the layout jumping when it lands",
+      "Making a wait feel shorter than it is"
     ],
     "whenNot": [
-      "Short loading times (< 300ms)",
-      "When spinner is more appropriate",
-      "Background operations without visible impact"
+      "Waits under about 300ms",
+      "A spinner says it better",
+      "Work the user cannot see anyway"
     ],
     "guidelines": [
-      "Match skeleton shape to expected content",
-      "Use semantic variants (text, heading, avatar) for consistency",
-      "Maintain similar dimensions to loaded content",
-      "Avoid too many skeleton elements - simplify complex layouts",
-      "Skeleton and Skeleton.Text forward DOM props (id, aria-*, data-*, handlers)"
+      "Match the shape and size of the real content",
+      "Prefer the text, heading, and avatar variants over hand-rolled boxes",
+      "Give Skeleton.Text an ancestor with a real width — percentage lines collapse without one",
+      "A few big shapes beat many small ones",
+      "Skeleton and Skeleton.Text forward id, aria-*, data-* and handlers"
     ],
     "accessibility": [
-      "Skeletons are decorative - use aria-hidden",
-      "Announce loading state separately if needed",
-      "Ensure sufficient contrast for the animation"
+      "Skeletons are decoration — hide them with aria-hidden",
+      "Announce the loading state separately if it matters",
+      "Keep the pulse subtle but visible against the surface"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic rectangle skeleton",
+      "description": "One rectangle at an explicit size.",
       "code": "<Skeleton width={200} height={20} />"
     },
     {
       "name": "Text Lines",
-      "description": "Multi-line text placeholder",
-      "code": "<Skeleton.Text lines={3} />"
+      "description": "Stacked lines that fill the width they are given.",
+      "code": "<div style={{ width: 260 }}>\n  <Skeleton.Text lines={3} />\n</div>"
     },
     {
       "name": "Semantic Variants",
-      "description": "Pre-configured shapes for common elements",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--fui-space-2)' }}>\n  <Skeleton variant=\"heading\" width={200} />\n  <Skeleton variant=\"text\" width=\"100%\" />\n  <Skeleton variant=\"text\" width=\"80%\" />\n</div>"
+      "description": "Heading sits taller than the body lines under it.",
+      "code": "<div\n  style={{\n    width: 260,\n    display: 'flex',\n    flexDirection: 'column',\n    gap: 'var(--fui-space-2)',\n  }}\n>\n  <Skeleton variant=\"heading\" width={200} />\n  <Skeleton variant=\"text\" width=\"100%\" />\n  <Skeleton variant=\"text\" width=\"80%\" />\n</div>"
     },
     {
       "name": "Avatar Skeleton",
-      "description": "Circular placeholder for avatars",
+      "description": "Circles matching the three avatar sizes.",
       "code": "<div style={{ display: 'flex', gap: 'var(--fui-space-1)', alignItems: 'center' }}>\n  <Skeleton.Circle size=\"sm\" />\n  <Skeleton.Circle size=\"md\" />\n  <Skeleton.Circle size=\"lg\" />\n</div>"
     },
     {
       "name": "Card Skeleton",
-      "description": "Composed skeleton for a card layout",
-      "code": "<div style={{ width: 300, padding: 'var(--fui-space-2)', border: '1px solid var(--fui-border)', borderRadius: 'var(--fui-radius-lg)' }}>\n  <Skeleton variant=\"rect\" height={120} radius=\"md\" />\n  <div style={{ marginTop: 'var(--fui-space-2)' }}>\n    <Skeleton variant=\"heading\" width=\"60%\" />\n  </div>\n  <div style={{ marginTop: 'var(--fui-space-1)' }}>\n    <Skeleton.Text lines={2} />\n  </div>\n</div>"
+      "description": "Media, title, then body — the card before it loads.",
+      "code": "<div\n  style={{\n    width: 300,\n    padding: 'var(--fui-space-2)',\n    border: '1px solid var(--fui-border)',\n    borderRadius: 'var(--fui-radius-lg)',\n  }}\n>\n  <Skeleton variant=\"rect\" height={120} radius=\"md\" />\n  <div style={{ marginTop: 'var(--fui-space-2)' }}>\n    <Skeleton variant=\"heading\" width=\"60%\" />\n  </div>\n  <div style={{ marginTop: 'var(--fui-space-1)' }}>\n    <Skeleton.Text lines={2} />\n  </div>\n</div>"
     }
   ],
   "relations": [

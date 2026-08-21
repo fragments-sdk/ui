@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ScrollArea",
-  "description": "Contains overflowing content with styled scrollbars and fade indicators.",
+  "description": "Scrolls overflowing content with a slim scrollbar and optional edge fades.",
   "category": "layout",
   "tags": ["scroll", "overflow", "scrollbar", "container", "layout"],
   "status": "stable",
@@ -48,20 +48,19 @@
   },
   "usage": {
     "when": [
-      "Content overflows its container and needs scrolling",
-      "Horizontal tab bars or chip lists that may overflow",
-      "Scrollable panels, sidebars, or dropdown content",
-      "Any area where native scrollbars look too heavy"
+      "Content that overflows a fixed-size container",
+      "Tab bars or chip rows that may run past the edge",
+      "Scrollable panels, sidebars, and menu content"
     ],
     "whenNot": [
-      "Page-level scrolling (use native body scroll)",
-      "Very short content that never overflows"
+      "Whole-page scrolling (use the native body scroll)",
+      "Content that can never overflow"
     ],
     "guidelines": [
-      "Use `orientation` to constrain scroll direction",
-      "Use `showFades` to hint at hidden content when no other overflow cue exists",
-      "The `auto` and `hover` modes keep the thumb quiet until hover or keyboard focus without changing track geometry",
-      "Combine with `orientation=\"horizontal\"` for tab bars and chip rows"
+      "orientation constrains which axis can scroll",
+      "showFades hints at hidden content when nothing else does",
+      "scrollbarVisibility=\"hover\" hides the thumb without shifting layout",
+      "The container needs a fixed height or the area cannot scroll"
     ],
     "accessibility": [
       "Preserves native scroll behavior and keyboard support across both axes",
@@ -72,23 +71,23 @@
   "examples": [
     {
       "name": "Vertical",
-      "description": "Vertical scrollable area with thin scrollbar.",
-      "code": "<ScrollArea style={{ height: '200px' }}>\n  {/* Long content */}\n</ScrollArea>"
+      "description": "Scrolls down with a thin, always-visible thumb.",
+      "code": "import { Box } from '@/components/Box';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <ScrollArea style={{ height: '200px' }}>\n    <Box padding=\"sm\">\n      <Stack gap=\"sm\">\n        <Text>Row 1</Text>\n        <Text>Row 2</Text>\n        <Text>Row 3</Text>\n        <Text>Row 4</Text>\n        <Text>Row 5</Text>\n        <Text>Row 6</Text>\n        <Text>Row 7</Text>\n        <Text>Row 8</Text>\n        <Text>Row 9</Text>\n        <Text>Row 10</Text>\n        <Text>Row 11</Text>\n        <Text>Row 12</Text>\n      </Stack>\n    </Box>\n  </ScrollArea>\n</Box>"
     },
     {
       "name": "Horizontal",
-      "description": "Horizontal scrollable area for overflowing inline content like tabs or chips.",
-      "code": "<ScrollArea orientation=\"horizontal\">\n  <div style={{ display: 'flex', gap: '8px' }}>\n    {tags.map(tag => <Chip key={tag}>{tag}</Chip>)}\n  </div>\n</ScrollArea>"
+      "description": "Keeps an overflowing row of chips on one line.",
+      "code": "import { Box } from '@/components/Box';\nimport { Chip } from '@/components/Chip';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\n\n<Box width=\"100%\">\n  <ScrollArea orientation=\"horizontal\">\n    <Stack direction=\"row\" gap=\"sm\">\n      <Chip>React</Chip>\n      <Chip>TypeScript</Chip>\n      <Chip>Accessibility</Chip>\n      <Chip>Docs</Chip>\n      <Chip>Playground</Chip>\n      <Chip>CLI</Chip>\n      <Chip>Tokens</Chip>\n      <Chip>Governance</Chip>\n      <Chip>Contracts</Chip>\n      <Chip>Registry</Chip>\n    </Stack>\n  </ScrollArea>\n</Box>"
     },
     {
       "name": "With Fades",
-      "description": "Fade indicators independently show the available logical direction on each scrollable axis.",
-      "code": "<ScrollArea orientation=\"horizontal\" showFades>\n  {/* Overflowing content */}\n</ScrollArea>"
+      "description": "Edge fades signal there is more content each way.",
+      "code": "import { Box } from '@/components/Box';\nimport { Chip } from '@/components/Chip';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\n\n<Box width=\"100%\">\n  <ScrollArea orientation=\"horizontal\" showFades>\n    <Stack direction=\"row\" gap=\"sm\">\n      <Chip>React</Chip>\n      <Chip>TypeScript</Chip>\n      <Chip>Accessibility</Chip>\n      <Chip>Docs</Chip>\n      <Chip>Playground</Chip>\n      <Chip>CLI</Chip>\n      <Chip>Tokens</Chip>\n      <Chip>Governance</Chip>\n      <Chip>Contracts</Chip>\n      <Chip>Registry</Chip>\n    </Stack>\n  </ScrollArea>\n</Box>"
     },
     {
       "name": "Hover Scrollbar",
-      "description": "Scrollbar thumb paint appears on hover or keyboard focus without changing track dimensions.",
-      "code": "<ScrollArea scrollbarVisibility=\"hover\" style={{ height: '200px' }}>\n  {/* Content */}\n</ScrollArea>"
+      "description": "Thumb stays invisible until hover or keyboard focus.",
+      "code": "import { Box } from '@/components/Box';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <ScrollArea scrollbarVisibility=\"hover\" style={{ height: '200px' }}>\n    <Box padding=\"sm\">\n      <Stack gap=\"sm\">\n        <Text>Row 1</Text>\n        <Text>Row 2</Text>\n        <Text>Row 3</Text>\n        <Text>Row 4</Text>\n        <Text>Row 5</Text>\n        <Text>Row 6</Text>\n        <Text>Row 7</Text>\n        <Text>Row 8</Text>\n        <Text>Row 9</Text>\n        <Text>Row 10</Text>\n        <Text>Row 11</Text>\n        <Text>Row 12</Text>\n      </Stack>\n    </Box>\n  </ScrollArea>\n</Box>"
     }
   ],
   "contract": {

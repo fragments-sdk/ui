@@ -58,6 +58,7 @@ const TARGET_KEYS = {
     "field-minimum",
     "inline-floor",
     "compact-content",
+    "menu-min",
     "grid-cell",
     "composer-item",
     "page-narrow",
@@ -73,7 +74,7 @@ const ACCEPTED_TARGET_HASHES = {
   surfaceInset: "d118c32771058a8cd1bb8807def4c09e8c3273d7186195e1673de51db2bf9a21",
   icon: "f03744e2274d0b1efab0bd6a6f0d8dd8f71d16dd4e76b4f4010f89ad0813ace8",
   stroke: "d2690b7eaf28f349a212a099c5ca1be29846845158bb7fec9723b29f0bddbb1c",
-  layoutMeasure: "8798cd85b27d5c52dcea3d1dc5cabf6f6a1d5088363e33b404ef87f407d30b03",
+  layoutMeasure: "236ababc5ee8c8b67f4f7781bb1cd7118597bf2e898b592e01ac63ea9b16f40e",
 };
 
 const ACCEPTED_TYPOGRAPHY_HASHES = {

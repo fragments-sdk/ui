@@ -90,7 +90,7 @@
 // Indeterminate animation
 .indicatorIndeterminate {
   inline-size: 50%;
-  animation: indeterminate 1.5s ease-in-out infinite;
+  animation: indeterminate var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out infinite;
 }
 
 @keyframes indeterminate {
@@ -147,7 +147,8 @@
 }
 
 .circularIndicatorIndeterminate {
-  animation: circularIndeterminate 1.5s ease-in-out infinite;
+  animation: circularIndeterminate var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out
+    infinite;
 }
 
 @keyframes circularIndeterminate {

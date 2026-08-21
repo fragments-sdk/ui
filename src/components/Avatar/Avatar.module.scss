@@ -84,7 +84,10 @@
   }
 }
 
-.groupItem:last-child {
+// Must match the specificity of `.group .<size>.groupItem` above (and follow it
+// in source order), otherwise the leading avatar keeps its negative margin and
+// the whole stack sits offset from the content around it.
+.group .groupItem:last-child {
   margin-inline-start: 0;
 }
 

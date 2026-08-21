@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import type { Preview } from "@storybook/react";
-import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/onest";
 import "@fontsource-variable/jetbrains-mono";
 import { ThemeProvider, type ThemeMode } from "../src/components/Theme";
 import "../src/styles/globals.scss";

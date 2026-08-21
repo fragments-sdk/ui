@@ -43,6 +43,12 @@
   &[data-popup-open] {
     border-color: var(--fui-field-border-focus, $fui-color-accent);
   }
+
+  // Error border, matching Input. Set from the wrapper's data-invalid so the
+  // control reads as failed, not just the message beneath it.
+  .wrapper[data-invalid] & {
+    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
 }
 
 .triggerSm {
@@ -276,7 +282,8 @@
 // ============================================
 
 .today > .dayButton {
-  box-shadow: inset 0 0 0 1px var(--fui-field-border, $fui-border-strong);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    var(--fui-field-border, $fui-border-strong);
   background-color: color-mix(in srgb, var(--fui-bg-hover, $fui-bg-hover) 55%, transparent);
 }
 
@@ -318,7 +325,7 @@
   &::before {
     content: "";
     position: absolute;
-    inset: 2px 0;
+    inset: var(--fui-raw-space-2, 2px) 0;
     background-color: color-mix(
       in srgb,
       var(--fui-color-accent, $fui-color-accent) 10%,
@@ -339,7 +346,7 @@
   &::before {
     content: "";
     position: absolute;
-    inset: 2px 0 2px 50%;
+    inset: var(--fui-raw-space-2, 2px) 0 var(--fui-raw-space-2, 2px) 50%;
     background-color: color-mix(
       in srgb,
       var(--fui-color-accent, $fui-color-accent) 10%,
@@ -369,7 +376,7 @@
   &::before {
     content: "";
     position: absolute;
-    inset: 2px 50% 2px 0;
+    inset: var(--fui-raw-space-2, 2px) 50% var(--fui-raw-space-2, 2px) 0;
     background-color: color-mix(
       in srgb,
       var(--fui-color-accent, $fui-color-accent) 10%,
@@ -419,7 +426,7 @@
 
 @media (prefers-contrast: more) {
   .trigger {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
     border-color: var(--fui-text-primary, $fui-text-primary);
 
     &[data-popup-open] {

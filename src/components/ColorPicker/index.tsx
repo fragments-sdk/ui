@@ -192,6 +192,9 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(funct
             onChange={handleInputChange}
             onBlur={handleInputBlur}
             disabled={disabled}
+            // Without this the hex field keeps its neutral border while the
+            // helper text turns red, so the error reads as a stray message.
+            error={error}
             size={size}
             className={styles.hexInput}
             inputClassName={styles.hexInputField}

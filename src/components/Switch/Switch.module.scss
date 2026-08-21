@@ -177,7 +177,7 @@
   box-sizing: border-box;
   width: var(--_fui-switch-thumb-size);
   height: var(--_fui-switch-thumb-size);
-  border-radius: 50%;
+  border-radius: var(--fui-radius-full, $fui-radius-full);
   pointer-events: none;
   background-color: var(--_switch-thumb-bg);
   border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);

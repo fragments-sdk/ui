@@ -133,86 +133,85 @@
   },
   "usage": {
     "when": [
-      "Users need to search/filter through many options",
-      "Large option lists where scrolling is impractical",
-      "When users might know what they are looking for",
-      "Autocomplete or typeahead functionality",
-      "Multiple selections from a searchable list"
+      "Lists too long to scan by eye",
+      "The user roughly knows the value they want",
+      "Autocomplete or typeahead",
+      "Multi-select from a searchable list"
     ],
     "whenNot": [
-      "Few options (under 5) - use Select or RadioGroup",
-      "Free-form text with no predefined options - use Input",
-      "Non-searchable single selection - use Select",
-      "Actions, not selection - use Menu"
+      "Under five options (use Select or RadioGroup)",
+      "Free-form text with no known options (use Input)",
+      "Short list nobody needs to search (use Select)",
+      "Actions rather than values (use Menu)"
     ],
     "guidelines": [
-      "Include a placeholder that explains what to search for",
-      "Use label prop for accessible field labeling",
-      "Use helperText for guidance and error for validation messages",
-      "Provide an empty state message when no results match",
-      "Group related options with Combobox.Group for large lists",
-      "Static items may be composed through fragments and groups; filtering preserves wrapper composition",
-      "Keep option text concise and searchable",
-      "Use multiple prop for multi-select with chip display"
+      "Placeholder names what is searchable",
+      "Set label so the field is announced",
+      "helperText for guidance, error for the failure reason",
+      "Override the built-in \"No results found\" with Combobox.Empty when you have better wording",
+      "Group related options with Combobox.Group in long lists",
+      "Filtering keeps wrapper composition, so groups and fragments survive",
+      "Keep option text short and searchable",
+      "multiple turns selections into removable chips"
     ],
     "accessibility": [
-      "Full keyboard navigation support (arrow keys, enter, escape)",
-      "Type-ahead filtering within options",
-      "Proper ARIA combobox roles and attributes",
-      "Screen reader announcements for filtered results",
-      "Chip removal via keyboard in multi-select mode"
+      "Arrow keys, Enter, and Escape all work",
+      "Typing filters the list in place",
+      "Correct ARIA combobox roles and attributes",
+      "Filtered result counts are announced",
+      "Chips can be removed from the keyboard"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic searchable select",
+      "description": "Type to narrow the list; unmatched queries show a no-results row.",
       "code": "<StatefulCombobox placeholder=\"Select a fruit\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"apple\">Apple</Combobox.Item>\n    <Combobox.Item value=\"banana\">Banana</Combobox.Item>\n    <Combobox.Item value=\"orange\">Orange</Combobox.Item>\n    <Combobox.Item value=\"grape\">Grape</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "Multiple Selection",
-      "description": "Multi-select with chips",
+      "description": "Each pick becomes a removable chip in the field.",
       "code": "<StatefulCombobox multiple placeholder=\"Select fruits...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"apple\">Apple</Combobox.Item>\n    <Combobox.Item value=\"banana\">Banana</Combobox.Item>\n    <Combobox.Item value=\"orange\">Orange</Combobox.Item>\n    <Combobox.Item value=\"grape\">Grape</Combobox.Item>\n    <Combobox.Item value=\"mango\">Mango</Combobox.Item>\n    <Combobox.Item value=\"kiwi\">Kiwi</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "With Label and Helper Text",
-      "description": "Combobox with built-in label and helper text",
+      "description": "Helper text tells the user the field is searchable.",
       "code": "<StatefulCombobox\n  label=\"Assignee\"\n  placeholder=\"Search assignees...\"\n  helperText=\"Type to filter the list of available assignees.\"\n>\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Empty>No matches</Combobox.Empty>\n    <Combobox.Item value=\"alice\">Alice Johnson</Combobox.Item>\n    <Combobox.Item value=\"bob\">Bob Chen</Combobox.Item>\n    <Combobox.Item value=\"carol\">Carol Smith</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "Error State",
-      "description": "Validation error with message",
-      "code": "<Combobox\n  label=\"Reviewer\"\n  placeholder=\"Search reviewers...\"\n  error=\"Please select a reviewer\"\n  disabled\n>\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"alice\">Alice</Combobox.Item>\n  </Combobox.Content>\n</Combobox>"
+      "description": "Red border, and the message replaces helper text.",
+      "code": "<Combobox\n  label=\"Reviewer\"\n  placeholder=\"Search reviewers...\"\n  error=\"Please select a reviewer\"\n>\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"alice\">Alice</Combobox.Item>\n  </Combobox.Content>\n</Combobox>"
     },
     {
       "name": "With Groups",
-      "description": "Options organized into groups",
+      "description": "Headed sections stay intact while filtering.",
       "code": "<StatefulCombobox placeholder=\"Search countries...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <>\n      <Combobox.Group>\n        <Combobox.GroupLabel>North America</Combobox.GroupLabel>\n        <Combobox.Item value=\"us\">United States</Combobox.Item>\n        <Combobox.Item value=\"ca\">Canada</Combobox.Item>\n        <Combobox.Item value=\"mx\">Mexico</Combobox.Item>\n      </Combobox.Group>\n      <Combobox.Group>\n        <Combobox.GroupLabel>Europe</Combobox.GroupLabel>\n        <Combobox.Item value=\"uk\">United Kingdom</Combobox.Item>\n        <Combobox.Item value=\"de\">Germany</Combobox.Item>\n        <Combobox.Item value=\"fr\">France</Combobox.Item>\n      </Combobox.Group>\n      <Combobox.Empty>No matching country</Combobox.Empty>\n    </>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "With Empty State",
-      "description": "Shows message when no results match",
-      "code": "<StatefulCombobox placeholder=\"Search programming languages...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Empty>No results found</Combobox.Empty>\n    <Combobox.Item value=\"js\">JavaScript</Combobox.Item>\n    <Combobox.Item value=\"ts\">TypeScript</Combobox.Item>\n    <Combobox.Item value=\"py\">Python</Combobox.Item>\n    <Combobox.Item value=\"rs\">Rust</Combobox.Item>\n    <Combobox.Item value=\"go\">Go</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+      "description": "Combobox.Empty replaces the default no-results wording.",
+      "code": "<StatefulCombobox placeholder=\"Filter languages...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Empty>No language matches that search</Combobox.Empty>\n    <Combobox.Item value=\"js\">JavaScript</Combobox.Item>\n    <Combobox.Item value=\"ts\">TypeScript</Combobox.Item>\n    <Combobox.Item value=\"py\">Python</Combobox.Item>\n    <Combobox.Item value=\"rs\">Rust</Combobox.Item>\n    <Combobox.Item value=\"go\">Go</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "Scrollable List",
-      "description": "Long list with scroll hint — shows 4 items with half-peek of the 5th",
+      "description": "Caps at four rows and half-shows the fifth as a scroll hint.",
       "code": "<StatefulCombobox placeholder=\"Search languages...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Empty>No results found</Combobox.Empty>\n    <Combobox.Item value=\"js\">JavaScript</Combobox.Item>\n    <Combobox.Item value=\"ts\">TypeScript</Combobox.Item>\n    <Combobox.Item value=\"py\">Python</Combobox.Item>\n    <Combobox.Item value=\"rs\">Rust</Combobox.Item>\n    <Combobox.Item value=\"go\">Go</Combobox.Item>\n    <Combobox.Item value=\"rb\">Ruby</Combobox.Item>\n    <Combobox.Item value=\"java\">Java</Combobox.Item>\n    <Combobox.Item value=\"swift\">Swift</Combobox.Item>\n    <Combobox.Item value=\"kt\">Kotlin</Combobox.Item>\n    <Combobox.Item value=\"cpp\">C++</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "Custom Max Visible Items",
-      "description": "Show 6 items before scrolling with half-peek scroll hint",
+      "description": "maxVisibleItems raises the cap to six rows.",
       "code": "<StatefulCombobox placeholder=\"Search cities...\">\n  <Combobox.Input />\n  <Combobox.Content maxVisibleItems={6}>\n    <Combobox.Empty>No results found</Combobox.Empty>\n    <Combobox.Item value=\"nyc\">New York</Combobox.Item>\n    <Combobox.Item value=\"lon\">London</Combobox.Item>\n    <Combobox.Item value=\"tok\">Tokyo</Combobox.Item>\n    <Combobox.Item value=\"par\">Paris</Combobox.Item>\n    <Combobox.Item value=\"syd\">Sydney</Combobox.Item>\n    <Combobox.Item value=\"ber\">Berlin</Combobox.Item>\n    <Combobox.Item value=\"tor\">Toronto</Combobox.Item>\n    <Combobox.Item value=\"sin\">Singapore</Combobox.Item>\n    <Combobox.Item value=\"dub\">Dubai</Combobox.Item>\n    <Combobox.Item value=\"sao\">São Paulo</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     },
     {
       "name": "Disabled",
-      "description": "Disabled combobox",
+      "description": "Dimmed and unfocusable.",
       "code": "<Combobox disabled placeholder=\"Search...\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"1\">Option 1</Combobox.Item>\n  </Combobox.Content>\n</Combobox>"
     },
     {
       "name": "Explicit Trigger",
-      "description": "Hide the built-in input trigger when rendering a separate Combobox.Trigger",
-      "code": "<StatefulCombobox placeholder=\"Search assignees...\">\n  <Combobox.Input showTrigger={false} />\n  <Combobox.Trigger aria-label=\"Open assignee list\" />\n  <Combobox.Content>\n    <Combobox.Item value=\"alice\">Alice</Combobox.Item>\n    <Combobox.Item value=\"bob\">Bob</Combobox.Item>\n    <Combobox.Item value=\"carol\">Carol</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+      "description": "showTrigger={false} hands the open control to your own Combobox.Trigger.",
+      "code": "<StatefulCombobox placeholder=\"Search assignees...\">\n  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>\n    <Combobox.Input showTrigger={false} />\n    <Combobox.Trigger aria-label=\"Open assignee list\" />\n  </div>\n  <Combobox.Content>\n    <Combobox.Item value=\"alice\">Alice</Combobox.Item>\n    <Combobox.Item value=\"bob\">Bob</Combobox.Item>\n    <Combobox.Item value=\"carol\">Carol</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
     }
   ],
   "relations": [

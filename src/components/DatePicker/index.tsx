@@ -476,7 +476,9 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
 
   return (
     <DatePickerContext.Provider value={contextValue}>
-      <div ref={ref} className={wrapperClasses}>
+      {/* data-invalid lets the trigger pick up the error border; without it only
+          the message turns red and the control still looks valid. */}
+      <div ref={ref} className={wrapperClasses} data-invalid={hasError || undefined}>
         {label && (
           <span id={labelId} className={styles.label}>
             {label}

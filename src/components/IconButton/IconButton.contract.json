@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "IconButton",
-  "description": "Triggers an icon-only action in compact interface chrome.",
+  "description": "Runs an action from an icon alone, for toolbars and table rows.",
   "category": "forms",
   "tags": ["action", "button", "icon", "toolbar", "interactive"],
   "status": "stable",
@@ -53,36 +53,52 @@
   },
   "usage": {
     "when": [
-      "Compact icon-only actions in toolbars or top bars",
-      "Row actions where a text button would be too wide",
-      "Toggle-style icon actions with a visible pressed state"
+      "Toolbars and top bars where text buttons crowd",
+      "Row actions too narrow for a label",
+      "Toggle actions that show a pressed state"
     ],
     "whenNot": [
-      "The action needs a visible text label (use Button)",
-      "The control changes a persistent boolean setting (use Switch)",
-      "The icon is decorative and not interactive (use Icon)"
+      "The action needs a visible label — use Button",
+      "It flips a persistent setting — use Switch",
+      "The icon is decorative — use Icon"
     ],
     "guidelines": [
-      "Always provide aria-label or aria-labelledby",
-      "Use ghost for ordinary toolbar actions and outlined when more separation is needed",
-      "Use pressed only when the button represents a persistent toggle state"
+      "aria-label or aria-labelledby is required, every time",
+      "ghost for ordinary toolbar actions; outlined when it needs separation",
+      "pressed only for real toggle state, not selection",
+      "Keep icon meaning obvious, or pair it with a Tooltip"
     ],
     "accessibility": [
-      "Every icon-only button must have an accessible name",
-      "The accessible name should describe the action, not the icon",
-      "Pressed state must be exposed with aria-pressed"
+      "Name the action, not the icon: \"Delete row\", not \"Trash\"",
+      "Pressed state is exposed via aria-pressed",
+      "Hit target stays at least 24px even at size=\"sm\""
     ]
   },
   "examples": [
     {
       "name": "Toolbar action",
-      "description": "A named icon-only toolbar action",
-      "code": "<IconButton aria-label=\"Add item\">\n  <PlusIcon aria-hidden />\n</IconButton>"
+      "description": "Icon carries the action; the label lives in aria-label.",
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Add item\">\n  <PlusIcon aria-hidden />\n</IconButton>"
+    },
+    {
+      "name": "Variants",
+      "description": "Rising chrome: transparent, tinted, then bordered.",
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"ghost\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"subtle\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outlined\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
+    },
+    {
+      "name": "Sizes",
+      "description": "sm for table rows, lg for primary chrome.",
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"outlined\" size=\"sm\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outlined\" size=\"md\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outlined\" size=\"lg\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
     },
     {
       "name": "Pressed state",
-      "description": "A toggle-style action with its state exposed",
-      "code": "import { PushPin as PinIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Pin item\" pressed>\n  <PinIcon aria-hidden />\n</IconButton>"
+      "description": "Toggle that stays on, reported through aria-pressed.",
+      "code": "import { PushPin as PinIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Pin item\" variant=\"outlined\">\n    <PinIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Unpin item\" variant=\"outlined\" pressed>\n    <PinIcon aria-hidden />\n  </IconButton>\n</Stack>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Unavailable action, out of the tab order.",
+      "code": "import { Trash as TrashIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Delete row\" variant=\"outlined\" disabled>\n  <TrashIcon aria-hidden />\n</IconButton>"
     }
   ],
   "relations": [

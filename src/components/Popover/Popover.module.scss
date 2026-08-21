@@ -13,7 +13,7 @@
 
   position: relative;
   opacity: 0;
-  transform: scale(0.95) translateY(-$fui-anim-offset-sm);
+  transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-sm, #{$fui-anim-offset-sm})));
   transform-origin: var(--transform-origin);
   transition:
     opacity var(--fui-transition-fast, $fui-transition-fast),
@@ -26,21 +26,22 @@
 
   &[data-starting-style] {
     opacity: 0;
-    transform: scale(0.95) translateY(-$fui-anim-offset-sm);
+    transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-sm, #{$fui-anim-offset-sm})));
   }
 
   &[data-ending-style] {
     opacity: 0;
-    transform: scale(0.95) translateY($fui-anim-offset-sm);
+    transform: scale(0.95) translateY(var(--fui-anim-offset-sm, #{$fui-anim-offset-sm}));
   }
 
   &[data-side="top"] {
     &[data-starting-style] {
-      transform: scale(0.95) translateY($fui-anim-offset-sm);
+      transform: scale(0.95) translateY(var(--fui-anim-offset-sm, #{$fui-anim-offset-sm}));
     }
 
     &[data-ending-style] {
-      transform: scale(0.95) translateY(-$fui-anim-offset-sm);
+      transform: scale(0.95)
+        translateY(calc(-1 * var(--fui-anim-offset-sm, #{$fui-anim-offset-sm})));
     }
   }
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Menu",
-  "description": "Presents actions and commands in a keyboard-accessible dropdown.",
+  "description": "Drops a list of actions below a trigger, driveable entirely by keyboard.",
   "category": "feedback",
   "tags": ["menu", "dropdown", "actions", "context-menu", "commands", "submenu"],
   "status": "stable",
@@ -45,26 +45,23 @@
   },
   "usage": {
     "when": [
-      "Overflow actions that dont fit in the toolbar",
-      "Context menus (right-click)",
-      "User account menus",
-      "Grouped actions with separators",
-      "Nested menus with submenus"
+      "Actions that do not fit in the toolbar",
+      "Right-click context actions",
+      "Account and profile actions",
+      "Related actions that read better grouped"
     ],
     "whenNot": [
-      "Selecting from options (use Select)",
-      "Navigation (use Tabs or navigation components)",
-      "Form selection (use Select or RadioGroup)"
+      "Picking a value for a form (use Select)",
+      "Moving between pages or views (use Tabs or NavigationMenu)",
+      "One of a few visible choices (use RadioGroup)"
     ],
     "guidelines": [
-      "Group related actions with Menu.Group",
-      "Use separators to divide action categories",
-      "Include keyboard shortcuts where applicable",
-      "Use danger variant for destructive actions",
-      "Keep menu items under 10-12 for usability",
-      "Use checked prop on Menu.Item for simple selection state",
-      "Use Menu.Submenu for nested secondary options",
-      "Menu.Trigger supports asChild for links/router-link components (single valid element child required)"
+      "Group related actions and separate the rest",
+      "Show the keyboard shortcut where one exists",
+      "Mark destructive actions with the danger variant",
+      "Past a dozen rows, reach for Command instead",
+      "Nest at most one level of submenu",
+      "asChild on Trigger needs a single element child"
     ],
     "accessibility": [
       "Full keyboard navigation with arrow keys",
@@ -77,37 +74,37 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic dropdown menu",
+      "description": "Plain actions, one per row.",
       "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Actions</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>Edit</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Duplicate</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Shortcuts",
-      "description": "Menu items with keyboard shortcuts",
+      "description": "Trailing keys teach the faster path.",
       "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Edit</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item shortcut=\"Ctrl+Z\" onSelect={() => {}}>Undo</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+Y\" onSelect={() => {}}>Redo</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item shortcut=\"Ctrl+C\" onSelect={() => {}}>Copy</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+V\" onSelect={() => {}}>Paste</Menu.Item>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Groups",
-      "description": "Menu with labeled groups",
+      "description": "Labels separate unrelated actions.",
       "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Options</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Group>\n      <Menu.GroupLabel>View</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Zoom In</Menu.Item>\n      <Menu.Item onSelect={() => {}}>Zoom Out</Menu.Item>\n    </Menu.Group>\n    <Menu.Separator />\n    <Menu.Group>\n      <Menu.GroupLabel>Layout</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Grid View</Menu.Item>\n      <Menu.Item onSelect={() => {}}>List View</Menu.Item>\n    </Menu.Group>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Checkboxes",
-      "description": "Menu with toggleable checkbox options",
+      "description": "Rows that stay open while you toggle them.",
       "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Display</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.CheckboxItem defaultChecked>Show Grid</Menu.CheckboxItem>\n    <Menu.CheckboxItem defaultChecked>Show Rulers</Menu.CheckboxItem>\n    <Menu.CheckboxItem>Show Guides</Menu.CheckboxItem>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Checked Items",
-      "description": "Filter menu with check marks indicating active selections",
+      "description": "Ticks mark which filters are on.",
       "code": "<CheckedItemsMenuDemo />"
     },
     {
       "name": "With Submenu",
-      "description": "Menu with nested submenu for grouped secondary options",
+      "description": "Secondary options nest one level deep.",
       "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">File</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>New File</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Open</Menu.Item>\n    <Menu.Separator />\n    <Menu.Submenu>\n      <Menu.SubmenuTrigger>Export As</Menu.SubmenuTrigger>\n      <Menu.Content side=\"right\" align=\"start\">\n        <Menu.Item onSelect={() => {}}>PNG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>SVG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>PDF</Menu.Item>\n      </Menu.Content>\n    </Menu.Submenu>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "Link Trigger",
-      "description": "Use asChild with a non-button trigger element",
+      "description": "asChild lets a link open it.",
       "code": "<Menu>\n  <Menu.Trigger asChild>\n    <a href=\"#menu-actions\">Open menu</a>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>Inspect</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Rename</Menu.Item>\n  </Menu.Content>\n</Menu>"
     }
   ],

@@ -38,7 +38,27 @@
   }
 
   li + li {
-    margin-block-start: var(--fui-raw-space-4);
+    margin-block-start: var(--fui-raw-space-4, 4px);
+  }
+
+  // GFM task items are `<li><input type="checkbox"> label text</li>`. The prose
+  // list recipe lays each item out as a subgrid, so the checkbox and the bare
+  // text node land in separate rows and the marker column still draws a bullet.
+  // Flex keeps the checkbox on the same line as its label and drops the bullet.
+  li.task-list-item {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: baseline;
+    gap: var(--fui-raw-space-4, 4px);
+
+    &::before {
+      content: none;
+    }
+
+    input[type="checkbox"] {
+      flex: none;
+      margin-inline-end: 0;
+    }
   }
 
   code {
@@ -93,7 +113,7 @@
   }
 
   input[type="checkbox"] {
-    margin-inline-end: var(--fui-raw-space-4);
+    margin-inline-end: var(--fui-raw-space-4, 4px);
   }
 
   strong {

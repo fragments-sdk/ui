@@ -1,14 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Icon",
-  "description": "Standardizes icon sizing and semantic color.",
+  "description": "Sizes and colors any icon so it lines up with the text beside it.",
   "category": "display",
-  "tags": [
-    "icon",
-    "visual",
-    "symbol",
-    "graphic"
-  ],
+  "tags": ["icon", "visual", "symbol", "graphic"],
   "status": "stable",
   "sourcePath": "src/components/Icon/index.tsx",
   "exportName": "Icon",
@@ -37,27 +32,14 @@
       "description": "Icon size",
       "default": "md",
       "required": false,
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ]
+      "values": ["xs", "sm", "md", "lg", "xl"]
     },
     "weight": {
       "type": "string",
       "description": "Optional icon style/weight hint (forwarded when supported by the icon component)",
       "default": "regular",
       "required": false,
-      "values": [
-        "thin",
-        "light",
-        "regular",
-        "bold",
-        "fill",
-        "duotone"
-      ]
+      "values": ["thin", "light", "regular", "bold", "fill", "duotone"]
     },
     "variant": {
       "type": "enum",
@@ -79,15 +61,7 @@
       "type": "enum",
       "description": "Deprecated alias for variant",
       "required": false,
-      "values": [
-        "primary",
-        "secondary",
-        "tertiary",
-        "accent",
-        "success",
-        "warning",
-        "error"
-      ]
+      "values": ["primary", "secondary", "tertiary", "accent", "success", "warning", "error"]
     },
     "iconProps": {
       "type": "object",
@@ -97,55 +71,46 @@
   },
   "usage": {
     "when": [
-      "Displaying UI icons alongside text or in buttons",
-      "Indicating status or state visually",
-      "Adding visual hierarchy to feature lists",
-      "Decorating cards or stats with relevant symbols"
+      "A symbol sits beside text, inside a button, or leads a list item",
+      "State needs a glanceable marker"
     ],
-    "whenNot": [
-      "Large decorative illustrations (use Image or custom SVG)",
-      "Logo display (use dedicated Logo component)",
-      "Complex graphics with multiple colors",
-      "Animated icons (use custom implementation)"
-    ],
+    "whenNot": ["Artwork or illustration (use Image)", "Multi-color or animated graphics"],
     "guidelines": [
-      "Use semantic color variants (success, error, warning) for status indication",
-      "Pair icons with text labels for accessibility",
-      "Match icon weight/style to surrounding text weight for visual consistency when supported by the icon package",
-      "Use consistent sizes within the same context",
-      "Use iconProps for package-specific icon options not exposed directly on the wrapper"
+      "Reserve success, warning, and error colors for real state",
+      "Hold one size per context",
+      "Match weight to the text weight beside it",
+      "iconProps reaches options the wrapper does not expose"
     ],
     "accessibility": [
-      "Icons are decorative by default (aria-hidden)",
-      "Always pair with visible or visually-hidden text for meaning",
-      "Do not rely on color alone to convey information",
-      "Consider using VisuallyHidden for icon-only buttons"
+      "Icons ship aria-hidden — they are decoration until you label them",
+      "An icon-only button needs VisuallyHidden text",
+      "Color alone never carries the message"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic icon with default styling",
+      "description": "Inherits the size and color of its surroundings.",
       "code": "<Icon icon={Heart} />"
     },
     {
       "name": "Sizes",
-      "description": "Available size options",
+      "description": "Steps tuned to the type scale, so icons never float off the baseline.",
       "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Star} size=\"xs\" />\n  <Icon icon={Star} size=\"sm\" />\n  <Icon icon={Star} size=\"md\" />\n  <Icon icon={Star} size=\"lg\" />\n  <Icon icon={Star} size=\"xl\" />\n</div>"
     },
     {
       "name": "Semantic Colors",
-      "description": "Status and semantic color variants",
+      "description": "Color states carry meaning — never use them for decoration.",
       "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Check} variant=\"success\" />\n  <Icon icon={Warning} variant=\"warning\" />\n  <Icon icon={Warning} variant=\"error\" />\n  <Icon icon={Info} variant=\"accent\" />\n</div>"
     },
     {
       "name": "Weights",
-      "description": "Icon weight/style options",
+      "description": "Match the stroke to the text weight next to it.",
       "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Heart} weight=\"thin\" />\n  <Icon icon={Heart} weight=\"light\" />\n  <Icon icon={Heart} weight=\"regular\" />\n  <Icon icon={Heart} weight=\"bold\" />\n  <Icon icon={Heart} weight=\"fill\" />\n  <Icon icon={Heart} weight=\"duotone\" />\n</div>"
     },
     {
       "name": "Advanced Icon Props",
-      "description": "Forward extra icon-package-specific props through iconProps",
+      "description": "iconProps passes anything the underlying icon package supports.",
       "code": "<Icon icon={Heart} iconProps={{ mirrored: true }} />"
     }
   ],
@@ -174,16 +139,11 @@
       "variant: default|primary|secondary|tertiary|accent|success|warning|error - color",
       "iconProps: typed from the passed icon component - advanced icon-specific props"
     ],
-    "a11yRules": [
-      "A11Y_ICON_LABEL",
-      "A11Y_COLOR_CONTRAST"
-    ]
+    "a11yRules": ["A11Y_ICON_LABEL", "A11Y_COLOR_CONTRAST"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

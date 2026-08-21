@@ -119,9 +119,9 @@ const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function Load
 
   const animation =
     variant === "dots" ? (
-      <DotsAnimation className={styles.dots} />
+      <DotsAnimation className={styles.dotsTrack} />
     ) : variant === "pulse" ? (
-      <PulseAnimation className={styles.pulse} />
+      <PulseAnimation className={styles.pulseTrack} />
     ) : (
       <SpinnerIcon className={styles.spinnerIcon} />
     );

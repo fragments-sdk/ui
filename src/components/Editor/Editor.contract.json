@@ -3,15 +3,7 @@
   "name": "Editor",
   "description": "Edits rich text with formatting, autosave, and a word count.",
   "category": "forms",
-  "tags": [
-    "editor",
-    "rich-text",
-    "markdown",
-    "toolbar",
-    "writing",
-    "blog",
-    "content"
-  ],
+  "tags": ["editor", "rich-text", "markdown", "toolbar", "writing", "blog", "content"],
   "status": "stable",
   "dependencies": [
     {
@@ -123,11 +115,7 @@
       "description": "Editor size preset: \"sm\" (120px), \"md\" (200px), or \"lg\" (400px)",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "maxLength": {
       "type": "number",
@@ -142,27 +130,26 @@
   },
   "usage": {
     "when": [
-      "Building blog post or article editors",
-      "Need rich text editing with formatting controls",
-      "Content management with auto-save and word count",
-      "Markdown or WYSIWYG editing interfaces"
+      "Blog posts and long-form articles",
+      "Text that needs formatting controls beside it",
+      "Drafts that autosave and report a word count",
+      "Markdown or WYSIWYG authoring"
     ],
     "whenNot": [
-      "Simple single-line text input (use Input)",
-      "Plain multi-line without formatting (use Textarea)",
-      "Chat/AI prompt input (use Prompt)",
+      "Single-line text (use Input)",
+      "Multi-line with no formatting (use Textarea)",
+      "Chat or AI prompt input (use Prompt)",
       "Code editing (use CodeBlock)"
     ],
     "guidelines": [
-      "Use compound pattern for custom toolbar layouts",
-      "Install @tiptap/react, @tiptap/starter-kit, and @tiptap/extension-link for rich text mode",
-      "Falls back to a markdown-aware textarea when TipTap is not installed",
-      "Use onAutoSave for periodic content persistence",
-      "onAutoSave may return a Promise; save status updates after the async save resolves/rejects",
-      "Use size prop (sm/md/lg) to control editor height",
-      "Use maxLength to show character limit with visual warning states",
-      "New formats (headings, blockquote, orderedList, undo, redo) are opt-in via the formats prop",
-      "Use toolbarIcons to swap in icons from any icon package without changing toolbar button labels or accessibility behavior"
+      "Compose Editor.Toolbar and Editor.Content to control toolbar layout",
+      "Rich text needs @tiptap/react, @tiptap/starter-kit, and @tiptap/extension-link",
+      "Without TipTap it falls back to a markdown-aware textarea",
+      "onAutoSave may return a Promise; save status updates once it settles",
+      "size sets the minimum body height: sm 120px, md 200px, lg 400px",
+      "maxLength drives the counter's warning and over-limit states",
+      "Headings, blockquote, orderedList, undo, and redo are opt-in via formats",
+      "toolbarIcons swaps glyphs without changing labels or keyboard behavior"
     ],
     "accessibility": [
       "Toolbar has role=\"toolbar\" with aria-label",
@@ -177,47 +164,47 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Editor with default toolbar and status bar",
+      "description": "Toolbar and status bar you get with no configuration.",
       "code": "<Editor placeholder=\"Start typing your masterpiece here...\" />"
     },
     {
       "name": "With Auto-Save and Publish",
-      "description": "Full compound usage with custom toolbar, auto-save indicator, and publish button",
+      "description": "Save state sits next to the primary action in the toolbar.",
       "code": "<Editor\n  placeholder=\"Start typing your masterpiece here...\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Actions\">\n      <Editor.StatusIndicator status=\"saved\" />\n      <Button variant=\"accent\" size=\"sm\">\n        Publish\n      </Button>\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
-      "name": "Minimal",
-      "description": "Editor with subset of formats",
-      "code": "<Editor\n  placeholder=\"Quick note...\"\n  formats={['bold', 'italic', 'code']}\n/>"
+      "name": "Save Failed",
+      "description": "A failed autosave turns the status text red.",
+      "code": "<Editor defaultValue=\"This draft could not be saved.\">\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"error\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "Disabled",
-      "description": "Non-interactive editor with content",
+      "description": "Dimmed and inert, but the text stays readable.",
       "code": "<Editor\n  defaultValue=\"This content cannot be edited.\"\n  disabled\n/>"
     },
     {
       "name": "Read Only",
-      "description": "Visible content, non-editable",
+      "description": "Text can be selected and copied, but never changed.",
       "code": "<Editor\n  defaultValue=\"This content is read-only. You can select and copy text but cannot modify it.\"\n  readOnly\n/>"
     },
     {
       "name": "Custom Toolbar",
-      "description": "Compound usage with custom toolbar layout and separator",
+      "description": "Separators split the controls into labelled clusters.",
       "code": "<Editor\n  placeholder=\"Write your blog post...\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Basic formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Advanced formatting\">\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"saving\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "Full Formatting",
-      "description": "All format options including headings, blockquote, ordered list, undo/redo",
+      "description": "Every opt-in format switched on, at the tallest preset.",
       "code": "<Editor\n  placeholder=\"Write an article...\"\n  size=\"lg\"\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"History\">\n      <Editor.ToolbarButton format=\"undo\" />\n      <Editor.ToolbarButton format=\"redo\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Headings\">\n      <Editor.ToolbarButton format=\"heading1\" />\n      <Editor.ToolbarButton format=\"heading2\" />\n      <Editor.ToolbarButton format=\"heading3\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"code\" />\n    </Editor.ToolbarGroup>\n    <Editor.Separator />\n    <Editor.ToolbarGroup aria-label=\"Block formatting\">\n      <Editor.ToolbarButton format=\"bulletList\" />\n      <Editor.ToolbarButton format=\"orderedList\" />\n      <Editor.ToolbarButton format=\"blockquote\" />\n      <Editor.ToolbarButton format=\"link\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "With Character Limit",
-      "description": "Editor with maxLength showing character count indicator with warning and error states",
+      "description": "The counter warns near 280 characters and turns red past it.",
       "code": "<Editor\n  placeholder=\"Write a tweet-sized message...\"\n  maxLength={280}\n  size=\"sm\"\n  formats={['bold', 'italic', 'link']}\n/>"
     },
     {
       "name": "Small Size",
-      "description": "Compact editor with sm size preset (120px min-height)",
+      "description": "A 120px body with a trimmed toolbar, for tight spaces.",
       "code": "<Editor\n  placeholder=\"Quick note...\"\n  size=\"sm\"\n  formats={['bold', 'italic', 'code']}\n/>"
     }
   ],
@@ -253,11 +240,7 @@
       "maxLength: number - character limit with visual indicator",
       "toolbarIcons: Partial<Record<EditorFormat, ReactNode | (state) => ReactNode>> - custom toolbar icons"
     ],
-    "a11yRules": [
-      "A11Y_TOOLBAR_ROLE",
-      "A11Y_BUTTON_LABEL",
-      "A11Y_LIVE_REGION"
-    ]
+    "a11yRules": ["A11Y_TOOLBAR_ROLE", "A11Y_BUTTON_LABEL", "A11Y_LIVE_REGION"]
   },
   "ai": {
     "compositionPattern": "compound",

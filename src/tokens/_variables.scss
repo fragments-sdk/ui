@@ -47,8 +47,8 @@ $fui-base-unit: computed.$computed-base-unit !default;
 // Typography
 // --------------------------------------------
 $fui-font-sans:
-  "Instrument Sans Variable",
-  "Instrument Sans",
+  "Onest Variable",
+  Onest,
   -apple-system,
   BlinkMacSystemFont,
   "Segoe UI",
@@ -414,6 +414,19 @@ $fui-icon-2xl: measurements.target-value("icon", "2xl") !default;
 $fui-anim-offset-sm: 4px !default; // Small slide animation
 $fui-anim-offset-md: 8px !default; // Medium slide animation
 
+// Ambient loop durations — infinite animations (spinners, pulses, shimmer).
+// Easing stays per-effect; duration is the system knob.
+$fui-duration-spin: 800ms !default; // Busy indicators
+$fui-duration-pulse: 1500ms !default; // Breathing / attention loops
+$fui-duration-shimmer: 2000ms !default; // Placeholder shimmer
+
+// Overlay stacking layers (kept adjacent so relative order is auditable)
+$fui-overlay-layer-swipe: 49 !default;
+$fui-overlay-layer-backdrop: 50 !default;
+$fui-overlay-layer-modal: 51 !default;
+$fui-overlay-layer-anchored: 52 !default;
+$fui-overlay-layer-tooltip: 60 !default;
+
 // Sidebar (multi-consumer — used by Sidebar, NavigationMenu, Theme)
 $fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact/default: 32px, relaxed: 36px)
 
@@ -428,13 +441,13 @@ $fui-header-z-index: 40 !default;
 // CodeBlock background — shared with Markdown's <pre> prose styling — and
 // selection tint are runtime hooks so consuming apps can preserve their own
 // code-surface treatment without forking either component.
-$fui-code-bg: light-dark(#171717, #0d0d0d) !default;
+$fui-code-bg: light-dark(#1d1c1a, #121110) !default;
 // Selection tint tracks the accent (pine light / sage dark), not the button
 // chrome — the ink-first default theme paints buttons with the inverse
 // surface, which would grey out code selection.
 $fui-code-selection-bg: color-mix(
   in srgb,
-  var(--fui-color-accent, #006b57) 30%,
+  var(--fui-color-accent, #f56138) 30%,
   transparent
 ) !default;
 
@@ -528,6 +541,20 @@ $fui-code-selection-bg: color-mix(
     // Transitions
     --fui-transition-fast: #{$fui-transition-fast};
     --fui-transition-normal: #{$fui-transition-normal};
+
+    // Motion primitives
+    --fui-anim-offset-sm: #{$fui-anim-offset-sm};
+    --fui-anim-offset-md: #{$fui-anim-offset-md};
+    --fui-duration-spin: #{$fui-duration-spin};
+    --fui-duration-pulse: #{$fui-duration-pulse};
+    --fui-duration-shimmer: #{$fui-duration-shimmer};
+
+    // Overlay stacking layers
+    --fui-overlay-layer-swipe: #{$fui-overlay-layer-swipe};
+    --fui-overlay-layer-backdrop: #{$fui-overlay-layer-backdrop};
+    --fui-overlay-layer-modal: #{$fui-overlay-layer-modal};
+    --fui-overlay-layer-anchored: #{$fui-overlay-layer-anchored};
+    --fui-overlay-layer-tooltip: #{$fui-overlay-layer-tooltip};
 
     // Colors — Accent (light-dark for automatic dark mode)
     --fui-color-accent: light-dark(#{$fui-color-accent}, #{$fui-dark-color-accent});
@@ -634,8 +661,8 @@ $fui-code-selection-bg: color-mix(
     // dark) as a soft wash — matching the Flight Recorder accent-tint.
     // Component-selected states stay tuned per control density.
     --fui-selection-bg: light-dark(
-      color-mix(in srgb, var(--fui-color-accent, #006b57) 18%, transparent),
-      color-mix(in srgb, var(--fui-color-accent, #7fc9b3) 22%, transparent)
+      color-mix(in srgb, var(--fui-color-accent, #f56138) 18%, transparent),
+      color-mix(in srgb, var(--fui-color-accent, #f56138) 22%, transparent)
     );
     --fui-selection-color: var(--fui-text-primary);
 

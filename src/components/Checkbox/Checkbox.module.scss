@@ -99,17 +99,33 @@
     height: var(--fui-icon-xs, $fui-icon-xs);
   }
 
-  // Animation
+  // Animation: the mark draws itself in (stroke-dashoffset over the
+  // pathLength-normalized glyphs) instead of popping. Opacity keeps the
+  // un-draw exit from lingering.
   opacity: 0;
-  transform: scale(0.8);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
+  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
+
+  svg :is(polyline, line) {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset var(--fui-transition-normal, $fui-transition-normal);
+  }
 
   [data-checked] > &,
   [data-indeterminate] > & {
     opacity: 1;
-    transform: scale(1);
+
+    svg :is(polyline, line) {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    svg :is(polyline, line) {
+      transition: none;
+    }
   }
 
   [data-invalid][data-checked] > &,

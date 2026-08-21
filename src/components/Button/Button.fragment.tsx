@@ -1,11 +1,12 @@
 import { defineFragment } from "@usefragments/core";
 import { Link } from "../Link";
+import { Stack } from "../Stack";
 import { Button } from "./index";
 
 export default defineFragment(Button, {
   meta: {
     name: "Button",
-    purpose: "Interactive element for user actions and form submissions",
+    purpose: "Triggers an action — save, submit, delete, open.",
     category: "forms",
     status: "stable",
     tags: ["action", "button", "form", "interactive"],
@@ -13,32 +14,36 @@ export default defineFragment(Button, {
   states: {
     Primary: {
       render: <Button variant="primary">Save changes</Button>,
-      note: "Default action button for primary actions",
+      note: "The one action you want people to take here.",
       canonical: true,
     },
     Secondary: {
       render: <Button variant="secondary">Cancel</Button>,
-      note: "Less prominent action button",
+      note: "Supporting action that sits beside the main one.",
     },
     Ghost: {
       render: <Button variant="ghost">Learn more</Button>,
-      note: "Minimal visual weight for subtle actions",
+      note: "No fill, no border — for dense toolbars and repeated rows.",
     },
     Link: {
       render: <Button variant="link">View all →</Button>,
-      note: "Accent-coloured transparent button for tertiary CTAs",
+      note: "Reads like a link, behaves like an action.",
     },
     Quiet: {
-      render: <Button variant="quiet" size="xs">Manage preferences</Button>,
-      note: "Neutral text button with no box and no height floor, for meta lines and footnotes",
+      render: (
+        <Button variant="quiet" size="xs">
+          Manage preferences
+        </Button>
+      ),
+      note: "No box and no height floor, so it sits inline in meta lines.",
     },
     Danger: {
       render: <Button variant="danger">Delete item</Button>,
-      note: "Destructive action requiring attention",
+      note: "Destructive action people cannot undo.",
     },
     Outline: {
       render: <Button variant="outline">View details</Button>,
-      note: "Bordered button with transparent background",
+      note: "Bordered and transparent — reads over any surface.",
     },
     Icon: {
       render: (
@@ -46,22 +51,22 @@ export default defineFragment(Button, {
           <span aria-hidden>+</span>
         </Button>
       ),
-      note: "Convenience icon-only button alias (ghost + square icon sizing)",
+      note: "Square icon-only action. Always pass aria-label.",
     },
     Sizes: {
       render: (
-        <div>
+        <Stack direction="row" gap="sm" align="center" wrap>
           <Button size="xs">Extra small</Button>
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
           <Button size="lg">Large</Button>
-        </div>
+        </Stack>
       ),
-      note: "Available size options",
+      note: "xs for inline row actions, lg for hero calls to action.",
     },
     Disabled: {
       render: <Button disabled>Unavailable</Button>,
-      note: "Non-interactive state",
+      note: "Blocks clicks and drops the button out of the tab order.",
     },
     "As Child": {
       render: (
@@ -69,7 +74,7 @@ export default defineFragment(Button, {
           <a href="#billing-settings">Billing settings</a>
         </Button>
       ),
-      note: "Compose button styles onto another interactive element while preserving forwarded props",
+      note: "Paints button styles onto an anchor or router link; props forward to the child.",
     },
     "Long Label": {
       render: (
@@ -77,32 +82,30 @@ export default defineFragment(Button, {
           Save the localized account preferences and notify every affected workspace administrator
         </Button>
       ),
-      note: "Long localized action labels wrap without hiding the action",
+      note: "Long labels wrap instead of clipping or truncating.",
     },
   },
   guidance: {
     when: [
-      "Triggering an action (save, submit, delete, etc.)",
-      "Form submission",
-      "Opening dialogs or menus",
-      "Navigation when action context is needed",
+      "Running an action: save, submit, delete",
+      "Submitting a form",
+      "Opening a dialog or menu",
     ],
     whenNot: [
-      "Simple navigation (use Link)",
-      "Toggling state (use Switch or Checkbox)",
-      "Selecting from options (use Select or RadioGroup)",
+      "Plain navigation — use Link",
+      "Toggling state — use Switch or Checkbox",
+      "Picking an option — use Select or RadioGroup",
     ],
     guidelines: [
-      "Use Primary for the main action in a context",
-      "Only one Primary button per section/form",
-      "Use Danger variant for destructive actions",
-      "Loading state should disable the button",
-      "When using asChild, pass interaction and accessibility props directly on Button (they are forwarded to the child element)",
-      'Use variant="icon" for the default icon-only action button, or combine icon={true} with another visual variant when needed',
+      "One primary button per form or section",
+      "Danger for anything destructive",
+      "Loading state must also disable the button",
+      "With asChild, put interaction and a11y props on Button — they forward to the child",
+      'variant="icon" for icon-only actions; or icon={true} plus another variant',
     ],
     accessibility: [
-      "Button text should describe the action",
-      'Avoid generic labels like "Click here"',
+      "Label the action, not the widget",
+      'No "Click here"',
       "Icon-only buttons need aria-label",
     ],
     dont: [

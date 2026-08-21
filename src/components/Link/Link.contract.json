@@ -1,15 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Link",
-  "description": "Navigates to internal or external destinations with consistent styling.",
+  "description": "Navigates somewhere else, inline or in chrome, with real link semantics.",
   "category": "navigation",
-  "tags": [
-    "link",
-    "anchor",
-    "navigation",
-    "href",
-    "url"
-  ],
+  "tags": ["link", "anchor", "navigation", "href", "url"],
   "status": "stable",
   "sourcePath": "src/components/Link/index.tsx",
   "exportName": "Link",
@@ -35,23 +29,14 @@
       "description": "Visual style variant",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "subtle",
-        "muted"
-      ]
+      "values": ["default", "subtle", "muted"]
     },
     "underline": {
       "type": "enum",
       "description": "Underline behavior",
       "default": "hover",
       "required": false,
-      "values": [
-        "always",
-        "hover",
-        "none",
-        "dotted"
-      ]
+      "values": ["always", "hover", "none", "dotted"]
     },
     "external": {
       "type": "boolean",
@@ -88,56 +73,55 @@
   },
   "usage": {
     "when": [
-      "Inline text links within paragraphs",
-      "Navigation links in footers or sidebars",
-      "\"Forgot password?\" or \"Sign up\" links in forms",
-      "External links to documentation or resources"
+      "Inline links inside body text",
+      "Footer and sidebar navigation",
+      "\"Forgot password?\" and \"Sign up\" in forms",
+      "Pointing out to docs or external resources"
     ],
     "whenNot": [
-      "Primary call-to-action (use Button instead)",
-      "Navigation tabs (use Tabs component)",
-      "Menu items in dropdowns (use Menu component)",
-      "Cards that link to detail pages should still use real link semantics (Link or anchor inside Card)"
+      "A main call to action — use Button",
+      "Switching views in place — use Tabs",
+      "Dropdown items — use Menu"
     ],
     "guidelines": [
-      "Link text should describe the destination, not \"click here\"",
-      "Use external prop for links that open in new tabs",
-      "Use subtle variant for secondary/contextual links",
-      "Ensure links are distinguishable from regular text",
-      "When using asChild, Link composes event handlers with the child instead of overwriting them"
+      "Name the destination; never \"click here\"",
+      "external sets target and rel — add your own \"opens in a new tab\" cue",
+      "subtle and muted for secondary and contextual links",
+      "Links must stay distinguishable from surrounding text",
+      "asChild composes handlers with the child rather than replacing them"
     ],
     "accessibility": [
-      "Link text must be descriptive of the destination",
-      "External links should indicate they open in new window",
-      "Links must have visible focus indicators",
-      "Avoid using links that look like buttons without button semantics"
+      "The link text alone should make sense out of context",
+      "Say when a link opens a new window",
+      "Focus ring must stay visible",
+      "A link that looks like a button still needs link semantics"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Standard link with hover underline",
+      "description": "Accent text that underlines on hover.",
       "code": "<Link href=\"#\">Learn more about our services</Link>"
     },
     {
       "name": "Variants",
-      "description": "Visual style options",
-      "code": "<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>\n  <Link href=\"#\" variant=\"default\">Default</Link>\n  <Link href=\"#\" variant=\"subtle\">Subtle</Link>\n  <Link href=\"#\" variant=\"muted\">Muted</Link>\n</div>"
+      "description": "Accent, then quieter, then quietest.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Link href=\"#\" variant=\"default\">Default</Link>\n  <Link href=\"#\" variant=\"subtle\">Subtle</Link>\n  <Link href=\"#\" variant=\"muted\">Muted</Link>\n</Stack>"
     },
     {
       "name": "Underline Styles",
-      "description": "Different underline behaviors",
-      "code": "<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>\n  <Link href=\"#\" underline=\"always\">Always underlined</Link>\n  <Link href=\"#\" underline=\"hover\">Underline on hover</Link>\n  <Link href=\"#\" underline=\"none\">No underline</Link>\n</div>"
+      "description": "Four rules for when the line shows.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Link href=\"#\" underline=\"always\">Always underlined</Link>\n  <Link href=\"#\" underline=\"hover\">Underline on hover</Link>\n  <Link href=\"#\" underline=\"dotted\">Dotted underline</Link>\n  <Link href=\"#\" underline=\"none\">No underline</Link>\n</Stack>"
     },
     {
       "name": "External Link",
-      "description": "Link that opens in new tab",
+      "description": "Sets target and rel; you still supply the visible cue.",
       "code": "<Link href=\"https://example.com\" external>\n  View documentation ↗\n</Link>"
     },
     {
       "name": "As Child (Polymorphic)",
-      "description": "Renders as a custom element while applying Link styles and composing handlers. Useful with Next.js Link for client-side navigation.",
-      "code": "<Link asChild variant=\"subtle\" onClick={() => {}}>\n  <button type=\"button\" onClick={() => alert('Navigated!')}>\n    Polymorphic link as button\n  </button>\n</Link>"
+      "description": "Paints Link styling onto a router link and keeps both click handlers.",
+      "code": "<Link asChild variant=\"subtle\" onClick={() => {}}>\n  <a href=\"#pricing\" onClick={() => {}}>\n    Client-side navigation\n  </a>\n</Link>"
     }
   ],
   "relations": [
@@ -161,16 +145,11 @@
       "external: boolean - opens in new tab",
       "asChild: boolean - polymorphic child rendering with merged styles and composed event handlers"
     ],
-    "a11yRules": [
-      "A11Y_LINK_TEXT",
-      "A11Y_LINK_FOCUS"
-    ]
+    "a11yRules": ["A11Y_LINK_TEXT", "A11Y_LINK_FOCUS"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

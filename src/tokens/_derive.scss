@@ -146,209 +146,92 @@
 // Surface/Background Derivation
 // --------------------------------------------
 
-/// Derive surface/background tokens from a neutral palette
+/// Derive surface/background tokens for the paper ramp.
 /// Maps shade levels to semantic surface tokens for visual depth layering.
-/// For colorful palettes (ice, earth, sand, fire), light mode uses tinted backgrounds.
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
-/// @param {String} $palette-name - Palette name for colorful detection (default: 'stone')
 /// @return {Map} Surface token values
-@function derive-surfaces($palette, $is-dark: false, $palette-name: "stone") {
+@function derive-surfaces($palette, $is-dark: false, $palette-name: "paper") {
   @if $is-dark {
-    // Carbon (Fragments default) — one charcoal plane with a restrained
-    // raised and interaction ladder. The light branch below is its exact RGB
-    // inverse.
-    @if $palette-name == "carbon" {
-      @return (
-        primary: #161616,
-        // page background
-        secondary: #161616,
-        // shell/sidebar on the same plane
-        tertiary: #202020,
-        // neutral raised chrome
-        elevated: #202020,
-        // cards and overlays
-        subtle: #202020,
-        // recessed wells and insets
-        hover: #242424,
-        // transient interaction
-        active: #2e2e2e // transient pressed interaction
-      );
-    }
-
-    @if $palette-name == "stone" or $palette-name == "mono" {
-      @return (
-        primary: #000000,
-        secondary: #050505,
-        tertiary: #111111,
-        elevated: #151515,
-        subtle: #080808,
-        hover: rgba(255, 255, 255, 0.055),
-        active: rgba(255, 255, 255, 0.085)
-      );
-    }
-
-    // Dark mode: darker = more recessed, lighter = elevated
-    // Hover/active opacities tuned for subdued dense-UI aesthetic: hairlines and
-    // alpha overlays do most of the depth work rather than heavy color shifts.
+    // The cream canvas moved onto a warm charcoal plane with a real elevation
+    // ladder: bands step up from the page, cards step up from bands — the
+    // dark mirror of canvas / tinted band / white card in light mode.
     @return (
-      primary: get-shade($palette, 950),
-      // Page background (darkest)
-      secondary: get-shade($palette, 900),
-      // Sidebar, panels
-      tertiary: get-shade($palette, 800),
-      // Content areas (lighter)
-      elevated: interpolate-shade($palette, 875),
-      // Cards (distinct from secondary)
-      subtle: interpolate-shade($palette, 925),
-      // Between primary and secondary
-      hover: rgba(255, 255, 255, 0.035),
-      // Interactive hover
-      active: rgba(255, 255, 255, 0.06) // Interactive active
+      primary: #171614,
+      // page background
+      secondary: #171614,
+      // shell/sidebar on the same plane
+      tertiary: #1e1c19,
+      // tinted section band, raised chrome
+      elevated: #262421,
+      // cards and overlays float clearly above bands
+      subtle: #1b1a17,
+      // barely-raised wells
+      hover: #2a2723,
+      // transient interaction
+      active: #322e29 // transient pressed interaction
     );
   }
 
-  // Carbon light mode keeps the same step intervals as the dark ladder, but
-  // starts halfway between the previous #e9 paper and white. The softer canvas
-  // preserves hierarchy without the flat grey cast of the exact RGB inverse.
-  @if $palette-name == "carbon" {
-    @return (
-      primary: #f4f4f4,
-      secondary: #f4f4f4,
-      tertiary: #eaeaea,
-      elevated: #eaeaea,
-      subtle: #eaeaea,
-      hover: #e6e6e6,
-      active: #dcdcdc
-    );
-  }
-
-  // Light mode: colorful palettes get tinted backgrounds.
-  $is-colorful: $palette-name != "stone" and $palette-name != "carbon";
-  @if $is-colorful {
-    @return (
-      primary: get-shade($palette, 50),
-      // Tinted page background
-      secondary: get-shade($palette, 100),
-      // Tinted secondary panels
-      tertiary: get-shade($palette, 200),
-      // Deeper tint for nested sections
-      elevated: #ffffff,
-      // Cards, modals (floats above)
-      subtle: get-shade($palette, 50),
-      // Very subtle tinted background
-      hover: rgba(0, 0, 0, 0.04),
-      // Interactive hover
-      active: rgba(0, 0, 0, 0.06) // Interactive active
-    );
-  }
-
-  // Stone/carbon: neutral paper backgrounds. Tertiary sits one step below
-  // secondary — when a hover or nested section lands on a paper (secondary)
-  // surface it must still read, not dissolve into the same tone.
+  // Light mode — the warm gallery scheme: a cream page canvas, white cards
+  // floating above it, and a deeper cream band for nested sections.
+  // Hover/active are warm alpha tints so interaction chrome never goes cold
+  // grey on the warm canvas.
   @return (
-    primary: #ffffff,
-    // Page background (white)
-    secondary: get-shade($palette, 100),
-    // Sidebar, secondary panels (paper)
-    tertiary: get-shade($palette, 200),
-    // Nested sections, hover-on-paper
+    primary: #faf8f5,
+    // page canvas (cream)
+    secondary: #faf8f5,
+    // shell/sidebar on the same plane
+    tertiary: #f2ede7,
+    // tinted section band, hover-on-paper
     elevated: #ffffff,
-    // Cards, modals (floats above)
-    subtle: get-shade($palette, 50),
-    // Very subtle backgrounds
-    hover: rgba(0, 0, 0, 0.04),
-    // Interactive hover
-    active: rgba(0, 0, 0, 0.06) // Interactive active
+    // cards and overlays float white
+    subtle: #fdfcfa,
+    // barely-raised wells
+    hover: rgba(96, 48, 16, 0.06),
+    // warm transient interaction
+    active: rgba(96, 48, 16, 0.1) // warm pressed interaction
   );
 }
 
 /// Derive document/application canvas tokens used by base body styles and
-/// large layout containers. The defaults intentionally separate the page
-/// canvas from the primary main surface so app shells can expose chrome around
-/// the focused content region.
+/// large layout containers. Body and main share the paper canvas so app
+/// shells sit on one plane; raised component roles provide the contrast.
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
-/// @param {String} $palette-name - Palette name for colorful detection
 /// @return {Map} Body and main background values
-@function derive-app-surfaces($palette, $is-dark: false, $palette-name: "stone") {
+@function derive-app-surfaces($palette, $is-dark: false, $palette-name: "paper") {
   @if $is-dark {
-    // Carbon (Fragments default) — the same plane as component surfaces.
-    @if $palette-name == "carbon" {
-      @return (body: #161616, main: #161616);
-    }
-
-    @if $palette-name == "stone" or $palette-name == "mono" or $palette-name == "wind" {
-      @return (body: #000000, main: #050505);
-    }
-
-    @return (body: get-shade($palette, 800), main: get-shade($palette, 900));
+    @return (body: #171614, main: #171614);
   }
-
-  @if $palette-name == "carbon" {
-    @return (body: #f4f4f4, main: #f4f4f4);
-  }
-
-  @if $palette-name == "stone" or $palette-name == "wind" {
-    @return (body: get-shade($palette, 100), main: #ffffff);
-  }
-
-  @return (body: get-shade($palette, 100), main: get-shade($palette, 50));
+  @return (body: #faf8f5, main: #faf8f5);
 }
 
 // --------------------------------------------
 // Text Color Derivation
 // --------------------------------------------
 
-/// Derive text tokens from a neutral palette.
-/// For colorful palettes in light mode, applies ensure-contrast() to meet
-/// WCAG AAA (7:1) against tinted backgrounds (palette[50]).
+/// Derive text tokens for the paper ramp.
+/// Light mode applies ensure-contrast() to meet WCAG AAA (7:1) against the
+/// cream canvas; dark mode uses warm ink tiers so text keeps the scheme's
+/// warmth instead of snapping to pure white.
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
-/// @param {String} $palette-name - Palette name for background detection (default: 'stone')
 /// @return {Map} Text token values
-@function derive-text($palette, $is-dark: false, $palette-name: "stone") {
+@function derive-text($palette, $is-dark: false, $palette-name: "paper") {
   @if $is-dark {
-    // Carbon (Fragments default) — ink / muted / faint text tiers.
-    @if $palette-name == "carbon" {
-      @return (
-        primary: #ececec,
-        // ink
-        secondary: #b4b4b4,
-        // muted
-        tertiary: #8f8f8f,
-        // faint / placeholder
-        inverse: #161616 // text on light (sage) accents
-      );
-    }
-
-    @if $palette-name == "stone" or $palette-name == "mono" {
-      @return (primary: #ededed, secondary: #a1a1a1, tertiary: #7a7a7a, inverse: #000000);
-    }
-
-    // Dark mode: neutral white text on all palettes.
-    // Palette-tinted text (e.g. green-on-green-dark) looks muddy and reduces
-    // readability. Major polished dark themes use neutral white text regardless
-    // of background tint.
-    // Opacity ladder tuned for a subdued, product-chrome aesthetic — secondary
-    // and tertiary are lifted closer to primary so dense UI reads cleanly
-    // without needing to bump to primary for every chrome label.
     @return (
-      primary: #ffffff,
-      secondary: rgba(255, 255, 255, 0.72),
-      tertiary: rgba(255, 255, 255, 0.5),
-      inverse: get-shade($palette, 900) // Text on light accents
+      primary: #f0ede9,
+      // warm ink
+      secondary: #b6b0a8,
+      // muted
+      tertiary: #8d8780,
+      // faint / placeholder
+      inverse: #171614 // text on light (cream) accents
     );
   }
 
-  // Light mode background — carbon uses its mirrored page plane, stone uses
-  // white, and colorful palettes use palette[50].
-  $bg: #ffffff;
-  @if $palette-name == "carbon" {
-    $bg: get-shade($palette, 100);
-  } @else if $palette-name != "stone" {
-    $bg: get-shade($palette, 50);
-  }
+  $bg: get-shade($palette, 50);
 
   @return (
     primary: get-shade($palette, 900),
@@ -367,35 +250,22 @@
 // Border Color Derivation
 // --------------------------------------------
 
-/// Derive border tokens from a neutral palette
+/// Derive border tokens for the paper ramp
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Map} Border token values
-@function derive-borders($palette, $is-dark: false, $palette-name: "stone") {
+@function derive-borders($palette, $is-dark: false, $palette-name: "paper") {
   @if $is-dark {
-    // Carbon (Fragments default) — solid hairline + strong border.
-    @if $palette-name == "carbon" {
-      @return (
-        default: #323232,
-        // hairline
-        strong: #4b4b4b // strong border
-      );
-    }
-
-    @if $palette-name == "stone" or $palette-name == "mono" {
-      @return (default: rgba(255, 255, 255, 0.075), strong: rgba(255, 255, 255, 0.14));
-    }
-
-    // Dark mode: subtle white-alpha hairlines. Tight opacities keep panel
-    // edges barely-there so borders define structure without adding visual
-    // weight — matches the dense dashboard aesthetic.
-    @return (default: rgba(255, 255, 255, 0.055), strong: rgba(255, 255, 255, 0.085));
-  } @else {
-    // Light mode: spec-sheet hairlines. On the paper canvas (carbon 100) a 5%
-    // black edge dissolves entirely; 8%/15% keeps card and field edges crisp
-    // — strong lands on the #d9d9d9 family, the classic drafting line weight.
-    @return (default: rgba(0, 0, 0, 0.08), strong: rgba(0, 0, 0, 0.15));
+    // Solid warm hairline + strong border on the charcoal plane.
+    @return (
+      default: #343029,
+      // hairline
+      strong: #4a4641 // strong border
+    );
   }
+  // Warm-tinted hairlines so edges on the cream canvas never read as cold
+  // grey lines cutting through a warm scheme.
+  @return (default: rgba(60, 45, 30, 0.1), strong: rgba(60, 45, 30, 0.18));
 }
 
 // --------------------------------------------
@@ -445,29 +315,20 @@
 // Scrollbar Derivation
 // --------------------------------------------
 
-/// Derive scrollbar tokens from a neutral palette
+/// Derive scrollbar tokens for the paper ramp
 /// @param {Map} $palette - Neutral palette map
 /// @param {Boolean} $is-dark - Whether in dark mode
 /// @return {Map} Scrollbar token values
-@function derive-scrollbar($palette, $is-dark: false, $palette-name: "stone") {
+@function derive-scrollbar($palette, $is-dark: false, $palette-name: "paper") {
   @if $is-dark {
-    // Carbon (Fragments default) — transparent track, strong-border thumb.
-    @if $palette-name == "carbon" {
-      @return (track: transparent, thumb: #4b4b4b, thumb-hover: #b4b4b4);
-    }
-
-    @return (
-      track: get-shade($palette, 800),
-      thumb: get-shade($palette, 600),
-      thumb-hover: get-shade($palette, 500)
-    );
-  } @else {
-    @return (
-      track: get-shade($palette, 100),
-      thumb: get-shade($palette, 300),
-      thumb-hover: get-shade($palette, 400)
-    );
+    // Transparent track, strong-border thumb on the warm charcoal plane.
+    @return (track: transparent, thumb: #4a4641, thumb-hover: #b6b0a8);
   }
+  @return (
+    track: get-shade($palette, 100),
+    thumb: get-shade($palette, 300),
+    thumb-hover: get-shade($palette, 400)
+  );
 }
 
 // --------------------------------------------

@@ -1,14 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Breadcrumbs",
-  "description": "Shows the current location in a hierarchy and links to parent pages.",
+  "description": "Shows where the user is and links back up the hierarchy.",
   "category": "navigation",
-  "tags": [
-    "breadcrumbs",
-    "navigation",
-    "hierarchy",
-    "wayfinding"
-  ],
+  "tags": ["breadcrumbs", "navigation", "hierarchy", "wayfinding"],
   "status": "stable",
   "sourcePath": "src/components/Breadcrumbs/index.tsx",
   "exportName": "Breadcrumbs",
@@ -44,21 +39,22 @@
   },
   "usage": {
     "when": [
-      "Showing hierarchical page location (e.g., Home > Category > Product)",
-      "Allowing quick navigation to parent pages",
-      "Multi-level content structures like documentation or e-commerce"
+      "Nested content more than two levels deep",
+      "Jumping back to a parent in one click",
+      "Documentation and catalogue hierarchies"
     ],
     "whenNot": [
-      "Flat navigation with no hierarchy (use Tabs or Header nav)",
-      "Step-by-step wizards (use Stepper)",
+      "Flat structures with no parents (use Tabs or header navigation)",
+      "Steps in an order (use Stepper)",
       "Primary navigation (use Sidebar or Header)"
     ],
     "guidelines": [
-      "Always include the current page as the last, non-linked item",
-      "Keep labels short and descriptive",
-      "Use maxItems to collapse long paths, keeping first and last visible",
-      "The separator defaults to \"/\" but can be customized",
-      "Use the label prop to customize the nav landmark name (defaults to \"Breadcrumb\")"
+      "End on the current page, unlinked",
+      "Short labels — the trail is a path, not a summary",
+      "Set maxItems to fold long paths, keeping first and last",
+      "The separator defaults to a slash and takes any node",
+      "Set label to rename the landmark (defaults to \"Breadcrumb\")",
+      "Crumbs truncate at 200px so one long title cannot push the rest out"
     ],
     "accessibility": [
       "Uses <nav aria-label=\"Breadcrumb\"> for landmark navigation",
@@ -70,27 +66,27 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic breadcrumb navigation",
+      "description": "Each ancestor links; the last one does not.",
       "code": "<Breadcrumbs>\n  <Breadcrumbs.Item href=\"#\">Home</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Products</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Category</Breadcrumbs.Item>\n  <Breadcrumbs.Item current>Current Page</Breadcrumbs.Item>\n</Breadcrumbs>"
     },
     {
       "name": "With Icons",
-      "description": "Breadcrumbs with icons on items",
+      "description": "Glyphs mark what kind of thing each level is.",
       "code": "<Breadcrumbs>\n  <Breadcrumbs.Item\n    href=\"#\"\n    icon={\n      <svg viewBox=\"0 0 16 16\" fill=\"currentColor\">\n        <path d=\"M8 1.25l-7 6v7.5c0 .138.112.25.25.25H5.5V10h5v5h4.25a.25.25 0 0 0 .25-.25v-7.5l-7-6z\" />\n      </svg>\n    }\n  >\n    Home\n  </Breadcrumbs.Item>\n  <Breadcrumbs.Item\n    href=\"#\"\n    icon={\n      <svg viewBox=\"0 0 16 16\" fill=\"currentColor\">\n        <path d=\"M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75z\" />\n      </svg>\n    }\n  >\n    Documents\n  </Breadcrumbs.Item>\n  <Breadcrumbs.Item current>Report.pdf</Breadcrumbs.Item>\n</Breadcrumbs>"
     },
     {
       "name": "Collapsed",
-      "description": "Long breadcrumb trail collapsed with ellipsis",
+      "description": "Middle levels fold behind an ellipsis.",
       "code": "<Breadcrumbs maxItems={3}>\n  <Breadcrumbs.Item href=\"#\">Home</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Category</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Subcategory</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Section</Breadcrumbs.Item>\n  <Breadcrumbs.Item current>Current Page</Breadcrumbs.Item>\n</Breadcrumbs>"
     },
     {
       "name": "Custom Separator",
-      "description": "Breadcrumbs with a custom chevron separator",
+      "description": "Any node can replace the slash.",
       "code": "<Breadcrumbs\n  separator={\n    <svg width=\"12\" height=\"12\" viewBox=\"0 0 16 16\" fill=\"currentColor\">\n      <path fillRule=\"evenodd\" d=\"M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06z\" />\n    </svg>\n  }\n>\n  <Breadcrumbs.Item href=\"#\">Home</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Settings</Breadcrumbs.Item>\n  <Breadcrumbs.Item current>Profile</Breadcrumbs.Item>\n</Breadcrumbs>"
     },
     {
       "name": "Custom Landmark Label",
-      "description": "Override the nav landmark label for screen readers",
+      "description": "Renames the landmark screen readers announce.",
       "code": "<Breadcrumbs label=\"Documentation breadcrumbs\">\n  <Breadcrumbs.Item href=\"#\">Docs</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Components</Breadcrumbs.Item>\n  <Breadcrumbs.Item current>Breadcrumbs</Breadcrumbs.Item>\n</Breadcrumbs>"
     }
   ],
@@ -115,21 +111,12 @@
       "Breadcrumbs.Item current: boolean - marks current page",
       "Breadcrumbs.Item icon: ReactNode - icon before label"
     ],
-    "a11yRules": [
-      "A11Y_NAV_LANDMARK",
-      "A11Y_ARIA_CURRENT",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_NAV_LANDMARK", "A11Y_ARIA_CURRENT", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Item",
-      "Separator"
-    ],
-    "requiredChildren": [
-      "Item"
-    ],
+    "subComponents": ["Item", "Separator"],
+    "requiredChildren": ["Item"],
     "commonPatterns": [
       "<Breadcrumbs><Breadcrumbs.Item href=\"/\">Home</Breadcrumbs.Item><Breadcrumbs.Item href=\"/products\">Products</Breadcrumbs.Item><Breadcrumbs.Item current>Widget</Breadcrumbs.Item></Breadcrumbs>"
     ]

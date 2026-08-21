@@ -32,8 +32,9 @@
     var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
     1fr;
 
-  // Smooth transition for sidebar collapse/expand
-  transition: grid-template-columns var(--fui-transition-normal, $fui-transition-normal) ease;
+  // Smooth transition for sidebar collapse/expand.
+  // The token already carries its own easing curve — do not append another.
+  transition: grid-template-columns var(--fui-transition-normal, $fui-transition-normal);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -197,7 +198,7 @@
   border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-  box-shadow: inset 0 1px 0
+  box-shadow: inset 0 var(--fui-stroke-hairline, 1px) 0
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
   overflow: hidden auto;
 
@@ -292,7 +293,7 @@
   border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-panel-bg, inherit);
-  box-shadow: inset 0 1px 0
+  box-shadow: inset 0 var(--fui-stroke-hairline, 1px) 0
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
   overflow: hidden;
 

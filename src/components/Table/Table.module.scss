@@ -50,7 +50,7 @@
 .headerContent {
   display: flex;
   align-items: center;
-  gap: var(--fui-raw-space-4);
+  gap: var(--fui-raw-space-4, 4px);
 }
 
 .row {

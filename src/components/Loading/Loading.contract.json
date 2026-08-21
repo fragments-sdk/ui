@@ -1,16 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Loading",
-  "description": "Communicates progress or a waiting state.",
+  "description": "Signals that something is happening when you cannot say how long it will take.",
   "category": "feedback",
-  "tags": [
-    "loading",
-    "spinner",
-    "progress",
-    "feedback",
-    "indicator",
-    "async"
-  ],
+  "tags": ["loading", "spinner", "progress", "feedback", "indicator", "async"],
   "status": "stable",
   "sourcePath": "src/components/Loading/index.tsx",
   "exportName": "Loading",
@@ -29,23 +22,14 @@
       "description": "Size of the loading indicator",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ]
+      "values": ["sm", "md", "lg", "xl"]
     },
     "variant": {
       "type": "enum",
       "description": "Visual style of the loading animation",
       "default": "spinner",
       "required": false,
-      "values": [
-        "spinner",
-        "dots",
-        "pulse"
-      ]
+      "values": ["spinner", "dots", "pulse"]
     },
     "label": {
       "type": "string",
@@ -76,87 +60,79 @@
       "description": "Color variant - accent uses theme color, current inherits text color",
       "default": "accent",
       "required": false,
-      "values": [
-        "accent",
-        "current",
-        "muted"
-      ]
+      "values": ["accent", "current", "muted"]
     }
   },
   "usage": {
     "when": [
-      "Indicating content is being fetched or processed",
-      "Showing a pending state while waiting for an async operation",
-      "Displaying loading state for buttons, forms, or page sections",
-      "Full-screen loading during initial app/page load"
+      "Fetching or processing content",
+      "Waiting on an async action to come back",
+      "Buttons, forms, and page sections mid-request",
+      "The first paint of an app or page"
     ],
     "whenNot": [
-      "For showing determinate progress - use Progress component instead",
-      "For showing skeleton placeholders - use Skeleton component instead",
-      "For AI-specific thinking states - use ThinkingIndicator instead"
+      "You know the percentage — use Progress",
+      "You know the page shape — use Skeleton",
+      "AI reasoning states — use ThinkingIndicator"
     ],
     "guidelines": [
-      "Use spinner variant for general loading states",
-      "Use dots variant for chat/messaging contexts",
-      "Use pulse variant for subtle, ambient loading",
-      "Always provide a meaningful label for screen readers",
-      "Consider using Loading.Screen for initial page loads",
-      "Use Loading.Inline when loading indicator should flow with text"
+      "spinner for general waits",
+      "dots for chat and messaging",
+      "pulse for quiet ambient waiting",
+      "Always pass a label describing what is loading",
+      "Loading.Screen for first page load, Loading.Inline to sit inside a sentence"
     ],
     "accessibility": [
-      "Component uses role=\"status\" and aria-live=\"polite\"",
-      "Always provide descriptive label prop for screen readers",
-      "Animations respect prefers-reduced-motion preference"
+      "Announced through role=\"status\" with aria-live=\"polite\"",
+      "label is what a screen reader reads — make it specific",
+      "Animation stops for prefers-reduced-motion"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Default spinner loading indicator",
-      "code": "<Loading />"
+      "description": "Spinner at medium size, accent coloured.",
+      "code": "<Loading label=\"Loading content\" />"
     },
     {
       "name": "Sizes",
-      "description": "Loading indicators in different sizes",
-      "code": "<div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>\n  <Loading size=\"sm\" />\n  <Loading size=\"md\" />\n  <Loading size=\"lg\" />\n  <Loading size=\"xl\" />\n</div>"
+      "description": "sm inside controls, xl for a whole page.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"lg\" align=\"center\">\n  <Loading size=\"sm\" label=\"Loading\" />\n  <Loading size=\"md\" label=\"Loading\" />\n  <Loading size=\"lg\" label=\"Loading\" />\n  <Loading size=\"xl\" label=\"Loading\" />\n</Stack>"
     },
     {
       "name": "Dots",
-      "description": "Bouncing dots animation",
-      "code": "<Loading variant=\"dots\" />"
+      "description": "Three bouncing dots, at home in a message thread.",
+      "code": "<Loading variant=\"dots\" label=\"Sending message\" />"
     },
     {
       "name": "Pulse",
-      "description": "Pulsing circle animation",
-      "code": "<Loading variant=\"pulse\" />"
+      "description": "One breathing dot for ambient background work.",
+      "code": "<Loading variant=\"pulse\" label=\"Syncing\" />"
     },
     {
       "name": "Colors",
-      "description": "Different color variants",
-      "code": "<div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>\n  <Loading color=\"accent\" />\n  <Loading color=\"muted\" />\n  <span style={{ color: '#3b82f6' }}>\n    <Loading color=\"current\" />\n  </span>\n</div>"
+      "description": "Accent, muted, or whatever the surrounding text is.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"lg\" align=\"center\">\n  <Loading color=\"accent\" label=\"Loading\" />\n  <Loading color=\"muted\" label=\"Loading\" />\n  <span style={{ color: 'var(--fui-color-info)' }}>\n    <Loading color=\"current\" label=\"Loading\" />\n  </span>\n</Stack>"
     },
     {
       "name": "Inline",
-      "description": "Inline loading indicator that flows with text",
-      "code": "<p style={{ margin: 0 }}>\n  Processing your request <Loading.Inline /> please wait...\n</p>"
+      "description": "Sits on the text baseline mid-sentence.",
+      "code": "<p style={{ margin: 0 }}>\n  Processing your request <Loading.Inline label=\"Processing\" /> please wait…\n</p>"
     },
     {
       "name": "Centered",
-      "description": "Centered in container",
-      "code": "<div style={{ width: '200px', height: '100px', border: '1px dashed #ccc', borderRadius: '8px' }}>\n  <Loading centered fill />\n</div>"
+      "description": "Fills its container and centres in it.",
+      "code": "<div\n  style={{\n    width: '200px',\n    height: '100px',\n    border: '1px dashed var(--fui-border)',\n    borderRadius: 'var(--fui-radius-md)',\n  }}\n>\n  <Loading centered fill label=\"Loading section\" />\n</div>"
     },
     {
       "name": "Screen",
-      "description": "Full-screen loading state with optional label",
-      "code": "<div style={{ position: 'relative', width: '300px', height: '200px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', transform: 'scale(1)' }}>\n  <Loading.Screen size=\"lg\" label=\"Loading application...\" showLabel />\n</div>"
+      "description": "Covers the surface it sits on and names the wait.",
+      "code": "<div\n  style={{\n    position: 'relative',\n    width: '300px',\n    height: '200px',\n    border: '1px solid var(--fui-border)',\n    borderRadius: 'var(--fui-radius-md)',\n    overflow: 'hidden',\n  }}\n>\n  <Loading.Screen size=\"lg\" label=\"Loading application…\" showLabel />\n</div>"
     }
   ],
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Inline",
-      "Screen"
-    ]
+    "subComponents": ["Inline", "Screen"]
   },
   "provenance": {
     "source": "migrated",

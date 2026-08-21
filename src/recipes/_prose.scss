@@ -1,3 +1,4 @@
+@use "../tokens/mixins" as mixins;
 @use "typography" as typography;
 
 @mixin root {
@@ -152,12 +153,16 @@
 @mixin link {
   color: inherit;
   text-decoration: underline;
-  text-underline-offset: var(--fui-raw-space-2);
+  // Em offset scales with the inherited font size (prose links render at
+  // several sizes); matches the Link component's hover/dotted variants.
+  text-underline-offset: 0.2em;
   overflow-wrap: anywhere;
 
   &:focus-visible {
-    outline: var(--fui-stroke-default) solid var(--fui-focus-ring);
-    outline-offset: var(--fui-stroke-default);
+    // The previous hand-rolled outline referenced --fui-focus-ring, which is
+    // never defined — the whole declaration was invalid and prose links had
+    // no visible ring at all.
+    @include mixins.focus-ring;
   }
 }
 

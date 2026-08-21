@@ -20,7 +20,8 @@
 .skeleton {
   display: block;
   background-color: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
-  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: skeleton-pulse var(--fui-duration-shimmer, $fui-duration-shimmer)
+    cubic-bezier(0.4, 0, 0.6, 1) infinite;
   border-radius: var(--fui-radius-md, #{$fui-radius-md});
 }
 
@@ -150,7 +151,8 @@
   height: 1em;
   width: 100%;
   background-color: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
-  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: skeleton-pulse var(--fui-duration-shimmer, $fui-duration-shimmer)
+    cubic-bezier(0.4, 0, 0.6, 1) infinite;
   border-radius: var(--fui-radius-sm, #{$fui-radius-sm});
 }
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Stack",
-  "description": "Arranges children in a row or column with consistent responsive spacing.",
+  "description": "Stacks children in a row or column with one consistent gap.",
   "category": "layout",
   "tags": ["stack", "layout", "flex", "spacing", "responsive"],
   "status": "stable",
@@ -91,22 +91,21 @@
   },
   "usage": {
     "when": [
-      "Arranging elements in a row or column",
-      "Creating consistent spacing between items",
-      "Building responsive layouts",
-      "Simple flexbox-based arrangements"
+      "Spacing a short row or column of elements",
+      "Any one-directional flexbox arrangement",
+      "Layouts that flip direction at a breakpoint"
     ],
     "whenNot": [
-      "Complex grid layouts (use Grid)",
-      "Button-specific grouping (use ButtonGroup)",
-      "Page-level layout (use AppShell)"
+      "Two-dimensional layouts (use Grid)",
+      "Grouping buttons into one control (use ButtonGroup)",
+      "Page shell regions (use AppShell)"
     ],
     "guidelines": [
-      "Use semantic elements via the \"as\" prop when appropriate",
-      "Leverage responsive props for mobile-first layouts",
-      "Keep spacing consistent within related sections",
-      "Consider alignment for visual balance",
-      "Pass DOM attributes (id, role, aria-*, data-*, event handlers) directly to Stack root when needed"
+      "Set gap once on the parent instead of margins on children",
+      "Numeric gaps (1-8) map to the same spacing scale as the tokens",
+      "direction, gap, and align all accept per-breakpoint objects",
+      "Use as=\"nav\" or as=\"ul\" so the markup stays semantic",
+      "separator draws dividers without extra elements"
     ],
     "accessibility": [
       "Use semantic elements (nav, section, etc.) via \"as\" prop",
@@ -117,42 +116,37 @@
   "examples": [
     {
       "name": "Vertical Stack",
-      "description": "Default column layout",
-      "code": "<Stack gap=\"sm\">\n  <Badge>Item 1</Badge>\n  <Badge>Item 2</Badge>\n  <Badge>Item 3</Badge>\n</Stack>"
+      "description": "Children flow top to bottom — the default.",
+      "code": "import { Box } from '@/components/Box';\nimport { Stack } from '@/components/Stack';\n\n<Stack gap=\"sm\">\n  <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">One</Box>\n  <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">Two</Box>\n  <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">Three</Box>\n</Stack>"
     },
     {
       "name": "Horizontal Stack",
-      "description": "Row layout",
-      "code": "<Stack direction=\"row\" gap=\"sm\">\n  <Badge>Item 1</Badge>\n  <Badge>Item 2</Badge>\n  <Badge>Item 3</Badge>\n</Stack>"
+      "description": "Children flow left to right.",
+      "code": "import { Box } from '@/components/Box';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\">\n  <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">One</Box>\n  <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">Two</Box>\n  <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">Three</Box>\n</Stack>"
     },
     {
       "name": "Gap Sizes",
-      "description": "Different spacing options",
-      "code": "<Stack gap=\"lg\">\n  <Stack direction=\"row\" gap=\"xs\">\n    <Badge variant=\"info\">XS</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\">\n    <Badge variant=\"info\">SM</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"md\">\n    <Badge variant=\"info\">MD</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"lg\">\n    <Badge variant=\"info\">LG</Badge>\n    <Badge variant=\"info\">Gap</Badge>\n  </Stack>\n</Stack>"
-    },
-    {
-      "name": "Numeric Gap",
-      "description": "Using number values (1-8) mapped to the spacing scale",
-      "code": "<Stack gap=\"lg\">\n  <Stack direction=\"row\" gap={2}>\n    <Badge variant=\"info\">Gap 2</Badge>\n    <Badge variant=\"info\">Gap 2</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap={4}>\n    <Badge variant=\"info\">Gap 4</Badge>\n    <Badge variant=\"info\">Gap 4</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap={6}>\n    <Badge variant=\"info\">Gap 6</Badge>\n    <Badge variant=\"info\">Gap 6</Badge>\n  </Stack>\n</Stack>"
+      "description": "One spacing token sets every gap in the stack.",
+      "code": "import { Box } from '@/components/Box';\nimport { Stack } from '@/components/Stack';\n\n<Stack gap=\"lg\">\n  <Stack direction=\"row\" gap=\"xs\">\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">xs</Box>\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">xs</Box>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\">\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">sm</Box>\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">sm</Box>\n  </Stack>\n  <Stack direction=\"row\" gap=\"md\">\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">md</Box>\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">md</Box>\n  </Stack>\n  <Stack direction=\"row\" gap=\"lg\">\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">lg</Box>\n    <Box background=\"secondary\" rounded=\"sm\" paddingX=\"md\" paddingY=\"sm\">lg</Box>\n  </Stack>\n</Stack>"
     },
     {
       "name": "Alignment",
-      "description": "Cross-axis and main-axis alignment",
-      "code": "<Stack gap=\"md\">\n  <Stack direction=\"row\" gap=\"sm\" justify=\"between\" style={{ width: '200px', padding: '8px', background: 'var(--fui-bg-secondary)', borderRadius: '4px' }}>\n    <Badge>Start</Badge>\n    <Badge>End</Badge>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\" justify=\"center\" style={{ width: '200px', padding: '8px', background: 'var(--fui-bg-secondary)', borderRadius: '4px' }}>\n    <Badge>Centered</Badge>\n  </Stack>\n</Stack>"
+      "description": "justify positions children along the main axis.",
+      "code": "import { Box } from '@/components/Box';\nimport { Stack } from '@/components/Stack';\n\n<Stack gap=\"md\">\n  <Box width=\"240px\" border rounded=\"sm\" padding=\"sm\">\n    <Stack direction=\"row\" gap=\"sm\" justify=\"between\">\n      <Box background=\"secondary\" rounded=\"sm\" paddingX=\"sm\" paddingY=\"xs\">Start</Box>\n      <Box background=\"secondary\" rounded=\"sm\" paddingX=\"sm\" paddingY=\"xs\">End</Box>\n    </Stack>\n  </Box>\n  <Box width=\"240px\" border rounded=\"sm\" padding=\"sm\">\n    <Stack direction=\"row\" gap=\"sm\" justify=\"center\">\n      <Box background=\"secondary\" rounded=\"sm\" paddingX=\"sm\" paddingY=\"xs\">Centered</Box>\n    </Stack>\n  </Box>\n</Stack>"
     },
     {
       "name": "Responsive",
-      "description": "Direction changes at breakpoints",
+      "description": "Swap direction and gap per breakpoint with an object value.",
       "code": "<Stack\n  direction={{ base: 'column', md: 'row' }}\n  gap={{ base: 'sm', md: 'lg' }}\n>\n  <Button variant=\"secondary\">First</Button>\n  <Button variant=\"secondary\">Second</Button>\n  <Button variant=\"secondary\">Third</Button>\n</Stack>"
     },
     {
       "name": "With Separator",
-      "description": "Default line separator between items",
-      "code": "<Stack gap=\"md\" separator>\n  <div>Section One</div>\n  <div>Section Two</div>\n  <div>Section Three</div>\n</Stack>"
+      "description": "Draws a divider between each child.",
+      "code": "import { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack gap=\"md\" separator>\n  <Text>Section one</Text>\n  <Text>Section two</Text>\n  <Text>Section three</Text>\n</Stack>"
     },
     {
       "name": "Semantic Element",
-      "description": "Using nav element for navigation",
+      "description": "The as prop renders a real nav, section, or list element.",
       "code": "<Stack as=\"nav\" direction=\"row\" gap=\"md\">\n  <Button variant=\"ghost\" size=\"sm\">Home</Button>\n  <Button variant=\"ghost\" size=\"sm\">About</Button>\n  <Button variant=\"ghost\" size=\"sm\">Contact</Button>\n</Stack>"
     }
   ],

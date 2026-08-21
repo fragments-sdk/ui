@@ -8,7 +8,7 @@
   @include navigation.properties;
 
   --fui-sidebar-row-height: var(--fui-navigation-row-track);
-  --fui-sidebar-row-radius: var(--fui-radius-md, #{$fui-radius-md});
+  --fui-sidebar-row-radius: var(--fui-radius-full, #{$fui-radius-full});
   --fui-sidebar-gutter: var(--fui-navigation-gutter);
   --fui-sidebar-row-gap: var(--fui-navigation-content-gap);
   --fui-sidebar-row-padding-x: var(--fui-navigation-inline-inset);

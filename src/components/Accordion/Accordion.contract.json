@@ -1,15 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Accordion",
-  "description": "A set of collapsible sections for progressively disclosing related content.",
+  "description": "Stacks sections that expand one at a time, or several at once.",
   "category": "layout",
-  "tags": [
-    "accordion",
-    "collapse",
-    "expand",
-    "disclosure",
-    "faq"
-  ],
+  "tags": ["accordion", "collapse", "expand", "disclosure", "faq"],
   "status": "stable",
   "sourcePath": "src/components/Accordion/index.tsx",
   "exportName": "Accordion",
@@ -28,10 +22,7 @@
       "description": "Whether one or multiple items can be open",
       "default": "single",
       "required": false,
-      "values": [
-        "single",
-        "multiple"
-      ]
+      "values": ["single", "multiple"]
     },
     "value": {
       "type": "union",
@@ -64,34 +55,28 @@
       "description": "Semantic heading level for accordion triggers",
       "default": "3",
       "required": false,
-      "values": [
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-      ]
+      "values": ["2", "3", "4", "5", "6"]
     }
   },
   "usage": {
     "when": [
-      "FAQ pages with multiple questions and answers",
-      "Settings panels with grouped options",
-      "Long forms that benefit from progressive disclosure",
-      "Navigation menus with nested items"
+      "Answers most readers skip",
+      "Settings grouped by area",
+      "Long forms broken into stages",
+      "Navigation with nested children"
     ],
     "whenNot": [
-      "Primary content that all users need to see",
-      "Very short content (just display inline)",
-      "Sequential steps (use Stepper or wizard)",
-      "Tab-like navigation (use Tabs instead)"
+      "Content everyone needs to read",
+      "A line or two — just show it",
+      "Steps in an order (use Stepper)",
+      "Switching between panels (use Tabs)"
     ],
     "guidelines": [
-      "Keep section headers concise and descriptive",
-      "Use single mode when only one section should be open at a time",
-      "Use multiple mode when users may need to compare sections",
-      "Consider defaulting important sections to open",
-      "Avoid nesting accordions more than one level deep"
+      "Headers should say what is inside",
+      "Single mode when one answer at a time is enough",
+      "Multiple mode when sections get compared",
+      "Open the section most readers came for",
+      "Never nest an accordion inside an accordion"
     ],
     "accessibility": [
       "Keyboard navigation with Enter/Space to toggle",
@@ -102,18 +87,18 @@
   "examples": [
     {
       "name": "Basic",
-      "description": "Single accordion with collapsible sections",
+      "description": "Opening one section closes the last.",
       "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"single\" collapsible defaultValue=\"item-1\">\n  <Accordion.Item value=\"item-1\">\n    <Accordion.Trigger>What is Fragments UI?</Accordion.Trigger>\n    <Accordion.Content>\n      Fragments UI is a modern React component library built on Base UI primitives, providing accessible and customizable components.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"item-2\">\n    <Accordion.Trigger>How do I install it?</Accordion.Trigger>\n    <Accordion.Content>\n      Install via npm or pnpm: pnpm add @usefragments/ui\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"item-3\">\n    <Accordion.Trigger>Is it accessible?</Accordion.Trigger>\n    <Accordion.Content>\n      Yes! All components follow WAI-ARIA guidelines and support keyboard navigation.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
     },
     {
       "name": "Multiple Open",
-      "description": "Allows multiple sections to be open simultaneously",
+      "description": "Sections stay open so answers can be compared.",
       "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"multiple\" defaultValue={['features', 'pricing']}>\n  <Accordion.Item value=\"features\">\n    <Accordion.Trigger>Features</Accordion.Trigger>\n    <Accordion.Content>\n      Comprehensive component library with theming support, accessibility built-in, and TypeScript-first development.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"pricing\">\n    <Accordion.Trigger>Pricing</Accordion.Trigger>\n    <Accordion.Content>\n      Free and open source. MIT licensed for both personal and commercial use.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"support\">\n    <Accordion.Trigger>Support</Accordion.Trigger>\n    <Accordion.Content>\n      Community support via GitHub issues and discussions.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
     },
     {
       "name": "With Disabled",
-      "description": "Accordion with a disabled item",
-      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"single\" collapsible>\n  <Accordion.Item value=\"available\">\n    <Accordion.Trigger>Available Section</Accordion.Trigger>\n    <Accordion.Content>\n      This section can be expanded and collapsed.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"disabled\" disabled>\n    <Accordion.Trigger>Disabled Section</Accordion.Trigger>\n    <Accordion.Content>\n      This content is not accessible because the item is disabled.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"another\">\n    <Accordion.Trigger>Another Section</Accordion.Trigger>\n    <Accordion.Content>\n      This section is also available for interaction.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+      "description": "An unavailable section stays visible but inert.",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion type=\"single\" collapsible defaultValue=\"available\">\n  <Accordion.Item value=\"available\">\n    <Accordion.Trigger>Notification preferences</Accordion.Trigger>\n    <Accordion.Content>\n      Choose which events send you an email and how often digests arrive.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"disabled\" disabled>\n    <Accordion.Trigger>Billing history</Accordion.Trigger>\n    <Accordion.Content>\n      Unavailable until a payment method is on file.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"another\">\n    <Accordion.Trigger>Connected accounts</Accordion.Trigger>\n    <Accordion.Content>\n      Review the services linked to this workspace and revoke the ones you no longer use.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
     }
   ],
   "relations": [
@@ -141,21 +126,12 @@
       "collapsible: boolean - allow all closed in single mode",
       "Accordion.Trigger forwards button props and defaults type=\"button\""
     ],
-    "a11yRules": [
-      "A11Y_DISCLOSURE_KEYBOARD",
-      "A11Y_FOCUS_VISIBLE"
-    ]
+    "a11yRules": ["A11Y_DISCLOSURE_KEYBOARD", "A11Y_FOCUS_VISIBLE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Item",
-      "Trigger",
-      "Content"
-    ],
-    "requiredChildren": [
-      "Item"
-    ],
+    "subComponents": ["Item", "Trigger", "Content"],
+    "requiredChildren": ["Item"],
     "commonPatterns": [
       "<Accordion type=\"single\" collapsible><Accordion.Item value=\"item-1\"><Accordion.Trigger>{title}</Accordion.Trigger><Accordion.Content>{content}</Accordion.Content></Accordion.Item></Accordion>"
     ]

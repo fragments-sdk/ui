@@ -29,7 +29,7 @@
 
   // Gradient layer (behind everything)
   &::before {
-    inset: -1px;
+    inset: calc(-1 * var(--fui-stroke-hairline, 1px));
     z-index: 0;
     background: conic-gradient(
       from var(--beam-angle, 0deg) at 50% 50%,
@@ -42,14 +42,16 @@
       transparent 75%,
       transparent 100%
     );
-    animation: beam-rotate 4s linear infinite;
+    // Ambient loop: twice the shimmer beat, kept on the token scale.
+    animation: beam-rotate calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 2) linear
+      infinite;
     opacity: 0.6;
     transition: opacity var(--fui-transition-normal, $fui-transition-normal);
   }
 
   // Mask layer — covers the interior, leaving only the 1px border visible
   &::after {
-    inset: 1px;
+    inset: var(--fui-stroke-hairline, 1px);
     z-index: 1;
     background: var(--fui-bg-elevated, $fui-bg-elevated);
   }
@@ -299,6 +301,8 @@
   @include button-reset;
   @include typography.role("body-compact");
 
+  // button-reset marks pressables select-none; typed text must stay selectable.
+  user-select: text;
   display: block;
   width: 100%;
   min-height: var(--fui-input-height, $fui-input-height);
@@ -360,6 +364,10 @@
 
   &:hover {
     color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
   }
 }
 

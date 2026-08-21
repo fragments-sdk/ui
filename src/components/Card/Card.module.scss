@@ -1,7 +1,28 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../recipes/action" as action;
 @use "../../recipes/surface" as surface;
 @use "../../recipes/typography" as typography;
+
+// The private inset channels are element-scoped signals between a card's own
+// classes, but custom properties inherit by default — a Card nested inside
+// another Card (docs previews, dashboard panels) would receive the outer
+// card's forced/requested inset and lose its padding. Register them as
+// non-inheriting so each card resolves only its own channels.
+@property --_card-root-forced-inset {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --_card-root-requested-inset {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --_card-body-inset {
+  syntax: "*";
+  inherits: false;
+}
 
 @layer fui.components {
   .card {
@@ -152,7 +173,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--fui-raw-space-12, 12px);
-    min-height: var(--fui-control-track-md, 32px);
+    min-height: #{action.track("md")};
     padding: #{surface.inset("compact")};
     margin-bottom: 0;
     background-color: var(--fui-card-header-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));

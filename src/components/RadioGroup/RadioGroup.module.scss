@@ -78,7 +78,7 @@
       var(--fui-field-bg, #{$fui-bg-elevated})
     );
     border-color: var(--fui-control-checked-border, $fui-color-accent);
-    box-shadow: inset 0 0 0 1px
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
       color-mix(in srgb, var(--fui-control-checked-border, #{$fui-color-accent}) 55%, transparent);
   }
 
@@ -200,7 +200,7 @@
       var(--fui-control-checked-border, #{$fui-color-accent}) 62%,
       transparent
     );
-    box-shadow: 0 0 0 1px
+    box-shadow: 0 0 0 var(--fui-stroke-hairline, 1px)
       color-mix(in srgb, var(--fui-control-checked-border, #{$fui-color-accent}) 28%, transparent);
   }
 

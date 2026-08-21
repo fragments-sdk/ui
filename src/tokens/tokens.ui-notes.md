@@ -1,17 +1,22 @@
 # Token layer — UI notes
 
-The library's default theme is **paper & ink** (2026-08): warm-neutral paper
-surfaces, near-black ink primary actions, pine/sage reserved for meaning.
-Derived from the approved mintlify-style landing direction and promoted here so
-every consumer — docs, Cloud, open-source installs — inherits it by default.
+The library's default theme is **warm paper & coral** (2026-08-21): a single
+`paper` neutral ramp (one light theme, one dark theme — all alternative
+palettes deleted), coral `#f56138` accent, ink primary actions. Fonts are
+Onest (sans) + JetBrains Mono. Verified in-browser on the docs homepage and
+the coral prototype in both modes.
 
 ## What works
 
-- **Paper and charcoal planes.** The default carbon theme uses `#161616` for
-  the dark canvas/main/primary surfaces and `#202020` for neutral raised
-  chrome. Light mode starts at `#f4f4f4`—halfway between the previous grey
-  paper and white—with `#eaeaea` raised chrome. Hover and pressed roles retain
-  the same step rhythm (`#242424` / `#e6e6e6`, `#2e2e2e` / `#dcdcdc`).
+- **Cream canvas and warm charcoal planes.** Light: `#faf8f5` canvas,
+  `#f2ede7` tinted bands (tertiary), white elevated cards, warm alpha
+  hover/active tints. Dark: `#171614` canvas, `#1e1c19` bands, `#262421`
+  elevated cards — a real elevation ladder so bands and cards separate in
+  both modes. Borders are warm-tinted (`rgba(60,45,30,…)` light, `#343029`
+  dark).
+- **Coral accent everywhere.** `$fui-brand: #f56138` drives accent, focus
+  rings, selection tint; dark mode preserves its chroma via the OKLCH
+  derivation (no more pinned sage). On-accent resolves to black (6.6:1).
 - **Semantic raised chrome.** `--fui-card-header-bg` aliases the subtle raised
   plane. `--fui-header-search-bg` sits one step higher on the hover plane so
   the global search affordance remains easy to find. Each role can still be
@@ -78,3 +83,14 @@ $fui-icon-md)` → `16px`) but copies a custom property's value through
 - **UI notes are not a published artifact.** `*.ui-notes.md` is excluded from
   the `@usefragments/ui` tarball. Keep landmines here for in-repo agents; do
   not teach consumers to import these files from `node_modules`.
+- **`button-reset` marks pressables `user-select: none` + transparent tap
+  highlight (2026-08-21).** Every include site is a real pressable except two
+  textareas (Prompt `.textarea`, Editor `.contentTextarea`) which restore
+  `user-select: text` locally. New non-button include sites must do the same.
+- **Motion token families registered (2026-08-21).** `--fui-anim-offset-sm/md`,
+  loop durations `--fui-duration-spin/pulse/shimmer` (800/1500/2000ms — easing
+  stays per-effect), and `--fui-overlay-layer-swipe/backdrop/modal/anchored/
+  tooltip` (49/50/51/52/60) now emit from `:root`. All spinners, pulses,
+  shimmers, and overlay z-indexes ride these; new looping animations must not
+  hardcode seconds. `_measurements.generated.scss` is also a contract token
+  source (fragments.config.ts) so measurement vars are real vocabulary.

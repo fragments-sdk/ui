@@ -115,63 +115,62 @@
   },
   "usage": {
     "when": [
-      "User must select exactly one option from a small set",
-      "Options are mutually exclusive",
-      "All options should be visible at once",
-      "2-5 options available"
+      "Exactly one answer out of two to five",
+      "Options rule each other out",
+      "Every option should be visible without opening anything"
     ],
     "whenNot": [
-      "Multiple selections allowed (use Checkbox group)",
-      "Many options (use Select)",
-      "Binary on/off choice (use Switch)",
-      "Options need to be searchable (use Combobox)"
+      "Several answers allowed (use a Checkbox group)",
+      "Long lists (use Select)",
+      "A single on/off (use Switch)",
+      "Options need searching (use Combobox)"
     ],
     "guidelines": [
-      "Always have one option pre-selected when possible",
-      "Order options logically (alphabetical, frequency, etc.)",
-      "Keep option labels concise",
-      "Use helperText on RadioGroup.Item for complex options"
+      "Pre-select a sensible default whenever one exists",
+      "Order options predictably: alphabetical, by frequency, or by cost",
+      "Keep labels short",
+      "Put the trade-off in each item's helperText"
     ],
     "accessibility": [
-      "Group must have an accessible label",
-      "Use arrow keys to navigate between options",
-      "Selected option should be clearly indicated"
+      "The group carries its own label",
+      "Arrow keys move between options",
+      "The selected option reads as checked"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic radio group with labels",
+      "description": "Three options stacked, the first already chosen.",
       "code": "<RadioGroup defaultValue=\"option1\" label=\"Select an option\">\n  <RadioGroup.Item value=\"option1\" label=\"Option 1\" />\n  <RadioGroup.Item value=\"option2\" label=\"Option 2\" />\n  <RadioGroup.Item value=\"option3\" label=\"Option 3\" />\n</RadioGroup>"
     },
     {
       "name": "With Helper Text",
-      "description": "Radio items with additional context",
+      "description": "Each option carries the trade-off under its label.",
       "code": "<RadioGroup defaultValue=\"standard\" label=\"Shipping Method\">\n  <RadioGroup.Item\n    value=\"standard\"\n    label=\"Standard\"\n    helperText=\"5-7 business days\"\n  />\n  <RadioGroup.Item\n    value=\"express\"\n    label=\"Express\"\n    helperText=\"2-3 business days\"\n  />\n  <RadioGroup.Item\n    value=\"overnight\"\n    label=\"Overnight\"\n    helperText=\"Next business day\"\n  />\n</RadioGroup>"
     },
     {
       "name": "Horizontal",
-      "description": "Side-by-side layout",
+      "description": "One row — good for short labels like sizes.",
       "code": "<RadioGroup orientation=\"horizontal\" defaultValue=\"small\" label=\"Size\">\n  <RadioGroup.Item value=\"small\" label=\"S\" />\n  <RadioGroup.Item value=\"medium\" label=\"M\" />\n  <RadioGroup.Item value=\"large\" label=\"L\" />\n  <RadioGroup.Item value=\"xlarge\" label=\"XL\" />\n</RadioGroup>"
     },
     {
       "name": "With Group Helper Text",
-      "description": "Group-level helper text",
+      "description": "One note under the whole group instead of per option.",
       "code": "<RadioGroup defaultValue=\"standard\" label=\"Plan\" helperText=\"You can change your plan at any time\">\n  <RadioGroup.Item value=\"free\" label=\"Free\" />\n  <RadioGroup.Item value=\"standard\" label=\"Standard\" />\n  <RadioGroup.Item value=\"pro\" label=\"Pro\" />\n</RadioGroup>"
     },
     {
       "name": "With Error",
-      "description": "Validation error state (string shows error message)",
+      "description": "Passing a string to error tints the group and prints the reason.",
       "code": "<RadioGroup label=\"Required selection\" error=\"Please select an option\">\n  <RadioGroup.Item value=\"a\" label=\"Option A\" />\n  <RadioGroup.Item value=\"b\" label=\"Option B\" />\n</RadioGroup>"
     },
     {
       "name": "Disabled",
-      "description": "Non-interactive state",
+      "description": "The choice stays visible but nothing can change it.",
       "code": "<RadioGroup disabled defaultValue=\"locked\" label=\"Locked selection\">\n  <RadioGroup.Item value=\"locked\" label=\"This is locked\" />\n  <RadioGroup.Item value=\"other\" label=\"Cannot select\" />\n</RadioGroup>"
     },
     {
       "name": "Styling Targets",
-      "description": "Use explicit class names for wrapper/group/item styling hooks",
+      "description": "Named class hooks for the wrapper, the group, and each item.",
       "code": "<RadioGroup\n  defaultValue=\"a\"\n  label=\"Display mode\"\n  wrapperClassName=\"demo-radio-wrapper\"\n  groupClassName=\"demo-radio-group\"\n>\n  <RadioGroup.Item value=\"a\" label=\"Compact\" controlClassName=\"demo-radio-control\" contentClassName=\"demo-radio-content\" />\n  <RadioGroup.Item value=\"b\" label=\"Comfortable\" />\n</RadioGroup>"
     }
   ],

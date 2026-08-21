@@ -13,7 +13,8 @@
 
   &:active:not(:disabled) {
     background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    box-shadow: inset 0 0 0 1px var(--fui-field-selection-border, $fui-border-strong);
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+      var(--fui-field-selection-border, $fui-border-strong);
   }
 }
 
@@ -24,7 +25,6 @@
 
   border-radius: var(--fui-radius-full, $fui-radius-full);
   white-space: nowrap;
-  user-select: none;
 }
 
 .withRemove {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Main",
-  "description": "Controls page gutters, reading measure, and vertical rhythm.",
+  "description": "Owns a page's gutters, reading measure, and vertical rhythm.",
   "category": "layout",
   "tags": ["main", "page", "layout", "compound"],
   "status": "stable",
@@ -45,11 +45,19 @@
     }
   },
   "usage": {
-    "when": ["Composing a page header, description, content, and footer"],
-    "whenNot": ["Application shell navigation (use AppShell)"],
+    "when": [
+      "Laying out a page's header, description, content, and footer",
+      "Giving a page one consistent gutter and measure"
+    ],
+    "whenNot": [
+      "Shell-level navigation chrome (use AppShell)",
+      "Arbitrary spacing inside a component (use Stack or Box)"
+    ],
     "guidelines": [
-      "Use one Main gutter owner per page",
-      "Compose page regions with Main.Header, Main.Description, Main.Content, and Main.Footer"
+      "One Main per page owns the gutters — do not nest them",
+      "measure=\"narrow\" caps content for reading; \"full\" uses the whole canvas",
+      "Compose regions with Main.Header, Main.Description, Main.Content, Main.Footer",
+      "Main.Description caps itself at 68ch regardless of measure"
     ],
     "accessibility": [
       "Use the default main element unless an existing shell already owns the main landmark"
@@ -58,13 +66,13 @@
   "examples": [
     {
       "name": "Full Measure",
-      "description": "Page composition that uses the full available canvas",
-      "code": "<Main measure=\"full\">\n  <Main.Header>Page statement</Main.Header>\n  <Main.Description>Supporting page context.</Main.Description>\n  <Main.Content>Page content</Main.Content>\n  <Main.Footer>Page actions</Main.Footer>\n</Main>"
+      "description": "Content fills the canvas, inset only by the page gutter.",
+      "code": "import { Box } from '@/components/Box';\nimport { Main } from '@/components/Main';\n\n<Box width=\"100%\" border rounded=\"md\">\n  <Main measure=\"full\">\n    <Main.Header>Findings</Main.Header>\n    <Main.Description>\n      Every governance finding raised against this repository, newest first.\n    </Main.Description>\n    <Main.Content>\n      Content stretches edge to edge, inset only by the page gutter.\n    </Main.Content>\n    <Main.Footer>Export report</Main.Footer>\n  </Main>\n</Box>"
     },
     {
       "name": "Narrow Measure",
-      "description": "Readable page composition constrained to the canonical 800px measure",
-      "code": "<Main measure=\"narrow\">\n  <Main.Header>Settings</Main.Header>\n  <Main.Description>Manage the workspace contract.</Main.Description>\n  <Main.Content>Settings content</Main.Content>\n  <Main.Footer>Save changes</Main.Footer>\n</Main>"
+      "description": "Caps content at the reading measure and centres it on wide screens.",
+      "code": "import { Box } from '@/components/Box';\nimport { Main } from '@/components/Main';\n\n<Box width=\"100%\" border rounded=\"md\">\n  <Main measure=\"narrow\">\n    <Main.Header>Settings</Main.Header>\n    <Main.Description>\n      Manage the workspace contract, canonical components, and token files.\n    </Main.Description>\n    <Main.Content>\n      Content is capped at the reading measure and centred, so long prose stays\n      comfortable to read on wide displays.\n    </Main.Content>\n    <Main.Footer>Save changes</Main.Footer>\n  </Main>\n</Box>"
     }
   ],
   "ai": {

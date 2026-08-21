@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Badge",
-  "description": "Labels a status, count, or category without dominating nearby content.",
+  "description": "Labels a status, count, or category without pulling focus.",
   "category": "display",
   "tags": ["status", "label", "tag", "count", "chip"],
   "status": "stable",
@@ -87,71 +87,66 @@
   },
   "usage": {
     "when": [
-      "Showing item status (active, pending, archived)",
-      "Displaying counts or quantities inline",
-      "Categorizing or tagging content",
-      "Highlighting new or updated items"
+      "Marking item status: active, pending, archived",
+      "Showing a count inline",
+      "Tagging or categorising content",
+      "Flagging what is new or changed"
     ],
     "whenNot": [
-      "Conveying critical errors (use Alert instead)",
-      "Long-form status messages (use Alert)",
-      "Interactive filtering (use Chip/ToggleGroup)",
-      "Navigation labels (use Tabs or links)"
+      "Real errors that need attention — use Alert",
+      "Anything longer than a few words — use Alert",
+      "Clickable filters — use Chip or ToggleGroup",
+      "View switching — use Tabs or links"
     ],
     "guidelines": [
-      "Keep badge text under 20 characters",
-      "Use dot variant for live status indicators",
-      "Pair success/error variants with meaningful labels, not just colors",
-      "Semantic status badges are borderless pills using shared semantic bg/text tokens",
-      "Use onRemove for user-created tags only, not system-generated badges",
-      "Badges are not announced as live status updates by default; use announce for screen-reader status announcements when appropriate"
+      "Under 20 characters",
+      "dot for live status; add dotPulse only while it is still changing",
+      "Semantic variants are borderless pills on shared status tokens",
+      "label pairs with dotColor; dim pairs with active for filter chrome",
+      "onRemove for user-created tags only, never system labels"
     ],
     "accessibility": [
-      "Badge text must be meaningful without relying on color alone",
-      "Removable badges must have accessible dismiss button labels",
-      "Avoid using badges as the sole indicator of important state changes"
+      "The text must carry the meaning — colour alone never does",
+      "Removable badges need a named dismiss button",
+      "Badges are silent to screen readers unless you pass announce",
+      "Do not make a badge the only signal that something changed"
     ]
   },
   "examples": [
     {
-      "name": "Default",
-      "description": "Neutral badge for general labels",
-      "code": "import { Badge } from '@/components/Badge';\n\n<Badge>Default</Badge>"
-    },
-    {
       "name": "Status Variants",
-      "description": "All severity variants for different contexts",
-      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"default\">Default</Badge>\n  <Badge variant=\"success\">Active</Badge>\n  <Badge variant=\"warning\">Pending</Badge>\n  <Badge variant=\"error\">Failed</Badge>\n  <Badge variant=\"info\">New</Badge>\n</Stack>"
-    },
-    {
-      "name": "Delivery Status",
-      "description": "Reference status pills with deep semantic fill and bright text",
-      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"success\" size=\"lg\">Delivered</Badge>\n  <Badge variant=\"error\" size=\"lg\">Bounced</Badge>\n</Stack>"
+      "description": "Neutral through info, on shared status tokens.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"default\">Default</Badge>\n  <Badge variant=\"success\">Active</Badge>\n  <Badge variant=\"warning\">Pending</Badge>\n  <Badge variant=\"error\">Failed</Badge>\n  <Badge variant=\"info\">New</Badge>\n</Stack>"
     },
     {
       "name": "With Dot",
-      "description": "Live status indicators using dot prefix",
-      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"success\" dot>Online</Badge>\n  <Badge variant=\"warning\" dot>Away</Badge>\n  <Badge variant=\"error\" dot>Offline</Badge>\n</Stack>"
+      "description": "Leading dot for live state; it breathes while still moving.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"success\" dot>Online</Badge>\n  <Badge variant=\"warning\" dot>Away</Badge>\n  <Badge variant=\"error\" dot>Offline</Badge>\n  <Badge variant=\"info\" dot dotPulse>Syncing</Badge>\n</Stack>"
     },
     {
-      "name": "Announced Status",
-      "description": "Opt into screen-reader status announcement behavior",
-      "code": "import { Badge } from '@/components/Badge';\n\n<Badge variant=\"success\" announce>Saved</Badge>"
+      "name": "Label and Filter",
+      "description": "Hairline metadata pill, and filter chrome that marks the active one.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"label\" dotColor=\"var(--fui-color-accent)\">Design</Badge>\n  <Badge variant=\"label\" dotColor=\"var(--fui-color-success)\">Shipped</Badge>\n  <Badge variant=\"dim\" active>All</Badge>\n  <Badge variant=\"dim\">Archived</Badge>\n</Stack>"
     },
     {
       "name": "Outline",
-      "description": "Minimal bordered badge for neutral emphasis",
-      "code": "import { Badge } from '@/components/Badge';\n\n<Badge variant=\"outline\">Outline</Badge>"
+      "description": "Bordered and transparent, when a fill would shout.",
+      "code": "<Badge variant=\"outline\">Outline</Badge>"
     },
     {
-      "name": "Small Size",
-      "description": "Compact badges for dense UIs",
-      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Badge size=\"sm\" variant=\"info\">v2.1</Badge>\n  <Badge size=\"sm\" variant=\"success\">Stable</Badge>\n  <Badge size=\"md\" variant=\"info\">Standard</Badge>\n</Stack>"
+      "name": "Sizes",
+      "description": "sm for dense tables, lg for reference status pills.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Badge variant=\"success\" size=\"sm\">Small</Badge>\n  <Badge variant=\"success\" size=\"md\">Medium</Badge>\n  <Badge variant=\"success\" size=\"lg\">Large</Badge>\n</Stack>"
     },
     {
       "name": "Removable",
-      "description": "User-created tags that can be dismissed",
-      "code": "import { Badge } from '@/components/Badge';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"info\" onRemove={() => {}}>React</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>TypeScript</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>CSS</Badge>\n</Stack>"
+      "description": "Dismissible tags the user added themselves.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"info\" onRemove={() => {}}>React</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>TypeScript</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>CSS</Badge>\n</Stack>"
+    },
+    {
+      "name": "Announced Status",
+      "description": "Looks the same, but screen readers now hear the change.",
+      "code": "<Badge variant=\"success\" announce>Saved</Badge>"
     }
   ],
   "relations": [

@@ -1,26 +1,16 @@
 import { defineFragment } from "@usefragments/core";
+import { Text } from "../Text";
 import { Card } from "./index";
 
 export default defineFragment(Card, {
   meta: {
     name: "Card",
-    purpose: "Container for grouping related content",
+    purpose: "Groups related content onto one bounded surface.",
     category: "layout",
     status: "stable",
     tags: ["container", "layout", "surface"],
   },
   states: {
-    "Nested Heading": {
-      render: (
-        <Card variant="panel" padding="none">
-          <Card.Header divided>
-            <Card.Title as="h4">Nested panel</Card.Title>
-          </Card.Header>
-          <Card.Body padding="md">Panel content</Card.Body>
-        </Card>
-      ),
-      note: "Select the heading level required by the surrounding document outline",
-    },
     Default: {
       render: (
         <Card>
@@ -31,80 +21,16 @@ export default defineFragment(Card, {
           <Card.Body>Related content</Card.Body>
         </Card>
       ),
-      note: "Standard quiet card surface",
+      note: "Quiet surface with a title and description.",
       canonical: true,
     },
-    Outlined: {
+    "Content Only": {
       render: (
-        <Card variant="outlined">
-          <Card.Body>Related content</Card.Body>
+        <Card>
+          <Card.Body>Just content, no header or footer.</Card.Body>
         </Card>
       ),
-      note: "Card with border instead of shadow",
-    },
-    Outline: {
-      render: (
-        <Card variant="outline">
-          <Card.Header>
-            <Card.Title>Outline card</Card.Title>
-          </Card.Header>
-          <Card.Body>Uses the outline alias.</Card.Body>
-        </Card>
-      ),
-      note: "Card with border, using the \"outline\" alias for \"outlined\"",
-    },
-    Elevated: {
-      render: (
-        <Card variant="elevated">
-          <Card.Body>Related content</Card.Body>
-        </Card>
-      ),
-      note: "Card with prominent shadow for emphasis",
-    },
-    Stat: {
-      render: (
-        <Card variant="stat">
-          <Card.Body>
-            <strong>94%</strong>
-            <p>Component coverage</p>
-          </Card.Body>
-        </Card>
-      ),
-      note: "Compact metric tile for dashboard grids",
-    },
-    Panel: {
-      render: (
-        <Card variant="panel">
-          <Card.Header divided>
-            <Card.Title>Overview</Card.Title>
-          </Card.Header>
-          <Card.Body padding="md">Panel content</Card.Body>
-        </Card>
-      ),
-      note: "Dashboard panel with a divided header and body-owned spacing",
-    },
-    Interactive: {
-      render: (
-        <Card as="section" onClick={() => undefined}>
-          <Card.Header>
-            <Card.Title>Open details</Card.Title>
-            <Card.Description>This card is interactive</Card.Description>
-          </Card.Header>
-          <Card.Body>Activate the card to view more.</Card.Body>
-        </Card>
-      ),
-      note: "Clickable card surface (root stays a semantic container)",
-    },
-    "Section Root": {
-      render: (
-        <Card as="section" aria-labelledby="billing-card-title">
-          <Card.Header>
-            <Card.Title id="billing-card-title">Billing summary</Card.Title>
-          </Card.Header>
-          <Card.Body>Section semantics support the surrounding document outline.</Card.Body>
-        </Card>
-      ),
-      note: "Use the as prop to match the surrounding document semantics",
+      note: "Body alone, when there is nothing to title.",
     },
     "With Footer": {
       render: (
@@ -117,15 +43,83 @@ export default defineFragment(Card, {
           <Card.Footer>Footer actions go here</Card.Footer>
         </Card>
       ),
-      note: "Card with header, body, and footer",
+      note: "Footer parks the actions below the content.",
     },
-    "Content Only": {
+    Outlined: {
       render: (
-        <Card>
-          <Card.Body>Just content, no header or footer.</Card.Body>
+        <Card variant="outlined">
+          <Card.Body>Related content</Card.Body>
         </Card>
       ),
-      note: "Card with just body content",
+      note: "Border instead of shadow, for dense layouts.",
+    },
+    Elevated: {
+      render: (
+        <Card variant="elevated">
+          <Card.Body>Related content</Card.Body>
+        </Card>
+      ),
+      note: "Heavier shadow pulls one surface forward.",
+    },
+    Stat: {
+      render: (
+        <Card variant="stat">
+          <Card.Body>
+            <Text size="xl" weight="semibold">
+              94%
+            </Text>
+            <Text size="sm" color="secondary">
+              Component coverage
+            </Text>
+          </Card.Body>
+        </Card>
+      ),
+      note: "Compact metric tile for dashboard grids.",
+    },
+    Panel: {
+      render: (
+        <Card variant="panel">
+          <Card.Header divided>
+            <Card.Title>Overview</Card.Title>
+          </Card.Header>
+          <Card.Body padding="md">Panel content</Card.Body>
+        </Card>
+      ),
+      note: "Divided header; the body owns its own spacing.",
+    },
+    Interactive: {
+      render: (
+        <Card as="section" onClick={() => undefined}>
+          <Card.Header>
+            <Card.Title>Open details</Card.Title>
+            <Card.Description>This card is interactive</Card.Description>
+          </Card.Header>
+          <Card.Body>Activate the card to view more.</Card.Body>
+        </Card>
+      ),
+      note: "onClick adds keyboard and button behaviour to the whole surface.",
+    },
+    "Section Root": {
+      render: (
+        <Card as="section" aria-labelledby="billing-card-title">
+          <Card.Header>
+            <Card.Title id="billing-card-title">Billing summary</Card.Title>
+          </Card.Header>
+          <Card.Body>Section semantics support the surrounding document outline.</Card.Body>
+        </Card>
+      ),
+      note: "The as prop matches the surrounding document semantics.",
+    },
+    "Nested Heading": {
+      render: (
+        <Card variant="panel" padding="none">
+          <Card.Header divided>
+            <Card.Title as="h4">Nested panel</Card.Title>
+          </Card.Header>
+          <Card.Body padding="md">Panel content</Card.Body>
+        </Card>
+      ),
+      note: "Pick the heading level the page outline expects.",
     },
     "Long Content": {
       render: (
@@ -146,27 +140,27 @@ export default defineFragment(Card, {
           </Card.Body>
         </Card>
       ),
-      note: "Long titles and dense supporting content wrap inside the card",
+      note: "Long titles and dense text wrap without breaking the surface.",
     },
   },
   guidance: {
     when: [
-      "Grouping related pieces of content together",
-      "Creating visual separation between content sections",
-      "Displaying a preview or summary of an item",
-      "Building dashboard widgets or tiles",
+      "Grouping related content behind one boundary",
+      "Previews, summaries, and dashboard tiles",
+      "Separating sections that spacing alone cannot",
     ],
     whenNot: [
-      "Simple text content that does not need grouping",
-      "Modal or dialog content (use Dialog component)",
-      "Navigation items (use List or Sidebar patterns)",
+      "Plain text that needs no grouping",
+      "Modal surfaces (use Dialog)",
+      "Navigation items (use List or Sidebar)",
     ],
     guidelines: [
-      "Use consistent card variants within the same context",
-      "Cards in a grid should have uniform sizing",
-      "Use elevated variant sparingly for emphasis",
-      "Use stat and panel variants for dashboard surfaces so spacing, border, and radius stay consistent",
-      "If a card is clickable, provide clear hover/focus affordances and prefer explicit buttons/links inside the card",
+      "Keep one variant per context — mixed variants read as noise",
+      "Cards sharing a grid row should size uniformly",
+      "elevated is for emphasis; use it on one card, not all of them",
+      "stat and panel keep dashboard spacing, border, and radius consistent",
+      "outline is an alias for outlined — either spelling works",
+      "Prefer a Button or Link inside the card over making the whole card clickable",
     ],
     accessibility: [
       'Card is a semantic container (article/div/section); onClick adds keyboard and role="button" behavior, but explicit Button or Link actions are preferred',

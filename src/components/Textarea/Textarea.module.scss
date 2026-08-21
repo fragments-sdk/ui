@@ -164,7 +164,7 @@
 
 @media (prefers-contrast: more) {
   .textarea {
-    border-width: 2px;
+    border-width: var(--fui-stroke-default, 2px);
     border-color: var(--fui-text-primary, $fui-text-primary);
 
     &:focus-visible {

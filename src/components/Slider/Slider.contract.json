@@ -3,13 +3,7 @@
   "name": "Slider",
   "description": "Selects a numeric value within a defined range.",
   "category": "forms",
-  "tags": [
-    "slider",
-    "range",
-    "input",
-    "number",
-    "control"
-  ],
+  "tags": ["slider", "range", "input", "number", "control"],
   "status": "stable",
   "sourcePath": "src/components/Slider/index.tsx",
   "exportName": "Slider",
@@ -141,63 +135,63 @@
   },
   "usage": {
     "when": [
-      "Selecting a value from a continuous range",
-      "Volume or brightness controls",
-      "Price range filters",
-      "Settings that benefit from visual feedback"
+      "Any value along a range, where roughly right is good enough",
+      "Volume, brightness, opacity",
+      "Price and range filters",
+      "The effect is visible as the user drags"
     ],
     "whenNot": [
-      "Precise numeric input (use Input type=\"number\")",
-      "Discrete options (use RadioGroup or Select)",
-      "Yes/no choices (use Switch)"
+      "An exact number matters (use Input type=\"number\")",
+      "A handful of fixed choices (use RadioGroup or Select)",
+      "On or off (use Switch)"
     ],
     "guidelines": [
-      "Always provide a label describing what the slider controls",
-      "Show the current value when precision matters",
-      "Use appropriate min/max values for the context",
-      "Consider step size for usability"
+      "Label what the track controls",
+      "Turn on showValue whenever the number matters",
+      "Set min and max to the real limits, not 0-100 by habit",
+      "Pick a step the user can actually land on"
     ],
     "accessibility": [
-      "Label is associated with the slider",
-      "Keyboard accessible with arrow keys",
-      "Current value is announced to screen readers",
-      "Uses native slider semantics"
+      "Label is tied to the track",
+      "Arrow keys move the thumb",
+      "The current value is announced",
+      "Native slider semantics throughout"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic slider with label",
+      "description": "0-100 with no number shown.",
       "code": "<div style={{ width: '300px' }}>\n  <Slider label=\"Volume\" defaultValue={50} />\n</div>"
     },
     {
       "name": "With Value Display",
-      "description": "Shows current value alongside the slider",
+      "description": "showValue prints the number opposite the label.",
       "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Brightness\"\n    defaultValue={75}\n    showValue\n    valueSuffix=\"%\"\n  />\n</div>"
     },
     {
       "name": "Custom Range",
-      "description": "Custom min, max, and step values",
+      "description": "min, max and step bound the track to real-world units.",
       "code": "<div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  <Slider\n    label=\"Temperature\"\n    min={60}\n    max={80}\n    step={1}\n    defaultValue={72}\n    showValue\n    valueSuffix=\"°F\"\n  />\n  <Slider\n    label=\"Font Size\"\n    min={12}\n    max={32}\n    step={2}\n    defaultValue={16}\n    showValue\n    valueSuffix=\"px\"\n  />\n</div>"
     },
     {
       "name": "Controlled",
-      "description": "Controlled slider with external state",
+      "description": "The parent owns the value and can react to every move.",
       "code": "<ControlledSliderDemo />"
     },
     {
       "name": "Drag Value Bubble",
-      "description": "Shows a floating value bubble while the thumb is being dragged",
+      "description": "The number floats above the thumb only while dragging.",
       "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Mix\"\n    defaultValue={40}\n    showValueOnDrag\n    valueSuffix=\"%\"\n  />\n</div>"
     },
     {
       "name": "With Helper Text",
-      "description": "Slider with helper text guidance",
+      "description": "A line below the track explains the trade-off.",
       "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Quality\"\n    defaultValue={80}\n    showValue\n    valueSuffix=\"%\"\n    helperText=\"Higher quality increases file size\"\n  />\n</div>"
     },
     {
       "name": "Disabled",
-      "description": "Disabled slider",
+      "description": "Dimmed; the thumb will not move.",
       "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Locked Setting\"\n    defaultValue={30}\n    showValue\n    disabled\n  />\n</div>"
     }
   ],
@@ -227,17 +221,11 @@
       "showValueOnDrag: boolean - show value bubble during drag",
       "valueSuffix: string - unit suffix"
     ],
-    "a11yRules": [
-      "A11Y_LABEL_REQUIRED",
-      "A11Y_KEYBOARD_ACCESSIBLE",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_LABEL_REQUIRED", "A11Y_KEYBOARD_ACCESSIBLE", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root"
-    ]
+    "subComponents": ["Root"]
   },
   "provenance": {
     "source": "migrated",

@@ -3,14 +3,7 @@
   "name": "Prompt",
   "description": "Collects multi-line input for AI and chat interfaces.",
   "category": "ai",
-  "tags": [
-    "prompt",
-    "chat",
-    "ai",
-    "input",
-    "textarea",
-    "form"
-  ],
+  "tags": ["prompt", "chat", "ai", "input", "textarea", "form"],
   "status": "stable",
   "sourcePath": "src/components/Prompt/index.tsx",
   "exportName": "Prompt",
@@ -106,11 +99,7 @@
       "description": "Visual/positioning variant",
       "default": "default",
       "required": false,
-      "values": [
-        "default",
-        "fixed",
-        "sticky"
-      ]
+      "values": ["default", "fixed", "sticky"]
     },
     "onFiles": {
       "type": "function",
@@ -127,37 +116,30 @@
       "description": "How the card is divided up. \"panel\" keeps the toolbar as a filled footer under a rule; \"seamless\" makes the whole card one writing surface with the controls floating on it.",
       "default": "panel",
       "required": false,
-      "values": [
-        "panel",
-        "seamless"
-      ]
+      "values": ["panel", "seamless"]
     }
   },
   "usage": {
     "when": [
-      "Building chat or AI assistant interfaces",
-      "Need multi-line input with submit action",
-      "Require toolbar with actions like attachments or model selection"
+      "Chat and AI assistant interfaces",
+      "Multi-line input with a submit action",
+      "Toolbars carrying attachments or a model picker"
     ],
     "whenNot": [
-      "Simple single-line text input (use Input)",
-      "Basic multi-line without toolbar (use Textarea)",
-      "Search-only interface (use Input with search variant)"
+      "Single-line text (use Input)",
+      "Multi-line with no toolbar (use Textarea)",
+      "Search-only fields (use Input with the search variant)"
     ],
     "guidelines": [
-      "Always provide an onSubmit handler",
-      "Use loading state during API calls",
-      "Prompt.Textarea forwards native textarea props (autoComplete, inputMode, aria-*, data-*, handlers)",
-      "Prompt.Textarea composes your onChange/onKeyDown handlers with built-in submit and auto-resize behavior",
-      "Use appearance=\"seamless\" for agent composers where the controls should float on the writing surface rather than sit in a footer",
-      "Seamless controls share the dense 32px token scale with body-sized labels and standard glyphs so mixed Prompt.Select, Prompt.Attach and Prompt.Submit rows remain optically aligned",
-      "Seamless secondary controls keep transparent hover and open states so they read as inline tools; only Prompt.Submit carries a persistent filled shape",
-      "Seamless Prompt.Submit mirrors the trailing ink gutter established by Prompt.Attach at the leading edge",
-      "Prompt.Submit uses a neutral inverse surface by default so the primary action stays visible without consuming semantic brand color",
-      "Use Prompt.ModeButton for a setting you toggle and Prompt.Select for one you pick from a list",
-      "Wire onFiles once: the attach button, pasting a screenshot and dropping on the card all go through it",
-      "Render Prompt.Attachments above Prompt.Textarea — attachments are part of the message, not a setting on it",
-      "Consider showing usage/token limits for AI contexts"
+      "Always pass an onSubmit handler",
+      "Set loading while the request is in flight to block duplicate sends",
+      "Prompt.Textarea forwards native textarea props and composes your own handlers",
+      "appearance=\"seamless\" floats the controls on the writing surface instead of a footer",
+      "Seamless secondary controls stay transparent; only Prompt.Submit keeps a filled shape",
+      "Prompt.Submit uses a neutral inverse surface, never semantic brand color",
+      "Prompt.ModeButton toggles a setting; Prompt.Select picks one from a list",
+      "Wire onFiles once — the attach button, paste, and drop all route through it",
+      "Render Prompt.Attachments above Prompt.Textarea; they are part of the message"
     ],
     "accessibility": [
       "Enter submits, Shift+Enter for newline",
@@ -168,32 +150,37 @@
   "examples": [
     {
       "name": "Basic",
-      "description": "Simple prompt with submit button",
+      "description": "A textarea and a submit button, nothing else.",
       "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions />\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
       "name": "With Actions",
-      "description": "Prompt with attachment and mode buttons",
+      "description": "Attach and mode controls sit to the left of submit.",
       "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
       "name": "With Usage",
-      "description": "Shows token usage indicator",
+      "description": "A quota readout sits beside the submit button.",
       "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton active>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Usage>52% used</Prompt.Usage>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
       "name": "Agent Composer",
-      "description": "Seamless surface with the scope of the run chosen on the toolbar",
+      "description": "Controls float on the writing surface instead of a footer.",
       "code": "<Prompt\n  appearance=\"seamless\"\n  submitOnEnter={false}\n  minRows={3}\n  onSubmit={(value) => console.log(value)}\n>\n  <Prompt.Textarea placeholder=\"What should be true when this is done?\" />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.Select\n        aria-label=\"Model\"\n        defaultValue=\"claude-opus-4-8\"\n        options={[{ value: 'claude-opus-4-8', label: 'Opus 4.8' }, { value: 'claude-sonnet-5', label: 'Sonnet 5' }]}\n      />\n      <Prompt.ModeButton>Plan</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
+      "name": "With Attachments",
+      "description": "Staged files list above the text they belong to.",
+      "code": "<Prompt onSubmit={(value) => console.log(value)}>\n  <Prompt.Attachments\n    items={[\n      { id: '1', name: 'findings-export.csv', size: 20480 },\n      { id: '2', name: 'dashboard.png', size: 153600 },\n    ]}\n    onRemove={(id) => console.log(id)}\n  />\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
       "name": "Loading State",
-      "description": "During API submission",
+      "description": "Input locks and submit spins while the request runs.",
       "code": "<Prompt\n  onSubmit={(value) => console.log(value)}\n  loading\n  defaultValue=\"Tell me about the weather...\"\n>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n      <Prompt.ModeButton>Auto</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Usage>52% used</Prompt.Usage>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
       "name": "Disabled",
-      "description": "Non-interactive prompt",
+      "description": "Everything dims and stops responding to input.",
       "code": "<Prompt onSubmit={(value) => console.log(value)} disabled>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.ActionButton aria-label=\"Add attachment\">\n        +\n      </Prompt.ActionButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     }
   ],
@@ -220,10 +207,7 @@
       "submitOnEnter: boolean - Enter key behavior (default: true)",
       "Prompt.Textarea accepts native textarea props and optional aria-label override"
     ],
-    "a11yRules": [
-      "A11Y_TEXTAREA_LABEL",
-      "A11Y_BUTTON_LABEL"
-    ]
+    "a11yRules": ["A11Y_TEXTAREA_LABEL", "A11Y_BUTTON_LABEL"]
   },
   "ai": {
     "compositionPattern": "compound",

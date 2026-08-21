@@ -1,6 +1,7 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
+@use "../../recipes/layout" as layout;
 @use "../../recipes/navigation" as navigation;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
@@ -118,27 +119,27 @@
   left: 0;
   top: 0;
   width: 100%;
-  min-width: 180px;
+  min-width: layout.measure("menu-min");
 
   // Motion direction for directional slide
   &[data-motion="from-start"] {
-    animation: slideFromStart var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+    animation: slideFromStart var(--fui-transition-normal, $fui-transition-normal) forwards;
   }
   &[data-motion="from-end"] {
-    animation: slideFromEnd var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+    animation: slideFromEnd var(--fui-transition-normal, $fui-transition-normal) forwards;
   }
   &[data-motion="to-start"] {
-    animation: slideToStart var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+    animation: slideToStart var(--fui-transition-normal, $fui-transition-normal) forwards;
   }
   &[data-motion="to-end"] {
-    animation: slideToEnd var(--fui-transition-normal, $fui-transition-normal) ease forwards;
+    animation: slideToEnd var(--fui-transition-normal, $fui-transition-normal) forwards;
   }
 }
 
 @keyframes slideFromStart {
   from {
     opacity: 0;
-    transform: translateX(calc(-1 * #{$fui-anim-offset-md}));
+    transform: translateX(calc(-1 * var(--fui-anim-offset-md, #{$fui-anim-offset-md})));
   }
   to {
     opacity: 1;
@@ -149,7 +150,7 @@
 @keyframes slideFromEnd {
   from {
     opacity: 0;
-    transform: translateX($fui-anim-offset-md);
+    transform: translateX(var(--fui-anim-offset-md, #{$fui-anim-offset-md}));
   }
   to {
     opacity: 1;
@@ -164,7 +165,7 @@
   }
   to {
     opacity: 0;
-    transform: translateX(calc(-1 * #{$fui-anim-offset-md}));
+    transform: translateX(calc(-1 * var(--fui-anim-offset-md, #{$fui-anim-offset-md})));
   }
 }
 
@@ -175,7 +176,7 @@
   }
   to {
     opacity: 0;
-    transform: translateX($fui-anim-offset-md);
+    transform: translateX(var(--fui-anim-offset-md, #{$fui-anim-offset-md}));
   }
 }
 
@@ -358,7 +359,7 @@
   inset: 0;
   background: var(--fui-backdrop, $fui-backdrop);
   z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 10);
-  animation: fadeIn var(--fui-transition-normal, $fui-transition-normal) ease;
+  animation: fadeIn var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .drawer {
@@ -374,7 +375,7 @@
   flex-direction: column;
   // Keep the header pinned; ScrollArea in .drawerBody owns vertical scroll.
   overflow: hidden;
-  animation: slideInLeft var(--fui-transition-normal, $fui-transition-normal) ease;
+  animation: slideInLeft var(--fui-transition-normal, $fui-transition-normal);
 
   @media (min-width: 480px) {
     width: min(380px, 85vw);
@@ -384,7 +385,7 @@
 .drawerRight {
   left: auto;
   right: 0;
-  animation: slideInRight var(--fui-transition-normal, $fui-transition-normal) ease;
+  animation: slideInRight var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .drawerHeader {

@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../recipes/layout" as layout;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
 
@@ -6,23 +7,37 @@
   z-index: var(--fui-overlay-layer-anchored, 52);
   outline: none;
   pointer-events: auto;
+
+  // The popup is absolutely positioned inside the positioner whenever a
+  // Menu.Viewport is present (Base UI anchors it with top/bottom: 0). Without an
+  // explicit box the positioner collapses to zero height and any flipped
+  // (side="top") menu renders a full popup-height away from its trigger.
+  inline-size: var(--positioner-width);
+  block-size: var(--positioner-height);
 }
 
 .popup {
   @include popup.container;
 
-  min-inline-size: var(--fui-menu-min-inline, 192px);
+  min-inline-size: layout.measure("menu-min");
   margin: 0;
   list-style: none;
-  opacity: 1;
-  transform: none;
+  opacity: 0;
+  transform: scale(0.95);
   transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--fui-transition-fast, $fui-transition-fast),
+    transform var(--fui-transition-fast, $fui-transition-fast);
 
-  &[data-open],
+  &[data-open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
   &[data-starting-style],
   &[data-ending-style] {
-    opacity: 1;
-    transform: none;
+    opacity: 0;
+    transform: scale(0.95);
   }
 }
 
@@ -126,8 +141,8 @@
   block-size: 0;
   margin-inline-start: auto;
   border-style: solid;
-  border-width: var(--fui-menu-submenu-caret-block, 4px) 0 var(--fui-menu-submenu-caret-block, 4px)
-    var(--fui-menu-submenu-caret-inline, 6px);
+  border-width: var(--fui-raw-space-4, 4px) 0 var(--fui-raw-space-4, 4px)
+    var(--fui-raw-space-6, 6px);
   border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
 }
 

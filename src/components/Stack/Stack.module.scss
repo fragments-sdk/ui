@@ -1,4 +1,5 @@
 @use "../../recipes/layout";
+@use "../../tokens/mixins" as *;
 @use "../../tokens/variables" as *;
 
 .stack {
@@ -19,18 +20,18 @@
 .directionResponsive {
   flex-direction: var(--fui-stack-direction, column);
 
-  @media (min-width: 640px) {
+  @include breakpoint-sm {
     flex-direction: var(--fui-stack-direction-sm, var(--fui-stack-direction, column));
   }
 
-  @media (min-width: 768px) {
+  @include breakpoint-md {
     flex-direction: var(
       --fui-stack-direction-md,
       var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
     );
   }
 
-  @media (min-width: 1024px) {
+  @include breakpoint-lg {
     flex-direction: var(
       --fui-stack-direction-lg,
       var(
@@ -40,7 +41,7 @@
     );
   }
 
-  @media (min-width: 1280px) {
+  @include breakpoint-xl {
     flex-direction: var(
       --fui-stack-direction-xl,
       var(
@@ -58,22 +59,22 @@
 .gapResponsive {
   gap: var(--fui-stack-gap, #{layout.gap("none")});
 
-  @media (min-width: 640px) {
+  @include breakpoint-sm {
     gap: var(--fui-stack-gap-sm, var(--fui-stack-gap, 0));
   }
 
-  @media (min-width: 768px) {
+  @include breakpoint-md {
     gap: var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)));
   }
 
-  @media (min-width: 1024px) {
+  @include breakpoint-lg {
     gap: var(
       --fui-stack-gap-lg,
       var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))
     );
   }
 
-  @media (min-width: 1280px) {
+  @include breakpoint-xl {
     gap: var(
       --fui-stack-gap-xl,
       var(
@@ -154,7 +155,7 @@
   height: var(--fui-stroke-hairline, 1px);
 }
 
-@media (min-width: 640px) {
+@include breakpoint-sm {
   .directionResponsive[data-direction-sm="row"] > .separator {
     width: var(--fui-stroke-hairline, 1px);
     height: auto;
@@ -167,7 +168,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@include breakpoint-md {
   .directionResponsive[data-direction-md="row"] > .separator {
     width: var(--fui-stroke-hairline, 1px);
     height: auto;
@@ -180,7 +181,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@include breakpoint-lg {
   .directionResponsive[data-direction-lg="row"] > .separator {
     width: var(--fui-stroke-hairline, 1px);
     height: auto;
@@ -193,7 +194,7 @@
   }
 }
 
-@media (min-width: 1280px) {
+@include breakpoint-xl {
   .directionResponsive[data-direction-xl="row"] > .separator {
     width: var(--fui-stroke-hairline, 1px);
     height: auto;

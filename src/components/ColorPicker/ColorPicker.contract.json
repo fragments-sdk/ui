@@ -3,14 +3,7 @@
   "name": "ColorPicker",
   "description": "Selects a color through a visual picker and hexadecimal input.",
   "category": "forms",
-  "tags": [
-    "color",
-    "picker",
-    "input",
-    "hex",
-    "swatch",
-    "theme"
-  ],
+  "tags": ["color", "picker", "input", "hex", "swatch", "theme"],
   "status": "stable",
   "dependencies": [
     {
@@ -88,11 +81,7 @@
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ]
+      "values": ["sm", "md", "lg"]
     },
     "showInput": {
       "type": "boolean",
@@ -103,68 +92,67 @@
   },
   "usage": {
     "when": [
-      "Theme customization interfaces",
-      "Brand color selection",
-      "Design tool color inputs",
-      "User preference settings for colors"
+      "Theme and brand customisation",
+      "Any colour the user must pick freely",
+      "Design tool inputs"
     ],
     "whenNot": [
-      "Predefined color options only (use RadioGroup with swatches)",
-      "Simple color display without editing (use a colored Badge)",
-      "Color indication only (use semantic color tokens)"
+      "A fixed palette (use RadioGroup with swatches)",
+      "Showing a colour without editing it (use a tinted Badge)",
+      "Status colour that should come from a token"
     ],
     "guidelines": [
-      "Always provide a label to describe what the color is for",
-      "Use helperText to explain color usage or constraints",
-      "Consider providing color presets alongside the picker for common choices",
-      "Validate hex format (#RRGGBB) on input"
+      "Label says what the colour is for",
+      "Use helperText for constraints, such as contrast rules",
+      "Offer presets next to the picker for the common choices",
+      "Validate the hex as #RRGGBB before accepting it"
     ],
     "accessibility": [
-      "Label is associated with the color input",
-      "Swatch button has appropriate aria-label",
-      "Color picker popup is keyboard accessible",
-      "Hex input allows direct text entry"
+      "Label is tied to the hex input",
+      "The swatch button carries its own aria-label",
+      "The picker popup is reachable from the keyboard",
+      "Users can type a hex instead of dragging"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic color picker with label",
+      "description": "Swatch opens the picker; the hex field accepts typing.",
       "code": "<ColorPicker\n  label=\"Brand Color\"\n  defaultValue=\"#3b82f6\"\n/>"
     },
     {
       "name": "With Helper Text",
-      "description": "Color picker with helper text",
+      "description": "Supporting line says where the colour will be used.",
       "code": "<ColorPicker\n  label=\"Primary Color\"\n  defaultValue=\"#10b981\"\n  helperText=\"This color will be used for buttons and links\"\n/>"
     },
     {
       "name": "Controlled",
-      "description": "Controlled color picker that logs changes",
+      "description": "The parent owns the value and sees every change.",
       "code": "<ControlledColorPickerDemo />"
     },
     {
       "name": "Multiple Pickers",
-      "description": "Multiple color pickers for theme configuration",
+      "description": "A stacked set reads as one palette.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '240px' }}>\n  <ColorPicker label=\"Primary\" defaultValue=\"#3b82f6\" />\n  <ColorPicker label=\"Success\" defaultValue=\"#22c55e\" />\n  <ColorPicker label=\"Warning\" defaultValue=\"#f59e0b\" />\n  <ColorPicker label=\"Danger\" defaultValue=\"#ef4444\" />\n</div>"
     },
     {
       "name": "Compact",
-      "description": "Small size with swatch only (no input)",
+      "description": "showInput={false} drops the hex field, leaving a swatch row.",
       "code": "<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>\n  <ColorPicker defaultValue=\"#ef4444\" size=\"sm\" showInput={false} />\n  <ColorPicker defaultValue=\"#f59e0b\" size=\"sm\" showInput={false} />\n  <ColorPicker defaultValue=\"#22c55e\" size=\"sm\" showInput={false} />\n  <ColorPicker defaultValue=\"#3b82f6\" size=\"sm\" showInput={false} />\n</div>"
     },
     {
       "name": "Sizes",
-      "description": "Different size variants",
+      "description": "Three swatch sizes: sm, md, lg.",
       "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '240px' }}>\n  <ColorPicker label=\"Small\" defaultValue=\"#3b82f6\" size=\"sm\" />\n  <ColorPicker label=\"Medium (default)\" defaultValue=\"#3b82f6\" size=\"md\" />\n  <ColorPicker label=\"Large\" defaultValue=\"#3b82f6\" size=\"lg\" />\n</div>"
     },
     {
       "name": "Error State",
-      "description": "Color picker with error styling",
-      "code": "<ColorPicker\n  label=\"Brand Color\"\n  defaultValue=\"#000000\"\n  error\n  helperText=\"Please select a valid brand color\"\n/>"
+      "description": "Red border on the hex field, and the reason below it.",
+      "code": "<ColorPicker\n  label=\"Brand Color\"\n  defaultValue=\"#7c3aed\"\n  error\n  helperText=\"This color fails contrast against the page background\"\n/>"
     },
     {
       "name": "Disabled",
-      "description": "Disabled color picker",
+      "description": "Swatch will not open and the hex field will not accept typing.",
       "code": "<ColorPicker\n  label=\"Locked Color\"\n  defaultValue=\"#64748b\"\n  helperText=\"This color cannot be changed\"\n  disabled\n/>"
     }
   ],
@@ -198,18 +186,11 @@
       "size: sm|md|lg - size variant",
       "showInput: boolean - show hex input field"
     ],
-    "a11yRules": [
-      "A11Y_LABEL_REQUIRED",
-      "A11Y_FOCUS_VISIBLE",
-      "A11Y_TARGET_SIZE_MIN"
-    ]
+    "a11yRules": ["A11Y_LABEL_REQUIRED", "A11Y_FOCUS_VISIBLE", "A11Y_TARGET_SIZE_MIN"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Root",
-      "preload"
-    ]
+    "subComponents": ["Root", "preload"]
   },
   "provenance": {
     "source": "migrated",

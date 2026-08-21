@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Separator",
-  "description": "Creates a visual boundary between related content sections.",
+  "description": "Draws a rule between sections of related content.",
   "category": "layout",
   "tags": ["separator", "divider", "hr", "line", "layout"],
   "status": "stable",
@@ -48,21 +48,20 @@
   },
   "usage": {
     "when": [
-      "Dividing content sections",
-      "Separating groups of related items",
-      "Creating visual breathing room",
-      "Labeled section breaks"
+      "Dividing sections that spacing alone cannot separate",
+      "Labelled breaks such as an Or divider",
+      "Splitting items inside a toolbar or row"
     ],
     "whenNot": [
-      "Creating grid layouts (use CSS Grid)",
-      "Decorative borders (use CSS)",
-      "Spacing alone is sufficient"
+      "Whenever spacing already reads as a break",
+      "Decorative rules (use a border)",
+      "Building layout structure (use Grid)"
     ],
     "guidelines": [
-      "Use sparingly - too many separators create visual noise",
-      "Consider if spacing alone would work",
-      "Use soft variant for subtle separation",
-      "Labeled separators work well for major section breaks"
+      "Use sparingly — stacked rules read as noise",
+      "soft halves the rule's weight for quieter breaks",
+      "orientation=\"vertical\" needs a parent with a set height",
+      "Add aria-hidden when the rule is purely decorative"
     ],
     "accessibility": [
       "Uses role=\"separator\" for semantic meaning",
@@ -72,28 +71,23 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Basic horizontal separator",
-      "code": "<div style={{ width: '300px' }}>\n  <p>Content above</p>\n  <Separator spacing=\"md\" />\n  <p>Content below</p>\n</div>"
+      "description": "Standard and soft weights, one above the other.",
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>Standard weight</Text>\n  <Separator spacing=\"md\" />\n  <Text>Soft weight</Text>\n  <Separator soft spacing=\"md\" />\n  <Text>Below</Text>\n</Box>"
     },
     {
       "name": "With Label",
-      "description": "Labeled section divider",
-      "code": "<div style={{ width: '300px' }}>\n  <p>First section</p>\n  <Separator label=\"Or\" spacing=\"md\" />\n  <p>Second section</p>\n</div>"
-    },
-    {
-      "name": "Soft",
-      "description": "Subtle separator",
-      "code": "<div style={{ width: '300px' }}>\n  <p>Content above</p>\n  <Separator soft spacing=\"md\" />\n  <p>Content below</p>\n</div>"
+      "description": "A label sits inside the rule for a major break.",
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>First section</Text>\n  <Separator label=\"Or\" spacing=\"md\" />\n  <Text>Second section</Text>\n</Box>"
     },
     {
       "name": "Vertical",
-      "description": "Vertical separator between elements",
-      "code": "<div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '40px' }}>\n  <span>Item 1</span>\n  <Separator orientation=\"vertical\" />\n  <span>Item 2</span>\n  <Separator orientation=\"vertical\" />\n  <span>Item 3</span>\n</div>"
+      "description": "Divides items sitting in a row.",
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack direction=\"row\" align=\"center\" gap=\"md\" style={{ height: '40px' }}>\n  <Text>Item 1</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Item 2</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Item 3</Text>\n</Stack>"
     },
     {
       "name": "Spacing Options",
-      "description": "Different spacing sizes",
-      "code": "<div style={{ width: '300px' }}>\n  <p>No spacing</p>\n  <Separator spacing=\"none\" />\n  <p>Small spacing</p>\n  <Separator spacing=\"sm\" />\n  <p>Medium spacing</p>\n  <Separator spacing=\"md\" />\n  <p>Large spacing</p>\n  <Separator spacing=\"lg\" />\n  <p>End</p>\n</div>"
+      "description": "spacing sets the breathing room around the rule.",
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>none</Text>\n  <Separator spacing=\"none\" />\n  <Text>sm</Text>\n  <Separator spacing=\"sm\" />\n  <Text>md</Text>\n  <Separator spacing=\"md\" />\n  <Text>lg</Text>\n  <Separator spacing=\"lg\" />\n  <Text>End</Text>\n</Box>"
     }
   ],
   "relations": [

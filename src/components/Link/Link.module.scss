@@ -46,7 +46,7 @@
 .underline-always {
   text-decoration: underline;
   text-decoration-style: var(--fui-link-underline-style, solid);
-  text-underline-offset: var(--fui-raw-space-2);
+  text-underline-offset: 0.2em;
 }
 
 .underline-hover {

@@ -1,14 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Avatar",
-  "description": "Displays a visual representation of a user or entity.",
+  "description": "Shows who someone is — their photo, or their initials when there is none.",
   "category": "display",
-  "tags": [
-    "user",
-    "profile",
-    "image",
-    "identity"
-  ],
+  "tags": ["user", "profile", "image", "identity"],
   "status": "stable",
   "sourcePath": "src/components/Avatar/index.tsx",
   "exportName": "Avatar",
@@ -52,13 +47,7 @@
       "description": "Size variant",
       "default": "md",
       "required": false,
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ]
+      "values": ["xs", "sm", "md", "lg", "xl"]
     },
     "customSize": {
       "type": "union",
@@ -70,10 +59,7 @@
       "description": "Shape variant",
       "default": "circle",
       "required": false,
-      "values": [
-        "circle",
-        "square"
-      ]
+      "values": ["circle", "square"]
     },
     "color": {
       "type": "string",
@@ -98,66 +84,67 @@
   },
   "usage": {
     "when": [
-      "Displaying user profile pictures",
-      "Showing team member lists",
-      "Representing entities in lists or cards",
-      "User identification in comments or messages"
+      "A row, comment, or card needs to say who",
+      "Several people belong to one thing — use Avatar.Group"
     ],
     "whenNot": [
-      "Decorative images (use Image)",
-      "Logo display (use Logo component)",
-      "Large profile headers (use custom layout)"
+      "The picture is content, not identity (use Image)",
+      "A profile hero at display size (build the layout yourself)"
     ],
     "guidelines": [
-      "Always provide alt text or name for accessibility",
-      "Use consistent sizes within the same context",
-      "Provide fallback initials when image may not load",
-      "Use Avatar.Group for multiple avatars in a row",
-      "Use imageProps for advanced img attributes (loading, decoding, referrerPolicy, etc.)"
+      "Pass name even when you pass src — it is the fallback and the label",
+      "Hold one size per context; mixed sizes read as a mistake",
+      "Avatar.Group max caps the stack and counts the rest",
+      "imageProps carries loading, decoding, referrerPolicy"
     ],
     "accessibility": [
-      "Include meaningful alt text describing the user",
-      "Initials should be derived from name for screen readers",
-      "Decorative avatars should have empty alt"
+      "alt describes the person, not the word \"avatar\"",
+      "Initials come from name, so screen readers get the whole name",
+      "Purely decorative? Pass alt=\"\""
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Avatar with image",
+      "description": "A photo, cropped to the circle and centred.",
       "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar\n  src=\"https://i.pravatar.cc/150?u=jane\"\n  alt=\"Jane Doe\"\n  name=\"Jane Doe\"\n/>"
     },
     {
       "name": "With Initials",
-      "description": "Fallback when no image is provided",
+      "description": "No src, so the name collapses to initials.",
       "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"John Smith\" />"
     },
     {
       "name": "Sizes",
-      "description": "Available size options",
+      "description": "Five steps, xs through xl — pick one per context and stick to it.",
       "code": "import { Avatar } from '@/components/Avatar';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Avatar name=\"XS\" size=\"xs\" />\n  <Avatar name=\"SM\" size=\"sm\" />\n  <Avatar name=\"MD\" size=\"md\" />\n  <Avatar name=\"LG\" size=\"lg\" />\n  <Avatar name=\"XL\" size=\"xl\" />\n</Stack>"
     },
     {
       "name": "Custom Size",
-      "description": "Set an exact avatar size",
+      "description": "customSize takes any number when the scale does not fit.",
       "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"Conan McNicholl\" customSize={36} />"
     },
     {
       "name": "Square Shape",
-      "description": "Square variant for app icons or brands",
+      "description": "Squares read as products or orgs, circles as people.",
       "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"App\" shape=\"square\" />"
     },
     {
       "name": "Group",
-      "description": "Multiple avatars stacked together",
+      "description": "Overlapping stack with a count for whoever did not fit.",
       "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar.Group max={3} size=\"md\">\n  <Avatar name=\"Alice Johnson\" />\n  <Avatar name=\"Bob Smith\" />\n  <Avatar name=\"Carol Williams\" />\n  <Avatar name=\"David Brown\" />\n  <Avatar name=\"Eve Davis\" />\n</Avatar.Group>"
     }
   ],
   "relations": [
     {
-      "component": "Avatar",
-      "relationship": "parent",
-      "note": "Use Avatar.Group for stacked avatar displays"
+      "component": "Image",
+      "relationship": "alternative",
+      "note": "Use Image for content pictures that are not a person or entity"
+    },
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Pair with Badge to show presence or role beside a name"
     }
   ],
   "contract": {
@@ -170,15 +157,11 @@
       "imageProps: ImgHTMLAttributes - advanced img attributes",
       "shape: circle|square (default: circle)"
     ],
-    "a11yRules": [
-      "A11Y_IMG_ALT"
-    ]
+    "a11yRules": ["A11Y_IMG_ALT"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Group"
-    ]
+    "subComponents": ["Group"]
   },
   "provenance": {
     "source": "migrated",

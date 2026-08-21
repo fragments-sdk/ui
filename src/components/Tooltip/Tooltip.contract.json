@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Tooltip",
-  "description": "Provides brief contextual help when a control receives hover or focus.",
+  "description": "Shows a one-line hint when a control is hovered or focused.",
   "category": "feedback",
   "tags": ["tooltip", "hint", "help", "hover", "contextual"],
   "status": "stable",
@@ -107,55 +107,55 @@
   },
   "usage": {
     "when": [
-      "Explaining icon-only buttons",
-      "Showing full text for truncated content",
-      "Providing keyboard shortcuts",
-      "Brief contextual help that fits in one line"
+      "Naming icon-only buttons",
+      "Showing text that had to be truncated",
+      "Surfacing a keyboard shortcut",
+      "One line of help, no more"
     ],
     "whenNot": [
-      "Long-form help content (use Popover)",
-      "Critical information users must see (use Alert)",
-      "Interactive content (use Popover or Menu)",
-      "Mobile-primary interfaces (tooltips require hover)"
+      "Help longer than a line — use Popover",
+      "Anything the user must not miss — use Alert",
+      "Content they need to click — use Popover or Menu",
+      "Touch-first screens, where there is no hover"
     ],
     "guidelines": [
-      "Keep tooltip text concise (under 80 characters)",
-      "Use sentence case, no period for single sentences",
-      "Avoid duplicating visible label text",
-      "Consider mobile users who cannot hover",
-      "Use contentProps for tooltip popup attributes/styling; top-level HTML attrs are applied to the popup for backward compatibility"
+      "Under 80 characters",
+      "Sentence case, no trailing period",
+      "Never just repeat the visible label",
+      "Always leave a non-hover path to the same information",
+      "contentProps sets attributes and styling on the popup"
     ],
     "accessibility": [
-      "Accessible via focus as well as hover",
-      "Uses role=\"tooltip\" with proper aria association",
-      "Delay prevents tooltips from appearing during navigation"
+      "Opens on keyboard focus, not only hover",
+      "The open delay stops tooltips flashing while the pointer crosses the screen",
+      "Do not put anything critical here — treat it as a hint, not a label"
     ]
   },
   "examples": [
     {
       "name": "Default",
-      "description": "Basic tooltip on hover",
+      "description": "Appears after a short delay above the trigger.",
       "code": "<Tooltip content=\"Save your changes\">\n  <Button>Save</Button>\n</Tooltip>"
     },
     {
       "name": "Positions",
-      "description": "Tooltips on different sides",
-      "code": "<div style={{ display: 'flex', gap: '16px', padding: '40px' }}>\n  <Tooltip content=\"Top tooltip\" side=\"top\">\n    <Button variant=\"secondary\">Top</Button>\n  </Tooltip>\n  <Tooltip content=\"Bottom tooltip\" side=\"bottom\">\n    <Button variant=\"secondary\">Bottom</Button>\n  </Tooltip>\n  <Tooltip content=\"Left tooltip\" side=\"left\">\n    <Button variant=\"secondary\">Left</Button>\n  </Tooltip>\n  <Tooltip content=\"Right tooltip\" side=\"right\">\n    <Button variant=\"secondary\">Right</Button>\n  </Tooltip>\n</div>"
+      "description": "Four sides; it flips if the edge is too close.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Tooltip content=\"Top tooltip\" side=\"top\">\n    <Button variant=\"secondary\">Top</Button>\n  </Tooltip>\n  <Tooltip content=\"Bottom tooltip\" side=\"bottom\">\n    <Button variant=\"secondary\">Bottom</Button>\n  </Tooltip>\n  <Tooltip content=\"Left tooltip\" side=\"left\">\n    <Button variant=\"secondary\">Left</Button>\n  </Tooltip>\n  <Tooltip content=\"Right tooltip\" side=\"right\">\n    <Button variant=\"secondary\">Right</Button>\n  </Tooltip>\n</Stack>"
     },
     {
       "name": "With Shortcut",
-      "description": "Tooltip showing keyboard shortcut",
+      "description": "Spells out the key combination the icon implies.",
       "code": "<Tooltip content=\"Undo (Ctrl+Z)\">\n  <Button variant=\"ghost\">Undo</Button>\n</Tooltip>"
     },
     {
       "name": "No Arrow",
-      "description": "Tooltip without arrow",
-      "code": "<Tooltip content=\"Clean tooltip\" arrow={false}>\n  <Button variant=\"secondary\">Hover me</Button>\n</Tooltip>"
+      "description": "Drops the pointer for tooltips packed into dense chrome.",
+      "code": "<Tooltip content=\"No arrow on this one\" arrow={false}>\n  <Button variant=\"secondary\">Arrowless</Button>\n</Tooltip>"
     },
     {
       "name": "With Content Props",
-      "description": "Pass popup attributes/styling using contentProps",
-      "code": "<Tooltip content=\"Custom popup attrs\" contentProps={{ id: 'custom-tooltip-popup' }}>\n  <Button variant=\"secondary\">Hover me</Button>\n</Tooltip>"
+      "description": "contentProps lands on the popup element itself.",
+      "code": "<Tooltip\n  content=\"Styled through contentProps\"\n  contentProps={{ id: 'custom-tooltip-popup' }}\n>\n  <Button variant=\"secondary\">Custom popup</Button>\n</Tooltip>"
     }
   ],
   "relations": [

@@ -1,15 +1,9 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Message",
-  "description": "Displays an individual chat message with role-based styling.",
+  "description": "Shows one chat message, styled by who sent it.",
   "category": "ai",
-  "tags": [
-    "message",
-    "chat",
-    "ai",
-    "conversation",
-    "bubble"
-  ],
+  "tags": ["message", "chat", "ai", "conversation", "bubble"],
   "status": "stable",
   "sourcePath": "src/components/Message/index.tsx",
   "exportName": "Message",
@@ -26,11 +20,7 @@
       "type": "enum",
       "description": "Message role determines styling and alignment",
       "required": true,
-      "values": [
-        "user",
-        "assistant",
-        "system"
-      ]
+      "values": ["user", "assistant", "system"]
     },
     "children": {
       "type": "node",
@@ -42,12 +32,7 @@
       "description": "Message state",
       "default": "complete",
       "required": false,
-      "values": [
-        "sending",
-        "streaming",
-        "complete",
-        "error"
-      ]
+      "values": ["sending", "streaming", "complete", "error"]
     },
     "timestamp": {
       "type": "object",
@@ -67,24 +52,24 @@
   },
   "usage": {
     "when": [
-      "Displaying individual messages in a chat interface",
-      "Building AI assistant or chatbot UIs",
-      "Need role-based message styling (user vs assistant)",
-      "Messages need actions like copy, regenerate, or feedback"
+      "Individual turns in a chat transcript",
+      "AI assistant and chatbot interfaces",
+      "User and assistant turns that must read differently",
+      "Turns carrying copy, regenerate, or feedback actions"
     ],
     "whenNot": [
-      "Simple text display without chat context (use Text)",
-      "Notification-style messages (use Alert or Toast)",
-      "Comment threads with nested replies (use Card with custom layout)"
+      "Plain text with no chat context (use Text)",
+      "Notifications (use Alert or Toast)",
+      "Threads with nested replies (use Card with a custom layout)"
     ],
     "guidelines": [
-      "Always provide a role prop to determine styling",
-      "Use status prop to show message state (sending, streaming, error)",
-      "Pass avatar={null}, or set showAvatars={false} on the parent ConversationList, to hide avatars; avatarless assistant content is flush while the user's own bubble keeps compact space-1/space-2 padding",
-      "User message bubbles are capped at 80% of the available inline measure so they remain visually distinct from assistant responses",
-      "User and assistant message chrome uses neutral surface tokens with the primary text foreground; reserve brand accent for actions or semantic state",
-      "Consider showing timestamps for longer conversations",
-      "Provide hover actions for assistant messages (copy, regenerate)"
+      "Always set role — it drives alignment, avatar, and chrome",
+      "status covers sending, streaming, and error",
+      "Hide avatars with avatar={null}, or showAvatars={false} on ConversationList",
+      "User bubbles cap at 80% of the inline measure so the two sides stay distinct",
+      "Chrome stays on neutral surfaces; reserve accent for actions and semantic state",
+      "Add timestamps once a conversation runs long",
+      "Give assistant turns hover actions such as copy and regenerate"
     ],
     "accessibility": [
       "Uses semantic HTML for message structure",
@@ -96,43 +81,43 @@
   "examples": [
     {
       "name": "User Message",
-      "description": "Message from the user (right-aligned)",
+      "description": "Right-aligned and capped at 80% of the available width.",
       "code": "<Message role=\"user\">\n  <Message.Content>\n    Hello! Can you help me with a coding question?\n  </Message.Content>\n</Message>"
     },
     {
       "name": "Assistant Message",
-      "description": "Response from the AI assistant",
+      "description": "Left-aligned with an avatar and a wider measure.",
       "code": "<Message role=\"assistant\">\n  <Message.Content>\n    Of course! I'd be happy to help. What would you like to know?\n  </Message.Content>\n</Message>"
     },
     {
       "name": "System Message",
-      "description": "System notification or context",
+      "description": "Centred and quiet, for context rather than conversation.",
       "code": "<Message role=\"system\">\n  <Message.Content>\n    Conversation started. Model: GPT-4\n  </Message.Content>\n</Message>"
     },
     {
       "name": "Streaming",
-      "description": "Message being streamed (with cursor)",
+      "description": "A blinking caret trails the text as it arrives.",
       "code": "<Message role=\"assistant\" status=\"streaming\">\n  <Message.Content>\n    I'm currently generating a response for you\n  </Message.Content>\n</Message>"
     },
     {
       "name": "With Timestamp",
-      "description": "Message with timestamp display",
+      "description": "A relative send time sits beneath the bubble.",
       "code": "<Message role=\"assistant\" timestamp={new Date(Date.now() - 300000)}>\n  <Message.Content>\n    This message was sent 5 minutes ago.\n  </Message.Content>\n  <Message.Timestamp />\n</Message>"
     },
     {
       "name": "Error State",
-      "description": "Message that failed to send",
+      "description": "A failed send turns the bubble and its border red.",
       "code": "<Message role=\"user\" status=\"error\">\n  <Message.Content>\n    This message failed to send.\n  </Message.Content>\n</Message>"
     },
     {
       "name": "Custom Avatars",
-      "description": "Messages with image-based avatars",
+      "description": "Photos replace the default glyphs on both sides.",
       "code": "<>\n  <Message\n    role=\"user\"\n    avatar={<Message.Avatar src=\"https://i.pravatar.cc/64?u=user\" alt=\"Jane\" />}\n  >\n    <Message.Content>\n      Can you help me understand this error?\n    </Message.Content>\n  </Message>\n  <Message\n    role=\"assistant\"\n    avatar={<Message.Avatar src=\"https://i.pravatar.cc/64?u=bot\" alt=\"AI Assistant\" />}\n  >\n    <Message.Content>\n      Sure! Let me take a look at that for you.\n    </Message.Content>\n  </Message>\n</>"
     },
     {
       "name": "With Actions",
-      "description": "Message with hover actions",
-      "code": "<Message\n  role=\"assistant\"\n  actions={\n    <>\n      <button style={{ padding: '4px 8px', fontSize: '12px' }}>Copy</button>\n      <button style={{ padding: '4px 8px', fontSize: '12px' }}>Regenerate</button>\n    </>\n  }\n>\n  <Message.Content>\n    Hover over this message to see the actions.\n  </Message.Content>\n</Message>"
+      "description": "Controls stay hidden until the pointer enters the row.",
+      "code": "<Message\n  role=\"assistant\"\n  actions={\n    <>\n      <Button variant=\"ghost\" size=\"xs\">\n        Copy\n      </Button>\n      <Button variant=\"ghost\" size=\"xs\">\n        Regenerate\n      </Button>\n    </>\n  }\n>\n  <Message.Content>\n    Hover over this message to see the actions.\n  </Message.Content>\n</Message>"
     }
   ],
   "relations": [
@@ -163,19 +148,11 @@
       "Avatar.src: string - image URL for avatar",
       "Avatar.alt: string - alt text for image avatar"
     ],
-    "a11yRules": [
-      "A11Y_COLOR_CONTRAST",
-      "A11Y_MOTION_PREFERENCE"
-    ]
+    "a11yRules": ["A11Y_COLOR_CONTRAST", "A11Y_MOTION_PREFERENCE"]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": [
-      "Content",
-      "Actions",
-      "Timestamp",
-      "Avatar"
-    ]
+    "subComponents": ["Content", "Actions", "Timestamp", "Avatar"]
   },
   "provenance": {
     "source": "migrated",
