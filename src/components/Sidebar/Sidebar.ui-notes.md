@@ -20,3 +20,10 @@ transparent so the active row is only the gray rect.
 A closed mobile Sidebar now combines `aria-hidden` with native `inert`.
 Translating the drawer off-canvas is therefore visual only; descendants cannot
 remain in the keyboard focus order.
+
+## 2026-08-21 — section labels become eyebrows
+
+Default section-label voice changed from quiet title-case to small tracked
+uppercase (2xs / 0.07em / medium) so groups can't be mistaken for items.
+Existing `--fui-sidebar-section-label-*` hooks still override; new hooks:
+`-size`, `-tracking`, `-transform`.

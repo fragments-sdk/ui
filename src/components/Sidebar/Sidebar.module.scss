@@ -188,14 +188,18 @@
 
 // Override section-label-text inheritance — sidebar groups read as quiet
 // title-case headings, not shouty all-caps labels.
+// Section labels read as small tracked eyebrows — a clearly different voice
+// from the nav items beneath them, so groups can't be mistaken for links.
 .sectionLabel {
   flex: 1;
   min-width: 0;
-  text-transform: none;
+  font-size: var(--fui-sidebar-section-label-size, var(--fui-font-size-2xs, #{$fui-font-size-2xs}));
+  letter-spacing: var(--fui-sidebar-section-label-tracking, 0.07em);
+  text-transform: var(--fui-sidebar-section-label-transform, uppercase);
   color: var(--fui-sidebar-section-label-color, var(--fui-sidebar-faint));
   font-weight: var(
     --fui-sidebar-section-label-weight,
-    var(--fui-font-weight-normal, #{$fui-font-weight-normal})
+    var(--fui-font-weight-medium, #{$fui-font-weight-medium})
   );
 }
 
