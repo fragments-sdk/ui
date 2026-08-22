@@ -37,27 +37,45 @@
     @include prose.list("decimal");
   }
 
+  // Markdown's tight list items carry one inline run of text + <strong> +
+  // <code>. The prose recipe's per-item subgrid fragments that run: every
+  // element child becomes its own grid row and the bare text auto-places into
+  // the marker column. Markdown lists therefore fall back to block items with
+  // a hanging absolute marker (the recipe still supplies the marker content
+  // and counter).
+  ul,
+  ol {
+    display: block;
+    padding-inline-start: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-8, 8px));
+
+    > li {
+      position: relative;
+      display: block;
+      min-inline-size: 0;
+
+      &::before {
+        position: absolute;
+        inset-inline-start: calc(
+          -1 * (var(--fui-raw-space-20, 20px) + var(--fui-raw-space-8, 8px))
+        );
+        inline-size: var(--fui-raw-space-20, 20px);
+        text-align: end;
+      }
+    }
+  }
+
   li + li {
     margin-block-start: var(--fui-raw-space-4, 4px);
   }
 
-  // GFM task items are `<li><input type="checkbox"> label text</li>`. The prose
-  // list recipe lays each item out as a subgrid, so the checkbox and the bare
-  // text node land in separate rows and the marker column still draws a bullet.
-  // Flex keeps the checkbox on the same line as its label and drops the bullet.
-  li.task-list-item {
-    display: flex;
-    grid-column: 1 / -1;
-    align-items: baseline;
-    gap: var(--fui-raw-space-4, 4px);
-
+  // GFM task items are `<li><input type="checkbox"> label text</li>`. The
+  // checkbox replaces the bullet; block items already keep it inline with the
+  // label. `task-list-item` is remark-gfm's runtime class, so the selector
+  // must stay global — a module-scoped `.task-list-item` gets hashed and
+  // never matches.
+  li:global(.task-list-item) {
     &::before {
       content: none;
-    }
-
-    input[type="checkbox"] {
-      flex: none;
-      margin-inline-end: 0;
     }
   }
 
