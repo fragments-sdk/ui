@@ -381,7 +381,7 @@ export function handleArrowNavigation(
 // Screen Reader Only Component
 // ============================================
 
-export interface VisuallyHiddenProps {
+export interface A11yVisuallyHiddenProps {
   children: React.ReactNode;
   /** If true, becomes visible when focused (useful for skip links) */
   focusable?: boolean;
@@ -405,10 +405,10 @@ export interface VisuallyHiddenProps {
  * </VisuallyHidden>
  * ```
  */
-export function VisuallyHidden({
+export function A11yVisuallyHidden({
   children,
   focusable = false,
-}: VisuallyHiddenProps): React.ReactElement {
+}: A11yVisuallyHiddenProps): React.ReactElement {
   const style: React.CSSProperties = focusable
     ? {}
     : {

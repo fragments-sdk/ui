@@ -678,8 +678,8 @@ export {
   usePrefersContrast,
   useFocusTrap,
   handleArrowNavigation,
-  VisuallyHidden as A11yVisuallyHidden,
-  type VisuallyHiddenProps as A11yVisuallyHiddenProps,
+  A11yVisuallyHidden,
+  type A11yVisuallyHiddenProps,
 } from "./utils/a11y";
 
 // Keyboard Shortcuts
