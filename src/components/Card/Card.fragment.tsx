@@ -87,6 +87,17 @@ export default defineFragment(Card, {
       ),
       note: "Divided header; the body owns its own spacing.",
     },
+    Accent: {
+      render: (
+        <Card variant="accent" padding="lg">
+          <Card.Header>
+            <Card.Title>Finish setting up governance</Card.Title>
+            <Card.Description>Run the first scan to start tracking drift.</Card.Description>
+          </Card.Header>
+        </Card>
+      ),
+      note: "Earned-moment capsule: accent hairline and wash, for the few surfaces that deserve emphasis.",
+    },
     Interactive: {
       render: (
         <Card as="section" onClick={() => undefined}>
@@ -208,7 +219,7 @@ export default defineFragment(Card, {
   },
   contract: {
     propsSummary: [
-      "variant: default|outlined|outline|elevated|stat|panel (default: default)",
+      "variant: default|outlined|outline|elevated|stat|panel|accent (default: default)",
       "padding: none|sm|md|lg (default: md)",
       "as: article|div|section (default: article) - card root element",
       "onClick: (event) => void - click handler on root (adds role/button keyboard behavior)",

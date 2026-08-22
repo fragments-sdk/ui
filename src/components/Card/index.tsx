@@ -21,9 +21,13 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, "chil
    * - `panel`: hairline-bordered panel with zero own padding, designed for
    *   compound use with `Card.Header divided` + `Card.Body` so each region
    *   manages its own spacing.
+   * - `accent`: the earned-moment capsule — accent-tinted hairline, radial
+   *   accent wash, soft fixed radius. Reserve for the few surfaces that earn
+   *   emphasis (demo banner, upgrade panel, onboarding resume), never for
+   *   routine content.
    * @default "default"
    * @see https://usefragments.com/components/card#variants */
-  variant?: "default" | "outlined" | "outline" | "elevated" | "stat" | "panel";
+  variant?: "default" | "outlined" | "outline" | "elevated" | "stat" | "panel" | "accent";
   /** Inner padding.
    * @default "md" */
   padding?: "none" | "sm" | "md" | "lg";
@@ -67,7 +71,7 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 interface CardContextValue {
-  variant: "default" | "outlined" | "elevated" | "stat" | "panel";
+  variant: "default" | "outlined" | "elevated" | "stat" | "panel" | "accent";
   padding: "none" | "sm" | "md" | "lg";
   isInteractive: boolean;
 }

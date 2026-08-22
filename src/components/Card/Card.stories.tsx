@@ -22,7 +22,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "outlined", "outline", "elevated", "stat", "panel"],
+      options: ["default", "outlined", "outline", "elevated", "stat", "panel", "accent"],
       description: "Visual style of the card surface",
     },
     padding: {
@@ -119,6 +119,19 @@ export const Panel: Story = {
           rhythm.
         </Text>
       </Card.Body>
+    </Card>
+  ),
+};
+
+export const Accent: Story = {
+  render: () => (
+    <Card variant="accent" padding="lg" style={{ width: 420 }}>
+      <Stack gap="sm">
+        <Card.Title>Finish setting up governance</Card.Title>
+        <Text as="p" size="sm" color="secondary">
+          Your contract is authored — run the first scan to start tracking drift.
+        </Text>
+      </Stack>
     </Card>
   ),
 };

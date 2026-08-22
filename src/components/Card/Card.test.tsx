@@ -35,6 +35,9 @@ describe("Card", () => {
 
     rerender(<Card variant="panel">Content</Card>);
     expect(screen.getByRole("article")).toHaveClass("panel");
+
+    rerender(<Card variant="accent">Content</Card>);
+    expect(screen.getByRole("article")).toHaveClass("accent");
   });
 
   it("applies padding classes", () => {

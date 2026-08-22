@@ -109,6 +109,38 @@
     overflow: hidden;
   }
 
+  // Accent capsule — the earned-moment surface (demo banner, upgrade panel,
+  // onboarding resume capsule). Accent-tinted hairline, radial accent wash
+  // from the top-right corner, and a soft fixed radius that stays 24px across
+  // radius profiles: the capsule reads as one idiom everywhere it appears.
+  .accent {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--fui-card-accent-bg, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+    border-color: var(
+      --fui-card-accent-border,
+      color-mix(
+        in srgb,
+        var(--fui-color-accent, #{$fui-color-accent}) 30%,
+        var(--fui-border, #{$fui-border})
+      )
+    );
+    border-radius: var(--fui-card-accent-radius, 24px);
+    box-shadow: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        90% 70% at 100% -10%,
+        color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 13%, transparent),
+        transparent 62%
+      );
+    }
+  }
+
   // Padding
   .paddingNone {
     --_card-root-requested-inset: #{surface.inset("panel")};
