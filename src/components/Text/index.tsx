@@ -50,11 +50,20 @@ type TextSharedProps = Omit<React.HTMLAttributes<HTMLElement>, "color" | "role">
     | "cite"
     | "code"
     | "abbr";
-  /** Text color. `"muted"` is an alias for `"tertiary"`. `"success" | "warning" | "danger"`
+  /** Text color. `"muted"` is an alias for `"tertiary"`. `"accent"` is the brand
+   * spend for one word inside a line (a repo name). `"success" | "warning" | "danger"`
    * are for a run of text that carries a state on its own; prefer Badge or Alert when the
    * state deserves a container.
    * @default "primary" */
-  color?: "primary" | "secondary" | "tertiary" | "muted" | "success" | "warning" | "danger";
+  color?:
+    | "primary"
+    | "secondary"
+    | "tertiary"
+    | "muted"
+    | "accent"
+    | "success"
+    | "warning"
+    | "danger";
   /** Truncate text with ellipsis when it overflows */
   truncate?: boolean;
   /** Number of lines before truncating (requires truncate=true) */
@@ -79,7 +88,7 @@ type TextRoleProps = {
 type TextLegacyScaleProps = {
   role?: never;
   size?: TextSize;
-  variant?: "section-label";
+  variant?: "section-label" | "eyebrow";
   weight?: TextWeight;
   font?: TextFont;
   letterSpacing?: TextTracking;

@@ -1,6 +1,8 @@
 # Card fragment notes
 
 - Authored states: default, outlined, elevated, panel, accent, and rendered long content.
+- 2026-08-23: `--fui-card-accent-bg` aliases `--fui-bg-elevated`. The
+  accent variant is a lifted card + wash, not a black-mixed well.
 - 2026-08-22: `accent` variant added — the docs-landing capsule idiom promoted into the lib
   (accent-mixed hairline, radial accent wash via `::before`, fixed 24px radius through
   `--fui-card-accent-radius`). Reserved for earned moments: demo banner, upgrade panels, the

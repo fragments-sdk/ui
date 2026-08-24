@@ -42,11 +42,19 @@ describe('Text', () => {
 
     rerender(<Text color="success">Passing</Text>);
     expect(screen.getByText('Passing')).toHaveClass('color-success');
+
+    rerender(<Text color="accent">healthy-ui</Text>);
+    expect(screen.getByText('healthy-ui')).toHaveClass('color-accent');
   });
 
   it('applies md size class (alias for base)', () => {
     render(<Text size="md">Medium text</Text>);
     expect(screen.getByText('Medium text')).toHaveClass('size-md');
+  });
+
+  it('applies eyebrow variant class', () => {
+    render(<Text variant="eyebrow">Overview</Text>);
+    expect(screen.getByText('Overview')).toHaveClass('variant-eyebrow');
   });
 
   it('applies section-label variant class', () => {

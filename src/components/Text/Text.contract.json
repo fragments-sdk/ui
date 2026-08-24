@@ -13,7 +13,7 @@
     "variant: section-label",
     "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl",
     "weight: normal|medium|semibold|bold (default: \"normal\")",
-    "color: primary|secondary|tertiary|muted|success|warning|danger (default: \"primary\")",
+    "color: primary|secondary|tertiary|muted|accent|success|warning|danger (default: \"primary\")",
     "font: sans|mono (default: sans)",
     "truncate: boolean",
     "lineClamp: number",
@@ -61,7 +61,7 @@
       "type": "enum",
       "description": "Preset text variant",
       "required": false,
-      "values": ["section-label"]
+      "values": ["section-label", "eyebrow"]
     },
     "size": {
       "type": "enum",
@@ -81,7 +81,7 @@
       "description": "Text color (muted is an alias for tertiary; success/warning/danger are for a run of text that carries a state on its own — prefer Badge or Alert when the state deserves a container)",
       "default": "\"primary\"",
       "required": false,
-      "values": ["primary", "secondary", "tertiary", "muted", "success", "warning", "danger"]
+      "values": ["primary", "secondary", "tertiary", "muted", "accent", "success", "warning", "danger"]
     },
     "font": {
       "type": "enum",
@@ -182,7 +182,7 @@
       "as: string - HTML element",
       "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl - font size (px: 10/12/14/14/15/20/24/30/36/48)",
       "weight: normal|medium|semibold|bold - font weight",
-      "color: primary|secondary|tertiary|muted|success|warning|danger - text color (muted = tertiary; semantic colours for inline state)",
+      "color: primary|secondary|tertiary|muted|accent|success|warning|danger - text color (muted = tertiary; accent = brand spend; semantic colours for inline state)",
       "font: sans|mono - font family",
       "truncate: boolean - enable truncation",
       "lineClamp: number - max lines"

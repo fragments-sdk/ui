@@ -39,6 +39,30 @@
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
+// `emphasis="surface"`: the card keeps the page's own surface and spends the
+// severity only on the hairline and the title. Declared after the severities
+// so it overrides their wash while their border survives.
+.surface {
+  background: var(--fui-bg-secondary, $fui-bg-secondary);
+  color: var(--fui-text-secondary, $fui-text-secondary);
+}
+
+.surface.info .title {
+  color: var(--fui-color-info-text, $fui-color-info-text);
+}
+
+.surface.success .title {
+  color: var(--fui-color-success-text, $fui-color-success-text);
+}
+
+.surface.warning .title {
+  color: var(--fui-color-warning-text, $fui-color-warning-text);
+}
+
+.surface.error .title {
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
+}
+
 .icon {
   @include feedback.icon;
 

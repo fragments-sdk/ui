@@ -67,7 +67,7 @@ const meta = {
     },
     color: {
       control: 'select',
-      options: ['primary', 'secondary', 'tertiary', 'muted', 'success', 'warning', 'danger'],
+      options: ['primary', 'secondary', 'tertiary', 'muted', 'accent', 'success', 'warning', 'danger'],
       description: 'Text color (muted is an alias for tertiary)',
     },
     font: {

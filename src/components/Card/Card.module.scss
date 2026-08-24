@@ -111,21 +111,13 @@
 
   // Accent capsule — the earned-moment surface (demo banner, upgrade panel,
   // onboarding resume capsule). Accent-tinted hairline, radial accent wash
-  // from the top-right corner, and a soft fixed radius that stays 24px across
-  // radius profiles: the capsule reads as one idiom everywhere it appears.
+  // from the top-right corner. Radius matches the default card.
   .accent {
     position: relative;
     overflow: hidden;
-    background-color: var(--fui-card-accent-bg, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-    border-color: var(
-      --fui-card-accent-border,
-      color-mix(
-        in srgb,
-        var(--fui-color-accent, #{$fui-color-accent}) 30%,
-        var(--fui-border, #{$fui-border})
-      )
-    );
-    border-radius: var(--fui-card-accent-radius, 24px);
+    background-color: var(--fui-card-accent-bg, #{$fui-card-accent-bg});
+    border-color: var(--fui-card-accent-border, #{$fui-card-accent-border});
+    border-radius: var(--fui-card-accent-radius, #{$fui-card-accent-radius});
     box-shadow: none;
 
     &::before {
@@ -138,6 +130,41 @@
         color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 13%, transparent),
         transparent 62%
       );
+    }
+  }
+
+  // Accent tones — same capsule, state-coloured hairline + wash. Chroma is
+  // earned by state (SPEC §4.4): danger = a merge is held, warning =
+  // enforcement lapsed, neutral = waiting (no wash at all).
+  .toneDanger {
+    border-color: var(--fui-color-danger-border, #{$fui-color-danger-border});
+
+    &::before {
+      background: radial-gradient(
+        90% 70% at 100% -10%,
+        var(--fui-color-danger-bg, #{$fui-color-danger-bg}),
+        transparent 62%
+      );
+    }
+  }
+
+  .toneWarning {
+    border-color: var(--fui-color-warning-border, #{$fui-color-warning-border});
+
+    &::before {
+      background: radial-gradient(
+        90% 70% at 100% -10%,
+        var(--fui-color-warning-bg, #{$fui-color-warning-bg}),
+        transparent 62%
+      );
+    }
+  }
+
+  .toneNeutral {
+    border-color: var(--fui-border, #{$fui-border});
+
+    &::before {
+      content: none;
     }
   }
 

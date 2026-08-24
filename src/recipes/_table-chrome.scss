@@ -9,8 +9,13 @@
   --fui-table-cell-inline-inset-regular: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   --fui-table-cell-inline-inset-relaxed: var(--fui-raw-space-16, #{measurements.raw-space(16)});
   --fui-table-cell-block-inset-compact: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  --fui-table-cell-block-inset-regular: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  --fui-table-cell-block-inset-regular: var(--fui-raw-space-10, #{measurements.raw-space(10)});
   --fui-table-cell-block-inset-relaxed: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+  // The header sits tighter than the rows it labels: a column head is chrome,
+  // not a record, so it keeps the pre-ledger inset while cells breathe.
+  --fui-table-header-block-inset-compact: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  --fui-table-header-block-inset-regular: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  --fui-table-header-block-inset-relaxed: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   --fui-table-tree-indent-step: var(--fui-raw-space-24, #{measurements.raw-space(24)});
   --fui-table-divider-size: var(
     --fui-stroke-hairline,
@@ -42,6 +47,14 @@
   @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
 }
 
+@function header-block-inset($density) {
+  @if $density == "compact" or $density == "regular" or $density == "relaxed" {
+    @return var(--fui-table-header-block-inset-#{$density});
+  }
+
+  @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
+}
+
 @mixin density($density) {
   @if $density != "compact" and $density != "regular" and $density != "relaxed" {
     @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
@@ -50,6 +63,7 @@
   --_fui-table-row-track: #{row-track($density)};
   --_fui-table-cell-inline-inset: #{cell-inline-inset($density)};
   --_fui-table-cell-block-inset: #{cell-block-inset($density)};
+  --_fui-table-header-block-inset: #{header-block-inset($density)};
 
   @if $density == "compact" {
     @include typography.role("ui-compact");
@@ -78,7 +92,7 @@
 @mixin header-cell {
   @include typography.role("ui-compact");
 
-  padding-block: var(--_fui-table-cell-block-inset);
+  padding-block: var(--_fui-table-header-block-inset, var(--_fui-table-cell-block-inset));
   padding-inline: var(--_fui-table-cell-inline-inset);
   color: var(--fui-text-secondary);
   text-align: start;

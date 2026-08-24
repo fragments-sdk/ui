@@ -28,6 +28,12 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, "chil
    * @default "default"
    * @see https://usefragments.com/components/card#variants */
   variant?: "default" | "outlined" | "outline" | "elevated" | "stat" | "panel" | "accent";
+  /** Semantic tone of the `accent` capsule. The wash and hairline follow the
+   * tone so the same earned-moment idiom can carry state: `danger` (a merge is
+   * held), `warning` (enforcement lapsed), `neutral` (waiting — ink hairline,
+   * no wash). Ignored for other variants.
+   * @default "accent" */
+  tone?: "accent" | "danger" | "warning" | "neutral";
   /** Inner padding.
    * @default "md" */
   padding?: "none" | "sm" | "md" | "lg";
@@ -104,9 +110,17 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
 // Components
 // ============================================
 
+const toneMap = {
+  accent: undefined,
+  danger: styles.toneDanger,
+  warning: styles.toneWarning,
+  neutral: styles.toneNeutral,
+} as const;
+
 function CardRoot({
   children,
   variant: variantProp = "default",
+  tone = "accent",
   padding = "md",
   as: Component = "article",
   className,
@@ -124,6 +138,7 @@ function CardRoot({
   const classes = [
     styles.card,
     styles[variant],
+    variant === "accent" && tone !== "accent" && toneMap[tone],
     paddingMap[padding],
     isInteractive && styles.interactive,
     className,

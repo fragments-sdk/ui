@@ -27,12 +27,12 @@ $fui-brand: #f56138 !default;
 $fui-neutral: "paper" !default;
 $fui-density: "default" !default;
 $fui-radius-style: "default" !default;
-// Status seeds (see tokens/_seeds.scss): muted mineral tones that read as
-// one family next to the coral accent rather than bolted-on neon.
-$fui-danger: #a54f46 !default;
-$fui-success: #7fc9b3 !default;
-$fui-warning: #e0aa5c !default;
-$fui-info: #7fa6c4 !default;
+// Status seeds (see tokens/_seeds.scss): Cloud Surfaces rust / forest /
+// amber / slate-blue. Washes derive from these.
+$fui-danger: #c44732 !default;
+$fui-success: #2c8c5f !default;
+$fui-warning: #c4922a !default;
+$fui-info: #3d7aa8 !default;
 
 // Configure seeds BEFORE loading variables.
 // Sass module singleton: once configured here, every subsequent

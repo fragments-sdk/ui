@@ -24,7 +24,13 @@ describe("default Fragments surface tokens", () => {
     expect(css).toContain("--fui-bg-active: light-dark(rgba(96, 48, 16, 0.1), #322e29)");
     expect(css).toContain("--fui-body-bg: light-dark(#faf8f5, #171614)");
     expect(css).toContain("--fui-main-bg: light-dark(#faf8f5, #171614)");
-    expect(css).toContain("--fui-code-bg: light-dark(#1d1c1a, #121110)");
+    expect(css).toContain("--fui-code-bg: light-dark(#f2ede7, #1e1c19)");
+    expect(css).toContain("--fui-app-main-bg: var(--fui-bg-tertiary)");
+    expect(css).toContain("--fui-app-sidebar-bg: var(--fui-body-bg)");
+    // The earned-moment capsule sits in the tertiary well, not on an
+    // elevated white plane (lifted-verdict direction, 2026-08-22).
+    expect(css).toContain("--fui-card-accent-bg: var(--fui-bg-tertiary)");
+    expect(css).toContain("--fui-app-sidebar-bg: var(--fui-bg-tertiary)");
     expect(css).toContain("--fui-card-header-bg: var(--fui-bg-subtle)");
     expect(css).toContain("--fui-header-search-bg: var(--fui-bg-hover)");
     expect(css).toContain("--fui-field-selection-bg: var(--fui-control-selected-bg)");

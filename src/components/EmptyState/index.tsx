@@ -10,6 +10,11 @@ import styles from "./EmptyState.module.scss";
 export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   size?: "sm" | "md" | "lg";
+  /** `outlined` draws the dashed hairline that marks a reserved-but-empty
+   * region. Default `plain` keeps the state inside whatever already frames it
+   * (a Card, a table body) so the frame is never doubled.
+   * @default "plain" */
+  variant?: "plain" | "outlined";
 }
 
 export interface EmptyStateIconProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -50,8 +55,21 @@ function useEmptyStateContext() {
 // Components
 // ============================================
 
-function EmptyStateRoot({ children, size = "md", className, ...htmlProps }: EmptyStateProps) {
-  const classes = [styles.emptyState, styles[size], className].filter(Boolean).join(" ");
+function EmptyStateRoot({
+  children,
+  size = "md",
+  variant = "plain",
+  className,
+  ...htmlProps
+}: EmptyStateProps) {
+  const classes = [
+    styles.emptyState,
+    styles[size],
+    variant === "outlined" ? styles.outlined : null,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const contextValue: EmptyStateContextValue = { size };
 

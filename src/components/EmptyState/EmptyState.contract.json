@@ -7,7 +7,11 @@
   "status": "stable",
   "sourcePath": "src/components/EmptyState/index.tsx",
   "exportName": "EmptyState",
-  "propsSummary": ["children: node (required)", "size: sm|md|lg (default: md)"],
+  "propsSummary": [
+    "children: node (required)",
+    "size: sm|md|lg (default: md)",
+    "variant: plain|outlined (default: plain)"
+  ],
   "props": {
     "children": {
       "type": "node",
@@ -20,6 +24,13 @@
       "default": "md",
       "required": false,
       "values": ["sm", "md", "lg"]
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Frame style. `outlined` draws a dashed hairline around the reserved region; `plain` leaves framing to the surrounding surface.",
+      "default": "plain",
+      "required": false,
+      "values": ["plain", "outlined"]
     }
   },
   "usage": {
@@ -37,7 +48,7 @@
       "Say why the area is empty, not just that it is",
       "Give one clear action out of the state",
       "Keep to two actions at most, primary first",
-      "Match the icon to the cause — search, inbox, folder",
+      "Match the icon to the cause \u2014 search, inbox, folder",
       "Use size=\"sm\" inline and size=\"lg\" for full-page states"
     ],
     "accessibility": [
@@ -53,7 +64,7 @@
     },
     {
       "name": "No Results",
-      "description": "A filter or query matched nothing — offer a way back.",
+      "description": "A filter or query matched nothing \u2014 offer a way back.",
       "code": "<EmptyState>\n  <EmptyState.Icon><SearchIcon /></EmptyState.Icon>\n  <EmptyState.Title>No results found</EmptyState.Title>\n  <EmptyState.Description>Try adjusting your search terms or filters.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button variant=\"secondary\">Clear Filters</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     },
     {

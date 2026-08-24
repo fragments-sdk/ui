@@ -132,6 +132,34 @@ export function ChartContainer({
   ...htmlProps
 }: ChartContainerProps) {
   const chartId = React.useId();
+  const frameRef = React.useRef<HTMLDivElement | null>(null);
+  // Recharts only lays a chart out once it knows a pixel box. Percentage
+  // sizing leaves the first paint blank until something else happens to
+  // resize the window, so the container measures its own frame and hands the
+  // chart real numbers — re-measured whenever the frame changes.
+  const [frame, setFrame] = React.useState<{ width: number; height: number } | null>(null);
+
+  React.useEffect(() => {
+    const element = frameRef.current;
+    if (!element || typeof ResizeObserver === "undefined") return;
+
+    const measure = () => {
+      const rect = element.getBoundingClientRect();
+      const width = Math.round(rect.width);
+      const height = Math.round(rect.height);
+      setFrame((current) =>
+        current && current.width === width && current.height === height
+          ? current
+          : { width, height }
+      );
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   const summaryId = summary ? `chart-summary-${chartId}` : undefined;
   const dataTableId = dataTable ? `chart-data-${chartId}` : undefined;
 
@@ -149,12 +177,12 @@ export function ChartContainer({
   // Inject sizing props into the chart child (recharts API).
   // Only pass `responsive` for custom component types to avoid leaking the
   // prop to intrinsic DOM nodes in test/demo usage.
-  const chartChildProps: Record<string, unknown> = {
-    width: "100%",
-    height: "100%",
-  };
+  const measured = frame !== null && frame.width > 0 && frame.height > 0;
+  const chartChildProps: Record<string, unknown> = measured
+    ? { width: frame.width, height: frame.height }
+    : { width: "100%", height: "100%" };
 
-  if (typeof children.type !== "string") {
+  if (!measured && typeof children.type !== "string") {
     chartChildProps.responsive = true;
   }
 
@@ -167,6 +195,7 @@ export function ChartContainer({
     <ChartConfigContext.Provider value={config}>
       <div
         {...htmlProps}
+        ref={frameRef}
         className={rootClasses}
         style={{ ...cssVars, ...style }}
         role="img"

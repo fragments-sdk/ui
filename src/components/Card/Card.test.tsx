@@ -38,6 +38,18 @@ describe("Card", () => {
 
     rerender(<Card variant="accent">Content</Card>);
     expect(screen.getByRole("article")).toHaveClass("accent");
+    rerender(
+      <Card variant="accent" tone="danger">
+        Content
+      </Card>
+    );
+    expect(screen.getByRole("article")).toHaveClass("accent", "toneDanger");
+    rerender(
+      <Card variant="outlined" tone="danger">
+        Content
+      </Card>
+    );
+    expect(screen.getByRole("article")).not.toHaveClass("toneDanger");
   });
 
   it("applies padding classes", () => {

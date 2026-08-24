@@ -20,6 +20,12 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default "info"
    * @see https://usefragments.com/components/alert#variants */
   severity?: AlertSeverity;
+  /** How much surface the severity claims. `tint` washes the whole card in the
+   * severity colour. `surface` keeps the card on the page's own background and
+   * spends the colour only on the hairline and the title — for a standing
+   * failure that owns the view, where a full wash would read as a red page.
+   * @default "tint" */
+  emphasis?: "tint" | "surface";
 }
 
 export interface AlertIconProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -104,7 +110,13 @@ const severityIcons: Record<AlertSeverity, string> = {
 // Components
 // ============================================
 
-function AlertRoot({ children, severity = "info", className, ...htmlProps }: AlertProps) {
+function AlertRoot({
+  children,
+  severity = "info",
+  emphasis = "tint",
+  className,
+  ...htmlProps
+}: AlertProps) {
   const [dismissed, setDismissed] = React.useState(false);
   const titleId = React.useId();
   const descId = React.useId();
@@ -115,7 +127,14 @@ function AlertRoot({ children, severity = "info", className, ...htmlProps }: Ale
 
   if (dismissed) return null;
 
-  const classes = [styles.alert, styles[severity], className].filter(Boolean).join(" ");
+  const classes = [
+    styles.alert,
+    styles[severity],
+    emphasis === "surface" ? styles.surface : null,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const role = severity === "warning" || severity === "error" ? "alert" : "status";
 
   const contextValue: AlertContextValue = {

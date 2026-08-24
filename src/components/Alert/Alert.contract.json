@@ -9,7 +9,8 @@
   "exportName": "Alert",
   "propsSummary": [
     "children: node (required)",
-    "severity: info|success|warning|error (default: info)"
+    "severity: info|success|warning|error (default: info)",
+    "emphasis: tint|surface (default: tint)"
   ],
   "props": {
     "children": {
@@ -23,6 +24,13 @@
       "default": "info",
       "required": false,
       "values": ["info", "success", "warning", "error"]
+    },
+    "emphasis": {
+      "type": "enum",
+      "description": "How much surface the severity claims. `tint` washes the card in the severity colour; `surface` keeps the page background and colours only the hairline and title.",
+      "default": "tint",
+      "required": false,
+      "values": ["tint", "surface"]
     }
   },
   "usage": {
@@ -38,7 +46,7 @@
       "A decision the user must make first (use Dialog)"
     ],
     "guidelines": [
-      "Match severity to real stakes — an error that is not an error trains people to ignore you",
+      "Match severity to real stakes \u2014 an error that is not an error trains people to ignore you",
       "Every error alert says what to do next",
       "Add Alert.Title only when the message needs two lines",
       "One action per alert",
@@ -49,13 +57,13 @@
     "accessibility": [
       "role=\"alert\" means assistive tech announces it on arrival",
       "Alert.Close needs its own label",
-      "Icon plus wording carry the severity — never color alone"
+      "Icon plus wording carry the severity \u2014 never color alone"
     ]
   },
   "examples": [
     {
       "name": "Info",
-      "description": "Neutral context — nothing went wrong, nothing needs doing.",
+      "description": "Neutral context \u2014 nothing went wrong, nothing needs doing.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      Your session will expire in 15 minutes. Save your work to avoid losing changes.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
@@ -65,7 +73,7 @@
     },
     {
       "name": "Warning",
-      "description": "Nothing is broken yet — act before it is.",
+      "description": "Nothing is broken yet \u2014 act before it is.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Storage almost full</Alert.Title>\n    <Alert.Content>\n      You have used 90% of your storage quota. Consider deleting unused files.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
@@ -75,7 +83,7 @@
     },
     {
       "name": "With Action",
-      "description": "One button, one job — more than one stalls the reader.",
+      "description": "One button, one job \u2014 more than one stalls the reader.",
       "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Update available</Alert.Title>\n    <Alert.Content>\n      A new version is available with important security fixes.\n    </Alert.Content>\n    <Alert.Actions>\n      <Alert.Action onClick={() => {}}>Update now</Alert.Action>\n    </Alert.Actions>\n  </Alert.Body>\n</Alert>"
     },
     {

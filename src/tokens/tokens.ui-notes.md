@@ -52,15 +52,25 @@ the coral prototype in both modes.
 - **Keyboard focus is a solid token ring.** `focus-ring` uses the full
   theme-resolved focus color at the configured width/offset instead of
   low-opacity shadows, preserving a clear non-layout focus indicator.
+- **Light product chrome swaps the rail and canvas.** `--fui-app-sidebar-bg`
+  follows paper (`--fui-body-bg`); `--fui-app-main-bg` follows tertiary.
+  Dark rail is `--fui-bg-tertiary` against a `--fui-main-bg` body — do not
+  mix primary into secondary; they are the same stop in paper dark.
+- **Accent capsules sit on elevated.** `--fui-card-accent-bg` aliases
+  `--fui-bg-elevated` (white in light, lifted charcoal in dark). Tone
+  supplies the wash and hairline. Mixing toward black made light-mode
+  moments look like a dark-mode slab.
+- **Semantic seeds match the Cloud Surfaces artifact.** Danger `#c44732`,
+  success `#2c8c5f`, warning `#c4922a`, info `#3d7aa8`. Badge / Text
+  washes still derive from those seeds.
+- **Code surfaces ride tertiary** in both themes (`#f2ede7` / `#1e1c19`) so
+  they sit on the paper plane instead of a second dark inset.
 
 ## What doesn't
 
 - `--fui-button-radius` is a single token across all button sizes; 12px on an
   xs button reads rounder than on lg. Acceptable, but a per-size radius recipe
   would be truer to optical intent.
-- Code remains intentionally dark in both themes: `#171717` on light paper and
-  the recessed `#0d0d0d` in dark mode. A consumer wanting a light code surface
-  must override `--fui-code-bg`.
 
 ## Landmines
 
@@ -94,3 +104,20 @@ $fui-icon-md)` → `16px`) but copies a custom property's value through
   shimmers, and overlay z-indexes ride these; new looping animations must not
   hardcode seconds. `_measurements.generated.scss` is also a contract token
   source (fragments.config.ts) so measurement vars are real vocabulary.
+
+## 2026-08-23 — placeholder ramp + capsule plane (Cloud parity)
+
+- `--fui-skeleton` / `--fui-skeleton-hi` now emit from `:root`, derived from
+  `--fui-border-default` mixed into `--fui-bg-secondary` (62% / 24%) so they
+  track both themes. `Skeleton` paints the base colour and shimmers the
+  highlight across it; the old opacity pulse spent half its cycle invisible
+  on paper, which made every light-theme loading state read as a blank page.
+  Static under `prefers-reduced-motion`.
+- `--fui-card-accent-bg` moved from `--fui-bg-elevated` to `--fui-bg-tertiary`
+  and `--fui-card-accent-radius` from `radius-lg` to `radius-xl`: the earned
+  moment sits *into* the page as a warm well rather than floating a white slab
+  on it (approved lifted-verdict direction, 2026-08-22). Covered by
+  `baseline-surfaces.test.ts`.
+- Open: the approved mockup draws the capsule at 24px radius; the ramp tops
+  out at `radius-xl` (12px at Cloud's 14px rem). A display radius step would
+  close it.

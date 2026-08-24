@@ -78,6 +78,13 @@
   @include table-chrome.body-cell;
 }
 
+// Ledger edge: the first column starts at the surrounding surface's own inset
+// so a table inside a card reads as part of the card, not a box within a box.
+.th:first-child,
+.td:first-child {
+  padding-inline-start: 0;
+}
+
 .selected {
   --fui-table-row-bg: var(
     --fui-table-row-selected-bg,

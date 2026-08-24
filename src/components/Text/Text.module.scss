@@ -13,6 +13,17 @@
   @include typography.role("ui-compact");
 }
 
+// Eyebrow: the small-caps label that names a surface above its statement
+// (page label, card section head). Always tertiary ink — it is never the
+// thing the reader is meant to look at.
+.variant-eyebrow {
+  @include typography.role("caption");
+  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
 @each $role
   in (
     "caption",
@@ -107,22 +118,27 @@
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
+.color-accent {
+  color: var(--fui-color-accent, $fui-color-accent);
+}
+
 // Semantic colours, for a run of text that carries a state on its own — a
 // count going over budget, an inline "expired", a figure in the red. Where
 // there is a component for the job (Badge, Alert, Callout) use that instead:
 // this is for the cases where the state is one word inside a line, and
 // wrapping it in a box would be more chrome than the fact is worth. Colour is
-// never the only carrier — the words still have to say it.
+// never the only carrier — the words still have to say it. Text uses the
+// same *-text stop as Badge so inline ink and chips stay one family.
 .color-success {
-  color: var(--fui-color-success, $fui-color-success);
+  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 .color-warning {
-  color: var(--fui-color-warning, $fui-color-warning);
+  color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
 .color-danger {
-  color: var(--fui-color-danger, $fui-color-danger);
+  color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
 // Font family

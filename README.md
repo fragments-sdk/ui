@@ -181,10 +181,10 @@ Configure ~5 seeds and everything derives automatically using the SCSS `@use ...
 | `$fui-neutral`      | String | `"carbon"`  | Neutral palette for surfaces, text, borders             |
 | `$fui-density`      | String | `"default"` | Spacing density scale                                   |
 | `$fui-radius-style` | String | `"default"` | Corner radius style                                     |
-| `$fui-danger`       | Color  | `#a54f46`   | Error/danger semantic color                             |
-| `$fui-success`      | Color  | `#7fc9b3`   | Success semantic color                                  |
-| `$fui-warning`      | Color  | `#e0aa5c`   | Warning semantic color                                  |
-| `$fui-info`         | Color  | `#7fa6c4`   | Info semantic color                                     |
+| `$fui-danger`       | Color  | `#c44732`   | Error/danger semantic color                             |
+| `$fui-success`      | Color  | `#2c8c5f`   | Success semantic color                                  |
+| `$fui-warning`      | Color  | `#c4922a`   | Warning semantic color                                  |
+| `$fui-info`         | Color  | `#3d7aa8`   | Info semantic color                                     |
 
 #### Neutral Palettes
 

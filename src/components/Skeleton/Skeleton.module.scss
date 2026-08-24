@@ -5,29 +5,44 @@
 // Skeleton Component Styles
 // ============================================
 
-// Animation
-@keyframes skeleton-pulse {
-  0%,
-  100% {
-    opacity: 1;
+// Animation — a highlight travelling across the placeholder, not the whole
+// block fading out. A pulsing opacity spends half its cycle invisible on a
+// light surface; the shimmer keeps the missing fact legible the entire time.
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 120% 0;
   }
-  50% {
-    opacity: 0.5;
+  to {
+    background-position: -120% 0;
   }
 }
 
 // Base skeleton
 .skeleton {
   display: block;
-  background-color: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
-  animation: skeleton-pulse var(--fui-duration-shimmer, $fui-duration-shimmer)
-    cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-color: var(--fui-skeleton, #{$fui-bg-tertiary});
+  background-image: linear-gradient(
+    90deg,
+    var(--fui-skeleton, #{$fui-bg-tertiary}) 0%,
+    var(--fui-skeleton-hi, #{$fui-bg-secondary}) 45%,
+    var(--fui-skeleton, #{$fui-bg-tertiary}) 90%
+  );
+  background-size: 240% 100%;
+  animation: skeleton-shimmer var(--fui-duration-shimmer, $fui-duration-shimmer) linear infinite;
   border-radius: var(--fui-radius-md, #{$fui-radius-md});
 }
 
 // Static (no animation)
 .static {
   animation: none;
+  background-image: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background-image: none;
+  }
 }
 
 // Fill parent

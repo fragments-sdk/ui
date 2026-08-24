@@ -70,23 +70,23 @@ $_valid-radii: measurements.$radius-profile-names;
 // Override these to customize semantic colors.
 // If not overridden, they use sensible defaults.
 
-// The status seeds below are muted and mineral rather than neon so they sit
-// in one family beside the coral accent: danger a deep clay, success a sage
-// green ("green means contract passing"), warning honey amber, info a dusty
-// slate-blue — one palette, not bolted-on brights.
+// Status seeds match the Cloud Surfaces artifact: danger a red-orange rust
+// (held counts, error badges), success a forest green (Enforcing), warning
+// a honey amber (stopped), info a slate-blue. Washes and text stops derive
+// from these; do not invent a second badge palette.
 
-/// Danger/error color — deep muted clay.
+/// Danger/error color — red-orange rust.
 /// @type Color
-$fui-danger: #a54f46 !default;
+$fui-danger: #c44732 !default;
 
-/// Success color — sage; green means "contract passing".
+/// Success color — forest green; green means "contract passing".
 /// @type Color
-$fui-success: #7fc9b3 !default;
+$fui-success: #2c8c5f !default;
 
 /// Warning color — honey amber.
 /// @type Color
-$fui-warning: #e0aa5c !default;
+$fui-warning: #c4922a !default;
 
-/// Info color — dusty slate-blue.
+/// Info color — slate-blue.
 /// @type Color
-$fui-info: #7fa6c4 !default;
+$fui-info: #3d7aa8 !default;

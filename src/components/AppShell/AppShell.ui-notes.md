@@ -2,9 +2,8 @@
 
 ## 2026-08-13 — header slot is the reading pane
 
-The header grid area uses `--fui-main-bg` (and forces the child `<header>`
-to the same) instead of `background-color: inherit`. Inherit pulled the
-canvas through and made light-mode headers match the sidebar.
+The header grid area uses `--fui-app-main-bg` (and forces the child
+`<header>` to the same) so the topbar is the reading pane, not the rail.
 
 ## 2026-08-13 — motion
 

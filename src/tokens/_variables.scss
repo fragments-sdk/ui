@@ -441,7 +441,20 @@ $fui-header-z-index: 40 !default;
 // CodeBlock background — shared with Markdown's <pre> prose styling — and
 // selection tint are runtime hooks so consuming apps can preserve their own
 // code-surface treatment without forking either component.
-$fui-code-bg: light-dark(#1d1c1a, #121110) !default;
+// Light stop is the paper tertiary well — not a second dark grey.
+$fui-code-bg: light-dark(#{$fui-bg-tertiary}, #{$fui-dark-bg-tertiary}) !default;
+// Accent capsule — the tertiary well + wash/hairline, so the earned moment
+// sits *into* the page rather than floating a white slab on it (lifted-verdict
+// direction, 2026-08-22). Do not mix toward black: that paints a dark slab on
+// the light canvas.
+$fui-card-accent-bg: $fui-bg-tertiary !default;
+$fui-card-accent-border: color-mix(
+  in srgb,
+  $fui-color-accent 30%,
+  $fui-border
+) !default;
+// Softer than a panel: the capsule is a moment, not another card.
+$fui-card-accent-radius: $fui-radius-xl !default;
 // Selection tint tracks the accent (pine light / sage dark), not the button
 // chrome — the ink-first default theme paints buttons with the inverse
 // surface, which would grey out code selection.
@@ -657,6 +670,12 @@ $fui-code-selection-bg: color-mix(
     --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
     --fui-border-subtle: color-mix(in srgb, var(--fui-border-default) 68%, transparent);
 
+    // Placeholder fills. A skeleton has to read as a *missing fact* against the
+    // card it sits in — a hairline-weight tint is invisible on paper, so the
+    // base leans on the border colour and the highlight is the shimmer stop.
+    --fui-skeleton: color-mix(in srgb, var(--fui-border-default) 62%, var(--fui-bg-secondary));
+    --fui-skeleton-hi: color-mix(in srgb, var(--fui-border-default) 24%, var(--fui-bg-secondary));
+
     // Native browser text selection tracks the accent (pine in light, sage in
     // dark) as a soft wash — matching the Flight Recorder accent-tint.
     // Component-selected states stay tuned per control density.
@@ -784,6 +803,13 @@ $fui-code-selection-bg: color-mix(
 
     --fui-code-bg: #{$fui-code-bg};
     --fui-code-selection-bg: #{$fui-code-selection-bg};
+    --fui-card-accent-bg: var(--fui-bg-tertiary);
+    --fui-card-accent-border: color-mix(
+      in srgb,
+      var(--fui-color-accent) 30%,
+      var(--fui-border)
+    );
+    --fui-card-accent-radius: #{$fui-card-accent-radius};
 
     // Popup/menu active-item highlight — neutral, deliberately stronger than
     // --fui-bg-hover (which is tuned for subtle surface hovers and reads as ~invisible
@@ -794,8 +820,10 @@ $fui-code-selection-bg: color-mix(
     // Product shell and navigation chrome. These stay neutral-first so a
     // dashboard page reads as one system instead of brand-tinted islands.
     --fui-app-canvas-bg: var(--fui-body-bg);
-    --fui-app-main-bg: var(--fui-main-bg);
-    --fui-app-sidebar-bg: color-mix(in srgb, var(--fui-bg-primary) 78%, var(--fui-bg-secondary));
+    // Light: paper rail, warm tertiary canvas (Cloud Surfaces). Dark keeps
+    // the lifted rail on a darker body.
+    --fui-app-main-bg: var(--fui-bg-tertiary);
+    --fui-app-sidebar-bg: var(--fui-body-bg);
     --fui-sidebar-bg: var(--fui-app-sidebar-bg);
     --fui-sidebar-border: var(--fui-border-default);
     --fui-sidebar-item-color: var(--fui-text-secondary);
@@ -1151,6 +1179,11 @@ $fui-code-selection-bg: color-mix(
   --fui-bg-highlight: color-mix(in srgb, var(--fui-text-primary) 10%, transparent);
   --fui-body-bg: #{$fui-dark-body-bg};
   --fui-main-bg: #{$fui-dark-main-bg};
+  --fui-app-main-bg: var(--fui-main-bg);
+  // Paper primary == secondary in dark, so a mix of the two is a no-op.
+  // Tertiary is the lifted rail; main stays the deeper body.
+  --fui-app-sidebar-bg: var(--fui-bg-tertiary);
+  --fui-sidebar-bg: var(--fui-app-sidebar-bg);
   --fui-bg-inverse: #{$fui-dark-bg-inverse};
 
   // Text

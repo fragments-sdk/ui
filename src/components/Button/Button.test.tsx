@@ -53,7 +53,10 @@ describe("Button", () => {
     expect(buttonTokenSection).toContain("--fui-button-primary-shadow: none");
     expect(buttonTokenSection).toContain("--fui-button-neutral-shadow: none");
     expect(buttonTokenSection).toContain("--fui-button-outlined-shadow: none");
-    expect(seedStyles).toContain("$fui-danger: #a54f46 !default");
+    expect(seedStyles).toContain("$fui-danger: #c44732 !default");
+    expect(seedStyles).toContain("$fui-success: #2c8c5f !default");
+    expect(seedStyles).toContain("$fui-warning: #c4922a !default");
+    expect(seedStyles).toContain("$fui-info: #3d7aa8 !default");
   });
 
   it("keeps secondary fill-led and reserves a visible neutral border for outlined", () => {

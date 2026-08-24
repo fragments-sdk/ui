@@ -42,6 +42,14 @@
   @include feedback.empty-state("lg");
 }
 
+// Reserved-but-empty region: a dashed hairline says the space belongs to
+// content that has not arrived, without claiming the weight of a real card.
+.outlined {
+  justify-content: center;
+  border: var(--fui-stroke-hairline, 1px) dashed var(--fui-border-default, $fui-border-default);
+  border-radius: var(--fui-card-radius, var(--fui-radius-lg, $fui-radius-lg));
+}
+
 .icon {
   display: flex;
   align-items: center;
