@@ -78,11 +78,15 @@
   @include table-chrome.body-cell;
 }
 
-// Ledger edge: the first column starts at the surrounding surface's own inset
-// so a table inside a card reads as part of the card, not a box within a box.
-.th:first-child,
-.td:first-child {
-  padding-inline-start: 0;
+// Unbordered ledger edge: the first column starts at the surrounding surface's
+// own inset so a table inside a card reads as part of the card, not a box within
+// a box. A bordered table owns its frame and keeps the recipe's inline inset.
+.wrapper:not(.bordered) > .table {
+  > .thead > .row > .th:first-child,
+  > .tbody > .row > .td:first-child,
+  > .tfoot > .row > .td:first-child {
+    padding-inline-start: 0;
+  }
 }
 
 .selected {

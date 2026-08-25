@@ -1,7 +1,27 @@
+import { resolve } from "node:path";
+
 import * as React from "react";
+import * as sass from "sass";
 import { describe, it, expect } from "vitest";
 import { render, screen, expectNoA11yViolations } from "../../test/utils";
 import { Table } from "./index";
+
+const compiledStyles = sass.compile(
+  resolve(process.cwd(), "src/components/Table/Table.module.scss"),
+  { style: "expanded" }
+).css;
+
+const unborderedFirstHeaderSelector =
+  ".wrapper:not(.bordered) > .table > .thead > .row > .th:first-child";
+const unborderedFirstBodySelector =
+  ".wrapper:not(.bordered) > .table > .tbody > .row > .td:first-child";
+const unborderedFirstFooterSelector =
+  ".wrapper:not(.bordered) > .table > .tfoot > .row > .td:first-child";
+const unborderedInsetRule = `${unborderedFirstHeaderSelector},
+${unborderedFirstBodySelector},
+${unborderedFirstFooterSelector} {
+  padding-inline-start: 0;
+}`;
 
 describe("Table", () => {
   it("renders a table with semantic structure", () => {
@@ -144,6 +164,67 @@ describe("Table", () => {
     );
 
     expect(container.querySelector(".bordered")).toBeInTheDocument();
+  });
+
+  it("removes the leading cell inset only from the owning unbordered ledger", () => {
+    const { container } = render(
+      <Table aria-label="Outer ledger">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Outer column</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell data-testid="outer-body-cell">
+              <Table bordered aria-label="Nested bordered ledger">
+                <Table.Head>
+                  <Table.Row>
+                    <Table.HeaderCell>Nested column</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Head>
+                <Table.Body>
+                  <Table.Row>
+                    <Table.Cell data-testid="nested-body-cell">Nested body</Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+                <Table.Footer>
+                  <Table.Row>
+                    <Table.Cell data-testid="nested-footer-cell">Nested footer</Table.Cell>
+                  </Table.Row>
+                </Table.Footer>
+              </Table>
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+        <Table.Footer>
+          <Table.Row>
+            <Table.Cell data-testid="outer-footer-cell">Outer footer</Table.Cell>
+          </Table.Row>
+        </Table.Footer>
+      </Table>
+    );
+
+    expect(compiledStyles).toContain(unborderedInsetRule);
+    expect(compiledStyles).toContain("padding-inline: var(--_fui-table-cell-inline-inset)");
+
+    const [outerHeader, nestedHeader] = screen.getAllByRole("columnheader");
+    expect(outerHeader.matches(unborderedFirstHeaderSelector)).toBe(true);
+    expect(nestedHeader.matches(unborderedFirstHeaderSelector)).toBe(false);
+
+    expect(screen.getByTestId("outer-body-cell").matches(unborderedFirstBodySelector)).toBe(true);
+    expect(screen.getByTestId("nested-body-cell").matches(unborderedFirstBodySelector)).toBe(false);
+    expect(screen.getByTestId("outer-footer-cell").matches(unborderedFirstFooterSelector)).toBe(
+      true
+    );
+    expect(screen.getByTestId("nested-footer-cell").matches(unborderedFirstFooterSelector)).toBe(
+      false
+    );
+
+    const nestedBorderedWrapper = container.querySelector(".bordered");
+    expect(nestedBorderedWrapper).toContainElement(nestedHeader);
+    expect(nestedBorderedWrapper).toContainElement(screen.getByTestId("nested-body-cell"));
+    expect(nestedBorderedWrapper).toContainElement(screen.getByTestId("nested-footer-cell"));
   });
 
   it("maps legacy size to the canonical density attribute", () => {

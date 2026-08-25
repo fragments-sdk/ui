@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Link } from '../Link';
+import { Stack } from '../Stack';
 import { Table } from '.';
 
 /**
@@ -131,6 +133,47 @@ export const Bordered: Story = {
         </Table.Row>
       </Table.Body>
     </Table>
+  ),
+};
+
+export const BorderedEdgeCases: Story = {
+  args: { bordered: true },
+  render: (args) => (
+    <Stack gap="md">
+      <Table {...args} aria-label="Repository adoption">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Repository</Table.HeaderCell>
+            <Table.HeaderCell>State</Table.HeaderCell>
+            <Table.HeaderCell>Adoption</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>
+              <Link href="#">fragments-sdk/a-repository-with-a-deliberately-long-name</Link>
+            </Table.Cell>
+            <Table.Cell>Enforcing</Table.Cell>
+            <Table.Cell>90%</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+
+      <Table {...args} aria-label="Empty repository adoption">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Repository</Table.HeaderCell>
+            <Table.HeaderCell>State</Table.HeaderCell>
+            <Table.HeaderCell>Adoption</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell colSpan={3}>No repositories to show</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    </Stack>
   ),
 };
 
