@@ -134,3 +134,11 @@ on `#1e1c19`. `--fui-code-text` aliases `--fui-text-primary`.
 fails AA on `--fui-app-main-bg`) and `$fui-dark-color-accent` in dark.
 Gated by `read-safe-contrast.test.ts`. Do not point light link or syntax ink
 at `$fui-color-accent` without re-running that test.
+
+## 2026-09-02 — stroke + control-track Sass variables
+
+`$fui-stroke-{hairline,default,strong}` and
+`$fui-control-track-{micro,sm,md,lg}` now exist in `_variables.scss`, read
+from the measurements map, so `var(--fui-stroke-hairline, $fui-stroke-hairline)`
+satisfies the dual-fallback contract. Before this the only fallback form was
+a raw `1px`, which the docs vocabulary guard forbids.

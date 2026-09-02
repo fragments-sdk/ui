@@ -855,6 +855,12 @@ export interface TabbedCodeBlockProps {
   wordWrap?: boolean;
   /** Maximum height in pixels (enables scrolling) */
   maxHeight?: number;
+  /** Allow collapsing/expanding each tab's code (forwarded to every panel) */
+  collapsible?: boolean;
+  /** Initial collapsed state (only applies when collapsible is true) */
+  defaultCollapsed?: boolean;
+  /** Number of lines to show when collapsed */
+  collapsedLines?: number;
   /** Additional class name */
   className?: string;
   /** Callback fired when a tab's copy button is clicked. Receives the tab label. */
@@ -873,6 +879,9 @@ function TabbedCodeBlock({
   tabsVariant = "pills",
   wordWrap,
   maxHeight,
+  collapsible,
+  defaultCollapsed,
+  collapsedLines,
   className,
   onCopy,
 }: TabbedCodeBlockProps) {
@@ -909,6 +918,9 @@ function TabbedCodeBlock({
                 showLineNumbers={showLineNumbers}
                 wordWrap={wordWrap}
                 maxHeight={maxHeight}
+                collapsible={collapsible}
+                defaultCollapsed={defaultCollapsed}
+                collapsedLines={collapsedLines}
                 onCopy={onCopy ? () => onCopy(tab.label) : undefined}
               />
             </TabsPanel>

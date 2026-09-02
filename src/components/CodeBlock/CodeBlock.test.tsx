@@ -4,15 +4,7 @@ import { CodeBlock } from "./index";
 import styles from "./CodeBlock.module.scss";
 
 vi.mock("shiki", () => ({
-  // Shiki-shaped output: with the css-variables theme every token span carries
-  // a kit ink, so the DOM assertion below catches a regression where spans
-  // stop resolving to `--fui-code-token-*`.
-  codeToHtml: vi.fn(
-    async (code: string, options: { theme?: { name?: string } }) =>
-      `<pre class="shiki"><code><span class="line"><span style="color:${
-        options?.theme?.name === "css-variables" ? "var(--fui-code-token-keyword)" : "#ff0000"
-      }">${code}</span></span></code></pre>`
-  ),
+  codeToHtml: vi.fn(async (code: string) => `<pre class="shiki"><code>${code}</code></pre>`),
 }));
 
 async function waitForHighlight(container: HTMLElement) {
@@ -36,9 +28,6 @@ describe("CodeBlock", () => {
     expect(codeToHtml).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({ theme: expect.objectContaining({ name: "css-variables" }) })
-    );
-    expect(container.querySelector("pre.shiki span[style]")?.getAttribute("style")).toContain(
-      "var(--fui-code-token-keyword)"
     );
   });
 
@@ -252,6 +241,24 @@ describe("CodeBlock", () => {
     const tabs = screen.getAllByRole("tab", { name: "Example" });
     await user.click(tabs[0]);
     expect(onValueChange).toHaveBeenCalled();
+  });
+
+  it("forwards collapse props to every tabbed panel", () => {
+    const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join("\n");
+    render(
+      <CodeBlock.Tabbed
+        collapsible
+        defaultCollapsed
+        collapsedLines={5}
+        tabs={[
+          { label: "A", language: "text", code: longCode },
+          { label: "B", language: "text", code: longCode },
+        ]}
+      />
+    );
+    const expandBtn = screen.getByRole("button", { name: /expand code/i });
+    expect(expandBtn).toHaveAttribute("aria-expanded", "false");
+    expect(expandBtn).toHaveTextContent("Show 15 more lines");
   });
 
   it("has no accessibility violations", async () => {

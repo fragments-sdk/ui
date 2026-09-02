@@ -342,7 +342,7 @@
       "collapsible: boolean (default: false)",
       "defaultCollapsed: boolean (default: false)",
       "collapsedLines: number (default: 5)",
-      "CodeBlock.Tabbed: tabs[] plus optional defaultTab/value/onValueChange for multi-language snippets"
+      "CodeBlock.Tabbed: tabs[] plus optional defaultTab/value/onValueChange for multi-language snippets; collapsible/defaultCollapsed/collapsedLines forward to every panel"
     ],
     "a11yRules": ["A11Y_CODE_SEMANTIC", "A11Y_BTN_LABEL"]
   },

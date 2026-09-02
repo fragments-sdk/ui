@@ -116,7 +116,7 @@
 
   th,
   td {
-    border: var(--fui-stroke-hairline) solid var(--fui-border, $fui-border);
+    border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
     text-align: start;
   }
 

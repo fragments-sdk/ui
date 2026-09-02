@@ -1,6 +1,9 @@
 @use "../tokens/mixins" as mixins;
 @use "typography" as typography;
 
+// Block rhythm is owned by the container (owl selectors below). The element
+// mixins reset inline margins only, so a `.x p { @include paragraph }` rule
+// (specificity 0,1,1) cannot out-rank the owl (0,1,0) and glue the flow.
 @mixin root {
   @include typography.role("body-relaxed");
 
@@ -20,7 +23,7 @@
 @mixin paragraph {
   @include typography.role("body-relaxed");
 
-  margin: 0;
+  margin-inline: 0;
 }
 
 @mixin heading($level) {
@@ -36,7 +39,7 @@
     @error "Unknown prose heading '#{$level}'. Expected 1 through 6.";
   }
 
-  margin: 0;
+  margin-inline: 0;
 }
 
 @mixin list($kind) {

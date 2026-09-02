@@ -20,3 +20,26 @@ now `:global`, so checkbox items drop the stray bullet.
 
 Markdown `a` color is `--fui-link-ink`, not accent, and hover no longer
 drops opacity (that failed AA). Underline on hover stays.
+
+## 2026-09-02 (brief 04)
+
+Diff: `Markdown.module.scss` table cell border now carries the dual fallback
+(`var(--fui-stroke-hairline, $fui-stroke-hairline)`, DRG-D19). The docs'
+`MarkdownRenderer` is the only Markdown path there (react-markdown removed,
+DRG-D05) and passes kit `CodeBlock` with the docs collapse bundle for fences.
+
+### What works
+
+- One renderer for blog posts and error-code guidance; heading offset (0/1)
+  keeps one h2 rung per page (DRG-D18).
+- Table hairlines resolve at build time even without the runtime var.
+
+### What doesn't
+
+- Prose block rhythm depends on the container owl (DRG-D16); a consumer that
+  resets `> * + *` margins glues paragraphs again.
+
+### Candidates
+
+- Expose a `components` preset for "docs fences" so consumers do not each
+  rebuild the `pre` → `CodeBlock` override.

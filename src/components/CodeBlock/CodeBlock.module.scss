@@ -27,9 +27,24 @@
 .wrapper {
   position: relative;
   overflow: hidden;
+  // A hairline keeps the block legible on any ground: the light code surface
+  // and the sunken app main share the same tone, so fill alone can vanish.
+  border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
+    var(--fui-code-border, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   background-color: var(--fui-code-bg, $fui-code-bg);
   color: var(--fui-code-text, var(--fui-text-primary, #{$fui-text-primary}));
+  --shiki-color-text: var(--fui-code-text, var(--fui-text-primary, #{$fui-text-primary}));
+  --shiki-color-background: var(--fui-code-bg, #{$fui-code-bg});
+  --shiki-token-keyword: var(--fui-code-token-keyword, #{$fui-code-token-keyword});
+  --shiki-token-string: var(--fui-code-token-string, #{$fui-code-token-string});
+  --shiki-token-string-expression: var(--fui-code-token-string, #{$fui-code-token-string});
+  --shiki-token-comment: var(--fui-code-token-comment, #{$fui-code-token-comment});
+  --shiki-token-function: var(--fui-code-token-function, #{$fui-code-token-function});
+  --shiki-token-constant: var(--fui-code-token-number, #{$fui-code-token-number});
+  --shiki-token-parameter: var(--fui-code-token-variable, #{$fui-code-token-variable});
+  --shiki-token-punctuation: var(--fui-code-token-punctuation, #{$fui-code-token-punctuation});
+  --shiki-token-link: var(--fui-link-ink, #{$fui-link-ink});
 }
 
 .header {
@@ -38,7 +53,7 @@
   justify-content: space-between;
   min-block-size: action.track("md");
   padding-inline: layout.gap("lg");
-  border-block-end: var(--fui-stroke-hairline) solid
+  border-block-end: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
     var(--fui-code-border, var(--fui-border, #{$fui-border}));
 }
 
@@ -157,7 +172,7 @@
     &:global(.highlighted) {
       margin-inline: calc(-1 * var(--_fui-code-inline-inset));
       padding-inline: var(--_fui-code-inline-inset);
-      border-inline-start: var(--fui-stroke-default) solid
+      border-inline-start: var(--fui-stroke-default, $fui-stroke-default) solid
         var(--fui-color-info-text, $fui-color-info-text);
       background-color: var(--fui-code-highlight-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
     }
