@@ -261,6 +261,24 @@ describe("CodeBlock", () => {
     expect(expandBtn).toHaveTextContent("Show 15 more lines");
   });
 
+  it("uses Expand / Collapse copy when collapseAction is expand", async () => {
+    const user = userEvent.setup();
+    const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join("\n");
+    render(
+      <CodeBlock
+        code={longCode}
+        collapsible
+        defaultCollapsed
+        collapsedLines={6}
+        collapseAction="expand"
+      />
+    );
+    const expandBtn = screen.getByRole("button", { name: /expand code/i });
+    expect(expandBtn).toHaveTextContent("Expand");
+    await user.click(expandBtn);
+    expect(screen.getByRole("button", { name: /collapse code/i })).toHaveTextContent("Collapse");
+  });
+
   it("has no accessibility violations", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     await waitForHighlight(container);

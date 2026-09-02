@@ -1,5 +1,11 @@
 # Markdown — UI notes
 
+## 2026-09-02 — fence highlighting (brief 08)
+
+MDX/prose fences use kit `CodeBlock`. JSX/TSX tag scopes now map to
+`--fui-code-token-function` in `css-variables-theme.ts` so usage blocks
+are not plain ink. Do not add a docs highlighter.
+
 ## 2026-08-13 — fallback keys
 
 The pre-parser fallback keyed paragraphs by text. Blog posts with repeated

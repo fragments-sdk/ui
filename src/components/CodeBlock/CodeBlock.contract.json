@@ -184,6 +184,12 @@
       "default": "5",
       "required": false
     },
+    "collapseAction": {
+      "type": "\"lines\" | \"expand\"",
+      "description": "Collapse control copy: line-count bar, or a single Expand / Collapse control",
+      "default": "lines",
+      "required": false
+    },
     "compact": {
       "type": "boolean",
       "description": "Compact mode with reduced padding",

@@ -1,5 +1,11 @@
 # CodeBlock — UI notes
 
+## 2026-09-02 — Expand control + JSX scopes (brief 08)
+
+`collapseAction="expand"` paints one right-aligned Expand / Collapse control
+instead of “Show N more lines”. JSX/TSX tags and components map to
+`--fui-code-token-function` so usage blocks are not plain ink.
+
 ## 2026-09-02 — theme-aware syntax (Brief 03)
 
 Default `theme` is `css-variables`, not `one-dark-pro`. Shiki 3 dropped the

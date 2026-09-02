@@ -129,6 +129,12 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultCollapsed?: boolean;
   /** Number of lines to show when collapsed */
   collapsedLines?: number;
+  /**
+   * Collapse control copy. `lines` keeps “Show N more lines” / “Show less”
+   * (docs prose). `expand` is one right-aligned Expand / Collapse control
+   * for preview+code capsules.
+   */
+  collapseAction?: "lines" | "expand";
   /** Compact mode with reduced padding */
   compact?: boolean;
   /** Show a persistent copy button (always visible, uses Button component) */
@@ -592,6 +598,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     collapsible = false,
     defaultCollapsed = false,
     collapsedLines = 5,
+    collapseAction = "lines",
     compact = false,
     persistentCopy = false,
     copyPlacement = "auto",
@@ -794,11 +801,17 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
           <button
             type="button"
             onClick={toggleCollapsed}
-            className={styles.collapseButton}
+            className={
+              collapseAction === "expand"
+                ? `${styles.collapseButton} ${styles.collapseExpand}`
+                : styles.collapseButton
+            }
             aria-expanded={!isCollapsed}
             aria-label={isCollapsed ? "Expand code" : "Collapse code"}
           >
-            {isCollapsed ? (
+            {collapseAction === "expand" ? (
+              <span>{isCollapsed ? "Expand" : "Collapse"}</span>
+            ) : isCollapsed ? (
               <>
                 <ChevronDownIcon className={styles.icon} />
                 <span>Show {totalLines - collapsedLines} more lines</span>
@@ -861,6 +874,8 @@ export interface TabbedCodeBlockProps {
   defaultCollapsed?: boolean;
   /** Number of lines to show when collapsed */
   collapsedLines?: number;
+  /** Forwarded to every panel (see CodeBlock `collapseAction`) */
+  collapseAction?: "lines" | "expand";
   /** Additional class name */
   className?: string;
   /** Callback fired when a tab's copy button is clicked. Receives the tab label. */
@@ -882,6 +897,7 @@ function TabbedCodeBlock({
   collapsible,
   defaultCollapsed,
   collapsedLines,
+  collapseAction,
   className,
   onCopy,
 }: TabbedCodeBlockProps) {
@@ -921,6 +937,7 @@ function TabbedCodeBlock({
                 collapsible={collapsible}
                 defaultCollapsed={defaultCollapsed}
                 collapsedLines={collapsedLines}
+                collapseAction={collapseAction}
                 onCopy={onCopy ? () => onCopy(tab.label) : undefined}
               />
             </TabsPanel>
