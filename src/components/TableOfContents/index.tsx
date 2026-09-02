@@ -128,7 +128,7 @@ function TableOfContentsItem({
   trailing,
   className,
   onClick,
-  href: _href,
+  href,
   ...htmlProps
 }: TableOfContentsItemProps) {
   const { depth, hideSubItems } = React.useContext(TocContext);
@@ -140,7 +140,9 @@ function TableOfContentsItem({
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
-    if (e.defaultPrevented) return;
+    // An explicit href is a route, not an in-page anchor: let the browser
+    // (or a wrapping router link) own navigation.
+    if (e.defaultPrevented || href) return;
 
     e.preventDefault();
     const el = document.getElementById(id);
@@ -157,7 +159,7 @@ function TableOfContentsItem({
     <li className={styles.item} data-depth={effectiveDepth} data-active={active || undefined}>
       <a
         {...htmlProps}
-        href={`#${id}`}
+        href={href ?? `#${id}`}
         className={linkClasses}
         onClick={handleClick}
         aria-current={active ? "location" : undefined}

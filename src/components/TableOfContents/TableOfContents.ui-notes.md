@@ -19,3 +19,10 @@ can therefore make both title and rows flush without an internal override.
 `hideSubItems` is additive and defaults to `false`, preserving the released
 hierarchy for existing consumers. Dense page indexes can opt in with
 `hideSubItems`; Docs does so explicitly rather than changing the library default.
+
+## 2026-09-02 — `Item href`
+
+`TableOfContents.Item` was typed with `href` but ignored it. It now renders an
+explicit `href` as a plain route link and skips the anchor scroll handler
+(`onClick` still fires). Docs uses it for a "Related" list beside the page
+index. Anchor behaviour is unchanged when `href` is omitted.

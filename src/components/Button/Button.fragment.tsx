@@ -82,7 +82,7 @@ export default defineFragment(Button, {
           Save the localized account preferences and notify every affected workspace administrator
         </Button>
       ),
-      note: "Long labels wrap instead of clipping or truncating.",
+      note: "Long labels stay on one line; shorten the label or give the button room.",
     },
   },
   guidance: {

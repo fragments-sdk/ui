@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { fireEvent, render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { TableOfContents } from "./index";
 
 const tableOfContentsStyles = readFileSync(
@@ -71,6 +71,22 @@ describe("TableOfContents", () => {
     );
     expect(screen.getByRole("link", { name: "Setup" })).toHaveAttribute("href", "#setup");
     expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute("href", "#props");
+  });
+
+  it("routes items with an explicit href instead of an in-page anchor", () => {
+    const onClick = vi.fn();
+    render(
+      <TableOfContents>
+        <TableOfContents.Item id="link" href="/components/link" onClick={onClick}>
+          Link
+        </TableOfContents.Item>
+      </TableOfContents>
+    );
+    const link = screen.getByRole("link", { name: "Link" });
+    expect(link).toHaveAttribute("href", "/components/link");
+    fireEvent.click(link);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick.mock.calls[0][0].defaultPrevented).toBe(false);
   });
 
   it("marks active item with aria-current", () => {
