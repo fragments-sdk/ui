@@ -68,6 +68,10 @@ export interface HeaderNavItemProps extends Omit<React.HTMLAttributes<HTMLElemen
   active?: boolean;
   /** Link destination */
   href?: string;
+  /** Anchor target, when `href` renders an anchor */
+  target?: React.AnchorHTMLAttributes<HTMLAnchorElement>["target"];
+  /** Anchor rel, when `href` renders an anchor */
+  rel?: React.AnchorHTMLAttributes<HTMLAnchorElement>["rel"];
   /** Render as child element (polymorphic) */
   asChild?: boolean;
   /** Click handler */
