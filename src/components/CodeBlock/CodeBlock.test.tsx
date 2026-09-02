@@ -4,7 +4,15 @@ import { CodeBlock } from "./index";
 import styles from "./CodeBlock.module.scss";
 
 vi.mock("shiki", () => ({
-  codeToHtml: vi.fn(async (code: string) => `<pre class="shiki"><code>${code}</code></pre>`),
+  // Shiki-shaped output: with the css-variables theme every token span carries
+  // a kit ink, so the DOM assertion below catches a regression where spans
+  // stop resolving to `--fui-code-token-*`.
+  codeToHtml: vi.fn(
+    async (code: string, options: { theme?: { name?: string } }) =>
+      `<pre class="shiki"><code><span class="line"><span style="color:${
+        options?.theme?.name === "css-variables" ? "var(--fui-code-token-keyword)" : "#ff0000"
+      }">${code}</span></span></code></pre>`
+  ),
 }));
 
 async function waitForHighlight(container: HTMLElement) {
@@ -17,6 +25,21 @@ describe("CodeBlock", () => {
     // Initially shows loading state with pre/code
     expect(container.querySelector("pre")).toBeInTheDocument();
     expect(container.querySelector("code")).toBeInTheDocument();
+  });
+
+  it("defaults to the css-variables theme and does not pin data-theme", async () => {
+    const { container } = render(<CodeBlock code="const x = 1;" />);
+    const root = container.querySelector('[data-slot="code-block"]');
+    expect(root).not.toHaveAttribute("data-theme");
+    const { codeToHtml } = await import("shiki");
+    await waitForHighlight(container);
+    expect(codeToHtml).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ theme: expect.objectContaining({ name: "css-variables" }) })
+    );
+    expect(container.querySelector("pre.shiki span[style]")?.getAttribute("style")).toContain(
+      "var(--fui-code-token-keyword)"
+    );
   });
 
   it("exposes stable styling slots without adding public props", async () => {
@@ -93,14 +116,14 @@ describe("CodeBlock", () => {
     await waitForHighlight(overlayContainer);
   });
 
-  it('keeps persistent copy visible with a trailing content gutter', async () => {
+  it("keeps persistent copy visible with a trailing content gutter", async () => {
     const { container } = render(<CodeBlock code="npx @usefragments/cli init" persistentCopy />);
     expect(container.querySelector(`.${styles.persistentCopyWrapper}`)).toBeInTheDocument();
     expect(container.querySelector(`.${styles.persistentCopy}`)).toBeInTheDocument();
     await waitForHighlight(container);
   });
 
-  it('copies code to clipboard on copy button click', async () => {
+  it("copies code to clipboard on copy button click", async () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {

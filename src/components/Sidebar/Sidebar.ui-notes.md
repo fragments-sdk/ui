@@ -27,3 +27,11 @@ Default section-label voice changed from quiet title-case to small tracked
 uppercase (2xs / 0.07em / medium) so groups can't be mistaken for items.
 Existing `--fui-sidebar-section-label-*` hooks still override; new hooks:
 `-size`, `-tracking`, `-transform`.
+
+## 2026-09-02 — no viewport cap (Brief 03)
+
+`.root` is `height: 100%` with no `max-height: 100vh`. AppShell owns the
+full-content-height rail border on the grid column; capping the inner
+sidebar at one viewport made the hairline stop mid-page. Standalone
+Sidebar still draws its own `border-inline-end`; inside AppShell the
+column border wins and the inner edge is zeroed.

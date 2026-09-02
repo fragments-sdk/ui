@@ -124,14 +124,17 @@ $fui-info: #3d7aa8 !default;
     color: inherit;
   }
 
+  // Classless prose anchors take the link ink (≥ 4.5:1 on every surface in
+  // both themes); the accent stays for actions. Hover strengthens the rule.
   :where(a:not([class]):not([style])) {
-    color: var(--fui-color-accent, #{$fui-color-accent});
+    color: var(--fui-link-ink, #{$fui-link-ink});
     text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
     text-underline-offset: 0.2em;
-    transition: color 0.15s ease;
+    transition: text-decoration-color 0.15s ease;
 
     &:hover {
-      color: var(--fui-color-accent-hover, #{$fui-color-accent-hover});
+      text-decoration-color: currentColor;
     }
   }
 

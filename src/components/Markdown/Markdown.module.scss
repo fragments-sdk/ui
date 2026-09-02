@@ -22,10 +22,10 @@
   a {
     @include prose.link;
 
-    color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-link-ink, #{$fui-link-ink});
 
     &:hover {
-      opacity: 0.8;
+      text-decoration: underline;
     }
   }
 

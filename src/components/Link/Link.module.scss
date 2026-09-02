@@ -19,10 +19,10 @@
 
 // Variants
 .default {
-  color: var(--fui-link-color, var(--fui-color-accent, #{$fui-color-accent}));
+  color: var(--fui-link-color, var(--fui-link-ink, #{$fui-link-ink}));
 
   &:hover {
-    color: var(--fui-link-color-hover, var(--fui-color-accent-hover, #{$fui-color-accent-hover}));
+    color: var(--fui-link-color-hover, var(--fui-link-ink, #{$fui-link-ink}));
   }
 }
 

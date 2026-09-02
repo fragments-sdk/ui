@@ -448,11 +448,7 @@ $fui-code-bg: light-dark(#{$fui-bg-tertiary}, #{$fui-dark-bg-tertiary}) !default
 // direction, 2026-08-22). Do not mix toward black: that paints a dark slab on
 // the light canvas.
 $fui-card-accent-bg: $fui-bg-tertiary !default;
-$fui-card-accent-border: color-mix(
-  in srgb,
-  $fui-color-accent 30%,
-  $fui-border
-) !default;
+$fui-card-accent-border: color-mix(in srgb, $fui-color-accent 30%, $fui-border) !default;
 // Softer than a panel: the capsule is a moment, not another card.
 $fui-card-accent-radius: $fui-radius-xl !default;
 // Selection tint tracks the accent (pine light / sage dark), not the button
@@ -463,6 +459,30 @@ $fui-code-selection-bg: color-mix(
   var(--fui-color-accent, #f56138) 30%,
   transparent
 ) !default;
+// Default code ink follows primary text so unhighlighted fallback and shiki
+// `css-variables` foreground stay on the same contrast floor.
+$fui-code-text: $fui-text-primary !default;
+// Syntax ink for CodeBlock's css-variables theme. Each light stop is ≥ 4.5:1
+// on the light code well; each dark stop is ≥ 4.5:1 on the dark code well
+// (gated by read-safe-contrast.test.ts).
+$fui-code-token-keyword: #9a3412 !default;
+$fui-code-token-string: #166534 !default;
+$fui-code-token-comment: #5c5348 !default;
+$fui-code-token-function: #1e3a8a !default;
+$fui-code-token-number: #92400e !default;
+$fui-code-token-punctuation: #3d3429 !default;
+$fui-code-token-variable: #3d3429 !default;
+$fui-dark-code-token-keyword: #f56138 !default;
+$fui-dark-code-token-string: #7dcea0 !default;
+$fui-dark-code-token-comment: #a89b8c !default;
+$fui-dark-code-token-function: #8cb4e8 !default;
+$fui-dark-code-token-number: #e8b86d !default;
+$fui-dark-code-token-punctuation: #c9c2b8 !default;
+$fui-dark-code-token-variable: #f0ede9 !default;
+// Prose/link ink. Light is a darker accent step so 4.5:1 holds on
+// --fui-app-main-bg; dark keeps the theme accent (already ≥ 4.5).
+$fui-link-ink: #9a3412 !default;
+$fui-dark-link-ink: $fui-dark-color-accent !default;
 
 // --------------------------------------------
 // CSS Custom Properties Export
@@ -803,12 +823,32 @@ $fui-code-selection-bg: color-mix(
 
     --fui-code-bg: #{$fui-code-bg};
     --fui-code-selection-bg: #{$fui-code-selection-bg};
-    --fui-card-accent-bg: var(--fui-bg-tertiary);
-    --fui-card-accent-border: color-mix(
-      in srgb,
-      var(--fui-color-accent) 30%,
-      var(--fui-border)
+    --fui-code-text: var(--fui-text-primary);
+    --fui-code-token-keyword: light-dark(
+      #{$fui-code-token-keyword},
+      #{$fui-dark-code-token-keyword}
     );
+    --fui-code-token-string: light-dark(#{$fui-code-token-string}, #{$fui-dark-code-token-string});
+    --fui-code-token-comment: light-dark(
+      #{$fui-code-token-comment},
+      #{$fui-dark-code-token-comment}
+    );
+    --fui-code-token-function: light-dark(
+      #{$fui-code-token-function},
+      #{$fui-dark-code-token-function}
+    );
+    --fui-code-token-number: light-dark(#{$fui-code-token-number}, #{$fui-dark-code-token-number});
+    --fui-code-token-punctuation: light-dark(
+      #{$fui-code-token-punctuation},
+      #{$fui-dark-code-token-punctuation}
+    );
+    --fui-code-token-variable: light-dark(
+      #{$fui-code-token-variable},
+      #{$fui-dark-code-token-variable}
+    );
+    --fui-link-ink: light-dark(#{$fui-link-ink}, #{$fui-dark-link-ink});
+    --fui-card-accent-bg: var(--fui-bg-tertiary);
+    --fui-card-accent-border: color-mix(in srgb, var(--fui-color-accent) 30%, var(--fui-border));
     --fui-card-accent-radius: #{$fui-card-accent-radius};
 
     // Popup/menu active-item highlight — neutral, deliberately stronger than

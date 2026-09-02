@@ -99,29 +99,42 @@
 
 .sidebar {
   grid-area: sidebar;
-  position: sticky;
-  top: var(
-    --appshell-header-height,
-    var(--fui-appshell-header-height, $fui-appshell-header-height)
-  );
-  height: calc(
-    100vh - var(
-        --appshell-header-height,
-        var(--fui-appshell-header-height, $fui-appshell-header-height)
-      )
-  );
-  height: calc(
-    100dvh - var(
-        --appshell-header-height,
-        var(--fui-appshell-header-height, $fui-appshell-header-height)
-      )
-  );
+  align-self: stretch;
+  position: relative;
+  height: auto;
+  min-height: 100%;
   z-index: 30;
-  overflow: hidden;
+  overflow: visible;
   background-color: inherit;
+  // Border lives on the grid column so the rail runs the full content
+  // height; the sticky inner sidebar is viewport-tall for nav scrolling.
+  border-inline-end: var(--fui-stroke-hairline, 1px) solid
+    var(
+      --fui-sidebar-border,
+      var(--fui-border-subtle, var(--fui-border-default, #{$fui-border-default}))
+    );
 
   > aside {
+    position: sticky;
+    top: var(
+      --appshell-header-height,
+      var(--fui-appshell-header-height, $fui-appshell-header-height)
+    );
+    height: calc(
+      100vh - var(
+          --appshell-header-height,
+          var(--fui-appshell-header-height, $fui-appshell-header-height)
+        )
+    );
+    height: calc(
+      100dvh - var(
+          --appshell-header-height,
+          var(--fui-appshell-header-height, $fui-appshell-header-height)
+        )
+    );
+    overflow: hidden;
     background-color: inherit;
+    border-inline-end: 0;
   }
 
   // On mobile, sidebar becomes a fixed overlay
@@ -134,33 +147,27 @@
     height: 100vh;
     height: 100dvh;
     z-index: 51;
+    border-inline-end: 0;
 
-    // Allow the sidebar to appear as overlay on mobile
-    & > :global(.root) {
+    > aside {
+      position: relative;
+      top: 0;
       width: var(--appshell-sidebar-expanded-width, 240px);
-    }
-  }
-
-  // Override Sidebar component's height
-  :global(.root) {
-    height: 100%;
-
-    @include below-md {
       height: 100vh;
       height: 100dvh;
     }
   }
 }
 
-// Sidebar in sidebar structure: full height
+// Sidebar in sidebar structure: column stretches both rows; inner sticks
+// from the top of the viewport.
 .sidebarFullHeight {
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
   z-index: var(--fui-header-z-index, $fui-header-z-index);
 
-  :global(.root) {
-    height: 100%;
+  > aside {
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
   }
 }
 

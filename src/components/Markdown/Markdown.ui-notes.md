@@ -15,3 +15,8 @@ on the blog). Markdown ul/ol now render block items with a hanging absolute
 marker; the recipe still supplies marker content and the decimal counter.
 Also: the GFM `task-list-item` selector was module-hashed and never matched —
 now `:global`, so checkbox items drop the stray bullet.
+
+## 2026-09-02 — prose links use `--fui-link-ink` (Brief 03)
+
+Markdown `a` color is `--fui-link-ink`, not accent, and hover no longer
+drops opacity (that failed AA). Underline on hover stays.

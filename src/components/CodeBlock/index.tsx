@@ -6,8 +6,10 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 // Lazy-loaded dependency (shiki)
 // ============================================
 
+type ShikiThemeInput = string | typeof import("./css-variables-theme").FUI_CSS_VARIABLES_THEME;
+
 let _codeToHtml:
-  | ((code: string, options: { lang: string; theme: string }) => Promise<string>)
+  | ((code: string, options: { lang: string; theme: ShikiThemeInput }) => Promise<string>)
   | null = null;
 let _shikiLoadPromise: Promise<void> | null = null;
 let _shikiFailed = false;
@@ -28,6 +30,7 @@ async function loadShikiDeps() {
   await _shikiLoadPromise;
 }
 import { TabsRoot, TabsList, Tab, TabsPanel } from "../Tabs";
+import { FUI_CSS_VARIABLES_THEME } from "./css-variables-theme";
 import styles from "./CodeBlock.module.scss";
 
 export type CodeBlockLanguage =
@@ -76,6 +79,7 @@ const LANGUAGE_ALIASES: Partial<Record<CodeBlockLanguage, string>> = {
 
 /** Available syntax highlighting themes */
 export type CodeBlockTheme =
+  | "css-variables"
   | "synthwave-84"
   | "github-dark"
   | "github-light"
@@ -95,7 +99,7 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   code: string;
   /** Programming language for syntax highlighting */
   language?: CodeBlockLanguage;
-  /** Syntax highlighting theme */
+  /** Syntax highlighting theme. Default follows `--fui-code-token-*` via shiki css-variables. */
   theme?: CodeBlockTheme;
   /** Show copy button */
   showCopy?: boolean;
@@ -559,7 +563,7 @@ function processShikiHtml(html: string, options: ProcessOptions): string {
     if (/^<span class="line([^"]*)">/.test(line)) {
       return line.replace(
         /^<span class="line([^"]*)">/,
-        `<span class="${lineClass}$1">${lineNumHtml}`,
+        `<span class="${lineClass}$1">${lineNumHtml}`
       );
     }
     return `<span class="${lineClass}">${lineNumHtml}${line}</span>`;
@@ -573,7 +577,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   {
     code,
     language = "tsx",
-    theme = "one-dark-pro",
+    theme = "css-variables",
     showCopy = true,
     title,
     filename,
@@ -646,7 +650,9 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
 
       try {
         const resolvedLang = LANGUAGE_ALIASES[language] || language;
-        const html = await _codeToHtml(visibleCode, { lang: resolvedLang, theme });
+        const shikiTheme: ShikiThemeInput =
+          theme === "css-variables" ? FUI_CSS_VARIABLES_THEME : theme;
+        const html = await _codeToHtml(visibleCode, { lang: resolvedLang, theme: shikiTheme });
         return processShikiHtml(html, {
           showLineNumbers,
           startLineNumber,
@@ -725,7 +731,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     : undefined;
 
   return (
-    <div ref={ref} {...htmlProps} className={classNames} data-slot="code-block" data-theme="dark">
+    <div ref={ref} {...htmlProps} className={classNames} data-slot="code-block">
       {title && (
         <div className={styles.title} data-slot="code-block-title">
           {title}

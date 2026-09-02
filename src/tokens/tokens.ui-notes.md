@@ -100,7 +100,7 @@ $fui-icon-md)` → `16px`) but copies a custom property's value through
 - **Motion token families registered (2026-08-21).** `--fui-anim-offset-sm/md`,
   loop durations `--fui-duration-spin/pulse/shimmer` (800/1500/2000ms — easing
   stays per-effect), and `--fui-overlay-layer-swipe/backdrop/modal/anchored/
-  tooltip` (49/50/51/52/60) now emit from `:root`. All spinners, pulses,
+tooltip` (49/50/51/52/60) now emit from `:root`. All spinners, pulses,
   shimmers, and overlay z-indexes ride these; new looping animations must not
   hardcode seconds. `_measurements.generated.scss` is also a contract token
   source (fragments.config.ts) so measurement vars are real vocabulary.
@@ -115,9 +115,22 @@ $fui-icon-md)` → `16px`) but copies a custom property's value through
   Static under `prefers-reduced-motion`.
 - `--fui-card-accent-bg` moved from `--fui-bg-elevated` to `--fui-bg-tertiary`
   and `--fui-card-accent-radius` from `radius-lg` to `radius-xl`: the earned
-  moment sits *into* the page as a warm well rather than floating a white slab
+  moment sits _into_ the page as a warm well rather than floating a white slab
   on it (approved lifted-verdict direction, 2026-08-22). Covered by
   `baseline-surfaces.test.ts`.
 - Open: the approved mockup draws the capsule at 24px radius; the ramp tops
   out at `radius-xl` (12px at Cloud's 14px rem). A display radius step would
   close it.
+
+## 2026-09-02 — read-safe syntax + link ink (Brief 03)
+
+`--fui-code-token-{keyword,string,comment,function,number,punctuation,variable}`
+and `--fui-link-ink` emit from `:root` as `light-dark($light, $dark)`. Light
+syntax ink is a darker paper-and-coral set so each stop is ≥ 4.5:1 on
+`--fui-code-bg` (`#f2ede7`). Dark syntax ink is a lifted coral/sage/ink set
+on `#1e1c19`. `--fui-code-text` aliases `--fui-text-primary`.
+
+`--fui-link-ink` is `#9a3412` in light (a darker accent step; coral `#f56138`
+fails AA on `--fui-app-main-bg`) and `$fui-dark-color-accent` in dark.
+Gated by `read-safe-contrast.test.ts`. Do not point light link or syntax ink
+at `$fui-color-accent` without re-running that test.

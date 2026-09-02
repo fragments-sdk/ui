@@ -17,7 +17,7 @@
   "propsSummary": [
     "code: string (required)",
     "language: tsx|typescript|ts|javascript|js|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext|text (default: tsx)",
-    "theme: synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: one-dark-pro)",
+    "theme: css-variables|synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: css-variables)",
     "showCopy: boolean (default: true)",
     "title: string",
     "filename: string",
@@ -89,10 +89,11 @@
     },
     "theme": {
       "type": "enum",
-      "description": "Syntax highlighting theme",
-      "default": "one-dark-pro",
+      "description": "Syntax highlighting theme. css-variables maps spans onto --fui-code-token-* so both themes stay readable.",
+      "default": "css-variables",
       "required": false,
       "values": [
+        "css-variables",
         "synthwave-84",
         "github-dark",
         "github-light",
@@ -325,7 +326,7 @@
     "propsSummary": [
       "code: string - required code content",
       "language: tsx|typescript|javascript|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext",
-      "theme: synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: one-dark-pro)",
+      "theme: css-variables|synthwave-84|github-dark|github-light|one-dark-pro|dracula|nord|monokai|vitesse-dark|vitesse-light|min-dark|min-light (default: css-variables)",
       "showCopy: boolean (default: true)",
       "copyPlacement: auto|header|overlay (default: auto)",
       "title: string - optional external label",
