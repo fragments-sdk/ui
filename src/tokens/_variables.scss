@@ -871,10 +871,11 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     // Product shell and navigation chrome. These stay neutral-first so a
     // dashboard page reads as one system instead of brand-tinted islands.
     --fui-app-canvas-bg: var(--fui-body-bg);
-    // Light: paper rail, warm tertiary canvas (Cloud Surfaces). Dark keeps
-    // the lifted rail on a darker body.
-    --fui-app-main-bg: var(--fui-bg-tertiary);
-    --fui-app-sidebar-bg: var(--fui-body-bg);
+    // Same surface order in both themes: the rail is recessed, the main
+    // reading sheet is raised. Light: tertiary paper rail, body-bg sheet.
+    // Dark keeps the lifted rail on a deeper body.
+    --fui-app-main-bg: var(--fui-body-bg);
+    --fui-app-sidebar-bg: var(--fui-bg-tertiary);
     --fui-sidebar-bg: var(--fui-app-sidebar-bg);
     --fui-sidebar-border: var(--fui-border-default);
     --fui-sidebar-item-color: var(--fui-text-secondary);

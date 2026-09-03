@@ -7,7 +7,7 @@ export default defineFragment(Button, {
   meta: {
     name: "Button",
     purpose: "Triggers an action — save, submit, delete, open.",
-    category: "forms",
+    category: "actions",
     status: "stable",
     tags: ["action", "button", "form", "interactive"],
   },

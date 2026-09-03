@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Tooltip",
   "description": "Shows a one-line hint when a control is hovered or focused.",
-  "category": "feedback",
+  "category": "overlays",
   "tags": ["tooltip", "hint", "help", "hover", "contextual"],
   "status": "stable",
   "sourcePath": "src/components/Tooltip/index.tsx",

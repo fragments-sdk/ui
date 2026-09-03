@@ -7,7 +7,7 @@ export default defineFragment(Dialog, {
   meta: {
     name: "Dialog",
     purpose: "Blocks the page with one focused task the user must finish or dismiss.",
-    category: "feedback",
+    category: "overlays",
     status: "stable",
     tags: ["modal", "dialog", "overlay", "popup", "confirmation"],
   },

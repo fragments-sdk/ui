@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Theme",
   "description": "Gives every component below it a light, dark, or system color mode, and remembers the choice.",
-  "category": "navigation",
+  "category": "utilities",
   "tags": ["theme", "dark-mode", "light-mode", "provider", "toggle"],
   "status": "stable",
   "sourcePath": "src/components/Theme/index.tsx",

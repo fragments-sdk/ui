@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Textarea",
   "description": "Collects multi-line text for longer form content.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["input", "text", "form", "multiline"],
   "status": "stable",
   "sourcePath": "src/components/Textarea/index.tsx",

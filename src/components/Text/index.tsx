@@ -14,6 +14,7 @@ export type TextRole =
   | "title-sm"
   | "title-md"
   | "title-lg"
+  | "display"
   | "code";
 
 export type TextSize = "2xs" | "xs" | "sm" | "base" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";

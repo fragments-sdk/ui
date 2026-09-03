@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Checkbox",
   "description": "Selects options that take effect when a form is submitted.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["checkbox", "form", "boolean", "selection", "input"],
   "status": "stable",
   "sourcePath": "src/components/Checkbox/index.tsx",

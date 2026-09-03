@@ -270,8 +270,9 @@
   @include action.size("sm");
 
   inline-size: 100%;
-  border-block-start: 0;
-  background: linear-gradient(to bottom, transparent, var(--fui-code-bg, $fui-code-bg) 40%);
+  border-block-start: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
+    var(--fui-border, $fui-border);
+  background: var(--fui-code-bg, $fui-code-bg);
   color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
   cursor: pointer;
 

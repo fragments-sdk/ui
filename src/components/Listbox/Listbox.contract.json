@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Listbox",
   "description": "Shows a keyboard-navigable list of options with no trigger of its own.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["listbox", "search", "autocomplete", "combobox", "command", "dropdown"],
   "status": "stable",
   "sourcePath": "src/components/Listbox/index.tsx",

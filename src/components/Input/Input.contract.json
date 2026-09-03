@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Input",
   "description": "Collects a single line of user-entered text.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["form", "input", "text"],
   "status": "stable",
   "sourcePath": "src/components/Input/index.tsx",

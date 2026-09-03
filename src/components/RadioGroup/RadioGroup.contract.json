@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "RadioGroup",
   "description": "Selects one option from a mutually exclusive set.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["form", "radio", "selection", "options"],
   "status": "stable",
   "sourcePath": "src/components/RadioGroup/index.tsx",

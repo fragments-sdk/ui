@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ButtonGroup",
   "description": "Lays out related buttons in a row with one shared gap and alignment.",
-  "category": "forms",
+  "category": "actions",
   "tags": ["button", "group", "toolbar", "actions", "layout"],
   "status": "stable",
   "sourcePath": "src/components/ButtonGroup/index.tsx",

@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Slider",
   "description": "Selects a numeric value within a defined range.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["slider", "range", "input", "number", "control"],
   "status": "stable",
   "sourcePath": "src/components/Slider/index.tsx",

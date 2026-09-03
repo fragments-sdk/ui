@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Switch",
   "description": "Toggles a setting that takes effect immediately.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["switch", "toggle", "boolean", "settings", "preference"],
   "status": "stable",
   "sourcePath": "src/components/Switch/index.tsx",

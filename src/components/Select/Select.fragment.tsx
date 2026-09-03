@@ -5,7 +5,7 @@ export default defineFragment(Select, {
   meta: {
     name: "Select",
     purpose: "Opens a list and returns the single option the user picks.",
-    category: "forms",
+    category: "inputs",
     status: "stable",
     tags: ["select", "dropdown", "form", "options", "picker"],
   },

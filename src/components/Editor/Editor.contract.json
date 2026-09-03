@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Editor",
   "description": "Edits rich text with formatting, autosave, and a word count.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["editor", "rich-text", "markdown", "toolbar", "writing", "blog", "content"],
   "status": "stable",
   "dependencies": [

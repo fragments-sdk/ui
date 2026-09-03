@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Menu",
   "description": "Drops a list of actions below a trigger, driveable entirely by keyboard.",
-  "category": "feedback",
+  "category": "overlays",
   "tags": ["menu", "dropdown", "actions", "context-menu", "commands", "submenu"],
   "status": "stable",
   "sourcePath": "src/components/Menu/index.tsx",

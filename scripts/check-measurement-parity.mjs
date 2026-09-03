@@ -24,7 +24,7 @@ delete missingRole.typography.caption;
 assert.throws(() => validateMeasurements(missingRole), /typography keys must be exactly/);
 
 const extraRole = copyMeasurements();
-extraRole.typography.display = extraRole.typography.caption;
+extraRole.typography.hero = extraRole.typography.caption;
 assert.throws(() => validateMeasurements(extraRole), /typography keys must be exactly/);
 
 const missingField = copyMeasurements();

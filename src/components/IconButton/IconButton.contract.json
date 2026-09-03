@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "IconButton",
   "description": "Runs an action from an icon alone, for toolbars and table rows.",
-  "category": "forms",
+  "category": "actions",
   "tags": ["action", "button", "icon", "toolbar", "interactive"],
   "status": "stable",
   "sourcePath": "src/components/IconButton/index.tsx",

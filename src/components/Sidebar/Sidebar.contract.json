@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Sidebar",
   "description": "Collapsible navigation panel that turns into a drawer on mobile.",
-  "category": "navigation",
+  "category": "layout",
   "tags": ["sidebar", "navigation", "drawer", "menu", "layout"],
   "status": "stable",
   "sourcePath": "src/components/Sidebar/index.tsx",

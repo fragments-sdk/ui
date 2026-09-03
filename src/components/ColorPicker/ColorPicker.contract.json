@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ColorPicker",
   "description": "Selects a color through a visual picker and hexadecimal input.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["color", "picker", "input", "hex", "swatch", "theme"],
   "status": "stable",
   "dependencies": [

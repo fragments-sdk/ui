@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Chip",
   "description": "Pill control for filtering, multi-select, and removable tags.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["chip", "tag", "filter", "selection", "multi-select", "action"],
   "status": "stable",
   "sourcePath": "src/components/Chip/index.tsx",

@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "ToggleGroup",
   "description": "Picks exactly one option from a short row of toggle buttons.",
-  "category": "forms",
+  "category": "actions",
   "tags": ["toggle", "group", "fragmented", "control", "tabs", "switch"],
   "status": "stable",
   "sourcePath": "src/components/ToggleGroup/index.tsx",

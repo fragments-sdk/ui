@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "VisuallyHidden",
   "description": "Keeps text in the accessibility tree while taking it off the screen.",
-  "category": "navigation",
+  "category": "utilities",
   "tags": ["accessibility", "a11y", "screen-reader", "hidden", "sr-only"],
   "status": "stable",
   "sourcePath": "src/components/VisuallyHidden/index.tsx",

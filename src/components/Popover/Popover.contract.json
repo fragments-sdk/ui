@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Popover",
   "description": "Anchors interactive content to a trigger without blocking the page.",
-  "category": "feedback",
+  "category": "overlays",
   "tags": ["popover", "overlay", "dropdown", "floating", "contextual"],
   "status": "stable",
   "sourcePath": "src/components/Popover/index.tsx",

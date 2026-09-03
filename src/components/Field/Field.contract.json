@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Field",
   "description": "Composes labels, descriptions, validation, and errors around a form control.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["form", "field", "validation", "label", "error", "input", "accessible"],
   "status": "stable",
   "sourcePath": "src/components/Field/index.tsx",

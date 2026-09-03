@@ -218,6 +218,12 @@
       "weight": 400,
       "tracking": "0"
     },
+    "display": {
+      "size": "32px",
+      "line": "40px",
+      "weight": 600,
+      "tracking": "-0.02em"
+    },
     "title-sm": {
       "size": "16px",
       "line": "24px",

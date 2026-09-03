@@ -127,7 +127,7 @@
     {
       "name": "Screen",
       "description": "Covers the surface it sits on and names the wait.",
-      "code": "<div\n  style={{\n    position: 'relative',\n    width: '300px',\n    height: '200px',\n    border: '1px solid var(--fui-border)',\n    borderRadius: 'var(--fui-radius-md)',\n    overflow: 'hidden',\n  }}\n>\n  <Loading.Screen size=\"lg\" label=\"Loading application…\" showLabel />\n</div>"
+      "code": "<div\n  style={{\n    position: 'relative',\n    contain: 'layout',\n    width: '300px',\n    height: '200px',\n    border: '1px solid var(--fui-border)',\n    borderRadius: 'var(--fui-radius-md)',\n    overflow: 'hidden',\n  }}\n>\n  <Loading.Screen size=\"lg\" label=\"Loading application…\" showLabel />\n</div>"
     }
   ],
   "ai": {

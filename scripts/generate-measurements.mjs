@@ -44,6 +44,7 @@ const TYPOGRAPHY_ROLES = [
   "title-sm",
   "title-md",
   "title-lg",
+  "display",
   "code",
 ];
 
@@ -86,6 +87,7 @@ const ACCEPTED_TYPOGRAPHY_HASHES = {
   "title-sm": "25955d11dcf212058e025e5eff4c7616f3ac0e9ccaefc8d7be32563458ef9a9a",
   "title-md": "c6ee39954a5b7bcd3c24179cb7f9ffe8729e273077b3f65c0384320848c28fe8",
   "title-lg": "d730a9945f991fca7764a2ea9ca804b1802331b20699cf294e4100d6bf3e0635",
+  display: "12185204877c7f8aac81d7ced347b5fab8fe5f320d060fadebec130122b3d528",
   code: "57dadb81bc6066d5af50ae3505fc89675b5ab0f983385f14dc0fe570504c41ca",
 };
 

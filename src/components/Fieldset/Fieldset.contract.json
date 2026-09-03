@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Fieldset",
   "description": "Groups related form controls under an accessible legend.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["form", "fieldset", "group", "legend", "accessible"],
   "status": "stable",
   "sourcePath": "src/components/Fieldset/index.tsx",

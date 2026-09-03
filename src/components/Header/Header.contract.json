@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Header",
   "description": "Composes brand, navigation, search, and actions into one responsive app bar.",
-  "category": "navigation",
+  "category": "layout",
   "tags": ["header", "navigation", "navbar", "brand", "layout", "dropdown"],
   "status": "stable",
   "sourcePath": "src/components/Header/index.tsx",

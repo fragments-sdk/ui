@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Drawer",
   "description": "Slides a panel in from a screen edge and dims the page behind it.",
-  "category": "feedback",
+  "category": "overlays",
   "tags": ["drawer", "sheet", "panel", "sidebar", "slide-over"],
   "status": "stable",
   "sourcePath": "src/components/Drawer/index.tsx",

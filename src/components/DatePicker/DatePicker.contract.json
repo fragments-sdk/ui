@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "DatePicker",
   "description": "Selects a date or date range from a calendar.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["date", "picker", "calendar", "range", "form", "input"],
   "status": "stable",
   "dependencies": [

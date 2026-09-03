@@ -2,7 +2,7 @@
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Combobox",
   "description": "Filters a list of options as the user types.",
-  "category": "forms",
+  "category": "inputs",
   "tags": ["combobox", "autocomplete", "search", "select", "typeahead", "form", "multiselect"],
   "status": "stable",
   "sourcePath": "src/components/Combobox/index.tsx",

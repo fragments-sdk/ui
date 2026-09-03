@@ -22,7 +22,7 @@ export function checkCssLoaded(): void {
           "  // next.config.ts\n" +
           "  transpilePackages: ['@usefragments/ui']\n\n" +
           "Or run: npx @usefragments/cli setup\n\n" +
-          "Docs: https://usefragments.com/getting-started"
+          "Docs: https://usefragments.com/components/install"
       );
     }
   });
