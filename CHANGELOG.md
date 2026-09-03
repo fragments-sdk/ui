@@ -1,5 +1,42 @@
 # @usefragments/ui
 
+## 1.7.0
+
+### Minor Changes
+
+- [#493](https://github.com/fragments-sdk/fragments/pull/493) [`242ee09`](https://github.com/fragments-sdk/fragments/commit/242ee09b16846bef4e91c9fabb85c18b772d6cd6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add an opt-in compact hierarchy to `TableOfContents`, improved `ScrollArea`
+  edge fades, configurable `NavigationMenu` mobile breakpoints, a compact icon
+  appearance for `ThemeToggle`, and a dotted underline treatment for inline
+  `Link` components. Introduce semantic surface roles and refresh the baseline
+  typography to Instrument Sans with JetBrains Mono. Existing `ScrollArea` and
+  `TableOfContents` defaults remain backward compatible.
+
+### Patch Changes
+
+- [#587](https://github.com/fragments-sdk/fragments/pull/587) [`7e5fc77`](https://github.com/fragments-sdk/fragments/commit/7e5fc77aff84e442e98d68a71c4e24e9dc7a46af) Thanks [@ConanMcN](https://github.com/ConanMcN)! - `CodeBlock` accepts `collapseAction`: `"lines"` keeps “Show N more lines”,
+  `"expand"` is one right-aligned Expand / Collapse control. JSX/TSX tags map
+  onto `--fui-code-token-function` so usage blocks highlight in both themes.
+
+- [#493](https://github.com/fragments-sdk/fragments/pull/493) [`fe1314d`](https://github.com/fragments-sdk/fragments/commit/fe1314dae4f664d8f488dac26ea86f5dd3a147f6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Keep in-repo agent `*.ui-notes.md` session logs out of the published
+  `@usefragments/ui` tarball. They are working notes, not a consumer contract.
+
+- [#530](https://github.com/fragments-sdk/fragments/pull/530) [`9de0c55`](https://github.com/fragments-sdk/fragments/commit/9de0c55dd97c61b8d5ccbd32891c834f3355be98) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Keep the canonical cell inset on bordered Tables so headers, rows, empty
+  content, and hover states no longer sit against the component frame. Unbordered
+  card ledgers retain their flush leading edge.
+
+- [#493](https://github.com/fragments-sdk/fragments/pull/493) [`a9b030f`](https://github.com/fragments-sdk/fragments/commit/a9b030f2879de9dd06b521d7c7a0df1e0192eb5d) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Restore the SCSS build-time half of the design-token contract in Switch and
+  Editor, so their surfaces still resolve when a consumer loads component CSS
+  without the token layer or ships a partial theme. Switch previously derived
+  every off-state surface from bare `var()` references inside `color-mix()`,
+  which made the whole declaration invalid and rendered the control fully
+  transparent — its off state was indistinguishable from its on state.
+
+- [#584](https://github.com/fragments-sdk/fragments/pull/584) [`4ab157b`](https://github.com/fragments-sdk/fragments/commit/4ab157bd9c01ccaeaf503756875024a9546407b2) Thanks [@ConanMcN](https://github.com/ConanMcN)! - `TableOfContents.Item` now honours an explicit `href`. Pass it to list sibling pages beside the in-page index; the item renders a plain route link and leaves navigation to the browser or a wrapping router link instead of scrolling to an anchor.
+
+- [#581](https://github.com/fragments-sdk/fragments/pull/581) [`74b6a2a`](https://github.com/fragments-sdk/fragments/commit/74b6a2ab2f87869d2cb803a36217d5a072b66313) Thanks [@ConanMcN](https://github.com/ConanMcN)! - `Header.NavItem` and `Header.MobileNavLink` accept `target` and `rel`, so a nav
+  row can open an external destination in a new tab without wrapping a second
+  anchor inside the item.
+
 ## 1.6.0
 
 ### Minor Changes
