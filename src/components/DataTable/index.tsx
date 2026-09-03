@@ -6,6 +6,7 @@ import styles from "./DataTable.module.scss";
 import { Checkbox } from "../Checkbox";
 import { ExpandIcon, SortAscIcon, SortDescIcon, SortIcon } from "./DataTable.icons";
 import { DataTableSkeletonRows, useArrowKeyRowNav } from "./DataTable.support";
+import { isDevelopmentBuild } from "../../utils/env";
 
 // ============================================
 // Dependency (@tanstack/react-table) — lazy import()
@@ -36,7 +37,7 @@ function loadReactTable(): Promise<void> {
         _reactTable = (await import("@tanstack/react-table")) as unknown as ReactTableModule;
       } catch {
         _reactTableFailed = true;
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopmentBuild()) {
           console.warn(
             "[@usefragments/ui] DataTable: @tanstack/react-table is not installed. " +
               "Rendering a static table without sorting, selection, or expansion. " +

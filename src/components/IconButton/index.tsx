@@ -4,6 +4,7 @@ import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./IconButton.module.scss";
+import { isProductionBuild } from "../../utils/env";
 
 /**
  * Compact square button for icon-only affordances — topbar actions, row
@@ -56,7 +57,7 @@ const IconButtonRoot = React.forwardRef<HTMLButtonElement, IconButtonProps>(func
   },
   ref
 ) {
-  if (process.env.NODE_ENV !== "production" && !ariaLabel && !ariaLabelledBy) {
+  if (!isProductionBuild() && !ariaLabel && !ariaLabelledBy) {
     console.warn(
       "[IconButton] Icon-only buttons need an accessible name. Provide `aria-label` or `aria-labelledby`."
     );

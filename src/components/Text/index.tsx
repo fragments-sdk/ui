@@ -1,5 +1,6 @@
 import * as React from "react";
 import styles from "./Text.module.scss";
+import { isProductionBuild } from "../../utils/env";
 
 /**
  * Typography component for rendering text with consistent styling.
@@ -121,7 +122,7 @@ const TextRoot = React.forwardRef<HTMLElement, TextProps>(function Text(
     ? [size, variant, weight, font, letterSpacing].some((value) => value !== undefined)
     : false;
 
-  if (process.env.NODE_ENV !== "production" && ignoredLegacyProps) {
+  if (!isProductionBuild() && ignoredLegacyProps) {
     console.warn(
       "[Text] Semantic role takes precedence over size, variant, weight, font, and letterSpacing."
     );

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { mergeAriaIds } from "../../utils/aria";
 import styles from "./Chart.module.scss";
+import { isDevelopmentBuild } from "../../utils/env";
 
 // ============================================
 // Types (self-owned — no external dependency for types)
@@ -74,7 +75,7 @@ function loadChartDeps(): Promise<void> {
         _RechartsLegend = rc.Legend as unknown as React.ComponentType<Record<string, unknown>>;
       } catch {
         _chartFailed = true;
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopmentBuild()) {
           console.warn(
             "[@usefragments/ui] Chart: recharts is not installed. " +
               "Install it with: npm install recharts"

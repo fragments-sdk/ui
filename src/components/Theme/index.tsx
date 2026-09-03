@@ -81,7 +81,7 @@ function ThemeProvider({
   const systemPreference = useSystemPreference();
 
   // Warn on deprecated prop usage (dev only)
-  if (process.env.NODE_ENV !== "production" && defaultTheme !== undefined) {
+  if (!isProductionBuild() && defaultTheme !== undefined) {
     console.warn(
       "[Fragments] ThemeProvider: `defaultTheme` is deprecated. Use `defaultMode` instead. " +
         "`defaultTheme` will be removed in v1.0."
@@ -194,6 +194,7 @@ export { ThemeProvider, ThemeToggle, useTheme };
 // Import + re-export seed derivation types — canonical definitions in utils/seed-derivation.ts
 import type { NeutralPalette, DensityPreset, RadiusStyle } from "../../utils/seed-derivation";
 import { applyMeasurementSelection } from "../../measurements";
+import { isProductionBuild } from "../../utils/env";
 export type { NeutralPalette, DensityPreset, RadiusStyle };
 
 export interface ConfigureThemeOptions {

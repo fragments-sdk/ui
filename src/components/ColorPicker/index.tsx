@@ -25,7 +25,7 @@ function loadColorfulDeps(): Promise<void> {
         _HexColorPicker = rc.HexColorPicker;
       } catch {
         _colorfulFailed = true;
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopmentBuild()) {
           console.warn(
             "[@usefragments/ui] ColorPicker: react-colorful is not installed. " +
               "Install it with: npm install react-colorful"
@@ -55,6 +55,7 @@ import { Field } from "@base-ui/react/field";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import { Input } from "../Input";
 import styles from "./ColorPicker.module.scss";
+import { isDevelopmentBuild } from "../../utils/env";
 
 export interface ColorPickerProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,

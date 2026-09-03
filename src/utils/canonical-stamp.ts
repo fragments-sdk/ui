@@ -1,3 +1,5 @@
+import { isProductionBuild } from "./env";
+
 export type FragmentsCanonicalStampProps = {
   "data-fc-canonical"?: string;
   "data-fc-slot"?: string;
@@ -32,16 +34,4 @@ export function fragmentsCanonicalStampProps(
     "data-fc-slot": slot,
     "data-fc-contract": `source:@usefragments/ui#${component}`,
   };
-}
-
-function isProductionBuild(): boolean {
-  try {
-    // Bundlers statically replace this member expression, so production builds
-    // collapse to `"production" === "production"` and the stamp drops out. When
-    // `process` is genuinely absent (unbundled browser), the reference throws
-    // and we treat it as non-production (emit).
-    return process.env.NODE_ENV === "production";
-  } catch {
-    return false;
-  }
 }

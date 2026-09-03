@@ -6,6 +6,7 @@ import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
 import { POPUP_OFFSET_PX } from "../../recipes/popup";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./DatePicker.module.scss";
+import { isDevelopmentBuild } from "../../utils/env";
 
 // ============================================
 // Types (self-owned — no external dependency for types)
@@ -249,7 +250,7 @@ function loadDayPickerDeps(): Promise<void> {
         _DayFlag = rdp.DayFlag as unknown as RdpEnum;
       } catch {
         _rdpFailed = true;
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopmentBuild()) {
           console.warn(
             "[@usefragments/ui] DatePicker: react-day-picker is not installed. " +
               "Install it with: npm install react-day-picker"

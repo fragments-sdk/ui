@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Markdown.module.scss';
+import * as React from "react";
+import styles from "./Markdown.module.scss";
+import { isDevelopmentBuild } from "../../utils/env";
 
 // ============================================
 // Types
@@ -10,7 +11,7 @@ import styles from './Markdown.module.scss';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MarkdownComponentMap = Record<string, React.ComponentType<any>>;
 
-export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   /** Markdown string to render */
   content: string;
   /** Override map for markdown element components */
@@ -47,22 +48,22 @@ function loadDeps(): Promise<void> {
   if (!loadPromise) {
     loadPromise = (async () => {
       try {
-        const mod = await import('react-markdown');
+        const mod = await import("react-markdown");
         ReactMarkdown = ((mod as { default?: ReactMarkdownType }).default ??
           mod) as ReactMarkdownType;
       } catch {
         loadFailed = true;
-        if (process.env.NODE_ENV === 'development') {
+        if (isDevelopmentBuild()) {
           console.warn(
-            '[@usefragments/ui] Markdown: react-markdown is not installed. ' +
-            'Install it with: npm install react-markdown remark-gfm'
+            "[@usefragments/ui] Markdown: react-markdown is not installed. " +
+              "Install it with: npm install react-markdown remark-gfm"
           );
         }
         return;
       }
 
       try {
-        const mod = await import('remark-gfm');
+        const mod = await import("remark-gfm");
         remarkGfm = (mod as { default?: unknown }).default ?? mod;
       } catch {
         // remark-gfm is optional; markdown still works without it
@@ -91,49 +92,47 @@ function FallbackRenderer({ content }: { content: string }) {
 // Component
 // ============================================
 
-const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(
-  function Markdown({ content, components: componentOverrides, className, ...htmlProps }, ref) {
-    // The parser resolves asynchronously, so the first mount on a page renders
-    // the fallback and then swaps. Both module-level results are cached, so
-    // every later mount is synchronous; an app that knows prose is coming can
-    // skip even the first swap by calling Markdown.preload() up front.
-    const [, rerender] = React.useReducer((n: number) => n + 1, 0);
+const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(function Markdown(
+  { content, components: componentOverrides, className, ...htmlProps },
+  ref
+) {
+  // The parser resolves asynchronously, so the first mount on a page renders
+  // the fallback and then swaps. Both module-level results are cached, so
+  // every later mount is synchronous; an app that knows prose is coming can
+  // skip even the first swap by calling Markdown.preload() up front.
+  const [, rerender] = React.useReducer((n: number) => n + 1, 0);
 
-    React.useEffect(() => {
-      if (ReactMarkdown || loadFailed) return;
-      let active = true;
-      void loadDeps().then(() => {
-        if (active) rerender();
-      });
-      return () => {
-        active = false;
-      };
-    }, []);
+  React.useEffect(() => {
+    if (ReactMarkdown || loadFailed) return;
+    let active = true;
+    void loadDeps().then(() => {
+      if (active) rerender();
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
-    const classes = [styles.markdown, className].filter(Boolean).join(' ');
+  const classes = [styles.markdown, className].filter(Boolean).join(" ");
 
-    if (!ReactMarkdown) {
-      return (
-        <div ref={ref} {...htmlProps} className={classes}>
-          <FallbackRenderer content={content} />
-        </div>
-      );
-    }
-
-    const plugins = remarkGfm ? [remarkGfm] : [];
-
+  if (!ReactMarkdown) {
     return (
       <div ref={ref} {...htmlProps} className={classes}>
-        <ReactMarkdown
-          remarkPlugins={plugins}
-          components={componentOverrides}
-        >
-          {content}
-        </ReactMarkdown>
+        <FallbackRenderer content={content} />
       </div>
     );
   }
-);
+
+  const plugins = remarkGfm ? [remarkGfm] : [];
+
+  return (
+    <div ref={ref} {...htmlProps} className={classes}>
+      <ReactMarkdown remarkPlugins={plugins} components={componentOverrides}>
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+});
 
 export const Markdown = Object.assign(MarkdownRoot, {
   Root: MarkdownRoot,

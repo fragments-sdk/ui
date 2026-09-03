@@ -32,6 +32,7 @@ async function loadShikiDeps() {
 import { TabsRoot, TabsList, Tab, TabsPanel } from "../Tabs";
 import { FUI_CSS_VARIABLES_THEME } from "./css-variables-theme";
 import styles from "./CodeBlock.module.scss";
+import { isDevelopmentBuild, isProductionBuild } from "../../utils/env";
 
 export type CodeBlockLanguage =
   | "tsx"
@@ -646,7 +647,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
       const fallbackHtml = `<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`;
 
       if (_shikiFailed || !_codeToHtml) {
-        if (_shikiFailed && process.env.NODE_ENV === "development") {
+        if (_shikiFailed && isDevelopmentBuild()) {
           console.warn(
             "[@usefragments/ui] CodeBlock: shiki is not installed. " +
               "Install it with: npm install shiki"
@@ -668,7 +669,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
           removedLines: removedSet,
         });
       } catch (err) {
-        if (process.env.NODE_ENV !== "production") {
+        if (!isProductionBuild()) {
           console.error("Syntax highlighting failed:", err);
         }
         return fallbackHtml;
@@ -703,7 +704,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
       setTimeout(() => setCopied(false), 2000);
       onCopy?.();
     } catch (err) {
-      if (process.env.NODE_ENV !== "production") {
+      if (!isProductionBuild()) {
         console.error("Failed to copy:", err);
       }
     }

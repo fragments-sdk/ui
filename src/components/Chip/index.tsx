@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import styles from "./Chip.module.scss";
+import { isProductionBuild } from "../../utils/env";
 
 /**
  * Chip for selections, filters, and tags. Use with Chip.Group for multi-select.
@@ -165,7 +166,7 @@ function ChipGroupInner(
           if (child.props.value != null) return child.props.value;
           if (typeof child.props.children === "string") return child.props.children;
           if (child.key != null) return String(child.key);
-          if (process.env.NODE_ENV !== "production") {
+          if (!isProductionBuild()) {
             // Non-string labels need an explicit value to avoid unstable group selection keys.
             console.warn(
               "Chip.Group: Chips with non-string children should provide a `value` prop."
