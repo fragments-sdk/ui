@@ -46,8 +46,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => (
     <ButtonGroup>
-      <Button variant="secondary">Cancel</Button>
-      <Button variant="primary">Save</Button>
+      <Button variant="soft">Cancel</Button>
+      <Button variant="solid">Save</Button>
     </ButtonGroup>
   ),
 };
@@ -55,13 +55,13 @@ export const Default: Story = {
 export const Tight: Story = {
   render: () => (
     <ButtonGroup gap="none">
-      <Button variant="secondary" size="sm">
+      <Button variant="soft" size="sm">
         Bold
       </Button>
-      <Button variant="secondary" size="sm">
+      <Button variant="soft" size="sm">
         Italic
       </Button>
-      <Button variant="secondary" size="sm">
+      <Button variant="soft" size="sm">
         Underline
       </Button>
     </ButtonGroup>
@@ -71,10 +71,10 @@ export const Tight: Story = {
 export const AlignedEnd: Story = {
   render: () => (
     <ButtonGroup align="end">
-      <Button variant="secondary" size="sm">
+      <Button variant="soft" size="sm">
         End
       </Button>
-      <Button variant="secondary" size="sm">
+      <Button variant="soft" size="sm">
         Aligned
       </Button>
     </ButtonGroup>
@@ -85,7 +85,7 @@ export const FormActions: Story = {
   render: () => (
     <ButtonGroup align="end" role="group" aria-label="Form actions">
       <Button variant="ghost">Cancel</Button>
-      <Button variant="primary">Submit</Button>
+      <Button variant="solid">Submit</Button>
     </ButtonGroup>
   ),
 };

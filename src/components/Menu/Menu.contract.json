@@ -75,22 +75,22 @@
     {
       "name": "Default",
       "description": "Plain actions, one per row.",
-      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Actions</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>Edit</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Duplicate</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"soft\">Actions</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>Edit</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Duplicate</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Shortcuts",
       "description": "Trailing keys teach the faster path.",
-      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Edit</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item shortcut=\"Ctrl+Z\" onSelect={() => {}}>Undo</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+Y\" onSelect={() => {}}>Redo</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item shortcut=\"Ctrl+C\" onSelect={() => {}}>Copy</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+V\" onSelect={() => {}}>Paste</Menu.Item>\n  </Menu.Content>\n</Menu>"
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"soft\">Edit</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item shortcut=\"Ctrl+Z\" onSelect={() => {}}>Undo</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+Y\" onSelect={() => {}}>Redo</Menu.Item>\n    <Menu.Separator />\n    <Menu.Item shortcut=\"Ctrl+C\" onSelect={() => {}}>Copy</Menu.Item>\n    <Menu.Item shortcut=\"Ctrl+V\" onSelect={() => {}}>Paste</Menu.Item>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Groups",
       "description": "Labels separate unrelated actions.",
-      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Options</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Group>\n      <Menu.GroupLabel>View</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Zoom In</Menu.Item>\n      <Menu.Item onSelect={() => {}}>Zoom Out</Menu.Item>\n    </Menu.Group>\n    <Menu.Separator />\n    <Menu.Group>\n      <Menu.GroupLabel>Layout</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Grid View</Menu.Item>\n      <Menu.Item onSelect={() => {}}>List View</Menu.Item>\n    </Menu.Group>\n  </Menu.Content>\n</Menu>"
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"soft\">Options</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Group>\n      <Menu.GroupLabel>View</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Zoom In</Menu.Item>\n      <Menu.Item onSelect={() => {}}>Zoom Out</Menu.Item>\n    </Menu.Group>\n    <Menu.Separator />\n    <Menu.Group>\n      <Menu.GroupLabel>Layout</Menu.GroupLabel>\n      <Menu.Item onSelect={() => {}}>Grid View</Menu.Item>\n      <Menu.Item onSelect={() => {}}>List View</Menu.Item>\n    </Menu.Group>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Checkboxes",
       "description": "Rows that stay open while you toggle them.",
-      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">Display</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.CheckboxItem defaultChecked>Show Grid</Menu.CheckboxItem>\n    <Menu.CheckboxItem defaultChecked>Show Rulers</Menu.CheckboxItem>\n    <Menu.CheckboxItem>Show Guides</Menu.CheckboxItem>\n  </Menu.Content>\n</Menu>"
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"soft\">Display</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.CheckboxItem defaultChecked>Show Grid</Menu.CheckboxItem>\n    <Menu.CheckboxItem defaultChecked>Show Rulers</Menu.CheckboxItem>\n    <Menu.CheckboxItem>Show Guides</Menu.CheckboxItem>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Checked Items",
@@ -100,7 +100,7 @@
     {
       "name": "With Submenu",
       "description": "Secondary options nest one level deep.",
-      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"secondary\">File</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>New File</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Open</Menu.Item>\n    <Menu.Separator />\n    <Menu.Submenu>\n      <Menu.SubmenuTrigger>Export As</Menu.SubmenuTrigger>\n      <Menu.Content side=\"right\" align=\"start\">\n        <Menu.Item onSelect={() => {}}>PNG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>SVG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>PDF</Menu.Item>\n      </Menu.Content>\n    </Menu.Submenu>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
+      "code": "<Menu>\n  <Menu.Trigger asChild>\n    <Button variant=\"soft\">File</Button>\n  </Menu.Trigger>\n  <Menu.Content>\n    <Menu.Item onSelect={() => {}}>New File</Menu.Item>\n    <Menu.Item onSelect={() => {}}>Open</Menu.Item>\n    <Menu.Separator />\n    <Menu.Submenu>\n      <Menu.SubmenuTrigger>Export As</Menu.SubmenuTrigger>\n      <Menu.Content side=\"right\" align=\"start\">\n        <Menu.Item onSelect={() => {}}>PNG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>SVG</Menu.Item>\n        <Menu.Item onSelect={() => {}}>PDF</Menu.Item>\n      </Menu.Content>\n    </Menu.Submenu>\n    <Menu.Separator />\n    <Menu.Item danger onSelect={() => {}}>Delete</Menu.Item>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "Link Trigger",

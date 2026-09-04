@@ -1,30 +1,34 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/feedback" as feedback;
+@use "../../recipes/typography" as typography;
 
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, 4px));
+  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
   text-align: center;
   font-family: var(--fui-font-sans, $fui-font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  // Icon and actions sit a section step (16) away from the copy, netted
+  // against the flex gap so the copy block keeps its own text rhythm.
   > .icon {
     margin-block-end: calc(
-      var(--fui-feedback-section-gap, var(--fui-raw-space-16, 16px)) - var(
+      var(--fui-raw-space-16, #{measurements.raw-space(16)}) - var(
           --fui-feedback-text-gap,
-          var(--fui-raw-space-4, 4px)
+          var(--fui-raw-space-4, #{measurements.raw-space(4)})
         )
     );
   }
 
   > .actions {
     margin-block-start: calc(
-      var(--fui-feedback-section-gap, var(--fui-raw-space-16, 16px)) - var(
+      var(--fui-raw-space-16, #{measurements.raw-space(16)}) - var(
           --fui-feedback-text-gap,
-          var(--fui-raw-space-4, 4px)
+          var(--fui-raw-space-4, #{measurements.raw-space(4)})
         )
     );
   }
@@ -44,9 +48,9 @@
 
 // Reserved-but-empty region: a dashed hairline says the space belongs to
 // content that has not arrived, without claiming the weight of a real card.
-.outlined {
+.outline {
   justify-content: center;
-  border: var(--fui-stroke-hairline, 1px) dashed var(--fui-border-default, $fui-border-default);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) dashed var(--fui-border-default, $fui-border-default);
   border-radius: var(--fui-card-radius, var(--fui-radius-lg, $fui-radius-lg));
 }
 
@@ -57,30 +61,41 @@
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 
   svg {
-    inline-size: var(--_fui-feedback-empty-icon-size);
-    block-size: var(--_fui-feedback-empty-icon-size);
+    inline-size: var(--_fui-feedback-empty-icon-size, var(--fui-icon-2xl, #{$fui-icon-2xl}));
+    block-size: var(--_fui-feedback-empty-icon-size, var(--fui-icon-2xl, #{$fui-icon-2xl}));
   }
 }
 
+// The size recipe (feedback.empty-state) authors the type channels per size;
+// the md role is the fallback when a size class is missing.
 .title {
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-primary, $fui-text-primary);
   font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--_fui-feedback-empty-title-size);
-  font-weight: var(--_fui-feedback-empty-title-weight);
-  line-height: var(--_fui-feedback-empty-title-line);
-  letter-spacing: var(--_fui-feedback-empty-title-tracking);
+  font-size: var(--_fui-feedback-empty-title-size, #{typography.font-size("ui-standard")});
+  font-weight: var(--_fui-feedback-empty-title-weight, #{typography.weight("ui-standard")});
+  line-height: var(--_fui-feedback-empty-title-line, #{typography.line-height("ui-standard")});
+  letter-spacing: var(
+    --_fui-feedback-empty-title-tracking,
+    #{typography.tracking("ui-standard")}
+  );
 }
 
 .description {
-  max-inline-size: var(--_fui-feedback-empty-max-inline);
-  margin: 0;
+  max-inline-size: var(
+    --_fui-feedback-empty-max-inline,
+    var(--fui-overlay-tooltip-max, #{measurements.target-value("overlay", "tooltip-max")})
+  );
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-secondary, $fui-text-secondary);
   font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--_fui-feedback-empty-copy-size);
-  font-weight: var(--_fui-feedback-empty-copy-weight);
-  line-height: var(--_fui-feedback-empty-copy-line);
-  letter-spacing: var(--_fui-feedback-empty-copy-tracking);
+  font-size: var(--_fui-feedback-empty-copy-size, #{typography.font-size("body-compact")});
+  font-weight: var(--_fui-feedback-empty-copy-weight, #{typography.weight("body-compact")});
+  line-height: var(--_fui-feedback-empty-copy-line, #{typography.line-height("body-compact")});
+  letter-spacing: var(
+    --_fui-feedback-empty-copy-tracking,
+    #{typography.tracking("body-compact")}
+  );
 }
 
 .actions {
@@ -88,5 +103,5 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--fui-feedback-transient-gap, var(--fui-raw-space-8, 8px));
+  gap: var(--fui-feedback-transient-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
 }

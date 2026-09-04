@@ -43,7 +43,7 @@ describe("Progress", () => {
 
   it("supports a neutral meter without treating its maximum as success", () => {
     const { container } = render(
-      <Progress value={100} variant="neutral" role="meter" aria-label="Rule distribution" />
+      <Progress value={100} tone="neutral" role="meter" aria-label="Rule distribution" />
     );
     expect(screen.getByRole("meter")).toHaveAttribute("aria-valuenow", "100");
     expect(container.querySelector('[class*="indicator"]')).toHaveClass("indicatorNeutral");
@@ -91,19 +91,19 @@ describe("CircularProgress", () => {
     const progress = screen.getByRole("progressbar");
     expect(progress).not.toHaveAttribute("aria-valuenow");
     expect(progress).toHaveAttribute("aria-busy", "true");
-    expect(progress.style.getPropertyValue("--_progress-diameter")).toBe("48px");
+    expect(progress.style.getPropertyValue("--fui-progress-diameter")).toBe("48px");
   });
 
-  it.each(["default", "success", "warning", "danger"] as const)(
-    "preserves the requested %s paint at 100 percent",
-    (variant) => {
-      const { container } = render(<CircularProgress value={100} variant={variant} />);
+  it.each(["accent", "neutral", "success", "warning", "danger"] as const)(
+    "preserves the requested %s tone at 100 percent",
+    (tone) => {
+      const { container } = render(<CircularProgress value={100} tone={tone} />);
       const indicator = container.querySelector("circle[class*='circularIndicator']");
-      if (variant === "default") {
+      if (tone === "accent") {
         expect(indicator).not.toHaveClass("circularIndicatorSuccess");
       } else {
         expect(indicator).toHaveClass(
-          `circularIndicator${variant.charAt(0).toUpperCase()}${variant.slice(1)}`
+          `circularIndicator${tone.charAt(0).toUpperCase()}${tone.slice(1)}`
         );
       }
     }
@@ -111,9 +111,9 @@ describe("CircularProgress", () => {
 
   it("lets intentional user styles override the canonical outer box", () => {
     render(
-      <CircularProgress value={50} style={{ "--_progress-diameter": "72px" } as CSSProperties} />
+      <CircularProgress value={50} style={{ "--fui-progress-diameter": "72px" } as CSSProperties} />
     );
-    expect(screen.getByRole("progressbar").style.getPropertyValue("--_progress-diameter")).toBe(
+    expect(screen.getByRole("progressbar").style.getPropertyValue("--fui-progress-diameter")).toBe(
       "72px"
     );
   });

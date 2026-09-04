@@ -1,26 +1,28 @@
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
+@use "../tokens/mixins" as mixins;
 @use "typography";
 
+$_container-inset: measurements.raw-space(4);
+$_row-pitch: measurements.raw-space(32);
+$_row-inset: measurements.raw-space(8);
+$_separator-size: measurements.target-value("stroke", "hairline");
+$_separator-gap: measurements.raw-space(4);
+/// Rows visible before the viewport scrolls (the half row signals overflow).
+$_viewport-rows: 4.5;
+
 @mixin properties {
-  --fui-popup-container-inset: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  --fui-popup-row-pitch: var(--fui-raw-space-32, #{measurements.raw-space(32)});
-  --fui-popup-row-block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  --fui-popup-row-inline-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  --fui-popup-row-content-gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  --fui-popup-row-gap: var(
-    --fui-stroke-hairline,
-    #{measurements.target-value("stroke", "hairline")}
-  );
+  --fui-popup-container-inset: var(--fui-raw-space-4, #{$_container-inset});
+  --fui-popup-row-pitch: var(--fui-raw-space-32, #{$_row-pitch});
+  --fui-popup-row-block-inset: var(--fui-raw-space-8, #{$_row-inset});
+  --fui-popup-row-inline-inset: var(--fui-raw-space-8, #{$_row-inset});
+  --fui-popup-row-content-gap: var(--fui-raw-space-8, #{$_row-inset});
   --fui-popup-indicator-box: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-  --fui-popup-separator-size: var(
-    --fui-stroke-hairline,
-    #{measurements.target-value("stroke", "hairline")}
-  );
-  --fui-popup-separator-gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  --fui-popup-separator-size: var(--fui-stroke-hairline, #{$_separator-size});
+  --fui-popup-separator-gap: var(--fui-raw-space-4, #{$_separator-gap});
   --fui-popup-offset: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  --fui-popup-viewport-rows: 4.5;
-  --_fui-popup-effective-row-pitch: var(--fui-popup-row-pitch);
+  --fui-popup-viewport-rows: #{$_viewport-rows};
+  --_fui-popup-effective-row-pitch: var(--fui-popup-row-pitch, #{$_row-pitch});
 
   @media (pointer: coarse) {
     --_fui-popup-effective-row-pitch: var(--fui-raw-space-48, #{measurements.raw-space(48)});
@@ -31,7 +33,7 @@
   @include properties;
 
   box-sizing: border-box;
-  padding: var(--fui-popup-container-inset);
+  padding: var(--fui-popup-container-inset, #{$_container-inset});
   border: var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")}) solid
     var(--fui-border, #{tokens.$fui-border});
   border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
@@ -43,10 +45,12 @@
 @mixin viewport {
   box-sizing: border-box;
   max-block-size: calc(
-    2 * var(--fui-popup-container-inset) + 2 *
+    2 * var(--fui-popup-container-inset, #{$_container-inset}) + 2 *
       var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")}) +
-      var(--fui-popup-viewport-rows) * var(--_fui-popup-effective-row-pitch) +
-      (var(--fui-popup-viewport-rows) - 0.5) * var(--fui-popup-row-gap)
+      var(--fui-popup-viewport-rows, #{$_viewport-rows}) *
+      var(--_fui-popup-effective-row-pitch, #{$_row-pitch}) +
+      (var(--fui-popup-viewport-rows, #{$_viewport-rows}) - 0.5) *
+      var(--fui-popup-row-gap, #{tokens.$fui-popup-row-gap})
   );
   overflow-y: auto;
 }
@@ -61,10 +65,10 @@
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
-  min-block-size: var(--_fui-popup-effective-row-pitch);
-  padding-block: var(--fui-popup-row-block-inset);
-  padding-inline: var(--fui-popup-row-inline-inset);
-  gap: var(--fui-popup-row-content-gap);
+  min-block-size: var(--_fui-popup-effective-row-pitch, #{$_row-pitch});
+  padding-block: var(--fui-popup-row-block-inset, #{$_row-inset});
+  padding-inline: var(--fui-popup-row-inline-inset, #{$_row-inset});
+  gap: var(--fui-popup-row-content-gap, #{$_row-inset});
 }
 
 @mixin highlight-state {
@@ -80,7 +84,8 @@
 }
 
 @mixin disabled-state {
-  opacity: 0.5;
+  @include mixins.disabled-state;
+
   pointer-events: none;
 }
 
@@ -90,13 +95,13 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  min-block-size: var(--_fui-popup-effective-row-pitch);
-  padding-inline: var(--fui-popup-row-inline-inset);
+  min-block-size: var(--_fui-popup-effective-row-pitch, #{$_row-pitch});
+  padding-inline: var(--fui-popup-row-inline-inset, #{$_row-inset});
   color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
 }
 
 @mixin group-separator {
-  block-size: var(--fui-popup-separator-size);
-  margin-block: var(--fui-popup-separator-gap);
+  block-size: var(--fui-popup-separator-size, #{$_separator-size});
+  margin-block: var(--fui-popup-separator-gap, #{$_separator-gap});
   background: var(--fui-border, #{tokens.$fui-border});
 }

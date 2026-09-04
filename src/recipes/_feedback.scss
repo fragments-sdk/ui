@@ -1,15 +1,16 @@
+@use "../tokens/measurements.generated" as measurements;
 @use "action" as action;
 @use "surface" as surface;
 @use "target" as target;
 @use "typography" as typography;
 
-@function _raw($step, $fallback) {
-  @return var(--fui-raw-space-#{$step}, $fallback);
+@function _raw($step) {
+  @return var(--fui-raw-space-#{$step}, #{measurements.raw-space($step)});
 }
 
 @mixin icon {
-  inline-size: var(--fui-icon-lg, 20px);
-  block-size: var(--fui-icon-lg, 20px);
+  inline-size: var(--fui-icon-lg, #{measurements.target-value("icon", "lg")});
+  block-size: var(--fui-icon-lg, #{measurements.target-value("icon", "lg")});
   flex: 0 0 auto;
 }
 
@@ -27,7 +28,7 @@
 
   display: flex;
   align-items: center;
-  gap: var(--fui-feedback-content-gap, #{_raw(12, 12px)});
+  gap: #{_raw(12)};
 }
 
 @mixin transient {
@@ -36,7 +37,7 @@
 
   display: flex;
   align-items: center;
-  gap: var(--fui-feedback-transient-gap, #{_raw(8, 8px)});
+  gap: var(--fui-feedback-transient-gap, #{_raw(8)});
 }
 
 @mixin disclosure-row {
@@ -45,10 +46,10 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: _raw(8, 8px);
+  gap: _raw(8);
   min-block-size: action.track("md");
   padding-block: 0;
-  padding-inline: _raw(8, 8px);
+  padding-inline: _raw(8);
 }
 
 @mixin disclosure-glyph {
@@ -60,8 +61,8 @@
 @mixin disclosure-panel {
   @include body;
 
-  padding-block-end: _raw(12, 12px);
-  padding-inline: _raw(8, 8px);
+  padding-block-end: _raw(12);
+  padding-inline: _raw(8);
 }
 
 @mixin close {
@@ -89,8 +90,8 @@
     --_fui-feedback-empty-copy-weight: #{typography.weight("caption")};
     --_fui-feedback-empty-copy-tracking: #{typography.tracking("caption")};
 
-    padding-block: _raw(24, 24px);
-    padding-inline: _raw(16, 16px);
+    padding-block: _raw(24);
+    padding-inline: _raw(16);
   } @else if $size == "md" {
     --_fui-feedback-empty-icon-size: var(--fui-icon-2xl, 32px);
     --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-md, 320px);
@@ -103,8 +104,8 @@
     --_fui-feedback-empty-copy-weight: #{typography.weight("body-compact")};
     --_fui-feedback-empty-copy-tracking: #{typography.tracking("body-compact")};
 
-    padding-block: _raw(32, 32px);
-    padding-inline: _raw(24, 24px);
+    padding-block: _raw(32);
+    padding-inline: _raw(24);
   } @else if $size == "lg" {
     --_fui-feedback-empty-icon-size: var(--fui-feedback-empty-icon-lg, 40px);
     --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-lg, 400px);
@@ -117,8 +118,8 @@
     --_fui-feedback-empty-copy-weight: #{typography.weight("body-compact")};
     --_fui-feedback-empty-copy-tracking: #{typography.tracking("body-compact")};
 
-    padding-block: _raw(48, 48px);
-    padding-inline: _raw(32, 32px);
+    padding-block: _raw(48);
+    padding-inline: _raw(32);
   } @else {
     @error "Unknown empty-state size '#{$size}'. Expected sm, md, or lg.";
   }

@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout";
 @use "../../recipes/segmented";
 
@@ -49,8 +50,7 @@
   }
 
   &.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+    @include disabled-state;
   }
 }
 
@@ -95,11 +95,11 @@
 }
 
 // ============================================
-// Default variant: inset tonal selection
+// Soft variant: filled rail with an inset tonal selection
 // ============================================
 
-.default {
-  gap: 0;
+.soft {
+  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   padding: var(--fui-raw-space-2, 2px);
   background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
@@ -108,12 +108,13 @@
 
   .item {
     min-block-size: calc(
-      var(--_fui-segmented-track) - var(--fui-raw-space-2, 2px) - var(--fui-raw-space-2, 2px)
+      var(--_fui-segmented-track, #{segmented.track("md")}) - var(--fui-raw-space-2, 2px) -
+        var(--fui-raw-space-2, 2px)
     );
     background-color: transparent;
-    // Connected segments: only outer corners are rounded. Per-item full radius
-    // left a rail-colored notch between items that reads as a gap.
-    border-radius: 0;
+    // Connected segments: only outer corners are rounded (the item base carries
+    // no radius). Per-item full radius left a rail-colored notch between items
+    // that reads as a gap.
 
     &:first-child {
       border-start-start-radius: var(--fui-radius-md, $fui-radius-md);
@@ -134,26 +135,16 @@
     }
 
     &.selected {
-      background-color: var(
-        --fui-toggle-group-selected-bg,
-        var(
-          --fui-control-selected-bg,
-          color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 9%, transparent)
-        )
-      );
-      box-shadow:
-        inset 0 0 0 var(--fui-stroke-hairline, 1px)
-          var(--fui-toggle-group-selected-border, transparent),
-        var(--fui-toggle-group-selected-shadow, none);
+      @include segmented-selection;
     }
   }
 }
 
 // ============================================
-// Pills variant: open cluster with soft selected pills
+// Ghost variant: open cluster of pills, no rail
 // ============================================
 
-.pills {
+.ghost {
   .item {
     background-color: transparent;
     border-radius: var(--fui-radius-full, $fui-radius-full);
@@ -164,17 +155,7 @@
     }
 
     &.selected {
-      background-color: var(
-        --fui-toggle-group-selected-bg,
-        var(
-          --fui-control-selected-bg,
-          color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 9%, transparent)
-        )
-      );
-      box-shadow:
-        inset 0 0 0 var(--fui-stroke-hairline, 1px)
-          var(--fui-toggle-group-selected-border, transparent),
-        var(--fui-toggle-group-selected-shadow, none);
+      @include segmented-selection;
     }
   }
 }
@@ -184,7 +165,7 @@
 // ============================================
 
 .outline {
-  gap: 0;
+  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   background-color: transparent;
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
@@ -192,7 +173,6 @@
 
   .item {
     background-color: transparent;
-    border-radius: 0;
 
     &:first-child {
       border-start-start-radius: var(--fui-radius-lg, $fui-radius-lg);
@@ -224,17 +204,7 @@
     }
 
     &.selected {
-      background-color: var(
-        --fui-toggle-group-selected-bg,
-        var(
-          --fui-control-selected-bg,
-          color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 9%, transparent)
-        )
-      );
-      box-shadow:
-        inset 0 0 0 var(--fui-stroke-hairline, 1px)
-          var(--fui-toggle-group-selected-border, transparent),
-        var(--fui-toggle-group-selected-shadow, none);
+      @include segmented-selection;
     }
   }
 }

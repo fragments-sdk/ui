@@ -51,9 +51,9 @@ describe('List', () => {
     );
   });
 
-  it('renders icon items when variant is "icon"', () => {
+  it('renders icon items when marker is "icon"', () => {
     render(
-      <List variant="icon">
+      <List marker="icon">
         <List.Item icon={<span data-testid="star">*</span>}>Starred</List.Item>
       </List>
     );

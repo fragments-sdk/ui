@@ -49,7 +49,7 @@ const metrics = [
   </AppShell.Header>
   <AppShell.Sidebar width="220px" collapsible="offcanvas">
     <Sidebar.Header>
-      <Text weight="semibold" size="lg">Acme Inc</Text>
+      <Text weight="semibold" scale="lg">Acme Inc</Text>
     </Sidebar.Header>
     <Sidebar.Nav>
       <Sidebar.Section label="Main">
@@ -61,13 +61,13 @@ const metrics = [
       </Sidebar.Section>
     </Sidebar.Nav>
     <Sidebar.Footer>
-      <Text size="sm" color="tertiary">v2.0.0</Text>
+      <Text scale="sm" color="tertiary">v2.0.0</Text>
     </Sidebar.Footer>
   </AppShell.Sidebar>
   <AppShell.Main padding="lg">
     <Stack gap="lg">
       <Stack gap="xs">
-        <Text size="xl" weight="semibold">Dashboard</Text>
+        <Text scale="xl" weight="semibold">Dashboard</Text>
         <Text color="tertiary">Welcome back! Here's an overview of your metrics.</Text>
       </Stack>
       <Grid columns={{ base: 1, md: 3 }} gap="md">
@@ -75,10 +75,10 @@ const metrics = [
           <Card key={metric.label}>
             <Card.Body>
               <Stack gap="sm">
-                <Text size="sm" color="tertiary">{metric.label}</Text>
+                <Text scale="sm" color="tertiary">{metric.label}</Text>
                 <Stack direction="row" justify="between" align="baseline">
-                  <Text size="2xl" weight="semibold">{metric.value}</Text>
-                  <Badge variant="success">{metric.change}</Badge>
+                  <Text scale="2xl" weight="semibold">{metric.value}</Text>
+                  <Badge tone="success">{metric.change}</Badge>
                 </Stack>
               </Stack>
             </Card.Body>

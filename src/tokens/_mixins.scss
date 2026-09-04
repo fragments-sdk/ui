@@ -3,6 +3,7 @@
 // ============================================
 
 @use "variables" as *;
+@use "measurements.generated" as measurements;
 
 // Focus ring for keyboard accessibility
 @mixin focus-ring {
@@ -16,8 +17,8 @@
   appearance: none;
   background: transparent;
   border: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -29,6 +30,13 @@
   &:disabled {
     cursor: not-allowed;
   }
+}
+
+// The one disabled treatment. Form controls keep `:disabled`; non-form
+// pressables carry `aria-disabled` and read this through `[aria-disabled]`.
+@mixin disabled-state {
+  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+  cursor: not-allowed;
 }
 
 // Base interactive element
@@ -45,22 +53,34 @@
 
   &:disabled,
   &[data-disabled] {
-    opacity: 0.5;
+    @include disabled-state;
+
     pointer-events: none;
   }
 }
 
+
 // Card surface
 @mixin surface-elevated {
   background-color: var(--fui-bg-elevated, #{$fui-bg-elevated});
-  border: 1px solid var(--fui-border, #{$fui-border});
-  border-radius: var(--fui-radius-lg, #{$fui-radius-lg});
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, #{$fui-border});
+  border-radius: var(--fui-radius-l1, #{$fui-radius-l1});
 }
 
 @mixin form-group-surface {
   background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
-  border: 1px solid var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-radius-lg, #{$fui-radius-lg});
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
+  border-radius: var(--fui-radius-l1, #{$fui-radius-l1});
+}
+
+// The shared selected treatment for segmented controls: Tabs pills, ToggleGroup
+// items, Prompt mode buttons. One surface, one hairline, one ink.
+@mixin segmented-selection {
+  color: var(--fui-text-primary, #{$fui-text-primary});
+  background-color: var(--fui-control-selected-bg, #{$fui-bg-active});
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+    var(--fui-control-selected-border, #{$fui-control-selected-border});
 }
 
 // Responsive breakpoint mixins (mobile-first, min-width)
@@ -153,13 +173,14 @@
   }
 }
 
-// Visually hidden (for screen readers)
+// Visually hidden (for screen readers). The clipping box is one CSS pixel by
+// spec, not by design: it borrows the hairline stroke so no bare px lives here.
 @mixin visually-hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+  width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+  height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  margin: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -177,10 +198,14 @@
   }
 }
 
-// High contrast mode support - for users who need more visual contrast
-@mixin prefers-contrast {
+// The one high-contrast treatment: a default-weight outline in the ink colour,
+// drawn inside the box so geometry does not shift. Components include this on
+// the element that carries their border; no hand-written `prefers-contrast`
+// blocks elsewhere.
+@mixin high-contrast-outline($color: var(--fui-text-primary, #{$fui-text-primary})) {
   @media (prefers-contrast: more) {
-    @content;
+    outline: var(--fui-stroke-default, #{$fui-stroke-default}) solid $color;
+    outline-offset: calc(-1 * var(--fui-stroke-default, #{$fui-stroke-default}));
   }
 }
 

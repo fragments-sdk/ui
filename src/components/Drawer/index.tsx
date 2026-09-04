@@ -13,6 +13,8 @@ import styles from "./Drawer.module.scss";
  * Now backed by Base UI's stable Drawer (v1.3.0) with native swipe gestures.
  * @see https://usefragments.com/components/drawer
  */
+export type DrawerWidth = "sm" | "md" | "lg" | "xl" | "full";
+
 export interface DrawerProps {
   children: React.ReactNode;
   /** Controlled open state */
@@ -40,10 +42,10 @@ export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement>
   /** Which edge the drawer slides from.
    * @default "right" */
   side?: "left" | "right" | "top" | "bottom";
-  /** Drawer width (for left/right) or height (for top/bottom).
+  /** Drawer width (for left/right) or height (for top/bottom). `full` spans the safe viewport.
    * @default "md"
-   * @see https://usefragments.com/components/drawer#sizes */
-  size?: "sm" | "md" | "lg" | "xl" | "full";
+   * @see https://usefragments.com/components/drawer#widths */
+  width?: DrawerWidth;
   /** Whether to show the backdrop overlay (default: true). Set to false for non-modal bottom panels. */
   backdrop?: boolean;
   /** Whether to autofocus an element on open (default: true) */
@@ -191,7 +193,7 @@ function DrawerTrigger({ children, asChild, className, ...htmlProps }: DrawerTri
 function DrawerContent({
   children,
   side = "right",
-  size = "md",
+  width = "md",
   backdrop = true,
   initialFocus = true,
   viewportProps,
@@ -200,7 +202,7 @@ function DrawerContent({
 }: DrawerContentProps) {
   const registerContentSide = React.useContext(DrawerContentSideContext);
   const { className: viewportClassName, ...viewportHtmlProps } = viewportProps ?? {};
-  const popupClasses = [styles.popup, styles[`side-${side}`], styles[`size-${size}`], className]
+  const popupClasses = [styles.popup, styles[`side-${side}`], styles[`width-${width}`], className]
     .filter(Boolean)
     .join(" ");
 

@@ -30,7 +30,7 @@
 }
 
 .eyebrow {
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
   text-transform: uppercase;
 }
@@ -38,13 +38,13 @@
 .title {
   @include typography.role("title-lg");
 
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .description {
   @include typography.role("body-compact");
 
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
 }
 
@@ -78,7 +78,7 @@
 .sectionTitle {
   @include typography.role("title-sm");
 
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .specimenList {
@@ -99,7 +99,7 @@
 
 .specimenName,
 .specimenValue {
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .specimenName {
@@ -188,7 +188,7 @@
 }
 
 .typographySample {
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   overflow-wrap: anywhere;
 }
 

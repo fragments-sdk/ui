@@ -49,7 +49,7 @@ export const Default: Story = {
       </Header.Nav>
       <Header.Spacer />
       <Header.Actions>
-        <Button variant="secondary" size="sm">
+        <Button variant="soft" size="sm">
           Sign In
         </Button>
       </Header.Actions>
@@ -75,7 +75,7 @@ export const WithDropdownNav: Story = {
       </Header.Nav>
       <Header.Spacer />
       <Header.Actions>
-        <Button variant="primary" size="sm">
+        <Button variant="solid" size="sm">
           Sign Up
         </Button>
       </Header.Actions>
@@ -89,7 +89,7 @@ export const Minimal: Story = {
       <Header.Brand href="/">MyApp</Header.Brand>
       <Header.Spacer />
       <Header.Actions>
-        <Button variant="secondary" size="sm">
+        <Button variant="soft" size="sm">
           Account
         </Button>
       </Header.Actions>

@@ -28,12 +28,12 @@ export interface IconButtonProps extends Omit<
    *
    * - `ghost` (default): transparent at rest, subtle hover. Fits inside
    *   dense topbars and row affordances.
-   * - `subtle`: painted with the tertiary surface; use when the affordance
+   * - `soft`: painted with the tertiary surface; use when the affordance
    *   sits on a matching surface and needs a touch more weight.
-   * - `outlined`: hairline border; use as a secondary control alongside a
-   *   primary `Button`.
+   * - `outline`: hairline border; use as a secondary control alongside a
+   *   solid `Button`.
    * @default "ghost" */
-  variant?: "ghost" | "subtle" | "outlined";
+  variant?: "ghost" | "soft" | "outline";
   /** Button size. Uses the same height ladder as Button so icon-only
    * affordances align with toolbar actions and adjacent fields.
    * @default "md" */

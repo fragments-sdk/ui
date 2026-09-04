@@ -4,13 +4,13 @@ import { useToast, ToastProvider } from './index';
 
 // Helper component to trigger toasts via the hook
 function ToastTrigger({
-  variant,
+  tone,
   title = 'Test Toast',
   description,
   duration,
   action,
 }: {
-  variant?: 'default' | 'success' | 'error' | 'warning' | 'info';
+  tone?: 'neutral' | 'success' | 'danger' | 'warning' | 'info';
   title?: string;
   description?: string;
   duration?: number;
@@ -19,7 +19,7 @@ function ToastTrigger({
   const { toast } = useToast();
   return (
     <button
-      onClick={() => toast({ title, description, variant, duration, action })}
+      onClick={() => toast({ title, description, tone, duration, action })}
     >
       Show Toast
     </button>
@@ -71,9 +71,9 @@ describe('Toast', () => {
     });
   });
 
-  it('uses role="alert" for error variant', async () => {
+  it('uses role="alert" for the danger tone', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderWithProvider(<ToastTrigger variant="error" title="Error!" />);
+    renderWithProvider(<ToastTrigger tone="danger" title="Error!" />);
 
     await user.click(screen.getByRole('button', { name: /show toast/i }));
 
@@ -82,9 +82,9 @@ describe('Toast', () => {
     });
   });
 
-  it('uses role="alert" for warning variant', async () => {
+  it('uses role="alert" for the warning tone', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderWithProvider(<ToastTrigger variant="warning" title="Warning!" />);
+    renderWithProvider(<ToastTrigger tone="warning" title="Warning!" />);
 
     await user.click(screen.getByRole('button', { name: /show toast/i }));
 
@@ -93,9 +93,9 @@ describe('Toast', () => {
     });
   });
 
-  it('uses role="status" for default/success/info variants', async () => {
+  it('uses role="status" for neutral/success/info tones', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderWithProvider(<ToastTrigger variant="success" title="Success!" />);
+    renderWithProvider(<ToastTrigger tone="success" title="Success!" />);
 
     await user.click(screen.getByRole('button', { name: /show toast/i }));
 
@@ -178,7 +178,7 @@ describe('Toast', () => {
   it('has no accessibility violations', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const { container } = renderWithProvider(
-      <ToastTrigger title="Accessible Toast" variant="info" />
+      <ToastTrigger title="Accessible Toast" tone="info" />
     );
 
     await user.click(screen.getByRole('button', { name: /show toast/i }));

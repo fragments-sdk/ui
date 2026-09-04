@@ -35,3 +35,22 @@ full-content-height rail border on the grid column; capping the inner
 sidebar at one viewport made the hairline stop mid-page. Standalone
 Sidebar still draws its own `border-inline-end`; inside AppShell the
 column border wins and the inner edge is zeroed.
+
+## 2026-09-03 — alias layer deleted (UI refinement, Wave 0)
+
+The private `--fui-sidebar-row-height/-gutter/-row-gap/-row-radius/-icon-size/
+-leading-size/-row-padding-x/-active-dot-size` aliases are gone; rows read
+`--fui-navigation-*` hooks straight from the recipe with Sass twins from the
+new `navigation.gutter()` / `row-track()` / `leading-box()` / `active-rail()`
+getters. Public `--fui-sidebar-item-*`, `--fui-sidebar-bg/-border/-footer-border`
+hooks stay (declared in `tokens/_variables.scss`); `--fui-sidebar-section-label-size`
+joins them because docs sets it. The undeclared `--fui-sidebar-section-gap`,
+`-section-label-tracking/-transform/-color/-weight`, `-item-gap`,
+`-item-font-size/-line-height` hooks are inlined (single reader, no writer).
+Disabled rows use the shared `disabled-state` mixin; the collapsed rail
+reads `--fui-opacity-muted`.
+
+### 2026-09-03 — `--fui-sidebar-item-radius` (UIR-D25)
+
+- The row radius is a public hook again, in the documented `--fui-sidebar-item-*` family: `--fui-sidebar-item-radius` defaults to `var(--fui-radius-full)` in `_variables.scss`; `.item` and `.subItem` read it with the Sass twin as fallback. Products that want restrained rows set it on the `Sidebar.Root` element (Cloud sets `--fui-radius-sm`).
+- `.sectionAction` and `.submenu` keep the full radius directly; they are not rows.

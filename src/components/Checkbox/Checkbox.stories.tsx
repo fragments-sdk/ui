@@ -25,14 +25,14 @@ const meta = {
     },
     variant: {
       control: "select",
-      options: ["default", "card"],
-      description: "Inline checkbox or full-width clickable card",
+      options: [undefined, "outline"],
+      description: "Omit for the inline checkbox; outline renders a full-width bordered surface",
     },
     indeterminate: { control: "boolean", description: "Partial selection state" },
     disabled: { control: "boolean" },
     required: { control: "boolean" },
   },
-  args: { size: "md", variant: "default", label: "Accept terms and conditions" },
+  args: { size: "md", label: "Accept terms and conditions" },
 } satisfies Meta<typeof Checkbox>;
 
 export default meta;

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider, ThemeToggle } from '.';
+import { ThemeButton, ThemeProvider, ThemeToggle } from '.';
 
 /**
  * ThemeProvider is the canonical theme-management primitive. Wrap your app with
@@ -90,6 +90,15 @@ export const DarkDefault: Story = {
   render: (args) => (
     <ThemeProvider {...args}>
       <ThemeToggle showSystem />
+    </ThemeProvider>
+  ),
+};
+
+export const IconButtonForm: Story = {
+  args: { defaultMode: 'system' },
+  render: (args) => (
+    <ThemeProvider {...args}>
+      <ThemeButton aria-label="Switch color mode" />
     </ThemeProvider>
   ),
 };

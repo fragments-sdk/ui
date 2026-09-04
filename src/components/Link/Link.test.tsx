@@ -10,11 +10,19 @@ describe('Link', () => {
     expect(link).toHaveAttribute('href', '/page');
   });
 
-  it('applies variant and underline classes', () => {
-    render(<Link href="#" variant="subtle" underline="always">Styled</Link>);
+  it('applies tone and underline classes', () => {
+    render(<Link href="#" tone="neutral" underline="always">Styled</Link>);
     const link = screen.getByRole('link');
-    expect(link).toHaveClass('subtle');
+    expect(link).toHaveClass('toneNeutral');
     expect(link).toHaveClass('underline-always');
+  });
+
+  it('defaults to the accent tone and layers the hierarchy colour on a neutral link', () => {
+    const { rerender } = render(<Link href="#">Plain</Link>);
+    expect(screen.getByRole('link')).toHaveClass('toneAccent');
+
+    rerender(<Link href="#" tone="neutral" color="tertiary">Quiet</Link>);
+    expect(screen.getByRole('link')).toHaveClass('toneNeutral', 'colorTertiary');
   });
 
   it('applies the dotted underline class', () => {
@@ -37,19 +45,19 @@ describe('Link', () => {
 
   it('renders as child element when asChild is true', () => {
     render(
-      <Link asChild variant="subtle">
+      <Link asChild tone="neutral">
         <button type="button">Click me</button>
       </Link>
     );
     const btn = screen.getByRole('button', { name: 'Click me' });
     expect(btn.tagName).toBe('BUTTON');
     expect(btn).toHaveClass('link');
-    expect(btn).toHaveClass('subtle');
+    expect(btn).toHaveClass('toneNeutral');
   });
 
   it('merges classNames when asChild is true', () => {
     render(
-      <Link asChild variant="default">
+      <Link asChild tone="accent">
         <a href="/test" className="custom-class">Test</a>
       </Link>
     );

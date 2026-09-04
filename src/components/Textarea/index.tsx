@@ -128,8 +128,8 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(functi
     .join(" ");
 
   const textareaInlineStyle = {
-    "--_fui-textarea-min-rows": minRows ?? 1,
-    "--_fui-textarea-max-rows": maxRows ?? 9999,
+    "--fui-textarea-min-rows": minRows ?? 1,
+    "--fui-textarea-max-rows": maxRows ?? 9999,
   } as React.CSSProperties;
 
   return (

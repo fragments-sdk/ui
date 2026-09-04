@@ -23,15 +23,16 @@ export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   onValueChange?: (value: string) => void;
   /** Toggle items */
   children: React.ReactNode;
-  /** Visual variant.
-   * @default "default"
+  /** Chrome. `soft` is the filled rail, `ghost` the open pill cluster,
+   * `outline` the connected bordered segments.
+   * @default "soft"
    * @see https://usefragments.com/components/togglegroup#variants */
-  variant?: "default" | "pills" | "outline" | "outlined";
+  variant?: "soft" | "ghost" | "outline";
   /** Size.
    * @default "md" */
   size?: "sm" | "md" | "lg";
-  /** Gap between items in the pills variant. Defaults to `xs` for pills and
-   * is intentionally removed from connected variants. */
+  /** Gap between items in the ghost variant. Defaults to `xs` for ghost and
+   * is intentionally removed from the connected variants. */
   gap?: "none" | "xs" | "sm";
   /** Selection mode for this control. Currently only single-select is supported.
    * @default "single" */
@@ -57,7 +58,7 @@ export interface ToggleGroupItemProps extends Omit<
 interface ToggleGroupContextValue {
   value: string;
   onChange: (value: string) => void;
-  variant: "default" | "pills" | "outline";
+  variant: "soft" | "ghost" | "outline";
   size: "sm" | "md" | "lg";
   hasFocusableSelection: boolean;
   firstEnabledValue: string | null;
@@ -83,7 +84,7 @@ function ToggleGroupRoot({
   onChange,
   onValueChange,
   children,
-  variant = "default",
+  variant = "soft",
   size: sizeProp,
   gap,
   selectionMode = "single",
@@ -91,8 +92,7 @@ function ToggleGroupRoot({
   ...htmlProps
 }: ToggleGroupProps) {
   const size = useResolvedControlSize(sizeProp);
-  const normalizedVariant = variant === "outlined" ? "outline" : variant;
-  const resolvedGap = normalizedVariant === "pills" ? (gap ?? "xs") : "none";
+  const resolvedGap = variant === "ghost" ? (gap ?? "xs") : "none";
   const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
   const isControlled = value !== undefined;
   const currentValue = isControlled ? (value ?? "") : internalValue;
@@ -107,7 +107,7 @@ function ToggleGroupRoot({
   );
   const classes = [
     styles.group,
-    styles[normalizedVariant],
+    styles[variant],
     styles[`size-${size}`],
     resolvedGap !== "none" && styles[`gap-${resolvedGap}`],
     className,
@@ -127,7 +127,7 @@ function ToggleGroupRoot({
   const contextValue: ToggleGroupContextValue = {
     value: currentValue,
     onChange: emitChange,
-    variant: normalizedVariant,
+    variant,
     size,
     hasFocusableSelection,
     firstEnabledValue,

@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
@@ -37,7 +38,7 @@
 // Steps
 //
 // NOTE: The dots/pulse/spinner animations live in <Loading>; the three
-// ThinkingIndicator variants delegate to it (see index.tsx). No animation
+// ThinkingIndicator kinds delegate to it (see index.tsx). No animation
 // styles are kept here.
 // ============================================
 
@@ -47,7 +48,7 @@
   gap: layout.gap("xs");
   margin-inline-start: calc(representation.activity-size("sm") / 2);
   padding-inline-start: layout.gap("lg");
-  border-inline-start: var(--fui-stroke-default, 2px) solid var(--fui-border, $fui-border);
+  border-inline-start: var(--fui-stroke-default, #{$fui-stroke-default}) solid var(--fui-border, $fui-border);
 }
 
 .step {
@@ -71,11 +72,11 @@
 }
 
 .stepDot {
-  inline-size: var(--fui-raw-space-8, 8px);
-  block-size: var(--fui-raw-space-8, 8px);
+  inline-size: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  block-size: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  opacity: 0.5;
+  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
 }
 
 .stepLabel {
@@ -83,11 +84,12 @@
 }
 
 // Step status styles
-.stepPending {
+.stepIdle {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
-.stepActive {
+.stepPending,
+.stepStreaming {
   color: var(--fui-text-secondary, $fui-text-secondary);
 
   .stepIndicator {

@@ -17,3 +17,23 @@ scrolls inside its container rather than wrapping. Decide one way — allow
 wrapping (multi-line buttons change the control-track contract) or rewrite the
 example copy to say what the component does. Logged as G-19 in
 `docs/docs-reference-grade/GOVERNANCE-FRICTION.md`.
+
+## 2026-09-03 — Wave 0 vocabulary cut (UIR-D10, UIR-D17)
+
+What changed
+
+- `variant` is chrome only: `solid` (was primary) · `soft` (was secondary) · `outline` (was outlined/outline/icon) · `ghost` (absorbs quiet) · `link`. `danger` is `solid tone="danger"`; `xs` folded into `sm`.
+- New `tone` axis (`neutral | accent | info | success | warning | danger`) works on every variant. Default follows the variant: accent on solid/link, neutral elsewhere.
+- SCSS is two layers: `.tone*` classes publish colour channels (`--_tone-fill/-ink/-soft/-wash/-line`), variant classes map channels onto the button slots. Every private var carries a fallback (14 dual-fallback findings closed).
+- `prefers-contrast` block replaced by `@include high-contrast-outline` on `.button`. No literal opacities remain.
+- Stories declare the four render states (UIR-D33) and a variant × tone matrix.
+
+Judgment calls (undo in the SCSS)
+
+- `.link` underlines on hover so it stays distinguishable from `ghost tone="accent"`, which otherwise paints identically. Undo: drop the `&:hover` block in `.link`.
+- Neutral solid = inverse surface; semantic solid tones derive hover/active/border by mixing the seed toward its `-text` ink, and the on-fill ink mixes the seed 8% into `white` (the pre-existing danger recipe). A `--fui-color-on-<tone>` token would remove that keyword.
+
+What still does not work / candidates
+
+- Long labels still `nowrap` (G-19 above) — unchanged this wave.
+- `solid` on info/success/warning has no named application job yet; it exists because the tone axis is uniform. Revisit if it never gets used.

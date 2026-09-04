@@ -3,7 +3,7 @@ import { Loading } from ".";
 
 /**
  * Loading indicator for showing progress or waiting states. Offers spinner,
- * dots, and pulse variants plus `Loading.Inline` and `Loading.Screen` helpers.
+ * dots, and pulse kinds plus `Loading.Inline` and `Loading.Screen` helpers.
  */
 const meta = {
   title: "Feedback/Loading",
@@ -12,7 +12,7 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "Versatile loading indicator with spinner, dots, and pulse variants.",
+        component: "Loading indicator with spinner, dots, and pulse kinds.",
       },
     },
   },
@@ -22,15 +22,15 @@ const meta = {
       options: ["sm", "md", "lg", "xl"],
       description: "Size of the loading indicator",
     },
-    variant: {
+    kind: {
       control: "select",
       options: ["spinner", "dots", "pulse"],
-      description: "Visual style of the loading animation",
+      description: "Which animation plays",
     },
     color: {
       control: "select",
       options: ["accent", "current", "muted"],
-      description: "Color variant",
+      description: "Colour",
     },
     centered: { control: "boolean" },
     fill: { control: "boolean" },
@@ -38,7 +38,7 @@ const meta = {
   },
   args: {
     size: "md",
-    variant: "spinner",
+    kind: "spinner",
     color: "accent",
     label: "Loading...",
   },
@@ -49,21 +49,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Spinner: Story = {
-  args: { variant: "spinner" },
+  args: { kind: "spinner" },
 };
 
 export const Dots: Story = {
-  args: { variant: "dots" },
+  args: { kind: "dots" },
 };
 
 export const Pulse: Story = {
-  args: { variant: "pulse" },
+  args: { kind: "pulse" },
 };
 
 export const Large: Story = {
-  args: { variant: "spinner", size: "xl" },
+  args: { kind: "spinner", size: "xl" },
 };
 
 export const Muted: Story = {
-  args: { variant: "spinner", color: "muted" },
+  args: { kind: "spinner", color: "muted" },
 };

@@ -17,16 +17,13 @@
   }
 }
 
-// Variants
-.default {
-  color: var(--fui-link-color, var(--fui-link-ink, #{$fui-link-ink}));
-
-  &:hover {
-    color: var(--fui-link-color-hover, var(--fui-link-ink, #{$fui-link-ink}));
-  }
+// Tone. The accent ink is `--fui-link-ink` (the read-safe step, gated by
+// read-safe-contrast.test.ts); hover keeps the same ink and underlines.
+.toneAccent {
+  color: var(--fui-link-ink, #{$fui-link-ink});
 }
 
-.subtle {
+.toneNeutral {
   color: var(--fui-text-primary, $fui-text-primary);
 
   &:hover {
@@ -34,7 +31,24 @@
   }
 }
 
-.muted {
+// Text-hierarchy colour on a neutral link; hover steps one rung up the ladder.
+.colorPrimary {
+  color: var(--fui-text-primary, $fui-text-primary);
+
+  &:hover {
+    color: var(--fui-color-accent, $fui-color-accent);
+  }
+}
+
+.colorSecondary {
+  color: var(--fui-text-secondary, $fui-text-secondary);
+
+  &:hover {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+
+.colorTertiary {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 
   &:hover {
@@ -45,19 +59,19 @@
 // Underline styles
 .underline-always {
   text-decoration: underline;
-  text-decoration-style: var(--fui-link-underline-style, solid);
+  text-decoration-style: solid;
   text-underline-offset: 0.2em;
 }
 
 .underline-hover {
-  text-decoration-line: var(--fui-link-underline-line, none);
-  text-decoration-style: var(--fui-link-underline-style, solid);
+  text-decoration-line: none;
+  text-decoration-style: solid;
   text-underline-offset: 0.2em;
   text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
 
   &:hover {
     text-decoration-line: underline;
-    text-decoration-style: var(--fui-link-underline-style, solid);
+    text-decoration-style: solid;
     text-decoration-color: currentColor;
     text-underline-offset: 0.2em;
   }

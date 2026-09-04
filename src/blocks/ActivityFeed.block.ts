@@ -27,7 +27,7 @@ const activities = [
             <Text>
               <Text weight="semibold">{activity.user}</Text> {activity.action}
             </Text>
-            <Text size="sm" color="tertiary">{activity.time}</Text>
+            <Text scale="sm" color="tertiary">{activity.time}</Text>
           </Stack>
         </Stack>
       ))}

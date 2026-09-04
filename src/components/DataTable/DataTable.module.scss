@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/table-chrome" as table-chrome;
 @use "../../recipes/target" as target;
@@ -45,6 +46,7 @@
 .headerRow,
 .row {
   @include table-chrome.row;
+  @include high-contrast-outline;
 }
 
 .headerRow {
@@ -75,7 +77,7 @@
 
   justify-content: space-between;
   inline-size: 100%;
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: inherit;
   text-align: start;
   transition: color var(--fui-transition-fast, $fui-transition-fast);
@@ -148,12 +150,13 @@
   );
 
   .td:first-child {
-    box-shadow: inset var(--fui-table-divider-size) 0 0
-      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
+    box-shadow: inset var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))
+      0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
   }
 
   &:dir(rtl) .td:first-child {
-    box-shadow: inset calc(-1 * var(--fui-table-divider-size)) 0 0
+    box-shadow: inset
+      calc(-1 * var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))) 0 0
       var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
   }
 }
@@ -300,11 +303,11 @@
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
-@media (prefers-contrast: more) {
-  .headerRow,
-  .row {
-    border-block-end-color: CanvasText;
-  }
+// Virtualizer spacer rows: height is measured state set inline; the chrome
+// reset lives here so the spacer never paints a cell.
+.virtualSpacer {
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

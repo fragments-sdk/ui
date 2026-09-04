@@ -21,8 +21,8 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["filled", "outlined", "outline", "soft"],
-      description: "Visual style variant",
+      options: ["solid", "outline", "soft"],
+      description: "Chrome family",
     },
     size: {
       control: "select",
@@ -32,7 +32,7 @@ const meta = {
     selected: { control: "boolean", description: "Selection state" },
     disabled: { control: "boolean" },
   },
-  args: { variant: "filled", size: "xs", children: "Default" },
+  args: { variant: "solid", size: "xs", children: "Default" },
 } satisfies Meta<typeof Chip>;
 
 export default meta;
@@ -51,7 +51,7 @@ export const Selected: Story = {
   render: () => (
     <Stack direction="row" gap="sm" wrap>
       <Chip selected>Filled</Chip>
-      <Chip variant="outlined" selected>
+      <Chip variant="outline" selected>
         Outlined
       </Chip>
       <Chip variant="soft" selected>
@@ -71,7 +71,7 @@ export const SelectedRemovable: Story = {
       <Chip selected onRemove={() => {}}>
         Filled
       </Chip>
-      <Chip variant="outlined" selected onRemove={() => {}}>
+      <Chip variant="outline" selected onRemove={() => {}}>
         Outlined
       </Chip>
       <Chip variant="soft" selected onRemove={() => {}}>

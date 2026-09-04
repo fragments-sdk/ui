@@ -1,5 +1,6 @@
 @use '../../tokens/variables' as *;
 @use '../../tokens/mixins' as *;
+@use '../../tokens/measurements.generated' as measurements;
 @use '../../recipes/action';
 @use '../../recipes/layout';
 
@@ -22,8 +23,8 @@
   align-items: center;
   gap: layout.gap("xs");
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 // ============================================
@@ -59,12 +60,14 @@
   &:hover:not(:disabled) {
     background-color: var(--fui-control-selected-bg, $fui-bg-active);
   }
+
+  @include high-contrast-outline;
 }
 
 // Disabled state (prev/next at boundaries)
 .itemDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  @include disabled-state;
+
   pointer-events: none;
 }
 
@@ -107,13 +110,3 @@
   @include action.glyph("lg");
 }
 
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .itemActive {
-    outline: var(--fui-stroke-default, 2px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
-  }
-}

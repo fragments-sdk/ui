@@ -8,12 +8,18 @@ import { isProductionBuild } from "../../utils/env";
  * Chip for selections, filters, and tags. Use with Chip.Group for multi-select.
  * @see https://usefragments.com/components/chip
  */
+export type ChipVariant = "solid" | "outline" | "soft";
+
 export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   children: React.ReactNode;
-  /** Visual style variant. `"outline"` is an alias for `"outlined"`.
-   * @default "filled"
+  /** Chrome family.
+   *
+   * - `solid` (default): tinted pill for filters and tags.
+   * - `outline`: hairline-bordered, transparent.
+   * - `soft`: info-tinted, for a chip that carries a suggestion.
+   * @default "solid"
    * @see https://usefragments.com/components/chip#variants */
-  variant?: "filled" | "outlined" | "outline" | "soft";
+  variant?: ChipVariant;
   /** Chip size.
    * @default "xs" */
   size?: "xs" | "sm" | "md" | "lg";
@@ -45,7 +51,7 @@ export interface ChipGroupProps extends Omit<
 const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   {
     children,
-    variant: variantProp = "filled",
+    variant = "solid",
     size: sizeProp,
     selected = false,
     disabled = false,
@@ -60,8 +66,6 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   ref
 ) {
   const size = sizeProp ?? "xs";
-  // Resolve alias: "outline" → "outlined"
-  const variant = variantProp === "outline" ? "outlined" : variantProp;
 
   const classes = [
     styles.chip,

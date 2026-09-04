@@ -9,7 +9,7 @@
   "exportName": "Alert",
   "propsSummary": [
     "children: node (required)",
-    "severity: info|success|warning|error (default: info)",
+    "tone: info|success|warning|danger (default: info)",
     "emphasis: tint|surface (default: tint)"
   ],
   "props": {
@@ -18,16 +18,16 @@
       "description": "Alert content - use Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Close sub-components",
       "required": true
     },
-    "severity": {
+    "tone": {
       "type": "enum",
-      "description": "Visual severity level",
+      "description": "Tone; controls colour, icon and live-region role",
       "default": "info",
       "required": false,
-      "values": ["info", "success", "warning", "error"]
+      "values": ["info", "success", "warning", "danger"]
     },
     "emphasis": {
       "type": "enum",
-      "description": "How much surface the severity claims. `tint` washes the card in the severity colour; `surface` keeps the page background and colours only the hairline and title.",
+      "description": "How much surface the tone claims. `tint` washes the card in the tone colour; `surface` keeps the page background and colours only the hairline and title.",
       "default": "tint",
       "required": false,
       "values": ["tint", "surface"]
@@ -46,8 +46,8 @@
       "A decision the user must make first (use Dialog)"
     ],
     "guidelines": [
-      "Match severity to real stakes \u2014 an error that is not an error trains people to ignore you",
-      "Every error alert says what to do next",
+      "Match tone to real stakes \u2014 an error that is not an error trains people to ignore you",
+      "Every danger alert says what to do next",
       "Add Alert.Title only when the message needs two lines",
       "One action per alert",
       "Only dismissible when losing the message costs nothing",
@@ -57,39 +57,39 @@
     "accessibility": [
       "role=\"alert\" means assistive tech announces it on arrival",
       "Alert.Close needs its own label",
-      "Icon plus wording carry the severity \u2014 never color alone"
+      "Icon plus wording carry the tone \u2014 never color alone"
     ]
   },
   "examples": [
     {
       "name": "Info",
       "description": "Neutral context \u2014 nothing went wrong, nothing needs doing.",
-      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      Your session will expire in 15 minutes. Save your work to avoid losing changes.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      Your session will expire in 15 minutes. Save your work to avoid losing changes.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Success",
       "description": "Confirms the thing the user just did actually landed.",
-      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"success\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Payment processed</Alert.Title>\n    <Alert.Content>\n      Your order #12345 has been confirmed. You will receive a confirmation email shortly.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"success\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Payment processed</Alert.Title>\n    <Alert.Content>\n      Your order #12345 has been confirmed. You will receive a confirmation email shortly.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Warning",
       "description": "Nothing is broken yet \u2014 act before it is.",
-      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Storage almost full</Alert.Title>\n    <Alert.Content>\n      You have used 90% of your storage quota. Consider deleting unused files.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Storage almost full</Alert.Title>\n    <Alert.Content>\n      You have used 90% of your storage quota. Consider deleting unused files.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Error",
       "description": "Something failed; say what to do about it.",
-      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"error\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Upload failed</Alert.Title>\n    <Alert.Content>\n      The file could not be uploaded. Check your connection and try again.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"danger\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Upload failed</Alert.Title>\n    <Alert.Content>\n      The file could not be uploaded. Check your connection and try again.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "With Action",
       "description": "One button, one job \u2014 more than one stalls the reader.",
-      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Update available</Alert.Title>\n    <Alert.Content>\n      A new version is available with important security fixes.\n    </Alert.Content>\n    <Alert.Actions>\n      <Alert.Action onClick={() => {}}>Update now</Alert.Action>\n    </Alert.Actions>\n  </Alert.Body>\n</Alert>"
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Update available</Alert.Title>\n    <Alert.Content>\n      A new version is available with important security fixes.\n    </Alert.Content>\n    <Alert.Actions>\n      <Alert.Action onClick={() => {}}>Update now</Alert.Action>\n    </Alert.Actions>\n  </Alert.Body>\n</Alert>"
     },
     {
       "name": "Dismissible",
       "description": "A close button suits news the user can safely ignore.",
-      "code": "import { Alert } from '@/components/Alert';\n\n<Alert severity=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      You can customize your notification preferences in Settings.\n    </Alert.Content>\n  </Alert.Body>\n  <Alert.Close />\n</Alert>"
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      You can customize your notification preferences in Settings.\n    </Alert.Content>\n  </Alert.Body>\n  <Alert.Close />\n</Alert>"
     }
   ],
   "relations": [
@@ -111,7 +111,7 @@
   ],
   "contract": {
     "propsSummary": [
-      "severity: info|success|warning|error - visual severity",
+      "tone: info|success|warning|danger - colour, icon and live-region role",
       "Sub-components: Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Action, Alert.Close",
       "Alert.Action / Alert.Close accept button props and default type=\"button\""
     ],
@@ -127,9 +127,9 @@
     "subComponents": ["Icon", "Body", "Title", "Content", "Actions", "Action", "Close"],
     "requiredChildren": ["Body"],
     "commonPatterns": [
-      "<Alert severity=\"info\"><Alert.Icon /><Alert.Body><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
-      "<Alert severity=\"warning\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
-      "<Alert severity=\"error\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body><Alert.Close /></Alert>"
+      "<Alert tone=\"info\"><Alert.Icon /><Alert.Body><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
+      "<Alert tone=\"warning\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
+      "<Alert tone=\"danger\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body><Alert.Close /></Alert>"
     ]
   },
   "provenance": {

@@ -74,7 +74,7 @@ export default defineFragment(DataTable, {
               accessorKey: "status",
               header: "Status",
               cell: ({ row }) => (
-                <Badge variant={row.original.status === "Active" ? "success" : "warning"}>
+                <Badge tone={row.original.status === "Active" ? "success" : "warning"}>
                   {row.original.status}
                 </Badge>
               ),

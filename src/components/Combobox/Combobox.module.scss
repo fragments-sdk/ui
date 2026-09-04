@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/field";
 @use "../../recipes/layout";
@@ -47,6 +48,8 @@
     background-color: var(--fui-field-bg-disabled, $fui-bg-tertiary);
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
+
+  @include high-contrast-outline;
 }
 
 // Size variants for input wrapper — override --_field-h.
@@ -67,7 +70,7 @@
   flex: 1;
   min-width: layout.measure("inline-floor");
   min-block-size: 0;
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   background: transparent;
   border: none;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
@@ -277,21 +280,6 @@
 // Group label
 .groupLabel {
   @include popup.group-label;
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .inputWrapper {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
-
-    &:focus-within {
-      border-color: var(--fui-color-accent, $fui-color-accent);
-    }
-  }
 }
 
 // ============================================

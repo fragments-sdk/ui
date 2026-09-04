@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/feedback" as feedback;
 
@@ -6,7 +7,7 @@
   width: 100%;
 
   > * {
-    border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+    border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 
     &:last-child {
       border-bottom: none;
@@ -15,12 +16,13 @@
 }
 
 .item[data-disabled] {
-  opacity: 0.5;
+  @include disabled-state;
+
   pointer-events: none;
 }
 
 .heading {
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   font: inherit;
 }
 

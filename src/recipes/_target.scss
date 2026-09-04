@@ -13,8 +13,6 @@
 }
 
 @mixin hit-area($role) {
-  --_fui-target-hit-size: #{hit-size($role)};
-
   position: relative;
 
   &::after {
@@ -22,8 +20,8 @@
     position: absolute;
     inset-block-start: 50%;
     inset-inline-start: 50%;
-    inline-size: max(100%, var(--_fui-target-hit-size));
-    block-size: max(100%, var(--_fui-target-hit-size));
+    inline-size: max(100%, #{hit-size($role)});
+    block-size: max(100%, #{hit-size($role)});
     box-sizing: border-box;
     transform: translate(-50%, -50%);
     pointer-events: auto;

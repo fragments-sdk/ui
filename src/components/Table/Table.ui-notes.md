@@ -14,3 +14,9 @@ density recipe's inline inset on both edges, including hover and selected rows.
 The flush selector is anchored to the owning Table structure so an unbordered
 outer ledger cannot remove the inset from a bordered Table nested in one of its
 cells.
+
+## 2026-09-03 Wave 0
+
+- `--fui-table-row-bg` falls back to `--fui-bg-primary`; `--fui-table-divider-size` falls back to `--fui-stroke-hairline`.
+- `prefers-contrast` block replaced by `@include high-contrast-outline;` on `.row` and `.thead > tr` (CanvasText dividers dropped).
+- Still open: `Table.test.tsx` "removes the leading cell inset…" fails because the uncommitted `recipes/_table-chrome.scss` declares `$_cell-inline-inset: cell-inline-inset("regular")` before the function exists (orchestrator-owned).

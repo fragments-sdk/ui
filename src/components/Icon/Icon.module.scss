@@ -20,35 +20,36 @@
   }
 }
 
-.size2xl {
-  @include representation.glyph("2xl");
-}
-
-// Color variants (matching Badge/Alert pattern)
-.primary {
+// Text-hierarchy colour (Text's `color` axis). Absence inherits currentColor.
+.colorPrimary {
   color: var(--fui-text-primary, $fui-text-primary);
 }
 
-.secondary {
+.colorSecondary {
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
-.tertiary {
+.colorTertiary {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 
-.accent {
+// Tone paints the shared status ramp (same `*-text` stops as Badge and Text).
+.toneAccent {
   color: var(--fui-color-accent, $fui-color-accent);
 }
 
-.success {
+.toneInfo {
+  color: var(--fui-color-info-text, $fui-color-info-text);
+}
+
+.toneSuccess {
   color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
-.warning {
+.toneWarning {
   color: var(--fui-color-warning-text, $fui-color-warning-text);
 }
 
-.error {
+.toneDanger {
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }

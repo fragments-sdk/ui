@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from '.';
+import { RENDER_STATES } from '../../storybook/render-states';
 
 /**
  * Tabs is the canonical content-switcher primitive. Use it to organize related
@@ -12,6 +13,7 @@ const meta = {
   component: Tabs,
   tags: ['autodocs', 'canonical'],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
@@ -22,8 +24,8 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['underline', 'pills'],
-      description: 'Default visual style for Tabs.List',
+      options: ['ghost', 'soft'],
+      description: 'Default chrome for Tabs.List',
     },
     orientation: {
       control: 'select',
@@ -32,7 +34,7 @@ const meta = {
     },
   },
   args: {
-    variant: 'underline',
+    variant: 'ghost',
     orientation: 'horizontal',
     defaultValue: 'overview',
     children: (
@@ -56,9 +58,9 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Underline: Story = {
+export const Ghost: Story = {
   render: () => (
-    <Tabs defaultValue="overview" variant="underline">
+    <Tabs defaultValue="overview" variant="ghost">
       <Tabs.List>
         <Tabs.Tab value="overview">Overview</Tabs.Tab>
         <Tabs.Tab value="analytics">Analytics</Tabs.Tab>
@@ -77,9 +79,9 @@ export const Underline: Story = {
   ),
 };
 
-export const Pills: Story = {
+export const Soft: Story = {
   render: () => (
-    <Tabs defaultValue="all" variant="pills">
+    <Tabs defaultValue="all" variant="soft">
       <Tabs.List>
         <Tabs.Tab value="all">All</Tabs.Tab>
         <Tabs.Tab value="active">Active</Tabs.Tab>
@@ -100,7 +102,7 @@ export const Pills: Story = {
 
 export const WithDisabled: Story = {
   render: () => (
-    <Tabs defaultValue="general" variant="underline">
+    <Tabs defaultValue="general" variant="ghost">
       <Tabs.List>
         <Tabs.Tab value="general">General</Tabs.Tab>
         <Tabs.Tab value="security">Security</Tabs.Tab>
@@ -120,13 +122,13 @@ export const WithDisabled: Story = {
 
 export const ListVariantOverride: Story = {
   render: () => (
-    <Tabs defaultValue="overview" variant="pills">
-      <Tabs.List variant="underline">
+    <Tabs defaultValue="overview" variant="soft">
+      <Tabs.List variant="ghost">
         <Tabs.Tab value="overview">Overview</Tabs.Tab>
         <Tabs.Tab value="activity">Activity</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="overview">
-        <p>Root sets pills, but this list overrides to underline.</p>
+        <p>Root sets soft, but this list overrides to ghost.</p>
       </Tabs.Panel>
       <Tabs.Panel value="activity">
         <p>Per-list variant override example.</p>

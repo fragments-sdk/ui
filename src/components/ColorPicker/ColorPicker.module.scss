@@ -93,6 +93,7 @@ $fui-colorpicker-pointer-size: $fui-target-size-min !default;
 
   flex-shrink: 0;
   // Disabled state (opacity + pointer-events) comes from @include interactive-base.
+  @include high-contrast-outline;
 }
 
 // Hex input wrapper (using Input component)
@@ -138,17 +139,6 @@ $fui-colorpicker-pointer-size: $fui-target-size-min !default;
     height: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
     border: var(--fui-stroke-default, 2px) solid var(--fui-text-inverse, $fui-text-inverse);
     box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-  }
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .swatch {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
   }
 }
 

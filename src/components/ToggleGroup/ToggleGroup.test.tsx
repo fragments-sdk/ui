@@ -72,37 +72,36 @@ describe("ToggleGroup", () => {
   it("uses a connected rail by default without accidental item gaps", () => {
     renderToggleGroup();
     const group = screen.getByRole("radiogroup");
-    expect(group.className).toContain("default");
+    expect(group.className).toContain("soft");
     expect(group.className).not.toMatch(/gap-/);
     // Adjacent items share a flush edge; only outer corners are rounded.
-    expect(toggleGroupStyles).toMatch(/\.default\s*\{[\s\S]*\.item\s*\{[\s\S]*border-radius:\s*0/);
+    expect(toggleGroupStyles).not.toMatch(/^\.item\s*\{[^}]*border-radius/m);
     expect(toggleGroupStyles).toMatch(
-      /\.default\s*\{[\s\S]*&:first-child\s*\{[\s\S]*border-start-start-radius/
+      /\.soft\s*\{[\s\S]*&:first-child\s*\{[\s\S]*border-start-start-radius/
     );
   });
 
-  it("gives the open pills variant compact spacing by default", () => {
-    renderToggleGroup({ variant: "pills" });
+  it("gives the open ghost variant compact spacing by default", () => {
+    renderToggleGroup({ variant: "ghost" });
     const group = screen.getByRole("radiogroup");
-    expect(group.className).toContain("pills");
+    expect(group.className).toContain("ghost");
     expect(group.className).toContain("gap-xs");
   });
 
-  it("keeps the outline alias connected even when a gap is requested", () => {
-    renderToggleGroup({ variant: "outlined", gap: "sm" });
+  it("keeps the outline variant connected even when a gap is requested", () => {
+    renderToggleGroup({ variant: "outline", gap: "sm" });
     const group = screen.getByRole("radiogroup");
     expect(group.className).toContain("outline");
     expect(group.className).not.toMatch(/gap-/);
   });
 
-  it("uses the shared selection tone across all visual variants", () => {
-    expect(toggleGroupStyles).toMatch(
-      /\.default\s*\{[\s\S]*--fui-toggle-group-selected-bg,[\s\S]*--fui-control-selected-bg/
+  it("uses the shared segmented selection across all visual variants", () => {
+    const selectedBlocks = toggleGroupStyles.match(
+      /&\.selected\s*\{\s*@include segmented-selection;\s*\}/g
     );
-    expect(toggleGroupStyles).toMatch(/\.pills\s*\{[\s\S]*border-radius:\s*var\(--fui-radius-full/);
-    expect(toggleGroupStyles).toMatch(
-      /\.outline\s*\{[\s\S]*--fui-toggle-group-selected-bg,[\s\S]*--fui-control-selected-bg/
-    );
+    expect(selectedBlocks).toHaveLength(3);
+    expect(toggleGroupStyles).not.toContain("--fui-toggle-group-selected");
+    expect(toggleGroupStyles).toMatch(/\.ghost\s*\{[\s\S]*border-radius:\s*var\(--fui-radius-full/);
   });
 
   it("applies size class", () => {

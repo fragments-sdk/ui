@@ -10,6 +10,7 @@ import styles from "./Tabs.module.scss";
 // ============================================
 
 export type TabValue = string;
+export type TabsVariant = "ghost" | "soft";
 export type TabsChangeEventDetails = Parameters<
   NonNullable<React.ComponentProps<typeof BaseTabs.Root>["onValueChange"]>
 >[1];
@@ -29,19 +30,20 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "d
   /** Tab layout direction.
    * @default "horizontal" */
   orientation?: "horizontal" | "vertical";
-  /** Tab list visual style (default for Tabs.List).
-   * @default "underline" */
-  variant?: "underline" | "pills";
+  /** Tab list chrome (default for Tabs.List): `ghost` draws a rule under the
+   * active tab, `soft` is a filled rail with a selected segment.
+   * @default "ghost" */
+  variant?: TabsVariant;
   /** Tab control size. Defaults to the component-default control size. */
   size?: ControlSize;
 }
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Tab list visual style.
-   * @default "underline"
+  /** Tab list chrome.
+   * @default "ghost"
    * @see https://usefragments.com/components/tabs#variants */
-  variant?: "underline" | "pills";
+  variant?: TabsVariant;
   /** Tab control size. Defaults to the nearest Tabs root or provider default. */
   size?: ControlSize;
 }
@@ -64,7 +66,7 @@ export interface TabsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
 // Context for variant
 // ============================================
 
-const TabsVariantContext = React.createContext<"underline" | "pills">("underline");
+const TabsVariantContext = React.createContext<TabsVariant>("ghost");
 const TabsSizeContext = React.createContext<ControlSize>("md");
 
 // ============================================
@@ -77,7 +79,7 @@ function TabsRoot({
   value,
   onValueChange,
   orientation = "horizontal",
-  variant = "underline",
+  variant = "ghost",
   size: sizeProp,
   className,
   ...htmlProps
@@ -109,8 +111,9 @@ function TabsList({ children, variant, size: sizeProp, className, ...htmlProps }
   const rootSize = React.useContext(TabsSizeContext);
   const size = sizeProp ?? rootSize;
   const resolvedVariant = variant ?? rootVariant;
-  const variantClass = resolvedVariant === "pills" ? styles.listPills : styles.listUnderline;
-  const classes = [styles.list, variantClass, className].filter(Boolean).join(" ");
+  const classes = [styles.list, resolvedVariant === "soft" && styles.listSoft, className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <TabsVariantContext.Provider value={resolvedVariant}>
@@ -122,7 +125,7 @@ function TabsList({ children, variant, size: sizeProp, className, ...htmlProps }
           data-variant={resolvedVariant}
         >
           {children}
-          {resolvedVariant === "underline" && <BaseTabs.Indicator className={styles.indicator} />}
+          {resolvedVariant === "ghost" && <BaseTabs.Indicator className={styles.indicator} />}
         </BaseTabs.List>
       </TabsSizeContext.Provider>
     </TabsVariantContext.Provider>
@@ -132,7 +135,7 @@ function TabsList({ children, variant, size: sizeProp, className, ...htmlProps }
 function Tab({ children, value, disabled, className }: TabProps) {
   const variant = React.useContext(TabsVariantContext);
   const size = React.useContext(TabsSizeContext);
-  const variantClass = variant === "pills" ? styles.tabPills : styles.tabUnderline;
+  const variantClass = variant === "soft" ? styles.tabSoft : styles.tabGhost;
   const sizeClass = size === "sm" ? styles.tabSm : size === "lg" ? styles.tabLg : styles.tabMd;
   const classes = [styles.tab, sizeClass, variantClass, className].filter(Boolean).join(" ");
 

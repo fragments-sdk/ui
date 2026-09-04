@@ -104,11 +104,11 @@ describe("Dialog", () => {
     });
   });
 
-  it("supports size variant prop", async () => {
+  it("supports the width prop", async () => {
     render(
       <Dialog defaultOpen>
         <Dialog.Trigger>Open</Dialog.Trigger>
-        <Dialog.Content size="lg">
+        <Dialog.Content width="lg">
           <Dialog.Title>Large Dialog</Dialog.Title>
         </Dialog.Content>
       </Dialog>

@@ -3,7 +3,7 @@ import { List } from '.';
 
 /**
  * Compound component for ordered or unordered lists with consistent styling.
- * Compose with `List.Item`. Supports bullet, numbered, icon, and unstyled variants.
+ * Compose with `List.Item`. Supports bullet, numbered, icon, and unstyled markers.
  */
 const meta = {
   title: 'Display/List',
@@ -22,19 +22,19 @@ const meta = {
       options: ['ul', 'ol'],
       description: 'Underlying list element',
     },
-    variant: {
+    marker: {
       control: 'select',
       options: ['none', 'disc', 'decimal', 'icon'],
-      description: 'List style variant',
+      description: 'Marker drawn before each item',
     },
     gap: {
       control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg'],
+      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Spacing between items',
     },
   },
   args: {
-    variant: 'disc',
+    marker: 'disc',
     gap: 'sm',
     children: (
       <>
@@ -51,7 +51,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Bullet: Story = {
-  args: { variant: 'disc' },
+  args: { marker: 'disc' },
   render: (args) => (
     <List {...args}>
       <List.Item>First item</List.Item>
@@ -62,7 +62,7 @@ export const Bullet: Story = {
 };
 
 export const Numbered: Story = {
-  args: { as: 'ol', variant: 'decimal' },
+  args: { as: 'ol', marker: 'decimal' },
   render: (args) => (
     <List {...args}>
       <List.Item>Create your account</List.Item>
@@ -73,7 +73,7 @@ export const Numbered: Story = {
 };
 
 export const IconList: Story = {
-  args: { variant: 'icon' },
+  args: { marker: 'icon' },
   render: (args) => (
     <List {...args}>
       <List.Item icon={<span aria-hidden>✓</span>}>Unlimited projects</List.Item>
@@ -84,7 +84,7 @@ export const IconList: Story = {
 };
 
 export const Unstyled: Story = {
-  args: { variant: 'none', gap: 'md' },
+  args: { marker: 'none', gap: 'md' },
   render: (args) => (
     <List {...args}>
       <List.Item>Dashboard</List.Item>

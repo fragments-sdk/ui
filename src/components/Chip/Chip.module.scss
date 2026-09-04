@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/layout";
 
@@ -13,7 +14,7 @@
 
   &:active:not(:disabled) {
     background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
       var(--fui-field-selection-border, $fui-border-strong);
   }
 }
@@ -28,8 +29,8 @@
 }
 
 .withRemove {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  border-start-end-radius: var(--fui-radius-none, #{$fui-radius-none});
+  border-end-end-radius: var(--fui-radius-none, #{$fui-radius-none});
 }
 
 // Sizes
@@ -49,8 +50,8 @@
   @include action.size("lg");
 }
 
-// Variants
-.filled {
+// Variants — chrome only
+.solid {
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   color: var(--fui-text-primary, $fui-text-primary);
 
@@ -67,10 +68,10 @@
   }
 }
 
-.outlined {
+.outline {
   background-color: transparent;
   color: var(--fui-text-primary, $fui-text-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 
   &:hover:not(:disabled) {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -110,23 +111,23 @@
   align-items: center;
 
   img {
-    width: var(--fui-icon-md, $fui-icon-md);
-    height: var(--fui-icon-md, $fui-icon-md);
+    inline-size: var(--fui-icon-md, $fui-icon-md);
+    block-size: var(--fui-icon-md, $fui-icon-md);
     border-radius: var(--fui-radius-full, $fui-radius-full);
     object-fit: cover;
   }
 
   .xs & {
     img {
-      width: var(--fui-icon-sm, $fui-icon-sm);
-      height: var(--fui-icon-sm, $fui-icon-sm);
+      inline-size: var(--fui-icon-sm, $fui-icon-sm);
+      block-size: var(--fui-icon-sm, $fui-icon-sm);
     }
   }
 
   .sm & {
     img {
-      width: var(--fui-icon-sm, $fui-icon-sm);
-      height: var(--fui-icon-sm, $fui-icon-sm);
+      inline-size: var(--fui-icon-sm, $fui-icon-sm);
+      block-size: var(--fui-icon-sm, $fui-icon-sm);
     }
   }
 }
@@ -149,13 +150,13 @@
   @include action.base;
 
   color: var(--fui-text-secondary, $fui-text-secondary);
-  border-top-right-radius: var(--fui-radius-full, $fui-radius-full);
-  border-bottom-right-radius: var(--fui-radius-full, $fui-radius-full);
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  border-start-end-radius: var(--fui-radius-full, $fui-radius-full);
+  border-end-end-radius: var(--fui-radius-full, $fui-radius-full);
+  border-start-start-radius: var(--fui-radius-none, #{$fui-radius-none});
+  border-end-start-radius: var(--fui-radius-none, #{$fui-radius-none});
   background-color: transparent;
-  border: var(--fui-stroke-hairline, 1px) solid transparent;
-  border-left-color: var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
+  border-inline-start-color: var(--fui-border, $fui-border);
 
   .removableChip[data-size="xs"] & {
     @include action.icon-only("micro");
@@ -180,7 +181,7 @@
 
 // Match remove button visuals to chip variant/state so the compound control
 // remains visually coherent across seeds/themes.
-.filled + .remove {
+.solid + .remove {
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
 
   &:hover:not(:disabled) {
@@ -192,7 +193,7 @@
   }
 }
 
-.outlined + .remove {
+.outline + .remove {
   background-color: transparent;
 
   &:hover:not(:disabled) {
@@ -219,7 +220,7 @@
 
 .selected + .remove {
   @include selected-surface;
-  border-left-color: transparent;
+  border-inline-start-color: transparent;
 }
 
 // Chip.Group

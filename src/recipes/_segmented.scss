@@ -13,7 +13,7 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: stretch;
-  min-block-size: var(--_fui-segmented-track);
+  min-block-size: var(--_fui-segmented-track, #{action.track($size)});
 }
 
 @mixin item($size) {

@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
 @use "../../recipes/typography" as typography;
@@ -62,14 +63,15 @@
 }
 
 .error .content {
-  border: var(--fui-stroke-hairline, 1px) solid
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--fui-color-danger-border, $fui-color-danger-border);
   background: var(--fui-color-danger-bg, $fui-color-danger-bg);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
-.sending {
-  opacity: 0.7;
+// In-flight messages dim with the one disabled opacity until they land.
+.pending {
+  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
 }
 
 .avatar {
@@ -88,7 +90,7 @@
 }
 
 .avatarImage {
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .body {
@@ -126,7 +128,7 @@
     background-color: var(--fui-bg-subtle, $fui-bg-subtle);
 
     code {
-      padding: 0;
+      padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
       background: none;
       font: inherit;
       letter-spacing: inherit;
@@ -147,7 +149,7 @@
   display: inline-block;
   inline-size: 0.5em;
   block-size: 1em;
-  margin-inline-start: var(--fui-raw-space-2, 2px);
+  margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
   background-color: currentColor;
   animation: blink var(--fui-duration-pulse, $fui-duration-pulse) step-end infinite;
 }

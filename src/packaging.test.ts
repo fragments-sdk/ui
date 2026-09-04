@@ -167,9 +167,15 @@ describe("measurements public subpath", () => {
       return match?.[1].trim();
     };
 
+    // Catalog lengths read --fui-scale (UIR-D27); hairlines of 2px and under stay fixed.
+    const scaled = (value: string) => {
+      const match = /^([0-9]+(?:\.[0-9]+)?)px$/.exec(value);
+      return match && Number(match[1]) > 2 ? `calc(var(--fui-scale, 1) * ${value})` : value;
+    };
+
     for (const [step, value] of Object.entries(MEASUREMENT_PROFILES.rawSpace)) {
       const property = `--fui-raw-space-${step}`;
-      expect(declaration(":root", property)).toBe(value);
+      expect(declaration(":root", property)).toBe(scaled(value));
       expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
     }
 
@@ -177,7 +183,7 @@ describe("measurements public subpath", () => {
       const groupName = group.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
       for (const [name, value] of Object.entries(values)) {
         const property = `--fui-${groupName}-${name}`;
-        expect(declaration(":root", property)).toBe(value);
+        expect(declaration(":root", property)).toBe(scaled(value));
         expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
       }
     }

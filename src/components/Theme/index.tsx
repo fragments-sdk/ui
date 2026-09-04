@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { ComponentDefaultsProvider, type ComponentDefaults } from "../ComponentDefaults";
-import { ThemeToggle } from "../ThemeToggle";
+import { ThemeButton, ThemeToggle } from "../ThemeToggle";
 import { ThemeContext, useTheme, type ThemeContextValue, type ThemeMode } from "./context";
 
-export type { ThemeToggleProps } from "../ThemeToggle";
+export type { ThemeButtonProps, ThemeToggleProps } from "../ThemeToggle";
 export type { ThemeMode, UseThemeReturn } from "./context";
 
 // ============================================
@@ -182,10 +182,11 @@ export const Theme = Object.assign(ThemeProvider, {
   Root: ThemeProvider,
   Provider: ThemeProvider,
   Toggle: ThemeToggle,
+  Button: ThemeButton,
   useTheme,
 });
 
-export { ThemeProvider, ThemeToggle, useTheme };
+export { ThemeProvider, ThemeToggle, ThemeButton, useTheme };
 
 // ============================================
 // configureTheme — JS-only seed configuration

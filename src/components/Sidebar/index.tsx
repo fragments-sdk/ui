@@ -35,7 +35,7 @@ function renderSidebarBadge(badge: React.ReactNode) {
   }
 
   return (
-    <Badge variant="default" size="sm">
+    <Badge tone="neutral" size="sm">
       {badge}
     </Badge>
   );
@@ -1122,10 +1122,10 @@ function SidebarMenuSkeleton({
     <div {...htmlProps} className={classes} aria-hidden="true">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className={styles.skeletonItem}>
-          {showIcon && <Skeleton variant="avatar" size="sm" />}
+          {showIcon && <Skeleton shape="avatar" size="sm" />}
           {!isCollapsed && (
             <Skeleton
-              variant="text"
+              shape="text"
               className={styles.skeletonLabel}
               width={labelWidths[i % labelWidths.length]}
             />

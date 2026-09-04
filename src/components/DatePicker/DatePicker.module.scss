@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/field";
 @use "../../recipes/layout";
@@ -49,6 +50,8 @@
   .wrapper[data-invalid] & {
     border-color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
+
+  @include high-contrast-outline;
 }
 
 .triggerSm {
@@ -182,7 +185,7 @@
   top: 0;
   left: 0;
   right: 0;
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .navButton {
@@ -224,9 +227,9 @@
 .weekday {
   @include typography.role("ui-compact");
 
-  width: var(--_day-size);
-  height: var(--_day-size);
-  padding: 0;
+  width: var(--_day-size, #{action.track("md")});
+  height: var(--_day-size, #{action.track("md")});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
   vertical-align: middle;
@@ -245,9 +248,9 @@
 // ============================================
 
 .day {
-  width: var(--_day-size);
-  height: var(--_day-size);
-  padding: 0;
+  width: var(--_day-size, #{action.track("md")});
+  height: var(--_day-size, #{action.track("md")});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   text-align: center;
   vertical-align: middle;
   position: relative;
@@ -259,8 +262,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--_day-size);
-  height: var(--_day-size);
+  width: var(--_day-size, #{action.track("md")});
+  height: var(--_day-size, #{action.track("md")});
   border-radius: var(--fui-radius-md, $fui-radius-md);
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
   color: var(--fui-text-primary, $fui-text-primary);
@@ -296,14 +299,17 @@
   }
 }
 
+// Days outside the visible month recede but stay clickable; they borrow the
+// disabled opacity because the kit has no separate muted-opacity token yet.
 .outside > .dayButton {
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  opacity: 0.5;
+  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
 }
 
 .disabled > .dayButton {
+  @include disabled-state;
+
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -417,29 +423,6 @@
 
   &:focus-visible {
     @include focus-ring;
-  }
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .trigger {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
-
-    &[data-popup-open] {
-      border-color: var(--fui-color-accent, $fui-color-accent);
-    }
-  }
-
-  .dayButton {
-    border: var(--fui-stroke-hairline, 1px) solid transparent;
-
-    &:focus-visible {
-      border-color: var(--fui-text-primary, $fui-text-primary);
-    }
   }
 }
 

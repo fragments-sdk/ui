@@ -83,8 +83,8 @@
   --_col-span: var(--bento-col-span, 1);
   --_row-span: var(--bento-row-span, 1);
 
-  grid-column: span var(--_col-span);
-  grid-row: span var(--_row-span);
+  grid-column: span var(--_col-span, var(--bento-col-span, 1));
+  grid-row: span var(--_row-span, var(--bento-row-span, 1));
 
   @include breakpoint-sm {
     --_col-span: var(--bento-col-span-sm, var(--bento-col-span, 1));
@@ -129,12 +129,8 @@
 // Accessibility: High Contrast Mode
 // ============================================
 
-@media (prefers-contrast: more) {
-  .item {
-    border-color: var(--fui-text-primary, $fui-text-primary);
-    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
-  }
+.item {
+  @include high-contrast-outline;
 }
 
 // ============================================

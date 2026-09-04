@@ -13,20 +13,20 @@ describe('Alert', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('applies severity variant class', () => {
+  it('applies tone class', () => {
     const { rerender } = render(
-      <Alert severity="error">
+      <Alert tone="danger">
         <Alert.Title>Error</Alert.Title>
       </Alert>
     );
-    expect(screen.getByRole('alert')).toHaveClass('error');
+    expect(screen.getByRole('alert')).toHaveClass('toneDanger');
 
     rerender(
-      <Alert severity="success">
+      <Alert tone="success">
         <Alert.Title>Success</Alert.Title>
       </Alert>
     );
-    expect(screen.getByRole('status')).toHaveClass('success');
+    expect(screen.getByRole('status')).toHaveClass('toneSuccess');
   });
 
   it('links title and content via aria-labelledby and aria-describedby', () => {
@@ -58,9 +58,9 @@ describe('Alert', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('renders default severity icon', () => {
+  it('renders default tone icon', () => {
     render(
-      <Alert severity="success">
+      <Alert tone="success">
         <Alert.Icon />
         <Alert.Title>Done</Alert.Title>
       </Alert>
@@ -127,18 +127,18 @@ describe('Alert', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('defaults to info severity', () => {
+  it('defaults to the info tone', () => {
     render(
       <Alert>
         <Alert.Title>Default</Alert.Title>
       </Alert>
     );
-    expect(screen.getByRole('status')).toHaveClass('info');
+    expect(screen.getByRole('status')).toHaveClass('toneInfo');
   });
 
-  it('uses role="alert" for urgent severities', () => {
+  it('uses role="alert" for urgent tones', () => {
     render(
-      <Alert severity="warning">
+      <Alert tone="warning">
         <Alert.Title>Warning</Alert.Title>
       </Alert>
     );
@@ -147,7 +147,7 @@ describe('Alert', () => {
 
   it('has no accessibility violations', async () => {
     const { container } = render(
-      <Alert severity="warning">
+      <Alert tone="warning">
         <Alert.Icon />
         <Alert.Body>
           <Alert.Title>Warning</Alert.Title>

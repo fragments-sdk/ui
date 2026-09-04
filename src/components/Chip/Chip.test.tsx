@@ -21,8 +21,8 @@ describe("Chip", () => {
   });
 
   it("applies variant classes", () => {
-    render(<Chip variant="outlined">Outlined</Chip>);
-    expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("outlined");
+    render(<Chip variant="outline">Outlined</Chip>);
+    expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("outline");
   });
 
   it("sets aria-pressed for selected state", () => {
@@ -68,9 +68,9 @@ describe("Chip", () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('resolves variant="outline" to "outlined"', () => {
-    render(<Chip variant="outline">Outline</Chip>);
-    expect(screen.getByRole("button", { name: "Outline" })).toHaveClass("outlined");
+  it("defaults to the solid variant", () => {
+    render(<Chip>Plain</Chip>);
+    expect(screen.getByRole("button", { name: "Plain" })).toHaveClass("solid");
   });
 
   it("Chip.Group supports non-string chip children without value collisions", async () => {

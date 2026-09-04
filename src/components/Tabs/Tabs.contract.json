@@ -13,7 +13,7 @@
     "value: string",
     "onValueChange: function",
     "orientation: horizontal|vertical (default: horizontal)",
-    "variant: underline|pills (default: underline)"
+    "variant: ghost|soft (default: ghost)"
   ],
   "props": {
     "children": {
@@ -45,10 +45,10 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Default visual style for Tabs.List (can be overridden on Tabs.List)",
-      "default": "underline",
+      "description": "Default chrome for Tabs.List (can be overridden on Tabs.List): ghost draws a rule under the active tab, soft is a filled rail with a selected segment",
+      "default": "ghost",
       "required": false,
-      "values": ["underline", "pills"]
+      "values": ["ghost", "soft"]
     }
   },
   "usage": {
@@ -69,7 +69,7 @@
       "Order by how often each panel is used",
       "Past five or six tabs, split the page instead",
       "Keep panels comparable in depth",
-      "Pills inside cards, underline at page level"
+      "Soft rails inside cards, ghost at page level"
     ],
     "accessibility": [
       "Keyboard navigation with arrow keys",
@@ -79,24 +79,24 @@
   },
   "examples": [
     {
-      "name": "Underline",
+      "name": "Ghost",
       "description": "A rule tracks the active panel.",
-      "code": "<Tabs defaultValue=\"overview\" variant=\"underline\">\n  <Tabs.List>\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"analytics\">Analytics</Tabs.Tab>\n    <Tabs.Tab value=\"settings\">Settings</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Overview content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"analytics\">\n    <p>Analytics content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"settings\">\n    <p>Settings content goes here.</p>\n  </Tabs.Panel>\n</Tabs>"
+      "code": "<Tabs defaultValue=\"overview\" variant=\"ghost\">\n  <Tabs.List>\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"analytics\">Analytics</Tabs.Tab>\n    <Tabs.Tab value=\"settings\">Settings</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Overview content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"analytics\">\n    <p>Analytics content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"settings\">\n    <p>Settings content goes here.</p>\n  </Tabs.Panel>\n</Tabs>"
     },
     {
-      "name": "Pills",
-      "description": "A filled track suits panels inside a card.",
-      "code": "<Tabs defaultValue=\"all\" variant=\"pills\">\n  <Tabs.List>\n    <Tabs.Tab value=\"all\">All</Tabs.Tab>\n    <Tabs.Tab value=\"active\">Active</Tabs.Tab>\n    <Tabs.Tab value=\"archived\">Archived</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"all\">\n    <p>Showing all items.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"active\">\n    <p>Showing active items only.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"archived\">\n    <p>Showing archived items.</p>\n  </Tabs.Panel>\n</Tabs>"
+      "name": "Soft",
+      "description": "A filled rail suits panels inside a card.",
+      "code": "<Tabs defaultValue=\"all\" variant=\"soft\">\n  <Tabs.List>\n    <Tabs.Tab value=\"all\">All</Tabs.Tab>\n    <Tabs.Tab value=\"active\">Active</Tabs.Tab>\n    <Tabs.Tab value=\"archived\">Archived</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"all\">\n    <p>Showing all items.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"active\">\n    <p>Showing active items only.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"archived\">\n    <p>Showing archived items.</p>\n  </Tabs.Panel>\n</Tabs>"
     },
     {
       "name": "With Disabled",
       "description": "An unavailable panel stays visible but unreachable.",
-      "code": "<Tabs defaultValue=\"general\" variant=\"underline\">\n  <Tabs.List>\n    <Tabs.Tab value=\"general\">General</Tabs.Tab>\n    <Tabs.Tab value=\"security\">Security</Tabs.Tab>\n    <Tabs.Tab value=\"billing\" disabled>Billing</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"general\">\n    <p>General settings panel.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"security\">\n    <p>Security settings panel.</p>\n  </Tabs.Panel>\n</Tabs>"
+      "code": "<Tabs defaultValue=\"general\" variant=\"ghost\">\n  <Tabs.List>\n    <Tabs.Tab value=\"general\">General</Tabs.Tab>\n    <Tabs.Tab value=\"security\">Security</Tabs.Tab>\n    <Tabs.Tab value=\"billing\" disabled>Billing</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"general\">\n    <p>General settings panel.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"security\">\n    <p>Security settings panel.</p>\n  </Tabs.Panel>\n</Tabs>"
     },
     {
       "name": "List Variant Override",
       "description": "One list can opt out of the root's style.",
-      "code": "<Tabs defaultValue=\"overview\" variant=\"pills\">\n  <Tabs.List variant=\"underline\">\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"activity\">Activity</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Root sets pills, but this list overrides to underline.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"activity\">\n    <p>Per-list variant override example.</p>\n  </Tabs.Panel>\n</Tabs>"
+      "code": "<Tabs defaultValue=\"overview\" variant=\"soft\">\n  <Tabs.List variant=\"ghost\">\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"activity\">Activity</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Root sets soft, but this list overrides to ghost.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"activity\">\n    <p>Per-list variant override example.</p>\n  </Tabs.Panel>\n</Tabs>"
     }
   ],
   "relations": [
@@ -116,8 +116,8 @@
       "value: string - controlled active tab",
       "defaultValue: string - initial active tab",
       "onValueChange: (value) => void - tab change handler",
-      "variant: underline|pills - default style for Tabs.List",
-      "Tabs.List variant?: underline|pills - optional per-list override"
+      "variant: ghost|soft - default chrome for Tabs.List",
+      "Tabs.List variant?: ghost|soft - optional per-list override"
     ],
     "a11yRules": ["A11Y_TABS_KEYBOARD", "A11Y_TABS_LABELS"]
   },

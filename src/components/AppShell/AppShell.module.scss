@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/navigation" as navigation;
 
@@ -108,7 +109,7 @@
   background-color: inherit;
   // Border lives on the grid column so the rail runs the full content
   // height; the sticky inner sidebar is viewport-tall for nav scrolling.
-  border-inline-end: var(--fui-stroke-hairline, 1px) solid
+  border-inline-end: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(
       --fui-sidebar-border,
       var(--fui-border-subtle, var(--fui-border-default, #{$fui-border-default}))
@@ -200,10 +201,10 @@
   margin: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1)
     var(--fui-space-1, $fui-space-1) 0;
   padding: var(--fui-space-4, $fui-space-4);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-  box-shadow: inset 0 var(--fui-stroke-hairline, 1px) 0
+  box-shadow: inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
   overflow: hidden auto;
 
@@ -220,7 +221,7 @@
 // Keep these compound rules after `.mainFloating`: the explicit padding prop
 // owns the content inset even when the floating surface supplies its default.
 .main.paddingNone {
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .main.paddingSm {
@@ -269,7 +270,7 @@
     position: static;
     width: 100%;
     height: auto;
-    border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+    border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   }
 }
 
@@ -295,10 +296,10 @@
   );
   margin: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1)
     var(--fui-space-1, $fui-space-1) 0;
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
   background-color: var(--fui-panel-bg, inherit);
-  box-shadow: inset 0 var(--fui-stroke-hairline, 1px) 0
+  box-shadow: inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
   overflow: hidden;
 

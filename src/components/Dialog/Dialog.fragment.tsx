@@ -27,7 +27,7 @@ export default defineFragment(Dialog, {
             <Dialog.Body>Dialog body</Dialog.Body>
             <Dialog.Footer>
               <Dialog.Close asChild>
-                <Button variant="secondary">Close</Button>
+                <Button variant="soft">Close</Button>
               </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
@@ -40,7 +40,7 @@ export default defineFragment(Dialog, {
       render: (
         <Dialog>
           <Dialog.Trigger asChild>
-            <Button variant="danger">Delete item</Button>
+            <Button variant="solid" tone="danger">Delete item</Button>
           </Dialog.Trigger>
           <Dialog.Content>
             <Dialog.Header>
@@ -49,10 +49,10 @@ export default defineFragment(Dialog, {
             <Dialog.Body>This action cannot be undone.</Dialog.Body>
             <Dialog.Footer>
               <Dialog.Close asChild>
-                <Button variant="secondary">Cancel</Button>
+                <Button variant="soft">Cancel</Button>
               </Dialog.Close>
               <Dialog.Close asChild>
-                <Button variant="danger">Delete</Button>
+                <Button variant="solid" tone="danger">Delete</Button>
               </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
@@ -66,7 +66,7 @@ export default defineFragment(Dialog, {
           <Dialog.Trigger asChild>
             <Button>Open large dialog</Button>
           </Dialog.Trigger>
-          <Dialog.Content size="lg">
+          <Dialog.Content width="lg">
             <Dialog.Close />
             <Dialog.Header>
               <Dialog.Title>Detailed settings</Dialog.Title>
@@ -74,7 +74,7 @@ export default defineFragment(Dialog, {
             <Dialog.Body>Complex content</Dialog.Body>
             <Dialog.Footer>
               <Dialog.Close asChild>
-                <Button variant="secondary">Close</Button>
+                <Button variant="soft">Close</Button>
               </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
@@ -86,7 +86,7 @@ export default defineFragment(Dialog, {
       render: (
         <Dialog>
           <Dialog.Trigger asChild>
-            <Button variant="secondary">Open settings</Button>
+            <Button variant="soft">Open settings</Button>
           </Dialog.Trigger>
           <Dialog.Content initialFocus={false}>
             <Dialog.Header>
@@ -96,7 +96,7 @@ export default defineFragment(Dialog, {
             <Dialog.Body>Settings content</Dialog.Body>
             <Dialog.Footer>
               <Dialog.Close asChild>
-                <Button variant="secondary">Close</Button>
+                <Button variant="soft">Close</Button>
               </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
@@ -122,7 +122,7 @@ export default defineFragment(Dialog, {
             </Dialog.Header>
             <Dialog.Footer>
               <Dialog.Close asChild>
-                <Button variant="secondary">Close</Button>
+                <Button variant="soft">Close</Button>
               </Dialog.Close>
             </Dialog.Footer>
           </Dialog.Content>
@@ -162,7 +162,7 @@ export default defineFragment(Dialog, {
         reason: "Do not use a Dialog for a non-blocking notification.",
         bad: "<Dialog>Saved</Dialog>",
         good: (
-          <Alert severity="success">
+          <Alert tone="success">
             <Alert.Icon />
             <Alert.Body>
               <Alert.Title>Changes saved</Alert.Title>
@@ -187,7 +187,7 @@ export default defineFragment(Dialog, {
     ],
   },
   matrix: {
-    axes: { size: "auto", modal: ["true", "false"], theme: ["light", "dark"] },
+    axes: { width: "auto", modal: ["true", "false"], theme: ["light", "dark"] },
     forced: ["open", "focus", "reduced-motion"],
     worstCase: {
       title:
@@ -218,8 +218,8 @@ export default defineFragment(Dialog, {
     ],
     requiredChildren: ["Content"],
     commonPatterns: [
-      '<Dialog><Dialog.Trigger asChild><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close asChild><Button variant="secondary">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
-      '<Dialog><Dialog.Trigger asChild><Button variant="secondary">Open settings</Button></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger asChild><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close asChild><Button variant="soft">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger asChild><Button variant="soft">Open settings</Button></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
     ],
   },
   contract: {
@@ -228,7 +228,7 @@ export default defineFragment(Dialog, {
       "onOpenChange: (open) => void - open state handler",
       "modal: boolean - blocks page interaction (default: true)",
       "Dialog.Content initialFocus?: boolean - control auto-focus on open (default: true)",
-      "Dialog.Content size: sm|md|lg|xl|full - dialog width",
+      "Dialog.Content width: sm|md|lg|xl|full - dialog width (default: md)",
     ],
     a11yRules: ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"],
   },

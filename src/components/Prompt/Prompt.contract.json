@@ -20,8 +20,8 @@
     "maxRows: number (default: 8)",
     "autoResize: boolean (default: true)",
     "submitOnEnter: boolean (default: true)",
-    "variant: default|fixed|sticky (default: default)",
-    "appearance: panel|seamless (default: panel)",
+    "placement: inline|fixed|sticky (default: inline)",
+    "variant: outline|ghost (default: outline)",
     "onFiles: function",
     "accept: string"
   ],
@@ -94,12 +94,12 @@
       "default": "true",
       "required": false
     },
-    "variant": {
+    "placement": {
       "type": "enum",
-      "description": "Visual/positioning variant",
-      "default": "default",
+      "description": "Where the card sits: inline in the flow, fixed to the viewport bottom, or sticky to the content area (offset by --fui-prompt-inset-left)",
+      "default": "inline",
       "required": false,
-      "values": ["default", "fixed", "sticky"]
+      "values": ["inline", "fixed", "sticky"]
     },
     "onFiles": {
       "type": "function",
@@ -111,12 +111,12 @@
       "description": "accept filter for the attach button's picker, e.g. \"image/*\"",
       "required": false
     },
-    "appearance": {
+    "variant": {
       "type": "enum",
-      "description": "How the card is divided up. \"panel\" keeps the toolbar as a filled footer under a rule; \"seamless\" makes the whole card one writing surface with the controls floating on it.",
-      "default": "panel",
+      "description": "Card chrome. \"outline\" keeps the toolbar as a filled footer under a rule; \"ghost\" makes the whole card one writing surface with the controls floating on it.",
+      "default": "outline",
       "required": false,
-      "values": ["panel", "seamless"]
+      "values": ["outline", "ghost"]
     }
   },
   "usage": {
@@ -134,7 +134,7 @@
       "Always pass an onSubmit handler",
       "Set loading while the request is in flight to block duplicate sends",
       "Prompt.Textarea forwards native textarea props and composes your own handlers",
-      "appearance=\"seamless\" floats the controls on the writing surface instead of a footer",
+      "variant=\"ghost\" floats the controls on the writing surface instead of a footer",
       "Seamless secondary controls stay transparent; only Prompt.Submit keeps a filled shape",
       "Prompt.Submit uses a neutral inverse surface, never semantic brand color",
       "Prompt.ModeButton toggles a setting; Prompt.Select picks one from a list",
@@ -166,7 +166,7 @@
     {
       "name": "Agent Composer",
       "description": "Controls float on the writing surface instead of a footer.",
-      "code": "<Prompt\n  appearance=\"seamless\"\n  submitOnEnter={false}\n  minRows={3}\n  onSubmit={(value) => console.log(value)}\n>\n  <Prompt.Textarea placeholder=\"What should be true when this is done?\" />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.Select\n        aria-label=\"Model\"\n        defaultValue=\"claude-opus-4-8\"\n        options={[{ value: 'claude-opus-4-8', label: 'Opus 4.8' }, { value: 'claude-sonnet-5', label: 'Sonnet 5' }]}\n      />\n      <Prompt.ModeButton>Plan</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
+      "code": "<Prompt\n  variant=\"ghost\"\n  submitOnEnter={false}\n  minRows={3}\n  onSubmit={(value) => console.log(value)}\n>\n  <Prompt.Textarea placeholder=\"What should be true when this is done?\" />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.Select\n        aria-label=\"Model\"\n        defaultValue=\"claude-opus-4-8\"\n        options={[{ value: 'claude-opus-4-8', label: 'Opus 4.8' }, { value: 'claude-sonnet-5', label: 'Sonnet 5' }]}\n      />\n      <Prompt.ModeButton>Plan</Prompt.ModeButton>\n    </Prompt.Actions>\n    <Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Info>\n  </Prompt.Toolbar>\n</Prompt>"
     },
     {
       "name": "With Attachments",

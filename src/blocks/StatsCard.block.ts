@@ -11,14 +11,14 @@ export default defineBlock({
   <Card.Body>
     <Stack direction="row" justify="between" align="start">
       <Stack gap="xs">
-        <Text size="sm" color="tertiary">Total Revenue</Text>
-        <Text size="2xl" weight="semibold">$45,231</Text>
+        <Text scale="sm" color="tertiary">Total Revenue</Text>
+        <Text scale="2xl" weight="semibold">$45,231</Text>
         <Stack direction="row" gap="xs" align="center">
-          <Badge variant="success">+12.5%</Badge>
-          <Text size="sm" color="tertiary">from last month</Text>
+          <Badge tone="success">+12.5%</Badge>
+          <Text scale="sm" color="tertiary">from last month</Text>
         </Stack>
       </Stack>
-      <Icon icon={TrendUp} size="lg" color="success" />
+      <Icon icon={TrendUp} size="lg" tone="success" />
     </Stack>
   </Card.Body>
 </Card>

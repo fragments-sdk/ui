@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
 
@@ -58,7 +59,7 @@
 }
 
 // ============================================
-// Spinner Variant
+// Spinner kind
 // ============================================
 
 .spinnerIcon {
@@ -68,7 +69,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
-    opacity: 0.7;
+    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
   }
 }
 
@@ -82,10 +83,10 @@
 }
 
 // ============================================
-// Dots Variant
+// Dots kind
 // ============================================
 
-// `.dots`/`.pulse` on the root are variant hooks only — sizing lives on the
+// `.dots`/`.pulse` on the root are kind hooks only — sizing lives on the
 // inner track. Sharing one class between root and track let the track's
 // 100% × 100% override the root's fixed activity footprint (rendered 0 × 0).
 .dotsTrack {
@@ -104,20 +105,20 @@
   animation: bounce var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out infinite;
 
   &:nth-child(1) {
-    animation-delay: 0s;
+    animation-delay: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   }
 
   &:nth-child(2) {
-    animation-delay: 0.2s;
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 8);
   }
 
   &:nth-child(3) {
-    animation-delay: 0.4s;
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 4);
   }
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
-    opacity: 0.6;
+    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
   }
 }
 
@@ -126,7 +127,7 @@
   60%,
   100% {
     transform: translateY(0);
-    opacity: 0.4;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
   }
   30% {
     transform: translateY(-30%);
@@ -135,7 +136,7 @@
 }
 
 // ============================================
-// Pulse Variant
+// Pulse kind
 // ============================================
 
 .pulseTrack {
@@ -149,22 +150,22 @@
 
 .pulseRing {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inline-size: 100%;
+  block-size: 100%;
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: currentColor;
-  opacity: 0.3;
+  opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
   animation: pulseRing var(--fui-duration-pulse, $fui-duration-pulse) ease-out infinite;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
-    opacity: 0.2;
+    opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
   }
 }
 
 .pulseDot {
-  width: 50%;
-  height: 50%;
+  inline-size: 50%;
+  block-size: 50%;
   border-radius: var(--fui-radius-full, $fui-radius-full);
   background-color: currentColor;
   z-index: 1;
@@ -173,7 +174,7 @@
 @keyframes pulseRing {
   0% {
     transform: scale(0.5);
-    opacity: 0.5;
+    opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
   }
   100% {
     transform: scale(1.5);
@@ -192,7 +193,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--fui-backdrop, $fui-backdrop);
-  z-index: var(--fui-overlay-layer-backdrop, 50);
+  z-index: var(--fui-overlay-layer-backdrop, #{$fui-overlay-layer-backdrop});
 }
 
 .overlay {
@@ -200,7 +201,7 @@
 }
 
 // ============================================
-// Inline Variant
+// Inline
 // ============================================
 
 .inline {
@@ -209,23 +210,25 @@
   vertical-align: middle;
 }
 
+// The inline spinner scales with the surrounding text, so its box is an em
+// measure rather than a glyph step; the md icon is the fallback.
 .inline-sm {
-  --inline-size: 0.875em; // Relative to surrounding text
+  --_loading-inline-size: 0.875em;
 }
 
 .inline-md {
-  --inline-size: 1.125em;
+  --_loading-inline-size: 1.125em;
 }
 
 .inlineSpinner {
-  width: var(--inline-size);
-  height: var(--inline-size);
+  inline-size: var(--_loading-inline-size, var(--fui-icon-md, #{$fui-icon-md}));
+  block-size: var(--_loading-inline-size, var(--fui-icon-md, #{$fui-icon-md}));
   animation: spin var(--fui-duration-spin, $fui-duration-spin) linear infinite;
   color: currentColor;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
-    opacity: 0.7;
+    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
   }
 }
 
@@ -240,9 +243,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--fui-raw-space-12, 12px);
+  gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  z-index: 100;
+  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
 }
 
 .screenLabel {

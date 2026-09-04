@@ -13,9 +13,9 @@
     "onChange: function",
     "onValueChange: function",
     "children: node (required)",
-    "variant: default|pills|outline|outlined (default: default)",
+    "variant: soft|ghost|outline (default: soft)",
     "size: sm|md|lg (default: md)",
-    "gap: sm|none|xs (default: xs for pills; none otherwise)",
+    "gap: sm|none|xs (default: xs for ghost; none otherwise)",
     "selectionMode: single (default: single)"
   ],
   "props": {
@@ -46,10 +46,10 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual style",
-      "default": "default",
+      "description": "Chrome: soft is the filled rail, ghost the open pill cluster, outline the connected bordered segments",
+      "default": "soft",
       "required": false,
-      "values": ["default", "pills", "outline", "outlined"]
+      "values": ["soft", "ghost", "outline"]
     },
     "size": {
       "type": "enum",
@@ -60,7 +60,7 @@
     },
     "gap": {
       "type": "enum",
-      "description": "Gap between items in the pills variant. Connected variants intentionally ignore gaps.",
+      "description": "Gap between items in the ghost variant. Connected variants intentionally ignore gaps.",
       "required": false,
       "values": ["sm", "none", "xs"]
     },
@@ -88,7 +88,7 @@
       "Two to five items",
       "Labels short enough to scan in one pass",
       "Icons work for well-known modes like grid and list",
-      "default for an inset tonal rail, pills for an open filter cluster, outlined for connected segments",
+      "soft for an inset tonal rail, ghost for an open filter cluster, outline for connected segments",
       "Keep targets at least 24px on touch"
     ],
     "accessibility": [
@@ -105,14 +105,14 @@
       "code": "<ToggleGroup value={value} onChange={setValue}>\n  <ToggleGroup.Item value=\"left\">Left</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"center\">Center</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"right\">Right</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
-      "name": "Pills",
+      "name": "Ghost",
       "description": "Detached rounded buttons for open filter clusters.",
-      "code": "<ToggleGroup value={value} onChange={setValue} variant=\"pills\">\n  <ToggleGroup.Item value=\"all\">All</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"active\">Active</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"completed\">Completed</ToggleGroup.Item>\n</ToggleGroup>"
+      "code": "<ToggleGroup value={value} onChange={setValue} variant=\"ghost\">\n  <ToggleGroup.Item value=\"all\">All</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"active\">Active</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"completed\">Completed</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
-      "name": "Outlined",
+      "name": "Outline",
       "description": "Bordered segments sharing one continuous edge.",
-      "code": "<ToggleGroup value={value} onChange={setValue} variant=\"outlined\">\n  <ToggleGroup.Item value=\"day\">Day</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"week\">Week</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"month\">Month</ToggleGroup.Item>\n</ToggleGroup>"
+      "code": "<ToggleGroup value={value} onChange={setValue} variant=\"outline\">\n  <ToggleGroup.Item value=\"day\">Day</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"week\">Week</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"month\">Month</ToggleGroup.Item>\n</ToggleGroup>"
     },
     {
       "name": "Uncontrolled",
@@ -158,9 +158,9 @@
       "defaultValue?: string - initial selected value (uncontrolled)",
       "onChange: (value: string) => void - change handler (or onValueChange)",
       "children: ToggleGroup.Item[] - toggle items",
-      "variant: default|pills|outline|outlined - visual style (outlined aliases outline)",
+      "variant: soft|ghost|outline - chrome (soft rail, ghost cluster, outline segments)",
       "size: sm|md|lg - size variant",
-      "gap: none|xs|sm - pills spacing (xs by default; connected variants remain gapless)",
+      "gap: none|xs|sm - ghost spacing (xs by default; connected variants remain gapless)",
       "selectionMode: single (default: single)"
     ],
     "a11yRules": ["A11Y_GROUP_ROLE", "A11Y_KEYBOARD_ACCESSIBLE"]

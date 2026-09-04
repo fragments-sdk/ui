@@ -1,66 +1,70 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/feedback" as feedback;
 
+// The tone publishes its ramp on three channels; the alert paints wash, hairline
+// and ink from them, and `emphasis="surface"` keeps only the hairline + title.
 .alert {
   @include feedback.contextual;
+  @include high-contrast-outline;
 
+  --_alert-tint: var(--fui-color-info-bg, #{$fui-color-info-bg});
+  --_alert-ink: var(--fui-color-info-text, #{$fui-color-info-text});
+  --_alert-line: var(--fui-color-info-border, #{$fui-color-info-border});
+
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--_alert-line, var(--fui-color-info-border, #{$fui-color-info-border}));
   border-radius: var(--fui-card-radius, var(--fui-radius-lg, $fui-radius-lg));
+  background: var(--_alert-tint, var(--fui-color-info-bg, #{$fui-color-info-bg}));
+  color: var(--_alert-ink, var(--fui-color-info-text, #{$fui-color-info-text}));
 }
 
 .alert:has(.title) {
   align-items: flex-start;
 }
 
-.info {
-  background: var(--fui-color-info-bg, $fui-color-info-bg);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-color-info-border, $fui-color-info-border);
-  color: var(--fui-color-info-text, $fui-color-info-text);
+@mixin _tone($tone, $bg, $text, $border) {
+  --_alert-tint: var(--fui-color-#{$tone}-bg, #{$bg});
+  --_alert-ink: var(--fui-color-#{$tone}-text, #{$text});
+  --_alert-line: var(--fui-color-#{$tone}-border, #{$border});
 }
 
-.success {
-  background: var(--fui-color-success-bg, $fui-color-success-bg);
-  border: var(--fui-stroke-hairline, 1px) solid
-    var(--fui-color-success-border, $fui-color-success-border);
-  color: var(--fui-color-success-text, $fui-color-success-text);
+.toneInfo {
+  @include _tone("info", $fui-color-info-bg, $fui-color-info-text, $fui-color-info-border);
 }
 
-.warning {
-  background: var(--fui-color-warning-bg, $fui-color-warning-bg);
-  border: var(--fui-stroke-hairline, 1px) solid
-    var(--fui-color-warning-border, $fui-color-warning-border);
-  color: var(--fui-color-warning-text, $fui-color-warning-text);
+.toneSuccess {
+  @include _tone(
+    "success",
+    $fui-color-success-bg,
+    $fui-color-success-text,
+    $fui-color-success-border
+  );
 }
 
-.error {
-  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
-  border: var(--fui-stroke-hairline, 1px) solid
-    var(--fui-color-danger-border, $fui-color-danger-border);
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
+.toneWarning {
+  @include _tone(
+    "warning",
+    $fui-color-warning-bg,
+    $fui-color-warning-text,
+    $fui-color-warning-border
+  );
+}
+
+.toneDanger {
+  @include _tone("danger", $fui-color-danger-bg, $fui-color-danger-text, $fui-color-danger-border);
 }
 
 // `emphasis="surface"`: the card keeps the page's own surface and spends the
-// severity only on the hairline and the title. Declared after the severities
-// so it overrides their wash while their border survives.
+// tone only on the hairline and the title.
 .surface {
   background: var(--fui-bg-secondary, $fui-bg-secondary);
   color: var(--fui-text-secondary, $fui-text-secondary);
-}
 
-.surface.info .title {
-  color: var(--fui-color-info-text, $fui-color-info-text);
-}
-
-.surface.success .title {
-  color: var(--fui-color-success-text, $fui-color-success-text);
-}
-
-.surface.warning .title {
-  color: var(--fui-color-warning-text, $fui-color-warning-text);
-}
-
-.surface.error .title {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
+  .title {
+    color: var(--_alert-ink, var(--fui-color-info-text, #{$fui-color-info-text}));
+  }
 }
 
 .icon {
@@ -69,35 +73,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--fui-radius-full, #{$fui-radius-full});
+  background-color: var(--_alert-ink, var(--fui-color-info-text, #{$fui-color-info-text}));
   color: var(--fui-text-inverse, $fui-text-inverse);
   font: inherit;
 }
 
 .alert:has(.title) .icon {
-  margin-block-start: var(--fui-stroke-hairline, 1px);
-}
-
-.info .icon {
-  background-color: var(--fui-color-info-text, $fui-color-info-text);
-}
-
-.success .icon {
-  background-color: var(--fui-color-success-text, $fui-color-success-text);
-}
-
-.warning .icon {
-  background-color: var(--fui-color-warning-text, $fui-color-warning-text);
-}
-
-.error .icon {
-  background-color: var(--fui-color-danger-text, $fui-color-danger-text);
+  margin-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 }
 
 .body {
   display: grid;
   flex: 1;
-  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, 4px));
+  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
   min-inline-size: 0;
 }
 
@@ -107,14 +96,12 @@
 
 .content {
   @include feedback.body;
-
-  opacity: 0.9;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--fui-feedback-transient-gap, var(--fui-raw-space-8, 8px));
+  gap: var(--fui-feedback-transient-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
 }
 
 .close {
@@ -123,13 +110,12 @@
   @include feedback.close;
 
   margin-inline-start: auto;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: inherit;
+  border-radius: var(--fui-radius-l3, $fui-radius-l3);
+  color: color-mix(in srgb, currentColor 60%, transparent);
   line-height: 1;
-  opacity: 0.6;
 
   &:hover {
-    opacity: 1;
+    color: currentColor;
   }
 }
 
@@ -137,12 +123,12 @@
   @include button-reset;
   @include feedback.compact-action;
 
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  border-radius: var(--fui-radius-l3, $fui-radius-l3);
   color: inherit;
   text-decoration: underline;
 
   &:hover {
-    opacity: 0.8;
+    color: color-mix(in srgb, currentColor 80%, transparent);
   }
 
   &:focus-visible {

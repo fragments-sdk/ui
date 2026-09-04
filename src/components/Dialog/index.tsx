@@ -12,6 +12,8 @@ import styles from "./Dialog.module.scss";
  * Modal dialog overlay for confirmations, forms, and focused tasks.
  * @see https://usefragments.com/components/dialog
  */
+export type DialogWidth = "sm" | "md" | "lg" | "xl" | "full";
+
 export interface DialogProps {
   children: React.ReactNode;
   /** Controlled open state */
@@ -27,10 +29,10 @@ export interface DialogProps {
 
 export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Dialog width.
+  /** Dialog width. `full` spans the safe viewport.
    * @default "md"
-   * @see https://usefragments.com/components/dialog#sizes */
-  size?: "sm" | "md" | "lg" | "xl" | "full";
+   * @see https://usefragments.com/components/dialog#widths */
+  width?: DialogWidth;
   /** Whether the dialog should autofocus content on open.
    * @default true */
   initialFocus?: boolean;
@@ -146,12 +148,12 @@ function DialogTrigger({ children, asChild, className, ...htmlProps }: DialogTri
 
 function DialogContent({
   children,
-  size = "md",
+  width = "md",
   initialFocus = true,
   className,
   ...htmlProps
 }: DialogContentProps) {
-  const popupClasses = [styles.popup, styles[size], className].filter(Boolean).join(" ");
+  const popupClasses = [styles.popup, styles[width], className].filter(Boolean).join(" ");
 
   return (
     <BaseDialog.Portal>

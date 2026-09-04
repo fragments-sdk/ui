@@ -1,20 +1,19 @@
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/navigation" as navigation;
 @use "../../recipes/target" as target;
 
+$_gutter: navigation.gutter();
+$_leading-box: navigation.leading-box();
+$_active-rail: navigation.active-rail();
+
 .root {
   @include navigation.properties;
 
-  --fui-sidebar-row-height: var(--fui-navigation-row-track);
-  --fui-sidebar-row-radius: var(--fui-radius-full, #{$fui-radius-full});
-  --fui-sidebar-gutter: var(--fui-navigation-gutter);
-  --fui-sidebar-row-gap: var(--fui-navigation-content-gap);
-  --fui-sidebar-row-padding-x: var(--fui-navigation-inline-inset);
-  --fui-sidebar-icon-size: var(--fui-icon-md, #{$fui-icon-md});
-  --fui-sidebar-leading-size: var(--fui-navigation-leading-box);
-  --fui-sidebar-active-dot-size: var(--fui-navigation-active-dot);
+  // Folded reads of the public `--fui-sidebar-item-*` hooks (declared in
+  // tokens/_variables.scss); every read below carries the Sass twin.
   --fui-sidebar-muted: var(
     --fui-sidebar-item-color,
     var(--fui-text-secondary, #{$fui-text-secondary})
@@ -36,7 +35,7 @@
   width: var(--sidebar-width);
   height: 100%;
   background: var(--fui-sidebar-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
-  border-inline-end: var(--fui-stroke-hairline, 1px) solid
+  border-inline-end: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
   transition: width var(--fui-transition-normal, $fui-transition-normal);
   overflow: hidden;
@@ -52,7 +51,7 @@
 }
 
 .positionRight {
-  border-inline-start: var(--fui-stroke-hairline, 1px) solid
+  border-inline-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
   border-inline-end: 0;
 }
@@ -63,7 +62,7 @@
   .header,
   .nav,
   .footer {
-    padding: var(--fui-navigation-gutter);
+    padding: var(--fui-navigation-gutter, #{$_gutter});
   }
 
   .header,
@@ -83,12 +82,12 @@
 
   .item {
     justify-content: center;
-    padding: 0;
-    min-height: var(--fui-sidebar-row-height);
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    min-height: var(--fui-navigation-row-track, #{navigation.row-track()});
   }
 
   .itemIcon {
-    margin: 0;
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   }
   .collapseToggle {
     margin: 0 auto;
@@ -147,8 +146,7 @@
 .header {
   display: flex;
   align-items: center;
-  gap: 0;
-  padding: var(--fui-sidebar-gutter) var(--fui-sidebar-gutter) 0;
+  padding: var(--fui-navigation-gutter, #{$_gutter}) var(--fui-navigation-gutter, #{$_gutter}) 0;
   flex-shrink: 0;
   min-height: 0;
 }
@@ -159,7 +157,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: var(--fui-sidebar-gutter) var(--fui-sidebar-gutter) var(--fui-space-3, $fui-space-3);
+  padding: var(--fui-navigation-gutter, #{$_gutter}) var(--fui-navigation-gutter, #{$_gutter})
+    var(--fui-space-3, $fui-space-3);
 }
 
 .navScrollArea {
@@ -168,9 +167,7 @@
 }
 
 .section:not(:first-child) {
-  // Consumers with sparse, reading-oriented navigation (docs sites) can open
-  // this up via --fui-sidebar-section-gap without touching the raw scale.
-  margin-top: var(--fui-sidebar-section-gap, var(--fui-raw-space-16, 16px));
+  margin-top: var(--fui-raw-space-16, #{measurements.raw-space(16)});
 }
 
 .sectionHeader {
@@ -178,7 +175,7 @@
 
   display: flex;
   align-items: center;
-  padding-block-end: var(--fui-raw-space-4, 4px);
+  padding-block-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
 }
 
 .sectionTrigger {
@@ -192,14 +189,11 @@
 .sectionLabel {
   flex: 1;
   min-width: 0;
-  font-size: var(--fui-sidebar-section-label-size, var(--fui-font-size-2xs, #{$fui-font-size-2xs}));
-  letter-spacing: var(--fui-sidebar-section-label-tracking, 0.07em);
-  text-transform: var(--fui-sidebar-section-label-transform, uppercase);
-  color: var(--fui-sidebar-section-label-color, var(--fui-sidebar-faint));
-  font-weight: var(
-    --fui-sidebar-section-label-weight,
-    var(--fui-font-weight-medium, #{$fui-font-weight-medium})
-  );
+  font-size: var(--fui-sidebar-section-label-size, #{$fui-font-size-2xs});
+  letter-spacing: var(--fui-letter-spacing-wide, #{$fui-letter-spacing-wide});
+  text-transform: uppercase;
+  color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
+  font-weight: var(--fui-font-weight-medium, #{$fui-font-weight-medium});
 }
 
 .sectionActionWrapper {
@@ -213,11 +207,11 @@
   @include action.icon-only("micro");
   @include target.hit-area("compact");
 
-  border-radius: var(--fui-sidebar-row-radius);
-  color: var(--fui-sidebar-faint);
+  border-radius: var(--fui-radius-full, #{$fui-radius-full});
+  color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
 
   &:hover {
-    background-color: var(--fui-sidebar-hover-bg);
+    background-color: var(--fui-sidebar-hover-bg, #{$fui-bg-hover});
     color: var(--fui-text-secondary, $fui-text-secondary);
   }
 
@@ -229,11 +223,11 @@
 .sectionList,
 .submenu {
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   display: flex;
   flex-direction: column;
-  gap: var(--fui-sidebar-item-gap, var(--fui-raw-space-2, 2px));
+  gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
 }
 
 .sectionCollapsible .sectionTrigger {
@@ -243,8 +237,8 @@
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  padding: 0;
-  border-radius: var(--fui-sidebar-row-radius);
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  border-radius: var(--fui-radius-full, #{$fui-radius-full});
   background: transparent;
 
   &:hover {
@@ -261,9 +255,9 @@
 
   // Trailing caret reads as a quiet disclosure twistie.
   svg {
-    width: var(--fui-raw-space-10, 10px);
-    height: var(--fui-raw-space-10, 10px);
-    color: var(--fui-sidebar-faint);
+    width: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    height: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
   }
 }
 
@@ -286,27 +280,25 @@
   display: flex;
   align-items: center;
   width: 100%;
-  font-size: var(--fui-sidebar-item-font-size, var(--fui-type-ui-compact-size, 12px));
-  line-height: var(--fui-sidebar-item-line-height, var(--fui-type-ui-compact-line, 16px));
-  border: var(--fui-stroke-hairline, 1px) solid transparent;
-  border-radius: var(--fui-sidebar-row-radius);
-  color: var(--fui-sidebar-muted);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
+  border-radius: var(--fui-sidebar-item-radius, #{$fui-radius-full});
+  color: var(--fui-sidebar-muted, #{$fui-text-secondary});
   text-decoration: none;
   font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-  outline-offset: calc(-1 * var(--fui-stroke-hairline, 1px));
+  outline-offset: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
   transition:
     background-color var(--fui-transition-fast, $fui-transition-fast),
     border-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover:not(.itemDisabled) {
-    background-color: var(--fui-sidebar-hover-bg);
+    background-color: var(--fui-sidebar-hover-bg, #{$fui-bg-hover});
     color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
     text-decoration: none;
   }
 
   &:active:not(.itemDisabled) {
-    background-color: var(--fui-sidebar-active-bg);
+    background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
   }
 }
 
@@ -315,14 +307,14 @@
 .itemActive {
   @include navigation.active-indicator("start");
 
-  background-color: var(--fui-sidebar-active-bg);
-  border-color: var(--fui-sidebar-active-border);
+  background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
+  border-color: var(--fui-sidebar-active-border, transparent);
   color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &::before {
-    border-start-end-radius: var(--fui-navigation-active-rail);
-    border-end-end-radius: var(--fui-navigation-active-rail);
+    border-start-end-radius: var(--fui-navigation-active-rail, #{$_active-rail});
+    border-end-end-radius: var(--fui-navigation-active-rail, #{$_active-rail});
     background: var(
       --fui-sidebar-item-active-indicator,
       var(--fui-color-accent, #{$fui-color-accent})
@@ -331,8 +323,8 @@
 
   &.item:hover,
   &.item:active {
-    background-color: var(--fui-sidebar-active-bg);
-    border-color: var(--fui-sidebar-active-border);
+    background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
+    border-color: var(--fui-sidebar-active-border, transparent);
     color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
     text-decoration: none;
   }
@@ -348,7 +340,8 @@
   @include navigation.active-indicator("end");
 
   padding-inline-end: calc(
-    var(--fui-navigation-inline-inset) * 2 + var(--fui-navigation-active-dot)
+    var(--fui-navigation-inline-inset, #{$_gutter}) * 2 +
+      var(--fui-navigation-active-dot, #{navigation.active-dot()})
   );
 
   &::before {
@@ -365,8 +358,7 @@
 
 .itemDisabled,
 .subItemDisabled {
-  opacity: 0.46;
-  cursor: not-allowed;
+  @include disabled-state;
 }
 
 .itemIcon {
@@ -375,15 +367,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--fui-sidebar-faint);
+  color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
 
   svg {
-    width: var(--fui-sidebar-leading-size);
-    height: var(--fui-sidebar-leading-size);
+    width: var(--fui-navigation-leading-box, #{$_leading-box});
+    height: var(--fui-navigation-leading-box, #{$_leading-box});
   }
 
   .item:hover:not(.itemDisabled) & {
-    color: var(--fui-sidebar-muted);
+    color: var(--fui-sidebar-muted, #{$fui-text-secondary});
   }
 
   .itemActive & {
@@ -397,7 +389,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform: translateY(var(--fui-navigation-label-optical-y));
+  transform: translateY(var(--fui-navigation-label-optical-y, #{navigation.label-optical-y()}));
 }
 
 // A row whose label is a block rather than a link: a title over a status line,
@@ -422,14 +414,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--fui-sidebar-icon-size);
-  height: var(--fui-sidebar-icon-size);
+  width: var(--fui-icon-md, #{$fui-icon-md});
+  height: var(--fui-icon-md, #{$fui-icon-md});
   flex-shrink: 0;
   transition: transform var(--fui-transition-fast, $fui-transition-fast);
 
   svg {
-    width: var(--fui-sidebar-icon-size);
-    height: var(--fui-sidebar-icon-size);
+    width: var(--fui-icon-md, #{$fui-icon-md});
+    height: var(--fui-icon-md, #{$fui-icon-md});
   }
 }
 
@@ -438,7 +430,7 @@
 }
 
 .submenu {
-  padding-inline-start: var(--fui-raw-space-24, 24px);
+  padding-inline-start: var(--fui-raw-space-24, #{measurements.raw-space(24)});
   min-height: 0;
   overflow: hidden;
 }
@@ -460,8 +452,8 @@
 
   display: inline-flex;
   align-items: center;
-  border-radius: var(--fui-sidebar-row-radius);
-  color: var(--fui-sidebar-muted);
+  border-radius: var(--fui-sidebar-item-radius, #{$fui-radius-full});
+  color: var(--fui-sidebar-muted, #{$fui-text-secondary});
   text-decoration: none;
   position: relative;
 
@@ -471,21 +463,21 @@
     inset-inline-start: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: var(--fui-navigation-active-rail);
-    height: var(--fui-navigation-leading-box);
+    width: var(--fui-navigation-active-rail, #{$_active-rail});
+    height: var(--fui-navigation-leading-box, #{$_leading-box});
     background-color: transparent;
     border-radius: var(--fui-radius-full, $fui-radius-full);
     transition: background-color var(--fui-transition-fast, $fui-transition-fast);
   }
 
   &:hover:not(.subItemDisabled) {
-    background-color: var(--fui-sidebar-hover-bg);
+    background-color: var(--fui-sidebar-hover-bg, #{$fui-bg-hover});
     color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
     text-decoration: none;
   }
 
   &:active:not(.subItemDisabled) {
-    background-color: var(--fui-sidebar-active-bg);
+    background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
   }
 }
 
@@ -504,11 +496,11 @@
 .footer {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-sidebar-row-gap);
-  padding: var(--fui-sidebar-gutter);
+  gap: var(--fui-navigation-content-gap, #{$_gutter});
+  padding: var(--fui-navigation-gutter, #{$_gutter});
   margin-top: auto;
   flex-shrink: 0;
-  border-top: var(--fui-stroke-hairline, 1px) solid
+  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(
       --fui-sidebar-footer-border,
       color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent)
@@ -577,9 +569,9 @@
   top: var(--fui-space-3, $fui-space-3);
   left: calc(100% + var(--fui-space-2, $fui-space-2));
   z-index: 20;
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
 
   .positionRight & {
@@ -594,7 +586,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: var(--fui-navigation-leading-box);
+  width: var(--fui-navigation-leading-box, #{$_leading-box});
   height: 100%;
   z-index: 10;
 
@@ -608,8 +600,8 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: var(--fui-raw-space-4, 4px);
-    width: var(--fui-raw-space-4, 4px);
+    right: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    width: var(--fui-raw-space-4, #{measurements.raw-space(4)});
     height: #{action.track("lg")};
     border-radius: var(--fui-radius-full, $fui-radius-full);
     background-color: var(--fui-border, $fui-border);
@@ -621,7 +613,7 @@
 
     .positionRight & {
       right: auto;
-      left: var(--fui-raw-space-4, 4px);
+      left: var(--fui-raw-space-4, #{measurements.raw-space(4)});
     }
   }
 
@@ -632,12 +624,12 @@
   }
 
   &:hover::before {
-    height: var(--fui-navigation-sidebar-collapsed-width, 56px);
+    height: #{navigation.collapsed-width()};
   }
 }
 
 .railCollapsed::before {
-  opacity: 0.7;
+  opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
 }
 
 .menuSkeleton {

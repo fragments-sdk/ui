@@ -45,7 +45,7 @@ describe("geometry recipes", () => {
       .row { @include popup.row; }
     `);
 
-    expect(css).toContain("--_fui-target-hit-size: var(--fui-control-track-md, 32px)");
+    expect(css).toContain("inline-size: max(100%, var(--fui-control-track-md, 32px))");
     expect(css).toContain("pointer-events: auto");
     expect(css).toContain("--fui-popup-row-pitch: var(--fui-raw-space-32, 32px)");
     expect(css).toContain("@media (pointer: coarse)");
@@ -86,9 +86,13 @@ describe("geometry recipes", () => {
     expect(css).toContain("--fui-navigation-row-track: var(");
     expect(css).toContain("--fui-control-track-md");
     expect(css).toContain("--fui-navigation-gutter: var(--fui-navigation-sidebar-gutter, 8px)");
-    expect(css).toContain("min-block-size: var(--fui-navigation-row-track)");
-    expect(css).toContain("inline-size: var(--fui-navigation-leading-box)");
-    expect(css).toContain("inline-size: var(--fui-navigation-active-dot)");
+    expect(css).toContain("min-block-size: var(--fui-navigation-row-track, 32px)");
+    expect(css).toContain(
+      "inline-size: var(--fui-navigation-leading-box, var(--fui-navigation-sidebar-leading-box, 16px))"
+    );
+    expect(css).toContain(
+      "inline-size: var(--fui-navigation-active-dot, var(--fui-navigation-sidebar-dot, 6px))"
+    );
     expect(css).toContain("inline-size: var(--fui-navigation-sidebar-collapsed-width, 56px)");
   });
 
@@ -122,7 +126,7 @@ describe("geometry recipes", () => {
     expect(css).toContain("padding: var(--fui-surface-inset-default, 16px)");
     expect(css).toContain("padding: var(--fui-surface-inset-compact, 12px)");
     expect(css).toContain("min-block-size: var(--fui-control-track-md, 32px)");
-    expect(css).toContain("--_fui-target-hit-size: var(--fui-control-track-md, 32px)");
+    expect(css).toContain("inline-size: max(100%, var(--fui-control-track-md, 32px))");
     expect(css).toContain(
       "--_fui-feedback-empty-icon-size: var(--fui-feedback-empty-icon-lg, 40px)"
     );
@@ -144,13 +148,14 @@ describe("geometry recipes", () => {
     `);
 
     expect(css).toContain("--_fui-overlay-safe-inline: calc(");
-    expect(css).toContain("padding-inline: var(--fui-overlay-inline-inset");
+    expect(css).toContain("padding-inline: var(--fui-surface-inset-roomy, 24px)");
+    expect(css).toContain("padding-inline: var(--fui-surface-inset-default, 16px)");
     expect(css).toContain("--_fui-action-track: var(--fui-control-track-sm, 28px)");
-    expect(css).toContain("max-inline-size: var(--fui-overlay-popover-max-inline-lg, 512px)");
+    expect(css).toContain("max-inline-size: var(--fui-overlay-popover-lg, 512px)");
     expect(css).toContain(
       "inline-size: var(--fui-overlay-arrow-size, var(--fui-raw-space-10, 10px))"
     );
-    expect(css).toContain("max-inline-size: var(--fui-overlay-tooltip-max-inline, 320px)");
+    expect(css).toContain("max-inline-size: var(--fui-overlay-tooltip-max, 320px)");
   });
 
   it.each([

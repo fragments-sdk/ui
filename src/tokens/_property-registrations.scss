@@ -160,6 +160,7 @@
   @include register-length("radius-lg", $fui-radius-lg);
   @include register-length("radius-xl", $fui-radius-xl);
   @include register-length("radius-full", $fui-radius-full);
+  @include register-length("radius-none", $fui-radius-none);
 
   // ------------------------------------------
   // Component Heights — Lengths
@@ -219,4 +220,12 @@
   //   --fui-transition-fast/normal (shorthand timing)
   //   --fui-backdrop, --fui-dark-backdrop (rgba — registered above as <color>)
   // ------------------------------------------
+
+  // ------------------------------------------
+  // Runtime dials — one value each, animatable
+  // ------------------------------------------
+  @include register-number("opacity-disabled", $fui-opacity-disabled);
+  @include register-number("opacity-muted", $fui-opacity-muted);
+  @include register-number("opacity-faint", $fui-opacity-faint);
+  @include register-number("scale", $fui-scale);
 }

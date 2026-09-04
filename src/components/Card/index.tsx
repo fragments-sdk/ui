@@ -7,36 +7,35 @@ import styles from "./Card.module.scss";
 // Types
 // ============================================
 
+export type CardVariant = "solid" | "soft" | "outline";
+export type CardTone = "neutral" | "accent" | "warning" | "danger";
+export type CardPadding = "none" | "sm" | "md" | "lg";
+
 /**
  * Card container for grouping related content.
  * @see https://usefragments.com/components/card
  */
 export interface CardProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
-  /** Visual style variant. `"outline"` is an alias for `"outlined"`.
+  /** Surface chrome.
    *
-   * - `default` / `outlined` / `elevated`: general-purpose cards.
-   * - `stat`: compact metric tile for dashboard grids — hairline border,
-   *   panel-subtle surface, tight radius, zero shadow.
-   * - `panel`: hairline-bordered panel with zero own padding, designed for
-   *   compound use with `Card.Header divided` + `Card.Body` so each region
-   *   manages its own spacing.
-   * - `accent`: the earned-moment capsule — accent-tinted hairline, radial
-   *   accent wash, soft fixed radius. Reserve for the few surfaces that earn
-   *   emphasis (demo banner, upgrade panel, onboarding resume), never for
-   *   routine content.
-   * @default "default"
+   * - `solid`: the filled, elevated surface for general-purpose cards.
+   * - `soft`: quiet tint fill for metric tiles and dashboard panels. Add
+   *   `padding="none"` and let `Card.Header divided` + `Card.Body padding`
+   *   own their inset for a panel.
+   * - `outline`: transparent with a hairline border, for dense layouts.
+   * @default "solid"
    * @see https://usefragments.com/components/card#variants */
-  variant?: "default" | "outlined" | "outline" | "elevated" | "stat" | "panel" | "accent";
-  /** Semantic tone of the `accent` capsule. The wash and hairline follow the
-   * tone so the same earned-moment idiom can carry state: `danger` (a merge is
-   * held), `warning` (enforcement lapsed), `neutral` (waiting — ink hairline,
-   * no wash). Ignored for other variants.
-   * @default "accent" */
-  tone?: "accent" | "danger" | "warning" | "neutral";
+  variant?: CardVariant;
+  /** Earned-moment capsule. Any tone other than `neutral` paints a
+   * tone-tinted hairline, a radial wash and the capsule radius on top of the
+   * variant: `accent` (the moment), `danger` (a merge is held), `warning`
+   * (enforcement lapsed). Reserve it for the few surfaces that earn emphasis.
+   * @default "neutral" */
+  tone?: CardTone;
   /** Inner padding.
    * @default "md" */
-  padding?: "none" | "sm" | "md" | "lg";
+  padding?: CardPadding;
   /** Root element tag.
    * @default "article" */
   as?: "article" | "div" | "section";
@@ -46,7 +45,7 @@ export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Renders the header as a divided region with a minimum height, canonical
    * inset, hairline bottom border, and no trailing margin. Used with
-   * `variant="panel"` for dashboard-style panel headers. */
+   * `padding="none"` for dashboard-style panel headers. */
   divided?: boolean;
 }
 
@@ -63,9 +62,9 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
 
 export interface CardBodyProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Inner padding for body-only spacing, useful with `variant="panel"`.
-   * Omit when the card root already owns padding. */
-  padding?: "none" | "sm" | "md" | "lg";
+  /** Inner padding for body-only spacing, useful with `padding="none"` on the
+   * root. Omit when the card root already owns padding. */
+  padding?: CardPadding;
 }
 
 export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -77,8 +76,9 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 interface CardContextValue {
-  variant: "default" | "outlined" | "elevated" | "stat" | "panel" | "accent";
-  padding: "none" | "sm" | "md" | "lg";
+  variant: CardVariant;
+  tone: CardTone;
+  padding: CardPadding;
   isInteractive: boolean;
 }
 
@@ -110,25 +110,29 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
 // Components
 // ============================================
 
-const toneMap = {
-  accent: undefined,
+const variantMap: Record<CardVariant, string> = {
+  solid: styles.solid,
+  soft: styles.soft,
+  outline: styles.outline,
+};
+
+const toneMap: Record<CardTone, string | undefined> = {
+  neutral: undefined,
+  accent: styles.toneAccent,
   danger: styles.toneDanger,
   warning: styles.toneWarning,
-  neutral: styles.toneNeutral,
-} as const;
+};
 
 function CardRoot({
   children,
-  variant: variantProp = "default",
-  tone = "accent",
+  variant = "solid",
+  tone = "neutral",
   padding = "md",
   as: Component = "article",
   className,
   style,
   ...htmlProps
 }: CardProps) {
-  // Resolve alias: "outline" → "outlined"
-  const variant = variantProp === "outline" ? "outlined" : variantProp;
   const { onKeyDown, onKeyUp, role, tabIndex, ...elementProps } = htmlProps;
 
   const isInteractive = typeof elementProps.onClick === "function";
@@ -137,8 +141,8 @@ function CardRoot({
 
   const classes = [
     styles.card,
-    styles[variant],
-    variant === "accent" && tone !== "accent" && toneMap[tone],
+    variantMap[variant],
+    toneMap[tone],
     paddingMap[padding],
     isInteractive && styles.interactive,
     className,
@@ -148,6 +152,7 @@ function CardRoot({
 
   const contextValue: CardContextValue = {
     variant,
+    tone,
     padding,
     isInteractive,
   };

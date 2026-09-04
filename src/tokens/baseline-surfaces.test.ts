@@ -36,9 +36,7 @@ describe("default Fragments surface tokens", () => {
     expect(css).toContain("--fui-field-selection-bg: var(--fui-control-selected-bg)");
     expect(css).toContain("--fui-sidebar-item-active-bg: var(--fui-control-selected-bg)");
     expect(css).toContain("--fui-table-row-selected-bg: var(--fui-control-selected-bg)");
-    expect(css).toContain("--fui-tabs-pill-active-bg: var(--fui-control-selected-bg)");
-    expect(css).toContain("--fui-toggle-group-selected-bg: var(--fui-control-selected-bg)");
-    expect(css).toContain("--fui-toggle-group-selected-border: transparent");
+    expect(css).toContain("--fui-control-selected-border: transparent");
     expect(css).toContain("--fui-control-checked-bg: var(--fui-color-accent)");
     expect(css).toContain("--fui-control-checked-bg-hover: var(--fui-color-accent-hover)");
     expect(css).toContain("--fui-control-checked-color: var(--fui-color-on-accent)");

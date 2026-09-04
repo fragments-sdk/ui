@@ -74,22 +74,22 @@
     {
       "name": "Default",
       "description": "Enters from the right, the default for editing and forms.",
-      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button>Open Drawer</Button>\n  </Drawer.Trigger>\n  <Drawer.Content>\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Drawer Title</Drawer.Title>\n      <Drawer.Description>\n        A panel sliding in from the right.\n      </Drawer.Description>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Drawer content goes here.</p>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close asChild>\n        <Button variant=\"secondary\">Cancel</Button>\n      </Drawer.Close>\n      <Button variant=\"primary\">Save</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button>Open Drawer</Button>\n  </Drawer.Trigger>\n  <Drawer.Content>\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Drawer Title</Drawer.Title>\n      <Drawer.Description>\n        A panel sliding in from the right.\n      </Drawer.Description>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Drawer content goes here.</p>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close asChild>\n        <Button variant=\"soft\">Cancel</Button>\n      </Drawer.Close>\n      <Button variant=\"solid\">Save</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
     },
     {
       "name": "Left Side",
       "description": "Enters from the left, where navigation belongs.",
-      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button variant=\"secondary\">Open Left</Button>\n  </Drawer.Trigger>\n  <Drawer.Content side=\"left\">\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Navigation</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Left-side drawer for navigation or filters.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button variant=\"soft\">Open Left</Button>\n  </Drawer.Trigger>\n  <Drawer.Content side=\"left\">\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Navigation</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Left-side drawer for navigation or filters.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
     },
     {
       "name": "Bottom Sheet",
       "description": "Rises from the bottom for touch-reachable actions.",
-      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button variant=\"secondary\">Open Bottom Sheet</Button>\n  </Drawer.Trigger>\n  <Drawer.Content side=\"bottom\" size=\"sm\">\n    <Drawer.Header>\n      <Drawer.Title>Actions</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Bottom sheet for mobile-style actions.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button variant=\"soft\">Open Bottom Sheet</Button>\n  </Drawer.Trigger>\n  <Drawer.Content side=\"bottom\" width=\"sm\">\n    <Drawer.Header>\n      <Drawer.Title>Actions</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Bottom sheet for mobile-style actions.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
     },
     {
       "name": "With Form",
       "description": "Fields in the body, submit and cancel pinned to the footer.",
-      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button>Edit Settings</Button>\n  </Drawer.Trigger>\n  <Drawer.Content size=\"md\">\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Settings</Drawer.Title>\n      <Drawer.Description>Update your preferences.</Drawer.Description>\n    </Drawer.Header>\n    <Drawer.Body>\n      <Stack gap=\"md\">\n        <Input label=\"Display Name\" placeholder=\"Enter name\" />\n        <Input label=\"Email\" type=\"email\" placeholder=\"you@example.com\" />\n      </Stack>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close asChild>\n        <Button variant=\"secondary\">Cancel</Button>\n      </Drawer.Close>\n      <Button variant=\"primary\">Save Changes</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
+      "code": "<Drawer>\n  <Drawer.Trigger asChild>\n    <Button>Edit Settings</Button>\n  </Drawer.Trigger>\n  <Drawer.Content width=\"md\">\n    <Drawer.Close />\n    <Drawer.Header>\n      <Drawer.Title>Settings</Drawer.Title>\n      <Drawer.Description>Update your preferences.</Drawer.Description>\n    </Drawer.Header>\n    <Drawer.Body>\n      <Stack gap=\"md\">\n        <Input label=\"Display Name\" placeholder=\"Enter name\" />\n        <Input label=\"Email\" type=\"email\" placeholder=\"you@example.com\" />\n      </Stack>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close asChild>\n        <Button variant=\"soft\">Cancel</Button>\n      </Drawer.Close>\n      <Button variant=\"solid\">Save Changes</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
     }
   ],
   "relations": [
@@ -115,7 +115,7 @@
       "onOpenChange: (open) => void - open state handler",
       "modal: boolean - blocks page interaction (default: true)",
       "Drawer.Content side: left|right|top|bottom - slide direction (default: right)",
-      "Drawer.Content size: sm|md|lg|xl|full - panel size",
+      "Drawer.Content width: sm|md|lg|xl|full - panel width, or height for top/bottom (default: md)",
       "Drawer.Content initialFocus: boolean - auto-focus popup on open (default: true)"
     ],
     "a11yRules": ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"]
@@ -135,7 +135,7 @@
     ],
     "requiredChildren": ["Content"],
     "commonPatterns": [
-      "<Drawer><Drawer.Trigger><Button>Open</Button></Drawer.Trigger><Drawer.Content><Drawer.Close /><Drawer.Header><Drawer.Title>{title}</Drawer.Title></Drawer.Header><Drawer.Body>{content}</Drawer.Body><Drawer.Footer><Drawer.Close asChild><Button variant=\"secondary\">Cancel</Button></Drawer.Close><Button>Save</Button></Drawer.Footer></Drawer.Content></Drawer>"
+      "<Drawer><Drawer.Trigger><Button>Open</Button></Drawer.Trigger><Drawer.Content><Drawer.Close /><Drawer.Header><Drawer.Title>{title}</Drawer.Title></Drawer.Header><Drawer.Body>{content}</Drawer.Body><Drawer.Footer><Drawer.Close asChild><Button variant=\"soft\">Cancel</Button></Drawer.Close><Button>Save</Button></Drawer.Footer></Drawer.Content></Drawer>"
     ]
   },
   "provenance": {

@@ -49,3 +49,21 @@ DRG-D05) and passes kit `CodeBlock` with the docs collapse bundle for fences.
 
 - Expose a `components` preset for "docs fences" so consumers do not each
   rebuild the `pre` → `CodeBlock` override.
+
+## 2026-09-03 — Wave 0 vocabulary cut
+
+What changed
+
+- No vocabulary move: Markdown exposes no `variant` / `tone` props.
+- The inline `code` reset inside `pre` reads `--fui-raw-space-0` instead of
+  `padding: 0`; `measurements.generated` is now in scope for the file.
+
+What still does not work
+
+- Fenced blocks style themselves through `prose.code-block("default")` rather
+  than rendering `CodeBlock`, so copy / line numbers / collapse are not
+  available inside Markdown.
+
+Improvement candidates
+
+- Route fenced blocks through `CodeBlock` so both surfaces share one frame.

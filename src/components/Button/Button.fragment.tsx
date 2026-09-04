@@ -12,14 +12,14 @@ export default defineFragment(Button, {
     tags: ["action", "button", "form", "interactive"],
   },
   states: {
-    Primary: {
-      render: <Button variant="primary">Save changes</Button>,
-      note: "The one action you want people to take here.",
+    Solid: {
+      render: <Button variant="solid">Save changes</Button>,
+      note: "The one action you want people to take here. Accent tone by default.",
       canonical: true,
     },
-    Secondary: {
-      render: <Button variant="secondary">Cancel</Button>,
-      note: "Supporting action that sits beside the main one.",
+    Soft: {
+      render: <Button variant="soft">Cancel</Button>,
+      note: "Supporting action that sits beside the main one. Neutral tone by default.",
     },
     Ghost: {
       render: <Button variant="ghost">Learn more</Button>,
@@ -29,17 +29,35 @@ export default defineFragment(Button, {
       render: <Button variant="link">View all →</Button>,
       note: "Reads like a link, behaves like an action.",
     },
-    Quiet: {
+    Danger: {
       render: (
-        <Button variant="quiet" size="xs">
-          Manage preferences
+        <Button variant="solid" tone="danger">
+          Delete item
         </Button>
       ),
-      note: "No box and no height floor, so it sits inline in meta lines.",
+      note: "Destructive action people cannot undo: solid chrome, danger tone.",
     },
-    Danger: {
-      render: <Button variant="danger">Delete item</Button>,
-      note: "Destructive action people cannot undo.",
+    Tones: {
+      render: (
+        <Stack direction="row" gap="sm" align="center" wrap>
+          <Button variant="soft" tone="accent">
+            Accent
+          </Button>
+          <Button variant="soft" tone="info">
+            Info
+          </Button>
+          <Button variant="soft" tone="success">
+            Success
+          </Button>
+          <Button variant="soft" tone="warning">
+            Warning
+          </Button>
+          <Button variant="soft" tone="danger">
+            Danger
+          </Button>
+        </Stack>
+      ),
+      note: "Tone is colour and colour is meaning; it works on every variant.",
     },
     Outline: {
       render: <Button variant="outline">View details</Button>,
@@ -47,7 +65,7 @@ export default defineFragment(Button, {
     },
     Icon: {
       render: (
-        <Button variant="icon" aria-label="Add item">
+        <Button icon variant="outline" aria-label="Add item">
           <span aria-hidden>+</span>
         </Button>
       ),
@@ -56,13 +74,12 @@ export default defineFragment(Button, {
     Sizes: {
       render: (
         <Stack direction="row" gap="sm" align="center" wrap>
-          <Button size="xs">Extra small</Button>
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
           <Button size="lg">Large</Button>
         </Stack>
       ),
-      note: "xs for inline row actions, lg for hero calls to action.",
+      note: "sm for inline row actions, lg for hero calls to action.",
     },
     Disabled: {
       render: <Button disabled>Unavailable</Button>,
@@ -70,7 +87,7 @@ export default defineFragment(Button, {
     },
     "As Child": {
       render: (
-        <Button asChild variant="outlined" aria-label="Open billing settings">
+        <Button asChild variant="outline" aria-label="Open billing settings">
           <a href="#billing-settings">Billing settings</a>
         </Button>
       ),
@@ -97,11 +114,12 @@ export default defineFragment(Button, {
       "Picking an option — use Select or RadioGroup",
     ],
     guidelines: [
-      "One primary button per form or section",
-      "Danger for anything destructive",
+      "One solid accent button per form or section",
+      'tone="danger" for anything destructive',
+      "Chroma is earned: leave tone at its default unless the action carries that meaning",
       "Loading state must also disable the button",
       "With asChild, put interaction and a11y props on Button — they forward to the child",
-      'variant="icon" for icon-only actions; or icon={true} plus another variant',
+      "icon={true} with any variant for icon-only actions",
     ],
     accessibility: [
       "Label the action, not the widget",
@@ -117,7 +135,7 @@ export default defineFragment(Button, {
     ],
   },
   matrix: {
-    axes: { variant: "auto", size: "auto", theme: ["light", "dark"] },
+    axes: { variant: "auto", tone: "auto", size: "auto", theme: ["light", "dark"] },
     forced: ["hover", "focus", "disabled"],
     worstCase: { children: "A long localized action label that wraps without hiding the action" },
   },
@@ -142,8 +160,9 @@ export default defineFragment(Button, {
   composition: { pattern: "compound", subComponents: ["Root"] },
   contract: {
     propsSummary: [
-      "variant: primary|secondary|ghost|link|quiet|danger|outlined|outline|icon (default: primary, icon = outlined + icon-only, link = accent transparent, quiet = neutral text button, no box)",
-      "size: xs|sm|md|lg (default: md, xs for inline row-action controls)",
+      "variant: solid|soft|outline|ghost|link (default: solid)",
+      "tone: neutral|accent|info|success|warning|danger (default: accent on solid/link, neutral on soft/outline/ghost)",
+      "size: sm|md|lg (default: md)",
       "disabled: boolean - disables interaction",
       "type: button|submit|reset (default: button)",
       "onClick: (event) => void - action handler",

@@ -78,8 +78,8 @@
   );
 
   display: grid;
-  grid-template-columns: var(--_fui-boolean-mark-size) minmax(0, 1fr);
-  column-gap: var(--_fui-boolean-label-gap);
+  grid-template-columns: var(--_fui-boolean-mark-size, #{mark-size($size)}) minmax(0, 1fr);
+  column-gap: var(--_fui-boolean-label-gap, #{label-gap($size)});
   align-items: start;
   @include typography.role($type-role);
 }
@@ -102,8 +102,8 @@
   --_fui-switch-inset: var(--fui-stroke-default, #{measurements.target-value("stroke", "default")});
   --_fui-switch-travel: calc(var(--_fui-switch-inline-size) - var(--_fui-switch-block-size));
 
-  inline-size: var(--_fui-switch-inline-size);
-  block-size: var(--_fui-switch-block-size);
+  inline-size: var(--_fui-switch-inline-size, #{switch-inline-size($size)});
+  block-size: var(--_fui-switch-block-size, #{switch-block-size($size)});
 }
 
 @mixin slider-track {

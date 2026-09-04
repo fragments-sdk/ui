@@ -547,7 +547,7 @@ function DataTableLive<T>({
                         style={{
                           ...getColumnSizeStyle(cell.column),
                           ...(isFirstDataCell
-                            ? ({ "--_fui-table-tree-depth": depth } as React.CSSProperties)
+                            ? ({ "--fui-table-tree-depth": depth } as React.CSSProperties)
                             : undefined),
                         }}
                       >

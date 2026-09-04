@@ -1,10 +1,11 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/overlay" as overlay;
 
 .positioner {
-  z-index: var(--fui-overlay-layer-anchored, 52);
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   outline: none;
 }
 
@@ -65,14 +66,14 @@
 .title {
   @include overlay.anchored-title;
 
-  margin: 0 0 var(--fui-feedback-text-gap, var(--fui-raw-space-4, 4px));
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)}) var(--fui-raw-space-0, #{measurements.raw-space(0)}) var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
   color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .description {
   @include overlay.description;
 
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
@@ -97,7 +98,7 @@
 
 .popup:has(.close) .title {
   padding-inline-end: calc(
-    #{action.track("sm")} + var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px))
+    #{action.track("sm")} + var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
   );
 }
 
@@ -105,7 +106,7 @@
   @include overlay.arrow-box;
 
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 
   &[data-side="top"] {
     border-top: none;
@@ -129,17 +130,17 @@
 }
 
 .body {
-  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
+  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
 }
 
 .footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
-  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
-  padding-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px));
-  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  gap: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  padding-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 
 @media (prefers-reduced-motion: reduce) {

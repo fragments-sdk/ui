@@ -1,6 +1,7 @@
 @use "../../recipes/layout";
 @use "../../tokens/mixins" as *;
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 
 .stack {
   display: flex;
@@ -134,75 +135,75 @@
   background-color: var(--fui-border, $fui-border);
 
   &[data-orientation="horizontal"] {
-    height: var(--fui-stroke-hairline, 1px);
+    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     width: 100%;
   }
 
   &[data-orientation="vertical"] {
-    width: var(--fui-stroke-hairline, 1px);
+    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     align-self: stretch;
   }
 }
 
 .directionResponsive[data-direction-base="row"] > .separator {
-  width: var(--fui-stroke-hairline, 1px);
+  width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   height: auto;
   align-self: stretch;
 }
 
 .directionResponsive[data-direction-base="column"] > .separator {
   width: 100%;
-  height: var(--fui-stroke-hairline, 1px);
+  height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 }
 
 @include breakpoint-sm {
   .directionResponsive[data-direction-sm="row"] > .separator {
-    width: var(--fui-stroke-hairline, 1px);
+    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-sm="column"] > .separator {
     width: 100%;
-    height: var(--fui-stroke-hairline, 1px);
+    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   }
 }
 
 @include breakpoint-md {
   .directionResponsive[data-direction-md="row"] > .separator {
-    width: var(--fui-stroke-hairline, 1px);
+    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-md="column"] > .separator {
     width: 100%;
-    height: var(--fui-stroke-hairline, 1px);
+    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   }
 }
 
 @include breakpoint-lg {
   .directionResponsive[data-direction-lg="row"] > .separator {
-    width: var(--fui-stroke-hairline, 1px);
+    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-lg="column"] > .separator {
     width: 100%;
-    height: var(--fui-stroke-hairline, 1px);
+    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   }
 }
 
 @include breakpoint-xl {
   .directionResponsive[data-direction-xl="row"] > .separator {
-    width: var(--fui-stroke-hairline, 1px);
+    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     height: auto;
     align-self: stretch;
   }
 
   .directionResponsive[data-direction-xl="column"] > .separator {
     width: 100%;
-    height: var(--fui-stroke-hairline, 1px);
+    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   }
 }

@@ -21,14 +21,14 @@ describe("Loading", () => {
   it.each(["sm", "md", "lg", "xl"] as const)(
     "reserves the %s activity footprint for every visual variant",
     (size) => {
-      const { rerender } = render(<Loading size={size} variant="spinner" />);
+      const { rerender } = render(<Loading size={size} kind="spinner" />);
       const status = screen.getByRole("status");
       expect(status).toHaveClass(size, "spinner");
 
-      rerender(<Loading size={size} variant="dots" />);
+      rerender(<Loading size={size} kind="dots" />);
       expect(status).toHaveClass(size, "dots");
 
-      rerender(<Loading size={size} variant="pulse" />);
+      rerender(<Loading size={size} kind="pulse" />);
       expect(status).toHaveClass(size, "pulse");
     }
   );

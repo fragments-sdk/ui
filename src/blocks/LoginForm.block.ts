@@ -7,7 +7,7 @@ export default defineBlock({
   components: ['Card', 'Stack', 'Input', 'Button', 'Text', 'Link'],
   tags: ['auth', 'login', 'signin', 'form'],
   code: `
-<Card variant="elevated">
+<Card variant="solid">
   <Card.Header>
     <Card.Title>Sign In</Card.Title>
     <Card.Description>Welcome back! Please enter your details.</Card.Description>
@@ -16,12 +16,12 @@ export default defineBlock({
     <Stack gap="md">
       <Input label="Email" type="email" placeholder="Enter your email" />
       <Input label="Password" type="password" placeholder="Enter your password" />
-      <Link href="#" variant="subtle"><Text size="sm">Forgot password?</Text></Link>
-      <Button variant="primary" fullWidth>Sign In</Button>
+      <Link href="#" tone="neutral"><Text scale="sm">Forgot password?</Text></Link>
+      <Button variant="solid" fullWidth>Sign In</Button>
     </Stack>
   </Card.Body>
   <Card.Footer>
-    <Text size="sm" color="tertiary">Don't have an account? <Link href="#">Sign up</Link></Text>
+    <Text scale="sm" color="tertiary">Don't have an account? <Link href="#">Sign up</Link></Text>
   </Card.Footer>
 </Card>
 `.trim(),

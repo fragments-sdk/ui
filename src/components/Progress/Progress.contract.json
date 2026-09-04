@@ -12,7 +12,7 @@
     "min: number (default: 0)",
     "max: number (default: 100)",
     "size: sm|md|lg (default: md)",
-    "variant: default|neutral|success|warning|danger (default: default)",
+    "tone: accent|neutral|success|warning|danger (default: accent)",
     "role: progressbar|meter (default: progressbar)",
     "label: string",
     "showValue: boolean (default: false)",
@@ -44,12 +44,12 @@
       "required": false,
       "values": ["sm", "md", "lg"]
     },
-    "variant": {
+    "tone": {
       "type": "enum",
-      "description": "Color variant",
-      "default": "default",
+      "description": "Colour. accent is the plain bar; neutral reads as a meter whose maximum is not a success; success, warning and danger carry state.",
+      "default": "accent",
       "required": false,
-      "values": ["default", "neutral", "success", "warning", "danger"]
+      "values": ["accent", "neutral", "success", "warning", "danger"]
     },
     "label": {
       "type": "string",
@@ -84,7 +84,7 @@
       "Pass a value when you know the percentage; pass null when you do not",
       "Add a label whenever the bar alone leaves the purpose unclear",
       "success, warning, and danger carry state, not decoration",
-      "variant=\"neutral\" with role=\"meter\" for a magnitude where full is not success",
+      "tone=\"neutral\" with role=\"meter\" for a magnitude where full is not success",
       "Values outside min and max are clamped before display"
     ],
     "accessibility": [
@@ -101,14 +101,14 @@
       "code": "<Progress value={60} label=\"Uploading…\" showValue />"
     },
     {
-      "name": "Variants",
+      "name": "Tones",
       "description": "Colour carries state: normal, done, tight, critical.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <Progress value={75} variant=\"default\" label=\"Processing\" showValue />\n  <Progress value={100} variant=\"success\" label=\"Complete\" showValue />\n  <Progress value={80} variant=\"warning\" label=\"Almost full\" showValue />\n  <Progress value={95} variant=\"danger\" label=\"Storage critical\" showValue />\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <Progress value={75} tone=\"accent\" label=\"Processing\" showValue />\n  <Progress value={100} tone=\"success\" label=\"Complete\" showValue />\n  <Progress value={80} tone=\"warning\" label=\"Almost full\" showValue />\n  <Progress value={95} tone=\"danger\" label=\"Storage critical\" showValue />\n</Stack>"
     },
     {
       "name": "Meter",
       "description": "A reading where hitting the top is not a win.",
-      "code": "<Progress\n  value={42}\n  variant=\"neutral\"\n  role=\"meter\"\n  label=\"Seats used\"\n  showValue\n/>"
+      "code": "<Progress\n  value={42}\n  tone=\"neutral\"\n  role=\"meter\"\n  label=\"Seats used\"\n  showValue\n/>"
     },
     {
       "name": "Sizes",
@@ -123,7 +123,7 @@
     {
       "name": "Circular",
       "description": "Same value in a ring, for tiles and compact chrome.",
-      "code": "import { CircularProgress } from '@/components/Progress';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"lg\" align=\"center\">\n  <CircularProgress value={25} size=\"sm\" />\n  <CircularProgress value={50} size=\"md\" showValue />\n  <CircularProgress value={75} size=\"lg\" showValue variant=\"success\" />\n  <CircularProgress value={null} size=\"md\" />\n</Stack>"
+      "code": "import { CircularProgress } from '@/components/Progress';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"lg\" align=\"center\">\n  <CircularProgress value={25} size=\"sm\" />\n  <CircularProgress value={50} size=\"md\" showValue />\n  <CircularProgress value={75} size=\"lg\" showValue tone=\"success\" />\n  <CircularProgress value={null} size=\"md\" />\n</Stack>"
     }
   ],
   "relations": [
@@ -142,7 +142,7 @@
     "propsSummary": [
       "value: number|null - progress percentage (null for indeterminate)",
       "size: sm|md|lg - bar thickness",
-      "variant: default|success|warning|danger - color",
+      "tone: accent|neutral|success|warning|danger - colour",
       "label: string - descriptive label",
       "showValue: boolean - display percentage",
       "Determinate display values are clamped (and invalid min/max ranges render as 0%)"

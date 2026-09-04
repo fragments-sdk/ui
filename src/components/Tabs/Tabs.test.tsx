@@ -29,11 +29,11 @@ describe("Tabs", () => {
   });
 
   it("exposes stable styling slots and the resolved list variant", () => {
-    renderTabs({ variant: "pills", "data-testid": "tabs-example" });
+    renderTabs({ variant: "soft", "data-testid": "tabs-example" });
 
     expect(screen.getByTestId("tabs-example")).toHaveAttribute("data-slot", "tabs");
     expect(screen.getByRole("tablist")).toHaveAttribute("data-slot", "tabs-list");
-    expect(screen.getByRole("tablist")).toHaveAttribute("data-variant", "pills");
+    expect(screen.getByRole("tablist")).toHaveAttribute("data-variant", "soft");
     expect(screen.getAllByRole("tab")[0]).toHaveAttribute("data-slot", "tabs-tab");
     expect(screen.getByRole("tabpanel")).toHaveAttribute("data-slot", "tabs-panel");
   });

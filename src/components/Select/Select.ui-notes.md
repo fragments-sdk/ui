@@ -7,3 +7,9 @@
   Central European localized option. ArrowDown focused that option; Escape
   collapsed the list and settled focus back on `Workspace region`. Desktop,
   390px, and 320px remained contained; Console remained 0/0.
+
+## 2026-09-03 Wave 0
+
+- `variant="field"` is now `variant="outline"` (default); `ghost` stays (UIR-D13). `Select.fragment.tsx` gained a `Ghost` state and the summary reads `outline|ghost (default: outline)`.
+- Ghost disabled opacity reads `--fui-opacity-disabled`; `prefers-contrast` block replaced by `@include high-contrast-outline;` on `.trigger`.
+- Still open: `fragments.json` still lists `field` until the orchestrator regenerates the manifest.

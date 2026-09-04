@@ -263,8 +263,8 @@ describe("Drawer", () => {
     expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
   });
 
-  it("supports size prop", async () => {
-    renderDrawer({ defaultOpen: true }, { size: "lg" });
+  it("supports the width prop", async () => {
+    renderDrawer({ defaultOpen: true }, { width: "lg" });
 
     await waitFor(() => {
       expect(screen.getByText("Drawer Title")).toBeInTheDocument();

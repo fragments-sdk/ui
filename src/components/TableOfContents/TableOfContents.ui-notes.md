@@ -26,3 +26,12 @@ hierarchy for existing consumers. Dense page indexes can opt in with
 explicit `href` as a plain route link and skips the anchor scroll handler
 (`onClick` still fires). Docs uses it for a "Related" list beside the page
 index. Anchor behaviour is unchanged when `href` is omitted.
+
+## 2026-09-03 — hooks fold into navigation (UI refinement, Wave 0)
+
+`--fui-toc-title-gap`, `--fui-toc-inline-inset`, `--fui-toc-row-track`,
+`--fui-toc-section-track`, `--fui-toc-content-gap` and `--fui-toc-hover-bg`
+are deleted: no consumer set them and `navigation.row` / `section-row`
+already author the geometry. Every read now carries a Sass twin
+(`var(--fui-navigation-inline-inset, #{navigation.gutter()})`), so the
+kit scan's dual-fallback and undefined-token gates are green here.

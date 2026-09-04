@@ -16,7 +16,7 @@ import styles from "./Select.module.scss";
 
 export type SelectValue = string;
 
-export type SelectVariant = "field" | "ghost";
+export type SelectVariant = "outline" | "ghost";
 
 export interface SelectOption {
   value: SelectValue;
@@ -68,10 +68,10 @@ export interface SelectProps extends FormFieldProps {
   /** Size variant.
    * @default "md" */
   size?: "sm" | "md" | "lg";
-  /** Visual treatment. `ghost` drops the field shell for a compact, borderless
-   * control — for toolbars and dense rows, where a bordered field reads as a
-   * form. Pair with `size="sm"`.
-   * @default "field" */
+  /** Chrome. `outline` is the bordered field shell; `ghost` drops it for a
+   * compact, borderless control — for toolbars and dense rows, where a bordered
+   * field reads as a form. Pair with `size="sm"`.
+   * @default "outline" */
   variant?: SelectVariant;
   /** Wrapper class name */
   className?: string;
@@ -175,7 +175,7 @@ const SelectContext = React.createContext<SelectContextValue>({
   registerItem: () => {},
   unregisterItem: () => {},
   size: "md",
-  variant: "field",
+  variant: "outline",
   optionItems: null,
 });
 
@@ -234,7 +234,7 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     helperText,
     error,
     size: sizeProp,
-    variant = "field",
+    variant = "outline",
     className,
   }: SelectProps,
   ref

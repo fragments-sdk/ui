@@ -24,32 +24,54 @@ describe("Card", () => {
   });
 
   it("applies variant classes", () => {
-    const { rerender } = render(<Card variant="outlined">Content</Card>);
-    expect(screen.getByRole("article")).toHaveClass("outlined");
+    const { rerender } = render(<Card>Content</Card>);
+    expect(screen.getByRole("article")).toHaveClass("solid");
 
-    rerender(<Card variant="elevated">Content</Card>);
-    expect(screen.getByRole("article")).toHaveClass("elevated");
+    rerender(<Card variant="outline">Content</Card>);
+    expect(screen.getByRole("article")).toHaveClass("outline");
 
-    rerender(<Card variant="stat">Content</Card>);
-    expect(screen.getByRole("article")).toHaveClass("stat");
+    rerender(<Card variant="soft">Content</Card>);
+    expect(screen.getByRole("article")).toHaveClass("soft");
 
-    rerender(<Card variant="panel">Content</Card>);
-    expect(screen.getByRole("article")).toHaveClass("panel");
-
-    rerender(<Card variant="accent">Content</Card>);
-    expect(screen.getByRole("article")).toHaveClass("accent");
     rerender(
-      <Card variant="accent" tone="danger">
+      <Card variant="soft" padding="none">
         Content
       </Card>
     );
-    expect(screen.getByRole("article")).toHaveClass("accent", "toneDanger");
+    expect(screen.getByRole("article")).toHaveClass("soft", "paddingNone");
+  });
+
+  it("paints the capsule from the tone on any variant", () => {
+    const { rerender } = render(<Card>Content</Card>);
+    expect(screen.getByRole("article").className).not.toMatch(/tone/);
+
     rerender(
-      <Card variant="outlined" tone="danger">
+      <Card variant="soft" tone="accent">
         Content
       </Card>
     );
-    expect(screen.getByRole("article")).not.toHaveClass("toneDanger");
+    expect(screen.getByRole("article")).toHaveClass("soft", "toneAccent");
+
+    rerender(
+      <Card variant="soft" tone="danger">
+        Content
+      </Card>
+    );
+    expect(screen.getByRole("article")).toHaveClass("soft", "toneDanger");
+
+    rerender(
+      <Card variant="outline" tone="warning">
+        Content
+      </Card>
+    );
+    expect(screen.getByRole("article")).toHaveClass("outline", "toneWarning");
+  });
+
+  it("carries no elevated shadow hook, contrast block or disabled literal", () => {
+    expect(cardStyles).not.toContain("--fui-card-elevated-shadow");
+    expect(cardStyles).not.toContain("prefers-contrast");
+    expect(cardStyles).toContain("@include high-contrast-outline");
+    expect(cardStyles).not.toMatch(/opacity:\s*0\.\d/);
   });
 
   it("applies padding classes", () => {
@@ -114,11 +136,6 @@ describe("Card", () => {
     expect(screen.getByRole("button", { name: "Content" })).toHaveClass("interactive");
   });
 
-  it('resolves variant="outline" to "outlined"', () => {
-    render(<Card variant="outline">Content</Card>);
-    expect(screen.getByRole("article")).toHaveClass("outlined");
-  });
-
   it("has no accessibility violations", async () => {
     const { container } = render(
       <Card>
@@ -133,7 +150,7 @@ describe("Card", () => {
 
   it("pins divided header children to opposite edges", () => {
     const { container } = render(
-      <Card variant="panel" padding="none">
+      <Card variant="soft" padding="none">
         <Card.Header divided data-testid="divided-header">
           <Card.Title>Adoption</Card.Title>
           <span>aside</span>

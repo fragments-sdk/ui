@@ -41,7 +41,7 @@ export {
   AlertAction,
   AlertClose,
   type AlertProps,
-  type AlertSeverity,
+  type AlertTone,
   type AlertIconProps,
   type AlertBodyProps,
   type AlertTitleProps,
@@ -50,7 +50,7 @@ export {
   type AlertActionProps,
   type AlertCloseProps,
 } from "./components/Alert";
-export { Badge, type BadgeProps } from "./components/Badge";
+export { Badge, type BadgeProps, type BadgeTone, type BadgeVariant } from "./components/Badge";
 export { IconButton, type IconButtonProps } from "./components/IconButton";
 export {
   ComponentDefaultsProvider,
@@ -216,7 +216,7 @@ export {
   Skeleton,
   type SkeletonProps,
   type SkeletonTextProps,
-  type SkeletonVariant,
+  type SkeletonShape,
   type SkeletonSize,
 } from "./components/Skeleton";
 
@@ -228,7 +228,7 @@ export {
   LoadingScreen,
   type LoadingProps,
   type LoadingSize,
-  type LoadingVariant,
+  type LoadingKind,
   type LoadingInlineProps,
   type LoadingScreenProps,
 } from "./components/Loading";
@@ -289,7 +289,7 @@ export {
   type ToastProps,
   type ToastProviderProps,
   type ToastData,
-  type ToastVariant,
+  type ToastTone,
   type ToastPosition,
 } from "./components/Toast";
 
@@ -344,10 +344,12 @@ export {
   Theme,
   ThemeProvider,
   ThemeToggle,
+  ThemeButton,
   useTheme,
   configureTheme,
   type ThemeProviderProps,
   type ThemeToggleProps,
+  type ThemeButtonProps,
   type ThemeMode,
   type UseThemeReturn,
   type ConfigureThemeOptions,
@@ -559,7 +561,7 @@ export {
   ThinkingStep,
   useThinkingIndicatorContext,
   type ThinkingIndicatorProps,
-  type ThinkingVariant,
+  type ThinkingKind,
   type ThinkingStep as ThinkingStepType,
   type StepStatus,
   type ThinkingStepsProps,
@@ -728,6 +730,3 @@ export {
   type ThemeConfig,
   type PresetDefinition,
 } from "./utils/theme-presets";
-
-// Legacy aliases (deprecated)
-export { Switch as Toggle, type SwitchProps as ToggleProps } from "./components/Switch";

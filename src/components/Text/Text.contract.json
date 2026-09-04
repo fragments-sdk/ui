@@ -10,8 +10,8 @@
   "propsSummary": [
     "children: node (required)",
     "as: h1|h2|h3|h4|h5|h6|p|span|label|div|strong|em|small|mark|del|ins|sub|sup|time|address|blockquote|cite|code|abbr (default: span)",
-    "variant: section-label",
-    "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl",
+    "role: caption|ui-compact|ui-standard|body-compact|body-relaxed|title-sm|title-md|title-lg|code|section-label|eyebrow",
+    "scale: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl",
     "weight: normal|medium|semibold|bold (default: \"normal\")",
     "color: primary|secondary|tertiary|muted|accent|success|warning|danger (default: \"primary\")",
     "font: sans|mono (default: sans)",
@@ -57,15 +57,27 @@
         "abbr"
       ]
     },
-    "variant": {
+    "role": {
       "type": "enum",
-      "description": "Preset text variant",
+      "description": "Typography role: one named setting of size, weight, line height and tracking. section-label is the uppercase list heading; eyebrow is the small-caps label above a statement. A role owns the whole setting, so scale, weight, font and letterSpacing are unavailable beside it.",
       "required": false,
-      "values": ["section-label", "eyebrow"]
+      "values": [
+        "caption",
+        "ui-compact",
+        "ui-standard",
+        "body-compact",
+        "body-relaxed",
+        "title-sm",
+        "title-md",
+        "title-lg",
+        "code",
+        "section-label",
+        "eyebrow"
+      ]
     },
-    "size": {
+    "scale": {
       "type": "enum",
-      "description": "Font size. 2xs (10), xs (12), sm/base (14), md (15 prose body), lg (20), xl (24), 2xl (30), 3xl (36 page title), 4xl (48 hero).",
+      "description": "Type-scale step for text with no role. 2xs (10), xs (12), sm/base (14), md (15 prose body), lg (20), xl (24), 2xl (30), 3xl (36 page title), 4xl (48 hero).",
       "required": false,
       "values": ["2xs", "xs", "sm", "base", "md", "lg", "xl", "2xl", "3xl", "4xl"]
     },
@@ -118,7 +130,7 @@
       "Anything clickable (use Link or Button)"
     ],
     "guidelines": [
-      "Pick the tag with as, the look with size — they are separate decisions",
+      "Pick the tag with as, the look with role (or scale) — they are separate decisions",
       "Never skip heading levels to get a smaller heading",
       "Color is for hierarchy and state, not decoration",
       "Truncated text needs the full string in title or a tooltip"
@@ -130,9 +142,9 @@
   },
   "examples": [
     {
-      "name": "Sizes",
+      "name": "Scale",
       "description": "Ten steps from caption to hero, all on the same scale.",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text size=\"2xs\">Extra extra small (2xs — 10px)</Text>\n  <Text size=\"xs\">Extra small (xs — 12px)</Text>\n  <Text size=\"sm\">Small (sm — 14px)</Text>\n  <Text size=\"base\">Base size (14px)</Text>\n  <Text size=\"md\">Medium prose body (md — 15px)</Text>\n  <Text size=\"lg\">Large (lg — 20px)</Text>\n  <Text size=\"xl\">Extra large (xl — 24px)</Text>\n  <Text size=\"2xl\">Extra extra large (2xl — 30px)</Text>\n  <Text size=\"3xl\">Page title (3xl — 36px)</Text>\n  <Text size=\"4xl\">Hero display (4xl — 48px)</Text>\n</div>"
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text scale=\"2xs\">Extra extra small (2xs — 10px)</Text>\n  <Text scale=\"xs\">Extra small (xs — 12px)</Text>\n  <Text scale=\"sm\">Small (sm — 14px)</Text>\n  <Text scale=\"base\">Base size (14px)</Text>\n  <Text scale=\"md\">Medium prose body (md — 15px)</Text>\n  <Text scale=\"lg\">Large (lg — 20px)</Text>\n  <Text scale=\"xl\">Extra large (xl — 24px)</Text>\n  <Text scale=\"2xl\">Extra extra large (2xl — 30px)</Text>\n  <Text scale=\"3xl\">Page title (3xl — 36px)</Text>\n  <Text scale=\"4xl\">Hero display (4xl — 48px)</Text>\n</div>"
     },
     {
       "name": "Weights",
@@ -147,12 +159,12 @@
     {
       "name": "Semantic Elements",
       "description": "The as prop picks the tag, so the outline stays correct.",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text as=\"h1\" size=\"3xl\" weight=\"semibold\">Heading 1</Text>\n  <Text as=\"h2\" size=\"xl\" weight=\"semibold\">Heading 2</Text>\n  <Text as=\"h3\" size=\"lg\" weight=\"semibold\">Heading 3</Text>\n  <Text as=\"p\" size=\"md\" color=\"secondary\">\n    This is a paragraph of text that demonstrates the Text component\n    with semantic paragraph element.\n  </Text>\n</div>"
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Text as=\"h1\" scale=\"3xl\" weight=\"semibold\">Heading 1</Text>\n  <Text as=\"h2\" scale=\"xl\" weight=\"semibold\">Heading 2</Text>\n  <Text as=\"h3\" scale=\"lg\" weight=\"semibold\">Heading 3</Text>\n  <Text as=\"p\" scale=\"md\" color=\"secondary\">\n    This is a paragraph of text that demonstrates the Text component\n    with semantic paragraph element.\n  </Text>\n</div>"
     },
     {
       "name": "Monospace",
       "description": "Fixed width for IDs, keys, and anything meant to be compared.",
-      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text font=\"mono\" size=\"sm\">const greeting = \"Hello, World!\";</Text>\n  <Text font=\"mono\" size=\"sm\" color=\"secondary\">npm install @usefragments/ui</Text>\n</div>"
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Text font=\"mono\" scale=\"sm\">const greeting = \"Hello, World!\";</Text>\n  <Text font=\"mono\" scale=\"sm\" color=\"secondary\">npm install @usefragments/ui</Text>\n</div>"
     },
     {
       "name": "Truncation",
@@ -180,7 +192,8 @@
   "contract": {
     "propsSummary": [
       "as: string - HTML element",
-      "size: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl - font size (px: 10/12/14/14/15/20/24/30/36/48)",
+      "role: caption|ui-compact|ui-standard|body-compact|body-relaxed|title-sm|title-md|title-lg|code|section-label|eyebrow - typography role (owns size, weight, line height, tracking)",
+      "scale: 2xs|xs|sm|base|md|lg|xl|2xl|3xl|4xl - type-scale step for text with no role (px: 10/12/14/14/15/20/24/30/36/48)",
       "weight: normal|medium|semibold|bold - font weight",
       "color: primary|secondary|tertiary|muted|accent|success|warning|danger - text color (muted = tertiary; accent = brand spend; semantic colours for inline state)",
       "font: sans|mono - font family",

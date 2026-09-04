@@ -16,6 +16,7 @@
     "disabled: boolean (default: false)",
     "required: boolean (default: false)",
     "size: sm|md|lg (default: md)",
+    "variant: outline",
     "label: string",
     "helperText: string",
     "description: string",
@@ -76,10 +77,9 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual variant. 'default' is the inline checkbox, 'card' renders as a full-width clickable card with the checkbox tucked inside.",
-      "default": "default",
+      "description": "Chrome. Omit for the inline checkbox beside its label; 'outline' renders a full-width bordered surface with the checkbox tucked inside.",
       "required": false,
-      "values": ["default", "card"]
+      "values": ["outline"]
     },
     "label": {
       "type": "string",
@@ -217,6 +217,7 @@
       "onCheckedChange: (checked) => void - change handler",
       "onChange: (checked) => void - alias for onCheckedChange",
       "indeterminate: boolean - partial selection state",
+      "variant: outline - full-width bordered surface; omit for the inline control",
       "label: string - checkbox label",
       "helperText: string - helper text (preferred)",
       "description: string - deprecated alias for helperText",

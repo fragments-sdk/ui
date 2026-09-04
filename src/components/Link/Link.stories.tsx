@@ -3,7 +3,7 @@ import { Link } from '.';
 
 /**
  * Styled anchor element for navigation. Supports internal and external links
- * with consistent visual treatment, variants, and underline behaviors.
+ * with consistent visual treatment, tones, and underline behaviors.
  */
 const meta = {
   title: 'Navigation/Link',
@@ -17,10 +17,15 @@ const meta = {
     },
   },
   argTypes: {
-    variant: {
+    tone: {
       control: 'select',
-      options: ['default', 'subtle', 'muted'],
-      description: 'Visual style variant',
+      options: ['accent', 'neutral'],
+      description: 'Colour: accent link ink, or neutral body text until hovered',
+    },
+    color: {
+      control: 'select',
+      options: ['primary', 'secondary', 'tertiary'],
+      description: 'Text-hierarchy colour for a neutral link',
     },
     underline: {
       control: 'select',
@@ -32,7 +37,7 @@ const meta = {
   },
   args: {
     href: '#',
-    variant: 'default',
+    tone: 'accent',
     underline: 'hover',
     children: 'Learn more about our services',
   },
@@ -46,12 +51,12 @@ export const Default: Story = {
   args: { href: '#', children: 'Learn more about our services' },
 };
 
-export const Subtle: Story = {
-  args: { href: '#', variant: 'subtle', children: 'Secondary link' },
+export const Neutral: Story = {
+  args: { href: '#', tone: 'neutral', children: 'Secondary link' },
 };
 
-export const Muted: Story = {
-  args: { href: '#', variant: 'muted', children: 'Muted link' },
+export const Tertiary: Story = {
+  args: { href: '#', tone: 'neutral', color: 'tertiary', children: 'Quiet metadata link' },
 };
 
 export const AlwaysUnderlined: Story = {

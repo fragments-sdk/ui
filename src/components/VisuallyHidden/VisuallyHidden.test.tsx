@@ -48,11 +48,9 @@ describe('VisuallyHidden', () => {
     expect(el).toHaveClass('extra');
   });
 
-  it('keeps the reviewed accessibility geometry and scoped governance exceptions', () => {
-    expect(visuallyHiddenStyles).toContain('width: 1px;');
-    expect(visuallyHiddenStyles).toContain('height: 1px;');
-    expect(visuallyHiddenStyles).toContain('margin: -1px;');
-    expect(visuallyHiddenStyles.match(/fragments-allow FUI2004/g)).toHaveLength(3);
-    expect(visuallyHiddenStyles.match(/expires="2027-08-01"/g)).toHaveLength(3);
+  it('composes the shared visually-hidden mixin instead of a hand-rolled clip box', () => {
+    expect(visuallyHiddenStyles).toContain('@include visually-hidden;');
+    expect(visuallyHiddenStyles).not.toContain('1px');
+    expect(visuallyHiddenStyles).not.toContain('fragments-allow');
   });
 });

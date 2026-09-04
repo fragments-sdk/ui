@@ -37,7 +37,7 @@ export const LoginForm = React.forwardRef<HTMLFormElement, LoginFormProps>(
     };
 
     return (
-      <Card variant="elevated" className={className}>
+      <Card variant="solid" className={className}>
         <Card.Header>
           <Card.Title>Sign In</Card.Title>
           <Card.Description>
@@ -80,7 +80,7 @@ export const LoginForm = React.forwardRef<HTMLFormElement, LoginFormProps>(
               <div style={{ textAlign: 'right' }}>
                 <Text
                   as="span"
-                  size="sm"
+                  scale="sm"
                   color="secondary"
                   style={{ cursor: 'pointer', textDecoration: 'underline' }}
                 >
@@ -88,7 +88,7 @@ export const LoginForm = React.forwardRef<HTMLFormElement, LoginFormProps>(
                 </Text>
               </div>
               <Button
-                variant="primary"
+                variant="solid"
                 fullWidth
                 type="submit"
                 disabled={loading}
@@ -99,11 +99,11 @@ export const LoginForm = React.forwardRef<HTMLFormElement, LoginFormProps>(
           </form>
         </Card.Body>
         <Card.Footer>
-          <Text size="sm" color="tertiary">
+          <Text scale="sm" color="tertiary">
             Don't have an account?{' '}
             <Text
               as="span"
-              size="sm"
+              scale="sm"
               style={{
                 color: 'var(--fui-color-accent)',
                 cursor: 'pointer',

@@ -13,6 +13,8 @@ import styles from "./Progress.module.scss";
 // Types
 // ============================================
 
+export type ProgressTone = "accent" | "neutral" | "success" | "warning" | "danger";
+
 export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
   /** Current progress value (0-100). Null for indeterminate. */
   value?: number | null;
@@ -22,8 +24,10 @@ export interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   max?: number;
   /** Size of the progress bar */
   size?: ProgressSize;
-  /** Color variant */
-  variant?: "default" | "neutral" | "success" | "warning" | "danger";
+  /** Colour. `accent` is the plain bar; `neutral` reads as a meter whose
+   * maximum is not a success; the semantic tones carry state.
+   * @default "accent" */
+  tone?: ProgressTone;
   /** Label text */
   label?: string;
   /** Show percentage value */
@@ -37,13 +41,30 @@ export interface CircularProgressProps extends React.HTMLAttributes<HTMLDivEleme
   value?: number | null;
   /** Size of the circular progress */
   size?: ProgressSize;
-  /** Color variant */
-  variant?: "default" | "success" | "warning" | "danger";
+  /** Colour, same axis as the bar.
+   * @default "accent" */
+  tone?: ProgressTone;
   /** Show percentage in center */
   showValue?: boolean;
   /** Stroke width */
   strokeWidth?: number;
 }
+
+const INDICATOR_TONE_CLASS: Record<ProgressTone, string | undefined> = {
+  accent: undefined,
+  neutral: styles.indicatorNeutral,
+  success: styles.indicatorSuccess,
+  warning: styles.indicatorWarning,
+  danger: styles.indicatorDanger,
+};
+
+const CIRCULAR_TONE_CLASS: Record<ProgressTone, string | undefined> = {
+  accent: undefined,
+  neutral: styles.circularIndicatorNeutral,
+  success: styles.circularIndicatorSuccess,
+  warning: styles.circularIndicatorWarning,
+  danger: styles.circularIndicatorDanger,
+};
 
 // ============================================
 // Horizontal progress bar
@@ -54,7 +75,7 @@ function ProgressRoot({
   min = 0,
   max = 100,
   size = "md",
-  variant = "default",
+  tone = "accent",
   label,
   showValue = false,
   formatValue,
@@ -88,10 +109,7 @@ function ProgressRoot({
 
   const indicatorClasses = [
     styles.indicator,
-    variant === "neutral" && styles.indicatorNeutral,
-    variant === "success" && styles.indicatorSuccess,
-    variant === "warning" && styles.indicatorWarning,
-    variant === "danger" && styles.indicatorDanger,
+    INDICATOR_TONE_CLASS[tone],
     isIndeterminate && styles.indicatorIndeterminate,
   ]
     .filter(Boolean)
@@ -140,7 +158,7 @@ function ProgressRoot({
 function CircularProgressRoot({
   value = null,
   size = "md",
-  variant = "default",
+  tone = "accent",
   showValue = false,
   strokeWidth: customStrokeWidth,
   className,
@@ -163,9 +181,7 @@ function CircularProgressRoot({
 
   const indicatorClasses = [
     styles.circularIndicator,
-    variant === "success" && styles.circularIndicatorSuccess,
-    variant === "warning" && styles.circularIndicatorWarning,
-    variant === "danger" && styles.circularIndicatorDanger,
+    CIRCULAR_TONE_CLASS[tone],
     isIndeterminate && styles.circularIndicatorIndeterminate,
   ]
     .filter(Boolean)
@@ -176,10 +192,12 @@ function CircularProgressRoot({
   // Default value text for screen readers
   const effectiveValueText =
     ariaValueText || (isIndeterminate ? "Loading" : `${Math.round(percentage)} percent`);
+  // The ring geometry is authored on the instance through the public
+  // `--fui-progress-*` properties (declared in tokens/_component-properties.scss).
   const circularStyle = {
-    "--_progress-diameter": `${geometry.diameter}px`,
-    "--_progress-dash-full": circumference,
-    "--_progress-dash-quarter": circumference / 4,
+    "--fui-progress-diameter": `${geometry.diameter}px`,
+    "--fui-progress-dash-full": circumference,
+    "--fui-progress-dash-quarter": circumference / 4,
     ...styleProp,
   } as React.CSSProperties;
 

@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
@@ -64,7 +65,7 @@
 
 .dateSeparatorLine {
   flex: 1;
-  height: var(--fui-stroke-hairline, 1px);
+  height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   background-color: var(--fui-border, $fui-border);
 }
 

@@ -3,7 +3,12 @@
   "name": "Toast",
   "description": "Briefly reports what just happened, without blocking the page.",
   "category": "feedback",
-  "tags": ["notification", "alert", "message", "feedback"],
+  "tags": [
+    "notification",
+    "alert",
+    "message",
+    "feedback"
+  ],
   "status": "stable",
   "sourcePath": "src/components/Toast/index.tsx",
   "exportName": "Toast",
@@ -11,7 +16,7 @@
     "onDismiss: function",
     "title: string",
     "description: string",
-    "variant: default|success|error|warning|info (default: default)",
+    "tone: neutral|success|danger|warning|info (default: neutral)",
     "duration: number",
     "action: object",
     "id: string",
@@ -34,12 +39,18 @@
       "description": "Additional message content",
       "required": false
     },
-    "variant": {
+    "tone": {
       "type": "enum",
-      "description": "Visual variant indicating message type",
-      "default": "default",
+      "description": "Colour on the shared status ramp; neutral is the plain notification. The useToast().error helper sets tone=\"danger\".",
+      "default": "neutral",
       "required": false,
-      "values": ["default", "success", "error", "warning", "info"]
+      "values": [
+        "neutral",
+        "success",
+        "danger",
+        "warning",
+        "info"
+      ]
     },
     "duration": {
       "type": "number",
@@ -83,7 +94,7 @@
     ],
     "guidelines": [
       "One sentence, plus a title if it helps",
-      "Match the variant to what actually happened",
+      "Match the tone to what actually happened",
       "Auto-dismiss in three to five seconds",
       "Anything with an action needs a manual dismiss too",
       "Two or three on screen at once, no more",
@@ -103,9 +114,9 @@
       "code": "<Toast\n  title=\"Draft saved\"\n  description=\"We will keep it until you publish.\"\n/>"
     },
     {
-      "name": "Variants",
+      "name": "Tones",
       "description": "Icon and colour together carry the outcome.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"sm\">\n  <Toast\n    title=\"Success!\"\n    description=\"Your changes have been saved.\"\n    variant=\"success\"\n  />\n  <Toast\n    title=\"Error\"\n    description=\"Failed to save changes. Please try again.\"\n    variant=\"error\"\n  />\n  <Toast\n    title=\"Warning\"\n    description=\"This action cannot be undone.\"\n    variant=\"warning\"\n  />\n  <Toast\n    title=\"New update\"\n    description=\"Version 2.0 is now available.\"\n    variant=\"info\"\n  />\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"sm\">\n  <Toast\n    title=\"Success!\"\n    description=\"Your changes have been saved.\"\n    tone=\"success\"\n  />\n  <Toast\n    title=\"Error\"\n    description=\"Failed to save changes. Please try again.\"\n    tone=\"danger\"\n  />\n  <Toast\n    title=\"Warning\"\n    description=\"This action cannot be undone.\"\n    tone=\"warning\"\n  />\n  <Toast\n    title=\"New update\"\n    description=\"Version 2.0 is now available.\"\n    tone=\"info\"\n  />\n</Stack>"
     },
     {
       "name": "With Action",
@@ -115,7 +126,7 @@
     {
       "name": "Dismissible",
       "description": "onDismiss adds a close button for longer messages.",
-      "code": "<Toast\n  title=\"Export running\"\n  description=\"We will email you when the file is ready.\"\n  variant=\"info\"\n  onDismiss={() => {}}\n/>"
+      "code": "<Toast\n  title=\"Export running\"\n  description=\"We will email you when the file is ready.\"\n  tone=\"info\"\n  onDismiss={() => {}}\n/>"
     }
   ],
   "relations": [
@@ -134,17 +145,22 @@
     "propsSummary": [
       "title: string - toast title",
       "description: string - additional message",
-      "variant: default|success|error|warning|info",
+      "tone: neutral|success|danger|warning|info",
       "duration: number - ms before auto-dismiss",
       "action: { label, onClick } - optional action",
       "ToastInput (useToast): optional id for deterministic creation/replacement flows",
       "useToast().success/error/warning/info: (title, description?) or ({ title, description, action, duration, id })"
     ],
-    "a11yRules": ["A11Y_ALERT_ROLE", "A11Y_TARGET_SIZE_MIN"]
+    "a11yRules": [
+      "A11Y_ALERT_ROLE",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": ["Provider"]
+    "subComponents": [
+      "Provider"
+    ]
   },
   "provenance": {
     "source": "migrated",

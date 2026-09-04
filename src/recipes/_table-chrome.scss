@@ -1,4 +1,5 @@
 @use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
 @use "typography" as typography;
 
 @mixin properties {
@@ -16,12 +17,10 @@
   --fui-table-header-block-inset-compact: var(--fui-raw-space-4, #{measurements.raw-space(4)});
   --fui-table-header-block-inset-regular: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   --fui-table-header-block-inset-relaxed: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  --fui-table-tree-indent-step: var(--fui-raw-space-24, #{measurements.raw-space(24)});
-  --fui-table-divider-size: var(
-    --fui-stroke-hairline,
-    #{measurements.target-value("stroke", "hairline")}
-  );
+  --fui-table-tree-indent-step: var(--fui-raw-space-24, #{$_tree-indent-step});
+  --fui-table-divider-size: var(--fui-stroke-hairline, #{$_divider-size});
 }
+
 
 @function row-track($density) {
   @if $density == "compact" or $density == "regular" or $density == "relaxed" {
@@ -72,6 +71,14 @@
   }
 }
 
+// Fallbacks are the regular-density defaults; `properties` sets the channels
+// per density on the table root.
+$_tree-indent-step: measurements.raw-space(24);
+$_divider-size: measurements.target-value("stroke", "hairline");
+$_cell-inline-inset: cell-inline-inset("regular");
+$_cell-block-inset: cell-block-inset("regular");
+$_row-track: row-track("regular");
+
 @mixin root {
   @include properties;
 
@@ -84,7 +91,7 @@
 
   padding-block: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   padding-inline: 0;
-  color: var(--fui-text-secondary);
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
   text-align: start;
   caption-side: top;
 }
@@ -92,28 +99,32 @@
 @mixin header-cell {
   @include typography.role("ui-compact");
 
-  padding-block: var(--_fui-table-header-block-inset, var(--_fui-table-cell-block-inset));
-  padding-inline: var(--_fui-table-cell-inline-inset);
-  color: var(--fui-text-secondary);
+  padding-block: var(
+    --_fui-table-header-block-inset,
+    var(--_fui-table-cell-block-inset, #{$_cell-block-inset})
+  );
+  padding-inline: var(--_fui-table-cell-inline-inset, #{$_cell-inline-inset});
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
   text-align: start;
   vertical-align: middle;
 }
 
 @mixin body-cell {
-  padding-block: var(--_fui-table-cell-block-inset);
-  padding-inline: var(--_fui-table-cell-inline-inset);
-  color: var(--fui-text-primary);
+  padding-block: var(--_fui-table-cell-block-inset, #{$_cell-block-inset});
+  padding-inline: var(--_fui-table-cell-inline-inset, #{$_cell-inline-inset});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   vertical-align: middle;
 }
 
 @mixin row {
-  height: var(--_fui-table-row-track);
-  border-block-end: var(--fui-table-divider-size) solid var(--fui-table-border, var(--fui-border));
+  height: var(--_fui-table-row-track, #{$_row-track});
+  border-block-end: var(--fui-table-divider-size, #{$_divider-size}) solid
+    var(--fui-table-border, var(--fui-border, #{tokens.$fui-border}));
 }
 
 @mixin tree-cell {
   padding-inline-start: calc(
-    var(--_fui-table-cell-inline-inset) + var(--_fui-table-tree-depth, 0) *
-      var(--fui-table-tree-indent-step)
+    var(--_fui-table-cell-inline-inset, #{$_cell-inline-inset}) + var(--fui-table-tree-depth, 0) *
+      var(--fui-table-tree-indent-step, #{$_tree-indent-step})
   );
 }

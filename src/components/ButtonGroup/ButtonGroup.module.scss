@@ -1,3 +1,5 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout";
 
 .group {
@@ -7,21 +9,21 @@
 
 // Gap sizes
 .gapNone {
-  gap: 0;
+  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 
   > * {
     position: relative;
   }
 
   > *:not(:first-child) {
-    margin-inline-start: calc(-1 * var(--fui-stroke-hairline, 1px));
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    margin-inline-start: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
+    border-start-start-radius: var(--fui-radius-none, #{$fui-radius-none});
+    border-end-start-radius: var(--fui-radius-none, #{$fui-radius-none});
   }
 
   > *:not(:last-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-start-end-radius: var(--fui-radius-none, #{$fui-radius-none});
+    border-end-end-radius: var(--fui-radius-none, #{$fui-radius-none});
   }
 
   > *:hover,

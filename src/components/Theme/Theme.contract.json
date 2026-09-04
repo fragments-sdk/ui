@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Theme",
-  "description": "Gives every component below it a light, dark, or system color mode, and remembers the choice.",
+  "description": "Utility provider that gives everything below it a light, dark, or system color mode.",
   "category": "utilities",
   "tags": ["theme", "dark-mode", "light-mode", "provider", "toggle"],
   "status": "stable",
@@ -15,7 +15,8 @@
     "onModeChange: function",
     "storageKey: string (default: fui-theme)",
     "attribute: data-theme|class (default: data-theme)",
-    "ThemeToggle appearance: group|icon (default: group)"
+    "Theme.Toggle size: sm|md|lg",
+    "Theme.Button size: sm|md|lg"
   ],
   "props": {
     "children": {
@@ -76,7 +77,7 @@
       "useTheme reads and sets the mode anywhere below it",
       "storageKey renames the localStorage entry",
       "attribute=\"class\" if your CSS keys off .dark instead of data-theme",
-      "appearance=\"icon\" for tight toolbars; the default group shows both modes"
+      "ThemeProvider renders no chrome of its own; Theme.Toggle is the segmented light/dark/system control and Theme.Button the single icon button for tight toolbars"
     ],
     "accessibility": [
       "The toggle's label names the mode it is in",
@@ -100,9 +101,9 @@
       "code": "<ThemeProvider defaultMode=\"light\">\n  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>\n    <ThemeToggle size=\"sm\" />\n    <ThemeToggle size=\"md\" />\n    <ThemeToggle size=\"lg\" />\n  </div>\n</ThemeProvider>"
     },
     {
-      "name": "Icon Toggle",
+      "name": "Theme Button",
       "description": "A single icon button for toolbars with no room to spare.",
-      "code": "<ThemeProvider defaultMode=\"system\">\n  <ThemeToggle appearance=\"icon\" aria-label=\"Switch color mode\" />\n</ThemeProvider>"
+      "code": "<ThemeProvider defaultMode=\"system\">\n  <ThemeButton aria-label=\"Switch color mode\" />\n</ThemeProvider>"
     }
   ],
   "relations": [
@@ -118,9 +119,9 @@
       "mode: light|dark|system - controlled mode",
       "onModeChange: (mode) => void - change handler",
       "attribute: data-theme|class - DOM theme attribute",
-      "ThemeToggle size: sm|md|lg - toggle button size",
-      "ThemeToggle appearance: group|icon - segmented or compact icon control (default: group)",
-      "ThemeToggle forwards div DOM props to the button group root"
+      "Theme.Toggle size: sm|md|lg - segmented light/dark/system control",
+      "Theme.Toggle forwards div DOM props to the button group root",
+      "Theme.Button size: sm|md|lg - single ghost icon button that flips light and dark, built on IconButton"
     ],
     "a11yRules": ["A11Y_TARGET_SIZE_MIN"]
   },

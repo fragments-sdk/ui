@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/target" as target;
@@ -16,8 +17,8 @@
   flex-wrap: wrap;
   gap: var(--fui-space-1, $fui-space-1);
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 // Individual breadcrumb item (li)
@@ -92,7 +93,7 @@
   align-items: center;
   justify-content: center;
   background: none;
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   color: var(--fui-text-secondary, $fui-text-secondary);
   cursor: pointer;

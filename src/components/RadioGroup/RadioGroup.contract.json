@@ -19,6 +19,7 @@
     "helperText: string",
     "error: union",
     "size: sm|md|lg (default: md)",
+    "variant: outline",
     "wrapperClassName: string",
     "groupClassName: string",
     "groupId: string",
@@ -87,10 +88,9 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual variant. 'default' is the inline radio, 'card' renders each item as a full-width clickable card with the radio tucked inside.",
-      "default": "default",
+      "description": "Chrome. Omit for the inline radio beside its label; 'outline' renders each item as a full-width bordered surface with the radio tucked inside.",
       "required": false,
-      "values": ["default", "card"]
+      "values": ["outline"]
     },
     "wrapperClassName": {
       "type": "string",
@@ -198,6 +198,7 @@
       "onChange: (value: string) => void - alias for onValueChange",
       "orientation: horizontal|vertical (default: vertical)",
       "size: sm|md|lg (default: md)",
+      "variant: outline - each item a full-width bordered surface; omit for the inline control",
       "label: string - group label",
       "helperText: string - helper text below the group",
       "error: boolean | string - error styling and message",

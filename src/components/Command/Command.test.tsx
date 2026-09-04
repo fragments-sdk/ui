@@ -351,7 +351,7 @@ describe('Command', () => {
     render(
       <Dialog>
         <Dialog.Trigger>Open Palette</Dialog.Trigger>
-        <Dialog.Content size="sm">
+        <Dialog.Content width="sm">
           <Command>
             <Command.Input placeholder="Search commands..." />
             <Command.List>

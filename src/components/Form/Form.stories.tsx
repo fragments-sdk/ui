@@ -61,7 +61,7 @@ export const SignUp: Story = {
         </Grid.Item>
       </Grid>
       <Form.Actions>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="solid">
           Create Account
         </Button>
       </Form.Actions>
@@ -94,7 +94,7 @@ export const WithServerErrors: Story = {
         </Field>
       </Grid>
       <Form.Actions>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="solid">
           Submit
         </Button>
       </Form.Actions>
@@ -115,7 +115,7 @@ export const ValidateOnBlur: Story = {
         </Field>
       </Grid>
       <Form.Actions>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="solid">
           Submit
         </Button>
       </Form.Actions>

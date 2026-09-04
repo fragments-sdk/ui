@@ -8,13 +8,14 @@ import styles from "./Loading.module.scss";
 // ============================================
 
 export type LoadingSize = "sm" | "md" | "lg" | "xl";
-export type LoadingVariant = "spinner" | "dots" | "pulse";
+export type LoadingKind = "spinner" | "dots" | "pulse";
 
 export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Size of the loading indicator */
   size?: LoadingSize;
-  /** Visual style of the loading indicator */
-  variant?: LoadingVariant;
+  /** Which animation plays. Not chrome, so it is `kind`, not `variant`.
+   * @default "spinner" */
+  kind?: LoadingKind;
   /** Accessible label for screen readers */
   label?: string;
   /** Whether to center the loading indicator in its container */
@@ -23,7 +24,7 @@ export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   fill?: boolean;
   /** Whether to show the loading indicator with a backdrop overlay */
   overlay?: boolean;
-  /** Color variant - uses accent color by default, 'current' inherits text color */
+  /** Colour. `accent` by default; `current` inherits the surrounding text colour */
   color?: "accent" | "current" | "muted";
 }
 
@@ -37,8 +38,8 @@ export interface LoadingInlineProps extends React.HTMLAttributes<HTMLSpanElement
 export interface LoadingScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Loading indicator size */
   size?: LoadingSize;
-  /** Loading indicator variant */
-  variant?: LoadingVariant;
+  /** Which animation plays */
+  kind?: LoadingKind;
   /** Optional label text to display */
   label?: string;
   /** Whether to show the label text visually */
@@ -93,7 +94,7 @@ function PulseAnimation({ className }: { className?: string }) {
 const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function LoadingRoot(
   {
     size = "md",
-    variant = "spinner",
+    kind = "spinner",
     label = "Loading...",
     centered = false,
     fill = false,
@@ -107,7 +108,7 @@ const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function Load
   const classes = [
     styles.loading,
     styles[size],
-    styles[variant],
+    styles[kind],
     styles[`color-${color}`],
     centered && styles.centered,
     fill && styles.fill,
@@ -118,9 +119,9 @@ const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function Load
     .join(" ");
 
   const animation =
-    variant === "dots" ? (
+    kind === "dots" ? (
       <DotsAnimation className={styles.dotsTrack} />
-    ) : variant === "pulse" ? (
+    ) : kind === "pulse" ? (
       <PulseAnimation className={styles.pulseTrack} />
     ) : (
       <SpinnerIcon className={styles.spinnerIcon} />
@@ -171,7 +172,7 @@ function LoadingInline({
 
 function LoadingScreen({
   size = "lg",
-  variant = "spinner",
+  kind = "spinner",
   label = "Loading...",
   showLabel = false,
   className,
@@ -181,7 +182,7 @@ function LoadingScreen({
 
   return (
     <div className={classes} role="status" aria-label={label} aria-live="polite" {...htmlProps}>
-      <LoadingRoot size={size} variant={variant} label={label} />
+      <LoadingRoot size={size} kind={kind} label={label} />
       {showLabel && <span className={styles.screenLabel}>{label}</span>}
     </div>
   );

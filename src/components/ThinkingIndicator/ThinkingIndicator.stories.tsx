@@ -20,7 +20,7 @@ const meta = {
     },
   },
   argTypes: {
-    variant: {
+    kind: {
       control: "select",
       options: ["dots", "pulse", "spinner"],
       description: "Animation style",
@@ -30,7 +30,7 @@ const meta = {
     label: { control: "text", description: "Status text" },
   },
   args: {
-    variant: "dots",
+    kind: "dots",
     label: "Thinking...",
     active: true,
   },
@@ -41,45 +41,45 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Dots: Story = {
-  args: { variant: "dots", label: "Thinking..." },
+  args: { kind: "dots", label: "Thinking..." },
 };
 
 export const Pulse: Story = {
-  args: { variant: "pulse", label: "Processing..." },
+  args: { kind: "pulse", label: "Processing..." },
 };
 
 export const Spinner: Story = {
-  args: { variant: "spinner", label: "Loading..." },
+  args: { kind: "spinner", label: "Loading..." },
 };
 
 export const WithElapsedTime: Story = {
-  args: { variant: "dots", label: "Generating response...", showElapsed: true },
+  args: { kind: "dots", label: "Generating response...", showElapsed: true },
 };
 
 export const CustomLabel: Story = {
-  args: { variant: "dots", label: "Claude is writing code..." },
+  args: { kind: "dots", label: "Claude is writing code..." },
 };
 
 export const MultiStepProgress: Story = {
   args: {
-    variant: "spinner",
+    kind: "spinner",
     label: "Working...",
     steps: [
       { id: "1", label: "Analyzing request", status: "complete" },
-      { id: "2", label: "Searching knowledge base", status: "active" },
-      { id: "3", label: "Generating response", status: "pending" },
+      { id: "2", label: "Searching knowledge base", status: "pending" },
+      { id: "3", label: "Generating response", status: "idle" },
     ],
   },
 };
 
 export const WithErrorStep: Story = {
   args: {
-    variant: "spinner",
+    kind: "spinner",
     label: "Retrying...",
     steps: [
       { id: "1", label: "Connecting to API", status: "complete" },
       { id: "2", label: "Fetching data", status: "error" },
-      { id: "3", label: "Retrying with fallback", status: "active" },
+      { id: "3", label: "Retrying with fallback", status: "pending" },
     ],
   },
 };

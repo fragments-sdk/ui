@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/prose" as prose;
 
 .markdown {
@@ -90,7 +91,7 @@
     background-color: var(--fui-code-bg, $fui-code-bg);
 
     code {
-      padding: 0;
+      padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
       background: none;
       font: inherit;
       letter-spacing: inherit;

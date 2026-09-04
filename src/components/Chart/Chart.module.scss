@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
 
@@ -57,13 +58,13 @@
 .tooltipItems {
   display: flex;
   flex-direction: column;
-  gap: var(--_fui-chart-tooltip-item-gap);
+  gap: var(--_fui-chart-tooltip-item-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
 }
 
 .tooltipItem {
   display: flex;
   align-items: center;
-  gap: var(--_fui-chart-tooltip-item-gap);
+  gap: var(--_fui-chart-tooltip-item-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
   justify-content: space-between;
 }
 
@@ -82,8 +83,8 @@
     @include representation.chart-marker("dashed");
 
     box-sizing: border-box;
-    border-top: var(--fui-chart-marker-stroke, var(--fui-raw-space-2, 2px)) dashed;
-    border-radius: 0;
+    border-block-start: var(--fui-chart-marker-stroke, var(--fui-raw-space-2, #{measurements.raw-space(2)})) dashed;
+    border-radius: var(--fui-radius-none, #{$fui-radius-none});
   }
 }
 
@@ -104,7 +105,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--fui-raw-space-12, 12px);
+  gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   padding-block-start: var(--fui-raw-space-8, 8px);
 }
 

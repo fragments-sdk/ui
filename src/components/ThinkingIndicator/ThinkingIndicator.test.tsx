@@ -25,8 +25,8 @@ describe("ThinkingIndicator", () => {
   it("renders steps when provided", () => {
     const steps = [
       { id: "1", label: "Analyzing", status: "complete" as const },
-      { id: "2", label: "Generating", status: "active" as const },
-      { id: "3", label: "Reviewing", status: "pending" as const },
+      { id: "2", label: "Generating", status: "pending" as const },
+      { id: "3", label: "Reviewing", status: "idle" as const },
     ];
     render(<ThinkingIndicator steps={steps} />);
     expect(screen.getByText("Analyzing")).toBeInTheDocument();

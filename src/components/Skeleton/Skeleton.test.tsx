@@ -9,20 +9,20 @@ describe("Skeleton", () => {
   });
 
   it("applies variant classes", () => {
-    const { container: c1 } = render(<Skeleton variant="text" />);
+    const { container: c1 } = render(<Skeleton shape="text" />);
     expect(c1.firstElementChild).toHaveClass("text");
 
-    const { container: c2 } = render(<Skeleton variant="avatar" />);
+    const { container: c2 } = render(<Skeleton shape="avatar" />);
     expect(c2.firstElementChild).toHaveClass("avatar");
 
-    const { container: c3 } = render(<Skeleton variant="button" />);
+    const { container: c3 } = render(<Skeleton shape="button" />);
     expect(c3.firstElementChild).toHaveClass("button");
   });
 
   it.each(["sm", "md", "lg"] as const)(
     "applies the %s size to represented input geometry",
     (size) => {
-      const { container } = render(<Skeleton variant="input" size={size} />);
+      const { container } = render(<Skeleton shape="input" size={size} />);
       expect(container.firstElementChild).toHaveClass(`input-${size}`);
     }
   );
@@ -54,8 +54,8 @@ describe("Skeleton", () => {
   it("has no accessibility violations", async () => {
     const { container } = render(
       <div>
-        <Skeleton variant="text" />
-        <Skeleton variant="avatar" />
+        <Skeleton shape="text" />
+        <Skeleton shape="avatar" />
         <Skeleton.Text lines={3} />
       </div>
     );

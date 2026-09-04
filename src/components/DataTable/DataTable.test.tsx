@@ -313,7 +313,7 @@ describe("DataTable", () => {
     expect(childRows).toHaveLength(2);
     expect(childRows[0]).toHaveAttribute("data-depth", "1");
     const treeCell = childRows[0].querySelector("td");
-    expect(treeCell).toHaveStyle("--_fui-table-tree-depth: 1");
+    expect(treeCell).toHaveStyle("--fui-table-tree-depth: 1");
     expect(treeCell?.getAttribute("style")).not.toContain("padding-left");
   });
 

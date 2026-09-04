@@ -24,7 +24,7 @@ const meta = {
     },
     status: {
       control: 'select',
-      options: ['sending', 'streaming', 'complete', 'error'],
+      options: ['pending', 'streaming', 'complete', 'error'],
       description: 'Message state',
     },
   },

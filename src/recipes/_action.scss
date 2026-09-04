@@ -118,9 +118,9 @@
 @mixin icon-only($role) {
   @include size($role);
 
-  inline-size: var(--_fui-action-track);
-  block-size: var(--_fui-action-track);
-  min-block-size: var(--_fui-action-track);
+  inline-size: var(--_fui-action-track, #{track($role)});
+  block-size: var(--_fui-action-track, #{track($role)});
+  min-block-size: var(--_fui-action-track, #{track($role)});
   padding-inline: 0;
 }
 
@@ -132,7 +132,7 @@
 
 @mixin inline {
   min-block-size: auto;
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   font: inherit;
   letter-spacing: inherit;
 }

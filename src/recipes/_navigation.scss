@@ -1,4 +1,5 @@
 @use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
 @use "typography";
 
 @function _navigation($role) {
@@ -21,21 +22,49 @@
   @error "Unknown navigation measurement '#{$role}'.";
 }
 
+$_row-track: measurements.target-value("controlTrack", "md");
+$_section-track: measurements.target-value("controlTrack", "micro");
+$_gutter: _navigation("sidebarGutter");
+$_leading-box: _navigation("sidebarLeadingBox");
+$_active-rail: _navigation("sidebarRail");
+$_active-dot: _navigation("sidebarDot");
+
+// Build-time twins for the `--fui-navigation-*` hooks `properties` authors, so
+// consumers can write `var(--fui-navigation-gutter, #{navigation.gutter()})`.
+@function row-track() {
+  @return $_row-track;
+}
+@function section-track() {
+  @return $_section-track;
+}
+@function gutter() {
+  @return $_gutter;
+}
+@function leading-box() {
+  @return $_leading-box;
+}
+@function active-rail() {
+  @return $_active-rail;
+}
+@function active-dot() {
+  @return $_active-dot;
+}
+@function label-optical-y() {
+  @return _navigation("sidebarLabelOffset");
+}
+@function collapsed-width() {
+  @return _navigation("sidebarCollapsedWidth");
+}
+
 @mixin properties {
-  --fui-navigation-row-track: var(
-    --fui-control-track-md,
-    #{measurements.target-value("controlTrack", "md")}
-  );
-  --fui-navigation-section-track: var(
-    --fui-control-track-micro,
-    #{measurements.target-value("controlTrack", "micro")}
-  );
-  --fui-navigation-gutter: #{_navigation("sidebarGutter")};
-  --fui-navigation-inline-inset: #{_navigation("sidebarGutter")};
-  --fui-navigation-content-gap: #{_navigation("sidebarGutter")};
-  --fui-navigation-leading-box: #{_navigation("sidebarLeadingBox")};
-  --fui-navigation-active-rail: #{_navigation("sidebarRail")};
-  --fui-navigation-active-dot: #{_navigation("sidebarDot")};
+  --fui-navigation-row-track: var(--fui-control-track-md, #{$_row-track});
+  --fui-navigation-section-track: var(--fui-control-track-micro, #{$_section-track});
+  --fui-navigation-gutter: #{$_gutter};
+  --fui-navigation-inline-inset: #{$_gutter};
+  --fui-navigation-content-gap: #{$_gutter};
+  --fui-navigation-leading-box: #{$_leading-box};
+  --fui-navigation-active-rail: #{$_active-rail};
+  --fui-navigation-active-dot: #{$_active-dot};
   --fui-navigation-label-optical-y: #{_navigation("sidebarLabelOffset")};
 }
 
@@ -44,9 +73,9 @@
   @include typography.role("ui-compact");
 
   box-sizing: border-box;
-  min-block-size: var(--fui-navigation-row-track);
-  padding-inline: var(--fui-navigation-inline-inset);
-  gap: var(--fui-navigation-content-gap);
+  min-block-size: var(--fui-navigation-row-track, #{$_row-track});
+  padding-inline: var(--fui-navigation-inline-inset, #{$_gutter});
+  gap: var(--fui-navigation-content-gap, #{$_gutter});
 }
 
 @mixin section-row {
@@ -54,17 +83,17 @@
   @include typography.role("caption");
 
   box-sizing: border-box;
-  min-block-size: var(--fui-navigation-section-track);
-  padding-inline: var(--fui-navigation-inline-inset);
-  gap: var(--fui-navigation-content-gap);
+  min-block-size: var(--fui-navigation-section-track, #{$_section-track});
+  padding-inline: var(--fui-navigation-inline-inset, #{$_gutter});
+  gap: var(--fui-navigation-content-gap, #{$_gutter});
 }
 
 @mixin leading {
   @include properties;
 
-  inline-size: var(--fui-navigation-leading-box);
-  block-size: var(--fui-navigation-leading-box);
-  flex: 0 0 var(--fui-navigation-leading-box);
+  inline-size: var(--fui-navigation-leading-box, #{$_leading-box});
+  block-size: var(--fui-navigation-leading-box, #{$_leading-box});
+  flex: 0 0 var(--fui-navigation-leading-box, #{$_leading-box});
 
   > svg,
   > img {
@@ -83,18 +112,18 @@
       content: "";
       position: absolute;
       inset-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-      inset-inline-start: calc(-1 * var(--fui-navigation-gutter));
-      inline-size: var(--fui-navigation-active-rail);
+      inset-inline-start: calc(-1 * var(--fui-navigation-gutter, #{$_gutter}));
+      inline-size: var(--fui-navigation-active-rail, #{$_active-rail});
     }
   } @else if $placement == "end" {
     &::after {
       content: "";
       position: absolute;
       inset-block-start: 50%;
-      inset-inline-end: var(--fui-navigation-inline-inset);
-      inline-size: var(--fui-navigation-active-dot);
-      block-size: var(--fui-navigation-active-dot);
-      border-radius: 999px;
+      inset-inline-end: var(--fui-navigation-inline-inset, #{$_gutter});
+      inline-size: var(--fui-navigation-active-dot, #{$_active-dot});
+      block-size: var(--fui-navigation-active-dot, #{$_active-dot});
+      border-radius: var(--fui-radius-full, #{tokens.$fui-radius-full});
       transform: translateY(-50%);
     }
   } @else {

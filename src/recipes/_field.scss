@@ -1,5 +1,6 @@
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
+@use "../tokens/mixins" as mixins;
 @use "typography";
 
 @function track($size) {
@@ -39,9 +40,12 @@
   }
 }
 
+$_label-gap: measurements.raw-space(6);
+$_message-gap: measurements.raw-space(4);
+
 @mixin wrapper {
-  --fui-field-label-gap: var(--fui-raw-space-6, #{measurements.raw-space(6)});
-  --fui-field-message-gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  --fui-field-label-gap: var(--fui-raw-space-6, #{$_label-gap});
+  --fui-field-message-gap: var(--fui-raw-space-4, #{$_message-gap});
 
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -50,28 +54,29 @@
 @mixin label {
   @include typography.role("ui-standard");
 
-  margin-block-end: var(--fui-field-label-gap);
+  margin-block-end: var(--fui-field-label-gap, #{$_label-gap});
 }
 
 @mixin helper {
   @include typography.role("caption");
 
-  margin-block-start: var(--fui-field-message-gap);
+  margin-block-start: var(--fui-field-message-gap, #{$_message-gap});
   color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
 }
 
 @mixin error {
   @include typography.role("caption");
 
-  margin-block-start: var(--fui-field-message-gap);
+  margin-block-start: var(--fui-field-message-gap, #{$_message-gap});
   color: var(--fui-color-danger-text, #{tokens.$fui-color-danger-text});
 }
 
 @mixin shell {
   box-sizing: border-box;
-  min-block-size: var(--_fui-field-track);
-  padding-inline: var(--_fui-field-inline-inset);
-  border: var(--_fui-field-stroke) solid var(--fui-border, #{tokens.$fui-border});
+  // Fallbacks are the md defaults; `size()` sets the channels per field size.
+  min-block-size: var(--_fui-field-track, #{track("md")});
+  padding-inline: var(--_fui-field-inline-inset, #{inline-inset("md")});
+  border: var(--_fui-field-stroke, #{stroke()}) solid var(--fui-border, #{tokens.$fui-border});
   border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
   background: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
@@ -93,8 +98,7 @@
 }
 
 @mixin disabled-state {
-  opacity: 0.5;
-  cursor: not-allowed;
+  @include mixins.disabled-state;
 }
 
 @mixin readonly-state {

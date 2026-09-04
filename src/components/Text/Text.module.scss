@@ -1,22 +1,23 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/typography" as typography;
 
 .text {
   font-family: var(--fui-font-sans, $fui-font-sans);
   color: var(--fui-text-primary, $fui-text-primary);
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
-// Variants
-.variant-section-label {
+// Label roles: the uppercase list heading and the eyebrow.
+.role-section-label {
   @include typography.role("ui-compact");
 }
 
 // Eyebrow: the small-caps label that names a surface above its statement
 // (page label, card section head). Always tertiary ink — it is never the
 // thing the reader is meant to look at.
-.variant-eyebrow {
+.role-eyebrow {
   @include typography.role("caption");
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
   letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
@@ -43,46 +44,46 @@
   }
 }
 
-// Font sizes
-.size-2xs {
+// Scale steps, for text with no role
+.scale-2xs {
   font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
 }
 
-.size-xs {
+.scale-xs {
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
 }
 
-.size-sm {
+.scale-sm {
   font-size: var(--fui-font-size-sm, $fui-font-size-sm);
 }
 
-.size-base {
+.scale-base {
   font-size: var(--fui-font-size-base, $fui-font-size-base);
 }
 
-.size-md {
+.scale-md {
   font-size: var(--fui-font-size-md, $fui-font-size-md);
 }
 
-.size-lg {
+.scale-lg {
   font-size: var(--fui-font-size-lg, $fui-font-size-lg);
 }
 
-.size-xl {
+.scale-xl {
   font-size: var(--fui-font-size-xl, $fui-font-size-xl);
 }
 
-.size-2xl {
+.scale-2xl {
   font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
 }
 
-.size-3xl {
+.scale-3xl {
   font-size: var(--fui-font-size-3xl, $fui-font-size-3xl);
   line-height: var(--fui-line-height-display, $fui-line-height-display);
   letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
 }
 
-.size-4xl {
+.scale-4xl {
   font-size: var(--fui-font-size-4xl, $fui-font-size-4xl);
   line-height: var(--fui-line-height-display, $fui-line-height-display);
   letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);

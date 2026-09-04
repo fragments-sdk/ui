@@ -1,46 +1,43 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/variables" as *;
 
+$_track-size: measurements.raw-space(6);
+$_inline-fade: measurements.raw-space(48);
+$_block-fade: measurements.raw-space(32);
+$_mask-none: linear-gradient(black, black);
+
 .root {
-  --fui-scrollarea-track-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
-  --fui-scrollarea-inline-fade: var(--fui-raw-space-48, #{measurements.raw-space(48)});
-  --fui-scrollarea-block-fade: var(--fui-raw-space-32, #{measurements.raw-space(32)});
-  --_fui-scrollarea-track-size: var(
-    --fui-scrollarea-track-size,
-    var(--fui-raw-space-6, #{measurements.raw-space(6)})
-  );
-  --_fui-scrollarea-inline-fade: var(
-    --fui-scrollarea-inline-fade,
-    var(--fui-raw-space-48, #{measurements.raw-space(48)})
-  );
-  --_fui-scrollarea-block-fade: var(
-    --fui-scrollarea-block-fade,
-    var(--fui-raw-space-32, #{measurements.raw-space(32)})
-  );
+  --_fui-scrollarea-track-size: var(--fui-raw-space-6, #{$_track-size});
+  --_fui-scrollarea-inline-fade: var(--fui-raw-space-48, #{$_inline-fade});
+  --_fui-scrollarea-block-fade: var(--fui-raw-space-32, #{$_block-fade});
 
   position: relative;
   overflow: hidden;
 }
 
 .viewport {
-  --_fui-scrollarea-inline-mask: linear-gradient(black, black);
-  --_fui-scrollarea-block-mask: linear-gradient(black, black);
+  --_fui-scrollarea-inline-mask: #{$_mask-none};
+  --_fui-scrollarea-block-mask: #{$_mask-none};
 
   inline-size: 100%;
   block-size: 100%;
   overflow: hidden;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
-  mask-image: var(--_fui-scrollarea-inline-mask), var(--_fui-scrollarea-block-mask);
+  mask-image:
+    var(--_fui-scrollarea-inline-mask, #{$_mask-none}),
+    var(--_fui-scrollarea-block-mask, #{$_mask-none});
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
   mask-composite: intersect;
-  -webkit-mask-image: var(--_fui-scrollarea-inline-mask), var(--_fui-scrollarea-block-mask);
+  -webkit-mask-image:
+    var(--_fui-scrollarea-inline-mask, #{$_mask-none}),
+    var(--_fui-scrollarea-block-mask, #{$_mask-none});
   -webkit-mask-composite: source-in;
 
   &::-webkit-scrollbar {
-    width: var(--_fui-scrollarea-track-size);
-    height: var(--_fui-scrollarea-track-size);
+    width: var(--_fui-scrollarea-track-size, #{$_track-size});
+    height: var(--_fui-scrollarea-track-size, #{$_track-size});
   }
 
   &::-webkit-scrollbar-track {
@@ -84,18 +81,18 @@
 
 .horizontal:not([data-scroll-x="none"]),
 .both:not([data-scroll-x="none"]) {
-  scroll-padding-inline: var(--_fui-scrollarea-inline-fade);
+  scroll-padding-inline: var(--_fui-scrollarea-inline-fade, #{$_inline-fade});
 }
 
 .vertical:not([data-scroll-y="none"]),
 .both:not([data-scroll-y="none"]) {
-  scroll-padding-block: var(--_fui-scrollarea-block-fade);
+  scroll-padding-block: var(--_fui-scrollarea-block-fade, #{$_block-fade});
 }
 
 .viewport[data-scroll-x="end"] {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
-    black calc(100% - var(--_fui-scrollarea-inline-fade)),
+    black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
     transparent
   );
 }
@@ -104,7 +101,7 @@
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     transparent,
-    black var(--_fui-scrollarea-inline-fade)
+    black var(--_fui-scrollarea-inline-fade, #{$_inline-fade})
   );
 }
 
@@ -112,8 +109,8 @@
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     transparent,
-    black var(--_fui-scrollarea-inline-fade),
-    black calc(100% - var(--_fui-scrollarea-inline-fade)),
+    black var(--_fui-scrollarea-inline-fade, #{$_inline-fade}),
+    black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
     transparent
   );
 }
@@ -122,14 +119,14 @@
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
     transparent,
-    black var(--_fui-scrollarea-inline-fade)
+    black var(--_fui-scrollarea-inline-fade, #{$_inline-fade})
   );
 }
 
 .viewport[data-scroll-x="start"]:dir(rtl) {
   --_fui-scrollarea-inline-mask: linear-gradient(
     to right,
-    black calc(100% - var(--_fui-scrollarea-inline-fade)),
+    black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
     transparent
   );
 }
@@ -137,7 +134,7 @@
 .viewport[data-scroll-y="end"] {
   --_fui-scrollarea-block-mask: linear-gradient(
     to bottom,
-    black calc(100% - var(--_fui-scrollarea-block-fade)),
+    black calc(100% - var(--_fui-scrollarea-block-fade, #{$_block-fade})),
     transparent
   );
 }
@@ -146,7 +143,7 @@
   --_fui-scrollarea-block-mask: linear-gradient(
     to bottom,
     transparent,
-    black var(--_fui-scrollarea-block-fade)
+    black var(--_fui-scrollarea-block-fade, #{$_block-fade})
   );
 }
 
@@ -154,8 +151,8 @@
   --_fui-scrollarea-block-mask: linear-gradient(
     to bottom,
     transparent,
-    black var(--_fui-scrollarea-block-fade),
-    black calc(100% - var(--_fui-scrollarea-block-fade)),
+    black var(--_fui-scrollarea-block-fade, #{$_block-fade}),
+    black calc(100% - var(--_fui-scrollarea-block-fade, #{$_block-fade})),
     transparent
   );
 }

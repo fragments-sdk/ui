@@ -47,7 +47,7 @@ describe("Progress geometry", () => {
       const indicator = container.querySelector("circle[class*='circularIndicator']");
       const radius = (geometry.diameter - geometry.strokeWidth) / 2;
 
-      expect(root.style.getPropertyValue("--_progress-diameter")).toBe(`${geometry.diameter}px`);
+      expect(root.style.getPropertyValue("--fui-progress-diameter")).toBe(`${geometry.diameter}px`);
       expect(svg).toHaveAttribute("viewBox", `0 0 ${geometry.diameter} ${geometry.diameter}`);
       expect(indicator).toHaveAttribute("r", String(radius));
       expect(indicator).toHaveAttribute("stroke-width", String(geometry.strokeWidth));
@@ -55,11 +55,11 @@ describe("Progress geometry", () => {
     }
   );
 
-  it("binds circular sizing and indeterminate animation to private runtime properties", () => {
-    expect(compiledStyles).toContain("inline-size: var(--_progress-diameter)");
-    expect(compiledStyles).toContain("block-size: var(--_progress-diameter)");
-    expect(compiledStyles).toContain("stroke-dashoffset: var(--_progress-dash-full)");
-    expect(compiledStyles).toContain("stroke-dashoffset: var(--_progress-dash-quarter)");
+  it("binds circular sizing and indeterminate animation to the public runtime properties", () => {
+    expect(compiledStyles).toContain("inline-size: var(--fui-progress-diameter, var(--fui-raw-space-48, 48px))");
+    expect(compiledStyles).toContain("block-size: var(--fui-progress-diameter, var(--fui-raw-space-48, 48px))");
+    expect(compiledStyles).toContain("stroke-dashoffset: var(--fui-progress-dash-full, var(--fui-raw-space-0, 0))");
+    expect(compiledStyles).toContain("stroke-dashoffset: var(--fui-progress-dash-quarter, var(--fui-raw-space-0, 0))");
     expect(compiledStyles).not.toContain("!important");
     expect(compiledStyles).not.toContain("[data-complete]");
   });

@@ -60,16 +60,16 @@ export const Positions: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "16px", padding: "40px" }}>
       <Tooltip content="Top tooltip" side="top">
-        <Button variant="secondary">Top</Button>
+        <Button variant="soft">Top</Button>
       </Tooltip>
       <Tooltip content="Bottom tooltip" side="bottom">
-        <Button variant="secondary">Bottom</Button>
+        <Button variant="soft">Bottom</Button>
       </Tooltip>
       <Tooltip content="Left tooltip" side="left">
-        <Button variant="secondary">Left</Button>
+        <Button variant="soft">Left</Button>
       </Tooltip>
       <Tooltip content="Right tooltip" side="right">
-        <Button variant="secondary">Right</Button>
+        <Button variant="soft">Right</Button>
       </Tooltip>
     </div>
   ),
@@ -88,7 +88,7 @@ export const NoArrow: Story = {
   args: { content: "Clean tooltip", arrow: false },
   render: (args) => (
     <Tooltip {...args}>
-      <Button variant="secondary">Hover me</Button>
+      <Button variant="soft">Hover me</Button>
     </Tooltip>
   ),
 };

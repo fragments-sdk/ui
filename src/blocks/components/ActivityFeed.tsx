@@ -72,20 +72,20 @@ export const ActivityFeed = React.forwardRef<HTMLDivElement, ActivityFeedProps>(
                     size="sm"
                   />
                   <Stack gap="xs" style={{ flex: 1, minWidth: 0 }}>
-                    <Text size="sm">
+                    <Text scale="sm">
                       <Text as="span" weight="medium">
                         {item.user}
                       </Text>{' '}
                       {item.action}
                     </Text>
-                    <Text size="xs" color="tertiary">
+                    <Text scale="xs" color="tertiary">
                       {item.time}
                     </Text>
                   </Stack>
                 </div>
               ))}
               {items.length === 0 && (
-                <Text size="sm" color="tertiary">
+                <Text scale="sm" color="tertiary">
                   No recent activity.
                 </Text>
               )}

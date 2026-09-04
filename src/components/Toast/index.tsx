@@ -1,13 +1,15 @@
 'use client';
 
-import * as React from 'react';
-import styles from './Toast.module.scss';
+import * as React from "react";
+import { Button } from "../Button";
+import { IconButton } from "../IconButton";
+import styles from "./Toast.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type ToastVariant = 'default' | 'success' | 'error' | 'warning' | 'info';
+export type ToastTone = "neutral" | "success" | "danger" | "warning" | "info";
 export type ToastPosition =
   | 'top-left'
   | 'top-center'
@@ -20,7 +22,8 @@ export interface ToastData {
   id: string;
   title?: string;
   description?: string;
-  variant?: ToastVariant;
+  /** Colour. `neutral` is the plain notification; the semantic tones paint the shared status ramp. */
+  tone?: ToastTone;
   duration?: number;
   action?: {
     label: string;
@@ -76,21 +79,22 @@ export function useToast() {
     return context.addToast(options);
   }, [context]);
 
-  const makeVariantHelper = React.useCallback(
-    (variant: ToastVariant) =>
-      (titleOrOptions: string | Omit<ToastInput, 'variant'>, description?: string) => {
-        if (typeof titleOrOptions === 'string') {
-          return context.addToast({ title: titleOrOptions, description, variant });
+  const makeToneHelper = React.useCallback(
+    (tone: ToastTone) =>
+      (titleOrOptions: string | Omit<ToastInput, "tone">, description?: string) => {
+        if (typeof titleOrOptions === "string") {
+          return context.addToast({ title: titleOrOptions, description, tone });
         }
-        return context.addToast({ ...titleOrOptions, variant });
+        return context.addToast({ ...titleOrOptions, tone });
       },
     [context]
   );
 
-  const success = React.useMemo(() => makeVariantHelper('success'), [makeVariantHelper]);
-  const error = React.useMemo(() => makeVariantHelper('error'), [makeVariantHelper]);
-  const warning = React.useMemo(() => makeVariantHelper('warning'), [makeVariantHelper]);
-  const info = React.useMemo(() => makeVariantHelper('info'), [makeVariantHelper]);
+  const success = React.useMemo(() => makeToneHelper("success"), [makeToneHelper]);
+  // Keeps its name; the field it sets is `tone: "danger"`.
+  const error = React.useMemo(() => makeToneHelper("danger"), [makeToneHelper]);
+  const warning = React.useMemo(() => makeToneHelper("warning"), [makeToneHelper]);
+  const info = React.useMemo(() => makeToneHelper("info"), [makeToneHelper]);
 
   return {
     toast,
@@ -155,12 +159,20 @@ function CloseIcon() {
   );
 }
 
-const variantIcons: Record<ToastVariant, React.ComponentType | null> = {
-  default: null,
+const toneIcons: Record<ToastTone, React.ComponentType | null> = {
+  neutral: null,
   success: SuccessIcon,
-  error: ErrorIcon,
+  danger: ErrorIcon,
   warning: WarningIcon,
   info: InfoIcon,
+};
+
+const TONE_CLASS: Record<ToastTone, string | undefined> = {
+  neutral: undefined,
+  success: styles.toneSuccess,
+  danger: styles.toneDanger,
+  warning: styles.toneWarning,
+  info: styles.toneInfo,
 };
 
 // ============================================
@@ -171,7 +183,7 @@ function ToastItem({
   id,
   title,
   description,
-  variant = 'default',
+  tone = "neutral",
   action,
   onDismiss,
   onPause,
@@ -183,18 +195,14 @@ function ToastItem({
   onPause?: () => void;
   onResume?: () => void;
 }) {
-  const Icon = variantIcons[variant];
+  const Icon = toneIcons[tone];
   const uniqueId = React.useId();
   const toastRef = React.useRef<HTMLDivElement>(null);
   const titleId = title ? `toast-title-${id || uniqueId}` : undefined;
   const descId = description ? `toast-desc-${id || uniqueId}` : undefined;
-  const liveRole = variant === 'error' || variant === 'warning' ? 'alert' : 'status';
+  const liveRole = tone === "danger" || tone === "warning" ? "alert" : "status";
 
-  const toastClasses = [
-    styles.toast,
-    styles[variant],
-    className,
-  ].filter(Boolean).join(' ');
+  const toastClasses = [styles.toast, TONE_CLASS[tone], className].filter(Boolean).join(" ");
 
   return (
     <div
@@ -232,23 +240,20 @@ function ToastItem({
         {description && <div id={descId} className={styles.description}>{description}</div>}
       </div>
       {action && (
-        <button
-          type="button"
-          className={styles.action}
-          onClick={action.onClick}
-        >
+        <Button variant="link" size="sm" className={styles.action} onClick={action.onClick}>
           {action.label}
-        </button>
+        </Button>
       )}
       {onDismiss && (
-        <button
-          type="button"
+        <IconButton
+          variant="ghost"
+          size="sm"
           className={styles.close}
           onClick={onDismiss}
           aria-label="Dismiss notification"
         >
           <CloseIcon />
-        </button>
+        </IconButton>
       )}
     </div>
   );

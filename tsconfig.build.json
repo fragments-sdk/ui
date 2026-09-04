@@ -14,6 +14,7 @@
     "src/**/*.test.tsx",
     "src/**/*.stories.tsx",
     "src/**/*.fragment.tsx",
+    "src/storybook",
     "src/test"
   ]
 }

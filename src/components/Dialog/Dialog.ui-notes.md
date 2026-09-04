@@ -91,3 +91,9 @@
   settled focus back on `Open large dialog`. Synthesized Browser Enter still opened zero dialogs and
   remains explicit under D-129; same-server native Enter passed 3/3 with the required event order and
   lifecycle. Console remained 0/0 and the isolated tagged suite passed 15/15 in 33.1 seconds.
+
+## 2026-09-04 — Wave 0 vocabulary migration
+
+- **What changed** — `Dialog.Content size` is `width` (UIR-D16); the panel widths moved into the hash-guarded measurement catalog as `--fui-overlay-*` (UIR-D15). No other prop renamed.
+- **What works** — the vocabulary schema gate (`src/contract-vocabulary.test.ts`) and the kit test suite are green at this HEAD.
+- **Candidates** — Wave 1 Navigation + Layout + Overlays category pass.

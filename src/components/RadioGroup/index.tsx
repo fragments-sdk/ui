@@ -50,13 +50,11 @@ export interface RadioGroupProps extends Omit<
   /** Size variant */
   size?: "sm" | "md" | "lg";
   /**
-   * Visual variant.
-   * - `default`: inline radio circle next to a label (form-control style).
-   * - `card`: each item is a full-width clickable card with the radio circle
-   *   tucked inside. Useful for high-stakes choices, surveys, plan pickers.
-   * @default "default"
+   * Chrome. Omit it for the inline radio circle next to a label (form-control
+   * style); `outline` renders each item as a full-width bordered surface with
+   * the radio circle tucked inside — high-stakes choices, surveys, plan pickers.
    */
-  variant?: "default" | "card";
+  variant?: "outline";
   /** Class applied to the outer wrapper (label + group + error) */
   wrapperClassName?: string;
   /** Class applied to the inner radio group container */
@@ -97,7 +95,7 @@ export interface RadioItemProps {
 // ============================================
 
 const RadioSizeContext = React.createContext<ControlSize>("md");
-const RadioVariantContext = React.createContext<"default" | "card">("default");
+const RadioVariantContext = React.createContext<"outline" | undefined>(undefined);
 
 // ============================================
 // Radio Item Component
@@ -134,7 +132,7 @@ function RadioItem({
 
   const wrapperClasses = [
     styles.itemWrapper,
-    variant === "card" && styles.itemWrapperCard,
+    variant === "outline" && styles.itemWrapperOutline,
     className,
   ]
     .filter(Boolean)
@@ -210,7 +208,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
     helperText,
     error,
     size: sizeProp,
-    variant = "default",
+    variant,
     wrapperClassName,
     groupClassName,
     groupId,

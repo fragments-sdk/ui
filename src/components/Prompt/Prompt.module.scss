@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/target" as target;
@@ -29,7 +30,7 @@
 
   // Gradient layer (behind everything)
   &::before {
-    inset: calc(-1 * var(--fui-stroke-hairline, 1px));
+    inset: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
     z-index: 0;
     background: conic-gradient(
       from var(--beam-angle, 0deg) at 50% 50%,
@@ -45,13 +46,13 @@
     // Ambient loop: twice the shimmer beat, kept on the token scale.
     animation: beam-rotate calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 2) linear
       infinite;
-    opacity: 0.6;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
     transition: opacity var(--fui-transition-normal, $fui-transition-normal);
   }
 
   // Mask layer — covers the interior, leaving only the 1px border visible
   &::after {
-    inset: var(--fui-stroke-hairline, 1px);
+    inset: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     z-index: 1;
     background: var(--fui-bg-elevated, $fui-bg-elevated);
   }
@@ -67,12 +68,13 @@
   }
 
   &[data-disabled] {
-    opacity: 0.5;
+    @include disabled-state;
+
     pointer-events: none;
 
     &::before {
       animation-play-state: paused;
-      opacity: 0.2;
+      opacity: calc(var(--fui-opacity-disabled, #{$fui-opacity-disabled}) * var(--fui-opacity-disabled, #{$fui-opacity-disabled}));
     }
   }
 }
@@ -92,7 +94,7 @@
   inherits: false;
 }
 
-// Fixed variant - for viewport-fixed prompts (centered to page)
+// Fixed placement - for viewport-fixed prompts (centered to page)
 .fixed {
   position: fixed;
   bottom: var(--fui-space-4, $fui-space-4);
@@ -104,7 +106,7 @@
   box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
 }
 
-// Sticky variant - for content-area fixed prompts (accounts for sidebar)
+// Sticky placement - for content-area fixed prompts (accounts for sidebar)
 // Use --fui-prompt-inset-left CSS variable to offset from sidebar
 .sticky {
   position: fixed;
@@ -124,7 +126,7 @@
 }
 
 // ============================================
-// Seamless appearance
+// Ghost variant
 // ============================================
 
 // One continuous writing surface instead of a field with a footer.
@@ -135,12 +137,13 @@
 // resting on it — which is what makes the text you are writing the only thing
 // with any weight. Each selector below is one class deeper than the rule it
 // replaces, so this wins wherever the stylesheet happens to land.
+// (`variant="ghost"`; the default `outline` card is the rules above.)
 //
 // One gutter runs down the card. `--_gutter` is the distance from the card's
 // edge to the ink of everything in it, and every child is padded from it
 // rather than given a number of its own, so the placeholder, the first glyph
 // in the toolbar and any attachment chip all sit on the same line.
-.seamless {
+.ghost {
   --_gutter: var(--fui-space-3, #{$fui-space-3});
   // Every band is inset by its own children's padding, so what lands on the
   // gutter is the ink — the first character of the placeholder, the first glyph
@@ -154,7 +157,7 @@
   border-radius: var(--fui-radius-xl, $fui-radius-xl);
 
   // The beam draws a 1px animated border by painting a gradient and masking
-  // out everything but the edge. Seamless has no edge to draw, so both layers
+  // out everything but the edge. Ghost has no edge to draw, so both layers
   // go and the card paints its own surface instead of borrowing the mask's.
   &::before,
   &::after {
@@ -170,7 +173,7 @@
   .toolbar {
     background-color: transparent;
     border-top: none;
-    padding: 0 calc(var(--_gutter) - var(--_control-padding)) var(--_gutter);
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)}) calc(var(--_gutter, var(--fui-space-3, #{$fui-space-3})) - var(--_control-padding, var(--fui-space-2, #{$fui-space-2}))) var(--_gutter, var(--fui-space-3, #{$fui-space-3}));
   }
 
   // The message is the content of the card, not a field in it. The bottom is
@@ -178,11 +181,11 @@
   // footer under it, and the top is tight for the same reason when a scope
   // band sits above.
   .textarea {
-    padding: var(--_gutter) var(--_gutter) var(--fui-space-1, $fui-space-1);
+    padding: var(--_gutter, var(--fui-space-3, #{$fui-space-3})) var(--_gutter, var(--fui-space-3, #{$fui-space-3})) var(--fui-space-1, $fui-space-1);
   }
 
   .attachments {
-    padding: var(--_gutter) calc(var(--_gutter) - var(--_chip-padding)) 0;
+    padding: var(--_gutter, var(--fui-space-3, #{$fui-space-3})) calc(var(--_gutter, var(--fui-space-3, #{$fui-space-3})) - var(--_chip-padding, var(--fui-space-1, #{$fui-space-1}))) var(--fui-raw-space-0, #{measurements.raw-space(0)});
     gap: var(--fui-space-1, $fui-space-1);
   }
 
@@ -193,22 +196,22 @@
     padding-top: var(--fui-space-1, $fui-space-1);
   }
 
-  // In a panel the tabs are a strip the card is docked to, so they are centred
-  // and bordered like a folder tab. Seamless has no card edge for them to dock
+  // In an outline card the tabs are a strip the card is docked to, so they are centred
+  // and bordered like a folder tab. Ghost has no card edge for them to dock
   // against, so they become the top band of the one surface: left-aligned on
   // the gutter with the rest of it, and stripped of the chrome that only made
   // sense as an edge.
   .tabs {
-    margin-bottom: 0;
+    margin-bottom: var(--fui-raw-space-0, #{measurements.raw-space(0)});
     justify-content: flex-start;
-    padding: var(--_gutter) calc(var(--_gutter) - var(--_control-padding)) 0;
+    padding: var(--_gutter, var(--fui-space-3, #{$fui-space-3})) calc(var(--_gutter, var(--fui-space-3, #{$fui-space-3})) - var(--_control-padding, var(--fui-space-2, #{$fui-space-2}))) var(--fui-raw-space-0, #{measurements.raw-space(0)});
   }
 
   .tabsInner {
     background-color: transparent;
     border: none;
-    border-radius: 0;
-    padding: 0;
+    border-radius: var(--fui-radius-none, #{$fui-radius-none});
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
     gap: var(--fui-space-1, $fui-space-1);
   }
 
@@ -224,7 +227,7 @@
   // the placeholder above it starts, and costs only a wider hover.
   .attach {
     width: auto;
-    padding-inline: var(--_control-padding);
+    padding-inline: var(--_control-padding, var(--fui-space-2, #{$fui-space-2}));
 
     svg {
       width: var(--fui-icon-md, $fui-icon-md);
@@ -232,7 +235,7 @@
     }
   }
 
-  // Labels and glyphs share the body scale inside a seamless composer. The
+  // Labels and glyphs share the body scale inside a ghost composer. The
   // trigger still truncates at its cap, but no longer looks like caption text
   // floating between larger attach and submit affordances.
   .select,
@@ -289,7 +292,7 @@
   // padding. Give the filled Submit shape the same inset at the trailing edge
   // so the two visible affordances balance across the toolbar.
   .submit {
-    margin-inline-end: var(--_control-padding);
+    margin-inline-end: var(--_control-padding, var(--fui-space-2, #{$fui-space-2}));
   }
 }
 
@@ -344,9 +347,10 @@
   display: inline-flex;
   gap: var(--fui-space-px, $fui-space-px);
   background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border-radius: var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg) 0 0;
-  padding: var(--fui-space-0-75, $fui-space-0-75) var(--fui-space-0-75, $fui-space-0-75) 0;
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg) var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-space-0-75, $fui-space-0-75) var(--fui-space-0-75, $fui-space-0-75) var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   border-bottom: none;
 }
 
@@ -355,7 +359,8 @@
   @include action.base;
   @include action.size("sm");
 
-  border-radius: var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) 0 0;
+  border-radius: var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
@@ -372,8 +377,7 @@
 }
 
 .tabButtonActive {
-  background-color: var(--fui-control-selected-bg, $fui-bg-active);
-  color: var(--fui-text-primary, $fui-text-primary);
+  @include segmented-selection;
 }
 
 // ============================================
@@ -387,7 +391,7 @@
   gap: var(--fui-space-2, $fui-space-2);
   padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 
 // ============================================
@@ -461,8 +465,7 @@
 }
 
 .modeButtonActive {
-  color: var(--fui-text-primary, $fui-text-primary);
-  background-color: var(--fui-control-selected-bg, $fui-bg-active);
+  @include segmented-selection;
 }
 
 // ============================================
@@ -494,11 +497,6 @@
     background-color: var(--fui-bg-active, $fui-bg-active);
   }
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
   svg {
     @include action.glyph("sm");
   }
@@ -512,8 +510,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--fui-space-1, $fui-space-1);
-  margin: 0;
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3) 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3) var(--fui-raw-space-0, #{measurements.raw-space(0)});
   list-style: none;
 }
 
@@ -528,14 +526,14 @@
   display: inline-flex;
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
-  height: var(--_chip-height);
+  height: var(--_chip-height, #{action.track("sm")});
   max-width: layout.measure("composer-item");
   padding-inline: var(--fui-space-1, $fui-space-1);
   // Outlined rather than filled. A chip sits on whatever surface the prompt is
   // using, and on an elevated card the raised fill is the same value as the
   // card itself — so the object would disappear exactly where it is most
   // likely to be used. An edge reads on any of them.
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   font-size: var(--fui-font-size-xs, $fui-font-size-xs);
@@ -547,8 +545,8 @@
 // chip's height less the padding, which keeps it square without a second
 // number to keep in step.
 .attachmentThumb {
-  width: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
-  height: calc(var(--_chip-height) - var(--fui-space-1, #{$fui-space-1}));
+  width: calc(var(--_chip-height, #{action.track("sm")}) - var(--fui-space-1, #{$fui-space-1}));
+  height: calc(var(--_chip-height, #{action.track("sm")}) - var(--fui-space-1, #{$fui-space-1}));
   flex-shrink: 0;
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   object-fit: cover;
@@ -643,11 +641,6 @@
 
   &:active:not(:disabled) {
     background-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 
   svg {

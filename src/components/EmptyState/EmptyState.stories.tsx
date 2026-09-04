@@ -66,7 +66,7 @@ export const NoResults: Story = {
         Try adjusting your search terms or filters.
       </EmptyState.Description>
       <EmptyState.Actions>
-        <Button variant="secondary">Clear Filters</Button>
+        <Button variant="soft">Clear Filters</Button>
       </EmptyState.Actions>
     </EmptyState>
   ),

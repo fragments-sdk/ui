@@ -45,8 +45,7 @@
   }
 
   &[data-disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
+    @include disabled-state;
   }
 }
 
@@ -66,6 +65,7 @@
   border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border-strong);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: inherit;
+  @include high-contrast-outline;
 
   &:hover:not([data-disabled]) {
     border-color: var(--fui-field-border-hover, $fui-text-tertiary);
@@ -160,16 +160,16 @@
 }
 
 // ============================================
-// Card variant: each item is a full-width clickable surface that signals
+// Outline variant: each item is a full-width bordered surface that signals
 // selection via background + border tint while keeping the inline radio
 // circle as the canonical control. The `:has([data-checked])` selector is
 // the source of truth for selected styling — no extra attribute plumbing
 // required from JS.
 // ============================================
-// Card variant uses a transparent base so the selected accent tint reads
-// as a deliberate state change rather than a small shift between two grey
-// surfaces. Mirrors the pattern used by the Checkbox card variant.
-.itemWrapperCard {
+// The outline variant uses a transparent base so the selected accent tint
+// reads as a deliberate state change rather than a small shift between two
+// grey surfaces. Mirrors the pattern used by the Checkbox outline variant.
+.itemWrapperOutline {
   width: 100%;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-default, $fui-border-default);
@@ -219,26 +219,6 @@
 
 .group[data-invalid] .radio {
   border-color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .radio {
-    border-color: var(--fui-text-primary, $fui-text-primary);
-    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
-
-    &[data-checked] {
-      border-color: var(--fui-control-checked-border, $fui-color-accent);
-    }
-
-    &[data-invalid] {
-      border-color: var(--fui-color-danger-text, $fui-color-danger-text);
-    }
-  }
 }
 
 // ============================================

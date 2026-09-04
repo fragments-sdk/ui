@@ -9,9 +9,9 @@ import { Select, type SelectOption, type SelectValue } from '../Select';
 // Types
 // ============================================
 
-export type PromptVariant = 'default' | 'fixed' | 'sticky';
+export type PromptPlacement = 'inline' | 'fixed' | 'sticky';
 
-export type PromptAppearance = 'panel' | 'seamless';
+export type PromptVariant = 'outline' | 'ghost';
 
 export interface PromptProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onSubmit' | 'defaultValue'> {
   children: React.ReactNode;
@@ -43,13 +43,15 @@ export interface PromptProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   onFiles?: (files: File[]) => void;
   /** `accept` for the attach button's picker, e.g. `"image/*"`. */
   accept?: string;
-  /** Visual variant - "fixed" for bottom-fixed elevated prompt */
+  /** Where the card sits: `inline` in the flow, `fixed` to the viewport bottom,
+   * `sticky` to the content area (offset by `--fui-prompt-inset-left`).
+   * @default "inline" */
+  placement?: PromptPlacement;
+  /** Card chrome. `outline` keeps the toolbar as a filled footer under a rule;
+   * `ghost` makes the whole card one writing surface with the controls floating
+   * on it — the shape most agent composers use.
+   * @default "outline" */
   variant?: PromptVariant;
-  /** How the card is divided up. `panel` keeps the toolbar as a filled footer
-   * under a rule; `seamless` makes the whole card one writing surface with the
-   * controls floating on it — the shape most agent composers use.
-   * @default "panel" */
-  appearance?: PromptAppearance;
 }
 
 export interface PromptTextareaProps extends Omit<
@@ -307,8 +309,8 @@ function PromptRoot({
   maxRows = 8,
   autoResize = true,
   submitOnEnter = true,
-  variant = 'default',
-  appearance = 'panel',
+  placement = 'inline',
+  variant = 'outline',
   onFiles,
   accept,
   className,
@@ -386,9 +388,9 @@ function PromptRoot({
 
   const classes = [
     styles.prompt,
-    variant === 'fixed' && styles.fixed,
-    variant === 'sticky' && styles.sticky,
-    appearance === 'seamless' && styles.seamless,
+    placement === 'fixed' && styles.fixed,
+    placement === 'sticky' && styles.sticky,
+    variant === 'ghost' && styles.ghost,
     dragging && styles.dragging,
     disabled && styles.disabled,
     loading && styles.loading,
@@ -403,8 +405,8 @@ function PromptRoot({
         className={classes}
         data-disabled={disabled || undefined}
         data-loading={loading || undefined}
+        data-placement={placement}
         data-variant={variant}
-        data-appearance={appearance}
         data-dragging={dragging || undefined}
       >
         {children}
@@ -780,7 +782,7 @@ function PromptSubmit({
       {loading ? (
         <Loading
           size="sm"
-          variant="spinner"
+          kind="spinner"
           color="current"
           label="Submitting"
           className={styles.submitSpinner}

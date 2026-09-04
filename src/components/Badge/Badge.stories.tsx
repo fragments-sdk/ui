@@ -20,8 +20,13 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "success", "warning", "error", "info", "outline"],
-      description: "Visual style indicating severity or category",
+      options: ["soft", "outline", "ghost"],
+      description: "Chrome family",
+    },
+    tone: {
+      control: "select",
+      options: ["neutral", "accent", "info", "success", "warning", "danger"],
+      description: "Colour on the shared status ramp",
     },
     size: {
       control: "select",
@@ -42,7 +47,8 @@ const meta = {
     },
   },
   args: {
-    variant: "default",
+    variant: "soft",
+    tone: "neutral",
     size: "md",
     children: "Default",
   },
@@ -53,30 +59,30 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { variant: "default", children: "Default" },
+  args: { children: "Default" },
 };
 
 export const Success: Story = {
-  args: { variant: "success", children: "Active" },
+  args: { tone: "success", children: "Active" },
 };
 
-export const Error: Story = {
-  args: { variant: "error", children: "Failed" },
+export const Danger: Story = {
+  args: { tone: "danger", children: "Failed" },
 };
 
 export const SemanticStatus: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "var(--fui-space-2)", alignItems: "center" }}>
-      <Badge variant="success" size="lg">
+      <Badge tone="success" size="lg">
         Delivered
       </Badge>
-      <Badge variant="error" size="lg">
+      <Badge tone="danger" size="lg">
         Bounced
       </Badge>
-      <Badge variant="warning" size="lg">
+      <Badge tone="warning" size="lg">
         Delayed
       </Badge>
-      <Badge variant="info" size="lg">
+      <Badge tone="info" size="lg">
         Queued
       </Badge>
     </div>
@@ -84,11 +90,11 @@ export const SemanticStatus: Story = {
 };
 
 export const WithDot: Story = {
-  args: { variant: "success", dot: true, children: "Online" },
+  args: { tone: "success", dot: true, children: "Online" },
 };
 
 export const PulsingDot: Story = {
-  args: { variant: "info", dot: true, dotPulse: true, announce: true, children: "Running" },
+  args: { tone: "info", dot: true, dotPulse: true, announce: true, children: "Running" },
   parameters: {
     docs: {
       description: {
@@ -103,6 +109,17 @@ export const Outline: Story = {
   args: { variant: "outline", children: "Outline" },
 };
 
+export const Ghost: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: "var(--fui-space-2)", alignItems: "center" }}>
+      <Badge variant="ghost" active>
+        All
+      </Badge>
+      <Badge variant="ghost">Archived</Badge>
+    </div>
+  ),
+};
+
 export const Removable: Story = {
-  args: { variant: "info", children: "React", onRemove: () => {} },
+  args: { tone: "info", children: "React", onRemove: () => {} },
 };

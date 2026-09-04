@@ -8,8 +8,9 @@ import { Loading } from "../Loading";
 // Types
 // ============================================
 
-export type ThinkingVariant = "dots" | "pulse" | "spinner";
-export type StepStatus = "pending" | "active" | "complete" | "error";
+export type ThinkingKind = "dots" | "pulse" | "spinner";
+/** Shared lifecycle axis: `idle` waits, `pending`/`streaming` are in flight. */
+export type StepStatus = "idle" | "pending" | "streaming" | "complete" | "error";
 
 export interface ThinkingStep {
   id: string;
@@ -23,7 +24,7 @@ export interface ThinkingIndicatorProps extends React.HTMLAttributes<HTMLDivElem
   /** Status text */
   label?: string;
   /** Animation style */
-  variant?: ThinkingVariant;
+  kind?: ThinkingKind;
   /** Show elapsed time */
   showElapsed?: boolean;
   /** Multi-step progress */
@@ -47,7 +48,7 @@ export interface ThinkingStepProps extends React.HTMLAttributes<HTMLDivElement> 
 
 interface ThinkingIndicatorContextValue {
   active: boolean;
-  variant: ThinkingVariant;
+  kind: ThinkingKind;
 }
 
 const ThinkingIndicatorContext = React.createContext<ThinkingIndicatorContextValue | null>(null);
@@ -147,7 +148,7 @@ function ThinkingSteps({ children, className, ...htmlProps }: ThinkingStepsProps
   );
 }
 
-function ThinkingStep({ label, status = "pending", className, ...htmlProps }: ThinkingStepProps) {
+function ThinkingStep({ label, status = "idle", className, ...htmlProps }: ThinkingStepProps) {
   const classes = [
     styles.step,
     styles[`step${status.charAt(0).toUpperCase() + status.slice(1)}`],
@@ -161,17 +162,17 @@ function ThinkingStep({ label, status = "pending", className, ...htmlProps }: Th
       <span className={styles.stepIndicator}>
         {status === "complete" && <CheckIcon />}
         {status === "error" && <ErrorIcon />}
-        {status === "active" && (
+        {(status === "pending" || status === "streaming") && (
           <Loading
             size="sm"
-            variant="spinner"
+            kind="spinner"
             color="current"
             label=""
             role="presentation"
             aria-hidden="true"
           />
         )}
-        {status === "pending" && <span className={styles.stepDot} />}
+        {status === "idle" && <span className={styles.stepDot} />}
       </span>
       <span className={styles.stepLabel}>{label}</span>
     </div>
@@ -185,7 +186,7 @@ function ThinkingStep({ label, status = "pending", className, ...htmlProps }: Th
 function ThinkingIndicatorRoot({
   active = true,
   label = "Thinking...",
-  variant = "dots",
+  kind = "dots",
   showElapsed = false,
   steps,
   className,
@@ -195,15 +196,12 @@ function ThinkingIndicatorRoot({
 
   const contextValue: ThinkingIndicatorContextValue = {
     active,
-    variant,
+    kind,
   };
 
   if (!active) return null;
 
   const classes = [styles.thinkingIndicator, className].filter(Boolean).join(" ");
-
-  // Map ThinkingIndicator variants to Loading variants
-  const loadingVariant = variant === "dots" ? "dots" : variant === "pulse" ? "pulse" : "spinner";
 
   return (
     <ThinkingIndicatorContext.Provider value={contextValue}>
@@ -211,7 +209,7 @@ function ThinkingIndicatorRoot({
         <div className={styles.main}>
           <Loading
             size="sm"
-            variant={loadingVariant}
+            kind={kind}
             color="muted"
             label=""
             role="presentation"

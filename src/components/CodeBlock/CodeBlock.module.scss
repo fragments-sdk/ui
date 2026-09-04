@@ -1,13 +1,13 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
-@use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
 .container {
-  --_fui-code-inline-inset: var(--fui-raw-space-16, 16px);
+  --_fui-code-inline-inset: var(--fui-raw-space-16, #{measurements.raw-space(16)});
 
   inline-size: 100%;
 }
@@ -30,7 +30,7 @@
   // A hairline keeps the block legible on any ground: the light code surface
   // and the sunken app main share the same tone, so fill alone can vanish.
   border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
-    var(--fui-code-border, var(--fui-border, #{$fui-border}));
+    var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   background-color: var(--fui-code-bg, $fui-code-bg);
   color: var(--fui-code-text, var(--fui-text-primary, #{$fui-text-primary}));
@@ -54,52 +54,35 @@
   min-block-size: action.track("md");
   padding-inline: layout.gap("lg");
   border-block-end: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
-    var(--fui-code-border, var(--fui-border, #{$fui-border}));
+    var(--fui-border, $fui-border);
 }
 
 .filename {
   @include typography.role("code");
 
-  color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
+  color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
-.copyButton {
-  @include button-reset;
-  @include action.base;
-  @include action.icon-only("sm");
-  @include target.hit-area("compact");
-
-  border: 0;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  background: transparent;
-  color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
-  cursor: pointer;
+// Copy affordances are IconButtons (ghost, sm); the kit owns reset, hit area,
+// hover and focus. Only the overlay fade and the copied state live here.
+.wrapper .copyButton {
   transition:
-    background var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast),
     opacity var(--fui-transition-fast, $fui-transition-fast);
 
-  &:hover {
-    background: var(--fui-code-copy-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
-    color: var(--fui-code-tab-text-active, var(--fui-text-primary, #{$fui-text-primary}));
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
-
-  &.copied {
+  &.copied,
+  &.copied:hover:not(:disabled) {
     color: var(--fui-color-success-text, $fui-color-success-text);
     opacity: 1;
   }
 }
 
-.copyOverlay {
+.wrapper .copyOverlay {
   position: absolute;
   inset-block-start: layout.gap("sm");
   inset-inline-end: layout.gap("sm");
   z-index: 2;
-  background: var(--fui-code-copy-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+  background-color: var(--fui-bg-hover, $fui-bg-hover);
   opacity: 0;
 }
 
@@ -115,7 +98,7 @@
   @include action.glyph("sm");
 }
 
-.persistentCopy {
+.wrapper .persistentCopy {
   inset-block-start: 50%;
   transform: translateY(-50%);
   opacity: 1;
@@ -132,7 +115,7 @@
   .codeContainer :global(.shiki),
   .loading pre {
     padding-inline-end: calc(
-      var(--_fui-code-inline-inset) + #{action.track("sm")} + var(--fui-raw-space-12, 12px)
+      var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})) + #{action.track("sm")} + var(--fui-raw-space-12, #{measurements.raw-space(12)})
     );
   }
 }
@@ -141,18 +124,18 @@
 .codeContainer :global(.shiki) {
   @include prose.code-block("default");
 
-  margin: 0;
-  border: 0 !important;
-  border-radius: 0 !important;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  border: none !important;
+  border-radius: var(--fui-radius-none, #{$fui-radius-none}) !important;
   background-color: transparent !important;
   color: inherit;
 }
 
 .loading code,
 .codeContainer :global(.shiki) code {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  border: none;
+  border-radius: var(--fui-radius-none, #{$fui-radius-none});
   background: none !important;
   color: inherit;
   font: inherit;
@@ -167,14 +150,14 @@
   :global(.line) {
     display: inline-block;
     inline-size: 100%;
-    min-block-size: var(--fui-type-code-line);
+    min-block-size: typography.line-height("code");
 
     &:global(.highlighted) {
-      margin-inline: calc(-1 * var(--_fui-code-inline-inset));
-      padding-inline: var(--_fui-code-inline-inset);
+      margin-inline: calc(-1 * var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})));
+      padding-inline: var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
       border-inline-start: var(--fui-stroke-default, $fui-stroke-default) solid
         var(--fui-color-info-text, $fui-color-info-text);
-      background-color: var(--fui-code-highlight-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
     }
   }
 
@@ -182,44 +165,44 @@
     display: inline-block;
     inline-size: 2.5em;
     padding-inline-end: 1em;
-    color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
+    color: var(--fui-text-secondary, $fui-text-secondary);
     text-align: end;
     user-select: none;
-    opacity: 0.6;
+    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
   }
 
   *::selection {
     background: var(--fui-code-selection-bg, $fui-code-selection-bg);
-    color: var(--fui-code-tab-text-active, var(--fui-text-primary, #{$fui-text-primary}));
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 
   :global(.shiki)::-webkit-scrollbar {
-    block-size: var(--fui-raw-space-4, 4px);
+    block-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
   }
 
   :global(.shiki)::-webkit-scrollbar-thumb {
     border-radius: var(--fui-radius-full, $fui-radius-full);
-    background: var(--fui-code-scrollbar-thumb, var(--fui-border-strong, #{$fui-border-strong}));
+    background: var(--fui-border-strong, $fui-border-strong);
   }
 }
 
 .withLineNumbers .codeContainer :global(.shiki) {
-  padding-inline-start: var(--fui-raw-space-8, 8px);
+  padding-inline-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 }
 
 .withDiff {
   :global(.diff-marker) {
     display: inline-block;
     inline-size: 1.5em;
-    color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
+    color: var(--fui-text-secondary, $fui-text-secondary);
     text-align: center;
     user-select: none;
   }
 
   :global(.diff-added),
   :global(.diff-removed) {
-    margin-inline: calc(-1 * var(--_fui-code-inline-inset));
-    padding-inline: var(--_fui-code-inline-inset);
+    margin-inline: calc(-1 * var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})));
+    padding-inline: var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
   }
 
   :global(.diff-added) {
@@ -240,7 +223,7 @@
 }
 
 .compact {
-  --_fui-code-inline-inset: var(--fui-raw-space-12, 12px);
+  --_fui-code-inline-inset: var(--fui-raw-space-12, #{measurements.raw-space(12)});
 
   .wrapper {
     border-radius: var(--fui-radius-md, $fui-radius-md);
@@ -264,33 +247,28 @@
   margin-block-start: layout.gap("sm");
 }
 
-.collapseButton {
-  @include button-reset;
-  @include action.base;
-  @include action.size("sm");
+// The collapse bar is a ghost Button (sm, fullWidth) squared into the frame;
+// the gradient lets the last visible line fade under it.
+.wrapper .collapseButton {
+  border-block-start: none;
+  border-radius: var(--fui-radius-none, #{$fui-radius-none});
+  background: linear-gradient(to bottom, transparent, var(--fui-code-bg, $fui-code-bg) 40%);
+  color: var(--fui-text-secondary, $fui-text-secondary);
 
-  inline-size: 100%;
-  border-block-start: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
-    var(--fui-border, $fui-border);
-  background: var(--fui-code-bg, $fui-code-bg);
-  color: var(--fui-code-text-muted, var(--fui-text-secondary, #{$fui-text-secondary}));
-  cursor: pointer;
-
-  &:hover {
-    color: var(--fui-code-tab-text-active, var(--fui-text-primary, #{$fui-text-primary}));
+  &:hover:not(:disabled) {
+    background: linear-gradient(to bottom, transparent, var(--fui-code-bg, $fui-code-bg) 40%);
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 
   &:focus-visible {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
-      var(--fui-focus-ring-color, $fui-focus-ring-color);
     outline-offset: calc(-1 * var(--fui-focus-ring-offset, #{$fui-focus-ring-offset}));
   }
 }
 
-.collapseExpand {
+.wrapper .collapseExpand {
   justify-content: flex-end;
 }
 
 .tabbedPanel {
-  margin-block-start: 0;
+  margin-block-start: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }

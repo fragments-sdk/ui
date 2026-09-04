@@ -201,7 +201,7 @@ describe("Checkbox", () => {
       /border-radius:\s*var\(--fui-checkbox-radius,\s*var\(--fui-radius-sm,\s*#\{\$fui-radius-sm\}\)\);/g
     );
 
-    expect(componentProperties).toContain("--fui-checkbox-radius: var(--fui-radius-sm);");
+    expect(componentProperties).toContain("--fui-checkbox-radius: var(--fui-radius-l3);");
     expect(checkboxStyles).not.toMatch(/\.checkbox\s*\{[\s\S]*?--fui-checkbox-radius\s*:/);
     expect(radiusUses).toHaveLength(1);
     expect(checkboxStyles).toContain("border-radius: var(--fui-radius-md, $fui-radius-md);");

@@ -9,6 +9,7 @@ import * as sass from "sass";
 import {
   checkGeneratedArtifacts,
   measurementPaths,
+  scaledLength,
   validateMeasurements,
 } from "./generate-measurements.mjs";
 
@@ -103,13 +104,13 @@ function cssDeclaration(selector, property) {
 }
 
 for (const [step, value] of Object.entries(generated.measurements.rawSpace)) {
-  assert.equal(cssDeclaration(".fixed", `--fui-raw-space-${step}`), value);
+  assert.equal(cssDeclaration(".fixed", `--fui-raw-space-${step}`), scaledLength(value));
 }
 
 for (const [group, values] of Object.entries(generated.measurements.targets)) {
   const groupName = group.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
   for (const [name, value] of Object.entries(values)) {
-    assert.equal(cssDeclaration(".fixed", `--fui-${groupName}-${name}`), value);
+    assert.equal(cssDeclaration(".fixed", `--fui-${groupName}-${name}`), scaledLength(value));
   }
 }
 
@@ -122,7 +123,7 @@ assert.doesNotMatch(css, /--fui-type-[\w-]+-family\s*:/);
 
 for (const [name, value] of Object.entries(generated.measurements.legacy.navigation)) {
   const property = name.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
-  assert.equal(cssDeclaration(".fixed", `--fui-navigation-${property}`), value);
+  assert.equal(cssDeclaration(".fixed", `--fui-navigation-${property}`), scaledLength(value));
 }
 
 for (const [name, profile] of Object.entries(generated.measurements.density)) {
@@ -142,6 +143,15 @@ for (const [name, profile] of Object.entries(generated.measurements.density)) {
       `var(${property}, ${value})`
     );
   }
+  // Every spacing step reads --fui-scale (UIR-D27); hairlines and radius do not.
+  for (const step of Object.keys(profile.spacingMultipliers)) {
+    if (step === "px") continue;
+    assert.match(
+      cssDeclaration(selector, `--fui-space-${step}`),
+      /^calc\(var\(--fui-scale, 1\) \* [0-9.]+rem\)$/
+    );
+  }
+  assert.equal(cssDeclaration(".fixed", "--fui-raw-space-2"), "2px");
   for (const [size, value] of Object.entries(profile.touch)) {
     const expected = `${Number.parseFloat(value) / baseFontSize}rem`;
     const actual = cssDeclaration(selector, `--fui-touch-${size}`);

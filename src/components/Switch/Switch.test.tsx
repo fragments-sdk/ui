@@ -35,7 +35,7 @@ describe("Switch", () => {
     expect(switchStyles).toMatch(/\.thumb\s*\{[\s\S]*inset-block-start:\s*50%;/);
     expect(switchStyles).toMatch(/\.thumb\s*\{[\s\S]*transform:\s*translateY\(-50%\);/);
     expect(switchStyles).toMatch(
-      /\.root\[data-checked\]\s*&\s*\{[\s\S]*transform:\s*translate\(var\(--_fui-switch-travel\), -50%\);/
+      /\.root\[data-checked\]\s*&\s*\{[\s\S]*transform:\s*translate\(var\(--_fui-switch-travel,[\s\S]*?\), -50%\);/
     );
     expect(switchStyles).not.toMatch(/top:\s*var\(--_fui-switch-inset\)/);
   });

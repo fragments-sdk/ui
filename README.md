@@ -148,9 +148,9 @@ All fragment and block previews are authored source snippets, not runtime-serial
 
 ## Design Tokens
 
-### Seed-Based Configuration (Recommended)
+### Seeds
 
-Configure ~5 seeds and everything derives automatically using the SCSS `@use ... with()` syntax:
+Eight seeds drive every derived token. Set them with the SCSS `@use ... with()` syntax on the styles entry point:
 
 ```scss
 // styles/globals.scss
@@ -165,7 +165,6 @@ Configure ~5 seeds and everything derives automatically using the SCSS `@use ...
 // Full customization
 @use "@usefragments/ui/styles" with (
   $fui-brand: #0066ff,
-  $fui-neutral: "ice",
   $fui-density: "compact",
   $fui-radius-style: "rounded",
   $fui-danger: #dc2626,
@@ -175,29 +174,18 @@ Configure ~5 seeds and everything derives automatically using the SCSS `@use ...
 
 #### Available Seeds
 
-| Seed                | Type   | Default     | Description                                             |
-| ------------------- | ------ | ----------- | ------------------------------------------------------- |
-| `$fui-brand`        | Color  | `#006b57`   | Primary brand color - derives accent, focus rings, etc. |
-| `$fui-neutral`      | String | `"carbon"`  | Neutral palette for surfaces, text, borders             |
-| `$fui-density`      | String | `"default"` | Spacing density scale                                   |
-| `$fui-radius-style` | String | `"default"` | Corner radius style                                     |
-| `$fui-danger`       | Color  | `#c44732`   | Error/danger semantic color                             |
-| `$fui-success`      | Color  | `#2c8c5f`   | Success semantic color                                  |
-| `$fui-warning`      | Color  | `#c4922a`   | Warning semantic color                                  |
-| `$fui-info`         | Color  | `#3d7aa8`   | Info semantic color                                     |
+| Seed                | Type   | Default     | Description                                                                 |
+| ------------------- | ------ | ----------- | --------------------------------------------------------------------------- |
+| `$fui-brand`        | Color  | `#f56138`   | Brand color — derives the accent ramp, focus rings and the dark-mode accent |
+| `$fui-neutral`      | String | `"paper"`   | The neutral ramp: warm cream canvas, white cards, warm charcoal dark mode   |
+| `$fui-density`      | String | `"default"` | Spacing density scale                                                       |
+| `$fui-radius-style` | String | `"default"` | Corner radius style                                                         |
+| `$fui-danger`       | Color  | `#c44732`   | Danger semantic color                                                       |
+| `$fui-success`      | Color  | `#2c8c5f`   | Success semantic color                                                      |
+| `$fui-warning`      | Color  | `#c4922a`   | Warning semantic color                                                      |
+| `$fui-info`         | Color  | `#3d7aa8`   | Info semantic color                                                         |
 
-#### Neutral Palettes
-
-| Name        | Description                                   |
-| ----------- | --------------------------------------------- |
-| `carbon`    | Near-black product chrome — default           |
-| `stone`     | Cool gray neutrals (balanced, professional)   |
-| `mono`      | Strict grayscale neutrals                     |
-| `ice`       | Cool blue-tinted grays (crisp, technical)     |
-| `earth`     | Warm brown-tinted grays (natural, grounded)   |
-| `sand`      | Warm tan-tinted grays (organic, approachable) |
-| `fire`      | Warm red-tinted grays (bold, energetic)       |
-| `fragments` | Fragments' original neutral palette           |
+`"paper"` is the only neutral ramp that ships: one light theme, one dark theme. Any other `$fui-neutral` value fails the build.
 
 #### Density Presets
 
@@ -217,7 +205,33 @@ Configure ~5 seeds and everything derives automatically using the SCSS `@use ...
 | `rounded` | More prominent (friendly)         |
 | `pill`    | Maximum rounding (playful, soft)  |
 
-### Individual Token Overrides (Backward Compatible)
+### Runtime attributes
+
+The compiled stylesheet also answers three attributes on `<html>` (or any ancestor), so a page can switch without a rebuild:
+
+| Attribute               | Values                                  | Effect                                  |
+| ----------------------- | --------------------------------------- | --------------------------------------- |
+| `data-theme`            | `light` · `dark`                        | Colour scheme (`ThemeProvider` sets it) |
+| `data-fui-density`      | `compact` · `relaxed`                   | Density profile; absent = `default`     |
+| `data-fui-radius-style` | `sharp` · `subtle` · `rounded` · `pill` | Radius profile; absent = `default`      |
+
+### Shared state tokens
+
+Every component reads these instead of carrying its own literal, so one override changes the whole kit:
+
+| Token                    | Default            | Purpose                                                                                                                                                                                |
+| ------------------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--fui-opacity-faint`    | `0.3`              | Faint decoration: pulse rings and glow tracks                                                                                                                                          |
+| `--fui-opacity-disabled` | `0.5`              | Disabled controls (`@include disabled-state` in SCSS)                                                                                                                                  |
+| `--fui-opacity-muted`    | `0.7`              | Dimmed but live: collapsed rails, secondary glyphs, decorative rules                                                                                                                   |
+| `--fui-radius-none`      | `0`                | Square corners: joined segments, skeleton blocks, code gutters                                                                                                                         |
+| `--fui-radius-l1`        | `--fui-radius-lg`  | Outermost surface level: cards, dialogs, panels                                                                                                                                        |
+| `--fui-radius-l2`        | `--fui-radius-md`  | Control level: buttons, inputs, menus                                                                                                                                                  |
+| `--fui-radius-l3`        | `--fui-radius-sm`  | Inner level: checkboxes, badges, nested chips                                                                                                                                          |
+| `--fui-scale`            | `1`                | Multiplies the spacing scale (`--fui-space-*`) and the measurement-catalog lengths (control and field tracks, insets, overlay widths, navigation); radius, strokes and type stay fixed |
+| `--fui-stroke-default`   | measurement target | Stroke used by `@include high-contrast-outline` under `prefers-contrast`                                                                                                               |
+
+### Individual Token Overrides
 
 You can still override individual tokens directly:
 
@@ -253,35 +267,22 @@ You can still override individual tokens directly:
 | `$fui-breakpoint-lg` | 1024px |
 | `$fui-breakpoint-xl` | 1280px |
 
-### Migration Guide
+### Migrating token overrides to seeds
 
-**Existing code continues to work.** The seed system is fully backward compatible:
+Instead of overriding many individual tokens, set seed values; dark mode, hover states and derived colors are computed automatically:
 
-- Existing `@use '@usefragments/ui/tokens'` imports work unchanged
-- Individual variable overrides (`$fui-color-accent: #blue`) still work
-- CSS variable usage (`var(--fui-color-accent)`) works
-- Component APIs remain the same
-- Visual appearance is unchanged with default seeds
+```scss
+// Before: many individual overrides
+$fui-color-accent: #0066ff;
+$fui-color-accent-hover: #0052cc;
+$fui-bg-secondary: #f1f5f9;
+// ...many more
 
-**To migrate to seeds (optional):**
-
-1. Instead of overriding many individual tokens, set seed values:
-
-   ```scss
-   // Before: many individual overrides
-   $fui-color-accent: #0066ff;
-   $fui-color-accent-hover: #0052cc;
-   $fui-bg-secondary: #f1f5f9;
-   // ...many more
-
-   // After: just seeds
-   @use "@usefragments/ui/styles" with (
-     $fui-brand: #0066ff,
-     $fui-neutral: "ice"
-   );
-   ```
-
-2. Dark mode, hover states, and derived colors are computed automatically
+// After: just seeds
+@use "@usefragments/ui/styles" with (
+  $fui-brand: #0066ff
+);
+```
 
 ## AI Agent Support
 
@@ -313,11 +314,9 @@ API-key header. There is no MCP npm package or local stdio process to install.
 The library includes composition blocks — named patterns showing how components wire together for common use cases:
 
 - **Login Form** — Email/password authentication form
-- **Confirm Dialog** — Destructive action confirmation
-- **Card Grid** — Responsive auto-fill card layout
-- **Form Layout** — Two-column form with Grid
 - **Dashboard Layout** — Featured card with metrics grid
-- **Settings Page** — Settings sections with cards and controls
+- **Stats Card** — Metric tile with delta badge
+- **Activity Feed** — Avatar-led activity list
 
 Access blocks through the Fragments docs or context generated by the CLI.
 

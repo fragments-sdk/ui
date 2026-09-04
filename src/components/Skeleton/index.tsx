@@ -5,7 +5,7 @@ import styles from "./Skeleton.module.scss";
 // Types
 // ============================================
 
-export type SkeletonVariant =
+export type SkeletonShape =
   | "text" // Single line of text, height: 1em
   | "heading" // Heading text, height: 1.5em
   | "avatar" // Circular, uses size prop
@@ -17,21 +17,22 @@ export type SkeletonSize = "sm" | "md" | "lg";
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
-   * Semantic variant that auto-sizes based on design tokens.
+   * Semantic shape that auto-sizes from the design tokens. Not chrome, so it
+   * is `shape`, not `variant`.
    * @default 'rect'
    */
-  variant?: SkeletonVariant;
+  shape?: SkeletonShape;
   /**
-   * Size variant for avatar, button, and input placeholders.
+   * Size for the avatar, button, and input shapes.
    * @default 'md'
    */
   size?: SkeletonSize;
   /**
-   * Width in pixels or CSS value. Auto-determined for most variants.
+   * Width in pixels or CSS value. Auto-determined for most shapes.
    */
   width?: number | string;
   /**
-   * Height in pixels or CSS value. Auto-determined for semantic variants.
+   * Height in pixels or CSS value. Auto-determined for semantic shapes.
    */
   height?: number | string;
   /**
@@ -40,7 +41,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   fill?: boolean;
   /**
-   * Border radius override. Auto-determined for most variants.
+   * Border radius override. Auto-determined for most shapes.
    */
   radius?: "none" | "sm" | "md" | "lg" | "full";
   /**
@@ -69,7 +70,7 @@ export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElem
 
 const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonBase(
   {
-    variant = "rect",
+    shape = "rect",
     size = "md",
     width,
     height,
@@ -83,10 +84,10 @@ const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(function Sk
 ) {
   const classes = [
     styles.skeleton,
-    styles[variant],
-    variant === "avatar" && styles[`avatar-${size}`],
-    variant === "button" && styles[`button-${size}`],
-    variant === "input" && styles[`input-${size}`],
+    styles[shape],
+    shape === "avatar" && styles[`avatar-${size}`],
+    shape === "button" && styles[`button-${size}`],
+    shape === "input" && styles[`input-${size}`],
     fill && styles.fill,
     radius && styles[`radius-${radius}`],
     isStatic && styles.static,
@@ -147,7 +148,7 @@ function SkeletonText({
 }
 
 // ============================================
-// Skeleton.Circle - Shorthand for avatar variant
+// Skeleton.Circle - Shorthand for the avatar shape
 // ============================================
 
 function SkeletonCircle({
@@ -159,10 +160,10 @@ function SkeletonCircle({
 }) {
   if (typeof size === "number") {
     return (
-      <SkeletonBase variant="rect" width={size} height={size} radius="full" className={className} />
+      <SkeletonBase shape="rect" width={size} height={size} radius="full" className={className} />
     );
   }
-  return <SkeletonBase variant="avatar" size={size} className={className} />;
+  return <SkeletonBase shape="avatar" size={size} className={className} />;
 }
 
 // ============================================

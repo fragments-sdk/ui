@@ -29,7 +29,9 @@ async function loadShikiDeps() {
   }
   await _shikiLoadPromise;
 }
-import { TabsRoot, TabsList, Tab, TabsPanel } from "../Tabs";
+import { Button } from "../Button";
+import { IconButton } from "../IconButton";
+import { TabsRoot, TabsList, Tab, TabsPanel, type TabsVariant } from "../Tabs";
 import { FUI_CSS_VARIABLES_THEME } from "./css-variables-theme";
 import styles from "./CodeBlock.module.scss";
 import { isDevelopmentBuild, isProductionBuild } from "../../utils/env";
@@ -750,8 +752,9 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
           <div className={styles.header}>
             <span className={styles.filename}>{filename ?? ""}</span>
             {shouldShowHeaderCopy && (
-              <button
-                type="button"
+              <IconButton
+                variant="ghost"
+                size="sm"
                 onClick={handleCopy}
                 className={`${styles.copyButton} ${copied ? styles.copied : ""}`}
                 aria-label={copied ? "Copied!" : "Copy code"}
@@ -761,19 +764,20 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
                 ) : (
                   <CopyIcon className={styles.icon} />
                 )}
-              </button>
+              </IconButton>
             )}
           </div>
         )}
         {shouldShowOverlayCopy && (
-          <button
-            type="button"
+          <IconButton
+            variant="ghost"
+            size="sm"
             onClick={handleCopy}
             className={`${styles.copyButton} ${styles.copyOverlay} ${copied ? styles.copied : ""}`}
             aria-label={copied ? "Copied!" : "Copy code"}
           >
             {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
-          </button>
+          </IconButton>
         )}
         {highlight.loading ? (
           <div className={styles.loading} style={codeContainerStyle}>
@@ -789,18 +793,21 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
           />
         )}
         {persistentCopy && (
-          <button
-            type="button"
+          <IconButton
+            variant="ghost"
+            size="sm"
             onClick={handleCopy}
             className={`${styles.persistentCopy} ${styles.copyButton} ${styles.copyOverlay} ${copied ? styles.copied : ""}`}
             aria-label={copied ? "Copied!" : "Copy code"}
           >
             {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
-          </button>
+          </IconButton>
         )}
         {shouldShowCollapse && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
+            fullWidth
             onClick={toggleCollapsed}
             className={
               collapseAction === "expand"
@@ -823,7 +830,7 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
                 <span>Show less</span>
               </>
             )}
-          </button>
+          </Button>
         )}
       </div>
       {caption && <div className={styles.caption}>{caption}</div>}
@@ -863,8 +870,8 @@ export interface TabbedCodeBlockProps {
   showLineNumbers?: boolean;
   /** Syntax highlighting theme (applies to all tabs) */
   theme?: CodeBlockTheme;
-  /** Tab list visual style */
-  tabsVariant?: "underline" | "pills";
+  /** Tab list chrome: `soft` (default) is the filled rail, `ghost` the underline strip. */
+  tabsVariant?: TabsVariant;
   /** Enable word wrapping for long lines */
   wordWrap?: boolean;
   /** Maximum height in pixels (enables scrolling) */
@@ -892,7 +899,7 @@ function TabbedCodeBlock({
   copyPlacement = "auto",
   showLineNumbers = false,
   theme,
-  tabsVariant = "pills",
+  tabsVariant = "soft",
   wordWrap,
   maxHeight,
   collapsible,

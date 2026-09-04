@@ -9,7 +9,7 @@
   "exportName": "Chip",
   "propsSummary": [
     "children: node (required)",
-    "variant: filled|outlined|outline|soft (default: filled)",
+    "variant: solid|outline|soft (default: solid)",
     "size: xs|sm|md|lg (default: xs)",
     "selected: boolean (default: false)",
     "icon: node",
@@ -27,10 +27,10 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual style variant",
-      "default": "filled",
+      "description": "Chrome family. solid is the tinted pill; outline is hairline-bordered; soft is info-tinted for a suggestion",
+      "default": "solid",
       "required": false,
-      "values": ["filled", "outlined", "outline", "soft"]
+      "values": ["solid", "outline", "soft"]
     },
     "size": {
       "type": "enum",
@@ -107,17 +107,17 @@
     {
       "name": "Variants",
       "description": "Tinted, hairline, and accent-soft chrome.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"filled\">Filled</Chip>\n  <Chip variant=\"outlined\">Outlined</Chip>\n  <Chip variant=\"soft\">Soft</Chip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"solid\">Solid</Chip>\n  <Chip variant=\"outline\">Outline</Chip>\n  <Chip variant=\"soft\">Soft</Chip>\n</Stack>"
     },
     {
       "name": "Sizes",
       "description": "xs for filter rows; larger sizes match taller field tracks.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Chip variant=\"outlined\" size=\"xs\">Extra small</Chip>\n  <Chip variant=\"outlined\" size=\"sm\">Small</Chip>\n  <Chip variant=\"outlined\" size=\"md\">Medium</Chip>\n  <Chip variant=\"outlined\" size=\"lg\">Large</Chip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Chip variant=\"outline\" size=\"xs\">Extra small</Chip>\n  <Chip variant=\"outline\" size=\"sm\">Small</Chip>\n  <Chip variant=\"outline\" size=\"md\">Medium</Chip>\n  <Chip variant=\"outline\" size=\"lg\">Large</Chip>\n</Stack>"
     },
     {
       "name": "Selected",
       "description": "All three variants share one selection treatment.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Filled</Chip>\n  <Chip variant=\"outlined\" selected>Outlined</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Solid</Chip>\n  <Chip variant=\"outline\" selected>Outline</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</Stack>"
     },
     {
       "name": "With Avatar",
@@ -127,7 +127,7 @@
     {
       "name": "With Remove",
       "description": "Trailing dismiss button clears the tag.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outlined\" onRemove={() => {}}>React</Chip>\n  <Chip variant=\"outlined\" selected onRemove={() => {}}>TypeScript</Chip>\n  <Chip variant=\"soft\" onRemove={() => {}}>SCSS</Chip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outline\" onRemove={() => {}}>React</Chip>\n  <Chip variant=\"outline\" selected onRemove={() => {}}>TypeScript</Chip>\n  <Chip variant=\"soft\" onRemove={() => {}}>SCSS</Chip>\n</Stack>"
     },
     {
       "name": "Chip Group",
@@ -142,7 +142,7 @@
     {
       "name": "Disabled",
       "description": "Dimmed and unreachable, selected or not.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outlined\" disabled>Disabled</Chip>\n  <Chip variant=\"outlined\" disabled selected>Disabled selected</Chip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outline\" disabled>Disabled</Chip>\n  <Chip variant=\"outline\" disabled selected>Disabled selected</Chip>\n</Stack>"
     }
   ],
   "relations": [
@@ -165,7 +165,7 @@
   "contract": {
     "propsSummary": [
       "children: ReactNode - chip label (required)",
-      "variant: filled|outlined|outline|soft - visual style",
+      "variant: solid|outline|soft - chrome family",
       "size: xs|sm|md|lg - chip size (xs by default)",
       "selected: boolean - selection state",
       "icon/avatar: ReactNode - leading visual",

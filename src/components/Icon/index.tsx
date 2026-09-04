@@ -7,56 +7,56 @@ import styles from "./Icon.module.scss";
 type AnyIconComponent = React.ComponentType<any>;
 type IconComponentProps<TIcon extends AnyIconComponent> = React.ComponentPropsWithoutRef<TIcon>;
 
+export type IconSize = "xs" | "sm" | "md" | "lg" | "xl";
+export type IconTone = "accent" | "info" | "success" | "warning" | "danger";
+export type IconColor = "primary" | "secondary" | "tertiary";
+
 export type IconProps<TIcon extends AnyIconComponent = AnyIconComponent> = Omit<
   React.HTMLAttributes<HTMLSpanElement>,
   "color"
 > & {
   /** The icon component to render */
   icon: TIcon;
-  /** Size of the icon */
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  /** Size of the icon. `xl` is the largest step (24px); the glyph inherits
+   * `currentColor` and the surrounding line height.
+   * @default "md" */
+  size?: IconSize;
   /** Optional style/weight hint forwarded when the icon component supports a `weight` prop */
   weight?: string;
-  /** Semantic color variant */
-  variant?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "tertiary"
-    | "accent"
-    | "success"
-    | "warning"
-    | "error";
-  /** @deprecated Use variant instead */
-  color?: "primary" | "secondary" | "tertiary" | "accent" | "success" | "warning" | "error";
+  /** Semantic colour. Reserve `success`, `warning` and `danger` for real
+   * state; `accent` is the brand spend. Omit to inherit `currentColor`. */
+  tone?: IconTone;
+  /** Text-hierarchy colour, the same axis as Text's `color`. `tone` wins when
+   * both are set. Omit to inherit `currentColor`. */
+  color?: IconColor;
   /** Additional props forwarded to the underlying icon component (typed from `icon`) */
   iconProps?: Partial<IconComponentProps<TIcon>>;
 };
 
 const iconTargets = MEASUREMENT_PROFILES.targets.icon;
-type IconSize = NonNullable<IconProps["size"]>;
+
+const TONE_CLASS: Record<IconTone, string> = {
+  accent: styles.toneAccent,
+  info: styles.toneInfo,
+  success: styles.toneSuccess,
+  warning: styles.toneWarning,
+  danger: styles.toneDanger,
+};
+
+const COLOR_CLASS: Record<IconColor, string> = {
+  primary: styles.colorPrimary,
+  secondary: styles.colorSecondary,
+  tertiary: styles.colorTertiary,
+};
 
 const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
-  {
-    icon: IconComponent,
-    size = "md",
-    weight = "regular",
-    variant,
-    color,
-    iconProps,
-    className,
-    style,
-    ...htmlProps
-  },
+  { icon: IconComponent, size = "md", weight = "regular", tone, color, iconProps, className, style, ...htmlProps },
   ref
 ) {
-  // Support deprecated color prop (variant takes precedence)
-  const colorVariant = variant || color;
-
   const classes = [
     styles.icon,
-    size === "2xl" ? styles.size2xl : styles[size as Exclude<IconSize, "2xl">],
-    colorVariant && colorVariant !== "default" && styles[colorVariant],
+    styles[size],
+    tone ? TONE_CLASS[tone] : color ? COLOR_CLASS[color] : undefined,
     className,
   ]
     .filter(Boolean)

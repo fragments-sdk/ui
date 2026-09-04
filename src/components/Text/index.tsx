@@ -16,9 +16,11 @@ export type TextRole =
   | "title-md"
   | "title-lg"
   | "display"
-  | "code";
+  | "code"
+  | "section-label"
+  | "eyebrow";
 
-export type TextSize = "2xs" | "xs" | "sm" | "base" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+export type TextScale = "2xs" | "xs" | "sm" | "base" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 export type TextWeight = "normal" | "medium" | "semibold" | "bold";
 export type TextFont = "sans" | "mono";
 export type TextTracking = "normal" | "tight" | "tighter" | "tightest";
@@ -70,41 +72,44 @@ type TextSharedProps = Omit<React.HTMLAttributes<HTMLElement>, "color" | "role">
   truncate?: boolean;
   /** Number of lines before truncating (requires truncate=true) */
   lineClamp?: number;
-  /** Letter-spacing preset. `"tight"` suits dense UI chrome labels (-0.01em);
-   * `"tighter"` suits headings and stat values (-0.02em); `"tightest"` suits
-   * display numerics (-0.025em). Omit for the font's default tracking. */
   /** Use tabular (fixed-width) numerals so digits align in columns. Ideal for
    * stat values, tables, timestamps, and any updating number. */
   tabularNums?: boolean;
 };
 
 type TextRoleProps = {
+  /** Typography role: one named setting of size, weight, line height and
+   * tracking. `section-label` is the uppercase list heading; `eyebrow` is the
+   * small-caps label that names a surface above its statement. A role owns the
+   * whole setting, so `scale`, `weight`, `font` and `letterSpacing` are
+   * unavailable beside it. */
   role: TextRole;
-  size?: never;
-  variant?: never;
+  scale?: never;
   weight?: never;
   font?: never;
   letterSpacing?: never;
 };
 
-type TextLegacyScaleProps = {
+type TextScaleProps = {
   role?: never;
-  size?: TextSize;
-  variant?: "section-label" | "eyebrow";
+  /** Step on the type scale, for text that has no role. */
+  scale?: TextScale;
   weight?: TextWeight;
   font?: TextFont;
+  /** Letter-spacing preset. `"tight"` suits dense UI chrome labels (-0.01em);
+   * `"tighter"` suits headings and stat values (-0.02em); `"tightest"` suits
+   * display numerics (-0.025em). Omit for the font's default tracking. */
   letterSpacing?: TextTracking;
 };
 
-export type TextProps = TextSharedProps & (TextRoleProps | TextLegacyScaleProps);
+export type TextProps = TextSharedProps & (TextRoleProps | TextScaleProps);
 
 const TextRoot = React.forwardRef<HTMLElement, TextProps>(function Text(
   {
     children,
     as: Component = "span",
     role,
-    variant,
-    size,
+    scale,
     weight,
     color,
     font,
@@ -118,21 +123,18 @@ const TextRoot = React.forwardRef<HTMLElement, TextProps>(function Text(
   },
   ref
 ) {
-  const ignoredLegacyProps = role
-    ? [size, variant, weight, font, letterSpacing].some((value) => value !== undefined)
+  const ignoredScaleProps = role
+    ? [scale, weight, font, letterSpacing].some((value) => value !== undefined)
     : false;
 
-  if (!isProductionBuild() && ignoredLegacyProps) {
-    console.warn(
-      "[Text] Semantic role takes precedence over size, variant, weight, font, and letterSpacing."
-    );
+  if (!isProductionBuild() && ignoredScaleProps) {
+    console.warn("[Text] A role takes precedence over scale, weight, font, and letterSpacing.");
   }
 
   const classes = [
     styles.text,
     role && styles[`role-${role}`],
-    !role && variant && styles[`variant-${variant}`],
-    !role && size && styles[`size-${size}`],
+    !role && scale && styles[`scale-${scale}`],
     !role && weight && styles[`weight-${weight}`],
     color && styles[`color-${color}`],
     !role && font === "mono" && styles.mono,

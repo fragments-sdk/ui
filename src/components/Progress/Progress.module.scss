@@ -35,7 +35,7 @@
 .track {
   position: relative;
   inline-size: 100%;
-  block-size: var(--_progress-track-size);
+  block-size: var(--_progress-track-size, var(--fui-raw-space-6, #{measurements.raw-space(6)}));
   overflow: hidden;
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
   border-radius: var(--fui-radius-full, $fui-radius-full);
@@ -70,7 +70,7 @@
   transition: inline-size var(--fui-transition-normal, $fui-transition-normal);
 }
 
-// Color variants
+// Tones (accent is the absence of a tone class)
 .indicatorNeutral {
   background-color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
@@ -105,14 +105,15 @@
   }
 }
 
-// Circular progress variant
+// Circular progress. The ring geometry (`--fui-progress-diameter`, `--fui-progress-dash-*`)
+// is authored on the instance from geometry.ts; the md ring is the fallback.
 .circular {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--_progress-diameter);
-  block-size: var(--_progress-diameter);
+  inline-size: var(--fui-progress-diameter, var(--fui-raw-space-48, #{measurements.raw-space(48)}));
+  block-size: var(--fui-progress-diameter, var(--fui-raw-space-48, #{measurements.raw-space(48)}));
 }
 
 .circularSvg {
@@ -134,6 +135,10 @@
   transition: stroke-dashoffset var(--fui-transition-normal, $fui-transition-normal);
 }
 
+.circularIndicatorNeutral {
+  stroke: var(--fui-text-tertiary, $fui-text-tertiary);
+}
+
 .circularIndicatorSuccess {
   stroke: var(--fui-color-success-text, $fui-color-success-text);
 }
@@ -153,14 +158,14 @@
 
 @keyframes circularIndeterminate {
   0% {
-    stroke-dashoffset: var(--_progress-dash-full);
+    stroke-dashoffset: var(--fui-progress-dash-full, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
     transform: rotate(0deg);
   }
   50% {
-    stroke-dashoffset: var(--_progress-dash-quarter);
+    stroke-dashoffset: var(--fui-progress-dash-quarter, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
   }
   100% {
-    stroke-dashoffset: var(--_progress-dash-full);
+    stroke-dashoffset: var(--fui-progress-dash-full, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
     transform: rotate(360deg);
   }
 }

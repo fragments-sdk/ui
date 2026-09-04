@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Dialog } from ".";
 import { Button } from "../Button";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Modal overlay for focused user interactions such as confirmations and
@@ -12,6 +13,7 @@ const meta = {
   component: Dialog,
   tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Modal overlay for focused user interactions.",
@@ -52,9 +54,9 @@ export const Default: Story = {
         </Dialog.Body>
         <Dialog.Footer>
           <Dialog.Close asChild>
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="soft">Cancel</Button>
           </Dialog.Close>
-          <Button variant="primary">Confirm</Button>
+          <Button variant="solid">Confirm</Button>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog>
@@ -65,9 +67,9 @@ export const Confirmation: Story = {
   render: (args) => (
     <Dialog {...args}>
       <Dialog.Trigger asChild>
-        <Button variant="danger">Delete Item</Button>
+        <Button variant="solid" tone="danger">Delete Item</Button>
       </Dialog.Trigger>
-      <Dialog.Content size="sm">
+      <Dialog.Content width="sm">
         <Dialog.Header>
           <Dialog.Title>Delete item?</Dialog.Title>
           <Dialog.Description>
@@ -76,9 +78,9 @@ export const Confirmation: Story = {
         </Dialog.Header>
         <Dialog.Footer>
           <Dialog.Close asChild>
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="soft">Cancel</Button>
           </Dialog.Close>
-          <Button variant="danger">Delete</Button>
+          <Button variant="solid" tone="danger">Delete</Button>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog>
@@ -91,7 +93,7 @@ export const Large: Story = {
       <Dialog.Trigger asChild>
         <Button>Open Large Dialog</Button>
       </Dialog.Trigger>
-      <Dialog.Content size="lg">
+      <Dialog.Content width="lg">
         <Dialog.Close />
         <Dialog.Header>
           <Dialog.Title>Settings</Dialog.Title>
@@ -102,9 +104,9 @@ export const Large: Story = {
         </Dialog.Body>
         <Dialog.Footer>
           <Dialog.Close asChild>
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="soft">Cancel</Button>
           </Dialog.Close>
-          <Button variant="primary">Save Changes</Button>
+          <Button variant="solid">Save Changes</Button>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog>
@@ -115,7 +117,7 @@ export const OpenByDefault: Story = {
   args: { defaultOpen: true },
   render: (args) => (
     <Dialog {...args}>
-      <Dialog.Content size="sm">
+      <Dialog.Content width="sm">
         <Dialog.Close />
         <Dialog.Header>
           <Dialog.Title>Welcome</Dialog.Title>
@@ -123,7 +125,7 @@ export const OpenByDefault: Story = {
         </Dialog.Header>
         <Dialog.Footer>
           <Dialog.Close asChild>
-            <Button variant="secondary">Close</Button>
+            <Button variant="soft">Close</Button>
           </Dialog.Close>
         </Dialog.Footer>
       </Dialog.Content>

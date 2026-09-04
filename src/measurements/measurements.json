@@ -185,6 +185,21 @@
       "grid-cell": "224px",
       "composer-item": "210px",
       "page-narrow": "800px"
+    },
+    "overlay": {
+      "popover-min": "192px",
+      "popover-sm": "256px",
+      "popover-md": "384px",
+      "popover-lg": "512px",
+      "tooltip-max": "320px",
+      "dialog-sm": "384px",
+      "dialog-md": "448px",
+      "dialog-lg": "576px",
+      "dialog-xl": "768px",
+      "drawer-sm": "320px",
+      "drawer-md": "384px",
+      "drawer-lg": "512px",
+      "drawer-xl": "768px"
     }
   },
   "typography": {

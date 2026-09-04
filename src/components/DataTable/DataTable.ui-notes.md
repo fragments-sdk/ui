@@ -10,3 +10,9 @@
   Search results message, intentional absence of an Error state, and full
   localized long-cell workflow at desktop, 390px, and 320px. Console remained
   0/0.
+
+## 2026-09-03 Wave 0
+
+- Fragment: Badge `variant` → `tone` (Active→success, otherwise warning). Typechecks once G2's Badge lands.
+- Virtual spacer row moved from inline `padding: 0` to `.virtualSpacer` in the stylesheet (height stays inline, it is measured).
+- Sort button `padding: 0` reads `--fui-raw-space-0`; dividers fall back to `--fui-stroke-hairline`; `prefers-contrast` block replaced by `@include high-contrast-outline;` on `.headerRow, .row`.

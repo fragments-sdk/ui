@@ -1,19 +1,30 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
 @use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
+// Editing-area floor per size preset, in whole row tracks: three, five and ten
+// times the regular table row track (120, 200 and 400 at the shipped scale).
+@function _min-block($size) {
+  $rows: 5;
+
+  @if $size == "sm" {
+    $rows: 3;
+  } @else if $size == "lg" {
+    $rows: 10;
+  } @else if $size != "md" {
+    @error "Unknown editor size '#{$size}'. Expected sm, md, or lg.";
+  }
+
+  @return calc(#{$rows} * var(--fui-raw-space-40, #{measurements.raw-space(40)}));
+}
+
 .editor {
   @include form-group-surface;
-
-  // Component-scoped registered vocabulary: these are declared here as the
-  // token source for the editor's size presets, not ad-hoc custom properties.
-  --fui-editor-min-block-sm: 120px;
-  --fui-editor-min-block-md: 200px;
-  --fui-editor-min-block-lg: 400px;
 
   display: flex;
   flex-direction: column;
@@ -26,7 +37,8 @@
   }
 
   &[data-disabled] {
-    opacity: 0.5;
+    @include disabled-state;
+
     pointer-events: none;
   }
 
@@ -39,7 +51,7 @@
       .content,
       .contentTextarea,
       :global(.tiptap) {
-        min-block-size: var(--fui-editor-min-block-#{$size});
+        min-block-size: _min-block($size);
       }
     }
   }
@@ -148,14 +160,14 @@
 
 .content {
   flex: 1;
-  min-block-size: var(--fui-editor-min-block-md);
+  min-block-size: _min-block("md");
   overflow-y: auto;
 }
 
 .contentRich :global(.tiptap) {
   @include prose.root;
 
-  min-block-size: var(--fui-editor-min-block-md);
+  min-block-size: _min-block("md");
   padding: layout.gap("lg");
   outline: none;
 
@@ -234,7 +246,7 @@
   display: block;
   inline-size: 100%;
   block-size: 100%;
-  min-block-size: var(--fui-editor-min-block-md);
+  min-block-size: _min-block("md");
   padding: layout.gap("lg");
   border: 0;
   background: transparent;

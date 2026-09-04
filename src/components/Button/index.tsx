@@ -22,37 +22,54 @@ function composeEventHandlers<T extends (...args: any[]) => void>(
  * Button props.
  * @see https://usefragments.com/components/button
  */
+export type ButtonVariant = "solid" | "soft" | "outline" | "ghost" | "link";
+export type ButtonTone = "neutral" | "accent" | "info" | "success" | "warning" | "danger";
+export type ButtonSize = "sm" | "md" | "lg";
+
 type ButtonBaseProps = {
   children: React.ReactNode;
-  /** Visual style variant.
-   * @default "primary"
+  /** Chrome family.
+   * @default "solid"
    * @see https://usefragments.com/components/button#variants
    * @remarks
-   * - `"link"` — accent-coloured, transparent; for tertiary CTAs like "View all →"
-   * - `"quiet"` — neutral text button with no box and no height floor; for meta lines and footnotes
-   * - `"icon"` — convenience alias for outlined + icon-only layout
-   * - `"outline"` — alias for `"outlined"` */
-  variant?:
-    | "primary"
-    | "secondary"
-    | "ghost"
-    | "link"
-    | "quiet"
-    | "danger"
-    | "outlined"
-    | "outline"
-    | "icon";
-  /** Button size. `"xs"` is for inline row-action controls (accept/dismiss, table-row icons) where `"sm"` is too tall.
+   * - `"solid"` — filled; the one action you want taken here
+   * - `"soft"` — tinted fill, no border; supporting actions
+   * - `"outline"` — hairline border on a transparent surface
+   * - `"ghost"` — no fill, no border; dense toolbars and repeated rows
+   * - `"link"` — reads like a link, behaves like an action; tertiary CTAs */
+  variant?: ButtonVariant;
+  /** Colour. Defaults to `"accent"` on `solid` and `link`, `"neutral"` on
+   * `soft`, `outline` and `ghost`.
+   * @see https://usefragments.com/components/button#tones */
+  tone?: ButtonTone;
+  /** Control height.
    * @default "md"
    * @see https://usefragments.com/components/button#sizes */
-  size?: "xs" | "sm" | "md" | "lg";
-  /** Render as icon-only button (square aspect ratio). Prefer `variant="icon"` for the default outlined icon button. */
+  size?: ButtonSize;
+  /** Render as icon-only button (square aspect ratio). Always pass `aria-label`. */
   icon?: boolean;
   /** Make button full width of container */
   fullWidth?: boolean;
   /** Merge props onto child element instead of rendering a button. Useful for composition with Link components.
    * @see https://usefragments.com/components/button#aschild */
   asChild?: boolean;
+};
+
+const DEFAULT_TONE: Record<ButtonVariant, ButtonTone> = {
+  solid: "accent",
+  link: "accent",
+  soft: "neutral",
+  outline: "neutral",
+  ghost: "neutral",
+};
+
+const TONE_CLASS: Record<ButtonTone, string> = {
+  neutral: styles.toneNeutral,
+  accent: styles.toneAccent,
+  info: styles.toneInfo,
+  success: styles.toneSuccess,
+  warning: styles.toneWarning,
+  danger: styles.toneDanger,
 };
 
 // Button as native button element
@@ -73,7 +90,8 @@ const ButtonRoot = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Butto
   function Button(props, ref) {
     const {
       children,
-      variant: variantProp = "primary",
+      variant = "solid",
+      tone: toneProp,
       size: sizeProp,
       icon = false,
       fullWidth = false,
@@ -83,20 +101,15 @@ const ButtonRoot = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Butto
     } = props;
 
     const size = useResolvedControlSize(sizeProp);
-    const iconOnly = icon || variantProp === "icon";
-
-    // Resolve aliases:
-    // "outline" → "outlined"
-    // "icon" → visual "outlined" + icon-only sizing
-    const variant =
-      variantProp === "outline" ? "outlined" : variantProp === "icon" ? "outlined" : variantProp;
+    const tone = toneProp ?? DEFAULT_TONE[variant];
     const canonicalStamp = fragmentsCanonicalStampProps("Button");
 
     const classNames = [
       styles.button,
       styles[size],
       styles[variant],
-      iconOnly && styles.icon,
+      TONE_CLASS[tone],
+      icon && styles.icon,
       fullWidth && styles.fullWidth,
       className,
     ]

@@ -10,7 +10,7 @@
   "propsSummary": [
     "active: boolean (default: true)",
     "label: string (default: Thinking...)",
-    "variant: dots|pulse|spinner (default: dots)",
+    "kind: dots|pulse|spinner (default: dots)",
     "showElapsed: boolean (default: false)",
     "steps: array"
   ],
@@ -27,7 +27,7 @@
       "default": "Thinking...",
       "required": false
     },
-    "variant": {
+    "kind": {
       "type": "enum",
       "description": "Animation style",
       "default": "dots",
@@ -75,37 +75,37 @@
     {
       "name": "Dots (Default)",
       "description": "Three dots bounce in sequence; the quietest option.",
-      "code": "<ThinkingIndicator variant=\"dots\" label=\"Thinking...\" />"
+      "code": "<ThinkingIndicator kind=\"dots\" label=\"Thinking...\" />"
     },
     {
       "name": "Pulse",
       "description": "A single ring breathes in place.",
-      "code": "<ThinkingIndicator variant=\"pulse\" label=\"Processing...\" />"
+      "code": "<ThinkingIndicator kind=\"pulse\" label=\"Processing...\" />"
     },
     {
       "name": "Spinner",
       "description": "A rotating arc, for work with a definite end.",
-      "code": "<ThinkingIndicator variant=\"spinner\" label=\"Loading...\" />"
+      "code": "<ThinkingIndicator kind=\"spinner\" label=\"Loading...\" />"
     },
     {
       "name": "With Elapsed Time",
       "description": "A live counter reassures the reader during long waits.",
-      "code": "<ThinkingIndicator\n  variant=\"dots\"\n  label=\"Generating response...\"\n  showElapsed\n/>"
+      "code": "<ThinkingIndicator\n  kind=\"dots\"\n  label=\"Generating response...\"\n  showElapsed\n/>"
     },
     {
       "name": "Multi-Step Progress",
       "description": "Finished, running, and queued stages read at a glance.",
-      "code": "<ThinkingIndicator\n  variant=\"spinner\"\n  label=\"Working...\"\n  steps={[\n    { id: '1', label: 'Analyzing request', status: 'complete' },\n    { id: '2', label: 'Searching knowledge base', status: 'active' },\n    { id: '3', label: 'Generating response', status: 'pending' },\n  ]}\n/>"
+      "code": "<ThinkingIndicator\n  kind=\"spinner\"\n  label=\"Working...\"\n  steps={[\n    { id: '1', label: 'Analyzing request', status: 'complete' },\n    { id: '2', label: 'Searching knowledge base', status: 'pending' },\n    { id: '3', label: 'Generating response', status: 'idle' },\n  ]}\n/>"
     },
     {
       "name": "With Error Step",
       "description": "A failed stage turns red while the next one retries.",
-      "code": "<ThinkingIndicator\n  variant=\"spinner\"\n  label=\"Retrying...\"\n  steps={[\n    { id: '1', label: 'Connecting to API', status: 'complete' },\n    { id: '2', label: 'Fetching data', status: 'error' },\n    { id: '3', label: 'Retrying with fallback', status: 'active' },\n  ]}\n/>"
+      "code": "<ThinkingIndicator\n  kind=\"spinner\"\n  label=\"Retrying...\"\n  steps={[\n    { id: '1', label: 'Connecting to API', status: 'complete' },\n    { id: '2', label: 'Fetching data', status: 'error' },\n    { id: '3', label: 'Retrying with fallback', status: 'pending' },\n  ]}\n/>"
     },
     {
       "name": "Custom Label",
       "description": "Name the actual task instead of a generic status.",
-      "code": "<ThinkingIndicator\n  variant=\"dots\"\n  label=\"Claude is writing code...\"\n/>"
+      "code": "<ThinkingIndicator\n  kind=\"dots\"\n  label=\"Claude is writing code...\"\n/>"
     }
   ],
   "relations": [
@@ -129,7 +129,8 @@
     "propsSummary": [
       "active: boolean - whether indicator is visible (default: true)",
       "label: string - status text (default: \"Thinking...\")",
-      "variant: \"dots\" | \"pulse\" | \"spinner\" - animation style",
+      "kind: \"dots\" | \"pulse\" | \"spinner\" - animation style",
+      "steps[].status: \"idle\" | \"pending\" | \"streaming\" | \"complete\" | \"error\" - shared lifecycle axis",
       "showElapsed: boolean - show elapsed time",
       "steps: ThinkingStep[] - multi-step progress"
     ],

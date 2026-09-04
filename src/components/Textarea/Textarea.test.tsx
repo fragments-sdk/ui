@@ -23,8 +23,8 @@ describe('Textarea', () => {
   it('passes numeric row bounds to the CSS field equation', () => {
     render(<Textarea aria-label="Notes" minRows={2} maxRows={5} />);
     const textarea = screen.getByRole('textbox');
-    expect(textarea.style.getPropertyValue('--_fui-textarea-min-rows')).toBe('2');
-    expect(textarea.style.getPropertyValue('--_fui-textarea-max-rows')).toBe('5');
+    expect(textarea.style.getPropertyValue('--fui-textarea-min-rows')).toBe('2');
+    expect(textarea.style.getPropertyValue('--fui-textarea-max-rows')).toBe('5');
     expect(textarea.style.minHeight).toBe('');
     expect(textarea.style.maxHeight).toBe('');
   });

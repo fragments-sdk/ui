@@ -1,17 +1,24 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/target" as target;
 
+// Tone publishes three channels (tint, ink, line); the variant decides which
+// one paints the surface. Neutral is the absence of a tone class.
 .badge {
+  --_badge-tint: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
+  --_badge-ink: var(--fui-text-secondary, #{$fui-text-secondary});
+  --_badge-line: var(--fui-border-strong, #{$fui-border-strong});
+
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
   inline-size: max-content;
-  gap: var(--fui-raw-space-4, 4px);
-  padding-block: 0;
-  border: 0;
+  gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  padding-block: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
   border-radius: var(--fui-badge-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
   white-space: nowrap;
 }
@@ -20,65 +27,78 @@
 .sm {
   @include representation.badge("sm");
 
-  padding-inline: var(--fui-raw-space-4, 4px);
+  padding-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
 }
 
 .md {
   @include representation.badge("md");
 
-  padding-inline: var(--fui-raw-space-6, 6px);
+  padding-inline: var(--fui-raw-space-6, #{measurements.raw-space(6)});
 }
 
 .lg {
   @include representation.badge("lg");
 
-  padding-inline: var(--fui-raw-space-8, 8px);
+  padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+}
+
+// Tones
+@mixin _tone($tone, $bg, $text, $border) {
+  --_badge-tint: var(--fui-color-#{$tone}-bg, #{$bg});
+  --_badge-ink: var(--fui-color-#{$tone}-text, #{$text});
+  --_badge-line: var(--fui-color-#{$tone}-border, #{$border});
+}
+
+.toneAccent {
+  --_badge-tint: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 12%, transparent);
+  --_badge-ink: var(--fui-color-accent, #{$fui-color-accent});
+  --_badge-line: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 48%, transparent);
+}
+
+.toneInfo {
+  @include _tone("info", $fui-color-info-bg, $fui-color-info-text, $fui-color-info-border);
+}
+
+.toneSuccess {
+  @include _tone(
+    "success",
+    $fui-color-success-bg,
+    $fui-color-success-text,
+    $fui-color-success-border
+  );
+}
+
+.toneWarning {
+  @include _tone(
+    "warning",
+    $fui-color-warning-bg,
+    $fui-color-warning-text,
+    $fui-color-warning-border
+  );
+}
+
+.toneDanger {
+  @include _tone("danger", $fui-color-danger-bg, $fui-color-danger-text, $fui-color-danger-border);
 }
 
 // Variants
-.default {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.success {
-  background: var(--fui-color-success-bg, $fui-color-success-bg);
-  color: var(--fui-color-success-text, $fui-color-success-text);
-}
-
-.warning {
-  background: var(--fui-color-warning-bg, $fui-color-warning-bg);
-  color: var(--fui-color-warning-text, $fui-color-warning-text);
-}
-
-.error {
-  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-.info {
-  background: var(--fui-color-info-bg, $fui-color-info-bg);
-  color: var(--fui-color-info-text, $fui-color-info-text);
+.soft {
+  background-color: var(--_badge-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+  color: var(--_badge-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
 }
 
 .outline {
   background-color: transparent;
-  color: var(--fui-text-primary, $fui-text-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
+  border-color: var(--_badge-line, var(--fui-border-strong, #{$fui-border-strong}));
+  color: var(--_badge-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
 }
 
-.label {
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+// Filter-pill chrome: transparent at rest, `active` wears the shared selected
+// surface. Tones colour the ink only.
+.ghost {
+  border-radius: var(--fui-radius-l3, #{$fui-radius-l3});
   background-color: transparent;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.dim {
-  border: var(--fui-stroke-hairline, 1px) solid transparent;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  background-color: transparent;
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  color: var(--_badge-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
     border-color var(--fui-transition-fast, $fui-transition-fast),
@@ -92,15 +112,15 @@
 }
 
 .dot {
-  inline-size: var(--fui-raw-space-6, 6px);
-  block-size: var(--fui-raw-space-6, 6px);
-  border-radius: 50%;
+  inline-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+  block-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+  border-radius: var(--fui-radius-full, #{$fui-radius-full});
   background-color: var(--fui-badge-dot-color, currentColor);
   flex-shrink: 0;
 
   .sm & {
-    inline-size: var(--fui-raw-space-4, 4px);
-    block-size: var(--fui-raw-space-4, 4px);
+    inline-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    block-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
   }
 }
 
@@ -115,7 +135,7 @@
 
 @keyframes fui-badge-dot-pulse {
   50% {
-    opacity: 0.35;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
   }
 }
 
@@ -148,7 +168,7 @@
 }
 
 .badge:has(.remove) {
-  padding-inline-end: var(--fui-raw-space-4, 4px);
+  padding-inline-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
 }
 
 .remove {
@@ -158,22 +178,21 @@
 
   inline-size: 1em;
   block-size: 1em;
-  margin-inline-start: calc(-1 * var(--fui-raw-space-2, 2px));
-  padding: 0;
+  margin-inline-start: calc(-1 * var(--fui-raw-space-2, #{measurements.raw-space(2)}));
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   border: 0;
   background: transparent;
-  color: inherit;
-  opacity: 0.6;
+  color: color-mix(in srgb, currentColor 60%, transparent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: pointer;
 
   &:hover {
-    opacity: 1;
+    color: currentColor;
   }
 
   &:focus-visible {
     @include focus-ring;
 
-    opacity: 1;
+    color: currentColor;
   }
 }

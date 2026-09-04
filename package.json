@@ -189,6 +189,7 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "generate:measurements": "node scripts/generate-measurements.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "check:measurements": "node scripts/generate-measurements.mjs --check && node scripts/check-measurement-parity.mjs",
     "build": "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json && pnpm run typecheck:fragments",
     "typecheck:fragments": "tsc -p tsconfig.fragments.json",
@@ -197,9 +198,7 @@
     "test:geometry": "node geometry/run.mjs",
     "test:geometry:self": "node --test geometry/__tests__/*.test.mjs",
     "test:geometry:types": "tsc -p geometry/tsconfig.json --noEmit",
-    "build-storybook": "storybook build",
-    "chromatic": "chromatic",
-    "chromatic:ci": "chromatic --build-script-name build-storybook"
+    "build-storybook": "storybook build"
   },
   "peerDependencies": {
     "@tanstack/react-table": ">=8.0.0",
@@ -281,7 +280,6 @@
     "@usefragments/core": "workspace:*",
     "@vitejs/plugin-react": "^4.3.0",
     "ajv": "8.17.1",
-    "chromatic": "^17.1.0",
     "date-fns": "^4.0.0",
     "jsdom": "^25.0.0",
     "react": "^19.0.0",
@@ -310,9 +308,8 @@
     "!src/assets/*.svg",
     "!src/**/*.stories.tsx",
     "!src/**/*.ui-notes.md",
-    "!src/components/Cloud/",
+    "!src/storybook/",
     "dist",
-    "!dist/components/Cloud/",
     "fragments.json"
   ]
 }

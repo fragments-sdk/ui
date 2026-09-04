@@ -9,7 +9,7 @@
   "exportName": "Loading",
   "propsSummary": [
     "size: sm|md|lg|xl (default: md)",
-    "variant: spinner|dots|pulse (default: spinner)",
+    "kind: spinner|dots|pulse (default: spinner)",
     "label: string (default: Loading...)",
     "centered: boolean (default: false)",
     "fill: boolean (default: false)",
@@ -24,9 +24,9 @@
       "required": false,
       "values": ["sm", "md", "lg", "xl"]
     },
-    "variant": {
+    "kind": {
       "type": "enum",
-      "description": "Visual style of the loading animation",
+      "description": "Which animation plays",
       "default": "spinner",
       "required": false,
       "values": ["spinner", "dots", "pulse"]
@@ -57,7 +57,7 @@
     },
     "color": {
       "type": "enum",
-      "description": "Color variant - accent uses theme color, current inherits text color",
+      "description": "Colour. accent uses the theme accent, current inherits the surrounding text colour",
       "default": "accent",
       "required": false,
       "values": ["accent", "current", "muted"]
@@ -102,12 +102,12 @@
     {
       "name": "Dots",
       "description": "Three bouncing dots, at home in a message thread.",
-      "code": "<Loading variant=\"dots\" label=\"Sending message\" />"
+      "code": "<Loading kind=\"dots\" label=\"Sending message\" />"
     },
     {
       "name": "Pulse",
       "description": "One breathing dot for ambient background work.",
-      "code": "<Loading variant=\"pulse\" label=\"Syncing\" />"
+      "code": "<Loading kind=\"pulse\" label=\"Syncing\" />"
     },
     {
       "name": "Colors",

@@ -40,6 +40,8 @@
   &[data-popup-open] {
     border-color: var(--fui-field-border-focus, $fui-color-accent);
   }
+
+  @include high-contrast-outline;
 }
 
 // Trigger size variants
@@ -94,7 +96,7 @@
   &:disabled,
   &[data-disabled] {
     background-color: transparent;
-    opacity: 0.5;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
   }
 }
 
@@ -251,21 +253,6 @@
 // Group label
 .groupLabel {
   @include popup.group-label;
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .trigger {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
-
-    &[data-popup-open] {
-      border-color: var(--fui-color-accent, $fui-color-accent);
-    }
-  }
 }
 
 // ============================================

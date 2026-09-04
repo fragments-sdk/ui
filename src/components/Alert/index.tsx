@@ -8,20 +8,20 @@ import styles from "./Alert.module.scss";
 // Types
 // ============================================
 
-export type AlertSeverity = "info" | "success" | "warning" | "error";
+export type AlertTone = "info" | "success" | "warning" | "danger";
 
 /**
- * Alert for contextual feedback messages (info, success, warning, error).
+ * Alert for contextual feedback messages (info, success, warning, danger).
  * @see https://usefragments.com/components/alert
  */
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Alert severity level. Controls color and default icon.
+  /** Tone. Controls color and default icon.
    * @default "info"
-   * @see https://usefragments.com/components/alert#variants */
-  severity?: AlertSeverity;
-  /** How much surface the severity claims. `tint` washes the whole card in the
-   * severity colour. `surface` keeps the card on the page's own background and
+   * @see https://usefragments.com/components/alert#tones */
+  tone?: AlertTone;
+  /** How much surface the tone claims. `tint` washes the whole card in the
+   * tone colour. `surface` keeps the card on the page's own background and
    * spends the colour only on the hairline and the title — for a standing
    * failure that owns the view, where a full wash would read as a red page.
    * @default "tint" */
@@ -68,7 +68,7 @@ export interface AlertBodyProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================
 
 interface AlertContextValue {
-  severity: AlertSeverity;
+  tone: AlertTone;
   titleId: string;
   descId: string;
   dismiss: () => void;
@@ -96,14 +96,21 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
 }
 
 // ============================================
-// Severity Icons
+// Tone Icons
 // ============================================
 
-const severityIcons: Record<AlertSeverity, string> = {
+const toneIcons: Record<AlertTone, string> = {
   info: "i",
   success: "\u2713",
   warning: "!",
-  error: "\u2717",
+  danger: "\u2717",
+};
+
+const TONE_CLASS: Record<AlertTone, string> = {
+  info: styles.toneInfo,
+  success: styles.toneSuccess,
+  warning: styles.toneWarning,
+  danger: styles.toneDanger,
 };
 
 // ============================================
@@ -112,7 +119,7 @@ const severityIcons: Record<AlertSeverity, string> = {
 
 function AlertRoot({
   children,
-  severity = "info",
+  tone = "info",
   emphasis = "tint",
   className,
   ...htmlProps
@@ -129,16 +136,16 @@ function AlertRoot({
 
   const classes = [
     styles.alert,
-    styles[severity],
+    TONE_CLASS[tone],
     emphasis === "surface" ? styles.surface : null,
     className,
   ]
     .filter(Boolean)
     .join(" ");
-  const role = severity === "warning" || severity === "error" ? "alert" : "status";
+  const role = tone === "warning" || tone === "danger" ? "alert" : "status";
 
   const contextValue: AlertContextValue = {
-    severity,
+    tone,
     titleId,
     descId,
     dismiss,
@@ -160,12 +167,12 @@ function AlertRoot({
 }
 
 function AlertIcon({ children, className, ...htmlProps }: AlertIconProps) {
-  const { severity } = useAlertContext();
+  const { tone } = useAlertContext();
   const classes = [styles.icon, className].filter(Boolean).join(" ");
 
   return (
     <span {...htmlProps} className={classes} aria-hidden="true">
-      {children ?? severityIcons[severity]}
+      {children ?? toneIcons[tone]}
     </span>
   );
 }

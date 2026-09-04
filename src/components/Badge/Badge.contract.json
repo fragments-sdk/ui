@@ -3,13 +3,20 @@
   "name": "Badge",
   "description": "Labels a status, count, or category without pulling focus.",
   "category": "display",
-  "tags": ["status", "label", "tag", "count", "chip"],
+  "tags": [
+    "status",
+    "label",
+    "tag",
+    "count",
+    "chip"
+  ],
   "status": "stable",
   "sourcePath": "src/components/Badge/index.tsx",
   "exportName": "Badge",
   "propsSummary": [
     "children: node (required)",
-    "variant: default|success|warning|error|info|outline|label|dim (default: default)",
+    "variant: soft|outline|ghost (default: soft)",
+    "tone: neutral|accent|info|success|warning|danger (default: neutral)",
     "size: sm|md|lg (default: md)",
     "dot: boolean (default: false)",
     "dotPulse: boolean (default: false)",
@@ -28,17 +35,39 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Visual style indicating severity or category. `label` is a hairline-bordered metadata pill (pair with dotColor); `dim` is transparent filter-pill chrome (pair with active).",
-      "default": "default",
+      "description": "Chrome family. `soft` is the tinted pill; `outline` is a hairline metadata pill (pair with dotColor); `ghost` is transparent filter chrome (pair with active).",
+      "default": "soft",
       "required": false,
-      "values": ["default", "success", "warning", "error", "info", "outline", "label", "dim"]
+      "values": [
+        "soft",
+        "outline",
+        "ghost"
+      ]
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Colour on the shared status ramp; `neutral` is the plain badge.",
+      "default": "neutral",
+      "required": false,
+      "values": [
+        "neutral",
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ]
     },
     "size": {
       "type": "enum",
       "description": "Badge size",
       "default": "md",
       "required": false,
-      "values": ["sm", "md", "lg"]
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
     },
     "dot": {
       "type": "boolean",
@@ -54,7 +83,7 @@
     },
     "dotColor": {
       "type": "string",
-      "description": "Color for the leading status dot. Applies to variant=\"label\" (and the generic dot prop). Accepts any CSS color including CSS custom properties.",
+      "description": "Color for the leading status dot. Accepts any CSS color including CSS custom properties.",
       "required": false
     },
     "icon": {
@@ -64,7 +93,7 @@
     },
     "active": {
       "type": "boolean",
-      "description": "Marks variant=\"dim\" as the currently selected filter. Has no effect on other variants.",
+      "description": "Marks variant=\"ghost\" as the currently selected filter. Has no effect on other variants.",
       "default": "false",
       "required": false
     },
@@ -101,8 +130,8 @@
     "guidelines": [
       "Under 20 characters",
       "dot for live status; add dotPulse only while it is still changing",
-      "Semantic variants are borderless pills on shared status tokens",
-      "label pairs with dotColor; dim pairs with active for filter chrome",
+      "Semantic tones are borderless soft pills on shared status tokens",
+      "outline pairs with dotColor; ghost pairs with active for filter chrome",
       "onRemove for user-created tags only, never system labels"
     ],
     "accessibility": [
@@ -114,19 +143,19 @@
   },
   "examples": [
     {
-      "name": "Status Variants",
+      "name": "Tones",
       "description": "Neutral through info, on shared status tokens.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"default\">Default</Badge>\n  <Badge variant=\"success\">Active</Badge>\n  <Badge variant=\"warning\">Pending</Badge>\n  <Badge variant=\"error\">Failed</Badge>\n  <Badge variant=\"info\">New</Badge>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge>Neutral</Badge>\n  <Badge tone=\"success\">Active</Badge>\n  <Badge tone=\"warning\">Pending</Badge>\n  <Badge tone=\"danger\">Failed</Badge>\n  <Badge tone=\"info\">New</Badge>\n</Stack>"
     },
     {
       "name": "With Dot",
       "description": "Leading dot for live state; it breathes while still moving.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"success\" dot>Online</Badge>\n  <Badge variant=\"warning\" dot>Away</Badge>\n  <Badge variant=\"error\" dot>Offline</Badge>\n  <Badge variant=\"info\" dot dotPulse>Syncing</Badge>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge tone=\"success\" dot>Online</Badge>\n  <Badge tone=\"warning\" dot>Away</Badge>\n  <Badge tone=\"danger\" dot>Offline</Badge>\n  <Badge tone=\"info\" dot dotPulse>Syncing</Badge>\n</Stack>"
     },
     {
-      "name": "Label and Filter",
+      "name": "Outline and Ghost",
       "description": "Hairline metadata pill, and filter chrome that marks the active one.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"label\" dotColor=\"var(--fui-color-accent)\">Design</Badge>\n  <Badge variant=\"label\" dotColor=\"var(--fui-color-success)\">Shipped</Badge>\n  <Badge variant=\"dim\" active>All</Badge>\n  <Badge variant=\"dim\">Archived</Badge>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"outline\" dotColor=\"var(--fui-color-accent)\">Design</Badge>\n  <Badge variant=\"outline\" dotColor=\"var(--fui-color-success)\">Shipped</Badge>\n  <Badge variant=\"ghost\" active>All</Badge>\n  <Badge variant=\"ghost\">Archived</Badge>\n</Stack>"
     },
     {
       "name": "Outline",
@@ -136,17 +165,17 @@
     {
       "name": "Sizes",
       "description": "sm for dense tables, lg for reference status pills.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Badge variant=\"success\" size=\"sm\">Small</Badge>\n  <Badge variant=\"success\" size=\"md\">Medium</Badge>\n  <Badge variant=\"success\" size=\"lg\">Large</Badge>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n  <Badge tone=\"success\" size=\"sm\">Small</Badge>\n  <Badge tone=\"success\" size=\"md\">Medium</Badge>\n  <Badge tone=\"success\" size=\"lg\">Large</Badge>\n</Stack>"
     },
     {
       "name": "Removable",
       "description": "Dismissible tags the user added themselves.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge variant=\"info\" onRemove={() => {}}>React</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>TypeScript</Badge>\n  <Badge variant=\"info\" onRemove={() => {}}>CSS</Badge>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge tone=\"info\" onRemove={() => {}}>React</Badge>\n  <Badge tone=\"info\" onRemove={() => {}}>TypeScript</Badge>\n  <Badge tone=\"info\" onRemove={() => {}}>CSS</Badge>\n</Stack>"
     },
     {
       "name": "Announced Status",
       "description": "Looks the same, but screen readers now hear the change.",
-      "code": "<Badge variant=\"success\" announce>Saved</Badge>"
+      "code": "<Badge tone=\"success\" announce>Saved</Badge>"
     }
   ],
   "relations": [
@@ -164,20 +193,27 @@
   "contract": {
     "propsSummary": [
       "children: ReactNode - badge label (required)",
-      "variant: default|success|warning|error|info|outline|label|dim - visual style",
+      "variant: soft|outline|ghost - chrome family",
+      "tone: neutral|accent|info|success|warning|danger - colour",
       "size: sm|md|lg - badge size",
       "dot: boolean - show status dot indicator",
       "dotPulse: boolean - breathe the dot for an in-progress state (respects prefers-reduced-motion)",
       "dotColor: string - color for the leading status dot",
-      "active: boolean - marks variant=\"dim\" as the selected filter",
+      "active: boolean - marks variant=\"ghost\" as the selected filter",
       "onRemove: () => void - makes badge removable",
       "announce: boolean - opt into role=\"status\" + auto status aria-label"
     ],
-    "a11yRules": ["A11Y_BADGE_CONTRAST", "A11Y_BADGE_DISMISS", "A11Y_TARGET_SIZE_MIN"]
+    "a11yRules": [
+      "A11Y_BADGE_CONTRAST",
+      "A11Y_BADGE_DISMISS",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
   },
   "ai": {
     "compositionPattern": "compound",
-    "subComponents": ["Root"]
+    "subComponents": [
+      "Root"
+    ]
   },
   "provenance": {
     "source": "migrated",

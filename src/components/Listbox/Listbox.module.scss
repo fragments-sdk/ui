@@ -1,5 +1,7 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/layout" as layout;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
 
@@ -7,12 +9,14 @@
   @include popup.container;
   @include popup.viewport;
 
-  min-inline-size: var(--fui-listbox-min-inline, 192px);
+  min-inline-size: layout.measure("menu-min");
   border-color: var(--fui-form-group-border, $fui-border);
 
   &:focus-visible {
     @include focus-ring;
   }
+
+  @include high-contrast-outline;
 }
 
 .item {
@@ -56,23 +60,8 @@
 .empty {
   @include typography.role("body-compact");
 
-  padding-block: var(--fui-popup-row-block-inset);
-  padding-inline: var(--fui-popup-row-inline-inset);
+  padding-block: var(--fui-popup-row-block-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  padding-inline: var(--fui-popup-row-inline-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
-}
-
-@media (prefers-contrast: more) {
-  .listbox {
-    border-color: var(--fui-text-primary, $fui-text-primary);
-    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
-  }
-
-  .itemSelected,
-  .itemActive {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
-      var(--fui-color-accent, $fui-color-accent);
-    outline-offset: calc(-1 * var(--fui-focus-ring-width, $fui-focus-ring-width));
-  }
 }

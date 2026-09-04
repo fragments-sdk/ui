@@ -1,4 +1,6 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/field" as field;
 @use "../../recipes/popup" as popup;
@@ -10,6 +12,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  @include high-contrast-outline;
 }
 
 .inputWrapper {
@@ -18,8 +21,8 @@
 
   display: flex;
   align-items: center;
-  gap: var(--fui-popup-row-content-gap);
-  margin-block-end: var(--fui-popup-container-inset);
+  gap: var(--fui-popup-row-content-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  margin-block-end: var(--fui-popup-container-inset, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
 
   &:focus-within {
     @include field.focus-state;
@@ -36,7 +39,7 @@
 .input {
   flex: 1;
   min-inline-size: 0;
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   border: none;
   outline: none;
   color: var(--fui-text-primary, $fui-text-primary);
@@ -69,8 +72,8 @@
   }
 
   > svg {
-    inline-size: var(--fui-popup-indicator-box);
-    block-size: var(--fui-popup-indicator-box);
+    inline-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+    block-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
     flex: 0 0 auto;
   }
 }
@@ -97,26 +100,12 @@
 .empty {
   @include typography.role("body-compact");
 
-  padding-block: var(--fui-popup-row-block-inset);
-  padding-inline: var(--fui-popup-row-inline-inset);
+  padding-block: var(--fui-popup-row-block-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  padding-inline: var(--fui-popup-row-inline-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-align: center;
 }
 
 .separator {
   @include popup.group-separator;
-}
-
-@media (prefers-contrast: more) {
-  .command {
-    border-color: var(--fui-text-primary, $fui-text-primary);
-    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
-  }
-
-  .itemActive {
-    outline: var(--fui-focus-ring-width, $fui-focus-ring-width) solid
-      var(--fui-color-accent, $fui-color-accent);
-    outline-offset: calc(-1 * var(--fui-focus-ring-width, $fui-focus-ring-width));
-  }
 }

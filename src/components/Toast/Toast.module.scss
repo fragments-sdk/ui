@@ -1,22 +1,24 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/feedback" as feedback;
 
 .container {
   position: fixed;
-  z-index: var(--fui-feedback-toast-layer, 70);
+  // Above the app header; there is no dedicated layer token yet.
+  z-index: calc(2 * var(--fui-header-z-index, #{$fui-header-z-index}));
   display: flex;
   flex-direction: column;
-  gap: var(--fui-feedback-stack-gap, var(--fui-raw-space-8, 8px));
+  gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   inline-size: min(
-    var(--fui-feedback-toast-max-inline, 400px),
+    var(--fui-overlay-popover-md, #{measurements.target-value("overlay", "popover-md")}),
     calc(
       100% - var(
           --fui-feedback-viewport-inset-left,
-          max(var(--fui-raw-space-16, 16px), env(safe-area-inset-left))
+          max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-left))
         ) - var(
           --fui-feedback-viewport-inset-right,
-          max(var(--fui-raw-space-16, 16px), env(safe-area-inset-right))
+          max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-right))
         )
     )
   );
@@ -53,9 +55,16 @@
 
 .toast {
   @include feedback.transient;
+  @include high-contrast-outline;
 
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  --_toast-tint: var(--fui-bg-elevated, #{$fui-bg-elevated});
+  --_toast-line: var(--fui-border, #{$fui-border});
+  --_toast-ink: var(--fui-text-primary, #{$fui-text-primary});
+  --_toast-ink-soft: var(--fui-text-secondary, #{$fui-text-secondary});
+
+  background-color: var(--_toast-tint, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--_toast-line, var(--fui-border, #{$fui-border}));
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
@@ -77,63 +86,45 @@
   }
 }
 
-.default .icon {
-  color: var(--fui-text-secondary, $fui-text-secondary);
+// Tones paint wash, hairline and ink from the shared status ramp; the
+// description drops to the same ink so the toast reads as one tinted object.
+@mixin _tone($tone, $bg, $text, $border) {
+  --_toast-tint: var(--fui-color-#{$tone}-bg, #{$bg});
+  --_toast-line: var(--fui-color-#{$tone}-border, #{$border});
+  --_toast-ink: var(--fui-color-#{$tone}-text, #{$text});
+  --_toast-ink-soft: var(--fui-color-#{$tone}-text, #{$text});
 }
 
-.success {
-  background: var(--fui-color-success-bg, $fui-color-success-bg);
-  border-color: var(--fui-color-success-border, $fui-color-success-border);
-
-  .title,
-  .description,
-  .icon {
-    color: var(--fui-color-success-text, $fui-color-success-text);
-  }
+.toneSuccess {
+  @include _tone(
+    "success",
+    $fui-color-success-bg,
+    $fui-color-success-text,
+    $fui-color-success-border
+  );
 }
 
-.error {
-  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
-  border-color: var(--fui-color-danger-border, $fui-color-danger-border);
-
-  .title,
-  .description,
-  .icon {
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
-  }
+.toneDanger {
+  @include _tone("danger", $fui-color-danger-bg, $fui-color-danger-text, $fui-color-danger-border);
 }
 
-.warning {
-  background: var(--fui-color-warning-bg, $fui-color-warning-bg);
-  border-color: var(--fui-color-warning-border, $fui-color-warning-border);
-
-  .title,
-  .description,
-  .icon {
-    color: var(--fui-color-warning-text, $fui-color-warning-text);
-  }
+.toneWarning {
+  @include _tone(
+    "warning",
+    $fui-color-warning-bg,
+    $fui-color-warning-text,
+    $fui-color-warning-border
+  );
 }
 
-.info {
-  background: var(--fui-color-info-bg, $fui-color-info-bg);
-  border-color: var(--fui-color-info-border, $fui-color-info-border);
-
-  .title,
-  .description,
-  .icon {
-    color: var(--fui-color-info-text, $fui-color-info-text);
-  }
-}
-
-.success .description,
-.error .description,
-.warning .description,
-.info .description {
-  opacity: 0.8;
+.toneInfo {
+  @include _tone("info", $fui-color-info-bg, $fui-color-info-text, $fui-color-info-border);
 }
 
 .icon {
   @include feedback.icon;
+
+  color: var(--_toast-ink-soft, var(--fui-text-secondary, #{$fui-text-secondary}));
 
   svg {
     inline-size: 100%;
@@ -142,72 +133,32 @@
 }
 
 .toast:has(.description) .icon {
-  margin-block-start: var(--fui-stroke-hairline, 1px);
+  margin-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 }
 
 .content {
   display: grid;
   flex: 1;
-  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, 4px));
+  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
   min-inline-size: 0;
 }
 
 .title {
   @include feedback.title;
 
-  color: var(--fui-text-primary, $fui-text-primary);
+  color: var(--_toast-ink, var(--fui-text-primary, #{$fui-text-primary}));
 }
 
 .description {
   @include feedback.body;
 
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  color: var(--_toast-ink-soft, var(--fui-text-secondary, #{$fui-text-secondary}));
 }
 
-.action {
-  @include button-reset;
-  @include feedback.compact-action;
-
-  flex-shrink: 0;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-color-accent, $fui-color-accent);
-  cursor: pointer;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
+// The action and close are kit buttons; only their placement lives here.
+.action,
 .close {
-  @include button-reset;
-  @include feedback.close;
-
   flex-shrink: 0;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  cursor: pointer;
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  svg {
-    inline-size: var(--_fui-action-icon-size);
-    block-size: var(--_fui-action-icon-size);
-  }
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-secondary, $fui-text-secondary);
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -215,8 +166,4 @@
     animation: none;
   }
 
-  .action,
-  .close {
-    transition: none;
-  }
 }

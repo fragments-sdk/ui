@@ -117,6 +117,18 @@ export default defineFragment(Select, {
       ),
       note: "maxVisibleItems raises the cap to six rows.",
     },
+    Ghost: {
+      render: (
+        <Select variant="ghost" size="sm" aria-label="Sort order" defaultValue="newest">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="newest">Newest first</Select.Item>
+            <Select.Item value="oldest">Oldest first</Select.Item>
+          </Select.Content>
+        </Select>
+      ),
+      note: "Ghost drops the field shell for toolbars and dense rows.",
+    },
     Disabled: {
       render: (
         <Select disabled placeholder="Select an option">
@@ -226,7 +238,7 @@ export default defineFragment(Select, {
       "placeholder: string - placeholder text",
       "disabled: boolean - disable select",
       "size: sm|md|lg (default: md)",
-      "variant: field|ghost (default: field) - ghost is borderless, for toolbars",
+      "variant: outline|ghost (default: outline) - ghost is borderless, for toolbars",
       "options: SelectOption[] - convenience API for simple option lists",
       "maxVisibleItems: number - max visible options before scrolling (default 4)",
       "Select.Trigger accepts an icon prop for a leading adornment",

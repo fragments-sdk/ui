@@ -1,3 +1,4 @@
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/navigation" as navigation;
@@ -12,22 +13,22 @@
 .title {
   @include navigation.properties;
 
-  margin: 0 0 var(--fui-toc-title-gap, var(--fui-space-2, #{$fui-space-2}));
+  margin: 0 0 var(--fui-space-2, #{$fui-space-2});
   // Same inline inset as `.link` (navigation.row) so the label and the index
   // share one left edge — extra title padding made "On This Page" sit inward
   // of the items below it.
-  padding-inline: var(--fui-toc-inline-inset, var(--fui-navigation-inline-inset));
+  padding-inline: var(--fui-navigation-inline-inset, #{navigation.gutter()});
 }
 
 // The quiet index is flush; links and group headers share the title inset.
 .list {
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--fui-stroke-hairline, 1px);
+  gap: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 }
 
 // ============================================
@@ -45,9 +46,6 @@
 
   display: flex;
   align-items: center;
-  min-block-size: var(--fui-toc-row-track, var(--fui-navigation-row-track));
-  padding-inline: var(--fui-toc-inline-inset, var(--fui-navigation-inline-inset));
-  gap: var(--fui-toc-content-gap, var(--fui-navigation-content-gap));
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -56,7 +54,7 @@
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    background-color: var(--fui-toc-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+    background-color: var(--fui-bg-hover, #{$fui-bg-hover});
     color: var(--fui-text-primary, $fui-text-primary);
   }
 
@@ -69,7 +67,7 @@
 // flush with the title and group headers.
 [data-depth="1"] .link {
   margin-left: var(--fui-space-2, $fui-space-2);
-  padding-inline-start: var(--fui-raw-space-16, 16px);
+  padding-inline-start: var(--fui-raw-space-16, #{measurements.raw-space(16)});
 }
 
 .linkLabel {
@@ -112,9 +110,6 @@
 
   display: flex;
   align-items: center;
-  min-block-size: var(--fui-toc-section-track, var(--fui-navigation-section-track));
-  padding-inline: var(--fui-toc-inline-inset, var(--fui-navigation-inline-inset));
-  gap: var(--fui-toc-content-gap, var(--fui-navigation-content-gap));
   width: 100%;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-tertiary, $fui-text-tertiary);
@@ -133,7 +128,7 @@
     color var(--fui-transition-fast, $fui-transition-fast);
 
   &:hover {
-    background-color: var(--fui-toc-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
+    background-color: var(--fui-bg-hover, #{$fui-bg-hover});
     color: var(--fui-text-secondary, $fui-text-secondary);
   }
 
@@ -153,12 +148,12 @@
   width: var(--fui-icon-xs, $fui-icon-xs);
   height: var(--fui-icon-xs, $fui-icon-xs);
   color: inherit;
-  opacity: 0.7;
+  opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
   transition: transform var(--fui-transition-fast, $fui-transition-fast);
 
   svg {
-    width: var(--fui-raw-space-10, 10px);
-    height: var(--fui-raw-space-10, 10px);
+    width: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    height: var(--fui-raw-space-10, #{measurements.raw-space(10)});
   }
 
   &[data-open] {

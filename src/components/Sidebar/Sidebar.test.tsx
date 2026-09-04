@@ -94,11 +94,9 @@ describe('Sidebar', () => {
     expect(sidebarStyles).not.toContain('max-height: 500px');
     expect(sidebarStyles).toContain('grid-template-rows: 0fr;');
     expect(sidebarStyles).toContain('grid-template-rows: 1fr;');
-    expect(sidebarStyles).toContain('width: var(--fui-navigation-active-rail);');
+    expect(sidebarStyles).toContain('width: var(--fui-navigation-active-rail, #{$_active-rail});');
     expect(sidebarStyles).toContain('height: #{action.track("lg")};');
-    expect(sidebarStyles).toContain(
-      'height: var(--fui-navigation-sidebar-collapsed-width, 56px);'
-    );
+    expect(sidebarStyles).toContain('height: #{navigation.collapsed-width()};');
   });
 
   it('disables items with disabled prop', () => {
@@ -119,7 +117,7 @@ describe('Sidebar', () => {
     );
 
     const badge = screen.getByText('3').closest('.badge');
-    expect(badge).toHaveClass('badge', 'sm', 'default');
+    expect(badge).toHaveClass('badge', 'sm', 'soft');
     expect(badge?.parentElement).toHaveClass('itemBadge');
   });
 
@@ -128,14 +126,14 @@ describe('Sidebar', () => {
       <Sidebar aria-label="Test sidebar">
         <Sidebar.Nav aria-label="Main">
           <Sidebar.Section label="Section One">
-            <Sidebar.Item badge={<Badge variant="info">7</Badge>}>Findings</Sidebar.Item>
+            <Sidebar.Item badge={<Badge tone="info">7</Badge>}>Findings</Sidebar.Item>
           </Sidebar.Section>
         </Sidebar.Nav>
       </Sidebar>
     );
 
     expect(document.querySelectorAll('.badge')).toHaveLength(1);
-    expect(screen.getByText('7').closest('.badge')).toHaveClass('info');
+    expect(screen.getByText('7').closest('.badge')).toHaveClass('toneInfo');
   });
 
   it('supports data-state attribute', () => {

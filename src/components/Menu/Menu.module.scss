@@ -1,10 +1,11 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
 
 .positioner {
-  z-index: var(--fui-overlay-layer-anchored, 52);
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   outline: none;
   pointer-events: auto;
 
@@ -20,7 +21,7 @@
   @include popup.container;
 
   min-inline-size: layout.measure("menu-min");
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   list-style: none;
   opacity: 0;
   transform: scale(0.95);
@@ -74,8 +75,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--fui-popup-indicator-box);
-  block-size: var(--fui-popup-indicator-box);
+  inline-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  block-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
   flex: 0 0 auto;
 }
 
@@ -108,8 +109,8 @@
   color: var(--fui-color-accent, $fui-color-accent);
 
   svg {
-    inline-size: var(--fui-raw-space-12, 12px);
-    block-size: var(--fui-raw-space-12, 12px);
+    inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    block-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   }
 }
 
@@ -117,8 +118,8 @@
   visibility: hidden;
 
   svg {
-    inline-size: var(--fui-raw-space-12, 12px);
-    block-size: var(--fui-raw-space-12, 12px);
+    inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    block-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   }
 }
 
@@ -141,8 +142,8 @@
   block-size: 0;
   margin-inline-start: auto;
   border-style: solid;
-  border-width: var(--fui-raw-space-4, 4px) 0 var(--fui-raw-space-4, 4px)
-    var(--fui-raw-space-6, 6px);
+  border-width: var(--fui-raw-space-4, #{measurements.raw-space(4)}) 0 var(--fui-raw-space-4, #{measurements.raw-space(4)})
+    var(--fui-raw-space-6, #{measurements.raw-space(6)});
   border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
 }
 

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
 import { Table, type TableProps } from "../Table";
+import styles from "./DataTable.module.scss";
 
 // ============================================
 // Dependency (@tanstack/react-virtual)
@@ -86,13 +87,13 @@ function DataTableVirtualRoot<TItem>({
       <Table.Body>
         {paddingTop > 0 ? (
           <tr aria-hidden="true">
-            <td colSpan={colSpan} style={{ height: paddingTop, padding: 0 }} />
+            <td colSpan={colSpan} className={styles.virtualSpacer} style={{ height: paddingTop }} />
           </tr>
         ) : null}
         {virtualRows.map((row) => renderRow(row))}
         {paddingBottom > 0 ? (
           <tr aria-hidden="true">
-            <td colSpan={colSpan} style={{ height: paddingBottom, padding: 0, border: 0 }} />
+            <td colSpan={colSpan} className={styles.virtualSpacer} style={{ height: paddingBottom }} />
           </tr>
         ) : null}
       </Table.Body>

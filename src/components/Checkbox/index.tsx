@@ -38,13 +38,11 @@ export interface CheckboxProps extends Omit<
    * @default "md" */
   size?: "sm" | "md" | "lg";
   /**
-   * Visual variant.
-   * - `default`: inline checkbox next to a label (form-control style).
-   * - `card`: full-width clickable card with the checkbox tucked inside.
-   *   Useful for multi-select question lists, settings toggles, etc.
-   * @default "default"
+   * Chrome. Omit it for the inline checkbox next to a label (form-control
+   * style); `outline` renders a full-width bordered surface with the checkbox
+   * tucked inside — multi-select question lists, settings toggles, plan pickers.
    */
-  variant?: "default" | "card";
+  variant?: "outline";
   /** Label text */
   label?: string;
   /** Helper text shown below the label */
@@ -132,7 +130,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
     readOnly = false,
     required = false,
     size: sizeProp,
-    variant = "default",
+    variant,
     label,
     helperText,
     description,
@@ -169,7 +167,7 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
     .filter(Boolean)
     .join(" ");
 
-  const wrapperClasses = [styles.wrapper, variant === "card" && styles.wrapperCard, className]
+  const wrapperClasses = [styles.wrapper, variant === "outline" && styles.wrapperOutline, className]
     .filter(Boolean)
     .join(" ");
   const handleCheckedChange = onChange ?? onCheckedChange;

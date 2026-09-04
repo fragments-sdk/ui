@@ -5,6 +5,12 @@
 @use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
+// Fallback travel for the thumb when no size class has set the track: the md
+// track's inline size minus its block size, exactly what `switch-track` computes.
+$_switch-travel-md: calc(
+  #{boolean.switch-inline-size("md")} - #{boolean.switch-block-size("md")}
+);
+
 .root {
   --_switch-off-bg: light-dark(
     color-mix(
@@ -55,7 +61,11 @@
     )
   );
   --_switch-thumb-bg: light-dark(
-    color-mix(in srgb, var(--fui-bg-primary, #{$fui-bg-primary}) 98%, white 2%),
+    color-mix(
+      in srgb,
+      var(--fui-bg-primary, #{$fui-bg-primary}) 98%,
+      var(--fui-bg-elevated, #{$fui-bg-elevated}) 2%
+    ),
     color-mix(
       in srgb,
       var(--fui-bg-primary, #{$fui-bg-primary}) 56%,
@@ -101,8 +111,7 @@
   }
 
   &[data-disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
+    @include disabled-state;
   }
 
   @media (pointer: coarse) {
@@ -118,11 +127,16 @@
   flex-shrink: 0;
   box-sizing: border-box;
   border-radius: var(--fui-radius-full, $fui-radius-full);
-  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-off-border);
-  background-color: var(--_switch-off-bg);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--_switch-off-border, var(--fui-border-strong, #{$fui-border-strong}));
+  background-color: var(--_switch-off-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
+  // Specular sheen: the lightest neutral surface over the track, the ink under it.
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 26%, transparent),
-    inset 0 -1px 0 color-mix(in srgb, var(--fui-text-primary, $fui-text-primary) 5%, transparent);
+    inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
+      color-mix(in srgb, var(--fui-bg-elevated, #{$fui-bg-elevated}) 26%, transparent),
+    inset 0 calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline})) 0
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
+  @include high-contrast-outline;
   transition:
     background-color var(--fui-transition-normal, $fui-transition-normal),
     border-color var(--fui-transition-normal, $fui-transition-normal),
@@ -131,12 +145,13 @@
   .root[data-checked] & {
     background-color: var(--fui-control-checked-bg, $fui-color-accent);
     border-color: var(--fui-control-checked-border, $fui-color-accent);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+    box-shadow: inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
+      color-mix(in srgb, var(--fui-control-checked-color, #{$fui-color-on-accent}) 24%, transparent);
   }
 
   .root:not([data-disabled]):not([data-checked]) &:hover {
-    background-color: var(--_switch-off-bg-hover);
-    border-color: var(--_switch-off-border-hover);
+    background-color: var(--_switch-off-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
+    border-color: var(--_switch-off-border-hover, var(--fui-border-strong, #{$fui-border-strong}));
   }
 
   .root:not([data-disabled])[data-checked] &:hover {
@@ -173,17 +188,20 @@
 .thumb {
   position: absolute;
   inset-block-start: 50%;
-  inset-inline-start: var(--_fui-switch-inset);
+  inset-inline-start: var(--_fui-switch-inset, var(--fui-stroke-default, #{$fui-stroke-default}));
   box-sizing: border-box;
-  width: var(--_fui-switch-thumb-size);
-  height: var(--_fui-switch-thumb-size);
+  width: var(--_fui-switch-thumb-size, #{boolean.switch-thumb-size("md")});
+  height: var(--_fui-switch-thumb-size, #{boolean.switch-thumb-size("md")});
   border-radius: var(--fui-radius-full, $fui-radius-full);
   pointer-events: none;
-  background-color: var(--_switch-thumb-bg);
-  border: var(--fui-stroke-hairline, 1px) solid var(--_switch-thumb-border);
+  background-color: var(--_switch-thumb-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--_switch-thumb-border, var(--fui-border-strong, #{$fui-border-strong}));
   box-shadow:
-    0 1px 1px color-mix(in srgb, black 18%, transparent),
-    inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+    0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 18%, transparent),
+    inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
+      color-mix(in srgb, var(--fui-bg-elevated, #{$fui-bg-elevated}) 42%, transparent);
   transform: translateY(-50%);
   transition:
     transform var(--fui-transition-normal, $fui-transition-normal),
@@ -192,7 +210,7 @@
     box-shadow var(--fui-transition-fast, $fui-transition-fast);
 
   .root[data-checked] & {
-    transform: translate(var(--_fui-switch-travel), -50%);
+    transform: translate(var(--_fui-switch-travel, #{$_switch-travel-md}), -50%);
     background-color: var(--fui-control-checked-color, $fui-color-on-accent);
     border-color: color-mix(
       in srgb,
@@ -202,7 +220,7 @@
   }
 
   .root:dir(rtl)[data-checked] & {
-    transform: translate(calc(-1 * var(--_fui-switch-travel)), -50%);
+    transform: translate(calc(-1 * var(--_fui-switch-travel, #{$_switch-travel-md})), -50%);
   }
 
   .root:active:not([data-disabled]) & {
@@ -222,22 +240,6 @@
 .helper {
   display: block;
   @include field.helper;
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .track {
-    border-color: var(--fui-text-primary, $fui-text-primary);
-    outline: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: calc(-1 * var(--fui-stroke-default, 2px));
-  }
-
-  .root[data-checked] .track {
-    border-color: var(--fui-control-checked-border, $fui-color-accent);
-  }
 }
 
 // ============================================

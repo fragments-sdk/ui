@@ -19,15 +19,15 @@ const meta = {
     },
   },
   argTypes: {
-    variant: {
+    placement: {
       control: 'select',
-      options: ['default', 'fixed', 'sticky'],
-      description: 'Visual/positioning variant',
+      options: ['inline', 'fixed', 'sticky'],
+      description: 'Where the card sits: in the flow, fixed to the viewport, or sticky to the content area',
     },
-    appearance: {
+    variant: {
       control: 'inline-radio',
-      options: ['panel', 'seamless'],
-      description: 'Toolbar as a filled footer, or one continuous writing surface',
+      options: ['outline', 'ghost'],
+      description: 'Toolbar as a filled footer (outline), or one continuous writing surface (ghost)',
     },
     disabled: { control: 'boolean', description: 'Disable the entire prompt' },
     loading: { control: 'boolean', description: 'Show loading state' },
@@ -40,7 +40,7 @@ const meta = {
   },
   args: {
     placeholder: 'Ask, Search or Chat...',
-    variant: 'default',
+    placement: 'inline',
     children: (
       <>
         <Prompt.Textarea />
@@ -97,7 +97,7 @@ export const WithActions: Story = {
  */
 export const AgentComposer: Story = {
   args: {
-    appearance: 'seamless',
+    variant: 'ghost',
     minRows: 3,
     submitOnEnter: false,
     placeholder: 'What should be true when this is done?',

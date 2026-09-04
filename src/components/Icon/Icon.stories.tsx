@@ -4,7 +4,7 @@ import { Icon } from ".";
 
 /**
  * Icon is a wrapper for icon components with consistent sizing and semantic
- * colors. Pass any icon component (Phosphor, Lucide, etc.) via the required
+ * tones. Pass any icon component (Phosphor, Lucide, etc.) via the required
  * `icon` prop. Icons are decorative by default and should be paired with text
  * for meaning.
  */
@@ -15,14 +15,14 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "Wrapper for icon components with consistent sizing and semantic colors.",
+        component: "Wrapper for icon components with consistent sizing and semantic tones.",
       },
     },
   },
   argTypes: {
     size: {
       control: "select",
-      options: ["xs", "sm", "md", "lg", "xl", "2xl"],
+      options: ["xs", "sm", "md", "lg", "xl"],
       description: "Icon size",
     },
     weight: {
@@ -30,26 +30,21 @@ const meta = {
       options: ["thin", "light", "regular", "bold", "fill", "duotone"],
       description: "Optional icon style/weight hint",
     },
-    variant: {
+    tone: {
       control: "select",
-      options: [
-        "default",
-        "primary",
-        "secondary",
-        "tertiary",
-        "accent",
-        "success",
-        "warning",
-        "error",
-      ],
-      description: "Semantic color variant",
+      options: ["accent", "info", "success", "warning", "danger"],
+      description: "Semantic colour; omit to inherit currentColor",
+    },
+    color: {
+      control: "select",
+      options: ["primary", "secondary", "tertiary"],
+      description: "Text-hierarchy colour (tone wins when both are set)",
     },
   },
   args: {
     icon: Heart,
     size: "md",
     weight: "regular",
-    variant: "default",
   },
 } satisfies Meta<typeof Icon>;
 
@@ -62,18 +57,18 @@ export const Default: Story = {
 };
 
 export const Large: Story = {
-  args: { icon: Star, size: "2xl" },
+  args: { icon: Star, size: "xl" },
 };
 
 export const Success: Story = {
-  args: { icon: Check, variant: "success" },
+  args: { icon: Check, tone: "success" },
 };
 
 export const Warning_: Story = {
   name: "Warning",
-  args: { icon: Warning, variant: "warning" },
+  args: { icon: Warning, tone: "warning" },
 };
 
 export const Accent: Story = {
-  args: { icon: Info, variant: "accent", weight: "fill" },
+  args: { icon: Info, tone: "accent", weight: "fill" },
 };

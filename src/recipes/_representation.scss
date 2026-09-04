@@ -1,4 +1,5 @@
 @use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
 @use "action" as action;
 @use "typography" as typography;
 
@@ -106,13 +107,13 @@
   inline-size: avatar-size($size);
   block-size: avatar-size($size);
   overflow: hidden;
-  border-radius: var(--fui-radius-full);
+  border-radius: var(--fui-radius-full, #{tokens.$fui-radius-full});
 }
 
 @mixin avatar-group-item($size) {
   margin-inline-start: calc(-1 * #{avatar-overlap($size)});
   border: var(--fui-stroke-default, #{measurements.target-value("stroke", "default")}) solid
-    var(--fui-bg-primary);
+    var(--fui-bg-primary, #{tokens.$fui-bg-primary});
 }
 
 @mixin glyph($size) {
@@ -124,8 +125,8 @@
 @mixin activity($size) {
   --_fui-activity-size: #{activity-size($size)};
 
-  inline-size: var(--_fui-activity-size);
-  block-size: var(--_fui-activity-size);
+  inline-size: var(--_fui-activity-size, #{activity-size($size)});
+  block-size: var(--_fui-activity-size, #{activity-size($size)});
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -171,11 +172,11 @@
 
 @mixin chart-marker($kind) {
   @if $kind == "dot" {
-    inline-size: var(--fui-chart-marker-dot, #{_raw(8)});
-    block-size: var(--fui-chart-marker-dot, #{_raw(8)});
-    border-radius: var(--fui-radius-full);
+    inline-size: #{_raw(8)};
+    block-size: #{_raw(8)};
+    border-radius: var(--fui-radius-full, #{tokens.$fui-radius-full});
   } @else if $kind == "line" or $kind == "dashed" {
-    inline-size: var(--fui-chart-marker-inline, #{_raw(12)});
+    inline-size: #{_raw(12)};
     block-size: var(--fui-chart-marker-stroke, #{_raw(2)});
   } @else {
     @error "Unknown chart marker '#{$kind}'. Expected dot, line, or dashed.";
@@ -187,7 +188,7 @@
 
   --_fui-chart-tooltip-item-gap: #{_raw(8)};
 
-  min-inline-size: var(--fui-chart-tooltip-min-inline, 100px);
+  min-inline-size: var(--fui-layout-measure-inline-floor, #{measurements.target-value("layoutMeasure", "inline-floor")});
   padding-block: _raw(8);
   padding-inline: _raw(12);
 }

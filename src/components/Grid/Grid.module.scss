@@ -8,7 +8,7 @@
 .grid {
   display: grid;
   width: 100%;
-  gap: var(--_fui-grid-gap, #{layout.gap("md")});
+  gap: layout.gap("md");
 }
 
 // ============================================
@@ -75,7 +75,7 @@
 .columnsResponsive {
   --_cols: var(--fui-grid-cols, 1);
 
-  grid-template-columns: repeat(var(--_cols), 1fr);
+  grid-template-columns: repeat(var(--_cols, var(--fui-grid-cols, 1)), 1fr);
 
   @include breakpoint-sm {
     --_cols: var(--fui-grid-cols-sm, var(--fui-grid-cols, 1));

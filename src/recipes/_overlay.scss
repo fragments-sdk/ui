@@ -1,3 +1,4 @@
+@use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
 @use "action" as action;
 @use "feedback" as feedback;
@@ -5,19 +6,19 @@
 @use "target" as target;
 @use "typography" as typography;
 
-@function _raw($step, $fallback) {
-  @return var(--fui-raw-space-#{$step}, $fallback);
+@function _raw($step) {
+  @return var(--fui-raw-space-#{$step}, #{measurements.raw-space($step)});
 }
 
 @function dialog-max($size) {
   @if $size == "sm" {
-    @return var(--fui-overlay-dialog-max-inline-sm, 384px);
+    @return var(--fui-overlay-dialog-sm, #{measurements.target-value("overlay", "dialog-sm")});
   } @else if $size == "md" {
-    @return var(--fui-overlay-dialog-max-inline-md, 448px);
+    @return var(--fui-overlay-dialog-md, #{measurements.target-value("overlay", "dialog-md")});
   } @else if $size == "lg" {
-    @return var(--fui-overlay-dialog-max-inline-lg, 576px);
+    @return var(--fui-overlay-dialog-lg, #{measurements.target-value("overlay", "dialog-lg")});
   } @else if $size == "xl" {
-    @return var(--fui-overlay-dialog-max-inline-xl, 768px);
+    @return var(--fui-overlay-dialog-xl, #{measurements.target-value("overlay", "dialog-xl")});
   }
 
   @error "Unknown dialog overlay size '#{$size}'. Expected sm, md, lg, or xl.";
@@ -25,13 +26,13 @@
 
 @function drawer-inline($size) {
   @if $size == "sm" {
-    @return var(--fui-overlay-drawer-inline-sm, 320px);
+    @return var(--fui-overlay-drawer-sm, #{measurements.target-value("overlay", "drawer-sm")});
   } @else if $size == "md" {
-    @return var(--fui-overlay-drawer-inline-md, 384px);
+    @return var(--fui-overlay-drawer-md, #{measurements.target-value("overlay", "drawer-md")});
   } @else if $size == "lg" {
-    @return var(--fui-overlay-drawer-inline-lg, 512px);
+    @return var(--fui-overlay-drawer-lg, #{measurements.target-value("overlay", "drawer-lg")});
   } @else if $size == "xl" {
-    @return var(--fui-overlay-drawer-inline-xl, 768px);
+    @return var(--fui-overlay-drawer-xl, #{measurements.target-value("overlay", "drawer-xl")});
   }
 
   @error "Unknown side-drawer size '#{$size}'. Expected sm, md, lg, or xl.";
@@ -54,19 +55,19 @@
 @mixin safe-viewport {
   --_fui-overlay-safe-top: var(
     --fui-feedback-viewport-inset-top,
-    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-top))
+    max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-top))
   );
   --_fui-overlay-safe-bottom: var(
     --fui-feedback-viewport-inset-bottom,
-    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-bottom))
+    max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-bottom))
   );
   --_fui-overlay-safe-left: var(
     --fui-feedback-viewport-inset-left,
-    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-left))
+    max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-left))
   );
   --_fui-overlay-safe-right: var(
     --fui-feedback-viewport-inset-right,
-    max(var(--fui-raw-space-16, 16px), env(safe-area-inset-right))
+    max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-right))
   );
   --_fui-overlay-safe-inline: calc(
     100dvw - var(--_fui-overlay-safe-left) - var(--_fui-overlay-safe-right)
@@ -80,20 +81,20 @@
   @include typography.role("body-compact");
 
   box-sizing: border-box;
-  max-block-size: var(--_fui-overlay-safe-block, calc(100dvh - #{_raw(32, 32px)}));
+  max-block-size: var(--_fui-overlay-safe-block, calc(100dvh - #{_raw(32)}));
   overflow: auto;
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   background-color: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, #{tokens.$fui-border});
+  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid var(--fui-border, #{tokens.$fui-border});
   border-radius: var(--fui-radius-lg, #{tokens.$fui-radius-lg});
   box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
 }
 
 @mixin _section-inline-inset {
-  padding-inline: var(--fui-overlay-inline-inset, #{surface.inset("roomy")});
+  padding-inline: #{surface.inset("roomy")};
 
   @media (max-width: 479px) {
-    padding-inline: var(--fui-overlay-inline-inset-narrow, #{surface.inset("default")});
+    padding-inline: #{surface.inset("default")};
   }
 }
 
@@ -101,15 +102,15 @@
   @include _section-inline-inset;
 
   display: grid;
-  gap: var(--fui-overlay-section-gap, #{_raw(8, 8px)});
-  padding-block: var(--fui-overlay-header-block-inset, #{_raw(12, 12px)});
+  gap: var(--fui-overlay-section-gap, #{_raw(8)});
+  padding-block: #{_raw(12)};
 }
 
 @mixin body {
   @include _section-inline-inset;
   @include typography.role("body-compact");
 
-  padding-block: 0 var(--fui-overlay-body-block-end-inset, #{_raw(12, 12px)});
+  padding-block: 0 #{_raw(12)};
 }
 
 @mixin footer {
@@ -118,8 +119,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--fui-overlay-section-gap, #{_raw(8, 8px)});
-  padding-block: var(--fui-overlay-footer-block-inset, #{_raw(8, 8px)});
+  gap: var(--fui-overlay-section-gap, #{_raw(8)});
+  padding-block: #{_raw(8)};
 }
 
 @mixin modal-title {
@@ -140,23 +141,23 @@
   @include target.hit-area("compact");
 
   position: absolute;
-  inset-block-start: var(--fui-overlay-close-inset, #{_raw(12, 12px)});
-  inset-inline-end: var(--fui-overlay-close-inset, #{_raw(12, 12px)});
+  inset-block-start: var(--fui-overlay-close-inset, #{_raw(12)});
+  inset-inline-end: var(--fui-overlay-close-inset, #{_raw(12)});
 }
 
 @mixin anchored-size($size) {
   @if $size == "sm" {
     @include surface.apply-inset("compact");
 
-    max-inline-size: var(--fui-overlay-popover-max-inline-sm, 256px);
+    max-inline-size: var(--fui-overlay-popover-sm, #{measurements.target-value("overlay", "popover-sm")});
   } @else if $size == "md" {
     @include surface.apply-inset("compact");
 
-    max-inline-size: var(--fui-overlay-popover-max-inline-md, 384px);
+    max-inline-size: var(--fui-overlay-popover-md, #{measurements.target-value("overlay", "popover-md")});
   } @else if $size == "lg" {
     @include surface.apply-inset("default");
 
-    max-inline-size: var(--fui-overlay-popover-max-inline-lg, 512px);
+    max-inline-size: var(--fui-overlay-popover-lg, #{measurements.target-value("overlay", "popover-lg")});
   } @else {
     @error "Unknown anchored overlay size '#{$size}'. Expected sm, md, or lg.";
   }
@@ -167,17 +168,17 @@
   @include anchored-size($size);
 
   box-sizing: border-box;
-  min-inline-size: var(--fui-overlay-popover-min-inline, 192px);
+  min-inline-size: var(--fui-overlay-popover-min, #{measurements.target-value("overlay", "popover-min")});
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   background-color: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, #{tokens.$fui-border});
+  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid var(--fui-border, #{tokens.$fui-border});
   border-radius: var(--fui-radius-lg, #{tokens.$fui-radius-lg});
   box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
 }
 
 @mixin arrow-box {
-  inline-size: var(--fui-overlay-arrow-size, #{_raw(10, 10px)});
-  block-size: var(--fui-overlay-arrow-size, #{_raw(10, 10px)});
+  inline-size: var(--fui-overlay-arrow-size, #{_raw(10)});
+  block-size: var(--fui-overlay-arrow-size, #{_raw(10)});
   transform: rotate(45deg);
 }
 
@@ -185,7 +186,7 @@
   @include typography.role("ui-compact");
 
   box-sizing: border-box;
-  max-inline-size: var(--fui-overlay-tooltip-max-inline, 320px);
-  padding-block: _raw(4, 4px);
-  padding-inline: _raw(8, 8px);
+  max-inline-size: var(--fui-overlay-tooltip-max, #{measurements.target-value("overlay", "tooltip-max")});
+  padding-block: _raw(4);
+  padding-inline: _raw(8);
 }

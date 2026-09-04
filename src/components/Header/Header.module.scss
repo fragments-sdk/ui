@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/layout" as layout;
@@ -39,7 +40,7 @@
 }
 
 .elevatedOnScroll {
-  border-bottom: var(--fui-stroke-hairline, 1px) solid transparent;
+  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
   transition: border-color var(--fui-transition-fast, $fui-transition-fast);
 }
 
@@ -127,8 +128,8 @@
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 .navItem {
@@ -353,7 +354,7 @@
   z-index: 99;
   width: min(320px, 85vw);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border-left: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-left: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
   display: flex;
   flex-direction: column;
   animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal);
@@ -364,7 +365,7 @@
   align-items: center;
   justify-content: flex-end;
   padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
-  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 
 .mobileNavClose {
@@ -460,7 +461,7 @@
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   color: var(--fui-text-primary, $fui-text-primary);
-  border: var(--fui-stroke-default, 2px) solid var(--fui-color-accent, $fui-color-accent);
+  border: var(--fui-stroke-default, #{$fui-stroke-default}) solid var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   text-decoration: none;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
@@ -471,7 +472,7 @@
     height: auto;
     clip: auto;
     white-space: normal;
-    margin: 0;
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
     padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
     overflow: visible;
 

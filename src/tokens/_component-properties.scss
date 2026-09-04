@@ -5,12 +5,22 @@
 // doing so would override each component's fallback/inheritance behavior.
 // Governance reads this file as the explicit vocabulary for dynamic values.
 @mixin fui-component-property-contract {
-  --fui-checkbox-radius: var(--fui-radius-sm);
+  --fui-chart-marker-stroke: var(--fui-raw-space-2);
+  --fui-checkbox-radius: var(--fui-radius-l3);
+  --fui-feedback-text-gap: var(--fui-raw-space-4);
+  --fui-feedback-transient-gap: var(--fui-raw-space-8);
+  --fui-feedback-viewport-inset-top: max(var(--fui-raw-space-16), env(safe-area-inset-top));
+  --fui-feedback-viewport-inset-right: max(var(--fui-raw-space-16), env(safe-area-inset-right));
+  --fui-feedback-viewport-inset-bottom: max(var(--fui-raw-space-16), env(safe-area-inset-bottom));
+  --fui-feedback-viewport-inset-left: max(var(--fui-raw-space-16), env(safe-area-inset-left));
   --fui-grid-min-child-width: var(--fui-layout-measure-grid-cell);
   --fui-line-clamp: 2;
   --fui-navmenu-viewport-height: 0px;
   --fui-navmenu-viewport-left: 0px;
   --fui-navmenu-viewport-width: 0px;
+  --fui-overlay-arrow-size: var(--fui-raw-space-10);
+  --fui-overlay-close-inset: var(--fui-raw-space-12);
+  --fui-overlay-section-gap: var(--fui-raw-space-8);
   --fui-prompt-inset-left: 0px;
   --fui-select-max-items: 4.5;
   --fui-stack-direction: column;
@@ -23,4 +33,12 @@
   --fui-stack-gap-md: var(--fui-stack-gap-sm);
   --fui-stack-gap-lg: var(--fui-stack-gap-md);
   --fui-stack-gap-xl: var(--fui-stack-gap-lg);
+  --fui-table-tree-depth: 0;
+  // G1: Textarea row bounds, authored inline from the minRows/maxRows props.
+  --fui-textarea-min-rows: 1;
+  --fui-textarea-max-rows: 9999;
+  // G2: Progress ring geometry, authored inline from geometry.ts (see Progress/index.tsx).
+  --fui-progress-diameter: var(--fui-raw-space-48);
+  --fui-progress-dash-full: 0;
+  --fui-progress-dash-quarter: 0;
 }

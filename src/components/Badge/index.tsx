@@ -8,19 +8,25 @@ import styles from "./Badge.module.scss";
  * Badge for status indicators, labels, and counts.
  * @see https://usefragments.com/components/badge
  */
+export type BadgeVariant = "soft" | "outline" | "ghost";
+export type BadgeTone = "neutral" | "accent" | "info" | "success" | "warning" | "danger";
+
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
-  /** Visual style variant.
+  /** Chrome family.
    *
-   * - `default` / semantic / `outline`: pill-shaped status badges for
-   *   tags, counts, or state.
-   * - `label`: hairline-bordered label on the shared control floor for
-   *   metadata pills inside dense dashboard rows. Pair with `dotColor`.
-   * - `dim`: transparent 32px filter-pill chrome used
-   *   for toolbar filter chips. Pair with `active` to mark the selected one.
-   * @default "default"
+   * - `soft` (default): tinted pill for tags, counts, or state.
+   * - `outline`: hairline-bordered, transparent — metadata pills inside
+   *   dense rows. Pair with `dotColor`.
+   * - `ghost`: transparent filter-pill chrome for toolbar filters. Pair with
+   *   `active` to mark the selected one.
+   * @default "soft"
    * @see https://usefragments.com/components/badge#variants */
-  variant?: "default" | "success" | "warning" | "error" | "info" | "outline" | "label" | "dim";
+  variant?: BadgeVariant;
+  /** Colour. `neutral` is the plain badge; the semantic tones paint the
+   * shared status ramp.
+   * @default "neutral" */
+  tone?: BadgeTone;
   /** Badge size.
    * @default "md" */
   size?: "sm" | "md" | "lg";
@@ -29,13 +35,13 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** Breathe the status dot, for a state that is still happening rather than
    * one that has settled. Respects `prefers-reduced-motion`. */
   dotPulse?: boolean;
-  /** Color for the leading status dot. Applies to `variant="label"` (and the
-   * generic `dot` prop). Accepts any CSS color including CSS custom properties. */
+  /** Color for the leading status dot. Accepts any CSS color including CSS
+   * custom properties. */
   dotColor?: string;
   /** Icon element rendered before the label */
   icon?: React.ReactNode;
-  /** Marks `variant="dim"` as the currently selected filter. Has no effect on
-   * other variants. */
+  /** Marks `variant="ghost"` as the currently selected filter. Has no effect
+   * on other variants. */
   active?: boolean;
   /** Makes the badge removable. Called when dismiss button is clicked. */
   onRemove?: () => void;
@@ -44,10 +50,20 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   announce?: boolean;
 }
 
+const TONE_CLASS: Record<BadgeTone, string | undefined> = {
+  neutral: undefined,
+  accent: styles.toneAccent,
+  info: styles.toneInfo,
+  success: styles.toneSuccess,
+  warning: styles.toneWarning,
+  danger: styles.toneDanger,
+};
+
 const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {
     children,
-    variant = "default",
+    variant = "soft",
+    tone = "neutral",
     size = "md",
     dot = false,
     dotPulse = false,
@@ -68,7 +84,8 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     styles.badge,
     styles[size],
     styles[variant],
-    active && variant === "dim" && styles.active,
+    TONE_CLASS[tone],
+    active && variant === "ghost" && styles.active,
     className,
   ]
     .filter(Boolean)
@@ -81,8 +98,8 @@ const BadgeRoot = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   // For status badges, include the status in the aria-label if not provided
   const effectiveAriaLabel =
     ariaLabel ||
-    (announce && variant !== "default" && variant !== "outline"
-      ? `${variant}: ${typeof children === "string" ? children : ""}`
+    (announce && tone !== "neutral"
+      ? `${tone}: ${typeof children === "string" ? children : ""}`
       : undefined);
 
   return (

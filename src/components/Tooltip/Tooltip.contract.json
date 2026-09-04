@@ -140,7 +140,7 @@
     {
       "name": "Positions",
       "description": "Four sides; it flips if the edge is too close.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Tooltip content=\"Top tooltip\" side=\"top\">\n    <Button variant=\"secondary\">Top</Button>\n  </Tooltip>\n  <Tooltip content=\"Bottom tooltip\" side=\"bottom\">\n    <Button variant=\"secondary\">Bottom</Button>\n  </Tooltip>\n  <Tooltip content=\"Left tooltip\" side=\"left\">\n    <Button variant=\"secondary\">Left</Button>\n  </Tooltip>\n  <Tooltip content=\"Right tooltip\" side=\"right\">\n    <Button variant=\"secondary\">Right</Button>\n  </Tooltip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Tooltip content=\"Top tooltip\" side=\"top\">\n    <Button variant=\"soft\">Top</Button>\n  </Tooltip>\n  <Tooltip content=\"Bottom tooltip\" side=\"bottom\">\n    <Button variant=\"soft\">Bottom</Button>\n  </Tooltip>\n  <Tooltip content=\"Left tooltip\" side=\"left\">\n    <Button variant=\"soft\">Left</Button>\n  </Tooltip>\n  <Tooltip content=\"Right tooltip\" side=\"right\">\n    <Button variant=\"soft\">Right</Button>\n  </Tooltip>\n</Stack>"
     },
     {
       "name": "With Shortcut",
@@ -150,12 +150,12 @@
     {
       "name": "No Arrow",
       "description": "Drops the pointer for tooltips packed into dense chrome.",
-      "code": "<Tooltip content=\"No arrow on this one\" arrow={false}>\n  <Button variant=\"secondary\">Arrowless</Button>\n</Tooltip>"
+      "code": "<Tooltip content=\"No arrow on this one\" arrow={false}>\n  <Button variant=\"soft\">Arrowless</Button>\n</Tooltip>"
     },
     {
       "name": "With Content Props",
       "description": "contentProps lands on the popup element itself.",
-      "code": "<Tooltip\n  content=\"Styled through contentProps\"\n  contentProps={{ id: 'custom-tooltip-popup' }}\n>\n  <Button variant=\"secondary\">Custom popup</Button>\n</Tooltip>"
+      "code": "<Tooltip\n  content=\"Styled through contentProps\"\n  contentProps={{ id: 'custom-tooltip-popup' }}\n>\n  <Button variant=\"soft\">Custom popup</Button>\n</Tooltip>"
     }
   ],
   "relations": [

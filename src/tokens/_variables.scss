@@ -40,7 +40,10 @@ $fui-base-unit: computed.$computed-base-unit !default;
 // Helper function to convert base units to rem
 // Usage: fui-unit(2) = 2 * 7px = 14px = 1rem (when base is 14px)
 @function fui-unit($multiplier) {
-  @return calc(#{$multiplier} * #{$fui-base-unit} / #{$fui-base-font-size} * 1rem);
+  @return calc(
+    #{$multiplier} * #{$fui-base-unit} / #{$fui-base-font-size} * 1rem *
+      var(--fui-scale, #{$fui-scale})
+  );
 }
 
 // --------------------------------------------
@@ -187,6 +190,16 @@ $fui-radius-md: computed.$computed-radius-md !default;
 $fui-radius-lg: computed.$computed-radius-lg !default;
 $fui-radius-xl: computed.$computed-radius-xl !default;
 $fui-radius-full: computed.$computed-radius-full !default;
+/// Square corners where a shape must not follow the radius profile (joined
+/// segments, skeleton blocks, code gutters).
+$fui-radius-none: 0px !default;
+
+// Radius nesting levels. A surface (l1) holds controls (l2) which hold marks
+// (l3); each level maps onto the active radius profile, so concentric corners
+// stay concentric when a consumer switches `sharp`, `rounded`, or `pill`.
+$fui-radius-l1: $fui-radius-lg !default;
+$fui-radius-l2: $fui-radius-md !default;
+$fui-radius-l3: $fui-radius-sm !default;
 
 // --------------------------------------------
 // Strokes + control tracks (mirror the measurement CSS vars for SCSS fallbacks)
@@ -194,6 +207,19 @@ $fui-radius-full: computed.$computed-radius-full !default;
 $fui-stroke-hairline: measurements.target-value("stroke", "hairline") !default;
 $fui-stroke-default: measurements.target-value("stroke", "default") !default;
 $fui-stroke-strong: measurements.target-value("stroke", "strong") !default;
+
+// The one disabled treatment: every disabled control fades by this amount.
+$fui-opacity-disabled: 0.5 !default;
+/// Dimmed-but-live: secondary glyphs, collapsed rails, decorative rules.
+$fui-opacity-muted: 0.7 !default;
+/// Barely-there: pulse rings and glow tracks that animate up from almost nothing.
+$fui-opacity-faint: 0.3 !default;
+/// Hairline drawn around a selected segmented item (transparent unless a theme wants it).
+$fui-control-selected-border: transparent !default;
+
+// Runtime multiplier on the base unit. `fui-unit()` reads it so a consumer can
+// scale the whole measurement system from one custom property.
+$fui-scale: 1 !default;
 $fui-control-track-micro: measurements.target-value("controlTrack", "micro") !default;
 $fui-control-track-sm: measurements.target-value("controlTrack", "sm") !default;
 $fui-control-track-md: measurements.target-value("controlTrack", "md") !default;
@@ -554,19 +580,19 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
 
     // Spacing (micro)
     --fui-space-px: #{$fui-space-px};
-    --fui-space-0-5: #{$fui-space-0-5};
-    --fui-space-0-75: #{$fui-space-0-75};
+    --fui-space-0-5: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-0-5});
+    --fui-space-0-75: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-0-75});
 
     // Spacing
-    --fui-space-1: #{$fui-space-1};
-    --fui-space-2: #{$fui-space-2};
-    --fui-space-3: #{$fui-space-3};
-    --fui-space-4: #{$fui-space-4};
-    --fui-space-5: #{$fui-space-5};
-    --fui-space-6: #{$fui-space-6};
-    --fui-space-8: #{$fui-space-8};
-    --fui-space-10: #{$fui-space-10};
-    --fui-space-12: #{$fui-space-12};
+    --fui-space-1: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-1});
+    --fui-space-2: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-2});
+    --fui-space-3: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-3});
+    --fui-space-4: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-4});
+    --fui-space-5: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-5});
+    --fui-space-6: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-6});
+    --fui-space-8: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-8});
+    --fui-space-10: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-10});
+    --fui-space-12: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-12});
 
     // Popup geometry — the numbers Select/Listbox/Combobox derive their scroll
     // viewport from. Override these and the peek height follows.
@@ -581,9 +607,17 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-radius-lg: #{$fui-radius-lg};
     --fui-radius-xl: #{$fui-radius-xl};
     --fui-radius-full: #{$fui-radius-full};
+    --fui-radius-none: #{$fui-radius-none};
+    --fui-radius-l1: var(--fui-radius-lg);
+    --fui-radius-l2: var(--fui-radius-md);
+    --fui-radius-l3: var(--fui-radius-sm);
 
     // Transitions
     --fui-transition-fast: #{$fui-transition-fast};
+    --fui-opacity-disabled: #{$fui-opacity-disabled};
+    --fui-opacity-muted: #{$fui-opacity-muted};
+    --fui-opacity-faint: #{$fui-opacity-faint};
+    --fui-scale: #{$fui-scale};
     --fui-transition-normal: #{$fui-transition-normal};
 
     // Motion primitives
@@ -721,6 +755,7 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     // pointer-down state; selected must remain visible without dominating its
     // surrounding surface.
     --fui-control-selected-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
+    --fui-control-selected-border: #{$fui-control-selected-border};
 
     // Checked/value controls carry product meaning, so they follow the accent
     // rather than button chrome. This keeps Checkbox, RadioGroup, and Switch
@@ -880,6 +915,8 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-sidebar-border: var(--fui-border-default);
     --fui-sidebar-item-color: var(--fui-text-secondary);
     --fui-sidebar-item-icon-color: var(--fui-text-tertiary);
+    --fui-sidebar-item-radius: var(--fui-radius-full);
+    --fui-sidebar-section-label-size: var(--fui-font-size-2xs);
     --fui-sidebar-item-hover-bg: var(--fui-bg-hover);
     --fui-sidebar-item-hover-color: var(--fui-text-primary);
     --fui-sidebar-item-active-bg: var(--fui-control-selected-bg);
@@ -938,12 +975,6 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-tabs-pills-bg: color-mix(in srgb, var(--fui-text-primary) 5%, transparent);
     --fui-tabs-pills-border: var(--fui-border-default);
     --fui-tabs-pill-hover-bg: transparent;
-    --fui-tabs-pill-active-bg: var(--fui-control-selected-bg);
-    --fui-tabs-pill-active-border: transparent;
-    --fui-tabs-pill-active-shadow: none;
-    --fui-toggle-group-selected-bg: var(--fui-control-selected-bg);
-    --fui-toggle-group-selected-border: transparent;
-    --fui-toggle-group-selected-shadow: none;
 
     // Header search is persistent shell chrome rather than a ghost action.
     // One surface step above divided card headers keeps this global affordance
@@ -1159,31 +1190,32 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   * {
     // Firefox
     scrollbar-width: thin;
-    scrollbar-color: var(--fui-scrollbar-thumb) var(--fui-scrollbar-track);
+    scrollbar-color: var(--fui-scrollbar-thumb, #{$fui-scrollbar-thumb})
+      var(--fui-scrollbar-track, #{$fui-scrollbar-track});
   }
 
   // Webkit browsers (Chrome, Safari, Edge)
   *::-webkit-scrollbar {
-    width: var(--fui-scrollbar-width);
-    height: var(--fui-scrollbar-width);
+    width: var(--fui-scrollbar-width, #{$fui-scrollbar-width});
+    height: var(--fui-scrollbar-width, #{$fui-scrollbar-width});
   }
 
   *::-webkit-scrollbar-track {
-    background: var(--fui-scrollbar-track);
-    border-radius: calc(var(--fui-scrollbar-width) / 2);
+    background: var(--fui-scrollbar-track, #{$fui-scrollbar-track});
+    border-radius: calc(var(--fui-scrollbar-width, #{$fui-scrollbar-width}) / 2);
   }
 
   *::-webkit-scrollbar-thumb {
-    background: var(--fui-scrollbar-thumb);
-    border-radius: calc(var(--fui-scrollbar-width) / 2);
+    background: var(--fui-scrollbar-thumb, #{$fui-scrollbar-thumb});
+    border-radius: calc(var(--fui-scrollbar-width, #{$fui-scrollbar-width}) / 2);
 
     &:hover {
-      background: var(--fui-scrollbar-thumb-hover);
+      background: var(--fui-scrollbar-thumb-hover, #{$fui-scrollbar-thumb-hover});
     }
   }
 
   *::-webkit-scrollbar-corner {
-    background: var(--fui-scrollbar-track);
+    background: var(--fui-scrollbar-track, #{$fui-scrollbar-track});
   }
 }
 
@@ -1205,10 +1237,7 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   --fui-field-selection-border: var(--fui-color-accent);
   --fui-form-group-border: var(--fui-text-primary);
   --fui-sidebar-item-active-border: var(--fui-text-primary);
-  --fui-tabs-pill-active-border: var(--fui-text-primary);
-  --fui-tabs-pill-active-shadow: inset 0 0 0 1px var(--fui-tabs-pill-active-border);
-  --fui-toggle-group-selected-border: var(--fui-text-primary);
-  --fui-toggle-group-selected-shadow: inset 0 0 0 1px var(--fui-toggle-group-selected-border);
+  --fui-control-selected-border: var(--fui-text-primary);
 }
 
 // Private mixin for dark mode token values

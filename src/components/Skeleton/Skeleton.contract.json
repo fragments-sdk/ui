@@ -8,7 +8,7 @@
   "sourcePath": "src/components/Skeleton/index.tsx",
   "exportName": "Skeleton",
   "propsSummary": [
-    "variant: text|heading|avatar|button|input|rect (default: rect)",
+    "shape: text|heading|avatar|button|input|rect (default: rect)",
     "size: sm|md|lg (default: md)",
     "width: union",
     "height: union",
@@ -17,16 +17,16 @@
     "static: boolean (default: false)"
   ],
   "props": {
-    "variant": {
+    "shape": {
       "type": "enum",
-      "description": "Semantic variant that auto-sizes",
+      "description": "Semantic shape that auto-sizes",
       "default": "rect",
       "required": false,
       "values": ["text", "heading", "avatar", "button", "input", "rect"]
     },
     "size": {
       "type": "enum",
-      "description": "Size for avatar/button variants",
+      "description": "Size for avatar/button shapes",
       "default": "md",
       "required": false,
       "values": ["sm", "md", "lg"]
@@ -73,7 +73,7 @@
     ],
     "guidelines": [
       "Match the shape and size of the real content",
-      "Prefer the text, heading, and avatar variants over hand-rolled boxes",
+      "Prefer the text, heading, and avatar shapes over hand-rolled boxes",
       "Give Skeleton.Text an ancestor with a real width — percentage lines collapse without one",
       "A few big shapes beat many small ones",
       "Skeleton and Skeleton.Text forward id, aria-*, data-* and handlers"
@@ -96,9 +96,9 @@
       "code": "<div style={{ width: 260 }}>\n  <Skeleton.Text lines={3} />\n</div>"
     },
     {
-      "name": "Semantic Variants",
+      "name": "Semantic Shapes",
       "description": "Heading sits taller than the body lines under it.",
-      "code": "<div\n  style={{\n    width: 260,\n    display: 'flex',\n    flexDirection: 'column',\n    gap: 'var(--fui-space-2)',\n  }}\n>\n  <Skeleton variant=\"heading\" width={200} />\n  <Skeleton variant=\"text\" width=\"100%\" />\n  <Skeleton variant=\"text\" width=\"80%\" />\n</div>"
+      "code": "<div\n  style={{\n    width: 260,\n    display: 'flex',\n    flexDirection: 'column',\n    gap: 'var(--fui-space-2)',\n  }}\n>\n  <Skeleton shape=\"heading\" width={200} />\n  <Skeleton shape=\"text\" width=\"100%\" />\n  <Skeleton shape=\"text\" width=\"80%\" />\n</div>"
     },
     {
       "name": "Avatar Skeleton",
@@ -108,7 +108,7 @@
     {
       "name": "Card Skeleton",
       "description": "Media, title, then body — the card before it loads.",
-      "code": "<div\n  style={{\n    width: 300,\n    padding: 'var(--fui-space-2)',\n    border: '1px solid var(--fui-border)',\n    borderRadius: 'var(--fui-radius-lg)',\n  }}\n>\n  <Skeleton variant=\"rect\" height={120} radius=\"md\" />\n  <div style={{ marginTop: 'var(--fui-space-2)' }}>\n    <Skeleton variant=\"heading\" width=\"60%\" />\n  </div>\n  <div style={{ marginTop: 'var(--fui-space-1)' }}>\n    <Skeleton.Text lines={2} />\n  </div>\n</div>"
+      "code": "<div\n  style={{\n    width: 300,\n    padding: 'var(--fui-space-2)',\n    border: '1px solid var(--fui-border)',\n    borderRadius: 'var(--fui-radius-lg)',\n  }}\n>\n  <Skeleton shape=\"rect\" height={120} radius=\"md\" />\n  <div style={{ marginTop: 'var(--fui-space-2)' }}>\n    <Skeleton shape=\"heading\" width=\"60%\" />\n  </div>\n  <div style={{ marginTop: 'var(--fui-space-1)' }}>\n    <Skeleton.Text lines={2} />\n  </div>\n</div>"
     }
   ],
   "relations": [
@@ -120,7 +120,7 @@
   ],
   "contract": {
     "propsSummary": [
-      "variant: text|heading|avatar|button|input|rect",
+      "shape: text|heading|avatar|button|input|rect",
       "size: sm|md|lg (for avatar/button)",
       "width/height: custom dimensions",
       "fill: boolean - fill parent",

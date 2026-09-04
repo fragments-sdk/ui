@@ -1,27 +1,35 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
+
+// Two axes, one recipe. `tone` publishes the colour channels (fill, ink, wash,
+// line); `variant` decides which channel paints which slot. Every channel and
+// every slot carries a neutral fallback so a bare `.button` still renders.
 
 .button {
   @include button-reset;
   @include interactive-base;
   @include action.base;
+  @include high-contrast-outline;
 
+  // Slots the variant paints.
   --_button-bg: transparent;
   --_button-bg-hover: var(--fui-bg-hover, #{$fui-bg-hover});
   --_button-bg-active: var(--fui-bg-active, #{$fui-bg-active});
   --_button-border: transparent;
-  --_button-border-hover: var(--_button-border);
+  --_button-border-hover: var(--_button-border, transparent);
   --_button-color: var(--fui-text-primary, #{$fui-text-primary});
   --_button-shadow: none;
-  --_button-shadow-hover: var(--_button-shadow);
-  --_button-shadow-active: var(--_button-shadow);
+  --_button-shadow-hover: var(--_button-shadow, none);
+  --_button-shadow-active: var(--_button-shadow, none);
 
-  border: var(--fui-stroke-hairline, 1px) solid var(--_button-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--_button-border, transparent);
   border-radius: var(--fui-button-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-  background: var(--_button-bg);
-  box-shadow: var(--_button-shadow);
-  color: var(--_button-color);
+  background: var(--_button-bg, transparent);
+  box-shadow: var(--_button-shadow, none);
+  color: var(--_button-color, var(--fui-text-primary, #{$fui-text-primary}));
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
   white-space: nowrap;
 
@@ -34,25 +42,29 @@
   }
 
   &:hover:not(:disabled):not([data-disabled]) {
-    border-color: var(--_button-border-hover);
-    background: var(--_button-bg-hover);
-    box-shadow: var(--_button-shadow-hover);
+    border-color: var(--_button-border-hover, transparent);
+    background: var(--_button-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
+    box-shadow: var(--_button-shadow-hover, none);
   }
 
   &:active:not(:disabled):not([data-disabled]),
   &[data-pressed] {
-    border-color: var(--_button-border-hover);
-    background: var(--_button-bg-active);
-    box-shadow: var(--_button-shadow-active);
+    border-color: var(--_button-border-hover, transparent);
+    background: var(--_button-bg-active, var(--fui-bg-active, #{$fui-bg-active}));
+    box-shadow: var(--_button-shadow-active, none);
   }
 
   &:focus-visible {
     box-shadow:
-      0 0 0 1px
+      0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
         color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 34%, transparent),
-      0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
+      0 0 0
+        calc(
+          var(--fui-focus-ring-width, #{$fui-focus-ring-width}) +
+            var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+        )
         color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 14%, transparent),
-      var(--_button-shadow);
+      var(--_button-shadow, none);
   }
 
   &:disabled,
@@ -61,13 +73,9 @@
   }
 }
 
-.xs {
-  @include action.size("micro");
-
-  > svg {
-    @include action.glyph("micro");
-  }
-}
+// ============================================
+// Sizes
+// ============================================
 
 .sm {
   @include action.size("sm");
@@ -93,19 +101,9 @@
   }
 }
 
-// ============================================
-// Optical alignment: icon + text combinations
-// ============================================
-// Icons (SVGs) have built-in whitespace that makes symmetric padding look
-// uneven. When an icon leads or trails text, reduce padding on the icon
-// side so the content appears optically centered.
-//
-.xs:not(.icon):has(> svg:first-child:not(:last-child)) {
-  padding-inline-start: action.icon-side-inset("micro");
-}
-.xs:not(.icon):has(> svg:last-child:not(:first-child)) {
-  padding-inline-end: action.icon-side-inset("micro");
-}
+// Optical alignment: icons (SVGs) carry built-in whitespace that makes
+// symmetric padding look uneven. When an icon leads or trails text, reduce
+// padding on the icon side so the content appears optically centered.
 .sm:not(.icon):has(> svg:first-child:not(:last-child)) {
   padding-inline-start: action.icon-side-inset("sm");
 }
@@ -125,152 +123,239 @@
   padding-inline-end: action.icon-side-inset("lg");
 }
 
-// Variants
-.primary {
-  --_button-bg: var(--fui-button-primary-bg);
-  --_button-bg-hover: var(--fui-button-primary-bg-hover);
-  --_button-bg-active: var(--fui-button-primary-bg-active);
-  --_button-border: var(--fui-button-primary-border);
-  --_button-border-hover: var(--fui-button-primary-border-hover);
-  --_button-color: var(
-    --fui-button-primary-color,
-    var(--fui-color-on-accent, #{$fui-color-on-accent})
+// ============================================
+// Tones — colour channels
+// ============================================
+// fill / on-fill / fill-line → the solid variant
+// ink                       → foreground of soft, outline, ghost, link
+// soft                      → the tinted fill of the soft variant
+// wash                      → hover/active fill of outline, ghost, link
+// line                      → the outline border
+
+.toneNeutral {
+  --_tone-fill: var(--fui-bg-inverse, #{$fui-bg-inverse});
+  --_tone-fill-hover: color-mix(
+    in srgb,
+    var(--fui-bg-inverse, #{$fui-bg-inverse}) 88%,
+    var(--fui-text-inverse, #{$fui-text-inverse})
   );
-  --_button-shadow: var(--fui-button-primary-shadow);
-  --_button-shadow-hover: var(--fui-button-primary-shadow);
-  --_button-shadow-active: var(--fui-button-primary-shadow-active);
+  --_tone-fill-active: color-mix(
+    in srgb,
+    var(--fui-bg-inverse, #{$fui-bg-inverse}) 80%,
+    var(--fui-text-inverse, #{$fui-text-inverse})
+  );
+  --_tone-fill-line: var(--_tone-fill, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_tone-fill-line-hover: var(--_tone-fill-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_tone-on-fill: var(--fui-text-inverse, #{$fui-text-inverse});
+  --_tone-ink: var(--fui-button-neutral-color, var(--fui-text-primary, #{$fui-text-primary}));
+  --_tone-soft: var(--fui-button-neutral-bg, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+  --_tone-soft-hover: var(--fui-button-neutral-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
+  --_tone-soft-active: var(--fui-button-neutral-bg-active, var(--fui-bg-active, #{$fui-bg-active}));
+  --_tone-wash: var(--fui-bg-hover, #{$fui-bg-hover});
+  --_tone-wash-active: var(--fui-bg-active, #{$fui-bg-active});
+  --_tone-line: var(--fui-button-neutral-border, var(--fui-border-strong, #{$fui-border-strong}));
+  --_tone-line-hover: var(
+    --fui-button-neutral-border-hover,
+    var(--fui-border-strong, #{$fui-border-strong})
+  );
 }
 
-.secondary {
-  --_button-bg: var(--fui-button-neutral-bg);
-  --_button-bg-hover: var(--fui-button-neutral-bg-hover);
-  --_button-bg-active: var(--fui-button-neutral-bg-active);
-  // Secondary hierarchy comes from its fill. The transparent border preserves
-  // control geometry while leaving visible neutral borders to `.outlined`.
+// Accent solid reads the primary-chrome tokens so the ink-first default and a
+// consumer brand seed both paint the primary action (see `_variables.scss`).
+.toneAccent {
+  --_tone-fill: var(--fui-button-primary-bg, var(--fui-color-accent, #{$fui-color-accent}));
+  --_tone-fill-hover: var(
+    --fui-button-primary-bg-hover,
+    var(--fui-color-accent-hover, #{$fui-color-accent-hover})
+  );
+  --_tone-fill-active: var(
+    --fui-button-primary-bg-active,
+    var(--fui-color-accent-active, #{$fui-color-accent-active})
+  );
+  --_tone-fill-line: var(--fui-button-primary-border, var(--fui-color-accent, #{$fui-color-accent}));
+  --_tone-fill-line-hover: var(
+    --fui-button-primary-border-hover,
+    var(--fui-color-accent-hover, #{$fui-color-accent-hover})
+  );
+  --_tone-on-fill: var(--fui-button-primary-color, var(--fui-color-on-accent, #{$fui-color-on-accent}));
+  --_tone-ink: var(--fui-color-accent, #{$fui-color-accent});
+  --_tone-soft: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 12%, transparent);
+  --_tone-soft-hover: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 18%, transparent);
+  --_tone-soft-active: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 24%, transparent);
+  --_tone-wash: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 10%, transparent);
+  --_tone-wash-active: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 18%, transparent);
+  --_tone-line: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 48%, transparent);
+  --_tone-line-hover: var(--fui-color-accent, #{$fui-color-accent});
+}
+
+// Semantic tones share one derivation: the fill is the seed, hover and active
+// lean toward the tone's ink (darker on paper, lighter on charcoal), the
+// tinted surfaces come from the `-bg` / `-text` / `-border` ramp.
+@mixin _semantic-tone($tone, $seed, $bg, $text, $border) {
+  --_tone-fill: var(--fui-color-#{$tone}, #{$seed});
+  --_tone-fill-hover: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}, #{$seed}) 88%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-fill-active: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}, #{$seed}) 80%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-fill-line: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}, #{$seed}) 76%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-fill-line-hover: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}, #{$seed}) 62%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-on-fill: color-mix(in srgb, var(--fui-color-#{$tone}, #{$seed}) 8%, white);
+  --_tone-ink: var(--fui-color-#{$tone}-text, #{$text});
+  --_tone-soft: var(--fui-color-#{$tone}-bg, #{$bg});
+  --_tone-soft-hover: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}-bg, #{$bg}) 90%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-soft-active: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}-bg, #{$bg}) 80%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-wash: var(--fui-color-#{$tone}-bg, #{$bg});
+  --_tone-wash-active: color-mix(
+    in srgb,
+    var(--fui-color-#{$tone}-bg, #{$bg}) 85%,
+    var(--fui-color-#{$tone}-text, #{$text})
+  );
+  --_tone-line: var(--fui-color-#{$tone}-border, #{$border});
+  --_tone-line-hover: var(--fui-color-#{$tone}-text, #{$text});
+}
+
+.toneInfo {
+  @include _semantic-tone(
+    "info",
+    $fui-color-info,
+    $fui-color-info-bg,
+    $fui-color-info-text,
+    $fui-color-info-border
+  );
+}
+
+.toneSuccess {
+  @include _semantic-tone(
+    "success",
+    $fui-color-success,
+    $fui-color-success-bg,
+    $fui-color-success-text,
+    $fui-color-success-border
+  );
+}
+
+.toneWarning {
+  @include _semantic-tone(
+    "warning",
+    $fui-color-warning,
+    $fui-color-warning-bg,
+    $fui-color-warning-text,
+    $fui-color-warning-border
+  );
+}
+
+.toneDanger {
+  @include _semantic-tone(
+    "danger",
+    $fui-color-danger,
+    $fui-color-danger-bg,
+    $fui-color-danger-text,
+    $fui-color-danger-border
+  );
+}
+
+// ============================================
+// Variants — which channel paints which slot
+// ============================================
+
+.solid {
+  --_button-bg: var(--_tone-fill, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_button-bg-hover: var(--_tone-fill-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_button-bg-active: var(--_tone-fill-active, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_button-border: var(--_tone-fill-line, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_button-border-hover: var(--_tone-fill-line-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+  --_button-color: var(--_tone-on-fill, var(--fui-text-inverse, #{$fui-text-inverse}));
+  --_button-shadow: var(--fui-button-primary-shadow, none);
+  --_button-shadow-hover: var(--fui-button-primary-shadow, none);
+  --_button-shadow-active: var(--fui-button-primary-shadow-active, none);
+}
+
+// Soft hierarchy comes from its fill. The transparent border preserves
+// control geometry while leaving visible borders to `.outline`.
+.soft {
+  --_button-bg: var(--_tone-soft, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+  --_button-bg-hover: var(--_tone-soft-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
+  --_button-bg-active: var(--_tone-soft-active, var(--fui-bg-active, #{$fui-bg-active}));
   --_button-border: transparent;
   --_button-border-hover: transparent;
-  --_button-color: var(--fui-button-neutral-color, var(--fui-text-primary, #{$fui-text-primary}));
-  --_button-shadow: var(--fui-button-neutral-shadow);
-  --_button-shadow-hover: var(--fui-button-neutral-shadow);
-  --_button-shadow-active: var(--fui-button-neutral-shadow-active);
+  --_button-color: var(--_tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
+  --_button-shadow: var(--fui-button-neutral-shadow, none);
+  --_button-shadow-hover: var(--fui-button-neutral-shadow, none);
+  --_button-shadow-active: var(--fui-button-neutral-shadow-active, none);
+}
+
+.outline {
+  --_button-bg: color-mix(in srgb, var(--fui-bg-elevated, #{$fui-bg-elevated}) 42%, transparent);
+  --_button-bg-hover: var(--_tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
+  --_button-bg-active: var(--_tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
+  --_button-border: var(--_tone-line, var(--fui-border-strong, #{$fui-border-strong}));
+  --_button-border-hover: var(--_tone-line-hover, var(--fui-border-strong, #{$fui-border-strong}));
+  --_button-color: var(--_tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
+  --_button-shadow: var(--fui-button-outlined-shadow, #{$fui-button-outlined-shadow});
+  --_button-shadow-hover: var(--fui-button-neutral-shadow, none);
+  --_button-shadow-active: var(--fui-button-neutral-shadow-active, none);
 }
 
 .ghost {
   --_button-bg: transparent;
-  --_button-bg-hover: var(--fui-bg-hover, #{$fui-bg-hover});
-  --_button-bg-active: var(--fui-bg-active, #{$fui-bg-active});
+  --_button-bg-hover: var(--_tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
+  --_button-bg-active: var(--_tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
   --_button-border: transparent;
   --_button-border-hover: transparent;
-  --_button-color: var(--fui-text-primary, #{$fui-text-primary});
+  --_button-color: var(--_tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
   --_button-shadow: none;
   --_button-shadow-hover: none;
   --_button-shadow-active: none;
 }
 
-// Link: accent-coloured, transparent background. For tertiary CTAs
-// ("View all →", "Learn more →") that should feel linkish but live in
-// button contexts. Differs from ghost (text-primary) by using accent.
+// Link: reads like a link, behaves like an action. Same open chrome as ghost,
+// but it defaults to the accent tone and underlines on hover so a tertiary
+// CTA ("View all →") is never mistaken for a toolbar ghost.
 .link {
   --_button-bg: transparent;
-  --_button-bg-hover: color-mix(
-    in srgb,
-    var(--fui-color-accent, #{$fui-color-accent}) 10%,
-    transparent
-  );
-  --_button-bg-active: color-mix(
-    in srgb,
-    var(--fui-color-accent, #{$fui-color-accent}) 18%,
-    transparent
-  );
+  --_button-bg-hover: var(--_tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
+  --_button-bg-active: var(--_tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
   --_button-border: transparent;
   --_button-border-hover: transparent;
-  --_button-color: var(--fui-color-accent, #{$fui-color-accent});
-  --_button-shadow: none;
-  --_button-shadow-hover: none;
-  --_button-shadow-active: none;
-}
-
-// Quiet: a button that reads as text. The neutral sibling of `link` — nothing
-// but the foreground changes on hover, because in a meta line, a breadcrumb or
-// a footnote a box would be the loudest thing on the row for the least
-// important one. It is also the one variant that drops the interactive height
-// floor: there is no box to hold open, so it sits on the line it is in and
-// takes its hit target from the text and the row's own padding. That makes it
-// the wrong choice for a standalone action — reach for `ghost` there.
-.quiet {
-  @include action.inline;
-
-  --_button-bg: transparent;
-  --_button-bg-hover: transparent;
-  --_button-bg-active: transparent;
-  --_button-border: transparent;
-  --_button-border-hover: transparent;
-  --_button-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  --_button-color: var(--_tone-ink, var(--fui-color-accent, #{$fui-color-accent}));
   --_button-shadow: none;
   --_button-shadow-hover: none;
   --_button-shadow-active: none;
 
-  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-
-  // Only the custom property is restated: `color` reads it on .button, so the
-  // foreground follows without a second `color` declaration to keep in step.
   &:hover:not(:disabled):not([data-disabled]) {
-    --_button-color: var(--fui-text-secondary, #{$fui-text-secondary});
+    text-decoration: underline;
+    text-underline-offset: var(--fui-raw-space-2, #{measurements.raw-space(2)});
   }
-
-  &:active:not(:disabled):not([data-disabled]),
-  &[data-pressed] {
-    --_button-color: var(--fui-text-primary, #{$fui-text-primary});
-  }
-}
-
-.danger {
-  // Flat danger fill — no gradient. Hover/active darken the solid colour.
-  --_button-bg: var(--fui-color-danger, #{$fui-color-danger});
-  --_button-bg-hover: color-mix(
-    in srgb,
-    var(--fui-color-danger, #{$fui-color-danger}) 88%,
-    black 12%
-  );
-  --_button-bg-active: color-mix(
-    in srgb,
-    var(--fui-color-danger, #{$fui-color-danger}) 80%,
-    black 20%
-  );
-  --_button-border: color-mix(
-    in srgb,
-    var(--fui-color-danger, #{$fui-color-danger}) 76%,
-    black 24%
-  );
-  --_button-border-hover: color-mix(
-    in srgb,
-    var(--fui-color-danger, #{$fui-color-danger}) 62%,
-    black 38%
-  );
-  --_button-color: color-mix(in srgb, var(--fui-color-danger, #{$fui-color-danger}) 8%, white);
-  --_button-shadow: var(--fui-button-primary-shadow);
-  --_button-shadow-hover: var(--fui-button-primary-shadow);
-  --_button-shadow-active: var(--fui-button-primary-shadow-active);
-}
-
-.outlined {
-  --_button-bg: color-mix(in srgb, var(--fui-bg-elevated, #{$fui-bg-elevated}) 42%, transparent);
-  --_button-bg-hover: var(--fui-button-neutral-bg-hover);
-  --_button-bg-active: var(--fui-button-neutral-bg-active);
-  --_button-border: var(--fui-button-neutral-border);
-  --_button-border-hover: var(--fui-button-neutral-border-hover);
-  --_button-color: var(--fui-button-neutral-color, var(--fui-text-primary, #{$fui-text-primary}));
-  --_button-shadow: var(--fui-button-outlined-shadow, #{$fui-button-outlined-shadow});
-  --_button-shadow-hover: var(--fui-button-neutral-shadow);
-  --_button-shadow-active: var(--fui-button-neutral-shadow-active);
 }
 
 // Icon-only button (square aspect ratio)
 .icon {
-  inline-size: var(--_fui-action-track);
-  block-size: var(--_fui-action-track);
-  min-block-size: var(--_fui-action-track);
-  padding-inline: 0;
+  inline-size: var(--_fui-action-track, #{action.track("md")});
+  block-size: var(--_fui-action-track, #{action.track("md")});
+  min-block-size: var(--_fui-action-track, #{action.track("md")});
+  padding-inline: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
 // Full width
@@ -279,47 +364,11 @@
 }
 
 // ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-// ============================================
 // Accessibility: Reduced Motion
 // ============================================
 
 @media (prefers-reduced-motion: reduce) {
   .button {
     transition: none;
-  }
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .secondary {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  .outlined {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  .ghost {
-    border-width: var(--fui-stroke-default, 2px);
-
-    &:hover:not(:disabled) {
-      border-color: var(--fui-text-primary, $fui-text-primary);
-    }
-  }
-
-  .link {
-    border-width: var(--fui-stroke-default, 2px);
-
-    &:hover:not(:disabled) {
-      border-color: var(--fui-color-accent, $fui-color-accent);
-    }
   }
 }

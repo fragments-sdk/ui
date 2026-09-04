@@ -1,13 +1,14 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
 
 .list {
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
-// Variants
+// Markers
 .none {
   @include prose.list("none");
 }
@@ -24,7 +25,7 @@
   @include prose.list("icon");
 }
 
-// Gap variants
+// Gap
 .gap-none {
   row-gap: layout.gap("none");
 }
@@ -45,6 +46,10 @@
   row-gap: layout.gap("lg");
 }
 
+.gap-xl {
+  row-gap: layout.gap("xl");
+}
+
 // List item
 .item {
   color: var(--fui-text-primary, $fui-text-primary);
@@ -58,7 +63,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-inline-size: var(--fui-raw-space-12, 12px);
+  min-inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
 }
 
 .itemContent {

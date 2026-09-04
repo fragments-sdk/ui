@@ -11,7 +11,7 @@ import { Markdown } from '../Markdown';
 // ============================================
 
 export type MessageRole = 'user' | 'assistant' | 'system';
-export type MessageStatus = 'sending' | 'streaming' | 'complete' | 'error';
+export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
 
 export interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Message role determines styling and alignment */
@@ -264,7 +264,7 @@ function MessageRoot({
     styles.message,
     styles[role],
     status === 'error' && styles.error,
-    status === 'sending' && styles.sending,
+    status === 'pending' && styles.pending,
     !showAvatar && styles.withoutAvatar,
     className,
   ].filter(Boolean).join(' ');

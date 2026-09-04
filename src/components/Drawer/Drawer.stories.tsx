@@ -56,9 +56,9 @@ export const Default: Story = {
         </Drawer.Body>
         <Drawer.Footer>
           <Drawer.Close asChild>
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="soft">Cancel</Button>
           </Drawer.Close>
-          <Button variant="primary">Save</Button>
+          <Button variant="solid">Save</Button>
         </Drawer.Footer>
       </Drawer.Content>
     </Drawer>
@@ -69,7 +69,7 @@ export const LeftSide: Story = {
   render: () => (
     <Drawer>
       <Drawer.Trigger asChild>
-        <Button variant="secondary">Open Left</Button>
+        <Button variant="soft">Open Left</Button>
       </Drawer.Trigger>
       <Drawer.Content side="left">
         <Drawer.Close />
@@ -88,9 +88,9 @@ export const BottomSheet: Story = {
   render: () => (
     <Drawer>
       <Drawer.Trigger asChild>
-        <Button variant="secondary">Open Bottom Sheet</Button>
+        <Button variant="soft">Open Bottom Sheet</Button>
       </Drawer.Trigger>
-      <Drawer.Content side="bottom" size="sm">
+      <Drawer.Content side="bottom" width="sm">
         <Drawer.Header>
           <Drawer.Title>Actions</Drawer.Title>
         </Drawer.Header>
@@ -108,7 +108,7 @@ export const NonModal: Story = {
       <Drawer.Trigger asChild>
         <Button>Open Non-Modal</Button>
       </Drawer.Trigger>
-      <Drawer.Content side="right" size="md">
+      <Drawer.Content side="right" width="md">
         <Drawer.Close />
         <Drawer.Header>
           <Drawer.Title>Details</Drawer.Title>

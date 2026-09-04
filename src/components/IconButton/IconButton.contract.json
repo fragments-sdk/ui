@@ -9,7 +9,7 @@
   "exportName": "IconButton",
   "propsSummary": [
     "children: node (required)",
-    "variant: ghost|subtle|outlined (default: ghost)",
+    "variant: ghost|soft|outline (default: ghost)",
     "size: sm|md|lg (default: md)",
     "pressed: boolean",
     "aria-label: string",
@@ -26,7 +26,7 @@
       "description": "Visual treatment for the icon-only action",
       "default": "ghost",
       "required": false,
-      "values": ["ghost", "subtle", "outlined"]
+      "values": ["ghost", "soft", "outline"]
     },
     "size": {
       "type": "enum",
@@ -64,7 +64,7 @@
     ],
     "guidelines": [
       "aria-label or aria-labelledby is required, every time",
-      "ghost for ordinary toolbar actions; outlined when it needs separation",
+      "ghost for ordinary toolbar actions; outline when it needs separation",
       "pressed only for real toggle state, not selection",
       "Keep icon meaning obvious, or pair it with a Tooltip"
     ],
@@ -83,22 +83,22 @@
     {
       "name": "Variants",
       "description": "Rising chrome: transparent, tinted, then bordered.",
-      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"ghost\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"subtle\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outlined\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"ghost\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"soft\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outline\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
     },
     {
       "name": "Sizes",
       "description": "sm for table rows, lg for primary chrome.",
-      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"outlined\" size=\"sm\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outlined\" size=\"md\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outlined\" size=\"lg\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"outline\" size=\"sm\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outline\" size=\"md\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"outline\" size=\"lg\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
     },
     {
       "name": "Pressed state",
       "description": "Toggle that stays on, reported through aria-pressed.",
-      "code": "import { PushPin as PinIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Pin item\" variant=\"outlined\">\n    <PinIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Unpin item\" variant=\"outlined\" pressed>\n    <PinIcon aria-hidden />\n  </IconButton>\n</Stack>"
+      "code": "import { PushPin as PinIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Pin item\" variant=\"outline\">\n    <PinIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Unpin item\" variant=\"outline\" pressed>\n    <PinIcon aria-hidden />\n  </IconButton>\n</Stack>"
     },
     {
       "name": "Disabled",
       "description": "Unavailable action, out of the tab order.",
-      "code": "import { Trash as TrashIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Delete row\" variant=\"outlined\" disabled>\n  <TrashIcon aria-hidden />\n</IconButton>"
+      "code": "import { Trash as TrashIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Delete row\" variant=\"outline\" disabled>\n  <TrashIcon aria-hidden />\n</IconButton>"
     }
   ],
   "relations": [
@@ -116,7 +116,7 @@
   "contract": {
     "propsSummary": [
       "children: ReactNode - icon element (required)",
-      "variant: ghost|subtle|outlined - visual treatment",
+      "variant: ghost|soft|outline - visual treatment",
       "size: sm|md|lg - square control size",
       "pressed: boolean - toggle state exposed with aria-pressed",
       "aria-label or aria-labelledby - required accessible name"

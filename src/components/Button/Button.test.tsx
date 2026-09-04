@@ -35,12 +35,67 @@ describe("Button", () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it("applies variant classes", () => {
-    const { rerender } = render(<Button variant="primary">Btn</Button>);
-    expect(screen.getByRole("button")).toHaveClass("primary");
+  it("defaults to the solid variant with the accent tone", () => {
+    render(<Button>Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("solid", "toneAccent");
+  });
 
-    rerender(<Button variant="danger">Btn</Button>);
-    expect(screen.getByRole("button")).toHaveClass("danger");
+  it("applies variant classes", () => {
+    const { rerender } = render(<Button variant="solid">Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("solid");
+
+    rerender(<Button variant="soft">Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("soft");
+
+    rerender(<Button variant="outline">Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("outline");
+
+    rerender(<Button variant="ghost">Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("ghost");
+
+    rerender(<Button variant="link">Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("link");
+  });
+
+  it("defaults the tone per variant (UIR-D17)", () => {
+    const { rerender } = render(<Button variant="link">Btn</Button>);
+    expect(screen.getByRole("button")).toHaveClass("toneAccent");
+
+    for (const variant of ["soft", "outline", "ghost"] as const) {
+      rerender(<Button variant={variant}>Btn</Button>);
+      expect(screen.getByRole("button")).toHaveClass("toneNeutral");
+      expect(screen.getByRole("button")).not.toHaveClass("toneAccent");
+    }
+  });
+
+  it("applies an explicit tone on any variant", () => {
+    const { rerender } = render(
+      <Button variant="solid" tone="danger">
+        Btn
+      </Button>
+    );
+    expect(screen.getByRole("button")).toHaveClass("solid", "toneDanger");
+
+    rerender(
+      <Button variant="ghost" tone="success">
+        Btn
+      </Button>
+    );
+    expect(screen.getByRole("button")).toHaveClass("ghost", "toneSuccess");
+
+    rerender(
+      <Button variant="outline" tone="warning">
+        Btn
+      </Button>
+    );
+    expect(screen.getByRole("button")).toHaveClass("outline", "toneWarning");
+
+    rerender(
+      <Button variant="soft" tone="info">
+        Btn
+      </Button>
+    );
+    expect(screen.getByRole("button")).toHaveClass("soft", "toneInfo");
   });
 
   it("keeps every boxed button treatment flat and the default danger seed muted", () => {
@@ -59,32 +114,27 @@ describe("Button", () => {
     expect(seedStyles).toContain("$fui-info: #3d7aa8 !default");
   });
 
-  it("keeps secondary fill-led and reserves a visible neutral border for outlined", () => {
-    const secondaryStyles = buttonStyles.slice(
-      buttonStyles.indexOf(".secondary {"),
+  it("keeps soft fill-led and reserves the visible border for outline", () => {
+    const softStyles = buttonStyles.slice(
+      buttonStyles.indexOf(".soft {"),
+      buttonStyles.indexOf(".outline {")
+    );
+    const outlineStyles = buttonStyles.slice(
+      buttonStyles.indexOf(".outline {"),
       buttonStyles.indexOf(".ghost {")
     );
-    const outlinedStyles = buttonStyles.slice(
-      buttonStyles.indexOf(".outlined {"),
-      buttonStyles.indexOf("// Icon-only button")
-    );
 
-    expect(secondaryStyles).toContain("--_button-border: transparent");
-    expect(secondaryStyles).toContain("--_button-border-hover: transparent");
-    expect(outlinedStyles).toContain("--_button-border: var(--fui-button-neutral-border)");
-    expect(outlinedStyles).toContain(
-      "--_button-border-hover: var(--fui-button-neutral-border-hover)"
-    );
+    expect(softStyles).toContain("--_button-border: transparent");
+    expect(softStyles).toContain("--_button-border-hover: transparent");
+    expect(outlineStyles).toContain("--_button-border: var(--_tone-line");
+    expect(outlineStyles).toContain("--_button-border-hover: var(--_tone-line-hover");
+    expect(buttonStyles).toContain("--_tone-line: var(--fui-button-neutral-border");
   });
 
-  it("applies link variant class", () => {
-    render(<Button variant="link">View all</Button>);
-    expect(screen.getByRole("button")).toHaveClass("link");
-  });
-
-  it("applies quiet variant class", () => {
-    render(<Button variant="quiet">main</Button>);
-    expect(screen.getByRole("button")).toHaveClass("quiet");
+  it("carries no hand-written contrast or disabled literals", () => {
+    expect(buttonStyles).not.toContain("prefers-contrast");
+    expect(buttonStyles).toContain("@include high-contrast-outline");
+    expect(buttonStyles).not.toMatch(/opacity:\s*0\.\d/);
   });
 
   it("applies size classes", () => {
@@ -135,21 +185,16 @@ describe("Button", () => {
     expect(button).not.toHaveClass("sm");
   });
 
-  it("applies xs size class for inline row actions", () => {
-    render(<Button size="xs">Btn</Button>);
-    expect(screen.getByRole("button")).toHaveClass("xs");
-  });
-
-  it("combines xs size with icon variant for compact row actions", () => {
+  it("combines the small size with an icon-only outline for compact row actions", () => {
     render(
-      <Button variant="icon" size="xs" aria-label="Dismiss">
+      <Button icon variant="outline" size="sm" aria-label="Dismiss">
         <span aria-hidden>×</span>
       </Button>
     );
     const button = screen.getByRole("button", { name: "Dismiss" });
-    expect(button).toHaveClass("outlined");
+    expect(button).toHaveClass("outline");
     expect(button).toHaveClass("icon");
-    expect(button).toHaveClass("xs");
+    expect(button).toHaveClass("sm");
   });
 
   it('renders as an anchor when as="a"', () => {
@@ -171,22 +216,6 @@ describe("Button", () => {
     const ref = vi.fn();
     render(<Button ref={ref}>Ref</Button>);
     expect(ref).toHaveBeenCalled();
-  });
-
-  it('resolves variant="outline" to "outlined"', () => {
-    render(<Button variant="outline">Outline</Button>);
-    expect(screen.getByRole("button")).toHaveClass("outlined");
-  });
-
-  it('resolves variant="icon" to an outlined icon-only button', () => {
-    render(
-      <Button variant="icon" aria-label="Icon action">
-        <span aria-hidden>+</span>
-      </Button>
-    );
-    const button = screen.getByRole("button", { name: "Icon action" });
-    expect(button).toHaveClass("outlined");
-    expect(button).toHaveClass("icon");
   });
 
   it("renders as child element when asChild is true", () => {

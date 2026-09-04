@@ -116,20 +116,20 @@ describe('Prompt', () => {
     expect(screen.getByRole('status', { name: /submitting/i })).toBeInTheDocument();
   });
 
-  it('marks the appearance on the root so the toolbar can drop its footer', () => {
+  it('marks the variant on the root so the toolbar can drop its footer', () => {
     const { container, rerender } = render(
       <Prompt defaultValue="">
         <Prompt.Textarea />
       </Prompt>
     );
-    expect(container.firstChild).toHaveAttribute('data-appearance', 'panel');
+    expect(container.firstChild).toHaveAttribute('data-variant', 'outline');
 
     rerender(
-      <Prompt defaultValue="" appearance="seamless">
+      <Prompt defaultValue="" variant="ghost">
         <Prompt.Textarea />
       </Prompt>
     );
-    expect(container.firstChild).toHaveAttribute('data-appearance', 'seamless');
+    expect(container.firstChild).toHaveAttribute('data-variant', 'ghost');
   });
 
   it('composes shared action roles without subtree measurement overrides', () => {
@@ -148,7 +148,7 @@ describe('Prompt', () => {
     expect(promptStyles).toContain(
       'box-shadow: inset 0 calc(var(--fui-space-px, #{$fui-space-px}) * -2) 0'
     );
-    expect(promptStyles).toContain('margin-inline-end: var(--_control-padding)');
+    expect(promptStyles).toContain('margin-inline-end: var(--_control-padding, var(--fui-space-2, #{$fui-space-2}))');
     expect(promptStyles).toContain(
       'background-color: var(--fui-text-primary, #{$fui-text-primary})'
     );

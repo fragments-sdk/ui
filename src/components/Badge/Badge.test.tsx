@@ -8,10 +8,17 @@ describe("Badge", () => {
     expect(screen.getByText("New")).toBeInTheDocument();
   });
 
-  it("applies variant classes", () => {
-    const { container } = render(<Badge variant="success">OK</Badge>);
+  it("defaults to a soft neutral badge", () => {
+    const { container } = render(<Badge>New</Badge>);
     const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveClass("success");
+    expect(badge).toHaveClass("soft");
+    expect(badge.className).not.toMatch(/tone/);
+  });
+
+  it("applies tone classes", () => {
+    const { container } = render(<Badge tone="success">OK</Badge>);
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).toHaveClass("soft", "toneSuccess");
   });
 
   it("applies size classes", () => {
@@ -20,8 +27,8 @@ describe("Badge", () => {
     expect(badge).toHaveClass("sm");
   });
 
-  it.each(["label", "dim"] as const)(
-    "keeps the explicit size class when using the %s emphasis variant",
+  it.each(["outline", "ghost"] as const)(
+    "keeps the explicit size class when using the %s variant",
     (variant) => {
       const { container } = render(
         <Badge variant={variant} size="sm">
@@ -31,6 +38,22 @@ describe("Badge", () => {
       expect(container.firstChild).toHaveClass("sm", variant);
     }
   );
+
+  it("marks the active ghost filter only", () => {
+    const { container, rerender } = render(
+      <Badge variant="ghost" active>
+        All
+      </Badge>
+    );
+    expect(container.firstChild).toHaveClass("ghost", "active");
+
+    rerender(
+      <Badge variant="soft" active>
+        All
+      </Badge>
+    );
+    expect(container.firstChild).not.toHaveClass("active");
+  });
 
   it("pulses the dot only when asked", () => {
     const { container, rerender } = render(<Badge dot>Idle</Badge>);
@@ -69,21 +92,21 @@ describe("Badge", () => {
   });
 
   it("does not implicitly announce status variants", () => {
-    const { container } = render(<Badge variant="error">Failed</Badge>);
+    const { container } = render(<Badge tone="danger">Failed</Badge>);
     const badge = container.firstChild as HTMLElement;
     expect(badge).not.toHaveAttribute("role");
-    expect(badge).not.toHaveAttribute("aria-label", "error: Failed");
+    expect(badge).not.toHaveAttribute("aria-label", "danger: Failed");
   });
 
   it("announces badge content when announce is enabled", () => {
     const { container } = render(
-      <Badge variant="error" announce>
+      <Badge tone="danger" announce>
         Failed
       </Badge>
     );
     const badge = container.firstChild as HTMLElement;
     expect(badge).toHaveAttribute("role", "status");
-    expect(badge).toHaveAttribute("aria-label", "error: Failed");
+    expect(badge).toHaveAttribute("aria-label", "danger: Failed");
   });
 
   it("has no accessibility violations", async () => {

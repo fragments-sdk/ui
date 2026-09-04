@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/typography";
 
 .root {
@@ -7,12 +8,12 @@
 
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   padding: var(--fui-surface-inset-default, 16px);
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 
   &[data-disabled] {
-    opacity: 0.5;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
   }
 
   // Legend and description carry their own block margins, so spacing is added
@@ -27,7 +28,7 @@
   @include typography.role("ui-standard");
 
   color: var(--fui-text-secondary, $fui-text-secondary);
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   margin-block-end: var(--fui-raw-space-16, 16px);
 
   &:has(+ .description) {

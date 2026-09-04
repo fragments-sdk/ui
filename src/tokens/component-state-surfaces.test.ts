@@ -42,12 +42,12 @@ const persistentSurfaceCases = [
     "--fui-control-selected-bg",
   ],
   ["components/Pagination/Pagination.module.scss", ".itemActive", "--fui-control-selected-bg"],
-  ["components/Prompt/Prompt.module.scss", ".tabButtonActive", "--fui-control-selected-bg"],
-  ["components/Prompt/Prompt.module.scss", ".modeButtonActive", "--fui-control-selected-bg"],
+  ["components/Prompt/Prompt.module.scss", ".tabButtonActive", "@include segmented-selection"],
+  ["components/Prompt/Prompt.module.scss", ".modeButtonActive", "@include segmented-selection"],
   [
     "components/ThemeToggle/ThemeToggle.module.scss",
     ".toggleButtonActive",
-    "--fui-control-selected-bg",
+    "@include segmented-selection",
   ],
   ["recipes/_popup.scss", "@mixin selected-state", "--fui-field-selection-bg"],
 ] as const;
@@ -98,8 +98,6 @@ describe("component state surface contract", () => {
       "--fui-field-selection-bg",
       "--fui-sidebar-item-active-bg",
       "--fui-table-row-selected-bg",
-      "--fui-tabs-pill-active-bg",
-      "--fui-toggle-group-selected-bg",
     ]) {
       expect(variables).toContain(`${token}: var(--fui-control-selected-bg)`);
     }
@@ -108,8 +106,6 @@ describe("component state surface contract", () => {
       ["components/Sidebar/Sidebar.module.scss", "--fui-sidebar-item-active-bg"],
       ["components/Table/Table.module.scss", "--fui-table-row-selected-bg"],
       ["components/DataTable/DataTable.module.scss", "--fui-table-row-selected-bg"],
-      ["components/Tabs/Tabs.module.scss", "--fui-tabs-pill-active-bg"],
-      ["components/ToggleGroup/ToggleGroup.module.scss", "--fui-toggle-group-selected-bg"],
       ["components/Chip/Chip.module.scss", "--fui-field-selection-bg"],
       ["components/Editor/Editor.module.scss", "--fui-field-selection-bg"],
     ] as const;

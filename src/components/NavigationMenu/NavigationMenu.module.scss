@@ -1,3 +1,4 @@
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
@@ -51,8 +52,8 @@
   align-items: center;
   gap: var(--fui-space-1, $fui-space-1);
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 
   // Use viewport breakpoint (matches useIsMobile in NavigationMenu.tsx).
   // Self container queries on a shrink-to-content nav root can incorrectly hide
@@ -293,8 +294,8 @@
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 1);
 
-  width: var(--fui-navmenu-viewport-width);
-  height: var(--fui-navmenu-viewport-height);
+  width: var(--fui-navmenu-viewport-width, #{measurements.raw-space(0)});
+  height: var(--fui-navmenu-viewport-height, #{measurements.raw-space(0)});
   transition: opacity var(--fui-transition-fast, $fui-transition-fast);
 
   // Hidden when no item is open
@@ -333,8 +334,6 @@
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-primary, $fui-text-primary);
   flex-shrink: 0;
-  width: var(--fui-navigation-mobile-target, var(--_fui-action-track));
-  height: var(--fui-navigation-mobile-target, var(--_fui-action-track));
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -408,8 +407,6 @@
   justify-content: center;
   border-radius: var(--fui-radius-md, $fui-radius-md);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  width: var(--fui-navigation-mobile-target, var(--_fui-action-track));
-  height: var(--fui-navigation-mobile-target, var(--_fui-action-track));
 
   &:hover {
     background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -425,7 +422,7 @@
   // blocks ScrollArea from receiving a bounded height and scrolling.
   min-height: 0;
   // Match Sidebar.nav: outer gutter + row inset so links aren't flush to the edge.
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-navigation-gutter);
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-navigation-gutter, #{navigation.gutter()});
 }
 
 .drawerNav {
@@ -439,7 +436,6 @@
 
   display: flex;
   align-items: center;
-  min-block-size: var(--fui-navigation-mobile-row-track, var(--fui-navigation-row-track));
   width: 100%;
   color: var(--fui-text-secondary, $fui-text-secondary);
   text-decoration: none;
@@ -478,7 +474,6 @@
 
   display: flex;
   align-items: center;
-  min-block-size: var(--fui-navigation-mobile-row-track, var(--fui-navigation-row-track));
   justify-content: space-between;
   width: 100%;
   color: var(--fui-text-primary, $fui-text-primary);

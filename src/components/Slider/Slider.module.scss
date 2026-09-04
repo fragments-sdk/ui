@@ -50,9 +50,10 @@
   cursor: pointer;
 
   &[data-disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
+    @include disabled-state;
   }
+
+  @include high-contrast-outline;
 }
 
 .indicator {
@@ -89,13 +90,14 @@
   }
 
   &[data-disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
+    @include disabled-state;
   }
 
   @media (pointer: coarse) {
     --_fui-target-hit-size: #{target.hit-size("touch")};
   }
+
+  @include high-contrast-outline;
 }
 
 .helper {
@@ -125,21 +127,6 @@
 .wrapper[data-invalid] .track {
   box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
     var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .track {
-    border: var(--fui-stroke-hairline, 1px) solid var(--fui-text-primary, $fui-text-primary);
-  }
-
-  .thumb {
-    outline: var(--fui-stroke-default, 2px) solid var(--fui-text-primary, $fui-text-primary);
-    outline-offset: var(--fui-stroke-hairline, 1px);
-  }
 }
 
 // ============================================

@@ -9,7 +9,8 @@
   "exportName": "Link",
   "propsSummary": [
     "children: node (required)",
-    "variant: default|subtle|muted (default: default)",
+    "tone: accent|neutral (default: accent)",
+    "color: primary|secondary|tertiary",
     "underline: always|hover|none|dotted (default: hover)",
     "external: boolean (default: false)",
     "asChild: boolean (default: false)",
@@ -24,12 +25,18 @@
       "description": "Link text content",
       "required": true
     },
-    "variant": {
+    "tone": {
       "type": "enum",
-      "description": "Visual style variant",
-      "default": "default",
+      "description": "Colour. accent is the link ink; neutral reads as body text until hovered",
+      "default": "accent",
       "required": false,
-      "values": ["default", "subtle", "muted"]
+      "values": ["accent", "neutral"]
+    },
+    "color": {
+      "type": "enum",
+      "description": "Text-hierarchy colour for a neutral link (Text color axis); tertiary is the quietest link",
+      "required": false,
+      "values": ["primary", "secondary", "tertiary"]
     },
     "underline": {
       "type": "enum",
@@ -86,7 +93,7 @@
     "guidelines": [
       "Name the destination; never \"click here\"",
       "external sets target and rel — add your own \"opens in a new tab\" cue",
-      "subtle and muted for secondary and contextual links",
+      "tone=\"neutral\" for secondary links; add color=\"tertiary\" for metadata and footers",
       "Links must stay distinguishable from surrounding text",
       "asChild composes handlers with the child rather than replacing them"
     ],
@@ -104,9 +111,9 @@
       "code": "<Link href=\"#\">Learn more about our services</Link>"
     },
     {
-      "name": "Variants",
-      "description": "Accent, then quieter, then quietest.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Link href=\"#\" variant=\"default\">Default</Link>\n  <Link href=\"#\" variant=\"subtle\">Subtle</Link>\n  <Link href=\"#\" variant=\"muted\">Muted</Link>\n</Stack>"
+      "name": "Tones",
+      "description": "Accent, then neutral, then the quietest neutral.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Link href=\"#\" tone=\"accent\">Accent</Link>\n  <Link href=\"#\" tone=\"neutral\">Neutral</Link>\n  <Link href=\"#\" tone=\"neutral\" color=\"tertiary\">Tertiary</Link>\n</Stack>"
     },
     {
       "name": "Underline Styles",
@@ -121,7 +128,7 @@
     {
       "name": "As Child (Polymorphic)",
       "description": "Paints Link styling onto a router link and keeps both click handlers.",
-      "code": "<Link asChild variant=\"subtle\" onClick={() => {}}>\n  <a href=\"#pricing\" onClick={() => {}}>\n    Client-side navigation\n  </a>\n</Link>"
+      "code": "<Link asChild tone=\"neutral\" onClick={() => {}}>\n  <a href=\"#pricing\" onClick={() => {}}>\n    Client-side navigation\n  </a>\n</Link>"
     }
   ],
   "relations": [
@@ -140,7 +147,8 @@
     "propsSummary": [
       "children: ReactNode - link text (required)",
       "href: string - destination URL",
-      "variant: default|subtle|muted - visual style",
+      "tone: accent|neutral - colour",
+      "color: primary|secondary|tertiary - hierarchy colour on a neutral link",
       "underline: always|hover|none|dotted - underline behavior",
       "external: boolean - opens in new tab",
       "asChild: boolean - polymorphic child rendering with merged styles and composed event handlers"

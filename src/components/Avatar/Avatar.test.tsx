@@ -67,7 +67,7 @@ describe("Avatar", () => {
   });
 
   it("forwards imageProps to the underlying img and respects prevented onError", () => {
-    const onError = vi.fn((event: Event) => event.preventDefault());
+    const onError = vi.fn((event: React.SyntheticEvent<HTMLImageElement>) => event.preventDefault());
     render(
       <Avatar
         src="https://example.com/photo.jpg"

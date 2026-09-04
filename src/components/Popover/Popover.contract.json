@@ -73,22 +73,22 @@
     {
       "name": "Default",
       "description": "Title, body, and a close control.",
-      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"secondary\">Open Popover</Button>\n  </Popover.Trigger>\n  <Popover.Content>\n    <Popover.Close />\n    <Popover.Title>Popover Title</Popover.Title>\n    <Popover.Description>\n      This is a popover with some content. It can contain text, forms, or other elements.\n    </Popover.Description>\n  </Popover.Content>\n</Popover>"
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"soft\">Open Popover</Button>\n  </Popover.Trigger>\n  <Popover.Content>\n    <Popover.Close />\n    <Popover.Title>Popover Title</Popover.Title>\n    <Popover.Description>\n      This is a popover with some content. It can contain text, forms, or other elements.\n    </Popover.Description>\n  </Popover.Content>\n</Popover>"
     },
     {
       "name": "With Form",
       "description": "Enough room to edit a value in place.",
-      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"secondary\">Edit Name</Button>\n  </Popover.Trigger>\n  <Popover.Content size=\"sm\">\n    <Popover.Close />\n    <Popover.Title>Edit Name</Popover.Title>\n    <Popover.Body>\n      <Input label=\"Display Name\" placeholder=\"Enter name\" />\n    </Popover.Body>\n    <Popover.Footer>\n      <Popover.Close asChild>\n        <Button variant=\"secondary\" size=\"sm\">Cancel</Button>\n      </Popover.Close>\n      <Button variant=\"primary\" size=\"sm\">Save</Button>\n    </Popover.Footer>\n  </Popover.Content>\n</Popover>"
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"soft\">Edit Name</Button>\n  </Popover.Trigger>\n  <Popover.Content size=\"sm\">\n    <Popover.Close />\n    <Popover.Title>Edit Name</Popover.Title>\n    <Popover.Body>\n      <Input label=\"Display Name\" placeholder=\"Enter name\" />\n    </Popover.Body>\n    <Popover.Footer>\n      <Popover.Close asChild>\n        <Button variant=\"soft\" size=\"sm\">Cancel</Button>\n      </Popover.Close>\n      <Button variant=\"solid\" size=\"sm\">Save</Button>\n    </Popover.Footer>\n  </Popover.Content>\n</Popover>"
     },
     {
       "name": "With Arrow",
       "description": "The arrow ties the panel back to its trigger.",
-      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"secondary\">Info</Button>\n  </Popover.Trigger>\n  <Popover.Content arrow>\n    <Popover.Title>Quick Tip</Popover.Title>\n    <Popover.Description>\n      This popover has an arrow pointing to its trigger element.\n    </Popover.Description>\n  </Popover.Content>\n</Popover>"
+      "code": "<Popover>\n  <Popover.Trigger asChild>\n    <Button variant=\"soft\">Info</Button>\n  </Popover.Trigger>\n  <Popover.Content arrow>\n    <Popover.Title>Quick Tip</Popover.Title>\n    <Popover.Description>\n      This popover has an arrow pointing to its trigger element.\n    </Popover.Description>\n  </Popover.Content>\n</Popover>"
     },
     {
       "name": "Positions",
       "description": "Flips to the opposite side when space runs out.",
-      "code": "<div style={{ display: 'flex', gap: '16px', padding: '60px' }}>\n  <Popover>\n    <Popover.Trigger asChild>\n      <Button variant=\"secondary\">Top</Button>\n    </Popover.Trigger>\n    <Popover.Content side=\"top\" size=\"sm\">\n      <Popover.Description>Popover on top</Popover.Description>\n    </Popover.Content>\n  </Popover>\n  <Popover>\n    <Popover.Trigger asChild>\n      <Button variant=\"secondary\">Bottom</Button>\n    </Popover.Trigger>\n    <Popover.Content side=\"bottom\" size=\"sm\">\n      <Popover.Description>Popover on bottom</Popover.Description>\n    </Popover.Content>\n  </Popover>\n</div>"
+      "code": "<div style={{ display: 'flex', gap: '16px', padding: '60px' }}>\n  <Popover>\n    <Popover.Trigger asChild>\n      <Button variant=\"soft\">Top</Button>\n    </Popover.Trigger>\n    <Popover.Content side=\"top\" size=\"sm\">\n      <Popover.Description>Popover on top</Popover.Description>\n    </Popover.Content>\n  </Popover>\n  <Popover>\n    <Popover.Trigger asChild>\n      <Button variant=\"soft\">Bottom</Button>\n    </Popover.Trigger>\n    <Popover.Content side=\"bottom\" size=\"sm\">\n      <Popover.Description>Popover on bottom</Popover.Description>\n    </Popover.Content>\n  </Popover>\n</div>"
     },
     {
       "name": "Link Trigger",

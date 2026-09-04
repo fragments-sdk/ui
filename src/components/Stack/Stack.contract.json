@@ -137,7 +137,7 @@
     {
       "name": "Responsive",
       "description": "Swap direction and gap per breakpoint with an object value.",
-      "code": "<Stack\n  direction={{ base: 'column', md: 'row' }}\n  gap={{ base: 'sm', md: 'lg' }}\n>\n  <Button variant=\"secondary\">First</Button>\n  <Button variant=\"secondary\">Second</Button>\n  <Button variant=\"secondary\">Third</Button>\n</Stack>"
+      "code": "<Stack\n  direction={{ base: 'column', md: 'row' }}\n  gap={{ base: 'sm', md: 'lg' }}\n>\n  <Button variant=\"soft\">First</Button>\n  <Button variant=\"soft\">Second</Button>\n  <Button variant=\"soft\">Third</Button>\n</Stack>"
     },
     {
       "name": "With Separator",

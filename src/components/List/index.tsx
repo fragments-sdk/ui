@@ -7,19 +7,23 @@ import styles from './List.module.scss';
 // Types
 // ============================================
 
+export type ListMarker = 'none' | 'disc' | 'decimal' | 'icon';
+
 export interface ListProps extends React.HTMLAttributes<HTMLUListElement | HTMLOListElement> {
   children: React.ReactNode;
   /** List type */
   as?: 'ul' | 'ol';
-  /** List style variant */
-  variant?: 'none' | 'disc' | 'decimal' | 'icon';
-  /** Spacing between items */
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg';
+  /** Marker drawn before each item. Not chrome, so it is `marker`, not `variant`.
+   * @default 'disc' */
+  marker?: ListMarker;
+  /** Spacing between items
+   * @default 'sm' */
+  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
   children: React.ReactNode;
-  /** Icon to display (only used with variant="icon") */
+  /** Icon to display (only used with marker="icon") */
   icon?: React.ReactNode;
 }
 
@@ -28,10 +32,10 @@ export interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
 // ============================================
 
 interface ListContextValue {
-  variant: NonNullable<ListProps['variant']>;
+  marker: ListMarker;
 }
 
-const ListContext = React.createContext<ListContextValue>({ variant: 'disc' });
+const ListContext = React.createContext<ListContextValue>({ marker: 'disc' });
 
 function useListContext() {
   return React.useContext(ListContext);
@@ -44,7 +48,7 @@ function useListContext() {
 function ListRoot({
   children,
   as: Component = 'ul',
-  variant = 'disc',
+  marker = 'disc',
   gap = 'sm',
   className,
   style,
@@ -52,7 +56,7 @@ function ListRoot({
 }: ListProps) {
   const classes = [
     styles.list,
-    styles[variant],
+    styles[marker],
     styles[`gap-${gap}`],
     className,
   ]
@@ -60,7 +64,7 @@ function ListRoot({
     .join(' ');
 
   return (
-    <ListContext.Provider value={{ variant }}>
+    <ListContext.Provider value={{ marker }}>
       <Component {...htmlProps} className={classes} style={style}>
         {children}
       </Component>
@@ -69,11 +73,11 @@ function ListRoot({
 }
 
 function ListItem({ children, icon, className, style, ...htmlProps }: ListItemProps) {
-  const { variant } = useListContext();
+  const { marker } = useListContext();
 
   const classes = [
     styles.item,
-    variant === 'icon' && styles.iconItem,
+    marker === 'icon' && styles.iconItem,
     className,
   ]
     .filter(Boolean)
@@ -81,7 +85,7 @@ function ListItem({ children, icon, className, style, ...htmlProps }: ListItemPr
 
   return (
     <li {...htmlProps} className={classes} style={style}>
-      {variant === 'icon' && icon ? (
+      {marker === 'icon' && icon ? (
         <span className={styles.iconWrapper}>{icon}</span>
       ) : null}
       <span className={styles.itemContent}>{children}</span>

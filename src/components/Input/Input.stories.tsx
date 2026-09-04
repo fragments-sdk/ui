@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Input } from ".";
+import { Stack } from "../Stack";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Single-line text input with built-in label, helper text, and validation states.
@@ -11,6 +13,7 @@ const meta = {
   component: Input,
   tags: ["autodocs", "canonical"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Text input field for single-line user data entry.",
@@ -80,6 +83,26 @@ export const ErrorState: Story = {
 
 export const Disabled: Story = {
   args: { label: "Username", value: "readonly-user", disabled: true },
+};
+
+export const Invalid: Story = {
+  args: {
+    label: "Email",
+    type: "email",
+    value: "invalid-email",
+    error: true,
+    helperText: "Enter a valid email address",
+  },
+};
+
+export const Sizes: Story = {
+  render: (args) => (
+    <Stack direction="column" gap="md">
+      <Input {...args} size="sm" label="Small" placeholder="sm" />
+      <Input {...args} size="md" label="Medium" placeholder="md" />
+      <Input {...args} size="lg" label="Large" placeholder="lg" />
+    </Stack>
+  ),
 };
 
 export const Required: Story = {

@@ -8,11 +8,14 @@ import styles from "./Separator.module.scss";
 // Types
 // ============================================
 
+export type SeparatorGap = "none" | "xs" | "sm" | "md" | "lg" | "xl";
+
 export interface SeparatorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   /** Orientation of the separator */
   orientation?: "horizontal" | "vertical";
-  /** Spacing around the separator */
-  spacing?: "none" | "sm" | "md" | "lg";
+  /** Breathing room around the rule
+   * @default "none" */
+  gap?: SeparatorGap;
   /** Softer visual appearance */
   soft?: boolean;
   /** Optional label text (creates a labeled divider) */
@@ -20,14 +23,16 @@ export interface SeparatorProps extends Omit<React.HTMLAttributes<HTMLDivElement
 }
 
 // ============================================
-// Spacing class map
+// Gap class map
 // ============================================
 
-const spacingClasses = {
-  none: styles.spacingNone,
-  sm: styles.spacingSm,
-  md: styles.spacingMd,
-  lg: styles.spacingLg,
+const GAP_CLASS: Record<SeparatorGap, string> = {
+  none: styles.gapNone,
+  xs: styles.gapXs,
+  sm: styles.gapSm,
+  md: styles.gapMd,
+  lg: styles.gapLg,
+  xl: styles.gapXl,
 };
 
 // ============================================
@@ -37,7 +42,7 @@ const spacingClasses = {
 const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(function Separator(
   {
     orientation = "horizontal",
-    spacing = "none",
+    gap = "none",
     soft = false,
     label,
     className,
@@ -51,7 +56,7 @@ const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(function 
     const classes = [
       styles.separator,
       styles.withLabel,
-      spacingClasses[spacing],
+      GAP_CLASS[gap],
       soft && styles.soft,
       className,
     ]
@@ -76,7 +81,7 @@ const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(function 
   const classes = [
     styles.separator,
     orientation === "horizontal" ? styles.horizontal : styles.vertical,
-    spacingClasses[spacing],
+    GAP_CLASS[gap],
     soft && styles.soft,
     className,
   ]

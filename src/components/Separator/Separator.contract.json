@@ -9,7 +9,7 @@
   "exportName": "Separator",
   "propsSummary": [
     "orientation: horizontal|vertical (default: horizontal)",
-    "spacing: none|sm|md|lg (default: none)",
+    "gap: none|xs|sm|md|lg|xl (default: none)",
     "soft: boolean (default: false)",
     "label: string",
     "style: object"
@@ -22,12 +22,12 @@
       "required": false,
       "values": ["horizontal", "vertical"]
     },
-    "spacing": {
+    "gap": {
       "type": "enum",
-      "description": "Margin around the separator",
+      "description": "Breathing room around the rule",
       "default": "none",
       "required": false,
-      "values": ["none", "sm", "md", "lg"]
+      "values": ["none", "xs", "sm", "md", "lg", "xl"]
     },
     "soft": {
       "type": "boolean",
@@ -72,12 +72,12 @@
     {
       "name": "Default",
       "description": "Standard and soft weights, one above the other.",
-      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>Standard weight</Text>\n  <Separator spacing=\"md\" />\n  <Text>Soft weight</Text>\n  <Separator soft spacing=\"md\" />\n  <Text>Below</Text>\n</Box>"
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>Standard weight</Text>\n  <Separator gap=\"md\" />\n  <Text>Soft weight</Text>\n  <Separator soft gap=\"md\" />\n  <Text>Below</Text>\n</Box>"
     },
     {
       "name": "With Label",
       "description": "A label sits inside the rule for a major break.",
-      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>First section</Text>\n  <Separator label=\"Or\" spacing=\"md\" />\n  <Text>Second section</Text>\n</Box>"
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>First section</Text>\n  <Separator label=\"Or\" gap=\"md\" />\n  <Text>Second section</Text>\n</Box>"
     },
     {
       "name": "Vertical",
@@ -85,9 +85,9 @@
       "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack direction=\"row\" align=\"center\" gap=\"md\" style={{ height: '40px' }}>\n  <Text>Item 1</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Item 2</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Item 3</Text>\n</Stack>"
     },
     {
-      "name": "Spacing Options",
-      "description": "spacing sets the breathing room around the rule.",
-      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>none</Text>\n  <Separator spacing=\"none\" />\n  <Text>sm</Text>\n  <Separator spacing=\"sm\" />\n  <Text>md</Text>\n  <Separator spacing=\"md\" />\n  <Text>lg</Text>\n  <Separator spacing=\"lg\" />\n  <Text>End</Text>\n</Box>"
+      "name": "Gap Options",
+      "description": "gap sets the breathing room around the rule.",
+      "code": "import { Box } from '@/components/Box';\nimport { Separator } from '@/components/Separator';\nimport { Text } from '@/components/Text';\n\n<Box width=\"100%\">\n  <Text>none</Text>\n  <Separator gap=\"none\" />\n  <Text>sm</Text>\n  <Separator gap=\"sm\" />\n  <Text>md</Text>\n  <Separator gap=\"md\" />\n  <Text>lg</Text>\n  <Separator gap=\"lg\" />\n  <Text>End</Text>\n</Box>"
     }
   ],
   "relations": [
@@ -100,7 +100,7 @@
   "contract": {
     "propsSummary": [
       "orientation: horizontal|vertical - direction",
-      "spacing: none|sm|md|lg - margin",
+      "gap: none|xs|sm|md|lg|xl - breathing room",
       "soft: boolean - lighter appearance",
       "label: string - centered label text"
     ],

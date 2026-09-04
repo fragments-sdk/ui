@@ -1,5 +1,6 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout";
 @use "../../recipes/segmented";
 
@@ -14,47 +15,44 @@
   }
 }
 
-// Tab list container
+// Tab list container (ghost: a rule under the row, the indicator tracks the active tab)
 .list {
   position: relative;
   display: flex;
   align-items: center;
   gap: layout.gap("xs");
-  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-border, $fui-border);
   padding-inline: layout.gap("xs");
 
   &[data-orientation="vertical"] {
     flex-direction: column;
     align-items: stretch;
     border-bottom: none;
-    border-right: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+    border-right: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, $fui-border);
     padding-block: layout.gap("xs");
-    padding-inline: 0;
+    padding-inline: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   }
 }
 
-// Variant: pills (shadcn-style with background container)
-.listPills {
+// Variant: soft (filled rail with a selected segment)
+.listSoft {
   border-bottom: none;
   border: 0;
   background-color: var(
     --fui-tabs-pills-bg,
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
   );
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  padding: 0;
-  gap: 0;
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
+  border-radius: var(--fui-radius-l1, $fui-radius-l1);
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
     var(
       --fui-tabs-pills-border,
       color-mix(in srgb, var(--fui-border, #{$fui-border}) 72%, transparent)
     );
   width: fit-content;
-}
-
-// Variant: underline (default, with indicator line)
-.listUnderline {
-  // Default styles already applied to .list
 }
 
 // Individual tab button
@@ -65,7 +63,7 @@
   position: relative;
   color: var(--fui-text-secondary, $fui-text-secondary);
   white-space: nowrap;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  border-radius: var(--fui-radius-l3, $fui-radius-l3);
 
   &:hover:not([data-disabled]) {
     color: var(--fui-text-primary, $fui-text-primary);
@@ -105,18 +103,18 @@
   }
 }
 
-// Tab in underline variant
-.tabUnderline {
-  border-radius: 0;
+// Tab in the ghost variant: the indicator carries the selection, the tab stays flat
+.tabGhost {
+  border-radius: var(--fui-radius-none, #{$fui-radius-none});
 
   &:hover:not([data-disabled]) {
     background-color: transparent;
   }
 }
 
-// Tab in pills variant (shadcn-style)
-.tabPills {
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+// Tab in the soft variant: a segment on the rail
+.tabSoft {
+  border-radius: var(--fui-radius-l2, $fui-radius-l2);
   transition:
     background-color var(--fui-transition-fast, $fui-transition-fast),
     color var(--fui-transition-fast, $fui-transition-fast),
@@ -128,18 +126,16 @@
   }
 
   &[data-active] {
-    background-color: var(--fui-tabs-pill-active-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-    color: var(--fui-text-primary, $fui-text-primary);
-    box-shadow: var(--fui-tabs-pill-active-shadow, none);
+    @include segmented-selection;
   }
 }
 
-// Animated indicator (underline variant)
+// Animated indicator (ghost variant)
 .indicator {
   position: absolute;
   bottom: 0;
   left: 0;
-  height: var(--fui-stroke-default, 2px);
+  height: var(--fui-stroke-default, #{$fui-stroke-default});
   background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
 
@@ -155,7 +151,7 @@
     left: auto;
     right: 0;
     top: 0;
-    width: var(--fui-stroke-default, 2px);
+    width: var(--fui-stroke-default, #{$fui-stroke-default});
     height: var(--active-tab-height);
     transform: translateY(var(--active-tab-top));
   }
@@ -164,7 +160,7 @@
 // Tab panel content
 .panel {
   padding-block: layout.gap("sm");
-  padding-inline: 0;
+  padding-inline: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   outline: none;
 
   &[data-hidden] {
@@ -174,11 +170,11 @@
   // Focus visible for keyboard navigation
   &:focus-visible {
     @include focus-ring;
-    border-radius: var(--fui-radius-md, $fui-radius-md);
+    border-radius: var(--fui-radius-l2, $fui-radius-l2);
   }
 }
 
 // Panel with no padding (for custom layouts)
 .panelFlush {
-  padding: 0;
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }

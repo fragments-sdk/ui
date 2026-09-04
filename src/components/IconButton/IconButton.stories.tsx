@@ -22,7 +22,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['ghost', 'subtle', 'outlined'],
+      options: ['ghost', 'soft', 'outline'],
       description: 'Visual style variant',
     },
     size: {
@@ -52,16 +52,16 @@ export const Ghost: Story = {
 };
 
 export const Subtle: Story = {
-  args: { variant: 'subtle', 'aria-label': 'Add item', children: <Plus /> },
+  args: { variant: 'soft', 'aria-label': 'Add item', children: <Plus /> },
 };
 
 export const Outlined: Story = {
-  args: { variant: 'outlined', 'aria-label': 'Settings', children: <Gear /> },
+  args: { variant: 'outline', 'aria-label': 'Settings', children: <Gear /> },
 };
 
 export const Pressed: Story = {
   args: {
-    variant: 'subtle',
+    variant: 'soft',
     pressed: true,
     'aria-label': 'Toggle setting',
     children: <Gear />,
@@ -70,7 +70,7 @@ export const Pressed: Story = {
 
 export const Destructive: Story = {
   args: {
-    variant: 'outlined',
+    variant: 'outline',
     size: 'lg',
     'aria-label': 'Delete',
     children: <Trash />,

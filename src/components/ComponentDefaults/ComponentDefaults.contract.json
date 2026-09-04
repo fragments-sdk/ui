@@ -1,0 +1,91 @@
+{
+  "$schema": "https://usefragments.com/schemas/contract.v1.json",
+  "name": "ComponentDefaults",
+  "description": "Utility provider that sets the default control size for every control below it.",
+  "category": "utilities",
+  "tags": ["provider", "defaults", "size", "utility"],
+  "status": "stable",
+  "sourcePath": "src/components/ComponentDefaults/index.tsx",
+  "exportName": "ComponentDefaultsProvider",
+  "propsSummary": [
+    "children: node (required)",
+    "controlSize: sm|md|lg",
+    "value: { controlSize?: sm|md|lg }"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Subtree that inherits the defaults",
+      "required": true
+    },
+    "controlSize": {
+      "type": "enum",
+      "description": "Default size for controls that do not pass their own size prop",
+      "required": false,
+      "values": ["sm", "md", "lg"]
+    },
+    "value": {
+      "type": "object",
+      "description": "Full defaults object; explicit controlSize wins over value.controlSize",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "A region needs every control at one size (dense table toolbars, compact sidebars)",
+      "A ThemeProvider subtree should default to sm or lg controls"
+    ],
+    "whenNot": [
+      "Sizing a single control (pass its size prop)",
+      "Changing spacing or typography (use tokens, not control size)"
+    ],
+    "guidelines": [
+      "Renders no chrome: it only supplies context read through useResolvedControlSize",
+      "Nest providers to override the size for a smaller region",
+      "An explicit size prop on a control always wins over the provider default",
+      "ThemeProvider componentDefaults wires this provider for you at the root"
+    ],
+    "accessibility": [
+      "sm controls still meet the kit's minimum target size through the action recipe"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Dense Toolbar",
+      "description": "Every control in the toolbar defaults to sm without repeating the prop.",
+      "code": "<ComponentDefaultsProvider controlSize=\"sm\">\n  <div style={{ display: 'flex', gap: '8px' }}>\n    <Button variant=\"soft\">Filter</Button>\n    <Button variant=\"ghost\">Export</Button>\n  </div>\n</ComponentDefaultsProvider>"
+    },
+    {
+      "name": "Nested Override",
+      "description": "A nested provider narrows the default for one region.",
+      "code": "<ComponentDefaultsProvider controlSize=\"lg\">\n  <Button>Large by default</Button>\n  <ComponentDefaultsProvider controlSize=\"sm\">\n    <Button>Small in this region</Button>\n  </ComponentDefaultsProvider>\n</ComponentDefaultsProvider>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Theme",
+      "relationship": "parent",
+      "note": "ThemeProvider accepts componentDefaults and mounts this provider"
+    },
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "Controls resolve their size through useResolvedControlSize"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "controlSize: sm|md|lg - default size for controls below the provider",
+      "value: { controlSize } - defaults object, explicit controlSize wins",
+      "useComponentDefaults() - read the merged defaults",
+      "useResolvedControlSize(explicit, fallback) - explicit > provider > fallback (md)"
+    ],
+    "a11yRules": []
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-09-03T00:00:00.000Z"
+  }
+}

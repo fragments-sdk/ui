@@ -10,7 +10,7 @@
   "propsSummary": [
     "children: node (required)",
     "size: sm|md|lg (default: md)",
-    "variant: plain|outlined (default: plain)"
+    "variant: ghost|outline (default: ghost)"
   ],
   "props": {
     "children": {
@@ -27,10 +27,10 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Frame style. `outlined` draws a dashed hairline around the reserved region; `plain` leaves framing to the surrounding surface.",
-      "default": "plain",
+      "description": "Chrome. `outline` draws a dashed hairline around the reserved region; `ghost` leaves framing to the surrounding surface.",
+      "default": "ghost",
       "required": false,
-      "values": ["plain", "outlined"]
+      "values": ["ghost", "outline"]
     }
   },
   "usage": {
@@ -65,12 +65,12 @@
     {
       "name": "No Results",
       "description": "A filter or query matched nothing \u2014 offer a way back.",
-      "code": "<EmptyState>\n  <EmptyState.Icon><SearchIcon /></EmptyState.Icon>\n  <EmptyState.Title>No results found</EmptyState.Title>\n  <EmptyState.Description>Try adjusting your search terms or filters.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button variant=\"secondary\">Clear Filters</Button>\n  </EmptyState.Actions>\n</EmptyState>"
+      "code": "<EmptyState>\n  <EmptyState.Icon><SearchIcon /></EmptyState.Icon>\n  <EmptyState.Title>No results found</EmptyState.Title>\n  <EmptyState.Description>Try adjusting your search terms or filters.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button variant=\"soft\">Clear Filters</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     },
     {
       "name": "With Secondary Action",
       "description": "One primary action plus a quieter alternative.",
-      "code": "<EmptyState>\n  <EmptyState.Icon><InboxIcon /></EmptyState.Icon>\n  <EmptyState.Title>Inbox is empty</EmptyState.Title>\n  <EmptyState.Description>You have no new messages.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Compose Message</Button>\n    <Button variant=\"secondary\">View Archive</Button>\n  </EmptyState.Actions>\n</EmptyState>"
+      "code": "<EmptyState>\n  <EmptyState.Icon><InboxIcon /></EmptyState.Icon>\n  <EmptyState.Title>Inbox is empty</EmptyState.Title>\n  <EmptyState.Description>You have no new messages.</EmptyState.Description>\n  <EmptyState.Actions>\n    <Button>Compose Message</Button>\n    <Button variant=\"soft\">View Archive</Button>\n  </EmptyState.Actions>\n</EmptyState>"
     },
     {
       "name": "Small",

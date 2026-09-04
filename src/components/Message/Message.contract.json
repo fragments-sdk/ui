@@ -10,7 +10,7 @@
   "propsSummary": [
     "role: user|assistant|system (required)",
     "children: node (required)",
-    "status: sending|streaming|complete|error (default: complete)",
+    "status: pending|streaming|complete|error (default: complete)",
     "timestamp: object",
     "avatar: node",
     "actions: node"
@@ -32,7 +32,7 @@
       "description": "Message state",
       "default": "complete",
       "required": false,
-      "values": ["sending", "streaming", "complete", "error"]
+      "values": ["pending", "streaming", "complete", "error"]
     },
     "timestamp": {
       "type": "object",
@@ -64,7 +64,7 @@
     ],
     "guidelines": [
       "Always set role — it drives alignment, avatar, and chrome",
-      "status covers sending, streaming, and error",
+      "status covers pending, streaming, and error",
       "Hide avatars with avatar={null}, or showAvatars={false} on ConversationList",
       "User bubbles cap at 80% of the inline measure so the two sides stay distinct",
       "Chrome stays on neutral surfaces; reserve accent for actions and semantic state",
@@ -117,7 +117,7 @@
     {
       "name": "With Actions",
       "description": "Controls stay hidden until the pointer enters the row.",
-      "code": "<Message\n  role=\"assistant\"\n  actions={\n    <>\n      <Button variant=\"ghost\" size=\"xs\">\n        Copy\n      </Button>\n      <Button variant=\"ghost\" size=\"xs\">\n        Regenerate\n      </Button>\n    </>\n  }\n>\n  <Message.Content>\n    Hover over this message to see the actions.\n  </Message.Content>\n</Message>"
+      "code": "<Message\n  role=\"assistant\"\n  actions={\n    <>\n      <Button variant=\"ghost\" size=\"sm\">\n        Copy\n      </Button>\n      <Button variant=\"ghost\" size=\"sm\">\n        Regenerate\n      </Button>\n    </>\n  }\n>\n  <Message.Content>\n    Hover over this message to see the actions.\n  </Message.Content>\n</Message>"
     }
   ],
   "relations": [
@@ -141,7 +141,7 @@
     "propsSummary": [
       "role: \"user\" | \"assistant\" | \"system\" - determines styling",
       "children: ReactNode - message content",
-      "status: \"sending\" | \"streaming\" | \"complete\" | \"error\" - message state",
+      "status: \"pending\" | \"streaming\" | \"complete\" | \"error\" - message state",
       "timestamp: Date - when message was sent",
       "avatar: ReactNode - custom avatar (null to hide)",
       "actions: ReactNode - hover actions",

@@ -8,13 +8,19 @@ import type { FragmentsConfig } from "@usefragments/core";
  * catalog. Consumers share this loader so a missing or empty catalog fails
  * governance instead of silently disabling the component rules.
  */
+const PROVIDER_ONLY_FRAGMENTS = new Set(["ComponentDefaults"]);
+
 export function publicUiPrimitiveNames(
   catalogPath = join(dirname(fileURLToPath(import.meta.url)), "fragments.json")
 ): string[] {
   const catalog = JSON.parse(readFileSync(catalogPath, "utf-8")) as {
     fragments?: Record<string, unknown>;
   };
-  const names = Object.keys(catalog.fragments ?? {});
+  // Providers ship no chrome of their own, so they are not canonical
+  // primitives for `components/prefer-library` to point at.
+  const names = Object.keys(catalog.fragments ?? {}).filter(
+    (name) => !PROVIDER_ONLY_FRAGMENTS.has(name)
+  );
   if (names.length === 0) {
     throw new Error(`Canonical UI catalog is empty: ${catalogPath}`);
   }
@@ -63,24 +69,39 @@ const config: FragmentsConfig = {
         format: "css",
       },
       {
+        // Recipe mixins declare the component-scoped hooks their consumers
+        // read (`--fui-action-*`, `--fui-field-*`, ...). They are scan inputs
+        // for the undefined-token gate, not public catalog entries (UIR-D8).
+        path: "src/recipes/*.scss",
+        format: "scss",
+      },
+      {
         path: "src/components/**/*.module.scss",
         format: "scss",
       },
     ],
   },
   govern: {
-    rules: {
-      "tokens/css-vars-must-be-defined": {
-        enabled: true,
-        severity: "error",
+    // The kit is its own canonical library: every public export in
+    // fragments.json is the sanctioned implementation, so a raw element or a
+    // second implementation of one of them inside the kit is a finding.
+    presets: ["fragments"],
+    canonicalSources: [
+      {
+        kind: "directory",
+        path: "src/components",
+        include: publicUiPrimitiveNames(),
       },
-      // Token discovery also derives radius/typography hygiene rules. Those
-      // pre-existing findings are not part of the Base UI migration, and
-      // `fragments check --ci` intentionally treats every warning as a failure.
-      // Keep this gate scoped to the fail-closed token contract; migrate the
-      // legacy style debt in its own reviewable change.
-      "styles/no-raw-dimensions": { enabled: false },
-      "styles/no-raw-typography": { enabled: false },
+    ],
+    rules: {
+      "tokens/css-vars-must-be-defined": { enabled: true, severity: "error" },
+      "tokens/require-dual-fallback": { enabled: true, severity: "error" },
+      // Dimension and typography hygiene are armed: every length and type
+      // ramp value flows through the measurement catalog or a `--fui-*` token.
+      "styles/no-raw-dimensions": { enabled: true, severity: "error" },
+      "styles/no-raw-typography": { enabled: true, severity: "error" },
+      "components/prefer-library": { enabled: true, severity: "error" },
+      "components/shadow-component": { enabled: true, severity: "error" },
     },
   },
 };

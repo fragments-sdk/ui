@@ -1,0 +1,15 @@
+# Image — UI notes
+
+## 2026-09-03 — Wave 0 vocabulary cut
+
+What changed
+
+- Nothing in the component: no vocabulary move, no governance findings.
+
+What still does not work
+
+- No known defects this wave.
+
+Improvement candidates
+
+- Re-scan after the Wave 1 token pass; both files read only shared tokens.

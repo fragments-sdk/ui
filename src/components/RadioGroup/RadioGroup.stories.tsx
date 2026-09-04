@@ -30,8 +30,8 @@ const meta = {
     },
     variant: {
       control: 'select',
-      options: ['default', 'card'],
-      description: 'Visual variant',
+      options: [undefined, 'outline'],
+      description: 'Omit for the inline radio; outline renders each item as a bordered surface',
     },
     disabled: { control: 'boolean', description: 'Disable all options' },
   },

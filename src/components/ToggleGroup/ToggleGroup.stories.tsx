@@ -22,7 +22,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "pills", "outline", "outlined"],
+      options: ["soft", "ghost", "outline"],
       description: "Visual style",
     },
     size: {
@@ -33,7 +33,7 @@ const meta = {
     gap: {
       control: "select",
       options: ["sm", "none", "xs"],
-      description: "Pills spacing; connected variants remain gapless",
+      description: "Ghost spacing; connected variants remain gapless",
     },
     selectionMode: {
       control: "select",
@@ -42,7 +42,7 @@ const meta = {
     },
   },
   args: {
-    variant: "default",
+    variant: "soft",
     size: "md",
     defaultValue: "center",
     children: (
@@ -69,8 +69,8 @@ export const Default: Story = {
   ),
 };
 
-export const PillsVariant: Story = {
-  args: { variant: "pills" },
+export const GhostVariant: Story = {
+  args: { variant: "ghost" },
   render: (args) => (
     <ToggleGroup {...args} defaultValue="all">
       <ToggleGroup.Item value="all">All</ToggleGroup.Item>
@@ -81,7 +81,7 @@ export const PillsVariant: Story = {
 };
 
 export const OutlineVariant: Story = {
-  args: { variant: "outlined" },
+  args: { variant: "outline" },
   render: (args) => (
     <ToggleGroup {...args} defaultValue="week">
       <ToggleGroup.Item value="day">Day</ToggleGroup.Item>

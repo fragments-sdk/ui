@@ -3,7 +3,7 @@ import { Separator } from '.';
 
 /**
  * Separator is a visual divider between content sections. It supports
- * horizontal and vertical orientations, spacing presets, a softer
+ * horizontal and vertical orientations, gap presets, a softer
  * appearance, and an optional centered label (horizontal only).
  */
 const meta = {
@@ -23,14 +23,14 @@ const meta = {
       options: ['horizontal', 'vertical'],
       description: 'Direction of the separator',
     },
-    spacing: {
+    gap: {
       control: 'select',
-      options: ['none', 'sm', 'md', 'lg'],
-      description: 'Margin around the separator',
+      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Breathing room around the rule',
     },
     soft: { control: 'boolean', description: 'Softer, lighter appearance' },
   },
-  args: { orientation: 'horizontal', spacing: 'md', soft: false },
+  args: { orientation: 'horizontal', gap: 'md', soft: false },
 } satisfies Meta<typeof Separator>;
 
 export default meta;
@@ -38,7 +38,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { spacing: 'md' },
+  args: { gap: 'md' },
   render: (args) => (
     <div style={{ width: 300 }}>
       <p>Content above</p>
@@ -49,7 +49,7 @@ export const Default: Story = {
 };
 
 export const WithLabel: Story = {
-  args: { label: 'Or', spacing: 'md' },
+  args: { label: 'Or', gap: 'md' },
   render: (args) => (
     <div style={{ width: 300 }}>
       <p>First section</p>
@@ -60,7 +60,7 @@ export const WithLabel: Story = {
 };
 
 export const Soft: Story = {
-  args: { soft: true, spacing: 'md' },
+  args: { soft: true, gap: 'md' },
   render: (args) => (
     <div style={{ width: 300 }}>
       <p>Content above</p>
@@ -71,7 +71,7 @@ export const Soft: Story = {
 };
 
 export const Vertical: Story = {
-  args: { orientation: 'vertical', spacing: 'none' },
+  args: { orientation: 'vertical', gap: 'none' },
   render: (args) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 16, height: 40 }}>
       <span>Item 1</span>

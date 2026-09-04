@@ -258,19 +258,19 @@ describe("TableOfContents", () => {
     const list = classDeclarations(tableOfContentsStyles, "list");
     const title = classDeclarations(tableOfContentsStyles, "title");
 
-    expect(list).toContain("padding: 0;");
+    expect(list).toContain("padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});");
     expect(list).not.toContain("padding-left:");
-    expect(list).toContain("gap: var(--fui-stroke-hairline, 1px);");
+    expect(list).toContain("gap: var(--fui-stroke-hairline, #{$fui-stroke-hairline});");
     expect(title).toContain(
-      "padding-inline: var(--fui-toc-inline-inset, var(--fui-navigation-inline-inset));"
+      "padding-inline: var(--fui-navigation-inline-inset, #{navigation.gutter()});"
     );
     expect(tableOfContentsStyles).not.toContain("$rail-");
     expect(tableOfContentsStyles).not.toContain("--toc-rail");
     expect(tableOfContentsStyles).toContain("@include navigation.row;");
     expect(tableOfContentsStyles).toContain("@include navigation.section-row;");
-    expect(tableOfContentsStyles).toContain("--fui-toc-row-track");
-    expect(tableOfContentsStyles).toContain("--fui-toc-title-gap");
-    expect(tableOfContentsStyles).toContain("--fui-toc-hover-bg");
+    // The `--fui-toc-*` host hooks were deleted in Wave 0: rows read the shared
+    // navigation hooks directly and nothing outside the kit set them.
+    expect(tableOfContentsStyles).not.toContain("--fui-toc-");
   });
 
   it("has no accessibility violations", async () => {

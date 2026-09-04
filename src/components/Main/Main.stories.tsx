@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 const renderMain: Story["render"] = (args) => (
   <Main {...args}>
     <Main.Header>
-      <Text as="h1" size="2xl" weight="semibold">
+      <Text as="h1" scale="2xl" weight="semibold">
         Page statement
       </Text>
     </Main.Header>

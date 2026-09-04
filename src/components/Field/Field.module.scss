@@ -1,3 +1,4 @@
+@use "../../tokens/variables" as *;
 @use "../../recipes/field";
 
 .root {
@@ -8,7 +9,7 @@
   @include field.label;
 
   &[data-disabled] {
-    opacity: 0.5;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
   }
 }
 

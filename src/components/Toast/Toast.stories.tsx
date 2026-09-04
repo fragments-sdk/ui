@@ -20,10 +20,10 @@ const meta = {
     },
   },
   argTypes: {
-    variant: {
+    tone: {
       control: 'select',
-      options: ['default', 'success', 'error', 'warning', 'info'],
-      description: 'Visual variant indicating message type',
+      options: ['neutral', 'success', 'danger', 'warning', 'info'],
+      description: 'Colour on the shared status ramp',
     },
     title: { control: 'text', description: 'Toast title' },
     description: { control: 'text', description: 'Additional message content' },
@@ -35,7 +35,7 @@ const meta = {
   args: {
     title: 'Notification',
     description: 'This is a toast message.',
-    variant: 'default',
+    tone: 'neutral',
   },
 } satisfies Meta<typeof Toast>;
 
@@ -44,14 +44,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { title: 'Heads up', description: 'Something just happened.', variant: 'default' },
+  args: { title: 'Heads up', description: 'Something just happened.', tone: 'neutral' },
 };
 
 export const Success: Story = {
   args: {
     title: 'Success!',
     description: 'Your changes have been saved.',
-    variant: 'success',
+    tone: 'success',
   },
 };
 
@@ -59,7 +59,7 @@ export const Error: Story = {
   args: {
     title: 'Error',
     description: 'Failed to save changes. Please try again.',
-    variant: 'error',
+    tone: 'danger',
   },
 };
 
@@ -67,7 +67,7 @@ export const Warning: Story = {
   args: {
     title: 'Warning',
     description: 'This action cannot be undone.',
-    variant: 'warning',
+    tone: 'warning',
   },
 };
 
@@ -75,7 +75,7 @@ export const Info: Story = {
   args: {
     title: 'New Update',
     description: 'Version 2.0 is now available.',
-    variant: 'info',
+    tone: 'info',
   },
 };
 

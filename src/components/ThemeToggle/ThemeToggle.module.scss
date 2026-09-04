@@ -1,18 +1,19 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 
 // ============================================
-// Theme Toggle - Fragmented Button Group
+// Theme Toggle - segmented light / dark / system control
 // ============================================
 
 .toggleGroup {
   display: inline-flex;
   align-items: stretch;
-  gap: 0;
-  padding: 0;
-  background-color: var(--fui-theme-toggle-bg, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  border-radius: var(--fui-radius-l2, $fui-radius-l2);
 }
 
 .toggleButton {
@@ -20,7 +21,7 @@
   @include interactive-base;
   @include action.base;
 
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  border-radius: var(--fui-radius-l3, $fui-radius-l3);
   color: var(--fui-text-secondary, $fui-text-secondary);
   background-color: transparent;
 
@@ -36,54 +37,30 @@
 }
 
 .toggleButtonActive {
-  background-color: var(
-    --fui-theme-toggle-active-bg,
-    var(--fui-control-selected-bg, #{$fui-bg-active})
-  );
-  color: var(--fui-text-primary, $fui-text-primary);
-  box-shadow: var(--fui-theme-toggle-active-shadow, none);
+  @include segmented-selection;
 }
 
-.iconButton {
-  background-color: transparent;
-  color: var(--fui-text-secondary, $fui-text-secondary);
+// Size variants (the buttons inherit the size from the group)
+.sizeSm .toggleButton {
+  @include action.icon-only("sm");
 
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  svg {
+    @include action.glyph("sm");
   }
 }
 
-// Size variants — nested for the group, same-element for appearance="icon"
-.sizeSm {
-  .toggleButton,
-  &.toggleButton {
-    @include action.icon-only("sm");
+.sizeMd .toggleButton {
+  @include action.icon-only("md");
 
-    svg {
-      @include action.glyph("sm");
-    }
+  svg {
+    @include action.glyph("md");
   }
 }
 
-.sizeMd {
-  .toggleButton,
-  &.toggleButton {
-    @include action.icon-only("md");
+.sizeLg .toggleButton {
+  @include action.icon-only("lg");
 
-    svg {
-      @include action.glyph("md");
-    }
-  }
-}
-
-.sizeLg {
-  .toggleButton,
-  &.toggleButton {
-    @include action.icon-only("lg");
-
-    svg {
-      @include action.glyph("lg");
-    }
+  svg {
+    @include action.glyph("lg");
   }
 }

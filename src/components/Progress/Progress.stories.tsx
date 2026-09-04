@@ -14,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Visual indicator of task completion or loading state in linear and circular variants.",
+          "Visual indicator of task completion or loading state as a bar or a ring.",
       },
     },
   },
@@ -24,14 +24,14 @@ const meta = {
       options: ["sm", "md", "lg"],
       description: "Size of the progress bar",
     },
-    variant: {
+    tone: {
       control: "select",
-      options: ["default", "neutral", "success", "warning", "danger"],
-      description: "Color variant",
+      options: ["accent", "neutral", "success", "warning", "danger"],
+      description: "Colour; the semantic tones carry state",
     },
     showValue: { control: "boolean", description: "Show percentage value" },
   },
-  args: { value: 60, size: "md", variant: "default", label: "Uploading", showValue: true },
+  args: { value: 60, size: "md", tone: "accent", label: "Uploading", showValue: true },
 } satisfies Meta<typeof Progress>;
 
 export default meta;
@@ -43,13 +43,13 @@ export const Default: Story = {
 };
 
 export const Success: Story = {
-  args: { value: 100, variant: "success", label: "Complete", showValue: true },
+  args: { value: 100, tone: "success", label: "Complete", showValue: true },
 };
 
 export const NeutralMeter: Story = {
   args: {
     value: 100,
-    variant: "neutral",
+    tone: "neutral",
     role: "meter",
     label: "Largest rule domain",
     showValue: true,
@@ -57,7 +57,7 @@ export const NeutralMeter: Story = {
 };
 
 export const Danger: Story = {
-  args: { value: 95, variant: "danger", label: "Storage critical", showValue: true },
+  args: { value: 95, tone: "danger", label: "Storage critical", showValue: true },
 };
 
 export const Large: Story = {
@@ -70,5 +70,5 @@ export const Indeterminate: Story = {
 
 export const Circular: Story = {
   args: { value: 75, showValue: true },
-  render: (args) => <Progress.Circular {...args} variant="success" />,
+  render: (args) => <Progress.Circular {...args} tone="success" />,
 };

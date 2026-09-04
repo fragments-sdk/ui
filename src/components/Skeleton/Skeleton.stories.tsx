@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Skeleton } from ".";
 
 /**
- * Skeleton is a placeholder loading state for content. Semantic variants
- * auto-size to common shapes, while width/height allow custom dimensions.
+ * Skeleton is a placeholder loading state for content. Semantic shapes
+ * auto-size to common content, while width/height allow custom dimensions.
  * Includes Skeleton.Text and Skeleton.Circle subcomponents.
  */
 const meta = {
@@ -18,15 +18,15 @@ const meta = {
     },
   },
   argTypes: {
-    variant: {
+    shape: {
       control: "select",
       options: ["text", "heading", "avatar", "button", "input", "rect"],
-      description: "Semantic variant that auto-sizes",
+      description: "Semantic shape that auto-sizes",
     },
     size: {
       control: "select",
       options: ["sm", "md", "lg"],
-      description: "Size for avatar/button variants",
+      description: "Size for avatar/button shapes",
     },
     radius: {
       control: "select",
@@ -36,7 +36,7 @@ const meta = {
     fill: { control: "boolean", description: "Fill parent container" },
     static: { control: "boolean", description: "Disable skeleton animation" },
   },
-  args: { variant: "rect", width: 200, height: 20 },
+  args: { shape: "rect", width: 200, height: 20 },
 } satisfies Meta<typeof Skeleton>;
 
 export default meta;
@@ -44,11 +44,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { variant: "rect", width: 200, height: 20 },
+  args: { shape: "rect", width: 200, height: 20 },
 };
 
 export const Heading: Story = {
-  args: { variant: "heading", width: 200 },
+  args: { shape: "heading", width: 200 },
 };
 
 export const TextLines: Story = {
@@ -68,9 +68,9 @@ export const Avatars: Story = {
 export const Card: Story = {
   render: () => (
     <div style={{ width: 300 }}>
-      <Skeleton variant="rect" height={120} radius="md" />
+      <Skeleton shape="rect" height={120} radius="md" />
       <div style={{ marginTop: "var(--fui-space-2)" }}>
-        <Skeleton variant="heading" width="60%" />
+        <Skeleton shape="heading" width="60%" />
       </div>
       <div style={{ marginTop: "var(--fui-space-1)" }}>
         <Skeleton.Text lines={2} />

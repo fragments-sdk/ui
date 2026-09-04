@@ -1,6 +1,7 @@
 @use "../../recipes/layout";
 @use "../../recipes/typography";
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 
 .separator {
   flex-shrink: 0;
@@ -9,25 +10,25 @@
 
 // Horizontal (default)
 .horizontal {
-  width: 100%;
+  inline-size: 100%;
 
   .line {
     display: block;
-    width: 100%;
-    height: var(--fui-stroke-hairline, 1px);
+    inline-size: 100%;
+    block-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     background-color: var(--fui-border, $fui-border);
   }
 }
 
 // Vertical
 .vertical {
-  height: auto;
+  block-size: auto;
   align-self: stretch;
 
   .line {
     display: block;
-    width: var(--fui-stroke-hairline, 1px);
-    height: 100%;
+    inline-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+    block-size: 100%;
     background-color: var(--fui-border, $fui-border);
   }
 }
@@ -43,7 +44,7 @@
   &::after {
     content: "";
     flex: 1;
-    height: var(--fui-stroke-hairline, 1px);
+    block-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     background-color: var(--fui-border, $fui-border);
   }
 }
@@ -56,47 +57,31 @@
   white-space: nowrap;
 }
 
-// Spacing variants
-.spacingNone {
-  padding: 0;
+// Gap: breathing room on the cross axis of the rule.
+.gapNone {
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
-.spacingSm {
-  &.horizontal {
-    padding-block: layout.gap("sm");
-  }
+@each $gap, $class in ("xs": "gapXs", "sm": "gapSm", "md": "gapMd", "lg": "gapLg", "xl": "gapXl") {
+  .#{$class} {
+    &.horizontal,
+    &.withLabel {
+      padding-block: layout.gap($gap);
+    }
 
-  &.vertical {
-    padding-inline: layout.gap("sm");
-  }
-}
-
-.spacingMd {
-  &.horizontal {
-    padding-block: layout.gap("md");
-  }
-
-  &.vertical {
-    padding-inline: layout.gap("md");
+    &.vertical {
+      padding-inline: layout.gap($gap);
+    }
   }
 }
 
-.spacingLg {
-  &.horizontal {
-    padding-block: layout.gap("lg");
-  }
-
-  &.vertical {
-    padding-inline: layout.gap("lg");
-  }
-}
-
-// Soft variant (lighter color)
+// Soft: half-weight rule for quieter breaks. Shares the disabled opacity step
+// (0.5) — there is no dedicated soft-rule token yet.
 .soft {
-  opacity: 0.5;
+  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
 
   &.withLabel::before,
   &.withLabel::after {
-    opacity: 0.5;
+    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
   }
 }

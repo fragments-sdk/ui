@@ -7,10 +7,11 @@
   @include button-reset;
   @include interactive-base;
   @include action.base;
+  @include high-contrast-outline;
 
-  border-radius: var(--fui-radius-md, $fui-radius-md);
+  border-radius: var(--fui-radius-l2, $fui-radius-l2);
   color: var(--fui-text-secondary, $fui-text-secondary);
-  border: var(--fui-stroke-hairline, 1px) solid transparent;
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
   background-color: transparent;
   flex-shrink: 0;
 
@@ -59,7 +60,7 @@
   }
 }
 
-.subtle {
+.soft {
   background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
 
   &:hover:not(:disabled):not([data-disabled]) {
@@ -71,7 +72,7 @@
   }
 }
 
-.outlined {
+.outline {
   border-color: var(--fui-border, $fui-border);
 
   &:hover:not(:disabled):not([data-disabled]) {

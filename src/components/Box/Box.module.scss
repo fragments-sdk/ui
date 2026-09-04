@@ -1,5 +1,6 @@
 @use "../../recipes/layout";
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 
 .box {
   box-sizing: border-box;
@@ -181,7 +182,7 @@
 
 // Border radius
 .rounded-none {
-  border-radius: 0;
+  border-radius: var(--fui-radius-none, #{$fui-radius-none});
 }
 .rounded-sm {
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
@@ -198,21 +199,21 @@
 
 // Border
 .border {
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 
 // Directional borders
 .borderTop {
-  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 .borderBottom {
-  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 .borderLeft {
-  border-left: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-left: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 .borderRight {
-  border-right: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-right: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 }
 
 // Border color

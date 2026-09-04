@@ -206,7 +206,7 @@ describe("Table", () => {
     );
 
     expect(compiledStyles).toContain(unborderedInsetRule);
-    expect(compiledStyles).toContain("padding-inline: var(--_fui-table-cell-inline-inset)");
+    expect(compiledStyles).toContain("padding-inline: var(--_fui-table-cell-inline-inset, ");
 
     const [outerHeader, nestedHeader] = screen.getAllByRole("columnheader");
     expect(outerHeader.matches(unborderedFirstHeaderSelector)).toBe(true);

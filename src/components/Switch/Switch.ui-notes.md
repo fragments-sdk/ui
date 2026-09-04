@@ -55,3 +55,11 @@
   `node libs/ui/evidence/mvp-switch-fallback/generate-fixture.mjs`). Distinctive
   tokens must paint neon off-tracks; the no-layer panel must stay opaque and
   distinct from on.
+
+## 2026-09-03 Wave 0
+
+- Every `--_switch-*` and `--_fui-switch-*` private property now carries a Sass fallback (`boolean.switch-thumb-size("md")`, `$_switch-travel-md`, `--fui-stroke-default`, surface tokens).
+- Raw `white`/`black` sheens and shadows moved to `--fui-bg-elevated`, `--fui-control-checked-color`, `--fui-text-primary`.
+- Disabled rides `@include disabled-state;`; `prefers-contrast` block replaced by `@include high-contrast-outline;` on `.track`.
+- Test regex for the thumb translate now tolerates the fallback in `var(--_fui-switch-travel, …)`.
+- Still open: a `--fui-color-highlight` token for the sheen instead of borrowing surface/on-accent colors.

@@ -13,10 +13,18 @@ function composeEventHandlers<T extends (...args: any[]) => void>(
   }) as T;
 }
 
-export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+export type LinkTone = 'accent' | 'neutral';
+export type LinkColor = 'primary' | 'secondary' | 'tertiary';
+
+export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'color'> {
   children: React.ReactNode;
-  /** Visual variant */
-  variant?: 'default' | 'subtle' | 'muted';
+  /** Colour. `accent` (default) is the link ink; `neutral` reads as body text
+   * until hovered, for secondary and contextual links.
+   * @default 'accent' */
+  tone?: LinkTone;
+  /** Text-hierarchy colour for a `neutral` link (Text's `color` axis).
+   * `tertiary` is the quietest link, for metadata and footers. */
+  color?: LinkColor;
   /** Underline style */
   underline?: 'always' | 'hover' | 'none' | 'dotted';
   /** Open in new tab (adds rel="noopener noreferrer") */
@@ -32,11 +40,23 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
   style?: React.CSSProperties;
 }
 
+const TONE_CLASS: Record<LinkTone, string> = {
+  accent: styles.toneAccent,
+  neutral: styles.toneNeutral,
+};
+
+const COLOR_CLASS: Record<LinkColor, string> = {
+  primary: styles.colorPrimary,
+  secondary: styles.colorSecondary,
+  tertiary: styles.colorTertiary,
+};
+
 const LinkRoot = React.forwardRef<HTMLAnchorElement, LinkProps>(
   function Link(
     {
       children,
-      variant = 'default',
+      tone = 'accent',
+      color,
       underline = 'hover',
       external = false,
       asChild = false,
@@ -50,7 +70,8 @@ const LinkRoot = React.forwardRef<HTMLAnchorElement, LinkProps>(
   ) {
     const classes = [
       styles.link,
-      styles[variant],
+      TONE_CLASS[tone],
+      color && COLOR_CLASS[color],
       styles[`underline-${underline}`],
       className,
     ]

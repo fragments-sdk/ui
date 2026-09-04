@@ -67,27 +67,27 @@
     {
       "name": "Default",
       "description": "Confirming action sits last in the row.",
-      "code": "<ButtonGroup>\n  <Button variant=\"secondary\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+      "code": "<ButtonGroup>\n  <Button variant=\"soft\">Cancel</Button>\n  <Button variant=\"solid\">Save</Button>\n</ButtonGroup>"
     },
     {
       "name": "Spacing",
       "description": "Four gap steps, from touching to airy.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <ButtonGroup gap=\"none\">\n    <Button variant=\"secondary\" size=\"sm\">None</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"xs\">\n    <Button variant=\"secondary\" size=\"sm\">XS</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"sm\">\n    <Button variant=\"secondary\" size=\"sm\">SM</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"md\">\n    <Button variant=\"secondary\" size=\"sm\">MD</Button>\n    <Button variant=\"secondary\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <ButtonGroup gap=\"none\">\n    <Button variant=\"soft\" size=\"sm\">None</Button>\n    <Button variant=\"soft\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"xs\">\n    <Button variant=\"soft\" size=\"sm\">XS</Button>\n    <Button variant=\"soft\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"sm\">\n    <Button variant=\"soft\" size=\"sm\">SM</Button>\n    <Button variant=\"soft\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n  <ButtonGroup gap=\"md\">\n    <Button variant=\"soft\" size=\"sm\">MD</Button>\n    <Button variant=\"soft\" size=\"sm\">Gap</Button>\n  </ButtonGroup>\n</Stack>"
     },
     {
       "name": "Alignment",
       "description": "Pins the row to the left, centre, or right of its container.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <ButtonGroup align=\"start\">\n    <Button variant=\"secondary\" size=\"sm\">Start</Button>\n    <Button variant=\"secondary\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n  <ButtonGroup align=\"center\">\n    <Button variant=\"secondary\" size=\"sm\">Center</Button>\n    <Button variant=\"secondary\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n  <ButtonGroup align=\"end\">\n    <Button variant=\"secondary\" size=\"sm\">End</Button>\n    <Button variant=\"secondary\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <ButtonGroup align=\"start\">\n    <Button variant=\"soft\" size=\"sm\">Start</Button>\n    <Button variant=\"soft\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n  <ButtonGroup align=\"center\">\n    <Button variant=\"soft\" size=\"sm\">Center</Button>\n    <Button variant=\"soft\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n  <ButtonGroup align=\"end\">\n    <Button variant=\"soft\" size=\"sm\">End</Button>\n    <Button variant=\"soft\" size=\"sm\">Aligned</Button>\n  </ButtonGroup>\n</Stack>"
     },
     {
       "name": "Wrapping",
       "description": "Buttons drop to a second line instead of overflowing.",
-      "code": "<ButtonGroup wrap>\n  <Button variant=\"secondary\" size=\"sm\">Approve</Button>\n  <Button variant=\"secondary\" size=\"sm\">Request changes</Button>\n  <Button variant=\"secondary\" size=\"sm\">Reassign reviewer</Button>\n  <Button variant=\"secondary\" size=\"sm\">Move to backlog</Button>\n  <Button variant=\"secondary\" size=\"sm\">Archive</Button>\n</ButtonGroup>"
+      "code": "<ButtonGroup wrap>\n  <Button variant=\"soft\" size=\"sm\">Approve</Button>\n  <Button variant=\"soft\" size=\"sm\">Request changes</Button>\n  <Button variant=\"soft\" size=\"sm\">Reassign reviewer</Button>\n  <Button variant=\"soft\" size=\"sm\">Move to backlog</Button>\n  <Button variant=\"soft\" size=\"sm\">Archive</Button>\n</ButtonGroup>"
     },
     {
       "name": "Form Actions",
       "description": "Right-aligned pair, named for screen readers.",
-      "code": "<ButtonGroup align=\"end\" role=\"group\" aria-label=\"Form actions\">\n  <Button variant=\"ghost\">Cancel</Button>\n  <Button variant=\"primary\">Submit</Button>\n</ButtonGroup>"
+      "code": "<ButtonGroup align=\"end\" role=\"group\" aria-label=\"Form actions\">\n  <Button variant=\"ghost\">Cancel</Button>\n  <Button variant=\"solid\">Submit</Button>\n</ButtonGroup>"
     }
   ],
   "relations": [

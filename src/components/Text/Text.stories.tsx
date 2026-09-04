@@ -3,7 +3,7 @@ import { Text } from '.';
 
 /**
  * Text is the canonical typography primitive. Every heading, paragraph, label,
- * and inline string in the design system routes through it for consistent size,
+ * and inline string in the design system routes through it for consistent scale,
  * weight, color, and font — agents should reuse it rather than styling raw
  * `<p>`/`<span>`/`<h1>` elements by hand.
  */
@@ -50,15 +50,27 @@ const meta = {
       ],
       description: 'HTML element to render',
     },
-    variant: {
+    role: {
       control: 'select',
-      options: ['section-label'],
-      description: 'Preset text variant',
+      options: [
+        'caption',
+        'ui-compact',
+        'ui-standard',
+        'body-compact',
+        'body-relaxed',
+        'title-sm',
+        'title-md',
+        'title-lg',
+        'code',
+        'section-label',
+        'eyebrow',
+      ],
+      description: 'Typography role (owns the whole setting)',
     },
-    size: {
+    scale: {
       control: 'select',
       options: ['2xs', 'xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'],
-      description: 'Font size',
+      description: 'Type-scale step for text with no role',
     },
     weight: {
       control: 'select',
@@ -79,7 +91,7 @@ const meta = {
   },
   args: {
     children: 'The quick brown fox jumps over the lazy dog',
-    size: 'md',
+    scale: 'md',
     weight: 'normal',
     color: 'primary',
   },
@@ -94,13 +106,13 @@ export const Default: Story = {
 };
 
 export const Heading: Story = {
-  args: { as: 'h1', size: '3xl', weight: 'semibold', children: 'Page title' },
+  args: { as: 'h1', scale: '3xl', weight: 'semibold', children: 'Page title' },
 };
 
 export const Paragraph: Story = {
   args: {
     as: 'p',
-    size: 'md',
+    scale: 'md',
     color: 'secondary',
     children:
       'This is a paragraph of body text that demonstrates the Text component using a semantic paragraph element.',
@@ -108,7 +120,7 @@ export const Paragraph: Story = {
 };
 
 export const SectionLabel: Story = {
-  args: { as: 'p', variant: 'section-label', children: 'On This Page' },
+  args: { as: 'p', role: 'section-label', children: 'On This Page' },
 };
 
 export const Bold: Story = {
@@ -120,7 +132,7 @@ export const Secondary: Story = {
 };
 
 export const SemanticColor: Story = {
-  args: { size: 'xs', color: 'warning', children: '91% of context used' },
+  args: { scale: 'xs', color: 'warning', children: '91% of context used' },
   parameters: {
     docs: {
       description: {
@@ -132,7 +144,7 @@ export const SemanticColor: Story = {
 };
 
 export const Monospace: Story = {
-  args: { font: 'mono', size: 'sm', children: 'npm install @usefragments/ui' },
+  args: { font: 'mono', scale: 'sm', children: 'npm install @usefragments/ui' },
 };
 
 export const Truncated: Story = {

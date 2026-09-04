@@ -15,10 +15,10 @@ describe('Text', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Heading');
   });
 
-  it('applies size, weight, and color classes', () => {
-    render(<Text size="lg" weight="semibold" color="secondary">Styled</Text>);
+  it('applies scale, weight, and color classes', () => {
+    render(<Text scale="lg" weight="semibold" color="secondary">Styled</Text>);
     const el = screen.getByText('Styled');
-    expect(el).toHaveClass('size-lg');
+    expect(el).toHaveClass('scale-lg');
     expect(el).toHaveClass('weight-semibold');
     expect(el).toHaveClass('color-secondary');
   });
@@ -47,19 +47,19 @@ describe('Text', () => {
     expect(screen.getByText('healthy-ui')).toHaveClass('color-accent');
   });
 
-  it('applies md size class (alias for base)', () => {
-    render(<Text size="md">Medium text</Text>);
-    expect(screen.getByText('Medium text')).toHaveClass('size-md');
+  it('applies the md scale class (alias for base)', () => {
+    render(<Text scale="md">Medium text</Text>);
+    expect(screen.getByText('Medium text')).toHaveClass('scale-md');
   });
 
-  it('applies eyebrow variant class', () => {
-    render(<Text variant="eyebrow">Overview</Text>);
-    expect(screen.getByText('Overview')).toHaveClass('variant-eyebrow');
+  it('applies the eyebrow role class', () => {
+    render(<Text role="eyebrow">Overview</Text>);
+    expect(screen.getByText('Overview')).toHaveClass('role-eyebrow');
   });
 
-  it('applies section-label variant class', () => {
-    render(<Text variant="section-label">Label</Text>);
-    expect(screen.getByText('Label')).toHaveClass('variant-section-label');
+  it('applies the section-label role class', () => {
+    render(<Text role="section-label">Label</Text>);
+    expect(screen.getByText('Label')).toHaveClass('role-section-label');
   });
 
   it.each([
@@ -77,14 +77,14 @@ describe('Text', () => {
     expect(screen.getByText(role)).toHaveClass(`role-${role}`);
   });
 
-  it('warns and ignores legacy type selectors when an untyped spread supplies a role', () => {
+  it('warns and ignores scale selectors when an untyped spread supplies a role', () => {
     const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const UnsafeText = Text as React.ComponentType<Record<string, unknown>>;
+    const UnsafeText = Text as unknown as React.ComponentType<Record<string, unknown>>;
 
-    render(<UnsafeText role="body-relaxed" size="lg">Semantic copy</UnsafeText>);
+    render(<UnsafeText role="body-relaxed" scale="lg">Semantic copy</UnsafeText>);
 
     expect(screen.getByText('Semantic copy')).toHaveClass('role-body-relaxed');
-    expect(screen.getByText('Semantic copy')).not.toHaveClass('size-lg');
+    expect(screen.getByText('Semantic copy')).not.toHaveClass('scale-lg');
     expect(warning).toHaveBeenCalledOnce();
     warning.mockRestore();
   });

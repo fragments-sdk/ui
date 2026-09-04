@@ -40,6 +40,8 @@
   &:focus-visible {
     @include field.focus-state;
   }
+
+  @include high-contrast-outline;
 }
 
 // Size variants — shared control-size + field-padding path
@@ -207,30 +209,6 @@
   pointer-events: none;
   white-space: nowrap;
   user-select: none;
-}
-
-// ============================================
-// Accessibility: High Contrast Mode
-// ============================================
-
-@media (prefers-contrast: more) {
-  .input {
-    border-width: var(--fui-stroke-default, 2px);
-    border-color: var(--fui-text-primary, $fui-text-primary);
-
-    &:focus-visible {
-      border-color: var(--fui-color-accent, $fui-color-accent);
-    }
-  }
-
-  .error,
-  .input[aria-invalid] {
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
-  }
-
-  .success {
-    border-color: var(--fui-color-success-text, $fui-color-success-text);
-  }
 }
 
 // ============================================

@@ -108,7 +108,7 @@ function TableOfContentsRoot({
   return (
     <nav {...htmlProps} aria-label={ariaLabel ?? label} className={classes}>
       {!hideTitle && (
-        <Text as="p" variant="section-label" className={styles.title}>
+        <Text as="p" role="section-label" className={styles.title}>
           {title}
         </Text>
       )}

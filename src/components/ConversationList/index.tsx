@@ -130,7 +130,7 @@ function TypingIndicator({
       <div className={styles.typingContent}>
         <Loading
           size="sm"
-          variant="dots"
+          kind="dots"
           color="muted"
           label=""
           role="presentation"
@@ -242,7 +242,7 @@ function ConversationListRoot({
       <div {...htmlProps} ref={containerRef} className={classes} onScroll={handleScroll}>
         {loadingHistory && (
           <div className={styles.loadingHistory}>
-            <Loading size="md" variant="spinner" color="muted" label="Loading history" />
+            <Loading size="md" kind="spinner" color="muted" label="Loading history" />
             <span>Loading history...</span>
           </div>
         )}

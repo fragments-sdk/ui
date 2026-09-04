@@ -33,7 +33,6 @@ describe("Icon", () => {
     ["md", 16],
     ["lg", 20],
     ["xl", 24],
-    ["2xl", 32],
   ] as const)("passes the generated %s pixel size to the icon", (size, pixels) => {
     const { container } = render(<Icon icon={MockIcon} size={size} />);
     const svg = container.querySelector('[data-testid="mock-icon"]');
@@ -48,14 +47,23 @@ describe("Icon", () => {
     }
   );
 
-  it("applies an internal CSS-safe class for the public 2xl size", () => {
-    const { container } = render(<Icon icon={MockIcon} size="2xl" />);
-    expect(container.firstChild).toHaveClass("size2xl");
-  });
+  it.each(["accent", "info", "success", "warning", "danger"] as const)(
+    "applies the %s tone class",
+    (tone) => {
+      const { container } = render(<Icon icon={MockIcon} tone={tone} />);
+      expect(container.firstChild).toHaveClass(
+        `tone${tone.charAt(0).toUpperCase()}${tone.slice(1)}`
+      );
+    }
+  );
 
-  it("applies variant color class", () => {
-    const { container } = render(<Icon icon={MockIcon} variant="error" />);
-    expect(container.firstChild).toHaveClass("error");
+  it("applies the text-hierarchy colour class and lets tone win over it", () => {
+    const { container, rerender } = render(<Icon icon={MockIcon} color="tertiary" />);
+    expect(container.firstChild).toHaveClass("colorTertiary");
+
+    rerender(<Icon icon={MockIcon} color="tertiary" tone="warning" />);
+    expect(container.firstChild).toHaveClass("toneWarning");
+    expect(container.firstChild).not.toHaveClass("colorTertiary");
   });
 
   it("forwards custom icon props to arbitrary icon components", () => {

@@ -1,11 +1,12 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
 @use "../../recipes/overlay" as overlay;
 
 .backdrop {
   position: fixed;
-  z-index: var(--fui-overlay-layer-backdrop, 50);
+  z-index: var(--fui-overlay-layer-backdrop, #{$fui-overlay-layer-backdrop});
   inset: 0;
   background-color: var(--fui-backdrop, $fui-backdrop);
   opacity: 0;
@@ -25,13 +26,13 @@
   @include overlay.safe-viewport;
 
   position: fixed;
-  z-index: var(--fui-overlay-layer-modal, 51);
+  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-block: var(--_fui-overlay-safe-top) var(--_fui-overlay-safe-bottom);
-  padding-inline: var(--_fui-overlay-safe-left) var(--_fui-overlay-safe-right);
+  padding-block: var(--_fui-overlay-safe-top, var(--fui-raw-space-16, #{measurements.raw-space(16)})) var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  padding-inline: var(--_fui-overlay-safe-left, var(--fui-raw-space-16, #{measurements.raw-space(16)})) var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
   overflow: auto;
 }
 
@@ -80,7 +81,7 @@
 }
 
 .full {
-  max-inline-size: var(--_fui-overlay-safe-inline);
+  max-inline-size: var(--_fui-overlay-safe-inline, calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)})));
 }
 
 .header {
@@ -90,14 +91,14 @@
 .title {
   @include overlay.modal-title;
 
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .description {
   @include overlay.description;
 
-  margin: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-secondary, $fui-text-secondary);
 }
 
@@ -108,8 +109,9 @@
 .footer {
   @include overlay.footer;
 
-  border-top: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
-  border-radius: 0 0 var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg);
+  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-none, #{$fui-radius-none}) var(--fui-raw-space-0, #{measurements.raw-space(0)}) var(--fui-radius-lg, $fui-radius-lg)
+    var(--fui-radius-lg, $fui-radius-lg);
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 }
 
@@ -134,8 +136,8 @@
 
 .popup:has(.close) .header {
   padding-inline-end: calc(
-    var(--fui-overlay-close-inset, var(--fui-raw-space-12, 12px)) + #{action.track("sm")} +
-      var(--fui-overlay-section-gap, var(--fui-raw-space-8, 8px))
+    var(--fui-overlay-close-inset, var(--fui-raw-space-12, #{measurements.raw-space(12)})) + #{action.track("sm")} +
+      var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
   );
 }
 

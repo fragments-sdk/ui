@@ -1,4 +1,5 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/overlay" as overlay;
 
 .positioner {
@@ -41,22 +42,22 @@
   @include overlay.arrow-box;
 
   background-color: var(--fui-bg-inverse, $fui-bg-inverse);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-bg-inverse, $fui-bg-inverse);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-bg-inverse, $fui-bg-inverse);
 
   &[data-side="top"] {
-    bottom: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, 10px)) / -2);
+    bottom: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
   }
 
   &[data-side="bottom"] {
-    top: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, 10px)) / -2);
+    top: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
   }
 
   &[data-side="left"] {
-    right: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, 10px)) / -2);
+    right: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
   }
 
   &[data-side="right"] {
-    left: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, 10px)) / -2);
+    left: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
   }
 }
 

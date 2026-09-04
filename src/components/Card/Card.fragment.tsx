@@ -45,40 +45,32 @@ export default defineFragment(Card, {
       ),
       note: "Footer parks the actions below the content.",
     },
-    Outlined: {
+    Outline: {
       render: (
-        <Card variant="outlined">
+        <Card variant="outline">
           <Card.Body>Related content</Card.Body>
         </Card>
       ),
-      note: "Border instead of shadow, for dense layouts.",
+      note: "Hairline border on a transparent surface, for dense layouts.",
     },
-    Elevated: {
+    Soft: {
       render: (
-        <Card variant="elevated">
-          <Card.Body>Related content</Card.Body>
-        </Card>
-      ),
-      note: "Heavier shadow pulls one surface forward.",
-    },
-    Stat: {
-      render: (
-        <Card variant="stat">
+        <Card variant="soft">
           <Card.Body>
-            <Text size="xl" weight="semibold">
+            <Text scale="xl" weight="semibold">
               94%
             </Text>
-            <Text size="sm" color="secondary">
+            <Text scale="sm" color="secondary">
               Component coverage
             </Text>
           </Card.Body>
         </Card>
       ),
-      note: "Compact metric tile for dashboard grids.",
+      note: "Quiet tint fill: metric tiles and dashboard panels read as one system.",
     },
     Panel: {
       render: (
-        <Card variant="panel">
+        <Card variant="soft" padding="none">
           <Card.Header divided>
             <Card.Title>Overview</Card.Title>
           </Card.Header>
@@ -89,7 +81,7 @@ export default defineFragment(Card, {
     },
     Accent: {
       render: (
-        <Card variant="accent" padding="lg">
+        <Card variant="soft" tone="accent" padding="lg">
           <Card.Header>
             <Card.Title>Finish setting up governance</Card.Title>
             <Card.Description>Run the first scan to start tracking drift.</Card.Description>
@@ -97,6 +89,17 @@ export default defineFragment(Card, {
         </Card>
       ),
       note: "Earned-moment capsule: accent hairline and wash, for the few surfaces that deserve emphasis.",
+    },
+    "Danger Tone": {
+      render: (
+        <Card variant="soft" tone="danger">
+          <Card.Header>
+            <Card.Title>Merge held</Card.Title>
+            <Card.Description>Two blocking findings need a decision.</Card.Description>
+          </Card.Header>
+        </Card>
+      ),
+      note: "The same capsule carrying state: the wash and hairline follow the tone.",
     },
     Interactive: {
       render: (
@@ -123,7 +126,7 @@ export default defineFragment(Card, {
     },
     "Nested Heading": {
       render: (
-        <Card variant="panel" padding="none">
+        <Card variant="soft" padding="none">
           <Card.Header divided>
             <Card.Title as="h4">Nested panel</Card.Title>
           </Card.Header>
@@ -168,9 +171,8 @@ export default defineFragment(Card, {
     guidelines: [
       "Keep one variant per context — mixed variants read as noise",
       "Cards sharing a grid row should size uniformly",
-      "elevated is for emphasis; use it on one card, not all of them",
-      "stat and panel keep dashboard spacing, border, and radius consistent",
-      "outline is an alias for outlined — either spelling works",
+      "tone is earned: accent, warning and danger paint the capsule — reserve it for one surface per page",
+      "soft with padding=\"none\" plus Card.Header divided and Card.Body padding is the dashboard panel",
       "Prefer a Button or Link inside the card over making the whole card clickable",
     ],
     accessibility: [
@@ -182,7 +184,7 @@ export default defineFragment(Card, {
         reason: "Do not use a Card as a modal surface.",
         bad: "<Card>Confirm deletion</Card>",
         good: (
-          <Card variant="outlined">
+          <Card variant="outline">
             <Card.Body>Inline summary</Card.Body>
           </Card>
         ),
@@ -190,7 +192,7 @@ export default defineFragment(Card, {
     ],
   },
   matrix: {
-    axes: { variant: "auto", padding: "auto", theme: ["light", "dark"] },
+    axes: { variant: "auto", tone: "auto", padding: "auto", theme: ["light", "dark"] },
     forced: ["hover", "focus"],
     worstCase: { children: "A long localized heading and dense multi-line supporting content" },
   },
@@ -219,8 +221,9 @@ export default defineFragment(Card, {
   },
   contract: {
     propsSummary: [
-      "variant: default|outlined|outline|elevated|stat|panel|accent (default: default)",
-      "padding: none|sm|md|lg (default: md)",
+      "variant: solid|soft|outline (default: solid)",
+      "tone: neutral|accent|warning|danger (default: neutral) - non-neutral paints the earned-moment capsule",
+      "padding: none|sm|md|lg (default: md) - none + Card.Header divided + Card.Body padding = panel",
       "as: article|div|section (default: article) - card root element",
       "onClick: (event) => void - click handler on root (adds role/button keyboard behavior)",
       "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer",

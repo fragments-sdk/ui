@@ -25,11 +25,6 @@
   &:focus-visible {
     @include focus-ring;
   }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
 }
 
 .triggerContent {
@@ -72,8 +67,7 @@
 }
 
 .disabled .trigger {
-  opacity: 0.5;
-  cursor: not-allowed;
+  @include disabled-state;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,6 @@
+@use "../tokens/measurements.generated" as measurements;
 @use "../tokens/mixins" as mixins;
+@use "../tokens/variables" as tokens;
 @use "typography" as typography;
 
 // Block rhythm is owned by the container (owl selectors below). The element
@@ -12,11 +14,11 @@
   }
 
   > * + * {
-    margin-block-start: var(--fui-raw-space-12);
+    margin-block-start: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   }
 
   > * + :is(h1, h2, h3, h4, h5, h6) {
-    margin-block-start: var(--fui-raw-space-24);
+    margin-block-start: var(--fui-raw-space-24, #{measurements.raw-space(24)});
   }
 }
 
@@ -45,16 +47,16 @@
 @mixin list($kind) {
   @include typography.role("body-relaxed");
 
-  margin: 0;
-  padding: 0;
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 
   @if $kind == "none" {
     display: grid;
     list-style: none;
   } @else if $kind == "disc" or $kind == "decimal" or $kind == "icon" {
     display: grid;
-    grid-template-columns: minmax(var(--fui-raw-space-12), max-content) minmax(0, 1fr);
-    column-gap: var(--fui-raw-space-8);
+    grid-template-columns: minmax(var(--fui-raw-space-12, #{measurements.raw-space(12)}), max-content) minmax(0, 1fr);
+    column-gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
     list-style: none;
 
     > li {
@@ -79,7 +81,7 @@
 
     > li > :is(ul, ol) {
       grid-column: 1 / -1;
-      margin-block-start: var(--fui-raw-space-8);
+      margin-block-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
     }
 
     @if $kind == "disc" {
@@ -106,10 +108,10 @@
 @mixin inline-code {
   @include typography.role("code");
 
-  padding-block: var(--fui-raw-space-2);
-  padding-inline: var(--fui-raw-space-4);
-  border-radius: var(--fui-radius-sm);
-  background: var(--fui-bg-tertiary);
+  padding-block: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+  padding-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  border-radius: var(--fui-radius-sm, #{tokens.$fui-radius-sm});
+  background: var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary});
   overflow-wrap: anywhere;
 }
 
@@ -117,11 +119,11 @@
   @include typography.role("code");
 
   @if $density == "compact" {
-    padding-block: var(--fui-raw-space-8);
-    padding-inline: var(--fui-raw-space-12);
+    padding-block: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding-inline: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   } @else if $density == "default" {
-    padding-block: var(--fui-raw-space-12);
-    padding-inline: var(--fui-raw-space-16);
+    padding-block: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    padding-inline: var(--fui-raw-space-16, #{measurements.raw-space(16)});
   } @else {
     @error "Unknown code-block density '#{$density}'. Expected compact or default.";
   }
@@ -135,9 +137,9 @@
 @mixin blockquote {
   @include typography.role("body-relaxed");
 
-  margin: 0;
-  padding-inline-start: var(--fui-raw-space-16);
-  border-inline-start: var(--fui-raw-space-2) solid var(--fui-border-strong);
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding-inline-start: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+  border-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid var(--fui-border-strong, #{tokens.$fui-border-strong});
 }
 
 @mixin table {
@@ -148,8 +150,8 @@
   overflow-x: auto;
 
   :is(th, td) {
-    padding-block: var(--fui-raw-space-8);
-    padding-inline: var(--fui-raw-space-12);
+    padding-block: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding-inline: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   }
 }
 
@@ -170,10 +172,10 @@
 }
 
 @mixin rule {
-  block-size: var(--fui-stroke-hairline);
-  margin-block: var(--fui-raw-space-24);
+  block-size: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline});
+  margin-block: var(--fui-raw-space-24, #{measurements.raw-space(24)});
   border: 0;
-  background: var(--fui-border);
+  background: var(--fui-border, #{tokens.$fui-border});
 }
 
 @mixin media {

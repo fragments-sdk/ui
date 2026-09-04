@@ -1,7 +1,7 @@
 {
   "$schema": "https://usefragments.com/schemas/contract.v1.json",
   "name": "Icon",
-  "description": "Sizes and colors any icon so it lines up with the text beside it.",
+  "description": "Sizes and colours any icon so it lines up with the text beside it.",
   "category": "display",
   "tags": ["icon", "visual", "symbol", "graphic"],
   "status": "stable",
@@ -12,8 +12,8 @@
     "icon: union (required)",
     "size: xs|sm|md|lg|xl (default: md)",
     "weight: string (default: regular)",
-    "variant: default|primary|secondary|tertiary|accent|success|warning|error",
-    "color: primary|secondary|tertiary|accent|success|warning|error",
+    "tone: accent|info|success|warning|danger",
+    "color: primary|secondary|tertiary",
     "iconProps: object"
   ],
   "props": {
@@ -41,27 +41,17 @@
       "required": false,
       "values": ["thin", "light", "regular", "bold", "fill", "duotone"]
     },
-    "variant": {
+    "tone": {
       "type": "enum",
-      "description": "Semantic color variant",
-      "default": "default",
+      "description": "Semantic colour. Reserve success, warning and danger for real state; omit to inherit currentColor",
       "required": false,
-      "values": [
-        "default",
-        "primary",
-        "secondary",
-        "tertiary",
-        "accent",
-        "success",
-        "warning",
-        "error"
-      ]
+      "values": ["accent", "info", "success", "warning", "danger"]
     },
     "color": {
       "type": "enum",
-      "description": "Deprecated alias for variant",
+      "description": "Text-hierarchy colour, the same axis as Text color. tone wins when both are set",
       "required": false,
-      "values": ["primary", "secondary", "tertiary", "accent", "success", "warning", "error"]
+      "values": ["primary", "secondary", "tertiary"]
     },
     "iconProps": {
       "type": "object",
@@ -76,7 +66,7 @@
     ],
     "whenNot": ["Artwork or illustration (use Image)", "Multi-color or animated graphics"],
     "guidelines": [
-      "Reserve success, warning, and error colors for real state",
+      "Reserve the success, warning, and danger tones for real state",
       "Hold one size per context",
       "Match weight to the text weight beside it",
       "iconProps reaches options the wrapper does not expose"
@@ -99,9 +89,14 @@
       "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Star} size=\"xs\" />\n  <Icon icon={Star} size=\"sm\" />\n  <Icon icon={Star} size=\"md\" />\n  <Icon icon={Star} size=\"lg\" />\n  <Icon icon={Star} size=\"xl\" />\n</div>"
     },
     {
-      "name": "Semantic Colors",
-      "description": "Color states carry meaning — never use them for decoration.",
-      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Check} variant=\"success\" />\n  <Icon icon={Warning} variant=\"warning\" />\n  <Icon icon={Warning} variant=\"error\" />\n  <Icon icon={Info} variant=\"accent\" />\n</div>"
+      "name": "Tones",
+      "description": "Tone states carry meaning — never use them for decoration.",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Check} tone=\"success\" />\n  <Icon icon={Warning} tone=\"warning\" />\n  <Icon icon={Warning} tone=\"danger\" />\n  <Icon icon={Info} tone=\"accent\" />\n</div>"
+    },
+    {
+      "name": "Hierarchy",
+      "description": "The text colour ladder, for glyphs that sit beside secondary or tertiary copy.",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Heart} color=\"primary\" />\n  <Icon icon={Heart} color=\"secondary\" />\n  <Icon icon={Heart} color=\"tertiary\" />\n</div>"
     },
     {
       "name": "Weights",
@@ -136,7 +131,8 @@
       "icon: React component - icon component (required)",
       "size: xs|sm|md|lg|xl - icon size",
       "weight: string - optional style/weight hint for icons that support it",
-      "variant: default|primary|secondary|tertiary|accent|success|warning|error - color",
+      "tone: accent|info|success|warning|danger - semantic colour",
+      "color: primary|secondary|tertiary - text-hierarchy colour",
       "iconProps: typed from the passed icon component - advanced icon-specific props"
     ],
     "a11yRules": ["A11Y_ICON_LABEL", "A11Y_COLOR_CONTRAST"]

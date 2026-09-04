@@ -14,19 +14,19 @@ const meta = {
     docs: {
       description: {
         component:
-          'Contextual feedback messages for user actions or system status with severity levels.',
+          'Contextual feedback messages for user actions or system status with tones.',
       },
     },
   },
   argTypes: {
-    severity: {
+    tone: {
       control: 'select',
-      options: ['info', 'success', 'warning', 'error'],
-      description: 'Visual severity level',
+      options: ['info', 'success', 'warning', 'danger'],
+      description: 'Tone',
     },
   },
   args: {
-    severity: 'info',
+    tone: 'info',
     children: (
       <>
         <Alert.Icon />
@@ -44,7 +44,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Info: Story = {
   render: () => (
-    <Alert severity="info">
+    <Alert tone="info">
       <Alert.Icon />
       <Alert.Body>
         <Alert.Content>
@@ -57,7 +57,7 @@ export const Info: Story = {
 
 export const Success: Story = {
   render: () => (
-    <Alert severity="success">
+    <Alert tone="success">
       <Alert.Icon />
       <Alert.Body>
         <Alert.Title>Payment processed</Alert.Title>
@@ -69,7 +69,7 @@ export const Success: Story = {
 
 export const Warning: Story = {
   render: () => (
-    <Alert severity="warning">
+    <Alert tone="warning">
       <Alert.Icon />
       <Alert.Body>
         <Alert.Title>Storage almost full</Alert.Title>
@@ -81,7 +81,7 @@ export const Warning: Story = {
 
 export const Error: Story = {
   render: () => (
-    <Alert severity="error">
+    <Alert tone="danger">
       <Alert.Icon />
       <Alert.Body>
         <Alert.Title>Upload failed</Alert.Title>
@@ -93,7 +93,7 @@ export const Error: Story = {
 
 export const WithAction: Story = {
   render: () => (
-    <Alert severity="warning">
+    <Alert tone="warning">
       <Alert.Icon />
       <Alert.Body>
         <Alert.Title>Update available</Alert.Title>
@@ -108,7 +108,7 @@ export const WithAction: Story = {
 
 export const Dismissible: Story = {
   render: () => (
-    <Alert severity="info">
+    <Alert tone="info">
       <Alert.Icon />
       <Alert.Body>
         <Alert.Content>You can customize notification preferences in Settings.</Alert.Content>
