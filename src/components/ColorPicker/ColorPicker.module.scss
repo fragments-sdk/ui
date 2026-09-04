@@ -92,6 +92,25 @@ $fui-colorpicker-pointer-size: $fui-target-size-min !default;
   @include field.shell;
 
   flex-shrink: 0;
+
+  &:focus-visible,
+  &[data-popup-open] {
+    @include field.focus-state;
+  }
+
+  .wrapper[data-invalid] & {
+    @include field.invalid-state;
+
+    // Focused while invalid keeps the danger edge and takes the danger ring,
+    // the same pairing Input and Textarea render. Without it the ring stays
+    // accent-coloured and the control reads half-valid at the moment the user
+    // is actually in it.
+    &:focus-visible,
+    &[data-popup-open] {
+      @include field.invalid-focus-state;
+    }
+  }
+
   // Disabled state (opacity + pointer-events) comes from @include interactive-base.
   @include high-contrast-outline;
 }
@@ -115,8 +134,6 @@ $fui-colorpicker-pointer-size: $fui-target-size-min !default;
 
 .popup {
   @include popup.container;
-
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
 
   // react-colorful styling overrides
   :global(.react-colorful) {

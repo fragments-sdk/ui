@@ -61,21 +61,25 @@
   flex-shrink: 0;
   box-sizing: border-box;
   margin-block-start: var(--_fui-boolean-mark-offset, 0);
-  background-color: var(--fui-field-bg, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border-strong);
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   cursor: inherit;
   @include high-contrast-outline;
 
   &:hover:not([data-disabled]) {
-    border-color: var(--fui-field-border-hover, $fui-text-tertiary);
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus-visible {
+    @include field.focus-state;
   }
 
   &[data-checked] {
     background-color: color-mix(
       in srgb,
       var(--fui-control-checked-bg, #{$fui-color-accent}) 8%,
-      var(--fui-field-bg, #{$fui-bg-elevated})
+      var(--fui-bg-primary, #{$fui-bg-primary})
     );
     border-color: var(--fui-control-checked-border, $fui-color-accent);
     box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
@@ -86,13 +90,17 @@
     background-color: color-mix(
       in srgb,
       var(--fui-control-checked-bg-hover, #{$fui-color-accent-hover}) 12%,
-      var(--fui-field-bg, #{$fui-bg-elevated})
+      var(--fui-bg-primary, #{$fui-bg-primary})
     );
     border-color: var(--fui-control-checked-border-hover, $fui-color-accent-hover);
   }
 
   &[data-invalid] {
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+    @include field.invalid-state;
+
+    &:focus-visible {
+      @include field.invalid-focus-state;
+    }
   }
 }
 
@@ -218,7 +226,11 @@
 }
 
 .group[data-invalid] .radio {
-  border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+  @include field.invalid-state;
+
+  &:focus-visible {
+    @include field.invalid-focus-state;
+  }
 }
 
 // ============================================

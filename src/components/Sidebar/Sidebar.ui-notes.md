@@ -54,3 +54,9 @@ reads `--fui-opacity-muted`.
 
 - The row radius is a public hook again, in the documented `--fui-sidebar-item-*` family: `--fui-sidebar-item-radius` defaults to `var(--fui-radius-full)` in `_variables.scss`; `.item` and `.subItem` read it with the Sass twin as fallback. Products that want restrained rows set it on the `Sidebar.Root` element (Cloud sets `--fui-radius-sm`).
 - `.sectionAction` and `.submenu` keep the full radius directly; they are not rows.
+
+## 2026-09-04 Wave 1 — navigation parity (UIR-D41)
+
+- **What changed** — the mobile panel stays a _shell_ surface (flush, full height, app background) and took only the layer tokens plus `overlay.backdrop` for its scrim, not the Drawer panel. In-shell stacking is no longer on the overlay scale: `.rail` 10 → 1, `.collapseToggleFloating` 20 → 2. The rail-indicator active grammar is unchanged, and `navigation.link-states` / `link-active` are deliberately NOT applied here.
+- **What was browser-verified** — mobile1: the mobile aside measures 240 x 568 (full viewport height), `border-radius: 0`, `inset: 0`, and computes `z-index: 51` from `--fui-overlay-layer-modal` — no raw value left.
+- **Not re-checked in this lane** — the open-state slide and the submenu stories; the panel is closed by default in Storybook and no story exposes a trigger.

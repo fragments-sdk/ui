@@ -59,11 +59,11 @@
   }
 }
 
-
 // Card surface
 @mixin surface-elevated {
   background-color: var(--fui-bg-elevated, #{$fui-bg-elevated});
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, #{$fui-border});
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-border, #{$fui-border});
   border-radius: var(--fui-radius-l1, #{$fui-radius-l1});
 }
 
@@ -227,28 +227,4 @@
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
-}
-
-// Focus ring for success states (e.g., validated form fields)
-@mixin focus-ring-success {
-  outline: none;
-  box-shadow:
-    0 0 0 1px
-      color-mix(in srgb, var(--fui-color-success-text, #{$fui-color-success-text}) 42%, transparent),
-    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
-      color-mix(in srgb, var(--fui-color-success-text, #{$fui-color-success-text}) 14%, transparent),
-    0 10px 24px -16px
-      color-mix(in srgb, var(--fui-color-success-text, #{$fui-color-success-text}) 28%, transparent);
-}
-
-// Focus ring for error states (e.g., invalid form fields)
-@mixin focus-ring-error {
-  outline: none;
-  box-shadow:
-    0 0 0 1px
-      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 42%, transparent),
-    0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + 1px)
-      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 14%, transparent),
-    0 10px 24px -16px
-      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 28%, transparent);
 }

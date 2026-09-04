@@ -82,25 +82,29 @@ $_message-gap: measurements.raw-space(4);
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }
 
+// One ring for every field state: the edge takes the state colour, the ring
+// is that colour at 34%. Focus, open popup, and focus-within all use it.
+@mixin _ring($color) {
+  outline: var(--fui-focus-ring-width, #{tokens.$fui-focus-ring-width}) solid
+    color-mix(in srgb, #{$color} 34%, transparent);
+  outline-offset: var(--fui-focus-ring-offset, #{tokens.$fui-focus-ring-offset});
+}
+
 @mixin focus-state {
   border-color: var(--fui-color-accent, #{tokens.$fui-color-accent});
-  outline: var(--fui-focus-ring-width, #{tokens.$fui-focus-ring-width}) solid
-    color-mix(
-      in srgb,
-      var(--fui-focus-ring-color, #{tokens.$fui-focus-ring-color}) 34%,
-      transparent
-    );
-  outline-offset: var(--fui-focus-ring-offset, #{tokens.$fui-focus-ring-offset});
+  @include _ring(var(--fui-focus-ring-color, #{tokens.$fui-focus-ring-color}));
 }
 
 @mixin invalid-state {
   border-color: var(--fui-color-danger, #{tokens.$fui-color-danger});
 }
 
-@mixin disabled-state {
-  @include mixins.disabled-state;
+// Invalid and focused: the danger edge stays, the ring takes the danger hue.
+@mixin invalid-focus-state {
+  border-color: var(--fui-color-danger, #{tokens.$fui-color-danger});
+  @include _ring(var(--fui-color-danger, #{tokens.$fui-color-danger}));
 }
 
-@mixin readonly-state {
-  background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+@mixin disabled-state {
+  @include mixins.disabled-state;
 }

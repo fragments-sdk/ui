@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeButton, ThemeProvider, ThemeToggle } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ThemeButton, ThemeProvider, ThemeToggle } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * ThemeProvider is the canonical theme-management primitive. Wrap your app with
@@ -8,39 +9,40 @@ import { ThemeButton, ThemeProvider, ThemeToggle } from '.';
  * `useTheme` and `ThemeToggle`) rather than wiring up bespoke theme state.
  */
 const meta = {
-  title: 'Navigation/ThemeProvider',
+  title: "Navigation/ThemeProvider",
   component: ThemeProvider,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
-          'Theme context provider supporting light, dark, and system modes with localStorage persistence. Prefer this over hand-rolled theme state.',
+          "Theme context provider supporting light, dark, and system modes with localStorage persistence. Prefer this over hand-rolled theme state.",
       },
     },
   },
   argTypes: {
     defaultMode: {
-      control: 'select',
-      options: ['light', 'dark', 'system'],
-      description: 'Default theme mode for uncontrolled usage',
+      control: "select",
+      options: ["light", "dark", "system"],
+      description: "Default theme mode for uncontrolled usage",
     },
     mode: {
-      control: 'select',
-      options: ['light', 'dark', 'system'],
-      description: 'Controlled theme mode',
+      control: "select",
+      options: ["light", "dark", "system"],
+      description: "Controlled theme mode",
     },
     attribute: {
-      control: 'select',
-      options: ['data-theme', 'class'],
-      description: 'How to apply the theme to the DOM',
+      control: "select",
+      options: ["data-theme", "class"],
+      description: "How to apply the theme to the DOM",
     },
-    storageKey: { control: 'text', description: 'localStorage key for persistence' },
+    storageKey: { control: "text", description: "localStorage key for persistence" },
   },
   args: {
-    defaultMode: 'system',
+    defaultMode: "system",
     children: (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <ThemeToggle />
         <span>Click to cycle themes</span>
       </div>
@@ -55,7 +57,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <ThemeProvider {...args}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <ThemeToggle />
         <span>Click to cycle themes</span>
       </div>
@@ -64,7 +66,7 @@ export const Default: Story = {
 };
 
 export const WithToggle: Story = {
-  args: { defaultMode: 'light' },
+  args: { defaultMode: "light" },
   render: (args) => (
     <ThemeProvider {...args}>
       <ThemeToggle />
@@ -73,10 +75,10 @@ export const WithToggle: Story = {
 };
 
 export const ToggleSizes: Story = {
-  args: { defaultMode: 'light' },
+  args: { defaultMode: "light" },
   render: (args) => (
     <ThemeProvider {...args}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <ThemeToggle size="sm" />
         <ThemeToggle size="md" />
         <ThemeToggle size="lg" />
@@ -86,7 +88,7 @@ export const ToggleSizes: Story = {
 };
 
 export const DarkDefault: Story = {
-  args: { defaultMode: 'dark' },
+  args: { defaultMode: "dark" },
   render: (args) => (
     <ThemeProvider {...args}>
       <ThemeToggle showSystem />
@@ -95,7 +97,7 @@ export const DarkDefault: Story = {
 };
 
 export const IconButtonForm: Story = {
-  args: { defaultMode: 'system' },
+  args: { defaultMode: "system" },
   render: (args) => (
     <ThemeProvider {...args}>
       <ThemeButton aria-label="Switch color mode" />

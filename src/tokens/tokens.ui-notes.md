@@ -142,3 +142,29 @@ at `$fui-color-accent` without re-running that test.
 from the measurements map, so `var(--fui-stroke-hairline, $fui-stroke-hairline)`
 satisfies the dual-fallback contract. Before this the only fallback form was
 a raw `1px`, which the docs vocabulary guard forbids.
+
+## 2026-09-04 — density axis deleted (UIR-D36)
+
+`$fui-density`, `[data-fui-density]`, `_density.scss` and the compact/relaxed
+profiles are gone. `_computed.scss` reads the single `spacing` record from
+`_measurements.generated.scss` (`spacing-value`, `spacing-step`,
+`spacing-px-to-rem`) and `:root` is the only emitter of `--fui-space-*`,
+`--fui-touch-*` and `--fui-sidebar-item-height`. `--fui-scale` is the only
+runtime size knob. If a consumer needs a tighter or looser kit, the answer is
+`--fui-scale`, not a new profile; a request for a second profile is a
+blueprint decision, not a token edit.
+
+## 2026-09-04 — field chrome tokens deleted (UIR-D38)
+
+`--fui-field-bg`, `--fui-field-bg-disabled`, `--fui-field-border`,
+`--fui-field-border-hover` and `--fui-field-border-focus` are gone. The field
+recipe never read them (its shell rides `--fui-border` on `--fui-bg-primary`,
+its focus ring rides `--fui-color-accent` + `--fui-focus-ring-color`), so a
+consumer overriding them changed Checkbox and Radio marks and the Select
+open-state edge but not a single text field. Field chrome is now overridden
+through the base tokens the recipe actually reads. `--fui-field-selection-*`
+and `--fui-form-group-*` stay: Editor and listbox rows read them.
+
+## 2026-09-04 — overlay layer scale gains toast (UIR-D40)
+
+- `--fui-overlay-layer-toast` (55) added between anchored (52) and tooltip (60); Toast read `2 × --fui-header-z-index` before, which was outside the layer scale.

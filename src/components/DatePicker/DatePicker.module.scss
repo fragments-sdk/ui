@@ -5,6 +5,7 @@
 @use "../../recipes/field";
 @use "../../recipes/layout";
 @use "../../recipes/popup";
+@use "../../recipes/surface";
 @use "../../recipes/typography";
 
 .wrapper {
@@ -41,14 +42,22 @@
   min-width: layout.measure("field-minimum");
   text-align: left;
 
+  &:focus-visible,
   &[data-popup-open] {
-    border-color: var(--fui-field-border-focus, $fui-color-accent);
+    @include field.focus-state;
   }
 
   // Error border, matching Input. Set from the wrapper's data-invalid so the
   // control reads as failed, not just the message beneath it.
   .wrapper[data-invalid] & {
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+    @include field.invalid-state;
+
+    // Focused while invalid keeps the danger edge and takes the danger ring,
+    // the same pairing Input and Textarea render.
+    &:focus-visible,
+    &[data-popup-open] {
+      @include field.invalid-focus-state;
+    }
   }
 
   @include high-contrast-outline;
@@ -107,16 +116,14 @@
 // ============================================
 
 .positioner {
-  z-index: 52;
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   outline: none;
 }
 
 .popup {
-  @include surface-elevated;
+  @include popup.container;
 
-  border-color: var(--fui-form-group-border, $fui-border);
-  padding: var(--fui-surface-inset-compact, 12px);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+  padding: surface.inset("compact");
 
   // Animation
   opacity: 0;
@@ -286,7 +293,7 @@
 
 .today > .dayButton {
   box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-    var(--fui-field-border, $fui-border-strong);
+    var(--fui-border-strong, $fui-border-strong);
   background-color: color-mix(in srgb, var(--fui-bg-hover, $fui-bg-hover) 55%, transparent);
 }
 

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Header } from ".";
 import { Button } from "../Button";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Header is a composable header with slots for brand, navigation, search, and
@@ -13,6 +14,7 @@ const meta = {
   component: Header,
   tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Composable header with slots for brand, navigation, search, and actions.",
@@ -108,6 +110,42 @@ export const Sticky: Story = {
         <Header.NavItem href="/about">About</Header.NavItem>
       </Header.Nav>
       <Header.Spacer />
+    </Header>
+  ),
+};
+
+/**
+ * Mobile navigation drawer. Header.Trigger only renders below the `md`
+ * breakpoint, so view this story in a mobile viewport. The drawer is an
+ * overlay panel — it renders the same inset floating surface as Drawer
+ * (UIR-D41).
+ */
+export const MobileNav: Story = {
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+  render: () => (
+    <Header>
+      <Header.Trigger />
+      <Header.Brand href="/">MyApp</Header.Brand>
+      <Header.Spacer />
+      <Header.Actions>
+        <Button variant="soft" size="sm">
+          Sign In
+        </Button>
+      </Header.Actions>
+      <Header.MobileNav>
+        <Header.MobileNavLink href="/dashboard" active>
+          Dashboard
+        </Header.MobileNavLink>
+        <Header.MobileNavLink href="/projects">Projects</Header.MobileNavLink>
+        <Header.MobileNavLink href="/settings">Settings</Header.MobileNavLink>
+        <Header.MobileNavActions>
+          <Button variant="solid" size="sm">
+            Sign Up
+          </Button>
+        </Header.MobileNavActions>
+      </Header.MobileNav>
     </Header>
   ),
 };

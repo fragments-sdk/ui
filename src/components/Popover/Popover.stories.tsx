@@ -1,6 +1,7 @@
-import * as React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { Popover } from '.';
+import * as React from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { Popover } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Rich content overlay anchored to a trigger element. Compose with
@@ -8,19 +9,20 @@ import { Popover } from '.';
  * `Popover.Body`, `Popover.Footer`, and `Popover.Close`.
  */
 const meta = {
-  title: 'Feedback/Popover',
+  title: "Feedback/Popover",
   component: Popover,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: 'Floating content overlay anchored to a trigger element.',
+        component: "Floating content overlay anchored to a trigger element.",
       },
     },
   },
   argTypes: {
-    modal: { control: 'boolean' },
-    defaultOpen: { control: 'boolean' },
+    modal: { control: "boolean" },
+    defaultOpen: { control: "boolean" },
   },
   args: {
     modal: false,
@@ -30,9 +32,7 @@ const meta = {
         <Popover.Content>
           <Popover.Close />
           <Popover.Title>Popover Title</Popover.Title>
-          <Popover.Description>
-            This is a popover with some content.
-          </Popover.Description>
+          <Popover.Description>This is a popover with some content.</Popover.Description>
         </Popover.Content>
       </>
     ),
@@ -51,8 +51,7 @@ export const Default: Story = {
         <Popover.Close />
         <Popover.Title>Popover Title</Popover.Title>
         <Popover.Description>
-          This is a popover with some content. It can contain text, forms, or
-          other elements.
+          This is a popover with some content. It can contain text, forms, or other elements.
         </Popover.Description>
       </Popover.Content>
     </Popover>
@@ -106,10 +105,10 @@ function VirtualAnchorDemo(args: React.ComponentProps<typeof Popover>) {
         style={{
           width: 160,
           height: 40,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: '1px dashed currentColor',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "1px dashed currentColor",
           borderRadius: 8,
         }}
       >
@@ -118,11 +117,11 @@ function VirtualAnchorDemo(args: React.ComponentProps<typeof Popover>) {
       <Popover {...args} open={open} onOpenChange={setOpen}>
         <Popover.Trigger
           style={{
-            position: 'absolute',
+            position: "absolute",
             width: 1,
             height: 1,
-            overflow: 'hidden',
-            clip: 'rect(0 0 0 0)',
+            overflow: "hidden",
+            clip: "rect(0 0 0 0)",
           }}
           onClick={() => setOpen(true)}
         >
@@ -132,8 +131,8 @@ function VirtualAnchorDemo(args: React.ComponentProps<typeof Popover>) {
           <Popover.Close />
           <Popover.Title>Anchored elsewhere</Popover.Title>
           <Popover.Description>
-            This content is positioned against the dashed box above, not the
-            (visually hidden) trigger button.
+            This content is positioned against the dashed box above, not the (visually hidden)
+            trigger button.
           </Popover.Description>
         </Popover.Content>
       </Popover>

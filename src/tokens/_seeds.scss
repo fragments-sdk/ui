@@ -11,7 +11,6 @@
 // Example:
 //   @use '@usefragments/ui/styles' with (
 //     $fui-brand: #0066ff,
-//     $fui-density: "compact",
 //     $fui-radius-style: "rounded"
 //   );
 //
@@ -34,11 +33,6 @@ $fui-brand: #f56138 !default;
 /// @type String
 $fui-neutral: "paper" !default;
 
-/// Density preset controlling spacing scale
-/// Options: "compact" | "default" | "relaxed"
-/// @type String
-$fui-density: "default" !default;
-
 /// Radius style for borders and corners
 /// Options: "sharp" | "subtle" | "default" | "rounded" | "pill"
 /// @type String
@@ -49,14 +43,9 @@ $fui-radius-style: "default" !default;
 // --------------------------------------------
 // Fail fast at compile time if invalid seed values are provided.
 
-$_valid-neutrals: ("paper",);
+$_valid-neutrals: ("paper");
 @if not list.index($_valid-neutrals, $fui-neutral) {
   @error "Invalid $fui-neutral: '#{$fui-neutral}'. Must be one of: #{$_valid-neutrals}";
-}
-
-$_valid-densities: measurements.$density-profile-names;
-@if not list.index($_valid-densities, $fui-density) {
-  @error "Invalid $fui-density: '#{$fui-density}'. Must be one of: #{$_valid-densities}";
 }
 
 $_valid-radii: measurements.$radius-profile-names;

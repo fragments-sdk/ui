@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tooltip } from ".";
 import { Button } from "../Button";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Tooltip is the canonical contextual-hint primitive. Wrap a focusable trigger
@@ -13,6 +14,7 @@ const meta = {
   component: Tooltip,
   tags: ["autodocs", "canonical"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component:

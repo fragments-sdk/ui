@@ -26,3 +26,7 @@
 - **What changed** — none, only tokens/mixins: `--fui-overlay-layer-anchored`, `--fui-popup-indicator-box` and the caret sizes gained dual fallbacks through `measurements.raw-space()`, and the contract example snippets moved to the ruled Button vocabulary (UIR-D31).
 - **What works** — the vocabulary schema gate (`src/contract-vocabulary.test.ts`) and the kit test suite are green at this HEAD.
 - **Candidates** — Wave 1 Navigation + Layout + Overlays category pass.
+
+## 2026-09-04 Wave 1 — floating surface parity (UIR-D40)
+
+- No local change; `popup.container` now renders `--fui-radius-l1` and rows round to l2 on highlight. Checked WithGroups open in Storybook.

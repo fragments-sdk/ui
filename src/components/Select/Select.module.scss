@@ -37,8 +37,22 @@
   min-width: layout.measure("field-minimum");
   text-align: left;
 
+  &:focus-visible,
   &[data-popup-open] {
-    border-color: var(--fui-field-border-focus, $fui-color-accent);
+    @include field.focus-state;
+  }
+
+  .wrapper[data-invalid] & {
+    @include field.invalid-state;
+
+    // Focused while invalid keeps the danger edge and takes the danger ring,
+    // the same pairing Input and Textarea render. Without it the ring stays
+    // accent-coloured and the control reads half-valid at the moment the user
+    // is actually in it.
+    &:focus-visible,
+    &[data-popup-open] {
+      @include field.invalid-focus-state;
+    }
   }
 
   @include high-contrast-outline;
@@ -171,7 +185,7 @@
 
 // Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
-  z-index: 52;
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   outline: none;
 }
 

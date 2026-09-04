@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { RadioGroup } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { RadioGroup } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * RadioGroup lets users select one option from a set of mutually exclusive
@@ -7,39 +8,40 @@ import { RadioGroup } from '.';
  * a value and label.
  */
 const meta = {
-  title: 'Forms/RadioGroup',
+  title: "Forms/RadioGroup",
   component: RadioGroup,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: 'Single selection from a list of mutually exclusive options.',
+        component: "Single selection from a list of mutually exclusive options.",
       },
     },
   },
   argTypes: {
     orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'Layout orientation',
+      control: "select",
+      options: ["horizontal", "vertical"],
+      description: "Layout orientation",
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Size variant',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size variant",
     },
     variant: {
-      control: 'select',
-      options: [undefined, 'outline'],
-      description: 'Omit for the inline radio; outline renders each item as a bordered surface',
+      control: "select",
+      options: [undefined, "outline"],
+      description: "Omit for the inline radio; outline renders each item as a bordered surface",
     },
-    disabled: { control: 'boolean', description: 'Disable all options' },
+    disabled: { control: "boolean", description: "Disable all options" },
   },
   args: {
-    label: 'Select an option',
-    defaultValue: 'option1',
-    size: 'md',
-    orientation: 'vertical',
+    label: "Select an option",
+    defaultValue: "option1",
+    size: "md",
+    orientation: "vertical",
     children: (
       <>
         <RadioGroup.Item value="option1" label="Option 1" />
@@ -64,7 +66,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const WithHelperText: Story = {
-  args: { label: 'Shipping method', defaultValue: 'standard' },
+  args: { label: "Shipping method", defaultValue: "standard" },
   render: (args) => (
     <RadioGroup {...args}>
       <RadioGroup.Item value="standard" label="Standard" helperText="5-7 business days" />
@@ -75,7 +77,7 @@ export const WithHelperText: Story = {
 };
 
 export const Horizontal: Story = {
-  args: { label: 'Size', defaultValue: 'medium', orientation: 'horizontal' },
+  args: { label: "Size", defaultValue: "medium", orientation: "horizontal" },
   render: (args) => (
     <RadioGroup {...args}>
       <RadioGroup.Item value="small" label="S" />
@@ -87,7 +89,7 @@ export const Horizontal: Story = {
 };
 
 export const WithError: Story = {
-  args: { label: 'Required selection', defaultValue: undefined, error: 'Please select an option' },
+  args: { label: "Required selection", defaultValue: undefined, error: "Please select an option" },
   render: (args) => (
     <RadioGroup {...args}>
       <RadioGroup.Item value="a" label="Option A" />
@@ -97,7 +99,7 @@ export const WithError: Story = {
 };
 
 export const Disabled: Story = {
-  args: { label: 'Locked selection', defaultValue: 'locked', disabled: true },
+  args: { label: "Locked selection", defaultValue: "locked", disabled: true },
   render: (args) => (
     <RadioGroup {...args}>
       <RadioGroup.Item value="locked" label="This is locked" />

@@ -38,7 +38,6 @@ const meta = {
     },
     disabled: { control: "boolean" },
     error: { control: "boolean" },
-    success: { control: "boolean" },
     required: { control: "boolean" },
     withFieldWrapper: { control: "boolean" },
   },

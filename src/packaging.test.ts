@@ -148,7 +148,6 @@ describe("measurements public subpath", () => {
       "MEASUREMENT_PROFILES",
       "applyMeasurementSelection",
       "measurementPx",
-      "MeasurementDensity",
       "MeasurementRadiusStyle",
       "MeasurementSelection",
     ]) {
@@ -196,36 +195,39 @@ describe("measurements public subpath", () => {
       }
     }
 
-    for (const [density, profile] of Object.entries(MEASUREMENT_PROFILES.density)) {
-      const selector = `[data-fui-density=${density}]`;
-      expect(declaration(selector, "--fui-base-unit")).toBe(profile.baseUnit);
-      for (const [size, targetSize] of [
-        ["xs", "micro"],
-        ["sm", "sm"],
-        ["md", "md"],
-        ["lg", "lg"],
-      ] as const) {
-        const property =
-          targetSize === "micro"
-            ? "--fui-control-track-micro"
-            : `--fui-control-track-${targetSize}`;
-        expect(declaration(selector, `--fui-control-height-${size}`)).toBe(
-          `var(${property}, ${MEASUREMENT_PROFILES.targets.controlTrack[targetSize]})`
-        );
-      }
-      for (const [alias, expected] of [
-        ["--fui-button-height-xs", "var(--fui-control-height-xs)"],
-        ["--fui-button-height-sm", "var(--fui-control-height-sm)"],
-        ["--fui-button-height-md", "var(--fui-control-height-md)"],
-        ["--fui-button-height-lg", "var(--fui-control-height-lg)"],
-        ["--fui-input-height-sm", "var(--fui-field-track-sm, 28px)"],
-        ["--fui-input-height", "var(--fui-field-track-md, 32px)"],
-        ["--fui-input-height-lg", "var(--fui-field-track-lg, 40px)"],
-        ["--fui-target-size-min", "var(--fui-touch-sm)"],
-      ] as const) {
-        expect(declaration(selector, alias)).toBe(expected);
-      }
+    // The single spacing record lands on :root; every step reads --fui-scale (UIR-D27).
+    expect(declaration(":root", "--fui-base-unit")).toBe(MEASUREMENT_PROFILES.spacing.baseUnit);
+    for (const step of Object.keys(MEASUREMENT_PROFILES.spacing.multipliers)) {
+      if (step === "px") continue;
+      expect(declaration(":root", `--fui-space-${step}`)).toMatch(
+        /^calc\(var\(--fui-scale, 1\) \* [0-9.]+rem\)$/
+      );
     }
+    expect(css).not.toMatch(/\[data-fui-density/);
+
+    // The compatibility alias chain still ships at :root. It used to be asserted
+    // only inside the density selectors, so deleting those (UIR-D36) would have
+    // left it unguarded (cold review of #607).
+    for (const size of ["xs", "sm", "md", "lg"] as const) {
+      expect(declaration(":root", `--fui-control-height-${size}`)).toBe(
+        MEASUREMENT_PROFILES.targets.controlTrack[size === "xs" ? "micro" : size]
+      );
+      expect(declaration(":root", `--fui-button-height-${size}`)).toBe(
+        `var(--fui-control-height-${size})`
+      );
+    }
+    for (const [alias, expected] of [
+      ["--fui-input-height-sm", "var(--fui-field-track-sm)"],
+      ["--fui-input-height", "var(--fui-field-track-md)"],
+      ["--fui-input-height-lg", "var(--fui-field-track-lg)"],
+    ] as const) {
+      expect(declaration(":root", alias)).toBe(expected);
+    }
+    // `--fui-target-size-min` used to be `var(--fui-touch-sm)` inside the density
+    // selectors. At :root both are emitted as literals from the same measurement,
+    // rounded to different precisions, so guard that they are still the same length.
+    const rem = (property: string) => Number.parseFloat(declaration(":root", property) ?? "");
+    expect(rem("--fui-target-size-min")).toBeCloseTo(rem("--fui-touch-sm"), 3);
 
     for (const [radiusStyle, profile] of Object.entries(MEASUREMENT_PROFILES.radius)) {
       for (const [size, value] of Object.entries(profile)) {
@@ -257,7 +259,6 @@ describe("measurements public subpath", () => {
     }
 
     const declarations = readFileSync(declarationPath, "utf8");
-    expect(declarations).toContain("MeasurementDensity");
     expect(declarations).toContain("MeasurementRadiusStyle");
     expect(declarations).toContain("MeasurementSelection");
     expect(declarations).toContain("applyMeasurementSelection");

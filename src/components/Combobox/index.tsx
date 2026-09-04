@@ -178,6 +178,9 @@ interface ComboboxContextValue {
   size: "sm" | "md" | "lg";
   // Id applied to Combobox.Input so a native <label htmlFor> can target it.
   inputId?: string;
+  /** Mirrors the wrapper's `data-invalid` onto the input as `aria-invalid`, so
+   * assistive tech hears the state the danger edge is painting. */
+  invalid?: boolean;
 }
 
 const EMPTY_STATIC_LABELS = new Map<string, string>();
@@ -422,6 +425,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       registerTrigger,
       size,
       inputId,
+      invalid: hasError,
     }),
     [
       placeholder,
@@ -434,14 +438,17 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       registerTrigger,
       size,
       inputId,
+      hasError,
     ]
   );
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
   const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
 
+  // data-invalid lets the shell pick up the error border, the same hook Select,
+  // DatePicker and RadioGroup use; without it `error` renders only the message.
   const wrapperContent = (inner: React.ReactNode) => (
-    <div ref={ref} className={wrapperClasses}>
+    <div ref={ref} className={wrapperClasses} data-invalid={hasError || undefined}>
       {inner}
       {helperText && (
         <span id={helperId} className={helperClasses}>
@@ -590,6 +597,7 @@ function ComboboxInput({
           placeholder={context.selectedValues.length === 0 ? inputPlaceholder : undefined}
           id={inputId}
           className={classes}
+          aria-invalid={context.invalid || undefined}
         />
         {renderTrigger && (
           <BaseCombobox.Trigger className={styles.trigger}>
@@ -607,6 +615,7 @@ function ComboboxInput({
         placeholder={inputPlaceholder}
         id={inputId}
         className={classes}
+        aria-invalid={context.invalid || undefined}
       />
       {renderTrigger && (
         <BaseCombobox.Trigger className={styles.trigger}>

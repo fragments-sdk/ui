@@ -2,6 +2,7 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
+@use "../../recipes/layout" as layout;
 @use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
@@ -43,7 +44,7 @@
   text-overflow: ellipsis;
   // Intentional truncation width: one long crumb must not push the rest of the
   // trail off screen. Keep in sync with .current below.
-  max-width: 200px;
+  max-width: layout.measure("menu-min");
   border-radius: var(--fui-radius-sm, $fui-radius-sm);
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
@@ -70,7 +71,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   // Intentional truncation width — matches .link above.
-  max-width: 200px;
+  max-width: layout.measure("menu-min");
 }
 
 // Separator between items

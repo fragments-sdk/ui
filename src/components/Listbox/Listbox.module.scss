@@ -6,11 +6,10 @@
 @use "../../recipes/typography" as typography;
 
 .listbox {
-  @include popup.container;
+  @include popup.inline-container;
   @include popup.viewport;
 
   min-inline-size: layout.measure("menu-min");
-  border-color: var(--fui-form-group-border, $fui-border);
 
   &:focus-visible {
     @include focus-ring;
@@ -60,8 +59,14 @@
 .empty {
   @include typography.role("body-compact");
 
-  padding-block: var(--fui-popup-row-block-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  padding-inline: var(--fui-popup-row-inline-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  padding-block: var(
+    --fui-popup-row-block-inset,
+    var(--fui-raw-space-8, #{measurements.raw-space(8)})
+  );
+  padding-inline: var(
+    --fui-popup-row-inline-inset,
+    var(--fui-raw-space-8, #{measurements.raw-space(8)})
+  );
   color: var(--fui-text-tertiary, $fui-text-tertiary);
   text-align: center;
 }

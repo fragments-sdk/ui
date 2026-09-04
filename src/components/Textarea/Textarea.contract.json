@@ -18,7 +18,6 @@
     "size: sm|md|lg (default: md)",
     "disabled: boolean (default: false)",
     "error: boolean (default: false)",
-    "success: boolean (default: false)",
     "showCharCount: boolean (default: false)",
     "label: string",
     "helperText: string",
@@ -91,12 +90,6 @@
     "error": {
       "type": "boolean",
       "description": "Error state",
-      "default": "false",
-      "required": false
-    },
-    "success": {
-      "type": "boolean",
-      "description": "Whether to show success/validated styling",
       "default": "false",
       "required": false
     },
@@ -243,11 +236,6 @@
       "code": "<Textarea\n  label=\"Notes\"\n  placeholder=\"Add notes...\"\n  resize=\"none\"\n/>"
     },
     {
-      "name": "Success State",
-      "description": "Green border confirms the value passed validation.",
-      "code": "<Textarea\n  label=\"Bio\"\n  value=\"A short bio about myself.\"\n  success\n  helperText=\"Looks great!\"\n/>"
-    },
-    {
       "name": "With Character Counter",
       "description": "Live count against maxLength sits below the box.",
       "code": "<Textarea\n  label=\"Bio\"\n  placeholder=\"Tell us about yourself...\"\n  maxLength={200}\n  showCharCount\n/>"
@@ -267,7 +255,6 @@
       "label: string - label text",
       "size: sm|md|lg (default: md)",
       "error: boolean - error state",
-      "success: boolean - shows success/validated styling",
       "showCharCount: boolean - show character counter (requires maxLength)",
       "disabled: boolean - disabled state",
       "resize: none|vertical|horizontal|both",

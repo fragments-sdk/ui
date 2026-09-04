@@ -65,30 +65,13 @@
   @include field.invalid-state;
 
   &:focus-visible {
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
-    @include focus-ring-error;
-  }
-}
-
-// Success state — green border for validated fields (DoorDash/Stocksy pattern)
-.success {
-  border-color: var(--fui-color-success-text, $fui-color-success-text);
-
-  &:focus-visible {
-    border-color: var(--fui-color-success-text, $fui-color-success-text);
-    @include focus-ring-success;
+    @include field.invalid-focus-state;
   }
 }
 
 // Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
   color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// Auto-detect success state via :has() — applies success color to helper
-.wrapper[data-success] .helper,
-.helperSuccess {
-  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 // ============================================
@@ -151,18 +134,7 @@
     @include field.invalid-state;
 
     &:focus-within {
-      border-color: var(--fui-color-danger-text, $fui-color-danger-text);
-      @include focus-ring-error;
-    }
-  }
-
-  // Success state on adornment container
-  &:has(.success) {
-    border-color: var(--fui-color-success-text, $fui-color-success-text);
-
-    &:focus-within {
-      border-color: var(--fui-color-success-text, $fui-color-success-text);
-      @include focus-ring-success;
+      @include field.invalid-focus-state;
     }
   }
 }

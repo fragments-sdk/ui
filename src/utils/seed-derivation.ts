@@ -9,24 +9,18 @@
  * the @usefragments/ui barrel export.
  */
 
-import {
-  MEASUREMENT_PROFILES,
-  type MeasurementDensity,
-  type MeasurementRadiusStyle,
-} from "../measurements";
+import { MEASUREMENT_PROFILES, type MeasurementRadiusStyle } from "../measurements";
 
 // ============================================
 // Types
 // ============================================
 
 export type NeutralPalette = "stone" | "ice" | "sand" | "earth" | "fire" | "fragments";
-export type DensityPreset = MeasurementDensity;
 export type RadiusStyle = MeasurementRadiusStyle;
 
 export interface SeedConfig {
   brand: string;
   neutral: NeutralPalette;
-  density: DensityPreset;
   radiusStyle: RadiusStyle;
   danger?: string;
   success?: string;
@@ -666,7 +660,6 @@ export function deriveSemanticHover(color: string): string {
 export const DEFAULT_SEEDS: SeedConfig = {
   brand: "#18181b",
   neutral: "stone",
-  density: "default",
   radiusStyle: "default",
   // Semantic colors omitted - will use palette defaults from PALETTE_SEMANTIC_COLORS
 };

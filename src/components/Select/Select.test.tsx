@@ -353,4 +353,22 @@ describe("Select", () => {
 
     expect(await screen.findByRole("combobox")).toHaveTextContent("Pick one");
   });
+
+  // The `error` prop shipped once rendering only the message: no invalid edge
+  // and no aria-invalid, so the control looked and read as valid. Assert the
+  // rendered pair, not the source text — a source check cannot tell whether
+  // the attribute is present but the selector never matches.
+  it("marks the control invalid both visually and programmatically", () => {
+    const { container } = render(
+      <Select label="Framework" error errorMessage="Pick one">
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="react">React</Select.Item>
+        </Select.Content>
+      </Select>
+    );
+
+    expect(container.querySelector("[data-invalid]")).not.toBeNull();
+    expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
+  });
 });

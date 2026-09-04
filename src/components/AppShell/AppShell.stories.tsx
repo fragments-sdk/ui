@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { AppShell } from ".";
 import { Header } from "../Header";
 import { Sidebar } from "../Sidebar";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * AppShell is the full application layout wrapper integrating header, sidebar,
@@ -13,6 +14,7 @@ const meta = {
   component: AppShell,
   tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component:

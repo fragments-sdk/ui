@@ -264,6 +264,7 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
             aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
             data-size={size}
             data-invalid={hasError || undefined}
+            aria-invalid={hasError || undefined}
             className={groupClasses}
           >
             {children}

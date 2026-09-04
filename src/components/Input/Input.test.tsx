@@ -162,12 +162,6 @@ describe("Input", () => {
     expect(document.activeElement).not.toBe(input);
   });
 
-  it("applies success class when success is true", () => {
-    render(<Input label="Email" success />);
-    const input = screen.getByRole("textbox");
-    expect(input.className).toContain("success");
-  });
-
   it("renders startAdornment before the input", () => {
     render(<Input label="Price" startAdornment={<span data-testid="prefix">$</span>} />);
     expect(screen.getByTestId("prefix")).toBeInTheDocument();

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Drawer } from ".";
 import { Button } from "../Button";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Drawer is a panel that slides in from a screen edge, extending the Dialog
@@ -13,6 +14,7 @@ const meta = {
   component: Drawer,
   tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Slide-in panel for navigation, forms, or supplementary content.",

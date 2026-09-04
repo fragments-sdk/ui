@@ -15,7 +15,6 @@
     "size: sm|md|lg (default: md)",
     "disabled: boolean (default: false)",
     "error: boolean (default: false)",
-    "success: boolean (default: false)",
     "label: string",
     "required: boolean (default: false)",
     "helperText: string",
@@ -75,12 +74,6 @@
     "error": {
       "type": "boolean",
       "description": "Whether to show error styling",
-      "default": "false",
-      "required": false
-    },
-    "success": {
-      "type": "boolean",
-      "description": "Whether to show success/validated styling",
       "default": "false",
       "required": false
     },
@@ -252,11 +245,6 @@
       "code": "<Input\n  aria-label=\"Search findings\"\n  placeholder=\"Search findings...\"\n  shortcut=\"⌘K\"\n  shortcutBehavior=\"focus-input\"\n  startAdornment={<MagnifyingGlass aria-hidden=\"true\" />}\n  withFieldWrapper={false}\n/>"
     },
     {
-      "name": "Success State",
-      "description": "Green border confirms the value passed validation.",
-      "code": "<Input\n  label=\"Email\"\n  type=\"email\"\n  value=\"user@example.com\"\n  success\n  helperText=\"Email verified\"\n/>"
-    },
-    {
       "name": "With Start Adornment",
       "description": "Prefix sits inside the field, before the text.",
       "code": "<Input\n  label=\"Price\"\n  placeholder=\"0.00\"\n  startAdornment={<span>$</span>}\n/>"
@@ -293,7 +281,6 @@
       "disabled: boolean - disables interaction",
       "required: boolean - required field indicator",
       "error: boolean - shows error styling",
-      "success: boolean - shows success/validated styling",
       "startAdornment: ReactNode - content before the input (icon or prefix)",
       "endAdornment: ReactNode - content after the input (icon or suffix)",
       "shortcut: string - visual kbd hint inside the input; do not hand-roll extra kbd markup",

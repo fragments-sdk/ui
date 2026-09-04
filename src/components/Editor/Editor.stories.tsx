@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Editor } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Editor } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Editor is a rich-text editor with a formatting toolbar, auto-save, and word
@@ -9,34 +10,34 @@ import { Editor } from '.';
  * Editor.StatusBar for custom layouts.
  */
 const meta = {
-  title: 'Forms/Editor',
+  title: "Forms/Editor",
   component: Editor,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component:
-          'Rich text editor with formatting toolbar, auto-save, and word count.',
+        component: "Rich text editor with formatting toolbar, auto-save, and word count.",
       },
     },
   },
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Editor height preset',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Editor height preset",
     },
-    disabled: { control: 'boolean', description: 'Disable the editor' },
-    readOnly: { control: 'boolean', description: 'Make the editor read-only' },
-    toolbar: { control: 'boolean', description: 'Show default toolbar' },
+    disabled: { control: "boolean", description: "Disable the editor" },
+    readOnly: { control: "boolean", description: "Make the editor read-only" },
+    toolbar: { control: "boolean", description: "Show default toolbar" },
     statusBar: {
-      control: 'boolean',
-      description: 'Show word/character counts',
+      control: "boolean",
+      description: "Show word/character counts",
     },
   },
   args: {
-    placeholder: 'Start typing your masterpiece here...',
-    size: 'md',
+    placeholder: "Start typing your masterpiece here...",
+    size: "md",
     toolbar: true,
     statusBar: true,
   },
@@ -47,30 +48,29 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { placeholder: 'Start typing your masterpiece here...' },
+  args: { placeholder: "Start typing your masterpiece here..." },
 };
 
 export const Minimal: Story = {
   args: {
-    placeholder: 'Quick note...',
-    formats: ['bold', 'italic', 'code'],
+    placeholder: "Quick note...",
+    formats: ["bold", "italic", "code"],
   },
 };
 
 export const ReadOnly: Story = {
   args: {
     readOnly: true,
-    defaultValue:
-      'This content is read-only. You can select and copy text but cannot modify it.',
+    defaultValue: "This content is read-only. You can select and copy text but cannot modify it.",
   },
 };
 
 export const WithCharacterLimit: Story = {
   args: {
-    placeholder: 'Write a tweet-sized message...',
+    placeholder: "Write a tweet-sized message...",
     maxLength: 280,
-    size: 'sm',
-    formats: ['bold', 'italic', 'link'],
+    size: "sm",
+    formats: ["bold", "italic", "link"],
   },
 };
 

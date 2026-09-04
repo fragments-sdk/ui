@@ -1,6 +1,7 @@
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
 @use "../tokens/mixins" as mixins;
+@use "overlay";
 @use "typography";
 
 $_container-inset: measurements.raw-space(4);
@@ -29,16 +30,19 @@ $_viewport-rows: 4.5;
   }
 }
 
-@mixin container {
+/// A pick list drawn in the page flow: the popup box without elevation.
+@mixin inline-container {
   @include properties;
+  @include overlay.surface;
 
-  box-sizing: border-box;
   padding: var(--fui-popup-container-inset, #{$_container-inset});
-  border: var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")}) solid
-    var(--fui-border, #{tokens.$fui-border});
-  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
-  background: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  box-shadow: none;
+}
+
+/// The floating pick list (Menu, Select, Combobox, Command, DatePicker).
+@mixin container {
+  @include inline-container;
+
   box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
 }
 
@@ -69,6 +73,7 @@ $_viewport-rows: 4.5;
   padding-block: var(--fui-popup-row-block-inset, #{$_row-inset});
   padding-inline: var(--fui-popup-row-inline-inset, #{$_row-inset});
   gap: var(--fui-popup-row-content-gap, #{$_row-inset});
+  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
 }
 
 @mixin highlight-state {

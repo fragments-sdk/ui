@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Menu } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Menu } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Dropdown menu for actions and commands. Compose with `Menu.Trigger`,
@@ -7,19 +8,20 @@ import { Menu } from '.';
  * radio groups, and keyboard shortcuts.
  */
 const meta = {
-  title: 'Feedback/Menu',
+  title: "Feedback/Menu",
   component: Menu,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: 'Dropdown menu for actions and commands with keyboard navigation.',
+        component: "Dropdown menu for actions and commands with keyboard navigation.",
       },
     },
   },
   argTypes: {
-    modal: { control: 'boolean' },
-    defaultOpen: { control: 'boolean' },
+    modal: { control: "boolean" },
+    defaultOpen: { control: "boolean" },
   },
   args: {
     modal: true,

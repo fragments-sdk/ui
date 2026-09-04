@@ -25,3 +25,8 @@
 - Disabled rides `@include disabled-state;`; the hand-rolled `prefers-contrast` block is `@include high-contrast-outline;` on `.checkbox`.
 - The checked sheen no longer uses raw `white`: it is a `color-mix` of `--fui-control-checked-color`; the offset reads `--fui-stroke-hairline`.
 - Still open: a dedicated highlight token (`--fui-color-highlight`) would be cleaner than deriving the sheen from the on-accent color.
+
+## 2026-09-04 Wave 1 — field chrome parity (UIR-D38)
+
+- Mark: `--fui-bg-primary` ground, `--fui-border-strong` edge, `--fui-text-tertiary` hover edge, `--fui-color-danger` invalid edge, and a real keyboard focus ring (`field.focus-state`) where before only the global hairline applied.
+- Focus ring not browser-verified: script focus on a button does not set :focus-visible in this harness.

@@ -41,13 +41,14 @@ $_block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   min-block-size: max(
     var(--_fui-field-track, #{$_track}),
     calc(
-      var(--fui-textarea-min-rows, 1) * 1lh + 2 * var(--_fui-textarea-block-inset, #{$_block-inset}) +
-        2 * var(--_fui-field-stroke, #{$_stroke})
+      var(--fui-textarea-min-rows, 1) * 1lh + 2 *
+        var(--_fui-textarea-block-inset, #{$_block-inset}) + 2 *
+        var(--_fui-field-stroke, #{$_stroke})
     )
   );
   max-block-size: calc(
-    var(--fui-textarea-max-rows, 9999) * 1lh + 2 * var(--_fui-textarea-block-inset, #{$_block-inset}) +
-      2 * var(--_fui-field-stroke, #{$_stroke})
+    var(--fui-textarea-max-rows, 9999) * 1lh + 2 *
+      var(--_fui-textarea-block-inset, #{$_block-inset}) + 2 * var(--_fui-field-stroke, #{$_stroke})
   );
   padding-block: var(--_fui-textarea-block-inset, #{$_block-inset});
 
@@ -114,30 +115,13 @@ $_block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   @include field.invalid-state;
 
   &:focus-visible {
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
-    @include focus-ring-error;
-  }
-}
-
-// Success state — green border for validated fields
-.success {
-  border-color: var(--fui-color-success-text, $fui-color-success-text);
-
-  &:focus-visible {
-    border-color: var(--fui-color-success-text, $fui-color-success-text);
-    @include focus-ring-success;
+    @include field.invalid-focus-state;
   }
 }
 
 // Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
 .wrapper:has([aria-invalid]) .helper {
   color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// Auto-detect success state
-.wrapper[data-success] .helper,
-.helperSuccess {
-  color: var(--fui-color-success-text, $fui-color-success-text);
 }
 
 // Footer row — helper + character counter side by side
@@ -157,7 +141,10 @@ $_block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 .charCount {
   @include typography.role("caption");
 
-  margin-block-start: var(--fui-field-message-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
+  margin-block-start: var(
+    --fui-field-message-gap,
+    var(--fui-raw-space-4, #{measurements.raw-space(4)})
+  );
   margin-inline-start: auto;
   font-family: var(--fui-font-mono, $fui-font-mono);
   white-space: nowrap;

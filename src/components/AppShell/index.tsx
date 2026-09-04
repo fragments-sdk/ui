@@ -156,7 +156,7 @@ interface AppShellContextValue {
 const AppShellContext = React.createContext<AppShellContextValue>({
   layout: "default",
   structure: "default",
-  headerHeight: "56px",
+  headerHeight: "var(--fui-appshell-header-height, 56px)",
   sidebarWidth: "240px",
   sidebarCollapsedWidth: "var(--fui-navigation-sidebar-collapsed-width, 56px)",
   asideWidth: "280px",
@@ -204,7 +204,7 @@ interface ExtractedConfig {
 
 function extractConfigFromChildren(children: React.ReactNode): ExtractedConfig {
   const config: ExtractedConfig = {
-    headerHeight: "56px",
+    headerHeight: "var(--fui-appshell-header-height, 56px)",
     sidebarWidth: "240px",
     sidebarCollapsedWidth: "var(--fui-navigation-sidebar-collapsed-width, 56px)",
     sidebarCollapsible: "icon",

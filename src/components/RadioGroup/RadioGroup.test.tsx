@@ -224,4 +224,19 @@ describe("RadioGroup", () => {
     );
     await expectNoA11yViolations(container);
   });
+
+  // The `error` prop shipped once rendering only the message: no invalid edge
+  // and no aria-invalid, so the control looked and read as valid. Assert the
+  // rendered pair, not the source text — a source check cannot tell whether
+  // the attribute is present but the selector never matches.
+  it("marks the control invalid both visually and programmatically", () => {
+    const { container } = render(
+      <RadioGroup label="Color" error errorMessage="Pick one">
+        <RadioGroup.Item value="red">Red</RadioGroup.Item>
+      </RadioGroup>
+    );
+
+    expect(container.querySelector("[data-invalid]")).not.toBeNull();
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-invalid", "true");
+  });
 });

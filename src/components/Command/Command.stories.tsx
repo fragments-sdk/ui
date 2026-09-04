@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Command } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Command } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Searchable command palette combining an input with a filterable,
@@ -7,18 +8,19 @@ import { Command } from '.';
  * with Command.Item children; group with Command.Group and Command.Separator.
  */
 const meta = {
-  title: 'Navigation/Command',
+  title: "Navigation/Command",
   component: Command,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: 'Searchable command palette for quick actions.',
+        component: "Searchable command palette for quick actions.",
       },
     },
   },
   argTypes: {
-    loop: { control: 'boolean', description: 'Loop keyboard navigation' },
+    loop: { control: "boolean", description: "Loop keyboard navigation" },
   },
   args: {
     loop: true,
@@ -40,7 +42,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => (
-    <div style={{ maxWidth: '400px', width: '100%' }}>
+    <div style={{ maxWidth: "400px", width: "100%" }}>
       <Command {...args}>
         <Command.Input placeholder="Type a command..." />
         <Command.List>
@@ -56,7 +58,7 @@ export const Default: Story = {
 
 export const WithGroups: Story = {
   render: (args) => (
-    <div style={{ maxWidth: '400px', width: '100%' }}>
+    <div style={{ maxWidth: "400px", width: "100%" }}>
       <Command {...args}>
         <Command.Input placeholder="Search..." />
         <Command.List>
@@ -81,17 +83,17 @@ export const WithGroups: Story = {
 
 export const WithKeywords: Story = {
   render: (args) => (
-    <div style={{ maxWidth: '400px', width: '100%' }}>
+    <div style={{ maxWidth: "400px", width: "100%" }}>
       <Command {...args}>
         <Command.Input placeholder="What do you need?" />
         <Command.List>
-          <Command.Item keywords={['create', 'add']} onItemSelect={() => {}}>
+          <Command.Item keywords={["create", "add"]} onItemSelect={() => {}}>
             New Document
           </Command.Item>
-          <Command.Item keywords={['browse']} onItemSelect={() => {}}>
+          <Command.Item keywords={["browse"]} onItemSelect={() => {}}>
             Open Folder
           </Command.Item>
-          <Command.Item keywords={['find']} onItemSelect={() => {}}>
+          <Command.Item keywords={["find"]} onItemSelect={() => {}}>
             Search
           </Command.Item>
           <Command.Empty>No results found.</Command.Empty>

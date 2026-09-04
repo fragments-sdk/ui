@@ -5,10 +5,8 @@
 @use "../../recipes/overlay" as overlay;
 
 .backdrop {
-  position: fixed;
-  z-index: var(--fui-overlay-layer-backdrop, #{$fui-overlay-layer-backdrop});
-  inset: 0;
-  background-color: var(--fui-backdrop, $fui-backdrop);
+  @include overlay.backdrop;
+
   opacity: 0;
   transition: opacity var(--fui-transition-normal, $fui-transition-normal);
 
@@ -62,9 +60,11 @@
 }
 
 .side-right {
-  inset-block: var(--_fui-overlay-safe-top, var(--fui-raw-space-16, #{measurements.raw-space(16)})) var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  inset-inline-end: var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  transform: translateX(calc(100% + var(--drawer-swipe-movement-x, 0px)));
+  @include overlay.side-panel-geometry("end");
+
+  transform: translateX(
+    calc(#{overlay.side-panel-offscreen("end")} + var(--drawer-swipe-movement-x, 0px))
+  );
 
   &[data-open] {
     transform: translateX(var(--drawer-swipe-movement-x, 0px));
@@ -72,14 +72,16 @@
 
   &[data-starting-style],
   &[data-ending-style] {
-    transform: translateX(100%);
+    transform: translateX(overlay.side-panel-offscreen("end"));
   }
 }
 
 .side-left {
-  inset-block: var(--_fui-overlay-safe-top, var(--fui-raw-space-16, #{measurements.raw-space(16)})) var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  inset-inline-start: var(--_fui-overlay-safe-left, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  transform: translateX(calc(-100% + var(--drawer-swipe-movement-x, 0px)));
+  @include overlay.side-panel-geometry("start");
+
+  transform: translateX(
+    calc(#{overlay.side-panel-offscreen("start")} + var(--drawer-swipe-movement-x, 0px))
+  );
 
   &[data-open] {
     transform: translateX(var(--drawer-swipe-movement-x, 0px));
@@ -87,14 +89,23 @@
 
   &[data-starting-style],
   &[data-ending-style] {
-    transform: translateX(-100%);
+    transform: translateX(overlay.side-panel-offscreen("start"));
   }
 }
 
 .side-top {
-  inset-block-start: var(--_fui-overlay-safe-top, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  inset-inline: var(--_fui-overlay-safe-left, var(--fui-raw-space-16, #{measurements.raw-space(16)})) var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  transform: translateY(calc(-100% + var(--drawer-swipe-movement-y, 0px)));
+  inset-block-start: var(
+    --_fui-overlay-safe-top,
+    var(--fui-raw-space-16, #{measurements.raw-space(16)})
+  );
+  inset-inline: var(
+      --_fui-overlay-safe-left,
+      var(--fui-raw-space-16, #{measurements.raw-space(16)})
+    )
+    var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  transform: translateY(
+    calc(#{overlay.side-panel-offscreen("top")} + var(--drawer-swipe-movement-y, 0px))
+  );
 
   &[data-open] {
     transform: translateY(var(--drawer-swipe-movement-y, 0px));
@@ -102,14 +113,23 @@
 
   &[data-starting-style],
   &[data-ending-style] {
-    transform: translateY(-100%);
+    transform: translateY(overlay.side-panel-offscreen("top"));
   }
 }
 
 .side-bottom {
-  inset-block-end: var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  inset-inline: var(--_fui-overlay-safe-left, var(--fui-raw-space-16, #{measurements.raw-space(16)})) var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  transform: translateY(calc(100% + var(--drawer-swipe-movement-y, 0px)));
+  inset-block-end: var(
+    --_fui-overlay-safe-bottom,
+    var(--fui-raw-space-16, #{measurements.raw-space(16)})
+  );
+  inset-inline: var(
+      --_fui-overlay-safe-left,
+      var(--fui-raw-space-16, #{measurements.raw-space(16)})
+    )
+    var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  transform: translateY(
+    calc(#{overlay.side-panel-offscreen("bottom")} + var(--drawer-swipe-movement-y, 0px))
+  );
 
   &[data-open] {
     transform: translateY(var(--drawer-swipe-movement-y, 0px));
@@ -117,7 +137,7 @@
 
   &[data-starting-style],
   &[data-ending-style] {
-    transform: translateY(100%);
+    transform: translateY(overlay.side-panel-offscreen("bottom"));
   }
 }
 
@@ -128,46 +148,100 @@
 .side-left,
 .side-right {
   &.width-sm {
-    inline-size: min(#{overlay.drawer-inline("sm")}, var(--_fui-overlay-safe-inline, calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    inline-size: min(
+      #{overlay.drawer-inline("sm")},
+      var(
+        --_fui-overlay-safe-inline,
+        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-md {
-    inline-size: min(#{overlay.drawer-inline("md")}, var(--_fui-overlay-safe-inline, calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    inline-size: min(
+      #{overlay.drawer-inline("md")},
+      var(
+        --_fui-overlay-safe-inline,
+        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-lg {
-    inline-size: min(#{overlay.drawer-inline("lg")}, var(--_fui-overlay-safe-inline, calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    inline-size: min(
+      #{overlay.drawer-inline("lg")},
+      var(
+        --_fui-overlay-safe-inline,
+        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-xl {
-    inline-size: min(#{overlay.drawer-inline("xl")}, var(--_fui-overlay-safe-inline, calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    inline-size: min(
+      #{overlay.drawer-inline("xl")},
+      var(
+        --_fui-overlay-safe-inline,
+        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-full {
-    inline-size: var(--_fui-overlay-safe-inline, calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)})));
+    inline-size: var(
+      --_fui-overlay-safe-inline,
+      calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+    );
   }
 }
 
 .side-top,
 .side-bottom {
   &.width-sm {
-    block-size: min(#{overlay.drawer-block("sm")}, var(--_fui-overlay-safe-block, calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    block-size: min(
+      #{overlay.drawer-block("sm")},
+      var(
+        --_fui-overlay-safe-block,
+        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-md {
-    block-size: min(#{overlay.drawer-block("md")}, var(--_fui-overlay-safe-block, calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    block-size: min(
+      #{overlay.drawer-block("md")},
+      var(
+        --_fui-overlay-safe-block,
+        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-lg {
-    block-size: min(#{overlay.drawer-block("lg")}, var(--_fui-overlay-safe-block, calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    block-size: min(
+      #{overlay.drawer-block("lg")},
+      var(
+        --_fui-overlay-safe-block,
+        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-xl {
-    block-size: min(#{overlay.drawer-block("xl")}, var(--_fui-overlay-safe-block, calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))));
+    block-size: min(
+      #{overlay.drawer-block("xl")},
+      var(
+        --_fui-overlay-safe-block,
+        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+      )
+    );
   }
 
   &.width-full {
-    block-size: var(--_fui-overlay-safe-block, calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)})));
+    block-size: var(
+      --_fui-overlay-safe-block,
+      calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+    );
   }
 }
 
@@ -199,34 +273,18 @@
 
 .footer {
   @include overlay.footer;
-
-  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 }
 
 .close {
   @include button-reset;
   @include interactive-base;
   @include overlay.close;
-
-  z-index: 1;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  svg {
-    inline-size: action.icon-size("sm");
-    block-size: action.icon-size("sm");
-  }
 }
 
 .popup:has(.close) .header {
   padding-inline-end: calc(
-    var(--fui-overlay-close-inset, var(--fui-raw-space-12, #{measurements.raw-space(12)})) + #{action.track("sm")} +
+    var(--fui-overlay-close-inset, var(--fui-raw-space-12, #{measurements.raw-space(12)})) +
+      #{action.track("sm")} +
       var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
   );
 }

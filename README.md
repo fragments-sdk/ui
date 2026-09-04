@@ -150,7 +150,7 @@ All fragment and block previews are authored source snippets, not runtime-serial
 
 ### Seeds
 
-Eight seeds drive every derived token. Set them with the SCSS `@use ... with()` syntax on the styles entry point:
+Seven seeds drive every derived token. Set them with the SCSS `@use ... with()` syntax on the styles entry point:
 
 ```scss
 // styles/globals.scss
@@ -165,7 +165,6 @@ Eight seeds drive every derived token. Set them with the SCSS `@use ... with()` 
 // Full customization
 @use "@usefragments/ui/styles" with (
   $fui-brand: #0066ff,
-  $fui-density: "compact",
   $fui-radius-style: "rounded",
   $fui-danger: #dc2626,
   $fui-success: #16a34a
@@ -178,7 +177,6 @@ Eight seeds drive every derived token. Set them with the SCSS `@use ... with()` 
 | ------------------- | ------ | ----------- | --------------------------------------------------------------------------- |
 | `$fui-brand`        | Color  | `#f56138`   | Brand color — derives the accent ramp, focus rings and the dark-mode accent |
 | `$fui-neutral`      | String | `"paper"`   | The neutral ramp: warm cream canvas, white cards, warm charcoal dark mode   |
-| `$fui-density`      | String | `"default"` | Spacing density scale                                                       |
 | `$fui-radius-style` | String | `"default"` | Corner radius style                                                         |
 | `$fui-danger`       | Color  | `#c44732`   | Danger semantic color                                                       |
 | `$fui-success`      | Color  | `#2c8c5f`   | Success semantic color                                                      |
@@ -186,14 +184,6 @@ Eight seeds drive every derived token. Set them with the SCSS `@use ... with()` 
 | `$fui-info`         | Color  | `#3d7aa8`   | Info semantic color                                                         |
 
 `"paper"` is the only neutral ramp that ships: one light theme, one dark theme. Any other `$fui-neutral` value fails the build.
-
-#### Density Presets
-
-| Name      | Base Unit | Feel                                |
-| --------- | --------- | ----------------------------------- |
-| `compact` | 6px       | Tighter spacing, smaller elements   |
-| `default` | 7px       | Balanced, current visual appearance |
-| `relaxed` | 8px       | More spacious layout                |
 
 #### Radius Styles
 
@@ -207,12 +197,11 @@ Eight seeds drive every derived token. Set them with the SCSS `@use ... with()` 
 
 ### Runtime attributes
 
-The compiled stylesheet also answers three attributes on `<html>` (or any ancestor), so a page can switch without a rebuild:
+The compiled stylesheet also answers two attributes on `<html>` (or any ancestor), so a page can switch without a rebuild:
 
 | Attribute               | Values                                  | Effect                                  |
 | ----------------------- | --------------------------------------- | --------------------------------------- |
 | `data-theme`            | `light` · `dark`                        | Colour scheme (`ThemeProvider` sets it) |
-| `data-fui-density`      | `compact` · `relaxed`                   | Density profile; absent = `default`     |
 | `data-fui-radius-style` | `sharp` · `subtle` · `rounded` · `pill` | Radius profile; absent = `default`      |
 
 ### Shared state tokens

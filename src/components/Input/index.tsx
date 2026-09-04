@@ -30,8 +30,6 @@ export interface InputProps extends Omit<
   disabled?: boolean;
   /** Show error styling */
   error?: boolean;
-  /** Show success styling */
-  success?: boolean;
   /** Visible label text */
   label?: string;
   /** Whether the field is required */
@@ -105,7 +103,6 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
     size: sizeProp,
     disabled = false,
     error = false,
-    success = false,
     required = false,
     label,
     helperText,
@@ -174,23 +171,11 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
 
   const hasAdornment = !!(startAdornment || endAdornment);
 
-  const inputClasses = [
-    styles.input,
-    styles[size],
-    error && styles.error,
-    success && styles.success,
-    inputClassName,
-  ]
+  const inputClasses = [styles.input, styles[size], error && styles.error, inputClassName]
     .filter(Boolean)
     .join(" ");
 
-  const helperClasses = [
-    styles.helper,
-    error && styles.helperError,
-    success && styles.helperSuccess,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const helperClasses = [styles.helper, error && styles.helperError].filter(Boolean).join(" ");
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
   const labelClasses = styles.label;
@@ -275,7 +260,6 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
       {...rootProps}
       disabled={disabled}
       invalid={error}
-      data-success={success || undefined}
       className={[wrapperClasses, rootProps?.className].filter(Boolean).join(" ")}
       style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
     >

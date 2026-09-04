@@ -137,3 +137,29 @@ $_active-dot: _navigation("sidebarDot");
   inline-size: #{_navigation("sidebarCollapsedWidth")};
   justify-items: center;
 }
+
+/// Mobile navigation links (NavigationMenu drawer, Header mobile nav) are popup
+/// rows: secondary ink at rest, hover wash, nested radius. Sidebar keeps its own
+/// rail-indicator grammar and does not use these.
+@mixin link-states {
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
+  text-decoration: none;
+  transition: background-color var(--fui-transition-fast, #{tokens.$fui-transition-fast});
+
+  &:hover {
+    background-color: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
+    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  }
+}
+
+@mixin link-active {
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  font-weight: var(--fui-font-weight-medium, #{tokens.$fui-font-weight-medium});
+  background-color: var(--fui-control-selected-bg, #{tokens.$fui-bg-active});
+
+  &:hover {
+    background-color: var(--fui-control-selected-bg, #{tokens.$fui-bg-active});
+    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  }
+}

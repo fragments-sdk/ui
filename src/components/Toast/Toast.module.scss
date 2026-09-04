@@ -5,8 +5,7 @@
 
 .container {
   position: fixed;
-  // Above the app header; there is no dedicated layer token yet.
-  z-index: calc(2 * var(--fui-header-z-index, #{$fui-header-z-index}));
+  z-index: var(--fui-overlay-layer-toast, #{$fui-overlay-layer-toast});
   display: flex;
   flex-direction: column;
   gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
@@ -65,7 +64,7 @@
   background-color: var(--_toast-tint, var(--fui-bg-elevated, #{$fui-bg-elevated}));
   border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--_toast-line, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  border-radius: var(--fui-radius-l1, $fui-radius-l1);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
 }
@@ -165,5 +164,4 @@
   .toast {
     animation: none;
   }
-
 }

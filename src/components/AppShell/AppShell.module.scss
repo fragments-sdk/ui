@@ -26,9 +26,9 @@
     "header header header"
     "sidebar main aside";
   grid-template-columns:
-    var(--appshell-sidebar-width, 240px)
+    var(--appshell-sidebar-width)
     1fr
-    var(--appshell-aside-width, 0px);
+    var(--appshell-aside-width);
   grid-template-rows:
     var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
     1fr;
@@ -104,7 +104,7 @@
   position: relative;
   height: auto;
   min-height: 100%;
-  z-index: 30;
+  z-index: 1;
   overflow: visible;
   background-color: inherit;
   // Border lives on the grid column so the rail runs the full content
@@ -147,13 +147,13 @@
     width: 0;
     height: 100vh;
     height: 100dvh;
-    z-index: 51;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
     border-inline-end: 0;
 
     > aside {
       position: relative;
       top: 0;
-      width: var(--appshell-sidebar-expanded-width, 240px);
+      width: var(--appshell-sidebar-expanded-width);
       height: 100vh;
       height: 100dvh;
     }
@@ -259,9 +259,9 @@
         var(--fui-appshell-header-height, $fui-appshell-header-height)
       )
   );
-  width: var(--aside-width, 280px);
+  width: var(--aside-width);
   min-height: 0; // Allow shrinking in grid
-  z-index: 30;
+  z-index: 1;
   background-color: var(--fui-app-sidebar-bg, inherit);
   overflow: hidden;
 
@@ -270,7 +270,8 @@
     position: static;
     width: 100%;
     height: auto;
-    border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
+    border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, $fui-border);
   }
 }
 

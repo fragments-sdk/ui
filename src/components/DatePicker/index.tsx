@@ -171,6 +171,9 @@ interface DatePickerContextValue {
   isControlledOpen: boolean;
   size: "sm" | "md" | "lg";
   name?: string;
+  /** Mirrors the wrapper's `data-invalid` onto the trigger as `aria-invalid`,
+   * so assistive tech hears the state the danger edge is painting. */
+  invalid?: boolean;
 }
 
 const DatePickerContext = React.createContext<DatePickerContextValue | null>(null);
@@ -420,6 +423,12 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
 
   const defaultPlaceholder = mode === "range" ? "Select date range" : "Pick a date";
 
+  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("datepicker", {
+    label,
+    helperText,
+    error,
+  });
+
   const contextValue = React.useMemo<DatePickerContextValue>(
     () => ({
       mode,
@@ -440,6 +449,7 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
       isControlledOpen,
       size,
       name,
+      invalid: hasError,
     }),
     [
       mode,
@@ -463,14 +473,9 @@ const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(functio
       isControlledOpen,
       size,
       name,
+      hasError,
     ]
   );
-
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("datepicker", {
-    label,
-    helperText,
-    error,
-  });
 
   const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
   const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
@@ -543,7 +548,13 @@ function DatePickerTrigger({
   }
 
   return (
-    <BasePopover.Trigger {...htmlProps} type={type} className={classes} disabled={ctx.disabled}>
+    <BasePopover.Trigger
+      {...htmlProps}
+      type={type}
+      className={classes}
+      disabled={ctx.disabled}
+      aria-invalid={ctx.invalid || undefined}
+    >
       {children ?? (
         <>
           <span className={styles.triggerIcon}>

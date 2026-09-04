@@ -56,7 +56,7 @@ for (const group of Object.keys(generated.measurements.targets)) {
 }
 
 for (const [group, mutate] of [
-  ["density", (value) => (value.default.controlHeight.md = "999px")],
+  ["spacing", (value) => (value.touch.md = "999px")],
   ["radius", (value) => (value.default.md = "999px")],
   ["rawSpace", (value) => (value["8"] = "999px")],
   ["legacy", (value) => (value.navigation.sidebarGutter = "999px")],
@@ -69,12 +69,6 @@ for (const [group, mutate] of [
   );
 }
 
-const densitySelectors = Object.keys(generated.measurements.density)
-  .map(
-    (name) =>
-      `.density-${name} { @include measurements.emit-density-profile(${JSON.stringify(name)}); }`
-  )
-  .join("\n");
 const radiusSelectors = Object.keys(generated.measurements.radius)
   .map(
     (name) =>
@@ -87,7 +81,6 @@ const css = sass.compileString(
     @use "tokens/measurements.generated" as measurements;
 
     .fixed { @include measurements.emit-fixed-custom-properties; }
-    ${densitySelectors}
     ${radiusSelectors}
   `,
   { loadPaths: [resolve(packageRoot, "src")], style: "expanded" }
@@ -126,52 +119,40 @@ for (const [name, value] of Object.entries(generated.measurements.legacy.navigat
   assert.equal(cssDeclaration(".fixed", `--fui-navigation-${property}`), scaledLength(value));
 }
 
-for (const [name, profile] of Object.entries(generated.measurements.density)) {
-  const selector = `.density-${name}`;
-  const baseFontSize = Number.parseFloat(profile.baseFontSize);
-  for (const [size, targetSize] of [
-    ["xs", "micro"],
-    ["sm", "sm"],
-    ["md", "md"],
-    ["lg", "lg"],
-  ]) {
-    const value = generated.measurements.targets.controlTrack[targetSize];
-    const property =
-      targetSize === "micro" ? "--fui-control-track-micro" : `--fui-control-track-${targetSize}`;
-    assert.equal(
-      cssDeclaration(selector, `--fui-control-height-${size}`),
-      `var(${property}, ${value})`
-    );
+const spacing = generated.measurements.spacing;
+const baseFontSize = Number.parseFloat(spacing.baseFontSize);
+const baseUnit = Number.parseFloat(spacing.baseUnit);
+const spacingCss = sass.compileString(
+  `
+    @use "tokens/measurements.generated" as measurements;
+    .spacing {
+      @each $step, $multiplier in measurements.spacing-value("multipliers") {
+        --step-#{$step}: #{measurements.spacing-step($step)};
+      }
+      --touch-md: #{measurements.spacing-px-to-rem(measurements.spacing-nested-value("touch", "md"))};
+    }
+  `,
+  { loadPaths: [resolve(packageRoot, "src")], style: "expanded" }
+).css;
+for (const [step, multiplier] of Object.entries(spacing.multipliers)) {
+  const match = spacingCss.match(new RegExp(`--step-${step}:\\s*([^;]+);`));
+  assert.ok(match, `missing spacing step ${step}`);
+  if (step === "px") {
+    assert.equal(match[1].trim(), "1px");
+    continue;
   }
-  // Every spacing step reads --fui-scale (UIR-D27); hairlines and radius do not.
-  for (const step of Object.keys(profile.spacingMultipliers)) {
-    if (step === "px") continue;
-    assert.match(
-      cssDeclaration(selector, `--fui-space-${step}`),
-      /^calc\(var\(--fui-scale, 1\) \* [0-9.]+rem\)$/
-    );
-  }
-  assert.equal(cssDeclaration(".fixed", "--fui-raw-space-2"), "2px");
-  for (const [size, value] of Object.entries(profile.touch)) {
-    const expected = `${Number.parseFloat(value) / baseFontSize}rem`;
-    const actual = cssDeclaration(selector, `--fui-touch-${size}`);
-    assert.ok(
-      Math.abs(Number.parseFloat(actual) - Number.parseFloat(expected)) < 1e-9,
-      `${name} touch ${size}: expected ${expected}, received ${actual}`
-    );
-  }
-  for (const [alias, expected] of [
-    ["--fui-button-height-xs", "var(--fui-control-height-xs)"],
-    ["--fui-button-height-sm", "var(--fui-control-height-sm)"],
-    ["--fui-button-height-md", "var(--fui-control-height-md)"],
-    ["--fui-button-height-lg", "var(--fui-control-height-lg)"],
-    ["--fui-input-height-sm", "var(--fui-field-track-sm, 28px)"],
-    ["--fui-input-height", "var(--fui-field-track-md, 32px)"],
-    ["--fui-input-height-lg", "var(--fui-field-track-lg, 40px)"],
-    ["--fui-target-size-min", "var(--fui-touch-sm)"],
-  ]) {
-    assert.equal(cssDeclaration(selector, alias), expected);
-  }
+  const expected = (baseUnit / baseFontSize) * multiplier;
+  assert.ok(
+    Math.abs(Number.parseFloat(match[1]) - expected) < 1e-9,
+    `spacing step ${step}: expected ${expected}rem, received ${match[1]}`
+  );
+}
+assert.equal(cssDeclaration(".fixed", "--fui-raw-space-2"), "2px");
+{
+  const match = spacingCss.match(/--touch-md:\s*([^;]+);/);
+  assert.ok(match, "missing touch md");
+  const expected = Number.parseFloat(spacing.touch.md) / baseFontSize;
+  assert.ok(Math.abs(Number.parseFloat(match[1]) - expected) < 1e-9, "touch md rem projection");
 }
 
 for (const [name, profile] of Object.entries(generated.measurements.radius)) {

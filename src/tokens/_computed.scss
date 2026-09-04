@@ -11,7 +11,7 @@
 @use "sass:map";
 @use "seeds" as seeds;
 @use "palettes" as palettes;
-@use "density" as density;
+@use "measurements.generated" as measurements;
 @use "radius" as radius;
 @use "derive" as derive;
 
@@ -21,11 +21,7 @@
 
 // Get the selected configurations
 $_palette: palettes.get-palette(seeds.$fui-neutral);
-$_density: density.get-density(seeds.$fui-density);
 $_radius: radius.get-radius-style(seeds.$fui-radius-style);
-
-// Derive spacing from density
-$_spacing: density.derive-spacing($_density);
 
 // True when the brand seed is the Fragments default (coral). The default
 // theme uses the exact SCSS-computed accents; any consumer-supplied
@@ -36,25 +32,25 @@ $brand-is-fragments-default: seeds.$fui-brand == #f56138;
 // Computed: Base Configuration
 // --------------------------------------------
 
-$computed-base-font-size: map.get($_density, base-font-size);
-$computed-base-unit: map.get($_density, base-unit);
+$computed-base-font-size: measurements.spacing-value("baseFontSize");
+$computed-base-unit: measurements.spacing-value("baseUnit");
 
 // --------------------------------------------
 // Computed: Spacing
 // --------------------------------------------
 
-$computed-space-px: map.get($_spacing, px);
-$computed-space-0-5: map.get($_spacing, 0-5);
-$computed-space-0-75: map.get($_spacing, 0-75);
-$computed-space-1: map.get($_spacing, 1);
-$computed-space-2: map.get($_spacing, 2);
-$computed-space-3: map.get($_spacing, 3);
-$computed-space-4: map.get($_spacing, 4);
-$computed-space-5: map.get($_spacing, 5);
-$computed-space-6: map.get($_spacing, 6);
-$computed-space-8: map.get($_spacing, 8);
-$computed-space-10: map.get($_spacing, 10);
-$computed-space-12: map.get($_spacing, 12);
+$computed-space-px: measurements.spacing-step("px");
+$computed-space-0-5: measurements.spacing-step("0-5");
+$computed-space-0-75: measurements.spacing-step("0-75");
+$computed-space-1: measurements.spacing-step("1");
+$computed-space-2: measurements.spacing-step("2");
+$computed-space-3: measurements.spacing-step("3");
+$computed-space-4: measurements.spacing-step("4");
+$computed-space-5: measurements.spacing-step("5");
+$computed-space-6: measurements.spacing-step("6");
+$computed-space-8: measurements.spacing-step("8");
+$computed-space-10: measurements.spacing-step("10");
+$computed-space-12: measurements.spacing-step("12");
 
 // --------------------------------------------
 // Computed: Border Radius
@@ -67,23 +63,21 @@ $computed-radius-xl: radius.radius-value($_radius, xl);
 $computed-radius-full: radius.radius-full();
 
 // --------------------------------------------
-// Computed: Component Heights (from density)
+// Computed: Touch targets and navigation (from the spacing record)
 // --------------------------------------------
 
-// Canonical interactive control ladder
-$computed-control-height-xs: density.px-to-rem($_density, map.get($_density, control-height-xs));
-$computed-control-height-sm: density.px-to-rem($_density, map.get($_density, control-height-sm));
-$computed-control-height-md: density.px-to-rem($_density, map.get($_density, control-height-md));
-$computed-control-height-lg: density.px-to-rem($_density, map.get($_density, control-height-lg));
+$computed-touch-sm: measurements.spacing-px-to-rem(
+  measurements.spacing-nested-value("touch", "sm")
+);
+$computed-touch-md: measurements.spacing-px-to-rem(
+  measurements.spacing-nested-value("touch", "md")
+);
+$computed-touch-lg: measurements.spacing-px-to-rem(
+  measurements.spacing-nested-value("touch", "lg")
+);
 
-$computed-touch-sm: density.px-to-rem($_density, map.get($_density, touch-sm));
-$computed-touch-md: density.px-to-rem($_density, map.get($_density, touch-md));
-$computed-touch-lg: density.px-to-rem($_density, map.get($_density, touch-lg));
-
-// Sidebar navigation (from density)
-$computed-sidebar-item-height: density.px-to-rem(
-  $_density,
-  map.get($_density, sidebar-item-height)
+$computed-sidebar-item-height: measurements.spacing-px-to-rem(
+  measurements.spacing-value("sidebarItemHeight")
 );
 
 // --------------------------------------------

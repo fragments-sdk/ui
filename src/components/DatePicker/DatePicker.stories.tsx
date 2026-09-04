@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { DatePicker } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Date picker with a calendar dropdown for single dates or date ranges,
@@ -11,6 +12,7 @@ const meta = {
   component: DatePicker,
   tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Date picker with calendar dropdown for dates or ranges.",

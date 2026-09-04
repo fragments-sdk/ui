@@ -79,9 +79,7 @@ describe("AppShell", () => {
   it("forwards active-indicator placement to the sidebar", () => {
     render(
       <AppShell>
-        <AppShell.Sidebar activeIndicator="end">
-          Sidebar
-        </AppShell.Sidebar>
+        <AppShell.Sidebar activeIndicator="end">Sidebar</AppShell.Sidebar>
         <AppShell.Main>Main</AppShell.Main>
       </AppShell>
     );
@@ -128,7 +126,9 @@ describe("AppShell", () => {
 
     const root = container.firstElementChild as HTMLElement;
     expect(root.style.backgroundColor).toBe("rgb(1, 2, 3)");
-    expect(root.style.getPropertyValue("--appshell-header-height")).toBe("56px");
+    expect(root.style.getPropertyValue("--appshell-header-height")).toBe(
+      "var(--fui-appshell-header-height, 56px)"
+    );
   });
 
   it("collapses header track to 0px when no AppShell.Header is rendered", () => {

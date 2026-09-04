@@ -66,7 +66,9 @@
 .title {
   @include overlay.anchored-title;
 
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)}) var(--fui-raw-space-0, #{measurements.raw-space(0)}) var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
   color: var(--fui-text-primary, $fui-text-primary);
 }
 
@@ -81,24 +83,12 @@
   @include button-reset;
   @include interactive-base;
   @include overlay.close;
-
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  svg {
-    inline-size: action.icon-size("sm");
-    block-size: action.icon-size("sm");
-  }
 }
 
 .popup:has(.close) .title {
   padding-inline-end: calc(
-    #{action.track("sm")} + var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
+    #{action.track("sm")} +
+      var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
   );
 }
 
@@ -130,7 +120,10 @@
 }
 
 .body {
-  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  margin-block-start: var(
+    --fui-overlay-section-gap,
+    var(--fui-raw-space-8, #{measurements.raw-space(8)})
+  );
 }
 
 .footer {
@@ -138,9 +131,16 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  margin-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  padding-block-start: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
+  margin-block-start: var(
+    --fui-overlay-section-gap,
+    var(--fui-raw-space-8, #{measurements.raw-space(8)})
+  );
+  padding-block-start: var(
+    --fui-overlay-section-gap,
+    var(--fui-raw-space-8, #{measurements.raw-space(8)})
+  );
+  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-border, $fui-border);
 }
 
 @media (prefers-reduced-motion: reduce) {

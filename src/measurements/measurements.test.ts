@@ -10,7 +10,6 @@ import {
   MEASUREMENT_PROFILES,
   applyMeasurementSelection,
   measurementPx,
-  type MeasurementDensity,
   type MeasurementRadiusStyle,
 } from "./index";
 
@@ -38,14 +37,14 @@ describe("measurement generation", () => {
   });
 
   it("preserves closed profile names as literal public types", () => {
-    expectTypeOf<MeasurementDensity>().toEqualTypeOf<"compact" | "default" | "relaxed">();
     expectTypeOf<MeasurementRadiusStyle>().toEqualTypeOf<
       "sharp" | "subtle" | "default" | "rounded" | "pill"
     >();
   });
 
-  it("projects every adopted density value from the canonical document", () => {
-    expect(MEASUREMENT_PROFILES.density).toEqual(source.density);
+  it("projects the single spacing record from the canonical document", () => {
+    expect(MEASUREMENT_PROFILES.spacing).toEqual(source.spacing);
+    expect(MEASUREMENT_PROFILES.spacing.baseUnit).toBe("7px");
   });
 
   it("projects fixed targets and raw spacing from the canonical document", () => {
@@ -87,43 +86,25 @@ describe("measurement generation", () => {
 });
 
 describe("applyMeasurementSelection", () => {
-  it("applies and restores density only", () => {
-    const element = document.createElement("div");
-    const cleanup = applyMeasurementSelection(element, { density: "compact" });
-
-    expect(element).toHaveAttribute("data-fui-density", "compact");
-    expect(element).not.toHaveAttribute("data-fui-radius-style");
-
-    cleanup();
-    expect(element).not.toHaveAttribute("data-fui-density");
-  });
-
   it("applies and restores radius only", () => {
     const element = document.createElement("div");
     const cleanup = applyMeasurementSelection(element, { radiusStyle: "rounded" });
 
     expect(element).toHaveAttribute("data-fui-radius-style", "rounded");
-    expect(element).not.toHaveAttribute("data-fui-density");
 
     cleanup();
     expect(element).not.toHaveAttribute("data-fui-radius-style");
   });
 
-  it("applies both selectors and restores their exact prior values", () => {
+  it("restores the exact prior radius value", () => {
     const element = document.createElement("div");
-    element.setAttribute("data-fui-density", "relaxed");
     element.setAttribute("data-fui-radius-style", "sharp");
 
-    const cleanup = applyMeasurementSelection(element, {
-      density: "default",
-      radiusStyle: "pill",
-    });
+    const cleanup = applyMeasurementSelection(element, { radiusStyle: "pill" });
 
-    expect(element).toHaveAttribute("data-fui-density", "default");
     expect(element).toHaveAttribute("data-fui-radius-style", "pill");
 
     cleanup();
-    expect(element).toHaveAttribute("data-fui-density", "relaxed");
     expect(element).toHaveAttribute("data-fui-radius-style", "sharp");
   });
 
@@ -141,10 +122,7 @@ describe("applyMeasurementSelection", () => {
   it("does not touch unrelated inline styles and cleanup is idempotent", () => {
     const element = document.createElement("div");
     element.style.setProperty("--consumer-value", "17px");
-    const cleanup = applyMeasurementSelection(element, {
-      density: "compact",
-      radiusStyle: "subtle",
-    });
+    const cleanup = applyMeasurementSelection(element, { radiusStyle: "subtle" });
 
     expect(element.style.getPropertyValue("--consumer-value")).toBe("17px");
 
@@ -152,7 +130,6 @@ describe("applyMeasurementSelection", () => {
     cleanup();
 
     expect(element.style.getPropertyValue("--consumer-value")).toBe("17px");
-    expect(element).not.toHaveAttribute("data-fui-density");
     expect(element).not.toHaveAttribute("data-fui-radius-style");
   });
 });

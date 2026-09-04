@@ -3,6 +3,7 @@
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/navigation" as navigation;
+@use "../../recipes/overlay" as overlay;
 @use "../../recipes/target" as target;
 
 $_gutter: navigation.gutter();
@@ -127,7 +128,7 @@ $_active-rail: navigation.active-rail();
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 51;
+  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
   transform: translateX(-100%);
   transition: transform var(--fui-transition-normal, $fui-transition-normal);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
@@ -529,10 +530,8 @@ $_active-rail: navigation.active-rail();
 }
 
 .overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background-color: var(--fui-backdrop, $fui-backdrop);
+  @include overlay.backdrop;
+
   opacity: 0;
   transition: opacity var(--fui-transition-normal, $fui-transition-normal);
 
@@ -568,7 +567,7 @@ $_active-rail: navigation.active-rail();
   position: absolute;
   top: var(--fui-space-3, $fui-space-3);
   left: calc(100% + var(--fui-space-2, $fui-space-2));
-  z-index: 20;
+  z-index: 2;
   margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
@@ -588,7 +587,7 @@ $_active-rail: navigation.active-rail();
   right: 0;
   width: var(--fui-navigation-leading-box, #{$_leading-box});
   height: 100%;
-  z-index: 10;
+  z-index: 1;
 
   .positionRight & {
     right: auto;

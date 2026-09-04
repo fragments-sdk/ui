@@ -7,9 +7,7 @@
 
 // Fallback travel for the thumb when no size class has set the track: the md
 // track's inline size minus its block size, exactly what `switch-track` computes.
-$_switch-travel-md: calc(
-  #{boolean.switch-inline-size("md")} - #{boolean.switch-block-size("md")}
-);
+$_switch-travel-md: calc(#{boolean.switch-inline-size("md")} - #{boolean.switch-block-size("md")});
 
 .root {
   --_switch-off-bg: light-dark(
@@ -114,6 +112,14 @@ $_switch-travel-md: calc(
     @include disabled-state;
   }
 
+  // The focused element is the label root, but the field ring is drawn on
+  // .track — the box a user reads as the control. Left alone the root also
+  // takes the global :focus-visible ring, so a focused Switch paints two
+  // concentric rings where every other field paints one.
+  &:focus-visible {
+    outline: none;
+  }
+
   @media (pointer: coarse) {
     --_fui-target-hit-size: #{target.hit-size("touch")};
   }
@@ -198,7 +204,8 @@ $_switch-travel-md: calc(
   border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--_switch-thumb-border, var(--fui-border-strong, #{$fui-border-strong}));
   box-shadow:
-    0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+    0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+      var(--fui-stroke-hairline, #{$fui-stroke-hairline})
       color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 18%, transparent),
     inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
       color-mix(in srgb, var(--fui-bg-elevated, #{$fui-bg-elevated}) 42%, transparent);

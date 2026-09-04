@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Select } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Select is a dropdown for choosing from a list of options. It is a compound
@@ -11,6 +12,7 @@ const meta = {
   component: Select,
   tags: ["autodocs", "canonical"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Dropdown for choosing from a list of options.",

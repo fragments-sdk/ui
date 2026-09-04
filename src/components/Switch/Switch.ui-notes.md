@@ -63,3 +63,13 @@
 - Disabled rides `@include disabled-state;`; `prefers-contrast` block replaced by `@include high-contrast-outline;` on `.track`.
 - Test regex for the thumb translate now tolerates the fallback in `var(--_fui-switch-travel, …)`.
 - Still open: a `--fui-color-highlight` token for the sheen instead of borrowing surface/on-accent colors.
+
+## 2026-09-04 Wave 1 — field chrome parity (UIR-D38)
+
+- Unchanged; already on `field.focus-state`. Verified on :6006 as the reference for the ring.
+
+## 2026-09-04 Wave 1 — one focus ring, not two (UIR-D56)
+
+- **What was broken** — Switch is the only field whose ring is drawn on a child. `field.focus-state` styles `.track`, but the element that takes focus is `.root` (the label), so a focused Switch painted the recipe's `2px` @34% ring on the track **and** the global `:where(:focus-visible)` `1px` @24% ring on the root — two concentric rings where Checkbox and Select paint one, because there the focused element is the element the recipe styles.
+- **What changed** — `.root:focus-visible { outline: none; }`. The ring stays where it reads as part of the control.
+- **What was browser-verified** — keyboard-focused at `forms-switch--default` in all four render states: root `outline-width: 0px`, track ring `2px color(srgb 0.960784 0.380392 0.219608 / 0.34)`. One ring in each profile.

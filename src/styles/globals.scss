@@ -25,7 +25,6 @@
 
 $fui-brand: #f56138 !default;
 $fui-neutral: "paper" !default;
-$fui-density: "default" !default;
 $fui-radius-style: "default" !default;
 // Status seeds (see tokens/_seeds.scss): Cloud Surfaces rust / forest /
 // amber / slate-blue. Washes derive from these.
@@ -40,7 +39,6 @@ $fui-info: #3d7aa8 !default;
 @use "../tokens/seeds" with (
   $fui-brand: $fui-brand,
   $fui-neutral: $fui-neutral,
-  $fui-density: $fui-density,
   $fui-radius-style: $fui-radius-style,
   $fui-danger: $fui-danger,
   $fui-success: $fui-success,
@@ -202,11 +200,17 @@ $fui-info: #3d7aa8 !default;
   }
 
   :where(:focus-visible) {
-    outline: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 24%, transparent);
+    outline: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 24%, transparent);
     outline-offset: var(--fui-focus-ring-offset, #{$fui-focus-ring-offset});
     box-shadow:
-      0 0 0 calc(var(--fui-focus-ring-width, #{$fui-focus-ring-width}) + var(--fui-stroke-hairline, #{$fui-stroke-hairline}))
+      0 0 0
+        calc(
+          var(--fui-focus-ring-width, #{$fui-focus-ring-width}) +
+            var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+        )
         color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 10%, transparent),
-      0 10px 24px -16px color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 18%, transparent);
+      0 10px 24px -16px
+        color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 18%, transparent);
   }
 }

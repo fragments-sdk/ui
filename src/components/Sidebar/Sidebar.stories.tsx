@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Sidebar } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Sidebar } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Sidebar is a responsive navigation sidebar with collapsible desktop mode
@@ -7,38 +8,39 @@ import { Sidebar } from '.';
  * Sidebar.Header, Sidebar.Nav, Sidebar.Section, Sidebar.Item, and more.
  */
 const meta = {
-  title: 'Navigation/Sidebar',
+  title: "Navigation/Sidebar",
   component: Sidebar,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
-          'Responsive navigation sidebar with collapsible desktop mode and mobile drawer behavior.',
+          "Responsive navigation sidebar with collapsible desktop mode and mobile drawer behavior.",
       },
     },
   },
   argTypes: {
     position: {
-      control: 'select',
-      options: ['left', 'right'],
-      description: 'Sidebar position',
+      control: "select",
+      options: ["left", "right"],
+      description: "Sidebar position",
     },
     collapsible: {
-      control: 'select',
-      options: ['icon', 'offcanvas', 'none'],
-      description: 'Collapse behavior mode',
+      control: "select",
+      options: ["icon", "offcanvas", "none"],
+      description: "Collapse behavior mode",
     },
     activeIndicator: {
-      control: 'select',
-      options: ['start', 'end'],
-      description: 'Placement of the active-item affordance',
+      control: "select",
+      options: ["start", "end"],
+      description: "Placement of the active-item affordance",
     },
-    defaultCollapsed: { control: 'boolean', description: 'Initial collapsed state' },
+    defaultCollapsed: { control: "boolean", description: "Initial collapsed state" },
   },
   args: {
-    position: 'left',
-    collapsible: 'icon',
+    position: "left",
+    collapsible: "icon",
     defaultCollapsed: false,
     children: (
       <>
@@ -88,7 +90,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const EndActiveIndicator: Story = {
-  args: { activeIndicator: 'end' },
+  args: { activeIndicator: "end" },
 };
 
 export const WithBadges: Story = {

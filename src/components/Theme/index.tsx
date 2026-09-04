@@ -193,18 +193,16 @@ export { ThemeProvider, ThemeToggle, ThemeButton, useTheme };
 // ============================================
 
 // Import + re-export seed derivation types — canonical definitions in utils/seed-derivation.ts
-import type { NeutralPalette, DensityPreset, RadiusStyle } from "../../utils/seed-derivation";
+import type { NeutralPalette, RadiusStyle } from "../../utils/seed-derivation";
 import { applyMeasurementSelection } from "../../measurements";
 import { isProductionBuild } from "../../utils/env";
-export type { NeutralPalette, DensityPreset, RadiusStyle };
+export type { NeutralPalette, RadiusStyle };
 
 export interface ConfigureThemeOptions {
   /** Brand/accent color as hex */
   brand?: string;
   /** Neutral palette name */
   neutral?: NeutralPalette;
-  /** Spacing density preset */
-  density?: DensityPreset;
   /** Border radius style */
   radiusStyle?: RadiusStyle;
   /** Danger/error color as hex */
@@ -249,7 +247,6 @@ function setVar(el: HTMLElement, name: string, value: string) {
  * configureTheme({
  *   brand: '#6366f1',
  *   neutral: 'ice',
- *   density: 'compact',
  *   radiusStyle: 'rounded',
  * });
  * ```
@@ -279,8 +276,5 @@ export function configureTheme(options: ConfigureThemeOptions): void {
   // Named geometry is selected through the generated Measurement Module.
   // Partial calls leave the omitted selector untouched and never write numeric
   // CSS maps inline.
-  applyMeasurementSelection(root, {
-    density: options.density,
-    radiusStyle: options.radiusStyle,
-  });
+  applyMeasurementSelection(root, { radiusStyle: options.radiusStyle });
 }

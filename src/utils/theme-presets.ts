@@ -8,7 +8,6 @@
 
 import {
   type SeedConfig,
-  type DensityPreset,
   type RadiusStyle,
   PALETTES,
   RADIUS_STYLES,
@@ -110,7 +109,6 @@ export interface ThemeConfig {
   radius?: ThemeRadius;
   shadows?: ThemeShadows;
   dark?: ThemeDarkMode;
-  density?: DensityPreset;
   radiusStyle?: RadiusStyle;
 }
 
@@ -161,7 +159,6 @@ export function seedsToTheme(seeds: SeedConfig): ThemeConfig {
 
   return {
     name: "Custom",
-    density: seeds.density,
     radiusStyle: seeds.radiusStyle,
     colors: {
       accent: seeds.brand,
@@ -262,15 +259,15 @@ export interface PresetDefinition {
 const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
   default: {
     name: "Default",
-    seeds: { brand: "#18181b", neutral: "stone", density: "default", radiusStyle: "default" },
+    seeds: { brand: "#18181b", neutral: "stone", radiusStyle: "default" },
   },
   neutral: {
     name: "Neutral",
-    seeds: { brand: "#71717a", neutral: "stone", density: "default", radiusStyle: "default" },
+    seeds: { brand: "#71717a", neutral: "stone", radiusStyle: "default" },
   },
   slate: {
     name: "Slate",
-    seeds: { brand: "#64748b", neutral: "stone", density: "default", radiusStyle: "default" },
+    seeds: { brand: "#64748b", neutral: "stone", radiusStyle: "default" },
     overrides: {
       surfaces: { bgSecondary: "#f1f5f9", bgTertiary: "#e2e8f0" },
       dark: { surfaces: { bgSecondary: "#1e293b", bgTertiary: "#334155" } },
@@ -278,18 +275,17 @@ const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
   },
   emerald: {
     name: "Emerald",
-    seeds: { brand: "#10b981", neutral: "stone", density: "default", radiusStyle: "default" },
+    seeds: { brand: "#10b981", neutral: "stone", radiusStyle: "default" },
   },
   rose: {
     name: "Rose",
-    seeds: { brand: "#f43f5e", neutral: "stone", density: "default", radiusStyle: "default" },
+    seeds: { brand: "#f43f5e", neutral: "stone", radiusStyle: "default" },
   },
   classic: {
     name: "Classic",
     seeds: {
       brand: "#1e40af",
       neutral: "stone",
-      density: "default",
       radiusStyle: "default",
       danger: "#b91c1c",
       success: "#15803d",
@@ -302,7 +298,6 @@ const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
     seeds: {
       brand: "#7c3aed",
       neutral: "stone",
-      density: "default",
       radiusStyle: "default",
       danger: "#dc2626",
       success: "#16a34a",
@@ -315,7 +310,6 @@ const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
     seeds: {
       brand: "#06b6d4",
       neutral: "stone",
-      density: "default",
       radiusStyle: "default",
       danger: "#f43f5e",
       success: "#4ade80",
@@ -328,7 +322,6 @@ const PRESET_DEFINITIONS: Record<string, PresetDefinition> = {
     seeds: {
       brand: "#525252",
       neutral: "stone",
-      density: "default",
       radiusStyle: "default",
       danger: "#78716c",
       success: "#65a30d",

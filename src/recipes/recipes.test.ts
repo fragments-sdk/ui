@@ -158,6 +158,58 @@ describe("geometry recipes", () => {
     expect(css).toContain("max-inline-size: var(--fui-overlay-tooltip-max, 320px)");
   });
 
+  it("compiles the shared drawer, nav-link, inline-popup and invalid-focus grammars", () => {
+    const css = compile(`
+      @use "recipes/overlay";
+      @use "recipes/navigation";
+      @use "recipes/popup";
+      @use "recipes/field";
+      .backdrop { @include overlay.backdrop; }
+      .panelStart { @include overlay.side-panel("start"); }
+      .panelEnd { @include overlay.side-panel("end"); }
+      .geometry { @include overlay.side-panel-geometry("start"); }
+      .parkStart { transform: translateX(overlay.side-panel-offscreen("start")); }
+      .parkEnd { transform: translateX(overlay.side-panel-offscreen("end")); }
+      .parkTop { transform: translateY(overlay.side-panel-offscreen("top")); }
+      .parkBottom { transform: translateY(overlay.side-panel-offscreen("bottom")); }
+      .link { @include navigation.link-states; }
+      .linkActive { @include navigation.link-active; }
+      .inlinePopup { @include popup.inline-container; }
+      .invalidFocus { @include field.invalid-focus-state; }
+    `);
+
+    // The scrim and the panel sit on their own layers, never a raw z-index.
+    expect(css).toContain("z-index: var(--fui-overlay-layer-backdrop, 50)");
+    expect(css).toContain("z-index: var(--fui-overlay-layer-modal, 51)");
+    expect(css).toContain("background-color: var(--fui-backdrop");
+
+    // The panel is inset by the safe-area frame on the side it is anchored to.
+    expect(css).toContain("inset-inline-start: var(--_fui-overlay-safe-left");
+    expect(css).toContain("inset-inline-end: var(--_fui-overlay-safe-right");
+    expect(css).toContain("inset-block: var(--_fui-overlay-safe-top");
+
+    // side-panel is the surface on that geometry, so it carries the elevated fill.
+    expect(css).toContain("background-color: var(--fui-bg-elevated");
+
+    // Parking a panel off-screen has to clear its own width AND the inset the
+    // geometry just applied, or the inset stays painted at the viewport edge.
+    expect(css).toContain("translateX(calc(-100% - var(--_fui-overlay-safe-left");
+    expect(css).toContain("translateX(calc(100% + var(--_fui-overlay-safe-right");
+    expect(css).toContain("translateY(calc(-100% - var(--_fui-overlay-safe-top");
+    expect(css).toContain("translateY(calc(100% + var(--_fui-overlay-safe-bottom");
+
+    // Mobile navigation links: secondary ink at rest, nested radius, selected wash.
+    expect(css).toContain("color: var(--fui-text-secondary");
+    expect(css).toContain("border-radius: var(--fui-radius-l2");
+    expect(css).toContain("background-color: var(--fui-control-selected-bg");
+
+    // An inline pick list is the popup box with the elevation taken off.
+    expect(css).toContain("box-shadow: none");
+
+    // Invalid + focused keeps the danger edge and tints the ring with it.
+    expect(css).toContain("border-color: var(--fui-color-danger");
+  });
+
   it.each([
     ['@use "recipes/action"; .x { @include action.size("xl"); }', "Unknown action role"],
     ['@use "recipes/field"; .x { @include field.size("xs"); }', "Unknown field size"],
@@ -189,6 +241,14 @@ describe("geometry recipes", () => {
     [
       '@use "recipes/overlay"; .x { max-width: overlay.dialog-max("full"); }',
       "Unknown dialog overlay size",
+    ],
+    [
+      '@use "recipes/overlay"; .x { @include overlay.side-panel-geometry("middle"); }',
+      "Unknown side panel side",
+    ],
+    [
+      '@use "recipes/overlay"; .x { transform: translateX(overlay.side-panel-offscreen("middle")); }',
+      "Unknown side panel side",
     ],
   ])("rejects an unsupported closed recipe role", (source, message) => {
     expect(() => compile(source)).toThrow(message);

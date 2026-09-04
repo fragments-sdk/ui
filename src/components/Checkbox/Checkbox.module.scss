@@ -37,14 +37,18 @@
   flex-shrink: 0;
   box-sizing: border-box;
   margin-block-start: var(--_fui-boolean-mark-offset, 0);
-  background-color: var(--fui-field-bg, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-border-strong);
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
   border-radius: var(--fui-checkbox-radius, var(--fui-radius-sm, #{$fui-radius-sm}));
   cursor: inherit;
   @include high-contrast-outline;
 
   &:hover:not([data-disabled]) {
-    border-color: var(--fui-field-border-hover, $fui-text-tertiary);
+    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  &:focus-visible {
+    @include field.focus-state;
   }
 
   &[data-checked],
@@ -62,13 +66,13 @@
   }
 
   &[data-invalid] {
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+    border-color: var(--fui-color-danger, $fui-color-danger);
   }
 
   &[data-invalid][data-checked],
   &[data-invalid][data-indeterminate] {
     background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
-    border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+    border-color: var(--fui-color-danger, $fui-color-danger);
     box-shadow: inset 0 0 0 1px
       color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 35%, transparent);
   }

@@ -26,3 +26,10 @@ different band. Fix ground at this layer, not with a docs override.
 - **What changed** — none, only tokens/mixins: hairline and inset literals read `$fui-stroke-hairline` and `measurements.raw-space(0)`, and the contract example snippets moved to the ruled Button vocabulary (UIR-D31).
 - **What works** — the vocabulary schema gate (`src/contract-vocabulary.test.ts`) and the kit test suite are green at this HEAD.
 - **Candidates** — Wave 1 Navigation + Layout + Overlays category pass, which owns both the pre-existing bare px in `AppShell.module.scss` and the `variant="floating"` slot value parked in `EXAMPLE_DEVIATIONS` (UIR-D31).
+
+## 2026-09-04 Wave 1 — navigation parity (UIR-D41)
+
+- **What changed** — `.sidebar` / `.aside` drop from 30 to 1 (they only need to paint above `main`); the reduced-motion mobile sidebar reads `--fui-overlay-layer-modal`. The dead px fallbacks are gone — the TSX always sets `--appshell-*` and `--aside-width`. Both `headerHeight` defaults now read `var(--fui-appshell-header-height, 56px)`, mirroring `sidebarCollapsedWidth`.
+- **What was browser-verified** — Default Layout: the root sets `--appshell-header-height: var(--fui-appshell-header-height, 56px)`, which resolves to `56px`, and the header element measures exactly 56px with `grid-template-rows: 56px 772px`.
+- **Not re-checked in this lane** — the aside and floating-main stories.
+- **Candidates** — `sidebarWidth: "240px"` / `asideWidth: "280px"` still have no measurement role; add them to the `navigation` catalogue via the generator in Wave 2.

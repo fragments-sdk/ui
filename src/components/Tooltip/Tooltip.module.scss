@@ -3,17 +3,13 @@
 @use "../../recipes/overlay" as overlay;
 
 .positioner {
-  z-index: var(--fui-overlay-layer-tooltip, 60);
+  z-index: var(--fui-overlay-layer-tooltip, #{$fui-overlay-layer-tooltip});
   pointer-events: none;
 }
 
 .popup {
   @include overlay.tooltip;
 
-  color: var(--fui-text-inverse, $fui-text-inverse);
-  background-color: var(--fui-bg-inverse, $fui-bg-inverse);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   overflow-wrap: break-word;
   opacity: 0;
   transform: scale(0.95);
@@ -42,22 +38,31 @@
   @include overlay.arrow-box;
 
   background-color: var(--fui-bg-inverse, $fui-bg-inverse);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-bg-inverse, $fui-bg-inverse);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-bg-inverse, $fui-bg-inverse);
 
   &[data-side="top"] {
-    bottom: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
+    bottom: calc(
+      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
+    );
   }
 
   &[data-side="bottom"] {
-    top: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
+    top: calc(
+      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
+    );
   }
 
   &[data-side="left"] {
-    right: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
+    right: calc(
+      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
+    );
   }
 
   &[data-side="right"] {
-    left: calc(var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2);
+    left: calc(
+      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
+    );
   }
 }
 

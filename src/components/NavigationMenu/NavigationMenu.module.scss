@@ -4,6 +4,7 @@
 @use "../../recipes/action" as action;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/navigation" as navigation;
+@use "../../recipes/overlay" as overlay;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
 
@@ -115,7 +116,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--fui-stroke-hairline, 1px);
+  gap: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
   position: absolute;
   left: 0;
   top: 0;
@@ -255,7 +256,7 @@
 
 .linkFeatured {
   background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
 
   &:hover {
     @include popup.highlight-state;
@@ -270,7 +271,7 @@
 .indicator {
   position: absolute;
   bottom: 0;
-  height: var(--fui-stroke-default, 2px);
+  height: var(--fui-stroke-default, #{$fui-stroke-default});
   background-color: var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-full, $fui-radius-full);
   transition:
@@ -292,7 +293,7 @@
   overflow: hidden;
   border-color: var(--fui-border-strong, $fui-border-strong);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-  z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 1);
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
 
   width: var(--fui-navmenu-viewport-width, #{measurements.raw-space(0)});
   height: var(--fui-navmenu-viewport-height, #{measurements.raw-space(0)});
@@ -354,37 +355,17 @@
 // ============================================
 
 .drawerBackdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--fui-backdrop, $fui-backdrop);
-  z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 10);
+  @include overlay.backdrop;
+
   animation: fadeIn var(--fui-transition-normal, $fui-transition-normal);
 }
 
+// The mobile menu is the Drawer surface: same frame, width, layer and chrome.
+// The header stays pinned; ScrollArea in .drawerBody owns vertical scroll.
 .drawer {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: min(320px, 85vw);
-  max-width: 380px;
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  z-index: calc(var(--fui-header-z-index, $fui-header-z-index) + 11);
-  display: flex;
-  flex-direction: column;
-  // Keep the header pinned; ScrollArea in .drawerBody owns vertical scroll.
-  overflow: hidden;
+  @include overlay.side-panel("start");
+
   animation: slideInLeft var(--fui-transition-normal, $fui-transition-normal);
-
-  @media (min-width: 480px) {
-    width: min(380px, 85vw);
-  }
-}
-
-.drawerRight {
-  left: auto;
-  right: 0;
-  animation: slideInRight var(--fui-transition-normal, $fui-transition-normal);
 }
 
 .drawerHeader {
@@ -392,7 +373,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--fui-space-4, $fui-space-4);
-  border-bottom: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-border, $fui-border);
   min-height: var(--fui-appshell-header-height, $fui-appshell-header-height);
 }
 
@@ -433,28 +415,15 @@
 .drawerLink {
   @include button-reset;
   @include navigation.row;
+  @include navigation.link-states;
 
   display: flex;
   align-items: center;
   width: 100%;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-decoration: none;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    @include popup.highlight-state;
-  }
 }
 
 .drawerLinkActive {
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-control-selected-bg, $fui-bg-active);
-
-  &:hover {
-    background-color: var(--fui-control-selected-bg, $fui-bg-active);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
+  @include navigation.link-active;
 }
 
 .drawerSectionLabel {
@@ -514,16 +483,7 @@
 
 @keyframes slideInLeft {
   from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
+    transform: translateX(overlay.side-panel-offscreen("start"));
   }
   to {
     transform: translateX(0);

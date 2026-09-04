@@ -28,8 +28,6 @@ export interface TextareaProps extends Omit<
   disabled?: boolean;
   /** Error state */
   error?: boolean;
-  /** Success state */
-  success?: boolean;
   /** Show character count when maxLength is set */
   showCharCount?: boolean;
   /** Label text above the textarea */
@@ -76,7 +74,6 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(functi
     size: sizeProp,
     disabled = false,
     error = false,
-    success = false,
     showCharCount = false,
     label,
     helperText,
@@ -113,19 +110,12 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(functi
     styles.textarea,
     styles[size],
     error && styles.error,
-    success && styles.success,
     styles[`resize-${resize}`],
   ]
     .filter(Boolean)
     .join(" ");
 
-  const helperClasses = [
-    styles.helper,
-    error && styles.helperError,
-    success && styles.helperSuccess,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const helperClasses = [styles.helper, error && styles.helperError].filter(Boolean).join(" ");
 
   const textareaInlineStyle = {
     "--fui-textarea-min-rows": minRows ?? 1,
@@ -135,7 +125,6 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(functi
   return (
     <div
       {...rootProps}
-      data-success={success || undefined}
       className={[styles.wrapper, rootProps?.className, className].filter(Boolean).join(" ")}
       style={{ ...(rootProps?.style ?? {}), ...(wrapperStyle ?? {}) }}
     >

@@ -45,8 +45,17 @@
   }
 
   &:has([data-disabled]) {
-    background-color: var(--fui-field-bg-disabled, $fui-bg-tertiary);
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    @include field.disabled-state;
+  }
+
+  .wrapper[data-invalid] & {
+    @include field.invalid-state;
+
+    // Focused while invalid keeps the danger edge and takes the danger ring,
+    // the same pairing Input and Textarea render.
+    &:focus-within {
+      @include field.invalid-focus-state;
+    }
   }
 
   @include high-contrast-outline;
@@ -186,7 +195,7 @@
 
 // Positioner — z-index must exceed Dialog positioner (51)
 .positioner {
-  z-index: 52;
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   outline: none;
 }
 

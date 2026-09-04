@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { NavigationMenu } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { NavigationMenu } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Rich header navigation menu with dropdown content panels, animated viewport
@@ -8,25 +9,26 @@ import { NavigationMenu } from '.';
  * `NavigationMenu.Link`, and `NavigationMenu.Viewport`.
  */
 const meta = {
-  title: 'Navigation/NavigationMenu',
+  title: "Navigation/NavigationMenu",
   component: NavigationMenu,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: 'Header navigation menu with dropdown panels and responsive drawer.',
+        component: "Header navigation menu with dropdown panels and responsive drawer.",
       },
     },
   },
   argTypes: {
     orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'Menu orientation',
+      control: "select",
+      options: ["horizontal", "vertical"],
+      description: "Menu orientation",
     },
   },
   args: {
-    orientation: 'horizontal',
+    orientation: "horizontal",
     children: (
       <>
         <NavigationMenu.List>
@@ -71,11 +73,7 @@ export const Default: Story = {
               title="Documentation"
               description="Comprehensive API reference."
             />
-            <NavigationMenu.Link
-              href="/blog"
-              title="Blog"
-              description="Latest news and updates."
-            />
+            <NavigationMenu.Link href="/blog" title="Blog" description="Latest news and updates." />
           </NavigationMenu.Content>
         </NavigationMenu.Item>
         <NavigationMenu.Item>
@@ -96,10 +94,10 @@ export const WithSimpleLinks: Story = {
           <NavigationMenu.Content>
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '4px',
-                minWidth: '160px',
+                display: "flex",
+                flexDirection: "column",
+                padding: "4px",
+                minWidth: "160px",
               }}
             >
               <NavigationMenu.Link href="/about">About</NavigationMenu.Link>
@@ -121,14 +119,14 @@ export const WithSimpleLinks: Story = {
 };
 
 export const Vertical: Story = {
-  args: { orientation: 'vertical' },
+  args: { orientation: "vertical" },
   render: (args) => (
     <NavigationMenu {...args}>
       <NavigationMenu.List>
         <NavigationMenu.Item value="overview">
           <NavigationMenu.Trigger>Overview</NavigationMenu.Trigger>
           <NavigationMenu.Content>
-            <div style={{ padding: '8px', minWidth: '200px' }}>
+            <div style={{ padding: "8px", minWidth: "200px" }}>
               <NavigationMenu.Link
                 href="/intro"
                 title="Introduction"
@@ -140,7 +138,7 @@ export const Vertical: Story = {
         <NavigationMenu.Item value="guides">
           <NavigationMenu.Trigger>Guides</NavigationMenu.Trigger>
           <NavigationMenu.Content>
-            <div style={{ padding: '8px', minWidth: '200px' }}>
+            <div style={{ padding: "8px", minWidth: "200px" }}>
               <NavigationMenu.Link
                 href="/install"
                 title="Installation"

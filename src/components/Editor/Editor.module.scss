@@ -2,6 +2,7 @@
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
+@use "../../recipes/field" as field;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
 @use "../../recipes/target" as target;
@@ -33,7 +34,7 @@
   overflow: hidden;
 
   &:focus-within:not([data-disabled]) {
-    @include focus-ring;
+    @include field.focus-state;
   }
 
   &[data-disabled] {
@@ -99,7 +100,7 @@
 
   &:hover:not(:disabled) {
     border-color: var(--fui-form-group-border, $fui-border);
-    background-color: var(--fui-field-bg, $fui-bg-elevated);
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 

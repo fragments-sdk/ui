@@ -89,4 +89,15 @@ describe("ColorPicker", () => {
     const { container } = render(<ColorPicker label="Brand Color" />);
     await expectNoA11yViolations(container);
   });
+
+  // The `error` prop shipped once rendering only the message: no invalid edge
+  // and no aria-invalid, so the control looked and read as valid. Assert the
+  // rendered pair, not the source text — a source check cannot tell whether
+  // the attribute is present but the selector never matches.
+  it("marks the control invalid both visually and programmatically", () => {
+    const { container } = render(<ColorPicker label="Brand" error helperText="Pick a colour" />);
+
+    expect(container.querySelector("[data-invalid]")).not.toBeNull();
+    expect(screen.getByLabelText("Edit Brand color")).toHaveAttribute("aria-invalid", "true");
+  });
 });

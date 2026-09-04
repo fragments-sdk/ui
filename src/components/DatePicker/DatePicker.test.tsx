@@ -410,4 +410,20 @@ describe("DatePicker", () => {
       });
     });
   });
+
+  // The `error` prop shipped once rendering only the message: no invalid edge
+  // and no aria-invalid, so the control looked and read as valid. Assert the
+  // rendered pair, not the source text — a source check cannot tell whether
+  // the attribute is present but the selector never matches.
+  it("marks the control invalid both visually and programmatically", () => {
+    const { container } = render(
+      <DatePicker label="Due" error errorMessage="Pick a date">
+        <DatePicker.Trigger />
+        <DatePicker.Content />
+      </DatePicker>
+    );
+
+    expect(container.querySelector("[data-invalid]")).not.toBeNull();
+    expect(screen.getByRole("button")).toHaveAttribute("aria-invalid", "true");
+  });
 });

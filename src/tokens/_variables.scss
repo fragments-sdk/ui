@@ -14,7 +14,6 @@
 //      @use '@usefragments/ui/styles' with (
 //        $fui-brand: #0066ff,
 //        $fui-neutral: "ice",
-//        $fui-density: "compact"
 //      );
 //
 // 2. CSS CUSTOM PROPERTIES (Runtime theming):
@@ -150,7 +149,7 @@ $fui-letter-spacing-wide: map.get(
 ) !default;
 
 // --------------------------------------------
-// Spacing (derived from density seed)
+// Spacing (derived from the measurement spacing record)
 // --------------------------------------------
 // Micro-spacing for small internal alignments (margins, thumb offsets)
 $fui-space-px: computed.$computed-space-px !default;
@@ -408,8 +407,8 @@ $fui-breakpoint-xl: 1280px !default;
 // Component-specific tokens
 // --------------------------------------------
 
-// Interactive control heights are fixed geometry. Density still governs
-// composition spacing, but it cannot resize a named control.
+// Interactive control heights are fixed geometry; the spacing scale cannot
+// resize a named control.
 $fui-control-height-xs: measurements.target-value("controlTrack", "micro") !default;
 $fui-control-height-sm: measurements.target-value("controlTrack", "sm") !default;
 $fui-control-height-md: measurements.target-value("controlTrack", "md") !default;
@@ -426,7 +425,7 @@ $fui-input-height-sm: measurements.target-value("fieldTrack", "sm") !default;
 $fui-input-height: measurements.target-value("fieldTrack", "md") !default;
 $fui-input-height-lg: measurements.target-value("fieldTrack", "lg") !default;
 
-// Touch targets (derived from density seed)
+// Touch targets (from the measurement spacing record)
 $fui-touch-sm: computed.$computed-touch-sm !default;
 $fui-touch-md: computed.$computed-touch-md !default;
 $fui-touch-lg: computed.$computed-touch-lg !default;
@@ -462,10 +461,11 @@ $fui-overlay-layer-swipe: 49 !default;
 $fui-overlay-layer-backdrop: 50 !default;
 $fui-overlay-layer-modal: 51 !default;
 $fui-overlay-layer-anchored: 52 !default;
+$fui-overlay-layer-toast: 55 !default;
 $fui-overlay-layer-tooltip: 60 !default;
 
 // Sidebar (multi-consumer — used by Sidebar, NavigationMenu, Theme)
-$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default; // density-responsive (compact/default: 32px, relaxed: 36px)
+$fui-sidebar-item-height: computed.$computed-sidebar-item-height !default;
 
 // AppShell Layout
 $fui-appshell-header-height: map.get(
@@ -632,6 +632,7 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-overlay-layer-backdrop: #{$fui-overlay-layer-backdrop};
     --fui-overlay-layer-modal: #{$fui-overlay-layer-modal};
     --fui-overlay-layer-anchored: #{$fui-overlay-layer-anchored};
+    --fui-overlay-layer-toast: #{$fui-overlay-layer-toast};
     --fui-overlay-layer-tooltip: #{$fui-overlay-layer-tooltip};
 
     // Colors — Accent (light-dark for automatic dark mode)
@@ -766,17 +767,8 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-control-checked-border-hover: var(--fui-color-accent-hover);
     --fui-control-checked-color: var(--fui-color-on-accent);
 
-    // Form chrome (shared by Input, Textarea, Select, Combobox, DatePicker,
-    // ColorPicker, Editor, and listbox-style controls).
-    --fui-field-bg: color-mix(in srgb, var(--fui-bg-elevated) 72%, transparent);
-    --fui-field-bg-disabled: color-mix(in srgb, var(--fui-bg-tertiary) 78%, var(--fui-bg-primary));
-    --fui-field-border: var(--fui-border-strong);
-    --fui-field-border-hover: color-mix(
-      in srgb,
-      var(--fui-text-tertiary) 46%,
-      var(--fui-border-strong)
-    );
-    --fui-field-border-focus: var(--fui-text-primary);
+    // Field shells take their edge and ground from --fui-border / --fui-bg-primary
+    // through the field recipe; only selection chrome needs its own hooks.
     --fui-field-selection-bg: var(--fui-control-selected-bg);
     --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-text-primary) 11%, transparent);
     --fui-field-selection-border: var(--fui-border-strong);
@@ -1013,13 +1005,13 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-input-height: var(--fui-field-track-md);
     --fui-input-height-lg: var(--fui-field-track-lg);
 
-    // Touch targets (density-responsive, Fragments control floor: ≥32px)
+    // Touch targets (Fragments control floor: ≥32px)
     --fui-touch-sm: #{$fui-touch-sm};
     --fui-touch-md: #{$fui-touch-md};
     --fui-touch-lg: #{$fui-touch-lg};
     --fui-target-size-min: #{$fui-target-size-min};
 
-    // Sidebar (density-responsive)
+    // Sidebar
     --fui-sidebar-item-height: #{$fui-sidebar-item-height};
 
     // AppShell Layout
@@ -1031,12 +1023,6 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   // Sass seeds. Attribute specificity intentionally matches :root so these
   // later rules can override the compiled default on either the document root
   // or a scoped provider without inline numeric maps.
-  @each $density in measurements.$density-profile-names {
-    [data-fui-density="#{$density}"] {
-      @include measurements.emit-density-profile($density);
-    }
-  }
-
   @each $radius-style in measurements.$radius-profile-names {
     [data-fui-radius-style="#{$radius-style}"] {
       @include measurements.emit-radius-profile($radius-style);
@@ -1231,9 +1217,6 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   // Ensure minimum contrast on interactive elements
   --fui-bg-hover: rgba(0, 0, 0, 0.12);
   --fui-bg-active: rgba(0, 0, 0, 0.18);
-  --fui-field-border: var(--fui-text-primary);
-  --fui-field-border-hover: var(--fui-text-primary);
-  --fui-field-border-focus: var(--fui-color-accent);
   --fui-field-selection-border: var(--fui-color-accent);
   --fui-form-group-border: var(--fui-text-primary);
   --fui-sidebar-item-active-border: var(--fui-text-primary);

@@ -29,7 +29,11 @@ const persistentSurfaceCases = [
   ["components/Badge/Badge.module.scss", "&.active", "--fui-control-selected-bg"],
   ["components/Header/Header.module.scss", ".navItemActive", "--fui-control-selected-bg"],
   ["components/Header/Header.module.scss", ".navMenuItemActive", "--fui-control-selected-bg"],
-  ["components/Header/Header.module.scss", ".mobileNavLinkActive", "--fui-control-selected-bg"],
+  [
+    "components/Header/Header.module.scss",
+    ".mobileNavLinkActive",
+    "@include navigation.link-active",
+  ],
   ["components/IconButton/IconButton.module.scss", ".pressed", "--fui-control-selected-bg"],
   [
     "components/NavigationMenu/NavigationMenu.module.scss",
@@ -39,7 +43,7 @@ const persistentSurfaceCases = [
   [
     "components/NavigationMenu/NavigationMenu.module.scss",
     ".drawerLinkActive",
-    "--fui-control-selected-bg",
+    "@include navigation.link-active",
   ],
   ["components/Pagination/Pagination.module.scss", ".itemActive", "--fui-control-selected-bg"],
   ["components/Prompt/Prompt.module.scss", ".tabButtonActive", "@include segmented-selection"],
@@ -49,6 +53,7 @@ const persistentSurfaceCases = [
     ".toggleButtonActive",
     "@include segmented-selection",
   ],
+  ["recipes/_navigation.scss", "@mixin link-active", "--fui-control-selected-bg"],
   ["recipes/_popup.scss", "@mixin selected-state", "--fui-field-selection-bg"],
 ] as const;
 
@@ -68,9 +73,8 @@ describe("component state surface contract", () => {
 
   it("uses the persistent-selection role while a ghost Select owns an open popup", () => {
     const openGhostTrigger = extractBlock(
-      readSource("components/Select/Select.module.scss"),
-      "&[data-popup-open]",
-      1
+      extractBlock(readSource("components/Select/Select.module.scss"), ".triggerGhost"),
+      "&[data-popup-open]"
     );
 
     expect(openGhostTrigger).toContain("--fui-control-selected-bg");
@@ -133,5 +137,60 @@ describe("component state surface contract", () => {
     const slider = readSource("components/Slider/Slider.module.scss");
     expect(slider).toContain("background-color: var(--fui-color-accent");
     expect(slider).not.toContain("--fui-field-selection-border");
+  });
+
+  // Combobox shipped `error` that rendered only the message: no invalid edge and
+  // no aria-invalid, because nothing asserted the pair. A control that accepts
+  // `error` has to render the state, not just describe it.
+  it.each([
+    ["ColorPicker", "components/ColorPicker/ColorPicker.module.scss"],
+    ["Combobox", "components/Combobox/Combobox.module.scss"],
+    ["DatePicker", "components/DatePicker/DatePicker.module.scss"],
+    ["Input", "components/Input/Input.module.scss"],
+    ["RadioGroup", "components/RadioGroup/RadioGroup.module.scss"],
+    ["Select", "components/Select/Select.module.scss"],
+    ["Textarea", "components/Textarea/Textarea.module.scss"],
+  ])("%s renders the invalid edge from the field recipe", (_name, path) => {
+    expect(readSource(path), path).toContain("field.invalid-state");
+  });
+
+  it.each([
+    ["Combobox", "components/Combobox/index.tsx"],
+    ["DatePicker", "components/DatePicker/index.tsx"],
+    ["RadioGroup", "components/RadioGroup/index.tsx"],
+    ["Select", "components/Select/index.tsx"],
+  ])("%s marks its shell invalid so the edge has something to key off", (_name, path) => {
+    expect(readSource(path), path).toContain("data-invalid={hasError");
+  });
+
+  // The edge is only half the state. `aria-invalid` is what a screen reader
+  // reads, and a control that paints danger while reporting valid is worse
+  // than one that does neither. Each component's own test asserts the pair on
+  // the rendered DOM; this row keeps the source from losing it silently.
+  it.each([
+    ["ColorPicker", "components/ColorPicker/index.tsx"],
+    ["Combobox", "components/Combobox/index.tsx"],
+    ["DatePicker", "components/DatePicker/index.tsx"],
+    ["Input", "components/Input/index.tsx"],
+    ["RadioGroup", "components/RadioGroup/index.tsx"],
+    ["Select", "components/Select/index.tsx"],
+    ["Textarea", "components/Textarea/index.tsx"],
+  ])("%s reports its invalid state to assistive tech", (_name, path) => {
+    expect(readSource(path), path).toContain("aria-invalid=");
+  });
+
+  // Invalid while focused is a state of its own: the danger edge stays and the
+  // ring takes the danger hue. Shipped once on Input and Textarea only, so the
+  // other five drew a danger edge inside an accent ring.
+  it.each([
+    ["ColorPicker", "components/ColorPicker/ColorPicker.module.scss"],
+    ["Combobox", "components/Combobox/Combobox.module.scss"],
+    ["DatePicker", "components/DatePicker/DatePicker.module.scss"],
+    ["Input", "components/Input/Input.module.scss"],
+    ["RadioGroup", "components/RadioGroup/RadioGroup.module.scss"],
+    ["Select", "components/Select/Select.module.scss"],
+    ["Textarea", "components/Textarea/Textarea.module.scss"],
+  ])("%s rings in danger when it is focused while invalid", (_name, path) => {
+    expect(readSource(path), path).toContain("field.invalid-focus-state");
   });
 });

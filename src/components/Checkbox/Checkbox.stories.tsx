@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Checkbox } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Binary toggle for form fields that require explicit submission.
@@ -11,6 +12,7 @@ const meta = {
   component: Checkbox,
   tags: ["autodocs", "canonical"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Binary toggle for form fields requiring explicit submission.",

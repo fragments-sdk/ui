@@ -4,6 +4,7 @@
 @use "../../recipes/action" as action;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/navigation" as navigation;
+@use "../../recipes/overlay" as overlay;
 @use "../../recipes/popup" as popup;
 
 // ============================================
@@ -193,7 +194,7 @@
 // ============================================
 
 .navMenuPositioner {
-  z-index: 52;
+  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   outline: none;
 }
 
@@ -201,7 +202,6 @@
   @include popup.container;
 
   min-width: layout.measure("field-minimum");
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
 
   opacity: 0;
   transform: scale(0.95);
@@ -339,24 +339,15 @@
 // ============================================
 
 .mobileNavBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 98;
-  background: var(--fui-backdrop, $fui-backdrop);
+  @include overlay.backdrop;
+
   animation: mobileNavFadeIn var(--fui-transition-normal, $fui-transition-normal);
 }
 
+// The mobile nav is the Drawer surface: same frame, width, layer and chrome.
 .mobileNavDrawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 99;
-  width: min(320px, 85vw);
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border-left: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  display: flex;
-  flex-direction: column;
+  @include overlay.side-panel("end");
+
   animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal);
 }
 
@@ -365,7 +356,8 @@
   align-items: center;
   justify-content: flex-end;
   padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
-  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
+  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--fui-border, $fui-border);
 }
 
 .mobileNavClose {
@@ -389,30 +381,23 @@
 .mobileNavBody {
   flex: 1;
   overflow-y: auto;
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
+  // Same gutter as NavigationMenu.drawerBody so both mobile navs inset their
+  // rows identically (UIR-D42).
+  padding: var(--fui-space-2, $fui-space-2) var(--fui-navigation-gutter, #{navigation.gutter()});
 }
 
 .mobileNavLink {
   @include button-reset;
   @include navigation.row;
+  @include navigation.link-states;
 
   display: flex;
   align-items: center;
   width: 100%;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-decoration: none;
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
 }
 
 .mobileNavLinkActive {
-  color: var(--fui-text-primary, $fui-text-primary);
-  background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
+  @include navigation.link-active;
 }
 
 .mobileNavActions {
@@ -433,7 +418,7 @@
 
 @keyframes mobileNavSlideIn {
   from {
-    transform: translateX(100%);
+    transform: translateX(overlay.side-panel-offscreen("end"));
   }
   to {
     transform: translateX(0);
@@ -457,11 +442,13 @@
   position: absolute;
   top: var(--fui-space-2, $fui-space-2);
   left: var(--fui-space-2, $fui-space-2);
-  z-index: 100;
+  // Top of the layer scale: a skip link must win over every overlay.
+  z-index: var(--fui-overlay-layer-tooltip, #{$fui-overlay-layer-tooltip});
   padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
   background-color: var(--fui-bg-primary, $fui-bg-primary);
   color: var(--fui-text-primary, $fui-text-primary);
-  border: var(--fui-stroke-default, #{$fui-stroke-default}) solid var(--fui-color-accent, $fui-color-accent);
+  border: var(--fui-stroke-default, #{$fui-stroke-default}) solid
+    var(--fui-color-accent, $fui-color-accent);
   border-radius: var(--fui-radius-md, $fui-radius-md);
   text-decoration: none;
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);

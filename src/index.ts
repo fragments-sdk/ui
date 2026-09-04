@@ -354,7 +354,6 @@ export {
   type UseThemeReturn,
   type ConfigureThemeOptions,
   type NeutralPalette,
-  type DensityPreset,
   type RadiusStyle,
 } from "./components/Theme";
 

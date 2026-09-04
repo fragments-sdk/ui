@@ -4,10 +4,7 @@ import * as React from "react";
 import { Select as BaseSelect } from "@base-ui/react/select";
 import { useResolvedControlSize } from "../ComponentDefaults";
 import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
-import {
-  POPUP_OFFSET_PX,
-  resolvePopupViewportRows,
-} from "../../recipes/popup";
+import { POPUP_OFFSET_PX, resolvePopupViewportRows } from "../../recipes/popup";
 import styles from "./Select.module.scss";
 
 // ============================================
@@ -163,6 +160,9 @@ interface SelectContextValue {
   unregisterItem: (value: SelectValue) => void;
   size: "sm" | "md" | "lg";
   variant: SelectVariant;
+  /** Mirrors the wrapper's `data-invalid` onto the trigger as `aria-invalid`,
+   * so assistive tech hears the state the danger edge is painting. */
+  invalid?: boolean;
   /** Items built from the `options` prop, so a custom composition can put the
    * trigger where it wants without having to re-render the list itself — and
    * without losing whatever the root knows about an option that a bare label
@@ -320,6 +320,12 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     return merged;
   }, [declaredItems, items]);
 
+  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds("select", {
+    label,
+    helperText,
+    error,
+  });
+
   const contextValue = React.useMemo(
     () => ({
       placeholder,
@@ -330,6 +336,7 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
       size,
       variant,
       optionItems,
+      invalid: hasError,
     }),
     [
       placeholder,
@@ -340,27 +347,18 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
       size,
       variant,
       optionItems,
+      hasError,
     ]
   );
 
-  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds("select", {
-    label,
-    helperText,
-    error,
-  });
-
-  const wrapperClasses = [
-    styles.wrapper,
-    variant === "ghost" && styles.wrapperGhost,
-    className,
-  ]
+  const wrapperClasses = [styles.wrapper, variant === "ghost" && styles.wrapperGhost, className]
     .filter(Boolean)
     .join(" ");
   const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
 
   return (
     <SelectContext.Provider value={contextValue}>
-      <div ref={ref} className={wrapperClasses}>
+      <div ref={ref} className={wrapperClasses} data-invalid={hasError || undefined}>
         <BaseSelect.Root
           value={value !== undefined || readOnly ? selectedValue : undefined}
           defaultValue={value === undefined && !readOnly ? defaultValue : undefined}
@@ -427,7 +425,11 @@ function SelectTrigger({
     (placeholderText ? <span className={styles.placeholder}>{placeholderText}</span> : null);
 
   return (
-    <BaseSelect.Trigger {...htmlProps} className={classes}>
+    <BaseSelect.Trigger
+      {...htmlProps}
+      className={classes}
+      aria-invalid={context.invalid || undefined}
+    >
       {children ?? (
         <>
           {icon && <span className={styles.triggerIcon}>{icon}</span>}

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { MEASUREMENT_PROFILES, type MeasurementDensity } from "./generated";
+import { MEASUREMENT_PROFILES } from "./generated";
 import styles from "./MeasurementTargets.module.scss";
 
 type StorybookTheme = "light" | "dark";
@@ -8,9 +8,7 @@ type ControlTrack = keyof typeof MEASUREMENT_PROFILES.targets.controlTrack;
 type FieldTrack = keyof typeof MEASUREMENT_PROFILES.targets.fieldTrack;
 type TypographyRole = keyof typeof MEASUREMENT_PROFILES.typography;
 
-type TargetLineupArgs = {
-  density: MeasurementDensity;
-};
+type TargetLineupArgs = Record<string, never>;
 
 const CONTROL_TRACK_CLASSES: Record<ControlTrack, string> = {
   micro: styles.controlTrackMicro,
@@ -47,17 +45,6 @@ const meta = {
         component:
           "Generated target-lineup evidence. These specimens expose dormant measurement roles without switching a production component to them.",
       },
-    },
-  },
-  args: {
-    density: "default",
-  },
-  argTypes: {
-    density: {
-      control: "select",
-      options: ["compact", "default", "relaxed"],
-      description:
-        "Selects the surrounding density profile; fixed target and typography roles must not change.",
     },
   },
 } satisfies Meta<TargetLineupArgs>;
@@ -163,26 +150,23 @@ function TypographyTargets() {
 }
 
 export const TargetLineup: Story = {
-  render: ({ density }, context) => {
+  render: (_args, context) => {
     const theme = resolveTheme(context.globals.theme);
 
     return (
       <main
         className={styles.lineup}
-        data-fui-density={density}
         data-geometry-target-lineup="root"
-        data-geometry-density={density}
         data-geometry-theme={theme}
       >
         <header className={styles.header}>
           <p className={styles.eyebrow}>Measurement foundation</p>
           <h1 className={styles.title}>Target lineup</h1>
           <p className={styles.description}>
-            Fixed geometry and semantic type evidence. Density and theme may change the surrounding
-            surface, but these target values remain identical.
+            Fixed geometry and semantic type evidence. Theme may change the surrounding surface, but
+            these target values remain identical.
           </p>
           <div className={styles.context} role="group" aria-label="Active evidence context">
-            <span className={styles.contextValue}>density: {density}</span>
             <span className={styles.contextValue}>theme: {theme}</span>
           </div>
         </header>

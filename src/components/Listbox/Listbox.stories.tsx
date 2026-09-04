@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Listbox } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Listbox } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Controlled listbox for search results, autocomplete dropdowns, and command menus.
@@ -7,19 +8,19 @@ import { Listbox } from '.';
  * arrow/home/end keyboard navigation when focused.
  */
 const meta = {
-  title: 'Forms/Listbox',
+  title: "Forms/Listbox",
   component: Listbox,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component:
-          'Controlled option list for search results, autocomplete, and command menus.',
+        component: "Controlled option list for search results, autocomplete, and command menus.",
       },
     },
   },
   args: {
-    'aria-label': 'Options',
+    "aria-label": "Options",
     children: (
       <>
         <Listbox.Item selected>First option</Listbox.Item>
@@ -45,7 +46,7 @@ export const Default: Story = {
 };
 
 export const WithGroups: Story = {
-  args: { 'aria-label': 'Commands' },
+  args: { "aria-label": "Commands" },
   render: (args) => (
     <Listbox {...args}>
       <Listbox.Group label="Recent">
@@ -72,7 +73,7 @@ export const WithDisabledItems: Story = {
 };
 
 export const EmptyState: Story = {
-  args: { 'aria-label': 'Search results' },
+  args: { "aria-label": "Search results" },
   render: (args) => (
     <Listbox {...args}>
       <Listbox.Empty>No results found</Listbox.Empty>

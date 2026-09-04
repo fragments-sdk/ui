@@ -52,6 +52,27 @@
   @error "Unknown block-drawer size '#{$size}'. Expected sm, md, lg, or xl.";
 }
 
+/// The translate distance that parks a side panel fully off-screen.
+/// A side panel is inset from the viewport edge by the safe-area frame, so
+/// translating it by its own width alone stops with that inset still on
+/// screen — a sliver of elevated surface, edge and shadow painted at the
+/// border for the whole entrance. The offset has to clear the frame too.
+/// Returned as a distance, not a `transform`, so callers can compose it
+/// (Drawer adds its swipe offset on the same axis).
+@function side-panel-offscreen($side) {
+  @if $side == "start" {
+    @return calc(-100% - var(--_fui-overlay-safe-left, #{_raw(16)}));
+  } @else if $side == "end" {
+    @return calc(100% + var(--_fui-overlay-safe-right, #{_raw(16)}));
+  } @else if $side == "top" {
+    @return calc(-100% - var(--_fui-overlay-safe-top, #{_raw(16)}));
+  } @else if $side == "bottom" {
+    @return calc(100% + var(--_fui-overlay-safe-bottom, #{_raw(16)}));
+  }
+
+  @error "Unknown side panel side '#{$side}'. Expected start, end, top, or bottom.";
+}
+
 @mixin safe-viewport {
   --_fui-overlay-safe-top: var(
     --fui-feedback-viewport-inset-top,
@@ -77,17 +98,66 @@
   );
 }
 
-@mixin modal-shell {
-  @include typography.role("body-compact");
+/// Scrim behind any modal surface. Open/close transitions stay with the caller.
+@mixin backdrop {
+  position: fixed;
+  z-index: var(--fui-overlay-layer-backdrop, #{tokens.$fui-overlay-layer-backdrop});
+  inset: 0;
+  background-color: var(--fui-backdrop, #{tokens.$fui-backdrop});
+}
 
+/// The Drawer geometry for an edge-anchored modal panel: fixed on the modal
+/// layer, inset by the safe-area frame, one drawer width. Callers must also
+/// include `safe-viewport` somewhere on or above the panel. $side: start | end.
+@mixin side-panel-geometry($side) {
+  position: fixed;
+  z-index: var(--fui-overlay-layer-modal, #{tokens.$fui-overlay-layer-modal});
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  inset-block: var(--_fui-overlay-safe-top, #{_raw(16)})
+    var(--_fui-overlay-safe-bottom, #{_raw(16)});
+  inline-size: min(
+    #{drawer-inline("sm")},
+    var(--_fui-overlay-safe-inline, calc(100dvw - #{_raw(32)}))
+  );
+
+  @if $side == "start" {
+    inset-inline-start: var(--_fui-overlay-safe-left, #{_raw(16)});
+  } @else if $side == "end" {
+    inset-inline-end: var(--_fui-overlay-safe-right, #{_raw(16)});
+  } @else {
+    @error "Unknown side panel side '#{$side}'. Expected start or end.";
+  }
+}
+
+/// A complete side panel for hosts that are not the Drawer component
+/// (mobile navigation): the floating surface on the Drawer geometry.
+@mixin side-panel($side) {
+  @include surface;
+  @include safe-viewport;
+  @include typography.role("body-compact");
+  @include side-panel-geometry($side);
+}
+
+/// Every floating panel (modal, drawer, popover, popup list, toast) is the
+/// same object: elevated fill, hairline edge, the outer radius level, one shadow.
+@mixin surface {
   box-sizing: border-box;
-  max-block-size: var(--_fui-overlay-safe-block, calc(100dvh - #{_raw(32)}));
-  overflow: auto;
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   background-color: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid var(--fui-border, #{tokens.$fui-border});
-  border-radius: var(--fui-radius-lg, #{tokens.$fui-radius-lg});
+  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
+    var(--fui-border, #{tokens.$fui-border});
+  border-radius: var(--fui-radius-l1, #{tokens.$fui-radius-l1});
   box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
+}
+
+@mixin modal-shell {
+  @include surface;
+  @include typography.role("body-compact");
+
+  max-block-size: var(--_fui-overlay-safe-block, calc(100dvh - #{_raw(32)}));
+  overflow: auto;
 }
 
 @mixin _section-inline-inset {
@@ -121,6 +191,9 @@
   justify-content: flex-end;
   gap: var(--fui-overlay-section-gap, #{_raw(8)});
   padding-block: #{_raw(8)};
+  border-top: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
+    var(--fui-border, #{tokens.$fui-border});
+  background-color: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
 }
 
 @mixin modal-title {
@@ -143,37 +216,55 @@
   position: absolute;
   inset-block-start: var(--fui-overlay-close-inset, #{_raw(12)});
   inset-inline-end: var(--fui-overlay-close-inset, #{_raw(12)});
+  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+
+  &:hover {
+    background-color: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
+    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  }
+
+  svg {
+    @include action.glyph("sm");
+  }
 }
 
 @mixin anchored-size($size) {
   @if $size == "sm" {
     @include surface.apply-inset("compact");
 
-    max-inline-size: var(--fui-overlay-popover-sm, #{measurements.target-value("overlay", "popover-sm")});
+    max-inline-size: var(
+      --fui-overlay-popover-sm,
+      #{measurements.target-value("overlay", "popover-sm")}
+    );
   } @else if $size == "md" {
     @include surface.apply-inset("compact");
 
-    max-inline-size: var(--fui-overlay-popover-md, #{measurements.target-value("overlay", "popover-md")});
+    max-inline-size: var(
+      --fui-overlay-popover-md,
+      #{measurements.target-value("overlay", "popover-md")}
+    );
   } @else if $size == "lg" {
     @include surface.apply-inset("default");
 
-    max-inline-size: var(--fui-overlay-popover-lg, #{measurements.target-value("overlay", "popover-lg")});
+    max-inline-size: var(
+      --fui-overlay-popover-lg,
+      #{measurements.target-value("overlay", "popover-lg")}
+    );
   } @else {
     @error "Unknown anchored overlay size '#{$size}'. Expected sm, md, or lg.";
   }
 }
 
 @mixin anchored-surface($size) {
+  @include surface;
   @include typography.role("body-compact");
   @include anchored-size($size);
 
-  box-sizing: border-box;
-  min-inline-size: var(--fui-overlay-popover-min, #{measurements.target-value("overlay", "popover-min")});
-  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
-  background-color: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid var(--fui-border, #{tokens.$fui-border});
-  border-radius: var(--fui-radius-lg, #{tokens.$fui-radius-lg});
-  box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
+  min-inline-size: var(
+    --fui-overlay-popover-min,
+    #{measurements.target-value("overlay", "popover-min")}
+  );
 }
 
 @mixin arrow-box {
@@ -182,11 +273,19 @@
   transform: rotate(45deg);
 }
 
+/// The one inverse floating surface: compact, no edge, nested radius level.
 @mixin tooltip {
   @include typography.role("ui-compact");
 
   box-sizing: border-box;
-  max-inline-size: var(--fui-overlay-tooltip-max, #{measurements.target-value("overlay", "tooltip-max")});
+  max-inline-size: var(
+    --fui-overlay-tooltip-max,
+    #{measurements.target-value("overlay", "tooltip-max")}
+  );
   padding-block: _raw(4);
   padding-inline: _raw(8);
+  color: var(--fui-text-inverse, #{tokens.$fui-text-inverse});
+  background-color: var(--fui-bg-inverse, #{tokens.$fui-bg-inverse});
+  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
+  box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
 }

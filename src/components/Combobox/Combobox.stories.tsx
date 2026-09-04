@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Combobox } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Searchable select that filters a dropdown of options as you type.
@@ -11,6 +12,7 @@ const meta = {
   component: Combobox,
   tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component: "Searchable select that filters options as you type.",

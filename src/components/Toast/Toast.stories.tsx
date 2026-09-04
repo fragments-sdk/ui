@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Toast } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Toast } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Toast is the canonical transient-notification primitive. Use it for brief,
@@ -8,34 +9,35 @@ import { Toast } from '.';
  * should reuse this rather than hand-rolling a notification component.
  */
 const meta = {
-  title: 'Feedback/Toast',
+  title: "Feedback/Toast",
   component: Toast,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
-          'Brief, non-blocking notification messages. Prefer this (via Toast.Provider + useToast) over a hand-rolled notification system.',
+          "Brief, non-blocking notification messages. Prefer this (via Toast.Provider + useToast) over a hand-rolled notification system.",
       },
     },
   },
   argTypes: {
     tone: {
-      control: 'select',
-      options: ['neutral', 'success', 'danger', 'warning', 'info'],
-      description: 'Colour on the shared status ramp',
+      control: "select",
+      options: ["neutral", "success", "danger", "warning", "info"],
+      description: "Colour on the shared status ramp",
     },
-    title: { control: 'text', description: 'Toast title' },
-    description: { control: 'text', description: 'Additional message content' },
+    title: { control: "text", description: "Toast title" },
+    description: { control: "text", description: "Additional message content" },
     duration: {
-      control: 'number',
-      description: 'Auto-dismiss duration in ms (0 = no auto-dismiss)',
+      control: "number",
+      description: "Auto-dismiss duration in ms (0 = no auto-dismiss)",
     },
   },
   args: {
-    title: 'Notification',
-    description: 'This is a toast message.',
-    tone: 'neutral',
+    title: "Notification",
+    description: "This is a toast message.",
+    tone: "neutral",
   },
 } satisfies Meta<typeof Toast>;
 
@@ -44,47 +46,47 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { title: 'Heads up', description: 'Something just happened.', tone: 'neutral' },
+  args: { title: "Heads up", description: "Something just happened.", tone: "neutral" },
 };
 
 export const Success: Story = {
   args: {
-    title: 'Success!',
-    description: 'Your changes have been saved.',
-    tone: 'success',
+    title: "Success!",
+    description: "Your changes have been saved.",
+    tone: "success",
   },
 };
 
 export const Error: Story = {
   args: {
-    title: 'Error',
-    description: 'Failed to save changes. Please try again.',
-    tone: 'danger',
+    title: "Error",
+    description: "Failed to save changes. Please try again.",
+    tone: "danger",
   },
 };
 
 export const Warning: Story = {
   args: {
-    title: 'Warning',
-    description: 'This action cannot be undone.',
-    tone: 'warning',
+    title: "Warning",
+    description: "This action cannot be undone.",
+    tone: "warning",
   },
 };
 
 export const Info: Story = {
   args: {
-    title: 'New Update',
-    description: 'Version 2.0 is now available.',
-    tone: 'info',
+    title: "New Update",
+    description: "Version 2.0 is now available.",
+    tone: "info",
   },
 };
 
 export const WithAction: Story = {
   args: {
-    title: 'File deleted',
-    description: 'The file has been moved to trash.',
+    title: "File deleted",
+    description: "The file has been moved to trash.",
     action: {
-      label: 'Undo',
+      label: "Undo",
       onClick: () => {},
     },
   },

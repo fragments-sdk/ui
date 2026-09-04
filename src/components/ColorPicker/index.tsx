@@ -167,6 +167,7 @@ const ColorPickerRoot = React.forwardRef<HTMLDivElement, ColorPickerProps>(funct
             className={styles.swatch}
             style={{ backgroundColor: displayValue }}
             disabled={disabled}
+            aria-invalid={error || undefined}
             aria-label={label ? `Edit ${label} color` : "Edit color"}
           />
           <BasePopover.Portal>

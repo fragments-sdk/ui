@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Breadcrumbs } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Breadcrumbs } from ".";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Breadcrumbs show the current page location within a hierarchy and let users
@@ -7,25 +8,25 @@ import { Breadcrumbs } from '.';
  * Breadcrumbs.Item children, marking the last one with `current`.
  */
 const meta = {
-  title: 'Navigation/Breadcrumbs',
+  title: "Navigation/Breadcrumbs",
   component: Breadcrumbs,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
+    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component:
-          'Breadcrumb navigation showing the current page location within a hierarchy.',
+        component: "Breadcrumb navigation showing the current page location within a hierarchy.",
       },
     },
   },
   argTypes: {
     maxItems: {
-      control: 'number',
-      description: 'Maximum visible items before collapsing middle items with ellipsis',
+      control: "number",
+      description: "Maximum visible items before collapsing middle items with ellipsis",
     },
     label: {
-      control: 'text',
-      description: 'Custom aria-label for the breadcrumb nav landmark',
+      control: "text",
+      description: "Custom aria-label for the breadcrumb nav landmark",
     },
   },
   args: {

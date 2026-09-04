@@ -97,3 +97,12 @@
 - **What changed** — `Dialog.Content size` is `width` (UIR-D16); the panel widths moved into the hash-guarded measurement catalog as `--fui-overlay-*` (UIR-D15). No other prop renamed.
 - **What works** — the vocabulary schema gate (`src/contract-vocabulary.test.ts`) and the kit test suite are green at this HEAD.
 - **Candidates** — Wave 1 Navigation + Layout + Overlays category pass.
+
+## 2026-09-04 Wave 1 — floating surface parity (UIR-D40)
+
+- `.footer` and `.close` are recipe-only now: the footer band (hairline top edge, `--fui-bg-secondary`) lives in `overlay.footer`, the close button radius/ink/hover/glyph in `overlay.close`. The hand-written footer `border-radius` is gone; the popup's `overflow: auto` clips the band to the l1 corner (checked in Storybook, OpenByDefault).
+
+## 2026-09-04 Wave 1 — navigation parity (UIR-D41)
+
+- **What changed** — nothing. Dialog is listed here only because the lane re-ran its suite alongside the navigation components after `overlay.backdrop` was extracted from the shape Dialog already used.
+- **Not re-checked in this lane** — Dialog was browser-verified under UIR-D40; no UIR-D41 edit touches it.
