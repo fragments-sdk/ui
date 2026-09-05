@@ -10,7 +10,7 @@
   Button disabled state against implementation `ba6b9cd0` and snapshot `158d5547…`. The fresh Dialog
   path began closed, opened exactly one named modal from Enter, focused its close control, restored the
   trigger after Escape, and rendered the long-title case without desktop, 390px, or 320px overflow.
-  See `docs/fragment-workshop/browser/01-contract-pilot.md` for the owned-server record.
+  See `docs/fragments-v1/ARCHITECTURE.md` for the owned-server record.
 - The repair at `b1458c1b` received a second independent PASS against snapshot `b6c7377a…`: C01–C24
   were re-executed on owned port `34175`, the Dialog open/close/focus and long-title paths remained
   correct at desktop, 390px, and 320px, and the fresh Console audit contained zero warnings or errors.
@@ -39,7 +39,7 @@
   stop-on-first-failure rule, C03, C12, C16–C17, C22, and the full-matrix C23 Console audit were not run, so
   this renewal makes no fresh claim about Dialog modal, focus-return, long-title, or responsive behavior.
   The separate tagged Docs E2E suite passed 15/15 in 42.8s, and the partial Browser log contained zero
-  warnings and zero errors; see `docs/fragment-workshop/browser/01-contract-pilot.md` for the exact conflict
+  warnings and zero errors; see `docs/fragments-v1/ARCHITECTURE.md` for the exact conflict
   and cleanup record.
 - Brief 11C round-2 verifier `/root/browser_11c_round2` bound implementation `53161576` to base
   `2887f459` and snapshot `868b696e…` on owned port `34182`. Direct Browser checks passed the Dialog

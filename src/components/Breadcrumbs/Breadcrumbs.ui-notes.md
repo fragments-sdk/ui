@@ -4,7 +4,7 @@
 
 - **What changed** — none, only tokens/mixins: `margin`/`padding` zeros read `measurements.raw-space(0)` and the hairline reads `$fui-stroke-hairline`.
 - **What works** — the vocabulary schema gate (`src/contract-vocabulary.test.ts`) and the kit test suite are green at this HEAD.
-- **Candidates** — Wave 1 Navigation + Layout + Overlays category pass, which also owns the pre-existing bare px in `Breadcrumbs.module.scss` (follow-ups in `docs/ui-refinement/00-foundations.md`).
+- **Candidates** — Wave 1 Navigation + Layout + Overlays category pass, which also owns the pre-existing bare px in `Breadcrumbs.module.scss` (follow-ups in `docs/fragments-v1/ARCHITECTURE.md`).
 
 ## 2026-09-04 Wave 1 — navigation parity (UIR-D41)
 

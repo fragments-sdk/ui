@@ -3,7 +3,7 @@ import { basename, dirname, join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * Vocabulary schema gate (docs/ui-refinement/BRIEF.md, docs/ui-refinement/VOCABULARY.md).
+ * Vocabulary schema gate (docs/fragments-v1/ARCHITECTURE.md, docs/fragments-v1/ARCHITECTURE.md).
  *
  * Every authored contract (`*.contract.json`) and every compiled entry in
  * `fragments.json` for a `*.fragment.tsx` component must keep the shared axes
@@ -31,7 +31,7 @@ const FORBIDDEN_PROPS = ["severity", "appearance"];
 
 /**
  * Example attributes that name a real kit API outside the ruled vocabulary.
- * Each row is a tracked Wave 1/2 finding (docs/ui-refinement/DECISIONS.md
+ * Each row is a tracked Wave 1/2 finding (docs/fragments-v1/DECISIONS.md
  * UIR-D31); the gate fails if a row stops matching so the list cannot rot.
  */
 const EXAMPLE_DEVIATIONS: ReadonlyArray<{

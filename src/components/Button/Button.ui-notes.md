@@ -16,7 +16,7 @@ but `.button` is `white-space: nowrap`: a 614px label in a 346px docs capsule
 scrolls inside its container rather than wrapping. Decide one way — allow
 wrapping (multi-line buttons change the control-track contract) or rewrite the
 example copy to say what the component does. Logged as G-19 in
-`docs/docs-reference-grade/GOVERNANCE-FRICTION.md`.
+`docs/fragments-v1/ARCHITECTURE.md`.
 
 ## 2026-09-03 — Wave 0 vocabulary cut (UIR-D10, UIR-D17)
 
