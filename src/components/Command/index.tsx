@@ -20,6 +20,11 @@ export interface CommandProps extends React.HTMLAttributes<HTMLDivElement> {
   filter?: (value: string, search: string, keywords?: string[]) => number;
   /** Whether to loop keyboard navigation. Default: true */
   loop?: boolean;
+  /**
+   * The Command sits inside another surface (a Popover, a Dialog) that draws
+   * the frame, so it draws none of its own.
+   */
+  hosted?: boolean;
 }
 
 export interface CommandInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -154,6 +159,7 @@ function CommandRoot({
   onSearchChange,
   filter = defaultFilter,
   loop = true,
+  hosted = false,
   className,
   ...htmlProps
 }: CommandProps) {
@@ -249,7 +255,7 @@ function CommandRoot({
     <CommandContext.Provider value={contextValue}>
       <div
         {...htmlProps}
-        className={[styles.command, className].filter(Boolean).join(" ")}
+        className={[styles.command, hosted && styles.hosted, className].filter(Boolean).join(" ")}
         role="search"
       >
         {children}

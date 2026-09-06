@@ -27,6 +27,18 @@ describe('Command', () => {
     expect(screen.getByText('Print')).toBeInTheDocument();
   });
 
+  it('draws no frame of its own when hosted', () => {
+    const { container } = render(
+      <Command hosted>
+        <Command.Input placeholder="Find" />
+        <Command.List>
+          <Command.Item value="a">A</Command.Item>
+        </Command.List>
+      </Command>
+    );
+    expect(container.querySelector('[role="search"]')?.className).toMatch(/hosted/);
+  });
+
   it('typing filters items', async () => {
     const user = userEvent.setup();
     renderCommand();
