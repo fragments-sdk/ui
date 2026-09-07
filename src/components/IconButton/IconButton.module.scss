@@ -19,6 +19,14 @@
     color: var(--fui-text-primary, $fui-text-primary);
   }
 
+  // Tactile press. 0.96 exactly: lower reads as exaggerated. Rides the
+  // interactive-base transition, so a release mid-press eases back.
+  @media (prefers-reduced-motion: no-preference) {
+    &:active:not(:disabled):not([data-disabled]) {
+      scale: 0.96;
+    }
+  }
+
   svg {
     display: block;
   }

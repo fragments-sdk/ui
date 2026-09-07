@@ -35,4 +35,14 @@
   font-weight: weight($role);
   letter-spacing: tracking($role);
   font-family: font-family($role);
+
+  // Wrapping is part of the role: titles balance across their lines,
+  // descriptions never strand a single word on the last line. Long-form
+  // prose opts back out in recipes/prose, where evening out a paragraph
+  // only wastes space.
+  @if $role == "title-sm" or $role == "title-md" or $role == "title-lg" {
+    text-wrap: balance;
+  } @else if $role == "body-compact" or $role == "body-relaxed" {
+    text-wrap: pretty;
+  }
 }

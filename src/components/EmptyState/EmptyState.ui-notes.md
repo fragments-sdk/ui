@@ -24,3 +24,9 @@ Improvement candidates
 
 - Promote the three copy measures to `_variables.scss` so the recipe stops
   carrying literal widths.
+
+## 2026-09-07 — Rendering hints belong to the lib root
+
+- **What changed** — the `-webkit-font-smoothing` / `-moz-osx-font-smoothing` pair was deleted here (it was the only component setting them; the rule is that rendering hints live once, at the root). Prettier drift in the same file was reformatted.
+- **What works** — the EmptyState suite is green at this HEAD.
+- **Unchanged** — the `--_fui-feedback-empty-*` channel warnings from `fragments check` predate this edit.

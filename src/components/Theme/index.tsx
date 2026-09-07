@@ -68,6 +68,22 @@ function useSystemPreference(): "light" | "dark" {
  * ThemeProvider - Provides theme context to children
  * SSR-safe: initializes from localStorage in useEffect
  */
+function suppressTransitions(): () => void {
+  const style = document.createElement("style");
+  style.textContent = "*,*::before,*::after{transition:none!important}";
+  document.head.append(style);
+  return () => {
+    // Read layout for its side effect: a synchronous style flush commits the
+    // new colors while the override still applies, so nothing starts moving.
+    void document.body.offsetHeight;
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => requestAnimationFrame(() => style.remove()));
+    } else {
+      style.remove();
+    }
+  };
+}
+
 function ThemeProvider({
   children,
   componentDefaults,
@@ -121,6 +137,20 @@ function ThemeProvider({
     if (typeof document === "undefined" || !mounted) return;
 
     const root = document.documentElement;
+    const current =
+      attribute === "data-theme"
+        ? root.getAttribute("data-theme")
+        : root.classList.contains("dark")
+          ? "dark"
+          : root.classList.contains("light")
+            ? "light"
+            : null;
+
+    // A flip changes color, background, border and shadow on nearly every
+    // element at once; every transition on those properties would fire
+    // together and the switch smears instead of snapping. Turn transitions
+    // off for the swap, flush, then restore on the next frame.
+    const restore = current !== resolvedMode ? suppressTransitions() : null;
 
     if (attribute === "data-theme") {
       root.setAttribute("data-theme", resolvedMode);
@@ -128,6 +158,8 @@ function ThemeProvider({
       root.classList.remove("light", "dark");
       root.classList.add(resolvedMode);
     }
+
+    restore?.();
   }, [resolvedMode, attribute, mounted]);
 
   // Persist to localStorage when mode changes

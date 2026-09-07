@@ -12,3 +12,10 @@
 - **What works** — `configureTheme.measurements.test.ts` and the packaging suite are green at this HEAD; the built stylesheet emits no `[data-fui-density` selector.
 - **Breaking for consumers** — the CLI theme schema is `.strict()`, so a theme file still carrying `density` now fails validation rather than ignoring the key. Covered by the `delete-density-axis` changeset at a major bump for ui, core and cli.
 - **Not re-checked in this lane** — the Theme.Toggle / Theme.Button chrome (Wave 0, unchanged here).
+
+## 2026-09-07 — Theme-switch transition suppression (better-ui rule)
+
+- **What changed** — `ThemeProvider` now wraps the `data-theme` write in a one-frame `*{transition:none!important}` style when the resolved mode actually changes: inject, write the attribute, flush layout, remove on the second animation frame. Every surface with a colour transition (buttons, cards, links) used to smear at its own speed for one transition duration on toggle.
+- **What works** — the Theme suite and the kit tests are green at this HEAD. First mount never suppresses (nothing to smear from).
+- **Unverified** — browser proof of the smear being gone; needs a private Storybook/docs server (the shared :3001 serves a different branch).
+- **Candidates** — none; the suppression is the platform fix for the whole class.

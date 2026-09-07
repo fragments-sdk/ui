@@ -54,6 +54,14 @@
     box-shadow: var(--_button-shadow-active, none);
   }
 
+  // Tactile press. 0.96 exactly: lower reads as exaggerated. Rides the
+  // interactive-base transition, so a release mid-press eases back.
+  @media (prefers-reduced-motion: no-preference) {
+    &:active:not(:disabled):not([data-disabled]):not(.link) {
+      scale: 0.96;
+    }
+  }
+
   &:focus-visible {
     box-shadow:
       0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
@@ -172,18 +180,36 @@
     --fui-button-primary-bg-active,
     var(--fui-color-accent-active, #{$fui-color-accent-active})
   );
-  --_tone-fill-line: var(--fui-button-primary-border, var(--fui-color-accent, #{$fui-color-accent}));
+  --_tone-fill-line: var(
+    --fui-button-primary-border,
+    var(--fui-color-accent, #{$fui-color-accent})
+  );
   --_tone-fill-line-hover: var(
     --fui-button-primary-border-hover,
     var(--fui-color-accent-hover, #{$fui-color-accent-hover})
   );
-  --_tone-on-fill: var(--fui-button-primary-color, var(--fui-color-on-accent, #{$fui-color-on-accent}));
+  --_tone-on-fill: var(
+    --fui-button-primary-color,
+    var(--fui-color-on-accent, #{$fui-color-on-accent})
+  );
   --_tone-ink: var(--fui-color-accent, #{$fui-color-accent});
   --_tone-soft: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 12%, transparent);
-  --_tone-soft-hover: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 18%, transparent);
-  --_tone-soft-active: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 24%, transparent);
+  --_tone-soft-hover: color-mix(
+    in srgb,
+    var(--fui-color-accent, #{$fui-color-accent}) 18%,
+    transparent
+  );
+  --_tone-soft-active: color-mix(
+    in srgb,
+    var(--fui-color-accent, #{$fui-color-accent}) 24%,
+    transparent
+  );
   --_tone-wash: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 10%, transparent);
-  --_tone-wash-active: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 18%, transparent);
+  --_tone-wash-active: color-mix(
+    in srgb,
+    var(--fui-color-accent, #{$fui-color-accent}) 18%,
+    transparent
+  );
   --_tone-line: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 48%, transparent);
   --_tone-line-hover: var(--fui-color-accent, #{$fui-color-accent});
 }

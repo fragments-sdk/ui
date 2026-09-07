@@ -24,3 +24,18 @@ Improvement candidates
 
 - Retire `scale` once every consumer sits on a role; `weight`/`font`/tracking
   then become role modifiers instead of a parallel axis.
+
+## 2026-09-07 — `text-wrap` in the type roles (better-typography rule)
+
+What changed
+
+- `recipes/_typography.scss` `role()` now emits `text-wrap: balance` for the three `title-*` roles and `text-wrap: pretty` for `body-compact` / `body-relaxed`; every `Text` role, `Heading`, `EmptyState` and the page kits inherit it. The prose recipe resets to `text-wrap: auto` because balancing and orphan control are wrong in long-form.
+- Cloud's `html { line-height; -webkit-font-smoothing }` override and the duplicate smoothing in `EmptyState` were deleted; the lib owns rendering hints once.
+
+Unverified
+
+- Browser proof that two-line titles balance and that descriptions lose single-word last lines.
+
+Candidates
+
+- Logical properties: 37 physical `margin-left/right`, `padding-left/right`, `left/right` sites remain in the lib (Box 26, Sidebar 14, Prompt 7, feedback recipe 6, NavigationMenu 6, Header 6). Mechanical sweep, best done as one PR with a screenshot pass on an RTL story.

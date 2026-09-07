@@ -45,7 +45,8 @@
     background-color var(--fui-transition-fast, #{$fui-transition-fast}),
     border-color var(--fui-transition-fast, #{$fui-transition-fast}),
     box-shadow var(--fui-transition-fast, #{$fui-transition-fast}),
-    opacity var(--fui-transition-fast, #{$fui-transition-fast});
+    opacity var(--fui-transition-fast, #{$fui-transition-fast}),
+    scale var(--fui-transition-fast, #{$fui-transition-fast});
 
   &:focus-visible {
     @include focus-ring;

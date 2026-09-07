@@ -10,8 +10,6 @@
   gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
   text-align: center;
   font-family: var(--fui-font-sans, $fui-font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
   // Icon and actions sit a section step (16) away from the copy, netted
   // against the flex gap so the copy block keeps its own text rhythm.
@@ -50,7 +48,8 @@
 // content that has not arrived, without claiming the weight of a real card.
 .outline {
   justify-content: center;
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) dashed var(--fui-border-default, $fui-border-default);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) dashed
+    var(--fui-border-default, $fui-border-default);
   border-radius: var(--fui-card-radius, var(--fui-radius-lg, $fui-radius-lg));
 }
 
@@ -75,10 +74,7 @@
   font-size: var(--_fui-feedback-empty-title-size, #{typography.font-size("ui-standard")});
   font-weight: var(--_fui-feedback-empty-title-weight, #{typography.weight("ui-standard")});
   line-height: var(--_fui-feedback-empty-title-line, #{typography.line-height("ui-standard")});
-  letter-spacing: var(
-    --_fui-feedback-empty-title-tracking,
-    #{typography.tracking("ui-standard")}
-  );
+  letter-spacing: var(--_fui-feedback-empty-title-tracking, #{typography.tracking("ui-standard")});
 }
 
 .description {
@@ -92,10 +88,7 @@
   font-size: var(--_fui-feedback-empty-copy-size, #{typography.font-size("body-compact")});
   font-weight: var(--_fui-feedback-empty-copy-weight, #{typography.weight("body-compact")});
   line-height: var(--_fui-feedback-empty-copy-line, #{typography.line-height("body-compact")});
-  letter-spacing: var(
-    --_fui-feedback-empty-copy-tracking,
-    #{typography.tracking("body-compact")}
-  );
+  letter-spacing: var(--_fui-feedback-empty-copy-tracking, #{typography.tracking("body-compact")});
 }
 
 .actions {

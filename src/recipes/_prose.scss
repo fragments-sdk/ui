@@ -9,6 +9,9 @@
 @mixin root {
   @include typography.role("body-relaxed");
 
+  // Long-form text: no balancing or orphan control (see recipes/typography).
+  text-wrap: auto;
+
   > * {
     margin-block: 0;
   }
@@ -55,7 +58,10 @@
     list-style: none;
   } @else if $kind == "disc" or $kind == "decimal" or $kind == "icon" {
     display: grid;
-    grid-template-columns: minmax(var(--fui-raw-space-12, #{measurements.raw-space(12)}), max-content) minmax(0, 1fr);
+    grid-template-columns: minmax(
+        var(--fui-raw-space-12, #{measurements.raw-space(12)}),
+        max-content
+      ) minmax(0, 1fr);
     column-gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
     list-style: none;
 
@@ -139,7 +145,8 @@
 
   margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   padding-inline-start: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-  border-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid var(--fui-border-strong, #{tokens.$fui-border-strong});
+  border-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid
+    var(--fui-border-strong, #{tokens.$fui-border-strong});
 }
 
 @mixin table {

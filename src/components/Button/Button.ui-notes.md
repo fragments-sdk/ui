@@ -37,3 +37,18 @@ What still does not work / candidates
 
 - Long labels still `nowrap` (G-19 above) — unchanged this wave.
 - `solid` on info/success/warning has no named application job yet; it exists because the tone axis is uniform. Revisit if it never gets used.
+
+## 2026-09-07 — Press feedback (better-ui rule)
+
+What changed
+
+- `:active` now scales the control to `0.96` (the exact upstream value; lower reads as exaggerated) under `prefers-reduced-motion: no-preference`, disabled and `data-disabled` excluded, `.link` excluded (text should not shrink). The `scale` property rides `interactive-base`'s transition list, so a release mid-press eases back instead of snapping.
+- Prettier drift from before this change (long `var()` fallbacks) was reformatted in the same edit.
+
+Unverified
+
+- Browser proof of the press at 390px and on touch; the reduced-motion branch.
+
+Candidates
+
+- Icon stroke weight: `Icon` forwards no `strokeWidth`, so Lucide's 2px sits beside 400-weight body text in every button label. Rule says 1.5px beside 400 and 2px beside 500–600. Class-level fix belongs in `Icon`, not here.
