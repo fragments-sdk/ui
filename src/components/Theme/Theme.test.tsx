@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, userEvent, waitFor } from "../../test/utils";
+import { act, render, screen, userEvent, waitFor } from "../../test/utils";
 import { Theme, ThemeProvider, ThemeToggle, useTheme } from "./index";
 
 const localStorageMock = (() => {
@@ -90,6 +90,58 @@ describe("ThemeProvider", () => {
 
     expect(screen.getByText("Mode: light")).toBeInTheDocument();
   });
+
+  it.each(["data-theme", "class"] as const)(
+    "restores transitions after a theme change using %s",
+    (attribute) => {
+      const root = document.documentElement;
+      if (attribute === "class") root.classList.add("light");
+      else root.setAttribute("data-theme", "light");
+      const originalStyles = new Set(document.head.querySelectorAll("style"));
+      const frames: FrameRequestCallback[] = [];
+      const requestFrame = vi.spyOn(window, "requestAnimationFrame").mockImplementation((frame) => {
+        frames.push(frame);
+        return frames.length;
+      });
+      const addedStyles = () =>
+        [...document.head.querySelectorAll("style")].filter((style) => !originalStyles.has(style));
+
+      try {
+        const { rerender } = render(
+          <ThemeProvider mode="light" attribute={attribute}>
+            Content
+          </ThemeProvider>
+        );
+        expect(addedStyles()).toHaveLength(0);
+        expect(frames).toHaveLength(0);
+
+        rerender(
+          <ThemeProvider mode="dark" attribute={attribute}>
+            Content
+          </ThemeProvider>
+        );
+        const [override] = addedStyles();
+        expect(addedStyles()).toHaveLength(1);
+        const rule = override.sheet?.cssRules[0] as CSSStyleRule;
+        expect(rule.style.getPropertyValue("transition")).toBe("none");
+        expect(rule.style.getPropertyPriority("transition")).toBe("important");
+        expect(
+          attribute === "class"
+            ? root.classList.contains("dark")
+            : root.getAttribute("data-theme") === "dark"
+        ).toBe(true);
+
+        act(() => frames.shift()?.(0));
+        expect(override.isConnected).toBe(true);
+        act(() => frames.shift()?.(16));
+        expect(override.isConnected).toBe(false);
+        expect(frames).toHaveLength(0);
+      } finally {
+        requestFrame.mockRestore();
+        addedStyles().forEach((style) => style.remove());
+      }
+    }
+  );
 
   it("preserves the public compound and named export identities", () => {
     expect(Theme).toBe(ThemeProvider);
