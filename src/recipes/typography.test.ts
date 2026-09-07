@@ -20,7 +20,7 @@ function ruleBody(css: string, selector: string) {
 }
 
 describe("typography recipe", () => {
-  it("emits the exact five-declaration contract for every closed role", () => {
+  it("emits the exact declaration contract for every closed role", () => {
     const specimens = Object.keys(roles)
       .map((role) => `.${role} { @include typography.role(${JSON.stringify(role)}); }`)
       .join("\n");
@@ -29,7 +29,9 @@ describe("typography recipe", () => {
     for (const [role, values] of Object.entries(roles)) {
       const body = ruleBody(css, role);
       const declarations = body.match(/^[ ]{2}[\w-]+:/gm) ?? [];
-      expect(declarations, role).toHaveLength(5);
+      const wrapsTitle = role === "title-sm" || role === "title-md" || role === "title-lg";
+      const wrapsBody = role === "body-compact" || role === "body-relaxed";
+      expect(declarations, role).toHaveLength(wrapsTitle || wrapsBody ? 6 : 5);
       expect(body).toContain(`font-size: var(--fui-type-${role}-size, ${values.size})`);
       expect(body).toContain(`line-height: var(--fui-type-${role}-line, ${values.line})`);
       expect(body).toContain(
@@ -45,6 +47,14 @@ describe("typography recipe", () => {
       } else {
         expect(body).toContain("font-family: var(--fui-font-sans");
         expect(body).toContain("Onest Variable");
+      }
+
+      if (wrapsTitle) {
+        expect(body).toContain("text-wrap: balance");
+      } else if (wrapsBody) {
+        expect(body).toContain("text-wrap: pretty");
+      } else {
+        expect(body).not.toContain("text-wrap:");
       }
     }
   });

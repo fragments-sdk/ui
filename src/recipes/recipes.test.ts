@@ -5,7 +5,30 @@ function compile(source: string): string {
   return sass.compileString(source, { loadPaths: [`${process.cwd()}/src`], style: "expanded" }).css;
 }
 
+function textWrapValues(css: string, selector: string) {
+  const match = css.match(new RegExp(`\\.${selector}\\s*\\{([^}]*)\\}`, "s"));
+  expect(match, `missing .${selector} in compiled CSS`).not.toBeNull();
+  return [...(match?.[1] ?? "").matchAll(/text-wrap:\s*([^;]+);/g)].map((result) => result[1]);
+}
+
 describe("geometry recipes", () => {
+  it("keeps prose body elements on normal wrapping while balancing prose titles", () => {
+    const css = compile(`
+      @use "recipes/prose";
+      .root { @include prose.root; }
+      .paragraph { @include prose.paragraph; }
+      .list { @include prose.list("disc"); }
+      .blockquote { @include prose.blockquote; }
+      .table { @include prose.table; }
+      .heading { @include prose.heading(2); }
+    `);
+
+    for (const selector of ["root", "paragraph", "list", "blockquote", "table"]) {
+      expect(textWrapValues(css, selector).at(-1), selector).toBe("auto");
+    }
+    expect(textWrapValues(css, "heading")).toEqual(["balance"]);
+  });
+
   it("compiles the fixed action ladder and governed typography", () => {
     const css = compile(`
       @use "recipes/action";

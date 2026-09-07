@@ -28,6 +28,7 @@
 @mixin paragraph {
   @include typography.role("body-relaxed");
 
+  text-wrap: auto;
   margin-inline: 0;
 }
 
@@ -50,6 +51,7 @@
 @mixin list($kind) {
   @include typography.role("body-relaxed");
 
+  text-wrap: auto;
   margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 
@@ -58,10 +60,9 @@
     list-style: none;
   } @else if $kind == "disc" or $kind == "decimal" or $kind == "icon" {
     display: grid;
-    grid-template-columns: minmax(
-        var(--fui-raw-space-12, #{measurements.raw-space(12)}),
-        max-content
-      ) minmax(0, 1fr);
+    grid-template-columns:
+      minmax(var(--fui-raw-space-12, #{measurements.raw-space(12)}), max-content)
+      minmax(0, 1fr);
     column-gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
     list-style: none;
 
@@ -143,6 +144,7 @@
 @mixin blockquote {
   @include typography.role("body-relaxed");
 
+  text-wrap: auto;
   margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   padding-inline-start: var(--fui-raw-space-16, #{measurements.raw-space(16)});
   border-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid
@@ -152,6 +154,7 @@
 @mixin table {
   @include typography.role("body-compact");
 
+  text-wrap: auto;
   display: block;
   max-inline-size: 100%;
   overflow-x: auto;
