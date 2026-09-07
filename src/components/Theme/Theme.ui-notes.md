@@ -16,6 +16,6 @@
 ## 2026-09-07 — Theme-switch transition suppression (better-ui rule)
 
 - **What changed** — `ThemeProvider` now wraps the `data-theme` write in a one-frame `*{transition:none!important}` style when the resolved mode actually changes: inject, write the attribute, flush layout, remove on the second animation frame. Every surface with a colour transition (buttons, cards, links) used to smear at its own speed for one transition duration on toggle.
-- **What works** — the Theme suite and the kit tests are green at this HEAD. First mount never suppresses (nothing to smear from).
+- **What works** — the Theme suite verifies both `data-theme` and class changes: transitions are suppressed during the change and restored after the second frame. A matching DOM theme adds no override; hydration can suppress transitions when the DOM and resolved themes differ.
 - **Unverified** — browser proof of the smear being gone; needs a private Storybook/docs server (the shared :3001 serves a different branch).
 - **Candidates** — none; the suppression is the platform fix for the whole class.

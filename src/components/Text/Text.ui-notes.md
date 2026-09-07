@@ -29,7 +29,7 @@ Improvement candidates
 
 What changed
 
-- `recipes/_typography.scss` `role()` now emits `text-wrap: balance` for the three `title-*` roles and `text-wrap: pretty` for `body-compact` / `body-relaxed`; every `Text` role, `Heading`, `EmptyState` and the page kits inherit it. The prose recipe resets to `text-wrap: auto` because balancing and orphan control are wrong in long-form.
+- `recipes/_typography.scss` `role()` now emits `text-wrap: balance` for the three `title-*` roles and `text-wrap: pretty` for `body-compact` / `body-relaxed`; every `Text` role, `Heading`, `EmptyState` and the page kits inherit it. Prose paragraphs, lists, quotes and tables explicitly reset to `text-wrap: auto`; prose titles retain balancing. Compiled recipe tests verify the final cascade values.
 - Cloud's `html { line-height; -webkit-font-smoothing }` override and the duplicate smoothing in `EmptyState` were deleted; the lib owns rendering hints once.
 
 Unverified
