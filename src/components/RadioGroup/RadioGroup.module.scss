@@ -47,6 +47,20 @@
   &[data-disabled] {
     @include disabled-state;
   }
+
+  // A trailing value takes a third column so the label and helper keep
+  // theirs; it sits on the label's line at the end of the row.
+  &[data-has-trailing] {
+    grid-template-columns:
+      var(--_fui-boolean-mark-size, #{boolean.mark-size("md")}) minmax(0, 1fr)
+      auto;
+  }
+}
+
+.trailing {
+  justify-self: end;
+  text-align: end;
+  white-space: nowrap;
 }
 
 // The radio circle

@@ -74,6 +74,12 @@ export interface RadioItemProps {
   helperText?: string;
   /** @deprecated Use helperText instead. Description text below the label. */
   description?: string;
+  /**
+   * A value at the end of the row, on the label's line — a price, a count,
+   * a date. Read by the label's accessible name, so keep it short and put
+   * the explanation in `helperText`.
+   */
+  trailing?: React.ReactNode;
   /** Whether this item is disabled */
   disabled?: boolean;
   /** Accessible name for icon-only mode */
@@ -106,6 +112,7 @@ function RadioItem({
   label,
   helperText,
   description,
+  trailing,
   disabled = false,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
@@ -120,6 +127,7 @@ function RadioItem({
   const id = React.useId();
   const labelId = label ? `radio-label-${id}` : undefined;
   const descriptionId = resolvedHelperText ? `radio-desc-${id}` : undefined;
+  const trailingId = trailing != null ? `radio-trailing-${id}` : undefined;
 
   const radioClasses = [
     styles.radio,
@@ -160,13 +168,14 @@ function RadioItem({
       className={wrapperClasses}
       data-disabled={disabled || undefined}
       data-has-description={resolvedHelperText ? true : undefined}
+      data-has-trailing={trailing != null ? true : undefined}
       data-size={size}
     >
       <BaseRadio.Root
         value={value}
         disabled={disabled}
         aria-label={ariaLabel}
-        aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+        aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId, trailingId)}
         aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
         data-size={size}
         className={radioClasses}
@@ -183,6 +192,11 @@ function RadioItem({
           </span>
         )}
       </div>
+      {trailing != null && (
+        <span id={trailingId} className={styles.trailing}>
+          {trailing}
+        </span>
+      )}
     </label>
   );
 }

@@ -35,3 +35,6 @@ are deleted: no consumer set them and `navigation.row` / `section-row`
 already author the geometry. Every read now carries a Sass twin
 (`var(--fui-navigation-inline-inset, #{navigation.gutter()})`), so the
 kit scan's dual-fallback and undefined-token gates are green here.
+
+2026-09-07: the uppercase transform is gone (library-wide rule: no
+`text-transform: uppercase`). The label keeps its size, weight and colour.

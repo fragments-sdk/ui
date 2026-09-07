@@ -1,0 +1,166 @@
+@use "../tokens/variables" as *;
+
+// ================================================================
+// NavGlyph motion — one small verb per glyph, played when the row the
+// glyph sits in is hovered or focused. Nothing moves at rest; the verb
+// answers the pointer and returns the glyph to its drawn state. Keyframe
+// names are referenced statically so CSS Modules rewrites reference and
+// definition together.
+// ================================================================
+
+.glyph {
+  display: block;
+  overflow: visible;
+}
+
+// fragments-allow FUI2015: per-element motion parameters set by the glyph, not design tokens
+$_beat: 420ms;
+$_step: 70ms;
+$_ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+@mixin verb($name, $duration: $_beat, $ease: $_ease) {
+  :is(a, button):is(:hover, :focus-visible) & {
+    animation-name: $name;
+    animation-duration: $duration;
+    animation-timing-function: $ease;
+    // fragments-allow FUI2015: stagger between sibling parts of one glyph
+    animation-delay: calc(var(--i, 0) * #{$_step});
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  // Overview: the four tiles dip in turn.
+  .tile {
+    @include verb(hop, 360ms);
+  }
+
+  // Repository: the spine cracks open a hair.
+  .spine {
+    @include verb(open);
+  }
+
+  // Pull request: the branch draws into the base, then its head pops.
+  .branch {
+    @include verb(draw);
+  }
+
+  .head {
+    @include verb(pop, 240ms);
+  }
+
+  // Finding: the fly waves once on the pole.
+  .fly {
+    transform-origin: 0 0;
+
+    @include verb(wave, 520ms);
+  }
+
+  // Contract: the signature lines write themselves.
+  .line {
+    @include verb(draw, 320ms);
+  }
+
+  // Adoption: the bars rise from the baseline.
+  .bar {
+    transform-origin: 50% 100%;
+
+    @include verb(rise, 360ms);
+  }
+
+  // Component: the cube's inner edges redraw.
+  .edge {
+    @include verb(draw, 320ms);
+  }
+
+  // Setup: the prompt nudges and the cursor blinks.
+  .caret {
+    @include verb(nudge);
+  }
+
+  .cursor {
+    @include verb(blink, 600ms, steps(1, end));
+  }
+
+  // Settings: each knob slides along its rail and settles back.
+  .knob {
+    @include verb(slide);
+  }
+}
+
+@keyframes hop {
+  50% {
+    transform: scale(0.72);
+  }
+}
+
+@keyframes open {
+  50% {
+    transform: translateX(1.5px);
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0);
+  }
+
+  60% {
+    transform: scale(1.25);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes wave {
+  30% {
+    transform: rotate(-9deg);
+  }
+
+  65% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes nudge {
+  50% {
+    transform: translateX(1.5px);
+  }
+}
+
+@keyframes blink {
+  25%,
+  75% {
+    opacity: 0;
+  }
+}
+
+@keyframes slide {
+  50% {
+    transform: translateX(var(--dx, 2px));
+  }
+}

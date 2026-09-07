@@ -30,3 +30,10 @@ Improvement candidates
 - **What changed** — the `-webkit-font-smoothing` / `-moz-osx-font-smoothing` pair was deleted here (it was the only component setting them; the rule is that rendering hints live once, at the root). Prettier drift in the same file was reformatted.
 - **What works** — the EmptyState suite is green at this HEAD.
 - **Unchanged** — the `--_fui-feedback-empty-*` channel warnings from `fragments check` predate this edit.
+
+## 2026-09-07 — Title level follows the outline
+
+- **What changed** — `EmptyState.Title` takes `as` (`h2` | `h3` | `h4` | `p`,
+  default `h3`). A page whose first heading is the empty state was skipping
+  from the h1 to an h3; the caller now picks the level that fits its outline.
+- **What works** — existing callers render unchanged (default stays `h3`).

@@ -176,6 +176,12 @@ $_active-rail: navigation.active-rail();
 
   display: flex;
   align-items: center;
+  // Items carry a hairline border inside the same inset; the header mirrors
+  // it so the group label and the item glyphs below share one left edge.
+  padding-inline: calc(
+    var(--fui-navigation-inline-inset, #{$_gutter}) +
+      var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+  );
   padding-block-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
 }
 
@@ -183,18 +189,18 @@ $_active-rail: navigation.active-rail();
   flex: 1;
 }
 
-// Override section-label-text inheritance — sidebar groups read as quiet
-// title-case headings, not shouty all-caps labels.
-// Section labels read as small tracked eyebrows — a clearly different voice
-// from the nav items beneath them, so groups can't be mistaken for links.
+// A group name is not a row: it is heavier and fainter than the items
+// beneath it, sits on a shorter track with no hover surface, carries no
+// glyph, and keeps its natural case.
 .sectionLabel {
   flex: 1;
   min-width: 0;
-  font-size: var(--fui-sidebar-section-label-size, #{$fui-font-size-2xs});
-  letter-spacing: var(--fui-letter-spacing-wide, #{$fui-letter-spacing-wide});
-  text-transform: uppercase;
+  font-size: var(--fui-sidebar-section-label-size, #{$fui-font-size-xs});
+  font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
   color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
-  font-weight: var(--fui-font-weight-medium, #{$fui-font-weight-medium});
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sectionActionWrapper {

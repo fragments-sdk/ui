@@ -23,6 +23,9 @@ export interface EmptyStateIconProps extends React.HTMLAttributes<HTMLDivElement
 
 export interface EmptyStateTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: React.ReactNode;
+  /** Heading level follows the surrounding outline: `h2` for a page-level
+   * state, `h3` under a section heading. Defaults to `h3`. */
+  as?: "h2" | "h3" | "h4" | "p";
 }
 
 export interface EmptyStateDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
@@ -91,12 +94,17 @@ function EmptyStateIcon({ children, className, ...htmlProps }: EmptyStateIconPro
   );
 }
 
-function EmptyStateTitle({ children, className, ...htmlProps }: EmptyStateTitleProps) {
+function EmptyStateTitle({
+  children,
+  className,
+  as: Component = "h3",
+  ...htmlProps
+}: EmptyStateTitleProps) {
   const classes = [styles.title, className].filter(Boolean).join(" ");
   return (
-    <h3 {...htmlProps} className={classes}>
+    <Component {...htmlProps} className={classes}>
       {children}
-    </h3>
+    </Component>
   );
 }
 

@@ -25,3 +25,11 @@ Improvement candidates
 
 - Decide whether the `icon.2xl` measurement target survives Wave 1; if it does,
   restore it as an Icon size with a named job (empty-state and hero glyphs).
+
+## 2026-09-07 — NavGlyph
+
+Product navigation glyphs are hand-drawn SVGs in `assets/nav-glyph.tsx`, not
+Phosphor. `NavGlyph` takes `name` and `size`, inherits `currentColor`, and
+is `aria-hidden` by default. It is not an `Icon` component: pass it straight
+into `Sidebar.Item icon`. Group labels take no glyph. Each glyph plays one
+small verb when its row is hovered or focused (reduced motion: none).

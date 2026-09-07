@@ -205,7 +205,8 @@
       "disabled: boolean - disable all options",
       "wrapperClassName/groupClassName - explicit styling targets for wrapper and group",
       "groupId: string - ID forwarded to the inner radiogroup while id remains on the wrapper",
-      "RadioGroup.Item supports helperText (preferred) and description (legacy alias) plus controlClassName/contentClassName for item-level styling"
+      "RadioGroup.Item supports helperText (preferred) and description (legacy alias) plus controlClassName/contentClassName for item-level styling",
+      "RadioGroup.Item trailing: ReactNode - a short value (price, count) at the end of the row on the label's line; pairs with variant=outline for plan pickers"
     ],
     "a11yRules": ["A11Y_RADIO_GROUP", "A11Y_LABEL_REQUIRED", "A11Y_TARGET_SIZE_MIN"]
   },

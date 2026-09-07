@@ -215,6 +215,18 @@ describe("RadioGroup", () => {
     expect(handleChange.mock.calls[0][0]).toBe("red");
   });
 
+  it("puts a trailing value at the end of the row, inside the item's label", () => {
+    render(
+      <RadioGroup label="Plan" variant="outline">
+        <RadioGroup.Item value="pro" label="3 repositories" trailing="$219 a month" />
+      </RadioGroup>
+    );
+    const row = screen.getByText("3 repositories").closest("label");
+    expect(row).toHaveAttribute("data-has-trailing", "true");
+    expect(row).toHaveTextContent("3 repositories$219 a month");
+    expect(screen.getByRole("radio", { name: "3 repositories $219 a month" })).toBeInTheDocument();
+  });
+
   it("has no accessibility violations", async () => {
     const { container } = render(
       <RadioGroup label="Accessible group">

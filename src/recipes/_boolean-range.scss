@@ -89,9 +89,13 @@
   block-size: mark-size($size);
 }
 
+// A bordered surface reads as a card, not a field row: the same inset on
+// every side, so a two-line item (label + helper) breathes as much above and
+// below as it does at its edges. The field track still sets the floor so a
+// one-line card sits level with an input beside it.
 @mixin card($size) {
   min-block-size: card-track($size);
-  padding-inline: field.inline-inset($size);
+  padding: field.inline-inset($size);
   box-sizing: border-box;
 }
 

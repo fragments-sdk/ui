@@ -22,3 +22,6 @@ Improvement candidates
 
 - Fold the labelled rule onto `Text role="section-label"` so the label ink and
   tracking come from one place.
+
+2026-09-07: the uppercase transform is gone (library-wide rule: no
+`text-transform: uppercase`). The label keeps its size, weight and colour.

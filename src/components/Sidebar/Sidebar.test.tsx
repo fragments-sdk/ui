@@ -1,17 +1,17 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Badge } from '../Badge';
-import { Sidebar } from './index';
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, it, expect, vi, beforeAll } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Badge } from "../Badge";
+import { Sidebar } from "./index";
 
 const sidebarStyles = readFileSync(
-  resolve(process.cwd(), 'src/components/Sidebar/Sidebar.module.scss'),
-  'utf8'
+  resolve(process.cwd(), "src/components/Sidebar/Sidebar.module.scss"),
+  "utf8"
 );
 
 function mockMatchMedia(matches: boolean) {
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({
       matches,
@@ -38,8 +38,12 @@ function renderSidebar(props: Partial<React.ComponentProps<typeof Sidebar>> = {}
       <Sidebar.Nav aria-label="Main">
         <Sidebar.Section label="Section One">
           <Sidebar.Item icon={<span>I</span>}>Dashboard</Sidebar.Item>
-          <Sidebar.Item icon={<span>I</span>} active>Settings</Sidebar.Item>
-          <Sidebar.Item icon={<span>I</span>} disabled>Disabled</Sidebar.Item>
+          <Sidebar.Item icon={<span>I</span>} active>
+            Settings
+          </Sidebar.Item>
+          <Sidebar.Item icon={<span>I</span>} disabled>
+            Disabled
+          </Sidebar.Item>
         </Sidebar.Section>
       </Sidebar.Nav>
       <Sidebar.Footer>Footer Content</Sidebar.Footer>
@@ -47,65 +51,67 @@ function renderSidebar(props: Partial<React.ComponentProps<typeof Sidebar>> = {}
   );
 }
 
-describe('Sidebar', () => {
-  it('renders as an aside element', () => {
+describe("Sidebar", () => {
+  it("renders as an aside element", () => {
     renderSidebar();
-    const aside = document.querySelector('aside');
+    const aside = document.querySelector("aside");
     expect(aside).toBeInTheDocument();
   });
 
-  it('renders compound sub-components', () => {
+  it("renders compound sub-components", () => {
     renderSidebar();
-    expect(screen.getByText('Header Content')).toBeInTheDocument();
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Settings')).toBeInTheDocument();
-    expect(screen.getByText('Footer Content')).toBeInTheDocument();
+    expect(screen.getByText("Header Content")).toBeInTheDocument();
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(screen.getByText("Settings")).toBeInTheDocument();
+    expect(screen.getByText("Footer Content")).toBeInTheDocument();
   });
 
-  it('renders nav landmark', () => {
+  it("renders nav landmark", () => {
     renderSidebar();
-    expect(screen.getByRole('navigation', { name: /main/i })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: /main/i })).toBeInTheDocument();
   });
 
-  it('uses ScrollArea with fade indicators in nav content', () => {
+  it("uses ScrollArea with fade indicators in nav content", () => {
     renderSidebar();
-    const scrollAreaRoot = screen.getByRole('navigation', { name: /main/i }).querySelector('[data-orientation="vertical"]');
+    const scrollAreaRoot = screen
+      .getByRole("navigation", { name: /main/i })
+      .querySelector('[data-orientation="vertical"]');
     expect(scrollAreaRoot).toBeInTheDocument();
   });
 
-  it('renders section with label', () => {
+  it("renders section with label", () => {
     renderSidebar();
-    expect(screen.getByText('Section One')).toBeInTheDocument();
+    expect(screen.getByText("Section One")).toBeInTheDocument();
   });
 
   it('marks active item with aria-current="page"', () => {
     renderSidebar();
-    const activeItem = screen.getByText('Settings').closest('[aria-current]');
-    expect(activeItem).toHaveAttribute('aria-current', 'page');
+    const activeItem = screen.getByText("Settings").closest("[aria-current]");
+    expect(activeItem).toHaveAttribute("aria-current", "page");
   });
 
-  it('exposes the selected active-indicator placement', () => {
-    renderSidebar({ activeIndicator: 'end' });
-    expect(document.querySelector('aside')).toHaveAttribute('data-active-indicator', 'end');
+  it("exposes the selected active-indicator placement", () => {
+    renderSidebar({ activeIndicator: "end" });
+    expect(document.querySelector("aside")).toHaveAttribute("data-active-indicator", "end");
   });
 
-  it('derives optical rails and disclosure height from shared geometry', () => {
+  it("derives optical rails and disclosure height from shared geometry", () => {
     expect(sidebarStyles).not.toMatch(/\d+(?:\.\d+)?rem/);
-    expect(sidebarStyles).not.toContain('max-height: 500px');
-    expect(sidebarStyles).toContain('grid-template-rows: 0fr;');
-    expect(sidebarStyles).toContain('grid-template-rows: 1fr;');
-    expect(sidebarStyles).toContain('width: var(--fui-navigation-active-rail, #{$_active-rail});');
+    expect(sidebarStyles).not.toContain("max-height: 500px");
+    expect(sidebarStyles).toContain("grid-template-rows: 0fr;");
+    expect(sidebarStyles).toContain("grid-template-rows: 1fr;");
+    expect(sidebarStyles).toContain("width: var(--fui-navigation-active-rail, #{$_active-rail});");
     expect(sidebarStyles).toContain('height: #{action.track("lg")};');
-    expect(sidebarStyles).toContain('height: #{navigation.collapsed-width()};');
+    expect(sidebarStyles).toContain("height: #{navigation.collapsed-width()};");
   });
 
-  it('disables items with disabled prop', () => {
+  it("disables items with disabled prop", () => {
     renderSidebar();
-    const disabledItem = screen.getByText('Disabled').closest('button');
-    expect(disabledItem).toHaveAttribute('tabindex', '-1');
+    const disabledItem = screen.getByText("Disabled").closest("button");
+    expect(disabledItem).toHaveAttribute("tabindex", "-1");
   });
 
-  it('renders item badges with the shared Badge component', () => {
+  it("renders item badges with the shared Badge component", () => {
     render(
       <Sidebar aria-label="Test sidebar">
         <Sidebar.Nav aria-label="Main">
@@ -116,12 +122,16 @@ describe('Sidebar', () => {
       </Sidebar>
     );
 
-    const badge = screen.getByText('3').closest('.badge');
-    expect(badge).toHaveClass('badge', 'sm', 'soft');
-    expect(badge?.parentElement).toHaveClass('itemBadge');
+    const badge = screen.getByText("3").closest(".badge");
+    expect(badge).toHaveClass("badge", "sm", "soft");
+    expect(badge?.parentElement).toHaveClass("itemBadge");
   });
 
-  it('does not wrap explicit Badge elements passed to item badges', () => {
+  it("keeps section labels in their natural case", () => {
+    expect(sidebarStyles).not.toMatch(/text-transform:\s*uppercase/);
+  });
+
+  it("does not wrap explicit Badge elements passed to item badges", () => {
     render(
       <Sidebar aria-label="Test sidebar">
         <Sidebar.Nav aria-label="Main">
@@ -132,40 +142,40 @@ describe('Sidebar', () => {
       </Sidebar>
     );
 
-    expect(document.querySelectorAll('.badge')).toHaveLength(1);
-    expect(screen.getByText('7').closest('.badge')).toHaveClass('toneInfo');
+    expect(document.querySelectorAll(".badge")).toHaveLength(1);
+    expect(screen.getByText("7").closest(".badge")).toHaveClass("toneInfo");
   });
 
-  it('supports data-state attribute', () => {
+  it("supports data-state attribute", () => {
     renderSidebar();
-    const aside = document.querySelector('aside');
-    expect(aside).toHaveAttribute('data-state');
+    const aside = document.querySelector("aside");
+    expect(aside).toHaveAttribute("data-state");
   });
 
-  it('makes the closed mobile drawer inert', async () => {
+  it("makes the closed mobile drawer inert", async () => {
     mockMatchMedia(true);
     renderSidebar({ defaultOpen: false });
 
     await vi.waitFor(() => {
-      const aside = document.querySelector('aside');
-      expect(aside).toHaveAttribute('aria-hidden', 'true');
-      expect(aside).toHaveAttribute('inert');
-      expect(aside).toHaveAttribute('data-state', 'closed');
+      const aside = document.querySelector("aside");
+      expect(aside).toHaveAttribute("aria-hidden", "true");
+      expect(aside).toHaveAttribute("inert");
+      expect(aside).toHaveAttribute("data-state", "closed");
     });
 
     mockMatchMedia(false);
   });
 
-  it('uses icon collapse width when collapsed with icons', () => {
+  it("uses icon collapse width when collapsed with icons", () => {
     renderSidebar({ collapsed: true });
-    const aside = document.querySelector('aside');
+    const aside = document.querySelector("aside");
     expect(aside).toHaveStyle(
-      '--sidebar-effective-collapsed-width: var(--fui-navigation-sidebar-collapsed-width, 56px)'
+      "--sidebar-effective-collapsed-width: var(--fui-navigation-sidebar-collapsed-width, 56px)"
     );
-    expect(aside).toHaveAttribute('data-icon-collapse', 'icons');
+    expect(aside).toHaveAttribute("data-icon-collapse", "icons");
   });
 
-  it('collapses fully when collapsed with no item icons and keeps toggle visible', () => {
+  it("collapses fully when collapsed with no item icons and keeps toggle visible", () => {
     render(
       <Sidebar collapsed aria-label="Text-only sidebar">
         <Sidebar.Header>
@@ -181,13 +191,13 @@ describe('Sidebar', () => {
       </Sidebar>
     );
 
-    const aside = document.querySelector('aside');
-    expect(aside).toHaveStyle('--sidebar-effective-collapsed-width: 0px');
-    expect(aside).toHaveAttribute('data-icon-collapse', 'none');
-    expect(screen.getByRole('button', { name: /expand sidebar/i })).toBeInTheDocument();
+    const aside = document.querySelector("aside");
+    expect(aside).toHaveStyle("--sidebar-effective-collapsed-width: 0px");
+    expect(aside).toHaveAttribute("data-icon-collapse", "none");
+    expect(screen.getByRole("button", { name: /expand sidebar/i })).toBeInTheDocument();
   });
 
-  it('composes child click handler in Sidebar.Item asChild mode', async () => {
+  it("composes child click handler in Sidebar.Item asChild mode", async () => {
     const user = userEvent.setup();
     const childClick = vi.fn();
     const onItemClick = vi.fn();
@@ -197,21 +207,23 @@ describe('Sidebar', () => {
         <Sidebar.Nav aria-label="Main">
           <Sidebar.Section label="Section One">
             <Sidebar.Item asChild icon={<span>I</span>} onClick={onItemClick}>
-              <a href="#dashboard" onClick={childClick}>Dashboard</a>
+              <a href="#dashboard" onClick={childClick}>
+                Dashboard
+              </a>
             </Sidebar.Item>
           </Sidebar.Section>
         </Sidebar.Nav>
       </Sidebar>
     );
 
-    await user.click(screen.getByRole('link', { name: /dashboard/i }));
+    await user.click(screen.getByRole("link", { name: /dashboard/i }));
 
     expect(childClick).toHaveBeenCalled();
     expect(onItemClick).toHaveBeenCalled();
     expect(onItemClick.mock.calls[0][0]).toBeDefined();
   });
 
-  it('marks a multiline item so its label stops truncating', () => {
+  it("marks a multiline item so its label stops truncating", () => {
     const { container } = render(
       <Sidebar aria-label="Test sidebar">
         <Sidebar.Nav aria-label="Main">
@@ -225,10 +237,10 @@ describe('Sidebar', () => {
       </Sidebar>
     );
 
-    expect(container.querySelector('.itemMultiline')).toBeInTheDocument();
+    expect(container.querySelector(".itemMultiline")).toBeInTheDocument();
   });
 
-  it('passes event object to Sidebar.SubItem onClick', async () => {
+  it("passes event object to Sidebar.SubItem onClick", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
 
@@ -247,35 +259,39 @@ describe('Sidebar', () => {
       </Sidebar>
     );
 
-    await user.click(screen.getByRole('button', { name: 'Child' }));
+    await user.click(screen.getByRole("button", { name: "Child" }));
     expect(onClick).toHaveBeenCalled();
     expect(onClick.mock.calls[0][0]).toBeDefined();
   });
 
-  it('forwards html props to desktop compound parts', () => {
+  it("forwards html props to desktop compound parts", () => {
     render(
       <Sidebar aria-label="Test sidebar">
-        <Sidebar.Header data-testid="header" data-part="header">Header</Sidebar.Header>
+        <Sidebar.Header data-testid="header" data-part="header">
+          Header
+        </Sidebar.Header>
         <Sidebar.Nav aria-label="Main" data-testid="nav" data-part="nav">
           <Sidebar.Section data-testid="section" data-part="section" label="Section One">
             <Sidebar.Item icon={<span>I</span>}>Dashboard</Sidebar.Item>
           </Sidebar.Section>
         </Sidebar.Nav>
-        <Sidebar.Footer data-testid="footer" data-part="footer">Footer</Sidebar.Footer>
+        <Sidebar.Footer data-testid="footer" data-part="footer">
+          Footer
+        </Sidebar.Footer>
         <Sidebar.CollapseToggle data-testid="collapse-toggle" data-part="collapse-toggle" />
         <Sidebar.Rail data-testid="rail" data-part="rail" />
       </Sidebar>
     );
 
-    expect(screen.getByTestId('header')).toHaveAttribute('data-part', 'header');
-    expect(screen.getByTestId('nav')).toHaveAttribute('data-part', 'nav');
-    expect(screen.getByTestId('section')).toHaveAttribute('data-part', 'section');
-    expect(screen.getByTestId('footer')).toHaveAttribute('data-part', 'footer');
-    expect(screen.getByTestId('collapse-toggle')).toHaveAttribute('data-part', 'collapse-toggle');
-    expect(screen.getByTestId('rail')).toHaveAttribute('data-part', 'rail');
+    expect(screen.getByTestId("header")).toHaveAttribute("data-part", "header");
+    expect(screen.getByTestId("nav")).toHaveAttribute("data-part", "nav");
+    expect(screen.getByTestId("section")).toHaveAttribute("data-part", "section");
+    expect(screen.getByTestId("footer")).toHaveAttribute("data-part", "footer");
+    expect(screen.getByTestId("collapse-toggle")).toHaveAttribute("data-part", "collapse-toggle");
+    expect(screen.getByTestId("rail")).toHaveAttribute("data-part", "rail");
   });
 
-  it('forwards props to mobile Trigger/Overlay and composes overlay click', async () => {
+  it("forwards props to mobile Trigger/Overlay and composes overlay click", async () => {
     mockMatchMedia(true);
     const user = userEvent.setup();
     const overlayClick = vi.fn();
@@ -292,11 +308,11 @@ describe('Sidebar', () => {
       </Sidebar>
     );
 
-    const trigger = await screen.findByTestId('trigger');
-    const overlay = await screen.findByTestId('overlay');
+    const trigger = await screen.findByTestId("trigger");
+    const overlay = await screen.findByTestId("overlay");
 
-    expect(trigger).toHaveAttribute('data-part', 'trigger');
-    expect(overlay).toHaveAttribute('data-part', 'overlay');
+    expect(trigger).toHaveAttribute("data-part", "trigger");
+    expect(overlay).toHaveAttribute("data-part", "overlay");
 
     await user.click(overlay);
     expect(overlayClick).toHaveBeenCalled();
@@ -304,7 +320,7 @@ describe('Sidebar', () => {
     mockMatchMedia(false);
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = renderSidebar();
     await expectNoA11yViolations(container);
   });

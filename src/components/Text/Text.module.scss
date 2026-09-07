@@ -9,19 +9,17 @@
   margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }
 
-// Label roles: the uppercase list heading and the eyebrow.
+// Label roles: the small list heading and the eyebrow.
 .role-section-label {
   @include typography.role("ui-compact");
 }
 
-// Eyebrow: the small-caps label that names a surface above its statement
-// (page label, card section head). Always tertiary ink — it is never the
-// thing the reader is meant to look at.
+// Eyebrow: the small label that names a surface above its statement (page
+// label, card section head). Caption size, semibold, natural case, always
+// tertiary ink — it is never the thing the reader is meant to look at.
 .role-eyebrow {
   @include typography.role("caption");
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  letter-spacing: var(--fui-letter-spacing-wide, $fui-letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--fui-text-tertiary, $fui-text-tertiary);
 }
 

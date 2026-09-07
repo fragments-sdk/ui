@@ -5,3 +5,6 @@
 - **What changed** — none of its own props: only the nested `Loading`/`ThinkingIndicator` call sites moved from `variant` to `kind`, and the hairline reads `$fui-stroke-hairline`.
 - **What works** — the vocabulary schema gate (`src/contract-vocabulary.test.ts`) and the kit test suite are green at this HEAD.
 - **Candidates** — Wave 2 AI surfaces: UIR-D2 replaces this component with `Conversation`.
+
+2026-09-07: the uppercase transform is gone (library-wide rule: no
+`text-transform: uppercase`). The label keeps its size, weight and colour.

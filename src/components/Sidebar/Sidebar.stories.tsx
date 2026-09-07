@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Sidebar } from ".";
+import { NavGlyph } from "../../assets/nav-glyph";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
@@ -65,15 +66,22 @@ const meta = {
         <span>Acme App</span>
       </Sidebar.Header>
       <Sidebar.Nav>
-        <Sidebar.Section>
-          <Sidebar.Item active>Dashboard</Sidebar.Item>
-          <Sidebar.Item>Analytics</Sidebar.Item>
-          <Sidebar.Item>Team</Sidebar.Item>
-          <Sidebar.Item>Projects</Sidebar.Item>
+        <Sidebar.Section label="Workspace">
+          <Sidebar.Item icon={<NavGlyph name="overview" />} active>
+            Overview
+          </Sidebar.Item>
+          <Sidebar.Item icon={<NavGlyph name="repository" />}>Repositories</Sidebar.Item>
         </Sidebar.Section>
-        <Sidebar.Section label="Settings">
-          <Sidebar.Item>Preferences</Sidebar.Item>
-          <Sidebar.Item>Help</Sidebar.Item>
+        <Sidebar.Section label="web">
+          <Sidebar.Item icon={<NavGlyph name="pullRequest" />}>Pull requests</Sidebar.Item>
+          <Sidebar.Item icon={<NavGlyph name="finding" />}>Findings</Sidebar.Item>
+          <Sidebar.Item icon={<NavGlyph name="contract" />}>Contract</Sidebar.Item>
+          <Sidebar.Item icon={<NavGlyph name="adoption" />}>Adoption</Sidebar.Item>
+          <Sidebar.Item icon={<NavGlyph name="component" />}>Components</Sidebar.Item>
+          <Sidebar.Item icon={<NavGlyph name="setup" />}>Setup</Sidebar.Item>
+        </Sidebar.Section>
+        <Sidebar.Section label="Administration">
+          <Sidebar.Item icon={<NavGlyph name="settings" />}>Workspace settings</Sidebar.Item>
         </Sidebar.Section>
       </Sidebar.Nav>
       <Sidebar.Footer>

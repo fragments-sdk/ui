@@ -20,3 +20,9 @@
 - **What was broken** — a focused invalid radio drew the danger edge inside the accent ring, at both invalid sites. The group carried `data-invalid` but no `aria-invalid`.
 - **What changed** — both invalid rules (`.radio &[data-invalid]` and `.group[data-invalid] .radio`) nest `&:focus-visible { @include field.invalid-focus-state; }`, and the group element sets `aria-invalid` beside `data-invalid`.
 - **What was browser-verified** — keyboard-focused (real `Tab`, because `:focus-visible` does not match a scripted `.focus()`) at the error story in all four render states: edge `rgb(196, 71, 50)`, ring `2px` `color(srgb 0.768627 0.278431 0.196078 / 0.34)`, `aria-invalid="true"`. Identical to Input and Textarea in every profile.
+
+## 2026-09-07 — trailing value on an item
+
+- `RadioGroup.Item trailing` (ReactNode) adds a third grid column (`auto`) at the end of the row; the label and helper keep theirs. It sits on the label's line, right-aligned, no wrap. Built for the plan picker (price per row) — `PlanPicker` story.
+- The trailing span is in the radio's `aria-labelledby` after the label, so it joins the accessible name ("3 repositories $219 a month"); keep it a value, not a sentence.
+- `boolean.card` (shared with Checkbox outline) now pads every side by the field inline inset instead of inline only; two-line cards were cramped top and bottom (Conan, plan dialog).

@@ -39,3 +39,10 @@ Unverified
 Candidates
 
 - Logical properties: 37 physical `margin-left/right`, `padding-left/right`, `left/right` sites remain in the lib (Box 26, Sidebar 14, Prompt 7, feedback recipe 6, NavigationMenu 6, Header 6). Mechanical sweep, best done as one PR with a screenshot pass on an RTL story.
+
+## 2026-09-07 — eyebrow keeps its case
+
+`role="eyebrow"` no longer transforms to uppercase or tracks wide. It is
+caption size, semibold, tertiary ink. `section-label` was never uppercase in
+CSS; its docs said so and now do not. The library has no `text-transform:
+uppercase` left anywhere (Sidebar test guards its own module).

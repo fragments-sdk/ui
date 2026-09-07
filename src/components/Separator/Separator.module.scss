@@ -53,7 +53,6 @@
   @include typography.role("ui-compact");
 
   color: var(--fui-text-tertiary, $fui-text-tertiary);
-  text-transform: uppercase;
   white-space: nowrap;
 }
 

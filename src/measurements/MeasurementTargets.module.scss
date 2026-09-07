@@ -32,7 +32,6 @@
 .eyebrow {
   margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
-  text-transform: uppercase;
 }
 
 .title {

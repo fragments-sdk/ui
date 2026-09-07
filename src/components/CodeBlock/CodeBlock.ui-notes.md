@@ -60,3 +60,6 @@ What still does not work
 Improvement candidates
 
 - Let Markdown render fenced blocks through CodeBlock so both share the frame.
+
+2026-09-07: the uppercase transform is gone (library-wide rule: no
+`text-transform: uppercase`). The label keeps its size, weight and colour.

@@ -79,8 +79,8 @@ type TextSharedProps = Omit<React.HTMLAttributes<HTMLElement>, "color" | "role">
 
 type TextRoleProps = {
   /** Typography role: one named setting of size, weight, line height and
-   * tracking. `section-label` is the uppercase list heading; `eyebrow` is the
-   * small-caps label that names a surface above its statement. A role owns the
+   * tracking. `section-label` is the small list heading; `eyebrow` is the
+   * small semibold label that names a surface above its statement. A role owns the
    * whole setting, so `scale`, `weight`, `font` and `letterSpacing` are
    * unavailable beside it. */
   role: TextRole;

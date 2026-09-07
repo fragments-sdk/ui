@@ -107,3 +107,33 @@ export const Disabled: Story = {
     </RadioGroup>
   ),
 };
+
+/**
+ * The plan-picker shape: outline rows, the trade-off in the helper, and the
+ * price at the end of the row where the eye compares it.
+ */
+export const PlanPicker: Story = {
+  args: { label: "Repositories", defaultValue: "three", variant: "outline" },
+  render: (args) => (
+    <RadioGroup {...args}>
+      <RadioGroup.Item
+        value="one"
+        label="1 repository"
+        helperText="Covers 1 of them."
+        trailing="$79 a month"
+      />
+      <RadioGroup.Item
+        value="three"
+        label="3 repositories"
+        helperText="Current plan. Covers all of them."
+        trailing="$219 a month"
+      />
+      <RadioGroup.Item
+        value="ten"
+        label="10 repositories"
+        helperText="Room for 7 more."
+        trailing="$599 a month"
+      />
+    </RadioGroup>
+  ),
+};
