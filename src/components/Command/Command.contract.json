@@ -47,6 +47,12 @@
       "description": "Whether to loop keyboard navigation",
       "default": "true",
       "required": false
+    },
+    "hosted": {
+      "type": "boolean",
+      "description": "The Command sits inside another surface (a Popover, a Dialog) that draws the frame, so it draws none of its own",
+      "default": "false",
+      "required": false
     }
   },
   "usage": {

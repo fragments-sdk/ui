@@ -171,9 +171,13 @@ function BreadcrumbsItem({
     );
   }
 
+  // Neither a link nor the current page: the child is its own control (a
+  // menu trigger, a picker). It gets the item's layout and nothing more — the
+  // link's hover and enlarged hit-area would sit over the child and take its
+  // clicks.
   return (
     <li className={classes} {...htmlProps}>
-      <span className={styles.link}>
+      <span className={styles.content}>
         {iconEl}
         {children}
       </span>

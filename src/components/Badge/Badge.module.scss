@@ -42,43 +42,49 @@
   padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 }
 
-// Tones
-@mixin _tone($tone, $bg, $text, $border) {
-  --_badge-tint: var(--fui-color-#{$tone}-bg, #{$bg});
+// Tones. The semantic `-bg` tokens are panel tints (Alert, Toast: a large
+// area where 10–15% of the seed is right). A badge is a few glyphs wide and
+// is the one place a state becomes a colour, so its fill mixes the seed
+// itself, harder, and harder again in the dark where a faint tint sinks into
+// the page. The ink stays the contrast-derived text token.
+$_tint-light: 24%;
+$_tint-dark: 28%;
+
+@mixin _tint($seed-var, $seed) {
+  --_badge-tint: light-dark(
+    color-mix(in srgb, var(#{$seed-var}, #{$seed}) #{$_tint-light}, transparent),
+    color-mix(in srgb, var(#{$seed-var}, #{$seed}) #{$_tint-dark}, transparent)
+  );
+}
+
+@mixin _tone($tone, $seed, $text, $border) {
+  @include _tint(--fui-color-#{$tone}, $seed);
+
   --_badge-ink: var(--fui-color-#{$tone}-text, #{$text});
   --_badge-line: var(--fui-color-#{$tone}-border, #{$border});
 }
 
 .toneAccent {
-  --_badge-tint: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 12%, transparent);
+  @include _tint(--fui-color-accent, $fui-color-accent);
+
   --_badge-ink: var(--fui-color-accent, #{$fui-color-accent});
   --_badge-line: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 48%, transparent);
 }
 
 .toneInfo {
-  @include _tone("info", $fui-color-info-bg, $fui-color-info-text, $fui-color-info-border);
+  @include _tone("info", $fui-color-info, $fui-color-info-text, $fui-color-info-border);
 }
 
 .toneSuccess {
-  @include _tone(
-    "success",
-    $fui-color-success-bg,
-    $fui-color-success-text,
-    $fui-color-success-border
-  );
+  @include _tone("success", $fui-color-success, $fui-color-success-text, $fui-color-success-border);
 }
 
 .toneWarning {
-  @include _tone(
-    "warning",
-    $fui-color-warning-bg,
-    $fui-color-warning-text,
-    $fui-color-warning-border
-  );
+  @include _tone("warning", $fui-color-warning, $fui-color-warning-text, $fui-color-warning-border);
 }
 
 .toneDanger {
-  @include _tone("danger", $fui-color-danger-bg, $fui-color-danger-text, $fui-color-danger-border);
+  @include _tone("danger", $fui-color-danger, $fui-color-danger-text, $fui-color-danger-border);
 }
 
 // Variants

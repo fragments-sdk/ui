@@ -3,6 +3,15 @@
 @use "../../tokens/mixins" as *;
 @use "../../recipes/navigation" as navigation;
 
+// Tablet band (md ≤ width < lg): the sidebar stays docked but a third column
+// would starve main, so the aside stacks under it. Below md the sidebar
+// becomes an overlay and everything is one column.
+@mixin tablet {
+  @media (min-width: $fui-breakpoint-md) and (max-width: #{$fui-breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
 // ============================================
 // AppShell Root - CSS Grid Layout
 // ============================================
@@ -41,6 +50,19 @@
     transition: none;
   }
 
+  // Tablet: sidebar + main, aside stacked under main
+  @include tablet {
+    grid-template-areas:
+      "header header"
+      "sidebar main"
+      "sidebar aside";
+    grid-template-columns: var(--appshell-sidebar-width) 1fr;
+    grid-template-rows:
+      var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
+      1fr
+      auto;
+  }
+
   // Mobile: single column layout
   @include below-md {
     grid-template-areas:
@@ -63,6 +85,14 @@
   grid-template-areas:
     "sidebar header header"
     "sidebar main aside";
+
+  @include tablet {
+    grid-template-areas:
+      "sidebar header"
+      "sidebar main"
+      "sidebar aside";
+    grid-template-columns: var(--appshell-sidebar-width) 1fr;
+  }
 
   @include below-md {
     grid-template-areas:
@@ -265,8 +295,8 @@
   background-color: var(--fui-app-sidebar-bg, inherit);
   overflow: hidden;
 
-  // Stack below main on mobile
-  @include below-md {
+  // Stack below main on tablet and mobile
+  @include below-lg {
     position: static;
     width: 100%;
     height: auto;
@@ -304,7 +334,7 @@
     color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
   overflow: hidden;
 
-  @include below-md {
+  @include below-lg {
     margin: var(--fui-space-1, $fui-space-1) 0;
     border-left: none;
     border-right: none;

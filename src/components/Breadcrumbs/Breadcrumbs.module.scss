@@ -60,6 +60,14 @@
   }
 }
 
+// Plain item: a child that is its own control (menu trigger, picker)
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fui-space-1, $fui-space-1);
+  min-width: 0;
+}
+
 // Current page (not a link)
 .current {
   display: inline-flex;

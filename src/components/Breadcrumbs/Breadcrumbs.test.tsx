@@ -56,6 +56,25 @@ describe('Breadcrumbs', () => {
     expect(screen.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about');
   });
 
+  it('lets a plain item hand clicks to its own control', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <Breadcrumbs>
+        <Breadcrumbs.Item>
+          <button type="button" onClick={onClick}>
+            Switch
+          </button>
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+      </Breadcrumbs>
+    );
+    const control = screen.getByRole('button', { name: 'Switch' });
+    expect(control.parentElement?.className).not.toMatch(/link/);
+    await user.click(control);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
   it('collapses middle items when maxItems is set', async () => {
     const user = userEvent.setup();
     render(

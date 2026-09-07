@@ -15,6 +15,15 @@
   @include high-contrast-outline;
 }
 
+// Hosted: the surrounding surface is the frame; the pick list keeps only its
+// own inset.
+.hosted {
+  background: transparent;
+  border: 0;
+  border-radius: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  box-shadow: none;
+}
+
 .inputWrapper {
   @include field.size("md");
   @include field.shell;

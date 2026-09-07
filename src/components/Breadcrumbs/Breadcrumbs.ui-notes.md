@@ -1,5 +1,11 @@
 # Breadcrumbs — UI notes
 
+## 2026-09-06 — a plain item hands clicks to its own control
+
+- **What changed** — `Breadcrumbs.Item` with neither `href` nor `current` renders its child in a plain `.content` span (layout only) instead of the `.link` span. The link span's `hit-area("micro")` `::after` overlay sat over an interactive child (Cloud's header org menu and repository picker) and took every click.
+- **What works** — `Breadcrumbs.test.tsx` covers a button inside a plain item receiving its click; link and current items are unchanged.
+- **Candidates** — an `asChild` item so a router link can be the crumb without the `href` anchor.
+
 ## 2026-09-04 — Wave 0 vocabulary migration
 
 - **What changed** — none, only tokens/mixins: `margin`/`padding` zeros read `measurements.raw-space(0)` and the hairline reads `$fui-stroke-hairline`.
