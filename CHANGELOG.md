@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 2.0.2
+
+### Patch Changes
+
+- Refresh the packed Core dependency metadata for the 2.0.2 public package cohort. UI behavior is unchanged.
+
 ## 2.0.1
 
 ### Patch Changes
