@@ -1,5 +1,67 @@
 # @usefragments/ui
 
+## 2.0.0
+
+### Major Changes
+
+- [#607](https://github.com/fragments-sdk/fragments/pull/607) [`8af07f2`](https://github.com/fragments-sdk/fragments/commit/8af07f2fd00b1d6f2e96edfb805bfd5c01c29ef4) Thanks [@ConanMcN](https://github.com/ConanMcN)! - The density axis is deleted, not deprecated. `--fui-scale` replaces it: density profiles moved only `--fui-space-*`, while `--fui-scale` multiplies the spacing scale and every measurement-catalog length.
+
+  Removed public surface:
+  - `@usefragments/ui` — the `DensityPreset` and `MeasurementDensity` types, `configureTheme({ density })`, the `$fui-density` build seed, the `data-fui-density` runtime profiles it emitted, and the `Density` Storybook global.
+  - `@usefragments/core` — `density` on `ThemeSeeds`.
+  - `@usefragments/cli` — `density` on `ThemeConfig` and `SeedConfig`.
+
+  **This breaks existing theme files.** The CLI's theme schema is `.strict()`, so a `fragments.theme.json` (or seed config) that still carries a `density` key now fails validation with an unrecognized-key error rather than ignoring it. Delete the key; if you were using it to size an interface, set `--fui-scale` instead, which reaches measurements density never touched.
+
+- [#607](https://github.com/fragments-sdk/fragments/pull/607) [`8af07f2`](https://github.com/fragments-sdk/fragments/commit/8af07f2fd00b1d6f2e96edfb805bfd5c01c29ef4) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Field controls share one chrome grammar. Keyboard focus, an open popup and focus-within all render the field recipe's accent edge and 34% ring on Input, Textarea, Select, Combobox, DatePicker, the ColorPicker swatch, Checkbox, RadioGroup, Switch and Editor. Invalid renders the `--fui-color-danger` edge everywhere (Select and the ColorPicker swatch had none), and invalid-while-focused keeps that edge and takes a danger ring — previously only Input and Textarea did, so the other five drew a danger edge inside an accent ring. Every control that accepts `error` now also sets `aria-invalid` on the element that takes focus, so the state a screen reader reports matches the state the border paints. Switch no longer draws a second ring around its label root.
+
+  The `--fui-field-bg`, `--fui-field-bg-disabled`, `--fui-field-border`, `--fui-field-border-hover` and `--fui-field-border-focus` custom properties are removed: the recipe never read them, so overriding them changed nothing. The `success` prop on Input and Textarea is removed.
+
+  **Breaking:** passing `success`, or overriding any of the five removed custom properties, no longer compiles or has any effect — use `data-invalid` for the only state the field grammar renders.
+
+- [#602](https://github.com/fragments-sdk/fragments/pull/602) [`e9f084c`](https://github.com/fragments-sdk/fragments/commit/e9f084c22239235a32f80cac939e55f1a1a1f72f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Rule the component vocabulary and delete the aliases. `variant` is now
+  `solid | soft | outline | ghost | link` and `tone` is
+  `neutral | accent | info | success | warning | danger` on every component
+  that carries chrome; `outlined`, `quiet`, `subtle`, `plain`, `icon` and
+  `error` are removed rather than deprecated. Non-chrome axes get their own
+  names: `Dialog`/`Drawer` `width`, `List` `marker`, `Text` `scale` and `role`,
+  `Prompt` `placement`, `Loading`/`ThinkingIndicator` `kind`, `Skeleton`
+  `shape`, `Separator` `gap`, and `tone` on `Icon`, `Link`, `Progress` and
+  `Toast`. `ThemeToggle` splits into `Theme.Toggle` and `Theme.Button`.
+
+  New tokens and mixins: `--fui-opacity-faint/-disabled/-muted`,
+  `--fui-radius-none/-l1/-l2/-l3`, `--fui-scale` (multiplies `--fui-space-*`
+  and every measurement-catalog length), and the
+  `high-contrast-outline`, `segmented-selection` and `disabled-state` mixins
+  replace hand-rolled `prefers-contrast` blocks and literal opacities. The
+  `Cloud` prototype sandbox, the `Toggle` re-export and the string-template
+  blocks are deleted; `ActivityFeed`, `DashboardLayout`, `LoginForm` and
+  `StatsCard` remain.
+
+  Migrate call sites with `npx @usefragments/cli codemod ui-vocabulary`.
+
+### Minor Changes
+
+- [#602](https://github.com/fragments-sdk/fragments/pull/602) [`e9f084c`](https://github.com/fragments-sdk/fragments/commit/e9f084c22239235a32f80cac939e55f1a1a1f72f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Removed the `density` render state from the visual contract: `RENDER_STATES` is
+  now light, dark, sharp and pill, and the Storybook `Density` toolbar global and
+  its `data-fui-density` decorator are gone. Use `--fui-scale` for runtime size
+  adaptation — it multiplies the spacing scale and every measurement-catalog
+  length, where the density profiles moved only `--fui-space-*`.
+
+  The `density` prop on `Table` and `DataTable` is unchanged — it is row padding
+  on those two components, not a theme axis. Everything else density-shaped is
+  deleted; see the separate changeset for the removed public surface.
+
+- [#607](https://github.com/fragments-sdk/fragments/pull/607) [`8af07f2`](https://github.com/fragments-sdk/fragments/commit/8af07f2fd00b1d6f2e96edfb805bfd5c01c29ef4) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Navigation shares the overlay drawer. NavigationMenu's and Header's mobile navigation panels render the same inset floating surface as Drawer — `overlay.side-panel` over `overlay.backdrop` — instead of each hand-rolling a flush sheet with its own backdrop and widths. Sidebar's mobile panel stays a flush shell surface but moves onto the same layer scale. Every navigation z-index that stacks against the overlay world now reads an `--fui-overlay-layer-*` custom property — no raw 20/30/50/51/52/98/99/100 left; the skip link sits on the tooltip layer so it always wins. Stacking that is purely internal to a shell (Sidebar's and AppShell's local 1/2) stays a raw local value, because it orders siblings inside one component rather than placing that component in the overlay scale. Mobile navigation links take `navigation.link-states` / `navigation.link-active`, Breadcrumbs truncate at a layout measure instead of a raw 200px, and `AppShell`'s `headerHeight` default reads `--fui-appshell-header-height`.
+
+- [#607](https://github.com/fragments-sdk/fragments/pull/607) [`8af07f2`](https://github.com/fragments-sdk/fragments/commit/8af07f2fd00b1d6f2e96edfb805bfd5c01c29ef4) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Floating surfaces share one chrome grammar. Dialog, Drawer, Popover, Menu, Select, Combobox, Command, ColorPicker, DatePicker and the Header nav popup all render the overlay recipe's elevated fill, hairline edge, `--fui-radius-l1` corner and `--fui-shadow-md`; popup rows round to `--fui-radius-l2`; Tooltip keeps its inverse fill on the same recipe. Overlay close buttons, dialog and drawer footers now take their chrome from the recipe. Toast stacks on the new `--fui-overlay-layer-toast` custom property (55) instead of doubling the header z-index.
+
+### Patch Changes
+
+- [#626](https://github.com/fragments-sdk/fragments/pull/626) [`4880f54`](https://github.com/fragments-sdk/fragments/commit/4880f54cf4aa1ca064c23023bb1fe426d8b119cf) Thanks [@ConanMcN](https://github.com/ConanMcN)! - `EmptyState.Title` accepts `as` (`h2` | `h3` | `h4` | `p`) so a page-level empty state can sit at the right heading level instead of always rendering an `h3`.
+
+- [#624](https://github.com/fragments-sdk/fragments/pull/624) [`c6dc618`](https://github.com/fragments-sdk/fragments/commit/c6dc61810ec24d0fd3131d0fb701cc9adc25e067) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Interface refinements from the vendored interface skills: `ThemeProvider` suppresses transitions for one frame on a theme switch (no colour smear), `Button`/`IconButton` press to `scale(0.96)` under `prefers-reduced-motion: no-preference`, title type roles get `text-wrap: balance` and body roles `text-wrap: pretty` (prose resets to `auto`), and `EmptyState` no longer sets font-smoothing.
+
 ## 1.7.0
 
 ### Minor Changes
