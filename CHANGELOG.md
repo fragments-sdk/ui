@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 2.0.1
+
+### Patch Changes
+
+- Update the public package cohort to use Core 2.0.1 in its package metadata. This release does not change UI component behavior.
+
 ## 2.0.0
 
 ### Major Changes
