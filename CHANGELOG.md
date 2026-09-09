@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 2.0.3
+
+### Patch Changes
+
+- Refresh the published package metadata for the compatible Core 2.1 reader cohort. Component behavior is unchanged.
+
 ## 2.0.2
 
 ### Patch Changes
