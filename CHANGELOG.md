@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 2.0.4
+
+### Patch Changes
+
+- Publish rebuilt Core declarations under a new immutable patch version, and update the UI package metadata to reference that Core patch. Runtime behavior and public API semantics are unchanged.
+
 ## 2.0.3
 
 ### Patch Changes
