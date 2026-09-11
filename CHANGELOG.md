@@ -1,5 +1,21 @@
 # @usefragments/ui
 
+## 3.0.0
+
+### Major Changes
+
+- [#640](https://github.com/fragments-sdk/fragments/pull/640) [`946f96d`](https://github.com/fragments-sdk/fragments/commit/946f96d5fb2f2d3fed8ef953544b31655d4e5543) Thanks [@ConanMcN](https://github.com/ConanMcN)! - One tone ramp, one recipe, one interaction ladder.
+  - The semantic background tokens `--fui-color-{danger,success,warning,info}-bg` (and their `$fui-` / `$fui-dark-` Sass twins) are deleted. Every tone, accent included, now emits `-tint` (compact soft surface), `-wash` (panel surface), `-text`, `-border`, `-fill-hover`, `-fill-active`, `-tint-hover`, `-tint-active`, `-wash-active` and `-on-fill`, derived from the seed at runtime with `color-mix`.
+  - `recipes/_tone.scss` publishes the ramp as `--_fui-tone-*` channels. Badge, Chip, Button, Alert and Toast include it; a tone paints the same in every component.
+  - Chip: `variant` is `soft` (default) or `outline`; `solid` is removed. New `tone` prop (`neutral · accent · info · success · warning · danger`).
+  - Interaction ladder: `--fui-bg-hover`, `--fui-control-selected-bg`, `--fui-bg-active` and `--fui-field-selection-bg-hover` are the text ink at 7 / 12 / 14 / 16% (dark +2) in both themes, so sidebar and menu rows match. `--fui-bg-highlight` is deleted. `$fui-control-selected-bg` is a real Sass token.
+  - `deriveSemanticBg` is replaced by `deriveSemanticTint` and `deriveSemanticWash`; theme presets expose `<tone>Tint` / `<tone>Wash` instead of `<tone>Bg`.
+  - CLI theme config: `dangerBg`-style keys become `dangerTint` and `dangerWash` (light and dark).
+
+### Patch Changes
+
+- [#646](https://github.com/fragments-sdk/fragments/pull/646) [`5d2eda8`](https://github.com/fragments-sdk/fragments/commit/5d2eda8a1e1495f358ed58f14cc50ef7d0a248e5) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Render the Fragments wordmark with Fragments Sans vector outlines. The logo retains its accessible name, height/class props and theme color without requiring a font download; its width follows the new lettering’s proportions.
+
 ## 2.0.4
 
 ### Patch Changes
