@@ -52,7 +52,7 @@
   justify-content: center;
 
   .content {
-    background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+    background-color: var(--fui-color-info-wash, $fui-color-info-wash);
     color: var(--fui-text-secondary, $fui-text-secondary);
     text-align: center;
   }
@@ -65,7 +65,7 @@
 .error .content {
   border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--fui-color-danger-border, $fui-color-danger-border);
-  background: var(--fui-color-danger-bg, $fui-color-danger-bg);
+  background: var(--fui-color-danger-wash, $fui-color-danger-wash);
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 }
 
@@ -85,7 +85,7 @@
 }
 
 .avatarSystem {
-  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
+  background-color: var(--fui-color-info-tint, $fui-color-info-tint);
   color: var(--fui-color-info-text, $fui-color-info-text);
 }
 

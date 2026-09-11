@@ -1,8 +1,8 @@
-@use '../../tokens/variables' as *;
-@use '../../tokens/mixins' as *;
-@use '../../tokens/measurements.generated' as measurements;
-@use '../../recipes/action';
-@use '../../recipes/layout';
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/action";
+@use "../../recipes/layout";
 
 // ============================================
 // Navigation wrapper
@@ -53,12 +53,12 @@
 
 // Active page
 .itemActive {
-  background-color: var(--fui-control-selected-bg, $fui-bg-active);
+  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-control-selected-bg, $fui-bg-active);
+    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
   }
 
   @include high-contrast-outline;
@@ -109,4 +109,3 @@
 .lg .navButton svg {
   @include action.glyph("lg");
 }
-

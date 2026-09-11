@@ -31,3 +31,7 @@ plane without a consumer reaching into Button's private styling hooks.
 
 - Mobile nav panel measured at 320x568 in all four render states: **288x536 at (16, 16)**, elevated fill, `z-index: 51`, scrim at `z-index: 50`; radius 7.994 / 7.994 / 0 / 14px. Byte-identical to NavigationMenu's drawer on every measured value.
 - The entrance parks at `overlay.side-panel-offscreen("end")` so the 16px inset is not painted before the slide (UIR-D46).
+
+## 2026-09-08 — interaction ladder
+
+Correction to the 2026-09-04 measurement above: `--fui-control-selected-bg` is now 12% (light) / 14% (dark) of the ink, on the shared ladder with `--fui-bg-hover` 7 / 9% and `--fui-bg-active` 14 / 16%. The nav rows read it through the same `$fui-control-selected-bg` fallback as Sidebar and Menu.

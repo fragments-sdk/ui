@@ -4,13 +4,12 @@
 @use "../../recipes/action" as action;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/target" as target;
+@use "../../recipes/tone" as tone;
 
-// Tone publishes three channels (tint, ink, line); the variant decides which
-// one paints the surface. Neutral is the absence of a tone class.
+// The tone publishes the shared ramp (recipes/_tone.scss); the variant decides
+// which channel paints the surface. Neutral is the absence of a tone class.
 .badge {
-  --_badge-tint: var(--fui-bg-tertiary, #{$fui-bg-tertiary});
-  --_badge-ink: var(--fui-text-secondary, #{$fui-text-secondary});
-  --_badge-line: var(--fui-border-strong, #{$fui-border-strong});
+  @include tone.channels-neutral(secondary);
 
   display: inline-flex;
   align-items: center;
@@ -42,61 +41,37 @@
   padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 }
 
-// Tones. The semantic `-bg` tokens are panel tints (Alert, Toast: a large
-// area where 10–15% of the seed is right). A badge is a few glyphs wide and
-// is the one place a state becomes a colour, so its fill mixes the seed
-// itself, harder, and harder again in the dark where a faint tint sinks into
-// the page. The ink stays the contrast-derived text token.
-$_tint-light: 24%;
-$_tint-dark: 28%;
-
-@mixin _tint($seed-var, $seed) {
-  --_badge-tint: light-dark(
-    color-mix(in srgb, var(#{$seed-var}, #{$seed}) #{$_tint-light}, transparent),
-    color-mix(in srgb, var(#{$seed-var}, #{$seed}) #{$_tint-dark}, transparent)
-  );
-}
-
-@mixin _tone($tone, $seed, $text, $border) {
-  @include _tint(--fui-color-#{$tone}, $seed);
-
-  --_badge-ink: var(--fui-color-#{$tone}-text, #{$text});
-  --_badge-line: var(--fui-color-#{$tone}-border, #{$border});
-}
-
+// Tones
 .toneAccent {
-  @include _tint(--fui-color-accent, $fui-color-accent);
-
-  --_badge-ink: var(--fui-color-accent, #{$fui-color-accent});
-  --_badge-line: color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 48%, transparent);
+  @include tone.channels("accent");
 }
 
 .toneInfo {
-  @include _tone("info", $fui-color-info, $fui-color-info-text, $fui-color-info-border);
+  @include tone.channels("info");
 }
 
 .toneSuccess {
-  @include _tone("success", $fui-color-success, $fui-color-success-text, $fui-color-success-border);
+  @include tone.channels("success");
 }
 
 .toneWarning {
-  @include _tone("warning", $fui-color-warning, $fui-color-warning-text, $fui-color-warning-border);
+  @include tone.channels("warning");
 }
 
 .toneDanger {
-  @include _tone("danger", $fui-color-danger, $fui-color-danger-text, $fui-color-danger-border);
+  @include tone.channels("danger");
 }
 
 // Variants
 .soft {
-  background-color: var(--_badge-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  color: var(--_badge-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
+  background-color: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
 }
 
 .outline {
   background-color: transparent;
-  border-color: var(--_badge-line, var(--fui-border-strong, #{$fui-border-strong}));
-  color: var(--_badge-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
+  border-color: var(--_fui-tone-line, var(--fui-border-strong, #{$fui-border-strong}));
+  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
 }
 
 // Filter-pill chrome: transparent at rest, `active` wears the shared selected
@@ -104,7 +79,7 @@ $_tint-dark: 28%;
 .ghost {
   border-radius: var(--fui-radius-l3, #{$fui-radius-l3});
   background-color: transparent;
-  color: var(--_badge-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
+  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
   transition:
     color var(--fui-transition-fast, $fui-transition-fast),
     border-color var(--fui-transition-fast, $fui-transition-fast),
@@ -112,7 +87,7 @@ $_tint-dark: 28%;
 
   &.active {
     border-color: var(--fui-border, $fui-border);
-    background-color: var(--fui-control-selected-bg, $fui-bg-active);
+    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }

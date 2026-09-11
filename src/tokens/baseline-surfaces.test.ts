@@ -15,13 +15,23 @@ describe("default Fragments surface tokens", () => {
   it("emits mirrored light and dark neutral roles from the shared library", () => {
     const css = compileDefaultSurfaceTokens();
 
+    expect(css).toMatch(/font-size: 14px;\s+--fui-base-font-size: 14px;/);
     expect(css).toContain("--fui-bg-primary: light-dark(#faf8f5, #171614)");
     expect(css).toContain("--fui-bg-secondary: light-dark(#faf8f5, #171614)");
     expect(css).toContain("--fui-bg-tertiary: light-dark(#f2ede7, #1e1c19)");
     expect(css).toContain("--fui-bg-elevated: light-dark(#ffffff, #262421)");
     expect(css).toContain("--fui-bg-subtle: light-dark(#fdfcfa, #1b1a17)");
-    expect(css).toContain("--fui-bg-hover: light-dark(rgba(96, 48, 16, 0.06), #2a2723)");
-    expect(css).toContain("--fui-bg-active: light-dark(rgba(96, 48, 16, 0.1), #322e29)");
+    // Interaction ladder: ink alpha in both themes, dark two points stronger.
+    expect(css).toMatch(
+      /--fui-bg-hover: light-dark\(\s*color-mix\(in srgb, var\(--fui-text-primary\) 7%, transparent\),\s*color-mix\(in srgb, var\(--fui-text-primary\) 9%, transparent\)\s*\)/
+    );
+    expect(css).toMatch(
+      /--fui-control-selected-bg: light-dark\(\s*color-mix\(in srgb, var\(--fui-text-primary\) 12%, transparent\),\s*color-mix\(in srgb, var\(--fui-text-primary\) 14%, transparent\)\s*\)/
+    );
+    expect(css).toMatch(
+      /--fui-bg-active: light-dark\(\s*color-mix\(in srgb, var\(--fui-text-primary\) 14%, transparent\),\s*color-mix\(in srgb, var\(--fui-text-primary\) 16%, transparent\)\s*\)/
+    );
+    expect(css).not.toContain("--fui-bg-highlight");
     expect(css).toContain("--fui-body-bg: light-dark(#faf8f5, #171614)");
     expect(css).toContain("--fui-main-bg: light-dark(#faf8f5, #171614)");
     expect(css).toContain("--fui-code-bg: light-dark(#f2ede7, #1e1c19)");

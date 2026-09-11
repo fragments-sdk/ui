@@ -9,3 +9,7 @@
 ## 2026-09-04 Wave 1 — floating surface parity (UIR-D40)
 
 - Z-index is `--fui-overlay-layer-toast` (55, between anchored 52 and tooltip 60) instead of `calc(2 * --fui-header-z-index)`; radius is `--fui-radius-l1`. Tone wash/hairline/ink stay local because they are tone-driven.
+
+## 2026-09-08 — one tone ramp, one recipe
+
+- **What changed** — `.toast` publishes the neutral channels itself (`--_fui-tone-wash` = elevated surface, `-line` = border, `-ink` = primary) and each `.tone*` class includes `tone.channels()` and drops the description to the tone ink. The `--_toast-tint/-line/-ink` vars are gone; only `--_toast-ink-soft` stays (neutral description ink).

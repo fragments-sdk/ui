@@ -162,11 +162,11 @@
   // pointer-down state.
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
+  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
 
   &.navItem:hover,
   &.navItem:active {
-    background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
+    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }
@@ -243,12 +243,12 @@
 
 .navMenuItemActive {
   // Match the persistent navigation treatment in both light and dark themes.
-  background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
+  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
   color: var(--fui-text-primary, $fui-text-primary);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 
   &[data-highlighted] {
-    background-color: var(--fui-control-selected-bg, var(--fui-bg-active, $fui-bg-active));
+    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 }

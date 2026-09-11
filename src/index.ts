@@ -722,7 +722,8 @@ export {
   deriveAccentActive,
   deriveDarkAccent,
   deriveSemanticText,
-  deriveSemanticBg,
+  deriveSemanticTint,
+  deriveSemanticWash,
   deriveSemanticHover,
 } from "./utils/seed-derivation";
 

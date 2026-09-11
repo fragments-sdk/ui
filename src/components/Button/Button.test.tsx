@@ -126,9 +126,9 @@ describe("Button", () => {
 
     expect(softStyles).toContain("--_button-border: transparent");
     expect(softStyles).toContain("--_button-border-hover: transparent");
-    expect(outlineStyles).toContain("--_button-border: var(--_tone-line");
-    expect(outlineStyles).toContain("--_button-border-hover: var(--_tone-line-hover");
-    expect(buttonStyles).toContain("--_tone-line: var(--fui-button-neutral-border");
+    expect(outlineStyles).toContain("--_button-border: var(--_fui-tone-line");
+    expect(outlineStyles).toContain("--_button-border-hover: var(\n    --_button-line-hover");
+    expect(buttonStyles).toMatch(/--_fui-tone-line: var\(\s*--fui-button-neutral-border/);
   });
 
   it("carries no hand-written contrast or disabled literals", () => {

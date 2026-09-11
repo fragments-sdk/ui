@@ -638,11 +638,22 @@ export function deriveSemanticText(color: string, isDark: boolean): string {
 }
 
 /**
- * Derive semantic background colors
+ * Semantic tint: the compact soft surface (Badge, Chip, soft Button).
+ * Mirrors `derive-semantic-tint` in tokens/_derive.scss.
  */
-export function deriveSemanticBg(color: string, isDark: boolean): string {
+export function deriveSemanticTint(color: string, isDark: boolean): string {
   const { r, g, b } = hexToRgb(color);
-  const opacity = isDark ? 0.15 : 0.1;
+  const opacity = isDark ? 0.26 : 0.18;
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+/**
+ * Semantic wash: the panel surface (Alert, Toast, Card, Message).
+ * Mirrors `derive-semantic-wash` in tokens/_derive.scss.
+ */
+export function deriveSemanticWash(color: string, isDark: boolean): string {
+  const { r, g, b } = hexToRgb(color);
+  const opacity = isDark ? 0.16 : 0.1;
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 

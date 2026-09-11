@@ -99,13 +99,26 @@ $computed-color-success: seeds.$fui-success;
 $computed-color-warning: seeds.$fui-warning;
 $computed-color-info: seeds.$fui-info;
 
-// Semantic backgrounds
-$computed-color-danger-bg: derive.derive-semantic-bg(seeds.$fui-danger, false);
-$computed-color-success-bg: derive.derive-semantic-bg(seeds.$fui-success, false);
-$computed-color-warning-bg: derive.derive-semantic-bg(seeds.$fui-warning, false);
-$computed-color-info-bg: derive.derive-semantic-bg(seeds.$fui-info, false);
+// Tone ramp — tint (compact surfaces) and wash (panels), seed at an alpha
+$computed-color-accent-tint: derive.derive-semantic-tint(seeds.$fui-brand, false);
+$computed-color-danger-tint: derive.derive-semantic-tint(seeds.$fui-danger, false);
+$computed-color-success-tint: derive.derive-semantic-tint(seeds.$fui-success, false);
+$computed-color-warning-tint: derive.derive-semantic-tint(seeds.$fui-warning, false);
+$computed-color-info-tint: derive.derive-semantic-tint(seeds.$fui-info, false);
+$computed-color-accent-wash: derive.derive-semantic-wash(seeds.$fui-brand, false);
+$computed-color-danger-wash: derive.derive-semantic-wash(seeds.$fui-danger, false);
+$computed-color-success-wash: derive.derive-semantic-wash(seeds.$fui-success, false);
+$computed-color-warning-wash: derive.derive-semantic-wash(seeds.$fui-warning, false);
+$computed-color-info-wash: derive.derive-semantic-wash(seeds.$fui-info, false);
+
+// Ink on a solid tone fill (theme-invariant: the fill is the seed in both)
+$computed-color-danger-on-fill: derive.derive-on-fill(seeds.$fui-danger);
+$computed-color-success-on-fill: derive.derive-on-fill(seeds.$fui-success);
+$computed-color-warning-on-fill: derive.derive-on-fill(seeds.$fui-warning);
+$computed-color-info-on-fill: derive.derive-on-fill(seeds.$fui-info);
 
 // Semantic text colors (WCAG AA contrast-safe for text on semantic backgrounds)
+$computed-color-accent-text: derive.derive-semantic-text(seeds.$fui-brand, false);
 $computed-color-danger-text: derive.derive-semantic-text(seeds.$fui-danger, false);
 $computed-color-success-text: derive.derive-semantic-text(seeds.$fui-success, false);
 $computed-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, false);
@@ -119,6 +132,7 @@ $computed-bg-tertiary: map.get($_surfaces-light, tertiary);
 $computed-bg-elevated: map.get($_surfaces-light, elevated);
 $computed-bg-subtle: map.get($_surfaces-light, subtle);
 $computed-bg-hover: map.get($_surfaces-light, hover);
+$computed-bg-selected: map.get($_surfaces-light, selected);
 $computed-bg-active: map.get($_surfaces-light, active);
 
 // App/document surfaces
@@ -167,13 +181,20 @@ $computed-dark-color-on-accent: derive.contrast-color($computed-dark-color-accen
 $computed-dark-color-accent-hover: derive.derive-accent-hover($computed-dark-color-accent, true);
 $computed-dark-color-accent-active: derive.derive-accent-active($computed-dark-color-accent, true);
 
-// Semantic backgrounds (dark mode)
-$computed-dark-color-danger-bg: derive.derive-semantic-bg(seeds.$fui-danger, true);
-$computed-dark-color-success-bg: derive.derive-semantic-bg(seeds.$fui-success, true);
-$computed-dark-color-warning-bg: derive.derive-semantic-bg(seeds.$fui-warning, true);
-$computed-dark-color-info-bg: derive.derive-semantic-bg(seeds.$fui-info, true);
+// Tone ramp (dark mode)
+$computed-dark-color-accent-tint: derive.derive-semantic-tint($computed-dark-color-accent, true);
+$computed-dark-color-danger-tint: derive.derive-semantic-tint(seeds.$fui-danger, true);
+$computed-dark-color-success-tint: derive.derive-semantic-tint(seeds.$fui-success, true);
+$computed-dark-color-warning-tint: derive.derive-semantic-tint(seeds.$fui-warning, true);
+$computed-dark-color-info-tint: derive.derive-semantic-tint(seeds.$fui-info, true);
+$computed-dark-color-accent-wash: derive.derive-semantic-wash($computed-dark-color-accent, true);
+$computed-dark-color-danger-wash: derive.derive-semantic-wash(seeds.$fui-danger, true);
+$computed-dark-color-success-wash: derive.derive-semantic-wash(seeds.$fui-success, true);
+$computed-dark-color-warning-wash: derive.derive-semantic-wash(seeds.$fui-warning, true);
+$computed-dark-color-info-wash: derive.derive-semantic-wash(seeds.$fui-info, true);
 
 // Semantic text colors (dark mode, WCAG AA contrast-safe)
+$computed-dark-color-accent-text: derive.derive-semantic-text($computed-dark-color-accent, true);
 $computed-dark-color-danger-text: derive.derive-semantic-text(seeds.$fui-danger, true);
 $computed-dark-color-success-text: derive.derive-semantic-text(seeds.$fui-success, true);
 $computed-dark-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, true);
@@ -187,6 +208,7 @@ $computed-dark-bg-tertiary: map.get($_surfaces-dark, tertiary);
 $computed-dark-bg-elevated: map.get($_surfaces-dark, elevated);
 $computed-dark-bg-subtle: map.get($_surfaces-dark, subtle);
 $computed-dark-bg-hover: map.get($_surfaces-dark, hover);
+$computed-dark-bg-selected: map.get($_surfaces-dark, selected);
 $computed-dark-bg-active: map.get($_surfaces-dark, active);
 
 // App/document surfaces (dark mode)

@@ -21,8 +21,13 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["solid", "outline", "soft"],
+      options: ["soft", "outline"],
       description: "Chrome family",
+    },
+    tone: {
+      control: "select",
+      options: ["neutral", "accent", "info", "success", "warning", "danger"],
+      description: "Shared tone ramp",
     },
     size: {
       control: "select",
@@ -32,7 +37,7 @@ const meta = {
     selected: { control: "boolean", description: "Selection state" },
     disabled: { control: "boolean" },
   },
-  args: { variant: "solid", size: "xs", children: "Default" },
+  args: { variant: "soft", tone: "neutral", size: "xs", children: "Default" },
 } satisfies Meta<typeof Chip>;
 
 export default meta;
@@ -47,15 +52,35 @@ export const Outline: Story = {
   args: { variant: "outline", children: "Outline" },
 };
 
+const TONES = ["accent", "info", "success", "warning", "danger"] as const;
+
+export const Tones: Story = {
+  render: () => (
+    <Stack direction="column" gap="sm">
+      <Stack direction="row" gap="sm" wrap>
+        {TONES.map((tone) => (
+          <Chip key={tone} tone={tone}>
+            {tone}
+          </Chip>
+        ))}
+      </Stack>
+      <Stack direction="row" gap="sm" wrap>
+        {TONES.map((tone) => (
+          <Chip key={tone} variant="outline" tone={tone}>
+            {tone}
+          </Chip>
+        ))}
+      </Stack>
+    </Stack>
+  ),
+};
+
 export const Selected: Story = {
   render: () => (
     <Stack direction="row" gap="sm" wrap>
-      <Chip selected>Filled</Chip>
+      <Chip selected>Soft</Chip>
       <Chip variant="outline" selected>
         Outlined
-      </Chip>
-      <Chip variant="soft" selected>
-        Soft
       </Chip>
     </Stack>
   ),
@@ -69,13 +94,13 @@ export const SelectedRemovable: Story = {
   render: () => (
     <Stack direction="row" gap="sm" wrap>
       <Chip selected onRemove={() => {}}>
-        Filled
+        Soft
       </Chip>
       <Chip variant="outline" selected onRemove={() => {}}>
         Outlined
       </Chip>
-      <Chip variant="soft" selected onRemove={() => {}}>
-        Soft
+      <Chip tone="info" onRemove={() => {}}>
+        Info
       </Chip>
     </Stack>
   ),

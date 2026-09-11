@@ -30,3 +30,9 @@
 ## 2026-09-04 Wave 1 — floating surface parity (UIR-D40)
 
 - No local change; `popup.container` now renders `--fui-radius-l1` and rows round to l2 on highlight. Checked WithGroups open in Storybook.
+
+## 2026-09-08 — interaction ladder
+
+- **What changed** — highlighted rows read `--fui-bg-hover`, which is now the ink at 7% (light) / 9% (dark) instead of an opaque dark hex, so the same step reads on an elevated menu and on the page. Selected rows read `--fui-control-selected-bg` (12% / 14%) through the field hook; pressed is `--fui-bg-active` (14% / 16%). `.itemDanger[data-highlighted]` paints `--fui-color-danger-wash`.
+- **Why** — Conan: sidebar hover/active and menu hover/active did not match. They were two derivations (dark hover was `#2a2723`, invisible on `#262421` menus). Now one ladder: hover 7 < selected 12 < pressed 14 < selected+hover 16, dark +2.
+- **What was browser-verified** — WithGroups open, second row hovered, dark: the hover wash is visible on the elevated panel (was invisible); computed hover 9% / selected 14% / active 16%, identical to the Sidebar story.

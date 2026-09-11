@@ -100,3 +100,8 @@ are near-identical (88,83,76 vs 89,84,79), so the group label's ink barely
 differs from an item's; weight and the shorter track do the work. A mixed-down ink
 was tried and rejected — it fell under 4.5:1 in dark. Fix belongs in the
 theme tokens.
+
+## 2026-09-08 — interaction ladder
+
+Hover and active rows share the kit ladder with Menu: `--fui-sidebar-item-hover-bg` → `--fui-bg-hover` (ink 7% light / 9% dark), `--fui-sidebar-item-active-bg` → `--fui-control-selected-bg` (12% / 14%). The Sass fallback for the active row is the new `$fui-control-selected-bg` (derived `selected` surface) instead of `$fui-bg-active`, so build-time and runtime agree. `--fui-bg-highlight` is deleted (no reader).
+Browser-verified (Storybook Default, dark): active row 14% and hovered row 9% ink are both visible and distinct; the same computed values as Menu.

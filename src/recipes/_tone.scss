@@ -1,0 +1,138 @@
+@use "sass:map";
+@use "../tokens/variables" as tokens;
+
+// The tone ramp, published as channels. A component includes `channels()` on
+// its tone class and its variants read the channels — solid reads fill /
+// on-fill, soft reads tint / ink, outline and ghost read wash / line / ink,
+// panels read wash / ink / line. One derivation, every component.
+//
+// fill · fill-hover · fill-active   solid surface (the seed) and its states
+// on-fill                           ink on the solid surface
+// tint · tint-hover · tint-active   compact soft surface (Badge, Chip, Button)
+// wash · wash-active                panel surface (Alert, Toast, Card, Message)
+// ink                               text, icons, dots, outline ink
+// line                              hairline border
+
+$_ramp: (
+  accent: (
+    fill: tokens.$fui-color-accent,
+    fill-hover: tokens.$fui-color-accent-fill-hover,
+    fill-active: tokens.$fui-color-accent-fill-active,
+    on-fill: tokens.$fui-color-accent-on-fill,
+    tint: tokens.$fui-color-accent-tint,
+    tint-hover: tokens.$fui-color-accent-tint-hover,
+    tint-active: tokens.$fui-color-accent-tint-active,
+    wash: tokens.$fui-color-accent-wash,
+    wash-active: tokens.$fui-color-accent-wash-active,
+    text: tokens.$fui-color-accent-text,
+    border: tokens.$fui-color-accent-border,
+  ),
+  info: (
+    fill: tokens.$fui-color-info,
+    fill-hover: tokens.$fui-color-info-fill-hover,
+    fill-active: tokens.$fui-color-info-fill-active,
+    on-fill: tokens.$fui-color-info-on-fill,
+    tint: tokens.$fui-color-info-tint,
+    tint-hover: tokens.$fui-color-info-tint-hover,
+    tint-active: tokens.$fui-color-info-tint-active,
+    wash: tokens.$fui-color-info-wash,
+    wash-active: tokens.$fui-color-info-wash-active,
+    text: tokens.$fui-color-info-text,
+    border: tokens.$fui-color-info-border,
+  ),
+  success: (
+    fill: tokens.$fui-color-success,
+    fill-hover: tokens.$fui-color-success-fill-hover,
+    fill-active: tokens.$fui-color-success-fill-active,
+    on-fill: tokens.$fui-color-success-on-fill,
+    tint: tokens.$fui-color-success-tint,
+    tint-hover: tokens.$fui-color-success-tint-hover,
+    tint-active: tokens.$fui-color-success-tint-active,
+    wash: tokens.$fui-color-success-wash,
+    wash-active: tokens.$fui-color-success-wash-active,
+    text: tokens.$fui-color-success-text,
+    border: tokens.$fui-color-success-border,
+  ),
+  warning: (
+    fill: tokens.$fui-color-warning,
+    fill-hover: tokens.$fui-color-warning-fill-hover,
+    fill-active: tokens.$fui-color-warning-fill-active,
+    on-fill: tokens.$fui-color-warning-on-fill,
+    tint: tokens.$fui-color-warning-tint,
+    tint-hover: tokens.$fui-color-warning-tint-hover,
+    tint-active: tokens.$fui-color-warning-tint-active,
+    wash: tokens.$fui-color-warning-wash,
+    wash-active: tokens.$fui-color-warning-wash-active,
+    text: tokens.$fui-color-warning-text,
+    border: tokens.$fui-color-warning-border,
+  ),
+  danger: (
+    fill: tokens.$fui-color-danger,
+    fill-hover: tokens.$fui-color-danger-fill-hover,
+    fill-active: tokens.$fui-color-danger-fill-active,
+    on-fill: tokens.$fui-color-danger-on-fill,
+    tint: tokens.$fui-color-danger-tint,
+    tint-hover: tokens.$fui-color-danger-tint-hover,
+    tint-active: tokens.$fui-color-danger-tint-active,
+    wash: tokens.$fui-color-danger-wash,
+    wash-active: tokens.$fui-color-danger-wash-active,
+    text: tokens.$fui-color-danger-text,
+    border: tokens.$fui-color-danger-border,
+  ),
+);
+
+@function _fallback($tone, $stop) {
+  @return map.get(map.get($_ramp, $tone), $stop);
+}
+
+/// Publish every channel of `$tone` (accent, info, success, warning, danger).
+@mixin channels($tone) {
+  --_fui-tone-fill: var(--fui-color-#{$tone}, #{_fallback($tone, fill)});
+  --_fui-tone-fill-hover: var(--fui-color-#{$tone}-fill-hover, #{_fallback($tone, fill-hover)});
+  --_fui-tone-fill-active: var(--fui-color-#{$tone}-fill-active, #{_fallback($tone, fill-active)});
+  --_fui-tone-on-fill: var(--fui-color-#{$tone}-on-fill, #{_fallback($tone, on-fill)});
+  --_fui-tone-tint: var(--fui-color-#{$tone}-tint, #{_fallback($tone, tint)});
+  --_fui-tone-tint-hover: var(--fui-color-#{$tone}-tint-hover, #{_fallback($tone, tint-hover)});
+  --_fui-tone-tint-active: var(--fui-color-#{$tone}-tint-active, #{_fallback($tone, tint-active)});
+  --_fui-tone-wash: var(--fui-color-#{$tone}-wash, #{_fallback($tone, wash)});
+  --_fui-tone-wash-active: var(--fui-color-#{$tone}-wash-active, #{_fallback($tone, wash-active)});
+  --_fui-tone-ink: var(--fui-color-#{$tone}-text, #{_fallback($tone, text)});
+  --_fui-tone-line: var(--fui-color-#{$tone}-border, #{_fallback($tone, border)});
+}
+
+/// The neutral ramp: ink and surfaces from the neutral palette, same channel
+/// names, so a component's variants never branch on tone. `$ink` picks the
+/// resting text role (Badge labels read secondary; controls read primary).
+@mixin channels-neutral($ink: primary) {
+  --_fui-tone-fill: var(--fui-bg-inverse, #{tokens.$fui-bg-inverse});
+  --_fui-tone-fill-hover: color-mix(
+    in srgb,
+    var(--fui-bg-inverse, #{tokens.$fui-bg-inverse}) 88%,
+    var(--fui-text-inverse, #{tokens.$fui-text-inverse})
+  );
+  --_fui-tone-fill-active: color-mix(
+    in srgb,
+    var(--fui-bg-inverse, #{tokens.$fui-bg-inverse}) 80%,
+    var(--fui-text-inverse, #{tokens.$fui-text-inverse})
+  );
+  --_fui-tone-on-fill: var(--fui-text-inverse, #{tokens.$fui-text-inverse});
+  --_fui-tone-tint: var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary});
+  --_fui-tone-tint-hover: color-mix(
+    in srgb,
+    var(--fui-text-primary, #{tokens.$fui-text-primary}) 8%,
+    var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary})
+  );
+  --_fui-tone-tint-active: color-mix(
+    in srgb,
+    var(--fui-text-primary, #{tokens.$fui-text-primary}) 14%,
+    var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary})
+  );
+  --_fui-tone-wash: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
+  --_fui-tone-wash-active: var(--fui-bg-active, #{tokens.$fui-bg-active});
+  @if $ink == secondary {
+    --_fui-tone-ink: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  } @else {
+    --_fui-tone-ink: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  }
+  --_fui-tone-line: var(--fui-border-strong, #{tokens.$fui-border-strong});
+}

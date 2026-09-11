@@ -205,7 +205,7 @@
 // Current route — a "you are here" selection state, so it earns accent (distinct from
 // the neutral hover highlight, which previously made active indistinguishable).
 .linkActive {
-  background-color: var(--fui-field-selection-bg, var(--fui-bg-hover, $fui-bg-hover));
+  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
   color: var(--fui-color-accent, $fui-color-accent);
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }

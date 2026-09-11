@@ -8,18 +8,22 @@ import { isProductionBuild } from "../../utils/env";
  * Chip for selections, filters, and tags. Use with Chip.Group for multi-select.
  * @see https://usefragments.com/components/chip
  */
-export type ChipVariant = "solid" | "outline" | "soft";
+export type ChipVariant = "soft" | "outline";
+export type ChipTone = "neutral" | "accent" | "info" | "success" | "warning" | "danger";
 
 export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   children: React.ReactNode;
-  /** Chrome family.
+  /** Chrome family — the same two Badge has.
    *
-   * - `solid` (default): tinted pill for filters and tags.
+   * - `soft` (default): tinted pill for filters and tags.
    * - `outline`: hairline-bordered, transparent.
-   * - `soft`: info-tinted, for a chip that carries a suggestion.
-   * @default "solid"
+   * @default "soft"
    * @see https://usefragments.com/components/chip#variants */
   variant?: ChipVariant;
+  /** Colour. `neutral` is the plain chip; the other tones paint the shared
+   * tone ramp, the same one Badge and Button read.
+   * @default "neutral" */
+  tone?: ChipTone;
   /** Chip size.
    * @default "xs" */
   size?: "xs" | "sm" | "md" | "lg";
@@ -48,10 +52,20 @@ export interface ChipGroupProps extends Omit<
   onChange?: (value: string[]) => void;
 }
 
+const TONE_CLASS: Record<ChipTone, string | undefined> = {
+  neutral: undefined,
+  accent: styles.toneAccent,
+  info: styles.toneInfo,
+  success: styles.toneSuccess,
+  warning: styles.toneWarning,
+  danger: styles.toneDanger,
+};
+
 const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   {
     children,
-    variant = "solid",
+    variant = "soft",
+    tone = "neutral",
     size: sizeProp,
     selected = false,
     disabled = false,
@@ -71,6 +85,7 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
     styles.chip,
     styles[size],
     styles[variant],
+    TONE_CLASS[tone],
     selected && styles.selected,
     onRemove && styles.withRemove,
     className,
@@ -114,7 +129,12 @@ const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   }
 
   return (
-    <span className={styles.removableChip} data-disabled={disabled || undefined} data-size={size}>
+    <span
+      className={styles.removableChip}
+      data-disabled={disabled || undefined}
+      data-size={size}
+      data-tone={tone === "neutral" ? undefined : tone}
+    >
       {chipButton}
       <button
         type="button"

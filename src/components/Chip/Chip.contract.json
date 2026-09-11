@@ -9,7 +9,8 @@
   "exportName": "Chip",
   "propsSummary": [
     "children: node (required)",
-    "variant: solid|outline|soft (default: solid)",
+    "variant: soft|outline (default: soft)",
+    "tone: neutral|accent|info|success|warning|danger (default: neutral)",
     "size: xs|sm|md|lg (default: xs)",
     "selected: boolean (default: false)",
     "icon: node",
@@ -27,10 +28,17 @@
     },
     "variant": {
       "type": "enum",
-      "description": "Chrome family. solid is the tinted pill; outline is hairline-bordered; soft is info-tinted for a suggestion",
-      "default": "solid",
+      "description": "Chrome family. soft is the tinted pill; outline is hairline-bordered on the page surface",
+      "default": "soft",
       "required": false,
-      "values": ["solid", "outline", "soft"]
+      "values": ["soft", "outline"]
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Semantic colour from the shared tone ramp. neutral is ink on the neutral surfaces; the others tint, border and ink from one derivation shared with Badge and Button",
+      "default": "neutral",
+      "required": false,
+      "values": ["neutral", "accent", "info", "success", "warning", "danger"]
     },
     "size": {
       "type": "enum",
@@ -84,17 +92,18 @@
       "Showing filters the user can dismiss"
     ],
     "whenNot": [
-      "Read-only status — use Badge",
-      "Switching views — use Tabs",
-      "On/off state — use Switch",
-      "A main call to action — use Button"
+      "Read-only status \u2014 use Badge",
+      "Switching views \u2014 use Tabs",
+      "On/off state \u2014 use Switch",
+      "A main call to action \u2014 use Button"
     ],
     "guidelines": [
       "One to three words per chip",
       "Chip.Group when chips share selection state",
       "Keep xs for filters and tags; size up only to match a taller control track",
       "onRemove only when the chip is genuinely dismissible",
-      "Pass an explicit value when children are custom JSX"
+      "Pass an explicit value when children are custom JSX",
+      "Tone only when the chip reports a state; a plain filter stays neutral"
     ],
     "accessibility": [
       "Chips are buttons; selection is reported via aria-pressed",
@@ -106,8 +115,13 @@
   "examples": [
     {
       "name": "Variants",
-      "description": "Tinted, hairline, and accent-soft chrome.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"solid\">Solid</Chip>\n  <Chip variant=\"outline\">Outline</Chip>\n  <Chip variant=\"soft\">Soft</Chip>\n</Stack>"
+      "description": "Soft is the tinted pill; outline sits on the page surface.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip>Soft</Chip>\n  <Chip variant=\"outline\">Outline</Chip>\n</Stack>"
+    },
+    {
+      "name": "Tones",
+      "description": "The same ramp Badge and Button use, in both variants.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"sm\">\n  <Stack direction=\"row\" gap=\"sm\" wrap>\n    <Chip tone=\"accent\">Accent</Chip>\n    <Chip tone=\"info\">Info</Chip>\n    <Chip tone=\"success\">Success</Chip>\n    <Chip tone=\"warning\">Warning</Chip>\n    <Chip tone=\"danger\">Danger</Chip>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\" wrap>\n    <Chip variant=\"outline\" tone=\"accent\">Accent</Chip>\n    <Chip variant=\"outline\" tone=\"info\">Info</Chip>\n    <Chip variant=\"outline\" tone=\"success\">Success</Chip>\n    <Chip variant=\"outline\" tone=\"warning\">Warning</Chip>\n    <Chip variant=\"outline\" tone=\"danger\">Danger</Chip>\n  </Stack>\n</Stack>"
     },
     {
       "name": "Sizes",
@@ -116,8 +130,8 @@
     },
     {
       "name": "Selected",
-      "description": "All three variants share one selection treatment.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Solid</Chip>\n  <Chip variant=\"outline\" selected>Outline</Chip>\n  <Chip variant=\"soft\" selected>Soft</Chip>\n</Stack>"
+      "description": "Both variants share one selection treatment.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip selected>Soft</Chip>\n  <Chip variant=\"outline\" selected>Outline</Chip>\n</Stack>"
     },
     {
       "name": "With Avatar",
@@ -127,7 +141,7 @@
     {
       "name": "With Remove",
       "description": "Trailing dismiss button clears the tag.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outline\" onRemove={() => {}}>React</Chip>\n  <Chip variant=\"outline\" selected onRemove={() => {}}>TypeScript</Chip>\n  <Chip variant=\"soft\" onRemove={() => {}}>SCSS</Chip>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Chip variant=\"outline\" onRemove={() => {}}>React</Chip>\n  <Chip variant=\"outline\" selected onRemove={() => {}}>TypeScript</Chip>\n  <Chip tone=\"info\" onRemove={() => {}}>SCSS</Chip>\n</Stack>"
     },
     {
       "name": "Chip Group",
@@ -165,7 +179,8 @@
   "contract": {
     "propsSummary": [
       "children: ReactNode - chip label (required)",
-      "variant: solid|outline|soft - chrome family",
+      "variant: soft|outline - chrome family (soft by default)",
+      "tone: neutral|accent|info|success|warning|danger - shared tone ramp (neutral by default)",
       "size: xs|sm|md|lg - chip size (xs by default)",
       "selected: boolean - selection state",
       "icon/avatar: ReactNode - leading visual",

@@ -167,9 +167,11 @@
       // cards and overlays float clearly above bands
       subtle: #1b1a17,
       // barely-raised wells
-      hover: #2a2723,
-      // transient interaction
-      active: #322e29 // transient pressed interaction
+      // Interaction ladder: the ink at an alpha, so the same step reads on the
+      // page, the band and an elevated menu. Two points stronger than light.
+      hover: rgba(#f0ede9, 0.09),
+      selected: rgba(#f0ede9, 0.14),
+      active: rgba(#f0ede9, 0.16)
     );
   }
 
@@ -188,9 +190,11 @@
     // cards and overlays float white
     subtle: #fdfcfa,
     // barely-raised wells
-    hover: rgba(96, 48, 16, 0.06),
-    // warm transient interaction
-    active: rgba(96, 48, 16, 0.1) // warm pressed interaction
+    // Interaction ladder (hover < selected < active): the ink at an alpha so
+    // it composes on any surface.
+    hover: rgba(get-shade($palette, 900), 0.07),
+    selected: rgba(get-shade($palette, 900), 0.12),
+    active: rgba(get-shade($palette, 900), 0.14)
   );
 }
 
@@ -335,18 +339,42 @@
 // Semantic Color Backgrounds
 // --------------------------------------------
 
-/// Derive semantic background colors (danger, success, etc.)
+/// Derive the compact tone tint (Badge, Chip, Button soft): the seed at an
+/// alpha, so it composes on any surface instead of into a fixed white/black.
 /// @param {Color} $color - The semantic color
 /// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Background color with appropriate opacity
-@function derive-semantic-bg($color, $is-dark: false) {
+/// @return {Color} Tint colour
+@function derive-semantic-tint($color, $is-dark: false) {
   @if $is-dark {
-    // Dark mode: slightly higher opacity for visibility
-    @return rgba($color, 0.15);
-  } @else {
-    // Light mode: subtle background
-    @return rgba($color, 0.1);
+    @return color.change($color, $alpha: 0.26);
   }
+  @return color.change($color, $alpha: 0.18);
+}
+
+/// Derive the panel tone wash (Alert, Toast, Card, Message): the same seed at
+/// a lighter alpha, because a large area needs less chroma to read.
+/// @param {Color} $color - The semantic color
+/// @param {Boolean} $is-dark - Whether in dark mode
+/// @return {Color} Wash colour
+@function derive-semantic-wash($color, $is-dark: false) {
+  @if $is-dark {
+    @return color.change($color, $alpha: 0.16);
+  }
+  @return color.change($color, $alpha: 0.1);
+}
+
+/// Ink for text painted on a solid tone fill: whichever of white or the paper
+/// ink reads better against the seed. Warning and most accents take the ink;
+/// danger, info and success take white.
+/// @param {Color} $color - The tone fill
+/// @return {Color} On-fill ink
+@function derive-on-fill($color) {
+  $light: #ffffff;
+  $dark: #1d1c1a;
+  @if wcag-contrast($light, $color) >= wcag-contrast($dark, $color) {
+    @return $light;
+  }
+  @return $dark;
 }
 
 /// Derive hover state for semantic colors (like danger-hover)

@@ -156,10 +156,10 @@ $_active-dot: _navigation("sidebarDot");
 @mixin link-active {
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   font-weight: var(--fui-font-weight-medium, #{tokens.$fui-font-weight-medium});
-  background-color: var(--fui-control-selected-bg, #{tokens.$fui-bg-active});
+  background-color: var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg});
 
   &:hover {
-    background-color: var(--fui-control-selected-bg, #{tokens.$fui-bg-active});
+    background-color: var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg});
     color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   }
 }

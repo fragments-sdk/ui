@@ -2,6 +2,7 @@
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/feedback" as feedback;
+@use "../../recipes/tone" as tone;
 
 .container {
   position: fixed;
@@ -56,14 +57,15 @@
   @include feedback.transient;
   @include high-contrast-outline;
 
-  --_toast-tint: var(--fui-bg-elevated, #{$fui-bg-elevated});
-  --_toast-line: var(--fui-border, #{$fui-border});
-  --_toast-ink: var(--fui-text-primary, #{$fui-text-primary});
+  // Neutral: an elevated surface with secondary description ink. Tones
+  // republish the same three channels from the shared ramp.
+  --_fui-tone-wash: var(--fui-bg-elevated, #{$fui-bg-elevated});
+  --_fui-tone-line: var(--fui-border, #{$fui-border});
+  --_fui-tone-ink: var(--fui-text-primary, #{$fui-text-primary});
   --_toast-ink-soft: var(--fui-text-secondary, #{$fui-text-secondary});
 
-  background-color: var(--_toast-tint, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--_toast-line, var(--fui-border, #{$fui-border}));
+  background-color: var(--_fui-tone-wash);
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--_fui-tone-line);
   border-radius: var(--fui-radius-l1, $fui-radius-l1);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
   animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
@@ -85,45 +87,36 @@
   }
 }
 
-// Tones paint wash, hairline and ink from the shared status ramp; the
-// description drops to the same ink so the toast reads as one tinted object.
-@mixin _tone($tone, $bg, $text, $border) {
-  --_toast-tint: var(--fui-color-#{$tone}-bg, #{$bg});
-  --_toast-line: var(--fui-color-#{$tone}-border, #{$border});
-  --_toast-ink: var(--fui-color-#{$tone}-text, #{$text});
-  --_toast-ink-soft: var(--fui-color-#{$tone}-text, #{$text});
-}
-
+// Tones paint wash, hairline and ink from the shared ramp; the description
+// drops to the same ink so the toast reads as one tinted object.
 .toneSuccess {
-  @include _tone(
-    "success",
-    $fui-color-success-bg,
-    $fui-color-success-text,
-    $fui-color-success-border
-  );
+  @include tone.channels("success");
+
+  --_toast-ink-soft: var(--_fui-tone-ink);
 }
 
 .toneDanger {
-  @include _tone("danger", $fui-color-danger-bg, $fui-color-danger-text, $fui-color-danger-border);
+  @include tone.channels("danger");
+
+  --_toast-ink-soft: var(--_fui-tone-ink);
 }
 
 .toneWarning {
-  @include _tone(
-    "warning",
-    $fui-color-warning-bg,
-    $fui-color-warning-text,
-    $fui-color-warning-border
-  );
+  @include tone.channels("warning");
+
+  --_toast-ink-soft: var(--_fui-tone-ink);
 }
 
 .toneInfo {
-  @include _tone("info", $fui-color-info-bg, $fui-color-info-text, $fui-color-info-border);
+  @include tone.channels("info");
+
+  --_toast-ink-soft: var(--_fui-tone-ink);
 }
 
 .icon {
   @include feedback.icon;
 
-  color: var(--_toast-ink-soft, var(--fui-text-secondary, #{$fui-text-secondary}));
+  color: var(--_toast-ink-soft);
 
   svg {
     inline-size: 100%;
@@ -145,13 +138,13 @@
 .title {
   @include feedback.title;
 
-  color: var(--_toast-ink, var(--fui-text-primary, #{$fui-text-primary}));
+  color: var(--_fui-tone-ink);
 }
 
 .description {
   @include feedback.body;
 
-  color: var(--_toast-ink-soft, var(--fui-text-secondary, #{$fui-text-secondary}));
+  color: var(--_toast-ink-soft);
 }
 
 // The action and close are kit buttons; only their placement lives here.

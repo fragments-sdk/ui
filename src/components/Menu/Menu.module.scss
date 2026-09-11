@@ -64,7 +64,7 @@
   color: var(--fui-color-danger-text, $fui-color-danger-text);
 
   &[data-highlighted] {
-    background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+    background-color: var(--fui-color-danger-wash, $fui-color-danger-wash);
     color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
 }
@@ -75,8 +75,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  block-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  inline-size: var(
+    --fui-popup-indicator-box,
+    var(--fui-raw-space-16, #{measurements.raw-space(16)})
+  );
+  block-size: var(
+    --fui-popup-indicator-box,
+    var(--fui-raw-space-16, #{measurements.raw-space(16)})
+  );
   flex: 0 0 auto;
 }
 
@@ -142,7 +148,8 @@
   block-size: 0;
   margin-inline-start: auto;
   border-style: solid;
-  border-width: var(--fui-raw-space-4, #{measurements.raw-space(4)}) 0 var(--fui-raw-space-4, #{measurements.raw-space(4)})
+  border-width: var(--fui-raw-space-4, #{measurements.raw-space(4)}) 0
+    var(--fui-raw-space-4, #{measurements.raw-space(4)})
     var(--fui-raw-space-6, #{measurements.raw-space(6)});
   border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
 }

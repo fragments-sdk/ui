@@ -3,6 +3,7 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/layout";
+@use "../../recipes/tone" as tone;
 
 @mixin selected-surface {
   background-color: var(--fui-field-selection-bg, $fui-bg-hover);
@@ -50,17 +51,44 @@
   @include action.size("lg");
 }
 
-// Variants — chrome only
-.solid {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-primary, $fui-text-primary);
+// Tones publish the shared ramp; neutral is the absence of a tone class.
+.chip {
+  @include tone.channels-neutral;
+  --_fui-tone-line: var(--fui-border, #{$fui-border});
+}
+
+.toneAccent {
+  @include tone.channels("accent");
+}
+
+.toneInfo {
+  @include tone.channels("info");
+}
+
+.toneSuccess {
+  @include tone.channels("success");
+}
+
+.toneWarning {
+  @include tone.channels("warning");
+}
+
+.toneDanger {
+  @include tone.channels("danger");
+}
+
+// Variants — chrome only. Hover and pressed climb the tone's own ramp so a
+// tinted chip never washes to neutral grey under the pointer.
+.soft {
+  background-color: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+  color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--_fui-tone-tint-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 
   &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+    background-color: var(--_fui-tone-tint-active, var(--fui-bg-active, #{$fui-bg-active}));
   }
 
   &.selected {
@@ -70,38 +98,21 @@
 
 .outline {
   background-color: transparent;
-  color: var(--fui-text-primary, $fui-text-primary);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
+  color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
+  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+    var(--_fui-tone-line, var(--fui-border, #{$fui-border}));
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    border-color: var(--fui-border-strong, $fui-border-strong);
+    background-color: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 
   &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+    background-color: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
   }
 
   &.selected {
     @include selected-surface;
     border-color: var(--fui-field-selection-border, $fui-border-strong);
-  }
-}
-
-.soft {
-  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
-  color: var(--fui-color-info-text, $fui-color-info-text);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-
-  &.selected {
-    @include selected-surface;
   }
 }
 
@@ -140,8 +151,30 @@
 
 // Remove button
 .removableChip {
+  @include tone.channels-neutral;
+
   display: inline-flex;
   align-items: stretch;
+}
+
+.removableChip[data-tone="accent"] {
+  @include tone.channels("accent");
+}
+
+.removableChip[data-tone="info"] {
+  @include tone.channels("info");
+}
+
+.removableChip[data-tone="success"] {
+  @include tone.channels("success");
+}
+
+.removableChip[data-tone="warning"] {
+  @include tone.channels("warning");
+}
+
+.removableChip[data-tone="danger"] {
+  @include tone.channels("danger");
 }
 
 .remove {
@@ -179,42 +212,31 @@
   }
 }
 
-// Match remove button visuals to chip variant/state so the compound control
-// remains visually coherent across seeds/themes.
-.solid + .remove {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+// The remove button wears the chip's own surface so the compound control
+// reads as one object.
+.soft + .remove {
+  background-color: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
+  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--_fui-tone-tint-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 
   &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+    background-color: var(--_fui-tone-tint-active, var(--fui-bg-active, #{$fui-bg-active}));
   }
 }
 
 .outline + .remove {
   background-color: transparent;
+  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
 
   &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    background-color: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
   }
 
   &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-}
-
-.soft + .remove {
-  background-color: var(--fui-color-info-bg, $fui-color-info-bg);
-  color: var(--fui-color-info-text, $fui-color-info-text);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+    background-color: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
   }
 }
 

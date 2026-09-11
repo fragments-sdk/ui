@@ -246,23 +246,161 @@ $fui-color-success: computed.$computed-color-success !default;
 $fui-color-warning: computed.$computed-color-warning !default;
 $fui-color-info: computed.$computed-color-info !default;
 
-// Semantic backgrounds (light)
-$fui-color-danger-bg: computed.$computed-color-danger-bg !default;
-$fui-color-success-bg: computed.$computed-color-success-bg !default;
-$fui-color-warning-bg: computed.$computed-color-warning-bg !default;
-$fui-color-info-bg: computed.$computed-color-info-bg !default;
+// Tone ramp (light). One derivation for accent and the four semantic tones:
+// tint = compact soft surface (Badge, Chip, Button soft), wash = panel surface
+// (Alert, Toast, Card, Message), text = contrast-derived ink, border = the ink
+// at an alpha, on-fill = ink on the solid seed. See `recipes/_tone.scss`.
+$fui-color-accent-tint: computed.$computed-color-accent-tint !default;
+$fui-color-danger-tint: computed.$computed-color-danger-tint !default;
+$fui-color-success-tint: computed.$computed-color-success-tint !default;
+$fui-color-warning-tint: computed.$computed-color-warning-tint !default;
+$fui-color-info-tint: computed.$computed-color-info-tint !default;
 
-// Semantic text colors (WCAG AA contrast-safe on semantic backgrounds)
+$fui-color-accent-wash: computed.$computed-color-accent-wash !default;
+$fui-color-danger-wash: computed.$computed-color-danger-wash !default;
+$fui-color-success-wash: computed.$computed-color-success-wash !default;
+$fui-color-warning-wash: computed.$computed-color-warning-wash !default;
+$fui-color-info-wash: computed.$computed-color-info-wash !default;
+
+$fui-color-accent-text: computed.$computed-color-accent-text !default;
 $fui-color-danger-text: computed.$computed-color-danger-text !default;
 $fui-color-success-text: computed.$computed-color-success-text !default;
 $fui-color-warning-text: computed.$computed-color-warning-text !default;
 $fui-color-info-text: computed.$computed-color-info-text !default;
 
-// Semantic borders (fallbacks for --fui-color-*-border CSS custom properties)
-$fui-color-danger-border: color-mix(in srgb, $fui-color-danger-text 30%, transparent) !default;
-$fui-color-success-border: color-mix(in srgb, $fui-color-success-text 28%, transparent) !default;
-$fui-color-warning-border: color-mix(in srgb, $fui-color-warning-text 28%, transparent) !default;
-$fui-color-info-border: color-mix(in srgb, $fui-color-info-text 30%, transparent) !default;
+$fui-color-accent-border: color-mix(in srgb, $fui-color-accent-text 40%, transparent) !default;
+$fui-color-danger-border: color-mix(in srgb, $fui-color-danger-text 40%, transparent) !default;
+$fui-color-success-border: color-mix(in srgb, $fui-color-success-text 40%, transparent) !default;
+$fui-color-warning-border: color-mix(in srgb, $fui-color-warning-text 40%, transparent) !default;
+$fui-color-info-border: color-mix(in srgb, $fui-color-info-text 40%, transparent) !default;
+
+$fui-color-accent-on-fill: $fui-color-on-accent !default;
+$fui-color-danger-on-fill: computed.$computed-color-danger-on-fill !default;
+$fui-color-success-on-fill: computed.$computed-color-success-on-fill !default;
+$fui-color-warning-on-fill: computed.$computed-color-warning-on-fill !default;
+$fui-color-info-on-fill: computed.$computed-color-info-on-fill !default;
+
+$fui-color-accent-fill-hover: color-mix(
+  in srgb,
+  $fui-color-accent 88%,
+  $fui-color-accent-text
+) !default;
+$fui-color-danger-fill-hover: color-mix(
+  in srgb,
+  $fui-color-danger 88%,
+  $fui-color-danger-text
+) !default;
+$fui-color-success-fill-hover: color-mix(
+  in srgb,
+  $fui-color-success 88%,
+  $fui-color-success-text
+) !default;
+$fui-color-warning-fill-hover: color-mix(
+  in srgb,
+  $fui-color-warning 88%,
+  $fui-color-warning-text
+) !default;
+$fui-color-info-fill-hover: color-mix(in srgb, $fui-color-info 88%, $fui-color-info-text) !default;
+
+$fui-color-accent-fill-active: color-mix(
+  in srgb,
+  $fui-color-accent 80%,
+  $fui-color-accent-text
+) !default;
+$fui-color-danger-fill-active: color-mix(
+  in srgb,
+  $fui-color-danger 80%,
+  $fui-color-danger-text
+) !default;
+$fui-color-success-fill-active: color-mix(
+  in srgb,
+  $fui-color-success 80%,
+  $fui-color-success-text
+) !default;
+$fui-color-warning-fill-active: color-mix(
+  in srgb,
+  $fui-color-warning 80%,
+  $fui-color-warning-text
+) !default;
+$fui-color-info-fill-active: color-mix(in srgb, $fui-color-info 80%, $fui-color-info-text) !default;
+
+$fui-color-accent-tint-hover: color-mix(
+  in srgb,
+  $fui-color-accent-text 8%,
+  $fui-color-accent-tint
+) !default;
+$fui-color-danger-tint-hover: color-mix(
+  in srgb,
+  $fui-color-danger-text 8%,
+  $fui-color-danger-tint
+) !default;
+$fui-color-success-tint-hover: color-mix(
+  in srgb,
+  $fui-color-success-text 8%,
+  $fui-color-success-tint
+) !default;
+$fui-color-warning-tint-hover: color-mix(
+  in srgb,
+  $fui-color-warning-text 8%,
+  $fui-color-warning-tint
+) !default;
+$fui-color-info-tint-hover: color-mix(
+  in srgb,
+  $fui-color-info-text 8%,
+  $fui-color-info-tint
+) !default;
+
+$fui-color-accent-tint-active: color-mix(
+  in srgb,
+  $fui-color-accent-text 14%,
+  $fui-color-accent-tint
+) !default;
+$fui-color-danger-tint-active: color-mix(
+  in srgb,
+  $fui-color-danger-text 14%,
+  $fui-color-danger-tint
+) !default;
+$fui-color-success-tint-active: color-mix(
+  in srgb,
+  $fui-color-success-text 14%,
+  $fui-color-success-tint
+) !default;
+$fui-color-warning-tint-active: color-mix(
+  in srgb,
+  $fui-color-warning-text 14%,
+  $fui-color-warning-tint
+) !default;
+$fui-color-info-tint-active: color-mix(
+  in srgb,
+  $fui-color-info-text 14%,
+  $fui-color-info-tint
+) !default;
+
+$fui-color-accent-wash-active: color-mix(
+  in srgb,
+  $fui-color-accent-text 8%,
+  $fui-color-accent-wash
+) !default;
+$fui-color-danger-wash-active: color-mix(
+  in srgb,
+  $fui-color-danger-text 8%,
+  $fui-color-danger-wash
+) !default;
+$fui-color-success-wash-active: color-mix(
+  in srgb,
+  $fui-color-success-text 8%,
+  $fui-color-success-wash
+) !default;
+$fui-color-warning-wash-active: color-mix(
+  in srgb,
+  $fui-color-warning-text 8%,
+  $fui-color-warning-wash
+) !default;
+$fui-color-info-wash-active: color-mix(
+  in srgb,
+  $fui-color-info-text 8%,
+  $fui-color-info-wash
+) !default;
 
 // Surface colors (derived from $fui-neutral palette)
 $fui-bg-primary: computed.$computed-bg-primary !default;
@@ -272,6 +410,8 @@ $fui-bg-elevated: computed.$computed-bg-elevated !default;
 $fui-bg-subtle: computed.$computed-bg-subtle !default;
 $fui-bg-hover: computed.$computed-bg-hover !default;
 $fui-bg-active: computed.$computed-bg-active !default;
+// Persistent selection (nav, segmented controls, rows) — one step under active.
+$fui-control-selected-bg: computed.$computed-bg-selected !default;
 // The document canvas is the derived "paper" tone in light mode (carbon 100).
 // Body and main stay on that shared plane; raised component roles provide the
 // contrast instead of consumer-specific page overrides.
@@ -349,6 +489,7 @@ $fui-dark-bg-elevated: computed.$computed-dark-bg-elevated !default;
 $fui-dark-bg-subtle: computed.$computed-dark-bg-subtle !default;
 $fui-dark-bg-hover: computed.$computed-dark-bg-hover !default;
 $fui-dark-bg-active: computed.$computed-dark-bg-active !default;
+$fui-dark-control-selected-bg: computed.$computed-dark-bg-selected !default;
 $fui-dark-body-bg: computed.$computed-dark-body-bg !default;
 $fui-dark-main-bg: computed.$computed-dark-main-bg !default;
 
@@ -371,13 +512,20 @@ $fui-dark-shadow-sm: computed.$computed-dark-shadow-sm !default;
 $fui-dark-shadow-md: computed.$computed-dark-shadow-md !default;
 $fui-dark-shadow-lg: computed.$computed-dark-shadow-lg !default;
 
-// Semantic backgrounds (dark) - increased opacity for visibility
-$fui-dark-color-danger-bg: computed.$computed-dark-color-danger-bg !default;
-$fui-dark-color-success-bg: computed.$computed-dark-color-success-bg !default;
-$fui-dark-color-warning-bg: computed.$computed-dark-color-warning-bg !default;
-$fui-dark-color-info-bg: computed.$computed-dark-color-info-bg !default;
+// Tone ramp (dark)
+$fui-dark-color-accent-tint: computed.$computed-dark-color-accent-tint !default;
+$fui-dark-color-danger-tint: computed.$computed-dark-color-danger-tint !default;
+$fui-dark-color-success-tint: computed.$computed-dark-color-success-tint !default;
+$fui-dark-color-warning-tint: computed.$computed-dark-color-warning-tint !default;
+$fui-dark-color-info-tint: computed.$computed-dark-color-info-tint !default;
+$fui-dark-color-accent-wash: computed.$computed-dark-color-accent-wash !default;
+$fui-dark-color-danger-wash: computed.$computed-dark-color-danger-wash !default;
+$fui-dark-color-success-wash: computed.$computed-dark-color-success-wash !default;
+$fui-dark-color-warning-wash: computed.$computed-dark-color-warning-wash !default;
+$fui-dark-color-info-wash: computed.$computed-dark-color-info-wash !default;
 
 // Semantic text colors (dark, WCAG AA contrast-safe)
+$fui-dark-color-accent-text: computed.$computed-dark-color-accent-text !default;
 $fui-dark-color-danger-text: computed.$computed-dark-color-danger-text !default;
 $fui-dark-color-success-text: computed.$computed-dark-color-success-text !default;
 $fui-dark-color-warning-text: computed.$computed-dark-color-warning-text !default;
@@ -536,6 +684,7 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
 
     // Base configuration
     font-size: #{$fui-base-font-size};
+    --fui-base-font-size: #{$fui-base-font-size};
     --fui-base-unit: #{$fui-base-unit};
     @include measurements.emit-fixed-custom-properties;
 
@@ -654,60 +803,60 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-color-warning: #{$fui-color-warning};
     --fui-color-info: #{$fui-color-info};
 
-    // Colors — Semantic Status Recipe
-    // Inspired by compact status pills: dark mode uses a deep tinted fill with
-    // bright semantic text; light mode keeps the same hue recipe on a pale fill.
-    --fui-color-danger-bg: light-dark(
-      color-mix(in srgb, var(--fui-color-danger) 12%, white),
-      color-mix(in srgb, var(--fui-color-danger) 24%, black)
-    );
-    --fui-color-success-bg: light-dark(
-      color-mix(in srgb, var(--fui-color-success) 12%, white),
-      color-mix(in srgb, var(--fui-color-success) 24%, black)
-    );
-    --fui-color-warning-bg: light-dark(
-      color-mix(in srgb, var(--fui-color-warning) 12%, white),
-      color-mix(in srgb, var(--fui-color-warning) 24%, black)
-    );
-    --fui-color-info-bg: light-dark(
-      color-mix(in srgb, var(--fui-color-info) 12%, white),
-      color-mix(in srgb, var(--fui-color-info) 24%, black)
-    );
-
-    --fui-color-danger-text: light-dark(
-      color-mix(in srgb, var(--fui-color-danger) 72%, black),
-      color-mix(in srgb, var(--fui-color-danger) 78%, white 22%)
-    );
-    --fui-color-success-text: light-dark(
-      color-mix(in srgb, var(--fui-color-success) 72%, black),
-      color-mix(in srgb, var(--fui-color-success) 78%, white 22%)
-    );
-    --fui-color-warning-text: light-dark(
-      color-mix(in srgb, var(--fui-color-warning) 72%, black),
-      color-mix(in srgb, var(--fui-color-warning) 78%, white 22%)
-    );
-    --fui-color-info-text: light-dark(
-      color-mix(in srgb, var(--fui-color-info) 72%, black),
-      color-mix(in srgb, var(--fui-color-info) 78%, white 22%)
-    );
-
-    // Colors — Semantic Borders
-    --fui-color-danger-border: light-dark(
-      color-mix(in srgb, var(--fui-color-danger) 32%, transparent),
-      color-mix(in srgb, var(--fui-color-danger-text) 30%, transparent)
-    );
-    --fui-color-success-border: light-dark(
-      color-mix(in srgb, var(--fui-color-success) 32%, transparent),
-      color-mix(in srgb, var(--fui-color-success-text) 28%, transparent)
-    );
-    --fui-color-warning-border: light-dark(
-      color-mix(in srgb, var(--fui-color-warning) 32%, transparent),
-      color-mix(in srgb, var(--fui-color-warning-text) 28%, transparent)
-    );
-    --fui-color-info-border: light-dark(
-      color-mix(in srgb, var(--fui-color-info) 32%, transparent),
-      color-mix(in srgb, var(--fui-color-info-text) 30%, transparent)
-    );
+    // Colors — Tone ramp. Accent and the four semantic tones share one
+    // derivation; every surface is the seed (or its ink) at an alpha so it
+    // composes on the page, a band, a card or a menu alike.
+    @each $tone in (accent, danger, success, warning, info) {
+      --fui-color-#{$tone}-tint: light-dark(
+        color-mix(in srgb, var(--fui-color-#{$tone}) 18%, transparent),
+        color-mix(in srgb, var(--fui-color-#{$tone}) 26%, transparent)
+      );
+      --fui-color-#{$tone}-wash: light-dark(
+        color-mix(in srgb, var(--fui-color-#{$tone}) 10%, transparent),
+        color-mix(in srgb, var(--fui-color-#{$tone}) 16%, transparent)
+      );
+      --fui-color-#{$tone}-text: light-dark(
+        color-mix(in srgb, var(--fui-color-#{$tone}) 72%, black),
+        color-mix(in srgb, var(--fui-color-#{$tone}) 78%, white 22%)
+      );
+      --fui-color-#{$tone}-border: color-mix(
+        in srgb,
+        var(--fui-color-#{$tone}-text) 40%,
+        transparent
+      );
+      --fui-color-#{$tone}-fill-hover: color-mix(
+        in srgb,
+        var(--fui-color-#{$tone}) 88%,
+        var(--fui-color-#{$tone}-text)
+      );
+      --fui-color-#{$tone}-fill-active: color-mix(
+        in srgb,
+        var(--fui-color-#{$tone}) 80%,
+        var(--fui-color-#{$tone}-text)
+      );
+      --fui-color-#{$tone}-tint-hover: color-mix(
+        in srgb,
+        var(--fui-color-#{$tone}-text) 8%,
+        var(--fui-color-#{$tone}-tint)
+      );
+      --fui-color-#{$tone}-tint-active: color-mix(
+        in srgb,
+        var(--fui-color-#{$tone}-text) 14%,
+        var(--fui-color-#{$tone}-tint)
+      );
+      --fui-color-#{$tone}-wash-active: color-mix(
+        in srgb,
+        var(--fui-color-#{$tone}-text) 8%,
+        var(--fui-color-#{$tone}-wash)
+      );
+    }
+    // Ink on the solid seed is picked by contrast at build time (white or
+    // paper ink); accent keeps its own on-accent contract.
+    --fui-color-accent-on-fill: var(--fui-color-on-accent);
+    --fui-color-danger-on-fill: #{$fui-color-danger-on-fill};
+    --fui-color-success-on-fill: #{$fui-color-success-on-fill};
+    --fui-color-warning-on-fill: #{$fui-color-warning-on-fill};
+    --fui-color-info-on-fill: #{$fui-color-info-on-fill};
 
     // Backdrop
     --fui-backdrop: light-dark(#{$fui-backdrop}, #{$fui-dark-backdrop});
@@ -718,8 +867,17 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-bg-tertiary: light-dark(#{$fui-bg-tertiary}, #{$fui-dark-bg-tertiary});
     --fui-bg-elevated: light-dark(#{$fui-bg-elevated}, #{$fui-dark-bg-elevated});
     --fui-bg-subtle: light-dark(#{$fui-bg-subtle}, #{$fui-dark-bg-subtle});
-    --fui-bg-hover: light-dark(#{$fui-bg-hover}, #{$fui-dark-bg-hover});
-    --fui-bg-active: light-dark(#{$fui-bg-active}, #{$fui-dark-bg-active});
+    // Interaction ladder: the ink at an alpha, so hover / pressed / selected
+    // read as the same steps on the page, the band and an elevated menu. Dark
+    // runs two points stronger. hover 7 < selected 12 < pressed 14 < selected+hover 16.
+    --fui-bg-hover: light-dark(
+      color-mix(in srgb, var(--fui-text-primary) 7%, transparent),
+      color-mix(in srgb, var(--fui-text-primary) 9%, transparent)
+    );
+    --fui-bg-active: light-dark(
+      color-mix(in srgb, var(--fui-text-primary) 14%, transparent),
+      color-mix(in srgb, var(--fui-text-primary) 16%, transparent)
+    );
     --fui-body-bg: light-dark(#{$fui-body-bg}, #{$fui-dark-body-bg});
     --fui-main-bg: light-dark(#{$fui-main-bg}, #{$fui-dark-main-bg});
     --fui-bg-inverse: light-dark(#{$fui-bg-inverse}, #{$fui-dark-bg-inverse});
@@ -755,7 +913,10 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     // and rows. Keep this separate from --fui-bg-active: active is the brief
     // pointer-down state; selected must remain visible without dominating its
     // surrounding surface.
-    --fui-control-selected-bg: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
+    --fui-control-selected-bg: light-dark(
+      color-mix(in srgb, var(--fui-text-primary) 12%, transparent),
+      color-mix(in srgb, var(--fui-text-primary) 14%, transparent)
+    );
     --fui-control-selected-border: #{$fui-control-selected-border};
 
     // Checked/value controls carry product meaning, so they follow the accent
@@ -770,7 +931,10 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     // Field shells take their edge and ground from --fui-border / --fui-bg-primary
     // through the field recipe; only selection chrome needs its own hooks.
     --fui-field-selection-bg: var(--fui-control-selected-bg);
-    --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-text-primary) 11%, transparent);
+    --fui-field-selection-bg-hover: light-dark(
+      color-mix(in srgb, var(--fui-text-primary) 16%, transparent),
+      color-mix(in srgb, var(--fui-text-primary) 18%, transparent)
+    );
     --fui-field-selection-border: var(--fui-border-strong);
     --fui-field-selection-color: var(--fui-text-primary);
     --fui-form-group-bg: color-mix(in srgb, var(--fui-bg-secondary) 48%, var(--fui-bg-primary));
@@ -888,12 +1052,6 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-card-accent-bg: var(--fui-bg-tertiary);
     --fui-card-accent-border: color-mix(in srgb, var(--fui-color-accent) 30%, var(--fui-border));
     --fui-card-accent-radius: #{$fui-card-accent-radius};
-
-    // Popup/menu active-item highlight — neutral, deliberately stronger than
-    // --fui-bg-hover (which is tuned for subtle surface hovers and reads as ~invisible
-    // on menu items, esp. in dark mode). Shared by every popup-list surface. Accent is
-    // reserved for the *selected* item (see --fui-field-selection-*), not hover.
-    --fui-bg-highlight: color-mix(in srgb, var(--fui-text-primary) 7%, transparent);
 
     // Product shell and navigation chrome. These stay neutral-first so a
     // dashboard page reads as one system instead of brand-tinted islands.
@@ -1088,42 +1246,13 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
         #{$_rt-dark-accent-active}
       );
 
-      // Semantic hover derived from seed
+      // Semantic seeds drive the seed tokens; the ramp above mixes from them,
+      // so a runtime seed change re-derives every tint, wash, text and border.
+      --fui-color-danger: var(--fui-seed-danger);
+      --fui-color-success: var(--fui-seed-success);
+      --fui-color-warning: var(--fui-seed-warning);
+      --fui-color-info: var(--fui-seed-info);
       --fui-color-danger-hover: oklch(from var(--fui-seed-danger) max(0.05, calc(l - 0.06)) c h);
-
-      // Semantic status recipe, matching the static token block above.
-      --fui-color-danger-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-danger) 12%, white),
-        color-mix(in oklch, var(--fui-seed-danger) 24%, black)
-      );
-      --fui-color-success-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-success) 12%, white),
-        color-mix(in oklch, var(--fui-seed-success) 24%, black)
-      );
-      --fui-color-warning-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-warning) 12%, white),
-        color-mix(in oklch, var(--fui-seed-warning) 24%, black)
-      );
-      --fui-color-info-bg: light-dark(
-        color-mix(in oklch, var(--fui-seed-info) 12%, white),
-        color-mix(in oklch, var(--fui-seed-info) 24%, black)
-      );
-      --fui-color-danger-text: light-dark(
-        color-mix(in oklch, var(--fui-seed-danger) 72%, black),
-        color-mix(in oklch, var(--fui-seed-danger) 78%, white 22%)
-      );
-      --fui-color-success-text: light-dark(
-        color-mix(in oklch, var(--fui-seed-success) 72%, black),
-        color-mix(in oklch, var(--fui-seed-success) 78%, white 22%)
-      );
-      --fui-color-warning-text: light-dark(
-        color-mix(in oklch, var(--fui-seed-warning) 72%, black),
-        color-mix(in oklch, var(--fui-seed-warning) 78%, white 22%)
-      );
-      --fui-color-info-text: light-dark(
-        color-mix(in oklch, var(--fui-seed-info) 72%, black),
-        color-mix(in oklch, var(--fui-seed-info) 78%, white 22%)
-      );
 
       // Focus ring follows the resolved accent so dark brands are lifted on
       // dark surfaces instead of disappearing into the field chrome.
@@ -1142,14 +1271,6 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
       );
       --fui-color-accent-hover: #{$_rt-dark-accent-hover};
       --fui-color-accent-active: #{$_rt-dark-accent-active};
-      --fui-color-danger-bg: color-mix(in oklch, var(--fui-seed-danger) 24%, black);
-      --fui-color-success-bg: color-mix(in oklch, var(--fui-seed-success) 24%, black);
-      --fui-color-warning-bg: color-mix(in oklch, var(--fui-seed-warning) 24%, black);
-      --fui-color-info-bg: color-mix(in oklch, var(--fui-seed-info) 24%, black);
-      --fui-color-danger-text: color-mix(in oklch, var(--fui-seed-danger) 78%, white 22%);
-      --fui-color-success-text: color-mix(in oklch, var(--fui-seed-success) 78%, white 22%);
-      --fui-color-warning-text: color-mix(in oklch, var(--fui-seed-warning) 78%, white 22%);
-      --fui-color-info-text: color-mix(in oklch, var(--fui-seed-info) 78%, white 22%);
       --fui-focus-ring-color: var(--fui-color-accent);
     }
   }
@@ -1158,12 +1279,6 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   @media (prefers-contrast: more) {
     :root {
       @include _fui-high-contrast-tokens;
-    }
-
-    :root[data-theme="dark"],
-    :root.dark {
-      --fui-bg-hover: rgba(255, 255, 255, 0.15);
-      --fui-bg-active: rgba(255, 255, 255, 0.22);
     }
   }
 
@@ -1214,9 +1329,9 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   --fui-border: var(--fui-text-primary);
   --fui-border-strong: var(--fui-text-primary);
 
-  // Ensure minimum contrast on interactive elements
-  --fui-bg-hover: rgba(0, 0, 0, 0.12);
-  --fui-bg-active: rgba(0, 0, 0, 0.18);
+  // Ensure minimum contrast on interactive elements (ink alpha works in both themes)
+  --fui-bg-hover: color-mix(in srgb, var(--fui-text-primary) 18%, transparent);
+  --fui-bg-active: color-mix(in srgb, var(--fui-text-primary) 26%, transparent);
   --fui-field-selection-border: var(--fui-color-accent);
   --fui-form-group-border: var(--fui-text-primary);
   --fui-sidebar-item-active-border: var(--fui-text-primary);
@@ -1237,10 +1352,10 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   --fui-bg-tertiary: #{$fui-dark-bg-tertiary};
   --fui-bg-elevated: #{$fui-dark-bg-elevated};
   --fui-bg-subtle: #{$fui-dark-bg-subtle};
-  --fui-bg-hover: #{$fui-dark-bg-hover};
-  --fui-bg-active: #{$fui-dark-bg-active};
-  // Menu highlight runs a touch stronger in dark so it clears the low-contrast floor.
-  --fui-bg-highlight: color-mix(in srgb, var(--fui-text-primary) 10%, transparent);
+  --fui-bg-hover: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
+  --fui-bg-active: color-mix(in srgb, var(--fui-text-primary) 16%, transparent);
+  --fui-control-selected-bg: color-mix(in srgb, var(--fui-text-primary) 14%, transparent);
+  --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-text-primary) 18%, transparent);
   --fui-body-bg: #{$fui-dark-body-bg};
   --fui-main-bg: #{$fui-dark-main-bg};
   --fui-app-main-bg: var(--fui-main-bg);
@@ -1267,21 +1382,11 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   --fui-shadow-lg: #{$fui-dark-shadow-lg};
 
   // Semantic status recipe
-  --fui-color-danger-bg: color-mix(in srgb, var(--fui-color-danger) 24%, black);
-  --fui-color-success-bg: color-mix(in srgb, var(--fui-color-success) 24%, black);
-  --fui-color-warning-bg: color-mix(in srgb, var(--fui-color-warning) 24%, black);
-  --fui-color-info-bg: color-mix(in srgb, var(--fui-color-info) 24%, black);
-
-  --fui-color-danger-text: color-mix(in srgb, var(--fui-color-danger) 78%, white 22%);
-  --fui-color-success-text: color-mix(in srgb, var(--fui-color-success) 78%, white 22%);
-  --fui-color-warning-text: color-mix(in srgb, var(--fui-color-warning) 78%, white 22%);
-  --fui-color-info-text: color-mix(in srgb, var(--fui-color-info) 78%, white 22%);
-
-  // Semantic borders
-  --fui-color-danger-border: color-mix(in srgb, var(--fui-color-danger-text) 30%, transparent);
-  --fui-color-success-border: color-mix(in srgb, var(--fui-color-success-text) 28%, transparent);
-  --fui-color-warning-border: color-mix(in srgb, var(--fui-color-warning-text) 28%, transparent);
-  --fui-color-info-border: color-mix(in srgb, var(--fui-color-info-text) 30%, transparent);
+  @each $tone in (accent, danger, success, warning, info) {
+    --fui-color-#{$tone}-tint: color-mix(in srgb, var(--fui-color-#{$tone}) 26%, transparent);
+    --fui-color-#{$tone}-wash: color-mix(in srgb, var(--fui-color-#{$tone}) 16%, transparent);
+    --fui-color-#{$tone}-text: color-mix(in srgb, var(--fui-color-#{$tone}) 78%, white 22%);
+  }
 
   // Focus & backdrop
   --fui-focus-ring-color: #{$fui-dark-focus-ring-color};

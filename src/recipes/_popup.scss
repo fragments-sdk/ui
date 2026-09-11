@@ -83,7 +83,7 @@ $_viewport-rows: 4.5;
 @mixin selected-state {
   background: var(
     --fui-field-selection-bg,
-    var(--fui-control-selected-bg, #{tokens.$fui-bg-active})
+    var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg})
   );
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }

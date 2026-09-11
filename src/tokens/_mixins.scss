@@ -79,7 +79,7 @@
 // items, Prompt mode buttons. One surface, one hairline, one ink.
 @mixin segmented-selection {
   color: var(--fui-text-primary, #{$fui-text-primary});
-  background-color: var(--fui-control-selected-bg, #{$fui-bg-active});
+  background-color: var(--fui-control-selected-bg, #{$fui-control-selected-bg});
   box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
     var(--fui-control-selected-border, #{$fui-control-selected-border});
 }

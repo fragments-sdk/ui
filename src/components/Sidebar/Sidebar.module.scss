@@ -26,7 +26,7 @@ $_active-rail: navigation.active-rail();
   --fui-sidebar-hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
   --fui-sidebar-active-bg: var(
     --fui-sidebar-item-active-bg,
-    var(--fui-bg-active, #{$fui-bg-active})
+    var(--fui-control-selected-bg, #{$fui-control-selected-bg})
   );
   --fui-sidebar-active-border: var(--fui-sidebar-item-active-border, transparent);
 

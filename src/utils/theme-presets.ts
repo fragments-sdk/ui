@@ -20,7 +20,8 @@ import {
   deriveBorders,
   deriveShadows,
   deriveSemanticText,
-  deriveSemanticBg,
+  deriveSemanticTint,
+  deriveSemanticWash,
   deriveSemanticHover,
 } from "./seed-derivation";
 
@@ -41,10 +42,14 @@ interface ThemeColors {
   successText?: string;
   warningText?: string;
   infoText?: string;
-  dangerBg?: string;
-  successBg?: string;
-  warningBg?: string;
-  infoBg?: string;
+  dangerTint?: string;
+  successTint?: string;
+  warningTint?: string;
+  infoTint?: string;
+  dangerWash?: string;
+  successWash?: string;
+  warningWash?: string;
+  infoWash?: string;
 }
 
 interface ThemeSurfaces {
@@ -92,10 +97,14 @@ interface ThemeDarkMode {
   successText?: string;
   warningText?: string;
   infoText?: string;
-  dangerBg?: string;
-  successBg?: string;
-  warningBg?: string;
-  infoBg?: string;
+  dangerTint?: string;
+  successTint?: string;
+  warningTint?: string;
+  infoTint?: string;
+  dangerWash?: string;
+  successWash?: string;
+  warningWash?: string;
+  infoWash?: string;
   backdrop?: string;
 }
 
@@ -173,10 +182,14 @@ export function seedsToTheme(seeds: SeedConfig): ThemeConfig {
       successText,
       warningText,
       infoText,
-      dangerBg: deriveSemanticBg(danger, false),
-      successBg: deriveSemanticBg(success, false),
-      warningBg: deriveSemanticBg(warning, false),
-      infoBg: deriveSemanticBg(info, false),
+      dangerTint: deriveSemanticTint(danger, false),
+      successTint: deriveSemanticTint(success, false),
+      warningTint: deriveSemanticTint(warning, false),
+      infoTint: deriveSemanticTint(info, false),
+      dangerWash: deriveSemanticWash(danger, false),
+      successWash: deriveSemanticWash(success, false),
+      warningWash: deriveSemanticWash(warning, false),
+      infoWash: deriveSemanticWash(info, false),
     },
     surfaces: {
       bgPrimary: lightSurfaces.primary,
@@ -236,10 +249,14 @@ export function seedsToTheme(seeds: SeedConfig): ThemeConfig {
         sm: darkShadows.sm,
         md: darkShadows.md,
       },
-      dangerBg: deriveSemanticBg(danger, true),
-      successBg: deriveSemanticBg(success, true),
-      warningBg: deriveSemanticBg(warning, true),
-      infoBg: deriveSemanticBg(info, true),
+      dangerTint: deriveSemanticTint(danger, true),
+      successTint: deriveSemanticTint(success, true),
+      warningTint: deriveSemanticTint(warning, true),
+      infoTint: deriveSemanticTint(info, true),
+      dangerWash: deriveSemanticWash(danger, true),
+      successWash: deriveSemanticWash(success, true),
+      warningWash: deriveSemanticWash(warning, true),
+      infoWash: deriveSemanticWash(info, true),
       backdrop: "rgba(0, 0, 0, 0.8)",
     },
   };

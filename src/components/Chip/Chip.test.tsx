@@ -68,9 +68,33 @@ describe("Chip", () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it("defaults to the solid variant", () => {
+  it("defaults to the soft variant on the neutral tone", () => {
     render(<Chip>Plain</Chip>);
-    expect(screen.getByRole("button", { name: "Plain" })).toHaveClass("solid");
+    const chip = screen.getByRole("button", { name: "Plain" });
+    expect(chip).toHaveClass("soft");
+    expect(chip).not.toHaveClass("solid");
+  });
+
+  it("publishes the shared tone ramp per tone and variant", () => {
+    render(
+      <>
+        <Chip tone="danger">Held</Chip>
+        <Chip tone="success" variant="outline">
+          Passing
+        </Chip>
+        <Chip tone="warning" onRemove={() => {}}>
+          Lapsed
+        </Chip>
+      </>
+    );
+    expect(screen.getByRole("button", { name: "Held" })).toHaveClass("toneDanger", "soft");
+    expect(screen.getByRole("button", { name: "Passing" })).toHaveClass("toneSuccess", "outline");
+    expect(screen.getByRole("button", { name: "Lapsed" }).parentElement).toHaveAttribute(
+      "data-tone",
+      "warning"
+    );
+    expect(chipStyles).toContain('@include tone.channels("danger")');
+    expect(chipStyles).not.toContain(".solid");
   });
 
   it("Chip.Group supports non-string chip children without value collisions", async () => {

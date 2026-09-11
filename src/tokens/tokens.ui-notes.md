@@ -1,5 +1,12 @@
 # Token layer — UI notes
 
+## 2026-09-08 — tone ramp + interaction ladder
+
+- **Semantic `-bg` tokens are deleted.** Each tone (`accent`, `danger`, `success`, `warning`, `info`) now emits `-tint` (18% light / 26% dark), `-wash` (10% / 16%), `-text`, `-border` (ink 40%), `-fill-hover`, `-fill-active`, `-tint-hover`, `-tint-active`, `-wash-active` and `-on-fill` (contrast-picked at build time; accent aliases `--fui-color-on-accent`). Runtime derives from the seed with `color-mix`, so a consumer who sets `--fui-color-danger` gets the whole ramp. SCSS twins live in `_variables.scss` from `derive-semantic-tint/-wash` and `derive-on-fill`.
+- **One recipe.** `recipes/_tone.scss` publishes the ramp as `--_fui-tone-*` channels; Badge, Chip, Button, Alert, Toast include it. Card, Message, CodeBlock, Checkbox and Menu read `-wash`/`-tint` directly.
+- **Interaction ladder is ink alpha in both themes.** `--fui-bg-hover` 7% / 9%, `--fui-control-selected-bg` 12% / 14%, `--fui-bg-active` 14% / 16%, `--fui-field-selection-bg-hover` 16% / 18% of `--fui-text-primary`; high contrast 18% / 26%. Dark hover was an opaque `#2a2723` that vanished on elevated surfaces. `$fui-control-selected-bg` is a real Sass token (derived `selected` surface) and every selected fallback reads it. `--fui-bg-highlight` is deleted.
+- **Undo** — revert the `derive-*` functions in `_derive.scss` and the `@each $tone` emission loop in `_variables.scss`; the recipe would then need per-component mixins again.
+
 The library's default theme is **warm paper & coral** (2026-08-21): a single
 `paper` neutral ramp (one light theme, one dark theme — all alternative
 palettes deleted), coral `#f56138` accent, ink primary actions. Fonts are
@@ -168,3 +175,4 @@ and `--fui-form-group-*` stay: Editor and listbox rows read them.
 ## 2026-09-04 — overlay layer scale gains toast (UIR-D40)
 
 - `--fui-overlay-layer-toast` (55) added between anchored (52) and tooltip (60); Toast read `2 × --fui-header-z-index` before, which was outside the layer scale.
+- **What was browser-verified** — Storybook, light + dark, headless Chromium: Button matrix (solid on-fill: white on info/success/danger, ink on warning), Badge status, Chip tones (soft + outline) and Alert warning/danger all paint the same tint/wash/ink per tone; computed ladder `--fui-bg-hover` 7% / 9%, `--fui-control-selected-bg` 12% / 14%, `--fui-bg-active` 14% / 16% of the ink on both Menu and Sidebar.

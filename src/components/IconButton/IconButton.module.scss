@@ -95,6 +95,6 @@
 
 // Pressed is a persistent toggle selection, not the pointer-down state.
 .pressed {
-  background-color: var(--fui-control-selected-bg, $fui-bg-active);
+  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
   color: var(--fui-text-primary, $fui-text-primary);
 }

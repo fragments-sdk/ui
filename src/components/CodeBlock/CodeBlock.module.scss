@@ -28,8 +28,7 @@
   overflow: hidden;
   // A hairline keeps the block legible on any ground: the light code surface
   // and the sunken app main share the same tone, so fill alone can vanish.
-  border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
-    var(--fui-border, $fui-border);
+  border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
   border-radius: var(--fui-radius-lg, $fui-radius-lg);
   background-color: var(--fui-code-bg, $fui-code-bg);
   color: var(--fui-code-text, var(--fui-text-primary, #{$fui-text-primary}));
@@ -114,7 +113,8 @@
   .codeContainer :global(.shiki),
   .loading pre {
     padding-inline-end: calc(
-      var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})) + #{action.track("sm")} + var(--fui-raw-space-12, #{measurements.raw-space(12)})
+      var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})) +
+        #{action.track("sm")} + var(--fui-raw-space-12, #{measurements.raw-space(12)})
     );
   }
 }
@@ -152,8 +152,13 @@
     min-block-size: typography.line-height("code");
 
     &:global(.highlighted) {
-      margin-inline: calc(-1 * var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})));
-      padding-inline: var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+      margin-inline: calc(
+        -1 * var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)}))
+      );
+      padding-inline: var(
+        --_fui-code-inline-inset,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      );
       border-inline-start: var(--fui-stroke-default, $fui-stroke-default) solid
         var(--fui-color-info-text, $fui-color-info-text);
       background-color: var(--fui-bg-hover, $fui-bg-hover);
@@ -200,12 +205,17 @@
 
   :global(.diff-added),
   :global(.diff-removed) {
-    margin-inline: calc(-1 * var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)})));
-    padding-inline: var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+    margin-inline: calc(
+      -1 * var(--_fui-code-inline-inset, var(--fui-raw-space-16, #{measurements.raw-space(16)}))
+    );
+    padding-inline: var(
+      --_fui-code-inline-inset,
+      var(--fui-raw-space-16, #{measurements.raw-space(16)})
+    );
   }
 
   :global(.diff-added) {
-    background-color: var(--fui-color-success-bg, $fui-color-success-bg);
+    background-color: var(--fui-color-success-wash, $fui-color-success-wash);
 
     :global(.diff-marker) {
       color: var(--fui-color-success-text, $fui-color-success-text);
@@ -213,7 +223,7 @@
   }
 
   :global(.diff-removed) {
-    background-color: var(--fui-color-danger-bg, $fui-color-danger-bg);
+    background-color: var(--fui-color-danger-wash, $fui-color-danger-wash);
 
     :global(.diff-marker) {
       color: var(--fui-color-danger-text, $fui-color-danger-text);

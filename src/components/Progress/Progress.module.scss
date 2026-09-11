@@ -76,15 +76,15 @@
 }
 
 .indicatorSuccess {
-  background-color: var(--fui-color-success-text, $fui-color-success-text);
+  background-color: var(--fui-color-success, $fui-color-success);
 }
 
 .indicatorWarning {
-  background-color: var(--fui-color-warning-text, $fui-color-warning-text);
+  background-color: var(--fui-color-warning, $fui-color-warning);
 }
 
 .indicatorDanger {
-  background-color: var(--fui-color-danger-text, $fui-color-danger-text);
+  background-color: var(--fui-color-danger, $fui-color-danger);
 }
 
 // Indeterminate animation
@@ -140,15 +140,15 @@
 }
 
 .circularIndicatorSuccess {
-  stroke: var(--fui-color-success-text, $fui-color-success-text);
+  stroke: var(--fui-color-success, $fui-color-success);
 }
 
 .circularIndicatorWarning {
-  stroke: var(--fui-color-warning-text, $fui-color-warning-text);
+  stroke: var(--fui-color-warning, $fui-color-warning);
 }
 
 .circularIndicatorDanger {
-  stroke: var(--fui-color-danger-text, $fui-color-danger-text);
+  stroke: var(--fui-color-danger, $fui-color-danger);
 }
 
 .circularIndicatorIndeterminate {
@@ -158,14 +158,23 @@
 
 @keyframes circularIndeterminate {
   0% {
-    stroke-dashoffset: var(--fui-progress-dash-full, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
+    stroke-dashoffset: var(
+      --fui-progress-dash-full,
+      var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    );
     transform: rotate(0deg);
   }
   50% {
-    stroke-dashoffset: var(--fui-progress-dash-quarter, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
+    stroke-dashoffset: var(
+      --fui-progress-dash-quarter,
+      var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    );
   }
   100% {
-    stroke-dashoffset: var(--fui-progress-dash-full, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
+    stroke-dashoffset: var(
+      --fui-progress-dash-full,
+      var(--fui-raw-space-0, #{measurements.raw-space(0)})
+    );
     transform: rotate(360deg);
   }
 }

@@ -103,21 +103,21 @@
   .toneAccent {
     @include _capsule(
       var(--fui-card-accent-border, #{$fui-card-accent-border}),
-      color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 13%, transparent)
+      var(--fui-color-accent-wash, #{$fui-color-accent-wash})
     );
   }
 
   .toneDanger {
     @include _capsule(
       var(--fui-color-danger-border, #{$fui-color-danger-border}),
-      var(--fui-color-danger-bg, #{$fui-color-danger-bg})
+      var(--fui-color-danger-wash, #{$fui-color-danger-wash})
     );
   }
 
   .toneWarning {
     @include _capsule(
       var(--fui-color-warning-border, #{$fui-color-warning-border}),
-      var(--fui-color-warning-bg, #{$fui-color-warning-bg})
+      var(--fui-color-warning-wash, #{$fui-color-warning-wash})
     );
   }
 

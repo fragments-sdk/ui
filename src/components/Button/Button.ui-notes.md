@@ -52,3 +52,10 @@ Unverified
 Candidates
 
 - Icon stroke weight: `Icon` forwards no `strokeWidth`, so Lucide's 2px sits beside 400-weight body text in every button label. Rule says 1.5px beside 400 and 2px beside 500–600. Class-level fix belongs in `Icon`, not here.
+
+## 2026-09-08 — one tone ramp, one recipe
+
+- **What changed** — the per-component tone mixins are gone. `recipes/_tone.scss` publishes the shared ramp as channels (`--_fui-tone-fill/-fill-hover/-fill-active/-on-fill/-tint/-tint-hover/-tint-active/-wash/-wash-active/-ink/-line`) from the `--fui-color-<tone>-*` tokens; `channels("<tone>")` on each `.tone*` class, `channels-neutral()` on the root. Variants only read channels, so a tone looks the same in Badge, Chip and Button.
+- **Ramp** — `-tint` (18% light / 26% dark of the seed) is the compact soft surface; `-wash` (10% / 16%) is the panel surface; `-text` is the contrast-derived ink; `-border` is ink at 40%; `-fill-hover/-fill-active` mix the seed toward its ink; `-on-fill` is picked by contrast (white or ink) at build time. Accent has the full ramp too (`--fui-color-accent-tint/-wash/-text`), so `tone="accent"` is no longer a one-off.
+- **Button slots** — the `.tone*` classes now include the shared recipe and keep only the button-specific hooks (`--fui-button-neutral-*`, `--fui-button-primary-*`) plus `--_button-fill-line` / `--_button-line-hover`. `--_tone-*` no longer exists; the `-soft` channel is `-tint`, and `-wash` is the ghost/outline hover ground.
+- **Corrections to 2026-09-03 above** — the on-fill ink is no longer "seed 8% into white"; it is `--fui-color-<tone>-on-fill`, contrast-picked per tone (info/success/danger → white, warning → ink) and `--fui-color-on-accent` for accent. The `--fui-color-on-<tone>` candidate is done.

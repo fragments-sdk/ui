@@ -81,16 +81,19 @@
   @include register-color("color-info", $fui-color-info);
 
   // ------------------------------------------
-  // Colors — Semantic Backgrounds
+  // Colors — Tone ramp (tint / wash / text)
   // ------------------------------------------
-  @include register-color("color-danger-bg", $fui-color-danger-bg);
-  @include register-color("color-success-bg", $fui-color-success-bg);
-  @include register-color("color-warning-bg", $fui-color-warning-bg);
-  @include register-color("color-info-bg", $fui-color-info-bg);
-
-  // ------------------------------------------
-  // Colors — Semantic Text
-  // ------------------------------------------
+  @include register-color("color-accent-tint", $fui-color-accent-tint);
+  @include register-color("color-danger-tint", $fui-color-danger-tint);
+  @include register-color("color-success-tint", $fui-color-success-tint);
+  @include register-color("color-warning-tint", $fui-color-warning-tint);
+  @include register-color("color-info-tint", $fui-color-info-tint);
+  @include register-color("color-accent-wash", $fui-color-accent-wash);
+  @include register-color("color-danger-wash", $fui-color-danger-wash);
+  @include register-color("color-success-wash", $fui-color-success-wash);
+  @include register-color("color-warning-wash", $fui-color-warning-wash);
+  @include register-color("color-info-wash", $fui-color-info-wash);
+  @include register-color("color-accent-text", $fui-color-accent-text);
   @include register-color("color-danger-text", $fui-color-danger-text);
   @include register-color("color-success-text", $fui-color-success-text);
   @include register-color("color-warning-text", $fui-color-warning-text);

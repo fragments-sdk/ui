@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import * as sass from "sass";
 
 function readSource(path: string): string {
   return readFileSync(resolve(process.cwd(), "src", path), "utf8");
@@ -38,7 +39,7 @@ const persistentSurfaceCases = [
   [
     "components/NavigationMenu/NavigationMenu.module.scss",
     ".linkActive",
-    "--fui-field-selection-bg",
+    "--fui-control-selected-bg",
   ],
   [
     "components/NavigationMenu/NavigationMenu.module.scss",
@@ -58,6 +59,29 @@ const persistentSurfaceCases = [
 ] as const;
 
 describe("component state surface contract", () => {
+  it("preserves each outline Chip tone through the compiled CSS cascade", () => {
+    const css = sass.compile(resolve(process.cwd(), "src/components/Chip/Chip.module.scss"), {
+      silenceDeprecations: ["if-function"],
+    }).css;
+    for (const tone of ["neutral", "accent", "info", "success", "warning", "danger"]) {
+      const classes = new Set([
+        ".chip",
+        ".outline",
+        `.tone${tone[0].toUpperCase()}${tone.slice(1)}`,
+      ]);
+      let line = "";
+      for (const [, selector, declarations] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        if (!classes.has(selector.trim())) continue;
+        for (const value of declarations.matchAll(/--_fui-tone-line:\s*([^;]+);/g)) {
+          line = value[1];
+        }
+      }
+      expect(line).toContain(
+        tone === "neutral" ? "var(--fui-border," : `var(--fui-color-${tone}-border,`
+      );
+    }
+  });
+
   it.each(persistentSurfaceCases)(
     "%s keeps %s on the persistent-selection role",
     (path, selector, expectedToken) => {
