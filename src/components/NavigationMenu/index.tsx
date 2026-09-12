@@ -43,8 +43,10 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
    * Viewport width where the canonical drawer replaces desktop navigation.
    * `md` preserves the default 768px switch; `lg` lets rail-based shells
    * retire their sidebar and desktop navigation together below 1024px.
+   * `none` never switches: the host owns mobile navigation elsewhere and
+   * hides this menu itself, so no hamburger or drawer is rendered.
    */
-  mobileBreakpoint?: "md" | "lg";
+  mobileBreakpoint?: "md" | "lg" | "none";
 }
 
 export interface NavigationMenuListProps {
@@ -61,6 +63,8 @@ export interface NavigationMenuItemProps {
 
 export interface NavigationMenuTriggerProps {
   children: React.ReactNode;
+  /** The reader is inside this item's section; the trigger wears the current ink. */
+  active?: boolean;
   className?: string;
 }
 
@@ -106,6 +110,13 @@ export interface NavigationMenuIndicatorProps {
 
 export interface NavigationMenuViewportProps {
   className?: string;
+  /**
+   * Where the panel sits. `trigger` (default) opens under the open trigger and
+   * leans towards the roomier side of the window. `list` keeps one place for
+   * every section: centred under the list, so moving between sections only
+   * swaps the content.
+   */
+  anchor?: "trigger" | "list";
 }
 
 export interface NavigationMenuMobileContentProps {
@@ -126,11 +137,11 @@ export interface NavigationMenuMobileSectionProps {
 // Hooks
 // ============================================
 
-function useIsMobile(breakpoint: "md" | "lg") {
+function useIsMobile(breakpoint: "md" | "lg" | "none") {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || breakpoint === "none") return;
 
     const maxWidth = breakpoint === "lg" ? 1023 : 767;
     const mq = window.matchMedia(`(max-width: ${maxWidth}px)`);
@@ -310,7 +321,11 @@ function NavigationMenuItem({ children, value: valueProp, className }: Navigatio
 // Trigger
 // ============================================
 
-function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerProps) {
+function NavigationMenuTrigger({
+  children,
+  active = false,
+  className,
+}: NavigationMenuTriggerProps) {
   const ctx = useNavigationMenuContext();
   const itemCtx = useNavigationMenuItemContext();
   const isOpen = ctx.value === itemCtx.value;
@@ -397,7 +412,9 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
     }
   };
 
-  const classes = [styles.trigger, className].filter(Boolean).join(" ");
+  const classes = [styles.trigger, active && styles.triggerActive, className]
+    .filter(Boolean)
+    .join(" ");
   const chevronOverride = renderNavigationMenuIcon(ctx.icons?.triggerChevron, {
     slot: "triggerChevron",
     open: isOpen,
@@ -414,6 +431,7 @@ function NavigationMenuTrigger({ children, className }: NavigationMenuTriggerPro
       aria-expanded={isOpen}
       aria-controls={itemCtx.contentId}
       data-state={isOpen ? "open" : "closed"}
+      data-active={active || undefined}
       onClick={handleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -457,22 +475,21 @@ function NavigationMenuContent({ children, className }: NavigationMenuContentPro
   React.useEffect(() => {
     if (!isOpen || !contentRef.current) return;
 
+    // Measure what the content needs, not the box it was given: the content
+    // box is 100% of the viewport, and the viewport is sized from this
+    // measurement, so reading contentRect would lock the panel at the width
+    // the viewport happened to have when it opened (the menu minimum) and
+    // clip anything wider — a two-column panel, a grid of cards.
     const el = contentRef.current;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry) {
-        ctx.setViewportSize({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
-        });
-      }
-    });
+    const measure = () => {
+      ctx.setViewportSize({
+        width: el.scrollWidth,
+        height: el.scrollHeight,
+      });
+    };
+    const observer = new ResizeObserver(measure);
     observer.observe(el);
-
-    // Initial measurement
-    ctx.setViewportSize({
-      width: el.scrollWidth,
-      height: el.scrollHeight,
-    });
+    measure();
 
     return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -721,13 +738,21 @@ function NavigationMenuIndicator({ className }: NavigationMenuIndicatorProps) {
 // Viewport
 // ============================================
 
-function NavigationMenuViewport({ className }: NavigationMenuViewportProps) {
+// Panels stop this far short of the window edge when they would overrun it.
+const VIEWPORT_WINDOW_INSET = 8;
+
+function NavigationMenuViewport({ className, anchor = "trigger" }: NavigationMenuViewportProps) {
   const ctx = useNavigationMenuContext();
   const { viewportSize, viewportRef, value, triggerRefs } = ctx;
   const isOpen = !!value;
 
-  // Compute the active trigger's left offset relative to the nav root
-  const [triggerLeft, setTriggerLeft] = React.useState(0);
+  // Where the panel sits, relative to the nav root. Anchored to the trigger,
+  // one in the left half of the window opens its panel rightwards from its
+  // left edge and one in the right half opens leftwards from its right edge,
+  // so the panel leans towards the room the page has. Anchored to the list it
+  // is centred under the list whichever section is open. Either way it stays
+  // inside the window.
+  const [panelLeft, setPanelLeft] = React.useState(0);
 
   React.useEffect(() => {
     if (!isOpen || !value) return;
@@ -739,13 +764,42 @@ function NavigationMenuViewport({ className }: NavigationMenuViewportProps) {
 
     const navRect = navRoot.getBoundingClientRect();
     const triggerRect = trigger.getBoundingClientRect();
-    setTriggerLeft(triggerRect.left - navRect.left);
-  }, [isOpen, value, triggerRefs, viewportRef]);
+    // The size vars are the content's scroll size; the frame's own padding and
+    // border sit outside them.
+    const frame = getComputedStyle(viewportRef.current);
+    const chrome =
+      parseFloat(frame.paddingLeft) +
+      parseFloat(frame.paddingRight) +
+      parseFloat(frame.borderLeftWidth) +
+      parseFloat(frame.borderRightWidth);
+    const width = viewportSize.width + (Number.isFinite(chrome) ? chrome : 0);
+    const windowRight = window.innerWidth - VIEWPORT_WINDOW_INSET;
+    let left: number;
+    if (anchor === "list") {
+      left = navRect.left + (navRect.width - width) / 2;
+    } else {
+      const leansLeft = (triggerRect.left + triggerRect.right) / 2 > window.innerWidth / 2;
+      left = leansLeft ? triggerRect.right - width : triggerRect.left;
+    }
+    left = Math.max(VIEWPORT_WINDOW_INSET, Math.min(left, windowRight - width));
+    setPanelLeft(left - navRect.left);
+  }, [isOpen, value, anchor, viewportSize.width, triggerRefs, viewportRef]);
+
+  // Moving between two open panels morphs the frame (size and place) while
+  // the new content slides in. Opening from closed snaps to size instead:
+  // nothing was there to morph from.
+  const [switching, setSwitching] = React.useState(false);
+  const previousOpenValue = React.useRef("");
+  React.useEffect(() => {
+    const previous = previousOpenValue.current;
+    previousOpenValue.current = value;
+    setSwitching(!!value && !!previous && previous !== value);
+  }, [value]);
 
   const cssVars = {
     "--fui-navmenu-viewport-width": isOpen ? `${viewportSize.width}px` : "0px",
     "--fui-navmenu-viewport-height": isOpen ? `${viewportSize.height}px` : "0px",
-    "--fui-navmenu-viewport-left": `${triggerLeft}px`,
+    "--fui-navmenu-viewport-left": `${panelLeft}px`,
   } as React.CSSProperties;
 
   // Mark skip-delay state
@@ -771,6 +825,7 @@ function NavigationMenuViewport({ className }: NavigationMenuViewportProps) {
       className={classes}
       style={cssVars}
       data-state={isOpen ? "open" : "closed"}
+      data-switching={switching || undefined}
       role="presentation"
     />
   );

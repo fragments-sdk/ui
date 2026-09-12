@@ -16,7 +16,7 @@
     "delayDuration: number (default: 200)",
     "skipDelayDuration: number (default: 300)",
     "icons: object",
-    "mobileBreakpoint: md|lg (default: md)"
+    "mobileBreakpoint: md|lg|none (default: md)"
   ],
   "props": {
     "children": {
@@ -66,10 +66,10 @@
     },
     "mobileBreakpoint": {
       "type": "enum",
-      "description": "Viewport breakpoint below which the mobile drawer replaces desktop navigation",
+      "description": "Viewport breakpoint below which the mobile drawer replaces desktop navigation; none when the host owns mobile navigation elsewhere",
       "default": "md",
       "required": false,
-      "values": ["md", "lg"]
+      "values": ["md", "lg", "none"]
     }
   },
   "usage": {
@@ -159,7 +159,9 @@
       "orientation: horizontal | vertical — layout direction",
       "delayDuration: number — hover open delay (default: 200ms)",
       "icons: { triggerChevron?, mobileMenu?, mobileClose?, drawerClose? } — custom internal control icons",
-      "mobileBreakpoint: md | lg — mobile drawer breakpoint (default: md)",
+      "mobileBreakpoint: md | lg | none — mobile drawer breakpoint, none = host owns mobile nav (default: md)",
+      "NavigationMenu.Trigger active: the reader is inside this section; trigger wears the current ink",
+      "NavigationMenu.Viewport anchor: trigger | list — panel under the open trigger (leans away from the window edge) or one fixed place centred under the list (default: trigger)",
       "NavigationMenu.Link: title + description + icon for structured links, or children for simple links",
       "NavigationMenu.Link asChild: composes child and menu click handlers (preventDefault keeps menu open)",
       "NavigationMenu.MobileContent: slot for extra mobile-only sections"

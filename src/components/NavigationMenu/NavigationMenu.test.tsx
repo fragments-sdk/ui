@@ -116,6 +116,23 @@ describe("NavigationMenu", () => {
   // ============================================
 
   describe("Trigger", () => {
+    it("marks the trigger for the section the reader is in", () => {
+      render(
+        <NavigationMenu>
+          <NavigationMenu.List>
+            <NavigationMenu.Item value="learn">
+              <NavigationMenu.Trigger active>Learn</NavigationMenu.Trigger>
+              <NavigationMenu.Content>
+                <NavigationMenu.Link href="/docs">Docs</NavigationMenu.Link>
+              </NavigationMenu.Content>
+            </NavigationMenu.Item>
+          </NavigationMenu.List>
+          <NavigationMenu.Viewport />
+        </NavigationMenu>
+      );
+      expect(screen.getByRole("button", { name: "Learn" })).toHaveAttribute("data-active", "true");
+    });
+
     it("has aria-expanded=false when closed", () => {
       renderBasicMenu();
       const trigger = screen.getByText("Learn");
@@ -585,6 +602,15 @@ describe("NavigationMenu", () => {
       expect(window.matchMedia).toHaveBeenCalledWith("(max-width: 1023px)");
       expect(screen.getByRole("navigation")).toHaveAttribute("data-mobile", "true");
       expect(await screen.findByLabelText("Toggle navigation")).toBeInTheDocument();
+    });
+
+    it("never switches to the drawer when the host owns mobile navigation", () => {
+      renderBasicMenu({ mobileBreakpoint: "none" });
+
+      expect(window.matchMedia).not.toHaveBeenCalled();
+      expect(screen.getByRole("navigation")).not.toHaveAttribute("data-mobile");
+      expect(screen.queryByLabelText("Toggle navigation")).toBeNull();
+      expect(screen.getByRole("button", { name: "Learn" })).toBeInTheDocument();
     });
 
     it("includes direct link items in auto-converted drawer navigation", async () => {

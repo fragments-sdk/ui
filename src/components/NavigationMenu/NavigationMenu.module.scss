@@ -73,8 +73,10 @@
 // Trigger
 // ============================================
 
-.trigger {
-  @include button-reset;
+// One face for every top-level destination: the triggers, and any Link that
+// stands in the list beside them (a plain page such as Pricing) — the same
+// size, ink and fills, the trigger only adding its chevron.
+@mixin top-level {
   @include interactive-base;
   @include action.base;
   @include action.size("md");
@@ -94,10 +96,22 @@
   &:active {
     background-color: var(--fui-bg-active, $fui-bg-active);
   }
+}
+
+.trigger {
+  @include button-reset;
+  @include top-level;
 
   &[data-state="open"] {
     color: var(--fui-text-primary, $fui-text-primary);
   }
+}
+
+// The reader is inside this item's section: same ink and fill as a current
+// link, so the desktop list and the drawer agree on what "here" looks like.
+.triggerActive {
+  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
+  color: var(--fui-text-primary, $fui-text-primary);
 }
 
 .triggerChevron {
@@ -120,8 +134,12 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  // The viewport takes its size from this box, so the box must size to its
+  // own children. Filling the viewport would feed the measurement back into
+  // itself and the panel would grow on every resize tick.
+  width: max-content;
   min-width: layout.measure("menu-min");
+  max-width: 100vw;
 
   // Motion direction for directional slide
   &[data-motion="from-start"] {
@@ -210,6 +228,21 @@
   font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
 }
 
+// A Link directly in the list (not inside a panel) is a top-level
+// destination and wears the trigger's face; current matches `.triggerActive`.
+.list > li > .link {
+  @include top-level;
+
+  // The row inset would stack on the action height.
+  padding-block: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+
+  &.linkActive {
+    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-weight: inherit;
+  }
+}
+
 // Structured link (title + description + icon) inside content panels
 .linkStructured {
   display: flex;
@@ -290,6 +323,14 @@
   position: absolute;
   top: calc(100% + var(--fui-space-1, #{$fui-space-1}));
   left: var(--fui-navmenu-viewport-left, 0);
+  // The width and height below are the content's measured scroll size, so
+  // the hairline border must sit outside them or the last two pixels of
+  // every panel are clipped.
+  box-sizing: content-box;
+  // The content is absolutely positioned at the frame's top-left, so the
+  // container inset was never honoured on those sides and only left a blank
+  // strip along the bottom and right. The content owns its own inset.
+  padding: 0;
   overflow: hidden;
   border-color: var(--fui-border-strong, $fui-border-strong);
   box-shadow: var(--fui-shadow-md, $fui-shadow-md);
@@ -311,6 +352,16 @@
 
   &[data-state="open"] {
     opacity: 1;
+  }
+
+  // Between two open panels the frame morphs to the next panel's size and
+  // place while its content slides in.
+  &[data-switching] {
+    transition:
+      width var(--fui-transition-normal, $fui-transition-normal),
+      height var(--fui-transition-normal, $fui-transition-normal),
+      left var(--fui-transition-normal, $fui-transition-normal),
+      opacity var(--fui-transition-fast, $fui-transition-fast);
   }
 
   // Keep viewport visibility in sync with JS mobile mode.
