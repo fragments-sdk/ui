@@ -2,9 +2,16 @@ import { createHash } from "node:crypto";
 import symbol from "./fragments-symbol.json";
 import { describe, expect, it } from "vitest";
 import { render, screen } from "../test/utils";
-import { FragmentsLogo, fragmentsLogoSvg } from "./fragments-logo";
+import { FragmentsLogo, fragmentsLogoSvg, fragmentsSymbol } from "./fragments-logo";
 
 describe("FragmentsLogo", () => {
+  it("exports the same geometry used by the rendered brand for animation", () => {
+    const { container } = render(<FragmentsLogo size={48} />);
+    expect(container.querySelector("svg")).toHaveAttribute("viewBox", fragmentsSymbol.viewBox);
+    expect(
+      Array.from(container.querySelectorAll("path"), (path) => path.getAttribute("d"))
+    ).toEqual(fragmentsSymbol.paths);
+  });
   it("preserves the supplied connected symbol exactly", () => {
     // Golden geometry from the user's fragments-solid.svg, including (86, 100).
     // Optical sizing must change framing/strokes, never disconnect these paths.

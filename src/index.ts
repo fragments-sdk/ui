@@ -583,7 +583,12 @@ export {
 } from "./components/Chart";
 
 // Assets
-export { FragmentsLogo, fragmentsLogoSvg, type FragmentsLogoProps } from "./assets/fragments-logo";
+export {
+  FragmentsLogo,
+  fragmentsLogoSvg,
+  fragmentsSymbol,
+  type FragmentsLogoProps,
+} from "./assets/fragments-logo";
 export { FragmentsWordmark, type FragmentsWordmarkProps } from "./assets/fragments-wordmark";
 export { FragmentsBrand, type FragmentsBrandProps } from "./assets/fragments-brand";
 export {

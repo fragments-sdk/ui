@@ -1,6 +1,9 @@
 import * as React from "react";
 import symbol from "./fragments-symbol.json";
 
+/** Canonical symbol geometry for custom brand animation. */
+export const fragmentsSymbol: { viewBox: string; compactViewBox: string; paths: string[] } = symbol;
+
 export interface FragmentsLogoProps {
   /** Size in pixels. Sizes at or below 24 use the tightly framed mark. */
   size?: number;
