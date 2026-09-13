@@ -1,30 +1,24 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { FragmentsConfig } from "@usefragments/core";
+import catalogJson from "./fragments.json";
 
 /**
- * Resolve the public component vocabulary from the canonical workspace
- * catalog. Consumers share this loader so a missing or empty catalog fails
- * governance instead of silently disabling the component rules.
+ * The public component vocabulary, read from the canonical workspace catalog.
+ * The import is static so the governance closure stays verifiable for pending
+ * (unsaved) sources: a missing catalog fails module resolution, and an empty
+ * one leaves the npm canonical source inert, which Doctor reports. Consumers
+ * share this loader so every scan points `components/prefer-library` at the
+ * same vocabulary.
  */
-const PROVIDER_ONLY_FRAGMENTS = new Set(["ComponentDefaults"]);
+const catalog = catalogJson as { fragments?: Record<string, unknown> };
 
-export function publicUiPrimitiveNames(
-  catalogPath = join(dirname(fileURLToPath(import.meta.url)), "fragments.json")
-): string[] {
-  const catalog = JSON.parse(readFileSync(catalogPath, "utf-8")) as {
-    fragments?: Record<string, unknown>;
-  };
-  // Providers ship no chrome of their own, so they are not canonical
-  // primitives for `components/prefer-library` to point at.
-  const names = Object.keys(catalog.fragments ?? {}).filter(
-    (name) => !PROVIDER_ONLY_FRAGMENTS.has(name)
+// Providers ship no chrome of their own, so they are not canonical primitives
+// for `components/prefer-library` to point at.
+const PROVIDER_ONLY_FRAGMENTS = ["ComponentDefaults"];
+
+export function publicUiPrimitiveNames(): string[] {
+  return Object.keys(catalog.fragments ?? {}).filter(
+    (name) => !PROVIDER_ONLY_FRAGMENTS.includes(name)
   );
-  if (names.length === 0) {
-    throw new Error(`Canonical UI catalog is empty: ${catalogPath}`);
-  }
-  return names;
 }
 
 const config: FragmentsConfig = {
