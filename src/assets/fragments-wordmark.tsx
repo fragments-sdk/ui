@@ -12,7 +12,7 @@ export interface FragmentsWordmarkProps {
 }
 
 /**
- * The Fragments logo lockup — star + wordmark as one image. Use this anywhere
+ * The Fragments logo lockup — three-piece symbol + wordmark as one image. Use this anywhere
  * the brand is shown with its name, instead of the icon beside a text label.
  * Lettering is outlined from Fragments Sans, so it never depends on font loading.
  * Themeable: the vector artwork is a CSS mask filled with currentColor.

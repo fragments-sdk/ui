@@ -30,3 +30,22 @@ Improvement candidates
 
 - Fold `color` (`accent` | `current` | `muted`) onto the shared `tone` axis
   once a `current` tone value has a ruling.
+
+## 2026-09-12 — Connected Fragments drawing
+
+- `kind="fragments"` adds an opt-in outline drawing built from the canonical
+  symbol. The top/stem junction stays connected as in the supplied artwork.
+- Each path draws, holds and releases over 1.2 times the shimmer duration,
+  staggered by 0.08/0.16 times that duration. A faint complete track persists.
+- Small loaders increase stroke width; all sizes retain the same paths.
+- Reduced motion disables animation and shows the complete outline at full opacity.
+- `Loading.Screen` accepts the existing `color` choices and has one accessible
+  status announcement. Its inner visual is decorative.
+- Existing spinner/dots/pulse defaults and inline loaders remain available.
+- Cloud sign-in/account full-page gates use `kind="fragments" color="current"`.
+  Page-specific skeletons and navigation behavior are unchanged.
+
+Verification: component/a11y tests, Cloud route-loading and gate tests, UI/Cloud
+TypeScript, plus the offline browser verifier for light/dark, 390/768/1440px,
+playback controls, and reduced motion. The Cloud governance check is unavailable
+in this checkout because its existing connection configuration is invalid.

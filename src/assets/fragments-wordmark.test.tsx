@@ -18,7 +18,7 @@ describe("FragmentsWordmark", () => {
     );
     const document = new DOMParser().parseFromString(svg, "image/svg+xml");
     expect(document.querySelector("parsererror")).toBeNull();
-    expect(document.querySelectorAll("path")).toHaveLength(2);
+    expect(document.querySelectorAll("path")).toHaveLength(4);
     expect(document.querySelector("text, image, script, foreignObject")).toBeNull();
   });
 

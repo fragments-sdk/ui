@@ -40,10 +40,27 @@ describe("Loading", () => {
 
   it('renders Loading.Screen with role="status"', () => {
     render(<Loading.Screen label="Loading page..." />);
-    // Loading.Screen itself has role="status" plus a nested Loading
-    const statuses = screen.getAllByRole("status");
-    expect(statuses.length).toBeGreaterThanOrEqual(1);
-    expect(statuses[0]).toHaveAttribute("aria-label", "Loading page...");
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+    expect(screen.getByRole("status")).toHaveAttribute("aria-label", "Loading page...");
+  });
+
+  it("offers a themeable brand loader without adding a second announcement", async () => {
+    const { container } = render(
+      <Loading.Screen kind="fragments" color="current" label="Opening workspace" showLabel />
+    );
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+    expect(screen.getByText("Opening workspace")).toBeVisible();
+    expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector("svg")).toHaveAttribute("stroke", "currentColor");
+    expect(container.querySelector(".color-current")).toBeInTheDocument();
+    await expectNoA11yViolations(container);
+  });
+
+  it.each(["sm", "md", "lg", "xl"] as const)("renders the brand at %s size", (size) => {
+    const { container } = render(<Loading kind="fragments" size={size} label="Loading content" />);
+    expect(screen.getByRole("status")).toHaveClass(size);
+    expect(container.querySelector("svg")).toHaveAttribute("viewBox");
+    expect(container.querySelectorAll("path[pathLength='1']")).toHaveLength(3);
   });
 
   it("has no accessibility violations", async () => {

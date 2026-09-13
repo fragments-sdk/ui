@@ -1,0 +1,32 @@
+@use "../tokens/mixins" as *;
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: inherit;
+  line-height: 0;
+}
+
+// The children set their own inline display, so the wrappers carry the switch.
+.lockup,
+.symbol {
+  display: block;
+  line-height: 0;
+}
+
+.symbol {
+  display: none;
+}
+
+.collapsible {
+  @include below-md {
+    .lockup {
+      display: none;
+    }
+
+    .symbol {
+      display: block;
+    }
+  }
+}

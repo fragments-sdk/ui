@@ -186,6 +186,57 @@
 // Overlay
 // ============================================
 
+.fragmentsIcon {
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.fragmentsTrack {
+  opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
+}
+
+.fragmentsDrawing path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawFragment calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 1.2)
+    cubic-bezier(0.45, 0, 0.2, 1) infinite;
+
+  &:nth-child(2) {
+    animation-delay: calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 0.08);
+  }
+
+  &:nth-child(3) {
+    animation-delay: calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 0.16);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawFragment {
+  0%,
+  8% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  48%,
+  68% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+
 .overlayBackdrop {
   position: absolute;
   inset: 0;
@@ -245,6 +296,7 @@
   justify-content: center;
   gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   background-color: var(--fui-bg-primary, $fui-bg-primary);
+  color: var(--fui-text-primary, $fui-text-primary);
   z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
 }
 

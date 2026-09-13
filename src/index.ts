@@ -585,6 +585,12 @@ export {
 // Assets
 export { FragmentsLogo, fragmentsLogoSvg, type FragmentsLogoProps } from "./assets/fragments-logo";
 export { FragmentsWordmark, type FragmentsWordmarkProps } from "./assets/fragments-wordmark";
+export { FragmentsBrand, type FragmentsBrandProps } from "./assets/fragments-brand";
+export {
+  fragmentsWordmarkAspect,
+  fragmentsWordmarkSvg,
+  fragmentsWordmarkSymbol,
+} from "./assets/fragments-wordmark-artwork";
 export {
   NavGlyph,
   NAV_GLYPH_NAMES,

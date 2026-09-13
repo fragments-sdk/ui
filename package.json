@@ -35,6 +35,7 @@
     "./tokens": "./src/tokens/_variables.scss",
     "./mixins": "./src/tokens/_mixins.scss",
     "./recipes/typography": "./src/recipes/_typography.scss",
+    "./recipes/navigation": "./src/recipes/_navigation.scss",
     "./recipes/prose": "./src/recipes/_prose.scss",
     "./fragments.json": "./fragments.json",
     "./assets/*": "./src/assets/*",
@@ -181,6 +182,7 @@
       },
       "./tokens": "./src/tokens/_variables.scss",
       "./mixins": "./src/tokens/_mixins.scss",
+      "./recipes/navigation": "./src/recipes/_navigation.scss",
       "./fragments.json": "./fragments.json",
       "./assets/*": "./src/assets/*",
       "./package.json": "./package.json"

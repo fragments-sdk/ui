@@ -9,7 +9,7 @@
   "exportName": "Loading",
   "propsSummary": [
     "size: sm|md|lg|xl (default: md)",
-    "kind: spinner|dots|pulse (default: spinner)",
+    "kind: spinner|dots|pulse|fragments (default: spinner)",
     "label: string (default: Loading...)",
     "centered: boolean (default: false)",
     "fill: boolean (default: false)",
@@ -29,7 +29,7 @@
       "description": "Which animation plays",
       "default": "spinner",
       "required": false,
-      "values": ["spinner", "dots", "pulse"]
+      "values": ["spinner", "dots", "pulse", "fragments"]
     },
     "label": {
       "type": "string",

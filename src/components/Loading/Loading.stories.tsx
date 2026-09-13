@@ -3,7 +3,7 @@ import { Loading } from ".";
 
 /**
  * Loading indicator for showing progress or waiting states. Offers spinner,
- * dots, and pulse kinds plus `Loading.Inline` and `Loading.Screen` helpers.
+ * dots, pulse, and Fragments draw-on kinds plus `Loading.Inline` and `Loading.Screen` helpers.
  */
 const meta = {
   title: "Feedback/Loading",
@@ -12,7 +12,7 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "Loading indicator with spinner, dots, and pulse kinds.",
+        component: "Loading indicator with spinner, dots, pulse, and Fragments draw-on kinds.",
       },
     },
   },
@@ -24,7 +24,7 @@ const meta = {
     },
     kind: {
       control: "select",
-      options: ["spinner", "dots", "pulse"],
+      options: ["spinner", "dots", "pulse", "fragments"],
       description: "Which animation plays",
     },
     color: {
@@ -66,4 +66,8 @@ export const Large: Story = {
 
 export const Muted: Story = {
   args: { kind: "spinner", color: "muted" },
+};
+
+export const Fragments: Story = {
+  args: { kind: "fragments", size: "xl", color: "current" },
 };

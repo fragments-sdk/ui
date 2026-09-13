@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import symbol from "../../assets/fragments-symbol.json";
 import styles from "./Loading.module.scss";
 
 // ============================================
@@ -8,7 +9,7 @@ import styles from "./Loading.module.scss";
 // ============================================
 
 export type LoadingSize = "sm" | "md" | "lg" | "xl";
-export type LoadingKind = "spinner" | "dots" | "pulse";
+export type LoadingKind = "spinner" | "dots" | "pulse" | "fragments";
 
 export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Size of the loading indicator */
@@ -44,6 +45,8 @@ export interface LoadingScreenProps extends React.HTMLAttributes<HTMLDivElement>
   label?: string;
   /** Whether to show the label text visually */
   showLabel?: boolean;
+  /** Uses the same theme color choices as Loading. */
+  color?: LoadingProps["color"];
 }
 
 // ============================================
@@ -91,6 +94,35 @@ function PulseAnimation({ className }: { className?: string }) {
 // Components
 // ============================================
 
+function FragmentsAnimation({ size }: { size: LoadingSize }) {
+  const compact = size === "sm" || size === "md";
+  const paths = symbol.paths;
+  return (
+    <svg
+      className={styles.fragmentsIcon}
+      viewBox={symbol.viewBox}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={compact ? 16 : 12}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g className={styles.fragmentsTrack}>
+        {paths.map((d) => (
+          <path key={d} d={d} />
+        ))}
+      </g>
+      <g className={styles.fragmentsDrawing}>
+        {paths.map((d) => (
+          <path key={d} d={d} pathLength="1" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function LoadingRoot(
   {
     size = "md",
@@ -119,7 +151,9 @@ const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function Load
     .join(" ");
 
   const animation =
-    kind === "dots" ? (
+    kind === "fragments" ? (
+      <FragmentsAnimation size={size} />
+    ) : kind === "dots" ? (
       <DotsAnimation className={styles.dotsTrack} />
     ) : kind === "pulse" ? (
       <PulseAnimation className={styles.pulseTrack} />
@@ -175,6 +209,7 @@ function LoadingScreen({
   kind = "spinner",
   label = "Loading...",
   showLabel = false,
+  color = "accent",
   className,
   ...htmlProps
 }: LoadingScreenProps) {
@@ -182,7 +217,14 @@ function LoadingScreen({
 
   return (
     <div className={classes} role="status" aria-label={label} aria-live="polite" {...htmlProps}>
-      <LoadingRoot size={size} kind={kind} label={label} />
+      <LoadingRoot
+        size={size}
+        kind={kind}
+        color={color}
+        role="presentation"
+        aria-hidden="true"
+        aria-live="off"
+      />
       {showLabel && <span className={styles.screenLabel}>{label}</span>}
     </div>
   );
