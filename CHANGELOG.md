@@ -1,5 +1,13 @@
 # @usefragments/ui
 
+## 3.1.0
+
+### Minor Changes
+
+- [#705](https://github.com/fragments-sdk/fragments/pull/705) [`0dd550d`](https://github.com/fragments-sdk/fragments/commit/0dd550dafed0512dadcd7e6e8ed0bc21a1a9515d) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add `FragmentsBrand`, the symbol + wordmark lockup that collapses to the symbol below the md breakpoint, export the wordmark artwork (`fragmentsWordmarkSvg`, `fragmentsWordmarkAspect`, `fragmentsWordmarkSymbol`), add `Loading` kind `fragments`, and expose the `./recipes/navigation` SCSS recipe.
+
+- [#714](https://github.com/fragments-sdk/fragments/pull/714) [`673e7f9`](https://github.com/fragments-sdk/fragments/commit/673e7f967754d40b2832b0e3bebac6bcd126b7fc) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Export the canonical `fragmentsSymbol` geometry so brand animations can reuse the same paths and view boxes as `FragmentsLogo`.
+
 ## 3.0.0
 
 ### Major Changes
