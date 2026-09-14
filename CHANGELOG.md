@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 3.1.1
+
+### Patch Changes
+
+- Update the packed Core development dependency to the reproducible 3.1.1 release. Component behavior is unchanged.
+
 ## 3.1.0
 
 ### Minor Changes
