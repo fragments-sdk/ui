@@ -1,5 +1,11 @@
 # @usefragments/ui
 
+## 3.1.2
+
+### Patch Changes
+
+- [#726](https://github.com/fragments-sdk/fragments/pull/726) [`494c2b4`](https://github.com/fragments-sdk/fragments/commit/494c2b4b69d605bdac5a1f58d412fae0a6032dd9) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Refresh the shipped component catalog with current compiler evidence and Core metadata so consumers receive a consistent package artifact.
+
 ## 3.1.1
 
 ### Patch Changes
