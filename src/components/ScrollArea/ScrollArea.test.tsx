@@ -182,6 +182,21 @@ describe("ScrollArea", () => {
     expect(element).toHaveAttribute("tabindex", "0");
   });
 
+  it("takes the keyboard when its only control sits in a disabled fieldset", () => {
+    const { container } = render(
+      <ScrollArea aria-label="Actions">
+        <fieldset disabled>
+          <button type="button">Retry</button>
+        </fieldset>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    setMetrics(element, { clientHeight: 100, scrollHeight: 300, scrollTop: 0 });
+    flushFrame();
+
+    expect(element).toHaveAttribute("tabindex", "0");
+  });
+
   it("marks the viewport while it scrolls so auto shows the scrollbar", () => {
     vi.useFakeTimers();
     try {

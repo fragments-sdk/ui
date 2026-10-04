@@ -21,8 +21,9 @@ export interface UseScrollEdgesOptions {
   enabled?: boolean;
 }
 
+// `:disabled` rather than `[disabled]`, so a control locked by a disabled fieldset doesn't count.
 const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+  'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
 /** The attributes FOCUSABLE reads: changing one can add or remove the only keyboard stop. */
 const FOCUSABLE_ATTRIBUTES = ["disabled", "href", "tabindex", "contenteditable"];

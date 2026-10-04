@@ -48,3 +48,9 @@ fallback. Override fade depth via the raw-space tokens on the root.
 - **Fixed** — the scroller now re-reads its keyboard stops when a descendant's `disabled`, `href`, `tabindex` or `contenteditable` changes, not only when children are added or removed. Before, disabling the only button left the viewport without `tabindex`, so keyboard users could not reach it.
 - **What works** — a unit test disables the only button and checks the viewport takes `tabindex="0"`; Tabs, which shares the hook, still passes.
 - **What doesn't** — a control disabled through an ancestor `fieldset[disabled]` still counts as focusable (the selector reads attributes, not `:disabled`). Not browser-checked.
+
+## 2026-10-04 — a control in a disabled fieldset hands the keyboard back
+
+- **Fixed** — the focusable check reads `:disabled` rather than the `disabled` attribute, so a button locked by a disabled `fieldset` no longer counts as a keyboard stop, and the viewport takes `tabindex="0"`.
+- **What works** — a unit test puts the only button in a disabled fieldset; it fails on the old selector and passes now. Tabs, which shares the hook, still passes.
+- **What doesn't** — the observer watches the scroller's own subtree, so a fieldset outside the area (Form's pending lock) changes nothing until the next mutation inside it. Not browser-checked.

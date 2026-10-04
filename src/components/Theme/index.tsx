@@ -126,14 +126,15 @@ function useModeState({ controlledMode, defaultMode, storageKey, onModeChange }:
   const mode = isControlled ? controlledMode : internalMode;
   const resolvedMode: "light" | "dark" = mode === "system" ? systemPreference : mode;
 
-  // Hydrate from storage on mount (SSR-safe).
-  React.useEffect(() => {
+  // Hydrate from storage before the first paint (SSR-safe). A passive effect could paint the default
+  // first: a nested scope has no ThemeScript to cover that frame.
+  useIsomorphicLayoutEffect(() => {
     if (!isControlled && storageKey) {
       const stored = readStoredMode(storageKey);
       if (stored) setInternalMode(stored);
     }
-    setMounted(true);
   }, [isControlled, storageKey]);
+  React.useEffect(() => setMounted(true), []);
 
   // Persist when the mode changes.
   React.useEffect(() => {
