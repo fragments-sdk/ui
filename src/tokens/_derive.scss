@@ -20,7 +20,7 @@
 //    holds because the channels scale together.
 //
 // A solve needs the luminance of what the colour sits on. Planes are fixed
-// lightness steps of the neutral, so their bounds are constants (light canvas
+// lightness steps of the neutral, so their bounds are constants (light band
 // at least 0.82, dark raised plane at most 0.02). The bounds hold up to neutral
 // chroma 0.04, so a plane caps the neutral's chroma there: any neutral keeps
 // every pair.
@@ -37,8 +37,8 @@
 $neutral: "var(--fui-seed-neutral)";
 
 /// Luminance bounds of the planes text and indicators sit on (see above).
-/// Light: the darkest plane is the canvas. Dark: the lightest is the raised
-/// plane (popups), L 0.268.
+/// Light: the darkest plane is the band, L 0.95. Dark: the lightest is the
+/// raised plane (popups), L 0.268.
 $plane-floor-light: 0.82;
 $plane-ceiling-dark: 0.02;
 

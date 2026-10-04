@@ -56,10 +56,10 @@ describe("default Fragments surface tokens", () => {
   });
 
   it("derives the planes, inks and lines from the neutral at the Glass steps", () => {
-    expect(engine).toContain(`--fui-body-bg: ${plane([0.94, 0.5], [0.182, 0.2])};`);
-    expect(engine).toContain(`--fui-bg-secondary: ${plane([0.953, 0.4], [0.248, 0.2])};`);
-    expect(engine).toContain(`--fui-bg-primary: ${plane([0.985, 0.25], [0.214, 0.2])};`);
-    expect(engine).toContain(`--fui-bg-elevated: ${plane([0.985, 0.25], [0.268, 0.33])};`);
+    expect(engine).toContain(`--fui-body-bg: ${plane([0.97, 0.35], [0.182, 0.2])};`);
+    expect(engine).toContain(`--fui-bg-secondary: ${plane([0.95, 0.4], [0.248, 0.2])};`);
+    expect(engine).toContain(`--fui-bg-primary: ${plane([0.998, 0.1], [0.214, 0.2])};`);
+    expect(engine).toContain(`--fui-bg-elevated: ${plane([0.998, 0.1], [0.268, 0.33])};`);
     expect(engine).toContain(`--fui-text-primary: ${plane([0.216, 0.6], [0.935, 1.05])};`);
     expect(engine).toContain(`--fui-text-secondary: ${plane([0.415, 0.9], [0.768, 1.15])};`);
     expect(engine).toContain(`--fui-text-tertiary: ${plane([0.498, 1.15], [0.668, 1.2])};`);
@@ -90,12 +90,15 @@ describe("default Fragments surface tokens", () => {
   it("names the canvas and field roles on the four planes and ships no retired plane", () => {
     for (const [role, target] of [
       ["app-canvas-bg", "body-bg"],
-      ["field-bg", "bg-secondary"],
       ["bg-inverse", "text-primary"],
       ["text-inverse", "bg-primary"],
     ]) {
       expect(themed).toContain(`--fui-${role}: var(--fui-${target});`);
     }
+    // A field is the surface in light and the band in dark.
+    expect(themed).toContain(
+      "--fui-field-bg: light-dark(var(--fui-bg-primary), var(--fui-bg-secondary));"
+    );
     // v4 hard cut: the retired planes and per-component plane hooks are gone.
     for (const removed of [
       "main-bg",

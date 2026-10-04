@@ -6,11 +6,11 @@
  */
 
 :root {
-  --fui-bg-primary: #fbfaf8;
+  --fui-bg-primary: #fffefd;
   --fui-text-primary: #1b1916;
 
-  --fui-bg-secondary: #f1efec;
-  --fui-bg-elevated: #fbfaf8;
+  --fui-bg-secondary: #f0eeeb;
+  --fui-bg-elevated: #fffefd;
   --fui-bg-hover: #1b19160f;
   --fui-bg-active: #1b19161c;
 
@@ -41,31 +41,31 @@
   --fui-color-success: #2fbf8f;
   --fui-color-warning: #f2a100;
   --fui-color-info: #2580c1;
-  --fui-color-accent-tint: #e2e8f8;
-  --fui-color-accent-wash: #eef1f8;
-  --fui-color-accent-tint-hover: #d4dbf3;
-  --fui-color-accent-tint-active: #c9d2ef;
-  --fui-color-accent-wash-active: #dfe4f3;
-  --fui-color-danger-tint: #fae6e0;
-  --fui-color-danger-wash: #fbf0ec;
-  --fui-color-danger-tint-hover: #f3d4ce;
-  --fui-color-danger-tint-active: #eec7c1;
-  --fui-color-danger-wash-active: #f4ddd9;
-  --fui-color-success-tint: #e7f3eb;
-  --fui-color-success-wash: #f1f6f1;
-  --fui-color-success-tint-hover: #d4e9de;
-  --fui-color-success-tint-active: #c7e1d4;
-  --fui-color-success-wash-active: #deece3;
-  --fui-color-warning-tint: #fbebd6;
-  --fui-color-warning-wash: #fbf2e7;
-  --fui-color-warning-tint-hover: #f1dec5;
-  --fui-color-warning-tint-active: #ead4b8;
-  --fui-color-warning-wash-active: #f1e5d5;
-  --fui-color-info-tint: #e5ecf3;
-  --fui-color-info-wash: #f0f3f5;
-  --fui-color-info-tint-hover: #d2e1ec;
-  --fui-color-info-tint-active: #c5d8e6;
-  --fui-color-info-wash-active: #dde7ee;
+  --fui-color-accent-tint: #e5ecfd;
+  --fui-color-accent-wash: #f2f5fe;
+  --fui-color-accent-tint-hover: #d7dff8;
+  --fui-color-accent-tint-active: #ccd5f3;
+  --fui-color-accent-wash-active: #e3e7f8;
+  --fui-color-danger-tint: #fdeae5;
+  --fui-color-danger-wash: #fef4f1;
+  --fui-color-danger-tint-hover: #f6d8d3;
+  --fui-color-danger-tint-active: #f1cac5;
+  --fui-color-danger-wash-active: #f7e1de;
+  --fui-color-success-tint: #eaf7f0;
+  --fui-color-success-wash: #f4fbf7;
+  --fui-color-success-tint-hover: #d7ece2;
+  --fui-color-success-tint-active: #c9e4d8;
+  --fui-color-success-wash-active: #e1efe8;
+  --fui-color-warning-tint: #feeedb;
+  --fui-color-warning-wash: #fef6ec;
+  --fui-color-warning-tint-hover: #f4e1c9;
+  --fui-color-warning-tint-active: #ecd7bc;
+  --fui-color-warning-wash-active: #f4e8d9;
+  --fui-color-info-tint: #e8f0f8;
+  --fui-color-info-wash: #f3f7fb;
+  --fui-color-info-tint-hover: #d5e5f0;
+  --fui-color-info-tint-active: #c7dceb;
+  --fui-color-info-wash-active: #e0ebf3;
 
   --fui-focus-ring-color: #3d5ae8;
   --fui-selection-bg: #3d5ae82e;

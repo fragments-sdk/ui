@@ -632,22 +632,23 @@ $fui-dark-chart-6: _twin("chart-6", "dark") !default;
 /// Planes, inks and lines (the Glass ladder): lightness and chroma factor of
 /// the neutral, light then dark. Dark planes run canvas < surface < band <
 /// raised, at least 0.02 L apart, so a menu over a field or code well sits
-/// above it. Light raised equals the surface; the popup shadow separates them.
+/// above it. Light planes run band < canvas < surface, with raised equal to
+/// the near-white surface; the popup shadow separates them.
 $_planes: (
   "body-bg": (
-    (0.94, 0.5),
+    (0.97, 0.35),
     (0.182, 0.2),
   ),
   "bg-secondary": (
-    (0.953, 0.4),
+    (0.95, 0.4),
     (0.248, 0.2),
   ),
   "bg-primary": (
-    (0.985, 0.25),
+    (0.998, 0.1),
     (0.214, 0.2),
   ),
   "bg-elevated": (
-    (0.985, 0.25),
+    (0.998, 0.1),
     (0.268, 0.33),
   ),
   "text-primary": (
@@ -677,7 +678,7 @@ $_planes: (
 );
 
 /// The surface's lightness, light then dark: the plane every tint mixes into.
-$_surface-l: (0.985, 0.214);
+$_surface-l: (0.998, 0.214);
 
 /// Tones: the text clamp per mode and the tint percentages (light, dark).
 /// The wash is half the tint.
@@ -1047,9 +1048,10 @@ $_chart-series: (
       );
     }
 
-    // Planes the engine does not derive directly.
+    // Planes the engine does not derive directly. A field is the surface in
+    // light and the band in dark.
     --fui-app-canvas-bg: var(--fui-body-bg);
-    --fui-field-bg: var(--fui-bg-secondary);
+    --fui-field-bg: light-dark(var(--fui-bg-primary), var(--fui-bg-secondary));
     --fui-bg-inverse: var(--fui-text-primary);
     --fui-text-inverse: var(--fui-bg-primary);
 

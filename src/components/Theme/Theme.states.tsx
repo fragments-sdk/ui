@@ -119,7 +119,7 @@ async function checkScopes(host: HTMLElement): Promise<Check[]> {
   add(
     "Page canvas is the light canvas",
     `L ${canvas.l.toFixed(3)}`,
-    Math.abs(canvas.l - 0.94) < 0.01
+    Math.abs(canvas.l - 0.97) < 0.01
   );
   const pageButton = probe(host, "page").querySelector("button")!;
   const pageFill = paint(host, pageButton, "backgroundColor");

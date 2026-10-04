@@ -11,16 +11,17 @@ Current state, 2026-10-04. The code is the truth: `_variables.scss`, `_derive.sc
 
 Planes are lightness steps of the neutral: `oklch(from var(--fui-seed-neutral) L calc(min(c, 0.04) * k) h)`. The chroma cap lets a vivid neutral tint the planes without moving ink contrast.
 
-| Plane                                     | Token                                              | L light / dark |
-| ----------------------------------------- | -------------------------------------------------- | -------------- |
-| Canvas                                    | `--fui-body-bg` (aliased by `--fui-app-canvas-bg`) | 0.94 / 0.182   |
-| Sheets, cards                             | `--fui-bg-primary`                                 | 0.985 / 0.214  |
-| Band: code, user bubble, `--fui-field-bg` | `--fui-bg-secondary`                               | 0.953 / 0.248  |
-| Popups, with `--fui-shadow-popup`         | `--fui-bg-elevated`                                | 0.985 / 0.268  |
+| Plane                                          | Token                                              | L light / dark |
+| ---------------------------------------------- | -------------------------------------------------- | -------------- |
+| Canvas                                         | `--fui-body-bg` (aliased by `--fui-app-canvas-bg`) | 0.97 / 0.182   |
+| Sheets, cards, light `--fui-field-bg`          | `--fui-bg-primary`                                 | 0.998 / 0.214  |
+| Band: code, user bubble, dark `--fui-field-bg` | `--fui-bg-secondary`                               | 0.95 / 0.248   |
+| Popups, with `--fui-shadow-popup`              | `--fui-bg-elevated`                                | 0.998 / 0.268  |
 
 - **Dark ladder** runs canvas < primary < secondary < elevated, at least 0.02 L between neighbours.
+- **Light ladder** runs secondary < canvas < primary = elevated: a grey band, a light canvas, near-white sheets and popups.
 - **Light elevated equals primary.** Popups separate by shadow. Accepted.
-- **Solve bounds** (`_derive.scss`): the dark lightest plane (elevated) has luminance at most 0.02 (`$plane-ceiling-dark`); the light canvas floor is 0.82 (`$plane-floor-light`).
+- **Solve bounds** (`_derive.scss`): the dark lightest plane (elevated) has luminance at most 0.02 (`$plane-ceiling-dark`); the light darkest plane (the band) has luminance at least 0.82 (`$plane-floor-light`).
 - **App shell.** Rail, main and header all paint `--fui-app-canvas-bg`. Hairlines are `--fui-border`.
 - **Message user bubble** is `--fui-bg-secondary` with a `--fui-border` hairline, the same grammar as CodeBlock.
 
@@ -40,7 +41,7 @@ Planes are lightness steps of the neutral: `oklch(from var(--fui-seed-neutral) L
 
 ## Other roles
 
-- **Fields.** `--fui-field-bg` aliases `--fui-bg-secondary`; the field recipe and Prompt read it. The shell paints `--fui-field-bg` with a `--fui-field-border` edge, which holds 3:1 on every plane.
+- **Fields.** `--fui-field-bg` is `light-dark(var(--fui-bg-primary), var(--fui-bg-secondary))`: a sheet in light, the band in dark. The field recipe, Prompt, Editor and the boolean controls read it. The shell paints `--fui-field-bg` with a `--fui-field-border` edge, which holds 3:1 on every plane.
 - **Links and code.** `--fui-link-ink` is `var(--fui-color-accent-text)`. Code surfaces are `--fui-bg-secondary`; `read-safe-contrast.test.ts` gates every syntax stop on that well.
 - **Radius.** Eight roles of `--fui-radius` (control, indicator, popup, surface, overlay, row, tooltip, segment), each a CSS formula capped by `r`, so r = 0 squares every role. `recipes/_radius.scss` holds `nested(outer, pad)` and `pill(height)`. No size aliases.
 - **Motion.** `--fui-duration-*`, `--fui-ease-standard`, `--fui-popup-from`, `--fui-popup-travel`, `--fui-pending-delay`, loop durations `--fui-duration-spin/pulse/shimmer`.
@@ -87,3 +88,7 @@ Planes are lightness steps of the neutral: `oklch(from var(--fui-seed-neutral) L
 - Chromium stores a legacy `rgba()` alpha in 8 bits and WebKit does not; the snapshot check allows WebKit one 8-bit step per channel.
 - `button-reset` sets `user-select: none`; non-button include sites (Prompt, Editor textareas) restore `user-select: text`.
 - `*.ui-notes.md` is excluded from the package tarball. Do not point consumers at it.
+
+## Log
+
+- **2026-10-04 — light ladder re-tuned.** Light canvas 0.94 → 0.97 (chroma ×0.5 → ×0.35), band 0.953 → 0.95, sheets and popups 0.985 → 0.998 (chroma ×0.25 → ×0.1), tint surface 0.985 → 0.998. Fields are white sheets in light. Dark is unchanged. Why: the light canvas read grey and muddy, sheets barely lifted off it, and band-filled fields looked recessed.
