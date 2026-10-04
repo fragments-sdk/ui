@@ -8,8 +8,8 @@
 // The avatar sits on the control tracks (xs 24, sm 28, md 32, lg 40). The
 // initials step follows the type ladder: 11 on the two small tracks, 12 at
 // 32, 15 at 40. A group overlaps only as far as its 2px ring can go without
-// reaching a wide pair of initials (CW): none on the 24 track, 2 on 28 and
-// 32, 4 on 40.
+// reaching a wide pair of initials (CW) in the widest fallback face (Linux's
+// system-ui): none on the 24 and 28 tracks, 2 on 32, 4 on 40.
 $_sizes: (
   "xs": (
     track: var(--fui-control-height-xs, #{$fui-control-height-xs}),
@@ -19,7 +19,7 @@ $_sizes: (
   "sm": (
     track: var(--fui-control-height-sm, #{$fui-control-height-sm}),
     type: "caption",
-    overlap: 2,
+    overlap: 0,
   ),
   "md": (
     track: var(--fui-control-height-md, #{$fui-control-height-md}),

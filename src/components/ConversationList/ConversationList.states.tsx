@@ -5,6 +5,7 @@
  */
 import * as React from "react";
 import { ConversationList } from ".";
+import { Button } from "../Button";
 import { EmptyState } from "../EmptyState";
 import { Message } from "../Message";
 import { find, framesUntil, recorder } from "../../test/recipe-checks";
@@ -186,9 +187,9 @@ function Arriving() {
   const [count, setCount] = React.useState(20);
   return (
     <div>
-      <button type="button" data-add onClick={() => setCount((n) => n + 3)}>
+      <Button variant="soft" data-add onClick={() => setCount((n) => n + 3)}>
         Add three
-      </button>
+      </Button>
       <Frame>
         <ConversationList>{turns(count)}</ConversationList>
       </Frame>

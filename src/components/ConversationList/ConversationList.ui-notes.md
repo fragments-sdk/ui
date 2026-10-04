@@ -33,3 +33,7 @@
 - **What works** — 9 unit tests; states: populated, empty, loading, error, overflow, lifecycle (place held, arrivals counted, jump returns).
 - **What doesn't** — not browser-checked in this lane. Unread counting counts direct children appended at the end, so a streamed reply growing in place is not counted (by design: it is not a new message).
 - **Candidates** — smooth scroll on jump outside reduced motion; virtualisation for very long logs.
+
+## 2026-10-04 — lifecycle fixture's control is a library Button
+
+- **What changed** — the `lifecycle` fixture's "Add three" control was a bare `<button>`, so it took the browser's own button colours. In dark, axe failed its contrast on Linux WebKit only (macOS WebKit passes). It is a soft `Button` now; the component is unchanged.

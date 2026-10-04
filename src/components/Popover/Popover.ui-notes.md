@@ -59,3 +59,7 @@
 - **What works** — unit tests (13) green, including a link trigger through `render`, `size="sm"`, and Close through `render`.
 - **What doesn't** — not browser-checked in this lane; the arrow's seat is computed from the arrow-size token and not measured.
 - **Candidates** — move DatePicker and ColorPicker popups onto Popover (their own lanes); the shared `overlay.anchored-title` recipe should become 12/550 so this module can drop its override.
+
+## 2026-10-04 — returned-focus fixture composes the documented trigger
+
+- **What changed** — `FocusRecipe.states.tsx` (`returnedFocus`) rendered a bare trigger, which is an unstyled native button. In dark, axe failed its contrast on Linux WebKit only (macOS WebKit passes). The trigger now takes `render={<Button variant="soft" />}`, as the metadata says to; the component is unchanged.

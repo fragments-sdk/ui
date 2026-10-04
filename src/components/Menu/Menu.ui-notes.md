@@ -87,3 +87,7 @@
 - **What works** — unit tests (32) green: radio check + aria-checked, uncontrolled checkbox toggles, column-reserve marker, danger ink + kbd, render trigger, submenu keyboard and hover paths.
 - **What doesn't** — not browser-checked in this lane; the column reserve relies on `:has()`.
 - **Candidates** — a loading row for menus whose items fetch (one "Loading…" row after 1s, aria-busy); a shared `Kbd` component with Tooltip and Command.
+
+## 2026-10-04 — returned-focus fixture composes the documented trigger
+
+- **What changed** — `FocusRecipe.states.tsx` (`returnedFocus`) rendered a bare trigger, which is an unstyled native button. In dark, axe failed its contrast on Linux WebKit only (macOS WebKit passes). The trigger now takes `render={<Button variant="soft" />}`, as the metadata says to; the component is unchanged.

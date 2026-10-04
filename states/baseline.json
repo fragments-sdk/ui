@@ -1,14 +1,1 @@
-{
-  "linux:chromium/Avatar/populated/light": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:chromium/Avatar/populated/dark": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:webkit/Avatar/populated/light": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:webkit/Avatar/populated/dark": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:firefox/Avatar/populated/light": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:firefox/Avatar/populated/dark": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:coarse/Avatar/populated/light": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:coarse/Avatar/populated/dark": "Linux CI only (passes on macOS engines): the group's last tile reaches the initials before it, measured with Linux's system-ui font. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:webkit/ConversationList/lifecycle/dark": "Linux WebKit only (passes on macOS WebKit): axe color-contrast on a button in dark. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:webkit/FocusRecipe/returnedFocus/dark": "Linux WebKit only (passes on macOS WebKit): axe color-contrast on the returned-focus triggers in dark. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:firefox/SelectionRecipe/markings/light": "Linux Firefox only (passes on macOS Firefox): a hovered selected table row reports no hover tint. Evidence: CI ui-states artifact; fix after the 4.0.0 release.",
-  "linux:firefox/SelectionRecipe/markings/dark": "Linux Firefox only (passes on macOS Firefox): a hovered selected table row reports no hover tint. Evidence: CI ui-states artifact; fix after the 4.0.0 release."
-}
+{}

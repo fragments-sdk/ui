@@ -95,7 +95,8 @@ waits up to 10 seconds before it checks anything.
 ## What every test checks
 
 Each fixture runs in four projects (`chromium`, `webkit`, `firefox`, `coarse`) and two themes
-(`light`, `dark`). A test fails when:
+(`light`, `dark`). Headless Firefox on Linux reports no pointer, so its project sets a fine pointer
+with hover; without it, every `(hover: hover)` rule is dead on CI. A test fails when:
 
 - the fixture throws, or anything raises a page error;
 - anything logs `console.error`, including React's own warnings (the harness uses React's

@@ -61,3 +61,10 @@ Improvement candidates
 
 - **What doesn't** — on CI's Linux runners the populated fixture's "never covers the initials" check fails in all four projects ("1 covered"); it passes in all four on macOS. The likely cause is Linux's `system-ui` font setting the initials wider than macOS's, so it is probably a real overlap for Linux users, not only a harness quirk. Not seen yet: CI uploaded no screenshots until #746 (hidden `.output` folder).
 - **For now** — listed in `states/baseline.json` under `linux:`. Next: read the CI `ui-states` screenshot, then size the overlap (or the ring) against the widest pair on Linux's fallback face.
+
+## 2026-10-04 — group overlap sized for Linux's fallback face
+
+- **What changed** — sm groups no longer overlap: the tiles meet and the ring parts them, as on xs. Linux's `system-ui` sets 11px semibold "CW" at about 20px (macOS: 19.1px), so with a 2px overlap the next tile's ring reached its last letter on the 28 track. md (2px) and lg (4px) keep their overlap; at 12px and 15px the wide pair still clears.
+- **What works** — the `linux:` baseline entries for `populated` are gone; the check runs strict in every project on both OSes. Passes locally on macOS in all four projects.
+- **Not seen** — the Linux run itself (no Linux face locally); the width above is estimated from DejaVu Sans Bold, the likely fallback, so CI is the proof.
+- **What doesn't** — lg clears CW on Linux by well under a pixel; a wider pair (MW) on lg may touch the ring there.

@@ -16,7 +16,15 @@ const wide = { viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1 };
 const browsers: Record<(typeof PROJECTS)[number], Project["use"]> = {
   chromium: { browserName: "chromium", ...wide },
   webkit: { browserName: "webkit", ...wide },
-  firefox: { browserName: "firefox", ...wide },
+  // Headless Firefox on Linux reports no pointer, so every `(hover: hover)` rule goes dead. A fine
+  // pointer with hover (2 | 4) matches a desktop with a mouse, as on macOS.
+  firefox: {
+    browserName: "firefox",
+    ...wide,
+    launchOptions: {
+      firefoxUserPrefs: { "ui.primaryPointerCapabilities": 6, "ui.allPointerCapabilities": 6 },
+    },
+  },
   // Touch: Chromium with a coarse pointer and no hover. The spec asserts the media query.
   coarse: {
     browserName: "chromium",

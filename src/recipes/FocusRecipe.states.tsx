@@ -334,7 +334,7 @@ export function returnedFocus() {
       <Stack direction="row" gap="md">
         <div data-name="Menu trigger" data-return="" data-states-interact="focus">
           <Menu>
-            <Menu.Trigger>Actions</Menu.Trigger>
+            <Menu.Trigger render={<Button variant="soft" />}>Actions</Menu.Trigger>
             <Menu.Content>
               <Menu.Item onSelect={() => {}}>Edit</Menu.Item>
               <Menu.Item onSelect={() => {}}>Duplicate</Menu.Item>
@@ -343,7 +343,7 @@ export function returnedFocus() {
         </div>
         <div data-name="Popover trigger" data-return="" data-states-interact="focus">
           <Popover>
-            <Popover.Trigger>Details</Popover.Trigger>
+            <Popover.Trigger render={<Button variant="soft" />}>Details</Popover.Trigger>
             <Popover.Content>
               <Popover.Title>Details</Popover.Title>
               <Popover.Description>The repository is connected.</Popover.Description>
