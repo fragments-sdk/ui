@@ -2,7 +2,7 @@ import * as sass from "sass";
 import { describe, expect, it } from "vitest";
 
 /**
- * WCAG 2.1 contrast for the Brief 03 read-safe palette.
+ * WCAG 2.1 contrast for the read-safe palette.
  *
  * Resolves `--fui-code-token-*` against `--fui-bg-secondary` and `--fui-link-ink`
  * against `--fui-app-canvas-bg` from the compiled token stylesheet in both

@@ -7,7 +7,7 @@
 - **What doesn't** — screens are not compared visually; forced colours are proven only where a fixture says so above.
 - **Candidates** — a states fixture that renders this component under the coarse project and forced colours.
 
-## 2026-09-02 — fence highlighting (brief 08)
+## 2026-09-02 — fence highlighting
 
 MDX/prose fences use kit `CodeBlock`. JSX/TSX tag scopes now map to
 `--fui-code-token-function` in `css-variables-theme.ts` so usage blocks
@@ -29,12 +29,12 @@ marker; the recipe still supplies marker content and the decimal counter.
 Also: the GFM `task-list-item` selector was module-hashed and never matched —
 now `:global`, so checkbox items drop the stray bullet.
 
-## 2026-09-02 — prose links use `--fui-link-ink` (Brief 03)
+## 2026-09-02 — prose links use `--fui-link-ink`
 
 Markdown `a` color is `--fui-link-ink`, not accent, and hover no longer
 drops opacity (that failed AA). Underline on hover stays.
 
-## 2026-09-02 (brief 04)
+## 2026-09-02
 
 Diff: `Markdown.module.scss` table cell border now carries the dual fallback
 (`var(--fui-stroke-hairline, $fui-stroke-hairline)`, DRG-D19). The docs'

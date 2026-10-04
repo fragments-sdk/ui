@@ -1,5 +1,5 @@
 /**
- * The four render states every kit surface is proven in (docs/fragments-v1/ARCHITECTURE.md):
+ * The four render states every kit surface is proven in:
  * both themes and both radius extremes. Stories declare them with
  * `parameters: { renderStates: RENDER_STATES }` so a screenshot pass can
  * iterate the globals; the Storybook toolbar exposes the same globals for

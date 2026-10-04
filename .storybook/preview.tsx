@@ -12,11 +12,8 @@ import "../src/styles/globals.scss";
 /**
  * Storybook preview for the Fragments UI library.
  *
- * This is the reference for the "styles filter through" contract that Fragments
- * Cloud's live-Storybook embed depends on: the global stylesheet is imported
- * here and every story is wrapped in the design system's Theme, so a
- * published build renders components with their real tokens and theming. A
- * consuming team wires the same two things in their own `.storybook/preview`.
+ * The global stylesheet and Theme wrapper give every story the library's tokens
+ * and theming. Consuming teams can use the same setup in their own preview.
  */
 type StorybookTheme = Extract<ThemeMode, "light" | "dark">;
 

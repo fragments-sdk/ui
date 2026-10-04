@@ -22,7 +22,7 @@ surface opt into inherit color + always-on dotted underline without changing
 the kit default. `underline="dotted"` is the explicit prop for
 the same treatment on a single link.
 
-## 2026-09-02 — default ink is `--fui-link-ink` (Brief 03)
+## 2026-09-02 — default ink is `--fui-link-ink`
 
 `.default` no longer falls through to `--fui-color-accent`. Light coral
 fails AA on `--fui-app-main-bg`; `--fui-link-ink` is the darker step

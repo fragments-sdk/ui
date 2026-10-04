@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { extname, join, relative, resolve } from "node:path";
@@ -22,11 +23,16 @@ const manifest = JSON.parse(
 const forbiddenWorkspacePackages = [
   "@usefragments/cli",
   ...["compiler", "context"].map((name) => `${["@fragments", "sdk"].join("-")}/${name}`),
-  "@repo/engine",
-  "@repo/brand",
+  ["@repo", "engine"].join("/"),
+  ["@repo", "brand"].join("/"),
 ];
 
 describe("public package boundary", () => {
+  it("passes the public source boundary CLI", () => {
+    const result = runBoundary(process.cwd());
+    expect(result.status, result.stdout + result.stderr).toBe(0);
+  });
+
   it("has no dependency on private or retiring build packages", () => {
     const dependencies = {
       ...manifest.dependencies,
@@ -87,6 +93,129 @@ describe("public package boundary", () => {
     });
     expect(manifest.exports["./scss"]).toBe("./src/styles/globals.scss");
     expect(manifest.publishConfig.exports["./scss"]).toBe("./src/styles/globals.scss");
+  });
+});
+
+function runBoundary(root: string) {
+  return spawnSync(
+    process.execPath,
+    [resolve(process.cwd(), "scripts/check-public-boundary.mjs"), "--root", root],
+    { encoding: "utf8" }
+  );
+}
+
+describe("public boundary regression checks", () => {
+  function withFixture(check: (root: string) => void) {
+    const root = mkdtempSync(join(tmpdir(), "ui-public-boundary-"));
+    try {
+      check(root);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+
+  it.each([
+    "nested/drift.cjs",
+    "nested/drift-check.cjs",
+    ".fragments/drift.json",
+    ".fragments/drift/cache.json",
+    "tools/drift/runner.mjs",
+  ])("rejects private paths: %s", (path) => {
+    withFixture((root) => {
+      const file = join(root, path);
+      mkdirSync(resolve(file, ".."), { recursive: true });
+      writeFileSync(file, "export const value = 1;\n");
+      expect(runBoundary(root).status).toBe(1);
+    });
+  });
+
+  it.each([
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "optionalDependencies",
+    "bundledDependencies",
+    "bundleDependencies",
+  ])("rejects private dependencies in %s", (field) => {
+    withFixture((root) => {
+      for (const name of ["@usefragments/cli", ["@repo", "example"].join("/")]) {
+        const dependencies = field.includes("bundle") ? [name] : { [name]: "^1.0.0" };
+        writeFileSync(join(root, "package.json"), JSON.stringify({ [field]: dependencies }));
+        expect(runBoundary(root).status, name).toBe(1);
+      }
+    });
+  });
+
+  it.each([
+    ["https://github.com", "fragments-sdk", "fragments"].join("/"),
+    ["CW", "D123"].join("-"),
+    ["Brief", "03"].join(" "),
+    ["docs", "fragments-v1", "guide.md"].join("/"),
+    ["docs", "release", "guide.md"].join("/"),
+    ["apps", "cloud", "src"].join("/"),
+    `import { internal } from "${["@repo", "example"].join("/")}";`,
+  ])("rejects private text: %s", (value) => {
+    withFixture((root) => {
+      writeFileSync(join(root, "README.md"), value);
+      expect(runBoundary(root).status).toBe(1);
+    });
+  });
+
+  it("reports credentials without echoing their values", () => {
+    withFixture((root) => {
+      const credentials = [
+        ["-----BEGIN", "PRIVATE KEY-----"].join(" "),
+        ["-----BEGIN", "ENCRYPTED PRIVATE KEY-----"].join(" "),
+        "ghp_" + "a".repeat(36),
+        "npm_" + "b".repeat(36),
+        "AKIA" + "C".repeat(16),
+        `client_secret = "${"d".repeat(24)}"`,
+        `API_KEY=${"e".repeat(24)}`,
+      ];
+      for (const credential of credentials) {
+        writeFileSync(join(root, "settings.txt"), credential);
+        const result = runBoundary(root);
+        expect(result.status).toBe(1);
+        expect(result.stderr).toContain("settings.txt:1:");
+        expect(result.stderr).not.toContain(credential);
+      }
+    });
+  });
+
+  it("rejects a tracked kit folder", () => {
+    withFixture((root) => {
+      spawnSync("git", ["init", "--quiet"], { cwd: root });
+      mkdirSync(join(root, "fragments"));
+      writeFileSync(join(root, "fragments/preset.json"), "{}");
+      spawnSync("git", ["add", "fragments/preset.json"], { cwd: root });
+      const result = runBoundary(root);
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("tracked generated kit file");
+    });
+  });
+
+  it("checks tracked files inside generated directory names", () => {
+    withFixture((root) => {
+      spawnSync("git", ["init", "--quiet"], { cwd: root });
+      mkdirSync(join(root, "src/coverage"), { recursive: true });
+      writeFileSync(join(root, "src/coverage/drift.cjs"), "module.exports = {};\n");
+      spawnSync("git", ["add", "src/coverage/drift.cjs"], { cwd: root });
+      expect(runBoundary(root).status).toBe(1);
+    });
+  });
+
+  it("allows public decisions, public dependencies and pinned CLI commands", () => {
+    withFixture((root) => {
+      writeFileSync(join(root, "README.md"), "UIR-D123: public decision.");
+      writeFileSync(
+        join(root, "package.json"),
+        JSON.stringify({
+          devDependencies: { "@usefragments/core": "^3.2.0" },
+          scripts: { "fragments:check": "npx @usefragments/cli@3.2.0 build --check" },
+        })
+      );
+      expect(runBoundary(root).status).toBe(0);
+    });
   });
 });
 
@@ -202,7 +331,7 @@ describe("neutral library source", () => {
     "fluted-glass",
     "glass block",
     "fragmentShader",
-    'import { CompanyMark } from "@repo/brand"',
+    `import { CompanyMark } from "${["@repo", "brand"].join("/")}"`,
   ])("rejects brand references in source or paths: %s", (value) => {
     expect(brandReference(value)).toBeDefined();
   });

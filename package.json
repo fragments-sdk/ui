@@ -7,8 +7,7 @@
   "homepage": "https://usefragments.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fragments-sdk/fragments",
-    "directory": "libs/ui"
+    "url": "https://github.com/fragments-sdk/ui"
   },
   "type": "module",
   "main": "src/index.ts",
@@ -39,7 +38,8 @@
     "./recipes/navigation": "./src/recipes/_navigation.scss",
     "./recipes/prose": "./src/recipes/_prose.scss",
     "./fragments.json": "./fragments.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./tokens/measurements": "./src/tokens/_measurements.generated.scss"
   },
   "keywords": [
     "react",
@@ -185,7 +185,10 @@
       "./mixins": "./src/tokens/_mixins.scss",
       "./recipes/navigation": "./src/recipes/_navigation.scss",
       "./fragments.json": "./fragments.json",
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./tokens/measurements": "./src/tokens/_measurements.generated.scss",
+      "./recipes/typography": "./src/recipes/_typography.scss",
+      "./recipes/prose": "./src/recipes/_prose.scss"
     }
   },
   "scripts": {
@@ -272,6 +275,7 @@
     "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
+    "@eslint/js": "9.39.2",
     "@fontsource-variable/jetbrains-mono": "5.2.8",
     "@playwright/test": "1.58.2",
     "@storybook/addon-a11y": "^8",
@@ -289,20 +293,28 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@usefragments/core": "workspace:*",
+    "@usefragments/core": "^3.2.0",
     "@vitejs/plugin-react": "^4.3.0",
     "ajv": "8.17.1",
     "axe-core": "4.11.1",
     "date-fns": "^4.0.0",
     "eslint": "^9.39.2",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "17.3.0",
+    "happy-dom": "20.9.0",
     "jsdom": "^25.0.0",
     "next": "^16.3.0",
     "postcss-scss": "^4.0.9",
     "postcss-value-parser": "^4.2.0",
+    "prettier": "3.8.1",
     "react": "^19.0.0",
     "react-colorful": "^5.6.1",
     "react-day-picker": "^9.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "10.1.0",
+    "recharts": "3.7.0",
+    "remark-gfm": "4.0.1",
     "rollup-plugin-preserve-directives": "0.4.0",
     "sass": "^1.83.0",
     "shiki": "^3.0.0",
@@ -333,5 +345,8 @@
     "dist",
     "fragments.json",
     "tokens.css"
-  ]
+  ],
+  "bugs": {
+    "url": "https://github.com/fragments-sdk/ui/issues"
+  }
 }

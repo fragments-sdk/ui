@@ -6,15 +6,14 @@
 - Guidance uses Alert for non-blocking confirmation and shows a titled, explicitly closable Dialog for
   focused tasks.
 - The Bundle 01 browser record is the source of verification evidence; no Figma reference is authored.
-- Brief 11A's independent Browser Gate passed all 23 retained Bundle 01 cases plus the supported
+- The initial independent Browser Gate passed all 23 retained Bundle 01 cases plus the supported
   Button disabled state against implementation `ba6b9cd0` and snapshot `158d5547…`. The fresh Dialog
   path began closed, opened exactly one named modal from Enter, focused its close control, restored the
   trigger after Escape, and rendered the long-title case without desktop, 390px, or 320px overflow.
-  See `docs/fragments-v1/ARCHITECTURE.md` for the owned-server record.
 - The repair at `b1458c1b` received a second independent PASS against snapshot `b6c7377a…`: C01–C24
   were re-executed on owned port `34175`, the Dialog open/close/focus and long-title paths remained
   correct at desktop, 390px, and 320px, and the fresh Console audit contained zero warnings or errors.
-- Brief 11B implementation `0f2ad436` independently passed C01–C24 against stacked-base snapshot
+- The follow-up implementation `0f2ad436` independently passed C01–C24 against stacked-base snapshot
   `6c41c22b…` on owned port `34176`. Dialog again began closed, opened one named modal from Enter,
   focused its close control, restored the trigger after Escape, retained the long-title case at desktop,
   390px, and 320px, and produced zero Browser Console warnings or errors.
@@ -27,21 +26,20 @@
   one named modal from Enter with its close control focused, restored trigger focus after Escape,
   retained the long-title fixture at exact desktop/390px/320px widths across both themes, and produced
   zero Browser Console warnings or errors.
-- After child #481 landed on the Brief 11A parent, clean head `83938e21` independently passed C01–C24
-  against the brief-declared Bundle 01 base snapshot `d39ed67c…` on owned port `34179`. Dialog began
+- After child #481 landed on the parent verification, clean head `83938e21` independently passed C01–C24
+  against the recorded Bundle 01 base snapshot `d39ed67c…` on owned port `34179`. Dialog began
   closed, opened one named modal from Enter with its close control focused, restored trigger focus
   after Escape, retained the long-title fixture at exact desktop/390px/320px widths across both themes,
   and produced zero Browser Console warnings or errors.
-- Brief 11C is an evidence-record reconciliation only: it changes no Dialog runtime, fragment,
+- This evidence record reconciliation: it changes no Dialog runtime, fragment,
   generated-catalog, or rendered-state bytes. Independent verifier `/root/browser_11c` bound implementation
   `327f5e44` to base `2887f459` and snapshot `6b52e175…` on owned port `34180`, but the direct Browser Gate
   failed at C18 when ArrowRight focused the first Button `Code` tab and Enter left it unselected. Per the
   stop-on-first-failure rule, C03, C12, C16–C17, C22, and the full-matrix C23 Console audit were not run, so
   this renewal makes no fresh claim about Dialog modal, focus-return, long-title, or responsive behavior.
   The separate tagged Docs E2E suite passed 15/15 in 42.8s, and the partial Browser log contained zero
-  warnings and zero errors; see `docs/fragments-v1/ARCHITECTURE.md` for the exact conflict
-  and cleanup record.
-- Brief 11C round-2 verifier `/root/browser_11c_round2` bound implementation `53161576` to base
+  warnings and zero errors. The conflict and cleanup record remain internal.
+- The round-2 verifier `/root/browser_11c_round2` bound implementation `53161576` to base
   `2887f459` and snapshot `868b696e…` on owned port `34182`. Direct Browser checks passed the Dialog
   deep-link/refresh and long-title cases, including containment at `1280px` dark, `390px` dark, and
   `320px` light. D-122's C18-only raw Enter adapter passed exactly as authorized, but C22 failed:
@@ -49,7 +47,7 @@
   fallback was used because D-122 does not cover Dialog, so the matrix stopped and C23 remained `NOT RUN`.
   The tagged Docs E2E suite passed 15/15 in 45.5s and the completed partial Browser run had zero warnings
   and zero errors; the Browser record retains both the 11:08 C18 failure and this later C22 failure.
-- Brief 11C round-3 verifier `/root/browser_11c_round3` bound implementation `41f0acac` to base
+- The round-3 verifier `/root/browser_11c_round3` bound implementation `41f0acac` to base
   `2887f459` and snapshot `1dd14008…` on owned port `34184`. The fresh C01–C24 matrix passed under
   D-123: direct Browser reconfirmed Dialog deep-link/refresh, long-title containment at `1280px` dark,
   `390px` dark (`16–374px`), and `320px` light (`16–304px`). For C22 it uniquely identified the exact
@@ -76,7 +74,7 @@
   stale-lock fixture's same-process fan-out and restoring two record-integrity findings. Dialog source,
   UI/runtime behavior, generated catalog bytes, and prior Browser observations remain unchanged, so the prior
   D-124 direct smoke is retained without another UI interaction; fresh Gate V/Gate R own regression proof.
-- After PR #482 merged, the fresh Brief 11A parent renewal bound `6550c77d` to Bundle base `0ae700f4` at
+- After PR #482 merged, the fresh parent verification renewal bound `6550c77d` to Bundle base `0ae700f4` at
   snapshot `f9e0a425…`. Direct Browser reconfirmed Dialog deep-link/refresh, five authored preview groups,
   long-title containment at `1280px` dark, `390px` dark (`16–374px`), and `320px` light (`16–304px`), plus
   one-modal focus/close/trigger-return lifecycle and zero Console warnings or errors. The Browser's synthesized

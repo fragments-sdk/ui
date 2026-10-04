@@ -52,7 +52,7 @@ and the rail, so the topbar reads as one ground with the reading pane.
 
 Sidebar-column interpolation is disabled under `prefers-reduced-motion`.
 
-## 2026-09-02 — full-height rail, one ground (Brief 03)
+## 2026-09-02 — full-height rail, one ground
 
 The rail hairline is a `--fui-border` end border on Sidebar `.root`; the
 header's bottom edge is the same `--fui-border` hairline.

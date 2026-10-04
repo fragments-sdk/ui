@@ -9,6 +9,8 @@ import { MEASUREMENT_PROFILES } from "./measurements";
 
 type PackageManifest = {
   files?: string[];
+  repository?: { type: string; url: string; directory?: string };
+  bugs?: { url: string };
   exports?: Record<string, unknown>;
   peerDependencies?: Record<string, string>;
   peerDependenciesMeta?: Record<string, { optional?: boolean }>;
@@ -106,6 +108,26 @@ describe("style entrypoints carry a types condition (#7b)", () => {
       expect(Object.keys(entry ?? {})[0]).toBe("types");
     });
   }
+});
+
+describe("public package metadata and Sass subpaths", () => {
+  it("links the source and issue tracker to the public repository", () => {
+    expect(manifest.repository).toEqual({
+      type: "git",
+      url: "https://github.com/fragments-sdk/ui",
+    });
+    expect(manifest.bugs).toEqual({ url: "https://github.com/fragments-sdk/ui/issues" });
+  });
+
+  it.each([
+    ["./recipes/typography", "./src/recipes/_typography.scss"],
+    ["./recipes/prose", "./src/recipes/_prose.scss"],
+    ["./tokens/measurements", "./src/tokens/_measurements.generated.scss"],
+  ])("exports %s in development and publication", (subpath, target) => {
+    expect(manifest.exports?.[subpath]).toBe(target);
+    expect(manifest.publishConfig?.exports?.[subpath]).toBe(target);
+    expect(existsSync(resolve(packageRoot, target)), `missing ${target}`).toBe(true);
+  });
 });
 
 describe("measurements public subpath", () => {
@@ -376,6 +398,20 @@ describe("dist ESM contains no bare require() calls (P0 packaging)", () => {
       offenders,
       `bare require( found in ESM dist (use dynamic import() for optional peers):\n${offenders.join("\n")}`
     ).toEqual([]);
+  });
+});
+
+describe("published declarations are self-contained", () => {
+  it("does not leak development-only core types through block declarations", () => {
+    const distRoot = resolve(packageRoot, "dist");
+    expect(existsSync(distRoot), "build the package before checking declarations").toBe(true);
+    const declarations = readdirSync(distRoot, { recursive: true, encoding: "utf8" }).filter(
+      (file) => file.endsWith(".d.ts")
+    );
+    expect(declarations.length).toBeGreaterThan(70);
+    for (const file of declarations) {
+      expect(readFileSync(join(distRoot, file), "utf8"), file).not.toContain("@usefragments/core");
+    }
   });
 });
 

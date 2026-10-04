@@ -1,0 +1,55 @@
+| Component | Public props or part | Prop | Resolved type | Reason |
+| --- | --- | --- | --- | --- |
+| Checkbox | CheckboxProps | variant | "outline" | 1 literal value; expected 2–12 |
+| CodeBlock | CodeBlockProps | maxHeight | number | non-literal value: number |
+| CodeBlock | TabbedCodeBlockProps | maxHeight | number | non-literal value: number |
+| Combobox | ComboboxContentProps | maxVisibleItems | number | non-literal value: number |
+| DataTable | DataTableProps | maxHeight | number &#124; string | non-literal values: number, string |
+| DataTable | DataTableVirtualProps | colSpan | number | non-literal value: number |
+| DataTable | DataTableVirtualProps | maxHeight | number &#124; string | non-literal values: number, string |
+| Editor | EditorProps | rows | number | non-literal value: number |
+| Grid | GridItemProps | colSpan | "full" &#124; 1 &#124; 10 &#124; 11 &#124; 12 &#124; 2 &#124; 3 &#124; 4 &#124; 5 &#124; 6 &#124; 7 &#124; 8 &#124; 9 | 13 literal values; expected 2–12 |
+| Grid | GridProps | minChildWidth | string | non-literal value: string |
+| Header | HeaderProps | elevatedOnScroll | HeaderElevatedOnScrollOptions &#124; false &#124; true | non-literal value: HeaderElevatedOnScrollOptions |
+| Image | ImageProps | height | number &#124; string | non-literal values: number, string |
+| Image | ImageProps | width | number &#124; string | non-literal values: number, string |
+| Main | MainProps | collapseBelow | string | non-literal value: string |
+| Main | MainRegionProps | collapseBelow | string | non-literal value: string |
+| Menu | MenuContentProps | maxVisibleItems | number | non-literal value: number |
+| Prompt | PromptProps | maxRows | number | non-literal value: number |
+| Prompt | PromptProps | minRows | number | non-literal value: number |
+| RadioGroup | RadioGroupProps | variant | "outline" | 1 literal value; expected 2–12 |
+| Select | SelectContentProps | maxVisibleItems | number | non-literal value: number |
+| Skeleton | SkeletonProps | height | number &#124; string | non-literal values: number, string |
+| Skeleton | SkeletonProps | width | number &#124; string | non-literal values: number, string |
+| Skeleton | SkeletonTextProps | lastLineWidth | number | non-literal value: number |
+| Skeleton | SkeletonTextProps | lines | number | non-literal value: number |
+| Stack | StackProps | collapseBelow | string | non-literal value: string |
+| Table | TableEmptyProps | colSpan | number | non-literal value: number |
+| Table | TableLoadingProps | columns | number | non-literal value: number |
+| Table | TableLoadingProps | rows | number | non-literal value: number |
+| Table | TableProps | maxHeight | number &#124; string | non-literal values: number, string |
+| Tabs | TabProps | dot | false &#124; string &#124; true | non-literal value: string |
+| Text | TextProps | lineClamp | number | non-literal value: number |
+| Textarea | TextareaProps | maxRows | number | non-literal value: number |
+| Textarea | TextareaProps | minRows | number | non-literal value: number |
+| Theme | ThemeProps | brand | string | non-literal value: string |
+| Theme | ThemeProps | danger | string | non-literal value: string |
+| Theme | ThemeProps | font | string | non-literal value: string |
+| Theme | ThemeProps | info | string | non-literal value: string |
+| Theme | ThemeProps | neutral | "paper" &#124; string & {} | non-literal value: string & {} |
+| Theme | ThemeProps | pressScale | number | non-literal value: number |
+| Theme | ThemeProps | radius | number &#124; string | non-literal values: number, string |
+| Theme | ThemeProps | scale | number | non-literal value: number |
+| Theme | ThemeProps | success | string | non-literal value: string |
+| Theme | ThemeProps | warning | string | non-literal value: string |
+| Theme | ThemeScriptProps | brand | string | non-literal value: string |
+| Theme | ThemeScriptProps | danger | string | non-literal value: string |
+| Theme | ThemeScriptProps | font | string | non-literal value: string |
+| Theme | ThemeScriptProps | info | string | non-literal value: string |
+| Theme | ThemeScriptProps | neutral | "paper" &#124; string & {} | non-literal value: string & {} |
+| Theme | ThemeScriptProps | pressScale | number | non-literal value: number |
+| Theme | ThemeScriptProps | radius | number &#124; string | non-literal values: number, string |
+| Theme | ThemeScriptProps | scale | number | non-literal value: number |
+| Theme | ThemeScriptProps | success | string | non-literal value: string |
+| Theme | ThemeScriptProps | warning | string | non-literal value: string |

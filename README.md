@@ -4,12 +4,12 @@ A component library built on [Base UI](https://base-ui.com/) headless primitives
 
 ## About this repository
 
-This GitHub repository is a **read-only mirror** of `@usefragments/ui`. The canonical source lives in a private monorepo and is mirrored here on every push to `main`.
+Source and issues for `@usefragments/ui` live at
+[fragments-sdk/ui](https://github.com/fragments-sdk/ui).
 
 - **Install from npm:** `pnpm add @usefragments/ui` (or `npm install @usefragments/ui`)
 - **Docs:** [usefragments.com](https://usefragments.com)
-- **Issues:** file them in this repo — they're triaged by maintainers.
-- **Contributions:** pull requests are not merged from this mirror. Describe proposed changes in an issue; maintainers land them in the canonical repo and the mirror re-syncs automatically.
+- **Issues:** [report a bug or propose a change](https://github.com/fragments-sdk/ui/issues).
 
 ## Install
 

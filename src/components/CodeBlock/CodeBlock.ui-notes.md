@@ -18,13 +18,13 @@
 - **What doesn't** — screens are not compared visually; forced colours are proven only where a fixture says so above.
 - **Candidates** — a states fixture that renders this component under the coarse project and forced colours.
 
-## 2026-09-02 — Expand control + JSX scopes (brief 08)
+## 2026-09-02 — Expand control + JSX scopes
 
 `collapseAction="expand"` paints one right-aligned Expand / Collapse control
 instead of “Show N more lines”. JSX/TSX tags and components map to
 `--fui-code-token-function` so usage blocks are not plain ink.
 
-## 2026-09-02 — theme-aware syntax (Brief 03)
+## 2026-09-02 — theme-aware syntax
 
 Default `theme` is `css-variables`, not `one-dark-pro`. Shiki 3 dropped the
 bundled `css-variables` theme, so `css-variables-theme.ts` supplies a custom
@@ -42,7 +42,7 @@ names stays on-contract.
 Contrast of every `--fui-code-token-*` against `--fui-code-bg` is gated by
 `libs/ui/src/tokens/read-safe-contrast.test.ts` (≥ 4.5:1, both themes).
 
-## 2026-09-02 — hairline frame (docs brief 04)
+## 2026-09-02 — hairline frame
 
 The wrapper now carries `--fui-stroke-hairline` in `--fui-code-border`
 (falls back to `--fui-border`). Reason: the light code surface and the

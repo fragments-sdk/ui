@@ -27,13 +27,9 @@ describe("public design props", () => {
     expect(audit.designProps).toBeGreaterThan(80);
     const report = formatDesignPropViolations(audit.violations);
     const baseline = readFileSync(
-      resolve(process.cwd(), "../../docs/ui-design-prop-audit.md"),
+      resolve(process.cwd(), "src/test/design-prop-baseline.txt"),
       "utf8"
-    )
-      .split("<!-- design-prop-baseline:start -->\n")[1]
-      ?.split("\n<!-- design-prop-baseline:end -->")[0]
-      .replace(/^<!-- prettier-ignore -->\n/, "")
-      .trimEnd();
+    ).trimEnd();
     console.info(
       `Public design prop audit: ${audit.designProps} props, ${audit.violations.length} existing exceptions.\n${report}`
     );
