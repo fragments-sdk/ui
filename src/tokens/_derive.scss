@@ -21,7 +21,7 @@
 //
 // A solve needs the luminance of what the colour sits on. Planes are fixed
 // lightness steps of the neutral, so their bounds are constants (light canvas
-// at least 0.82, dark band at most 0.018). The bounds hold up to neutral
+// at least 0.82, dark raised plane at most 0.02). The bounds hold up to neutral
 // chroma 0.04, so a plane caps the neutral's chroma there: any neutral keeps
 // every pair.
 // A tone's tint depends on the seed, so its luminance is computed from the
@@ -37,9 +37,10 @@
 $neutral: "var(--fui-seed-neutral)";
 
 /// Luminance bounds of the planes text and indicators sit on (see above).
-/// Light: the darkest plane is the canvas. Dark: the lightest is the band.
+/// Light: the darkest plane is the canvas. Dark: the lightest is the raised
+/// plane (popups), L 0.268.
 $plane-floor-light: 0.82;
-$plane-ceiling-dark: 0.018;
+$plane-ceiling-dark: 0.02;
 
 /// Solve targets, a little above the WCAG bars so 8-bit rounding in the
 /// painted colour never drops a pair under them (UIR-D108).

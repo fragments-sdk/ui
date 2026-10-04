@@ -57,9 +57,9 @@ describe("default Fragments surface tokens", () => {
 
   it("derives the planes, inks and lines from the neutral at the Glass steps", () => {
     expect(engine).toContain(`--fui-body-bg: ${plane([0.94, 0.5], [0.182, 0.2])};`);
-    expect(engine).toContain(`--fui-bg-secondary: ${plane([0.953, 0.4], [0.257, 0.2])};`);
+    expect(engine).toContain(`--fui-bg-secondary: ${plane([0.953, 0.4], [0.248, 0.2])};`);
     expect(engine).toContain(`--fui-bg-primary: ${plane([0.985, 0.25], [0.214, 0.2])};`);
-    expect(engine).toContain(`--fui-bg-elevated: ${plane([0.985, 0.25], [0.235, 0.33])};`);
+    expect(engine).toContain(`--fui-bg-elevated: ${plane([0.985, 0.25], [0.268, 0.33])};`);
     expect(engine).toContain(`--fui-text-primary: ${plane([0.216, 0.6], [0.935, 1.05])};`);
     expect(engine).toContain(`--fui-text-secondary: ${plane([0.415, 0.9], [0.768, 1.15])};`);
     expect(engine).toContain(`--fui-text-tertiary: ${plane([0.498, 1.15], [0.668, 1.2])};`);
@@ -115,10 +115,10 @@ describe("default Fragments surface tokens", () => {
 
   it("steps hover and press in ink 1 and washes selection at 12% with a selection ring", () => {
     expect(themed).toMatch(
-      /--fui-bg-hover: light-dark\(\s*color-mix\(in oklab, var\(--fui-text-primary\) 6%, transparent\),\s*color-mix\(in oklab, var\(--fui-text-primary\) 8%, transparent\)\s*\)/
+      /--fui-bg-hover: light-dark\(\s*color-mix\(in oklab, var\(--fui-text-primary\) 6%, transparent\),\s*color-mix\(in oklab, var\(--fui-text-primary\) 4\.5%, transparent\)\s*\)/
     );
     expect(themed).toMatch(
-      /--fui-bg-active: light-dark\(\s*color-mix\(in oklab, var\(--fui-text-primary\) 11%, transparent\),\s*color-mix\(in oklab, var\(--fui-text-primary\) 14%, transparent\)\s*\)/
+      /--fui-bg-active: light-dark\(\s*color-mix\(in oklab, var\(--fui-text-primary\) 11%, transparent\),\s*color-mix\(in oklab, var\(--fui-text-primary\) 8%, transparent\)\s*\)/
     );
     expect(themed).toMatch(
       /--fui-control-selected-bg: color-mix\(\s*in oklab,\s*var\(--fui-control-checked-bg\) 12%,\s*transparent\s*\)/

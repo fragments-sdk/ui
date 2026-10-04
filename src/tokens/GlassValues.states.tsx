@@ -22,7 +22,7 @@ const WHITE = { r: 1, g: 1, b: 1, alpha: 1 };
 // Per theme: canvas lightness, hover and press opacity of ink 1.
 const EXPECTED = {
   light: { canvas: 0.94, hover: 0.06, press: 0.11 },
-  dark: { canvas: 0.182, hover: 0.08, press: 0.14 },
+  dark: { canvas: 0.182, hover: 0.045, press: 0.08 },
 } as const;
 
 function near(actual: number, expected: number, tolerance: number) {

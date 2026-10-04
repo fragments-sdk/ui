@@ -1,5 +1,11 @@
 # Message — UI notes
 
+## 2026-10-04 — User bubble edge
+
+- **What changed** — the user bubble keeps the band (`--fui-bg-secondary`) and gains a `--fui-border` hairline, the same grammar as CodeBlock. In light the band sat 0.013 L above the canvas with no edge, so the bubble vanished on Main; the edge makes it read on the canvas and on a primary sheet in both themes.
+- **What works** — the hairline is the one shared edge token, so no new token and no new grammar.
+- **What doesn't** — the bubble is 2px taller than before (the border adds to the padding box).
+
 ## 2026-10-03 — Glass v4 review fixes
 
 - **What changed** — a streaming message's content takes the shared working area (the working sweep on the surface corner), so streaming reads as work in progress, as the Prompt does. The flat `Message*` barrel exports are cut.
@@ -26,7 +32,7 @@
 
 ## 2026-10-03 — AI surface on Glass
 
-- **What changed** — `from: "user" | "assistant"` replaces `role` (and `"system"`; events are `ConversationList.Event`). The user's words sit in a band bubble at the end (surface corner, no edge, 80% cap); the reply is flush and an assistant string renders through Markdown with `streaming`. Streaming shows one still ink-1 caret at the end, no blink and no wash (the one waiting pattern lives in ThinkingIndicator). `status="pending"` says "Sending…" in the meta line; `status="error"` adds `Message.Error` (errbox recipe, an alert, "Not sent." or "This reply didn't finish." plus "Try again" when `onRetry` is set). Timestamps and actions share one meta line; actions wait for hover or focus where a pointer hovers and stay on touch. Avatars are opt-in through the `avatar` slot; the default user and assistant glyphs are gone, and so is `Content`'s `markdown` prop.
+- **What changed** — `from: "user" | "assistant"` replaces `role` (and `"system"`; events are `ConversationList.Event`). The user's words sit in a band bubble at the end (surface corner, 80% cap; a hairline edge since 2026-10-04); the reply is flush and an assistant string renders through Markdown with `streaming`. Streaming shows one still ink-1 caret at the end, no blink and no wash (the one waiting pattern lives in ThinkingIndicator). `status="pending"` says "Sending…" in the meta line; `status="error"` adds `Message.Error` (errbox recipe, an alert, "Not sent." or "This reply didn't finish." plus "Try again" when `onRetry` is set). Timestamps and actions share one meta line; actions wait for hover or focus where a pointer hovers and stay on touch. Avatars are opt-in through the `avatar` slot; the default user and assistant glyphs are gone, and so is `Content`'s `markdown` prop.
 - **What works** — 10 unit tests; states: populated, loading, error, overflow, lifecycle.
 - **What doesn't** — not browser-checked in this lane. Relative timestamps do not refresh while the page stays open.
 - **Candidates** — Reasoning, ToolCall and Sources parts; a refreshing relative time.

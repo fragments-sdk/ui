@@ -170,11 +170,13 @@
   },
   "cssVariables": [
     "--fui-bg-secondary",
+    "--fui-border",
     "--fui-duration-micro",
     "--fui-ease-standard",
     "--fui-radius-control",
     "--fui-radius-surface",
     "--fui-raw-space-2",
+    "--fui-stroke-hairline",
     "--fui-text-primary",
     "--fui-text-secondary",
     "--fui-text-tertiary"

@@ -48,13 +48,12 @@
 
 ## 2026-08-13 — header matches the reading pane
 
-`.header` and AppShell's header slot paint `--fui-app-main-bg` (fallback
-`--fui-main-bg`) so the topbar is the same plane as main — paper rail,
-tertiary canvas in light; lifted rail, deeper body in dark.
+`.header` and AppShell's header slot paint `--fui-app-canvas-bg`, the same
+plane as main and the rail. AppShell's slot draws a `--fui-border` bottom
+hairline; a standalone `elevatedOnScroll` header shows it once scrolled.
 
-`Header.Search` paints the semantic `--fui-header-search-bg` surface. The
-default aliases `--fui-bg-subtle`, so search remains visible on the reading
-plane without a consumer reaching into Button's private styling hooks.
+`Header.Search` is a slot for an Input, which owns its own fill (the field
+recipe's `--fui-field-bg` with a `--fui-field-border` edge).
 
 ## 2026-09-04 — Wave 0 vocabulary migration
 

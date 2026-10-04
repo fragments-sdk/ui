@@ -45,8 +45,8 @@
 
 ## 2026-08-13 — header slot is the reading pane
 
-The header grid area uses `--fui-app-main-bg` (and forces the child
-`<header>` to the same) so the topbar is the reading pane, not the rail.
+The header grid area paints `--fui-app-canvas-bg`, the same plane as main
+and the rail, so the topbar reads as one ground with the reading pane.
 
 ## 2026-08-13 — motion
 
@@ -54,15 +54,12 @@ Sidebar-column interpolation is disabled under `prefers-reduced-motion`.
 
 ## 2026-09-02 — full-height rail, one ground (Brief 03)
 
-The sidebar **column** (`align-self: stretch`, `height: auto`) carries the
-`--fui-border-subtle` hairline so the rail runs the full content height.
-The sticky inner `<aside>` is viewport-tall for nav scrolling and has no
-end border. Do not move the border back onto Sidebar `.root` — that only
-paints one viewport.
+The rail hairline is a `--fui-border` end border on Sidebar `.root`; the
+header's bottom edge is the same `--fui-border` hairline.
 
-Header and main already share `--fui-app-main-bg`. Docs must not paint
-`main` with `--fui-main-bg` (paper in light) or the header reads as a
-different band. Fix ground at this layer, not with a docs override.
+Rail, header and main all paint `--fui-app-canvas-bg`. Docs must not paint
+`main` with another plane or the header reads as a different band. Fix
+ground at this layer, not with a docs override.
 
 ## 2026-09-04 — Wave 0 vocabulary migration
 

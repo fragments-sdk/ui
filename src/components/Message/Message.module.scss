@@ -46,10 +46,12 @@
     overflow-wrap: anywhere;
   }
 
-  // The bubble: the band, the surface corner, no edge.
+  // The bubble: the band with a hairline edge and the surface corner, the
+  // same grammar as CodeBlock, so it reads on the canvas and on a sheet.
   .message[data-from="user"] .content {
     padding-block: layout.gap("sm");
     padding-inline: layout.gap("md");
+    border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
     border-radius: var(--fui-radius-surface, $fui-radius-surface);
     background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   }

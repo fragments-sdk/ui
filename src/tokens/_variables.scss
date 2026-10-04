@@ -630,7 +630,9 @@ $fui-dark-chart-6: _twin("chart-6", "dark") !default;
 // then its expression inside `@supports`.
 
 /// Planes, inks and lines (the Glass ladder): lightness and chroma factor of
-/// the neutral, light then dark.
+/// the neutral, light then dark. Dark planes run canvas < surface < band <
+/// raised, at least 0.02 L apart, so a menu over a field or code well sits
+/// above it. Light raised equals the surface; the popup shadow separates them.
 $_planes: (
   "body-bg": (
     (0.94, 0.5),
@@ -638,7 +640,7 @@ $_planes: (
   ),
   "bg-secondary": (
     (0.953, 0.4),
-    (0.257, 0.2),
+    (0.248, 0.2),
   ),
   "bg-primary": (
     (0.985, 0.25),
@@ -646,7 +648,7 @@ $_planes: (
   ),
   "bg-elevated": (
     (0.985, 0.25),
-    (0.235, 0.33),
+    (0.268, 0.33),
   ),
   "text-primary": (
     (0.216, 0.6),
@@ -1052,14 +1054,16 @@ $_chart-series: (
     --fui-text-inverse: var(--fui-bg-primary);
 
     // Interaction ladder: ink 1 at an alpha, so hover and press read as the
-    // same steps on the canvas, the band and a raised menu.
+    // same steps on the canvas, the band and a raised menu. Dark is scaled to
+    // the light steps: hover lifts the canvas about 0.04 L and stays under the
+    // band, so a hovered row never reads as a code well or field.
     --fui-bg-hover: light-dark(
       color-mix(in oklab, var(--fui-text-primary) 6%, transparent),
-      color-mix(in oklab, var(--fui-text-primary) 8%, transparent)
+      color-mix(in oklab, var(--fui-text-primary) 4.5%, transparent)
     );
     --fui-bg-active: light-dark(
       color-mix(in oklab, var(--fui-text-primary) 11%, transparent),
-      color-mix(in oklab, var(--fui-text-primary) 14%, transparent)
+      color-mix(in oklab, var(--fui-text-primary) 8%, transparent)
     );
     --fui-backdrop: light-dark(
       color-mix(in oklab, var(--fui-text-primary) 38%, transparent),
