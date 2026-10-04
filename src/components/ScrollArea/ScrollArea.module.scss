@@ -1,172 +1,203 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/variables" as *;
+@use "../../recipes/focus";
 
 $_track-size: measurements.raw-space(6);
 $_inline-fade: measurements.raw-space(48);
 $_block-fade: measurements.raw-space(32);
 $_mask-none: linear-gradient(black, black);
 
-.root {
-  --_fui-scrollarea-track-size: var(--fui-raw-space-6, #{$_track-size});
-  --_fui-scrollarea-inline-fade: var(--fui-raw-space-48, #{$_inline-fade});
-  --_fui-scrollarea-block-fade: var(--fui-raw-space-32, #{$_block-fade});
-
-  position: relative;
-  overflow: hidden;
-}
-
-.viewport {
-  --_fui-scrollarea-inline-mask: #{$_mask-none};
-  --_fui-scrollarea-block-mask: #{$_mask-none};
-
-  inline-size: 100%;
-  block-size: 100%;
-  overflow: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-  mask-image:
-    var(--_fui-scrollarea-inline-mask, #{$_mask-none}),
-    var(--_fui-scrollarea-block-mask, #{$_mask-none});
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
-  mask-composite: intersect;
-  -webkit-mask-image:
-    var(--_fui-scrollarea-inline-mask, #{$_mask-none}),
-    var(--_fui-scrollarea-block-mask, #{$_mask-none});
-  -webkit-mask-composite: source-in;
-
-  &::-webkit-scrollbar {
-    width: var(--_fui-scrollarea-track-size, #{$_track-size});
-    height: var(--_fui-scrollarea-track-size, #{$_track-size});
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+// The thin line-strong thumb, shown.
+@mixin _thumb-shown {
+  scrollbar-color: var(--fui-scrollbar-thumb, #{$fui-scrollbar-thumb}) transparent;
 
   &::-webkit-scrollbar-thumb {
-    border-radius: var(--fui-radius-full, #{$fui-radius-full});
-    background-color: transparent;
-    transition: background-color var(--fui-transition-fast, #{$fui-transition-fast});
+    background-color: var(--fui-scrollbar-thumb, #{$fui-scrollbar-thumb});
   }
+}
 
-  &:hover,
-  &:focus-within,
-  &[data-scrollbar-visibility="always"] {
-    scrollbar-color: var(--fui-border-strong, #{$fui-border-strong}) transparent;
+@layer fui.tokens, fui.base, fui.components;
 
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--fui-border-strong, #{$fui-border-strong});
+@layer fui.components {
+  .root {
+    --_fui-scrollarea-track-size: var(--fui-raw-space-6, #{$_track-size});
+    --_fui-scrollarea-inline-fade: var(--fui-raw-space-48, #{$_inline-fade});
+    --_fui-scrollarea-block-fade: var(--fui-raw-space-32, #{$_block-fade});
+
+    position: relative;
+    overflow: hidden;
+
+    // The viewport carries the edge mask, which would fade a ring drawn on it,
+    // so the root rings outside its own edge while the viewport has keyboard
+    // focus. The root's overflow clips its content, never its own outline.
+    &:has(> .viewport:focus-visible) {
+      @include focus.ring;
     }
   }
 
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
-  }
-}
-
-.horizontal {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.vertical {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.both {
-  overflow: auto;
-}
-
-.horizontal:not([data-scroll-x="none"]),
-.both:not([data-scroll-x="none"]) {
-  scroll-padding-inline: var(--_fui-scrollarea-inline-fade, #{$_inline-fade});
-}
-
-.vertical:not([data-scroll-y="none"]),
-.both:not([data-scroll-y="none"]) {
-  scroll-padding-block: var(--_fui-scrollarea-block-fade, #{$_block-fade});
-}
-
-.viewport[data-scroll-x="end"] {
-  --_fui-scrollarea-inline-mask: linear-gradient(
-    to right,
-    black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
-    transparent
-  );
-}
-
-.viewport[data-scroll-x="start"] {
-  --_fui-scrollarea-inline-mask: linear-gradient(
-    to right,
-    transparent,
-    black var(--_fui-scrollarea-inline-fade, #{$_inline-fade})
-  );
-}
-
-.viewport[data-scroll-x="both"] {
-  --_fui-scrollarea-inline-mask: linear-gradient(
-    to right,
-    transparent,
-    black var(--_fui-scrollarea-inline-fade, #{$_inline-fade}),
-    black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
-    transparent
-  );
-}
-
-.viewport[data-scroll-x="end"]:dir(rtl) {
-  --_fui-scrollarea-inline-mask: linear-gradient(
-    to right,
-    transparent,
-    black var(--_fui-scrollarea-inline-fade, #{$_inline-fade})
-  );
-}
-
-.viewport[data-scroll-x="start"]:dir(rtl) {
-  --_fui-scrollarea-inline-mask: linear-gradient(
-    to right,
-    black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
-    transparent
-  );
-}
-
-.viewport[data-scroll-y="end"] {
-  --_fui-scrollarea-block-mask: linear-gradient(
-    to bottom,
-    black calc(100% - var(--_fui-scrollarea-block-fade, #{$_block-fade})),
-    transparent
-  );
-}
-
-.viewport[data-scroll-y="start"] {
-  --_fui-scrollarea-block-mask: linear-gradient(
-    to bottom,
-    transparent,
-    black var(--_fui-scrollarea-block-fade, #{$_block-fade})
-  );
-}
-
-.viewport[data-scroll-y="both"] {
-  --_fui-scrollarea-block-mask: linear-gradient(
-    to bottom,
-    transparent,
-    black var(--_fui-scrollarea-block-fade, #{$_block-fade}),
-    black calc(100% - var(--_fui-scrollarea-block-fade, #{$_block-fade})),
-    transparent
-  );
-}
-
-@media (forced-colors: active) {
   .viewport {
-    scrollbar-color: CanvasText Canvas;
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-}
+    --_fui-scrollarea-inline-mask: #{$_mask-none};
+    --_fui-scrollarea-block-mask: #{$_mask-none};
 
-@media (prefers-reduced-motion: reduce) {
-  .viewport::-webkit-scrollbar-thumb {
-    transition: none;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    mask-image:
+      var(--_fui-scrollarea-inline-mask, #{$_mask-none}),
+      var(--_fui-scrollarea-block-mask, #{$_mask-none});
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
+    mask-composite: intersect;
+    -webkit-mask-image:
+      var(--_fui-scrollarea-inline-mask, #{$_mask-none}),
+      var(--_fui-scrollarea-block-mask, #{$_mask-none});
+    -webkit-mask-composite: source-in;
+
+    &::-webkit-scrollbar {
+      width: var(--_fui-scrollarea-track-size, #{$_track-size});
+      height: var(--_fui-scrollarea-track-size, #{$_track-size});
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: var(--fui-radius-full, #{$fui-radius-full});
+      background-color: transparent;
+      transition: background-color var(--fui-duration-micro, #{$fui-duration-micro})
+        var(--fui-ease-standard, #{$fui-ease-standard});
+    }
+
+    // `auto` shows the thumb while scrolling, on hover where the pointer can
+    // hover, and while focus is inside; `always` keeps it.
+    @media (hover: hover) {
+      &:hover {
+        @include _thumb-shown;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: var(--fui-scrollbar-thumb-hover, #{$fui-scrollbar-thumb-hover});
+      }
+    }
+
+    &:focus-within,
+    &[data-scrolling],
+    &[data-scrollbar-visibility="always"] {
+      @include _thumb-shown;
+    }
+
+    // A viewport that takes the keyboard leaves its ring to the root.
+    &:focus-visible {
+      @include focus.delegated;
+    }
+  }
+
+  .horizontal {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .vertical {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .both {
+    overflow: auto;
+  }
+
+  .horizontal:not([data-scroll-x="none"]),
+  .both:not([data-scroll-x="none"]) {
+    scroll-padding-inline: var(--_fui-scrollarea-inline-fade, #{$_inline-fade});
+  }
+
+  .vertical:not([data-scroll-y="none"]),
+  .both:not([data-scroll-y="none"]) {
+    scroll-padding-block: var(--_fui-scrollarea-block-fade, #{$_block-fade});
+  }
+
+  .viewport[data-scroll-x="end"] {
+    --_fui-scrollarea-inline-mask: linear-gradient(
+      to right,
+      black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
+      transparent
+    );
+  }
+
+  .viewport[data-scroll-x="start"] {
+    --_fui-scrollarea-inline-mask: linear-gradient(
+      to right,
+      transparent,
+      black var(--_fui-scrollarea-inline-fade, #{$_inline-fade})
+    );
+  }
+
+  .viewport[data-scroll-x="both"] {
+    --_fui-scrollarea-inline-mask: linear-gradient(
+      to right,
+      transparent,
+      black var(--_fui-scrollarea-inline-fade, #{$_inline-fade}),
+      black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
+      transparent
+    );
+  }
+
+  .viewport[data-scroll-x="end"]:dir(rtl) {
+    --_fui-scrollarea-inline-mask: linear-gradient(
+      to right,
+      transparent,
+      black var(--_fui-scrollarea-inline-fade, #{$_inline-fade})
+    );
+  }
+
+  .viewport[data-scroll-x="start"]:dir(rtl) {
+    --_fui-scrollarea-inline-mask: linear-gradient(
+      to right,
+      black calc(100% - var(--_fui-scrollarea-inline-fade, #{$_inline-fade})),
+      transparent
+    );
+  }
+
+  .viewport[data-scroll-y="end"] {
+    --_fui-scrollarea-block-mask: linear-gradient(
+      to bottom,
+      black calc(100% - var(--_fui-scrollarea-block-fade, #{$_block-fade})),
+      transparent
+    );
+  }
+
+  .viewport[data-scroll-y="start"] {
+    --_fui-scrollarea-block-mask: linear-gradient(
+      to bottom,
+      transparent,
+      black var(--_fui-scrollarea-block-fade, #{$_block-fade})
+    );
+  }
+
+  .viewport[data-scroll-y="both"] {
+    --_fui-scrollarea-block-mask: linear-gradient(
+      to bottom,
+      transparent,
+      black var(--_fui-scrollarea-block-fade, #{$_block-fade}),
+      black calc(100% - var(--_fui-scrollarea-block-fade, #{$_block-fade})),
+      transparent
+    );
+  }
+
+  @media (forced-colors: active) {
+    .viewport {
+      scrollbar-color: CanvasText Canvas;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .viewport::-webkit-scrollbar-thumb {
+      transition: none;
+    }
   }
 }

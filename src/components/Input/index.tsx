@@ -1,284 +1,181 @@
 "use client";
 
 import * as React from "react";
-import { Field } from "@base-ui/react/field";
-import { useResolvedControlSize } from "../ComponentDefaults";
-import { mergeAriaIds } from "../../utils/aria";
+import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { Field as BaseField } from "@base-ui/react/field";
+import { CONTROL_SIZES, useResolvedControlSize } from "../ComponentDefaults";
+import { Kbd } from "../Kbd";
 import styles from "./Input.module.scss";
 
+export type InputSize = "xs" | "sm" | "md" | "lg";
+
+export type InputType = "text" | "email" | "password" | "number" | "tel" | "url" | "search";
+
 /**
- * Text input field with label, helper text, and validation.
+ * A single-line text field on the band. Label, description and error come
+ * from Field: wrap the Input in a Field rather than passing them here.
  * @see https://usefragments.com/components/input
  */
 export interface InputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "size" | "onChange" | "onBlur" | "onFocus" | "onKeyDown" | "className" | "style"
+  "size" | "type" | "value" | "defaultValue"
 > {
-  /** Controlled input value */
+  /** Controlled value */
   value?: string;
-  /** Default value for uncontrolled usage */
+  /** Initial value for uncontrolled use */
   defaultValue?: string;
-  /** Placeholder text shown when empty */
-  placeholder?: string;
-  /** HTML input type */
-  type?: "text" | "email" | "password" | "number" | "tel" | "url";
-  /** Input size.
-   * @default "md"
-   * @see https://usefragments.com/components/input#sizes */
-  size?: "sm" | "md" | "lg";
-  /** Whether the input is non-interactive */
-  disabled?: boolean;
-  /** Show error styling */
-  error?: boolean;
-  /** Visible label text */
-  label?: string;
-  /** Whether the field is required */
-  required?: boolean;
-  /** Helper text shown below the input */
-  helperText?: string;
-  /** Content rendered before the input (e.g., icon or prefix text) */
-  startAdornment?: React.ReactNode;
-  /** Content rendered after the input (e.g., icon or suffix text) */
-  endAdornment?: React.ReactNode;
-  /** Keyboard shortcut hint displayed inside the input (e.g., "⌘K"). */
-  shortcut?: string;
-  /** Whether the shortcut should also register a global focus hotkey.
-   * @default "display-only" */
-  shortcutBehavior?: "display-only" | "focus-input";
-  /** Called when value changes (string value) */
-  onChange?: (value: string) => void;
-  /** Alias for onChange (value-first callback) */
+  /** Native input type. `search` adds a leading glyph, a clear button, Esc to
+   * clear (then Esc again to leave) and the `count` slot.
+   * @default "text" */
+  type?: InputType;
+  /** Field height on the shared control track: 24, 28, 32 or 40.
+   * @default "md" */
+  size?: InputSize;
+  /** Marks the value invalid: the danger edge and `aria-invalid`. Say why in a
+   * Field.Error; inside a Field, the Field's `invalid` does the same. */
+  invalid?: boolean;
+  /** Called with the new value on every change. `onChange` stays the native change event. */
   onValueChange?: (value: string) => void;
-  onBlur?: React.FocusEventHandler<HTMLInputElement>;
-  onFocus?: React.FocusEventHandler<HTMLInputElement>;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  /** Props applied to the wrapper element */
-  rootProps?: React.HTMLAttributes<HTMLDivElement>;
-  /** Styles applied directly to the input element */
-  inputStyle?: React.CSSProperties;
-  /** Class applied directly to the input element */
-  inputClassName?: string;
-  /** Whether to render the Base UI Field wrapper (label/description/invalid wiring)
-   * @default true */
-  withFieldWrapper?: boolean;
-  /** Wrapper class name */
-  className?: string;
-  /** Wrapper styles */
-  style?: React.CSSProperties;
+  /** Content before the text: a glyph or a prefix */
+  startAdornment?: React.ReactNode;
+  /** Content after the text: a glyph, a suffix or an action */
+  endAdornment?: React.ReactNode;
+  /** A keyboard shortcut hint drawn at the end ("⌘K"). Display only: the app
+   * owns the shortcut itself. */
+  shortcut?: string;
+  /** `type="search"` only: how many match while it filters ("3 of 40"),
+   * announced politely and shown at the end while there is a query. */
+  count?: string;
 }
 
-function parseShortcut(
-  shortcut: string
-): { meta: boolean; shift: boolean; alt: boolean; key: string } | null {
-  let meta = false,
-    shift = false,
-    alt = false;
-  let remaining = shortcut;
-
-  if (remaining.includes("⌘")) {
-    meta = true;
-    remaining = remaining.replace("⌘", "");
-  }
-  if (remaining.includes("⇧")) {
-    shift = true;
-    remaining = remaining.replace("⇧", "");
-  }
-  if (remaining.includes("⌥")) {
-    alt = true;
-    remaining = remaining.replace("⌥", "");
-  }
-
-  remaining = remaining.trim();
-  if (!remaining) return null;
-
-  return { meta, shift, alt, key: remaining };
+// The value setter on the element's prototype, so a programmatic clear goes
+// through React's change tracking and every onChange/onValueChange listener
+// (a form library's included) hears it.
+function clearNativeInput(element: HTMLInputElement) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+  setter?.call(element, "");
+  element.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
 const InputRoot = React.forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     value,
     defaultValue,
-    placeholder,
     type = "text",
     size: sizeProp,
-    disabled = false,
-    error = false,
-    required = false,
-    label,
-    helperText,
+    invalid = false,
+    onValueChange,
+    onKeyDown,
     startAdornment,
     endAdornment,
     shortcut,
-    shortcutBehavior = "display-only",
-    onChange,
-    onValueChange,
-    onBlur,
-    onFocus,
-    onKeyDown,
-    rootProps,
+    count,
     className,
-    style,
-    inputStyle,
-    inputClassName,
-    withFieldWrapper = true,
+    disabled,
+    readOnly,
     ...inputProps
   },
   ref
 ) {
-  const size = useResolvedControlSize(sizeProp);
-  const generatedId = React.useId();
-  const helperId = helperText ? `input-helper-${generatedId}` : undefined;
-  const {
-    id,
-    "aria-label": ariaLabel,
-    "aria-labelledby": ariaLabelledBy,
-    "aria-describedby": ariaDescribedBy,
-    ...nativeInputProps
-  } = inputProps;
-  const resolvedInputId = id ?? `input-${generatedId}`;
+  const size = useResolvedControlSize(sizeProp, CONTROL_SIZES);
+  const isSearch = type === "search";
 
   const internalRef = React.useRef<HTMLInputElement>(null);
   const mergedRef = React.useCallback(
     (node: HTMLInputElement | null) => {
       internalRef.current = node;
-      if (typeof ref === "function") {
-        ref(node);
-      } else if (ref) {
-        (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
-      }
+      if (typeof ref === "function") ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
     },
     [ref]
   );
 
-  // Register global keydown handler when shortcut is provided
-  React.useEffect(() => {
-    if (!shortcut) return;
-    if (shortcutBehavior !== "focus-input") return;
-    const parsed = parseShortcut(shortcut);
-    if (!parsed) return;
+  const [uncontrolledHasValue, setUncontrolledHasValue] = React.useState(
+    () => (defaultValue ?? "").length > 0
+  );
+  const hasValue = value !== undefined ? value.length > 0 : uncontrolledHasValue;
+  const canClear = isSearch && hasValue && !disabled && !readOnly;
 
-    const handler = (e: KeyboardEvent) => {
-      if (parsed.meta && !(e.metaKey || e.ctrlKey)) return;
-      if (parsed.shift && !e.shiftKey) return;
-      if (parsed.alt && !e.altKey) return;
-      if (e.key.toLowerCase() !== parsed.key.toLowerCase()) return;
-      e.preventDefault();
-      internalRef.current?.focus();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [shortcut, shortcutBehavior]);
-
-  const hasAdornment = !!(startAdornment || endAdornment);
-
-  const inputClasses = [styles.input, styles[size], error && styles.error, inputClassName]
-    .filter(Boolean)
-    .join(" ");
-
-  const helperClasses = [styles.helper, error && styles.helperError].filter(Boolean).join(" ");
-
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
-  const labelClasses = styles.label;
-
-  const sharedInputProps = {
-    ...nativeInputProps,
-    ref: mergedRef,
-    id: resolvedInputId,
-    type,
-    value,
-    defaultValue,
-    placeholder,
-    disabled,
-    required,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(e.target.value);
-      onValueChange?.(e.target.value);
-    },
-    onBlur: (e: React.FocusEvent<HTMLInputElement>) => onBlur?.(e),
-    onFocus: (e: React.FocusEvent<HTMLInputElement>) => onFocus?.(e),
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown?.(e),
-    "aria-label": ariaLabel,
-    "aria-labelledby": ariaLabelledBy,
-    "aria-describedby": mergeAriaIds(ariaDescribedBy, helperId),
-    className: inputClasses,
-    style: inputStyle,
-  } satisfies React.InputHTMLAttributes<HTMLInputElement> & {
-    ref: React.Ref<HTMLInputElement>;
+  const handleValueChange = (next: string) => {
+    if (value === undefined) setUncontrolledHasValue(next.length > 0);
+    onValueChange?.(next);
   };
 
-  const inputElement = <Field.Control {...sharedInputProps} render={<input />} />;
+  const clear = () => {
+    const element = internalRef.current;
+    if (!element) return;
+    clearNativeInput(element);
+    element.focus();
+  };
 
-  const fieldlessInputElement = <input {...sharedInputProps} aria-invalid={error || undefined} />;
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented || !isSearch || event.key !== "Escape") return;
+    // Esc empties the query first and stops there, so the page's own Esc (a
+    // dialog, a panel) waits. On an empty field Esc leaves it and carries on:
+    // the next layer out closes on the same press.
+    if (hasValue && !readOnly) {
+      event.preventDefault();
+      event.stopPropagation();
+      clearNativeInput(event.currentTarget);
+      return;
+    }
+    event.currentTarget.blur();
+  };
 
-  const rawInput = withFieldWrapper ? inputElement : fieldlessInputElement;
+  const leading = startAdornment ?? (isSearch ? <MagnifyingGlass aria-hidden="true" /> : null);
+  const showShortcut = Boolean(shortcut) && !(isSearch && hasValue);
+  const showCount = isSearch && count !== undefined;
+  const adorned = Boolean(leading || endAdornment || showShortcut || showCount || isSearch);
 
-  const content =
-    hasAdornment || shortcut ? (
-      <div
-        className={[styles.inputContainer, hasAdornment && styles.hasAdornment]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        {startAdornment && <span className={styles.adornment}>{startAdornment}</span>}
-        {rawInput}
-        {endAdornment && <span className={styles.adornment}>{endAdornment}</span>}
-        {shortcut && (
-          <kbd className={styles.shortcut} aria-hidden="true">
-            {shortcut}
-          </kbd>
-        )}
-      </div>
-    ) : (
-      rawInput
-    );
-
-  if (!withFieldWrapper) {
-    return (
-      <div
-        {...rootProps}
-        className={[styles.wrapper, rootProps?.className, className].filter(Boolean).join(" ")}
-        style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
-      >
-        {label && (
-          <label htmlFor={resolvedInputId} className={labelClasses}>
-            {label}
-            {required && <span className={styles.required}>*</span>}
-          </label>
-        )}
-        {content}
-        {helperText && (
-          <div id={helperId} className={helperClasses}>
-            {helperText}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <Field.Root
-      {...rootProps}
+  const control = (
+    <BaseField.Control
+      {...inputProps}
+      ref={mergedRef}
+      type={type}
+      value={value}
+      defaultValue={defaultValue}
       disabled={disabled}
-      invalid={error}
-      className={[wrapperClasses, rootProps?.className].filter(Boolean).join(" ")}
-      style={{ ...(rootProps?.style ?? {}), ...(style ?? {}) }}
+      readOnly={readOnly}
+      onValueChange={handleValueChange}
+      onKeyDown={handleKeyDown}
+      aria-invalid={invalid || undefined}
+      data-size={adorned ? undefined : size}
+      className={[styles.control, adorned ? styles.inner : styles.shell, className]
+        .filter(Boolean)
+        .join(" ")}
+      render={<input />}
+    />
+  );
+
+  // One tree whether adorned or not, so an adornment that comes and goes (a
+  // suffix that appears with a value) never remounts the input and drops focus.
+  // Bare, the wrapper draws no box and the input is the shell.
+  return (
+    <div
+      className={adorned ? styles.shell : styles.passthrough}
+      data-size={adorned ? size : undefined}
     >
-      {label && (
-        <Field.Label className={labelClasses}>
-          {label}
-          {required && <span className={styles.required}>*</span>}
-        </Field.Label>
+      {leading && <span className={styles.adornment}>{leading}</span>}
+      {control}
+      {showCount && (
+        <span className={styles.count} role="status">
+          {hasValue ? count : null}
+        </span>
       )}
-      {content}
-      {helperText && (
-        <Field.Description id={helperId} className={helperClasses}>
-          {helperText}
-        </Field.Description>
+      {endAdornment && <span className={styles.adornment}>{endAdornment}</span>}
+      {showShortcut && (
+        <Kbd className={styles.shortcut} aria-hidden="true">
+          {shortcut}
+        </Kbd>
       )}
-    </Field.Root>
+      {canClear && (
+        <button type="button" className={styles.clear} aria-label="Clear" onClick={clear}>
+          <X aria-hidden="true" weight="bold" />
+        </button>
+      )}
+    </div>
   );
 });
 
-export const Input = Object.assign(InputRoot, {
-  Root: InputRoot,
-});
+export const Input = InputRoot;

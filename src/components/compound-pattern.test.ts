@@ -11,17 +11,16 @@ const COMPOUND_EXPORT_PATTERN =
 
 // Provider/utility modules that live under components/ but are intentionally not
 // compound components (context providers, hooks, shared infrastructure).
-const NON_COMPOUND_MODULES = new Set([
-  "ComponentDefaults",
-  // Physical ownership seam for Theme.Toggle. Its public compound identity
-  // remains on Theme rather than minting a second compound root.
-  "ThemeToggle",
-]);
+const NON_COMPOUND_MODULES = new Set(["ComponentDefaults"]);
+
+// Components with no parts export the root itself: a `Root` alias would only be
+// a second name for the same component, and v4 cut those aliases.
+const PARTLESS_COMPONENTS = new Set(["Input"]);
 
 describe("component export pattern", () => {
   it("keeps component exports compound across the UI library", () => {
     const componentDirs = readdirSync(COMPONENTS_DIR).filter((entry) => {
-      if (NON_COMPOUND_MODULES.has(entry)) return false;
+      if (NON_COMPOUND_MODULES.has(entry) || PARTLESS_COMPONENTS.has(entry)) return false;
       const fullPath = path.join(COMPONENTS_DIR, entry);
       return statSync(fullPath).isDirectory();
     });

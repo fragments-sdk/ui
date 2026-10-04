@@ -76,30 +76,28 @@ describe("Collapsible", () => {
     expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it("keeps force-mounted closed content inert until it reopens", () => {
+  it("keeps mounted closed content hidden until it reopens", () => {
     const { rerender } = render(
       <Collapsible open={false}>
         <Collapsible.Trigger>Toggle</Collapsible.Trigger>
-        <Collapsible.Content forceMount data-testid="content">
+        <Collapsible.Content keepMounted data-testid="content">
           <button>Hidden action</button>
         </Collapsible.Content>
       </Collapsible>
     );
 
-    expect(screen.getByTestId("content")).toHaveAttribute("aria-hidden", "true");
-    expect(screen.getByTestId("content")).toHaveAttribute("inert");
+    expect(screen.getByTestId("content")).toHaveAttribute("hidden");
 
     rerender(
       <Collapsible open>
         <Collapsible.Trigger>Toggle</Collapsible.Trigger>
-        <Collapsible.Content forceMount data-testid="content">
+        <Collapsible.Content keepMounted data-testid="content">
           <button>Hidden action</button>
         </Collapsible.Content>
       </Collapsible>
     );
 
-    expect(screen.getByTestId("content")).not.toHaveAttribute("aria-hidden");
-    expect(screen.getByTestId("content")).not.toHaveAttribute("inert");
+    expect(screen.getByTestId("content")).not.toHaveAttribute("hidden");
   });
 
   it("fires onOpenChange callback", async () => {
@@ -108,7 +106,8 @@ describe("Collapsible", () => {
     renderCollapsible({ onOpenChange });
 
     await user.click(screen.getByRole("button", { name: /toggle/i }));
-    expect(onOpenChange).toHaveBeenCalledWith(true);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange.mock.calls[0][0]).toBe(true);
   });
 
   it("does not toggle when disabled", async () => {
@@ -116,36 +115,42 @@ describe("Collapsible", () => {
     renderCollapsible({ disabled: true });
 
     const trigger = screen.getByRole("button", { name: /toggle/i });
-    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAttribute("aria-disabled", "true");
 
     await user.click(trigger);
     expect(screen.queryByText("Collapsible content here")).not.toBeInTheDocument();
   });
 
-  it("composes child handlers when trigger uses asChild", async () => {
+  it("renders a custom trigger through render, without the caret", async () => {
     const user = userEvent.setup();
     const childClick = vi.fn();
-    const childKeyDown = vi.fn();
 
     render(
       <Collapsible>
-        <Collapsible.Trigger asChild>
-          <button onClick={childClick} onKeyDown={childKeyDown}>
-            Toggle
-          </button>
+        <Collapsible.Trigger render={<button type="button" onClick={childClick} />}>
+          Toggle
         </Collapsible.Trigger>
         <Collapsible.Content>Collapsible content here</Collapsible.Content>
       </Collapsible>
     );
 
     const trigger = screen.getByRole("button", { name: /toggle/i });
-    expect(trigger).toHaveClass("trigger");
+    expect(trigger).not.toHaveClass("trigger");
+    expect(trigger.querySelector("svg")).toBeNull();
     await user.click(trigger);
     expect(childClick).toHaveBeenCalled();
     expect(screen.getByText("Collapsible content here")).toBeInTheDocument();
+  });
 
-    await user.keyboard("{Enter}");
-    expect(childKeyDown).toHaveBeenCalled();
+  it("leads the trigger with the caret and marks it open", async () => {
+    const user = userEvent.setup();
+    renderCollapsible();
+
+    const trigger = screen.getByRole("button", { name: /toggle/i });
+    expect(trigger.firstElementChild?.tagName.toLowerCase()).toBe("svg");
+    expect(trigger).not.toHaveAttribute("data-panel-open");
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("data-panel-open");
   });
 
   it("forwards html props to root, trigger, and content", async () => {

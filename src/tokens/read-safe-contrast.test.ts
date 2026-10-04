@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 /**
  * WCAG 2.1 contrast for the Brief 03 read-safe palette.
  *
- * Resolves `--fui-code-token-*` against `--fui-code-bg` and `--fui-link-ink`
- * against `--fui-app-main-bg` from the compiled token stylesheet in both
+ * Resolves `--fui-code-token-*` against `--fui-bg-secondary` and `--fui-link-ink`
+ * against `--fui-app-canvas-bg` from the compiled token stylesheet in both
  * themes. Fails if any pairing drops below 4.5:1.
  */
 
@@ -183,12 +183,11 @@ function parseColor(css: string): RGB {
   throw new Error(`Cannot parse color: "${css}"`);
 }
 
-function themeVars(css: string, theme: "light" | "dark"): Map<string, string> {
+function themeVars(css: string): Map<string, string> {
+  // The static fallback: literal twins in `light-dark()`, which `resolveValue` picks per theme.
   const root = parseDeclarations(extractRuleBody(css, ":root {"));
-  if (theme === "light") return root;
-  // Sass emits unquoted attribute selectors: [data-theme=dark]
-  const dark = parseDeclarations(extractRuleBody(css, ":root[data-theme=dark] {"));
-  return new Map([...root, ...dark]);
+  const themed = parseDeclarations(extractRuleBody(css, ":where(:root, [data-fui-theme]) {"));
+  return new Map([...root, ...themed]);
 }
 
 function resolved(vars: Map<string, string>, name: string, theme: "light" | "dark"): string {
@@ -201,10 +200,10 @@ describe("read-safe token contrast", () => {
   const css = compileTokenCss();
 
   it.each(["light", "dark"] as const)(
-    "%s: every --fui-code-token-* is ≥ 4.5:1 on --fui-code-bg",
+    "%s: every --fui-code-token-* is ≥ 4.5:1 on --fui-bg-secondary",
     (theme) => {
-      const vars = themeVars(css, theme);
-      const bg = parseColor(resolved(vars, "--fui-code-bg", theme));
+      const vars = themeVars(css);
+      const bg = parseColor(resolved(vars, "--fui-bg-secondary", theme));
       const failures: string[] = [];
 
       for (const name of CODE_TOKEN_NAMES) {
@@ -221,11 +220,11 @@ describe("read-safe token contrast", () => {
   );
 
   it.each(["light", "dark"] as const)(
-    "%s: --fui-link-ink is ≥ 4.5:1 on --fui-app-main-bg",
+    "%s: --fui-link-ink is ≥ 4.5:1 on --fui-app-canvas-bg",
     (theme) => {
-      const vars = themeVars(css, theme);
+      const vars = themeVars(css);
       const ink = parseColor(resolved(vars, "--fui-link-ink", theme));
-      const bg = parseColor(resolved(vars, "--fui-app-main-bg", theme));
+      const bg = parseColor(resolved(vars, "--fui-app-canvas-bg", theme));
       const ratio = contrastRatio(ink, bg);
       expect(
         ratio,
@@ -237,9 +236,9 @@ describe("read-safe token contrast", () => {
   it("reports the resolved ratios for the handoff", () => {
     const rows: Record<string, { light: string; dark: string }> = {};
     for (const theme of ["light", "dark"] as const) {
-      const vars = themeVars(css, theme);
-      const codeBg = parseColor(resolved(vars, "--fui-code-bg", theme));
-      const mainBg = parseColor(resolved(vars, "--fui-app-main-bg", theme));
+      const vars = themeVars(css);
+      const codeBg = parseColor(resolved(vars, "--fui-bg-secondary", theme));
+      const mainBg = parseColor(resolved(vars, "--fui-app-canvas-bg", theme));
       for (const name of CODE_TOKEN_NAMES) {
         const token = `--fui-code-token-${name}`;
         const ratio = contrastRatio(parseColor(resolved(vars, token, theme)), codeBg);

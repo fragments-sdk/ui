@@ -1,0 +1,247 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Checkbox",
+  "description": "Selects options that take effect when a form is submitted.",
+  "category": "inputs",
+  "tags": ["checkbox", "form", "boolean", "selection", "input"],
+  "status": "stable",
+  "sourcePath": "src/components/Checkbox/index.tsx",
+  "exportName": "Checkbox",
+  "propsSummary": [
+    "checked: boolean",
+    "defaultChecked: boolean",
+    "onCheckedChange: function",
+    "indeterminate: boolean (default: false)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "required: boolean (default: false)",
+    "invalid: boolean (default: false)",
+    "errorMessage: node",
+    "variant: outline",
+    "label: string",
+    "helperText: string",
+    "name: string",
+    "value: string",
+    "id: string",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string"
+  ],
+  "props": {
+    "checked": {
+      "type": "boolean",
+      "description": "Controlled checked state",
+      "required": false
+    },
+    "defaultChecked": {
+      "type": "boolean",
+      "description": "Default checked state (uncontrolled)",
+      "required": false
+    },
+    "onCheckedChange": {
+      "type": "function",
+      "description": "Called with the next checked state when the user toggles the checkbox",
+      "required": false
+    },
+    "indeterminate": {
+      "type": "boolean",
+      "description": "Indeterminate state (partial selection)",
+      "default": "false",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the checkbox",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "The checkbox cannot be changed; band fill and a dashed edge",
+      "default": "false",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Whether the checkbox is required",
+      "default": "false",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The value fails validation: danger edge on the box and errorMessage under the label",
+      "default": "false",
+      "required": false
+    },
+    "errorMessage": {
+      "type": "node",
+      "description": "Message shown with a warning icon under the label while invalid; wired to aria-describedby",
+      "required": false
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Chrome. Omit for the inline checkbox beside its label; 'outline' renders a full-width choice card (surface, hairline, surface radius) whose hairline turns into the selection ring when checked.",
+      "required": false,
+      "values": ["outline"]
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the label",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for form submission",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Value attribute for form submission",
+      "required": false
+    },
+    "id": {
+      "type": "string",
+      "description": "ID for the checkbox input",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible label when there is no visible label",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "Accessible labelled-by relationship when there is no visible label",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "Accessible described-by relationship",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Choices that apply only once the form is submitted",
+      "Picking several items from a list",
+      "Accepting terms",
+      "Filter and preference lists"
+    ],
+    "whenNot": [
+      "Settings that apply instantly (use Switch)",
+      "One choice from a few (use RadioGroup)",
+      "Many options (use Select)"
+    ],
+    "guidelines": [
+      "Always show a label",
+      "Add helperText when the consequence is not obvious",
+      "Keep related boxes together",
+      "Use indeterminate for a parent whose children are partly checked",
+      "Pair invalid with an errorMessage; the danger edge alone is colour only"
+    ],
+    "accessibility": [
+      "Label is tied to the box",
+      "Space toggles it",
+      "Focus ring stays visible",
+      "Indeterminate is announced as mixed",
+      "The error message is wired to aria-describedby and carries an icon and words"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "One box, one label, off to start.",
+      "code": "<StatefulCheckbox label=\"Accept terms and conditions\" />"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Second line spells out what opting in does.",
+      "code": "<StatefulCheckbox\n  label=\"Email notifications\"\n  helperText=\"Receive email updates about your account activity\"\n/>"
+    },
+    {
+      "name": "Checked",
+      "description": "Starts on.",
+      "code": "<StatefulCheckbox defaultChecked label=\"Subscribe to newsletter\" />"
+    },
+    {
+      "name": "Indeterminate",
+      "description": "A dash on the parent means only some children are on.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Checkbox indeterminate label=\"Select all\" />\n  <div style={{ marginLeft: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>\n    <StatefulCheckbox defaultChecked label=\"Option 1\" />\n    <StatefulCheckbox label=\"Option 2\" />\n    <StatefulCheckbox defaultChecked label=\"Option 3\" />\n  </div>\n</div>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Locked in both positions, on and off.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>\n  <Checkbox disabled label=\"Disabled unchecked\" />\n  <Checkbox disabled checked label=\"Disabled checked\" />\n</div>"
+    },
+    {
+      "name": "Invalid",
+      "description": "A danger edge on the box and a message with an icon under the label.",
+      "code": "<Checkbox\n  label=\"I accept the terms\"\n  invalid\n  errorMessage=\"Accept the terms to continue.\"\n/>"
+    },
+    {
+      "name": "Outline Card",
+      "description": "The whole card picks; checked turns its hairline into the selection ring.",
+      "code": "<StatefulCheckbox\n  variant=\"outline\"\n  label=\"Weekly summary\"\n  helperText=\"One email on Monday morning.\"\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Switch",
+      "relationship": "alternative",
+      "note": "Use Switch for immediate-effect settings"
+    },
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Checkbox handles boolean; Input handles text"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "checked: boolean - controlled checked state",
+      "onCheckedChange: (checked) => void - change handler",
+      "indeterminate: boolean - partial selection state",
+      "readOnly: boolean - locked value, band fill and dashed edge",
+      "invalid: boolean - danger edge; pair with errorMessage",
+      "errorMessage: node - message with an icon under the label while invalid",
+      "variant: outline - full-width choice card; omit for the inline control",
+      "label: string - checkbox label",
+      "helperText: string - helper text"
+    ],
+    "a11yRules": ["A11Y_CHECKBOX_LABEL", "A11Y_CHECKBOX_FOCUS", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.226Z"
+  },
+  "cssVariables": [
+    "--fui-checkbox-radius",
+    "--fui-control-checked-bg",
+    "--fui-control-checked-bg-hover",
+    "--fui-control-checked-border",
+    "--fui-control-checked-color",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-field-bg",
+    "--fui-field-border",
+    "--fui-icon-sm",
+    "--fui-icon-xs",
+    "--fui-radius",
+    "--fui-radius-surface",
+    "--fui-raw-space-4",
+    "--fui-stroke-hairline",
+    "--fui-text-primary"
+  ],
+  "attributes": []
+}

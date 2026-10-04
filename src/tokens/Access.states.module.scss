@@ -1,0 +1,9 @@
+// The consumer side of the layer proof for Access.states.tsx: an adopter's own
+// stylesheet, unlayered and at zero specificity. It still wins over every
+// library rule, because the library ships in `fui.*` layers.
+
+@use "../tokens/variables" as *;
+
+:where(.consumer) {
+  border-radius: var(--fui-radius-none, $fui-radius-none);
+}

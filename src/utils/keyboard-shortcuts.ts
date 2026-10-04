@@ -21,6 +21,7 @@
 //
 
 import { useEffect, useRef, type RefObject } from "react";
+import { isComposingEnter } from "./isComposingEnter";
 
 // ============================================
 // Types
@@ -131,15 +132,6 @@ export const KEYBOARD_SHORTCUTS = {
     description: "Toggle ordered list",
     scope: "component",
   },
-  EDITOR_HEADING1: {
-    key: "1",
-    meta: true,
-    alt: true,
-    label: "Ctrl+Alt+1",
-    component: "Editor",
-    description: "Toggle heading level 1",
-    scope: "component",
-  },
   EDITOR_HEADING2: {
     key: "2",
     meta: true,
@@ -147,15 +139,6 @@ export const KEYBOARD_SHORTCUTS = {
     label: "Ctrl+Alt+2",
     component: "Editor",
     description: "Toggle heading level 2",
-    scope: "component",
-  },
-  EDITOR_HEADING3: {
-    key: "3",
-    meta: true,
-    alt: true,
-    label: "Ctrl+Alt+3",
-    component: "Editor",
-    description: "Toggle heading level 3",
     scope: "component",
   },
   EDITOR_BLOCKQUOTE: {
@@ -191,22 +174,6 @@ export const KEYBOARD_SHORTCUTS = {
     label: "Enter",
     component: "Prompt",
     description: "Submit prompt (when submitOnEnter is true)",
-    scope: "component",
-  },
-
-  // ----- NavigationMenu -----
-  NAV_TOGGLE: {
-    key: "Enter",
-    label: "Enter",
-    component: "NavigationMenu",
-    description: "Toggle menu item open/closed",
-    scope: "component",
-  },
-  NAV_CLOSE: {
-    key: "Escape",
-    label: "Escape",
-    component: "NavigationMenu",
-    description: "Close menu and return focus to trigger",
     scope: "component",
   },
 
@@ -259,6 +226,9 @@ export function matchesShortcut(event: KeyboardEvent, shortcut: KeyboardShortcut
   if (!shortcut.meta && (event.metaKey || event.ctrlKey)) return false;
   if (!shortcut.shift && event.shiftKey) return false;
   if (!shortcut.alt && event.altKey) return false;
+
+  // Enter confirms an IME candidate before it means the shortcut.
+  if (shortcut.key.toLowerCase() === "enter" && isComposingEnter(event)) return false;
 
   return event.key.toLowerCase() === shortcut.key.toLowerCase();
 }

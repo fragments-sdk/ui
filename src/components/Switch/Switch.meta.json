@@ -1,0 +1,242 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Switch",
+  "description": "Toggles a setting that takes effect immediately.",
+  "category": "inputs",
+  "tags": ["switch", "toggle", "boolean", "settings", "preference"],
+  "status": "stable",
+  "sourcePath": "src/components/Switch/index.tsx",
+  "exportName": "Switch",
+  "propsSummary": [
+    "checked: boolean",
+    "defaultChecked: boolean",
+    "onCheckedChange: function",
+    "label: string",
+    "helperText: string",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "required: boolean (default: false)",
+    "invalid: boolean (default: false)",
+    "errorMessage: node",
+    "className: string",
+    "name: string",
+    "id: string",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string"
+  ],
+  "props": {
+    "checked": {
+      "type": "boolean",
+      "description": "Whether the switch is in the on state",
+      "default": "false",
+      "required": false
+    },
+    "defaultChecked": {
+      "type": "boolean",
+      "description": "Default checked state (uncontrolled)",
+      "required": false
+    },
+    "onCheckedChange": {
+      "type": "function",
+      "description": "Called with the next state when the user toggles the switch",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible label beside the track (outside the switch element, tied by aria-labelledby)",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the label (preferred)",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Whether the switch is non-interactive",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "The switch cannot be toggled; an off track takes the band and a dashed edge",
+      "default": "false",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "The switch must be on before the form submits",
+      "default": "false",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The value fails validation: errorMessage shows under the label with an icon",
+      "default": "false",
+      "required": false
+    },
+    "errorMessage": {
+      "type": "node",
+      "description": "Message shown with a warning icon under the label while invalid; wired to aria-describedby",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Class on the outer element: the label row, or the track when there is no visible text",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "id": {
+      "type": "string",
+      "description": "ID for the hidden input",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Settings that apply the moment they change",
+      "Turning a feature on or off in a settings panel",
+      "The result is visible straight away"
+    ],
+    "whenNot": [
+      "Choices that only apply on submit (use Checkbox)",
+      "Several options at once (use a Checkbox group)",
+      "Yes/no questions in a form (use RadioGroup)",
+      "More than two states (use Select or RadioGroup)"
+    ],
+    "guidelines": [
+      "The label names what is being turned on",
+      "On always means enabled, never the reverse",
+      "Apply the change immediately — no save button",
+      "Add helperText when the label alone is ambiguous",
+      "Stack related switches together"
+    ],
+    "accessibility": [
+      "role=\"switch\" with aria-checked",
+      "Every switch has a label, visible or aria-label",
+      "Focus ring stays visible",
+      "Flipping it is announced"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default Off",
+      "description": "Nothing happens until the user flips it.",
+      "code": "<StatefulSwitch label=\"Email notifications\" />",
+      "args": {
+        "label": "Email notifications"
+      }
+    },
+    {
+      "name": "Checked",
+      "description": "Starts on; the track fills with the accent colour.",
+      "code": "<StatefulSwitch defaultChecked label=\"Dark mode\" />",
+      "args": {
+        "defaultChecked": true,
+        "label": "Dark mode"
+      }
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Second line says what the setting actually does.",
+      "code": "<StatefulSwitch\n  defaultChecked\n  label=\"Auto-save\"\n  helperText=\"Automatically save changes as you type\"\n/>",
+      "args": {
+        "defaultChecked": true,
+        "label": "Auto-save",
+        "helperText": "Automatically save changes as you type"
+      }
+    },
+    {
+      "name": "Disabled and Read-only",
+      "description": "Disabled dims once; read-only keeps full ink and refuses the toggle.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>\n  <Switch disabled label=\"Premium feature (upgrade required)\" />\n  <Switch readOnly checked label=\"System managed (read-only)\" />\n</div>"
+    },
+    {
+      "name": "Settings Panel",
+      "description": "Stacked switches sharing one rhythm and helper column.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '320px' }}>\n  <StatefulSwitch\n    defaultChecked\n    label=\"Push notifications\"\n    helperText=\"Receive push notifications on your device\"\n  />\n  <StatefulSwitch\n    defaultChecked\n    label=\"Email digest\"\n    helperText=\"Weekly summary of your activity\"\n  />\n  <StatefulSwitch\n    label=\"Marketing emails\"\n    helperText=\"Product updates and promotional offers\"\n  />\n</div>"
+    },
+    {
+      "name": "Invalid",
+      "description": "A message with an icon under the label; the track keeps its colours.",
+      "code": "<StatefulSwitch\n  label=\"Share findings with the team\"\n  invalid\n  errorMessage=\"Sharing is off on this plan.\"\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Input handles text/number entry; Switch handles boolean state"
+    },
+    {
+      "component": "Checkbox",
+      "relationship": "alternative",
+      "note": "Use Checkbox when change requires form submission"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "checked: boolean - on/off state",
+      "onCheckedChange: (checked) => void - state change handler",
+      "label: string - visible label beside the track",
+      "helperText: string - helper text below label",
+      "disabled: boolean - non-interactive state, dims once",
+      "readOnly: boolean - locked value",
+      "invalid: boolean - pair with errorMessage",
+      "errorMessage: node - message with an icon under the label while invalid"
+    ],
+    "a11yRules": [
+      "A11Y_SWITCH_ROLE",
+      "A11Y_SWITCH_LABEL",
+      "A11Y_SWITCH_FOCUS",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:06.429Z"
+  },
+  "cssVariables": [
+    "--fui-color-on-accent",
+    "--fui-control-checked-bg",
+    "--fui-control-checked-bg-hover",
+    "--fui-control-height-xs",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-field-bg",
+    "--fui-field-border",
+    "--fui-icon-sm",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-shadow-sm",
+    "--fui-stroke-hairline",
+    "--fui-text-primary"
+  ],
+  "attributes": []
+}

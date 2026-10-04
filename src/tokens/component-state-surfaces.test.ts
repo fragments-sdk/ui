@@ -26,60 +26,35 @@ function extractBlock(source: string, selector: string, occurrence = 0): string 
   throw new Error(`Unclosed block for ${selector}`);
 }
 
+// A selected item takes the wash and ring (`selection.selected`), a selected
+// segment the lifted thumb (`segmented-selection`, which is `selection.thumb`).
 const persistentSurfaceCases = [
-  ["components/Badge/Badge.module.scss", "&.active", "--fui-control-selected-bg"],
-  ["components/Header/Header.module.scss", ".navItemActive", "--fui-control-selected-bg"],
-  ["components/Header/Header.module.scss", ".navMenuItemActive", "--fui-control-selected-bg"],
-  [
-    "components/Header/Header.module.scss",
-    ".mobileNavLinkActive",
-    "@include navigation.link-active",
-  ],
-  ["components/IconButton/IconButton.module.scss", ".pressed", "--fui-control-selected-bg"],
-  [
-    "components/NavigationMenu/NavigationMenu.module.scss",
-    ".linkActive",
-    "--fui-control-selected-bg",
-  ],
-  [
-    "components/NavigationMenu/NavigationMenu.module.scss",
-    ".drawerLinkActive",
-    "@include navigation.link-active",
-  ],
-  ["components/Pagination/Pagination.module.scss", ".itemActive", "--fui-control-selected-bg"],
-  ["components/Prompt/Prompt.module.scss", ".tabButtonActive", "@include segmented-selection"],
-  ["components/Prompt/Prompt.module.scss", ".modeButtonActive", "@include segmented-selection"],
-  [
-    "components/ThemeToggle/ThemeToggle.module.scss",
-    ".toggleButtonActive",
-    "@include segmented-selection",
-  ],
-  ["recipes/_navigation.scss", "@mixin link-active", "--fui-control-selected-bg"],
+  ["components/IconButton/IconButton.module.scss", ".pressed", "@include selection.selected"],
+  ["components/Chip/Chip.module.scss", ".selected", "@include selection.selected"],
   ["recipes/_popup.scss", "@mixin selected-state", "--fui-field-selection-bg"],
 ] as const;
 
+// The current nav item is the press tint, ink 1 and the strong weight, with no wash or ring.
+const currentNavCases = [
+  ["components/Header/Header.module.scss", ".navItemActive"],
+  ["components/Header/Header.module.scss", ".navMenuItemActive"],
+  ["components/Pagination/Pagination.module.scss", ".itemActive"],
+  ["components/TableOfContents/TableOfContents.module.scss", ".active"],
+] as const;
+
 describe("component state surface contract", () => {
-  it("preserves each outline Chip tone through the compiled CSS cascade", () => {
+  it("draws one Chip look: the hairline edge, no tone or variant classes", () => {
     const css = sass.compile(resolve(process.cwd(), "src/components/Chip/Chip.module.scss"), {
       silenceDeprecations: ["if-function"],
     }).css;
-    for (const tone of ["neutral", "accent", "info", "success", "warning", "danger"]) {
-      const classes = new Set([
-        ".chip",
-        ".outline",
-        `.tone${tone[0].toUpperCase()}${tone.slice(1)}`,
-      ]);
-      let line = "";
-      for (const [, selector, declarations] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-        if (!classes.has(selector.trim())) continue;
-        for (const value of declarations.matchAll(/--_fui-tone-line:\s*([^;]+);/g)) {
-          line = value[1];
-        }
-      }
-      expect(line).toContain(
-        tone === "neutral" ? "var(--fui-border," : `var(--fui-color-${tone}-border,`
-      );
+    // v4 (UIR-D75): Chip has one look; selected is the wash with a border edge.
+    expect(css).not.toMatch(/\.(tone[A-Z]\w*|outline|soft|solid)\b/);
+    let edge = "";
+    for (const [, selector, declarations] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (selector.trim() !== ".chip") continue;
+      edge += declarations;
     }
+    expect(edge).toContain("var(--fui-border,");
   });
 
   it.each(persistentSurfaceCases)(
@@ -95,14 +70,25 @@ describe("component state surface contract", () => {
     }
   );
 
-  it("uses the persistent-selection role while a ghost Select owns an open popup", () => {
-    const openGhostTrigger = extractBlock(
-      extractBlock(readSource("components/Select/Select.module.scss"), ".triggerGhost"),
-      "&[data-popup-open]"
+  it.each(currentNavCases)("%s marks %s as the current nav item", (path, selector) => {
+    const block = extractBlock(readSource(path), selector);
+
+    expect(block).toMatch(/@include selection\.current/);
+    expect(block).not.toContain("--fui-control-selected-bg");
+    expect(block).not.toContain("--fui-color-accent");
+  });
+
+  // The ghost Select is cut (UIR-D75): an open trigger is a field holding its
+  // hover edge, not a selected item, so it never takes the selection wash.
+  it("holds the hover edge, not the selection wash, while a Select owns an open popup", () => {
+    const openTrigger = extractBlock(
+      extractBlock(readSource("components/Select/Select.module.scss"), ".trigger"),
+      "&[data-popup-open]:not([data-readonly])"
     );
 
-    expect(openGhostTrigger).toContain("--fui-control-selected-bg");
-    expect(openGhostTrigger).not.toContain("var(--fui-bg-tertiary");
+    expect(openTrigger).toContain("border-color");
+    expect(openTrigger).not.toContain("--fui-control-selected-bg");
+    expect(openTrigger).not.toContain("var(--fui-bg-tertiary");
   });
 
   it("routes popup-backed selected items through the shared selected-state recipe", () => {
@@ -110,7 +96,6 @@ describe("component state surface contract", () => {
       ["components/Listbox/Listbox.module.scss", 1],
       ["components/Select/Select.module.scss", 1],
       ["components/Combobox/Combobox.module.scss", 1],
-      ["components/DatePicker/DatePicker.module.scss", 3],
     ] as const;
 
     for (const [path, expectedCount] of recipeUsers) {
@@ -119,23 +104,33 @@ describe("component state surface contract", () => {
     }
   });
 
+  it("marks picked calendar days with the checked fill and the range with the selection tint", () => {
+    const source = readSource("components/DatePicker/DatePicker.module.scss");
+
+    expect(source).not.toMatch(/@include popup\.selected-state/);
+    expect(source).toContain("--fui-control-checked-bg");
+    expect(source).toContain("--fui-control-checked-color");
+    expect(source).toContain("--fui-control-selected-bg");
+    expect(source).not.toContain("--fui-color-accent");
+  });
+
   it("keeps component aliases connected to the shared persistent-selection role", () => {
     const variables = readSource("tokens/_variables.scss");
 
-    for (const token of [
-      "--fui-field-selection-bg",
-      "--fui-sidebar-item-active-bg",
-      "--fui-table-row-selected-bg",
-    ]) {
+    for (const token of ["--fui-field-selection-bg", "--fui-table-row-selected-bg"]) {
       expect(variables).toContain(`${token}: var(--fui-control-selected-bg)`);
     }
+    // The table ring is the selection ring; the sidebar's current row is chosen, so it takes
+    // the selection wash too (UIR-D142).
+    expect(variables).toContain(
+      "--fui-table-row-selected-border: var(--fui-control-selected-border)"
+    );
+    expect(variables).toContain("--fui-sidebar-item-active-bg: var(--fui-control-selected-bg)");
 
     const aliasConsumers = [
       ["components/Sidebar/Sidebar.module.scss", "--fui-sidebar-item-active-bg"],
+      // DataTable composes Table, so Table's row is the one consumer of the table alias.
       ["components/Table/Table.module.scss", "--fui-table-row-selected-bg"],
-      ["components/DataTable/DataTable.module.scss", "--fui-table-row-selected-bg"],
-      ["components/Chip/Chip.module.scss", "--fui-field-selection-bg"],
-      ["components/Editor/Editor.module.scss", "--fui-field-selection-bg"],
     ] as const;
 
     for (const [path, token] of aliasConsumers) {
@@ -159,7 +154,8 @@ describe("component state surface contract", () => {
     }
 
     const slider = readSource("components/Slider/Slider.module.scss");
-    expect(slider).toContain("background-color: var(--fui-color-accent");
+    expect(slider).toContain("background-color: var(--fui-control-checked-bg");
+    expect(slider).not.toContain("--fui-color-accent");
     expect(slider).not.toContain("--fui-field-selection-border");
   });
 
@@ -178,11 +174,11 @@ describe("component state surface contract", () => {
     expect(readSource(path), path).toContain("field.invalid-state");
   });
 
+  // Select and Combobox carry no wrapper of their own: the Field owns it, and
+  // the trigger and input key the edge off their own `aria-invalid`.
   it.each([
-    ["Combobox", "components/Combobox/index.tsx"],
     ["DatePicker", "components/DatePicker/index.tsx"],
     ["RadioGroup", "components/RadioGroup/index.tsx"],
-    ["Select", "components/Select/index.tsx"],
   ])("%s marks its shell invalid so the edge has something to key off", (_name, path) => {
     expect(readSource(path), path).toContain("data-invalid={hasError");
   });

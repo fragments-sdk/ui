@@ -3,153 +3,103 @@
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
 @use "../../recipes/overlay" as overlay;
+@use "../../recipes/popup" as popup;
+@use "../../recipes/typography" as typography;
 
-.positioner {
-  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
-  outline: none;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.popup {
-  @include overlay.anchored-surface("md");
-
-  position: relative;
-  opacity: 0;
-  transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-sm, #{$fui-anim-offset-sm})));
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+// The raised plane on the popup shadow, no edge. The title is the 12/550
+// anchored title (the shared recipe still reads ui-standard), the footer sits
+// on the same plane with no divider, and the arrow is fill only.
+@layer fui.components {
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   }
 
-  &[data-starting-style] {
-    opacity: 0;
-    transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-sm, #{$fui-anim-offset-sm})));
+  .popup {
+    @include overlay.anchored-surface("md");
+
+    position: relative;
+
+    @include popup.motion;
   }
 
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95) translateY(var(--fui-anim-offset-sm, #{$fui-anim-offset-sm}));
+  .sm {
+    @include overlay.anchored-size("sm");
   }
 
-  &[data-side="top"] {
-    &[data-starting-style] {
-      transform: scale(0.95) translateY(var(--fui-anim-offset-sm, #{$fui-anim-offset-sm}));
+  .title {
+    @include typography.role("body-compact");
+
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)})
+      var(--fui-raw-space-0, #{measurements.raw-space(0)})
+      var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-weight: typography.weight("ui-standard");
+  }
+
+  .description {
+    @include typography.role("body-compact");
+
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+
+  .close {
+    @include button-reset;
+    @include interactive-base;
+    @include overlay.close;
+  }
+
+  .popup:has(.close) .title {
+    padding-inline-end: calc(
+      #{action.track("sm")} +
+        var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
+    );
+  }
+
+  .arrow {
+    @include overlay.arrow-box;
+
+    $_half: calc(
+      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
+    );
+
+    background-color: var(--fui-bg-elevated, $fui-bg-elevated);
+
+    &[data-side="bottom"] {
+      inset-block-start: $_half;
     }
 
-    &[data-ending-style] {
-      transform: scale(0.95)
-        translateY(calc(-1 * var(--fui-anim-offset-sm, #{$fui-anim-offset-sm})));
+    &[data-side="top"] {
+      inset-block-end: $_half;
+    }
+
+    &[data-side="left"] {
+      inset-inline-end: $_half;
+    }
+
+    &[data-side="right"] {
+      inset-inline-start: $_half;
     }
   }
 
-  &[data-side="left"],
-  &[data-side="right"] {
-    &[data-starting-style],
-    &[data-ending-style] {
-      transform: scale(0.95) translateY(0);
-    }
-  }
-}
-
-.sm {
-  @include overlay.anchored-size("sm");
-}
-
-.lg {
-  @include overlay.anchored-size("lg");
-}
-
-.title {
-  @include overlay.anchored-title;
-
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-.description {
-  @include overlay.description;
-
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.close {
-  @include button-reset;
-  @include interactive-base;
-  @include overlay.close;
-}
-
-.popup:has(.close) .title {
-  padding-inline-end: calc(
-    #{action.track("sm")} +
-      var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
-  );
-}
-
-.arrow {
-  @include overlay.arrow-box;
-
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-
-  &[data-side="top"] {
-    border-top: none;
-    border-left: none;
+  .body {
+    margin-block-start: var(
+      --fui-overlay-section-gap,
+      var(--fui-raw-space-8, #{measurements.raw-space(8)})
+    );
   }
 
-  &[data-side="bottom"] {
-    border-right: none;
-    border-bottom: none;
-  }
-
-  &[data-side="left"] {
-    border-bottom: none;
-    border-left: none;
-  }
-
-  &[data-side="right"] {
-    border-top: none;
-    border-right: none;
-  }
-}
-
-.body {
-  margin-block-start: var(
-    --fui-overlay-section-gap,
-    var(--fui-raw-space-8, #{measurements.raw-space(8)})
-  );
-}
-
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  margin-block-start: var(
-    --fui-overlay-section-gap,
-    var(--fui-raw-space-8, #{measurements.raw-space(8)})
-  );
-  padding-block-start: var(
-    --fui-overlay-section-gap,
-    var(--fui-raw-space-8, #{measurements.raw-space(8)})
-  );
-  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-border, $fui-border);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .popup,
-  .popup[data-starting-style],
-  .popup[data-ending-style],
-  .popup[data-side="top"][data-starting-style],
-  .popup[data-side="top"][data-ending-style] {
-    transition: none;
-    transform: none;
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+    margin-block-start: var(
+      --fui-overlay-section-gap,
+      var(--fui-raw-space-8, #{measurements.raw-space(8)})
+    );
   }
 }

@@ -6,7 +6,7 @@ import { Button } from "../Button";
 export default defineFragment(Dialog, {
   meta: {
     name: "Dialog",
-    purpose: "Blocks the page with one focused task the user must finish or dismiss.",
+    purpose: "Blocks the page with one focused task the user finishes or dismisses.",
     category: "overlays",
     status: "stable",
     tags: ["modal", "dialog", "overlay", "popup", "confirmation"],
@@ -15,9 +15,7 @@ export default defineFragment(Dialog, {
     Default: {
       render: (
         <Dialog>
-          <Dialog.Trigger asChild>
-            <Button>Open dialog</Button>
-          </Dialog.Trigger>
+          <Dialog.Trigger render={<Button>Open dialog</Button>} />
           <Dialog.Content>
             <Dialog.Close />
             <Dialog.Header>
@@ -26,9 +24,7 @@ export default defineFragment(Dialog, {
             </Dialog.Header>
             <Dialog.Body>Dialog body</Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button variant="soft">Close</Button>
-              </Dialog.Close>
+              <Dialog.Close render={<Button variant="ghost">Close</Button>} />
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
@@ -36,36 +32,10 @@ export default defineFragment(Dialog, {
       note: "Header, body, and footer in the standard layout.",
       canonical: true,
     },
-    Confirmation: {
-      render: (
-        <Dialog>
-          <Dialog.Trigger asChild>
-            <Button variant="solid" tone="danger">Delete item</Button>
-          </Dialog.Trigger>
-          <Dialog.Content>
-            <Dialog.Header>
-              <Dialog.Title>Delete item?</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body>This action cannot be undone.</Dialog.Body>
-            <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button variant="soft">Cancel</Button>
-              </Dialog.Close>
-              <Dialog.Close asChild>
-                <Button variant="solid" tone="danger">Delete</Button>
-              </Dialog.Close>
-            </Dialog.Footer>
-          </Dialog.Content>
-        </Dialog>
-      ),
-      note: "Names the consequence before an irreversible action.",
-    },
     Large: {
       render: (
         <Dialog>
-          <Dialog.Trigger asChild>
-            <Button>Open large dialog</Button>
-          </Dialog.Trigger>
+          <Dialog.Trigger render={<Button>Open large dialog</Button>} />
           <Dialog.Content width="lg">
             <Dialog.Close />
             <Dialog.Header>
@@ -73,9 +43,7 @@ export default defineFragment(Dialog, {
             </Dialog.Header>
             <Dialog.Body>Complex content</Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button variant="soft">Close</Button>
-              </Dialog.Close>
+              <Dialog.Close render={<Button variant="ghost">Close</Button>} />
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
@@ -85,9 +53,7 @@ export default defineFragment(Dialog, {
     "No Initial Focus": {
       render: (
         <Dialog>
-          <Dialog.Trigger asChild>
-            <Button variant="soft">Open settings</Button>
-          </Dialog.Trigger>
+          <Dialog.Trigger render={<Button variant="soft">Open settings</Button>} />
           <Dialog.Content initialFocus={false}>
             <Dialog.Header>
               <Dialog.Title>Settings</Dialog.Title>
@@ -95,9 +61,7 @@ export default defineFragment(Dialog, {
             </Dialog.Header>
             <Dialog.Body>Settings content</Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button variant="soft">Close</Button>
-              </Dialog.Close>
+              <Dialog.Close render={<Button variant="ghost">Close</Button>} />
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
@@ -107,9 +71,7 @@ export default defineFragment(Dialog, {
     "Long Title": {
       render: (
         <Dialog>
-          <Dialog.Trigger asChild>
-            <Button>Open long title dialog</Button>
-          </Dialog.Trigger>
+          <Dialog.Trigger render={<Button>Open long title dialog</Button>} />
           <Dialog.Content>
             <Dialog.Close />
             <Dialog.Header>
@@ -121,9 +83,7 @@ export default defineFragment(Dialog, {
               </Dialog.Description>
             </Dialog.Header>
             <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button variant="soft">Close</Button>
-              </Dialog.Close>
+              <Dialog.Close render={<Button variant="ghost">Close</Button>} />
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>
@@ -133,12 +93,12 @@ export default defineFragment(Dialog, {
   },
   guidance: {
     when: [
-      "Confirming something irreversible",
       "Collecting input the user must finish in one pass",
       "Content that needs acknowledgment before continuing",
       "Isolating a step in a longer workflow",
     ],
     whenNot: [
+      "A decision the user must answer, such as a destructive confirmation (use AlertDialog)",
       "A short hint (use Tooltip)",
       "A list of actions (use Menu)",
       "Contextual content that should not block (use Popover)",
@@ -148,8 +108,8 @@ export default defineFragment(Dialog, {
       "One task per dialog",
       "Title states the task; body states the consequence",
       "Pair the primary action with an explicit cancel",
-      "Leave backdrop and Escape dismissal on unless the choice is destructive",
-      "Wrap the trigger with asChild around a real control — the bare trigger ships unstyled",
+      "Escape and an outside press dismiss; for a destructive choice use AlertDialog",
+      "Pass render={<Button />} to Dialog.Trigger — the bare trigger ships unstyled",
     ],
     accessibility: [
       "Traps focus while open",
@@ -162,11 +122,11 @@ export default defineFragment(Dialog, {
         reason: "Do not use a Dialog for a non-blocking notification.",
         bad: "<Dialog>Saved</Dialog>",
         good: (
-          <Alert tone="success">
+          <Alert tone="info">
             <Alert.Icon />
             <Alert.Body>
-              <Alert.Title>Changes saved</Alert.Title>
-              <Alert.Content>Your settings are up to date.</Alert.Content>
+              <Alert.Title>Settings sync pending</Alert.Title>
+              <Alert.Content>Changes reach every workspace within a minute.</Alert.Content>
             </Alert.Body>
           </Alert>
         ),
@@ -187,7 +147,7 @@ export default defineFragment(Dialog, {
     ],
   },
   matrix: {
-    axes: { width: "auto", modal: ["true", "false"], theme: ["light", "dark"] },
+    axes: { width: ["sm", "md", "lg"], theme: ["light", "dark"] },
     forced: ["open", "focus", "reduced-motion"],
     worstCase: {
       title:
@@ -203,6 +163,11 @@ export default defineFragment(Dialog, {
     },
     { component: "Menu", relationship: "alternative", note: "Use Menu for action lists" },
     { component: "Alert", relationship: "sibling", note: "Use Alert for inline notifications" },
+    {
+      component: "AlertDialog",
+      relationship: "sibling",
+      note: "Use AlertDialog for a decision the user must answer",
+    },
   ],
   composition: {
     pattern: "compound",
@@ -218,17 +183,18 @@ export default defineFragment(Dialog, {
     ],
     requiredChildren: ["Content"],
     commonPatterns: [
-      '<Dialog><Dialog.Trigger asChild><Button>Open</Button></Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close asChild><Button variant="soft">Cancel</Button></Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
-      '<Dialog><Dialog.Trigger asChild><Button variant="soft">Open settings</Button></Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger render={<Button />}>Open</Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close render={<Button variant="ghost" />}>Cancel</Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>',
+      '<Dialog><Dialog.Trigger render={<Button variant="soft" />}>Open settings</Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>',
     ],
   },
   contract: {
     propsSummary: [
       "open: boolean - controlled open state",
       "onOpenChange: (open) => void - open state handler",
-      "modal: boolean - blocks page interaction (default: true)",
-      "Dialog.Content initialFocus?: boolean - control auto-focus on open (default: true)",
-      "Dialog.Content width: sm|md|lg|xl|full - dialog width (default: md)",
+      "Dialog.Content initialFocus?: boolean|ref|function - focus target on open (default: true)",
+      "Dialog.Content finalFocus?: boolean|ref|function - focus target on close (default: true)",
+      "Dialog.Content width: sm|md|lg - sheet width (default: md)",
+      "Dialog.Trigger, Dialog.Close render: element - render a library control",
     ],
     a11yRules: ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"],
   },

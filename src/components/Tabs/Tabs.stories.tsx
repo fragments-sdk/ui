@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Tabs } from '.';
-import { RENDER_STATES } from '../../storybook/render-states';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Plus } from "@phosphor-icons/react";
+import { Tabs } from ".";
+import { IconButton } from "../IconButton";
+import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Tabs is the canonical content-switcher primitive. Use it to organize related
@@ -9,34 +11,34 @@ import { RENDER_STATES } from '../../storybook/render-states';
  * with manual focus management.
  */
 const meta = {
-  title: 'Navigation/Tabs',
+  title: "Navigation/Tabs",
   component: Tabs,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
-          'Organize content into switchable panels following the WAI-ARIA tabs pattern. Prefer this over a hand-rolled tab control.',
+          "Organize content into switchable panels following the WAI-ARIA tabs pattern. Prefer this over a hand-rolled tab control.",
       },
     },
   },
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['ghost', 'soft'],
-      description: 'Default chrome for Tabs.List',
+      control: "select",
+      options: ["ghost", "soft"],
+      description: "Tab row chrome",
     },
-    orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'Tab list orientation',
+    size: {
+      control: "select",
+      options: ["sm", "md"],
+      description: "Tab height",
     },
   },
   args: {
-    variant: 'ghost',
-    orientation: 'horizontal',
-    defaultValue: 'overview',
+    variant: "ghost",
+    size: "md",
+    defaultValue: "overview",
     children: (
       <>
         <Tabs.List>
@@ -120,19 +122,44 @@ export const WithDisabled: Story = {
   ),
 };
 
-export const ListVariantOverride: Story = {
+export const PanelTabs: Story = {
   render: () => (
-    <Tabs defaultValue="overview" variant="soft">
-      <Tabs.List variant="ghost">
-        <Tabs.Tab value="overview">Overview</Tabs.Tab>
-        <Tabs.Tab value="activity">Activity</Tabs.Tab>
+    <Tabs defaultValue="layers" variant="soft">
+      <Tabs.List
+        aria-label="Side panel"
+        activateOnFocus
+        actions={
+          <IconButton size="sm" aria-label="Add page">
+            <Plus weight="bold" />
+          </IconButton>
+        }
+      >
+        <Tabs.Tab value="layers" count={24}>
+          Layers
+        </Tabs.Tab>
+        <Tabs.Tab value="pages" dot="New activity">
+          Pages
+        </Tabs.Tab>
+        <Tabs.Tab value="system" count="…">
+          System
+        </Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="overview">
-        <p>Root sets soft, but this list overrides to ghost.</p>
-      </Tabs.Panel>
-      <Tabs.Panel value="activity">
-        <p>Per-list variant override example.</p>
-      </Tabs.Panel>
     </Tabs>
+  ),
+};
+
+export const Overflow: Story = {
+  render: () => (
+    <div style={{ maxInlineSize: 280 }}>
+      <Tabs defaultValue="history">
+        <Tabs.List aria-label="Repository">
+          <Tabs.Tab value="overview">Overview</Tabs.Tab>
+          <Tabs.Tab value="findings">Findings</Tabs.Tab>
+          <Tabs.Tab value="pulls">Pull requests</Tabs.Tab>
+          <Tabs.Tab value="history">History</Tabs.Tab>
+          <Tabs.Tab value="settings">Settings</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    </div>
   ),
 };

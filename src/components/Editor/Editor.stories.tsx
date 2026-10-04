@@ -1,13 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Editor } from ".";
+import { Separator } from "../Separator";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Editor is a rich-text editor with a formatting toolbar, auto-save, and word
- * count. It falls back to a markdown-aware textarea when TipTap is not
- * installed. It is a compound component: compose Editor.Toolbar,
- * Editor.ToolbarGroup, Editor.ToolbarButton, Editor.Content, and
- * Editor.StatusBar for custom layouts.
+ * Editor is a rich-text editor with a formatting toolbar, auto-save and
+ * counts. It falls back to a markdown-aware textarea when TipTap is not
+ * installed. Compose Editor.Toolbar, Editor.ToolbarGroup,
+ * Editor.ToolbarButton, Editor.Content and Editor.StatusBar for custom
+ * layouts; split toolbar groups with a vertical Separator.
  */
 const meta = {
   title: "Forms/Editor",
@@ -17,29 +18,24 @@ const meta = {
     renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Rich text editor with formatting toolbar, auto-save, and word count.",
+        component: "Rich text editor with a formatting toolbar, auto-save and counts.",
       },
     },
   },
   argTypes: {
-    size: {
-      control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Editor height preset",
+    rows: {
+      control: { type: "number", min: 2, max: 30 },
+      description: "Writing area height in lines",
     },
     disabled: { control: "boolean", description: "Disable the editor" },
     readOnly: { control: "boolean", description: "Make the editor read-only" },
+    invalid: { control: "boolean", description: "Mark the value invalid" },
     toolbar: { control: "boolean", description: "Show default toolbar" },
-    statusBar: {
-      control: "boolean",
-      description: "Show word/character counts",
-    },
+    statusBar: { control: "boolean", description: "Show the status bar" },
   },
   args: {
-    placeholder: "Start typing your masterpiece here...",
-    size: "md",
-    toolbar: true,
-    statusBar: true,
+    label: "Post",
+    placeholder: "Start typing your post",
   },
 } satisfies Meta<typeof Editor>;
 
@@ -47,43 +43,61 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { placeholder: "Start typing your masterpiece here..." },
-};
+export const Default: Story = {};
 
 export const Minimal: Story = {
   args: {
-    placeholder: "Quick note...",
+    label: "Note",
+    placeholder: "Quick note",
     formats: ["bold", "italic", "code"],
+    rows: 4,
   },
 };
 
-export const ReadOnly: Story = {
+export const WithHeading: Story = {
   args: {
-    readOnly: true,
-    defaultValue: "This content is read-only. You can select and copy text but cannot modify it.",
+    formats: ["heading", "bold", "italic", "link", "bulletList", "blockquote"],
   },
 };
 
 export const WithCharacterLimit: Story = {
   args: {
-    placeholder: "Write a tweet-sized message...",
+    label: "Bio",
+    placeholder: "Say who you are in a sentence or two",
     maxLength: 280,
-    size: "sm",
+    rows: 4,
     formats: ["bold", "italic", "link"],
+  },
+};
+
+export const Invalid: Story = {
+  args: { invalid: true, errorMessage: "Write at least one line" },
+};
+
+export const ReadOnly: Story = {
+  args: {
+    readOnly: true,
+    defaultValue: "This content is read-only. You can select and copy text but cannot change it.",
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    defaultValue: "Disabled text stays selectable, so it can still be copied.",
   },
 };
 
 export const CustomToolbar: Story = {
   render: () => (
-    <Editor placeholder="Write your blog post...">
+    <Editor label="Blog post" placeholder="Write your blog post">
       <Editor.Toolbar>
         <Editor.ToolbarGroup aria-label="Basic formatting">
           <Editor.ToolbarButton format="bold" />
           <Editor.ToolbarButton format="italic" />
         </Editor.ToolbarGroup>
-        <Editor.Separator />
-        <Editor.ToolbarGroup aria-label="Advanced formatting">
+        <Separator orientation="vertical" length="control" />
+        <Editor.ToolbarGroup aria-label="Structure">
           <Editor.ToolbarButton format="link" />
           <Editor.ToolbarButton format="code" />
           <Editor.ToolbarButton format="bulletList" />

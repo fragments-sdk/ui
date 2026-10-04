@@ -1,135 +1,135 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
-@use "../../recipes/action" as action;
-@use "../../recipes/layout" as layout;
-@use "../../recipes/target" as target;
-@use "../../recipes/typography" as typography;
+@use "../../recipes/action";
+@use "../../recipes/focus";
+@use "../../recipes/layout";
+@use "../../recipes/popup";
+@use "../../recipes/selection";
+@use "../../recipes/target";
+@use "../../recipes/typography";
 
-// Root nav wrapper
-.root {
-  @include typography.role("body-compact");
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Ordered list container
-.list {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--fui-space-1, $fui-space-1);
-  list-style: none;
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+@layer fui.components {
+  .root {
+    @include typography.role("body-compact");
+  }
 
-// Individual breadcrumb item (li)
-.item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  min-width: 0;
-}
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    list-style: none;
+  }
 
-// Link styling
-.link {
-  @include target.hit-area("micro");
+  // One crumb and the separator after it.
+  .item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    min-inline-size: 0;
+  }
 
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  // Intentional truncation width: one long crumb must not push the rest of the
-  // trail off screen. Keep in sync with .current below.
-  max-width: layout.measure("menu-min");
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
+  // A crumb you can press: h24 at the control radius, ink 2, the hover tint and
+  // ink 1 where the pointer can hover. Under a coarse pointer the hit area grows
+  // past the drawn row.
+  .crumb {
+    @include button-reset;
+    @include action.motion;
+    @include target.hit-area("micro");
 
-  &:hover {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    block-size: action.track("micro");
+    padding-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    font: inherit;
+    text-decoration: none;
+
+    @include action.hover {
+      @include selection.hover-tint;
+
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    @include focus.visible;
+  }
+
+  // The label truncates inside the crumb, so the crumb's hit area is not clipped.
+  // One long crumb must not push the rest of the trail off screen; the current
+  // page truncates at the same width.
+  .label {
+    min-inline-size: 0;
+    max-inline-size: layout.measure("menu-min");
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fold {
+    &[data-popup-open] {
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+  }
+
+  // A crumb that holds its own control (a menu trigger, a picker).
+  .content {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  // The current page: the last item, not a link. Position and aria-current
+  // mark it; ink 1 only reinforces.
+  .current {
+    padding-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
     color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-inline-size: layout.measure("menu-min");
   }
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
+  // One separator: the ink 3 caret, turned for right-to-left pages.
+  .separator {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+    block-size: var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
 
-// Plain item: a child that is its own control (menu trigger, picker)
-.content {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  min-width: 0;
-}
-
-// Current page (not a link)
-.current {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  // Intentional truncation width — matches .link above.
-  max-width: layout.measure("menu-min");
-}
-
-// Separator between items
-.separator {
-  display: inline-flex;
-  align-items: center;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  user-select: none;
-  flex-shrink: 0;
-}
-
-// Ellipsis button for collapsed items
-.ellipsis {
-  @include action.base;
-  @include action.icon-only("micro");
-  @include target.hit-area("compact");
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  cursor: pointer;
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    &:dir(rtl) {
+      transform: rotate(180deg);
+    }
   }
 
-  &:focus-visible {
-    @include focus-ring;
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   }
-}
 
-// Icon within an item
-.icon {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  width: var(--fui-icon-md, $fui-icon-md);
-  height: var(--fui-icon-md, $fui-icon-md);
+  .popup {
+    @include popup.container;
+    @include popup.motion;
 
-  svg {
-    width: 100%;
-    height: 100%;
+    min-inline-size: layout.measure("menu-min");
+  }
+
+  .menuItem {
+    @include popup.row;
+
+    text-decoration: none;
+
+    &[data-highlighted] {
+      @include popup.highlight-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
   }
 }

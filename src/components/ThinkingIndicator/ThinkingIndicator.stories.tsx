@@ -2,10 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThinkingIndicator } from ".";
 
 /**
- * ThinkingIndicator is the canonical AI-processing indicator. Use it to show
- * that an assistant is working — animated dots/pulse/spinner, optional elapsed
- * time, and multi-step progress — and prefer it over a generic spinner whenever
- * the wait is driven by an AI request.
+ * The one waiting pattern for an assistant: a live line in the work wash, an
+ * optional elapsed time, and a plan of steps. When work stops the row stays and
+ * says it finished.
  */
 const meta = {
   title: "Ai/ThinkingIndicator",
@@ -15,24 +14,20 @@ const meta = {
     docs: {
       description: {
         component:
-          "Animated indicator showing AI is processing, with optional elapsed time and multi-step progress. Prefer this over a generic spinner for AI operations.",
+          "The live line while an assistant works, with optional elapsed time and a plan of steps. Prefer it over a generic spinner for AI work.",
       },
     },
   },
   argTypes: {
-    kind: {
-      control: "select",
-      options: ["dots", "pulse", "spinner"],
-      description: "Animation style",
-    },
-    active: { control: "boolean", description: "Whether the indicator is visible" },
-    showElapsed: { control: "boolean", description: "Show elapsed time" },
-    label: { control: "text", description: "Status text" },
+    active: { control: "boolean" },
+    showElapsed: { control: "boolean" },
+    label: { control: "text" },
+    doneLabel: { control: "text" },
   },
   args: {
-    kind: "dots",
-    label: "Thinking...",
     active: true,
+    label: "Thinking…",
+    doneLabel: "Done",
   },
 } satisfies Meta<typeof ThinkingIndicator>;
 
@@ -40,46 +35,39 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Dots: Story = {
-  args: { kind: "dots", label: "Thinking..." },
+export const Working: Story = {};
+
+export const WithElapsed: Story = {
+  args: { showElapsed: true, label: "Reading the contract…" },
 };
 
-export const Pulse: Story = {
-  args: { kind: "pulse", label: "Processing..." },
+export const Finished: Story = {
+  args: { active: false, doneLabel: "Thought for 12s" },
 };
 
-export const Spinner: Story = {
-  args: { kind: "spinner", label: "Loading..." },
+export const Plan: Story = {
+  render: (args) => (
+    <ThinkingIndicator {...args} label="Checking the contract…">
+      <ThinkingIndicator.Steps label="Plan" foldable>
+        <ThinkingIndicator.Step label="Read the contract" status="complete" />
+        <ThinkingIndicator.Step label="Scan changed files" status="pending">
+          12 of 40 files
+        </ThinkingIndicator.Step>
+        <ThinkingIndicator.Step label="Write the summary" />
+      </ThinkingIndicator.Steps>
+    </ThinkingIndicator>
+  ),
 };
 
-export const WithElapsedTime: Story = {
-  args: { kind: "dots", label: "Generating response...", showElapsed: true },
-};
-
-export const CustomLabel: Story = {
-  args: { kind: "dots", label: "Claude is writing code..." },
-};
-
-export const MultiStepProgress: Story = {
-  args: {
-    kind: "spinner",
-    label: "Working...",
-    steps: [
-      { id: "1", label: "Analyzing request", status: "complete" },
-      { id: "2", label: "Searching knowledge base", status: "pending" },
-      { id: "3", label: "Generating response", status: "idle" },
-    ],
-  },
-};
-
-export const WithErrorStep: Story = {
-  args: {
-    kind: "spinner",
-    label: "Retrying...",
-    steps: [
-      { id: "1", label: "Connecting to API", status: "complete" },
-      { id: "2", label: "Fetching data", status: "error" },
-      { id: "3", label: "Retrying with fallback", status: "pending" },
-    ],
-  },
+export const FailedStep: Story = {
+  render: () => (
+    <ThinkingIndicator active={false} doneLabel="Stopped">
+      <ThinkingIndicator.Steps>
+        <ThinkingIndicator.Step label="Read the contract" status="complete" />
+        <ThinkingIndicator.Step label="Fetch the pull request" status="error">
+          GitHub did not answer
+        </ThinkingIndicator.Step>
+      </ThinkingIndicator.Steps>
+    </ThinkingIndicator>
+  ),
 };

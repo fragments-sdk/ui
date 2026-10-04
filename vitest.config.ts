@@ -12,7 +12,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'stylelint/**/*.test.ts', 'eslint/**/*.test.ts'],
     testTimeout: 15_000,
     css: {
       modules: {

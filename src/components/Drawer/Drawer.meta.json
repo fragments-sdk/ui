@@ -1,0 +1,196 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Drawer",
+  "description": "Shows edge sheets for navigation or inspection, with focus management and swipe dismissal.",
+  "category": "overlays",
+  "tags": ["drawer", "sheet", "panel", "sidebar", "slide-over"],
+  "status": "stable",
+  "sourcePath": "src/components/Drawer/index.tsx",
+  "exportName": "Drawer",
+  "propsSummary": [
+    "children: node (required)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "onOpenChangeComplete: function",
+    "modal: true | \"trap-focus\" | false (default: true)",
+    "snapPoints: (number | string)[]",
+    "disablePointerDismissal: boolean"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Drawer parts (Drawer.Trigger, Drawer.Content)",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when the open state changes",
+      "required": false
+    },
+    "onOpenChangeComplete": {
+      "type": "function",
+      "description": "Called after the open or close transition finishes",
+      "required": false
+    },
+    "modal": {
+      "type": "enum",
+      "values": ["true", "trap-focus", "false"],
+      "description": "true draws the scrim and blocks the page; trap-focus keeps focus inside without a scrim; false leaves the page usable",
+      "default": "true",
+      "required": false
+    },
+    "snapPoints": {
+      "type": "array",
+      "description": "Snap points for a bottom sheet: viewport fractions, pixels, or px/rem strings",
+      "required": false
+    },
+    "disablePointerDismissal": {
+      "type": "boolean",
+      "description": "Keep the drawer open on an outside press",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Editing or creating alongside the page behind it",
+      "Touch-reachable action sheets",
+      "Navigation that slides in and back out",
+      "Detail views that overlay rather than replace"
+    ],
+    "whenNot": [
+      "A centred task (use Dialog)",
+      "Navigation that stays on screen (use Sidebar)",
+      "A short list of actions (use Menu or Popover)",
+      "Feedback the user does not act on (use Toast)"
+    ],
+    "guidelines": [
+      "end for editing and inspecting, start for navigation, bottom for touch",
+      "start and end follow the writing direction; the swipe that dismisses follows the side",
+      "Always give a visible way out: Drawer.Close in the header or footer",
+      "One task per drawer",
+      "Pass render={<Button />} to Drawer.Trigger or Drawer.Close to use a library control",
+      "Use modal=\"trap-focus\" for an inspector that should not dim the page"
+    ],
+    "accessibility": [
+      "Traps focus within the drawer",
+      "Closes on Escape",
+      "Returns focus to the trigger on close",
+      "role=\"dialog\" labelled by Drawer.Title",
+      "A body that overflows joins the tab order so it scrolls from the keyboard"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Enters on the end edge, the default for editing and inspecting.",
+      "code": "<Drawer>\n  <Drawer.Trigger render={<Button variant=\"soft\" />}>Edit</Drawer.Trigger>\n  <Drawer.Content>\n    <Drawer.Header>\n      <Drawer.Title>Edit repository</Drawer.Title>\n      <Drawer.Description>Changes apply on the next check.</Drawer.Description>\n      <Drawer.Close />\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Drawer content goes here.</p>\n    </Drawer.Body>\n    <Drawer.Footer>\n      <Drawer.Close render={<Button variant=\"ghost\" />}>Cancel</Drawer.Close>\n      <Button variant=\"solid\">Save</Button>\n    </Drawer.Footer>\n  </Drawer.Content>\n</Drawer>"
+    },
+    {
+      "name": "Start Side",
+      "description": "Enters on the start edge, where navigation belongs.",
+      "code": "<Drawer>\n  <Drawer.Trigger render={<Button variant=\"soft\" />}>Menu</Drawer.Trigger>\n  <Drawer.Content side=\"start\" size=\"sm\">\n    <Drawer.Header>\n      <Drawer.Title>Navigation</Drawer.Title>\n      <Drawer.Close />\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Links go here.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+    },
+    {
+      "name": "Bottom Sheet",
+      "description": "Rises from the bottom for touch-reachable actions, with snap points.",
+      "code": "<Drawer snapPoints={[0.4, 1]}>\n  <Drawer.Trigger render={<Button variant=\"soft\" />}>Actions</Drawer.Trigger>\n  <Drawer.Content side=\"bottom\" size=\"lg\">\n    <Drawer.Header>\n      <Drawer.Title>Actions</Drawer.Title>\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>Snaps at 40% and full height.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+    },
+    {
+      "name": "Inspector",
+      "description": "Keeps focus inside without dimming the page.",
+      "code": "<Drawer modal=\"trap-focus\">\n  <Drawer.Trigger render={<Button variant=\"soft\" />}>Inspect</Drawer.Trigger>\n  <Drawer.Content size=\"sm\">\n    <Drawer.Header>\n      <Drawer.Title>Details</Drawer.Title>\n      <Drawer.Close />\n    </Drawer.Header>\n    <Drawer.Body>\n      <p>The page stays visible.</p>\n    </Drawer.Body>\n  </Drawer.Content>\n</Drawer>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Use Dialog for centered modal overlays"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "alternative",
+      "note": "Use Sidebar for permanent side navigation"
+    },
+    {
+      "component": "Popover",
+      "relationship": "alternative",
+      "note": "Use Popover for small contextual content"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "open: boolean - controlled open state",
+      "onOpenChange: (open) => void - open state handler",
+      "modal: true|trap-focus|false - scrim and page blocking (default: true)",
+      "snapPoints: (number|string)[] - bottom-sheet snap points",
+      "disablePointerDismissal: boolean - keep open on an outside press",
+      "Drawer.Content side: start|end|bottom - the edge, start/end follow the writing direction (default: end)",
+      "Drawer.Content size: sm|md|lg - width on start/end, height on bottom (default: md)",
+      "Drawer.Content initialFocus: boolean|ref|function - focus target on open (default: true)",
+      "Drawer.Content finalFocus: boolean|ref|function - focus target on close (default: true)",
+      "Drawer.Trigger, Drawer.Close render: element - render a library control"
+    ],
+    "a11yRules": ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Close",
+      "SwipeArea",
+      "Header",
+      "Title",
+      "Description",
+      "Body",
+      "Footer"
+    ],
+    "requiredChildren": ["Content"],
+    "commonPatterns": [
+      "<Drawer><Drawer.Trigger render={<Button variant=\"soft\" />}>Open</Drawer.Trigger><Drawer.Content><Drawer.Header><Drawer.Title>{title}</Drawer.Title><Drawer.Close /></Drawer.Header><Drawer.Body>{content}</Drawer.Body><Drawer.Footer><Drawer.Close render={<Button variant=\"ghost\" />}>Cancel</Drawer.Close><Button>Save</Button></Drawer.Footer></Drawer.Content></Drawer>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:55.637Z"
+  },
+  "cssVariables": [
+    "--fui-overlay-layer-modal",
+    "--fui-overlay-layer-swipe",
+    "--fui-raw-space-16",
+    "--fui-raw-space-32"
+  ],
+  "attributes": [
+    {
+      "name": "data-drawer-close",
+      "value": "",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-side",
+      "value": "end",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    }
+  ]
+}

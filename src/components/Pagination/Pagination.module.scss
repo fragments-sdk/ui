@@ -2,110 +2,81 @@
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
+@use "../../recipes/focus";
 @use "../../recipes/layout";
+@use "../../recipes/selection";
 
-// ============================================
-// Navigation wrapper
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// ============================================
-// List container
-// ============================================
-
-.list {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("xs");
-  list-style: none;
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
-
-// ============================================
-// Page item button
-// ============================================
-
-.item {
-  @include button-reset;
-  @include action.base;
-
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-primary, $fui-text-primary);
-  cursor: pointer;
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+@layer fui.components {
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
-// Active page
-.itemActive {
-  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
+  .list {
+    display: flex;
+    align-items: center;
+    gap: layout.gap("xs");
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    list-style: none;
   }
 
-  @include high-contrast-outline;
-}
+  // A page or step: square at the control radius, regular weight, tabular
+  // figures so the row does not shift as the numbers change.
+  .item {
+    @include button-reset;
+    @include action.base;
+    @include action.motion;
 
-// Disabled state (prev/next at boundaries)
-.itemDisabled {
-  @include disabled-state;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
 
-  pointer-events: none;
-}
+    // Hover paints over the item, so the current page keeps its wash.
+    @include action.hover {
+      @include selection.hover-tint;
+    }
 
-// ============================================
-// Nav buttons (Previous/Next)
-// ============================================
+    @include focus.visible;
+    @include action.disabled;
+  }
 
-// ============================================
-// Ellipsis
-// ============================================
+  // The current page: the nav marking, at the same weight.
+  .itemActive {
+    @include selection.current;
+    @include high-contrast-outline;
+  }
 
-.ellipsis {
-  @include action.base;
+  // The step caret turns for right-to-left pages.
+  .glyph:dir(rtl) {
+    transform: rotate(180deg);
+  }
 
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  user-select: none;
-}
+  .ellipsis {
+    @include action.base;
 
-.sm :is(.item, .ellipsis) {
-  @include action.icon-only("sm");
-}
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    user-select: none;
+  }
 
-.md :is(.item, .ellipsis) {
-  @include action.icon-only("md");
-}
+  .sm :is(.item, .ellipsis) {
+    @include action.icon-only("sm");
+  }
 
-.lg :is(.item, .ellipsis) {
-  @include action.icon-only("lg");
-}
+  .md :is(.item, .ellipsis) {
+    @include action.icon-only("md");
+  }
 
-.sm .navButton svg {
-  @include action.glyph("sm");
-}
+  .sm .glyph {
+    @include action.glyph("sm");
+  }
 
-.md .navButton svg {
-  @include action.glyph("md");
-}
-
-.lg .navButton svg {
-  @include action.glyph("lg");
+  .md .glyph {
+    @include action.glyph("md");
+  }
 }

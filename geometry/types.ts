@@ -301,20 +301,6 @@ export type GeometryCase = {
   transfer: GeometryTransfer | null;
 };
 
-export type GeometryCatalogEntry = {
-  catalogName: string;
-  family: LowerKebab;
-  primitive: LowerKebab;
-  caseId: GeometryCaseId;
-  selectorValue: LowerKebab;
-};
-
-export type GeometryCatalogMap = {
-  schemaVersion: typeof GEOMETRY_SCHEMA_VERSION;
-  storyId: "cloud-geometry-evidence--catalog-smoke";
-  entries: GeometryCatalogEntry[];
-};
-
 export type GeometryCoverageStatus = "pending" | "passed" | "failed" | "manual-pending" | "manual-approved";
 
 export type GeometryCoverage = {
@@ -344,7 +330,6 @@ export type GeometryBaseline = {
   storybookTreeSha256: string;
   runnerTreeSha256: string;
   schemaSetSha256: string;
-  catalogMapSha256?: string;
   caseSchemaVersion: typeof GEOMETRY_SCHEMA_VERSION;
   runnerVersion: typeof GEOMETRY_RUNNER_VERSION;
   environment: {
@@ -458,22 +443,18 @@ export type GeometryResultManifest = {
     storybookTreeSha256: string | null;
     runnerTreeSha256: string | null;
     schemaSetSha256: string | null;
-    catalogMapSha256: string | null;
   };
   filters: { casePrefix: string | null; authoritative: boolean };
   expected: {
     foundation: number;
     viewport: number;
-    condition: number;
-    engine: number;
-    catalog: number;
     automated: number;
     manual: number;
     total: number;
   };
   executed: { automated: number; manualValidated: number; total: number };
   finalCss: {
-    path: "libs/ui/dist/assets/ui.css";
+    path: "dist/assets/ui.css";
     sha256: string;
     bytes: number;
     gzipBytes: number;
@@ -497,12 +478,12 @@ export type GeometryResultManifest = {
 
 const validTypedCase = {
   schemaVersion: 1,
-  caseId: "geometry/harness/control-sizing/default/md/light/rest-1440",
-  storyId: "cloud-control-sizing--control-sizing",
+  caseId: "geometry/foundations/control-track/default/md/light/rest-1440",
+  storyId: "foundations-measurement-targets--target-lineup",
   ownerBrief: "03",
   executionMode: "automated",
   selectors: {
-    root: { attribute: "data-geometry-id", value: "control-sizing-md", kind: "element" },
+    root: { attribute: "data-geometry-id", value: "target-control-track-md", kind: "element" },
   },
   scenario: {
     engine: "chromium",

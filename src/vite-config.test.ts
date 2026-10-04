@@ -8,7 +8,9 @@ import configExport from "../vite.config";
 
 function configuredPlugins(): Plugin[] {
   const config = configExport as UserConfig;
-  return (config.plugins ?? []).flat(Infinity).filter(Boolean) as Plugin[];
+  const flatten = (list: readonly unknown[]): unknown[] =>
+    list.flatMap((item) => (Array.isArray(item) ? flatten(item) : [item]));
+  return flatten(config.plugins ?? []).filter(Boolean) as Plugin[];
 }
 
 describe("library-only Vite plugins", () => {

@@ -1,0 +1,102 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ButtonGroup",
+  "description": "Fuses two actions into one control, a split button, with one hairline between them.",
+  "category": "actions",
+  "tags": ["button", "group", "split-button", "actions"],
+  "status": "stable",
+  "sourcePath": "src/components/ButtonGroup/index.tsx",
+  "exportName": "ButtonGroup",
+  "propsSummary": [
+    "children: node (required)",
+    "aria-label: string (required unless aria-labelledby)",
+    "aria-labelledby: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "The fused actions: a Button and an IconButton menu trigger; at most two",
+      "required": true
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Names the group; required unless aria-labelledby is set",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "ID of the element that names the group",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "A split button: the main verb plus a menu of its variations",
+      "Two actions that read as one control"
+    ],
+    "whenNot": [
+      "Spacing separate buttons: use Stack (direction=\"row\", gap, justify=\"end\")",
+      "A form footer or verb cluster: use Stack",
+      "Picking one option: use ToggleGroup"
+    ],
+    "guidelines": [
+      "At most two; a third verb goes in a Menu",
+      "The fused halves share one opaque hairline whatever their variant; outer corners keep the control radius",
+      "Give both halves the same size and variant family",
+      "Always name the group with aria-label or aria-labelledby"
+    ],
+    "accessibility": [
+      "Renders role=\"group\"; a dev warning fires when it has no name",
+      "Each half stays individually focusable",
+      "Name the menu trigger for what it opens (\"More save options\")"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Split Button",
+      "description": "The main verb, then a menu of its variations.",
+      "code": "import { CaretDown } from '@phosphor-icons/react';\nimport { IconButton } from '@/components/IconButton';\nimport { Menu } from '@/components/Menu';\n\n<ButtonGroup aria-label=\"Save options\">\n  <Button variant=\"soft\">Save</Button>\n  <Menu>\n    <Menu.Trigger\n      render={\n        <IconButton variant=\"soft\" aria-label=\"More save options\">\n          <CaretDown />\n        </IconButton>\n      }\n    />\n    <Menu.Content>\n      <Menu.Item>Save as draft</Menu.Item>\n      <Menu.Item>Save and close</Menu.Item>\n    </Menu.Content>\n  </Menu>\n</ButtonGroup>"
+    },
+    {
+      "name": "Verb Cluster",
+      "description": "Separate buttons are a Stack, right-aligned, at most two.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" justify=\"end\">\n  <Button variant=\"soft\">Cancel</Button>\n  <Button>Save</Button>\n</Stack>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "The main verb of a split button"
+    },
+    {
+      "component": "IconButton",
+      "relationship": "child",
+      "note": "The menu trigger half of a split button"
+    },
+    {
+      "component": "Stack",
+      "relationship": "alternative",
+      "note": "Stack spaces separate buttons; ButtonGroup only fuses"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - at most two fused actions",
+      "aria-label or aria-labelledby - required group name"
+    ],
+    "a11yRules": ["A11Y_GROUP_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.693Z"
+  },
+  "cssVariables": ["--fui-border", "--fui-stroke-hairline"],
+  "attributes": []
+}

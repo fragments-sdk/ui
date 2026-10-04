@@ -1,0 +1,154 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/action";
+@use "../../recipes/field";
+@use "../../recipes/focus";
+@use "../../recipes/typography";
+
+// What the shell checks on its input: the shell carries none of the input's
+// own attributes, so its states read them through :has().
+$_input-disabled: ":has(> .input:disabled)";
+$_input-readonly: ":has(> .input[readonly])";
+$_input-invalid: ':has(> .input:is([aria-invalid="true"], [data-invalid]))';
+
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  .root {
+    display: block;
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  // The shell Input draws: band fill, the 3:1 field edge, the control radius,
+  // the shared track. The scrub label, the figures and the unit sit in a row.
+  .shell {
+    // Inherit first, so the size's type role below wins over it.
+    font: inherit;
+
+    @include interactive-base;
+    @include field.size("md");
+    @include field.shell;
+
+    display: flex;
+    align-items: center;
+    gap: action.gap("sm");
+    width: 100%;
+    cursor: text;
+
+    &[data-size="xs"] {
+      @include field.size-xs;
+    }
+
+    &[data-size="sm"] {
+      @include field.size("sm");
+    }
+
+    &[data-size="lg"] {
+      @include field.size("lg");
+
+      gap: action.gap("md");
+    }
+
+    @media (hover: hover) {
+      &:hover:not(#{$_input-disabled}, #{$_input-readonly}, #{$_input-invalid}) {
+        border-color: color-mix(
+          in oklab,
+          var(--fui-text-primary, #{$fui-text-primary}) 55%,
+          var(--fui-field-border, #{$fui-field-border})
+        );
+      }
+    }
+
+    &:has(> .input:focus-visible) {
+      @include field.focus-state;
+    }
+
+    &#{$_input-readonly} {
+      @include field.readonly-state;
+    }
+
+    &#{$_input-invalid} {
+      @include field.invalid-state;
+
+      &:has(> .input:focus-visible) {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    // Dimmed once, on the box.
+    &#{$_input-disabled} {
+      @include field.disabled-state;
+    }
+
+    @include high-contrast-outline;
+  }
+
+  // The figures: tabular, at the end, so a column of fields lines up.
+  .input {
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    @include field.coarse-typed-text;
+
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+
+    // The shell draws the ring through :has(:focus-visible).
+    &:focus-visible {
+      @include focus.delegated;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  // The scrub label: ink 2 at the strong weight; drag it sideways to scrub.
+  .scrub {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    align-self: stretch;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    cursor: ew-resize;
+    touch-action: none;
+    user-select: none;
+
+    &[data-scrubbing] {
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    [data-disabled] &,
+    [data-readonly] & {
+      cursor: inherit;
+    }
+  }
+
+  // The cursor while the pointer is locked to the scrub.
+  .scrubCursor {
+    color: var(--fui-text-primary, $fui-text-primary);
+
+    svg {
+      @include action.glyph("sm");
+    }
+  }
+
+  // The unit: ink 3 after the figures.
+  .unit {
+    flex: 0 0 auto;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    white-space: nowrap;
+  }
+}

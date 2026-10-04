@@ -1,72 +1,106 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
 
-.listbox {
-  @include popup.inline-container;
-  @include popup.viewport;
+@layer fui.tokens, fui.base, fui.components;
 
-  min-inline-size: layout.measure("menu-min");
+@layer fui.components {
+  // The inline plane: the surface and its hairline, popup corner and inset.
+  // The ring is drawn here when the listbox inside it takes keyboard focus.
+  .root {
+    @include popup.inline-container;
+    @include popup.viewport;
 
-  &:focus-visible {
-    @include focus-ring;
+    min-inline-size: layout.measure("menu-min");
+
+    &:has(> .listbox:focus-visible) {
+      @include focus.ring;
+    }
   }
 
-  @include high-contrast-outline;
-}
+  .listbox {
+    display: flex;
+    flex-direction: column;
 
-.item {
-  @include popup.row;
+    &:focus-visible {
+      @include focus.delegated;
+    }
 
-  text-align: start;
-
-  &:hover,
-  &[data-highlighted] {
-    @include popup.highlight-state;
+    &[aria-disabled="true"] {
+      cursor: not-allowed;
+    }
   }
 
-  &:focus-visible {
-    @include focus-ring;
+  // One highlighted row at a time: the keyboard-active or pointed row carries
+  // `data-highlighted`; there is no separate :hover paint to stack with it.
+  .item {
+    @include popup.row;
+
+    text-align: start;
+    cursor: default;
+
+    &[data-selected] {
+      @include popup.selected-state;
+
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    &[data-highlighted] {
+      @include popup.highlight-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
   }
-}
 
-.itemActive {
-  @include popup.highlight-state;
-}
+  .itemLabel {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
 
-.itemSelected {
-  @include popup.selected-state;
-}
+  .itemIndicator {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--fui-popup-indicator-box, #{measurements.raw-space(16)});
+    block-size: var(--fui-popup-indicator-box, #{measurements.raw-space(16)});
+    color: var(--fui-text-primary, $fui-text-primary);
 
-.itemDisabled {
-  @include popup.disabled-state;
-}
+    > svg {
+      inline-size: var(--fui-icon-xs, $fui-icon-xs);
+      block-size: var(--fui-icon-xs, $fui-icon-xs);
+    }
+  }
 
-.group:not(:first-child)::before {
-  @include popup.group-separator;
+  .group:not(:first-child)::before {
+    @include popup.group-separator;
 
-  content: "";
-  display: block;
-}
+    content: "";
+    display: block;
+  }
 
-.groupLabel {
-  @include popup.group-label;
-}
+  .groupLabel {
+    @include popup.group-label;
+  }
 
-.empty {
-  @include typography.role("body-compact");
+  .empty {
+    @include typography.role("body-compact");
 
-  padding-block: var(
-    --fui-popup-row-block-inset,
-    var(--fui-raw-space-8, #{measurements.raw-space(8)})
-  );
-  padding-inline: var(
-    --fui-popup-row-inline-inset,
-    var(--fui-raw-space-8, #{measurements.raw-space(8)})
-  );
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  text-align: center;
+    padding-block: var(
+      --fui-popup-row-block-inset,
+      var(--fui-raw-space-8, #{measurements.raw-space(8)})
+    );
+    padding-inline: var(
+      --fui-popup-row-inline-inset,
+      var(--fui-raw-space-8, #{measurements.raw-space(8)})
+    );
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    text-align: center;
+  }
 }

@@ -1,23 +1,68 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeButton, ThemeProvider, ThemeToggle } from ".";
+import { Monitor, Moon, Sun } from "@phosphor-icons/react";
+import { Button } from "../Button";
+import { IconButton } from "../IconButton";
+import { Stack } from "../Stack";
+import { Text } from "../Text";
+import { ToggleGroup } from "../ToggleGroup";
+import { Theme, useTheme, type ThemeMode } from ".";
 import { RENDER_STATES } from "../../storybook/render-states";
 
+/** The colour-mode control: a ToggleGroup wired to `useTheme`, System first. */
+function ColourModeControl({ size = "sm" }: { size?: "xs" | "sm" | "md" | "lg" }) {
+  const { mode, setMode } = useTheme();
+  return (
+    <ToggleGroup
+      aria-label="Colour mode"
+      size={size}
+      value={mode}
+      onValueChange={(next) => setMode(next as ThemeMode)}
+    >
+      <ToggleGroup.Item value="system">
+        <Monitor aria-hidden />
+        System
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="light">
+        <Sun aria-hidden />
+        Light
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="dark">
+        <Moon aria-hidden />
+        Dark
+      </ToggleGroup.Item>
+    </ToggleGroup>
+  );
+}
+
+/** One icon button that flips light and dark, for a tight toolbar. */
+function ColourModeButton() {
+  const { resolvedMode, setMode } = useTheme();
+  return (
+    <IconButton
+      aria-label={resolvedMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      onClick={() => setMode(resolvedMode === "dark" ? "light" : "dark")}
+    >
+      {resolvedMode === "dark" ? <Sun aria-hidden /> : <Moon aria-hidden />}
+    </IconButton>
+  );
+}
+
 /**
- * ThemeProvider is the canonical theme-management primitive. Wrap your app with
- * it once at the root to supply light/dark/system mode via CSS custom
+ * Theme is the canonical theme-management primitive. Wrap your app with it
+ * once at the root to supply light/dark/system mode via CSS custom
  * properties, with localStorage persistence — agents should use it (paired with
- * `useTheme` and `ThemeToggle`) rather than wiring up bespoke theme state.
+ * `useTheme` and a ToggleGroup) rather than wiring up bespoke theme state.
  */
 const meta = {
-  title: "Navigation/ThemeProvider",
-  component: ThemeProvider,
+  title: "Navigation/Theme",
+  component: Theme,
   tags: ["autodocs", "canonical"],
   parameters: {
     renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
-          "Theme context provider supporting light, dark, and system modes with localStorage persistence. Prefer this over hand-rolled theme state.",
+          "Theme root supporting light, dark, and system modes with localStorage persistence. Prefer this over hand-rolled theme state.",
       },
     },
   },
@@ -32,75 +77,67 @@ const meta = {
       options: ["light", "dark", "system"],
       description: "Controlled theme mode",
     },
-    attribute: {
-      control: "select",
-      options: ["data-theme", "class"],
-      description: "How to apply the theme to the DOM",
-    },
     storageKey: { control: "text", description: "localStorage key for persistence" },
   },
-  args: {
-    defaultMode: "system",
-    children: (
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <ThemeToggle />
-        <span>Click to cycle themes</span>
-      </div>
-    ),
-  },
-} satisfies Meta<typeof ThemeProvider>;
+  // No default mode: inside the page's Theme a story then follows the page's
+  // mode instead of taking the system one for its own scope.
+} satisfies Meta<typeof Theme>;
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+// Typed from the component: every story renders its own children, and JSX
+// stays out of component-level args (compound parts carry a `.Root` cycle).
+type Story = StoryObj<typeof Theme>;
 
 export const Default: Story = {
   render: (args) => (
-    <ThemeProvider {...args}>
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <ThemeToggle />
-        <span>Click to cycle themes</span>
-      </div>
-    </ThemeProvider>
-  ),
-};
-
-export const WithToggle: Story = {
-  args: { defaultMode: "light" },
-  render: (args) => (
-    <ThemeProvider {...args}>
-      <ThemeToggle />
-    </ThemeProvider>
-  ),
-};
-
-export const ToggleSizes: Story = {
-  args: { defaultMode: "light" },
-  render: (args) => (
-    <ThemeProvider {...args}>
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <ThemeToggle size="sm" />
-        <ThemeToggle size="md" />
-        <ThemeToggle size="lg" />
-      </div>
-    </ThemeProvider>
+    <Theme {...args}>
+      <Stack direction="row" gap="md" align="center">
+        <ColourModeControl />
+        <Text>Pick a mode</Text>
+      </Stack>
+    </Theme>
   ),
 };
 
 export const DarkDefault: Story = {
   args: { defaultMode: "dark" },
   render: (args) => (
-    <ThemeProvider {...args}>
-      <ThemeToggle showSystem />
-    </ThemeProvider>
+    <Theme {...args}>
+      <ColourModeControl />
+    </Theme>
   ),
 };
 
-export const IconButtonForm: Story = {
-  args: { defaultMode: "system" },
+/** A tight toolbar flips light and dark with one IconButton. */
+export const IconButtonFlip: Story = {
+  args: { defaultMode: "light" },
   render: (args) => (
-    <ThemeProvider {...args}>
-      <ThemeButton aria-label="Switch color mode" />
-    </ThemeProvider>
+    <Theme {...args}>
+      <ColourModeButton />
+    </Theme>
+  ),
+};
+
+/** A Theme inside another Theme scopes its subtree: dark and green here, whatever the page is. */
+export const NestedScope: Story = {
+  args: { defaultMode: "dark", brand: "#16a34a", style: { padding: "16px" } },
+  render: (args) => (
+    <Theme {...args}>
+      <Stack direction="row" gap="md" align="center">
+        <Button>Save</Button>
+        <ColourModeControl />
+      </Stack>
+    </Theme>
+  ),
+};
+
+/** Primary actions in ink instead of the accent, for one toolbar. */
+export const InkChrome: Story = {
+  args: { primaryChrome: "ink" },
+  render: (args) => (
+    <Theme {...args}>
+      <Button>Publish</Button>
+    </Theme>
   ),
 };

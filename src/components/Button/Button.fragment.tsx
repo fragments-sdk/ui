@@ -19,7 +19,7 @@ export default defineFragment(Button, {
     },
     Soft: {
       render: <Button variant="soft">Cancel</Button>,
-      note: "Supporting action that sits beside the main one. Neutral tone by default.",
+      note: "The neutral secondary: a quiet tint, no border, beside the main action.",
     },
     Ghost: {
       render: <Button variant="ghost">Learn more</Button>,
@@ -37,61 +37,32 @@ export default defineFragment(Button, {
       ),
       note: "Destructive action people cannot undo: solid chrome, danger tone.",
     },
-    Tones: {
-      render: (
-        <Stack direction="row" gap="sm" align="center" wrap>
-          <Button variant="soft" tone="accent">
-            Accent
-          </Button>
-          <Button variant="soft" tone="info">
-            Info
-          </Button>
-          <Button variant="soft" tone="success">
-            Success
-          </Button>
-          <Button variant="soft" tone="warning">
-            Warning
-          </Button>
-          <Button variant="soft" tone="danger">
-            Danger
-          </Button>
-        </Stack>
-      ),
-      note: "Tone is colour and colour is meaning; it works on every variant.",
-    },
-    Outline: {
-      render: <Button variant="outline">View details</Button>,
-      note: "Bordered and transparent — reads over any surface.",
-    },
-    Icon: {
-      render: (
-        <Button icon variant="outline" aria-label="Add item">
-          <span aria-hidden>+</span>
-        </Button>
-      ),
-      note: "Square icon-only action. Always pass aria-label.",
-    },
     Sizes: {
       render: (
         <Stack direction="row" gap="sm" align="center" wrap>
+          <Button size="xs">Micro</Button>
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
           <Button size="lg">Large</Button>
         </Stack>
       ),
-      note: "sm for inline row actions, lg for hero calls to action.",
+      note: "The one track: xs 24 for in-row actions, sm 28, md 32, lg 40.",
     },
     Disabled: {
       render: <Button disabled>Unavailable</Button>,
       note: "Blocks clicks and drops the button out of the tab order.",
     },
-    "As Child": {
+    Pending: {
+      render: <Button pending>Saving</Button>,
+      note: "Work is running: presses are ignored at once, the spinner shows after a second.",
+    },
+    Render: {
       render: (
-        <Button asChild variant="outline" aria-label="Open billing settings">
-          <a href="#billing-settings">Billing settings</a>
+        <Button variant="soft" render={<a href="#billing-settings" />}>
+          Billing settings
         </Button>
       ),
-      note: "Paints button styles onto an anchor or router link; props forward to the child.",
+      note: "render swaps the element; an anchor keeps its link role and takes the look.",
     },
     "Long Label": {
       render: (
@@ -117,9 +88,10 @@ export default defineFragment(Button, {
       "One solid accent button per form or section",
       'tone="danger" for anything destructive',
       "Chroma is earned: leave tone at its default unless the action carries that meaning",
-      "Loading state must also disable the button",
-      "With asChild, put interaction and a11y props on Button — they forward to the child",
-      "icon={true} with any variant for icon-only actions",
+      "soft is the neutral secondary; soft and ghost show danger as ink, never a coloured fill",
+      "pending while work runs: it ignores presses without disabling the button",
+      "render={<a href />} for a link that looks like a button; the anchor keeps its link role",
+      "Icon-only actions use IconButton",
     ],
     accessibility: [
       "Label the action, not the widget",
@@ -149,25 +121,31 @@ export default defineFragment(Button, {
     {
       component: "Icon",
       relationship: "complementary",
-      note: "Use Icon inside Button for icon-leading/trailing or icon-only actions",
+      note: "Use Icon inside Button for a leading or trailing glyph",
     },
     {
       component: "ButtonGroup",
       relationship: "parent",
-      note: "Use ButtonGroup for related action sets",
+      note: "ButtonGroup fuses a Button and an IconButton menu trigger into a split button",
+    },
+    {
+      component: "IconButton",
+      relationship: "sibling",
+      note: "The one icon-only control",
     },
   ],
   composition: { pattern: "compound", subComponents: ["Root"] },
   contract: {
     propsSummary: [
-      "variant: solid|soft|outline|ghost|link (default: solid)",
-      "tone: neutral|accent|info|success|warning|danger (default: accent on solid/link, neutral on soft/outline/ghost)",
-      "size: sm|md|lg (default: md)",
+      "variant: solid|soft|ghost|link (default: solid)",
+      "tone: solid accent|danger, soft and ghost neutral|danger (ink), link accent|neutral; the first is the default",
+      "size: xs|sm|md|lg (default: md)",
+      "pending: boolean - aria-busy, presses ignored, spinner after a second",
       "disabled: boolean - disables interaction",
       "type: button|submit|reset (default: button)",
       "onClick: (event) => void - action handler",
-      "asChild: boolean - composes styles/props onto a child element (links/router links)",
-      "icon: boolean - icon-only square layout (can be combined with visual variants)",
+      "render: element | function - swaps the rendered element (anchor, router link)",
+      "nativeButton: boolean - whether the rendered element is a native button",
     ],
     a11yRules: ["A11Y_BTN_LABEL", "A11Y_BTN_FOCUS"],
   },

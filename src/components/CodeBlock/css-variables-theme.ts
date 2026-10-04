@@ -10,7 +10,7 @@ export const FUI_CSS_VARIABLES_THEME = {
   type: "dark" as const,
   colors: {
     "editor.foreground": "var(--fui-code-text)",
-    "editor.background": "var(--fui-code-bg)",
+    "editor.background": "var(--fui-bg-secondary)",
   },
   tokenColors: [
     { settings: { foreground: "var(--fui-code-text)" } },

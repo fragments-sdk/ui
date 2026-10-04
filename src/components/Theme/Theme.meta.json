@@ -1,0 +1,241 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Theme",
+  "description": "Sets color mode and theme inputs for the page or a nested subtree.",
+  "category": "utilities",
+  "tags": ["theme", "dark-mode", "light-mode", "provider", "toggle", "scope", "no-flash"],
+  "status": "stable",
+  "sourcePath": "src/components/Theme/index.tsx",
+  "exportName": "Theme",
+  "propsSummary": [
+    "children: node (required)",
+    "defaultMode: light|dark|system",
+    "mode: light|dark|system",
+    "onModeChange: function",
+    "storageKey: string (default: fui-theme at the root; none when nested)",
+    "brand: string",
+    "neutral: string (default: paper)",
+    "radius: number|string",
+    "scale: number",
+    "font: string",
+    "pressScale: number",
+    "primaryChrome: accent|ink",
+    "danger: string",
+    "success: string",
+    "warning: string",
+    "info: string",
+    "className: string (nested scope only)",
+    "style: object (nested scope only)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Application content",
+      "required": true
+    },
+    "defaultMode": {
+      "type": "enum",
+      "description": "Default theme mode for uncontrolled usage",
+      "default": "system",
+      "required": false,
+      "values": ["light", "dark", "system"]
+    },
+    "mode": {
+      "type": "enum",
+      "description": "Controlled theme mode",
+      "required": false,
+      "values": ["light", "dark", "system"]
+    },
+    "onModeChange": {
+      "type": "function",
+      "description": "Callback when mode changes",
+      "required": false
+    },
+    "storageKey": {
+      "type": "string",
+      "description": "localStorage key for persistence. A nested Theme persists only when given one",
+      "default": "fui-theme",
+      "required": false
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand colour, any CSS colour; sets --fui-seed-brand",
+      "required": false
+    },
+    "neutral": {
+      "type": "string",
+      "description": "The neutral every plane, ink and line is a lightness step of: paper or any CSS colour; sets --fui-seed-neutral (chroma capped at 0.04)",
+      "default": "paper",
+      "required": false
+    },
+    "radius": {
+      "type": "string",
+      "description": "Base radius; a number is pixels; sets --fui-radius",
+      "required": false
+    },
+    "scale": {
+      "type": "number",
+      "description": "Multiplier on every measurement; sets --fui-scale",
+      "default": "1",
+      "required": false
+    },
+    "font": {
+      "type": "string",
+      "description": "Sans-serif font stack; sets --fui-font-sans",
+      "required": false
+    },
+    "pressScale": {
+      "type": "number",
+      "description": "Scale an action takes while pressed, 1 turns it off; sets --fui-press-scale",
+      "required": false
+    },
+    "primaryChrome": {
+      "type": "enum",
+      "description": "Primary action chrome: the accent ramp, or ink on the page plane; sets data-chrome",
+      "default": "accent",
+      "required": false,
+      "values": ["accent", "ink"]
+    },
+    "danger": {
+      "type": "string",
+      "description": "Danger colour; sets --fui-seed-danger",
+      "required": false
+    },
+    "success": {
+      "type": "string",
+      "description": "Success colour; sets --fui-seed-success",
+      "required": false
+    },
+    "warning": {
+      "type": "string",
+      "description": "Warning colour; sets --fui-seed-warning",
+      "required": false
+    },
+    "info": {
+      "type": "string",
+      "description": "Info colour; sets --fui-seed-info",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Class for the nested scope element; ignored at the root",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Style for the nested scope element; ignored at the root",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "An app needs light and dark modes",
+      "The user's choice should survive a reload",
+      "You want to honour the OS setting by default",
+      "One region needs its own mode, brand or neutral (a dark panel, an ink toolbar, a rebranded preview)"
+    ],
+    "whenNot": [
+      "Recoloring one component (use its props)",
+      "A single one-off color swap (use a CSS variable)"
+    ],
+    "guidelines": [
+      "The outermost Theme owns <html>: mode, storage and inputs are written there",
+      "A Theme inside another Theme scopes its subtree: it renders one <div data-fui-theme> and every role inside re-derives from what it sets",
+      "A nested Theme that sets no mode, input, className or style renders nothing and passes the parent context through",
+      "Put ThemeScript in <head> with the same storageKey and inputs as the root Theme so a reload paints the stored mode first; add suppressHydrationWarning to <html>",
+      "useTheme reads and sets the nearest Theme's mode",
+      "storageKey renames the localStorage entry; storage that throws falls back to the default mode",
+      "Popups opened inside a scope carry it into their portal",
+      "Theme renders no chrome of its own; the colour-mode control is a composition: a ToggleGroup wired to useTheme (System, Light, Dark, System first), or one IconButton calling setMode in a tight toolbar",
+      "Without a Theme, useTheme reads and writes data-theme on <html> directly; toggleMode steps system → light → dark"
+    ],
+    "accessibility": [
+      "Name the colour-mode control (aria-label \"Colour mode\"); a flip button's label names the mode it switches to",
+      "System mode follows prefers-color-scheme",
+      "A scoped theme re-derives every ink and plane, so text holds 4.5:1 inside it"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Wrap the app once; every token below resolves to the active mode.",
+      "code": "<Theme defaultMode=\"system\">\n  <div\n    style={{\n      padding: '16px',\n      borderRadius: '8px',\n      background: 'var(--fui-bg-elevated)',\n      color: 'var(--fui-text-primary)',\n    }}\n  >\n    Everything inside follows the system color scheme.\n  </div>\n</Theme>"
+    },
+    {
+      "name": "Colour Mode Control",
+      "description": "A ToggleGroup wired to useTheme sets system, light or dark.",
+      "code": "import { Monitor, Moon, Sun } from '@phosphor-icons/react';\nimport { ToggleGroup } from '@/components/ToggleGroup';\nimport { useTheme, type ThemeMode } from '@/components/Theme';\n\nfunction ColourMode() {\n  const { mode, setMode } = useTheme();\n  return (\n    <ToggleGroup aria-label=\"Colour mode\" size=\"sm\" value={mode} onValueChange={(next) => setMode(next as ThemeMode)}>\n      <ToggleGroup.Item value=\"system\"><Monitor aria-hidden />System</ToggleGroup.Item>\n      <ToggleGroup.Item value=\"light\"><Sun aria-hidden />Light</ToggleGroup.Item>\n      <ToggleGroup.Item value=\"dark\"><Moon aria-hidden />Dark</ToggleGroup.Item>\n    </ToggleGroup>\n  );\n}\n\n<Theme defaultMode=\"system\">\n  <ColourMode />\n</Theme>"
+    },
+    {
+      "name": "Colour Mode Button",
+      "description": "One IconButton flips light and dark in a toolbar with no room to spare.",
+      "code": "import { Moon, Sun } from '@phosphor-icons/react';\nimport { IconButton } from '@/components/IconButton';\nimport { useTheme } from '@/components/Theme';\n\nfunction ColourModeButton() {\n  const { resolvedMode, setMode } = useTheme();\n  return (\n    <IconButton aria-label={resolvedMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} onClick={() => setMode(resolvedMode === 'dark' ? 'light' : 'dark')}>\n      {resolvedMode === 'dark' ? <Sun aria-hidden /> : <Moon aria-hidden />}\n    </IconButton>\n  );\n}\n\n<Theme defaultMode=\"system\">\n  <ColourModeButton />\n</Theme>"
+    },
+    {
+      "name": "Nested Scope",
+      "description": "A dark, green-branded panel inside the page; everything inside re-derives.",
+      "code": "<Theme mode=\"dark\" brand=\"#16a34a\" style={{ padding: '16px' }}>\n  <Button>Save</Button>\n</Theme>"
+    },
+    {
+      "name": "Ink Chrome",
+      "description": "Primary actions in ink instead of the accent, for one toolbar.",
+      "code": "<Theme primaryChrome=\"ink\">\n  <Button>Publish</Button>\n</Theme>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "AppShell",
+      "relationship": "sibling",
+      "note": "Theme typically wraps AppShell"
+    },
+    {
+      "component": "ToggleGroup",
+      "relationship": "sibling",
+      "note": "The colour-mode control is a ToggleGroup wired to useTheme"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "defaultMode: light|dark|system - initial theme mode",
+      "mode: light|dark|system - controlled mode",
+      "onModeChange: (mode) => void - change handler",
+      "brand, neutral, radius, scale, font, pressScale, danger, success, warning, info - theme inputs written as custom properties",
+      "primaryChrome: accent|ink - primary action chrome",
+      "Nested Theme renders <div data-fui-theme> with className and style",
+      "ThemeScript: server component for <head> that writes the stored mode before first paint"
+    ],
+    "a11yRules": ["A11Y_TARGET_SIZE_MIN"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.406Z"
+  },
+  "cssVariables": [],
+  "attributes": [
+    {
+      "name": "data-chrome",
+      "value": "ink",
+      "fixture": "populatedNestedScope"
+    },
+    {
+      "name": "data-fui-theme",
+      "value": "",
+      "fixture": "populatedNestedScope"
+    },
+    {
+      "name": "data-theme",
+      "value": "light",
+      "fixture": "populatedNestedScope"
+    },
+    {
+      "name": "data-theme",
+      "value": "dark",
+      "fixture": "populatedNestedScope"
+    }
+  ],
+  "ai": {
+    "subComponents": ["Root", "useTheme"]
+  }
+}

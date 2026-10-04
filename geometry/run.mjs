@@ -47,17 +47,14 @@ export const SCREENSHOT_SETTINGS = Object.freeze({
 });
 
 export const STORYBOOK_EXCLUSIONS = Object.freeze(["project.json"]);
-export const FROZEN_STORY_IDS = Object.freeze([
-  "cloud-control-sizing--control-sizing",
-  "cloud-geometry-evidence--catalog-smoke",
-  "foundations-measurement-targets--target-lineup",
-]);
+export const FROZEN_STORY_IDS = Object.freeze(["foundations-measurement-targets--target-lineup"]);
 
 const modulePath = fileURLToPath(import.meta.url);
 const geometryRoot = dirname(modulePath);
+// Every path is relative to the package root, so the lane runs the same from a standalone checkout.
 const uiRoot = dirname(geometryRoot);
-const repoRoot = resolve(uiRoot, "../..");
-const outputRoot = join(repoRoot, "test-results/ui-geometry");
+const OUTPUT_DIR = "geometry/.output";
+const outputRoot = join(uiRoot, OUTPUT_DIR);
 const storybookRoot = join(outputRoot, "storybook-static");
 const schemaRoot = join(geometryRoot, "schema");
 const resultManifestPath = join(outputRoot, "manifest.json");
@@ -73,7 +70,6 @@ const SOURCE_REVISION_PATTERN = /^[0-9a-f]{40}$/;
 const REQUIRED_MANUAL_CASE_IDS = Object.freeze([
   "geometry/foundations/field-track/default/md/light/manual-zoom-200",
   "geometry/foundations/typography/default/ui-standard/light/manual-zoom-200",
-  "geometry/harness/control-sizing/default/md/light/manual-zoom-200",
 ]);
 const VIEWPORT_CASE_IDS = Object.freeze([
   "geometry/foundations/control-track/default/md/light/rest-320",
@@ -82,19 +78,6 @@ const VIEWPORT_CASE_IDS = Object.freeze([
   "geometry/foundations/field-track/default/md/light/rest-390",
   "geometry/foundations/typography/default/ui-standard/light/rest-320",
   "geometry/foundations/typography/default/ui-standard/light/rest-390",
-]);
-const CONDITION_CASE_IDS = Object.freeze([
-  "geometry/harness/control-sizing/default/md/forced/forced-colors-1440",
-  "geometry/harness/control-sizing/default/md/light/coarse-pointer-1440",
-  "geometry/harness/control-sizing/default/md/light/focus-1440",
-  "geometry/harness/control-sizing/default/md/light/reduced-motion-1440",
-  "geometry/harness/control-sizing/default/md/light/reflow-320",
-  "geometry/harness/control-sizing/default/md/light/rtl-1440",
-]);
-const ENGINE_CASE_IDS = Object.freeze([
-  "geometry/harness/control-sizing/default/md/light/smoke-chromium-1440",
-  "geometry/harness/control-sizing/default/md/light/smoke-firefox-1440",
-  "geometry/harness/control-sizing/default/md/light/smoke-webkit-1440",
 ]);
 const RUNNER_TREE_FILES = Object.freeze([
   "run.mjs",
@@ -423,11 +406,14 @@ export function caseExecutionSha256(geometryCase) {
   return sha256Canonical(caseExecutionProjection(geometryCase));
 }
 
+// The density axis was retired from the measurement document; every foundation
+// case keeps the fixed `default` density segment so case identities stay stable.
+const FOUNDATION_DENSITIES = Object.freeze(["default"]);
+
 function foundationCaseIds(measurements) {
-  const densities = Object.keys(measurements.density).sort(compareStrings);
   const themes = ["dark", "light"];
   const result = [];
-  for (const density of densities) {
+  for (const density of FOUNDATION_DENSITIES) {
     for (const tier of Object.keys(measurements.targets.controlTrack).sort(compareStrings)) {
       for (const theme of themes) {
         result.push(`geometry/foundations/control-track/${density}/${tier}/${theme}/rest-1440`);
@@ -447,22 +433,14 @@ function foundationCaseIds(measurements) {
   return result.sort(compareStrings);
 }
 
-export function deriveExpectedCaseIds({ measurements, catalogMap }) {
+export function deriveExpectedCaseIds({ measurements }) {
   const foundation = foundationCaseIds(measurements);
   const viewport = [...VIEWPORT_CASE_IDS].sort(compareStrings);
-  const condition = [...CONDITION_CASE_IDS].sort(compareStrings);
-  const engine = [...ENGINE_CASE_IDS].sort(compareStrings);
-  const catalog = catalogMap.entries.map((entry) => entry.caseId).sort(compareStrings);
   const manual = [...REQUIRED_MANUAL_CASE_IDS].sort(compareStrings);
-  const automated = [...foundation, ...viewport, ...condition, ...engine, ...catalog].sort(
-    compareStrings
-  );
+  const automated = [...foundation, ...viewport].sort(compareStrings);
   return {
     foundation,
     viewport,
-    condition,
-    engine,
-    catalog,
     automated,
     manual,
     all: [...automated, ...manual].sort(compareStrings),
@@ -562,43 +540,6 @@ function assertSelectorContracts(geometryCase) {
   });
 }
 
-function validateCatalogContracts({ cases, catalogMap, fragments }) {
-  const liveNames = Object.keys(fragments.fragments).sort(compareStrings);
-  const mappedNames = catalogMap.entries.map((entry) => entry.catalogName).sort(compareStrings);
-  assertSameSet(mappedNames, liveNames, "Catalog map names");
-  if (catalogMap.storyId !== "cloud-geometry-evidence--catalog-smoke") {
-    throw new GeometryError("GEO_CATALOG_STORY_INVALID", "Catalog map story identity changed.");
-  }
-
-  const casesById = new Map(cases.map((geometryCase) => [geometryCase.caseId, geometryCase]));
-  const selectorValues = [];
-  for (const entry of catalogMap.entries) {
-    const expectedId = `geometry/${entry.family}/${entry.primitive}/default/na/light/catalog-smoke-1440`;
-    if (entry.caseId !== expectedId || entry.selectorValue !== `catalog-${entry.primitive}`) {
-      throw new GeometryError(
-        "GEO_CATALOG_MAPPING_INVALID",
-        `Catalog mapping is not canonical for ${entry.catalogName}.`
-      );
-    }
-    selectorValues.push(entry.selectorValue);
-    const geometryCase = casesById.get(entry.caseId);
-    if (
-      !geometryCase ||
-      geometryCase.storyId !== catalogMap.storyId ||
-      geometryCase.ownerBrief !== "03" ||
-      geometryCase.executionMode !== "automated" ||
-      geometryCase.selectors.root.value !== entry.selectorValue
-    ) {
-      throw new GeometryError(
-        "GEO_CATALOG_CASE_INVALID",
-        `Catalog case is missing or inconsistent for ${entry.catalogName}.`,
-        { caseId: entry.caseId }
-      );
-    }
-  }
-  assertSameSet(selectorValues, [...new Set(selectorValues)], "Catalog selector values");
-}
-
 function validateCoverageContracts({ cases, coverage, expected }) {
   const coverageIds = coverage.entries.map((entry) => entry.caseId);
   assertSameSet(coverageIds, expected.all, "Coverage case IDs");
@@ -607,16 +548,21 @@ function validateCoverageContracts({ cases, coverage, expected }) {
   assertSameSet(caseIds, expected.all, "Case records");
 }
 
-function validateManualContracts({ cases, manualZoom, expected }) {
+function validateManualContracts({ cases, manualZoom, expected, requireCompleteEvidence }) {
   const manualCases = cases.filter((geometryCase) => geometryCase.executionMode === "manual");
   assertSameSet(
     manualCases.map((geometryCase) => geometryCase.caseId),
     expected.manual,
     "Manual case records"
   );
+  const recordIds = manualZoom.records.map((record) => record.caseId);
+  // Evidence is captured and reviewed by people. Outside the authoritative runner a case may
+  // still be awaiting its record; a record for an unknown case, or a duplicate, never passes.
   assertSameSet(
-    manualZoom.records.map((record) => record.caseId),
-    expected.manual,
+    recordIds,
+    requireCompleteEvidence
+      ? expected.manual
+      : expected.manual.filter((caseId) => recordIds.includes(caseId)),
     "Manual zoom evidence records"
   );
   for (const record of manualZoom.records) {
@@ -757,37 +703,31 @@ async function loadRepositoryDocuments() {
   const [
     schemas,
     cases,
-    catalogMap,
     coverage,
     baselines,
     manualZoom,
     opticalLedger,
     cascadeLedger,
     measurements,
-    fragments,
   ] = await Promise.all([
     loadSchemas(),
     readJson(join(geometryRoot, "cases.json")),
-    readJson(join(geometryRoot, "catalog-map.json")),
     readJson(join(geometryRoot, "coverage.json")),
     readJson(join(geometryRoot, "baselines.json")),
     readJson(join(geometryRoot, "manual-zoom.json")),
     readJson(join(geometryRoot, "ledgers/optical-exceptions.json")),
     readJson(join(geometryRoot, "ledgers/cascade-exceptions.json")),
     readJson(join(uiRoot, "src/measurements/measurements.json")),
-    readJson(join(uiRoot, "fragments.json")),
   ]);
   return {
     schemas,
     cases,
-    catalogMap,
     coverage,
     baselines,
     manualZoom,
     opticalLedger,
     cascadeLedger,
     measurements,
-    fragments,
   };
 }
 
@@ -796,46 +736,41 @@ function schemaDocuments(repository) {
   repository.cases.forEach((value, index) => {
     documents.push({
       schemaId: "urn:ui-geometry:v1:case",
-      name: `libs/ui/geometry/cases.json[${index}]`,
+      name: `geometry/cases.json[${index}]`,
       value,
     });
   });
   documents.push(
     {
-      schemaId: "urn:ui-geometry:v1:catalog-map",
-      name: "libs/ui/geometry/catalog-map.json",
-      value: repository.catalogMap,
-    },
-    {
       schemaId: "urn:ui-geometry:v1:coverage",
-      name: "libs/ui/geometry/coverage.json",
+      name: "geometry/coverage.json",
       value: repository.coverage,
     },
     {
       schemaId: "urn:ui-geometry:v1:baseline",
-      name: "libs/ui/geometry/baselines.json",
+      name: "geometry/baselines.json",
       value: repository.baselines,
     },
     {
       schemaId: "urn:ui-geometry:v1:manual-zoom",
-      name: "libs/ui/geometry/manual-zoom.json",
+      name: "geometry/manual-zoom.json",
       value: repository.manualZoom,
     },
     {
       schemaId: "urn:ui-geometry:v1:exception-ledger",
-      name: "libs/ui/geometry/ledgers/optical-exceptions.json",
+      name: "geometry/ledgers/optical-exceptions.json",
       value: repository.opticalLedger,
     },
     {
       schemaId: "urn:ui-geometry:v1:exception-ledger",
-      name: "libs/ui/geometry/ledgers/cascade-exceptions.json",
+      name: "geometry/ledgers/cascade-exceptions.json",
       value: repository.cascadeLedger,
     }
   );
   return documents;
 }
 
-function validateStructuralContracts(repository) {
+function validateStructuralContracts(repository, { requireCompleteEvidence = true } = {}) {
   const validation = validateGeometryDocuments({
     schemas: repository.schemas,
     documents: schemaDocuments(repository),
@@ -866,19 +801,15 @@ function validateStructuralContracts(repository) {
     assertSelectorContracts(geometryCase);
   }
 
-  validateCatalogContracts(repository);
-  const expected = deriveExpectedCaseIds({
-    measurements: repository.measurements,
-    catalogMap: repository.catalogMap,
-  });
+  const expected = deriveExpectedCaseIds({ measurements: repository.measurements });
   validateCoverageContracts({ ...repository, expected });
-  validateManualContracts({ ...repository, expected });
+  validateManualContracts({ ...repository, expected, requireCompleteEvidence });
   validateLedgerContracts(repository);
   return expected;
 }
 
 /** Run the production semantic preflight without performing file or browser I/O. */
-export function validateGeometryContract(repository) {
+export function validateGeometryContract(repository, { requireCompleteEvidence = true } = {}) {
   try {
     const seenCaseIds = new Set();
     for (const geometryCase of repository.cases) {
@@ -899,13 +830,9 @@ export function validateGeometryContract(repository) {
       seenCaseIds.add(geometryCase.caseId);
       assertSelectorContracts(geometryCase);
     }
-    validateCatalogContracts(repository);
-    const expected = deriveExpectedCaseIds({
-      measurements: repository.measurements,
-      catalogMap: repository.catalogMap,
-    });
+    const expected = deriveExpectedCaseIds({ measurements: repository.measurements });
     validateCoverageContracts({ ...repository, expected });
-    validateManualContracts({ ...repository, expected });
+    validateManualContracts({ ...repository, expected, requireCompleteEvidence });
     validateLedgerContracts(repository);
     return { valid: true, errors: [] };
   } catch (error) {
@@ -999,7 +926,7 @@ async function runCommand(command, args, { cwd, timeoutMs, timeoutCode, env = pr
 
 async function gitOutput(args) {
   return await new Promise((resolvePromise, reject) => {
-    const child = spawn("git", args, { cwd: repoRoot, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn("git", args, { cwd: uiRoot, stdio: ["ignore", "pipe", "pipe"] });
     const stdout = [];
     const stderr = [];
     child.stdout.on("data", (chunk) => stdout.push(chunk));
@@ -1015,7 +942,7 @@ async function gitOutput(args) {
 async function sourceIdentity() {
   const [revision, statusOutput] = await Promise.all([
     gitOutput(["rev-parse", "HEAD"]),
-    gitOutput(["status", "--porcelain=v1", "--untracked-files=normal"]),
+    gitOutput(["status", "--porcelain=v1", "--untracked-files=normal", "--", "."]),
   ]);
   if (!SOURCE_REVISION_PATTERN.test(revision)) {
     throw new GeometryError(
@@ -1034,7 +961,7 @@ async function finalCssMetrics() {
   const path = join(uiRoot, "dist/assets/ui.css");
   const bytes = await readFile(path);
   return {
-    path: "libs/ui/dist/assets/ui.css",
+    path: "dist/assets/ui.css",
     sha256: sha256Bytes(bytes),
     bytes: bytes.byteLength,
     gzipBytes: gzipSync(bytes, { level: 9 }).byteLength,
@@ -1076,7 +1003,6 @@ async function currentHashes(repository) {
     runnerTree,
     schemaSet,
     storySourceTree,
-    catalogMapSha256: sha256Canonical(repository.catalogMap),
     foundationCaseSetSha256: sha256Canonical(foundationSnapshot),
     caseHashes,
   };
@@ -1210,7 +1136,6 @@ async function packageVersion(specifier) {
 
 async function fontEnvironment() {
   const entries = [
-    ["@fontsource-variable/instrument-sans", "files/instrument-sans-latin-wght-normal.woff2"],
     ["@fontsource-variable/jetbrains-mono", "files/jetbrains-mono-latin-wght-normal.woff2"],
   ];
   const result = [];
@@ -1295,12 +1220,6 @@ async function baselinePreflight(repository, hashes, options) {
     if (row.storybookTreeSha256 !== hashes.storybookTree.sha256) stale.push("story");
     if (row.runnerTreeSha256 !== hashes.runnerTree.sha256) stale.push("runner");
     if (row.schemaSetSha256 !== hashes.schemaSet.sha256) stale.push("schema");
-    if (
-      geometryCase.storyId === "cloud-geometry-evidence--catalog-smoke" &&
-      row.catalogMapSha256 !== hashes.catalogMapSha256
-    ) {
-      stale.push("catalog");
-    }
     if (!row.approval || row.approval.decision !== "approved") stale.push("approval");
     if (stale.length > 0) {
       const category = [...new Set(stale)].sort(compareStrings)[0];
@@ -1333,7 +1252,6 @@ function resultRowFromError(error) {
 
 function sanitizeMessage(message) {
   return message
-    .replaceAll(repoRoot, "<repo>")
     .replaceAll(uiRoot, "<ui>")
     .replaceAll(process.cwd(), "<cwd>")
     .replace(/[\r\n]+/g, " ")
@@ -1362,9 +1280,6 @@ function countSummary(expected) {
   return {
     foundation: expected.foundation.length,
     viewport: expected.viewport.length,
-    condition: expected.condition.length,
-    engine: expected.engine.length,
-    catalog: expected.catalog.length,
     automated: expected.automated.length,
     manual: expected.manual.length,
     total: expected.all.length,
@@ -1389,15 +1304,11 @@ function initialManifest(options) {
       storybookTreeSha256: null,
       runnerTreeSha256: null,
       schemaSetSha256: null,
-      catalogMapSha256: null,
     },
     filters: { casePrefix: options.casePrefix, authoritative: false },
     expected: {
       foundation: 0,
       viewport: 0,
-      condition: 0,
-      engine: 0,
-      catalog: 0,
       automated: 0,
       manual: 0,
       total: 0,
@@ -1406,7 +1317,7 @@ function initialManifest(options) {
     finalCss: null,
     aggregate: "failed",
     cases: [],
-    artifacts: ["test-results/ui-geometry/manifest.json"],
+    artifacts: [`${OUTPUT_DIR}/manifest.json`],
   };
 }
 
@@ -1416,7 +1327,7 @@ async function validateResultManifest(manifest, schemas) {
     documents: [
       {
         schemaId: "urn:ui-geometry:v1:result-manifest",
-        name: "test-results/ui-geometry/manifest.json",
+        name: `${OUTPUT_DIR}/manifest.json`,
         value: manifest,
       },
     ],
@@ -1441,10 +1352,14 @@ async function runGeometry(options) {
 
   try {
     repository = await loadRepositoryDocuments();
-    const expected = validateStructuralContracts(repository);
+    // Only the pinned runner is authoritative for pixels and human evidence; elsewhere the
+    // numeric assertions gate and the screenshot and manual-zoom state is reported.
+    const authority = pixelAuthority(options);
+    const expected = validateStructuralContracts(repository, {
+      requireCompleteEvidence: authority,
+    });
     manifest.expected = countSummary(expected);
     manifest.source = await sourceIdentity();
-    const authority = pixelAuthority(options);
     manifest.filters.authoritative = authority;
     if (options.updateBaselines && manifest.source.dirty) {
       throw new GeometryError(
@@ -1462,42 +1377,40 @@ async function runGeometry(options) {
       );
     }
 
-    await runCommand("pnpm", ["--filter", "@usefragments/ui", "build"], {
-      cwd: repoRoot,
+    await runCommand("pnpm", ["run", "build"], {
+      cwd: uiRoot,
       timeoutMs: GEOMETRY_TIMEOUTS.uiBuild,
       timeoutCode: "GEO_TIMEOUT_UI_BUILD",
     });
     manifest.finalCss = await finalCssMetrics();
 
-    await runCommand(
-      "pnpm",
-      ["--filter", "@usefragments/ui", "build-storybook", "--output-dir", storybookRoot],
-      {
-        cwd: repoRoot,
-        timeoutMs: GEOMETRY_TIMEOUTS.storybookBuild,
-        timeoutCode: "GEO_TIMEOUT_STORYBOOK_BUILD",
-      }
-    );
+    await runCommand("pnpm", ["run", "build-storybook", "--output-dir", storybookRoot], {
+      cwd: uiRoot,
+      timeoutMs: GEOMETRY_TIMEOUTS.storybookBuild,
+      timeoutCode: "GEO_TIMEOUT_STORYBOOK_BUILD",
+    });
     await validateBuiltStories();
     const hashes = await currentHashes(repository);
     manifest.hashes = {
       storybookTreeSha256: hashes.storybookTree.sha256,
       runnerTreeSha256: hashes.runnerTree.sha256,
       schemaSetSha256: hashes.schemaSet.sha256,
-      catalogMapSha256: hashes.catalogMapSha256,
     };
     const baselineFailures = await baselinePreflight(repository, hashes, options);
     const baselinePreflightPath = join(outputRoot, "baseline-preflight.json");
-    await atomicWriteJson(baselinePreflightPath, { schemaVersion: 1, failures: baselineFailures });
-    manifest.artifacts.push("test-results/ui-geometry/baseline-preflight.json");
+    // Without pixel authority no screenshot is compared, so baseline state is advisory.
+    await atomicWriteJson(baselinePreflightPath, {
+      schemaVersion: 1,
+      failures: authority ? baselineFailures : [],
+      advisory: authority ? [] : baselineFailures,
+    });
+    manifest.artifacts.push(`${OUTPUT_DIR}/baseline-preflight.json`);
 
     manifest.environment.playwrightVersion = await packageVersion("@playwright/test");
     manifest.environment.fonts = await fontEnvironment();
     server = await createStaticServer(storybookRoot);
 
     const playwrightArgs = [
-      "--filter",
-      "@usefragments/ui",
       "exec",
       "playwright",
       "test",
@@ -1507,7 +1420,7 @@ async function runGeometry(options) {
     let playwrightFailure = null;
     try {
       await runCommand("pnpm", playwrightArgs, {
-        cwd: repoRoot,
+        cwd: uiRoot,
         timeoutMs: GEOMETRY_TIMEOUTS.case * Math.max(1, expected.automated.length) + 60_000,
         timeoutCode: "GEO_TIMEOUT_PLAYWRIGHT",
         env: {
@@ -1549,13 +1462,13 @@ async function runGeometry(options) {
     manifest.cases = caseRows;
     manifest.executed = {
       automated: caseRows.length,
-      manualValidated: expected.manual.length,
-      total: caseRows.length + expected.manual.length,
+      manualValidated: repository.manualZoom.records.length,
+      total: caseRows.length + repository.manualZoom.records.length,
     };
     manifest.artifacts.push(
-      "test-results/ui-geometry/case-results",
-      "test-results/ui-geometry/screenshots",
-      "test-results/ui-geometry/diffs"
+      `${OUTPUT_DIR}/case-results`,
+      `${OUTPUT_DIR}/screenshots`,
+      `${OUTPUT_DIR}/diffs`
     );
     const browserEnvironment = await readJson(browserEnvironmentPath).catch(() => null);
     if (browserEnvironment?.browsers) manifest.environment.browsers = browserEnvironment.browsers;
@@ -1597,8 +1510,13 @@ export async function main(argv = process.argv.slice(2)) {
   try {
     options = parseArguments(argv);
     const manifest = await runGeometry(options);
+    const pendingManual = manifest.expected.manual - manifest.executed.manualValidated;
     console.log(
-      `Geometry evidence passed: ${manifest.executed.automated} automated, ${manifest.executed.manualValidated} manual records validated.`
+      `Geometry evidence passed: ${manifest.executed.automated} automated, ${manifest.executed.manualValidated} manual records validated` +
+        (pendingManual > 0 ? `, ${pendingManual} manual records pending review` : "") +
+        (manifest.filters.authoritative
+          ? "."
+          : "; screenshots captured, not compared (non-authoritative runner).")
     );
   } catch (error) {
     console.error(

@@ -1,657 +1,355 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
+@use "../../recipes/field" as field;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/layout" as layout;
+@use "../../recipes/loading" as loading;
 @use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
+@use "../../recipes/working" as working;
 
-// ============================================
-// Prompt Root
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.prompt {
-  @include surface-elevated;
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--fui-radius-xl, $fui-radius-xl);
-  overflow: hidden;
-  position: relative;
+@layer fui.components {
+  @include working.keyframes;
+  @include loading.keyframes;
 
-  // Beam border — rotating conic gradient clipped to a 1px border
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-  }
+  // ============================================
+  // The composer: one field. The band, a 3:1 edge, the surface corner.
+  // ============================================
 
-  // Gradient layer (behind everything)
-  &::before {
-    inset: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
-    z-index: 0;
-    background: conic-gradient(
-      from var(--beam-angle, 0deg) at 50% 50%,
-      transparent 0%,
-      transparent 25%,
-      var(--fui-color-accent, $fui-color-accent) 45%,
-      transparent 50%,
-      transparent 55%,
-      color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 40%, transparent) 70%,
-      transparent 75%,
-      transparent 100%
-    );
-    // Ambient loop: twice the shimmer beat, kept on the token scale.
-    animation: beam-rotate calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 2) linear
-      infinite;
-    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
-    transition: opacity var(--fui-transition-normal, $fui-transition-normal);
-  }
+  .prompt {
+    @include typography.role("body-compact");
 
-  // Mask layer — covers the interior, leaving only the 1px border visible
-  &::after {
-    inset: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    z-index: 1;
-    background: var(--fui-bg-elevated, $fui-bg-elevated);
-  }
-
-  // Content must sit above the mask
-  > * {
     position: relative;
-    z-index: 2;
-  }
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
+      var(--fui-field-border, $fui-field-border);
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+    background-color: var(--fui-field-bg, $fui-field-bg);
+    color: var(--fui-text-primary, $fui-text-primary);
 
-  &:focus-within::before {
-    opacity: 1;
-  }
+    @include action.motion;
+    @include field.hover-state;
 
-  &[data-disabled] {
-    @include disabled-state;
+    // Focus: the one ring on the frame; the text area hands its focus up.
+    &:has(.textarea:focus-visible) {
+      @include field.focus-state;
+    }
 
-    pointer-events: none;
+    &[data-invalid] {
+      @include field.invalid-state;
+    }
 
-    &::before {
-      animation-play-state: paused;
-      opacity: calc(var(--fui-opacity-disabled, #{$fui-opacity-disabled}) * var(--fui-opacity-disabled, #{$fui-opacity-disabled}));
+    &[data-readonly] {
+      @include field.readonly-state;
+    }
+
+    &[data-disabled] {
+      @include field.disabled-state;
+    }
+
+    // Working: the work wash plays over the field while the assistant responds.
+    // The field's own edge turns the working colour and is the one edge: the
+    // recipe's inner line would sit inside it as a second.
+    &[data-working] {
+      @include working.area;
+
+      border-color: var(--fui-working-edge, $fui-working-edge);
+
+      &::after {
+        box-shadow: none;
+      }
+    }
+
+    // Drop target: the selection ring inside the edge, and words.
+    &[data-dragging] {
+      box-shadow: inset 0 0 0 var(--fui-stroke-hairline, $fui-stroke-hairline)
+        var(--fui-control-selected-border, $fui-control-checked-bg);
     }
   }
-}
 
-@keyframes beam-rotate {
-  from {
-    --beam-angle: 0deg;
-  }
-  to {
-    --beam-angle: 360deg;
-  }
-}
+  .textarea {
+    @include field.coarse-typed-text;
 
-@property --beam-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+    min-block-size: calc(
+      var(--_fui-prompt-min-rows, 1) * #{typography.line-height("body-compact")} + 2 *
+        #{layout.gap("md")}
+    );
+    max-block-size: calc(
+      var(--_fui-prompt-max-rows, 8) * #{typography.line-height("body-compact")} + 2 *
+        #{layout.gap("md")}
+    );
+    padding: layout.gap("md");
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    resize: none;
+    field-sizing: content;
 
-// Fixed placement - for viewport-fixed prompts (centered to page)
-.fixed {
-  position: fixed;
-  bottom: var(--fui-space-4, $fui-space-4);
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - var(--fui-space-8, $fui-space-8));
-  max-width: layout.measure("page-narrow");
-  z-index: 100;
-  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
-}
+    // 16px typed text under a coarse pointer, so a phone does not zoom in.
+    @include field.coarse-typed-text;
+    @include focus.delegated;
 
-// Sticky placement - for content-area fixed prompts (accounts for sidebar)
-// Use --fui-prompt-inset-left CSS variable to offset from sidebar
-.sticky {
-  position: fixed;
-  bottom: var(--fui-space-4, $fui-space-4);
-  left: var(--fui-prompt-inset-left, 0);
-  right: 0;
-  margin-left: auto;
-  margin-right: auto;
-  width: calc(100% - var(--fui-prompt-inset-left, 0px) - var(--fui-space-8, $fui-space-8));
-  max-width: layout.measure("page-narrow");
-  z-index: 100;
-  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+      opacity: 1;
+    }
 
-  // Center within the available space (after sidebar)
-  left: calc(var(--fui-prompt-inset-left, 0px) + ((100% - var(--fui-prompt-inset-left, 0px)) / 2));
-  transform: translateX(-50%);
-}
-
-// ============================================
-// Ghost variant
-// ============================================
-
-// One continuous writing surface instead of a field with a footer.
-//
-// The whole point is that nothing inside the card announces itself: no rule
-// under the toolbar, no stroke around the edge, no animated border. What is
-// left is a single quiet sheet, lighter than the page, with the controls
-// resting on it — which is what makes the text you are writing the only thing
-// with any weight. Each selector below is one class deeper than the rule it
-// replaces, so this wins wherever the stylesheet happens to land.
-// (`variant="ghost"`; the default `outline` card is the rules above.)
-//
-// One gutter runs down the card. `--_gutter` is the distance from the card's
-// edge to the ink of everything in it, and every child is padded from it
-// rather than given a number of its own, so the placeholder, the first glyph
-// in the toolbar and any attachment chip all sit on the same line.
-.ghost {
-  --_gutter: var(--fui-space-3, #{$fui-space-3});
-  // Every band is inset by its own children's padding, so what lands on the
-  // gutter is the ink — the first character of the placeholder, the first glyph
-  // in the toolbar, the first pixel of a thumbnail — and not the invisible box
-  // around it. Controls and chips carry different padding, so each band
-  // subtracts its own.
-  --_control-padding: var(--fui-space-2, #{$fui-space-2});
-  --_chip-padding: var(--fui-space-1, #{$fui-space-1});
-
-  border-color: transparent;
-  border-radius: var(--fui-radius-xl, $fui-radius-xl);
-
-  // The beam draws a 1px animated border by painting a gradient and masking
-  // out everything but the edge. Ghost has no edge to draw, so both layers
-  // go and the card paints its own surface instead of borrowing the mask's.
-  &::before,
-  &::after {
-    display: none;
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
 
-  // Focus lives in the caret and in the fact that the surface is the thing you
-  // are typing on. A ring here would be the loudest object on the page.
-  &:focus-within {
-    border-color: transparent;
-  }
+  // ============================================
+  // Toolbar: controls on the same plane, no footer band and no rule
+  // ============================================
 
   .toolbar {
-    background-color: transparent;
-    border-top: none;
-    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)}) calc(var(--_gutter, var(--fui-space-3, #{$fui-space-3})) - var(--_control-padding, var(--fui-space-2, #{$fui-space-2}))) var(--_gutter, var(--fui-space-3, #{$fui-space-3}));
+    display: flex;
+    align-items: center;
+    gap: layout.gap("xs");
+    min-inline-size: 0;
+    padding-inline: layout.gap("sm");
+    padding-block-end: layout.gap("sm");
   }
 
-  // The message is the content of the card, not a field in it. The bottom is
-  // tight because the toolbar below is part of the same surface rather than a
-  // footer under it, and the top is tight for the same reason when a scope
-  // band sits above.
-  .textarea {
-    padding: var(--_gutter, var(--fui-space-3, #{$fui-space-3})) var(--_gutter, var(--fui-space-3, #{$fui-space-3})) var(--fui-space-1, $fui-space-1);
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: layout.gap("xs");
+    margin-inline-start: auto;
   }
 
-  .attachments {
-    padding: var(--_gutter, var(--fui-space-3, #{$fui-space-3})) calc(var(--_gutter, var(--fui-space-3, #{$fui-space-3})) - var(--_chip-padding, var(--fui-space-1, #{$fui-space-1}))) var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    gap: var(--fui-space-1, $fui-space-1);
+  .info {
+    @include typography.role("caption");
+
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
-  // Two bands in a row would otherwise stack their gutters into a gap twice
-  // the size of the one at the card's edge.
-  .attachments + .textarea,
-  .tabs + .attachments {
-    padding-top: var(--fui-space-1, $fui-space-1);
-  }
+  // ============================================
+  // Picker: a ghost control that opens a menu of choices
+  // ============================================
 
-  // In an outline card the tabs are a strip the card is docked to, so they are centred
-  // and bordered like a folder tab. Ghost has no card edge for them to dock
-  // against, so they become the top band of the one surface: left-aligned on
-  // the gutter with the rest of it, and stripped of the chrome that only made
-  // sense as an edge.
-  .tabs {
-    margin-bottom: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    justify-content: flex-start;
-    padding: var(--_gutter, var(--fui-space-3, #{$fui-space-3})) calc(var(--_gutter, var(--fui-space-3, #{$fui-space-3})) - var(--_control-padding, var(--fui-space-2, #{$fui-space-2}))) var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  }
+  .picker {
+    @include action.base;
+    @include action.size("sm");
+    @include action.motion;
+    @include action.disabled;
 
-  .tabsInner {
-    background-color: transparent;
-    border: none;
-    border-radius: var(--fui-radius-none, #{$fui-radius-none});
-    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    gap: var(--fui-space-1, $fui-space-1);
-  }
+    min-inline-size: 0;
+    padding-inline: layout.gap("sm");
+    border: 0;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background: transparent;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    cursor: pointer;
 
-  // The band above already sets the top of the card, so the message starts
-  // from the tighter of the two spacings rather than adding a second gutter.
-  .tabs + .textarea {
-    padding-top: var(--fui-space-1, $fui-space-1);
-  }
-
-  // A centred glyph in a square box puts its ink half a box in from the
-  // gutter, which reads as the one thing in the card that is out of line.
-  // Giving it the same inline padding as its neighbours puts the glyph where
-  // the placeholder above it starts, and costs only a wider hover.
-  .attach {
-    width: auto;
-    padding-inline: var(--_control-padding, var(--fui-space-2, #{$fui-space-2}));
-
-    svg {
-      width: var(--fui-icon-md, $fui-icon-md);
-      height: var(--fui-icon-md, $fui-icon-md);
-    }
-  }
-
-  // Labels and glyphs share the body scale inside a ghost composer. The
-  // trigger still truncates at its cap, but no longer looks like caption text
-  // floating between larger attach and submit affordances.
-  .select,
-  .modeButton {
-    font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  }
-
-  .select {
-    svg {
-      width: var(--fui-icon-md, $fui-icon-md);
-      height: var(--fui-icon-md, $fui-icon-md);
-    }
-  }
-
-  // These are settings on the message, not a row of buttons. Preserve their
-  // full target boxes for hit testing, but keep those boxes visually absent.
-  // Send remains the only persistent shape in the composer.
-  .select,
-  .attach,
-  .modeButton {
-    &:hover:not(:disabled):not([data-disabled]),
-    &:active:not(:disabled):not([data-disabled]) {
-      background-color: transparent;
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
       color: var(--fui-text-primary, $fui-text-primary);
     }
 
-    // Keyboard focus still needs a visible location, but a restrained baseline
-    // reads as focus on inline content rather than another rounded button.
-    &:focus-visible {
-      outline: none;
-      box-shadow: inset 0 calc(var(--fui-space-px, #{$fui-space-px}) * -2) 0
-        var(--fui-text-primary, #{$fui-text-primary});
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, $fui-bg-active);
     }
-  }
 
-  .select {
-    // Opening a menu identifies the active choice through its popup and text
-    // color. A held surface behind the trigger is unnecessary visual chrome.
+    @include focus.visible;
+
     &[data-popup-open] {
-      border-color: transparent;
-      background-color: transparent;
-      box-shadow: none;
+      background-color: var(--fui-bg-active, $fui-bg-active);
       color: var(--fui-text-primary, $fui-text-primary);
     }
-
-    // Pointer focus must not inherit the field shell's accent treatment.
-    &:focus:not(:focus-visible) {
-      border-color: transparent;
-      box-shadow: none;
-    }
   }
 
-  // Attach's glyph reaches the leading ink gutter through its own control
-  // padding. Give the filled Submit shape the same inset at the trailing edge
-  // so the two visible affordances balance across the toolbar.
-  .submit {
-    margin-inline-end: var(--_control-padding, var(--fui-space-2, #{$fui-space-2}));
+  .pickerIcon {
+    display: inline-flex;
+    flex: 0 0 auto;
   }
-}
 
-// ============================================
-// Textarea
-// ============================================
+  .pickerValue {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.textarea {
-  @include button-reset;
-  @include typography.role("body-compact");
-
-  // button-reset marks pressables select-none; typed text must stay selectable.
-  user-select: text;
-  display: block;
-  width: 100%;
-  min-height: var(--fui-input-height, $fui-input-height);
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3);
-  background: transparent;
-  border: none;
-  resize: none;
-  overflow-y: auto;
-
-  &::placeholder {
+  .pickerCaret {
+    flex: 0 0 auto;
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  // Focus is shown on the prompt container via :focus-within instead
-  &:focus,
-  &:focus-visible {
-    outline: none;
-    box-shadow: none;
+  // ============================================
+  // Submit: the accent action, h32 at the control corner; Stop while working
+  // ============================================
+
+  .submit {
+    @include action.base;
+    @include action.icon-only("md");
+    @include action.motion;
+    @include action.disabled;
+    @include action.pending(".submitGlyph", ".submitSpinner");
+    @include target.hit-area("compact");
+
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background-color: var(--fui-color-accent, $fui-color-accent);
+    color: var(--fui-color-on-accent, $fui-color-on-accent);
+    cursor: pointer;
+
+    @include action.hover {
+      background-color: var(--fui-color-accent-hover, $fui-color-accent-hover);
+    }
+
+    @include action.press {
+      background-color: var(--fui-color-accent-active, $fui-color-accent-active);
+    }
+
+    @include focus.visible;
+
+    &[data-pending] {
+      cursor: progress;
+    }
   }
 
-  &:disabled {
-    cursor: not-allowed;
+  // Stop is the neutral secondary: the press tint, ink 1.
+  .stop {
+    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    color: var(--fui-text-primary, $fui-text-primary);
+
+    @include action.hover {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
+
+    @include action.press {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
   }
-}
 
-// ============================================
-// Tabs (floating above the prompt body)
-// ============================================
+  // ============================================
+  // Attachments: chips on the surface plane
+  // ============================================
 
-.tabs {
-  display: flex;
-  justify-content: center;
-  margin-bottom: calc(-1 * var(--fui-space-1, $fui-space-1)); // overlap the prompt border
-  position: relative;
-  z-index: 1;
-}
+  .attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: layout.gap("xs");
+    margin: 0;
+    padding-block-start: layout.gap("sm");
+    padding-inline: layout.gap("sm");
+    list-style: none;
+  }
 
-.tabsInner {
-  display: inline-flex;
-  gap: var(--fui-space-px, $fui-space-px);
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border-radius: var(--fui-radius-lg, $fui-radius-lg) var(--fui-radius-lg, $fui-radius-lg) var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-space-0-75, $fui-space-0-75) var(--fui-space-0-75, $fui-space-0-75) var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  border-bottom: none;
-}
+  .attachment {
+    @include typography.role("caption");
 
-.tabButton {
-  @include button-reset;
-  @include action.base;
-  @include action.size("sm");
-
-  border-radius: var(--fui-radius-md, $fui-radius-md) var(--fui-radius-md, $fui-radius-md) var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
-  white-space: nowrap;
-
-  &:hover {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: layout.gap("xs");
+    max-inline-size: 100%;
+    min-block-size: action.track("micro");
+    padding-inline: layout.gap("xs");
+    border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background-color: var(--fui-bg-primary, $fui-bg-primary);
     color: var(--fui-text-primary, $fui-text-primary);
   }
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
-.tabButtonActive {
-  @include segmented-selection;
-}
-
-// ============================================
-// Toolbar
-// ============================================
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-}
-
-// ============================================
-// Actions & Info
-// ============================================
-
-.actions {
-  display: flex;
-  align-items: center;
-  align-self: flex-end;
-  gap: var(--fui-space-1, $fui-space-1);
-}
-
-.info {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  margin-left: auto;
-}
-
-// ============================================
-// Action Button (circular, e.g. "+")
-// ============================================
-
-.actionButton {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("md");
-
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-primary, $fui-text-primary);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  .attachmentThumb {
+    inline-size: var(--fui-icon-md, #{$fui-icon-md});
+    block-size: var(--fui-icon-md, #{$fui-icon-md});
+    border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
+    object-fit: cover;
   }
 
-  &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+  .attachmentName {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  svg {
-    @include action.glyph("md");
+  .attachmentSize {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
-}
 
-// ============================================
-// Mode Button (text button, e.g. "Auto")
-// ============================================
+  .attachmentRemove {
+    @include action.base;
+    @include action.icon-only("micro");
+    @include action.motion;
+    @include target.hit-area("micro");
 
-.modeButton {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.size("sm");
-  @include target.hit-area("compact");
+    inline-size: var(--fui-icon-md, #{$fui-icon-md});
+    min-block-size: var(--fui-icon-md, #{$fui-icon-md});
+    padding: 0;
+    border: 0;
+    border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
+    background: transparent;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    cursor: pointer;
 
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  background-color: transparent;
-  color: var(--fui-text-secondary, $fui-text-secondary);
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
 
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include focus.visible;
+  }
+
+  // ============================================
+  // Invalid words and the drop hint
+  // ============================================
+
+  .error {
+    @include typography.role("caption");
+
+    display: flex;
+    align-items: center;
+    gap: layout.gap("xs");
+    margin: 0;
+    padding-inline: layout.gap("md");
+    padding-block-end: layout.gap("sm");
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
+
+  .errorIcon {
+    flex: 0 0 auto;
+  }
+
+  .dropHint {
+    @include typography.role("body-compact");
+
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: inherit;
+    background-color: var(--fui-field-bg, $fui-field-bg);
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, $fui-stroke-hairline)
+      var(--fui-control-selected-border, $fui-control-checked-bg);
     color: var(--fui-text-primary, $fui-text-primary);
+    pointer-events: none;
   }
 
-  &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+  .hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-}
-
-.modeButtonActive {
-  @include segmented-selection;
-}
-
-// ============================================
-// Attach (bare icon control)
-// ============================================
-
-// A `+` with nothing around it. ActionButton is a filled circle, which is the
-// right weight for a primary affordance in the bar; attaching a file is not
-// one — it should be findable and otherwise silent, so this is the mode button
-// with a square footprint and no label.
-.attach {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("sm");
-  @include target.hit-area("compact");
-
-  flex-shrink: 0;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  background-color: transparent;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-
-  svg {
-    @include action.glyph("sm");
-  }
-}
-
-// ============================================
-// Attachments strip
-// ============================================
-
-.attachments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fui-space-1, $fui-space-1);
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-3, $fui-space-3) var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  list-style: none;
-}
-
-// What is attached, stated once and removable. Sits above the message rather
-// than below the toolbar, because it is part of what you are sending, not a
-// setting on the sending.
-// Sized off the same target as everything else in the bar, so a chip and a
-// control are the same height and the card has one horizontal rhythm.
-.attachment {
-  --_chip-height: #{action.track("sm")};
-
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  height: var(--_chip-height, #{action.track("sm")});
-  max-width: layout.measure("composer-item");
-  padding-inline: var(--fui-space-1, $fui-space-1);
-  // Outlined rather than filled. A chip sits on whatever surface the prompt is
-  // using, and on an elevated card the raised fill is the same value as the
-  // card itself — so the object would disappear exactly where it is most
-  // likely to be used. An edge reads on any of them.
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-// A screenshot is recognised by its picture, not by "Screenshot 2026-07-24 at
-// 22.06.09.png", so an image attachment leads with a thumbnail. It fills the
-// chip's height less the padding, which keeps it square without a second
-// number to keep in step.
-.attachmentThumb {
-  width: calc(var(--_chip-height, #{action.track("sm")}) - var(--fui-space-1, #{$fui-space-1}));
-  height: calc(var(--_chip-height, #{action.track("sm")}) - var(--fui-space-1, #{$fui-space-1}));
-  flex-shrink: 0;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  object-fit: cover;
-}
-
-// The name is the only part worth the width, so it is the only part that grows
-// — and the only part that gives way when there is none.
-.attachmentName {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.attachmentSize {
-  flex-shrink: 0;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
-.attachmentRemove {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("micro");
-  @include target.hit-area("compact");
-
-  flex-shrink: 0;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  background-color: transparent;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  svg {
-    @include action.glyph("micro");
-  }
-}
-
-// Dropping a file anywhere on the card counts. The whole surface lights rather
-// than a dashed rectangle appearing inside it, because the target is the
-// composer, not some region of it.
-.dragging {
-  background-color: var(--fui-bg-hover, $fui-bg-hover);
-}
-
-// ============================================
-// Select (ghost Select, sized for the toolbar)
-// ============================================
-
-// The chosen value can be arbitrarily long — a model name, a file path — and
-// must not push the submit button off the row. Select's ghost trigger already
-// allows shrinking and ellipsises its value; this only caps how far it grows.
-.select {
-  max-width: layout.measure("composer-item");
-}
-
-// ============================================
-// Usage indicator
-// ============================================
-
-.usage {
-  @include typography.role("caption");
-
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  white-space: nowrap;
-}
-
-// ============================================
-// Submit Button
-// ============================================
-
-.submit {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("md");
-
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  // A neutral inverse keeps send visibly primary without spending the product
-  // accent, which may already encode agent state.
-  background-color: var(--fui-text-primary, #{$fui-text-primary});
-  color: var(--fui-bg-elevated, #{$fui-bg-elevated});
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-text-secondary, #{$fui-text-secondary});
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
-  }
-
-  svg {
-    @include action.glyph("md");
-  }
-}
-
-.submitLoading {
-  pointer-events: none;
-}
-
-.submitSpinner {
-  line-height: 0;
 }

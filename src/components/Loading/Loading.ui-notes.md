@@ -1,5 +1,17 @@
 # Loading — UI notes
 
+## 2026-10-03 — Glass v4 review fixes
+
+- **What changed** — the `LoadingRoot` and `LoadingScreen` flat exports are cut (`Loading`, `Loading.Screen`).
+- **What works** — unit tests pass.
+
+## 2026-10-03 — access tokens: cascade layers, coarse pointer, forced colours
+
+- **What changed** — every rule sits in `@layer fui.components`, after `@layer fui.tokens, fui.base, fui.components;`, so an adopter's unlayered class wins at any specificity (UIR-D122).
+- **What works** — `fui/layer/components-layer` passes on the module and `check:layers` on the built stylesheet; the Sass compiles. No fixture of its own covers the rest yet.
+- **What doesn't** — screens are not compared visually; forced colours are proven only where a fixture says so above.
+- **Candidates** — a states fixture that renders this component under the coarse project and forced colours.
+
 ## 2026-09-03 — Wave 0 vocabulary cut
 
 What changed
@@ -49,3 +61,23 @@ Verification: component/a11y tests, Cloud route-loading and gate tests, UI/Cloud
 TypeScript, plus the offline browser verifier for light/dark, 390/768/1440px,
 playback controls, and reduced motion. The Cloud governance check is unavailable
 in this checkout because its existing connection configuration is invalid.
+
+## 2026-10-03 — feedback recipes: still popups, overlay fade, loading, dismiss
+
+- **What changed** — the spinner comes from `recipes/_loading.scss` (keyframes `fui-loading-spin`) and keeps turning under reduced motion: it is essential progress (UIR-D102); the old reduced-motion stop is gone. New `Loading.states.tsx` (`@family:feedback`): loading and loadingReducedMotion.
+- **What works** — the fixture checks the spinner turns at 0.7s and its current time advances, with and without reduced motion. This only holds since the globals blanket was removed (UIR-D140); before, the spinner froze.
+- **What doesn't** — the other states are argued n/a.
+- **Candidates** — pair with `useLoadingPhase` so callers show nothing for the first second.
+
+## 2026-10-03 — v4 surface and token pass
+
+- **Token reads** — the legacy reads are gone: `--fui-radius-md`. Corners now read the radius roles (`surface`); motion reads `--fui-duration-*` with `--fui-ease-standard`; planes and lines follow MIGRATION-v4.md.
+- **Not browser-checked** in the token pass; the component lane owns the visual check.
+
+## 2026-10-03 — AI surface on Glass
+
+- **What changed** — one spinner at the icon md size (16px), `currentColor`, from the loading recipe. `kind`, `size`, `color`, `centered` and `overlay` are cut. `inline` (1em, sits in a line of text) replaces `Loading.Inline`; `fill` centres it in its parent (replaces `centered`). `delay` (default 1s) keeps the status region mounted and empty until it passes, so fast loads show nothing; `useLoadingDelay` is exported. `Loading.Screen` keeps the fixed canvas cover with an optional visible label. The previous decorative mark is gone.
+- **What works** — 8 unit tests; states: loading, loadingReducedMotion, lifecycle (nothing for the first second).
+- **What doesn't** — not browser-checked in this lane.
+- **Candidates** — a progress variant when the wait has a known length.
+- **States fixture** — the size check reads the spinner's layout width, not its bounding box, which grows as the square turns (it read 18–20px mid-turn).

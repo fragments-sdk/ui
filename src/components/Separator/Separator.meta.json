@@ -1,0 +1,116 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Separator",
+  "description": "Draws one hairline between sections of related content.",
+  "category": "layout",
+  "tags": ["separator", "divider", "hr", "line", "layout"],
+  "status": "stable",
+  "sourcePath": "src/components/Separator/index.tsx",
+  "exportName": "Separator",
+  "propsSummary": [
+    "orientation: horizontal|vertical (default: horizontal)",
+    "length: full|control (default: full)",
+    "label: ReactNode"
+  ],
+  "props": {
+    "orientation": {
+      "type": "enum",
+      "description": "Direction of the rule",
+      "default": "horizontal",
+      "required": false,
+      "values": ["horizontal", "vertical"]
+    },
+    "length": {
+      "type": "enum",
+      "description": "How far a vertical rule runs: full stretches across the parent, control stops at the compact control height with a small margin either side (the toolbar divider). Ignored on horizontal rules.",
+      "default": "full",
+      "required": false,
+      "values": ["full", "control"]
+    },
+    "label": {
+      "type": "node",
+      "description": "Words between two horizontal rules; a sibling of the rule, never inside its separator role",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Dividing sections that spacing alone cannot separate",
+      "Labelled breaks such as an Or divider",
+      "Splitting groups of controls inside a toolbar (length=\"control\")"
+    ],
+    "whenNot": [
+      "Whenever spacing already reads as a break",
+      "Decorative rules (use a border)",
+      "Building layout structure (use Grid)"
+    ],
+    "guidelines": [
+      "Use sparingly — stacked rules read as noise",
+      "The parent owns the space around the rule: put it in a Stack and set gap",
+      "One weight only: the rule is always a hairline in the line colour",
+      "orientation=\"vertical\" stretches across the parent; use length=\"control\" between toolbar controls",
+      "Add aria-hidden when the rule is purely decorative"
+    ],
+    "accessibility": [
+      "The rule carries role=\"separator\" and aria-orientation",
+      "A label is readable text beside the rule, not its accessible name",
+      "Decorative separators should be aria-hidden"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "One hairline; the Stack gap sets the space around it.",
+      "code": "import { Separator } from '@/components/Separator';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack gap=\"md\">\n  <Text>Above</Text>\n  <Separator />\n  <Text>Below</Text>\n</Stack>"
+    },
+    {
+      "name": "With Label",
+      "description": "Words sit between two rules for a major break.",
+      "code": "import { Separator } from '@/components/Separator';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack gap=\"md\">\n  <Text>Continue with email</Text>\n  <Separator label=\"Or\" />\n  <Text>Continue with a passkey</Text>\n</Stack>"
+    },
+    {
+      "name": "Vertical",
+      "description": "Divides items sitting in a row.",
+      "code": "import { Separator } from '@/components/Separator';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack direction=\"row\" align=\"center\" gap=\"md\">\n  <Text>Item 1</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Item 2</Text>\n</Stack>"
+    },
+    {
+      "name": "Toolbar",
+      "description": "length=\"control\" stops the rule at the control height between toolbar groups.",
+      "code": "import { LinkSimple, TextB } from '@phosphor-icons/react';\nimport { IconButton } from '@/components/IconButton';\nimport { Separator } from '@/components/Separator';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" align=\"center\" gap=\"xs\">\n  <IconButton aria-label=\"Bold\" variant=\"ghost\">\n    <TextB aria-hidden />\n  </IconButton>\n  <Separator orientation=\"vertical\" length=\"control\" />\n  <IconButton aria-label=\"Link\" variant=\"ghost\">\n    <LinkSimple aria-hidden />\n  </IconButton>\n</Stack>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "sibling",
+      "note": "Cards provide stronger visual grouping"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "orientation: horizontal|vertical - direction",
+      "length: full|control - how far a vertical rule runs",
+      "label: ReactNode - words between two rules"
+    ],
+    "a11yRules": ["A11Y_SEPARATOR_ROLE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:03.327Z"
+  },
+  "cssVariables": [
+    "--fui-border",
+    "--fui-control-height-xs",
+    "--fui-raw-space-16",
+    "--fui-raw-space-4",
+    "--fui-stroke-hairline",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

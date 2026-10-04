@@ -1,0 +1,27 @@
+// Loading in place. Under a second nothing shows; from one to ten seconds a
+// skeleton in the final geometry (recipes/_skeleton.scss) or a spinner where the
+// result will be; past ten seconds progress plus a way to cancel. The timing
+// lives in `loading.ts` (`useLoadingPhase`); this file draws the spinner.
+
+@use "../tokens/variables" as tokens;
+
+/// The spinner turns at a constant speed in `--fui-duration-spin`. It is
+/// essential progress, so it keeps turning under reduced motion. Include
+/// `keyframes` once in the same module.
+@mixin spinner {
+  animation: fui-loading-spin var(--fui-duration-spin, #{tokens.$fui-duration-spin}) linear infinite;
+
+  // Reduced motion stops decoration, not progress: the spinner keeps turning.
+  @media (prefers-reduced-motion: reduce) {
+    animation-play-state: running;
+  }
+}
+
+/// The turn. Sass emits it where it is included.
+@mixin keyframes {
+  @keyframes fui-loading-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+}

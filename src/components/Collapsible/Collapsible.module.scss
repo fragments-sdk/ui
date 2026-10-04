@@ -1,79 +1,86 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-@use "../../recipes/feedback" as feedback;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/action";
+@use "../../recipes/focus";
+@use "../../recipes/selection";
+@use "../../recipes/typography";
 
-.root {
-  width: 100%;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.trigger {
-  @include button-reset;
-  @include interactive-base;
-  @include feedback.disclosure-row;
-
-  inline-size: 100%;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-primary, $fui-text-primary);
-  text-align: start;
-  cursor: pointer;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+@layer fui.components {
+  .root {
+    inline-size: 100%;
   }
 
-  &:focus-visible {
-    @include focus-ring;
+  // The disclosure row (the fold): h32 at the control radius, inline pad 10,
+  // a leading ink 3 caret, then the label in 12 body at the strong weight in
+  // ink 1. Under a coarse pointer the row takes the hit-area floor.
+  .trigger {
+    @include button-reset;
+    @include typography.role("body-compact");
+    @include action.motion;
+
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    inline-size: 100%;
+    min-block-size: max(#{action.track("md")}, var(--fui-hit-area, #{$fui-hit-area}));
+    padding-block: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    padding-inline: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    text-align: start;
+
+    @include action.hover {
+      @include selection.hover-tint;
+    }
+
+    @include focus.visible;
+    @include action.disabled;
   }
-}
 
-.triggerContent {
-  flex: 1;
-  min-inline-size: 0;
-}
+  // The one disclosure caret: it turns a quarter when open, in the micro role.
+  .caret {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+    block-size: var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    transition: transform var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
 
-.chevron {
-  @include feedback.disclosure-glyph;
+    &:dir(rtl) {
+      transform: rotate(180deg);
+    }
 
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  transition: transform var(--fui-transition-normal, $fui-transition-normal);
-}
+    [data-panel-open] > & {
+      transform: rotate(90deg);
+    }
 
-.chevronOpen {
-  transform: rotate(90deg);
-}
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
 
-.content {
-  display: grid;
-  grid-template-rows: 0fr;
-  overflow: hidden;
-  opacity: 0;
-  transition:
-    grid-template-rows var(--fui-transition-normal, $fui-transition-normal),
-    opacity var(--fui-transition-normal, $fui-transition-normal);
-}
+  .label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
 
-.contentOpen {
-  grid-template-rows: 1fr;
-  opacity: 1;
-}
-
-.contentInner {
-  @include feedback.disclosure-panel;
-
-  min-block-size: 0;
-  overflow: hidden;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.disabled .trigger {
-  @include disabled-state;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .trigger,
-  .chevron,
+  // The content shows and hides at once (Still-Menus): no height motion.
   .content {
-    transition: none;
+    &[hidden]:not([hidden="until-found"]) {
+      display: none;
+    }
+  }
+
+  .contentInner {
+    @include typography.role("body-compact");
+
+    padding-block-end: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    padding-inline: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    color: var(--fui-text-secondary, $fui-text-secondary);
   }
 }

@@ -1,170 +1,167 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
 @use "../../recipes/field";
+@use "../../recipes/focus";
 @use "../../recipes/popup";
+@use "../../recipes/radius";
 
-// Local component tokens.
-//
-// The raw pixel values in this file (200px here, and the 80px/120px hex-input
-// min-widths below) are deliberate, not missed tokens: react-colorful lays the
-// saturation/hue canvas out in fixed pixels, and the hex field has to stay wide
-// enough for a full "#rrggbb" string. Spacing tokens do not map onto either
-// constraint, so these stay literal.
-$fui-colorpicker-size: 200px !default; // react-colorful saturation/hue square
+// react-colorful lays its saturation square and hue strip out in pixels, so
+// the canvas size stays a component token: 25 grid steps of 8.
+$fui-colorpicker-size: measurements.raw-space(8) * 25 !default;
 $fui-colorpicker-hue-height: $fui-target-size-min !default;
 $fui-colorpicker-pointer-size: $fui-target-size-min !default;
 
-.wrapper {
-  @include field.wrapper;
-}
+// The open (or hovered) swatch edge: ink 1 mixed into the field line.
+$_edge-strong: color-mix(
+  in oklab,
+  var(--fui-text-primary, #{$fui-text-primary}) 55%,
+  var(--fui-field-border, #{$fui-field-border})
+);
 
-.label {
-  @include field.label;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.helper {
-  @include field.helper;
-}
-
-.helperError,
-.errorMessage {
-  @include field.error;
-}
-
-// Size variants
-.sizeSm {
-  .inputWrapper {
-    gap: action.gap("sm");
+@layer fui.components {
+  .wrapper {
+    @include field.wrapper;
   }
 
-  .swatch {
-    @include field.size("sm");
-
-    width: field.track("sm");
-    height: field.track("sm");
+  .label {
+    @include field.label;
   }
 
-  .hexInput {
-    min-width: 80px;
-    flex: 0 0 auto;
+  .helper {
+    @include field.helper;
   }
-}
 
-.sizeMd {
-  .inputWrapper {
+  .error {
+    @include field.error;
+
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  .errorIcon {
+    flex-shrink: 0;
+    inline-size: var(--fui-icon-xs, $fui-icon-xs);
+    block-size: var(--fui-icon-xs, $fui-icon-xs);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
     gap: action.gap("md");
   }
 
+  // The swatch is a square control: the field line on the control corner,
+  // filled with the current colour. Open darkens the edge, focus rings it.
   .swatch {
-    @include field.size("md");
+    @include button-reset;
 
-    width: field.track("md");
-    height: field.track("md");
-  }
-}
+    --_fui-colorpicker-swatch: #{field.track("md")};
 
-.sizeLg {
-  .inputWrapper {
-    gap: action.gap("lg");
-  }
+    box-sizing: border-box;
+    flex-shrink: 0;
+    inline-size: var(--_fui-colorpicker-swatch);
+    block-size: var(--_fui-colorpicker-swatch);
+    border: field.stroke() solid var(--fui-field-border, $fui-field-border);
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background-color: var(--_fui-colorpicker-value, transparent);
+    cursor: pointer;
 
-  .swatch {
-    @include field.size("lg");
+    @include field.hover-state;
+    @include focus.visible;
 
-    width: field.track("lg");
-    height: field.track("lg");
-  }
-
-  .hexInput {
-    min-width: 120px;
-  }
-}
-
-.inputWrapper {
-  display: flex;
-  align-items: center;
-}
-
-.swatch {
-  @include button-reset;
-  @include interactive-base;
-  @include field.shell;
-
-  flex-shrink: 0;
-
-  &:focus-visible,
-  &[data-popup-open] {
-    @include field.focus-state;
-  }
-
-  .wrapper[data-invalid] & {
-    @include field.invalid-state;
-
-    // Focused while invalid keeps the danger edge and takes the danger ring,
-    // the same pairing Input and Textarea render. Without it the ring stays
-    // accent-coloured and the control reads half-valid at the moment the user
-    // is actually in it.
-    &:focus-visible,
     &[data-popup-open] {
-      @include field.invalid-focus-state;
+      border-color: $_edge-strong;
+    }
+
+    .wrapper[data-invalid] & {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    &:disabled {
+      @include field.disabled-state;
+    }
+
+    .wrapper[data-readonly] & {
+      border-style: dashed;
+      cursor: default;
+    }
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+      border-color: CanvasText;
     }
   }
 
-  // Disabled state (opacity + pointer-events) comes from @include interactive-base.
-  @include high-contrast-outline;
-}
-
-// Hex input wrapper (using Input component)
-.hexInput {
-  flex: 1;
-  min-width: 0;
-}
-
-// Style the actual input field inside Input component
-.hexInputField {
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  text-transform: lowercase;
-}
-
-.positioner {
-  z-index: 100;
-  outline: none;
-}
-
-.popup {
-  @include popup.container;
-
-  // react-colorful styling overrides
-  :global(.react-colorful) {
-    width: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
-    height: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
+  .sm .swatch {
+    --_fui-colorpicker-swatch: #{field.track("sm")};
   }
 
-  :global(.react-colorful__saturation) {
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-    margin-bottom: var(--fui-space-2, $fui-space-2);
+  // Wide enough for "#rrggbb" in the mono face plus the field's own inset.
+  .hexInput {
+    flex: 0 1 auto;
+    min-inline-size: calc(8ch + 2 * #{field.inline-inset("md")});
   }
 
-  :global(.react-colorful__hue) {
-    height: var(--fui-colorpicker-hue-height, #{$fui-colorpicker-hue-height});
-    border-radius: var(--fui-radius-sm, $fui-radius-sm);
+  // The class lands on the <input> itself, where Input's size rules set the
+  // sans role at a class plus the size attribute; the element selector keeps
+  // the hex value in mono at every size.
+  input.hexInput,
+  input.hexInput[data-size] {
+    font-family: var(--fui-font-mono, #{$fui-font-mono});
+    font-variant-numeric: tabular-nums;
   }
 
-  :global(.react-colorful__pointer) {
-    width: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
-    height: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
-    border: var(--fui-stroke-default, 2px) solid var(--fui-text-inverse, $fui-text-inverse);
-    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   }
-}
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
+  .popup {
+    @include popup.container;
+    @include popup.motion;
 
-@media (prefers-reduced-motion: reduce) {
-  .swatch {
-    transition: none;
+    // react-colorful styling overrides: corners nest inside the popup corner.
+    :global(.react-colorful) {
+      width: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
+      height: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
+    }
+
+    :global(.react-colorful__saturation) {
+      border-radius: radius.nested(
+        var(--fui-radius-popup, #{$fui-radius-popup}),
+        var(--fui-popup-container-inset, #{measurements.raw-space(4)})
+      );
+      border-block-end: 0;
+      margin-block-end: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    }
+
+    :global(.react-colorful__hue) {
+      height: var(--fui-colorpicker-hue-height, #{$fui-colorpicker-hue-height});
+      border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
+    }
+
+    // The pointer is a thumb, not a floating panel: a ring in the popup's own
+    // plane and the small resting shadow.
+    :global(.react-colorful__pointer) {
+      width: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
+      height: var(--fui-colorpicker-pointer-size, #{$fui-colorpicker-pointer-size});
+      border: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid
+        var(--fui-bg-elevated, $fui-bg-elevated);
+      box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
+    }
+  }
+
+  // Held at the canvas size while react-colorful resolves.
+  .canvasFallback {
+    inline-size: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
+    block-size: var(--fui-colorpicker-size, #{$fui-colorpicker-size});
   }
 }

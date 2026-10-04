@@ -3,16 +3,21 @@
 import * as React from "react";
 import { Dialog as BaseDialog } from "@base-ui/react/dialog";
 import styles from "./Dialog.module.scss";
+import { useThemePortalProps } from "../Theme/context";
+import { resolveNativeButton } from "../../utils/native-button";
+import { useOverflowFocusable } from "../../utils/overflow-focusable";
 
 // ============================================
 // Types
 // ============================================
 
 /**
- * Modal dialog overlay for confirmations, forms, and focused tasks.
+ * Modal dialog for focused tasks: a raised sheet over a scrim, with a fixed
+ * header and footer and a body that scrolls on its own. For a decision the user
+ * must answer, use AlertDialog.
  * @see https://usefragments.com/components/dialog
  */
-export type DialogWidth = "sm" | "md" | "lg" | "xl" | "full";
+export type DialogWidth = "sm" | "md" | "lg";
 
 export interface DialogProps {
   children: React.ReactNode;
@@ -20,22 +25,29 @@ export interface DialogProps {
   open?: boolean;
   /** Default open state */
   defaultOpen?: boolean;
-  /** Called when open state changes */
+  /** Called when the open state changes */
   onOpenChange?: (open: boolean) => void;
-  /** Whether the dialog blocks interaction with the rest of the page.
-   * @default true */
-  modal?: boolean;
 }
+
+type BasePopupProps = React.ComponentProps<typeof BaseDialog.Popup>;
+
+/** Where focus goes on open: `true` (the first focusable), `false` (stays on the sheet), a ref, or a function. */
+export type DialogInitialFocus = BasePopupProps["initialFocus"];
+/** Where focus goes on close: `true` (the trigger), `false`, a ref, or a function. */
+export type DialogFinalFocus = BasePopupProps["finalFocus"];
 
 export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Dialog width. `full` spans the safe viewport.
+  /** Sheet width.
    * @default "md"
    * @see https://usefragments.com/components/dialog#widths */
   width?: DialogWidth;
-  /** Whether the dialog should autofocus content on open.
+  /** Where focus goes when the dialog opens.
    * @default true */
-  initialFocus?: boolean;
+  initialFocus?: DialogInitialFocus;
+  /** Where focus goes when the dialog closes.
+   * @default true */
+  finalFocus?: DialogFinalFocus;
 }
 
 export interface DialogTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
@@ -61,29 +73,11 @@ export interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-type DialogTriggerAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: React.ReactNode;
-  asChild?: false;
-};
+/** The trigger. Pass `render` to make a library control (a Button) the trigger. */
+export type DialogTriggerProps = React.ComponentProps<typeof BaseDialog.Trigger>;
 
-type DialogTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, "children"> & {
-  children: React.ReactElement;
-  asChild: true;
-};
-
-export type DialogTriggerProps = DialogTriggerAsButtonProps | DialogTriggerAsChildProps;
-
-type DialogCloseAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  children?: React.ReactNode;
-  asChild?: false;
-};
-
-type DialogCloseAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, "children"> & {
-  children: React.ReactElement;
-  asChild: true;
-};
-
-export type DialogCloseProps = DialogCloseAsButtonProps | DialogCloseAsChildProps;
+/** A close control. With no children and no `render` it draws the corner X. */
+export type DialogCloseProps = React.ComponentProps<typeof BaseDialog.Close>;
 
 // ============================================
 // Close Icon
@@ -109,40 +103,29 @@ function CloseIcon() {
   );
 }
 
+function classes(...names: Array<string | false | undefined>) {
+  return names.filter(Boolean).join(" ");
+}
+
 // ============================================
 // Components
 // ============================================
 
-function DialogRoot({ children, open, defaultOpen, onOpenChange, modal = true }: DialogProps) {
+function DialogRoot({ children, open, defaultOpen, onOpenChange }: DialogProps) {
   return (
-    <BaseDialog.Root
-      open={open}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
-      modal={modal}
-    >
+    <BaseDialog.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {children}
     </BaseDialog.Root>
   );
 }
 
-function DialogTrigger({ children, asChild, className, ...htmlProps }: DialogTriggerProps) {
-  if (asChild) {
-    return (
-      <BaseDialog.Trigger
-        {...htmlProps}
-        className={className}
-        render={children as React.ReactElement}
-      >
-        {null}
-      </BaseDialog.Trigger>
-    );
-  }
-
+function DialogTrigger({ render, nativeButton, ...props }: DialogTriggerProps) {
   return (
-    <BaseDialog.Trigger {...htmlProps} className={className}>
-      {children}
-    </BaseDialog.Trigger>
+    <BaseDialog.Trigger
+      {...props}
+      render={render}
+      nativeButton={resolveNativeButton(render, nativeButton)}
+    />
   );
 }
 
@@ -150,16 +133,23 @@ function DialogContent({
   children,
   width = "md",
   initialFocus = true,
+  finalFocus,
   className,
   ...htmlProps
 }: DialogContentProps) {
-  const popupClasses = [styles.popup, styles[width], className].filter(Boolean).join(" ");
+  const portalProps = useThemePortalProps();
 
   return (
-    <BaseDialog.Portal>
+    <BaseDialog.Portal {...portalProps}>
       <BaseDialog.Backdrop className={styles.backdrop} />
       <BaseDialog.Viewport className={styles.positioner}>
-        <BaseDialog.Popup initialFocus={initialFocus} {...htmlProps} className={popupClasses}>
+        <BaseDialog.Popup
+          initialFocus={initialFocus}
+          finalFocus={finalFocus}
+          {...htmlProps}
+          data-width={width}
+          className={classes(styles.popup, width !== "md" && styles[width], className)}
+        >
           {children}
         </BaseDialog.Popup>
       </BaseDialog.Viewport>
@@ -168,80 +158,68 @@ function DialogContent({
 }
 
 function DialogHeader({ children, className, ...htmlProps }: DialogHeaderProps) {
-  const classes = [styles.header, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} className={classes(styles.header, className)}>
       {children}
     </div>
   );
 }
 
 function DialogTitle({ children, className, ...htmlProps }: DialogTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(" ");
   return (
-    <BaseDialog.Title {...htmlProps} className={classes}>
+    <BaseDialog.Title {...htmlProps} className={classes(styles.title, className)}>
       {children}
     </BaseDialog.Title>
   );
 }
 
 function DialogDescription({ children, className, ...htmlProps }: DialogDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(" ");
   return (
-    <BaseDialog.Description {...htmlProps} className={classes}>
+    <BaseDialog.Description {...htmlProps} className={classes(styles.description, className)}>
       {children}
     </BaseDialog.Description>
   );
 }
 
 function DialogBody({ children, className, ...htmlProps }: DialogBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(" ");
+  const ref = useOverflowFocusable<HTMLDivElement>();
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} ref={ref} className={classes(styles.body, className)}>
       {children}
     </div>
   );
 }
 
 function DialogFooter({ children, className, ...htmlProps }: DialogFooterProps) {
-  const classes = [styles.footer, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} className={classes(styles.footer, className)}>
       {children}
     </div>
   );
 }
 
-function DialogClose({ children, asChild, className, ...htmlProps }: DialogCloseProps) {
-  // If no children, render the default X close button
-  if (!children) {
+function DialogClose({ children, render, nativeButton, className, ...props }: DialogCloseProps) {
+  if (children == null && render == null) {
     return (
       <BaseDialog.Close
-        {...htmlProps}
-        data-dialog-close
         aria-label="Close dialog"
-        className={[styles.close, className].filter(Boolean).join(" ")}
+        {...props}
+        data-dialog-close=""
+        className={classes(styles.close, typeof className === "string" && className)}
       >
         <CloseIcon />
       </BaseDialog.Close>
     );
   }
 
-  if (asChild) {
-    return (
-      <BaseDialog.Close
-        {...htmlProps}
-        data-dialog-close
-        className={className}
-        render={children as React.ReactElement}
-      >
-        {null}
-      </BaseDialog.Close>
-    );
-  }
-
   return (
-    <BaseDialog.Close {...htmlProps} data-dialog-close className={className}>
+    <BaseDialog.Close
+      {...props}
+      data-dialog-close=""
+      className={className}
+      render={render}
+      nativeButton={resolveNativeButton(render, nativeButton)}
+    >
       {children}
     </BaseDialog.Close>
   );
@@ -263,14 +241,3 @@ export const Dialog = Object.assign(DialogRoot, {
 });
 
 // Re-export individual components for tree-shaking
-export {
-  DialogRoot,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogBody,
-  DialogFooter,
-  DialogClose,
-};

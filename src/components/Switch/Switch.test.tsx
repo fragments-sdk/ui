@@ -16,28 +16,30 @@ describe("Switch", () => {
     expect(screen.getByRole("switch")).toBeInTheDocument();
   });
 
-  it("exposes its resolved geometry size", () => {
-    render(<Switch aria-label="Dark mode" size="lg" />);
-    expect(screen.getByRole("switch")).toHaveAttribute("data-size", "lg");
-  });
-
   it("is unchecked by default", () => {
     render(<Switch aria-label="Dark mode" />);
     expect(screen.getByRole("switch")).not.toBeChecked();
   });
 
   it("renders as checked when checked prop is true", () => {
-    render(<Switch aria-label="Dark mode" checked onChange={() => {}} />);
+    render(<Switch aria-label="Dark mode" checked onCheckedChange={() => {}} />);
     expect(screen.getByRole("switch")).toBeChecked();
   });
 
-  it("keeps the thumb optically centered for both switch states", () => {
+  it("paints the Glass track and thumb: no border, no sheen, instant travel", () => {
     expect(switchStyles).toMatch(/\.thumb\s*\{[\s\S]*inset-block-start:\s*50%;/);
     expect(switchStyles).toMatch(/\.thumb\s*\{[\s\S]*transform:\s*translateY\(-50%\);/);
     expect(switchStyles).toMatch(
-      /\.root\[data-checked\]\s*&\s*\{[\s\S]*transform:\s*translate\(var\(--_fui-switch-travel,[\s\S]*?\), -50%\);/
+      /\.track\[data-checked\]\s*>\s*&\s*\{\s*transform:\s*translate\(#\{\$_travel\}, -50%\);/
     );
-    expect(switchStyles).not.toMatch(/top:\s*var\(--_fui-switch-inset\)/);
+    expect(switchStyles).toMatch(/\$_off:\s*var\(--fui-field-border,/);
+    expect(switchStyles).toMatch(/box-shadow:\s*var\(--fui-shadow-sm,/);
+    // A pill with a round thumb of the accent's ink, as the desktop app draws it.
+    expect(switchStyles).toMatch(/\$_radius:\s*radius\.pill\(\$_block\);/);
+    expect(switchStyles).toMatch(/\.thumb\s*\{[^}]*color:\s*var\(--fui-color-on-accent,/);
+    expect(switchStyles).not.toMatch(/light-dark\(|inset 0|--fui-radius-full|border:\s/);
+    // The thumb moves instantly: only the track's colour transitions.
+    expect(switchStyles).not.toMatch(/transition[^;]*transform/);
   });
 
   it("renders label text", () => {
@@ -45,31 +47,36 @@ describe("Switch", () => {
     expect(screen.getByText("Dark mode")).toBeInTheDocument();
   });
 
-  it("renders description text", () => {
-    render(<Switch label="Notifications" description="Enable push alerts" />);
-    expect(screen.getByText("Enable push alerts")).toBeInTheDocument();
+  it("keeps the label and helper outside the switch element", () => {
+    render(<Switch label="Notifications" helperText="Enable push alerts" />);
+    const toggle = screen.getByRole("switch", { name: "Notifications" });
+    expect(toggle).not.toHaveTextContent("Notifications");
+    expect(toggle.closest("label")).toHaveTextContent("NotificationsEnable push alerts");
   });
 
-  it("renders helperText (preferred API)", () => {
-    render(<Switch label="Notifications" helperText="Enable push alerts" />);
-    expect(screen.getByText("Enable push alerts")).toBeInTheDocument();
+  it("shows the error message with an icon and wires it to the switch while invalid", () => {
+    const { container } = render(
+      <Switch label="Share findings" invalid errorMessage="Sharing is off for this plan." />
+    );
+    const toggle = screen.getByRole("switch", { name: "Share findings" });
+    expect(toggle).toHaveAttribute("aria-invalid", "true");
+    expect(toggle).toHaveAccessibleDescription("Sharing is off for this plan.");
+    expect(container.querySelector("svg[aria-hidden='true']")).not.toBeNull();
+  });
+
+  it("drops the cut aliases at the type level", () => {
+    // @ts-expect-error onChange was cut in v4; use onCheckedChange.
+    render(<Switch aria-label="Dark mode" onChange={() => {}} />);
+    // @ts-expect-error size was cut in v4; there is one size.
+    render(<Switch aria-label="Dark mode" size="sm" />);
+    // @ts-expect-error description was cut in v4; use helperText.
+    render(<Switch label="Dark mode" description="Old" />);
+    expect(screen.getAllByRole("switch")).toHaveLength(3);
   });
 
   it("associates helper text via aria-describedby", () => {
     render(<Switch label="Notifications" helperText="Enable push alerts" />);
     expect(screen.getByRole("switch")).toHaveAccessibleDescription("Enable push alerts");
-  });
-
-  it("prefers helperText over description when both are provided", () => {
-    render(
-      <Switch
-        label="Notifications"
-        helperText="Preferred helper text"
-        description="Legacy description text"
-      />
-    );
-    expect(screen.getByText("Preferred helper text")).toBeInTheDocument();
-    expect(screen.queryByText("Legacy description text")).not.toBeInTheDocument();
   });
 
   it("disables the switch", () => {
@@ -128,16 +135,7 @@ describe("Switch", () => {
     expect(uncheckedInput).toHaveAttribute("value", "disabled");
   });
 
-  it("calls onChange with the new value on click", async () => {
-    const handleChange = vi.fn();
-    const user = userEvent.setup();
-    render(<Switch aria-label="Dark mode" onChange={handleChange} />);
-    await user.click(screen.getByRole("switch"));
-    expect(handleChange).toHaveBeenCalled();
-    expect(handleChange.mock.calls[0][0]).toBe(true);
-  });
-
-  it("calls onCheckedChange alias when toggled", async () => {
+  it("calls onCheckedChange with the new value when toggled", async () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
     render(<Switch aria-label="Dark mode" onCheckedChange={handleChange} />);
@@ -161,14 +159,21 @@ describe("Switch", () => {
     expect(validate).toHaveBeenLastCalledWith(true, expect.anything());
   });
 
-  it("prefers onCheckedChange over onChange when both provided", async () => {
-    const onChange = vi.fn();
-    const onCheckedChange = vi.fn();
+  it("delivers exactly one click to an ancestor per user click", async () => {
+    const handleAncestorClick = vi.fn();
     const user = userEvent.setup();
-    render(<Switch aria-label="Test" onChange={onChange} onCheckedChange={onCheckedChange} />);
+    render(
+      <div onClick={handleAncestorClick}>
+        <Switch label="Notifications" />
+      </div>
+    );
+
     await user.click(screen.getByRole("switch"));
-    expect(onCheckedChange).toHaveBeenCalled();
-    expect(onChange).not.toHaveBeenCalled();
+    expect(handleAncestorClick).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByText("Notifications"));
+    expect(handleAncestorClick).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole("switch")).not.toBeChecked();
   });
 
   it("has no accessibility violations", async () => {

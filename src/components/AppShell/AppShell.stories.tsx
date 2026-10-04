@@ -1,57 +1,47 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AppShell } from ".";
+import { Button } from "../Button";
 import { Header } from "../Header";
+import { Input } from "../Input";
+import { Main } from "../Main";
 import { Sidebar } from "../Sidebar";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * AppShell is the full application layout wrapper integrating header, sidebar,
- * main content, and an optional aside panel. It is a compound component:
- * compose AppShell.Header, AppShell.Sidebar, AppShell.Main, and AppShell.Aside.
+ * AppShell is the application frame: header, sidebar, main and an optional
+ * aside on one grid that fills the viewport. It holds the sidebar state, so
+ * Header.Trigger and useSidebar read it. Put a Main inside AppShell.Main: Main
+ * owns the gutter and the `<main>` landmark.
  */
 const meta = {
   title: "Layout/AppShell",
   component: AppShell,
   tags: ["autodocs"],
   parameters: {
+    layout: "fullscreen",
     renderStates: RENDER_STATES,
     docs: {
       description: {
         component:
-          "Full layout wrapper integrating sidebar, header, main content, and optional aside panel.",
+          "The application frame: header, sidebar, main and an optional aside, with the sidebar state.",
       },
     },
   },
   argTypes: {
     layout: {
       control: "select",
-      options: ["default", "sidebar", "sidebar-floating", "floating"],
-      description: "Structural layout for CSS grid areas",
+      options: ["default", "sidebar"],
+      description: "Where the header sits.",
     },
-    bg: {
-      control: "text",
-      description: "Background color override for the shell container",
+    collapsible: {
+      control: "select",
+      options: ["icon", "offcanvas", "none"],
+      description: "How the rail collapses.",
     },
   },
   args: {
     layout: "default",
-    children: (
-      <>
-        <AppShell.Header>
-          <Header>
-            <Header.Brand>MyApp</Header.Brand>
-          </Header>
-        </AppShell.Header>
-        <AppShell.Sidebar width="200px">
-          <Sidebar.Nav>
-            <Sidebar.Section label="Menu">
-              <Sidebar.Item active>Home</Sidebar.Item>
-            </Sidebar.Section>
-          </Sidebar.Nav>
-        </AppShell.Sidebar>
-        <AppShell.Main padding="md">Content</AppShell.Main>
-      </>
-    ),
+    children: null,
   },
 } satisfies Meta<typeof AppShell>;
 
@@ -59,100 +49,174 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+function Glyph() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true">
+      <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
+    </svg>
+  );
+}
+
+function Nav() {
+  return (
+    <Sidebar.Nav>
+      <Sidebar.Section label="Workspace">
+        <Sidebar.Item icon={<Glyph />} href="#overview" active>
+          Overview
+        </Sidebar.Item>
+        <Sidebar.Item icon={<Glyph />} href="#findings" badge="12">
+          Findings
+        </Sidebar.Item>
+        <Sidebar.Item icon={<Glyph />} href="#contract">
+          Contract
+        </Sidebar.Item>
+      </Sidebar.Section>
+      <Sidebar.Section label="Settings">
+        <Sidebar.Item icon={<Glyph />} href="#members">
+          Members
+        </Sidebar.Item>
+      </Sidebar.Section>
+    </Sidebar.Nav>
+  );
+}
+
+function Page() {
+  return (
+    <Main>
+      <Main.Header>
+        <Main.Title>Overview</Main.Title>
+        <Main.Description>
+          <p>Every repository passed its last check.</p>
+        </Main.Description>
+      </Main.Header>
+    </Main>
+  );
+}
+
+/** Header across the top, the rail below it. */
 export const DefaultLayout: Story = {
-  render: () => (
-    <div style={{ height: "360px", overflow: "hidden" }}>
-      <AppShell layout="default">
-        <AppShell.Header>
-          <Header>
-            <Header.Brand>MyApp</Header.Brand>
-          </Header>
-        </AppShell.Header>
-        <AppShell.Sidebar width="200px" collapsible="offcanvas">
-          <Sidebar.Nav>
-            <Sidebar.Section label="Menu">
-              <Sidebar.Item active>Home</Sidebar.Item>
-              <Sidebar.Item>Analytics</Sidebar.Item>
-              <Sidebar.Item>Settings</Sidebar.Item>
-            </Sidebar.Section>
-          </Sidebar.Nav>
-        </AppShell.Sidebar>
-        <AppShell.Main padding="md">Header spans full width. Logo is in the header.</AppShell.Main>
-      </AppShell>
-    </div>
+  render: (args) => (
+    <AppShell {...args} style={{ blockSize: 480 }}>
+      <AppShell.Header>
+        <Header>
+          <Header.SkipLink />
+          <Header.Trigger />
+          <Header.Brand href="#">Fragments</Header.Brand>
+          <Header.Actions>
+            <Button variant="soft">Invite</Button>
+          </Header.Actions>
+        </Header>
+      </AppShell.Header>
+      <AppShell.Sidebar>
+        <Nav />
+        <Sidebar.Footer>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Footer>
+      </AppShell.Sidebar>
+      <AppShell.Main>
+        <Page />
+      </AppShell.Main>
+    </AppShell>
   ),
 };
 
+/** The rail runs the full height and carries the brand; the header sits beside it. */
 export const SidebarLayout: Story = {
   render: () => (
-    <div style={{ height: "360px", overflow: "hidden" }}>
-      <AppShell layout="sidebar">
-        <AppShell.Header>
-          <Header>
-            <Header.Trigger />
-          </Header>
-        </AppShell.Header>
-        <AppShell.Sidebar width="200px" collapsible="offcanvas">
-          <Sidebar.Header>MyApp</Sidebar.Header>
-          <Sidebar.Nav>
-            <Sidebar.Section label="Menu">
-              <Sidebar.Item active>Home</Sidebar.Item>
-              <Sidebar.Item>Analytics</Sidebar.Item>
-            </Sidebar.Section>
-          </Sidebar.Nav>
-        </AppShell.Sidebar>
-        <AppShell.Main padding="md">Sidebar is full height. Logo is in the sidebar.</AppShell.Main>
-      </AppShell>
-    </div>
+    <AppShell layout="sidebar" style={{ blockSize: 480 }}>
+      <AppShell.Header>
+        <Header>
+          <Header.SkipLink />
+          <Header.Trigger />
+          <Header.Search>
+            <Input placeholder="Search…" aria-label="Search" />
+          </Header.Search>
+          <Header.Actions>
+            <Button>New check</Button>
+          </Header.Actions>
+        </Header>
+      </AppShell.Header>
+      <AppShell.Sidebar>
+        <Sidebar.Header>Fragments</Sidebar.Header>
+        <Nav />
+        <Sidebar.Footer>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Footer>
+      </AppShell.Sidebar>
+      <AppShell.Main>
+        <Page />
+      </AppShell.Main>
+    </AppShell>
   ),
 };
 
+/** The aside is the surface plane at the wide sidebar width; below lg it drops under main. */
 export const WithAside: Story = {
   render: () => (
-    <div style={{ height: "360px", overflow: "hidden" }}>
-      <AppShell layout="default">
-        <AppShell.Header>
-          <Header>
-            <Header.Brand>App</Header.Brand>
-          </Header>
-        </AppShell.Header>
-        <AppShell.Sidebar width="180px" collapsible="offcanvas">
-          <Sidebar.Nav>
-            <Sidebar.Section>
-              <Sidebar.Item active>Home</Sidebar.Item>
-            </Sidebar.Section>
-          </Sidebar.Nav>
-        </AppShell.Sidebar>
-        <AppShell.Main padding="md">Content with an aside panel on the right.</AppShell.Main>
-        <AppShell.Aside width="180px">
-          Additional context, filters, or quick actions.
-        </AppShell.Aside>
-      </AppShell>
-    </div>
+    <AppShell style={{ blockSize: 480 }}>
+      <AppShell.Header>
+        <Header>
+          <Header.Brand href="#">Fragments</Header.Brand>
+        </Header>
+      </AppShell.Header>
+      <AppShell.Sidebar>
+        <Nav />
+      </AppShell.Sidebar>
+      <AppShell.Main>
+        <Page />
+      </AppShell.Main>
+      <AppShell.Aside aria-label="Details">
+        <Main as="div">
+          <Main.Header>
+            <Main.Title as="h2">Details</Main.Title>
+          </Main.Header>
+        </Main>
+      </AppShell.Aside>
+    </AppShell>
   ),
 };
 
-export const FloatingMain: Story = {
+/** Collapsed to the glyphs; labels move into tooltips. The column follows at once. */
+export const CollapsedRail: Story = {
   render: () => (
-    <div style={{ height: "360px", overflow: "hidden" }}>
-      <AppShell layout="sidebar">
-        <AppShell.Header>
-          <Header>
-            <Header.Trigger />
-          </Header>
-        </AppShell.Header>
-        <AppShell.Sidebar width="200px" collapsible="offcanvas" variant="floating">
-          <Sidebar.Header>MyApp</Sidebar.Header>
-          <Sidebar.Nav>
-            <Sidebar.Section label="Menu">
-              <Sidebar.Item active>Home</Sidebar.Item>
-            </Sidebar.Section>
-          </Sidebar.Nav>
-        </AppShell.Sidebar>
-        <AppShell.Main padding="md" variant="floating">
-          Main content has rounded corners and visual separation from the sidebar.
-        </AppShell.Main>
-      </AppShell>
-    </div>
+    <AppShell defaultCollapsed style={{ blockSize: 480 }}>
+      <AppShell.Header>
+        <Header>
+          <Header.Brand href="#">Fragments</Header.Brand>
+        </Header>
+      </AppShell.Header>
+      <AppShell.Sidebar>
+        <Nav />
+        <Sidebar.Footer>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Footer>
+      </AppShell.Sidebar>
+      <AppShell.Main>
+        <Page />
+      </AppShell.Main>
+    </AppShell>
+  ),
+};
+
+/** Offcanvas: collapsing takes the rail off the canvas and Header.Trigger brings it back. */
+export const OffcanvasRail: Story = {
+  render: () => (
+    <AppShell collapsible="offcanvas" style={{ blockSize: 480 }}>
+      <AppShell.Header>
+        <Header>
+          <Header.Trigger />
+          <Header.Brand href="#">Fragments</Header.Brand>
+        </Header>
+      </AppShell.Header>
+      <AppShell.Sidebar>
+        <Nav />
+        <Sidebar.Footer>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Footer>
+      </AppShell.Sidebar>
+      <AppShell.Main>
+        <Page />
+      </AppShell.Main>
+    </AppShell>
   ),
 };

@@ -1,37 +1,44 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { useResolvedControlSize } from '../ComponentDefaults';
-import styles from './Pagination.module.scss';
+import * as React from "react";
+import { useRender } from "@base-ui/react/use-render";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { useResolvedControlSize } from "../ComponentDefaults";
+import styles from "./Pagination.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export type PaginationSize = "sm" | "md";
+
+/**
+ * Moves through a long list one page at a time.
+ * @see https://usefragments.com/components/pagination
+ */
+export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
-  /** Total number of pages. Clamped to Math.max(0, totalPages). Renders nothing when 0. */
+  /** Total number of pages. Renders nothing when there are none. */
   totalPages: number;
-  /** Controlled current page (1-indexed). Clamped to [1, totalPages]. */
+  /** The current page (controlled, 1-indexed). Clamped to the pages there are. */
   page?: number;
-  /** Default page (uncontrolled). Clamped to [1, totalPages]. Default: 1 */
+  /** The page shown first (uncontrolled). Clamped to the pages there are.
+   * @default 1 */
   defaultPage?: number;
-  /** Called when page changes */
+  /** Called with the new page when it changes. */
   onPageChange?: (page: number) => void;
-  /** Number of pages shown at edges: default 1 */
-  edgeCount?: number;
-  /** Number of pages shown around current: default 1 */
+  /** Pages shown on each side of the current one. The first and last page always show.
+   * @default 1 */
   siblingCount?: number;
-  /** Visible action size. Resolves through ComponentDefaults when omitted. */
-  size?: 'sm' | 'md' | 'lg';
+  /** Item size. Resolves through ComponentDefaults when omitted; `lg` resolves to `md`. */
+  size?: PaginationSize;
+  /** Makes every page a link: return the element to render for a page, such as
+   * `<a href="?page=2" />` or a router link. Pressing it still calls `onPageChange`. */
+  renderLink?: (page: number) => React.ReactElement;
 }
 
-export interface PaginationItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children?: React.ReactNode;
-  /** Override page number (auto-assigned by context if omitted) */
-  page?: number;
-  className?: string;
-}
+export type PaginationPreviousProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+export type PaginationNextProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 // ============================================
 // Context
@@ -40,151 +47,72 @@ export interface PaginationItemProps extends React.ButtonHTMLAttributes<HTMLButt
 interface PaginationContextValue {
   currentPage: number;
   totalPages: number;
-  edgeCount: number;
   siblingCount: number;
   setPage: (page: number) => void;
+  renderLink?: (page: number) => React.ReactElement;
 }
 
 const PaginationContext = React.createContext<PaginationContextValue | null>(null);
 
 function usePaginationContext() {
   const ctx = React.useContext(PaginationContext);
-  if (!ctx) throw new Error('Pagination sub-components must be used within <Pagination>');
+  if (!ctx) throw new Error("Pagination parts must be used within <Pagination>");
   return ctx;
 }
 
-// ============================================
-// Page range algorithm
-// ============================================
-
-type RangeItem = number | 'ellipsis';
-
-function usePaginationRange(
-  totalPages: number,
-  currentPage: number,
-  siblingCount: number,
-  edgeCount: number,
-): RangeItem[] {
-  return React.useMemo(() => {
-    if (totalPages <= 0) return [];
-
-    // If total pages is small enough, show all pages
-    const totalSlots = edgeCount * 2 + siblingCount * 2 + 1 + 2; // edges + siblings + current + 2 ellipses
-    if (totalPages <= totalSlots) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    const leftEdge = Array.from({ length: edgeCount }, (_, i) => i + 1);
-    const rightEdge = Array.from({ length: edgeCount }, (_, i) => totalPages - edgeCount + 1 + i);
-
-    const siblingStart = Math.max(edgeCount + 1, currentPage - siblingCount);
-    const siblingEnd = Math.min(totalPages - edgeCount, currentPage + siblingCount);
-
-    const result: RangeItem[] = [];
-
-    // Add left edge
-    for (const p of leftEdge) {
-      result.push(p);
-    }
-
-    // Left ellipsis
-    if (siblingStart > edgeCount + 1) {
-      // If there's only one gap, show the number instead of ellipsis
-      if (siblingStart === edgeCount + 2) {
-        result.push(edgeCount + 1);
-      } else {
-        result.push('ellipsis');
-      }
-    }
-
-    // Siblings + current
-    for (let i = siblingStart; i <= siblingEnd; i++) {
-      if (!result.includes(i)) {
-        result.push(i);
-      }
-    }
-
-    // Right ellipsis
-    if (siblingEnd < totalPages - edgeCount) {
-      if (siblingEnd === totalPages - edgeCount - 1) {
-        result.push(totalPages - edgeCount);
-      } else {
-        result.push('ellipsis');
-      }
-    }
-
-    // Add right edge
-    for (const p of rightEdge) {
-      if (!result.includes(p)) {
-        result.push(p);
-      }
-    }
-
-    return result;
-  }, [totalPages, currentPage, siblingCount, edgeCount]);
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
 }
 
 // ============================================
-// Chevron Icons
+// Page range
 // ============================================
 
-function ChevronLeftIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="15 18 9 12 15 6" />
-    </svg>
-  );
+type RangeItem = number | "ellipsis";
+
+/** The first and last page, the current page and its siblings, and an ellipsis for
+ * each gap wider than one page (a one-page gap shows the page instead). */
+function pageRange(totalPages: number, currentPage: number, siblingCount: number): RangeItem[] {
+  if (totalPages <= 0) return [];
+
+  // first + last + current + siblings + two gaps
+  const slots = siblingCount * 2 + 5;
+  if (totalPages <= slots) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const start = Math.max(2, currentPage - siblingCount);
+  const end = Math.min(totalPages - 1, currentPage + siblingCount);
+  const result: RangeItem[] = [1];
+
+  if (start > 2) result.push(start === 3 ? 2 : "ellipsis");
+  for (let page = start; page <= end; page++) result.push(page);
+  if (end < totalPages - 1) result.push(end === totalPages - 2 ? totalPages - 1 : "ellipsis");
+  result.push(totalPages);
+
+  return result;
 }
-
-function ChevronRightIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
-
-// ============================================
-// Components
-// ============================================
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-function composeButtonClickHandlers(
-  internal: (event: React.MouseEvent<HTMLButtonElement>) => void,
-  external?: React.MouseEventHandler<HTMLButtonElement>,
-) {
-  return (event: React.MouseEvent<HTMLButtonElement>) => {
+function composeClickHandlers(
+  internal: () => void,
+  external?: React.MouseEventHandler<HTMLElement>
+): React.MouseEventHandler<HTMLElement> {
+  return (event) => {
+    // A router link prevents the default to navigate in place; only a
+    // prevention by the caller's own handler skips the page change.
+    const preventedBefore = event.defaultPrevented;
     external?.(event);
-    if (!event.defaultPrevented) {
-      internal(event);
-    }
+    if (preventedBefore || !event.defaultPrevented) internal();
   };
 }
+
+// ============================================
+// Components
+// ============================================
 
 function PaginationRoot({
   children,
@@ -192,181 +120,163 @@ function PaginationRoot({
   page: controlledPage,
   defaultPage = 1,
   onPageChange,
-  edgeCount = 1,
   siblingCount = 1,
   size: sizeProp,
+  renderLink,
   className,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
   ...htmlProps
 }: PaginationProps) {
-  const size = useResolvedControlSize(sizeProp);
+  const resolvedSize = useResolvedControlSize(sizeProp);
+  const size: PaginationSize = resolvedSize === "sm" ? "sm" : "md";
   const totalPages = Math.max(0, Math.floor(rawTotalPages));
   const [uncontrolledPage, setUncontrolledPage] = React.useState(() =>
     totalPages > 0 ? clamp(defaultPage, 1, totalPages) : 1
   );
 
   const isControlled = controlledPage !== undefined;
-  const currentPage = isControlled
-    ? (totalPages > 0 ? clamp(controlledPage, 1, totalPages) : 1)
-    : (totalPages > 0 ? clamp(uncontrolledPage, 1, totalPages) : 1);
+  const requested = isControlled ? controlledPage : uncontrolledPage;
+  const currentPage = totalPages > 0 ? clamp(requested, 1, totalPages) : 1;
 
   const setPage = React.useCallback(
-    (newPage: number) => {
+    (next: number) => {
       if (totalPages <= 0) return;
-      const clamped = clamp(newPage, 1, totalPages);
+      const clamped = clamp(next, 1, totalPages);
       if (clamped === currentPage) return;
-      if (!isControlled) {
-        setUncontrolledPage(clamped);
-      }
+      if (!isControlled) setUncontrolledPage(clamped);
       onPageChange?.(clamped);
     },
     [totalPages, currentPage, isControlled, onPageChange]
   );
 
   const contextValue = React.useMemo<PaginationContextValue>(
-    () => ({ currentPage, totalPages, edgeCount, siblingCount, setPage }),
-    [currentPage, totalPages, edgeCount, siblingCount, setPage]
+    () => ({ currentPage, totalPages, siblingCount, setPage, renderLink }),
+    [currentPage, totalPages, siblingCount, setPage, renderLink]
   );
 
-  if (totalPages <= 0) {
-    return (
-      <nav
-        {...htmlProps}
-        aria-label={ariaLabel ?? 'Pagination'}
-        className={[styles.pagination, styles[size], className].filter(Boolean).join(' ')}
-      />
-    );
-  }
+  if (totalPages <= 0) return null;
 
   return (
     <PaginationContext.Provider value={contextValue}>
       <nav
         {...htmlProps}
-        aria-label={ariaLabel ?? 'Pagination'}
-        className={[styles.pagination, styles[size], className].filter(Boolean).join(' ')}
+        aria-label={ariaLabel ?? "Pagination"}
+        className={cx(styles.pagination, styles[size], className)}
+        data-slot="pagination"
+        data-size={size}
       >
-        <ul className={styles.list}>
-          {children}
-        </ul>
+        <ul className={styles.list}>{children}</ul>
       </nav>
     </PaginationContext.Provider>
   );
 }
 
-function PaginationPrevious({ className, ...htmlProps }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const { currentPage, setPage } = usePaginationContext();
+/** One page target: a link when the root has `renderLink`, otherwise a button. */
+function PageTarget({
+  page,
+  disabled = false,
+  className,
+  onClick,
+  children,
+  ...props
+}: Omit<React.HTMLAttributes<HTMLElement>, "onClick"> & {
+  page: number;
+  disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+}) {
+  const { setPage, renderLink } = usePaginationContext();
+  // A boundary step cannot be a link (a link cannot be disabled), so it stays a button.
+  const linked = Boolean(renderLink) && !disabled;
+
+  const element = useRender({
+    render: linked && renderLink ? renderLink(page) : <button type="button" disabled={disabled} />,
+    props: {
+      ...props,
+      className,
+      children,
+      onClick: composeClickHandlers(() => setPage(page), onClick),
+    },
+  });
+
+  return element;
+}
+
+function PaginationPrevious({ className, onClick, ...buttonProps }: PaginationPreviousProps) {
+  const { currentPage } = usePaginationContext();
   const disabled = currentPage <= 1;
-  const { onClick, ...buttonProps } = htmlProps;
 
   return (
     <li>
-      <button
-        type="button"
+      <PageTarget
         aria-label="Go to previous page"
-        disabled={disabled}
         {...buttonProps}
-        onClick={composeButtonClickHandlers(() => setPage(currentPage - 1), onClick)}
-        className={[styles.item, styles.navButton, disabled && styles.itemDisabled, className].filter(Boolean).join(' ')}
+        page={currentPage - 1}
+        disabled={disabled}
+        onClick={onClick as React.MouseEventHandler<HTMLElement> | undefined}
+        className={cx(styles.item, styles.step, className)}
       >
-        <ChevronLeftIcon />
-      </button>
+        <CaretLeft className={styles.glyph} weight="bold" aria-hidden="true" />
+      </PageTarget>
     </li>
   );
 }
 
-function PaginationNext({ className, ...htmlProps }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const { currentPage, totalPages, setPage } = usePaginationContext();
+function PaginationNext({ className, onClick, ...buttonProps }: PaginationNextProps) {
+  const { currentPage, totalPages } = usePaginationContext();
   const disabled = currentPage >= totalPages;
-  const { onClick, ...buttonProps } = htmlProps;
 
   return (
     <li>
-      <button
-        type="button"
+      <PageTarget
         aria-label="Go to next page"
-        disabled={disabled}
         {...buttonProps}
-        onClick={composeButtonClickHandlers(() => setPage(currentPage + 1), onClick)}
-        className={[styles.item, styles.navButton, disabled && styles.itemDisabled, className].filter(Boolean).join(' ')}
+        page={currentPage + 1}
+        disabled={disabled}
+        onClick={onClick as React.MouseEventHandler<HTMLElement> | undefined}
+        className={cx(styles.item, styles.step, className)}
       >
-        <ChevronRightIcon />
-      </button>
+        <CaretRight className={styles.glyph} weight="bold" aria-hidden="true" />
+      </PageTarget>
     </li>
   );
 }
 
+/** The page numbers: the first and last page, the current page and its siblings, and
+ * an ellipsis for each gap. */
 function PaginationItems() {
-  const { currentPage, totalPages, siblingCount, edgeCount, setPage } = usePaginationContext();
-  const range = usePaginationRange(totalPages, currentPage, siblingCount, edgeCount);
-  let ellipsisCount = 0;
+  const { currentPage, totalPages, siblingCount } = usePaginationContext();
+  const range = pageRange(totalPages, currentPage, siblingCount);
+  let gap = 0;
 
   return (
     <>
       {range.map((item) => {
-        if (item === 'ellipsis') {
-          ellipsisCount++;
+        if (item === "ellipsis") {
+          gap += 1;
           return (
-            <li key={`ellipsis-${ellipsisCount}`}>
+            <li key={`ellipsis-${gap}`}>
               <span className={styles.ellipsis} aria-hidden="true">
-                &hellip;
+                {"…"}
               </span>
             </li>
           );
         }
 
-        const isActive = item === currentPage;
+        const current = item === currentPage;
         return (
           <li key={item}>
-            <button
-              type="button"
+            <PageTarget
+              page={item}
               aria-label={`Go to page ${item}`}
-              aria-current={isActive ? 'page' : undefined}
-              onClick={() => setPage(item)}
-              className={[styles.item, isActive && styles.itemActive].filter(Boolean).join(' ')}
+              aria-current={current ? "page" : undefined}
+              className={cx(styles.item, current && styles.itemActive)}
             >
               {item}
-            </button>
+            </PageTarget>
           </li>
         );
       })}
     </>
-  );
-}
-
-function PaginationItem({
-  children,
-  page: pageProp,
-  className,
-  ...htmlProps
-}: PaginationItemProps) {
-  const { currentPage, setPage } = usePaginationContext();
-  const page = pageProp ?? 1;
-  const isActive = page === currentPage;
-  const { onClick, ...buttonProps } = htmlProps;
-
-  return (
-    <li>
-      <button
-        type="button"
-        aria-label={`Go to page ${page}`}
-        aria-current={isActive ? 'page' : undefined}
-        {...buttonProps}
-        onClick={composeButtonClickHandlers(() => setPage(page), onClick)}
-        className={[styles.item, isActive && styles.itemActive, className].filter(Boolean).join(' ')}
-      >
-        {children ?? page}
-      </button>
-    </li>
-  );
-}
-
-function PaginationEllipsis({ className, ...htmlProps }: React.HTMLAttributes<HTMLSpanElement>) {
-  return (
-    <li>
-      <span className={[styles.ellipsis, className].filter(Boolean).join(' ')} aria-hidden="true" {...htmlProps}>
-        &hellip;
-      </span>
-    </li>
   );
 }
 
@@ -378,15 +288,4 @@ export const Pagination = Object.assign(PaginationRoot, {
   Previous: PaginationPrevious,
   Next: PaginationNext,
   Items: PaginationItems,
-  Item: PaginationItem,
-  Ellipsis: PaginationEllipsis,
 });
-
-export {
-  PaginationRoot,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationItems,
-  PaginationItem,
-  PaginationEllipsis,
-};

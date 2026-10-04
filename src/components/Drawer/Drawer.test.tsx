@@ -10,6 +10,10 @@ const drawerStyleSource = readFileSync(
   resolve(process.cwd(), "src/components/Drawer/Drawer.module.scss"),
   "utf8"
 );
+const overlayRecipeSource = readFileSync(
+  resolve(process.cwd(), "src/recipes/_overlay.scss"),
+  "utf8"
+);
 
 function renderDrawer(
   props: Partial<React.ComponentProps<typeof Drawer>> = {},
@@ -28,21 +32,18 @@ function renderDrawer(
           <p>Body content</p>
         </Drawer.Body>
         <Drawer.Footer>
-          <Drawer.Close asChild>
-            <button>Cancel</button>
-          </Drawer.Close>
+          <Drawer.Close render={<button type="button" />}>Cancel</Drawer.Close>
         </Drawer.Footer>
       </Drawer.Content>
     </Drawer>
   );
 }
 
-type SwipeDirection = NonNullable<React.ComponentProps<typeof Drawer>["swipeDirection"]>;
+type SwipeDirection = "left" | "right" | "up" | "down";
 
 const DRAWER_SIDE_CASES = [
-  ["right", "right"],
-  ["left", "left"],
-  ["top", "up"],
+  ["end", "right"],
+  ["start", "left"],
   ["bottom", "down"],
 ] as const;
 
@@ -107,7 +108,7 @@ async function commitPrimaryButtonSwipe(
     if (elementFromPointDescriptor) {
       Object.defineProperty(document, "elementFromPoint", elementFromPointDescriptor);
     } else {
-      delete (document as Document & { elementFromPoint?: Document["elementFromPoint"] })
+      delete (document as unknown as { elementFromPoint?: Document["elementFromPoint"] })
         .elementFromPoint;
     }
   }
@@ -196,16 +197,18 @@ describe("Drawer", () => {
     expect(styles.content).toBeTruthy();
     expect(content).toHaveClass(styles.content);
     expect(drawerStyleSource).toMatch(
-      /\.content\s*\{[^}]*display:\s*flex;[^}]*block-size:\s*100%;[^}]*flex-direction:\s*column;/s
+      /\.content\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*min-block-size:\s*0;/s
     );
-    expect(drawerStyleSource).toMatch(/\.body\s*\{[^}]*min-block-size:\s*0;/s);
+    expect(overlayRecipeSource).toMatch(
+      /@mixin body\s*\{[^}]*min-block-size:\s*0;[^}]*overflow:\s*auto;/s
+    );
   });
 
-  it("defaults the content side and swipe direction to right", async () => {
+  it("defaults to the end edge with a rightward swipe dismissal", async () => {
     renderDrawer({ defaultOpen: true });
 
     await waitFor(() => {
-      expect(screen.getByRole("dialog")).toHaveAttribute("data-side", "right");
+      expect(screen.getByRole("dialog")).toHaveAttribute("data-side", "end");
       expect(screen.getByRole("dialog")).toHaveAttribute("data-swipe-direction", "right");
     });
   });
@@ -214,16 +217,10 @@ describe("Drawer", () => {
     "derives a %s drawer's %s swipe dismissal from Drawer.Content",
     async (side, expectedDirection) => {
       const onOpenChange = vi.fn();
-      renderDrawer(
-        { defaultOpen: true, onOpenChange },
-        {
-          side,
-          viewportProps: { "data-testid": "swipe-viewport" },
-        }
-      );
+      renderDrawer({ defaultOpen: true, onOpenChange }, { side });
 
-      const viewport = await screen.findByTestId("swipe-viewport");
-      const popup = screen.getByRole("dialog");
+      const popup = await screen.findByRole("dialog");
+      const viewport = popup.parentElement as HTMLElement;
       await waitFor(() => {
         expect(popup).toHaveAttribute("data-side", side);
         expect(popup).toHaveAttribute("data-swipe-direction", expectedDirection);
@@ -236,39 +233,23 @@ describe("Drawer", () => {
     }
   );
 
-  it("lets an explicit swipeDirection override Drawer.Content side", async () => {
-    const onOpenChange = vi.fn();
-    renderDrawer(
-      {
-        defaultOpen: true,
-        swipeDirection: "left",
-        onOpenChange,
-      },
-      {
-        side: "bottom",
-        viewportProps: { "data-testid": "swipe-viewport" },
-      }
-    );
+  it("draws the scrim only for a modal drawer", async () => {
+    const { unmount } = renderDrawer({ defaultOpen: true });
+    await screen.findByRole("dialog");
+    expect(document.querySelector(`.${styles.backdrop}`)).toBeInTheDocument();
+    unmount();
 
-    const viewport = await screen.findByTestId("swipe-viewport");
-    const popup = screen.getByRole("dialog");
-    await waitFor(() => {
-      expect(popup).toHaveAttribute("data-side", "bottom");
-      expect(popup).toHaveAttribute("data-swipe-direction", "left");
-    });
-
-    await commitPrimaryButtonSwipe(viewport, popup, "left");
-
-    expect(onOpenChange).toHaveBeenCalled();
-    expect(onOpenChange.mock.calls.at(-1)?.[0]).toBe(false);
+    renderDrawer({ defaultOpen: true, modal: "trap-focus" });
+    await screen.findByRole("dialog");
+    expect(document.querySelector(`.${styles.backdrop}`)).not.toBeInTheDocument();
   });
 
-  it("supports the width prop", async () => {
-    renderDrawer({ defaultOpen: true }, { width: "lg" });
+  it("sizes the panel with the size prop", async () => {
+    renderDrawer({ defaultOpen: true }, { size: "lg" });
 
-    await waitFor(() => {
-      expect(screen.getByText("Drawer Title")).toBeInTheDocument();
-    });
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveAttribute("data-size", "lg");
+    expect(dialog).toHaveClass(styles.lg);
   });
 
   it("accepts Drawer.Content initialFocus prop", async () => {
@@ -279,22 +260,21 @@ describe("Drawer", () => {
     });
   });
 
-  it("forwards props to the Base UI viewport", async () => {
-    renderDrawer(
-      { defaultOpen: true },
-      {
-        viewportProps: {
-          "data-testid": "drawer-viewport",
-          style: { paddingTop: 12 },
-        },
-      }
+  it("renders a library control as the trigger through render", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer>
+        <Drawer.Trigger render={<button type="button" data-testid="custom-trigger" />}>
+          Inspect
+        </Drawer.Trigger>
+        <Drawer.Content>
+          <Drawer.Title>Inspector</Drawer.Title>
+        </Drawer.Content>
+      </Drawer>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("drawer-viewport")).toHaveStyle({
-        paddingTop: "12px",
-      });
-    });
+    await user.click(screen.getByTestId("custom-trigger"));
+    expect(await screen.findByText("Inspector")).toBeInTheDocument();
   });
 
   it("has no accessibility violations when open", async () => {

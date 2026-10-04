@@ -1,0 +1,304 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Editor",
+  "description": "Edits rich text with formatting, autosave, and a word count.",
+  "category": "inputs",
+  "tags": ["editor", "rich-text", "markdown", "toolbar", "writing", "blog", "content"],
+  "status": "stable",
+  "dependencies": [
+    {
+      "name": "@tiptap/react",
+      "version": ">=2.0.0",
+      "reason": "Optional — enables rich-text mode; without TipTap the editor falls back to a markdown textarea."
+    },
+    {
+      "name": "@tiptap/starter-kit",
+      "version": ">=2.0.0",
+      "reason": "Optional — TipTap extension bundle used by rich-text mode."
+    },
+    {
+      "name": "@tiptap/extension-link",
+      "version": ">=2.0.0",
+      "reason": "Optional — link formatting in rich-text mode."
+    }
+  ],
+  "sourcePath": "src/components/Editor/index.tsx",
+  "exportName": "Editor",
+  "propsSummary": [
+    "children: node",
+    "value: string",
+    "defaultValue: string (default: )",
+    "onValueChange: function",
+    "label: string",
+    "helperText: string",
+    "invalid: boolean (default: false)",
+    "errorMessage: string",
+    "placeholder: string (default: Start typing…)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "formats: array",
+    "toolbar: boolean (default: true)",
+    "statusBar: boolean",
+    "onAutoSave: function",
+    "autoSaveInterval: number (default: 30000)",
+    "rows: number (default: 8)",
+    "maxLength: number"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled editor value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default value for uncontrolled usage",
+      "default": "",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called when content changes",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible label above the field; names the text box",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text below the field; describes the text box",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Marks the value invalid: the danger edge, aria-invalid and the error message",
+      "default": "false",
+      "required": false
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Words shown under the field while invalid, with a warning icon",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text shown when empty; never the accessible name",
+      "default": "Start typing…",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the editor; the text stays selectable and copyable",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Read-only: the toolbar hides and the edge turns dashed",
+      "default": "false",
+      "required": false
+    },
+    "formats": {
+      "type": "array",
+      "description": "Which format buttons the default toolbar shows (one heading step: `heading`)",
+      "default": "[\"bold\", \"italic\", \"strikethrough\", \"link\", \"code\", \"bulletList\"]",
+      "required": false
+    },
+    "toolbar": {
+      "type": "boolean",
+      "description": "Show default toolbar",
+      "default": "true",
+      "required": false
+    },
+    "statusBar": {
+      "type": "boolean",
+      "description": "Show the default status bar. On by default only when maxLength or onAutoSave is set",
+      "required": false
+    },
+    "onAutoSave": {
+      "type": "function",
+      "description": "Auto-save callback, called at autoSaveInterval (may be async)",
+      "required": false
+    },
+    "autoSaveInterval": {
+      "type": "number",
+      "description": "Auto-save interval in milliseconds",
+      "default": "30000",
+      "required": false
+    },
+    "rows": {
+      "type": "number",
+      "description": "Height of the writing area in text lines, as Textarea counts them",
+      "default": "8",
+      "required": false
+    },
+    "maxLength": {
+      "type": "number",
+      "description": "Maximum character count. The status bar shows count / limit, warns at 90% and says how many over past it",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Blog posts and long-form articles",
+      "Text that needs formatting controls beside it",
+      "Drafts that autosave and report a word count",
+      "Markdown or WYSIWYG authoring"
+    ],
+    "whenNot": [
+      "Single-line text (use Input)",
+      "Multi-line with no formatting (use Textarea)",
+      "Chat or AI prompt input (use Prompt)",
+      "Code editing (use CodeBlock)"
+    ],
+    "guidelines": [
+      "Compose Editor.Toolbar and Editor.Content to control toolbar layout; split groups with a vertical Separator",
+      "Rich text needs @tiptap/react, @tiptap/starter-kit, and @tiptap/extension-link",
+      "Without TipTap it falls back to a markdown-aware textarea",
+      "Give it a label (or aria-label); the placeholder is a hint, not a name",
+      "onAutoSave may return a Promise; the status reads Saving…, Saved or Couldn’t save",
+      "rows sets the writing area height in lines",
+      "maxLength drives the counter's warning and over-limit states",
+      "heading, blockquote, orderedList, undo and redo are opt-in via formats"
+    ],
+    "accessibility": [
+      "Toolbar has role=\"toolbar\" with one tab stop; arrow keys, Home and End move between its buttons",
+      "Format buttons use aria-pressed to indicate active state; undo and redo omit it",
+      "The label names the text box (aria-labelledby); helper and error text describe it; invalid sets aria-invalid",
+      "Status indicator uses aria-live=\"polite\" for save status announcements",
+      "Keyboard shortcuts match standard text editor conventions (Ctrl+B, Ctrl+I, etc.)",
+      "Global shortcuts (e.g., Sidebar Ctrl+B) automatically yield when focus is inside the Editor",
+      "The field rings when the writing area has focus; a focused toolbar button rings itself",
+      "Disabled text stays selectable; read-only hides the toolbar"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "The toolbar you get with no configuration; no status bar until there is a limit or a save.",
+      "code": "<Editor label=\"Post\" placeholder=\"Start typing your post\" />"
+    },
+    {
+      "name": "With Auto-Save and Publish",
+      "description": "Save state sits next to the primary action in the toolbar.",
+      "code": "<Editor\n  label=\"Post\" placeholder=\"Start typing your post\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Actions\">\n      <Editor.StatusIndicator status=\"saved\" />\n      <Button variant=\"solid\" tone=\"accent\" size=\"sm\">\n        Publish\n      </Button>\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "Save Failed",
+      "description": "A failed autosave says Couldn’t save in the danger ink, with an icon.",
+      "code": "<Editor label=\"Draft\" defaultValue=\"This draft could not be saved.\">\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"error\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The danger edge on the field and the reason below it.",
+      "code": "<Editor label=\"Post\" invalid errorMessage=\"Write at least one line\" />"
+    },
+    {
+      "name": "Disabled",
+      "description": "Dimmed and not editable, but the text stays selectable.",
+      "code": "<Editor\n  label=\"Post\"\n  defaultValue=\"This content cannot be edited.\"\n  disabled\n/>"
+    },
+    {
+      "name": "Read Only",
+      "description": "No toolbar and a dashed edge; text can be selected and copied, but never changed.",
+      "code": "<Editor\n  label=\"Post\"\n  defaultValue=\"This content is read-only. You can select and copy text but cannot change it.\"\n  readOnly\n/>"
+    },
+    {
+      "name": "Custom Toolbar",
+      "description": "A vertical Separator splits the controls into labelled clusters.",
+      "code": "<Editor\n  label=\"Blog post\" placeholder=\"Write your blog post\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Basic formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Structure\">\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"saving\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "Full Formatting",
+      "description": "Every opt-in format switched on, with a taller writing area.",
+      "code": "<Editor label=\"Article\" placeholder=\"Write an article\" rows={16}>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"History\">\n      <Editor.ToolbarButton format=\"undo\" />\n      <Editor.ToolbarButton format=\"redo\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"heading\" />\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"code\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Block formatting\">\n      <Editor.ToolbarButton format=\"bulletList\" />\n      <Editor.ToolbarButton format=\"orderedList\" />\n      <Editor.ToolbarButton format=\"blockquote\" />\n      <Editor.ToolbarButton format=\"link\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+    },
+    {
+      "name": "With Character Limit",
+      "description": "The counter warns near 280 characters and says how many over past it.",
+      "code": "<Editor\n  label=\"Bio\"\n  placeholder=\"Say who you are in a sentence or two\"\n  maxLength={280}\n  rows={4}\n  formats={['bold', 'italic', 'link']}\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Prompt",
+      "relationship": "sibling",
+      "note": "Prompt is for AI/chat input; Editor is for long-form content editing"
+    },
+    {
+      "component": "Textarea",
+      "relationship": "alternative",
+      "note": "Use Textarea for simple multi-line input without formatting toolbar"
+    },
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for single-line text input"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled editor value",
+      "onValueChange: (value: string) => void - change callback",
+      "label: string - visible label, names the text box",
+      "invalid: boolean + errorMessage: string - danger edge, aria-invalid and message",
+      "placeholder: string - hint text (default: \"Start typing…\")",
+      "disabled: boolean - not editable, text stays selectable",
+      "readOnly: boolean - prevents editing, hides the toolbar",
+      "formats: EditorFormat[] - toolbar buttons (default: 6; heading is one step)",
+      "toolbar: boolean - show default toolbar (default: true)",
+      "statusBar: boolean - show the status bar (default: only with maxLength or onAutoSave)",
+      "onAutoSave: (value: string) => void | Promise<void> - auto-save handler",
+      "rows: number - writing area height in lines (default: 8)",
+      "maxLength: number - character limit with count, warning and how many over"
+    ],
+    "a11yRules": ["A11Y_TOOLBAR_ROLE", "A11Y_BUTTON_LABEL", "A11Y_LIVE_REGION"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root",
+      "Toolbar",
+      "ToolbarGroup",
+      "ToolbarButton",
+      "StatusIndicator",
+      "Content",
+      "StatusBar",
+      "preload"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:56.748Z"
+  },
+  "cssVariables": [
+    "--fui-border",
+    "--fui-color-danger-text",
+    "--fui-color-warning-text",
+    "--fui-control-height-xs",
+    "--fui-field-bg",
+    "--fui-field-border",
+    "--fui-icon-xs",
+    "--fui-link-ink",
+    "--fui-radius-surface",
+    "--fui-raw-space-12",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-raw-space-6",
+    "--fui-raw-space-8",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary",
+    "--fui-type-body-compact-line"
+  ],
+  "attributes": []
+}

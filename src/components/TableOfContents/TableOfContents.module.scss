@@ -1,177 +1,188 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-@use "../../recipes/navigation" as navigation;
-@use "../../recipes/typography" as typography;
+@use "../../recipes/action";
+@use "../../recipes/focus";
+@use "../../recipes/navigation";
+@use "../../recipes/selection";
+@use "../../recipes/typography";
 
-.root {
-  @include navigation.properties;
-  @include typography.role("body-compact");
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.title {
-  @include navigation.properties;
+@layer fui.components {
+  .root {
+    @include navigation.properties;
+    @include typography.role("body-compact");
 
-  margin: 0 0 var(--fui-space-2, #{$fui-space-2});
-  // Same inline inset as `.link` (navigation.row) so the label and the index
-  // share one left edge — extra title padding made "On This Page" sit inward
-  // of the items below it.
-  padding-inline: var(--fui-navigation-inline-inset, #{navigation.gutter()});
-}
-
-// The quiet index is flush; links and group headers share the title inset.
-.list {
-  list-style: none;
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-}
-
-// ============================================
-// Item link
-// ============================================
-
-.item,
-.groupHeaderRow {
-  position: relative;
-  list-style: none;
-}
-
-.link {
-  @include navigation.row;
-
-  display: flex;
-  align-items: center;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-decoration: none;
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, #{$fui-bg-hover});
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
-// Depth-1 links carry the hierarchy indent while the top-level index remains
-// flush with the title and group headers.
-[data-depth="1"] .link {
-  margin-left: var(--fui-space-2, $fui-space-2);
-  padding-inline-start: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-}
-
-.linkLabel {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.leading,
-.trailing {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.leading {
-  @include navigation.leading;
-}
-
-.trailing {
-  @include typography.role("caption");
-
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
-.active {
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-}
-
-// ============================================
-// Group header
-// ============================================
-
-.groupHeader {
-  @include navigation.section-row;
-
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  background: transparent;
-  border: 0;
-  text-align: left;
-  font-family: inherit;
-  cursor: default;
-}
-
-.groupHeaderInteractive {
-  cursor: pointer;
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, #{$fui-bg-hover});
     color: var(--fui-text-secondary, $fui-text-secondary);
   }
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
+  .title {
+    @include navigation.properties;
 
-.groupHeaderActive {
-  color: var(--fui-color-accent, $fui-color-accent);
-}
-
-.groupChevron {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-icon-xs, $fui-icon-xs);
-  height: var(--fui-icon-xs, $fui-icon-xs);
-  color: inherit;
-  opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
-  transition: transform var(--fui-transition-fast, $fui-transition-fast);
-
-  svg {
-    width: var(--fui-raw-space-10, #{measurements.raw-space(10)});
-    height: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    margin: 0 0 var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    // Same inline inset as `.link` (navigation.row) so the title and the index
+    // share one start edge.
+    padding-inline: var(--fui-navigation-inline-inset, #{navigation.gutter()});
   }
 
-  &[data-open] {
-    transform: rotate(90deg);
+  // The quiet index is flush; links and group headers share the title inset.
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    list-style: none;
   }
-}
 
-.groupLabel {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  // The group's items show and hide at once: no height motion.
+  .groupPanel[hidden] {
+    display: none;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .link,
-  .groupHeaderInteractive,
-  .groupChevron {
-    transition: none;
+  .item,
+  .group {
+    list-style: none;
+  }
+
+  // ============================================
+  // Item link
+  // ============================================
+
+  .link {
+    @include navigation.row;
+    @include action.motion;
+
+    display: flex;
+    align-items: center;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    text-decoration: none;
+
+    // Hover paints over the item, so the current item keeps its wash.
+    @include action.hover {
+      @include selection.hover-tint;
+
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    @include focus.visible;
+  }
+
+  // Nesting indents the row's start inset one step per level.
+  [data-depth="1"] > :is(.link, .groupHeader) {
+    padding-inline-start: calc(
+      var(--fui-navigation-inline-inset, #{navigation.gutter()}) +
+        var(--fui-raw-space-12, #{measurements.raw-space(12)})
+    );
+  }
+
+  [data-depth="2"] > :is(.link, .groupHeader) {
+    padding-inline-start: calc(
+      var(--fui-navigation-inline-inset, #{navigation.gutter()}) +
+        var(--fui-raw-space-24, #{measurements.raw-space(24)})
+    );
+  }
+
+  [data-depth="3"] > :is(.link, .groupHeader) {
+    padding-inline-start: calc(
+      var(--fui-navigation-inline-inset, #{navigation.gutter()}) +
+        var(--fui-raw-space-32, #{measurements.raw-space(32)})
+    );
+  }
+
+  .linkLabel {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .leading,
+  .trailing {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .leading {
+    @include navigation.leading;
+  }
+
+  .trailing {
+    @include typography.role("caption");
+
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // The current item: the nav marking.
+  .active {
+    @include selection.current;
+  }
+
+  // ============================================
+  // Group header
+  // ============================================
+
+  // The header row: a button when the group folds, a plain label when not.
+  .groupHeader {
+    @include button-reset;
+    @include navigation.section-row;
+
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    text-align: start;
+    cursor: default;
+  }
+
+  .groupHeaderInteractive {
+    @include action.motion;
+
+    cursor: pointer;
+
+    @include action.hover {
+      @include selection.hover-tint;
+
+      color: var(--fui-text-secondary, $fui-text-secondary);
+    }
+
+    @include focus.visible;
+  }
+
+  // The disclosure caret: ink 3, a quarter turn when open, turned for
+  // right-to-left pages.
+  .groupCaret {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+    block-size: var(--fui-icon-xs, #{measurements.target-value("icon", "xs")});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    transition: transform var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
+
+    &:dir(rtl) {
+      transform: rotate(180deg);
+    }
+
+    [data-panel-open] > & {
+      transform: rotate(90deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .groupLabel {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

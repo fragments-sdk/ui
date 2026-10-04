@@ -1,0 +1,333 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Slider",
+  "description": "Chooses a number, or a range with one thumb per value, along a track.",
+  "category": "inputs",
+  "tags": ["slider", "range", "input", "number", "control"],
+  "status": "stable",
+  "sourcePath": "src/components/Slider/index.tsx",
+  "exportName": "Slider",
+  "propsSummary": [
+    "label: string",
+    "helperText: string",
+    "invalid: boolean (default: false)",
+    "errorMessage: ReactNode",
+    "value: number | number[]",
+    "defaultValue: number | number[]",
+    "onValueChange: function",
+    "onValueCommitted: function",
+    "min: number (default: 0)",
+    "max: number (default: 100)",
+    "step: number (default: 1)",
+    "largeStep: number",
+    "showValue: boolean (default: false)",
+    "showValueOnDrag: boolean (default: false)",
+    "format: Intl.NumberFormatOptions",
+    "locale: string",
+    "size: \"sm\" | \"md\" | \"lg\" (default: md)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "name: string",
+    "form: string",
+    "thumbAlignment: \"center\" | \"edge\" | \"edge-client-only\"",
+    "getAriaLabel: function",
+    "aria-label: string",
+    "aria-labelledby: string",
+    "aria-describedby: string",
+    "id: string"
+  ],
+  "props": {
+    "label": {
+      "type": "string",
+      "description": "Visible label text. A slider needs a label, aria-label or aria-labelledby; there is no fallback name.",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the slider",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Whether the value fails validation. The track takes the danger edge and errorMessage shows under it with an icon.",
+      "default": "false",
+      "required": false
+    },
+    "errorMessage": {
+      "type": "ReactNode",
+      "description": "Message shown under the slider while invalid is true",
+      "required": false
+    },
+    "value": {
+      "type": "number | number[]",
+      "description": "Controlled value: a number, or an array for a range (one thumb per value)",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "number | number[]",
+      "description": "Default value for uncontrolled usage",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new value while the user moves a thumb: (value: number | number[]) => void",
+      "required": false
+    },
+    "onValueCommitted": {
+      "type": "function",
+      "description": "Called with the value when the user finishes an interaction",
+      "required": false
+    },
+    "min": {
+      "type": "number",
+      "description": "Minimum value",
+      "default": "0",
+      "required": false
+    },
+    "max": {
+      "type": "number",
+      "description": "Maximum value",
+      "default": "100",
+      "required": false
+    },
+    "step": {
+      "type": "number",
+      "description": "Step interval",
+      "default": "1",
+      "required": false
+    },
+    "largeStep": {
+      "type": "number",
+      "description": "Larger step for Page Up/Page Down and shift-arrow keys",
+      "required": false
+    },
+    "showValue": {
+      "type": "boolean",
+      "description": "Show the formatted value beside the label",
+      "default": "false",
+      "required": false
+    },
+    "showValueOnDrag": {
+      "type": "boolean",
+      "description": "Show the formatted value in a bubble above the thumb while dragging",
+      "default": "false",
+      "required": false
+    },
+    "format": {
+      "type": "Intl.NumberFormatOptions",
+      "description": "Number formatting for the shown value, the bubble and the announced value",
+      "required": false
+    },
+    "locale": {
+      "type": "string",
+      "description": "Locale for format; defaults to the runtime locale",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Height of the control strip, so a slider lines up with fields of the same size. The track and thumb keep one size.",
+      "default": "md",
+      "required": false,
+      "values": ["sm", "md", "lg"]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the slider",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Show the value without letting the user change it",
+      "default": "false",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the hidden input for form submission",
+      "required": false
+    },
+    "form": {
+      "type": "string",
+      "description": "ID of the form that owns the hidden input",
+      "required": false
+    },
+    "thumbAlignment": {
+      "type": "enum",
+      "description": "How the thumb aligns at the minimum and maximum edges",
+      "required": false,
+      "values": ["center", "edge", "edge-client-only"]
+    },
+    "getAriaLabel": {
+      "type": "function",
+      "description": "Accessible name for each thumb of a range, by index: (index: number) => string",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible label when the visible label is omitted",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "Accessible labelled-by relationship",
+      "required": false
+    },
+    "aria-describedby": {
+      "type": "string",
+      "description": "Accessible described-by relationship",
+      "required": false
+    },
+    "id": {
+      "type": "string",
+      "description": "ID of the slider root",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Any value along a range, where roughly right is good enough",
+      "Volume, brightness, opacity",
+      "Price and range filters",
+      "The effect is visible as the user drags"
+    ],
+    "whenNot": [
+      "An exact number matters (use Input type=\"number\")",
+      "A handful of fixed choices (use RadioGroup or Select)",
+      "On or off (use Switch)",
+      "A value the user cannot change here (show it as text, or set readOnly when it sits among editable fields)"
+    ],
+    "guidelines": [
+      "Label what the track controls",
+      "Turn on showValue whenever the number matters, and format it with Intl options instead of a string suffix",
+      "Set min and max to the real limits, not 0-100 by habit",
+      "Pick a step the user can actually land on",
+      "Give each thumb of a range its own name with getAriaLabel"
+    ],
+    "accessibility": [
+      "The visible label names every thumb; a range names each thumb with getAriaLabel",
+      "Arrow keys move the thumb; Page Up and Page Down move by largeStep",
+      "The formatted value is announced",
+      "An invalid slider shows an icon and words, wired to the thumb with aria-describedby",
+      "A read-only slider says so with aria-readonly"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "0-100 with no number shown.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider label=\"Volume\" defaultValue={50} />\n</div>"
+    },
+    {
+      "name": "With Value Display",
+      "description": "showValue prints the number opposite the label.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Opacity\"\n    defaultValue={0.75}\n    max={1}\n    step={0.05}\n    showValue\n    format={{ style: 'percent' }}\n  />\n</div>"
+    },
+    {
+      "name": "Custom Range",
+      "description": "min, max and step bound the track to real-world units.",
+      "code": "<div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  <Slider\n    label=\"Temperature\"\n    min={60}\n    max={80}\n    defaultValue={72}\n    showValue\n    format={{ style: 'unit', unit: 'fahrenheit' }}\n  />\n  <Slider\n    label=\"Timeout\"\n    min={5}\n    max={60}\n    step={5}\n    defaultValue={30}\n    showValue\n    format={{ style: 'unit', unit: 'second' }}\n  />\n</div>"
+    },
+    {
+      "name": "Range",
+      "description": "Two thumbs choose a span; each thumb has its own name.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Price\"\n    defaultValue={[20, 80]}\n    getAriaLabel={(index) => (index === 0 ? 'Minimum price' : 'Maximum price')}\n    format={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}\n    showValue\n  />\n</div>"
+    },
+    {
+      "name": "Controlled",
+      "description": "The parent owns the value and can react to every move.",
+      "code": "<ControlledSliderDemo />"
+    },
+    {
+      "name": "Drag Value Bubble",
+      "description": "The number floats above the thumb only while dragging.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider label=\"Mix\" defaultValue={40} showValueOnDrag />\n</div>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "A line below the track explains the trade-off.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Quality\"\n    defaultValue={80}\n    showValue\n    helperText=\"Higher quality increases file size\"\n  />\n</div>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The track takes the danger edge; the message has an icon and words.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Budget\"\n    defaultValue={90}\n    showValue\n    invalid\n    errorMessage=\"The cap for this plan is 75.\"\n  />\n</div>"
+    },
+    {
+      "name": "Read-only",
+      "description": "A dashed track; the thumb does not move.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider label=\"Seats\" defaultValue={12} max={20} showValue readOnly />\n</div>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Dimmed; the thumb will not move.",
+      "code": "<div style={{ width: '300px' }}>\n  <Slider\n    label=\"Locked Setting\"\n    defaultValue={30}\n    showValue\n    disabled\n  />\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for precise numeric entry"
+    },
+    {
+      "component": "Progress",
+      "relationship": "sibling",
+      "note": "Similar visual, but Progress is read-only"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: number | number[] - controlled value (an array is a range)",
+      "defaultValue: number | number[] - initial value",
+      "onValueChange: (value) => void - change handler",
+      "onValueCommitted: (value) => void - end of interaction",
+      "min/max: number - range bounds",
+      "step: number - increment size",
+      "label: string - field label",
+      "helperText: string - helper text below slider",
+      "invalid: boolean - fails validation; errorMessage: ReactNode - shown with an icon",
+      "readOnly: boolean - shows the value, refuses changes",
+      "showValue: boolean - display value",
+      "showValueOnDrag: boolean - show value bubble during drag",
+      "format: Intl.NumberFormatOptions - value formatting",
+      "getAriaLabel: (index) => string - per-thumb names for a range"
+    ],
+    "a11yRules": ["A11Y_LABEL_REQUIRED", "A11Y_KEYBOARD_ACCESSIBLE", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.141Z"
+  },
+  "cssVariables": [
+    "--fui-bg-primary",
+    "--fui-bg-secondary",
+    "--fui-border",
+    "--fui-color-danger-text",
+    "--fui-control-checked-bg",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-field-border",
+    "--fui-field-label-gap",
+    "--fui-icon-sm",
+    "--fui-radius-control",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": [
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    }
+  ]
+}

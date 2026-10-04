@@ -1,27 +1,47 @@
-import { defineBlock } from '@usefragments/core';
+import { defineBlock } from "@usefragments/core";
 
 export default defineBlock({
-  name: 'Login Form',
-  description: 'Email/password authentication form with card layout and footer links',
-  category: 'authentication',
-  components: ['Card', 'Stack', 'Input', 'Button', 'Text', 'Link'],
-  tags: ['auth', 'login', 'signin', 'form'],
+  name: "Login Form",
+  description: "Email and password sign-in on a card, with a pending submit and footer links",
+  category: "authentication",
+  components: ["Card", "Stack", "Field", "Input", "Button", "Text", "Link"],
+  tags: ["auth", "login", "signin", "form"],
   code: `
-<Card variant="solid">
+<Card>
   <Card.Header>
-    <Card.Title>Sign In</Card.Title>
-    <Card.Description>Welcome back! Please enter your details.</Card.Description>
+    <Card.Title>Sign in</Card.Title>
+    <Card.Description>Welcome back. Enter your email and password.</Card.Description>
   </Card.Header>
   <Card.Body>
-    <Stack gap="md">
-      <Input label="Email" type="email" placeholder="Enter your email" />
-      <Input label="Password" type="password" placeholder="Enter your password" />
-      <Link href="#" tone="neutral"><Text scale="sm">Forgot password?</Text></Link>
-      <Button variant="solid" fullWidth>Sign In</Button>
-    </Stack>
+    <form noValidate>
+      <Stack gap="md">
+        <Field>
+          <Field.Label>Email</Field.Label>
+          <Input type="email" name="email" autoComplete="email" placeholder="you@example.com" required />
+        </Field>
+        <Field>
+          <Field.Label>Password</Field.Label>
+          <Input
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            placeholder="Enter your password"
+            required
+          />
+        </Field>
+        <Stack direction="row" justify="end">
+          <Text>
+            <Link href="#" tone="neutral">Forgot password?</Link>
+          </Text>
+        </Stack>
+        <Button variant="solid" fullWidth type="submit">Sign in</Button>
+      </Stack>
+    </form>
   </Card.Body>
   <Card.Footer>
-    <Text scale="sm" color="tertiary">Don't have an account? <Link href="#">Sign up</Link></Text>
+    <Text color="tertiary">
+      Don't have an account? <Link href="#">Sign up</Link>
+    </Text>
   </Card.Footer>
 </Card>
 `.trim(),

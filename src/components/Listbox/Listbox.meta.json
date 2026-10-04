@@ -1,0 +1,179 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Listbox",
+  "description": "Shows an inline, keyboard-navigable list of options with no trigger of its own.",
+  "category": "inputs",
+  "tags": ["listbox", "search", "autocomplete", "combobox", "command", "dropdown"],
+  "status": "stable",
+  "sourcePath": "src/components/Listbox/index.tsx",
+  "exportName": "Listbox",
+  "propsSummary": [
+    "children: node (required)",
+    "value: string | string[]",
+    "defaultValue: string | string[]",
+    "onValueChange: function",
+    "multiple: boolean",
+    "disabled: boolean"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Listbox.Item, Listbox.Group, or Listbox.Empty components",
+      "required": true
+    },
+    "value": {
+      "type": "string | string[]",
+      "description": "Selected value (controlled); an array when multiple",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string | string[]",
+      "description": "Initially selected value (uncontrolled)",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the picked value, or the new array when multiple",
+      "required": false
+    },
+    "multiple": {
+      "type": "boolean",
+      "description": "Each pick toggles its option; value is an array",
+      "default": false,
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disables every option and removes the list from the tab order",
+      "default": false,
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Results under a search field",
+      "Autocomplete suggestions",
+      "Command palette results",
+      "Any list the user drives with arrow keys"
+    ],
+    "whenNot": [
+      "A list nobody selects from (use List)",
+      "Actions behind a button (use Menu)",
+      "A form field (use Select)",
+      "Navigation (use Sidebar or Tabs)"
+    ],
+    "guidelines": [
+      "Selection lives on the root: value / onValueChange, single or multiple",
+      "Give every Listbox.Item a value",
+      "Arrows, Home, End, Enter, and Space are handled for you",
+      "Always supply Listbox.Empty as a direct child for the no-match case",
+      "Group once the list draws from more than one source"
+    ],
+    "accessibility": [
+      "Uses listbox and option roles with aria-activedescendant; one row is highlighted at a time",
+      "aria-selected marks picks, and a check repeats it without colour",
+      "aria-multiselectable is set in multiple mode",
+      "Listbox.Empty is a status line beside the listbox, never a fake option",
+      "Connect to an input with aria-controls for the full combobox pattern"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Single selection owned by the root.",
+      "code": "<Listbox aria-label=\"Options\" defaultValue=\"first\">\n  <Listbox.Item value=\"first\">First option</Listbox.Item>\n  <Listbox.Item value=\"second\">Second option</Listbox.Item>\n  <Listbox.Item value=\"third\">Third option</Listbox.Item>\n</Listbox>"
+    },
+    {
+      "name": "Controlled",
+      "description": "The owner holds the value and hears every pick.",
+      "code": "const [repo, setRepo] = React.useState(\"web\");\n\n<Listbox aria-label=\"Repository\" value={repo} onValueChange={setRepo}>\n  <Listbox.Item value=\"web\">fragments-sdk/web</Listbox.Item>\n  <Listbox.Item value=\"api\">fragments-sdk/api</Listbox.Item>\n</Listbox>"
+    },
+    {
+      "name": "Multiple",
+      "description": "Each pick toggles; the value is an array.",
+      "code": "<Listbox aria-label=\"Labels\" multiple defaultValue={['bug', 'ui']}>\n  <Listbox.Item value=\"bug\">Bug</Listbox.Item>\n  <Listbox.Item value=\"ui\">UI</Listbox.Item>\n  <Listbox.Item value=\"docs\">Docs</Listbox.Item>\n</Listbox>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Labelled sections once the list draws from more than one source.",
+      "code": "<Listbox aria-label=\"Fruit\">\n  <Listbox.Group label=\"Orchard\">\n    <Listbox.Item value=\"apple\">Apple</Listbox.Item>\n    <Listbox.Item value=\"pear\">Pear</Listbox.Item>\n  </Listbox.Group>\n  <Listbox.Group label=\"Stone fruit\">\n    <Listbox.Item value=\"plum\">Plum</Listbox.Item>\n  </Listbox.Group>\n</Listbox>"
+    },
+    {
+      "name": "Empty State",
+      "description": "A status line, not an option.",
+      "code": "<Listbox aria-label=\"Search results\">\n  <Listbox.Empty>No results match \"zebra\".</Listbox.Empty>\n</Listbox>"
+    },
+    {
+      "name": "With Disabled Items",
+      "description": "A disabled option is skipped by the keyboard and never picked.",
+      "code": "<Listbox aria-label=\"Plan\">\n  <Listbox.Item value=\"pro\">Pro</Listbox.Item>\n  <Listbox.Item value=\"team\" disabled>Team</Listbox.Item>\n</Listbox>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Pair with Input for search/autocomplete patterns"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu when you need a trigger button"
+    },
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for form field selection"
+    },
+    {
+      "component": "List",
+      "relationship": "alternative",
+      "note": "Use List for static, non-interactive lists"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - Listbox.Item components (required)",
+      "aria-label: string - accessible label",
+      "value / onValueChange / multiple - root-owned selection",
+      "Listbox.Item value: string (required); disabled: boolean"
+    ],
+    "a11yRules": ["A11Y_LISTBOX_ROLE", "A11Y_OPTION_ROLE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item", "Group", "Empty", "Root"],
+    "requiredChildren": ["Item"],
+    "commonPatterns": [
+      "<Listbox aria-label=\"Search results\" value={selectedId} onValueChange={setSelectedId}>{results.map(item => <Listbox.Item key={item.id} value={item.id}>{item.label}</Listbox.Item>)}</Listbox>",
+      "<Listbox aria-label=\"Labels\" multiple value={labels} onValueChange={setLabels}>…</Listbox>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.924Z"
+  },
+  "cssVariables": [
+    "--fui-icon-xs",
+    "--fui-popup-indicator-box",
+    "--fui-popup-row-block-inset",
+    "--fui-popup-row-inline-inset",
+    "--fui-raw-space-8",
+    "--fui-text-primary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-disabled",
+      "value": "true",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-selected",
+      "value": "true",
+      "fixture": "populated"
+    }
+  ]
+}

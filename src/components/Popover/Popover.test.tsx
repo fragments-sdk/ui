@@ -2,6 +2,7 @@ import * as React from "react";
 import { describe, it, expect } from "vitest";
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { Popover } from "./index";
+import styles from "./Popover.module.scss";
 
 function renderPopover(props: Partial<React.ComponentProps<typeof Popover>> = {}) {
   return render(
@@ -114,7 +115,7 @@ describe("Popover", () => {
     });
   });
 
-  it("positions against an external anchor element and applies a custom positioner class", async () => {
+  it("positions against an external anchor element", async () => {
     const anchorEl = document.createElement("div");
     anchorEl.getBoundingClientRect = () =>
       ({
@@ -133,11 +134,7 @@ describe("Popover", () => {
     render(
       <Popover defaultOpen>
         <Popover.Trigger>Open</Popover.Trigger>
-        <Popover.Content
-          anchor={anchorEl}
-          positionMethod="fixed"
-          positionerClassName="fi-test-positioner"
-        >
+        <Popover.Content anchor={anchorEl} positionMethod="fixed">
           <p>Anchored content</p>
         </Popover.Content>
       </Popover>
@@ -146,9 +143,34 @@ describe("Popover", () => {
     await waitFor(() => {
       expect(screen.getByText("Anchored content")).toBeInTheDocument();
     });
-    expect(screen.getByText("Anchored content").closest(".fi-test-positioner")).not.toBeNull();
 
     document.body.removeChild(anchorEl);
+  });
+
+  it("renders a library control as the trigger through render", async () => {
+    const user = userEvent.setup();
+    render(
+      <Popover>
+        <Popover.Trigger render={<a href="#evidence" />}>Evidence</Popover.Trigger>
+        <Popover.Content size="sm">
+          <Popover.Title>Checked 4 minutes ago</Popover.Title>
+          <Popover.Footer>
+            <Popover.Close render={<button type="button" />}>Done</Popover.Close>
+          </Popover.Footer>
+        </Popover.Content>
+      </Popover>
+    );
+
+    await user.click(screen.getByText("Evidence"));
+    const title = await screen.findByText("Checked 4 minutes ago");
+    const surface = title.closest("[data-size]") as HTMLElement;
+    expect(surface).toHaveAttribute("data-size", "sm");
+    expect(surface).toHaveClass(styles.sm);
+
+    await user.click(screen.getByRole("button", { name: "Done" }));
+    await waitFor(() =>
+      expect(screen.queryByText("Checked 4 minutes ago")).not.toBeInTheDocument()
+    );
   });
 
   it("portals into a custom container instead of document.body", async () => {

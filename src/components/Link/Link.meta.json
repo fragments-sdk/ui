@@ -1,0 +1,155 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Link",
+  "description": "Navigates somewhere else, inline or in chrome, with real link semantics.",
+  "category": "navigation",
+  "tags": ["link", "anchor", "navigation", "href", "url"],
+  "status": "stable",
+  "sourcePath": "src/components/Link/index.tsx",
+  "exportName": "Link",
+  "propsSummary": [
+    "children: node (required)",
+    "tone: accent|neutral (default: accent)",
+    "external: boolean (default: false)",
+    "render: element | function",
+    "className: string",
+    "style: object",
+    "target: union",
+    "rel: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Link text content",
+      "required": true
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Colour. accent is the link ink; neutral reads in ink 1 and keeps it on hover",
+      "default": "accent",
+      "required": false,
+      "values": ["accent", "neutral"]
+    },
+    "external": {
+      "type": "boolean",
+      "description": "Opens in new tab with noopener noreferrer",
+      "default": "false",
+      "required": false
+    },
+    "render": {
+      "type": "union",
+      "description": "Replaces the rendered element (a router link); the look and props move onto it",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Inline styles",
+      "required": false
+    },
+    "target": {
+      "type": "union",
+      "description": "",
+      "required": false
+    },
+    "rel": {
+      "type": "string",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Inline links inside body text",
+      "Footer and sidebar navigation",
+      "\"Forgot password?\" and \"Sign up\" in forms",
+      "Pointing out to docs or external resources"
+    ],
+    "whenNot": [
+      "A main call to action — use Button",
+      "Switching views in place — use Tabs",
+      "Dropdown items — use Menu"
+    ],
+    "guidelines": [
+      "Name the destination; never \"click here\"",
+      "external sets target and rel; add your own \"opens in a new tab\" cue",
+      "Always underlined: one hairline at the shared offset, so a link never relies on colour alone",
+      "tone=\"neutral\" for quiet links in dense copy and footers",
+      "render={<RouterLink />} for client-side navigation"
+    ],
+    "accessibility": [
+      "The link text alone should make sense out of context",
+      "Say when a link opens a new window",
+      "Focus ring must stay visible",
+      "A link that looks like a button still needs link semantics"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "The link ink, always underlined.",
+      "code": "<Link href=\"#\">Learn more about our services</Link>"
+    },
+    {
+      "name": "Tones",
+      "description": "The link ink, then the neutral ink.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Link href=\"#\" tone=\"accent\">Accent</Link>\n  <Link href=\"#\" tone=\"neutral\">Neutral</Link>\n</Stack>"
+    },
+    {
+      "name": "External Link",
+      "description": "Sets target and rel; you still supply the visible cue.",
+      "code": "<Link href=\"https://example.com\" external>\n  View documentation ↗\n</Link>"
+    },
+    {
+      "name": "Render",
+      "description": "Moves the look onto a router link.",
+      "code": "import RouterLink from \"next/link\";\n\n<Link render={<RouterLink href=\"/pricing\" />}>Client-side navigation</Link>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "alternative",
+      "note": "Use Button for primary actions, Link for navigation"
+    },
+    {
+      "component": "Text",
+      "relationship": "parent",
+      "note": "Links often appear within Text components"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - link text (required)",
+      "href: string - destination URL",
+      "tone: accent|neutral - colour",
+      "external: boolean - opens in new tab",
+      "render: element | function - replaces the rendered element (router links)"
+    ],
+    "a11yRules": ["A11Y_LINK_TEXT", "A11Y_LINK_FOCUS"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.546Z"
+  },
+  "cssVariables": [
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-link-ink",
+    "--fui-link-underline-offset",
+    "--fui-radius-indicator",
+    "--fui-stroke-hairline",
+    "--fui-text-primary"
+  ],
+  "attributes": []
+}

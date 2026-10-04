@@ -1,0 +1,69 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/overlay" as overlay;
+
+@layer fui.tokens, fui.base, fui.components;
+
+// The Dialog sheet without a corner X: an alert dialog is answered, never
+// waved away.
+@layer fui.components {
+  .backdrop {
+    @include overlay.backdrop;
+    @include overlay.motion;
+  }
+
+  .positioner {
+    @include overlay.safe-viewport;
+
+    position: fixed;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(
+        --_fui-overlay-safe-top,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      )
+      var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+    padding-inline: var(
+        --_fui-overlay-safe-left,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      )
+      var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  }
+
+  .popup {
+    @include overlay.modal-shell;
+
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: overlay.dialog-max("sm");
+
+    @include overlay.motion;
+  }
+
+  .md {
+    max-inline-size: overlay.dialog-max("md");
+  }
+
+  .header {
+    @include overlay.header;
+  }
+
+  .title {
+    @include overlay.modal-title;
+  }
+
+  .description {
+    @include overlay.description;
+  }
+
+  .body {
+    @include overlay.body;
+  }
+
+  .footer {
+    @include overlay.footer;
+  }
+}

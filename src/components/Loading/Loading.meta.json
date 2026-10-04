@@ -1,0 +1,104 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Loading",
+  "description": "Signals an indeterminate wait with a delayed spinner in the surrounding text color.",
+  "category": "feedback",
+  "tags": ["loading", "spinner", "progress", "feedback", "indicator", "async"],
+  "status": "stable",
+  "sourcePath": "src/components/Loading/index.tsx",
+  "exportName": "Loading",
+  "propsSummary": [
+    "label: string (default: Loading…)",
+    "inline: boolean (default: false)",
+    "fill: boolean (default: false)",
+    "delay: number (default: 1000)"
+  ],
+  "props": {
+    "label": {
+      "type": "string",
+      "description": "What is loading, read by screen readers",
+      "default": "Loading…",
+      "required": false
+    },
+    "inline": {
+      "type": "boolean",
+      "description": "Size the spinner to the surrounding text (1em) so it sits inside a line",
+      "default": "false",
+      "required": false
+    },
+    "fill": {
+      "type": "boolean",
+      "description": "Fill the parent and centre the spinner in it",
+      "default": "false",
+      "required": false
+    },
+    "delay": {
+      "type": "number",
+      "description": "Milliseconds of quiet before the spinner shows; 0 when the caller already waited",
+      "default": "1000",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Waiting on an async action where the result will appear",
+      "The first paint of an app (Loading.Screen)",
+      "A short wait inside a line of text (inline)"
+    ],
+    "whenNot": [
+      "You know the percentage: use Progress",
+      "You know the shape of the result: use Skeleton",
+      "An assistant working on a reply: use ThinkingIndicator"
+    ],
+    "guidelines": [
+      "One spinner, one size; it takes the ink of whatever it sits in",
+      "Nothing shows for the first second; work that finishes sooner shows nothing",
+      "Dim the content in place rather than covering it",
+      "Name the wait in the label: \"Loading findings\", not \"Loading\""
+    ],
+    "accessibility": [
+      "role=\"status\" with the label as its name and as hidden text once the spinner shows",
+      "The spinner keeps turning under reduced motion: it is progress, not decoration"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "A spinner where the result will appear, after a second of quiet.",
+      "code": "<Loading label=\"Loading findings\" />"
+    },
+    {
+      "name": "Inline",
+      "description": "Sized to the text it sits in.",
+      "code": "<p>\n  Checking the request <Loading inline label=\"Checking the request\" />\n</p>"
+    },
+    {
+      "name": "Fill",
+      "description": "Fills the slot the result will take and centres in it.",
+      "code": "<div style={{ height: 120 }}>\n  <Loading fill label=\"Loading the chart\" />\n</div>"
+    },
+    {
+      "name": "Screen",
+      "description": "The whole view is waiting on first paint.",
+      "code": "<Loading.Screen label=\"Opening the workspace\" showLabel />"
+    }
+  ],
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Screen"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.576Z"
+  },
+  "cssVariables": ["--fui-app-canvas-bg", "--fui-overlay-layer-modal", "--fui-text-secondary"],
+  "attributes": [
+    {
+      "name": "data-shown",
+      "value": "true",
+      "fixture": "loading"
+    }
+  ]
+}

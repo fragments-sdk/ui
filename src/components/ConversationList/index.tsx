@@ -1,46 +1,46 @@
 "use client";
 
 import * as React from "react";
-import styles from "./ConversationList.module.scss";
+import { WarningCircle } from "@phosphor-icons/react";
+import { Button } from "../Button";
+import { Icon } from "../Icon";
 import { Loading } from "../Loading";
+import styles from "./ConversationList.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type AutoScrollBehavior = boolean | "smart";
+/** `"smart"` follows new content while the reader is at the end; `false` never moves the reader. */
+export type AutoScrollBehavior = "smart" | false;
+
+/** Where earlier messages stand: nothing to show, loading, or failed. */
+export type ConversationHistory = "idle" | "loading" | "error";
 
 export interface ConversationListProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Message components */
+  /** Messages, events and the thinking indicator. */
   children: React.ReactNode;
-  /** Show avatars for messages and typing indicators in this conversation */
-  showAvatars?: boolean;
-  /** Auto-scroll behavior: true (always), false (never), or 'smart' (only when near bottom) */
+  /** Accessible name of the log. @default "Conversation" */
+  label?: string;
+  /** Follow new content while the reader is at the end. @default "smart" */
   autoScroll?: AutoScrollBehavior;
-  /** Callback when user scrolls to top (for loading history) */
-  onScrollTop?: (event?: React.UIEvent<HTMLDivElement>) => void;
-  /** Show loading spinner at top when loading history */
-  loadingHistory?: boolean;
-  /** Content to show when conversation is empty */
+  /** Called when the reader reaches the top, to load earlier messages. */
+  onScrollTop?: () => void;
+  /** Where earlier messages stand. @default "idle" */
+  history?: ConversationHistory;
+  /** Retry loading earlier messages after `history="error"`. */
+  onRetryHistory?: () => void;
+  /** What shows when there are no messages. */
   emptyState?: React.ReactNode;
-  /** Threshold in pixels from top to trigger onScrollTop */
-  scrollTopThreshold?: number;
-  /** Threshold in pixels from bottom for smart auto-scroll */
-  scrollBottomThreshold?: number;
 }
 
-export interface DateSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Date to display */
-  date: Date;
-  /** Custom format function */
+export interface ConversationListEventProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** A date for a day break; formatted as Today, Yesterday or the date. */
+  date?: Date;
+  /** Custom date format. */
   format?: (date: Date) => string;
-}
-
-export interface TypingIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Who is typing */
-  name?: string;
-  /** Custom avatar */
-  avatar?: React.ReactNode;
+  /** What happened (a model switch, a joined user). Wins over `date`. */
+  children?: React.ReactNode;
 }
 
 // ============================================
@@ -48,18 +48,14 @@ export interface TypingIndicatorProps extends React.HTMLAttributes<HTMLDivElemen
 // ============================================
 
 interface ConversationListContextValue {
+  /** Scroll to the newest content and follow it again. */
   scrollToBottom: () => void;
-  showAvatars: boolean;
 }
 
 const ConversationListContext = React.createContext<ConversationListContextValue | null>(null);
 
-export function useOptionalConversationList() {
-  return React.useContext(ConversationListContext);
-}
-
 export function useConversationList() {
-  const context = useOptionalConversationList();
+  const context = React.useContext(ConversationListContext);
   if (!context) {
     throw new Error("useConversationList must be used within a ConversationList");
   }
@@ -67,189 +63,245 @@ export function useConversationList() {
 }
 
 // ============================================
-// Helper Functions
+// Helpers
 // ============================================
 
-function formatDateSeparator(date: Date): string {
+/** How close to the end still counts as "at the end". */
+const FOLLOW_DISTANCE = 64;
+
+function formatEventDate(date: Date): string {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today.getTime() - 86400000);
-  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  if (day.getTime() === today.getTime()) return "Today";
+  if (day.getTime() === yesterday.getTime()) return "Yesterday";
+  return date.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+}
 
-  if (dateOnly.getTime() === today.getTime()) {
-    return "Today";
-  }
-  if (dateOnly.getTime() === yesterday.getTime()) {
-    return "Yesterday";
-  }
+interface Anchor {
+  element: Element;
+  offset: number;
+}
 
-  return date.toLocaleDateString(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
+/**
+ * Chat scrolling: follow the end while the reader is there, hold the reader's
+ * place (anchored to the first visible item) when they scroll up, count what
+ * arrives meanwhile, and keep the anchor when earlier messages are prepended or
+ * the space around the log changes.
+ */
+function useChatScroll(autoScroll: AutoScrollBehavior) {
+  const scrollerRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const following = React.useRef(autoScroll === "smart");
+  const anchor = React.useRef<Anchor | null>(null);
+  const measured = React.useRef({ scrollHeight: 0, clientHeight: 0 });
+  const [away, setAway] = React.useState(false);
+  const [unread, setUnread] = React.useState(0);
+
+  const remember = React.useCallback(() => {
+    const scroller = scrollerRef.current;
+    const content = contentRef.current;
+    if (!scroller || !content) return;
+    measured.current = { scrollHeight: scroller.scrollHeight, clientHeight: scroller.clientHeight };
+    const top = scroller.getBoundingClientRect().top;
+    const first = Array.from(content.children).find(
+      (child) => child.getBoundingClientRect().bottom > top
+    );
+    anchor.current = first
+      ? { element: first, offset: first.getBoundingClientRect().top - top }
+      : null;
+  }, []);
+
+  const settle = React.useCallback(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    if (following.current) {
+      scroller.scrollTop = scroller.scrollHeight;
+    } else if (anchor.current?.element.isConnected) {
+      const top = scroller.getBoundingClientRect().top;
+      const now = anchor.current.element.getBoundingClientRect().top - top;
+      scroller.scrollTop += now - anchor.current.offset;
+    }
+    remember();
+  }, [remember]);
+
+  const scrollToBottom = React.useCallback(() => {
+    following.current = true;
+    setAway(false);
+    setUnread(0);
+    settle();
+  }, [settle]);
+
+  const onScroll = React.useCallback(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const { scrollHeight, clientHeight } = measured.current;
+    if (scroller.scrollHeight !== scrollHeight || scroller.clientHeight !== clientHeight) {
+      // The layout moved, not the reader.
+      settle();
+      return;
+    }
+    const distance = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight;
+    const atEnd = distance < FOLLOW_DISTANCE;
+    following.current = autoScroll === "smart" && atEnd;
+    setAway(!atEnd);
+    if (atEnd) setUnread(0);
+    remember();
+  }, [autoScroll, remember, settle]);
+
+  React.useEffect(() => {
+    following.current = autoScroll === "smart" && following.current;
+  }, [autoScroll]);
+
+  React.useLayoutEffect(() => {
+    settle();
   });
+
+  React.useEffect(() => {
+    const scroller = scrollerRef.current;
+    const content = contentRef.current;
+    if (!scroller || !content) return;
+    const resize = new ResizeObserver(() => settle());
+    resize.observe(scroller);
+    resize.observe(content);
+    const mutation = new MutationObserver((records) => {
+      if (following.current) return;
+      let added = 0;
+      for (const record of records) {
+        if (record.target !== content || record.nextSibling !== null) continue;
+        record.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) added += 1;
+        });
+      }
+      if (added > 0) setUnread((count) => count + added);
+    });
+    mutation.observe(content, { childList: true });
+    return () => {
+      resize.disconnect();
+      mutation.disconnect();
+    };
+  }, [settle]);
+
+  return { scrollerRef, contentRef, onScroll, scrollToBottom, away, unread };
 }
 
 // ============================================
-// Sub-components
+// Parts
 // ============================================
 
-function DateSeparator({
+function ConversationListEvent({
   date,
   format: customFormat,
+  children,
   className,
   ...htmlProps
-}: DateSeparatorProps) {
-  const formatted = customFormat ? customFormat(date) : formatDateSeparator(date);
-
-  const classes = [styles.dateSeparator, className].filter(Boolean).join(" ");
-
+}: ConversationListEventProps) {
+  const classes = [styles.event, className].filter(Boolean).join(" ");
+  let text: React.ReactNode = children;
+  if (text == null && date) {
+    text = (
+      <time dateTime={date.toISOString()}>
+        {customFormat ? customFormat(date) : formatEventDate(date)}
+      </time>
+    );
+  }
   return (
-    <div {...htmlProps} className={classes} role="separator">
-      <span className={styles.dateSeparatorLine} />
-      <span className={styles.dateSeparatorText}>{formatted}</span>
-      <span className={styles.dateSeparatorLine} />
-    </div>
-  );
-}
-
-function TypingIndicator({
-  name = "Assistant",
-  avatar,
-  className,
-  ...htmlProps
-}: TypingIndicatorProps) {
-  const showAvatar = (useOptionalConversationList()?.showAvatars ?? true) && Boolean(avatar);
-  const classes = [styles.typingIndicator, !showAvatar && styles.withoutAvatar, className]
-    .filter(Boolean)
-    .join(" ");
-
-  return (
-    <div {...htmlProps} className={classes} role="status" aria-label={`${name} is typing`}>
-      {showAvatar && <div className={styles.typingAvatar}>{avatar}</div>}
-      <div className={styles.typingContent}>
-        <Loading
-          size="sm"
-          kind="dots"
-          color="muted"
-          label=""
-          role="presentation"
-          aria-hidden="true"
-        />
-      </div>
+    <div {...htmlProps} className={classes}>
+      <span className={styles.eventLine} aria-hidden="true" />
+      <span className={styles.eventText}>{text}</span>
+      <span className={styles.eventLine} aria-hidden="true" />
     </div>
   );
 }
 
 // ============================================
-// Main Component
+// Root
 // ============================================
 
 function ConversationListRoot({
   children,
-  showAvatars = true,
+  label = "Conversation",
   autoScroll = "smart",
   onScrollTop,
-  loadingHistory = false,
+  history = "idle",
+  onRetryHistory,
   emptyState,
-  scrollTopThreshold = 50,
-  scrollBottomThreshold = 100,
   className,
+  onScroll: userOnScroll,
   ...htmlProps
 }: ConversationListProps) {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
-  const isNearBottomRef = React.useRef(true);
-  const userOnScroll = htmlProps.onScroll;
+  const { scrollerRef, contentRef, onScroll, scrollToBottom, away, unread } =
+    useChatScroll(autoScroll);
 
-  // Check if user is near the bottom
-  const checkIsNearBottom = React.useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return true;
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    userOnScroll?.(event);
+    onScroll();
+    const scroller = scrollerRef.current;
+    if (onScrollTop && history === "idle" && scroller && scroller.scrollTop <= FOLLOW_DISTANCE) {
+      onScrollTop();
+    }
+  };
 
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    return scrollHeight - scrollTop - clientHeight <= scrollBottomThreshold;
-  }, [scrollBottomThreshold]);
-
-  // Scroll to bottom
-  const scrollToBottom = React.useCallback((behavior: ScrollBehavior = "smooth") => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior,
-    });
-  }, []);
-
-  // Handle scroll events
-  const handleScroll = React.useCallback(
-    (event: React.UIEvent<HTMLDivElement>) => {
-      userOnScroll?.(event);
-      if (event.defaultPrevented) return;
-
-      const container = containerRef.current;
-      if (!container) return;
-
-      // Update near-bottom status for smart scroll
-      isNearBottomRef.current = checkIsNearBottom();
-
-      // Check for scroll-to-top (history loading)
-      if (onScrollTop && container.scrollTop <= scrollTopThreshold) {
-        onScrollTop(event);
-      }
-    },
-    [checkIsNearBottom, onScrollTop, scrollTopThreshold, userOnScroll]
-  );
-
-  // Keep the reader at the newest content as the conversation grows.
-  //
-  // Child count is the wrong signal for this. A list whose messages are wrapped
-  // in a single element — a measured column, a virtualiser, a fragment the
-  // caller maps into — never changes count, so the list would pin once on mount
-  // and never again. And even when the count does change, the height keeps
-  // moving afterwards: markdown reflows, images decode, syntax highlighting
-  // lands, a streaming reply grows a character at a time. Rendered height is
-  // what actually moves the bottom of the list, so that is what this watches.
-  React.useEffect(() => {
-    const content = contentRef.current;
-    if (!content || !autoScroll) return;
-
-    // Instant, not smooth: while a reply streams this fires on every frame of
-    // growth, and overlapping smooth scrolls fight each other into a stutter.
-    // The context's scrollToBottom() stays smooth for deliberate jumps.
-    const observer = new ResizeObserver(() => {
-      if (autoScroll === true || isNearBottomRef.current) scrollToBottom("instant");
-    });
-    observer.observe(content);
-    return () => observer.disconnect();
-  }, [autoScroll, scrollToBottom]);
-
-  const contextValue = React.useMemo<ConversationListContextValue>(
-    () => ({
-      scrollToBottom,
-      showAvatars,
-    }),
-    [scrollToBottom, showAvatars]
-  );
-
+  const contextValue = React.useMemo(() => ({ scrollToBottom }), [scrollToBottom]);
   const hasChildren = React.Children.count(children) > 0;
-
-  const classes = [styles.conversationList, className].filter(Boolean).join(" ");
+  const classes = [styles.root, className].filter(Boolean).join(" ");
+  const jumpLabel =
+    unread > 0 ? `${unread} new ${unread === 1 ? "message" : "messages"}` : "Jump to latest";
 
   return (
     <ConversationListContext.Provider value={contextValue}>
-      <div {...htmlProps} ref={containerRef} className={classes} onScroll={handleScroll}>
-        {loadingHistory && (
-          <div className={styles.loadingHistory}>
-            <Loading size="md" kind="spinner" color="muted" label="Loading history" />
-            <span>Loading history...</span>
+      <div className={classes}>
+        {/* Earlier messages: in flow above the log, so the row is on screen while the log
+            holds its place at the end, never scrolled out of view above it. */}
+        {history === "loading" && (
+          <div className={styles.history} role="status">
+            <Loading
+              delay={0}
+              inline
+              label="Loading history…"
+              aria-hidden="true"
+              role="presentation"
+            />
+            <span>Loading history…</span>
           </div>
         )}
-
-        <div ref={contentRef} className={styles.content}>
-          {hasChildren ? children : emptyState}
+        {history === "error" && (
+          <div className={styles.historyError}>
+            <span className={styles.historyErrorIcon} aria-hidden="true">
+              <Icon icon={WarningCircle} size="md" />
+            </span>
+            <p className={styles.historyErrorWords}>Couldn&apos;t load earlier messages.</p>
+            {onRetryHistory && (
+              <div className={styles.historyErrorActions}>
+                <Button variant="soft" size="sm" onClick={onRetryHistory}>
+                  Retry
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+        <div
+          {...htmlProps}
+          ref={scrollerRef}
+          className={styles.scroller}
+          role="log"
+          aria-live="polite"
+          aria-label={label}
+          tabIndex={0}
+          onScroll={handleScroll}
+        >
+          <div ref={contentRef} className={styles.content}>
+            {hasChildren ? children : emptyState}
+          </div>
         </div>
+        {autoScroll === "smart" && away && (
+          <div className={styles.jump}>
+            <Button variant="soft" size="sm" onClick={scrollToBottom}>
+              {jumpLabel}
+            </Button>
+          </div>
+        )}
       </div>
     </ConversationListContext.Provider>
   );
@@ -260,8 +312,5 @@ function ConversationListRoot({
 // ============================================
 
 export const ConversationList = Object.assign(ConversationListRoot, {
-  DateSeparator,
-  TypingIndicator,
+  Event: ConversationListEvent,
 });
-
-export { ConversationListRoot, DateSeparator, TypingIndicator };

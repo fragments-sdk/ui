@@ -1,0 +1,179 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "IconButton",
+  "description": "Runs an action or toggles state from an icon in toolbars and table rows.",
+  "category": "actions",
+  "tags": ["action", "button", "icon", "toolbar", "interactive"],
+  "status": "stable",
+  "sourcePath": "src/components/IconButton/index.tsx",
+  "exportName": "IconButton",
+  "propsSummary": [
+    "children: node (required)",
+    "variant: ghost|soft (default: ghost)",
+    "size: xs|sm|md|lg (default: md)",
+    "pressed: boolean",
+    "defaultPressed: boolean",
+    "onPressedChange: (pressed) => void",
+    "pending: boolean",
+    "render: element | (props) => element",
+    "aria-label: string",
+    "aria-labelledby: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Icon element rendered inside the button",
+      "required": true
+    },
+    "variant": {
+      "type": "enum",
+      "description": "ghost is transparent at rest; soft is the neutral tint shared with Button soft",
+      "default": "ghost",
+      "required": false,
+      "values": ["ghost", "soft"]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Square control on the one track: xs 24, sm 28, md 32, lg 40",
+      "default": "md",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    },
+    "pressed": {
+      "type": "boolean",
+      "description": "Controlled pressed state; any of pressed, defaultPressed or onPressedChange makes the button a toggle with aria-pressed",
+      "required": false
+    },
+    "defaultPressed": {
+      "type": "boolean",
+      "description": "Initial pressed state of an uncontrolled toggle",
+      "required": false
+    },
+    "onPressedChange": {
+      "type": "function",
+      "description": "Called with the next pressed state",
+      "required": false
+    },
+    "pending": {
+      "type": "boolean",
+      "description": "Work is running: aria-busy, presses ignored, a spinner replaces the glyph after a second",
+      "required": false
+    },
+    "render": {
+      "type": "node",
+      "description": "Replace the rendered element, e.g. an anchor or a router link; a rendered anchor keeps link semantics and takes the look, pending and disabled behaviour",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible action name when no labelled-by relationship is available",
+      "required": false
+    },
+    "aria-labelledby": {
+      "type": "string",
+      "description": "ID reference for an external accessible action label",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Toolbars and top bars where text buttons crowd",
+      "Row actions too narrow for a label",
+      "Toggle actions that show a pressed state"
+    ],
+    "whenNot": [
+      "The action needs a visible label — use Button",
+      "It flips a persistent setting — use Switch",
+      "The icon is decorative — use Icon"
+    ],
+    "guidelines": [
+      "aria-label or aria-labelledby is required, every time",
+      "The only icon-only control: never a Button wrapping a lone icon",
+      "ghost for ordinary toolbar actions; soft when it needs a touch more weight",
+      "pressed only for real toggle state; it paints the selection wash and ring",
+      "xs for in-row actions; it still reaches the hit-area floor",
+      "Keep icon meaning obvious, or pair it with a Tooltip"
+    ],
+    "accessibility": [
+      "Name the action, not the icon: \"Delete row\", not \"Trash\"",
+      "Pressed state is exposed via aria-pressed",
+      "Pending sets aria-busy",
+      "Hit target stays at least 24px even at size=\"xs\""
+    ]
+  },
+  "examples": [
+    {
+      "name": "Toolbar action",
+      "description": "Icon carries the action; the label lives in aria-label.",
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Add item\">\n  <PlusIcon aria-hidden />\n</IconButton>"
+    },
+    {
+      "name": "Variants",
+      "description": "Transparent, then the neutral tint.",
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" variant=\"ghost\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" variant=\"soft\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
+    },
+    {
+      "name": "Sizes",
+      "description": "xs for in-row actions, lg for primary chrome.",
+      "code": "import { Plus as PlusIcon } from '@phosphor-icons/react';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <IconButton aria-label=\"Add item\" size=\"xs\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" size=\"sm\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" size=\"md\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n  <IconButton aria-label=\"Add item\" size=\"lg\">\n    <PlusIcon aria-hidden />\n  </IconButton>\n</Stack>"
+    },
+    {
+      "name": "Toggle",
+      "description": "A real toggle: the pressed state is owned by the caller and reported through aria-pressed.",
+      "code": "import { PushPin as PinIcon } from '@phosphor-icons/react';\n\nconst [pinned, setPinned] = React.useState(false);\n\n<IconButton aria-label=\"Pin item\" pressed={pinned} onPressedChange={setPinned}>\n  <PinIcon aria-hidden />\n</IconButton>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Unavailable action, out of the tab order.",
+      "code": "import { Trash as TrashIcon } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Delete row\" disabled>\n  <TrashIcon aria-hidden />\n</IconButton>"
+    },
+    {
+      "name": "Pending",
+      "description": "Work is running; the spinner takes the glyph's place.",
+      "code": "import { ArrowsClockwise } from '@phosphor-icons/react';\n\n<IconButton aria-label=\"Syncing\" pending>\n  <ArrowsClockwise aria-hidden />\n</IconButton>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "sibling",
+      "note": "Use Button when the action should have a visible text label or broader layout variants"
+    },
+    {
+      "component": "Icon",
+      "relationship": "complementary",
+      "note": "Icon supplies the visual glyph rendered inside IconButton"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - icon element (required)",
+      "variant: ghost|soft - visual treatment",
+      "size: xs|sm|md|lg - square control size",
+      "pressed/defaultPressed/onPressedChange - a real toggle exposed with aria-pressed",
+      "pending: boolean - aria-busy, presses ignored",
+      "aria-label or aria-labelledby - required accessible name"
+    ],
+    "a11yRules": ["A11Y_BTN_LABEL", "A11Y_BTN_FOCUS", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-07-14T00:00:00.000Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-button-soft-border",
+    "--fui-radius-control",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

@@ -1,0 +1,57 @@
+@use "../tokens/variables" as tokens;
+
+// The one focus geometry: a solid outline at the ring width, the ring offset
+// outside the control, in the ring colour, never cut by a clipping parent. An
+// outline follows the element's corners, so its radius is the control radius
+// plus the offset. It is never transitioned, and under forced colours it stays,
+// in Highlight.
+
+$_width: var(--fui-focus-ring-width, #{tokens.$fui-focus-ring-width});
+$_offset: var(--fui-focus-ring-offset, #{tokens.$fui-focus-ring-offset});
+$_color: var(--fui-focus-ring-color, #{tokens.$fui-focus-ring-color});
+
+/// The ring itself, for a rule that already matches the focused state.
+@mixin ring {
+  outline: $_width solid $_color;
+  outline-offset: $_offset;
+
+  @media (forced-colors: active) {
+    outline-color: var(--fui-focus-ring-color, Highlight);
+  }
+}
+
+/// The ring drawn inside the edge, for a control inside a clipping container
+/// (a scroll viewport, a bordered table) that would cut an outside ring.
+@mixin ring-inset {
+  @include ring;
+
+  outline-offset: calc(-1 * #{$_offset});
+}
+
+/// Keyboard focus draws the ring; `$inset` draws it inside the edge.
+@mixin visible($inset: false) {
+  &:focus-visible {
+    @if $inset {
+      @include ring-inset;
+    } @else {
+      @include ring;
+    }
+  }
+}
+
+/// A focusable element whose ring is drawn by another box: a text input whose
+/// shell rings through `:focus-within`, a switch whose track carries the ring.
+/// Only this recipe removes an outline.
+@mixin delegated {
+  outline: none;
+}
+
+/// A pick-list row (menu, select, combobox, command) that takes roving focus:
+/// its keyboard focus is the highlight (Still-Menus), drawn by the popup
+/// recipe, and the popup container is the focus boundary. A row that is a real
+/// tab stop (a link in a nav panel) sets the ring after this.
+@mixin highlight-row {
+  &:focus-visible {
+    @include delegated;
+  }
+}

@@ -1,26 +1,28 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Pagination } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Pagination } from ".";
 
 /**
  * Page navigation for paginated data. Compose with `Pagination.Previous`,
- * `Pagination.Items`, and `Pagination.Next`. Supports controlled/uncontrolled
- * state plus edge and sibling count customization.
+ * `Pagination.Items`, and `Pagination.Next`. The first and last page always
+ * show; `siblingCount` sets how many neighbours of the current page show.
  */
 const meta = {
-  title: 'Navigation/Pagination',
+  title: "Navigation/Pagination",
   component: Pagination,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Page navigation controls for paginated data sets.',
+        component: "Page navigation controls for paginated data sets.",
       },
     },
+  },
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md"] },
   },
   args: {
     totalPages: 10,
     defaultPage: 1,
-    edgeCount: 1,
     siblingCount: 1,
     children: (
       <>
@@ -47,8 +49,8 @@ export const Default: Story = {
   ),
 };
 
-export const WithEdgePages: Story = {
-  args: { totalPages: 20, defaultPage: 10, edgeCount: 2, siblingCount: 1 },
+export const ManyPages: Story = {
+  args: { totalPages: 20, defaultPage: 10, siblingCount: 1 },
   render: (args) => (
     <Pagination {...args}>
       <Pagination.Previous />
@@ -59,7 +61,22 @@ export const WithEdgePages: Story = {
 };
 
 export const Compact: Story = {
-  args: { totalPages: 20, defaultPage: 10, siblingCount: 0 },
+  args: { totalPages: 20, defaultPage: 10, siblingCount: 0, size: "sm" },
+  render: (args) => (
+    <Pagination {...args}>
+      <Pagination.Previous />
+      <Pagination.Items />
+      <Pagination.Next />
+    </Pagination>
+  ),
+};
+
+export const LinkPages: Story = {
+  args: {
+    totalPages: 8,
+    defaultPage: 3,
+    renderLink: (page: number) => <a href={`?page=${page}`} />,
+  },
   render: (args) => (
     <Pagination {...args}>
       <Pagination.Previous />

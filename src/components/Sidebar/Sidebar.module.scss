@@ -4,665 +4,480 @@
 @use "../../recipes/action" as action;
 @use "../../recipes/navigation" as navigation;
 @use "../../recipes/overlay" as overlay;
+@use "../../recipes/selection";
 @use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
+@use "../../recipes/working";
+@use "../../recipes/focus";
 
 $_gutter: navigation.gutter();
 $_leading-box: navigation.leading-box();
-$_active-rail: navigation.active-rail();
+$_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+$_line: $_hairline solid var(--fui-border, #{$fui-border});
+$_current-wash: var(
+  --fui-sidebar-item-active-bg,
+  var(--fui-control-selected-bg, #{$fui-control-selected-bg})
+);
+$_current-ring: var(
+  --fui-sidebar-item-active-border,
+  var(--fui-control-selected-border, #{$fui-control-selected-border})
+);
+$_hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
 
-.root {
+// The rail and the mobile panel share these reads of the public
+// `--fui-sidebar-item-*` hooks (declared in tokens/_variables.scss).
+@mixin _inks {
   @include navigation.properties;
 
-  // Folded reads of the public `--fui-sidebar-item-*` hooks (declared in
-  // tokens/_variables.scss); every read below carries the Sass twin.
-  --fui-sidebar-muted: var(
+  --_fui-sidebar-ink: var(
     --fui-sidebar-item-color,
     var(--fui-text-secondary, #{$fui-text-secondary})
   );
-  --fui-sidebar-faint: var(
+  --_fui-sidebar-glyph: var(
     --fui-sidebar-item-icon-color,
     var(--fui-text-tertiary, #{$fui-text-tertiary})
   );
-  --fui-sidebar-hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  --fui-sidebar-active-bg: var(
-    --fui-sidebar-item-active-bg,
-    var(--fui-control-selected-bg, #{$fui-control-selected-bg})
+  --_fui-sidebar-current-ink: var(
+    --fui-sidebar-item-active-color,
+    var(--fui-text-primary, #{$fui-text-primary})
   );
-  --fui-sidebar-active-border: var(--fui-sidebar-item-active-border, transparent);
+}
 
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: var(--sidebar-width);
-  height: 100%;
-  background: var(--fui-sidebar-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
-  border-inline-end: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
-  transition: width var(--fui-transition-normal, $fui-transition-normal);
-  overflow: hidden;
-  flex-shrink: 0;
+@layer fui.tokens, fui.base, fui.components;
 
-  // Prevent flash on mobile before JS hydrates
-  @include below-md {
-    &:not(.mobile) {
-      position: fixed;
-      transform: translateX(-100%);
+@layer fui.components {
+  @include working.keyframes;
+
+  // ============================================
+  // The rail (desktop)
+  // ============================================
+
+  // The canvas plane with one opaque hairline on the inline-end edge. Collapse
+  // is instant: the width switches, nothing moves.
+  .root {
+    @include _inks;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    inline-size: var(--fui-appshell-sidebar-width, #{$fui-appshell-sidebar-width});
+    block-size: 100%;
+    overflow: hidden;
+    background-color: var(--fui-app-canvas-bg, #{$fui-body-bg});
+    border-inline-end: $_line;
+
+    &[data-state="collapsed"] {
+      inline-size: var(--fui-navigation-sidebar-collapsed-width, #{navigation.collapsed-width()});
+
+      .header,
+      .footer,
+      .sectionList {
+        align-items: center;
+      }
+
+      .item {
+        justify-content: center;
+        inline-size: var(--fui-navigation-row-track, #{navigation.row-track()});
+        padding-inline: 0;
+      }
+    }
+
+    // Offcanvas, or collapsed with no glyphs to show: the rail takes no width.
+    &[data-hidden] {
+      inline-size: 0;
+      border-inline-end-width: 0;
+      visibility: hidden;
+    }
+
+    // Below md the rail is the modal panel; this covers the first paint.
+    @include below-md {
+      display: none;
     }
   }
-}
 
-.positionRight {
-  border-inline-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-sidebar-border, var(--fui-border-default, #{$fui-border-default}));
-  border-inline-end: 0;
-}
+  // ============================================
+  // The panel (mobile)
+  // ============================================
 
-.collapsed {
-  width: var(--sidebar-effective-collapsed-width, var(--sidebar-collapsed-width));
+  .scrim {
+    @include overlay.backdrop;
+    @include overlay.motion;
+  }
 
-  .header,
-  .nav,
+  // The floating surface on the drawer geometry: shadow, no edge.
+  .panel {
+    @include _inks;
+    @include overlay.side-panel("start");
+    @include overlay.motion;
+  }
+
+  // The panel's visible close, at the corner every sheet puts it.
+  .panelClose {
+    @include overlay.modal-close;
+  }
+
+  .panel:has(.panelClose) .header {
+    @include overlay.header-beside-close;
+  }
+
+  // ============================================
+  // Regions
+  // ============================================
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: stretch;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    padding: var(--fui-raw-space-12, #{measurements.raw-space(12)})
+      var(--fui-navigation-gutter, #{$_gutter}) 0;
+  }
+
+  .nav {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  .navScrollArea {
+    flex: 1;
+    min-block-size: 0;
+  }
+
+  .navInner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    padding: var(--fui-raw-space-12, #{measurements.raw-space(12)})
+      var(--fui-navigation-gutter, #{$_gutter});
+  }
+
   .footer {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    margin-block-start: auto;
     padding: var(--fui-navigation-gutter, #{$_gutter});
+    border-block-start: $_line;
   }
 
-  .header,
-  .footer {
-    justify-content: center;
+  // ============================================
+  // Sections
+  // ============================================
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
   }
 
+  .sectionHeader {
+    @include navigation.section-row;
+
+    display: flex;
+    align-items: center;
+  }
+
+  // A group name is not a row: 11/550 in ink 3 on a shorter track, no hover
+  // surface, no glyph, natural case.
   .sectionLabel {
-    @include visually-hidden;
+    flex: 1;
+    min-inline-size: 0;
+    font-size: var(--fui-sidebar-section-label-size, #{typography.font-size("caption")});
+    line-height: typography.line-height("caption");
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
+    color: var(--_fui-sidebar-glyph);
+    text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .itemLabel,
-  .itemBadge,
-  .itemChevron {
-    display: none;
+  // The label is 16 tall; the hit area reaches the 24 pointer floor (44
+  // under a coarse pointer) without moving the section.
+  .sectionTrigger {
+    @include button-reset;
+    @include target.hit-area("micro");
+
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    min-inline-size: 0;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+
+    @include focus.visible($inset: true);
+
+    @include action.hover {
+      .sectionLabel,
+      .sectionChevron {
+        color: var(--_fui-sidebar-ink);
+      }
+    }
   }
 
-  .item {
-    justify-content: center;
-    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    min-height: var(--fui-navigation-row-track, #{navigation.row-track()});
+  .sectionChevron {
+    display: flex;
+    flex-shrink: 0;
+    color: var(--_fui-sidebar-glyph);
+
+    svg {
+      @include action.glyph("micro");
+    }
+
+    &[data-open] svg {
+      rotate: 90deg;
+    }
   }
 
-  .itemIcon {
-    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  }
-  .collapseToggle {
-    margin: 0 auto;
-  }
-}
-
-.collapsedNoIcons,
-.offcanvasCollapsed {
-  .header,
-  .nav,
-  .footer {
-    visibility: hidden;
-    pointer-events: none;
+  .sectionActionWrapper {
+    flex-shrink: 0;
   }
 
-  .collapseToggleFloating {
-    visibility: visible;
-    pointer-events: auto;
-  }
-}
+  .sectionAction {
+    @include button-reset;
+    @include action.base;
+    @include action.icon-only("micro");
+    @include action.motion;
+    @include target.hit-area("compact");
 
-.collapsedNoIcons {
-  overflow: visible;
-}
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--_fui-sidebar-glyph);
 
-.offcanvasCollapsed {
-  width: 0;
-  overflow: visible;
+    @include focus.visible($inset: true);
 
-  .rail {
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
+    @include action.hover {
+      background-color: $_hover-bg;
+      color: var(--_fui-sidebar-ink);
+    }
 
-.mobile {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
-  transform: translateX(-100%);
-  transition: transform var(--fui-transition-normal, $fui-transition-normal);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-
-  &.positionRight {
-    left: auto;
-    right: 0;
-    transform: translateX(100%);
-  }
-
-  &[data-state="open"] {
-    transform: translateX(0);
-  }
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  padding: var(--fui-navigation-gutter, #{$_gutter}) var(--fui-navigation-gutter, #{$_gutter}) 0;
-  flex-shrink: 0;
-  min-height: 0;
-}
-
-.nav {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: var(--fui-navigation-gutter, #{$_gutter}) var(--fui-navigation-gutter, #{$_gutter})
-    var(--fui-space-3, $fui-space-3);
-}
-
-.navScrollArea {
-  flex: 1;
-  min-height: 0;
-}
-
-.section:not(:first-child) {
-  margin-top: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-}
-
-.sectionHeader {
-  @include navigation.section-row;
-
-  display: flex;
-  align-items: center;
-  // Items carry a hairline border inside the same inset; the header mirrors
-  // it so the group label and the item glyphs below share one left edge.
-  padding-inline: calc(
-    var(--fui-navigation-inline-inset, #{$_gutter}) +
-      var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-  );
-  padding-block-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-}
-
-.sectionTrigger {
-  flex: 1;
-}
-
-// A group name is not a row: it is heavier and fainter than the items
-// beneath it, sits on a shorter track with no hover surface, carries no
-// glyph, and keeps its natural case.
-.sectionLabel {
-  flex: 1;
-  min-width: 0;
-  font-size: var(--fui-sidebar-section-label-size, #{$fui-font-size-xs});
-  font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
-  color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sectionActionWrapper {
-  flex-shrink: 0;
-}
-
-.sectionAction {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("micro");
-  @include target.hit-area("compact");
-
-  border-radius: var(--fui-radius-full, #{$fui-radius-full});
-  color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
-
-  &:hover {
-    background-color: var(--fui-sidebar-hover-bg, #{$fui-bg-hover});
-    color: var(--fui-text-secondary, $fui-text-secondary);
-  }
-
-  svg {
-    @include action.glyph("micro");
-  }
-}
-
-.sectionList,
-.submenu {
-  list-style: none;
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
-}
-
-.sectionCollapsible .sectionTrigger {
-  @include navigation.section-row;
-
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  border-radius: var(--fui-radius-full, #{$fui-radius-full});
-  background: transparent;
-
-  &:hover {
-    background-color: transparent;
-
-    .sectionLabel {
-      color: var(--fui-text-secondary, $fui-text-secondary);
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, #{$fui-bg-active});
     }
 
     svg {
-      color: var(--fui-text-secondary, $fui-text-secondary);
+      @include action.glyph("micro");
     }
   }
 
-  // Trailing caret reads as a quiet disclosure twistie.
-  svg {
-    width: var(--fui-raw-space-10, #{measurements.raw-space(10)});
-    height: var(--fui-raw-space-10, #{measurements.raw-space(10)});
-    color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
+  .sectionList,
+  .submenu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    list-style: none;
+
+    &[hidden] {
+      display: none;
+    }
   }
-}
 
-.itemWrapper,
-.subItemWrapper,
-.submenuWrapper {
-  list-style: none;
-}
+  .itemWrapper,
+  .subItemWrapper,
+  .submenuWrapper {
+    list-style: none;
+  }
 
-.itemWrapper {
-  width: 100%;
-}
+  // ============================================
+  // Rows
+  // ============================================
 
-.item {
-  @include button-reset;
-  @include interactive-base;
-  @include navigation.row;
+  // One row: 32 tall (44 under a coarse pointer), inset 8, the control corner,
+  // ink 2 regular with an ink 3 glyph. No edge at rest.
+  .item,
+  .subItem {
+    @include button-reset;
+    @include navigation.row;
+    @include action.motion;
 
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
-  border-radius: var(--fui-sidebar-item-radius, #{$fui-radius-full});
-  color: var(--fui-sidebar-muted, #{$fui-text-secondary});
-  text-decoration: none;
-  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-  outline-offset: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not(.itemDisabled) {
-    background-color: var(--fui-sidebar-hover-bg, #{$fui-bg-hover});
-    color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
+    position: relative;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--_fui-sidebar-ink);
+    font-weight: var(--fui-font-weight-normal, #{$fui-font-weight-normal});
+    text-align: start;
     text-decoration: none;
-  }
 
-  &:active:not(.itemDisabled) {
-    background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
-  }
-}
+    // The nav scrolls inside a clipping viewport, so the ring sits inside the edge.
+    @include focus.visible($inset: true);
 
-// Alpha-overlay active state reads as a depression on any surface,
-// adapting cleanly across light and dark themes.
-.itemActive {
-  @include navigation.active-indicator("start");
+    @include action.hover {
+      background-color: $_hover-bg;
+      color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
 
-  background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
-  border-color: var(--fui-sidebar-active-border, transparent);
-  color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+      .itemIcon {
+        color: var(--_fui-sidebar-ink);
+      }
+    }
 
-  &::before {
-    border-start-end-radius: var(--fui-navigation-active-rail, #{$_active-rail});
-    border-end-end-radius: var(--fui-navigation-active-rail, #{$_active-rail});
-    background: var(
-      --fui-sidebar-item-active-indicator,
-      var(--fui-color-accent, #{$fui-color-accent})
-    );
-  }
+    // The press tint plays the well while the row is held.
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, #{$fui-bg-active});
+    }
 
-  &.item:hover,
-  &.item:active {
-    background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
-    border-color: var(--fui-sidebar-active-border, transparent);
-    color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
-    text-decoration: none;
+    // The current page is chosen: the selection wash and ring, ink 1, regular
+    // weight. Hover tints on top and keeps the ring.
+    &[data-active] {
+      @include selection.selected($_current-wash);
+
+      box-shadow: inset 0 0 0 $_hairline $_current-ring;
+      color: var(--_fui-sidebar-current-ink);
+
+      .itemIcon {
+        color: inherit;
+      }
+
+      @include action.hover {
+        @include selection.hover-tint;
+
+        background-color: $_current-wash;
+        color: var(--_fui-sidebar-current-ink);
+      }
+    }
+
+    &[data-disabled] {
+      @include disabled-state;
+    }
+
+    // An agent is working in this row: the working wash, edge and sweep.
+    &[data-working] {
+      @include working.area;
+    }
   }
 
   .itemIcon {
-    color: inherit;
-  }
-}
+    @include navigation.leading;
 
-// Trailing active dot (product shells that prefer end-affordance over the
-// start rail). Set data-active-indicator="end" on Sidebar root.
-.root[data-active-indicator="end"] .itemActive {
-  @include navigation.active-indicator("end");
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--_fui-sidebar-glyph);
 
-  padding-inline-end: calc(
-    var(--fui-navigation-inline-inset, #{$_gutter}) * 2 +
-      var(--fui-navigation-active-dot, #{navigation.active-dot()})
-  );
-
-  &::before {
-    content: none;
-  }
-
-  &::after {
-    background: var(
-      --fui-sidebar-item-active-indicator,
-      var(--fui-color-accent, #{$fui-color-accent})
-    );
-  }
-}
-
-.itemDisabled,
-.subItemDisabled {
-  @include disabled-state;
-}
-
-.itemIcon {
-  @include navigation.leading;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-sidebar-faint, #{$fui-text-tertiary});
-
-  svg {
-    width: var(--fui-navigation-leading-box, #{$_leading-box});
-    height: var(--fui-navigation-leading-box, #{$_leading-box});
-  }
-
-  .item:hover:not(.itemDisabled) & {
-    color: var(--fui-sidebar-muted, #{$fui-text-secondary});
-  }
-
-  .itemActive & {
-    color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
-  }
-}
-
-.itemLabel {
-  flex: 1;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transform: translateY(var(--fui-navigation-label-optical-y, #{navigation.label-optical-y()}));
-}
-
-// A row whose label is a block rather than a link: a title over a status line,
-// a name over an address, a subject over a preview. The single-line ellipsis is
-// right for navigation and wrong here, so it comes off — but the label keeps
-// bounding itself, so anything inside it that truncates still truncates against
-// the rail's width instead of widening it.
-.itemMultiline .itemLabel {
-  white-space: normal;
-  min-width: 0;
-}
-
-.itemBadge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.itemChevron {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-icon-md, #{$fui-icon-md});
-  height: var(--fui-icon-md, #{$fui-icon-md});
-  flex-shrink: 0;
-  transition: transform var(--fui-transition-fast, $fui-transition-fast);
-
-  svg {
-    width: var(--fui-icon-md, #{$fui-icon-md});
-    height: var(--fui-icon-md, #{$fui-icon-md});
-  }
-}
-
-.itemExpanded .itemChevron {
-  transform: rotate(90deg);
-}
-
-.submenu {
-  padding-inline-start: var(--fui-raw-space-24, #{measurements.raw-space(24)});
-  min-height: 0;
-  overflow: hidden;
-}
-
-.submenuWrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--fui-transition-normal, $fui-transition-normal);
-}
-
-.itemExpanded + .submenuWrapper {
-  grid-template-rows: 1fr;
-}
-
-.subItem {
-  @include button-reset;
-  @include interactive-base;
-  @include navigation.row;
-
-  display: inline-flex;
-  align-items: center;
-  border-radius: var(--fui-sidebar-item-radius, #{$fui-radius-full});
-  color: var(--fui-sidebar-muted, #{$fui-text-secondary});
-  text-decoration: none;
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset-inline-start: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: var(--fui-navigation-active-rail, #{$_active-rail});
-    height: var(--fui-navigation-leading-box, #{$_leading-box});
-    background-color: transparent;
-    border-radius: var(--fui-radius-full, $fui-radius-full);
-    transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-  }
-
-  &:hover:not(.subItemDisabled) {
-    background-color: var(--fui-sidebar-hover-bg, #{$fui-bg-hover});
-    color: var(--fui-sidebar-item-hover-color, var(--fui-text-primary, #{$fui-text-primary}));
-    text-decoration: none;
-  }
-
-  &:active:not(.subItemDisabled) {
-    background-color: var(--fui-sidebar-active-bg, #{$fui-bg-active});
-  }
-}
-
-.subItemActive {
-  color: var(--fui-sidebar-item-active-color, var(--fui-text-primary, #{$fui-text-primary}));
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-
-  &::before {
-    background-color: var(
-      --fui-sidebar-item-active-indicator,
-      var(--fui-border-strong, #{$fui-border-strong})
-    );
-  }
-}
-
-.footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-navigation-content-gap, #{$_gutter});
-  padding: var(--fui-navigation-gutter, #{$_gutter});
-  margin-top: auto;
-  flex-shrink: 0;
-  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(
-      --fui-sidebar-footer-border,
-      color-mix(in srgb, var(--fui-border-default, #{$fui-border-default}) 58%, transparent)
-    );
-}
-
-.trigger {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("lg");
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-primary, $fui-text-primary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  svg {
-    @include action.glyph("lg");
-  }
-}
-
-.overlay {
-  @include overlay.backdrop;
-
-  opacity: 0;
-  transition: opacity var(--fui-transition-normal, $fui-transition-normal);
-
-  &[data-state="open"] {
-    opacity: 1;
-  }
-}
-
-.collapseToggle {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("md");
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  margin-left: auto;
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  svg {
-    @include action.glyph("md");
-  }
-}
-
-.collapseToggleFloating {
-  position: absolute;
-  top: var(--fui-space-3, $fui-space-3);
-  left: calc(100% + var(--fui-space-2, $fui-space-2));
-  z-index: 2;
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
-
-  .positionRight & {
-    left: auto;
-    right: calc(100% + var(--fui-space-2, $fui-space-2));
-  }
-}
-
-.rail {
-  @include button-reset;
-
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: var(--fui-navigation-leading-box, #{$_leading-box});
-  height: 100%;
-  z-index: 1;
-
-  .positionRight & {
-    right: auto;
-    left: 0;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-    width: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-    height: #{action.track("lg")};
-    border-radius: var(--fui-radius-full, $fui-radius-full);
-    background-color: var(--fui-border, $fui-border);
-    opacity: 0;
-    transition:
-      opacity var(--fui-transition-fast, $fui-transition-fast),
-      background-color var(--fui-transition-fast, $fui-transition-fast),
-      height var(--fui-transition-fast, $fui-transition-fast);
-
-    .positionRight & {
-      right: auto;
-      left: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    svg {
+      inline-size: var(--fui-navigation-leading-box, #{$_leading-box});
+      block-size: var(--fui-navigation-leading-box, #{$_leading-box});
     }
   }
 
-  &:hover::before,
-  &:focus-visible::before {
-    opacity: 1;
-    background-color: var(--fui-border-strong, $fui-border-strong);
+  .itemLabel {
+    flex: 1;
+    min-inline-size: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    translate: 0 var(--fui-navigation-label-optical-y, #{navigation.label-optical-y()});
   }
 
-  &:hover::before {
-    height: #{navigation.collapsed-width()};
+  // A collapsed rail keeps the label for assistive tech and shows it in a tooltip.
+  .itemLabelHidden {
+    @include visually-hidden;
   }
-}
 
-.railCollapsed::before {
-  opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
-}
+  .itemBadge {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    margin-inline-start: auto;
+  }
 
-.menuSkeleton {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-2, $fui-space-2);
-}
+  .itemChevron {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--_fui-sidebar-glyph);
 
-.skeletonItem {
-  @include navigation.row;
+    svg {
+      inline-size: var(--fui-navigation-leading-box, #{$_leading-box});
+      block-size: var(--fui-navigation-leading-box, #{$_leading-box});
+    }
 
-  display: flex;
-  align-items: center;
-}
+    // Disclosure is instant: the chevron turns with the state, never animates.
+    &[data-open] svg {
+      rotate: 90deg;
+    }
+  }
 
-.skeletonLabel {
-  flex: 1;
-}
+  // A submenu opens in place under its row, instantly.
+  .itemWrapper:not([data-expanded]) + .submenuWrapper {
+    display: none;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .root,
-  .mobile,
-  .overlay,
-  .submenuWrapper,
-  .itemChevron,
-  .rail::before,
-  .subItem::before {
-    transition: none;
+  .submenu {
+    padding-inline-start: calc(
+      var(--fui-navigation-leading-box, #{$_leading-box}) +
+        var(--fui-navigation-content-gap, #{$_gutter})
+    );
+  }
+
+  // ============================================
+  // Collapse toggle (in the rail)
+  // ============================================
+
+  .collapseToggle {
+    @include button-reset;
+    @include action.base;
+    @include action.icon-only("md");
+    @include action.motion;
+
+    flex-shrink: 0;
+    align-self: flex-end;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--_fui-sidebar-glyph);
+
+    @include focus.visible($inset: true);
+
+    @include action.hover {
+      background-color: $_hover-bg;
+      color: var(--_fui-sidebar-ink);
+    }
+
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, #{$fui-bg-active});
+    }
+
+    svg {
+      @include action.glyph("md");
+    }
+
+    .root[data-state="collapsed"] & {
+      align-self: center;
+    }
+  }
+
+  // ============================================
+  // Loading
+  // ============================================
+
+  .menuSkeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+  }
+
+  .skeletonItem {
+    @include navigation.row;
+
+    display: flex;
+    align-items: center;
+  }
+
+  .skeletonIcon {
+    flex: 0 0 var(--fui-navigation-leading-box, #{$_leading-box});
+    inline-size: var(--fui-navigation-leading-box, #{$_leading-box});
+    block-size: var(--fui-navigation-leading-box, #{$_leading-box});
+  }
+
+  .skeletonLabel {
+    flex: 1;
   }
 }

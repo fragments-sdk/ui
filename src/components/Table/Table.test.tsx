@@ -2,8 +2,9 @@ import { resolve } from "node:path";
 
 import * as React from "react";
 import * as sass from "sass";
-import { describe, it, expect } from "vitest";
-import { render, screen, expectNoA11yViolations } from "../../test/utils";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent, expectNoA11yViolations } from "../../test/utils";
+import { EmptyState } from "../EmptyState";
 import { Table } from "./index";
 
 const compiledStyles = sass.compile(
@@ -11,16 +12,13 @@ const compiledStyles = sass.compile(
   { style: "expanded" }
 ).css;
 
-const unborderedFirstHeaderSelector =
-  ".wrapper:not(.bordered) > .table > .thead > .row > .th:first-child";
-const unborderedFirstBodySelector =
-  ".wrapper:not(.bordered) > .table > .tbody > .row > .td:first-child";
-const unborderedFirstFooterSelector =
-  ".wrapper:not(.bordered) > .table > .tfoot > .row > .td:first-child";
-const unborderedInsetRule = `${unborderedFirstHeaderSelector},
-${unborderedFirstBodySelector},
-${unborderedFirstFooterSelector} {
-  padding-inline-start: 0;
+const edgeHeaderSelector = ".wrapper > .table > .thead > .row > .th:first-child";
+const edgeBodySelector = ".wrapper > .table > .tbody > .row > .td:first-child";
+const edgeFooterSelector = ".wrapper > .table > .tfoot > .row > .td:first-child";
+const edgeInsetRule = `${edgeHeaderSelector},
+${edgeBodySelector},
+${edgeFooterSelector} {
+  padding-inline-start: var(--fui-table-cell-edge-inset, 12px);
 }`;
 
 describe("Table", () => {
@@ -94,7 +92,7 @@ describe("Table", () => {
   it("renders visually hidden caption", () => {
     render(
       <Table aria-label="Test">
-        <Table.Caption hidden>Hidden Caption</Table.Caption>
+        <Table.Caption visuallyHidden>Hidden Caption</Table.Caption>
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>A</Table.HeaderCell>
@@ -113,45 +111,6 @@ describe("Table", () => {
     expect(caption.className).toContain("captionHidden");
   });
 
-  it("applies striped class", () => {
-    const { container } = render(
-      <Table striped aria-label="Test">
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>A</Table.Cell>
-          </Table.Row>
-          <Table.Row>
-            <Table.Cell>B</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-    );
-
-    expect(container.querySelector(".striped")).toBeInTheDocument();
-  });
-
-  it("applies explicit row bands for nested striped rows", () => {
-    render(
-      <Table striped aria-label="Test">
-        <Table.Body>
-          <Table.Row band="alt" data-testid="parent-row">
-            <Table.Cell>Parent</Table.Cell>
-          </Table.Row>
-          <Table.Row band="alt" data-testid="child-row">
-            <Table.Cell>Child</Table.Cell>
-          </Table.Row>
-          <Table.Row band="default" data-testid="next-parent-row">
-            <Table.Cell>Next parent</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-    );
-
-    expect(screen.getByTestId("parent-row")).toHaveAttribute("data-band", "alt");
-    expect(screen.getByTestId("child-row")).toHaveAttribute("data-band", "alt");
-    expect(screen.getByTestId("next-parent-row")).toHaveAttribute("data-band", "default");
-  });
-
   it("applies bordered class", () => {
     const { container } = render(
       <Table bordered aria-label="Test">
@@ -166,35 +125,27 @@ describe("Table", () => {
     expect(container.querySelector(".bordered")).toBeInTheDocument();
   });
 
-  it("removes the leading cell inset only from the owning unbordered ledger", () => {
-    const { container } = render(
+  it("starts the first column 12 in on every table, bordered or not", () => {
+    render(
       <Table aria-label="Outer ledger">
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>Outer column</Table.HeaderCell>
+            <Table.HeaderCell>Second column</Table.HeaderCell>
           </Table.Row>
         </Table.Head>
         <Table.Body>
           <Table.Row>
             <Table.Cell data-testid="outer-body-cell">
               <Table bordered aria-label="Nested bordered ledger">
-                <Table.Head>
-                  <Table.Row>
-                    <Table.HeaderCell>Nested column</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Head>
                 <Table.Body>
                   <Table.Row>
                     <Table.Cell data-testid="nested-body-cell">Nested body</Table.Cell>
                   </Table.Row>
                 </Table.Body>
-                <Table.Footer>
-                  <Table.Row>
-                    <Table.Cell data-testid="nested-footer-cell">Nested footer</Table.Cell>
-                  </Table.Row>
-                </Table.Footer>
               </Table>
             </Table.Cell>
+            <Table.Cell data-testid="outer-second-cell">Second</Table.Cell>
           </Table.Row>
         </Table.Body>
         <Table.Footer>
@@ -205,54 +156,28 @@ describe("Table", () => {
       </Table>
     );
 
-    expect(compiledStyles).toContain(unborderedInsetRule);
-    expect(compiledStyles).toContain("padding-inline: var(--_fui-table-cell-inline-inset, ");
+    // The module ships inside a cascade layer, so compare without its indentation.
+    const flat = (css: string) => css.replace(/\s+/g, " ");
+    expect(flat(compiledStyles)).toContain(flat(edgeInsetRule));
+    expect(compiledStyles).toContain("--fui-table-cell-edge-inset: var(--fui-raw-space-12, 12px)");
+    expect(compiledStyles).toContain("padding-inline: var(--fui-table-cell-inline-inset, ");
+    // No flush edge: no cell drops its inset.
+    expect(compiledStyles).not.toMatch(/padding-inline-(start|end): 0;/);
 
-    const [outerHeader, nestedHeader] = screen.getAllByRole("columnheader");
-    expect(outerHeader.matches(unborderedFirstHeaderSelector)).toBe(true);
-    expect(nestedHeader.matches(unborderedFirstHeaderSelector)).toBe(false);
-
-    expect(screen.getByTestId("outer-body-cell").matches(unborderedFirstBodySelector)).toBe(true);
-    expect(screen.getByTestId("nested-body-cell").matches(unborderedFirstBodySelector)).toBe(false);
-    expect(screen.getByTestId("outer-footer-cell").matches(unborderedFirstFooterSelector)).toBe(
-      true
-    );
-    expect(screen.getByTestId("nested-footer-cell").matches(unborderedFirstFooterSelector)).toBe(
-      false
-    );
-
-    const nestedBorderedWrapper = container.querySelector(".bordered");
-    expect(nestedBorderedWrapper).toContainElement(nestedHeader);
-    expect(nestedBorderedWrapper).toContainElement(screen.getByTestId("nested-body-cell"));
-    expect(nestedBorderedWrapper).toContainElement(screen.getByTestId("nested-footer-cell"));
+    const [outerHeader, secondHeader] = screen.getAllByRole("columnheader");
+    expect(outerHeader.matches(edgeHeaderSelector)).toBe(true);
+    expect(secondHeader.matches(edgeHeaderSelector)).toBe(false);
+    expect(screen.getByTestId("outer-body-cell").matches(edgeBodySelector)).toBe(true);
+    expect(screen.getByTestId("outer-second-cell").matches(edgeBodySelector)).toBe(false);
+    expect(screen.getByTestId("nested-body-cell").matches(edgeBodySelector)).toBe(true);
+    expect(screen.getByTestId("outer-footer-cell").matches(edgeFooterSelector)).toBe(true);
   });
 
-  it("maps legacy size to the canonical density attribute", () => {
-    render(
-      <Table size="sm" aria-label="Test">
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>A</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
+  it("clears the dividers beside a selected row so the ring draws every edge", () => {
+    const flat = compiledStyles.replace(/\s+/g, " ");
+    expect(flat).toMatch(
+      /\.row:has\(\+ \.selected\), \.selected \{ border-block-end-color: transparent; \}/
     );
-
-    expect(screen.getByRole("table")).toHaveAttribute("data-density", "compact");
-  });
-
-  it("gives the canonical density explicit precedence over legacy size", () => {
-    render(
-      <Table density="relaxed" size="sm" aria-label="Test">
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>A</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-    );
-
-    expect(screen.getByRole("table")).toHaveAttribute("data-density", "relaxed");
   });
 
   it("applies selected state on Row", () => {
@@ -337,6 +262,145 @@ describe("Table", () => {
     );
 
     expect(container.querySelector("tfoot")).toBeInTheDocument();
+  });
+
+  it("has one row track and no density, size or stripe API", () => {
+    render(
+      <Table aria-label="Test">
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>A</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+
+    const table = screen.getByRole("table");
+    expect(table).not.toHaveAttribute("data-density");
+    expect(compiledStyles).not.toMatch(/striped|data-density|data-band/);
+    expect(compiledStyles).toContain("--fui-table-row-track: var(--fui-control-height-md, 32px)");
+  });
+
+  it("keeps rows transparent with an instant hover and a head that sticks only when bounded", () => {
+    const flat = compiledStyles.replace(/\s+/g, " ");
+    expect(flat).not.toMatch(/\.row \{[^}]*transition/);
+    expect(flat).not.toContain("--fui-main-bg");
+    // The head is not sticky and draws no band at rest.
+    expect(flat).not.toMatch(/(?<!> )\.thead \{[^}]*position: sticky/);
+    expect(flat).not.toMatch(/(?<!\] > \.table > )\.thead \{[^}]*background-color/);
+    expect(flat).toMatch(/\.bounded \{[^}]*overflow: auto;/);
+    expect(flat).toMatch(
+      /\.bounded > \.table > \.thead \{[^}]*position: sticky;[^}]*inset-block-start: 0;/
+    );
+    expect(flat).toMatch(
+      /\.bounded\[data-scrolled\] > \.table > \.thead \{[^}]*background-color: var\(--fui-bg-primary/
+    );
+    expect(flat).toMatch(
+      /\.th \{[^}]*box-shadow: inset 0 calc\(-1 \* var\(--fui-table-divider-size/
+    );
+    expect(flat).toMatch(/@media \(hover: hover\) \{ \.row:not\(\.stateRow\):hover/);
+  });
+
+  it("bounds the wrapper with maxHeight and marks it while rows scroll under the head", () => {
+    const onScroll = vi.fn();
+    const { container } = render(
+      <Table aria-label="Bounded" maxHeight={120} wrapperProps={{ onScroll }}>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Alice</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+    const wrapper = container.firstElementChild as HTMLDivElement;
+    expect(wrapper).toHaveClass("wrapper", "bounded");
+    expect(wrapper.style.maxBlockSize).toBe("120px");
+    expect(wrapper).not.toHaveAttribute("data-scrolled");
+
+    wrapper.scrollTop = 80;
+    fireEvent.scroll(wrapper);
+    expect(wrapper).toHaveAttribute("data-scrolled");
+    expect(onScroll).toHaveBeenCalledTimes(1);
+
+    wrapper.scrollTop = 0;
+    fireEvent.scroll(wrapper);
+    expect(wrapper).not.toHaveAttribute("data-scrolled");
+  });
+
+  it("leaves an unbounded wrapper free of a block bound", () => {
+    const { container } = render(
+      <Table aria-label="Free">
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Alice</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+    const wrapper = container.firstElementChild as HTMLDivElement;
+    expect(wrapper).not.toHaveClass("bounded");
+    expect(wrapper.style.maxBlockSize).toBe("");
+  });
+
+  it("draws the bordered sheet as the static surface", () => {
+    const flat = compiledStyles.replace(/\s+/g, " ");
+    expect(flat).toMatch(
+      /\.bordered \{[^}]*background-color: var\(--fui-bg-primary[^}]*border: var\(--fui-stroke-hairline, 1px\) solid var\(--fui-border[^}]*border-radius: var\(--fui-radius-surface/
+    );
+  });
+
+  it("renders an empty row spanning the columns with a compact EmptyState", () => {
+    render(
+      <Table aria-label="Repositories">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Repository</Table.HeaderCell>
+            <Table.HeaderCell>Findings</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Empty colSpan={2}>
+            <EmptyState.Title>No repositories</EmptyState.Title>
+          </Table.Empty>
+        </Table.Body>
+      </Table>
+    );
+
+    const cell = screen.getByText("No repositories").closest("td");
+    expect(cell).toHaveAttribute("colspan", "2");
+    expect(cell?.closest("tr")).toHaveAttribute("data-table-state", "empty");
+    expect(screen.getAllByRole("columnheader")).toHaveLength(2);
+  });
+
+  it("renders loading rows with one bar per cell and keeps the header real", () => {
+    const { container } = render(
+      <Table aria-label="Repositories">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Repository</Table.HeaderCell>
+            <Table.HeaderCell>Findings</Table.HeaderCell>
+            <Table.HeaderCell>Verdict</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body aria-busy="true">
+          <Table.Loading columns={3} rows={4} />
+        </Table.Body>
+      </Table>
+    );
+
+    const rows = container.querySelectorAll('tr[data-table-state="loading"]');
+    expect(rows).toHaveLength(4);
+    rows.forEach((row) => {
+      expect(row).toHaveAttribute("aria-hidden", "true");
+      expect(row.querySelectorAll("td")).toHaveLength(3);
+      expect(row.querySelectorAll("td > *")).toHaveLength(3);
+    });
+    expect(screen.getAllByRole("columnheader")).toHaveLength(3);
   });
 
   it("has no accessibility violations", async () => {

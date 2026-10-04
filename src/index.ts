@@ -1,27 +1,14 @@
-// CSS variables and base styles are NOT auto-imported here.
-// Consumers must import styles separately with seed configuration:
-//   @use '@usefragments/ui/styles' with ($fui-brand: ..., $fui-neutral: ...);
-// Bundling globals.scss here would compile with default seeds and
-// override any consumer-configured palette.
-
-// Runtime CSS detection — warns if component styles aren't loaded
-import { checkCssLoaded } from "./utils/css-warning";
-if (typeof window !== "undefined") {
-  checkCssLoaded();
-}
+// Keep this entry free of startup work so unused exports can be removed.
+// Import "@usefragments/ui/styles" once for the compiled tokens and component CSS.
+// Sass consumers can configure seeds with @use "@usefragments/ui/scss".
 
 // Core Components
 export { Button, type ButtonProps } from "./components/Button";
-export { Input, type InputProps } from "./components/Input";
-export { Textarea, type TextareaProps } from "./components/Textarea";
+export { Input, type InputProps, type InputSize, type InputType } from "./components/Input";
+export { Textarea, type TextareaProps, type TextareaSize } from "./components/Textarea";
+export { NumberField, type NumberFieldProps, type NumberFieldSize } from "./components/NumberField";
 export {
   Card,
-  CardRoot,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardBody,
-  CardFooter,
   type CardProps,
   type CardHeaderProps,
   type CardTitleProps,
@@ -32,14 +19,6 @@ export {
 export { Switch, type SwitchProps } from "./components/Switch";
 export {
   Alert,
-  AlertRoot,
-  AlertIcon,
-  AlertBody,
-  AlertTitle,
-  AlertContent,
-  AlertActions,
-  AlertAction,
-  AlertClose,
   type AlertProps,
   type AlertTone,
   type AlertIconProps,
@@ -50,9 +29,10 @@ export {
   type AlertActionProps,
   type AlertCloseProps,
 } from "./components/Alert";
-export { Badge, type BadgeProps, type BadgeTone, type BadgeVariant } from "./components/Badge";
+export { Badge, type BadgeProps, type BadgeTone } from "./components/Badge";
 export { IconButton, type IconButtonProps } from "./components/IconButton";
 export {
+  CONTROL_SIZES,
   ComponentDefaultsProvider,
   useComponentDefaults,
   useResolvedControlSize,
@@ -75,25 +55,26 @@ export {
   type AccordionTriggerProps,
   type AccordionContentProps,
   type AccordionValue,
+  type AccordionChangeEventDetails,
+  type AccordionHeadingLevel,
 } from "./components/Accordion";
 
 // Collapsible
 export {
   Collapsible,
-  CollapsibleRoot,
-  CollapsibleTrigger,
-  CollapsibleContent,
-  useCollapsibleContext,
   type CollapsibleProps,
-  type CollapsibleRootProps,
   type CollapsibleTriggerProps,
   type CollapsibleContentProps,
+  type CollapsibleChangeEventDetails,
 } from "./components/Collapsible";
 
 // Dialog
 export {
   Dialog,
   type DialogProps,
+  type DialogWidth,
+  type DialogInitialFocus,
+  type DialogFinalFocus,
   type DialogContentProps,
   type DialogTitleProps,
   type DialogDescriptionProps,
@@ -104,6 +85,23 @@ export {
   type DialogCloseProps,
 } from "./components/Dialog";
 
+// AlertDialog
+export {
+  AlertDialog,
+  ALERT_DIALOG_SETTLE_MS,
+  type AlertDialogProps,
+  type AlertDialogWidth,
+  type AlertDialogContentProps,
+  type AlertDialogTriggerProps,
+  type AlertDialogHeaderProps,
+  type AlertDialogTitleProps,
+  type AlertDialogDescriptionProps,
+  type AlertDialogBodyProps,
+  type AlertDialogFooterProps,
+  type AlertDialogCancelProps,
+  type AlertDialogActionProps,
+} from "./components/AlertDialog";
+
 // Tabs
 export {
   Tabs,
@@ -112,13 +110,19 @@ export {
   type TabProps,
   type TabsPanelProps,
   type TabValue,
+  type TabsVariant,
+  type TabsSize,
+  type TabsChangeEventDetails,
 } from "./components/Tabs";
 
 // Tooltip
 export {
   Tooltip,
   TooltipProvider,
+  TOOLTIP_COLD_DELAY_MS,
+  TOOLTIP_WARM_WINDOW_MS,
   type TooltipProps,
+  type TooltipContentProps,
   type TooltipProviderProps,
   type TooltipSide,
   type TooltipAlign,
@@ -135,6 +139,7 @@ export {
   type SelectGroupLabelProps,
   type SelectValue,
   type SelectOption,
+  type SelectSize,
 } from "./components/Select";
 
 // Menu
@@ -144,6 +149,7 @@ export {
   type MenuTriggerProps,
   type MenuContentProps,
   type MenuItemProps,
+  type MenuItemTone,
   type MenuCheckboxItemProps,
   type MenuRadioGroupProps,
   type MenuRadioItemProps,
@@ -156,6 +162,7 @@ export {
 export {
   Popover,
   type PopoverProps,
+  type PopoverSize,
   type PopoverTriggerProps,
   type PopoverContentProps,
   type PopoverTitleProps,
@@ -166,12 +173,7 @@ export {
 } from "./components/Popover";
 
 // Progress
-export {
-  Progress,
-  CircularProgress,
-  type ProgressProps,
-  type CircularProgressProps,
-} from "./components/Progress";
+export { Progress, type ProgressProps, type ProgressTone } from "./components/Progress";
 
 // Checkbox
 export { Checkbox, type CheckboxProps } from "./components/Checkbox";
@@ -180,6 +182,7 @@ export { Checkbox, type CheckboxProps } from "./components/Checkbox";
 export {
   Combobox,
   type ComboboxProps,
+  type ComboboxSize,
   type ComboboxInputProps,
   type ComboboxTriggerProps,
   type ComboboxContentProps,
@@ -197,19 +200,20 @@ export {
   Grid,
   type GridProps,
   type GridItemProps,
-  type ResponsiveColumns,
+  type GridColumns,
+  type GridGap,
+  type GridAlign,
+  type GridColSpan,
+  type GridRowSpan,
 } from "./components/Grid";
 
-// BentoGrid
-export {
-  BentoGrid,
-  type BentoGridProps,
-  type BentoGridItemProps,
-  type ResponsiveSpan,
-} from "./components/BentoGrid";
-
 // Separator
-export { Separator, type SeparatorProps } from "./components/Separator";
+export {
+  Separator,
+  type SeparatorProps,
+  type SeparatorOrientation,
+  type SeparatorLength,
+} from "./components/Separator";
 
 // Skeleton
 export {
@@ -223,13 +227,8 @@ export {
 // Loading
 export {
   Loading,
-  LoadingRoot,
-  LoadingInline,
-  LoadingScreen,
+  useLoadingDelay,
   type LoadingProps,
-  type LoadingSize,
-  type LoadingKind,
-  type LoadingInlineProps,
   type LoadingScreenProps,
 } from "./components/Loading";
 
@@ -251,7 +250,6 @@ export {
   type DataTableColumn,
   type ColumnDef,
   type ColumnAlign,
-  type DataTableDensity,
   type SortingState,
   type RowSelectionState,
   type ExpandedState,
@@ -269,11 +267,6 @@ export {
 // EmptyState
 export {
   EmptyState,
-  EmptyStateRoot,
-  EmptyStateIcon,
-  EmptyStateTitle,
-  EmptyStateDescription,
-  EmptyStateActions,
   type EmptyStateProps,
   type EmptyStateIconProps,
   type EmptyStateTitleProps,
@@ -286,9 +279,16 @@ export {
   Toast,
   ToastProvider,
   useToast,
+  TOAST_DURATION_MS,
+  TOAST_VISIBLE_MAX,
+  type ToastApi,
+  type ToastAction,
+  type ToastBusy,
+  type ToastContent,
+  type ToastInput,
+  type ToastPromiseMessages,
   type ToastProps,
   type ToastProviderProps,
-  type ToastData,
   type ToastTone,
   type ToastPosition,
 } from "./components/Toast";
@@ -319,9 +319,10 @@ export { Form, type FormActionsProps, type FormProps } from "./components/Form";
 // Sidebar
 export {
   Sidebar,
-  SidebarProvider,
   useSidebar,
-  useSidebarContext, // deprecated, use useSidebar instead
+  type SidebarStateProps,
+  type SidebarState,
+  type SidebarCollapsible,
   type SidebarProviderProps,
   type SidebarProps,
   type SidebarHeaderProps,
@@ -330,44 +331,44 @@ export {
   type SidebarSectionActionProps,
   type SidebarItemProps,
   type SidebarSubItemProps,
+  type SidebarSubmenuProps,
   type SidebarFooterProps,
-  type SidebarTriggerProps,
-  type SidebarOverlayProps,
   type SidebarCollapseToggleProps,
-  type SidebarRailProps,
   type SidebarMenuSkeletonProps,
-  type SidebarCollapsible,
 } from "./components/Sidebar";
 
 // Theme
 export {
   Theme,
-  ThemeProvider,
-  ThemeToggle,
-  ThemeButton,
   useTheme,
+  useThemePortalProps,
   configureTheme,
-  type ThemeProviderProps,
-  type ThemeToggleProps,
-  type ThemeButtonProps,
+  type ThemeProps,
   type ThemeMode,
+  type ThemeInputs,
+  type ThemeChrome,
+  type ThemeNeutral,
+  type ThemePortalProps,
   type UseThemeReturn,
   type ConfigureThemeOptions,
-  type NeutralPalette,
-  type RadiusStyle,
 } from "./components/Theme";
+// A server component: exported from its own module, not the client Theme module.
+export { ThemeScript, getThemeScript, type ThemeScriptProps } from "./components/Theme/ThemeScript";
 
 // Header
 export {
   Header,
   type HeaderProps,
+  type HeaderElevatedOnScrollOptions,
   type HeaderBrandProps,
   type HeaderNavProps,
   type HeaderNavItemProps,
+  type HeaderNavMenuProps,
+  type HeaderNavMenuItemProps,
   type HeaderSearchProps,
   type HeaderActionsProps,
   type HeaderTriggerProps,
-  type HeaderMobileNavProps,
+  type HeaderSkipLinkProps,
 } from "./components/Header";
 
 // AppShell
@@ -375,7 +376,6 @@ export {
   AppShell,
   type AppShellProps,
   type AppShellLayout,
-  type AppShellSlotVariant,
   type AppShellHeaderProps,
   type AppShellSidebarProps,
   type AppShellMainProps,
@@ -386,15 +386,28 @@ export {
 export {
   Stack,
   type StackProps,
-  type ResponsiveDirection,
-  type ResponsiveGap,
+  type StackDirection,
+  type StackGap,
+  type StackAlign,
+  type StackJustify,
+  type StackElement,
 } from "./components/Stack";
 
 // Main
-export { Main, type MainProps, type MainRegionProps, type MainMeasure } from "./components/Main";
+export {
+  Main,
+  type MainProps,
+  type MainRegionProps,
+  type MainMeasure,
+  type MainElement,
+  type MainTitleProps,
+} from "./components/Main";
 
 // Text
 export { Text, type TextProps } from "./components/Text";
+
+// Kbd
+export { Kbd, type KbdProps, type KbdGroupProps } from "./components/Kbd";
 
 // ButtonGroup
 export { ButtonGroup, type ButtonGroupProps } from "./components/ButtonGroup";
@@ -402,8 +415,6 @@ export { ButtonGroup, type ButtonGroupProps } from "./components/ButtonGroup";
 // ToggleGroup
 export {
   ToggleGroup,
-  ToggleGroupRoot,
-  ToggleGroupItem,
   type ToggleGroupProps,
   type ToggleGroupItemProps,
 } from "./components/ToggleGroup";
@@ -412,17 +423,15 @@ export {
 export { Slider, type SliderProps } from "./components/Slider";
 
 // ColorPicker
-export { ColorPicker, type ColorPickerProps } from "./components/ColorPicker";
+export { ColorPicker, type ColorPickerProps, type ColorPickerSize } from "./components/ColorPicker";
 
 // DatePicker
 export {
   DatePicker,
-  DatePickerRoot,
-  DatePickerTrigger,
-  DatePickerContent,
-  DatePickerCalendar,
-  DatePickerPreset,
   type DatePickerProps,
+  type DatePickerSingleProps,
+  type DatePickerRangeProps,
+  type DatePickerSize,
   type DatePickerTriggerProps,
   type DatePickerContentProps,
   type DatePickerCalendarProps,
@@ -436,49 +445,59 @@ export {
   Prompt,
   usePromptContext,
   type PromptProps,
-  type PromptVariant,
   type PromptTextareaProps,
   type PromptToolbarProps,
-  type PromptTabsProps,
-  type PromptTabProps,
   type PromptActionsProps,
   type PromptInfoProps,
-  type PromptActionButtonProps,
-  type PromptModeButtonProps,
-  type PromptUsageProps,
+  type PromptPickerProps,
+  type PromptPickerOption,
+  type PromptAttachProps,
+  type PromptAttachmentsProps,
+  type PromptAttachment,
   type PromptSubmitProps,
 } from "./components/Prompt";
 
 // CodeBlock
 export {
   CodeBlock,
-  TabbedCodeBlock,
   type CodeBlockProps,
   type CodeBlockLanguage,
+  type CodeBlockSize,
   type CodeBlockTab,
   type TabbedCodeBlockProps,
 } from "./components/CodeBlock";
 
 // Icon
-export { Icon, type IconProps } from "./components/Icon";
+export {
+  Icon,
+  type IconProps,
+  type IconSize,
+  type IconWeight,
+  type IconTone,
+} from "./components/Icon";
 
 // Image
-export { Image, type ImageProps } from "./components/Image";
+export {
+  Image,
+  type ImageProps,
+  type ImageAspectRatio,
+  type ImageObjectFit,
+  type ImageRadius,
+  type ImageStatus,
+} from "./components/Image";
 
 // Link
 export { Link, type LinkProps } from "./components/Link";
 
 // List
-export { List, ListRoot, ListItem, type ListProps, type ListItemProps } from "./components/List";
+export { List, type ListProps, type ListItemProps, type ListRowProps } from "./components/List";
 
 // Listbox (for search results, autocomplete, command menus)
 export {
   Listbox,
-  ListboxRoot,
-  ListboxItem,
-  ListboxGroup,
-  ListboxEmpty,
   type ListboxProps,
+  type ListboxSingleProps,
+  type ListboxMultipleProps,
   type ListboxItemProps,
   type ListboxGroupProps,
   type ListboxEmptyProps,
@@ -487,20 +506,13 @@ export {
 // Breadcrumbs
 export {
   Breadcrumbs,
-  BreadcrumbsRoot,
-  BreadcrumbsItem,
-  BreadcrumbsSeparator,
   type BreadcrumbsProps,
   type BreadcrumbsItemProps,
-  type BreadcrumbsSeparatorProps,
 } from "./components/Breadcrumbs";
 
 // TableOfContents
 export {
   TableOfContents,
-  TableOfContentsRoot,
-  TableOfContentsItem,
-  TableOfContentsGroup,
   type TableOfContentsProps,
   type TableOfContentsItemProps,
   type TableOfContentsGroupProps,
@@ -524,44 +536,31 @@ export { Markdown, type MarkdownProps } from "./components/Markdown";
 // Message (AI Chat)
 export {
   Message,
-  MessageRoot,
-  MessageContent,
-  MessageActions,
-  MessageTimestamp,
-  MessageAvatar,
   useMessageContext,
   type MessageProps,
-  type MessageRole,
+  type MessageFrom,
   type MessageStatus,
   type MessageContentProps,
   type MessageActionsProps,
   type MessageTimestampProps,
   type MessageAvatarProps,
+  type MessageErrorProps,
 } from "./components/Message";
 
 // ConversationList (AI Chat)
 export {
   ConversationList,
-  ConversationListRoot,
-  DateSeparator,
-  TypingIndicator,
   useConversationList,
   type ConversationListProps,
+  type ConversationListEventProps,
+  type ConversationHistory,
   type AutoScrollBehavior,
-  type DateSeparatorProps,
-  type TypingIndicatorProps,
 } from "./components/ConversationList";
 
 // ThinkingIndicator (AI Chat)
 export {
   ThinkingIndicator,
-  ThinkingIndicatorRoot,
-  ThinkingSteps,
-  ThinkingStep,
-  useThinkingIndicatorContext,
   type ThinkingIndicatorProps,
-  type ThinkingKind,
-  type ThinkingStep as ThinkingStepType,
   type StepStatus,
   type ThinkingStepsProps,
   type ThinkingStepProps,
@@ -577,61 +576,19 @@ export {
   ChartLegendContent,
   useChartConfig,
   type ChartConfig,
+  type ChartConfigEntry,
+  type ChartSeries,
   type ChartContainerProps,
   type ChartTooltipContentProps,
   type ChartLegendContentProps,
 } from "./components/Chart";
 
-// Assets
-export {
-  FragmentsLogo,
-  fragmentsLogoSvg,
-  fragmentsSymbol,
-  type FragmentsLogoProps,
-} from "./assets/fragments-logo";
-export { FragmentsWordmark, type FragmentsWordmarkProps } from "./assets/fragments-wordmark";
-export { FragmentsBrand, type FragmentsBrandProps } from "./assets/fragments-brand";
-export {
-  fragmentsWordmarkAspect,
-  fragmentsWordmarkSvg,
-  fragmentsWordmarkSymbol,
-} from "./assets/fragments-wordmark-artwork";
-export {
-  NavGlyph,
-  NAV_GLYPH_NAMES,
-  type NavGlyphName,
-  type NavGlyphProps,
-} from "./assets/nav-glyph";
-
-// NavigationMenu
-export {
-  NavigationMenu,
-  NavigationMenuRoot,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
-  NavigationMenuLink,
-  NavigationMenuIndicator,
-  NavigationMenuViewport,
-  NavigationMenuMobileContent,
-  NavigationMenuMobileSection,
-  type NavigationMenuProps,
-  type NavigationMenuListProps,
-  type NavigationMenuItemProps,
-  type NavigationMenuTriggerProps,
-  type NavigationMenuContentProps,
-  type NavigationMenuLinkProps,
-  type NavigationMenuIndicatorProps,
-  type NavigationMenuViewportProps,
-  type NavigationMenuMobileContentProps,
-  type NavigationMenuMobileSectionProps,
-} from "./components/NavigationMenu";
-
 // Drawer
 export {
   Drawer,
   type DrawerProps,
+  type DrawerSide,
+  type DrawerSize,
   type DrawerContentProps,
   type DrawerTriggerProps,
   type DrawerHeaderProps,
@@ -647,7 +604,9 @@ export {
 export {
   Pagination,
   type PaginationProps,
-  type PaginationItemProps,
+  type PaginationSize,
+  type PaginationPreviousProps,
+  type PaginationNextProps,
 } from "./components/Pagination";
 
 // Command
@@ -659,30 +618,23 @@ export {
   type CommandItemProps,
   type CommandGroupProps,
   type CommandEmptyProps,
+  type CommandErrorProps,
   type CommandSeparatorProps,
+  type CommandDialogProps,
+  type CommandFilter,
 } from "./components/Command";
 
 // Editor
 export {
   Editor,
-  EditorRoot,
-  EditorToolbar,
-  EditorToolbarGroup,
-  EditorToolbarButton,
-  EditorSeparator,
-  EditorStatusIndicator,
-  EditorContentArea,
-  EditorStatusBar,
   useEditorContext,
   type EditorProps,
   type EditorFormat,
   type EditorSaveStatus,
   type EditorMode,
-  type EditorSize,
   type EditorToolbarProps,
   type EditorToolbarGroupProps,
   type EditorToolbarButtonProps,
-  type EditorSeparatorProps,
   type EditorStatusIndicatorProps,
   type EditorContentProps,
   type EditorStatusBarProps,
@@ -699,6 +651,22 @@ export {
   A11yVisuallyHidden,
   type A11yVisuallyHiddenProps,
 } from "./utils/a11y";
+
+// Feedback recipes: loading phases and dismissal
+export {
+  useLoadingPhase,
+  LOADING_DELAY_MS,
+  LOADING_SLOW_MS,
+  type LoadingPhase,
+  type LoadingTimers,
+  type UseLoadingPhaseOptions,
+} from "./recipes/loading";
+export {
+  useDismiss,
+  nextFocusTarget,
+  type UseDismissOptions,
+  type UseDismissResult,
+} from "./recipes/dismiss";
 
 // Keyboard Shortcuts
 export {
@@ -747,3 +715,5 @@ export {
   type ThemeConfig,
   type PresetDefinition,
 } from "./utils/theme-presets";
+
+export type { ComponentMetadata } from "./metadata";

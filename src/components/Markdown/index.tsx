@@ -3,19 +3,25 @@
 import * as React from "react";
 import styles from "./Markdown.module.scss";
 import { isDevelopmentBuild } from "../../utils/env";
+import { CodeBlock } from "../CodeBlock";
 
 // ============================================
 // Types
 // ============================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- markdown element overrides take any element props
 type MarkdownComponentMap = Record<string, React.ComponentType<any>>;
 
 export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   /** Markdown string to render */
   content: string;
-  /** Override map for markdown element components */
+  /** Override map for markdown element components; overrides win over the built-in fences and tables */
   components?: MarkdownComponentMap;
+  /**
+   * The text is still arriving: an unclosed fence is closed for display, a
+   * still caret follows the last block, and the region is busy.
+   */
+  streaming?: boolean;
   /** Additional class name */
   className?: string;
 }
@@ -89,11 +95,57 @@ function FallbackRenderer({ content }: { content: string }) {
 }
 
 // ============================================
+// Built-in elements: fences through CodeBlock, tables in a focusable region
+// ============================================
+
+function textOf(node: React.ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (React.isValidElement<{ children?: React.ReactNode }>(node))
+    return textOf(node.props.children);
+  return "";
+}
+
+function MarkdownFence({ children }: { children?: React.ReactNode }) {
+  const code = React.Children.toArray(children).find(React.isValidElement) as
+    | React.ReactElement<{ className?: string; children?: React.ReactNode }>
+    | undefined;
+  const language = /language-([\w-]+)/.exec(code?.props.className ?? "")?.[1];
+  const text = textOf(code?.props.children ?? children).replace(/\n$/, "");
+  return <CodeBlock code={text} language={language as never} />;
+}
+
+function MarkdownTable({
+  children,
+  node: _node,
+  ...props
+}: React.TableHTMLAttributes<HTMLTableElement> & { node?: unknown }) {
+  return (
+    <div className={styles.tableRegion} role="region" aria-label="Table" tabIndex={0}>
+      <table {...props}>{children}</table>
+    </div>
+  );
+}
+
+const BUILT_IN_COMPONENTS: MarkdownComponentMap = {
+  pre: MarkdownFence,
+  table: MarkdownTable,
+};
+
+/** While text streams, close an unclosed fence so the partial reply renders as code. */
+export function closeOpenFence(content: string): string {
+  const fences = content.match(/^\s{0,3}(```|~~~)/gm) ?? [];
+  if (fences.length % 2 === 0) return content;
+  const marker = fences[fences.length - 1].trim();
+  return `${content}${content.endsWith("\n") ? "" : "\n"}${marker}`;
+}
+
+// ============================================
 // Component
 // ============================================
 
 const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(function Markdown(
-  { content, components: componentOverrides, className, ...htmlProps },
+  { content, components: componentOverrides, streaming = false, className, ...htmlProps },
   ref
 ) {
   // The parser resolves asynchronously, so the first mount on a page renders
@@ -113,12 +165,19 @@ const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(function Ma
     };
   }, []);
 
-  const classes = [styles.markdown, className].filter(Boolean).join(" ");
+  const classes = [styles.markdown, streaming && styles.streaming, className]
+    .filter(Boolean)
+    .join(" ");
+  const text = streaming ? closeOpenFence(content) : content;
+  const components = React.useMemo(
+    () => ({ ...BUILT_IN_COMPONENTS, ...componentOverrides }),
+    [componentOverrides]
+  );
 
   if (!ReactMarkdown) {
     return (
-      <div ref={ref} {...htmlProps} className={classes}>
-        <FallbackRenderer content={content} />
+      <div ref={ref} aria-busy={streaming || undefined} {...htmlProps} className={classes}>
+        <FallbackRenderer content={text} />
       </div>
     );
   }
@@ -126,9 +185,9 @@ const MarkdownRoot = React.forwardRef<HTMLDivElement, MarkdownProps>(function Ma
   const plugins = remarkGfm ? [remarkGfm] : [];
 
   return (
-    <div ref={ref} {...htmlProps} className={classes}>
-      <ReactMarkdown remarkPlugins={plugins} components={componentOverrides}>
-        {content}
+    <div ref={ref} aria-busy={streaming || undefined} {...htmlProps} className={classes}>
+      <ReactMarkdown remarkPlugins={plugins} components={components}>
+        {text}
       </ReactMarkdown>
     </div>
   );

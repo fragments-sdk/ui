@@ -1,254 +1,158 @@
 "use client";
 
 import * as React from "react";
-import { useResolvedControlSize } from "../ComponentDefaults";
+import { ToggleGroup as BaseToggleGroup } from "@base-ui/react/toggle-group";
+import { Toggle as BaseToggle } from "@base-ui/react/toggle";
+import { CONTROL_SIZES, useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
 import styles from "./ToggleGroup.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-/**
- * A group of toggle buttons where only one can be selected at a time.
- * @see https://usefragments.com/components/togglegroup
- */
-export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
-  /** Current selected value */
+/** One option at a time (the default): the value is a string. */
+interface ToggleGroupSingle {
+  /** Pick several options at once; the value becomes a string array.
+   * @default false */
+  multiple?: false;
+  /** Current value (controlled) */
   value?: string;
-  /** Default selected value (uncontrolled) */
+  /** Initial value (uncontrolled) */
   defaultValue?: string;
-  /** Callback when selection changes */
-  onChange?: (value: string) => void;
-  /** Alias for onChange (Radix convention) */
+  /** Called with the newly chosen value. A chosen segment cannot be
+   * unchosen by pressing it again. */
   onValueChange?: (value: string) => void;
-  /** Toggle items */
-  children: React.ReactNode;
-  /** Chrome. `soft` is the filled rail, `ghost` the open pill cluster,
-   * `outline` the connected bordered segments.
-   * @default "soft"
-   * @see https://usefragments.com/components/togglegroup#variants */
-  variant?: "soft" | "ghost" | "outline";
-  /** Size.
-   * @default "md" */
-  size?: "sm" | "md" | "lg";
-  /** Gap between items in the ghost variant. Defaults to `xs` for ghost and
-   * is intentionally removed from the connected variants. */
-  gap?: "none" | "xs" | "sm";
-  /** Selection mode for this control. Currently only single-select is supported.
-   * @default "single" */
-  selectionMode?: "single";
 }
 
+/** Several options at once: the value is a string array. */
+interface ToggleGroupMultiple {
+  multiple: true;
+  value?: string[];
+  defaultValue?: string[];
+  onValueChange?: (value: string[]) => void;
+}
+
+/**
+ * The segmented control: a few options on one band track, the chosen one on
+ * the lifted thumb.
+ * @see https://usefragments.com/components/togglegroup
+ */
+export type ToggleGroupProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange" | "defaultValue" | "dir"
+> &
+  (ToggleGroupSingle | ToggleGroupMultiple) & {
+    /** Toggle items */
+    children: React.ReactNode;
+    /** Size on the one track: xs 24, sm 28, md 32, lg 40.
+     * @default "md" */
+    size?: ControlSize;
+    /** Stretch the track to its container; segments share the width.
+     * @default false */
+    fullWidth?: boolean;
+    /** Disable every option. */
+    disabled?: boolean;
+  };
+
 export interface ToggleGroupItemProps extends Omit<
-  React.HTMLAttributes<HTMLButtonElement>,
-  "onClick"
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "value" | "onChange"
 > {
   /** Value for this item */
   value: string;
-  /** Item content */
+  /** Item content: a label, a glyph, or both. An icon-only item needs
+   * `aria-label`. */
   children: React.ReactNode;
   /** Disabled state */
   disabled?: boolean;
 }
 
-// ============================================
-// Context
-// ============================================
-
-interface ToggleGroupContextValue {
-  value: string;
-  onChange: (value: string) => void;
-  variant: "soft" | "ghost" | "outline";
-  size: "sm" | "md" | "lg";
-  hasFocusableSelection: boolean;
-  firstEnabledValue: string | null;
-}
-
-const ToggleGroupContext = React.createContext<ToggleGroupContextValue | null>(null);
-
-function useToggleGroupContext() {
-  const context = React.useContext(ToggleGroupContext);
-  if (!context) {
-    throw new Error("ToggleGroup.Item must be used within a ToggleGroup");
-  }
-  return context;
+function toArray(value: string | string[] | undefined): string[] | undefined {
+  if (value === undefined) return undefined;
+  if (Array.isArray(value)) return value;
+  return value === "" ? [] : [value];
 }
 
 // ============================================
 // Components
 // ============================================
 
-function ToggleGroupRoot({
-  value,
-  defaultValue,
-  onChange,
-  onValueChange,
-  children,
-  variant = "soft",
-  size: sizeProp,
-  gap,
-  selectionMode = "single",
-  className,
-  ...htmlProps
-}: ToggleGroupProps) {
-  const size = useResolvedControlSize(sizeProp);
-  const resolvedGap = variant === "ghost" ? (gap ?? "xs") : "none";
-  const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
-  const isControlled = value !== undefined;
-  const currentValue = isControlled ? (value ?? "") : internalValue;
-  const emitChange = React.useCallback(
-    (nextValue: string) => {
-      if (!isControlled) {
-        setInternalValue(nextValue);
+const ToggleGroupRoot = React.forwardRef<HTMLDivElement, ToggleGroupProps>(
+  function ToggleGroup(props, ref) {
+    const {
+      value,
+      defaultValue,
+      onValueChange,
+      multiple = false,
+      children,
+      size: sizeProp,
+      fullWidth = false,
+      disabled,
+      className,
+      ...htmlProps
+    } = props;
+
+    const size = useResolvedControlSize(sizeProp, CONTROL_SIZES);
+    const [internalValue, setInternalValue] = React.useState<string[]>(
+      () => toArray(defaultValue) ?? []
+    );
+    const isControlled = value !== undefined;
+    const currentValue = isControlled ? (toArray(value) ?? []) : internalValue;
+
+    const handleValueChange = (next: string[]) => {
+      if (multiple) {
+        if (!isControlled) setInternalValue(next);
+        (onValueChange as ToggleGroupMultiple["onValueChange"])?.(next);
+        return;
       }
-      (onChange ?? onValueChange)?.(nextValue);
-    },
-    [isControlled, onChange, onValueChange]
-  );
-  const classes = [
-    styles.group,
-    styles[variant],
-    styles[`size-${size}`],
-    resolvedGap !== "none" && styles[`gap-${resolvedGap}`],
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+      // One option at a time: pressing the chosen segment again keeps it chosen.
+      const picked = next[next.length - 1];
+      if (picked === undefined) return;
+      if (!isControlled) setInternalValue([picked]);
+      (onValueChange as ToggleGroupSingle["onValueChange"])?.(picked);
+    };
 
-  const childItems = React.Children.toArray(children).filter(
-    (child): child is React.ReactElement<ToggleGroupItemProps> =>
-      React.isValidElement<ToggleGroupItemProps>(child)
-  );
-  const firstEnabledValue = childItems.find((item) => !item.props.disabled)?.props.value ?? null;
-  const hasFocusableSelection = childItems.some(
-    (item) => !item.props.disabled && item.props.value === currentValue
-  );
+    const classes = [styles.group, styles[`size-${size}`], fullWidth && styles.fullWidth, className]
+      .filter(Boolean)
+      .join(" ");
 
-  const contextValue: ToggleGroupContextValue = {
-    value: currentValue,
-    onChange: emitChange,
-    variant,
-    size,
-    hasFocusableSelection,
-    firstEnabledValue,
-  };
-
-  return (
-    <ToggleGroupContext.Provider value={contextValue}>
-      <div
+    return (
+      <BaseToggleGroup
+        ref={ref}
         {...htmlProps}
-        role={selectionMode === "single" ? "radiogroup" : "radiogroup"}
+        value={currentValue}
+        onValueChange={handleValueChange}
+        multiple={multiple}
+        disabled={disabled}
         className={classes}
       >
         {children}
-      </div>
-    </ToggleGroupContext.Provider>
-  );
-}
-
-function ToggleGroupItem({
-  value,
-  children,
-  disabled = false,
-  className,
-  onKeyDown,
-  ...htmlProps
-}: ToggleGroupItemProps) {
-  const context = useToggleGroupContext();
-  const isSelected = context.value === value;
-  const isTabbableSelected = isSelected && !disabled;
-  const isFirstFallback =
-    !context.hasFocusableSelection && !disabled && context.firstEnabledValue === value;
-
-  const classes = [
-    styles.item,
-    isSelected && styles.selected,
-    disabled && styles.disabled,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const handleClick = () => {
-    if (!disabled) {
-      context.onChange(value);
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    onKeyDown?.(event);
-    if (event.defaultPrevented) return;
-
-    if (disabled) return;
-
-    const key = event.key;
-    const supportsRoving =
-      key === "ArrowRight" ||
-      key === "ArrowDown" ||
-      key === "ArrowLeft" ||
-      key === "ArrowUp" ||
-      key === "Home" ||
-      key === "End";
-
-    if (!supportsRoving) return;
-
-    event.preventDefault();
-
-    const group = event.currentTarget.closest('[role="radiogroup"]');
-    if (!group) return;
-
-    const radios = Array.from(
-      group.querySelectorAll<HTMLButtonElement>('[role="radio"]:not(:disabled)')
+      </BaseToggleGroup>
     );
+  }
+);
 
-    if (radios.length === 0) return;
-
-    const currentIndex = radios.indexOf(event.currentTarget);
-    const fallbackIndex = currentIndex >= 0 ? currentIndex : 0;
-    let nextIndex = fallbackIndex;
-
-    if (key === "ArrowRight" || key === "ArrowDown") {
-      nextIndex = (fallbackIndex + 1) % radios.length;
-    } else if (key === "ArrowLeft" || key === "ArrowUp") {
-      nextIndex = (fallbackIndex - 1 + radios.length) % radios.length;
-    } else if (key === "Home") {
-      nextIndex = 0;
-    } else if (key === "End") {
-      nextIndex = radios.length - 1;
-    }
-
-    const target = radios[nextIndex];
-    const nextValue = target.dataset.value;
-    if (nextValue != null) {
-      context.onChange(nextValue);
-    }
-    target.focus();
-  };
-
-  return (
-    <button
-      {...htmlProps}
-      type="button"
-      data-value={value}
-      role="radio"
-      aria-checked={isSelected}
-      tabIndex={isTabbableSelected || isFirstFallback ? 0 : -1}
-      disabled={disabled}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      className={classes}
-    >
-      {children}
-    </button>
-  );
-}
+const ToggleGroupItem = React.forwardRef<HTMLButtonElement, ToggleGroupItemProps>(
+  function ToggleGroupItem({ value, children, className, type = "button", ...htmlProps }, ref) {
+    return (
+      <BaseToggle
+        ref={ref}
+        {...htmlProps}
+        type={type}
+        value={value}
+        className={[styles.item, className].filter(Boolean).join(" ")}
+      >
+        {children}
+      </BaseToggle>
+    );
+  }
+);
 
 // ============================================
 // Export compound component
 // ============================================
 
 export const ToggleGroup = Object.assign(ToggleGroupRoot, {
+  Root: ToggleGroupRoot,
   Item: ToggleGroupItem,
 });
-
-export { ToggleGroupRoot, ToggleGroupItem, useToggleGroupContext };

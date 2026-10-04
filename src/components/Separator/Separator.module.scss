@@ -3,84 +3,57 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
 
-.separator {
-  flex-shrink: 0;
-  background-color: transparent;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Horizontal (default)
-.horizontal {
-  inline-size: 100%;
+@layer fui.components {
+  // One hairline in the line colour. No opacity, no second weight.
+  .rule {
+    flex-shrink: 0;
+    margin: 0;
+    border: 0;
+    background-color: var(--fui-border, $fui-border);
+  }
 
-  .line {
-    display: block;
+  .horizontal {
     inline-size: 100%;
     block-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    background-color: var(--fui-border, $fui-border);
   }
-}
 
-// Vertical
-.vertical {
-  block-size: auto;
-  align-self: stretch;
-
-  .line {
-    display: block;
+  .vertical {
     inline-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    block-size: 100%;
-    background-color: var(--fui-border, $fui-border);
+    align-self: stretch;
   }
-}
 
-// With label
-.withLabel {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-3, $fui-space-3);
-  background-color: transparent;
-
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    block-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    background-color: var(--fui-border, $fui-border);
+  // The toolbar divider: the compact control height, centred, with a small
+  // margin either side so neighbouring controls do not touch it.
+  .control {
+    align-self: center;
+    block-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    margin-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
   }
-}
 
-.label {
-  @include typography.role("ui-compact");
+  // Labelled break: rule, words, rule. Only the first rule carries the
+  // separator role; the words stay readable text.
+  .labelled {
+    display: flex;
+    align-items: center;
+    gap: layout.gap("sm");
+    inline-size: 100%;
 
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  white-space: nowrap;
-}
-
-// Gap: breathing room on the cross axis of the rule.
-.gapNone {
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
-
-@each $gap, $class in ("xs": "gapXs", "sm": "gapSm", "md": "gapMd", "lg": "gapLg", "xl": "gapXl") {
-  .#{$class} {
-    &.horizontal,
-    &.withLabel {
-      padding-block: layout.gap($gap);
-    }
-
-    &.vertical {
-      padding-inline: layout.gap($gap);
+    > .rule {
+      flex: 1 1 0;
+      min-inline-size: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+      block-size: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
     }
   }
-}
 
-// Soft: half-weight rule for quieter breaks. Shares the disabled opacity step
-// (0.5) — there is no dedicated soft-rule token yet.
-.soft {
-  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+  .label {
+    @include typography.role("caption");
 
-  &.withLabel::before,
-  &.withLabel::after {
-    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    text-align: center;
+    overflow-wrap: anywhere;
   }
 }

@@ -1,118 +1,110 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/feedback" as feedback;
+@use "../../recipes/surface" as surface;
 @use "../../recipes/tone" as tone;
+@use "../../recipes/typography" as typography;
 
-// Each tone publishes the shared ramp; the alert paints wash, hairline and ink
-// from it, and `emphasis="surface"` keeps only the hairline + title.
-.alert {
-  @include feedback.contextual;
-  @include high-contrast-outline;
-  @include tone.channels("info");
+@layer fui.tokens, fui.base, fui.components;
 
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--_fui-tone-line);
-  border-radius: var(--fui-card-radius, var(--fui-radius-lg, $fui-radius-lg));
-  background: var(--_fui-tone-wash);
-  color: var(--_fui-tone-ink);
-}
+@layer fui.components {
+  // The tone spends its colour on the tint fill, the icon and the title. Body
+  // copy stays ink 1 and there is no edge: the fill marks the plane. Inside a
+  // card the corner follows the nested radius the card publishes; standalone
+  // it is the surface corner.
+  .alert {
+    @include tone.channels("info");
+    @include typography.role("body-compact");
+    @include high-contrast-outline;
 
-.alert:has(.title) {
-  align-items: flex-start;
-}
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: [icon] auto [main] minmax(0, 1fr) [end] auto;
+    align-items: start;
+    padding: surface.inset("compact");
+    border-radius: var(--_fui-nested-radius, var(--fui-radius-surface, #{$fui-radius-surface}));
+    background-color: var(--_fui-tone-tint);
+    color: var(--fui-text-primary, #{$fui-text-primary});
+  }
 
-.toneInfo {
-  @include tone.channels("info");
-}
+  .toneInfo {
+    @include tone.channels("info");
+  }
 
-.toneSuccess {
-  @include tone.channels("success");
-}
+  .toneWarning {
+    @include tone.channels("warning");
+  }
 
-.toneWarning {
-  @include tone.channels("warning");
-}
+  .toneDanger {
+    @include tone.channels("danger");
+  }
 
-.toneDanger {
-  @include tone.channels("danger");
-}
+  // One line tall, so the glyph centres on the first line of copy.
+  .icon {
+    grid-column: icon;
+    display: inline-flex;
+    align-items: center;
+    block-size: #{typography.line-height("body-compact")};
+    margin-inline-end: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    color: var(--_fui-tone-ink);
 
-// `emphasis="surface"`: the card keeps the page's own surface and spends the
-// tone only on the hairline and the title.
-.surface {
-  background: var(--fui-bg-secondary, $fui-bg-secondary);
-  color: var(--fui-text-secondary, $fui-text-secondary);
+    svg {
+      inline-size: var(--fui-icon-md, #{$fui-icon-md});
+      block-size: var(--fui-icon-md, #{$fui-icon-md});
+    }
+  }
+
+  // Parts placed straight in the alert take the copy column; inside Alert.Body
+  // they stack in the body's own grid.
+  .alert > .body,
+  .alert > .title,
+  .alert > .content,
+  .alert > .actions {
+    grid-column: main;
+  }
+
+  .body {
+    display: grid;
+    gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
+    min-inline-size: 0;
+  }
 
   .title {
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
     color: var(--_fui-tone-ink);
   }
-}
 
-.icon {
-  @include feedback.icon;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--fui-radius-full, #{$fui-radius-full});
-  background-color: var(--_fui-tone-ink);
-  color: var(--fui-text-inverse, $fui-text-inverse);
-  font: inherit;
-}
-
-.alert:has(.title) .icon {
-  margin-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-}
-
-.body {
-  display: grid;
-  flex: 1;
-  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
-  min-inline-size: 0;
-}
-
-.title {
-  @include feedback.title;
-}
-
-.content {
-  @include feedback.body;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-feedback-transient-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-}
-
-.close {
-  @include button-reset;
-  @include interactive-base;
-  @include feedback.close;
-
-  margin-inline-start: auto;
-  border-radius: var(--fui-radius-l3, $fui-radius-l3);
-  color: color-mix(in srgb, currentColor 60%, transparent);
-  line-height: 1;
-
-  &:hover {
-    color: currentColor;
-  }
-}
-
-.action {
-  @include button-reset;
-  @include feedback.compact-action;
-
-  border-radius: var(--fui-radius-l3, $fui-radius-l3);
-  color: inherit;
-  text-decoration: underline;
-
-  &:hover {
-    color: color-mix(in srgb, currentColor 80%, transparent);
+  .content {
+    overflow-wrap: anywhere;
   }
 
-  &:focus-visible {
-    @include focus-ring;
+  // At most two verbs; they wrap under the copy on a narrow alert.
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    margin-block-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
+
+  // Inside the body the body gap already gives half the space.
+  .body > .actions {
+    margin-block-start: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  // The close button sits on the first line; its track is taller than the
+  // line, so it borrows the difference from the inset above and below.
+  .close {
+    grid-column: end;
+    grid-row: 1;
+    margin-block: calc(
+      (
+          #{typography.line-height("body-compact")} - var(
+              --fui-control-height-xs,
+              #{$fui-control-height-xs}
+            )
+        ) /
+        2
+    );
+    margin-inline-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
   }
 }

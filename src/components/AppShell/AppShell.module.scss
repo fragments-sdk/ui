@@ -1,345 +1,119 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
-@use "../../recipes/navigation" as navigation;
+@use "../../recipes/focus";
 
-// Tablet band (md ≤ width < lg): the sidebar stays docked but a third column
-// would starve main, so the aside stacks under it. Below md the sidebar
-// becomes an overlay and everything is one column.
-@mixin tablet {
-  @media (min-width: $fui-breakpoint-md) and (max-width: #{$fui-breakpoint-lg - 1px}) {
-    @content;
-  }
-}
+$_line: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, #{$fui-border});
+$_canvas: var(--fui-app-canvas-bg, #{$fui-body-bg});
 
-// ============================================
-// AppShell Root - CSS Grid Layout
-// ============================================
-// Grid areas: header, sidebar, main, aside
-//
-// Structure is controlled by the `layout` prop ('default' | 'sidebar').
-// Visual treatment (floating) is controlled per-slot via `variant` props.
+@layer fui.tokens, fui.base, fui.components;
 
-.root {
-  @include navigation.properties;
+@layer fui.components {
+  // ============================================
+  // Root: one grid filling the viewport. The tracks are `auto`, so each column
+  // is its slot's own size: the rail's token size (instant on collapse), the
+  // aside's wide size, nothing when a slot is absent.
+  // ============================================
 
-  display: grid;
-  min-height: 100vh;
-  min-height: 100dvh;
-  background-color: inherit;
-
-  // Default layout:
-  // header  header  header
-  // sidebar main    aside
-  grid-template-areas:
-    "header header header"
-    "sidebar main aside";
-  grid-template-columns:
-    var(--appshell-sidebar-width)
-    1fr
-    var(--appshell-aside-width);
-  grid-template-rows:
-    var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
-    1fr;
-
-  // Smooth transition for sidebar collapse/expand.
-  // The token already carries its own easing curve — do not append another.
-  transition: grid-template-columns var(--fui-transition-normal, $fui-transition-normal);
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-
-  // Tablet: sidebar + main, aside stacked under main
-  @include tablet {
+  .root {
+    box-sizing: border-box;
+    display: grid;
     grid-template-areas:
-      "header header"
-      "sidebar main"
-      "sidebar aside";
-    grid-template-columns: var(--appshell-sidebar-width) 1fr;
-    grid-template-rows:
-      var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
-      1fr
-      auto;
-  }
-
-  // Mobile: single column layout
-  @include below-md {
-    grid-template-areas:
-      "header"
-      "main"
-      "aside";
-    grid-template-columns: 1fr;
-    grid-template-rows:
-      var(--appshell-header-height, var(--fui-appshell-header-height, $fui-appshell-header-height))
-      1fr
-      auto;
-    transition: none; // No column transition on mobile
-  }
-}
-
-// Sidebar structure: sidebar spans full height
-// sidebar header header
-// sidebar main   aside
-.sidebarLayout {
-  grid-template-areas:
-    "sidebar header header"
-    "sidebar main aside";
-
-  @include tablet {
-    grid-template-areas:
-      "sidebar header"
-      "sidebar main"
-      "sidebar aside";
-    grid-template-columns: var(--appshell-sidebar-width) 1fr;
-  }
-
-  @include below-md {
-    grid-template-areas:
-      "header"
-      "main"
-      "aside";
-    grid-template-columns: 1fr;
-  }
-}
-
-// ============================================
-// Header
-// ============================================
-
-.header {
-  grid-area: header;
-  position: sticky;
-  top: 0;
-  height: var(
-    --appshell-header-height,
-    var(--fui-appshell-header-height, $fui-appshell-header-height)
-  );
-  z-index: var(--fui-header-z-index, $fui-header-z-index);
-  // Match the reading pane (`--fui-app-main-bg`), not the rail.
-  background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-
-  > header {
-    background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-  }
-}
-
-// ============================================
-// Sidebar
-// ============================================
-
-.sidebar {
-  grid-area: sidebar;
-  align-self: stretch;
-  position: relative;
-  height: auto;
-  min-height: 100%;
-  z-index: 1;
-  overflow: visible;
-  background-color: inherit;
-  // Border lives on the grid column so the rail runs the full content
-  // height; the sticky inner sidebar is viewport-tall for nav scrolling.
-  border-inline-end: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(
-      --fui-sidebar-border,
-      var(--fui-border-subtle, var(--fui-border-default, #{$fui-border-default}))
-    );
-
-  > aside {
-    position: sticky;
-    top: var(
-      --appshell-header-height,
-      var(--fui-appshell-header-height, $fui-appshell-header-height)
-    );
-    height: calc(
-      100vh - var(
-          --appshell-header-height,
-          var(--fui-appshell-header-height, $fui-appshell-header-height)
-        )
-    );
-    height: calc(
-      100dvh - var(
-          --appshell-header-height,
-          var(--fui-appshell-header-height, $fui-appshell-header-height)
-        )
-    );
+      "header header header"
+      "sidebar main aside";
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
+    block-size: 100dvh;
     overflow: hidden;
-    background-color: inherit;
-    border-inline-end: 0;
-  }
+    background-color: $_canvas;
+    color: var(--fui-text-primary, #{$fui-text-primary});
 
-  // On mobile, sidebar becomes a fixed overlay
-  @include below-md {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 100vh;
-    height: 100dvh;
-    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
-    border-inline-end: 0;
+    &[data-layout="sidebar"] {
+      grid-template-areas:
+        "sidebar header header"
+        "sidebar main aside";
+    }
 
-    > aside {
-      position: relative;
-      top: 0;
-      width: var(--appshell-sidebar-expanded-width);
-      height: 100vh;
-      height: 100dvh;
+    // Below lg the aside drops under main.
+    @include below-lg {
+      grid-template-areas:
+        "header header"
+        "sidebar main"
+        "sidebar aside";
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+
+      &[data-layout="sidebar"] {
+        grid-template-areas:
+          "sidebar header"
+          "sidebar main"
+          "sidebar aside";
+      }
+    }
+
+    // Below md the sidebar is the modal panel, so the grid is one column.
+    @include below-md {
+      &,
+      &[data-layout="sidebar"] {
+        grid-template-areas:
+          "header"
+          "main"
+          "aside";
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
   }
-}
 
-// Sidebar in sidebar structure: column stretches both rows; inner sticks
-// from the top of the viewport.
-.sidebarFullHeight {
-  z-index: var(--fui-header-z-index, $fui-header-z-index);
+  // ============================================
+  // Slots
+  // ============================================
 
-  > aside {
-    top: 0;
-    height: 100vh;
-    height: 100dvh;
+  .header {
+    grid-area: header;
+    display: flex;
+    min-inline-size: 0;
+    border-block-end: $_line;
+    background-color: $_canvas;
+    z-index: var(--fui-header-z-index, #{$fui-header-z-index});
   }
-}
 
-// Sidebar variant="floating" is retained as an API signal; AppShell sidebars
-// inherit the body/shell canvas by default.
-.sidebarFloating {
-  background-color: inherit;
-}
+  // The rail draws its own canvas and its inline-end hairline.
+  .sidebar {
+    grid-area: sidebar;
+    display: flex;
+    min-block-size: 0;
 
-// ============================================
-// Main Content
-// ============================================
-
-.main {
-  grid-area: main;
-  min-height: 0; // Allow shrinking in grid
-  min-width: 0; // Prevent overflow
-  background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-}
-
-// Main variant="floating": main surface inset from all edges of the shell.
-// - Inset 1px top highlight simulates a lit upper edge on dark canvases.
-// - Border + top highlight lift the panel without separating it from the canvas.
-// - Scroll is contained inside the card so the canvas stays fixed when the
-//   shell is height-constrained (e.g. 100dvh wrapper with overflow:hidden).
-.mainFloating {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-space-2, $fui-space-2);
-  margin: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1)
-    var(--fui-space-1, $fui-space-1) 0;
-  padding: var(--fui-space-4, $fui-space-4);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-xl, $fui-radius-xl);
-  background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-  box-shadow: inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
-    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
-  overflow: hidden auto;
-
-  @include below-md {
-    margin: var(--fui-space-1, $fui-space-1) 0;
-    border-left: none;
-    border-right: none;
-    border-radius: var(--fui-radius-lg, $fui-radius-lg);
-    width: 100%;
+    @include below-md {
+      display: none;
+    }
   }
-}
 
-// Canonical spacing scale (shared with Card/Box/Stack/Grid): sm=2 md=3 lg=4.
-// Keep these compound rules after `.mainFloating`: the explicit padding prop
-// owns the content inset even when the floating surface supplies its default.
-.main.paddingNone {
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+  .main {
+    grid-area: main;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background-color: $_canvas;
 
-.main.paddingSm {
-  padding: var(--fui-space-2, $fui-space-2);
-}
-
-.main.paddingMd {
-  padding: var(--fui-space-3, $fui-space-3);
-}
-
-.main.paddingLg {
-  padding: var(--fui-space-4, $fui-space-4);
-}
-
-// ============================================
-// Aside (Right Panel)
-// ============================================
-
-.aside {
-  grid-area: aside;
-  position: sticky;
-  top: var(
-    --appshell-header-height,
-    var(--fui-appshell-header-height, $fui-appshell-header-height)
-  );
-  height: calc(
-    100vh - var(
-        --appshell-header-height,
-        var(--fui-appshell-header-height, $fui-appshell-header-height)
-      )
-  );
-  height: calc(
-    100dvh - var(
-        --appshell-header-height,
-        var(--fui-appshell-header-height, $fui-appshell-header-height)
-      )
-  );
-  width: var(--aside-width);
-  min-height: 0; // Allow shrinking in grid
-  z-index: 1;
-  background-color: var(--fui-app-sidebar-bg, inherit);
-  overflow: hidden;
-
-  // Stack below main on tablet and mobile
-  @include below-lg {
-    position: static;
-    width: 100%;
-    height: auto;
-    border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-      var(--fui-border, $fui-border);
+    // While it overflows the slot is a tab stop; its ring sits inside the edge.
+    @include focus.visible(true);
   }
-}
 
-// Aside variant="floating": inherits the body/shell canvas while keeping the
-// same inset geometry as a floating panel.
-.asideFloating {
-  // Override the explicit width so the aside fills its grid cell
-  // and the margin creates visible inset space from the viewport edge.
-  width: auto;
-  height: calc(
-    100vh - var(
-        --appshell-header-height,
-        var(--fui-appshell-header-height, $fui-appshell-header-height)
-      ) - var(--fui-space-1, $fui-space-1) *
-      2
-  );
-  height: calc(
-    100dvh - var(
-        --appshell-header-height,
-        var(--fui-appshell-header-height, $fui-appshell-header-height)
-      ) - var(--fui-space-1, $fui-space-1) *
-      2
-  );
-  margin: var(--fui-space-1, $fui-space-1) var(--fui-space-1, $fui-space-1)
-    var(--fui-space-1, $fui-space-1) 0;
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-xl, $fui-radius-xl);
-  background-color: var(--fui-panel-bg, inherit);
-  box-shadow: inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
-    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent);
-  overflow: hidden;
+  .aside {
+    grid-area: aside;
+    box-sizing: border-box;
+    inline-size: var(--fui-appshell-sidebar-width-wide, #{$fui-appshell-sidebar-width-wide});
+    min-block-size: 0;
+    overflow: auto;
+    border-inline-start: $_line;
+    background-color: var(--fui-bg-primary, #{$fui-bg-primary});
 
-  @include below-lg {
-    margin: var(--fui-space-1, $fui-space-1) 0;
-    border-left: none;
-    border-right: none;
-    border-radius: var(--fui-radius-lg, $fui-radius-lg);
-    width: 100%;
-    height: auto;
+    @include below-lg {
+      inline-size: auto;
+      max-block-size: 40dvh;
+      border-inline-start: 0;
+      border-block-start: $_line;
+    }
   }
 }

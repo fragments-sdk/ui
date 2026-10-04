@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Progress } from ".";
 
 /**
- * Progress is a visual indicator of task completion or loading state.
- * Determinate values render a filled bar; a null value renders an
- * indeterminate animation. Includes a Circular subcomponent.
+ * Progress shows how far a task has got. A value fills one 4px track from
+ * its start edge; a null value is work not yet counted, shown as a short run
+ * that travels the track.
  */
 const meta = {
   title: "Feedback/Progress",
@@ -14,24 +14,19 @@ const meta = {
     docs: {
       description: {
         component:
-          "Visual indicator of task completion or loading state as a bar or a ring.",
+          "One 4px track on the band, filled in the selection colour; tones carry a quota near or over its limit.",
       },
     },
   },
   argTypes: {
-    size: {
-      control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Size of the progress bar",
-    },
     tone: {
       control: "select",
-      options: ["accent", "neutral", "success", "warning", "danger"],
-      description: "Colour; the semantic tones carry state",
+      options: ["accent", "neutral", "warning", "danger"],
+      description: "Fill colour; warning and danger carry state",
     },
-    showValue: { control: "boolean", description: "Show percentage value" },
+    showValue: { control: "boolean", description: "Show the value beside the label" },
   },
-  args: { value: 60, size: "md", tone: "accent", label: "Uploading", showValue: true },
+  args: { value: 60, tone: "accent", label: "Uploading", showValue: true },
 } satisfies Meta<typeof Progress>;
 
 export default meta;
@@ -42,8 +37,8 @@ export const Default: Story = {
   args: { value: 60, label: "Uploading", showValue: true },
 };
 
-export const Success: Story = {
-  args: { value: 100, tone: "success", label: "Complete", showValue: true },
+export const Bare: Story = {
+  args: { value: 35, label: undefined, showValue: false, "aria-label": "Indexing" },
 };
 
 export const NeutralMeter: Story = {
@@ -56,19 +51,23 @@ export const NeutralMeter: Story = {
   },
 };
 
-export const Danger: Story = {
-  args: { value: 95, tone: "danger", label: "Storage critical", showValue: true },
+export const Warning: Story = {
+  args: { value: 82, tone: "warning", label: "Storage nearly full", showValue: true },
 };
 
-export const Large: Story = {
-  args: { value: 40, size: "lg", label: "Processing", showValue: true },
+export const Danger: Story = {
+  args: { value: 100, tone: "danger", label: "Storage full", showValue: true },
 };
 
 export const Indeterminate: Story = {
-  args: { value: null, label: "Loading", showValue: false },
+  args: { value: null, label: "Counting files", showValue: false },
 };
 
-export const Circular: Story = {
-  args: { value: 75, showValue: true },
-  render: (args) => <Progress.Circular {...args} tone="success" />,
+export const CustomFormat: Story = {
+  args: {
+    value: 42,
+    label: "Checks",
+    showValue: true,
+    formatValue: (value: number) => `${value} of 100`,
+  },
 };

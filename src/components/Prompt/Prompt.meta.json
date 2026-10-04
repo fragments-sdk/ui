@@ -1,0 +1,269 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Prompt",
+  "description": "Composes chat input with attachments and pickers, switching Send to Stop while the assistant works.",
+  "category": "ai",
+  "tags": ["prompt", "chat", "ai", "input", "textarea", "form"],
+  "status": "stable",
+  "sourcePath": "src/components/Prompt/index.tsx",
+  "exportName": "Prompt",
+  "propsSummary": [
+    "children: node (required)",
+    "value: string",
+    "defaultValue: string",
+    "onValueChange: function",
+    "onSubmit: function",
+    "placeholder: string (default: Ask, search or chat…)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "invalid: boolean (default: false)",
+    "errorMessage: node",
+    "pending: boolean (default: false)",
+    "working: boolean (default: false)",
+    "onStop: function",
+    "minRows: number (default: 1)",
+    "maxRows: number (default: 8)",
+    "submitOnEnter: boolean (default: true)",
+    "onFiles: function",
+    "accept: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Prompt parts: Attachments, Textarea, Toolbar",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled text",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initial text when uncontrolled",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new text on every change",
+      "required": false
+    },
+    "onSubmit": {
+      "type": "function",
+      "description": "Called with the text when the message is sent",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Hint in the empty text area",
+      "required": false,
+      "default": "Ask, search or chat…"
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Nothing can be typed or sent",
+      "required": false,
+      "default": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "The text can be read and selected, not changed or sent",
+      "required": false,
+      "default": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The message can't be sent as written; pair with errorMessage",
+      "required": false,
+      "default": false
+    },
+    "errorMessage": {
+      "type": "node",
+      "description": "Why the message can't be sent, shown under the text",
+      "required": false
+    },
+    "pending": {
+      "type": "boolean",
+      "description": "Sending: Send shows a spinner after a second and Enter waits",
+      "required": false,
+      "default": false
+    },
+    "working": {
+      "type": "boolean",
+      "description": "The assistant is responding: the work wash plays, Send becomes Stop when onStop is set, the text stays editable",
+      "required": false,
+      "default": false
+    },
+    "onStop": {
+      "type": "function",
+      "description": "Stop the response while working",
+      "required": false
+    },
+    "minRows": {
+      "type": "number",
+      "description": "Rows before the text area grows",
+      "required": false,
+      "default": 1
+    },
+    "maxRows": {
+      "type": "number",
+      "description": "Rows before the text area scrolls",
+      "required": false,
+      "default": 8
+    },
+    "submitOnEnter": {
+      "type": "boolean",
+      "description": "Enter sends, Shift+Enter breaks the line",
+      "required": false,
+      "default": true
+    },
+    "onFiles": {
+      "type": "function",
+      "description": "Receives files from Attach, paste and drop",
+      "required": false
+    },
+    "accept": {
+      "type": "string",
+      "description": "File types the attach, paste and drop paths take",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Chat and AI assistant interfaces",
+      "Multi-line input with a submit action",
+      "Toolbars carrying attachments or a model picker"
+    ],
+    "whenNot": [
+      "Single-line text (use Input)",
+      "Multi-line with no toolbar (use Textarea)",
+      "Search-only fields (use Input with the search variant)"
+    ],
+    "guidelines": [
+      "Always pass onSubmit; pair working with onStop so Send becomes Stop",
+      "pending while the message is on its way; working while the assistant responds",
+      "The text stays editable while working, so the next message can be drafted",
+      "Prompt.Picker chooses one of a few options (a model, a mode) from a menu; its name is read before the value",
+      "Prompt.Submit is the one accent action; a menu on it opens by right-click, ArrowDown or long-press, never by a plain click",
+      "Wire onFiles once; the attach button, paste and drop all route through it",
+      "Render Prompt.Attachments above Prompt.Textarea; they are part of the message",
+      "invalid with errorMessage says why the message can't be sent"
+    ],
+    "accessibility": [
+      "Enter sends, Shift+Enter breaks the line; Enter waits while pending or working",
+      "The frame draws one focus ring for the text area",
+      "Send and Stop are labelled buttons; the picker reads its name before its value",
+      "The error message is linked with aria-describedby and the text area reports aria-invalid",
+      "Working sets aria-busy; the drop hint is words, not only a ring"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic",
+      "description": "The text area, attach and Send.",
+      "code": "const send = (message: string) => {};\n\n<Prompt onSubmit={send}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Attach />\n    <Prompt.Actions>\n      <Prompt.Submit />\n    </Prompt.Actions>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "With Picker",
+      "description": "A model picker and a token count beside Send.",
+      "code": "const models = [{ value: \"fast\", label: \"Fast\" }, { value: \"thorough\", label: \"Thorough\" }];\nconst [model, setModel] = React.useState(\"fast\");\nconst send = (message: string) => {};\n\n<Prompt onSubmit={send}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Picker aria-label=\"Model\" options={models} value={model} onValueChange={setModel} />\n    <Prompt.Actions>\n      <Prompt.Info>1.2k tokens</Prompt.Info>\n      <Prompt.Submit />\n    </Prompt.Actions>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "While Working",
+      "description": "Send becomes Stop; the text stays editable.",
+      "code": "const [responding, setResponding] = React.useState(true);\nconst send = (message: string) => setResponding(true);\nconst stop = () => setResponding(false);\n\n<Prompt working={responding} onStop={stop} onSubmit={send}>\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Actions>\n      <Prompt.Submit />\n    </Prompt.Actions>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "With Attachments",
+      "description": "Attach, paste or drop files; chips sit above the text.",
+      "code": "import type { PromptAttachment } from \"@/components/Prompt\";\n\nconst [files, setFiles] = React.useState<PromptAttachment[]>([{ id: \"notes\", name: \"notes.txt\" }]);\nconst addFiles = (selected: File[]) => setFiles((current) => [...current, ...selected.map((file, index) => ({ id: `${file.name}-${index}`, name: file.name }))]);\nconst removeFile = (id: string) => setFiles((current) => current.filter((file) => file.id !== id));\nconst send = (message: string) => {};\n\n<Prompt onSubmit={send} onFiles={addFiles}>\n  <Prompt.Attachments items={files} onRemove={removeFile} />\n  <Prompt.Textarea />\n  <Prompt.Toolbar>\n    <Prompt.Attach />\n    <Prompt.Actions>\n      <Prompt.Submit />\n    </Prompt.Actions>\n  </Prompt.Toolbar>\n</Prompt>"
+    },
+    {
+      "name": "Invalid",
+      "description": "Says why the message can't be sent.",
+      "code": "const send = (message: string) => {};\n\n<Prompt invalid errorMessage=\"Messages can be up to 4,000 characters.\" onSubmit={send}>\n  <Prompt.Textarea />\n</Prompt>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Nothing can be typed or sent.",
+      "code": "<Prompt disabled placeholder=\"Connect a repository to ask\">\n  <Prompt.Textarea />\n</Prompt>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for simple single-line text input"
+    },
+    {
+      "component": "Textarea",
+      "relationship": "alternative",
+      "note": "Use Textarea for multi-line without toolbar"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value / defaultValue / onValueChange: the text",
+      "onSubmit: (value: string) => void - send handler",
+      "placeholder: string (default: \"Ask, search or chat…\")",
+      "disabled / readOnly / invalid + errorMessage: field states",
+      "pending: boolean - sending",
+      "working: boolean + onStop - the assistant is responding; Send becomes Stop",
+      "minRows/maxRows: number - row constraints (default: 1/8)",
+      "submitOnEnter: boolean (default: true)",
+      "onFiles / accept: attach, paste and drop",
+      "Prompt.Picker: aria-label + options[] + value/defaultValue/onValueChange",
+      "Prompt.Submit: aria-label (default: \"Send\"), stopLabel (default: \"Stop\"), menu"
+    ],
+    "a11yRules": ["A11Y_TEXTAREA_LABEL", "A11Y_BUTTON_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Textarea",
+      "Toolbar",
+      "Actions",
+      "Info",
+      "Picker",
+      "Attach",
+      "Attachments",
+      "Submit"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.513Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-bg-primary",
+    "--fui-border",
+    "--fui-color-accent",
+    "--fui-color-accent-active",
+    "--fui-color-accent-hover",
+    "--fui-color-danger-text",
+    "--fui-color-on-accent",
+    "--fui-control-selected-border",
+    "--fui-field-bg",
+    "--fui-field-border",
+    "--fui-icon-md",
+    "--fui-radius-control",
+    "--fui-radius-indicator",
+    "--fui-radius-surface",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary",
+    "--fui-working-edge"
+  ],
+  "attributes": [
+    {
+      "name": "data-disabled",
+      "value": "",
+      "fixture": "populated"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Main",
+  "description": "Defines the page region, title, content gutter, reading width and vertical rhythm.",
+  "category": "layout",
+  "tags": ["main", "page", "layout", "compound"],
+  "status": "stable",
+  "sourcePath": "src/components/Main/index.tsx",
+  "exportName": "Main",
+  "propsSummary": [
+    "children: node (required)",
+    "measure: full|narrow (default: full)",
+    "as: main|section|div (default: main)",
+    "id: string - overrides the default main-content landmark id"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Page regions: Main.Header (with Main.Title and Main.Description), Main.Content, Main.Footer",
+      "required": true
+    },
+    "measure": {
+      "type": "enum",
+      "description": "Maximum width applied to the page composition",
+      "default": "full",
+      "required": false,
+      "values": ["full", "narrow"]
+    },
+    "as": {
+      "type": "enum",
+      "description": "The page region element. `main` gets id=\"main-content\" unless you pass an id.",
+      "default": "main",
+      "required": false,
+      "values": ["main", "section", "div"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Overrides the default main-content landmark id for a main element.",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Laying out a page's header, description, content, and footer",
+      "Giving a page one consistent gutter and measure"
+    ],
+    "whenNot": [
+      "Shell-level navigation chrome (use AppShell)",
+      "Arbitrary spacing inside a component (use Stack)"
+    ],
+    "guidelines": [
+      "One Main per page owns the gutter; AppShell.Main adds none, so do not nest them",
+      "measure=\"narrow\" caps content for reading; \"full\" uses the whole canvas",
+      "Main.Title is the page h1 at the display role (24, strong, ink 1); pass as=\"h2\" for a panel title",
+      "Main.Description is 12px ink 2 and wraps at the --fui-main-description-max-inline measure (68 characters)",
+      "Compose regions with Main.Header, Main.Title, Main.Description, Main.Content, Main.Footer"
+    ],
+    "accessibility": [
+      "The default <main> carries id=\"main-content\", the Header.SkipLink target",
+      "Use as=\"section\" or as=\"div\" when another <main> already exists",
+      "Main.Title renders the page's h1"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Full Measure",
+      "description": "Content fills the canvas, inset only by the page gutter.",
+      "code": "import { Button } from '@/components/Button';\nimport { Main } from '@/components/Main';\n\nconst content = <p>No findings need attention.</p>;\n\n<Main measure=\"full\">\n  <Main.Header>\n    <Main.Title>Findings</Main.Title>\n    <Main.Description>Every review finding raised against this repository, newest first.</Main.Description>\n  </Main.Header>\n  <Main.Content>{content}</Main.Content>\n  <Main.Footer>\n    <Button variant=\"soft\">Export</Button>\n  </Main.Footer>\n</Main>"
+    },
+    {
+      "name": "Narrow Measure",
+      "description": "Caps content at the reading measure and centres it on wide screens.",
+      "code": "import { Field } from \"@/components/Field\";\nimport { Input } from \"@/components/Input\";\nimport { Button } from '@/components/Button';\nimport { Main } from '@/components/Main';\n\nconst form = (\n  <form>\n    <Field><Field.Label>Workspace name</Field.Label><Input name=\"workspaceName\" defaultValue=\"Fragments\" /></Field>\n  </form>\n);\n\n<Main measure=\"narrow\">\n  <Main.Header>\n    <Main.Title>Settings</Main.Title>\n    <Main.Description>Manage the workspace rules, shared components and token files.</Main.Description>\n  </Main.Header>\n  <Main.Content>{form}</Main.Content>\n  <Main.Footer>\n    <Button>Save changes</Button>\n  </Main.Footer>\n</Main>"
+    }
+  ],
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Header", "Title", "Description", "Content", "Footer"]
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": true,
+    "frameworkSupport": "native"
+  },
+  "cssVariables": [
+    "--fui-main-description-max-inline",
+    "--fui-raw-space-0",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": [
+    {
+      "name": "data-main-measure",
+      "value": "full",
+      "fixture": "populated"
+    }
+  ]
+}

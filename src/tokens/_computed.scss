@@ -2,55 +2,24 @@
 // @usefragments/ui Computed Tokens
 // ============================================
 //
-// This module imports seed values and derivation functions,
-// then computes all token values. These computed values are
-// used as fallbacks in _variables.scss for backward compatibility.
+// Radius, touch and shadow values for the Sass twins in
+// _variables.scss. Colour is not computed here: it derives at runtime from
+// the seeds (_derive.scss), and its twins are the generated Glass defaults
+// (_defaults.generated.scss).
 //
 // ============================================
 
 @use "sass:map";
 @use "seeds" as seeds;
-@use "palettes" as palettes;
 @use "measurements.generated" as measurements;
 @use "radius" as radius;
-@use "derive" as derive;
 
 // --------------------------------------------
 // Resolve Seed Values
 // --------------------------------------------
 
 // Get the selected configurations
-$_palette: palettes.get-palette(seeds.$fui-neutral);
 $_radius: radius.get-radius-style(seeds.$fui-radius-style);
-
-// True when the brand seed is the Fragments default (coral). The default
-// theme uses the exact SCSS-computed accents; any consumer-supplied
-// $fui-brand keeps the full seed→accent derivation reactive at runtime.
-$brand-is-fragments-default: seeds.$fui-brand == #f56138;
-
-// --------------------------------------------
-// Computed: Base Configuration
-// --------------------------------------------
-
-$computed-base-font-size: measurements.spacing-value("baseFontSize");
-$computed-base-unit: measurements.spacing-value("baseUnit");
-
-// --------------------------------------------
-// Computed: Spacing
-// --------------------------------------------
-
-$computed-space-px: measurements.spacing-step("px");
-$computed-space-0-5: measurements.spacing-step("0-5");
-$computed-space-0-75: measurements.spacing-step("0-75");
-$computed-space-1: measurements.spacing-step("1");
-$computed-space-2: measurements.spacing-step("2");
-$computed-space-3: measurements.spacing-step("3");
-$computed-space-4: measurements.spacing-step("4");
-$computed-space-5: measurements.spacing-step("5");
-$computed-space-6: measurements.spacing-step("6");
-$computed-space-8: measurements.spacing-step("8");
-$computed-space-10: measurements.spacing-step("10");
-$computed-space-12: measurements.spacing-step("12");
 
 // --------------------------------------------
 // Computed: Border Radius
@@ -81,168 +50,10 @@ $computed-sidebar-item-height: measurements.spacing-px-to-rem(
 );
 
 // --------------------------------------------
-// Computed: Colors - Light Mode
+// Computed: Shadows (literal; colour roles derive at runtime in _derive.scss)
 // --------------------------------------------
 
-// Accent colors (from brand seed)
-$computed-color-accent: seeds.$fui-brand;
-// Default (pine) fill needs white text; contrast-color mis-scores mid-dark
-// brands, so pin on-accent to white for the Fragments default.
-$computed-color-on-accent: derive.contrast-color(seeds.$fui-brand);
-$computed-color-accent-hover: derive.derive-accent-hover(seeds.$fui-brand, false);
-$computed-color-accent-active: derive.derive-accent-active(seeds.$fui-brand, false);
-
-// Semantic colors (from seeds or defaults)
-$computed-color-danger: seeds.$fui-danger;
-$computed-color-danger-hover: derive.derive-semantic-hover(seeds.$fui-danger);
-$computed-color-success: seeds.$fui-success;
-$computed-color-warning: seeds.$fui-warning;
-$computed-color-info: seeds.$fui-info;
-
-// Tone ramp — tint (compact surfaces) and wash (panels), seed at an alpha
-$computed-color-accent-tint: derive.derive-semantic-tint(seeds.$fui-brand, false);
-$computed-color-danger-tint: derive.derive-semantic-tint(seeds.$fui-danger, false);
-$computed-color-success-tint: derive.derive-semantic-tint(seeds.$fui-success, false);
-$computed-color-warning-tint: derive.derive-semantic-tint(seeds.$fui-warning, false);
-$computed-color-info-tint: derive.derive-semantic-tint(seeds.$fui-info, false);
-$computed-color-accent-wash: derive.derive-semantic-wash(seeds.$fui-brand, false);
-$computed-color-danger-wash: derive.derive-semantic-wash(seeds.$fui-danger, false);
-$computed-color-success-wash: derive.derive-semantic-wash(seeds.$fui-success, false);
-$computed-color-warning-wash: derive.derive-semantic-wash(seeds.$fui-warning, false);
-$computed-color-info-wash: derive.derive-semantic-wash(seeds.$fui-info, false);
-
-// Ink on a solid tone fill (theme-invariant: the fill is the seed in both)
-$computed-color-danger-on-fill: derive.derive-on-fill(seeds.$fui-danger);
-$computed-color-success-on-fill: derive.derive-on-fill(seeds.$fui-success);
-$computed-color-warning-on-fill: derive.derive-on-fill(seeds.$fui-warning);
-$computed-color-info-on-fill: derive.derive-on-fill(seeds.$fui-info);
-
-// Semantic text colors (WCAG AA contrast-safe for text on semantic backgrounds)
-$computed-color-accent-text: derive.derive-semantic-text(seeds.$fui-brand, false);
-$computed-color-danger-text: derive.derive-semantic-text(seeds.$fui-danger, false);
-$computed-color-success-text: derive.derive-semantic-text(seeds.$fui-success, false);
-$computed-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, false);
-$computed-color-info-text: derive.derive-semantic-text(seeds.$fui-info, false);
-
-// Surfaces (from neutral palette)
-$_surfaces-light: derive.derive-surfaces($_palette, false, seeds.$fui-neutral);
-$computed-bg-primary: map.get($_surfaces-light, primary);
-$computed-bg-secondary: map.get($_surfaces-light, secondary);
-$computed-bg-tertiary: map.get($_surfaces-light, tertiary);
-$computed-bg-elevated: map.get($_surfaces-light, elevated);
-$computed-bg-subtle: map.get($_surfaces-light, subtle);
-$computed-bg-hover: map.get($_surfaces-light, hover);
-$computed-bg-selected: map.get($_surfaces-light, selected);
-$computed-bg-active: map.get($_surfaces-light, active);
-
-// App/document surfaces
-$_app-surfaces-light: derive.derive-app-surfaces($_palette, false, seeds.$fui-neutral);
-$computed-body-bg: map.get($_app-surfaces-light, body);
-$computed-main-bg: map.get($_app-surfaces-light, main);
-
-// Text (from neutral palette)
-$_text-light: derive.derive-text($_palette, false, seeds.$fui-neutral);
-$computed-text-primary: map.get($_text-light, primary);
-$computed-text-secondary: map.get($_text-light, secondary);
-$computed-text-tertiary: map.get($_text-light, tertiary);
-$computed-text-inverse: map.get($_text-light, inverse);
-
-// Borders (from neutral palette)
-$_borders-light: derive.derive-borders($_palette, false, seeds.$fui-neutral);
-$computed-border: map.get($_borders-light, default);
-$computed-border-default: map.get($_borders-light, default);
-$computed-border-strong: map.get($_borders-light, strong);
-
-// Shadows
-$_shadows-light: derive.derive-shadows(false);
-$computed-shadow-sm: map.get($_shadows-light, sm);
-$computed-shadow-md: map.get($_shadows-light, md);
-$computed-shadow-lg: map.get($_shadows-light, lg);
-
-// Focus ring
-$computed-focus-ring-color: derive.derive-focus-ring(seeds.$fui-brand, false);
-
-// Scrollbar
-$_scrollbar-light: derive.derive-scrollbar($_palette, false, seeds.$fui-neutral);
-$computed-scrollbar-track: map.get($_scrollbar-light, track);
-$computed-scrollbar-thumb: map.get($_scrollbar-light, thumb);
-$computed-scrollbar-thumb-hover: map.get($_scrollbar-light, thumb-hover);
-
-// Backdrop
-$computed-backdrop: derive.derive-backdrop(false);
-
-// --------------------------------------------
-// Computed: Colors - Dark Mode
-// --------------------------------------------
-
-// Accent colors — dark brands lightened for visibility; on-accent handles text contrast.
-$computed-dark-color-accent: derive.derive-dark-accent(seeds.$fui-brand);
-$computed-dark-color-on-accent: derive.contrast-color($computed-dark-color-accent);
-$computed-dark-color-accent-hover: derive.derive-accent-hover($computed-dark-color-accent, true);
-$computed-dark-color-accent-active: derive.derive-accent-active($computed-dark-color-accent, true);
-
-// Tone ramp (dark mode)
-$computed-dark-color-accent-tint: derive.derive-semantic-tint($computed-dark-color-accent, true);
-$computed-dark-color-danger-tint: derive.derive-semantic-tint(seeds.$fui-danger, true);
-$computed-dark-color-success-tint: derive.derive-semantic-tint(seeds.$fui-success, true);
-$computed-dark-color-warning-tint: derive.derive-semantic-tint(seeds.$fui-warning, true);
-$computed-dark-color-info-tint: derive.derive-semantic-tint(seeds.$fui-info, true);
-$computed-dark-color-accent-wash: derive.derive-semantic-wash($computed-dark-color-accent, true);
-$computed-dark-color-danger-wash: derive.derive-semantic-wash(seeds.$fui-danger, true);
-$computed-dark-color-success-wash: derive.derive-semantic-wash(seeds.$fui-success, true);
-$computed-dark-color-warning-wash: derive.derive-semantic-wash(seeds.$fui-warning, true);
-$computed-dark-color-info-wash: derive.derive-semantic-wash(seeds.$fui-info, true);
-
-// Semantic text colors (dark mode, WCAG AA contrast-safe)
-$computed-dark-color-accent-text: derive.derive-semantic-text($computed-dark-color-accent, true);
-$computed-dark-color-danger-text: derive.derive-semantic-text(seeds.$fui-danger, true);
-$computed-dark-color-success-text: derive.derive-semantic-text(seeds.$fui-success, true);
-$computed-dark-color-warning-text: derive.derive-semantic-text(seeds.$fui-warning, true);
-$computed-dark-color-info-text: derive.derive-semantic-text(seeds.$fui-info, true);
-
-// Surfaces (dark mode)
-$_surfaces-dark: derive.derive-surfaces($_palette, true, seeds.$fui-neutral);
-$computed-dark-bg-primary: map.get($_surfaces-dark, primary);
-$computed-dark-bg-secondary: map.get($_surfaces-dark, secondary);
-$computed-dark-bg-tertiary: map.get($_surfaces-dark, tertiary);
-$computed-dark-bg-elevated: map.get($_surfaces-dark, elevated);
-$computed-dark-bg-subtle: map.get($_surfaces-dark, subtle);
-$computed-dark-bg-hover: map.get($_surfaces-dark, hover);
-$computed-dark-bg-selected: map.get($_surfaces-dark, selected);
-$computed-dark-bg-active: map.get($_surfaces-dark, active);
-
-// App/document surfaces (dark mode)
-$_app-surfaces-dark: derive.derive-app-surfaces($_palette, true, seeds.$fui-neutral);
-$computed-dark-body-bg: map.get($_app-surfaces-dark, body);
-$computed-dark-main-bg: map.get($_app-surfaces-dark, main);
-
-// Text (dark mode)
-$_text-dark: derive.derive-text($_palette, true, seeds.$fui-neutral);
-$computed-dark-text-primary: map.get($_text-dark, primary);
-$computed-dark-text-secondary: map.get($_text-dark, secondary);
-$computed-dark-text-tertiary: map.get($_text-dark, tertiary);
-$computed-dark-text-inverse: map.get($_text-dark, inverse);
-
-// Borders (dark mode)
-$_borders-dark: derive.derive-borders($_palette, true, seeds.$fui-neutral);
-$computed-dark-border: map.get($_borders-dark, default);
-$computed-dark-border-default: map.get($_borders-dark, default);
-$computed-dark-border-strong: map.get($_borders-dark, strong);
-
-// Shadows (dark mode)
-$_shadows-dark: derive.derive-shadows(true);
-$computed-dark-shadow-sm: map.get($_shadows-dark, sm);
-$computed-dark-shadow-md: map.get($_shadows-dark, md);
-$computed-dark-shadow-lg: map.get($_shadows-dark, lg);
-
-// Focus ring (dark mode) — follows the dark accent.
-$computed-dark-focus-ring-color: derive.derive-focus-ring(seeds.$fui-brand, true);
-
-// Scrollbar (dark mode)
-$_scrollbar-dark: derive.derive-scrollbar($_palette, true, seeds.$fui-neutral);
-$computed-dark-scrollbar-track: map.get($_scrollbar-dark, track);
-$computed-dark-scrollbar-thumb: map.get($_scrollbar-dark, thumb);
-$computed-dark-scrollbar-thumb-hover: map.get($_scrollbar-dark, thumb-hover);
-
-// Backdrop (dark mode)
-$computed-dark-backdrop: derive.derive-backdrop(true);
+// The thumb shadow. The popup shadow is a role in _variables.scss; md and lg
+// alias it.
+$computed-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+$computed-dark-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);

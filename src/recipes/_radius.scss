@@ -1,0 +1,26 @@
+// Corner formulas that depend on where a box sits, so they cannot be one
+// token: a box nested in a rounded box, and a pill. Every other corner reads
+// a radius role (`--fui-radius-control`, `-popup`, `-surface`, …).
+
+@use "sass:string";
+@use "../tokens/variables" as tokens;
+
+/// The box's own corner when it is too far in to share its parent's curve.
+$_nested-own: "min(var(--fui-radius-indicator, #{tokens.$fui-radius-indicator}), 6px)";
+
+/// The corner of a box inset `$pad` inside a corner of `$outer`. While the
+/// pad is smaller than the corner the two curves stay concentric
+/// (`outer − pad`); once the pad reaches the corner the box takes its own
+/// small radius, `min(indicator, 6px)`. Both arguments are CSS lengths.
+@function nested($outer, $pad) {
+  $gap: "(#{$outer} - #{$pad})";
+  @return string.unquote(
+    "calc(max(0px, #{$gap}) + #{$_nested-own} - clamp(0px, #{$gap} * 1000, #{$_nested-own}))"
+  );
+}
+
+/// A pill: half the box's height. Only round marks use it: the radio dot and
+/// the switch track and thumb.
+@function pill($height) {
+  @return string.unquote("calc(#{$height} / 2)");
+}

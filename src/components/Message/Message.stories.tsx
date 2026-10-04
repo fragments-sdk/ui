@@ -1,36 +1,42 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Message } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Copy } from "@phosphor-icons/react";
+import { Message } from ".";
+import { Icon } from "../Icon";
+import { IconButton } from "../IconButton";
+import { Stack } from "../Stack";
 
 /**
- * Individual chat message with role-based styling and alignment. Compose with
- * `Message.Content`, `Message.Timestamp`, `Message.Avatar`, and `Message.Actions`.
+ * One turn of a conversation. The user's words sit in a band bubble at the
+ * end; the assistant's reply is flush, rendered as markdown. `status` covers
+ * sending, streaming (a still caret at the end), complete and failed (a
+ * failure block with "Try again").
  */
 const meta = {
-  title: 'Ai/Message',
+  title: "Ai/Message",
   component: Message,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Chat message display with role-based styling for AI conversation UIs.',
+        component: "One turn of an AI conversation: the user's bubble or the assistant's reply.",
       },
     },
   },
   argTypes: {
-    role: {
-      control: 'select',
-      options: ['user', 'assistant', 'system'],
-      description: 'Message role determines styling and alignment',
+    from: {
+      control: "inline-radio",
+      options: ["user", "assistant"],
+      description: "Who wrote the message",
     },
     status: {
-      control: 'select',
-      options: ['pending', 'streaming', 'complete', 'error'],
-      description: 'Message state',
+      control: "select",
+      options: ["pending", "streaming", "complete", "error"],
+      description: "Where the message stands",
     },
   },
   args: {
-    role: 'assistant',
-    status: 'complete',
+    from: "assistant",
+    status: "complete",
     children: <Message.Content>How can I help you today?</Message.Content>,
   },
 } satisfies Meta<typeof Message>;
@@ -39,47 +45,83 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const UserMessage: Story = {
+export const Assistant: Story = {
   args: {
-    role: 'user',
-    children: (
-      <Message.Content>Hello! Can you help me with a coding question?</Message.Content>
-    ),
-  },
-};
-
-export const AssistantMessage: Story = {
-  args: {
-    role: 'assistant',
     children: (
       <Message.Content>
-        Of course! I&apos;d be happy to help. What would you like to know?
+        {
+          "Two files use a raw `button`. Replace them with `Button`:\n\n- `src/Save.tsx`\n- `src/Cancel.tsx`"
+        }
       </Message.Content>
     ),
   },
 };
 
-export const SystemMessage: Story = {
+export const User: Story = {
   args: {
-    role: 'system',
-    children: <Message.Content>Conversation started.</Message.Content>,
+    from: "user",
+    timestamp: new Date(),
+    children: <Message.Content>Which files break the contract?</Message.Content>,
+  },
+};
+
+export const Sending: Story = {
+  args: {
+    from: "user",
+    status: "pending",
+    children: <Message.Content>Which files break the contract?</Message.Content>,
   },
 };
 
 export const Streaming: Story = {
   args: {
-    role: 'assistant',
-    status: 'streaming',
-    children: (
-      <Message.Content>I&apos;m currently generating a response for you</Message.Content>
-    ),
+    status: "streaming",
+    children: <Message.Content>{"Checking the contract for this pull request"}</Message.Content>,
   },
 };
 
-export const ErrorState: Story = {
+export const Failed: Story = {
   args: {
-    role: 'user',
-    status: 'error',
-    children: <Message.Content>This message failed to send.</Message.Content>,
+    status: "error",
+    onRetry: () => {},
+    children: <Message.Content>{"Two files use a raw"}</Message.Content>,
   },
+};
+
+export const WithActions: Story = {
+  render: (args) => (
+    <Message
+      {...args}
+      actions={
+        <IconButton variant="ghost" size="sm" aria-label="Copy reply">
+          <Icon icon={Copy} size="sm" />
+        </IconButton>
+      }
+    >
+      <Message.Content>{"Every changed file follows the contract."}</Message.Content>
+    </Message>
+  ),
+};
+
+export const WithAvatar: Story = {
+  args: {
+    from: "user",
+    avatar: <Message.Avatar>CM</Message.Avatar>,
+    children: <Message.Content>Summarise the drift on main.</Message.Content>,
+  },
+};
+
+export const Exchange: Story = {
+  render: () => (
+    <Stack gap="lg">
+      <Message from="user" timestamp={new Date(Date.now() - 120000)}>
+        <Message.Content>Which files break the contract?</Message.Content>
+      </Message>
+      <Message from="assistant">
+        <Message.Content>
+          {"Two files use a raw `button`:\n\n```tsx\n<button onClick={save}>Save</button>\n```"}
+        </Message.Content>
+      </Message>
+    </Stack>
+  ),
 };

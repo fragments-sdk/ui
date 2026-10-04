@@ -1,34 +1,38 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { VisuallyHidden } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
+import { VisuallyHidden } from ".";
+import { Button } from "../Button";
+import { Link } from "../Link";
+import { Text } from "../Text";
 
 /**
  * VisuallyHidden is the canonical screen-reader-only primitive. It hides content
- * visually while keeping it in the accessibility tree — essential for labeling
- * icon-only buttons and adding supplementary context. Agents should reuse it
- * rather than hand-rolling `sr-only` CSS.
+ * visually while keeping it in the accessibility tree. With `focusable` it
+ * reveals as a raised chip while it holds keyboard focus — the skip link.
  */
 const meta = {
-  title: 'Navigation/VisuallyHidden',
+  title: "Navigation/VisuallyHidden",
   component: VisuallyHidden,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'Hides content visually while keeping it accessible to screen readers. Prefer this over hand-rolled sr-only CSS for icon labels and supplementary text.',
+          "Hides content visually while keeping it accessible to screen readers. Prefer this over hand-rolled sr-only CSS for icon labels, supplementary text and skip links.",
       },
     },
   },
   argTypes: {
     as: {
-      control: 'select',
-      options: ['span', 'div'],
-      description: 'HTML element to render',
+      control: "select",
+      options: ["span", "div"],
+      description: "HTML element to render",
     },
+    focusable: { control: "boolean", description: "Reveal while focus is inside" },
   },
   args: {
-    children: 'Search',
-    as: 'span',
+    children: "Search",
+    as: "span",
   },
 } satisfies Meta<typeof VisuallyHidden>;
 
@@ -37,42 +41,44 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { children: 'Search' },
+  args: { children: "Search" },
 };
 
 export const IconButtonLabel: Story = {
   render: () => (
-    <button
-      type="button"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '40px',
-        height: '40px',
-        border: '1px solid var(--fui-border-default)',
-        borderRadius: '8px',
-        background: 'var(--fui-color-surface-primary)',
-        cursor: 'pointer',
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
+    <Button variant="ghost">
+      <MagnifyingGlass aria-hidden />
       <VisuallyHidden>Search</VisuallyHidden>
-    </button>
+    </Button>
   ),
 };
 
 export const SupplementaryText: Story = {
   render: () => (
-    <a href="#" style={{ color: 'var(--fui-color-accent)' }}>
+    <Link href="#features">
       Read more
       <VisuallyHidden> about our accessibility features</VisuallyHidden>
-    </a>
+    </Link>
+  ),
+};
+
+/** Press Tab: the link reveals as a raised chip at the top corner. */
+export const SkipLink: Story = {
+  render: () => (
+    <div>
+      <VisuallyHidden focusable>
+        <Link href="#main-content">Skip to main content</Link>
+      </VisuallyHidden>
+      <Text as="p" color="secondary">
+        Press Tab to reveal the skip link.
+      </Text>
+      <main id="main-content" tabIndex={-1}>
+        Main content
+      </main>
+    </div>
   ),
 };
 
 export const AsDiv: Story = {
-  args: { as: 'div', children: 'Skip to main content' },
+  args: { as: "div", children: "Results updated" },
 };

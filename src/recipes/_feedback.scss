@@ -1,5 +1,7 @@
 @use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
 @use "action" as action;
+@use "radius" as radius;
 @use "surface" as surface;
 @use "target" as target;
 @use "typography" as typography;
@@ -74,55 +76,57 @@
 @mixin compact-action {
   @include action.base;
   @include action.size("sm");
+  // The one action is a button, and buttons take the strong weight (UIR-D141).
+  @include action.weight("strong");
   @include target.hit-area("compact");
 }
 
-@mixin empty-state($size) {
-  @if $size == "sm" {
-    --_fui-feedback-empty-icon-size: var(--fui-icon-xl, 24px);
-    --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-sm, 240px);
-    --_fui-feedback-empty-title-size: #{typography.font-size("ui-standard")};
-    --_fui-feedback-empty-title-line: #{typography.line-height("ui-standard")};
-    --_fui-feedback-empty-title-weight: #{typography.weight("ui-standard")};
-    --_fui-feedback-empty-title-tracking: #{typography.tracking("ui-standard")};
-    --_fui-feedback-empty-copy-size: #{typography.font-size("caption")};
-    --_fui-feedback-empty-copy-line: #{typography.line-height("caption")};
-    --_fui-feedback-empty-copy-weight: #{typography.weight("caption")};
-    --_fui-feedback-empty-copy-tracking: #{typography.tracking("caption")};
+/// The error inside a surface (`errbox`): the danger tint fill, the nested
+/// radius, pad 12, a danger-text icon, ink-1 words and one action. `$outer` and
+/// `$inset` are the corner and padding of the surface the box sits in, so its
+/// corner stays concentric. Parts: `errbox-icon`, `errbox-words`,
+/// `errbox-actions`.
+@mixin errbox($outer: var(--fui-radius-surface, #{tokens.$fui-radius-surface}), $inset: _raw(12)) {
+  @include body;
 
-    padding-block: _raw(24);
-    padding-inline: _raw(16);
-  } @else if $size == "md" {
-    --_fui-feedback-empty-icon-size: var(--fui-icon-2xl, 32px);
-    --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-md, 320px);
-    --_fui-feedback-empty-title-size: #{typography.font-size("ui-standard")};
-    --_fui-feedback-empty-title-line: #{typography.line-height("ui-standard")};
-    --_fui-feedback-empty-title-weight: #{typography.weight("ui-standard")};
-    --_fui-feedback-empty-title-tracking: #{typography.tracking("ui-standard")};
-    --_fui-feedback-empty-copy-size: #{typography.font-size("body-compact")};
-    --_fui-feedback-empty-copy-line: #{typography.line-height("body-compact")};
-    --_fui-feedback-empty-copy-weight: #{typography.weight("body-compact")};
-    --_fui-feedback-empty-copy-tracking: #{typography.tracking("body-compact")};
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: _raw(4) _raw(10);
+  padding: _raw(12);
+  border-radius: radius.nested($outer, $inset);
+  background-color: var(--fui-color-danger-tint, #{tokens.$fui-color-danger-tint});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+}
 
-    padding-block: _raw(32);
-    padding-inline: _raw(24);
-  } @else if $size == "lg" {
-    --_fui-feedback-empty-icon-size: var(--fui-feedback-empty-icon-lg, 40px);
-    --_fui-feedback-empty-max-inline: var(--fui-feedback-empty-max-inline-lg, 400px);
-    --_fui-feedback-empty-title-size: #{typography.font-size("title-md")};
-    --_fui-feedback-empty-title-line: #{typography.line-height("title-md")};
-    --_fui-feedback-empty-title-weight: #{typography.weight("title-md")};
-    --_fui-feedback-empty-title-tracking: #{typography.tracking("title-md")};
-    --_fui-feedback-empty-copy-size: #{typography.font-size("body-compact")};
-    --_fui-feedback-empty-copy-line: #{typography.line-height("body-compact")};
-    --_fui-feedback-empty-copy-weight: #{typography.weight("body-compact")};
-    --_fui-feedback-empty-copy-tracking: #{typography.tracking("body-compact")};
+/// The errbox glyph: one line tall, in the danger text colour.
+@mixin errbox-icon {
+  display: inline-flex;
+  align-items: center;
+  block-size: #{typography.line-height("body-compact")};
+  color: var(--fui-color-danger-text, #{tokens.$fui-color-danger-text});
 
-    padding-block: _raw(48);
-    padding-inline: _raw(32);
-  } @else {
-    @error "Unknown empty-state size '#{$size}'. Expected sm, md, or lg.";
+  svg {
+    inline-size: var(--fui-icon-md, #{tokens.$fui-icon-md});
+    block-size: var(--fui-icon-md, #{tokens.$fui-icon-md});
   }
+}
+
+/// What went wrong and what to do, in ink 1 beside the glyph.
+@mixin errbox-words {
+  grid-column: 2;
+  min-inline-size: 0;
+  margin: _raw(0);
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+}
+
+/// The one way out (retry or fix), under the words.
+@mixin errbox-actions {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: _raw(8);
+  margin-block-start: _raw(4);
 }
 
 @mixin viewport-stack($position) {

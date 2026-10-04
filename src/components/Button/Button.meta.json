@@ -1,0 +1,246 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Button",
+  "description": "Triggers an action — save, submit, delete, open.",
+  "category": "actions",
+  "status": "stable",
+  "tags": ["action", "button", "form", "interactive"],
+  "sourcePath": "src/components/Button/index.tsx",
+  "exportName": "Button",
+  "propsSummary": [
+    "variant: solid|soft|ghost|link (default: solid)",
+    "tone: solid accent|danger, soft and ghost neutral|danger (ink), link accent|neutral; the first is the default",
+    "size: xs|sm|md|lg (default: md)",
+    "pending: boolean - aria-busy, presses ignored, spinner after a second",
+    "disabled: boolean - disables interaction",
+    "type: button|submit|reset (default: button)",
+    "onClick: (event) => void - action handler",
+    "render: element | function - swaps the rendered element (anchor, router link)",
+    "nativeButton: boolean - whether the rendered element is a native button"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "The label. Optional only so a Button can be the `render` element of a\ntrigger (`<Dialog.Trigger render={<Button />}>Open</Dialog.Trigger>`),\nwhere the trigger's children become the label.",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Control height on the one track: xs 24, sm 28, md 32, lg 40.",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"],
+      "default": "\"md\""
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "description": "Make button full width of container",
+      "required": false
+    },
+    "pending": {
+      "type": "boolean",
+      "description": "Work started by this button is running. The button sets `aria-busy`\nand ignores further presses at once; after a second (`--fui-pending-delay`)\nits label fades and a spinner takes its place, and its width holds.",
+      "required": false,
+      "default": "false"
+    },
+    "focusableWhenDisabled": {
+      "type": "boolean",
+      "description": "Keep a disabled button in the tab order (`aria-disabled` instead of\n`disabled`), so keyboard and screen reader users can still reach it and\nread why it is unavailable.",
+      "required": false,
+      "default": "false"
+    },
+    "render": {
+      "type": "union",
+      "description": "Replace the rendered element, e.g. `render={<a href=\"/docs\" />}` or a\nrouter link. A rendered anchor keeps its link semantics (no button role);\nthe button's look, pending and disabled behaviour move onto it.",
+      "required": false
+    },
+    "nativeButton": {
+      "type": "boolean",
+      "description": "Whether the rendered element is a native `<button>`. Inferred from an\nelement passed to `render` (a `<button>`, or a component without `href`);\npass it when `render` is a function or a component that renders an anchor\nwithout an `href` prop.",
+      "required": false
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Chrome family.",
+      "required": false,
+      "values": ["solid", "soft", "ghost", "link"],
+      "default": "\"solid\""
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Colour. `solid` takes `accent` (default) or `danger`.\nColour. `soft` and `ghost` take `neutral` (default) or `danger`, shown as ink.\nColour. `link` takes `accent` (default, the link ink) or `neutral`.",
+      "required": false,
+      "values": ["accent", "danger", "neutral"]
+    }
+  },
+  "usage": {
+    "when": [
+      "Running an action: save, submit, delete",
+      "Submitting a form",
+      "Opening a dialog or menu"
+    ],
+    "whenNot": [
+      "Plain navigation — use Link",
+      "Toggling state — use Switch or Checkbox",
+      "Picking an option — use Select or RadioGroup"
+    ],
+    "guidelines": [
+      "One solid accent button per form or section",
+      "tone=\"danger\" for anything destructive",
+      "Chroma is earned: leave tone at its default unless the action carries that meaning",
+      "soft is the neutral secondary; soft and ghost show danger as ink, never a coloured fill",
+      "pending while work runs: it ignores presses without disabling the button",
+      "render={<a href />} for a link that looks like a button; the anchor keeps its link role",
+      "Icon-only actions use IconButton"
+    ],
+    "accessibility": [
+      "Label the action, not the widget",
+      "No \"Click here\"",
+      "Icon-only buttons need aria-label"
+    ],
+    "dont": [
+      {
+        "reason": "Do not use a Button for plain navigation.",
+        "bad": "<Button href=\"/settings\">Settings</Button>",
+        "good": "<Link href=\"/settings\">Settings</Link>"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "name": "Solid",
+      "description": "The one action you want people to take here. Accent tone by default.",
+      "code": "<Button variant=\"solid\">Save changes</Button>",
+      "canonical": true
+    },
+    {
+      "name": "Soft",
+      "description": "The neutral secondary: a quiet tint, no border, beside the main action.",
+      "code": "<Button variant=\"soft\">Cancel</Button>"
+    },
+    {
+      "name": "Ghost",
+      "description": "No fill, no border — for dense toolbars and repeated rows.",
+      "code": "<Button variant=\"ghost\">Learn more</Button>"
+    },
+    {
+      "name": "Link",
+      "description": "Reads like a link, behaves like an action.",
+      "code": "<Button variant=\"link\">View all →</Button>"
+    },
+    {
+      "name": "Danger",
+      "description": "Destructive action people cannot undo: solid chrome, danger tone.",
+      "code": "<Button variant=\"solid\" tone=\"danger\">\n          Delete item\n        </Button>"
+    },
+    {
+      "name": "Sizes",
+      "description": "The one track: xs 24 for in-row actions, sm 28, md 32, lg 40.",
+      "code": "<Stack direction=\"row\" gap=\"sm\" align=\"center\" wrap>\n          <Button size=\"xs\">Micro</Button>\n          <Button size=\"sm\">Small</Button>\n          <Button size=\"md\">Medium</Button>\n          <Button size=\"lg\">Large</Button>\n        </Stack>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Blocks clicks and drops the button out of the tab order.",
+      "code": "<Button disabled>Unavailable</Button>"
+    },
+    {
+      "name": "Pending",
+      "description": "Work is running: presses are ignored at once, the spinner shows after a second.",
+      "code": "<Button pending>Saving</Button>"
+    },
+    {
+      "name": "Render",
+      "description": "render swaps the element; an anchor keeps its link role and takes the look.",
+      "code": "<Button variant=\"soft\" render={<a href=\"#billing-settings\" />}>\n          Billing settings\n        </Button>"
+    },
+    {
+      "name": "Long Label",
+      "description": "Long labels stay on one line; shorten the label or give the button room.",
+      "code": "<Button>\n          Save the localized account preferences and notify every affected workspace administrator\n        </Button>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Link",
+      "relationship": "alternative",
+      "note": "Use Link for navigation without action context"
+    },
+    {
+      "component": "Icon",
+      "relationship": "complementary",
+      "note": "Use Icon inside Button for a leading or trailing glyph"
+    },
+    {
+      "component": "ButtonGroup",
+      "relationship": "parent",
+      "note": "ButtonGroup fuses a Button and an IconButton menu trigger into a split button"
+    },
+    {
+      "component": "IconButton",
+      "relationship": "sibling",
+      "note": "The one icon-only control"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "variant: solid|soft|ghost|link (default: solid)",
+      "tone: solid accent|danger, soft and ghost neutral|danger (ink), link accent|neutral; the first is the default",
+      "size: xs|sm|md|lg (default: md)",
+      "pending: boolean - aria-busy, presses ignored, spinner after a second",
+      "disabled: boolean - disables interaction",
+      "type: button|submit|reset (default: button)",
+      "onClick: (event) => void - action handler",
+      "render: element | function - swaps the rendered element (anchor, router link)",
+      "nativeButton: boolean - whether the rendered element is a native button"
+    ],
+    "a11yRules": ["A11Y_BTN_LABEL", "A11Y_BTN_FOCUS"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-bg-inverse",
+    "--fui-button-primary-bg",
+    "--fui-button-primary-bg-active",
+    "--fui-button-primary-bg-hover",
+    "--fui-button-primary-border",
+    "--fui-button-primary-border-hover",
+    "--fui-button-primary-color",
+    "--fui-button-soft-border",
+    "--fui-color-accent",
+    "--fui-color-accent-active",
+    "--fui-color-accent-hover",
+    "--fui-color-on-accent",
+    "--fui-font-weight-semibold",
+    "--fui-link-ink",
+    "--fui-link-underline-offset",
+    "--fui-radius-control",
+    "--fui-stroke-hairline",
+    "--fui-text-inverse",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": [],
+  "matrix": {
+    "axes": {
+      "variant": "auto",
+      "tone": "auto",
+      "size": "auto",
+      "theme": ["light", "dark"]
+    },
+    "forced": ["hover", "focus", "disabled"],
+    "worstCase": {
+      "children": "A long localized action label that wraps without hiding the action"
+    }
+  },
+  "preview": {
+    "providers": [],
+    "dynamicRegions": []
+  }
+}

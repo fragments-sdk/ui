@@ -1,86 +1,94 @@
 "use client";
 
 import * as React from "react";
-import { createPortal } from "react-dom";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
-import { CaretDown, List, X } from "@phosphor-icons/react";
-import { useFocusTrap } from "../../utils/a11y";
-import { ScrollArea } from "../ScrollArea";
+import { useRender } from "@base-ui/react/use-render";
+import { CaretDown, List } from "@phosphor-icons/react";
 import styles from "./Header.module.scss";
-import { useSidebar } from "../Sidebar";
-import { POPUP_OFFSET_PX } from "../../recipes/popup";
+import { SidebarContext, isRailHidden } from "../Sidebar/context";
+import { HeaderLandmarkContext } from "./context";
+import { POPUP_COLLISION_PADDING_PX, POPUP_OFFSET_PX } from "../../recipes/popup";
+import { useThemePortalProps } from "../Theme/context";
+import { VisuallyHidden } from "../VisuallyHidden";
 
 // ============================================
 // Types
 // ============================================
 
-export interface HeaderIconRenderState {
-  slot: "menu" | "close" | "navMenuChevron" | "mobileClose";
-  open?: boolean;
-  active?: boolean;
-}
-
-export type HeaderIconSlot = React.ReactNode | ((state: HeaderIconRenderState) => React.ReactNode);
-
-export type HeaderIcons = Partial<Record<HeaderIconRenderState["slot"], HeaderIconSlot>>;
-
-export type HeaderNavAlign = "start" | "center";
-export type HeaderContainer = "full" | "page";
-
 export interface HeaderElevatedOnScrollOptions {
-  /** Scroll offset before the elevated surface is applied */
+  /** Scroll offset in pixels before the hairline appears.
+   * @default 16 */
   threshold?: number;
 }
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  /** Header height (default: '56px') */
-  height?: string;
-  /** Position behavior */
-  position?: "static" | "fixed" | "sticky";
-  /** Apply the elevated header surface after scroll */
+  /** `sticky` keeps the bar at the top of its scroll container.
+   * @default "static" */
+  position?: "static" | "sticky";
+  /** Draw the bottom hairline once the page scrolls (no shadow). */
   elevatedOnScroll?: boolean | HeaderElevatedOnScrollOptions;
-  /** Navigation alignment inside the header */
-  navAlign?: HeaderNavAlign;
-  /** Header content width */
-  container?: HeaderContainer;
-  /** Optional icon overrides for internal header controls (mobile trigger + nav menu chevron) */
-  icons?: HeaderIcons;
 }
 
 export interface HeaderBrandProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  /** Link destination */
+  /** Renders a link. */
   href?: string;
-  /** Render as child element (polymorphic) */
-  asChild?: boolean;
+  /** Replace the rendered element, e.g. a router link:
+   * `render={<RouterLink to="/" />}`. The look and props move onto it. */
+  render?: useRender.RenderProp;
 }
 
 export interface HeaderNavProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  /** Accessible label for navigation */
+  /** Accessible label for the navigation landmark.
+   * @default "Main navigation" */
   "aria-label"?: string;
 }
 
 export interface HeaderNavItemProps extends Omit<React.HTMLAttributes<HTMLElement>, "onClick"> {
   children: React.ReactNode;
-  /** Whether this item is active/current */
+  /** The current page: wash and ring, `aria-current="page"`. */
   active?: boolean;
-  /** Link destination */
+  /** The item cannot be used. */
+  disabled?: boolean;
+  /** Renders a link. */
   href?: string;
-  /** Anchor target, when `href` renders an anchor */
+  /** Anchor target, when `href` renders an anchor. */
   target?: React.AnchorHTMLAttributes<HTMLAnchorElement>["target"];
-  /** Anchor rel, when `href` renders an anchor */
+  /** Anchor rel, when `href` renders an anchor. */
   rel?: React.AnchorHTMLAttributes<HTMLAnchorElement>["rel"];
-  /** Render as child element (polymorphic) */
-  asChild?: boolean;
-  /** Click handler */
+  /** Click handler. */
   onClick?: React.MouseEventHandler<HTMLElement>;
+  /** Replace the rendered element, e.g. a router link. */
+  render?: useRender.RenderProp;
+}
+
+export interface HeaderNavMenuProps extends React.HTMLAttributes<HTMLLIElement> {
+  /** The trigger label. */
+  label: React.ReactNode;
+  /** The current page is one of this group's items. */
+  active?: boolean;
+  /** The group cannot be opened. */
+  disabled?: boolean;
+  children: React.ReactNode;
+}
+
+export interface HeaderNavMenuItemProps extends React.HTMLAttributes<HTMLElement> {
+  children: React.ReactNode;
+  /** Renders a link. */
+  href?: string;
+  /** The current page. */
+  active?: boolean;
+  /** The item cannot be chosen. */
+  disabled?: boolean;
+  /** Replace the rendered element, e.g. a router link. */
+  render?: React.ReactElement;
 }
 
 export interface HeaderSearchProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Whether search expands on mobile */
+  /** Keep the search visible when the bar is narrower than md. */
   expandable?: boolean;
 }
 
@@ -89,105 +97,42 @@ export interface HeaderActionsProps extends React.HTMLAttributes<HTMLDivElement>
 }
 
 export interface HeaderTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Custom trigger content */
+  /** Custom glyph. */
   children?: React.ReactNode;
-  /** Accessible label */
+  /** Accessible label.
+   * @default "Toggle navigation" */
   "aria-label"?: string;
 }
 
-export interface HeaderNavMenuProps extends React.HTMLAttributes<HTMLLIElement> {
-  /** Trigger label text */
-  label: string;
-  /** Whether any child in the group is active */
-  active?: boolean;
-  children: React.ReactNode;
-}
-
-export interface HeaderNavMenuItemProps extends React.HTMLAttributes<HTMLElement> {
-  children: React.ReactNode;
-  /** Link destination */
+export interface HeaderSkipLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  /** @default "Skip to main content" */
+  children?: React.ReactNode;
+  /** The id of the main region.
+   * @default "#main-content" */
   href?: string;
-  /** Whether this item is active/current */
-  active?: boolean;
-  /** Render as child element (polymorphic) */
-  asChild?: boolean;
-}
-
-export interface HeaderMobileNavProps {
-  /** Content rendered inside the mobile drawer */
-  children: React.ReactNode;
-  /** Optional className for the drawer panel */
-  className?: string;
-}
-
-export interface HeaderMobileNavActionsProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
 }
 
 // ============================================
-// Internal Context
+// Helpers
 // ============================================
 
-interface HeaderContextValue {
-  mobileOpen: boolean;
-  setMobileOpen: (open: boolean) => void;
-  icons?: HeaderIcons;
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
 }
 
-const HeaderContext = React.createContext<HeaderContextValue | null>(null);
-
-function useHeaderContext(): HeaderContextValue {
-  const ctx = React.useContext(HeaderContext);
-  if (!ctx) {
-    throw new Error("Header compound components must be used within a Header");
+/**
+ * What scrolls the page under the bar: inside AppShell it is the main pane,
+ * otherwise the nearest ancestor that scrolls on the block axis, else the window.
+ */
+function scrollContainerOf(node: HTMLElement): HTMLElement | Window {
+  const shellMain = node
+    .closest("[data-slot='app-shell']")
+    ?.querySelector<HTMLElement>("[data-slot='app-shell-main']");
+  if (shellMain) return shellMain;
+  for (let element = node.parentElement; element; element = element.parentElement) {
+    if (/(auto|scroll|overlay)/.test(getComputedStyle(element).overflowY)) return element;
   }
-  return ctx;
-}
-
-// ============================================
-// Hooks
-// ============================================
-
-const HeaderIconContext = React.createContext<HeaderIcons | undefined>(undefined);
-
-function useHeaderIcons(): HeaderIcons | undefined {
-  return React.useContext(HeaderIconContext);
-}
-
-function renderHeaderIcon(
-  slot: HeaderIconSlot | undefined,
-  state: HeaderIconRenderState
-): React.ReactNode {
-  if (slot === undefined) return undefined;
-  return typeof slot === "function" ? slot(state) : slot;
-}
-
-function composeEventHandlers<E extends { defaultPrevented: boolean }>(
-  userHandler: ((event: E) => void) | undefined,
-  internalHandler: (event: E) => void
-) {
-  return (event: E) => {
-    userHandler?.(event);
-    if (event.defaultPrevented) return;
-    internalHandler(event);
-  };
-}
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const mq = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mq.matches);
-
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  return isMobile;
+  return window;
 }
 
 // ============================================
@@ -195,330 +140,149 @@ function useIsMobile() {
 // ============================================
 
 /**
- * Header - Root header element
+ * The top bar: canvas, the header height token, a 16 gutter. With
+ * `elevatedOnScroll` a hairline appears under it once the page scrolls. It is
+ * the banner landmark, except inside AppShell.Header, which already is one.
+ * @see https://usefragments.com/components/header
  */
 function HeaderRoot({
   children,
-  height = "56px",
   position = "static",
   elevatedOnScroll = false,
-  navAlign = "start",
-  container = "full",
-  icons,
   className,
-  style: styleProp,
   ...htmlProps
 }: HeaderProps) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const insideBanner = React.useContext(HeaderLandmarkContext);
+  const Root = insideBanner ? "div" : "header";
+  const rootRef = React.useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = React.useState(false);
-  const shouldElevateOnScroll = Boolean(elevatedOnScroll);
-  const scrollThreshold =
-    typeof elevatedOnScroll === "object" ? (elevatedOnScroll.threshold ?? 16) : 16;
+  const watchScroll = Boolean(elevatedOnScroll);
+  const threshold = typeof elevatedOnScroll === "object" ? (elevatedOnScroll.threshold ?? 16) : 16;
 
   React.useEffect(() => {
-    if (!shouldElevateOnScroll) return;
-
-    const updateScrolled = () => setScrolled(window.scrollY > scrollThreshold);
-    updateScrolled();
-    window.addEventListener("scroll", updateScrolled, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrolled);
-  }, [scrollThreshold, shouldElevateOnScroll]);
-
-  const classes = [
-    styles.header,
-    position === "fixed" && styles.fixed,
-    position === "sticky" && styles.sticky,
-    shouldElevateOnScroll && styles.elevatedOnScroll,
-    shouldElevateOnScroll && scrolled && styles.scrolled,
-    navAlign === "center" && styles.navCentered,
-    container === "page" && styles.containerPage,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const style: React.CSSProperties = {
-    "--header-height": height,
-    ...styleProp,
-  } as React.CSSProperties;
-
-  const contextValue = React.useMemo(
-    () => ({ mobileOpen, setMobileOpen, icons }),
-    [mobileOpen, icons]
-  );
+    const node = rootRef.current;
+    if (!watchScroll || !node) return;
+    const scroller = scrollContainerOf(node);
+    const offset = () =>
+      scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop;
+    const update = () => setScrolled(offset() > threshold);
+    update();
+    scroller.addEventListener("scroll", update, { passive: true });
+    return () => scroller.removeEventListener("scroll", update);
+  }, [threshold, watchScroll]);
 
   return (
-    <HeaderContext.Provider value={contextValue}>
-      <HeaderIconContext.Provider value={icons}>
-        <header
-          {...htmlProps}
-          className={classes}
-          style={style}
-          data-position={position}
-          data-scrolled={shouldElevateOnScroll ? scrolled : undefined}
-        >
-          <div className={styles.container}>{children}</div>
-        </header>
-      </HeaderIconContext.Provider>
-    </HeaderContext.Provider>
+    <Root
+      {...htmlProps}
+      ref={rootRef as React.Ref<never>}
+      className={cx(
+        styles.header,
+        position === "sticky" && styles.sticky,
+        watchScroll && styles.elevatedOnScroll,
+        className
+      )}
+      data-position={position}
+      data-scrolled={watchScroll ? scrolled : undefined}
+    >
+      <div className={styles.container}>{children}</div>
+    </Root>
   );
 }
 
-/**
- * Header.Brand - Logo/brand slot
- */
-function HeaderBrand({
-  children,
-  href,
-  asChild = false,
-  className,
-  ...htmlProps
-}: HeaderBrandProps) {
-  const classes = [styles.brand, className].filter(Boolean).join(" ");
-
-  if (asChild && React.isValidElement(children)) {
-    const childProps = children.props as {
-      className?: string;
-      onClick?: React.MouseEventHandler<HTMLElement>;
-    };
-    const { onClick, ...restHtmlProps } = htmlProps as React.HTMLAttributes<HTMLElement>;
-
-    return React.cloneElement(children, {
-      ...restHtmlProps,
+function HeaderBrand({ children, href, render, className, ...htmlProps }: HeaderBrandProps) {
+  return useRender({
+    render,
+    defaultTagName: href ? "a" : "div",
+    props: {
+      ...htmlProps,
       ...(href ? { href } : {}),
-      className: [classes, childProps.className].filter(Boolean).join(" "),
-      onClick: onClick ? composeEventHandlers(childProps.onClick, onClick) : childProps.onClick,
-    } as React.HTMLAttributes<HTMLElement>);
-  }
-
-  if (href) {
-    return (
-      <a {...htmlProps} href={href} className={classes}>
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <div {...htmlProps} className={classes}>
-      {children}
-    </div>
-  );
+      className: cx(styles.brand, className),
+      children,
+    },
+  });
 }
 
-/**
- * Header.Nav - Navigation container (hidden on mobile)
- */
 function HeaderNav({
   children,
   "aria-label": ariaLabel = "Main navigation",
   className,
   ...htmlProps
 }: HeaderNavProps) {
-  const classes = [styles.nav, className].filter(Boolean).join(" ");
-
   return (
-    <nav {...htmlProps} className={classes} aria-label={ariaLabel}>
+    <nav {...htmlProps} className={cx(styles.nav, className)} aria-label={ariaLabel}>
       <ul className={styles.navList}>{children}</ul>
     </nav>
   );
 }
 
-/**
- * Header.NavItem - Navigation link
- */
 function HeaderNavItem({
   children,
   active = false,
+  disabled = false,
   href,
-  asChild = false,
+  target,
+  rel,
   onClick,
+  render,
   className,
   ...htmlProps
 }: HeaderNavItemProps) {
-  const classes = [styles.navItem, active && styles.navItemActive, className]
-    .filter(Boolean)
-    .join(" ");
+  const element = useRender({
+    render,
+    defaultTagName: href ? "a" : "button",
+    props: {
+      ...htmlProps,
+      ...(href ? { href, target, rel } : {}),
+      ...(!render && !href ? { type: "button" as const } : {}),
+      className: cx(styles.navItem, active && styles.navItemActive, className),
+      onClick: (event: React.MouseEvent<HTMLElement>) => {
+        if (disabled) {
+          event.preventDefault();
+          return;
+        }
+        onClick?.(event);
+      },
+      "aria-current": active ? ("page" as const) : undefined,
+      "aria-disabled": disabled || undefined,
+      "data-disabled": disabled || undefined,
+      tabIndex: disabled ? -1 : undefined,
+      children,
+    },
+  });
 
-  const itemProps = {
-    className: classes,
-    onClick,
-    "aria-current": active ? ("page" as const) : undefined,
-  };
-
-  if (asChild && React.isValidElement(children)) {
-    const childProps = children.props as {
-      className?: string;
-      onClick?: React.MouseEventHandler<HTMLElement>;
-    };
-    return (
-      <li>
-        {React.cloneElement(children, {
-          ...htmlProps,
-          ...itemProps,
-          onClick: composeEventHandlers(childProps.onClick, onClick ?? (() => {})),
-          className: [classes, childProps.className].filter(Boolean).join(" "),
-        } as React.HTMLAttributes<HTMLElement>)}
-      </li>
-    );
-  }
-
-  if (href) {
-    return (
-      <li>
-        <a {...htmlProps} {...itemProps} href={href}>
-          {children}
-        </a>
-      </li>
-    );
-  }
-
-  return (
-    <li>
-      <button {...htmlProps} {...itemProps} type="button">
-        {children}
-      </button>
-    </li>
-  );
+  return <li className={styles.navListItem}>{element}</li>;
 }
 
 /**
- * Header.Search - Search input slot (hidden on mobile unless expandable)
- */
-function HeaderSearch({
-  children,
-  expandable = false,
-  className,
-  ...htmlProps
-}: HeaderSearchProps) {
-  const classes = [styles.search, expandable && styles.searchExpandable, className]
-    .filter(Boolean)
-    .join(" ");
-
-  return (
-    <div {...htmlProps} className={classes}>
-      {children}
-    </div>
-  );
-}
-
-/**
- * Header.Actions - Right-side actions container
- */
-function HeaderActions({ children, className, ...htmlProps }: HeaderActionsProps) {
-  const classes = [styles.actions, className].filter(Boolean).join(" ");
-  return (
-    <div {...htmlProps} className={classes}>
-      {children}
-    </div>
-  );
-}
-
-/**
- * Header.Trigger - Mobile menu trigger
- *
- * Works in two modes:
- * 1. With SidebarProvider — toggles sidebar open state (existing behavior)
- * 2. Standalone — toggles Header's internal mobile nav drawer
- */
-function HeaderTrigger({
-  children,
-  "aria-label": ariaLabel = "Toggle navigation",
-  className,
-  onClick,
-  ...htmlProps
-}: HeaderTriggerProps) {
-  const isMobile = useIsMobile();
-  const sidebar = useSidebar();
-  const headerCtx = React.useContext(HeaderContext);
-  const icons = useHeaderIcons();
-
-  // Only render on mobile
-  if (!isMobile) {
-    return null;
-  }
-
-  // Determine which state to use: sidebar (if available with a real provider) or header internal
-  const hasSidebarProvider =
-    sidebar.open !== undefined &&
-    sidebar.setOpen !== undefined &&
-    typeof sidebar.setOpen === "function";
-  const isUsingSidebar = hasSidebarProvider && sidebar.isMobile;
-
-  const open = isUsingSidebar ? sidebar.open : (headerCtx?.mobileOpen ?? false);
-  const setOpen = isUsingSidebar ? sidebar.setOpen : (headerCtx?.setMobileOpen ?? (() => {}));
-
-  const classes = [styles.trigger, className].filter(Boolean).join(" ");
-  const iconSlot = open ? icons?.close : icons?.menu;
-  const iconState: HeaderIconRenderState = { slot: open ? "close" : "menu", open };
-  const iconOverride = renderHeaderIcon(iconSlot, iconState);
-
-  return (
-    <button
-      {...htmlProps}
-      type="button"
-      className={classes}
-      onClick={composeEventHandlers(onClick, () => setOpen(!open))}
-      aria-label={ariaLabel}
-      aria-expanded={open}
-    >
-      {children ||
-        iconOverride ||
-        (open ? <X size={24} aria-hidden /> : <List size={24} aria-hidden />)}
-    </button>
-  );
-}
-
-/**
- * Header.Spacer - Flexible spacer to push items apart
- */
-function HeaderSpacer({ className }: { className?: string }) {
-  const classes = [styles.spacer, className].filter(Boolean).join(" ");
-  return <div className={classes} />;
-}
-
-/**
- * Header.NavMenu - Dropdown navigation group
+ * A dropdown group in the bar: the trigger is a nav item, the list is a
+ * floating menu (raised, shadow, no edge) that appears in one frame.
  */
 function HeaderNavMenu({
   label,
   active = false,
+  disabled = false,
   className,
   children,
   ...htmlProps
 }: HeaderNavMenuProps) {
-  const icons = useHeaderIcons();
-  const triggerClasses = [
-    styles.navItem,
-    styles.navMenuTrigger,
-    active && styles.navItemActive,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const chevronIcon = renderHeaderIcon(icons?.navMenuChevron, {
-    slot: "navMenuChevron",
-    active,
-  });
+  const portalProps = useThemePortalProps();
 
   return (
-    <li {...htmlProps}>
-      <BaseMenu.Root modal={false}>
-        <BaseMenu.Trigger className={triggerClasses}>
+    <li {...htmlProps} className={cx(styles.navListItem, className)}>
+      <BaseMenu.Root modal={false} disabled={disabled}>
+        <BaseMenu.Trigger
+          className={cx(styles.navItem, styles.navMenuTrigger, active && styles.navItemActive)}
+          aria-current={active ? "true" : undefined}
+        >
           {label}
-          {chevronIcon ? (
-            <span className={styles.navMenuChevron} aria-hidden>
-              {chevronIcon}
-            </span>
-          ) : (
-            <CaretDown size={12} className={styles.navMenuChevron} aria-hidden />
-          )}
+          <CaretDown className={styles.navMenuChevron} aria-hidden />
         </BaseMenu.Trigger>
-        <BaseMenu.Portal>
+        <BaseMenu.Portal {...portalProps}>
           <BaseMenu.Positioner
             side="bottom"
             align="start"
             sideOffset={POPUP_OFFSET_PX}
+            collisionPadding={POPUP_COLLISION_PADDING_PX}
             className={styles.navMenuPositioner}
           >
             <BaseMenu.Popup className={styles.navMenuPopup}>{children}</BaseMenu.Popup>
@@ -529,195 +293,116 @@ function HeaderNavMenu({
   );
 }
 
-/**
- * Header.NavMenuItem - Item inside a NavMenu dropdown
- */
 function HeaderNavMenuItem({
   children,
   href,
   active = false,
-  asChild = false,
+  disabled = false,
+  render,
   className,
   ...htmlProps
 }: HeaderNavMenuItemProps) {
-  const classes = [styles.navMenuItem, active && styles.navMenuItemActive, className]
-    .filter(Boolean)
-    .join(" ");
-
-  if (asChild && React.isValidElement(children)) {
-    return (
-      <BaseMenu.Item {...htmlProps} className={classes} render={children as React.ReactElement} />
-    );
-  }
-
-  if (href) {
-    return (
-      <BaseMenu.Item {...htmlProps} className={classes} render={<a href={href} />}>
-        {children}
-      </BaseMenu.Item>
-    );
-  }
-
   return (
-    <BaseMenu.Item {...htmlProps} className={classes}>
+    <BaseMenu.Item
+      {...htmlProps}
+      disabled={disabled}
+      className={cx(styles.navMenuItem, active && styles.navMenuItemActive, className)}
+      aria-current={active ? "page" : undefined}
+      render={render ?? (href ? <a href={href} /> : undefined)}
+    >
       {children}
     </BaseMenu.Item>
   );
 }
 
-/**
- * Header.MobileNav - Mobile navigation drawer
- *
- * Renders a full-screen slide-in drawer on mobile when the Header.Trigger is toggled.
- * Place navigation links, actions, or any content as children.
- */
-function HeaderMobileNav({ children, className }: HeaderMobileNavProps) {
-  const { mobileOpen, setMobileOpen, icons } = useHeaderContext();
-  const drawerRef = React.useRef<HTMLDivElement>(null);
-
-  useFocusTrap(drawerRef, mobileOpen);
-
-  // Lock body scroll when open
-  React.useEffect(() => {
-    if (!mobileOpen) return;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileOpen]);
-
-  // Handle Escape
-  React.useEffect(() => {
-    if (!mobileOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMobileOpen(false);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [mobileOpen, setMobileOpen]);
-
-  if (!mobileOpen) return null;
-  if (typeof document === "undefined") return null;
-
-  const closeIcon = renderHeaderIcon(icons?.mobileClose, {
-    slot: "mobileClose",
-    open: true,
-  });
-
-  const drawerContent = (
-    <>
-      <div className={styles.mobileNavBackdrop} onClick={() => setMobileOpen(false)} aria-hidden />
-      <div
-        ref={drawerRef}
-        className={[styles.mobileNavDrawer, className].filter(Boolean).join(" ")}
-        role="dialog"
-        aria-modal
-        aria-label="Navigation"
-      >
-        <div className={styles.mobileNavHeader}>
-          <button
-            type="button"
-            className={styles.mobileNavClose}
-            onClick={() => setMobileOpen(false)}
-            aria-label="Close navigation"
-          >
-            {closeIcon ?? <X size={20} aria-hidden />}
-          </button>
-        </div>
-        <ScrollArea orientation="vertical" showFades className={styles.mobileNavBody}>
-          {children}
-        </ScrollArea>
-      </div>
-    </>
-  );
-
-  return createPortal(drawerContent, document.body);
-}
-
-/**
- * Header.MobileNavLink - A link inside the mobile drawer
- */
-function HeaderMobileNavLink({
+function HeaderSearch({
   children,
-  href,
-  active = false,
-  asChild = false,
-  onClick,
+  expandable = false,
   className,
   ...htmlProps
-}: HeaderNavItemProps) {
-  const { setMobileOpen } = useHeaderContext();
-
-  const classes = [styles.mobileNavLink, active && styles.mobileNavLinkActive, className]
-    .filter(Boolean)
-    .join(" ");
-
-  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
-    onClick?.(e);
-    if (!e.defaultPrevented) setMobileOpen(false);
-  };
-
-  if (asChild && React.isValidElement(children)) {
-    const childProps = children.props as {
-      className?: string;
-      onClick?: React.MouseEventHandler<HTMLElement>;
-    };
-    return React.cloneElement(children, {
-      ...htmlProps,
-      className: [classes, childProps.className].filter(Boolean).join(" "),
-      onClick: composeEventHandlers(childProps.onClick, handleClick),
-    } as React.HTMLAttributes<HTMLElement>);
-  }
-
-  if (href) {
-    return (
-      <a {...htmlProps} href={href} className={classes} onClick={handleClick}>
-        {children}
-      </a>
-    );
-  }
-
+}: HeaderSearchProps) {
   return (
-    <button {...htmlProps} type="button" className={classes} onClick={handleClick}>
+    <div
+      {...htmlProps}
+      className={cx(styles.search, expandable && styles.searchExpandable, className)}
+    >
       {children}
-    </button>
+    </div>
   );
 }
 
-/**
- * Header.MobileNavActions - Action row inside the mobile drawer
- */
-function HeaderMobileNavActions({
-  children,
-  className,
-  ...htmlProps
-}: HeaderMobileNavActionsProps) {
-  const classes = [styles.mobileNavActions, className].filter(Boolean).join(" ");
-
+function HeaderActions({ children, className, ...htmlProps }: HeaderActionsProps) {
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} className={cx(styles.actions, className)}>
       {children}
     </div>
   );
 }
 
 /**
- * Header.SkipLink - Skip to main content link (accessibility)
+ * The navigation trigger.
+ *
+ * Inside a Sidebar.Provider (or AppShell) it opens the sidebar's mobile panel,
+ * and on desktop it brings back a rail that is collapsed off the canvas. It is
+ * in the markup from the first paint and CSS hides it from md up while the
+ * rail is in view, so a phone never paints a bar without its navigation control.
+ *
+ * Standalone it is a plain button that shows while the bar is narrower than md;
+ * open your own Drawer of `Sidebar.Item` rows from `onClick`.
+ */
+function HeaderTrigger({
+  children,
+  "aria-label": ariaLabel = "Toggle navigation",
+  className,
+  onClick,
+  ...htmlProps
+}: HeaderTriggerProps) {
+  const sidebar = React.useContext(SidebarContext);
+  const railHidden = sidebar ? isRailHidden(sidebar) : false;
+
+  const sidebarProps = sidebar
+    ? {
+        "aria-expanded": sidebar.isMobile ? sidebar.open : !sidebar.collapsed,
+        "aria-controls": sidebar.sidebarId,
+      }
+    : {};
+
+  return (
+    <button
+      type="button"
+      {...sidebarProps}
+      {...htmlProps}
+      className={cx(
+        styles.trigger,
+        sidebar ? !railHidden && styles.triggerBelowMd : styles.triggerStandalone,
+        className
+      )}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) sidebar?.toggleSidebar();
+      }}
+      aria-label={ariaLabel}
+    >
+      {children ?? <List aria-hidden />}
+    </button>
+  );
+}
+
+/**
+ * The skip link: VisuallyHidden's focusable reveal, so it is hidden until
+ * keyboard focus lands on it and then floats as the one skip chip.
  */
 function HeaderSkipLink({
   children = "Skip to main content",
   href = "#main-content",
-  className,
-}: {
-  children?: React.ReactNode;
-  href?: string;
-  className?: string;
-}) {
-  const classes = [styles.skipLink, className].filter(Boolean).join(" ");
+  ...htmlProps
+}: HeaderSkipLinkProps) {
   return (
-    <a href={href} className={classes}>
-      {children}
-    </a>
+    <VisuallyHidden focusable>
+      <a {...htmlProps} href={href}>
+        {children}
+      </a>
+    </VisuallyHidden>
   );
 }
 
@@ -734,26 +419,5 @@ export const Header = Object.assign(HeaderRoot, {
   Search: HeaderSearch,
   Actions: HeaderActions,
   Trigger: HeaderTrigger,
-  Spacer: HeaderSpacer,
   SkipLink: HeaderSkipLink,
-  MobileNav: HeaderMobileNav,
-  MobileNavLink: HeaderMobileNavLink,
-  MobileNavActions: HeaderMobileNavActions,
 });
-
-export {
-  HeaderRoot,
-  HeaderBrand,
-  HeaderNav,
-  HeaderNavItem,
-  HeaderNavMenu,
-  HeaderNavMenuItem,
-  HeaderSearch,
-  HeaderActions,
-  HeaderTrigger,
-  HeaderSpacer,
-  HeaderSkipLink,
-  HeaderMobileNav,
-  HeaderMobileNavLink,
-  HeaderMobileNavActions,
-};

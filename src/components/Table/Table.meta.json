@@ -1,0 +1,167 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Table",
+  "description": "Renders tabular data as a real HTML table — headers, rows, footer — at one 32px row track.",
+  "category": "display",
+  "tags": ["table", "semantic", "html", "layout"],
+  "status": "stable",
+  "sourcePath": "src/components/Table/index.tsx",
+  "exportName": "Table",
+  "propsSummary": [
+    "bordered: boolean (default: false)",
+    "wrapperClassName: string",
+    "wrapperProps: object",
+    "children: node"
+  ],
+  "props": {
+    "bordered": {
+      "type": "boolean",
+      "description": "Draw the sheet: the surface plane, a hairline border and the surface radius",
+      "default": "false",
+      "required": false
+    },
+    "maxHeight": {
+      "type": "number | string",
+      "description": "Bound the table's height: the wrapper scrolls on both axes and the head sticks to its top, filling its plane once rows pass under it",
+      "required": false
+    },
+    "wrapperClassName": {
+      "type": "string",
+      "description": "Class name for the outer scroll/wrapper container",
+      "required": false
+    },
+    "wrapperProps": {
+      "type": "object",
+      "description": "HTML attributes for the outer scroll/wrapper container",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "The data is static — read it, do not interact with it",
+      "You need real thead/tbody/tfoot semantics",
+      "The table needs a caption or a totals footer"
+    ],
+    "whenNot": [
+      "Rows need sorting, selection, or clicking (use DataTable)",
+      "Content is a single column of items (use List)"
+    ],
+    "guidelines": [
+      "Header cells go in Table.HeaderCell — it sets scope=\"col\" for you",
+      "Give every table a caption or aria-label; visuallyHidden keeps it off screen",
+      "Every row is the 32px control track; there is no density or stripe option",
+      "Set maxHeight when the head must stay in view: the rows scroll inside the table and the head sticks; without it the page scrolls the rows and the head with them",
+      "The first column starts 12 in and every other cell pads 8, so content never meets a selected row's ring",
+      "Show an empty result with Table.Empty and a load with Table.Loading so the header stays real",
+      "Narrow viewports scroll the table sideways — keep column count low"
+    ],
+    "accessibility": [
+      "Semantic HTML table elements (thead, tbody, tfoot, th, td)",
+      "Column headers have scope=\"col\" by default",
+      "Caption provides table description for screen readers",
+      "Supports visually-hidden caption for screen-reader-only labels"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Header row plus body rows, no extra styling.",
+      "code": "<Table aria-label=\"Team members\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Role</Table.HeaderCell>\n      <Table.HeaderCell>Status</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Alice Johnson</Table.Cell>\n      <Table.Cell>Engineer</Table.Cell>\n      <Table.Cell>Active</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Bob Smith</Table.Cell>\n      <Table.Cell>Designer</Table.Cell>\n      <Table.Cell>Active</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Carol Williams</Table.Cell>\n      <Table.Cell>PM</Table.Cell>\n      <Table.Cell>Away</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Empty",
+      "description": "Keep the headers; Table.Empty spans the columns with a compact EmptyState.",
+      "code": "<Table aria-label=\"Team members\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Role</Table.HeaderCell>\n      <Table.HeaderCell>Status</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Empty colSpan={3}>\n      <EmptyState.Title>No team members yet</EmptyState.Title>\n      <EmptyState.Description>Invite someone to see them here.</EmptyState.Description>\n    </Table.Empty>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Loading",
+      "description": "Placeholder rows at the row track, one bar per cell, under the real header.",
+      "code": "<Table aria-label=\"Team members\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Role</Table.HeaderCell>\n      <Table.HeaderCell>Status</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body aria-busy=\"true\">\n    <Table.Loading columns={3} rows={4} />\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Selected Row",
+      "description": "A chosen row carries the selection wash and its 1px inset ring.",
+      "code": "<Table aria-label=\"Repositories\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Repository</Table.HeaderCell>\n      <Table.HeaderCell>Findings</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>web</Table.Cell>\n      <Table.Cell tabularNums>12</Table.Cell>\n    </Table.Row>\n    <Table.Row selected>\n      <Table.Cell>api</Table.Cell>\n      <Table.Cell tabularNums>3</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Bordered",
+      "description": "The sheet: the surface plane, a hairline border and the surface radius.",
+      "code": "<Table bordered aria-label=\"Pricing\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Plan</Table.HeaderCell>\n      <Table.HeaderCell>Price</Table.HeaderCell>\n      <Table.HeaderCell>Features</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Basic</Table.Cell>\n      <Table.Cell>$9/mo</Table.Cell>\n      <Table.Cell>5 projects</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Pro</Table.Cell>\n      <Table.Cell>$29/mo</Table.Cell>\n      <Table.Cell>Unlimited</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "With Caption",
+      "description": "A visible caption titles the data for every reader.",
+      "code": "<Table aria-label=\"Q1 results\">\n  <Table.Caption>Quarterly Results (Q1 2026)</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Metric</Table.HeaderCell>\n      <Table.HeaderCell>Value</Table.HeaderCell>\n      <Table.HeaderCell>Change</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Revenue</Table.Cell>\n      <Table.Cell>$1.2M</Table.Cell>\n      <Table.Cell>+15%</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Users</Table.Cell>\n      <Table.Cell>24,500</Table.Cell>\n      <Table.Cell>+8%</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "Screen Reader Caption",
+      "description": "The caption reaches screen readers only; the layout stays tight.",
+      "code": "<Table aria-label=\"API keys\">\n  <Table.Caption visuallyHidden>API keys and last-used timestamps</Table.Caption>\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Name</Table.HeaderCell>\n      <Table.HeaderCell>Prefix</Table.HeaderCell>\n      <Table.HeaderCell>Last Used</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Deploy</Table.Cell>\n      <Table.Cell>frg_live_...</Table.Cell>\n      <Table.Cell>2 hours ago</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>CI</Table.Cell>\n      <Table.Cell>frg_test_...</Table.Cell>\n      <Table.Cell>Yesterday</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n</Table>"
+    },
+    {
+      "name": "With Footer",
+      "description": "Totals sit in a footer that stays separate from the data.",
+      "code": "<Table bordered aria-label=\"Expenses\">\n  <Table.Head>\n    <Table.Row>\n      <Table.HeaderCell>Category</Table.HeaderCell>\n      <Table.HeaderCell>Amount</Table.HeaderCell>\n    </Table.Row>\n  </Table.Head>\n  <Table.Body>\n    <Table.Row>\n      <Table.Cell>Marketing</Table.Cell>\n      <Table.Cell>$12,000</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Engineering</Table.Cell>\n      <Table.Cell>$45,000</Table.Cell>\n    </Table.Row>\n    <Table.Row>\n      <Table.Cell>Operations</Table.Cell>\n      <Table.Cell>$8,000</Table.Cell>\n    </Table.Row>\n  </Table.Body>\n  <Table.Footer>\n    <Table.Row>\n      <Table.Cell>Total</Table.Cell>\n      <Table.Cell>$65,000</Table.Cell>\n    </Table.Row>\n  </Table.Footer>\n</Table>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "DataTable",
+      "relationship": "alternative",
+      "note": "Use DataTable for sorting, selection, and TanStack features"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "bordered: boolean - the sheet (surface plane, hairline, surface radius)",
+      "Table.Head, Table.Body, Table.Footer - section wrappers; the head is sticky and opaque",
+      "Table.Row - table row with optional selected prop (wash + inset ring)",
+      "Table.HeaderCell - th with scope=\"col\"",
+      "Table.Cell - td element; tabularNums aligns digits",
+      "Table.Empty - full-width row with a compact EmptyState (colSpan required)",
+      "Table.Loading - placeholder rows, one bar per cell (columns, rows)",
+      "wrapperClassName/wrapperProps - customize outer scroll wrapper",
+      "Table.Caption - caption with visuallyHidden prop"
+    ],
+    "a11yRules": ["A11Y_TABLE_HEADERS", "A11Y_TABLE_CAPTION"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Root",
+      "Head",
+      "Body",
+      "Footer",
+      "Row",
+      "Cell",
+      "HeaderCell",
+      "Caption",
+      "Empty",
+      "Loading"
+    ],
+    "commonPatterns": [
+      "<Table><Table.Head><Table.Row><Table.HeaderCell>Name</Table.HeaderCell></Table.Row></Table.Head><Table.Body><Table.Row><Table.Cell>Alice</Table.Cell></Table.Row></Table.Body></Table>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.484Z"
+  },
+  "cssVariables": [
+    "--fui-bg-hover",
+    "--fui-bg-primary",
+    "--fui-border",
+    "--fui-raw-space-4",
+    "--fui-stroke-hairline",
+    "--fui-table-divider-size",
+    "--fui-table-row-hover-bg"
+  ],
+  "attributes": []
+}

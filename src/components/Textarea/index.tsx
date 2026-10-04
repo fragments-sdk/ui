@@ -1,183 +1,118 @@
+"use client";
+
 import * as React from "react";
-import { useResolvedControlSize } from "../ComponentDefaults";
-import { mergeAriaIds } from "../../utils/aria";
+import { Field as BaseField } from "@base-ui/react/field";
+import { CONTROL_SIZES, useResolvedControlSize } from "../ComponentDefaults";
 import styles from "./Textarea.module.scss";
 
+export type TextareaSize = "xs" | "sm" | "md" | "lg";
+
+type FieldControlProps = Omit<React.ComponentProps<typeof BaseField.Control>, "ref">;
+
+/**
+ * A multi-line text field on the band that grows with its text from
+ * `minRows` to `maxRows`, then scrolls. Label, description and error come
+ * from Field.
+ * @see https://usefragments.com/components/textarea
+ */
 export interface TextareaProps extends Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-  "onChange" | "onBlur" | "onFocus" | "className" | "style" | "size"
+  "value" | "defaultValue" | "rows" | "cols"
 > {
   /** Controlled value */
   value?: string;
-  /** Default value for uncontrolled usage */
+  /** Initial value for uncontrolled use */
   defaultValue?: string;
-  /** Placeholder text */
-  placeholder?: string;
-  /** Number of visible text rows */
-  rows?: number;
-  /** Minimum number of rows (for auto-resize) */
+  /** Rows shown when empty; the field grows from here as text is added.
+   * @default 3 */
   minRows?: number;
-  /** Maximum number of rows (for auto-resize) */
+  /** Rows the field grows to before it scrolls. Omit to grow without limit. */
   maxRows?: number;
-  /** Allow user to resize the textarea */
-  resize?: "none" | "vertical" | "horizontal" | "both";
-  /** Size variant.
+  /** Whether the person can drag the height. Width never resizes: it would
+   * break the column measure.
+   * @default "vertical" */
+  resize?: "none" | "vertical";
+  /** Type size, inset and one-row height on the shared control ladder.
    * @default "md" */
-  size?: "sm" | "md" | "lg";
-  /** Disabled state */
-  disabled?: boolean;
-  /** Error state */
-  error?: boolean;
-  /** Show character count when maxLength is set */
-  showCharCount?: boolean;
-  /** Label text above the textarea */
-  label?: string;
-  /** Helper text below the textarea */
-  helperText?: string;
-  /** Called when value changes */
-  onChange?: (value: string) => void;
-  /** Alias for onChange (value-first callback) */
+  size?: TextareaSize;
+  /** Marks the value invalid: the danger edge and `aria-invalid`. Say why in a Field.Error. */
+  invalid?: boolean;
+  /** Called with the new value on every change. `onChange` stays the native change event. */
   onValueChange?: (value: string) => void;
-  /** Called when textarea loses focus */
-  onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
-  /** Called when textarea receives focus */
-  onFocus?: React.FocusEventHandler<HTMLTextAreaElement>;
-  /** Form field name */
-  name?: string;
-  /** Maximum character length */
+  /** The most characters allowed. Setting it shows a counter under the field. */
   maxLength?: number;
-  /** Required field */
-  required?: boolean;
-  /** Accessible label for no-visible-label usage */
-  "aria-label"?: string;
-  /** Accessible labelled-by relationship */
-  "aria-labelledby"?: string;
-  /** Accessible described-by relationship */
-  "aria-describedby"?: string;
-  /** Props applied to the wrapper element */
-  rootProps?: React.HTMLAttributes<HTMLDivElement>;
-  /** Wrapper class name */
-  className?: string;
-  /** Wrapper styles */
-  style?: React.CSSProperties;
+}
+
+/** The counter's words: "12/200", or the overage when a set value runs past the limit. */
+function counterText(length: number, max: number): string {
+  return length > max ? `${length - max} over the ${max} limit` : `${length}/${max}`;
 }
 
 const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
   {
     value,
     defaultValue,
-    placeholder,
-    rows = 3,
-    minRows,
+    minRows = 3,
     maxRows,
     resize = "vertical",
     size: sizeProp,
-    disabled = false,
-    error = false,
-    showCharCount = false,
-    label,
-    helperText,
-    onChange,
+    invalid = false,
     onValueChange,
-    onBlur,
-    onFocus,
-    rootProps,
+    maxLength,
     className,
-    style: wrapperStyle,
+    style,
     ...textareaProps
   },
   ref
 ) {
-  const size = useResolvedControlSize(sizeProp);
-  const generatedId = React.useId();
-  const {
-    id,
-    name,
-    maxLength,
-    required = false,
-    "aria-label": ariaLabel,
-    "aria-labelledby": ariaLabelledBy,
-    "aria-describedby": ariaDescribedBy,
-    ...nativeTextareaProps
-  } = textareaProps;
-  const textareaId = id || generatedId;
-  const labelId = label ? `${textareaId}-label` : undefined;
-  const helperId = `${textareaId}-helper`;
+  const size = useResolvedControlSize(sizeProp, CONTROL_SIZES);
+  const [uncontrolledLength, setUncontrolledLength] = React.useState(
+    () => (defaultValue ?? "").length
+  );
+  // The counter follows the value: a controlled value is read directly, so it
+  // never goes stale when the parent sets the text.
+  const length = value !== undefined ? value.length : uncontrolledLength;
+  const hasCounter = maxLength != null;
+  const over = hasCounter && length > maxLength;
 
-  const [charCount, setCharCount] = React.useState(() => (value ?? defaultValue ?? "").length);
+  const handleValueChange = (next: string) => {
+    if (value === undefined) setUncontrolledLength(next.length);
+    onValueChange?.(next);
+  };
 
-  const textareaClasses = [
-    styles.textarea,
-    styles[size],
-    error && styles.error,
-    styles[`resize-${resize}`],
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const helperClasses = [styles.helper, error && styles.helperError].filter(Boolean).join(" ");
-
-  const textareaInlineStyle = {
-    "--fui-textarea-min-rows": minRows ?? 1,
-    "--fui-textarea-max-rows": maxRows ?? 9999,
+  const sizing = {
+    "--_fui-textarea-min-rows": minRows,
+    ...(maxRows != null ? { "--_fui-textarea-max-rows": maxRows } : {}),
+    ...style,
   } as React.CSSProperties;
 
+  // Field.Control is typed for an input; the rendered element is the textarea,
+  // so its own attributes, handlers and ref pass through unchanged.
+  const controlProps = textareaProps as unknown as FieldControlProps;
+  const controlRef = ref as unknown as React.Ref<HTMLInputElement>;
+
   return (
-    <div
-      {...rootProps}
-      className={[styles.wrapper, rootProps?.className, className].filter(Boolean).join(" ")}
-      style={{ ...(rootProps?.style ?? {}), ...(wrapperStyle ?? {}) }}
-    >
-      {label && (
-        <label id={labelId} htmlFor={textareaId} className={styles.label}>
-          {label}
-          {required && <span className={styles.required}>*</span>}
-        </label>
-      )}
-      <textarea
-        ref={ref}
-        id={textareaId}
+    <div className={hasCounter ? styles.withCounter : styles.passthrough}>
+      <BaseField.Control
+        {...controlProps}
+        ref={controlRef}
         value={value}
         defaultValue={defaultValue}
-        placeholder={placeholder}
-        rows={rows}
-        {...nativeTextareaProps}
-        name={name}
         maxLength={maxLength}
-        disabled={disabled}
-        required={required}
-        aria-label={ariaLabel}
-        aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
-        aria-invalid={error || undefined}
-        aria-describedby={mergeAriaIds(ariaDescribedBy, helperText ? helperId : undefined)}
-        onChange={(e) => {
-          const val = e.target.value;
-          setCharCount(val.length);
-          onChange?.(val);
-          onValueChange?.(val);
-        }}
-        onBlur={(e) => onBlur?.(e)}
-        onFocus={(e) => onFocus?.(e)}
-        className={textareaClasses}
-        style={textareaInlineStyle}
+        onValueChange={handleValueChange}
+        aria-invalid={invalid || undefined}
+        data-size={size}
+        data-resize={resize}
+        data-single-row={minRows === 1 || undefined}
+        style={sizing}
+        className={[styles.textarea, className].filter(Boolean).join(" ")}
+        render={<textarea rows={minRows} />}
       />
-      <div className={styles.footer}>
-        {helperText && (
-          <span id={helperId} className={helperClasses}>
-            {helperText}
-          </span>
-        )}
-        {showCharCount && maxLength != null && (
-          <span
-            className={[styles.charCount, charCount > maxLength && styles.charCountOver]
-              .filter(Boolean)
-              .join(" ")}
-            aria-live="polite"
-          >
-            {charCount}/{maxLength}
-          </span>
-        )}
-      </div>
+      {hasCounter && (
+        <span className={styles.counter} data-over={over || undefined}>
+          {counterText(length, maxLength)}
+        </span>
+      )}
     </div>
   );
 });

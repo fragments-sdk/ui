@@ -1,114 +1,223 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/action" as action;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/layout" as layout;
-@use "../../recipes/representation" as representation;
+@use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
+@use "../../recipes/working" as working;
 
-// ============================================
-// Thinking Indicator Root
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.thinkingIndicator {
-  display: flex;
-  flex-direction: column;
-  gap: layout.gap("sm");
-  padding: layout.gap("sm");
-}
+@layer fui.components {
+  @include working.keyframes;
 
-.main {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("sm");
-}
-
-.label {
-  @include typography.role("body-compact");
-
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.elapsed {
-  @include typography.role("caption");
-
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
-// ============================================
-// Steps
-//
-// NOTE: The dots/pulse/spinner animations live in <Loading>; the three
-// ThinkingIndicator kinds delegate to it (see index.tsx). No animation
-// styles are kept here.
-// ============================================
-
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: layout.gap("xs");
-  margin-inline-start: calc(representation.activity-size("sm") / 2);
-  padding-inline-start: layout.gap("lg");
-  border-inline-start: var(--fui-stroke-default, #{$fui-stroke-default}) solid var(--fui-border, $fui-border);
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("sm");
-  @include typography.role("caption");
-
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-.stepIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  @include representation.glyph("md");
-
-  > svg {
-    @include representation.glyph("xs");
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: layout.gap("xs");
+    min-inline-size: 0;
   }
-}
 
-.stepDot {
-  inline-size: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  block-size: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
-}
+  // ============================================
+  // The live line: one row, the work wash while active
+  // ============================================
 
-.stepLabel {
-  flex: 1;
-}
-
-// Step status styles
-.stepIdle {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-.stepPending,
-.stepStreaming {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  .stepIndicator {
-    color: var(--fui-color-accent, $fui-color-accent);
+  .row {
+    display: flex;
+    align-items: center;
+    gap: layout.gap("sm");
+    min-block-size: action.track("md");
+    padding-inline: layout.gap("sm");
+    border-radius: var(--fui-radius-control, $fui-radius-control);
   }
-}
 
-.stepComplete {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  .stepIndicator {
-    color: var(--fui-color-success-text, $fui-color-success-text);
+  .root[data-active] > .row {
+    @include working.area;
   }
-}
 
-.stepError {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
+  .liveMark {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--fui-icon-xs, #{$fui-icon-xs});
+    block-size: var(--fui-icon-xs, #{$fui-icon-xs});
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
 
-  .stepIndicator {
+  // Working: a filled dot in the selection colour.
+  .root[data-active] .liveMark::before {
+    content: "";
+    inline-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    block-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    background-color: var(--fui-control-checked-bg, $fui-control-checked-bg);
+  }
+
+  .label {
+    @include typography.role("body-compact");
+
+    min-inline-size: 0;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+
+  .root[data-active] .label {
+    @include working.text;
+  }
+
+  .elapsed {
+    @include typography.role("caption");
+
+    margin-inline-start: auto;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // ============================================
+  // Steps: a plan list, no rail
+  // ============================================
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: layout.gap("xs");
+    padding-inline: layout.gap("sm");
+  }
+
+  .fold {
+    @include action.base;
+    @include action.size("micro");
+    @include action.motion;
+    @include target.hit-area("micro");
+
+    align-self: flex-start;
+    margin-inline-start: calc(-1 * #{layout.gap("xs")});
+    padding-inline: layout.gap("xs");
+    border: 0;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background: transparent;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
+
+    @include focus.visible;
+  }
+
+  .caret {
+    transition: rotate var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .fold[aria-expanded="true"] .caret {
+    rotate: 90deg;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: layout.gap("xs");
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: layout.gap("sm");
+    min-inline-size: 0;
+  }
+
+  // One mark per status, one line tall.
+  .mark {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--fui-icon-sm, #{$fui-icon-sm});
+    block-size: typography.line-height("body-compact");
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+
+  .step[data-status="idle"] .mark::before,
+  .step[data-status="pending"] .mark::before {
+    content: "";
+    box-sizing: border-box;
+    inline-size: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    block-size: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+  }
+
+  .step[data-status="idle"] .mark::before {
+    border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
+      var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  .step[data-status="pending"] .mark::before {
+    background-color: var(--fui-control-checked-bg, $fui-control-checked-bg);
+  }
+
+  .step[data-status="error"] .mark {
     color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
+
+  .stepBody {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .stepLabel {
+    @include typography.role("body-compact");
+
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    overflow-wrap: anywhere;
+  }
+
+  .step[data-status="idle"] .stepLabel {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  .step[data-status="pending"] .stepLabel,
+  .step[data-status="error"] .stepLabel {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  .failed {
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
+
+  .detail {
+    @include typography.role("caption");
+
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    overflow-wrap: anywhere;
+  }
+
+  .hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

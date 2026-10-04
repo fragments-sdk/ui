@@ -1,0 +1,15 @@
+// Each declaration breaks a doctrine style rule (stylelint/doctrine.test.ts).
+.bad {
+  text-transform: uppercase;
+  transition: height 200ms;
+  z-index: 999;
+  color: #fff;
+  transition-duration: 200ms;
+  outline: none;
+}
+
+@media (pointer: coarse) {
+  .bad {
+    font-size: max(16px, 13px);
+  }
+}

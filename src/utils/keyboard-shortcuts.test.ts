@@ -60,6 +60,17 @@ describe('matchesShortcut', () => {
     const event = makeKeyboardEvent('B', { ctrlKey: true });
     expect(matchesShortcut(event, KEYBOARD_SHORTCUTS.SIDEBAR_TOGGLE)).toBe(true);
   });
+
+  it('leaves an Enter that commits an IME candidate to the IME', () => {
+    const composing = new KeyboardEvent('keydown', { key: 'Enter', isComposing: true });
+    const safari = new KeyboardEvent('keydown', { key: 'Enter' });
+    Object.defineProperty(safari, 'keyCode', { value: 229 });
+    const plain = new KeyboardEvent('keydown', { key: 'Enter' });
+
+    expect(matchesShortcut(composing, KEYBOARD_SHORTCUTS.PROMPT_SUBMIT)).toBe(false);
+    expect(matchesShortcut(safari, KEYBOARD_SHORTCUTS.PROMPT_SUBMIT)).toBe(false);
+    expect(matchesShortcut(plain, KEYBOARD_SHORTCUTS.PROMPT_SUBMIT)).toBe(true);
+  });
 });
 
 // ============================================

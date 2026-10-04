@@ -1,0 +1,381 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "CodeBlock",
+  "description": "Displays code with syntax highlighting, copying, and optional line numbers, diffs or folding.",
+  "category": "display",
+  "tags": ["code", "syntax", "highlighting", "documentation", "developer", "diff"],
+  "status": "stable",
+  "dependencies": [
+    {
+      "name": "shiki",
+      "version": ">=1.0.0",
+      "reason": "Optional — provides syntax highlighting; without it code renders unhighlighted."
+    }
+  ],
+  "sourcePath": "src/components/CodeBlock/index.tsx",
+  "exportName": "CodeBlock",
+  "propsSummary": [
+    "code: string (required)",
+    "language: tsx|typescript|ts|javascript|js|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext|text (default: tsx)",
+    "title: node",
+    "size: sm|md (default: md)",
+    "showCopy: boolean (default: true)",
+    "showLineNumbers: boolean (default: false)",
+    "startLineNumber: number (default: 1)",
+    "highlightLines: array",
+    "addedLines: array",
+    "removedLines: array",
+    "wordWrap: boolean (default: false)",
+    "maxHeight: number",
+    "collapsible: boolean (default: false)",
+    "defaultCollapsed: boolean (default: false)",
+    "collapsedLines: number (default: 5)",
+    "onCopy: function"
+  ],
+  "props": {
+    "code": {
+      "type": "string",
+      "description": "The code string to display",
+      "required": true
+    },
+    "language": {
+      "type": "enum",
+      "description": "Programming language for syntax highlighting",
+      "default": "tsx",
+      "required": false,
+      "values": [
+        "tsx",
+        "typescript",
+        "ts",
+        "javascript",
+        "js",
+        "jsx",
+        "bash",
+        "shell",
+        "css",
+        "scss",
+        "sass",
+        "json",
+        "html",
+        "xml",
+        "markdown",
+        "md",
+        "yaml",
+        "yml",
+        "python",
+        "py",
+        "ruby",
+        "go",
+        "rust",
+        "java",
+        "kotlin",
+        "swift",
+        "c",
+        "cpp",
+        "csharp",
+        "php",
+        "sql",
+        "graphql",
+        "diff",
+        "plaintext",
+        "text"
+      ]
+    },
+    "title": {
+      "type": "node",
+      "description": "A file name or label, shown in a header inside the block beside the copy action",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Code type step: md is mono 12 for documents and replies, sm is mono 11 for dense panels",
+      "required": false,
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    "showCopy": {
+      "type": "boolean",
+      "description": "Show the copy action. It stays visible and says Copied or Couldn't copy for two seconds",
+      "default": "true",
+      "required": false
+    },
+    "showLineNumbers": {
+      "type": "boolean",
+      "description": "Whether to display line numbers",
+      "default": "false",
+      "required": false
+    },
+    "startLineNumber": {
+      "type": "number",
+      "description": "Starting line number (useful for code excerpts)",
+      "default": "1",
+      "required": false
+    },
+    "highlightLines": {
+      "type": "array",
+      "description": "Lines to highlight (e.g., [1, 3, \"5-7\"])",
+      "required": false
+    },
+    "addedLines": {
+      "type": "array",
+      "description": "Lines marked as added in diff view (e.g., [2, \"4-6\"])",
+      "required": false
+    },
+    "removedLines": {
+      "type": "array",
+      "description": "Lines marked as removed in diff view (e.g., [1, 3])",
+      "required": false
+    },
+    "wordWrap": {
+      "type": "boolean",
+      "description": "Enable word wrapping for long lines",
+      "default": "false",
+      "required": false
+    },
+    "maxHeight": {
+      "type": "number",
+      "description": "Maximum height in pixels (enables scrolling)",
+      "required": false
+    },
+    "collapsible": {
+      "type": "boolean",
+      "description": "Allow collapsing/expanding the code block",
+      "default": "false",
+      "required": false
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "description": "Initial collapsed state (only applies when collapsible is true)",
+      "default": "false",
+      "required": false
+    },
+    "collapsedLines": {
+      "type": "number",
+      "description": "Number of lines to show when collapsed",
+      "default": "5",
+      "required": false
+    },
+    "onCopy": {
+      "type": "function",
+      "description": "Callback fired when the copy button is clicked and copy succeeds",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Code examples inside prose or docs",
+      "Install and config snippets",
+      "Showing what changed, as a diff"
+    ],
+    "whenNot": [
+      "The user needs to edit it (use an editor)",
+      "A couple of words inline (use a code element)"
+    ],
+    "guidelines": [
+      "Set language every time; wrong highlighting is worse than none",
+      "title names a real file or labels the snippet; it sits in the header with the copy action",
+      "size sm in dense panels and side columns; md everywhere else",
+      "Line numbers earn their keep once you need to point at a line",
+      "highlightLines for emphasis; addedLines and removedLines for diffs",
+      "maxHeight or collapsible keeps a long file from swallowing the page",
+      "CodeBlock.Tabbed groups the same snippet across languages"
+    ],
+    "accessibility": [
+      "Renders as semantic pre and code inside a focusable, named scroll region, so a keyboard can scroll long lines",
+      "The copy action is labelled Copy code and always visible; its result is announced in a status region and shown as words",
+      "The fold bar names what it shows (Show 5 more lines, Show less) and reports aria-expanded and aria-controls",
+      "Colours follow the theme; added and removed lines also carry a + or - marker"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Pass code and language; highlighting and copy come free.",
+      "code": "<CodeBlock code={`import { Button } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}`} language=\"tsx\" />"
+    },
+    {
+      "name": "With Title",
+      "description": "The title sits in a header inside the block, beside the copy action.",
+      "code": "<CodeBlock title=\"Installation\" code=\"npm install @usefragments/ui\" language=\"bash\" />"
+    },
+    {
+      "name": "Small",
+      "description": "Mono 11 for dense panels and side columns.",
+      "code": "<CodeBlock size=\"sm\" language=\"bash\" title=\"Run in CI\" code=\"npx @usefragments/cli check --ci\" />"
+    },
+    {
+      "name": "With Line Numbers",
+      "description": "Turn these on once a snippet is long enough to point at.",
+      "code": "<CodeBlock code={`const greeting = \"Hello\";\nconst name = \"World\";\nconsole.log(\\`\\${greeting}, \\${name}!\\`);`} language=\"typescript\" showLineNumbers />"
+    },
+    {
+      "name": "Custom Start Line",
+      "description": "Numbering starts where the excerpt actually starts in the file.",
+      "code": "<CodeBlock\n  code={`  return (\n    <button onClick={() => setCount(c => c + 1)}>\n      Count: {count}\n    </button>\n  );\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  startLineNumber={15}\n/>"
+    },
+    {
+      "name": "With Highlighted Lines",
+      "description": "Marks the lines the prose is talking about.",
+      "code": "<CodeBlock code={`import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <button onClick={() => setCount(c => c + 1)}>\n      Count: {count}\n    </button>\n  );\n}`} language=\"tsx\" showLineNumbers highlightLines={[4, '7-9']} />"
+    },
+    {
+      "name": "Diff View",
+      "description": "Added and removed lines, side by side with the rest.",
+      "code": "<CodeBlock\n  code={`import { useState } from 'react';\nimport { useCallback } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const increment = () => setCount(c => c + 1);\n  const increment = useCallback(() => setCount(c => c + 1), []);\n\n  return <button onClick={increment}>Count: {count}</button>;\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  removedLines={[6]}\n  addedLines={[2, 7]}\n/>"
+    },
+    {
+      "name": "Word Wrap",
+      "description": "Long lines break instead of scrolling sideways.",
+      "code": "<CodeBlock\n  code={`const longString = \"This is a very long string that would normally cause horizontal scrolling, but with word wrap enabled it will break to the next line instead.\";`}\n  language=\"typescript\"\n  wordWrap\n/>"
+    },
+    {
+      "name": "Max Height with Scroll",
+      "description": "Caps the height so one snippet cannot own the page.",
+      "code": "<CodeBlock\n  code={`// This code block has a maximum height\nfunction processItems(items: string[]) {\n  const results = [];\n  for (const item of items) {\n    if (item.startsWith('_')) {\n      continue;\n    }\n    const processed = item.trim().toLowerCase();\n    if (processed.length > 0) {\n      results.push(processed);\n    }\n  }\n  return results;\n}\n\nexport default processItems;`}\n  language=\"typescript\"\n  maxHeight={150}\n  showLineNumbers\n/>"
+    },
+    {
+      "name": "Collapsible",
+      "description": "Shows the opening lines and hides the rest behind a toggle.",
+      "code": "<CodeBlock\n  code={`import React, { useState, useEffect } from 'react';\n\ninterface User {\n  id: string;\n  name: string;\n  email: string;\n  avatar?: string;\n}\n\nexport function UserProfile({ userId }: { userId: string }) {\n  const [user, setUser] = useState<User | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  useEffect(() => {\n    async function fetchUser() {\n      try {\n        setLoading(true);\n        const response = await fetch(\\`/api/users/\\${userId}\\`);\n        if (!response.ok) throw new Error('Failed to fetch');\n        const data = await response.json();\n        setUser(data);\n      } catch (err) {\n        setError(err instanceof Error ? err.message : 'Unknown error');\n      } finally {\n        setLoading(false);\n      }\n    }\n    fetchUser();\n  }, [userId]);\n\n  if (loading) return <div>Loading...</div>;\n  if (error) return <div>Error: {error}</div>;\n  if (!user) return null;\n\n  return (\n    <div>\n      <h1>{user.name}</h1>\n      <p>{user.email}</p>\n    </div>\n  );\n}`}\n  language=\"tsx\"\n  showLineNumbers\n  collapsible\n  defaultCollapsed\n  collapsedLines={8}\n/>"
+    },
+    {
+      "name": "JSON",
+      "description": "Config files highlight the same way source does.",
+      "code": "<CodeBlock title=\"package.json\" code={`{\n  \"name\": \"my-app\",\n  \"dependencies\": {\n    \"@usefragments/ui\": \"^0.3.0\"\n  }\n}`} language=\"json\" />"
+    },
+    {
+      "name": "Without Copy Button",
+      "description": "Drop the copy button when the snippet is not meant to be reused.",
+      "code": "<CodeBlock code=\"const simple = true;\" language=\"typescript\" showCopy={false} />"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "parent",
+      "note": "Can be wrapped in Card for additional context"
+    },
+    {
+      "component": "Tabs",
+      "relationship": "child",
+      "note": "Use in Tabs for showing code in multiple languages"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "code: string - required code content",
+      "language: tsx|typescript|ts|javascript|js|jsx|bash|shell|css|scss|sass|json|html|xml|markdown|md|yaml|yml|python|py|ruby|go|rust|java|kotlin|swift|c|cpp|csharp|php|sql|graphql|diff|plaintext|text (default: tsx)",
+      "title: node - file name or label in the header beside copy",
+      "size: sm|md (default: md)",
+      "showCopy: boolean (default: true) - visible copy action with a Copied / Couldn't copy status",
+      "showLineNumbers: boolean (default: false)",
+      "startLineNumber: number (default: 1)",
+      "highlightLines: (number | string)[] - lines to emphasize",
+      "addedLines: (number | string)[] - diff added lines",
+      "removedLines: (number | string)[] - diff removed lines",
+      "wordWrap: boolean (default: false)",
+      "maxHeight: number - max height with scrolling",
+      "collapsible: boolean (default: false)",
+      "defaultCollapsed: boolean (default: false)",
+      "collapsedLines: number (default: 5)",
+      "CodeBlock.Tabbed: tabs[] plus optional defaultTab/value/onValueChange for multi-language snippets; size/showCopy/showLineNumbers/wordWrap/maxHeight/collapsible/defaultCollapsed/collapsedLines forward to every panel"
+    ],
+    "a11yRules": ["A11Y_CODE_SEMANTIC", "A11Y_BTN_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Tabbed"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.626Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-bg-secondary",
+    "--fui-border",
+    "--fui-border-strong",
+    "--fui-code-selection-bg",
+    "--fui-code-text",
+    "--fui-code-token-comment",
+    "--fui-code-token-function",
+    "--fui-code-token-keyword",
+    "--fui-code-token-number",
+    "--fui-code-token-punctuation",
+    "--fui-code-token-string",
+    "--fui-code-token-variable",
+    "--fui-color-danger-text",
+    "--fui-color-danger-wash",
+    "--fui-color-success-text",
+    "--fui-color-success-wash",
+    "--fui-hit-area",
+    "--fui-link-ink",
+    "--fui-radius-control",
+    "--fui-radius-surface",
+    "--fui-stroke-default",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-copy",
+      "value": "header",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-copy",
+      "value": "overlay",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-language",
+      "value": "tsx",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-language",
+      "value": "bash",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "sm",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "code-block",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "code-block-header",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "code-block-copy",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "code-block-code",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-state",
+      "value": "idle",
+      "fixture": "populated"
+    }
+  ]
+}

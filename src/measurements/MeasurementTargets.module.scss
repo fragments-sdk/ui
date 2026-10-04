@@ -2,227 +2,235 @@
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
 
-.lineup {
-  display: grid;
-  gap: var(--fui-raw-space-24, #{measurements.raw-space("24")});
-  min-inline-size: 0;
-  padding: var(--fui-raw-space-24, #{measurements.raw-space("24")});
-  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
-  background: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.header,
-.section,
-.specimenList,
-.specimenRow,
-.typographySpecimen {
-  display: grid;
-  min-inline-size: 0;
-}
+@layer fui.components {
+  .lineup {
+    display: grid;
+    gap: var(--fui-raw-space-24, #{measurements.raw-space("24")});
+    min-inline-size: 0;
+    padding: var(--fui-raw-space-24, #{measurements.raw-space("24")});
+    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+    background: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
+  }
 
-.header {
-  gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
-}
+  .header,
+  .section,
+  .specimenList,
+  .specimenRow,
+  .typographySpecimen {
+    display: grid;
+    min-inline-size: 0;
+  }
 
-.eyebrow,
-.specimenName {
-  @include typography.role("ui-compact");
-}
+  .header {
+    gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
+  }
 
-.eyebrow {
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
-}
+  .eyebrow,
+  .specimenName {
+    @include typography.role("ui-compact");
+  }
 
-.title {
-  @include typography.role("title-lg");
+  .eyebrow {
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
+  }
 
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+  .title {
+    @include typography.role("title-lg");
 
-.description {
-  @include typography.role("body-compact");
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  }
 
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
-}
+  .description {
+    @include typography.role("body-compact");
 
-.context {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
-}
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  }
 
-.contextValue,
-.specimenValue {
-  @include typography.role("code");
-}
+  .context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
+  }
 
-.contextValue {
-  padding: var(--fui-raw-space-4, #{measurements.raw-space("4")})
-    var(--fui-raw-space-8, #{measurements.raw-space("8")});
-  border-radius: var(--fui-radius-sm, #{tokens.$fui-radius-sm});
-  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
-  background: var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary});
-}
+  .contextValue,
+  .specimenValue {
+    @include typography.role("code");
+  }
 
-.section {
-  gap: var(--fui-raw-space-16, #{measurements.raw-space("16")});
-  padding: var(--fui-raw-space-16, #{measurements.raw-space("16")});
-  border-radius: var(--fui-radius-lg, #{tokens.$fui-radius-lg});
-  background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
-  box-shadow: var(--fui-shadow-sm, #{tokens.$fui-shadow-sm});
-}
+  .contextValue {
+    padding: var(--fui-raw-space-4, #{measurements.raw-space("4")})
+      var(--fui-raw-space-8, #{measurements.raw-space("8")});
+    border-radius: var(--fui-radius-indicator, #{tokens.$fui-radius-indicator});
+    color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+    background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+  }
 
-.sectionTitle {
-  @include typography.role("title-sm");
+  .section {
+    gap: var(--fui-raw-space-16, #{measurements.raw-space("16")});
+    padding: var(--fui-raw-space-16, #{measurements.raw-space("16")});
+    border-radius: var(--fui-radius-surface, #{tokens.$fui-radius-surface});
+    background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+    box-shadow: var(--fui-shadow-sm, #{tokens.$fui-shadow-sm});
+  }
 
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+  .sectionTitle {
+    @include typography.role("title-sm");
 
-.specimenList {
-  gap: var(--fui-raw-space-12, #{measurements.raw-space("12")});
-}
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  }
 
-.specimenRow {
-  gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
-}
+  .specimenList {
+    gap: var(--fui-raw-space-12, #{measurements.raw-space("12")});
+  }
 
-.specimenMeta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--fui-raw-space-12, #{measurements.raw-space("12")});
-}
+  .specimenRow {
+    gap: var(--fui-raw-space-8, #{measurements.raw-space("8")});
+  }
 
-.specimenName,
-.specimenValue {
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+  .specimenMeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--fui-raw-space-12, #{measurements.raw-space("12")});
+  }
 
-.specimenName {
-  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
-}
+  .specimenName,
+  .specimenValue {
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  }
 
-.specimenValue {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-  color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
-}
+  .specimenName {
+    color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  }
 
-.controlTrack,
-.fieldTrack {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  min-inline-size: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
+  .specimenValue {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
+  }
 
-.controlTrack {
-  @include typography.role("ui-compact");
+  .controlTrack,
+  .fieldTrack {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-inline-size: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 
-  inline-size: fit-content;
-  justify-content: center;
-  padding-inline: var(--fui-raw-space-12, #{measurements.raw-space("12")});
-  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
-  color: var(--fui-color-on-accent, #{tokens.$fui-color-on-accent});
-  background: var(--fui-color-accent, #{tokens.$fui-color-accent});
-}
+  .controlTrack {
+    @include typography.role("ui-compact");
 
-.controlTrackMicro {
-  block-size: var(--fui-control-track-micro, #{measurements.target-value("controlTrack", "micro")});
-}
+    inline-size: fit-content;
+    justify-content: center;
+    padding-inline: var(--fui-raw-space-12, #{measurements.raw-space("12")});
+    border-radius: var(--fui-radius-control, #{tokens.$fui-radius-control});
+    color: var(--fui-color-on-accent, #{tokens.$fui-color-on-accent});
+    background: var(--fui-color-accent, #{tokens.$fui-color-accent});
+  }
 
-.controlTrackSm {
-  block-size: var(--fui-control-track-sm, #{measurements.target-value("controlTrack", "sm")});
-}
+  .controlTrackMicro {
+    block-size: var(--fui-control-height-xs, #{measurements.target-value("controlTrack", "micro")});
+  }
 
-.controlTrackMd {
-  block-size: var(--fui-control-track-md, #{measurements.target-value("controlTrack", "md")});
-}
+  .controlTrackSm {
+    block-size: var(--fui-control-height-sm, #{measurements.target-value("controlTrack", "sm")});
+  }
 
-.controlTrackLg {
-  block-size: var(--fui-control-track-lg, #{measurements.target-value("controlTrack", "lg")});
-}
+  .controlTrackMd {
+    block-size: var(--fui-control-height-md, #{measurements.target-value("controlTrack", "md")});
+  }
 
-.fieldTrack {
-  @include typography.role("ui-standard");
+  .controlTrackLg {
+    block-size: var(--fui-control-height-lg, #{measurements.target-value("controlTrack", "lg")});
+  }
 
-  inline-size: 100%;
-  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
-  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
-  background: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-}
+  .fieldTrack {
+    @include typography.role("ui-standard");
 
-.fieldTrackSm {
-  block-size: var(--fui-field-track-sm, #{measurements.target-value("fieldTrack", "sm")});
-  padding-inline: var(
-    --fui-field-inline-inset-sm,
-    #{measurements.target-value("fieldInlineInset", "sm")}
-  );
-}
+    inline-size: 100%;
+    border-radius: var(--fui-radius-control, #{tokens.$fui-radius-control});
+    color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+    background: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
+  }
 
-.fieldTrackMd {
-  block-size: var(--fui-field-track-md, #{measurements.target-value("fieldTrack", "md")});
-  padding-inline: var(
-    --fui-field-inline-inset-md,
-    #{measurements.target-value("fieldInlineInset", "md")}
-  );
-}
+  .fieldTrackSm {
+    block-size: var(--fui-control-height-sm, #{measurements.target-value("controlTrack", "sm")});
+    padding-inline: var(
+      --fui-field-inline-inset-sm,
+      #{measurements.target-value("fieldInlineInset", "sm")}
+    );
+  }
 
-.fieldTrackLg {
-  block-size: var(--fui-field-track-lg, #{measurements.target-value("fieldTrack", "lg")});
-  padding-inline: var(
-    --fui-field-inline-inset-lg,
-    #{measurements.target-value("fieldInlineInset", "lg")}
-  );
-}
+  .fieldTrackMd {
+    block-size: var(--fui-control-height-md, #{measurements.target-value("controlTrack", "md")});
+    padding-inline: var(
+      --fui-field-inline-inset-md,
+      #{measurements.target-value("fieldInlineInset", "md")}
+    );
+  }
 
-.typographySpecimen {
-  gap: var(--fui-raw-space-4, #{measurements.raw-space("4")});
-  padding-block: var(--fui-raw-space-4, #{measurements.raw-space("4")});
-}
+  .fieldTrackLg {
+    block-size: var(--fui-control-height-lg, #{measurements.target-value("controlTrack", "lg")});
+    padding-inline: var(
+      --fui-field-inline-inset-lg,
+      #{measurements.target-value("fieldInlineInset", "lg")}
+    );
+  }
 
-.typographySample {
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  overflow-wrap: anywhere;
-}
+  .typographySpecimen {
+    gap: var(--fui-raw-space-4, #{measurements.raw-space("4")});
+    padding-block: var(--fui-raw-space-4, #{measurements.raw-space("4")});
+  }
 
-.caption {
-  @include typography.role("caption");
-}
+  .typographySample {
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    overflow-wrap: anywhere;
+  }
 
-.uiCompact {
-  @include typography.role("ui-compact");
-}
+  .caption {
+    @include typography.role("caption");
+  }
 
-.uiStandard {
-  @include typography.role("ui-standard");
-}
+  .uiCompact {
+    @include typography.role("ui-compact");
+  }
 
-.bodyCompact {
-  @include typography.role("body-compact");
-}
+  .uiStandard {
+    @include typography.role("ui-standard");
+  }
 
-.bodyRelaxed {
-  @include typography.role("body-relaxed");
-}
+  .bodyCompact {
+    @include typography.role("body-compact");
+  }
 
-.titleSm {
-  @include typography.role("title-sm");
-}
+  .bodyRelaxed {
+    @include typography.role("body-relaxed");
+  }
 
-.titleMd {
-  @include typography.role("title-md");
-}
+  .titleSm {
+    @include typography.role("title-sm");
+  }
 
-.titleLg {
-  @include typography.role("title-lg");
-}
+  .titleMd {
+    @include typography.role("title-md");
+  }
 
-.code {
-  @include typography.role("code");
+  .titleLg {
+    @include typography.role("title-lg");
+  }
+
+  .display {
+    @include typography.role("display");
+  }
+
+  .code {
+    @include typography.role("code");
+  }
 }

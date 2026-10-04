@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { fireEvent } from "@testing-library/react";
 import { Menu } from "./index";
+import styles from "./Menu.module.scss";
 
 function renderMenu(props: Partial<React.ComponentProps<typeof Menu>> = {}) {
   return render(
@@ -13,7 +14,7 @@ function renderMenu(props: Partial<React.ComponentProps<typeof Menu>> = {}) {
         <Menu.Item onSelect={vi.fn()}>Copy</Menu.Item>
         <Menu.Separator />
         <Menu.Item disabled>Paste</Menu.Item>
-        <Menu.Item danger onSelect={vi.fn()}>
+        <Menu.Item tone="danger" onSelect={vi.fn()}>
           Delete
         </Menu.Item>
       </Menu.Content>
@@ -22,6 +23,24 @@ function renderMenu(props: Partial<React.ComponentProps<typeof Menu>> = {}) {
 }
 
 describe("Menu", () => {
+  it("is busy at once and shows the loading row after a second", async () => {
+    render(
+      <Menu defaultOpen>
+        <Menu.Trigger>Open Menu</Menu.Trigger>
+        <Menu.Content loading>
+          <Menu.Item>Recent</Menu.Item>
+        </Menu.Content>
+      </Menu>
+    );
+    const menu = screen.getByRole("menu");
+    expect(menu).toHaveAttribute("aria-busy", "true");
+    expect(screen.queryByText("Loading…")).toBeNull();
+    const label = await screen.findByText("Loading…", undefined, { timeout: 2000 });
+    const row = label.closest("[data-menu-loading]");
+    expect(row).toHaveAttribute("role", "menuitem");
+    expect(row).toHaveAttribute("aria-disabled", "true");
+  });
+
   it("opens when trigger is clicked", async () => {
     const user = userEvent.setup();
     renderMenu();
@@ -153,6 +172,23 @@ describe("Menu", () => {
     });
   });
 
+  it("names the group from its label and hides the label from the accessibility tree", async () => {
+    render(
+      <Menu defaultOpen>
+        <Menu.Trigger>Open</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Group>
+            <Menu.GroupLabel>Actions</Menu.GroupLabel>
+            <Menu.Item>Edit</Menu.Item>
+          </Menu.Group>
+        </Menu.Content>
+      </Menu>
+    );
+
+    expect(await screen.findByRole("group", { name: "Actions" })).toBeInTheDocument();
+    expect(screen.getByText("Actions")).toHaveAttribute("aria-hidden", "true");
+  });
+
   it("has no accessibility violations when open", async () => {
     const { container } = renderMenu({ defaultOpen: true });
 
@@ -166,65 +202,102 @@ describe("Menu", () => {
     });
   });
 
-  describe("checked items", () => {
-    it("renders check indicator when checked={true}", async () => {
+  describe("checked rows", () => {
+    it("shows a check only on the chosen radio row, with aria-checked", async () => {
       render(
         <Menu defaultOpen>
           <Menu.Trigger>Open</Menu.Trigger>
           <Menu.Content>
-            <Menu.Item checked={true} onSelect={() => {}}>
-              Grid
+            <Menu.RadioGroup defaultValue="grid">
+              <Menu.RadioItem value="grid">Grid</Menu.RadioItem>
+              <Menu.RadioItem value="list">List</Menu.RadioItem>
+            </Menu.RadioGroup>
+          </Menu.Content>
+        </Menu>
+      );
+
+      const grid = (await screen.findByText("Grid")).closest('[role="menuitemradio"]');
+      const list = screen.getByText("List").closest('[role="menuitemradio"]');
+      expect(grid).toHaveAttribute("aria-checked", "true");
+      expect(grid?.querySelector(`.${styles.check} svg`)).toBeInTheDocument();
+      expect(list).toHaveAttribute("aria-checked", "false");
+      expect(list?.querySelector("svg")).not.toBeInTheDocument();
+    });
+
+    it("toggles an uncontrolled checkbox row from its own state", async () => {
+      const user = userEvent.setup();
+      const onCheckedChange = vi.fn();
+      render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.CheckboxItem defaultChecked={false} onCheckedChange={onCheckedChange}>
+              Show minimap
+            </Menu.CheckboxItem>
+          </Menu.Content>
+        </Menu>
+      );
+
+      const row = (await screen.findByText("Show minimap")).closest(
+        '[role="menuitemcheckbox"]'
+      ) as HTMLElement;
+      expect(row.querySelector("svg")).not.toBeInTheDocument();
+      await user.click(row);
+      expect(onCheckedChange).toHaveBeenCalledWith(true);
+    });
+
+    it("marks checkable rows so plain rows reserve the indicator column", async () => {
+      render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.CheckboxItem defaultChecked>Wrap lines</Menu.CheckboxItem>
+            <Menu.Item>Reset view</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+
+      const checkable = (await screen.findByText("Wrap lines")).closest(
+        '[role="menuitemcheckbox"]'
+      );
+      expect(checkable).toHaveAttribute("data-menu-checkable");
+      expect(screen.getByText("Reset view").closest('[role="menuitem"]')).not.toHaveAttribute(
+        "data-menu-checkable"
+      );
+    });
+
+    it("colours a danger row's ink and keeps the shortcut in a kbd", async () => {
+      render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item tone="danger" shortcut="⌘⌫">
+              Delete
             </Menu.Item>
           </Menu.Content>
         </Menu>
       );
 
-      await waitFor(() => {
-        expect(screen.getByText("Grid")).toBeInTheDocument();
-      });
-
-      const item = screen.getByText("Grid").closest('[role="menuitem"]');
-      expect(item?.querySelector("svg")).toBeInTheDocument();
+      const row = (await screen.findByText("Delete")).closest('[role="menuitem"]');
+      expect(row).toHaveAttribute("data-tone", "danger");
+      expect(row).toHaveClass(styles.danger);
+      const kbd = screen.getByText("⌘⌫");
+      expect(kbd.tagName).toBe("KBD");
     });
 
-    it("reserves space but shows no icon when checked={false}", async () => {
+    it("renders a library control as the trigger through render", async () => {
+      const user = userEvent.setup();
       render(
-        <Menu defaultOpen>
-          <Menu.Trigger>Open</Menu.Trigger>
+        <Menu>
+          <Menu.Trigger render={<button type="button" data-testid="more" />}>More</Menu.Trigger>
           <Menu.Content>
-            <Menu.Item checked={false} onSelect={() => {}}>
-              List
-            </Menu.Item>
+            <Menu.Item>Rename</Menu.Item>
           </Menu.Content>
         </Menu>
       );
 
-      await waitFor(() => {
-        expect(screen.getByText("List")).toBeInTheDocument();
-      });
-
-      const item = screen.getByText("List").closest('[role="menuitem"]');
-      // Should not have a checkmark SVG
-      expect(item?.querySelector("svg")).not.toBeInTheDocument();
-    });
-
-    it("does not render check indicator when checked is omitted", async () => {
-      render(
-        <Menu defaultOpen>
-          <Menu.Trigger>Open</Menu.Trigger>
-          <Menu.Content>
-            <Menu.Item onSelect={() => {}}>Normal Item</Menu.Item>
-          </Menu.Content>
-        </Menu>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText("Normal Item")).toBeInTheDocument();
-      });
-
-      const item = screen.getByText("Normal Item").closest('[role="menuitem"]');
-      // Should not have any SVG or check indicator
-      expect(item?.querySelector("svg")).not.toBeInTheDocument();
+      await user.click(screen.getByTestId("more"));
+      expect(await screen.findByText("Rename")).toBeInTheDocument();
     });
   });
 

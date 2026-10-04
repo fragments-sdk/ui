@@ -1,15 +1,20 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Popover as BasePopover } from '@base-ui/react/popover';
-import styles from './Popover.module.scss';
+import * as React from "react";
+import { Popover as BasePopover } from "@base-ui/react/popover";
+import styles from "./Popover.module.scss";
+import { useThemePortalProps } from "../Theme/context";
+import { POPUP_COLLISION_PADDING_PX, POPUP_OFFSET_PX } from "../../recipes/popup";
+import { resolveNativeButton } from "../../utils/native-button";
 
 // ============================================
 // Types
 // ============================================
 
 /**
- * Popover for floating content attached to a trigger element.
+ * Floating content attached to a trigger: evidence beside a claim, a short
+ * form, a detail. The raised plane with the popup shadow and no edge; it opens
+ * and closes at once.
  * @see https://usefragments.com/components/popover
  */
 export interface PopoverProps {
@@ -25,46 +30,46 @@ export interface PopoverProps {
   modal?: boolean;
 }
 
-type PopoverTriggerAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: React.ReactNode;
-  asChild?: false;
-};
-type PopoverTriggerAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
-  children: React.ReactElement;
-  asChild: true;
-};
-export type PopoverTriggerProps = PopoverTriggerAsButtonProps | PopoverTriggerAsChildProps;
+export type PopoverSize = "sm" | "md";
+
+/** The trigger. Pass `render` to make a library control (a Button, a Link) the trigger. */
+export type PopoverTriggerProps = React.ComponentProps<typeof BasePopover.Trigger>;
 
 export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
-  side?: 'top' | 'bottom' | 'left' | 'right';
-  align?: 'start' | 'center' | 'end';
-  sideOffset?: number;
+  /** Width cap and inset.
+   * @default "md" */
+  size?: PopoverSize;
+  /** @default "bottom" */
+  side?: "top" | "bottom" | "left" | "right";
+  /** @default "center" */
+  align?: "start" | "center" | "end";
+  /** Draw a fill-only pointer toward the trigger.
+   * @default false */
   arrow?: boolean;
   /**
-   * Position the popover against an element outside the trigger-anchored
-   * flow (e.g. an arbitrary DOM node in a host page). Defaults to the
-   * trigger, like Base UI's own default.
+   * Position against an element other than the trigger (a node in a host
+   * page). Defaults to the trigger.
    */
   anchor?: Element | null;
-  /** CSS `position` for the floating content. @default 'absolute' */
-  positionMethod?: 'absolute' | 'fixed';
+  /** CSS `position` for the floating content.
+   * @default "absolute" */
+  positionMethod?: "absolute" | "fixed";
   /**
    * Render the portal into a specific container instead of `document.body`
-   * (e.g. a shadow root whose styles wouldn't otherwise reach body-portaled
-   * content).
+   * (a shadow root whose styles would not otherwise reach body-portaled content).
    */
   container?: HTMLElement | ShadowRoot | null;
-  /** Extra className applied to the positioner element (not the popup). */
-  positionerClassName?: string;
 }
 
-export interface PopoverTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface PopoverTitleProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
   children: React.ReactNode;
 }
 
-export interface PopoverDescriptionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface PopoverDescriptionProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  "children"
+> {
   children: React.ReactNode;
 }
 
@@ -76,15 +81,8 @@ export interface PopoverFooterProps extends React.HTMLAttributes<HTMLDivElement>
   children: React.ReactNode;
 }
 
-type PopoverCloseAsButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  children?: React.ReactNode;
-  asChild?: false;
-};
-type PopoverCloseAsChildProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
-  children: React.ReactElement;
-  asChild: true;
-};
-export type PopoverCloseProps = PopoverCloseAsButtonProps | PopoverCloseAsChildProps;
+/** A close control. With no children and no `render` it draws the corner X. */
+export type PopoverCloseProps = React.ComponentProps<typeof BasePopover.Close>;
 
 // ============================================
 // Icons
@@ -110,39 +108,15 @@ function CloseIcon() {
   );
 }
 
-// ============================================
-// Helpers
-// ============================================
-
-/**
- * Base UI's button-like triggers default `nativeButton` to `true`. When an
- * `asChild` trigger renders something other than a native `<button>` (an
- * anchor, or a component rendered `as="a"`), that default is wrong and Base UI
- * warns that native button semantics were removed. Resolve the correct value
- * from the child so the trigger stays honest and the warning goes away.
- */
-function resolveNativeButton(child: React.ReactElement): boolean {
-  const type = child.type;
-  // Intrinsic elements: only `<button>` is a native button.
-  if (typeof type === 'string') return type === 'button';
-  // Custom components render a native `<button>` by default; treat anchors
-  // (via `as="a"` or an `href`) as non-native.
-  const props = (child.props ?? {}) as Record<string, unknown>;
-  if (props.as === 'a' || props.href != null) return false;
-  return true;
+function classes(...names: Array<string | false | undefined>) {
+  return names.filter(Boolean).join(" ");
 }
 
 // ============================================
 // Components
 // ============================================
 
-function PopoverRoot({
-  children,
-  open,
-  defaultOpen,
-  onOpenChange,
-  modal = false,
-}: PopoverProps) {
+function PopoverRoot({ children, open, defaultOpen, onOpenChange, modal = false }: PopoverProps) {
   return (
     <BasePopover.Root
       open={open}
@@ -155,66 +129,46 @@ function PopoverRoot({
   );
 }
 
-function PopoverTrigger({ children, asChild, className, ...htmlProps }: PopoverTriggerProps) {
-  if (asChild) {
-    if (!React.isValidElement(children)) {
-      throw new Error('Popover.Trigger with asChild requires a single valid React element child.');
-    }
-    return (
-      <BasePopover.Trigger
-        {...htmlProps}
-        nativeButton={resolveNativeButton(children as React.ReactElement)}
-        className={className}
-        render={children as React.ReactElement}
-      >
-        {null}
-      </BasePopover.Trigger>
-    );
-  }
-
+function PopoverTrigger({ render, nativeButton, ...props }: PopoverTriggerProps) {
   return (
     <BasePopover.Trigger
-      {...htmlProps}
-      type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
-      className={className}
-    >
-      {children}
-    </BasePopover.Trigger>
+      {...props}
+      render={render}
+      nativeButton={resolveNativeButton(render, nativeButton)}
+    />
   );
 }
 
 function PopoverContent({
   children,
-  size = 'md',
-  side = 'bottom',
-  align = 'center',
-  sideOffset = 8,
+  size = "md",
+  side = "bottom",
+  align = "center",
   arrow = false,
   anchor,
   positionMethod,
   container,
-  positionerClassName,
   className,
   ...htmlProps
 }: PopoverContentProps) {
-  const popupClasses = [
-    styles.popup,
-    size !== 'md' && styles[size],
-    className,
-  ].filter(Boolean).join(' ');
-  const positionerClasses = [styles.positioner, positionerClassName].filter(Boolean).join(' ');
+  const portalProps = useThemePortalProps();
 
   return (
-    <BasePopover.Portal container={container}>
+    <BasePopover.Portal {...portalProps} container={container}>
       <BasePopover.Positioner
         side={side}
         align={align}
-        sideOffset={sideOffset}
+        sideOffset={POPUP_OFFSET_PX}
+        collisionPadding={POPUP_COLLISION_PADDING_PX}
         anchor={anchor}
         positionMethod={positionMethod}
-        className={positionerClasses}
+        className={styles.positioner}
       >
-        <BasePopover.Popup {...htmlProps} className={popupClasses}>
+        <BasePopover.Popup
+          {...htmlProps}
+          data-size={size}
+          className={classes(styles.popup, size === "sm" && styles.sm, className)}
+        >
           {children}
           {arrow && <BasePopover.Arrow className={styles.arrow} />}
         </BasePopover.Popup>
@@ -224,65 +178,56 @@ function PopoverContent({
 }
 
 function PopoverTitle({ children, className, ...htmlProps }: PopoverTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(' ');
-  return <BasePopover.Title {...htmlProps} className={classes}>{children}</BasePopover.Title>;
+  return (
+    <BasePopover.Title {...htmlProps} className={classes(styles.title, className)}>
+      {children}
+    </BasePopover.Title>
+  );
 }
 
 function PopoverDescription({ children, className, ...htmlProps }: PopoverDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(' ');
   return (
-    <BasePopover.Description {...htmlProps} className={classes}>
+    <BasePopover.Description {...htmlProps} className={classes(styles.description, className)}>
       {children}
     </BasePopover.Description>
   );
 }
 
 function PopoverBody({ children, className, ...htmlProps }: PopoverBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  return (
+    <div {...htmlProps} className={classes(styles.body, className)}>
+      {children}
+    </div>
+  );
 }
 
 function PopoverFooter({ children, className, ...htmlProps }: PopoverFooterProps) {
-  const classes = [styles.footer, className].filter(Boolean).join(' ');
-  return <div {...htmlProps} className={classes}>{children}</div>;
+  return (
+    <div {...htmlProps} className={classes(styles.footer, className)}>
+      {children}
+    </div>
+  );
 }
 
-function PopoverClose({ children, asChild, className, ...htmlProps }: PopoverCloseProps) {
-  // Default close button (X icon)
-  if (!children) {
+function PopoverClose({ children, render, nativeButton, className, ...props }: PopoverCloseProps) {
+  if (children == null && render == null) {
     return (
       <BasePopover.Close
-        {...htmlProps}
-        type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
         aria-label="Close popover"
-        className={[styles.close, className].filter(Boolean).join(' ')}
+        {...props}
+        className={classes(styles.close, typeof className === "string" && className)}
       >
         <CloseIcon />
       </BasePopover.Close>
     );
   }
 
-  if (asChild) {
-    if (!React.isValidElement(children)) {
-      throw new Error('Popover.Close with asChild requires a single valid React element child.');
-    }
-    return (
-      <BasePopover.Close
-        {...htmlProps}
-        nativeButton={resolveNativeButton(children as React.ReactElement)}
-        className={className}
-        render={children as React.ReactElement}
-      >
-        {null}
-      </BasePopover.Close>
-    );
-  }
-
   return (
     <BasePopover.Close
-      {...htmlProps}
-      type={(htmlProps as React.ButtonHTMLAttributes<HTMLButtonElement>).type ?? 'button'}
+      {...props}
       className={className}
+      render={render}
+      nativeButton={resolveNativeButton(render, nativeButton)}
     >
       {children}
     </BasePopover.Close>

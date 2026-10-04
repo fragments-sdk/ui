@@ -1,5 +1,26 @@
 # @usefragments/ui
 
+## 4.0.0
+
+### Major Changes
+
+- Version 4: one look, one way to do each thing.
+  - **Glass, on every component.** Four planes, one hairline between them, opaque lines that reach 3:1, colour only where it carries state, and one focus ring. Light and dark come from the same seeds.
+  - **A hard cut.** Weak variants, duplicate props and deprecated token aliases are removed with no shims. `NavigationMenu`, `DashboardLayout` and `BentoGrid` are gone: use `Header.NavItem` and `Header.NavMenu`, `AppShell`, and `Grid`.
+  - **Stylesheets you can build anywhere.** Every rule sits in a `fui.*` cascade layer, so your unlayered classes win. Module selectors stay pure for CSS-modules pure mode, and the CSS is the same on every Sass version.
+  - **Every removal has a row** in `MIGRATION-v4.md`, with what replaces it. The upgrade guide at https://usefragments.com/components/upgrade lists them all.
+
+### Patch Changes
+
+- [#739](https://github.com/fragments-sdk/fragments/pull/739) [`c401d6e`](https://github.com/fragments-sdk/fragments/commit/c401d6e2141b80876442d62ee7ccbfc95c0a761c) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Enter no longer submits, selects or activates while an input method is composing text. The Enter that commits a candidate (reported as `isComposing`, or as `keyCode` 229 in Safari) is left to the input method in `Prompt`, `Command`, `Listbox`, `Card`, `Button`, `Collapsible`, `DataTable` and `matchesShortcut`; the next Enter acts as before.
+
+  Also fixed:
+  - `Skeleton.Text` lines shimmer like `Skeleton` (they referenced an animation that did not exist) and hold still under reduced motion.
+  - `Grid`'s `gap` prop takes effect; every grid used the `md` gap before.
+  - `Icon` is hidden from assistive technology by default, as documented. Give it `aria-label` (or `aria-labelledby`) to make it meaningful: it then renders `role="img"`. An icon already labelled through `iconProps` stays announced.
+  - `ThinkingIndicator`'s live region is the label alone, so the elapsed seconds no longer re-announce every second.
+  - `Sidebar` metadata no longer claims 44px targets; rows are 32px.
+
 ## 3.1.2
 
 ### Patch Changes

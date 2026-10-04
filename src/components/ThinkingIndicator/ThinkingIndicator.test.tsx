@@ -1,52 +1,93 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { act, fireEvent } from "@testing-library/react";
+import { compiledModuleRules } from "../../test/compiled-css";
 import { render, screen, expectNoA11yViolations } from "../../test/utils";
 import { ThinkingIndicator } from "./index";
 
+const rules = compiledModuleRules("src/components/ThinkingIndicator/ThinkingIndicator.module.scss");
+const cssText = rules.map((rule) => rule.cssText).join("\n");
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+function Plan({ foldable = false }: { foldable?: boolean }) {
+  return (
+    <ThinkingIndicator label="Checking the contract…">
+      <ThinkingIndicator.Steps label="Plan" foldable={foldable}>
+        <ThinkingIndicator.Step label="Read the contract" status="complete" />
+        <ThinkingIndicator.Step label="Scan changed files" status="pending">
+          12 of 40 files
+        </ThinkingIndicator.Step>
+        <ThinkingIndicator.Step label="Fetch the pull request" status="error" />
+        <ThinkingIndicator.Step label="Write the summary" />
+      </ThinkingIndicator.Steps>
+    </ThinkingIndicator>
+  );
+}
+
 describe("ThinkingIndicator", () => {
-  it('renders with role="status" and aria-label', () => {
+  it('says "Thinking…" in a status region by default', () => {
     render(<ThinkingIndicator />);
-    // ThinkingIndicator contains a nested Loading with role="status", so use getAllByRole
+    expect(screen.getByRole("status")).toHaveTextContent("Thinking…");
+  });
+
+  it("keeps the region mounted when work stops and says it finished", () => {
+    const { rerender } = render(<ThinkingIndicator />);
+    const region = screen.getByRole("status");
+    rerender(<ThinkingIndicator active={false} doneLabel="Thought for 12s" />);
+    expect(screen.getByRole("status")).toBe(region);
+    expect(region).toHaveTextContent("Thought for 12s");
+  });
+
+  it("shows elapsed time outside the region and freezes it when work stops", () => {
+    vi.useFakeTimers();
+    const { container, rerender } = render(<ThinkingIndicator showElapsed />);
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(container).toHaveTextContent("3s");
+    expect(screen.getByRole("status")).not.toHaveTextContent("3s");
+    rerender(<ThinkingIndicator showElapsed active={false} />);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(container).toHaveTextContent("3s");
+  });
+
+  it("names the plan with its count and marks each step in words", () => {
+    render(<Plan />);
+    const list = screen.getByRole("list", { name: "Plan: 1 of 4 done" });
+    expect(list.tagName).toBe("OL");
+    const items = screen.getAllByRole("listitem");
+    expect(items[0]).toHaveTextContent("Done: Read the contract");
+    expect(items[1]).toHaveTextContent("Now: Scan changed files");
+    expect(items[2]).toHaveTextContent("Failed: Fetch the pull request");
+    expect(items[3]).toHaveAttribute("data-status", "idle");
+  });
+
+  it("makes the current step a status", () => {
+    render(<Plan />);
     const statuses = screen.getAllByRole("status");
-    expect(statuses.length).toBeGreaterThanOrEqual(1);
-    const thinkingStatus = statuses.find((el) => el.getAttribute("aria-label") === "Thinking...");
-    expect(thinkingStatus).toBeTruthy();
+    expect(statuses.map((node) => node.textContent)).toContain("Now: Scan changed files");
   });
 
-  it("accepts custom label", () => {
-    render(<ThinkingIndicator label="Processing..." />);
-    expect(screen.getByText("Processing...")).toBeInTheDocument();
+  it("folds the plan behind its count", () => {
+    render(<Plan foldable />);
+    const toggle = screen.getByRole("button", { name: "1 of 4 done" });
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("list")).toBeNull();
   });
 
-  it("renders nothing when active is false", () => {
-    const { container } = render(<ThinkingIndicator active={false} />);
-    expect(container.innerHTML).toBe("");
-  });
-
-  it("renders steps when provided", () => {
-    const steps = [
-      { id: "1", label: "Analyzing", status: "complete" as const },
-      { id: "2", label: "Generating", status: "pending" as const },
-      { id: "3", label: "Reviewing", status: "idle" as const },
-    ];
-    render(<ThinkingIndicator steps={steps} />);
-    expect(screen.getByText("Analyzing")).toBeInTheDocument();
-    expect(screen.getByText("Generating")).toBeInTheDocument();
-    expect(screen.getByText("Reviewing")).toBeInTheDocument();
-  });
-
-  it("renders step status indicators", () => {
-    const steps = [
-      { id: "1", label: "Done", status: "complete" as const },
-      { id: "2", label: "Failed", status: "error" as const },
-    ];
-    const { container } = render(<ThinkingIndicator steps={steps} />);
-    // Complete step renders a check icon (SVG), error step renders an X icon (SVG)
-    const svgs = container.querySelectorAll("svg");
-    expect(svgs.length).toBeGreaterThanOrEqual(2);
+  it("paints the work wash only while active and draws no rail", () => {
+    expect(cssText).toMatch(/\[data-active\] > \._?row[^{]*::after/);
+    expect(cssText).not.toMatch(/border-inline-start/);
   });
 
   it("has no accessibility violations", async () => {
-    const { container } = render(<ThinkingIndicator label="Thinking about it" />);
+    const { container } = render(<Plan foldable />);
     await expectNoA11yViolations(container);
   });
 });

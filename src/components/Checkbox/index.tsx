@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
-import { useResolvedControlSize } from "../ComponentDefaults";
+import { WarningCircle } from "@phosphor-icons/react";
 import { mergeAriaIds } from "../../utils/aria";
 import styles from "./Checkbox.module.scss";
 
@@ -22,10 +22,8 @@ export interface CheckboxProps extends Omit<
   checked?: boolean;
   /** Default checked state (uncontrolled) */
   defaultChecked?: boolean;
-  /** Callback when checked state changes */
+  /** Called with the next checked state when the user toggles the checkbox */
   onCheckedChange?: (checked: boolean) => void;
-  /** Alias for onCheckedChange */
-  onChange?: (checked: boolean) => void;
   /** Whether the checkbox is in an indeterminate state */
   indeterminate?: boolean;
   /** Whether the checkbox is disabled */
@@ -34,21 +32,23 @@ export interface CheckboxProps extends Omit<
   readOnly?: boolean;
   /** Whether the checkbox is required */
   required?: boolean;
-  /** Size variant.
-   * @default "md" */
-  size?: "sm" | "md" | "lg";
   /**
-   * Chrome. Omit it for the inline checkbox next to a label (form-control
-   * style); `outline` renders a full-width bordered surface with the checkbox
-   * tucked inside — multi-select question lists, settings toggles, plan pickers.
+   * Whether the value fails validation. The box takes the danger edge and
+   * `errorMessage` shows under the label with an icon.
+   */
+  invalid?: boolean;
+  /** Message shown under the label while `invalid` is true */
+  errorMessage?: React.ReactNode;
+  /**
+   * Chrome. Omit it for the inline checkbox next to a label; `outline` renders
+   * a full-width choice card with the checkbox inside it, for multi-select
+   * question lists, settings toggles and plan pickers.
    */
   variant?: "outline";
   /** Label text */
   label?: string;
   /** Helper text shown below the label */
   helperText?: string;
-  /** @deprecated Use helperText instead. Description text below the label. */
-  description?: string;
   /** Name attribute for form submission */
   name?: string;
   /** ID of the form that owns the hidden input */
@@ -63,13 +63,9 @@ export interface CheckboxProps extends Omit<
   parent?: boolean;
   /** ID for the checkbox input */
   id?: string;
-  /** Class applied directly to the checkbox control element */
-  controlClassName?: string;
-  /** Class applied to the label/description content wrapper */
-  contentClassName?: string;
-  /** Accessible label for icon-only mode */
+  /** Accessible label when there is no visible label */
   "aria-label"?: string;
-  /** Accessible labelled-by relationship for icon-only mode */
+  /** Accessible labelled-by relationship when there is no visible label */
   "aria-labelledby"?: string;
   /** Accessible described-by relationship */
   "aria-describedby"?: string;
@@ -91,8 +87,8 @@ function CheckIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      {/* Point order = draw order: the mark draws short arm first, then the
-          long stroke. pathLength normalizes the dash budget for the CSS draw. */}
+      {/* Point order = draw order: the short arm first, then the long stroke.
+          pathLength normalises the dash budget for the CSS draw. */}
       <polyline points="4 12 9 17 20 6" pathLength={24} />
     </svg>
   );
@@ -124,16 +120,15 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
     checked,
     defaultChecked,
     onCheckedChange,
-    onChange,
     indeterminate = false,
     disabled = false,
     readOnly = false,
     required = false,
-    size: sizeProp,
+    invalid = false,
+    errorMessage,
     variant,
     label,
     helperText,
-    description,
     name,
     form,
     value,
@@ -141,8 +136,6 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
     inputRef,
     parent,
     className,
-    controlClassName,
-    contentClassName,
     id,
     "aria-label": ariaLabel,
     "aria-labelledby": ariaLabelledBy,
@@ -151,105 +144,78 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxProps>(function
   },
   ref
 ) {
-  const size = useResolvedControlSize(sizeProp);
-  const resolvedHelperText = helperText ?? description;
   const generatedId = React.useId();
   const checkboxId = id ?? `checkbox-${generatedId}`;
+  const showError = invalid && errorMessage != null && errorMessage !== false;
   const labelId = label ? `${checkboxId}-label` : undefined;
-  const descriptionId = resolvedHelperText ? `${checkboxId}-description` : undefined;
+  const helperId = helperText ? `${checkboxId}-helper` : undefined;
+  const errorId = showError ? `${checkboxId}-error` : undefined;
 
-  const checkboxClasses = [
-    styles.checkbox,
-    size === "sm" && styles.sm,
-    size === "lg" && styles.lg,
-    controlClassName,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const renderBox = (boxProps: Record<string, unknown>, boxClassName?: string) => (
+    <BaseCheckbox.Root
+      {...boxProps}
+      ref={ref}
+      checked={checked}
+      defaultChecked={defaultChecked}
+      onCheckedChange={onCheckedChange}
+      indeterminate={indeterminate}
+      disabled={disabled}
+      readOnly={readOnly}
+      required={required}
+      name={name}
+      form={form}
+      value={value}
+      uncheckedValue={uncheckedValue}
+      inputRef={inputRef}
+      parent={parent}
+      id={checkboxId}
+      aria-label={ariaLabel}
+      aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+      aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
+      aria-invalid={invalid || undefined}
+      data-invalid={invalid || undefined}
+      className={[styles.checkbox, boxClassName].filter(Boolean).join(" ")}
+    >
+      <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
+        {indeterminate ? <MinusIcon /> : <CheckIcon />}
+      </BaseCheckbox.Indicator>
+    </BaseCheckbox.Root>
+  );
 
-  const wrapperClasses = [styles.wrapper, variant === "outline" && styles.wrapperOutline, className]
-    .filter(Boolean)
-    .join(" ");
-  const handleCheckedChange = onChange ?? onCheckedChange;
-
-  // If no label/description, render just the checkbox
-  if (!label && !resolvedHelperText) {
-    const iconOnlyHtmlProps = htmlProps as unknown as Record<string, unknown>;
-    return (
-      <BaseCheckbox.Root
-        {...iconOnlyHtmlProps}
-        ref={ref}
-        checked={checked}
-        defaultChecked={defaultChecked}
-        onCheckedChange={handleCheckedChange}
-        indeterminate={indeterminate}
-        disabled={disabled}
-        readOnly={readOnly}
-        required={required}
-        name={name}
-        form={form}
-        value={value}
-        uncheckedValue={uncheckedValue}
-        inputRef={inputRef}
-        parent={parent}
-        id={checkboxId}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
-        data-size={size}
-        className={[checkboxClasses, className].filter(Boolean).join(" ")}
-      >
-        <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
-          {indeterminate ? <MinusIcon /> : <CheckIcon />}
-        </BaseCheckbox.Indicator>
-      </BaseCheckbox.Root>
-    );
+  // No visible text: the box alone, labelled by aria-label or aria-labelledby.
+  if (!label && !helperText && !showError) {
+    return renderBox(htmlProps as unknown as Record<string, unknown>, className);
   }
 
   return (
     <label
       {...htmlProps}
-      className={wrapperClasses}
+      className={[styles.wrapper, variant === "outline" && styles.wrapperOutline, className]
+        .filter(Boolean)
+        .join(" ")}
       data-disabled={disabled || undefined}
-      data-has-description={resolvedHelperText ? true : undefined}
-      data-size={size}
+      data-readonly={readOnly || undefined}
+      data-invalid={invalid || undefined}
     >
-      <BaseCheckbox.Root
-        ref={ref}
-        checked={checked}
-        defaultChecked={defaultChecked}
-        onCheckedChange={handleCheckedChange}
-        indeterminate={indeterminate}
-        disabled={disabled}
-        readOnly={readOnly}
-        required={required}
-        name={name}
-        form={form}
-        value={value}
-        uncheckedValue={uncheckedValue}
-        inputRef={inputRef}
-        parent={parent}
-        id={checkboxId}
-        aria-label={ariaLabel}
-        aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
-        aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
-        data-size={size}
-        className={checkboxClasses}
-      >
-        <BaseCheckbox.Indicator className={styles.indicator} keepMounted>
-          {indeterminate ? <MinusIcon /> : <CheckIcon />}
-        </BaseCheckbox.Indicator>
-      </BaseCheckbox.Root>
-      <div className={[styles.content, contentClassName].filter(Boolean).join(" ")}>
-        <span id={labelId} className={styles.label}>
-          {label}
-        </span>
-        {resolvedHelperText && (
-          <span id={descriptionId} className={styles.helper}>
-            {resolvedHelperText}
+      {renderBox({})}
+      <span className={styles.content}>
+        {label && (
+          <span id={labelId} className={styles.label}>
+            {label}
           </span>
         )}
-      </div>
+        {helperText && (
+          <span id={helperId} className={styles.helper}>
+            {helperText}
+          </span>
+        )}
+        {showError && (
+          <span id={errorId} className={styles.error}>
+            <WarningCircle className={styles.errorIcon} aria-hidden="true" weight="bold" />
+            <span className={styles.errorWords}>{errorMessage}</span>
+          </span>
+        )}
+      </span>
     </label>
   );
 });

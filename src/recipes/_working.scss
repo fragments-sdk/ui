@@ -1,0 +1,103 @@
+// Working (`work`, `wtext`): where an agent is working, while it works. The one
+// place chroma moves. The wash and edge say "busy" even when nothing can move,
+// so reduced motion keeps them and stops only the sweep and the sheen.
+
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+
+/// The working area: the brand wash, a 1px inset edge and a sweep passing over
+/// it in `--fui-working-sweep-duration`, painted by `::after` above the element's
+/// own fill (and its hover tint), inside its border. Include it under the
+/// selector that means "working now", such as `&[data-working]`: when that stops
+/// matching, every loop stops in the same frame.
+@mixin area {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(
+          105deg,
+          transparent 28%,
+          var(--fui-working-from, #{tokens.$fui-working-from}) 42%,
+          var(--fui-working-to, #{tokens.$fui-working-to}) 54%,
+          transparent 68%
+        )
+        0 0 / 300% 100% no-repeat,
+      var(--fui-working-wash, #{tokens.$fui-working-wash});
+    box-shadow: inset 0 0 0
+      var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")})
+      var(--fui-working-edge, #{tokens.$fui-working-edge});
+    animation: fui-working-sweep
+      var(--fui-working-sweep-duration, #{tokens.$fui-working-sweep-duration})
+      var(--fui-ease-standard, #{tokens.$fui-ease-standard}) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+      background: var(--fui-working-wash, #{tokens.$fui-working-wash});
+    }
+  }
+}
+
+/// Words being worked toward: a sheen from ink 3 to ink 1 passes across them in
+/// `--fui-working-sheen-duration`. Under reduced motion the words hold still in
+/// ink 3; under forced colours they take the system text colour.
+@mixin text {
+  background-image: linear-gradient(
+    90deg,
+    var(--fui-text-tertiary, #{tokens.$fui-text-tertiary}) 40%,
+    var(--fui-text-primary, #{tokens.$fui-text-primary}) 50%,
+    var(--fui-text-tertiary, #{tokens.$fui-text-tertiary}) 60%
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  color: var(--fui-text-tertiary, #{tokens.$fui-text-tertiary});
+  -webkit-text-fill-color: transparent;
+  animation: fui-working-sheen
+    var(--fui-working-sheen-duration, #{tokens.$fui-working-sheen-duration}) linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-position: 0 0;
+  }
+
+  @media (forced-colors: active) {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+/// The sweep and the sheen. Sass emits them where they are included, so a module
+/// that uses `area` or `text` includes this once at the top of its layer.
+@mixin keyframes {
+  @keyframes fui-working-sweep {
+    from {
+      background-position:
+        100% 0,
+        0 0;
+    }
+
+    to {
+      background-position:
+        0 0,
+        0 0;
+    }
+  }
+
+  @keyframes fui-working-sheen {
+    from {
+      background-position: 100% 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
+  }
+}

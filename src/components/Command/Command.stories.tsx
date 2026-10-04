@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import * as React from "react";
 import { Command } from ".";
+import { Button } from "../Button";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
@@ -15,7 +17,8 @@ const meta = {
     renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Searchable command palette for quick actions.",
+        component:
+          "A frameless searchable list of commands; Command.Dialog floats it as a palette.",
       },
     },
   },
@@ -26,9 +29,9 @@ const meta = {
     loop: true,
     children: (
       <>
-        <Command.Input placeholder="Type a command..." />
+        <Command.Input placeholder="Type a command…" />
         <Command.List>
-          <Command.Item onItemSelect={() => {}}>Open File</Command.Item>
+          <Command.Item onSelect={() => {}}>Open file</Command.Item>
           <Command.Empty>No results found.</Command.Empty>
         </Command.List>
       </>
@@ -44,11 +47,11 @@ export const Default: Story = {
   render: (args) => (
     <div style={{ maxWidth: "400px", width: "100%" }}>
       <Command {...args}>
-        <Command.Input placeholder="Type a command..." />
+        <Command.Input placeholder="Type a command…" />
         <Command.List>
-          <Command.Item onItemSelect={() => {}}>Open File</Command.Item>
-          <Command.Item onItemSelect={() => {}}>Save Document</Command.Item>
-          <Command.Item onItemSelect={() => {}}>Print</Command.Item>
+          <Command.Item onSelect={() => {}}>Open file</Command.Item>
+          <Command.Item onSelect={() => {}}>Save document</Command.Item>
+          <Command.Item onSelect={() => {}}>Print</Command.Item>
           <Command.Empty>No results found.</Command.Empty>
         </Command.List>
       </Command>
@@ -60,17 +63,17 @@ export const WithGroups: Story = {
   render: (args) => (
     <div style={{ maxWidth: "400px", width: "100%" }}>
       <Command {...args}>
-        <Command.Input placeholder="Search..." />
+        <Command.Input placeholder="Search…" />
         <Command.List>
           <Command.Group heading="Suggestions">
-            <Command.Item onItemSelect={() => {}}>Calendar</Command.Item>
-            <Command.Item onItemSelect={() => {}}>Calculator</Command.Item>
+            <Command.Item onSelect={() => {}}>Calendar</Command.Item>
+            <Command.Item onSelect={() => {}}>Calculator</Command.Item>
           </Command.Group>
           <Command.Separator />
           <Command.Group heading="Settings">
-            <Command.Item onItemSelect={() => {}}>Profile</Command.Item>
-            <Command.Item onItemSelect={() => {}}>Billing</Command.Item>
-            <Command.Item disabled onItemSelect={() => {}}>
+            <Command.Item onSelect={() => {}}>Profile</Command.Item>
+            <Command.Item onSelect={() => {}}>Billing</Command.Item>
+            <Command.Item disabled onSelect={() => {}}>
               Team (coming soon)
             </Command.Item>
           </Command.Group>
@@ -87,13 +90,13 @@ export const WithKeywords: Story = {
       <Command {...args}>
         <Command.Input placeholder="What do you need?" />
         <Command.List>
-          <Command.Item keywords={["create", "add"]} onItemSelect={() => {}}>
+          <Command.Item keywords={["create", "add"]} onSelect={() => {}}>
             New Document
           </Command.Item>
-          <Command.Item keywords={["browse"]} onItemSelect={() => {}}>
+          <Command.Item keywords={["browse"]} onSelect={() => {}}>
             Open Folder
           </Command.Item>
-          <Command.Item keywords={["find"]} onItemSelect={() => {}}>
+          <Command.Item keywords={["find"]} onSelect={() => {}}>
             Search
           </Command.Item>
           <Command.Empty>No results found.</Command.Empty>
@@ -101,4 +104,58 @@ export const WithKeywords: Story = {
       </Command>
     </div>
   ),
+};
+
+function PaletteDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <Button variant="soft" onClick={() => setOpen(true)}>
+        Open palette
+      </Button>
+      <Command.Dialog open={open} onOpenChange={setOpen}>
+        <Command.Input placeholder="Search commands…" />
+        <Command.List>
+          <Command.Group heading="Repository">
+            <Command.Item onSelect={() => {}}>Open pull requests</Command.Item>
+            <Command.Item onSelect={() => {}}>Rename branch</Command.Item>
+          </Command.Group>
+          <Command.Group heading="Contract">
+            <Command.Item onSelect={() => {}}>Publish contract</Command.Item>
+          </Command.Group>
+          <Command.Empty>No commands match.</Command.Empty>
+        </Command.List>
+      </Command.Dialog>
+    </>
+  );
+}
+
+export const Palette: Story = {
+  render: () => <PaletteDemo />,
+};
+
+export const Loading: Story = {
+  args: {
+    children: (
+      <>
+        <Command.Input placeholder="Search issues…" defaultValue="bug" />
+        <Command.List loading>
+          <Command.Empty>No issues match.</Command.Empty>
+        </Command.List>
+      </>
+    ),
+  },
+};
+
+export const Error: Story = {
+  args: {
+    children: (
+      <>
+        <Command.Input placeholder="Search issues…" />
+        <Command.List>
+          <Command.Error onRetry={() => {}}>Couldn’t load issues.</Command.Error>
+        </Command.List>
+      </>
+    ),
+  },
 };

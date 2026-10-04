@@ -1,161 +1,143 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout" as layout;
+@use "../../recipes/loading" as loading;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
 
-.positioner {
-  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
-  outline: none;
-  pointer-events: auto;
+@layer fui.tokens, fui.base, fui.components;
 
-  // The popup is absolutely positioned inside the positioner whenever a
-  // Menu.Viewport is present (Base UI anchors it with top/bottom: 0). Without an
-  // explicit box the positioner collapses to zero height and any flipped
-  // (side="top") menu renders a full popup-height away from its trigger.
-  inline-size: var(--positioner-width);
-  block-size: var(--positioner-height);
-}
-
-.popup {
-  @include popup.container;
-
-  min-inline-size: layout.measure("menu-min");
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  list-style: none;
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-.viewport {
-  @include popup.viewport;
-
-  transition: block-size var(--fui-transition-fast, $fui-transition-fast);
-}
-
-.item {
-  @include popup.row;
-
-  &[data-highlighted] {
-    @include popup.highlight-state;
-  }
-
-  &[data-disabled] {
-    @include popup.disabled-state;
-  }
-}
-
-.itemDanger {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-
-  &[data-highlighted] {
-    background-color: var(--fui-color-danger-wash, $fui-color-danger-wash);
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
-  }
-}
-
-.itemIcon,
-.checkIndicator,
-.radioIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(
+// The raised plane, still. Rows take the row corner and the
+// neutral hover tint; danger is ink only. A chosen row shows a check in the
+// selection colour and no fill. Once any row is checkable,
+// every row reserves the indicator column so labels line up.
+@layer fui.components {
+  $_indicator: var(
     --fui-popup-indicator-box,
     var(--fui-raw-space-16, #{measurements.raw-space(16)})
   );
-  block-size: var(
-    --fui-popup-indicator-box,
-    var(--fui-raw-space-16, #{measurements.raw-space(16)})
-  );
-  flex: 0 0 auto;
-}
+  $_inset: var(--fui-popup-row-inline-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  $_gap: var(--fui-popup-row-content-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
 
-.itemIcon {
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
+    pointer-events: auto;
 
-  .itemDanger & {
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
+    // The popup is absolutely positioned inside the positioner whenever a
+    // Menu.Viewport is present (top/bottom: 0). Without an explicit box the
+    // positioner collapses to zero height and a flipped (side="top") menu
+    // renders a full popup-height away from its trigger.
+    inline-size: var(--positioner-width);
+    block-size: var(--positioner-height);
   }
 
-  svg {
-    inline-size: 100%;
-    block-size: 100%;
+  .popup {
+    @include popup.container;
+
+    min-inline-size: layout.measure("menu-min");
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    list-style: none;
+
+    @include popup.motion;
   }
-}
 
-.itemLabel {
-  flex: 1;
-  min-inline-size: 0;
-}
-
-.itemShortcut {
-  @include typography.role("caption");
-
-  margin-inline-start: auto;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-.checkIndicator {
-  color: var(--fui-color-accent, $fui-color-accent);
-
-  svg {
-    inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-    block-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  }
-}
-
-.radioIndicator {
-  visibility: hidden;
-
-  svg {
-    inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-    block-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  }
-}
-
-.radioItem[data-checked] .radioIndicator {
-  visibility: visible;
-  color: var(--fui-color-accent, $fui-color-accent);
-}
-
-.separator {
-  @include popup.group-separator;
-}
-
-.groupLabel {
-  @include popup.group-label;
-}
-
-.submenuTrigger::after {
-  content: "";
-  inline-size: 0;
-  block-size: 0;
-  margin-inline-start: auto;
-  border-style: solid;
-  border-width: var(--fui-raw-space-4, #{measurements.raw-space(4)}) 0
-    var(--fui-raw-space-4, #{measurements.raw-space(4)})
-    var(--fui-raw-space-6, #{measurements.raw-space(6)});
-  border-color: transparent transparent transparent var(--fui-text-secondary, $fui-text-secondary);
-}
-
-@media (prefers-reduced-motion: reduce) {
   .viewport {
-    transition: none;
+    @include popup.viewport;
+  }
+
+  .item {
+    @include popup.row;
+
+    &[data-highlighted] {
+      @include popup.highlight-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
+  }
+
+  .danger {
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
+
+  // Items still loading: one row in ink 2 with the spinner where the icon
+  // goes. It is a disabled item, so it never highlights or takes a press, and
+  // it is not dimmed: it reports, it does not refuse.
+  .loadingRow {
+    @include popup.row;
+
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    cursor: default;
+  }
+
+  .spinner {
+    @include loading.spinner;
+  }
+
+  @include loading.keyframes;
+
+  .viewport:has([data-menu-checkable]) {
+    .item:not([data-menu-checkable]),
+    .groupLabel {
+      padding-inline-start: calc(#{$_inset} + #{$_indicator} + #{$_gap});
+    }
+  }
+
+  .itemIcon,
+  .indicator,
+  .caret {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    inline-size: $_indicator;
+    block-size: $_indicator;
+
+    svg {
+      inline-size: var(--fui-icon-sm, #{$fui-icon-sm});
+      block-size: var(--fui-icon-sm, #{$fui-icon-sm});
+    }
+  }
+
+  .itemIcon {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    .danger & {
+      color: currentcolor;
+    }
+  }
+
+  .check {
+    display: flex;
+    color: var(--fui-control-selected-border, $fui-control-selected-border);
+  }
+
+  .itemLabel {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .itemShortcut {
+    @include typography.role("caption");
+
+    margin-inline-start: auto;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    white-space: nowrap;
+  }
+
+  .caret {
+    margin-inline-start: auto;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  .separator {
+    @include popup.group-separator;
+  }
+
+  .groupLabel {
+    @include popup.group-label;
   }
 }

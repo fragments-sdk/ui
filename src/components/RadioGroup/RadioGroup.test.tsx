@@ -13,15 +13,18 @@ describe("RadioGroup", () => {
     expect(screen.getByRole("radiogroup")).toBeInTheDocument();
   });
 
-  it("forwards groupId to the radiogroup while preserving the wrapper id", () => {
+  it("puts the id and ref on the radiogroup and other props on the wrapper", () => {
+    const ref = { current: null as HTMLDivElement | null };
     const { container } = render(
-      <RadioGroup id="shipping-field" groupId="shipping-options" label="Shipping">
+      <RadioGroup ref={ref} id="shipping-options" data-testid="shipping" label="Shipping">
         <RadioGroup.Item value="standard" label="Standard" />
       </RadioGroup>
     );
 
-    expect(container.firstElementChild).toHaveAttribute("id", "shipping-field");
-    expect(screen.getByRole("radiogroup")).toHaveAttribute("id", "shipping-options");
+    const group = screen.getByRole("radiogroup");
+    expect(group).toHaveAttribute("id", "shipping-options");
+    expect(ref.current).toBe(group);
+    expect(container.firstElementChild).toHaveAttribute("data-testid", "shipping");
   });
 
   it("renders radio items", () => {
@@ -34,16 +37,60 @@ describe("RadioGroup", () => {
     expect(screen.getAllByRole("radio")).toHaveLength(2);
   });
 
-  it("propagates the resolved size and invalid state to visible geometry", () => {
-    render(
-      <RadioGroup label="Color" size="sm" error="Choose a color">
+  it("shows the error message with an icon and wires it to the group while invalid", () => {
+    const { container, rerender } = render(
+      <RadioGroup label="Color" invalid errorMessage="Choose a color.">
         <RadioGroup.Item value="red" label="Red" />
       </RadioGroup>
     );
 
-    expect(screen.getByRole("radiogroup")).toHaveAttribute("data-size", "sm");
-    expect(screen.getByRole("radiogroup")).toHaveAttribute("data-invalid", "true");
-    expect(screen.getByRole("radio")).toHaveAttribute("data-size", "sm");
+    const group = screen.getByRole("radiogroup", { name: "Color" });
+    expect(group).toHaveAttribute("data-invalid", "true");
+    expect(group).toHaveAccessibleDescription("Choose a color.");
+    expect(container.querySelector("svg[aria-hidden='true']")).not.toBeNull();
+
+    rerender(
+      <RadioGroup label="Color" errorMessage="Choose a color.">
+        <RadioGroup.Item value="red" label="Red" />
+      </RadioGroup>
+    );
+    expect(screen.queryByText("Choose a color.")).not.toBeInTheDocument();
+    expect(screen.getByRole("radiogroup")).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("carries the group's disabled and read-only states to every item row", () => {
+    const { rerender } = render(
+      <RadioGroup label="Color" disabled>
+        <RadioGroup.Item value="red" label="Red" />
+      </RadioGroup>
+    );
+    expect(screen.getByText("Red").closest("label")).toHaveAttribute("data-disabled", "true");
+
+    rerender(
+      <RadioGroup label="Color" readOnly>
+        <RadioGroup.Item value="red" label="Red" />
+      </RadioGroup>
+    );
+    const row = screen.getByText("Red").closest("label");
+    expect(row).not.toHaveAttribute("data-disabled");
+    expect(row).toHaveAttribute("data-readonly", "true");
+  });
+
+  it("drops the cut aliases at the type level", () => {
+    render(
+      // @ts-expect-error onChange was cut in v4; use onValueChange.
+      <RadioGroup label="Color" onChange={() => {}}>
+        {/* @ts-expect-error description was cut in v4; use helperText. */}
+        <RadioGroup.Item value="red" label="Red" description="Old" />
+      </RadioGroup>
+    );
+    render(
+      // @ts-expect-error size was cut in v4; there is one size.
+      <RadioGroup label="Size" size="sm">
+        <RadioGroup.Item value="a" label="A" />
+      </RadioGroup>
+    );
+    expect(screen.getAllByRole("radiogroup")).toHaveLength(2);
   });
 
   it("renders helperText on radio items (preferred API)", () => {
@@ -120,16 +167,30 @@ describe("RadioGroup", () => {
     radios.forEach((radio) => expect(radio).toHaveAttribute("aria-disabled", "true"));
   });
 
-  it("sets required state on radio items", () => {
+  it("exposes required state on the radiogroup, not on each radio", () => {
     render(
       <RadioGroup label="Color" required>
         <RadioGroup.Item value="red" label="Red" />
         <RadioGroup.Item value="blue" label="Blue" />
       </RadioGroup>
     );
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-required", "true");
     screen
       .getAllByRole("radio")
-      .forEach((radio) => expect(radio).toHaveAttribute("aria-required", "true"));
+      .forEach((radio) => expect(radio).not.toHaveAttribute("aria-required"));
+  });
+
+  it("exposes readOnly state on the radiogroup, not on each radio", () => {
+    render(
+      <RadioGroup label="Color" defaultValue="red" readOnly>
+        <RadioGroup.Item value="red" label="Red" />
+        <RadioGroup.Item value="blue" label="Blue" />
+      </RadioGroup>
+    );
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-readonly", "true");
+    screen
+      .getAllByRole("radio")
+      .forEach((radio) => expect(radio).not.toHaveAttribute("aria-readonly"));
   });
 
   it("does not select another item when readOnly", async () => {
@@ -227,6 +288,26 @@ describe("RadioGroup", () => {
     expect(screen.getByRole("radio", { name: "3 repositories $219 a month" })).toBeInTheDocument();
   });
 
+  it("delivers exactly one click to an ancestor per user click", async () => {
+    const handleAncestorClick = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <div onClick={handleAncestorClick}>
+        <RadioGroup label="Color">
+          <RadioGroup.Item value="red" label="Red" />
+          <RadioGroup.Item value="blue" label="Blue" />
+        </RadioGroup>
+      </div>
+    );
+
+    await user.click(screen.getByRole("radio", { name: "Red" }));
+    expect(handleAncestorClick).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByText("Blue"));
+    expect(handleAncestorClick).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole("radio", { name: "Blue" })).toBeChecked();
+  });
+
   it("has no accessibility violations", async () => {
     const { container } = render(
       <RadioGroup label="Accessible group">
@@ -237,14 +318,14 @@ describe("RadioGroup", () => {
     await expectNoA11yViolations(container);
   });
 
-  // The `error` prop shipped once rendering only the message: no invalid edge
+  // The old `error` prop shipped once rendering only the message: no invalid edge
   // and no aria-invalid, so the control looked and read as valid. Assert the
   // rendered pair, not the source text — a source check cannot tell whether
   // the attribute is present but the selector never matches.
   it("marks the control invalid both visually and programmatically", () => {
     const { container } = render(
-      <RadioGroup label="Color" error errorMessage="Pick one">
-        <RadioGroup.Item value="red">Red</RadioGroup.Item>
+      <RadioGroup label="Color" invalid errorMessage="Pick one">
+        <RadioGroup.Item value="red" label="Red" />
       </RadioGroup>
     );
 

@@ -1,0 +1,173 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Command",
+  "description": "Filters and ranks commands as users type, with an optional floating palette.",
+  "category": "navigation",
+  "tags": ["command", "palette", "search", "spotlight", "quick-actions"],
+  "status": "stable",
+  "sourcePath": "src/components/Command/index.tsx",
+  "exportName": "Command",
+  "propsSummary": [
+    "children: node (required)",
+    "search: string",
+    "defaultSearch: string (default: )",
+    "onSearchChange: function",
+    "filter: function",
+    "loop: boolean (default: true)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Command.Input, Command.List, and other sub-components",
+      "required": true
+    },
+    "search": {
+      "type": "string",
+      "description": "Controlled search value",
+      "required": false
+    },
+    "defaultSearch": {
+      "type": "string",
+      "description": "Default search value (uncontrolled)",
+      "default": "",
+      "required": false
+    },
+    "onSearchChange": {
+      "type": "function",
+      "description": "Called when search input changes",
+      "required": false
+    },
+    "filter": {
+      "type": "function",
+      "description": "Ranks an item for a search: 0 hides it, higher scores sort first. The default ranks a prefix over a word start over a substring over a keyword.",
+      "required": false
+    },
+    "loop": {
+      "type": "boolean",
+      "description": "Whether to loop keyboard navigation",
+      "default": "true",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "A keyboard shortcut that jumps anywhere",
+      "Action lists too long to scan",
+      "Inline lists that need filtering",
+      "Search across everything the app can do"
+    ],
+    "whenNot": [
+      "A handful of actions (use Menu)",
+      "Picking a value for a form (use Select or Combobox)",
+      "Fixed navigation (use Sidebar or Tabs)"
+    ],
+    "guidelines": [
+      "Use Command.Dialog for the summon-anywhere palette; Command itself is frameless and sits in a Popover or a page as is",
+      "Group by category once the list gets long; group labels separate groups, never lines",
+      "Always supply Command.Empty",
+      "Add keywords so aliases and synonyms match",
+      "Label rows with a verb",
+      "Pass loading to Command.List while results load, and Command.Error with onRetry when they fail"
+    ],
+    "accessibility": [
+      "Combobox and listbox pattern: aria-expanded follows whether any result shows",
+      "The first match is active after every search change, so Return runs it",
+      "ArrowUp/ArrowDown move in ranked order, Home/End jump to first/last",
+      "aria-activedescendant tracks the active row; Empty, Searching and the error row are not options",
+      "The error row is a polite status with a danger glyph beside the words, so colour is never the only signal"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Search row over a flat list.",
+      "code": "<Command>\n  <Command.Input placeholder=\"Type a command…\" />\n  <Command.List>\n    <Command.Item onSelect={() => {}}>Open File</Command.Item>\n    <Command.Item onSelect={() => {}}>Save Document</Command.Item>\n    <Command.Item onSelect={() => {}}>Print</Command.Item>\n    <Command.Empty>No results found.</Command.Empty>\n  </Command.List>\n</Command>"
+    },
+    {
+      "name": "Palette",
+      "description": "Command.Dialog: a scrim and the raised panel near the top, key hints underneath; running an item closes it.",
+      "code": "const [open, setOpen] = React.useState(false);\n\n<Command.Dialog open={open} onOpenChange={setOpen}>\n  <Command.Input placeholder=\"Search commands…\" />\n  <Command.List>\n    <Command.Group heading=\"Actions\">\n      <Command.Item onSelect={() => {}}>New File</Command.Item>\n      <Command.Item onSelect={() => {}}>Open Recent</Command.Item>\n    </Command.Group>\n    <Command.Group heading=\"Settings\">\n      <Command.Item onSelect={() => {}}>Preferences</Command.Item>\n    </Command.Group>\n    <Command.Empty>No results found.</Command.Empty>\n  </Command.List>\n</Command.Dialog>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Category labels survive filtering.",
+      "code": "<Command>\n  <Command.Input placeholder=\"Search…\" />\n  <Command.List>\n    <Command.Group heading=\"Suggestions\">\n      <Command.Item onSelect={() => {}}>Calendar</Command.Item>\n      <Command.Item onSelect={() => {}}>Calculator</Command.Item>\n    </Command.Group>\n    <Command.Group heading=\"Settings\">\n      <Command.Item onSelect={() => {}}>Profile</Command.Item>\n      <Command.Item disabled onSelect={() => {}}>\n        Team (coming soon)\n      </Command.Item>\n    </Command.Group>\n    <Command.Empty>No results found.</Command.Empty>\n  </Command.List>\n</Command>"
+    },
+    {
+      "name": "Loading and error",
+      "description": "A busy list shows Searching after a second; a failed load offers Retry.",
+      "code": "const loading = false;\nconst [failed, setFailed] = React.useState(true);\nconst reload = () => setFailed(false);\n\n<Command>\n  <Command.Input placeholder=\"Search issues…\" />\n  <Command.List loading={loading}>\n    {failed && <Command.Error onRetry={reload}>Couldn’t load issues.</Command.Error>}\n    <Command.Empty>No issues match.</Command.Empty>\n  </Command.List>\n</Command>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Command.Dialog is the palette; plain Dialog is for tasks with a form"
+    },
+    {
+      "component": "Listbox",
+      "relationship": "sibling",
+      "note": "Command uses Listbox-like keyboard navigation internally"
+    },
+    {
+      "component": "Combobox",
+      "relationship": "alternative",
+      "note": "Use Combobox for form field selection with search"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "search/defaultSearch/onSearchChange: controlled and uncontrolled search",
+      "filter(value, search, keywords) => score: 0 hides, higher sorts first",
+      "loop: boolean (default true)",
+      "Command.Item: value, keywords, disabled, onSelect(value, event)",
+      "Command.List: loading, loadingLabel (default Searching…)",
+      "Command.Error: onRetry, retryLabel (default Retry)",
+      "Command.Dialog: open, defaultOpen, onOpenChange, label, footer"
+    ],
+    "a11yRules": ["A11Y_COMBOBOX_ROLE", "A11Y_LISTBOX_ROLE", "A11Y_ACTIVE_DESCENDANT"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Input", "List", "Item", "Group", "Empty", "Error", "Separator", "Dialog"],
+    "requiredChildren": ["Input", "List"],
+    "commonPatterns": [
+      "<Command.Dialog open={open} onOpenChange={setOpen}><Command.Input placeholder=\"Search…\" /><Command.List><Command.Group heading=\"Actions\"><Command.Item onSelect={() => {}}>Action 1</Command.Item></Command.Group><Command.Empty>No results.</Command.Empty></Command.List></Command.Dialog>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:53.723Z"
+  },
+  "cssVariables": [
+    "--fui-color-danger-text",
+    "--fui-control-height-md",
+    "--fui-overlay-layer-modal",
+    "--fui-popup-container-inset",
+    "--fui-popup-indicator-box",
+    "--fui-popup-row-gap",
+    "--fui-raw-space-0",
+    "--fui-raw-space-12",
+    "--fui-raw-space-16",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-active",
+      "value": "true",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-command-item",
+      "value": "",
+      "fixture": "populated"
+    }
+  ]
+}

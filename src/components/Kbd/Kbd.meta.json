@@ -1,0 +1,93 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Kbd",
+  "description": "Draws a keyboard key on a keycap, alone or as one shortcut.",
+  "category": "display",
+  "tags": ["keyboard", "shortcut", "key", "hotkey", "keycap"],
+  "status": "stable",
+  "sourcePath": "src/components/Kbd/index.tsx",
+  "exportName": "Kbd",
+  "propsSummary": ["children: node (required)", "label: string"],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "The key as it is printed: a glyph or a short word",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "description": "The key's spoken name for a glyph a screen reader cannot say. The glyph is then hidden from assistive tech.",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Showing the keyboard shortcut for an action",
+      "Naming a key inside help copy",
+      "A shortcut hint in a menu row, tooltip or field"
+    ],
+    "whenNot": [
+      "Inline code or a command to copy — use CodeBlock or Text type=\"code\"",
+      "A status or count — use Badge",
+      "Anything clickable — keys are hints, not buttons"
+    ],
+    "guidelines": [
+      "One key per Kbd; the keys of one shortcut go in Kbd.Group",
+      "Glyph keys carry a label so they are spoken by name",
+      "Print the platform's own glyphs (⌘ on macOS, Ctrl elsewhere)"
+    ],
+    "accessibility": [
+      "Renders native kbd elements; a shortcut is a kbd that holds kbds",
+      "label hides the glyph and speaks the name instead",
+      "A keycap never takes focus"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Key",
+      "description": "One key, printed as a word.",
+      "code": "<Kbd>Esc</Kbd>"
+    },
+    {
+      "name": "Shortcut",
+      "description": "The keys of one shortcut, the glyph spoken by name.",
+      "code": "<Kbd.Group>\n  <Kbd label=\"Command\">⌘</Kbd>\n  <Kbd>K</Kbd>\n</Kbd.Group>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Tooltip",
+      "relationship": "composition",
+      "note": "A tooltip names an action and shows its shortcut as a Kbd"
+    },
+    {
+      "component": "Menu",
+      "relationship": "composition",
+      "note": "A menu row shows its shortcut as a Kbd on the trailing edge"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - the key as printed (required)",
+      "label: string - the spoken name of a glyph key"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root", "Group"]
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": false,
+    "frameworkSupport": "native"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-kbd-gap",
+    "--fui-kbd-height",
+    "--fui-kbd-padding-x",
+    "--fui-radius-indicator",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

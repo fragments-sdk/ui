@@ -40,14 +40,12 @@ const schemas = await Promise.all(schemaNames.map((name) => readJson(join(schema
 const schemasById = new Map(schemas.map((schema) => [schema.$id, schema]));
 const repository = {
   cases: await readJson(join(geometryDirectory, "cases.json")),
-  catalogMap: await readJson(join(geometryDirectory, "catalog-map.json")),
   coverage: await readJson(join(geometryDirectory, "coverage.json")),
   baselines: await readJson(join(geometryDirectory, "baselines.json")),
   manualZoom: await readJson(join(geometryDirectory, "manual-zoom.json")),
   opticalLedger: await readJson(join(geometryDirectory, "ledgers/optical-exceptions.json")),
   cascadeLedger: await readJson(join(geometryDirectory, "ledgers/cascade-exceptions.json")),
   measurements: await readJson(join(uiDirectory, "src/measurements/measurements.json")),
-  fragments: await readJson(join(uiDirectory, "fragments.json")),
 };
 
 const hashA = "a".repeat(64);
@@ -62,11 +60,6 @@ function schemaDocuments(repo = repository) {
       name: `cases.json[${index}]`,
       value,
     })),
-    {
-      schemaId: "urn:ui-geometry:v1:catalog-map",
-      name: "catalog-map.json",
-      value: repo.catalogMap,
-    },
     {
       schemaId: "urn:ui-geometry:v1:coverage",
       name: "coverage.json",
@@ -147,12 +140,6 @@ function normalizedTypeContract(contract) {
 }
 
 function storyAndSelector(caseId) {
-  if (caseId.startsWith("geometry/harness/")) {
-    return {
-      storyId: "cloud-control-sizing--control-sizing",
-      selectorValue: "manual-control-md",
-    };
-  }
   if (caseId.includes("/field-track/")) {
     return {
       storyId: "foundations-measurement-targets--target-lineup",
@@ -182,7 +169,7 @@ function manualRecord(caseId, index) {
     cssViewport: { width: 720, height: 450 },
     windowInner: { width: 720, height: 450 },
     overflow: { horizontal: false, vertical: false },
-    screenshotPath: `test-results/ui-geometry/manual/manual-${index}.png`,
+    screenshotPath: `geometry/.output/manual/manual-${index}.png`,
     screenshotSha256: hashA,
     sourceRevision: revision,
     dirty: true,
@@ -205,16 +192,14 @@ function semanticallyReadyRepository() {
 }
 
 function validPendingBaseline(caseId) {
-  const catalog = caseId.endsWith("/catalog-smoke-1440");
   return {
     caseId,
-    pngPath: `libs/ui/geometry/baselines/${caseId}.png`,
+    pngPath: `geometry/baselines/${caseId}.png`,
     pngSha256: hashA,
     caseExecutionSha256: hashB,
     storybookTreeSha256: hashC,
     runnerTreeSha256: hashA,
     schemaSetSha256: hashB,
-    ...(catalog ? { catalogMapSha256: hashC } : {}),
     caseSchemaVersion: 1,
     runnerVersion: 1,
     environment: {
@@ -254,13 +239,12 @@ function validPendingBaseline(caseId) {
   };
 }
 
-test("all ten schemas use the frozen draft, IDs, and closed object rules", () => {
+test("all nine schemas use the frozen draft, IDs, and closed object rules", () => {
   assert.deepEqual(schemaNames, [
     "action.schema.json",
     "assertion.schema.json",
     "baseline.schema.json",
     "case.schema.json",
-    "catalog-map.schema.json",
     "coverage.schema.json",
     "exception-ledger.schema.json",
     "manual-zoom.schema.json",
@@ -362,20 +346,14 @@ test("production data validates without coercion, defaults, or property removal"
   );
 });
 
-test("the independently derived finite matrix is exactly the frozen 182-case set", () => {
-  const expected = deriveExpectedCaseIds({
-    measurements: repository.measurements,
-    catalogMap: repository.catalogMap,
-  });
-  assert.equal(expected.foundation.length, 96);
+test("the independently derived finite matrix is exactly the frozen 42-case set", () => {
+  const expected = deriveExpectedCaseIds({ measurements: repository.measurements });
+  assert.equal(expected.foundation.length, 34);
   assert.equal(expected.viewport.length, 6);
-  assert.equal(expected.condition.length, 6);
-  assert.equal(expected.engine.length, 3);
-  assert.equal(expected.catalog.length, 68);
-  assert.equal(expected.automated.length, 179);
-  assert.equal(expected.manual.length, 3);
-  assert.equal(expected.all.length, 182);
-  assert.equal(new Set(expected.all).size, 182);
+  assert.equal(expected.automated.length, 40);
+  assert.equal(expected.manual.length, 2);
+  assert.equal(expected.all.length, 42);
+  assert.equal(new Set(expected.all).size, 42);
   assert.deepEqual(
     repository.cases.map((geometryCase) => geometryCase.caseId).sort(),
     expected.all
@@ -388,39 +366,7 @@ test("the independently derived finite matrix is exactly the frozen 182-case set
   );
 });
 
-test("catalog mapping is a one-to-one canonical projection of the live public catalog", () => {
-  const liveNames = Object.keys(repository.fragments.fragments).sort();
-  const mappedNames = repository.catalogMap.entries.map((entry) => entry.catalogName).sort();
-  assert.deepEqual(mappedNames, liveNames);
-  assert.equal(new Set(mappedNames).size, liveNames.length);
-  assert.equal(
-    new Set(repository.catalogMap.entries.map((entry) => entry.caseId)).size,
-    liveNames.length
-  );
-  assert.equal(
-    new Set(repository.catalogMap.entries.map((entry) => entry.selectorValue)).size,
-    liveNames.length
-  );
-
-  const casesById = new Map(
-    repository.cases.map((geometryCase) => [geometryCase.caseId, geometryCase])
-  );
-  for (const entry of repository.catalogMap.entries) {
-    assert.equal(
-      entry.caseId,
-      `geometry/${entry.family}/${entry.primitive}/default/na/light/catalog-smoke-1440`
-    );
-    assert.equal(entry.selectorValue, `catalog-${entry.primitive}`);
-    const geometryCase = casesById.get(entry.caseId);
-    assert.equal(geometryCase.storyId, "cloud-geometry-evidence--catalog-smoke");
-    assert.equal(geometryCase.ownerBrief, "03");
-    assert.equal(geometryCase.transfer, null);
-    assert.equal(geometryCase.selectors.root.value, entry.selectorValue);
-  }
-  assert.match(sha256Canonical(repository.catalogMap), /^[0-9a-f]{64}$/);
-});
-
-test("foundation measurements remain identical across density for each target and theme", () => {
+test("foundation cases cover every measurement target and role once per theme", () => {
   const foundation = repository.cases.filter(
     (geometryCase) =>
       geometryCase.caseId.startsWith("geometry/foundations/") &&
@@ -428,19 +374,19 @@ test("foundation measurements remain identical across density for each target an
   );
   const groups = new Map();
   for (const geometryCase of foundation) {
-    const [, , family, , size, theme] = geometryCase.caseId.split("/");
-    const key = `${family}/${size}/${theme}`;
-    const snapshots = groups.get(key) ?? [];
-    snapshots.push(
-      canonicalizeJson({ selectors: geometryCase.selectors, scenario: geometryCase.scenario })
-    );
-    groups.set(key, snapshots);
+    const [, , family, density, size, theme] = geometryCase.caseId.split("/");
+    assert.equal(density, "default");
+    const key = `${family}/${size}`;
+    groups.set(key, [...(groups.get(key) ?? []), theme]);
   }
-  assert.equal(groups.size, 32);
-  for (const snapshots of groups.values()) {
-    assert.equal(snapshots.length, 3);
-    assert.equal(new Set(snapshots).size, 1);
-  }
+  const { targets, typography } = repository.measurements;
+  assert.equal(
+    groups.size,
+    Object.keys(targets.controlTrack).length +
+      Object.keys(targets.fieldTrack).length +
+      Object.keys(typography).length
+  );
+  for (const themes of groups.values()) assert.deepEqual(themes.sort(), ["dark", "light"]);
 });
 
 test("closed schemas reject unsafe identities, arbitrary DSL, and unledgered tolerance", () => {
@@ -498,19 +444,32 @@ test("semantic preflight rejects duplicates, dangling references, and undeclared
   danglingCoverage.coverage.entries.pop();
   assert.equal(validateGeometryContract(danglingCoverage).errors[0].code, "GEO_CASE_SET_MISMATCH");
 
-  const extraCatalog = structuredClone(ready);
-  extraCatalog.catalogMap.entries.push({
-    catalogName: "NotPublic",
-    family: "surfaces",
-    primitive: "not-public",
-    caseId: "geometry/surfaces/not-public/default/na/light/catalog-smoke-1440",
-    selectorValue: "catalog-not-public",
+  const extraCase = structuredClone(ready);
+  const extra = structuredClone(extraCase.cases[0]);
+  extra.caseId = extra.caseId.replace("/rest-1440", "/rest-1441");
+  extraCase.cases.push(extra);
+  assert.equal(validateGeometryContract(extraCase).errors[0].code, "GEO_CASE_SET_MISMATCH");
+
+  const pendingEvidence = structuredClone(ready);
+  pendingEvidence.manualZoom.records = pendingEvidence.manualZoom.records.slice(1);
+  assert.equal(validateGeometryContract(pendingEvidence).errors[0].code, "GEO_CASE_SET_MISMATCH");
+  assert.deepEqual(validateGeometryContract(pendingEvidence, { requireCompleteEvidence: false }), {
+    valid: true,
+    errors: [],
   });
-  assert.equal(validateGeometryContract(extraCatalog).errors[0].code, "GEO_CASE_SET_MISMATCH");
+
+  const strayEvidence = structuredClone(ready);
+  strayEvidence.manualZoom.records.push(
+    manualRecord("geometry/foundations/control-track/default/md/light/manual-zoom-200", 9)
+  );
+  assert.equal(
+    validateGeometryContract(strayEvidence, { requireCompleteEvidence: false }).errors[0].code,
+    "GEO_CASE_SET_MISMATCH"
+  );
 
   const reflowAsManualZoom = structuredClone(ready);
   const reflow = reflowAsManualZoom.cases.find((geometryCase) =>
-    geometryCase.caseId.endsWith("/reflow-320")
+    geometryCase.caseId.endsWith("/rest-320")
   );
   reflow.executionMode = "manual";
   assert.equal(
@@ -564,11 +523,13 @@ test("manual zoom schema and semantics reject simulated, stale, or self-reviewed
 
 test("baseline schema enforces hash binding and initial/update mode semantics", () => {
   const foundationCaseId = "geometry/foundations/control-track/default/md/light/rest-1440";
-  const catalogCaseId = "geometry/actions/button/default/na/light/catalog-smoke-1440";
+  const viewportCaseId = repository.cases.find((geometryCase) =>
+    geometryCase.caseId.endsWith("/rest-320")
+  ).caseId;
   const valid = {
     schemaVersion: 1,
     runnerVersion: 1,
-    baselines: [validPendingBaseline(foundationCaseId), validPendingBaseline(catalogCaseId)],
+    baselines: [validPendingBaseline(foundationCaseId), validPendingBaseline(viewportCaseId)],
   };
   assert.deepEqual(
     validateGeometryDocuments({
@@ -584,13 +545,9 @@ test("baseline schema enforces hash binding and initial/update mode semantics", 
     { valid: true, errors: [] }
   );
 
-  const missingCatalogHash = structuredClone(valid);
-  delete missingCatalogHash.baselines[1].catalogMapSha256;
-  assertSchemaRejects("urn:ui-geometry:v1:baseline", missingCatalogHash);
-
-  const catalogHashOnFoundation = structuredClone(valid);
-  catalogHashOnFoundation.baselines[0].catalogMapSha256 = hashA;
-  assertSchemaRejects("urn:ui-geometry:v1:baseline", catalogHashOnFoundation);
+  const retiredCatalogHash = structuredClone(valid);
+  retiredCatalogHash.baselines[0].catalogMapSha256 = hashA;
+  assertSchemaRejects("urn:ui-geometry:v1:baseline", retiredCatalogHash);
 
   const fabricatedPredecessor = structuredClone(valid);
   fabricatedPredecessor.baselines[0].generation.predecessor = "transparent.png";

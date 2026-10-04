@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import styles from "./EmptyState.module.scss";
 
@@ -9,12 +7,11 @@ import styles from "./EmptyState.module.scss";
 
 export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  size?: "sm" | "md" | "lg";
-  /** Chrome. `outline` draws the dashed hairline that marks a reserved-but-empty
-   * region. Default `ghost` keeps the state inside whatever already frames it
-   * (a Card, a table body) so the frame is never doubled.
-   * @default "ghost" */
-  variant?: "ghost" | "outline";
+  /** Padding only: `sm` for a panel or a table body, `md` for a page region.
+   * Type and icon never change with size. The state always sits inside
+   * whatever already frames it, so it draws no frame of its own.
+   * @default "md" */
+  size?: "sm" | "md";
 }
 
 export interface EmptyStateIconProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,58 +34,23 @@ export interface EmptyStateActionsProps extends React.HTMLAttributes<HTMLDivElem
 }
 
 // ============================================
-// Context
-// ============================================
-
-interface EmptyStateContextValue {
-  size: "sm" | "md" | "lg";
-}
-
-const EmptyStateContext = React.createContext<EmptyStateContextValue | null>(null);
-
-function useEmptyStateContext() {
-  const context = React.useContext(EmptyStateContext);
-  if (!context) {
-    throw new Error("EmptyState compound components must be used within an EmptyState");
-  }
-  return context;
-}
-
-// ============================================
 // Components
 // ============================================
 
-function EmptyStateRoot({
-  children,
-  size = "md",
-  variant = "ghost",
-  className,
-  ...htmlProps
-}: EmptyStateProps) {
-  const classes = [
-    styles.emptyState,
-    styles[size],
-    variant === "outline" ? styles.outline : null,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const contextValue: EmptyStateContextValue = { size };
+function EmptyStateRoot({ children, size = "md", className, ...htmlProps }: EmptyStateProps) {
+  const classes = [styles.emptyState, styles[size], className].filter(Boolean).join(" ");
 
   return (
-    <EmptyStateContext.Provider value={contextValue}>
-      <div {...htmlProps} className={classes}>
-        {children}
-      </div>
-    </EmptyStateContext.Provider>
+    <div {...htmlProps} className={classes}>
+      {children}
+    </div>
   );
 }
 
 function EmptyStateIcon({ children, className, ...htmlProps }: EmptyStateIconProps) {
   const classes = [styles.icon, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} className={classes}>
+    <div aria-hidden="true" {...htmlProps} className={classes}>
       {children}
     </div>
   );
@@ -136,13 +98,3 @@ export const EmptyState = Object.assign(EmptyStateRoot, {
   Description: EmptyStateDescription,
   Actions: EmptyStateActions,
 });
-
-// Re-export individual components for tree-shaking
-export {
-  EmptyStateRoot,
-  EmptyStateIcon,
-  EmptyStateTitle,
-  EmptyStateDescription,
-  EmptyStateActions,
-  useEmptyStateContext,
-};

@@ -1,24 +1,28 @@
 "use client";
 
 import * as React from "react";
-import styles from "./Editor.module.scss";
 import {
-  TextB,
-  TextItalic,
-  TextStrikethrough,
-  LinkSimple,
+  ArrowClockwise,
+  ArrowCounterClockwise,
   Code,
+  LinkSimple,
   ListBullets,
   ListNumbers,
-  TextHOne,
-  TextHTwo,
-  TextHThree,
   Quotes,
-  ArrowCounterClockwise,
-  ArrowClockwise,
+  TextB,
+  TextHTwo,
+  TextItalic,
+  TextStrikethrough,
+  WarningCircle,
 } from "@phosphor-icons/react";
-import { KEYBOARD_SHORTCUTS } from "../../utils/keyboard-shortcuts";
+import { mergeAriaIds } from "../../utils/aria";
+import { useControllableState } from "../../utils/controllable-state";
 import { isDevelopmentBuild } from "../../utils/env";
+import { KEYBOARD_SHORTCUTS } from "../../utils/keyboard-shortcuts";
+import { Icon } from "../Icon";
+import { IconButton } from "../IconButton";
+import { Separator } from "../Separator";
+import styles from "./Editor.module.scss";
 
 // ============================================
 // Lazy-loaded dependency (TipTap)
@@ -99,9 +103,7 @@ export type EditorFormat =
   | "code"
   | "bulletList"
   | "orderedList"
-  | "heading1"
-  | "heading2"
-  | "heading3"
+  | "heading"
   | "blockquote"
   | "undo"
   | "redo";
@@ -109,23 +111,6 @@ export type EditorFormat =
 export type EditorSaveStatus = "idle" | "saving" | "saved" | "error";
 
 export type EditorMode = "rich" | "markdown";
-
-export type EditorSize = "sm" | "md" | "lg";
-
-export interface EditorToolbarIconRenderState {
-  format: EditorFormat;
-  active: boolean;
-  disabled: boolean;
-  readOnly: boolean;
-  isDisabled: boolean;
-  mode: EditorMode;
-}
-
-export type EditorToolbarIconSlot =
-  | React.ReactNode
-  | ((state: EditorToolbarIconRenderState) => React.ReactNode);
-
-export type EditorToolbarIcons = Partial<Record<EditorFormat, EditorToolbarIconSlot>>;
 
 export interface EditorProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -138,32 +123,39 @@ export interface EditorProps extends Omit<
   defaultValue?: string;
   /** Called when content changes */
   onValueChange?: (value: string) => void;
-  /** Placeholder text */
+  /** Visible label above the field; names the text box */
+  label?: string;
+  /** Helper text below the field; describes the text box */
+  helperText?: string;
+  /** Marks the value invalid: the danger edge, aria-invalid and the error message */
+  invalid?: boolean;
+  /** Words shown under the field while it is invalid */
+  errorMessage?: string;
+  /** Placeholder text. Never the accessible name: pass `label` or `aria-label`. */
   placeholder?: string;
-  /** Disable the editor */
+  /** Disable the editor. The text stays selectable and copyable. */
   disabled?: boolean;
-  /** Read-only mode */
+  /** Read-only: the toolbar hides and the edge turns dashed */
   readOnly?: boolean;
-  /** Which format buttons to show */
+  /** Which format buttons the default toolbar shows */
   formats?: EditorFormat[];
-  /** Show default toolbar */
+  /** Show the default toolbar */
   toolbar?: boolean;
-  /** Show default status bar */
+  /** Show the default status bar. On by default only with `maxLength` or `onAutoSave`. */
   statusBar?: boolean;
   /** Auto-save callback (sync or async) */
   onAutoSave?: (value: string) => void | Promise<void>;
   /** Auto-save interval in ms */
   autoSaveInterval?: number;
-  /** Editor size preset */
-  size?: EditorSize;
-  /** Maximum character count (shows indicator in status bar) */
+  /** Height of the writing area in text lines, as Textarea counts them */
+  rows?: number;
+  /** Maximum character count (shows the count and how many over in the status bar) */
   maxLength?: number;
-  /** Custom toolbar icons keyed by format/action, for any icon package */
-  toolbarIcons?: EditorToolbarIcons;
 }
 
 export interface EditorToolbarProps {
   children: React.ReactNode;
+  "aria-label"?: string;
   className?: string;
 }
 
@@ -176,10 +168,6 @@ export interface EditorToolbarGroupProps {
 export interface EditorToolbarButtonProps {
   /** Which format this button toggles */
   format: EditorFormat;
-  className?: string;
-}
-
-export interface EditorSeparatorProps {
   className?: string;
 }
 
@@ -200,6 +188,7 @@ export interface EditorStatusBarProps {
   showWordCount?: boolean;
   /** Show character count */
   showCharCount?: boolean;
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -207,9 +196,9 @@ export interface EditorStatusBarProps {
 // Format metadata
 // ============================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FORMAT_META: Record<
   EditorFormat,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- icon components take varied prop shapes
   { icon: React.ComponentType<any>; label: string; shortcut: string }
 > = {
   bold: { icon: TextB, label: "Bold", shortcut: KEYBOARD_SHORTCUTS.EDITOR_BOLD.label },
@@ -228,27 +217,17 @@ const FORMAT_META: Record<
   },
   orderedList: {
     icon: ListNumbers,
-    label: "Ordered list",
+    label: "Numbered list",
     shortcut: KEYBOARD_SHORTCUTS.EDITOR_ORDERED_LIST.label,
   },
-  heading1: {
-    icon: TextHOne,
-    label: "Heading 1",
-    shortcut: KEYBOARD_SHORTCUTS.EDITOR_HEADING1.label,
-  },
-  heading2: {
+  heading: {
     icon: TextHTwo,
-    label: "Heading 2",
+    label: "Heading",
     shortcut: KEYBOARD_SHORTCUTS.EDITOR_HEADING2.label,
-  },
-  heading3: {
-    icon: TextHThree,
-    label: "Heading 3",
-    shortcut: KEYBOARD_SHORTCUTS.EDITOR_HEADING3.label,
   },
   blockquote: {
     icon: Quotes,
-    label: "Blockquote",
+    label: "Quote",
     shortcut: KEYBOARD_SHORTCUTS.EDITOR_BLOCKQUOTE.label,
   },
   undo: {
@@ -273,10 +252,12 @@ const ACTION_FORMATS = new Set<EditorFormat>(["undo", "redo"]);
 
 const DEFAULT_STATUS_LABELS: Record<EditorSaveStatus, string> = {
   idle: "",
-  saving: "SAVING...",
-  saved: "AUTO-SAVED",
-  error: "SAVE FAILED",
+  saving: "Saving…",
+  saved: "Saved",
+  error: "Couldn’t save",
 };
+
+const DEFAULT_ROWS = 8;
 
 // ============================================
 // Markdown formatting helpers (textarea fallback)
@@ -369,14 +350,8 @@ function applyMarkdownFormat(
       setValue(newValue);
       break;
     }
-    case "heading1":
-      wrapSelection(textarea, "# ", "", setValue);
-      break;
-    case "heading2":
+    case "heading":
       wrapSelection(textarea, "## ", "", setValue);
-      break;
-    case "heading3":
-      wrapSelection(textarea, "### ", "", setValue);
       break;
     case "blockquote": {
       const sel = getSelection(textarea);
@@ -399,25 +374,32 @@ function applyMarkdownFormat(
 // Context
 // ============================================
 
+interface EditorTextboxProps {
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: true;
+}
+
 interface EditorContextValue {
   value: string;
   setValue: (v: string) => void;
   placeholder: string;
   disabled: boolean;
   readOnly: boolean;
+  invalid: boolean;
   formats: EditorFormat[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the TipTap editor is an optional peer with no bundled types
   editor: any | null;
   mode: EditorMode;
-  size: EditorSize;
   maxLength?: number;
-  toolbarIcons?: EditorToolbarIcons;
   wordCount: number;
   charCount: number;
   toggleFormat: (f: EditorFormat) => void;
   isFormatActive: (f: EditorFormat) => boolean;
   saveStatus: EditorSaveStatus;
   contentRef: React.RefObject<HTMLTextAreaElement | null>;
+  textboxProps: EditorTextboxProps;
 }
 
 const EditorContext = React.createContext<EditorContextValue | null>(null);
@@ -431,35 +413,17 @@ function useEditorContext() {
 }
 
 // ============================================
-// Hooks
+// Helpers
 // ============================================
-
-function useControllableState<T>(
-  controlledValue: T | undefined,
-  defaultValue: T,
-  onChange?: (value: T) => void
-): [T, (value: T) => void] {
-  const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
-  const isControlled = controlledValue !== undefined;
-  const value = isControlled ? controlledValue : uncontrolledValue;
-
-  const setValue = React.useCallback(
-    (newValue: T) => {
-      if (!isControlled) {
-        setUncontrolledValue(newValue);
-      }
-      onChange?.(newValue);
-    },
-    [isControlled, onChange]
-  );
-
-  return [value, setValue];
-}
 
 function countWords(text: string): number {
   const trimmed = text.trim();
   if (!trimmed) return 0;
   return trimmed.split(/\s+/).length;
+}
+
+function plural(count: number, one: string, many: string) {
+  return `${count} ${count === 1 ? one : many}`;
 }
 
 // ============================================
@@ -480,18 +444,25 @@ function EditorImpl({
   value: controlledValue,
   defaultValue = "",
   onValueChange,
-  placeholder = "Start typing...",
+  label,
+  helperText,
+  invalid = false,
+  errorMessage,
+  placeholder = "Start typing…",
   disabled = false,
   readOnly = false,
   formats = DEFAULT_FORMATS,
   toolbar = true,
-  statusBar = true,
+  statusBar,
   onAutoSave,
   autoSaveInterval = 30000,
-  size = "md",
+  rows = DEFAULT_ROWS,
   maxLength,
-  toolbarIcons,
   className,
+  style,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
   ...htmlProps
 }: EditorProps & { hasTipTap: boolean }) {
   const contentRef = React.useRef<HTMLTextAreaElement>(null);
@@ -502,32 +473,48 @@ function EditorImpl({
 
   const mode: EditorMode = hasTipTap ? "rich" : "markdown";
 
+  const baseId = React.useId();
+  const labelId = label ? `${baseId}-label` : undefined;
+  const helperId = helperText ? `${baseId}-helper` : undefined;
+  const errorId = invalid && errorMessage ? `${baseId}-error` : undefined;
+
+  const textboxProps: EditorTextboxProps = {
+    "aria-label": ariaLabel,
+    "aria-labelledby": mergeAriaIds(labelId, ariaLabelledBy),
+    "aria-describedby": mergeAriaIds(helperId, errorId, ariaDescribedBy),
+    "aria-invalid": invalid || undefined,
+  };
+
   // TipTap editor instance (only when available)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the TipTap editor is an optional peer with no bundled types
   const tiptapEditor: any = hasTipTap
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any -- useEditor is loaded lazily from an optional peer
       (_useEditor as any)({
         extensions: [
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- StarterKit is loaded lazily from an optional peer
           (_StarterKit as any).configure({
-            heading: { levels: [1, 2, 3] },
+            // One heading step: the type ladder has one heading size for prose.
+            heading: { levels: [2] },
             blockquote: {},
             codeBlock: false,
             horizontalRule: false,
             hardBreak: false,
           }),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the Link extension is loaded lazily from an optional peer
           (_LinkExtension as any).configure({
             openOnClick: false,
             HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
           }),
         ],
         editorProps: {
-          attributes: {
-            role: "textbox",
-            "aria-label": placeholder,
-            "aria-multiline": "true",
-          },
+          attributes: Object.fromEntries(
+            Object.entries({
+              role: "textbox",
+              "aria-multiline": "true",
+              ...textboxProps,
+              "aria-invalid": textboxProps["aria-invalid"] ? "true" : undefined,
+            }).filter(([, entry]) => entry !== undefined)
+          ),
         },
         content: controlledValue !== undefined ? controlledValue : defaultValue,
         editable: !disabled && !readOnly,
@@ -548,10 +535,14 @@ function EditorImpl({
     }
   }, [controlledValue, tiptapEditor]);
 
-  // Update editable state
+  // Update editable state. Disabled stays selectable, so the textbox says so
+  // with aria-disabled rather than leaving the reader to infer it.
   React.useEffect(() => {
     if (tiptapEditor) {
       tiptapEditor.setEditable(!disabled && !readOnly);
+      const dom: HTMLElement | undefined = tiptapEditor.view?.dom;
+      if (disabled) dom?.setAttribute("aria-disabled", "true");
+      else dom?.removeAttribute("aria-disabled");
     }
   }, [tiptapEditor, disabled, readOnly]);
 
@@ -611,14 +602,8 @@ function EditorImpl({
           case "orderedList":
             tiptapEditor.chain().focus().toggleOrderedList().run();
             break;
-          case "heading1":
-            tiptapEditor.chain().focus().toggleHeading({ level: 1 }).run();
-            break;
-          case "heading2":
+          case "heading":
             tiptapEditor.chain().focus().toggleHeading({ level: 2 }).run();
-            break;
-          case "heading3":
-            tiptapEditor.chain().focus().toggleHeading({ level: 3 }).run();
             break;
           case "blockquote":
             tiptapEditor.chain().focus().toggleBlockquote().run();
@@ -653,52 +638,23 @@ function EditorImpl({
     (format: EditorFormat): boolean => {
       if (!tiptapEditor) return false;
       switch (format) {
-        case "bold":
-          return tiptapEditor.isActive("bold");
-        case "italic":
-          return tiptapEditor.isActive("italic");
         case "strikethrough":
           return tiptapEditor.isActive("strike");
-        case "code":
-          return tiptapEditor.isActive("code");
-        case "bulletList":
-          return tiptapEditor.isActive("bulletList");
-        case "orderedList":
-          return tiptapEditor.isActive("orderedList");
-        case "heading1":
-          return tiptapEditor.isActive("heading", { level: 1 });
-        case "heading2":
+        case "heading":
           return tiptapEditor.isActive("heading", { level: 2 });
-        case "heading3":
-          return tiptapEditor.isActive("heading", { level: 3 });
-        case "blockquote":
-          return tiptapEditor.isActive("blockquote");
-        case "link":
-          return tiptapEditor.isActive("link");
         case "undo":
         case "redo":
           return false; // Actions don't have active state
         default:
-          return false;
+          return tiptapEditor.isActive(format);
       }
     },
     [tiptapEditor]
   );
 
-  const wordCount = React.useMemo(() => {
-    if (tiptapEditor) {
-      const text = tiptapEditor.getText?.() ?? "";
-      return countWords(text);
-    }
-    return countWords(value);
-  }, [value, tiptapEditor]);
-
-  const charCount = React.useMemo(() => {
-    if (tiptapEditor) {
-      return (tiptapEditor.getText?.() ?? "").length;
-    }
-    return value.length;
-  }, [value, tiptapEditor]);
+  const plainText: string = tiptapEditor ? (tiptapEditor.getText?.() ?? "") : value;
+  const wordCount = countWords(plainText);
+  const charCount = plainText.length;
 
   const contextValue: EditorContextValue = {
     value,
@@ -706,66 +662,152 @@ function EditorImpl({
     placeholder,
     disabled,
     readOnly,
+    invalid,
     formats,
     editor: tiptapEditor,
     mode,
-    size,
     maxLength,
-    toolbarIcons,
     wordCount,
     charCount,
     toggleFormat,
     isFormatActive,
     saveStatus,
     contentRef,
+    textboxProps,
   };
 
-  const classes = [
-    styles.editor,
-    disabled && styles.disabled,
-    readOnly && styles.readOnly,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   const hasCustomChildren = children !== undefined;
+  // Counts by default are noise: the bar shows up when there is a limit or a save.
+  const showStatusBar = statusBar ?? (maxLength !== undefined || onAutoSave !== undefined);
 
   return (
     <EditorContext.Provider value={contextValue}>
       <div
         {...htmlProps}
-        className={classes}
-        data-disabled={disabled || undefined}
-        data-readonly={readOnly || undefined}
-        data-size={size}
+        className={[styles.root, className].filter(Boolean).join(" ")}
+        style={{ ...style, "--_fui-editor-rows": rows } as React.CSSProperties}
       >
-        {hasCustomChildren ? (
-          children
-        ) : (
-          <>
-            {toolbar && (
-              <EditorToolbar>
-                <EditorToolbarGroup aria-label="Text formatting">
-                  {formats.map((f) => (
-                    <EditorToolbarButton key={f} format={f} />
-                  ))}
-                </EditorToolbarGroup>
-              </EditorToolbar>
-            )}
-            <EditorContentArea />
-            {statusBar && <EditorStatusBar showWordCount showCharCount />}
-          </>
+        {label && (
+          <span id={labelId} className={styles.label}>
+            {label}
+          </span>
+        )}
+        <div
+          className={styles.editor}
+          data-disabled={disabled || undefined}
+          data-readonly={readOnly || undefined}
+          data-invalid={invalid || undefined}
+        >
+          {hasCustomChildren ? (
+            children
+          ) : (
+            <>
+              {toolbar && (
+                <EditorToolbar>
+                  <EditorToolbarGroup aria-label="Text formatting">
+                    {formats.map((f) => (
+                      <EditorToolbarButton key={f} format={f} />
+                    ))}
+                  </EditorToolbarGroup>
+                </EditorToolbar>
+              )}
+              <EditorContentArea />
+              {showStatusBar && (
+                <EditorStatusBar showWordCount={maxLength === undefined} showCharCount>
+                  {onAutoSave && <EditorStatusIndicator />}
+                </EditorStatusBar>
+              )}
+            </>
+          )}
+        </div>
+        {helperText && (
+          <p id={helperId} className={styles.helper}>
+            {helperText}
+          </p>
+        )}
+        {errorId && (
+          <p id={errorId} className={styles.error}>
+            <WarningCircle aria-hidden="true" weight="bold" className={styles.errorIcon} />
+            {errorMessage}
+          </p>
         )}
       </div>
     </EditorContext.Provider>
   );
 }
 
-function EditorToolbar({ children, className }: EditorToolbarProps) {
-  const classes = [styles.toolbar, className].filter(Boolean).join(" ");
+const ROVING_KEYS = new Set(["ArrowLeft", "ArrowRight", "Home", "End"]);
+
+/**
+ * The formatting toolbar: one tab stop, arrow keys move between its buttons
+ * (Home and End jump to the ends). Hidden while the editor is read-only.
+ */
+function EditorToolbar({
+  children,
+  "aria-label": ariaLabel = "Formatting",
+  className,
+}: EditorToolbarProps) {
+  const { readOnly } = useEditorContext();
+  const ref = React.useRef<HTMLDivElement>(null);
+  const current = React.useRef(0);
+
+  const items = () =>
+    Array.from(ref.current?.querySelectorAll<HTMLElement>("button:not(:disabled)") ?? []);
+
+  const applyTabStops = () => {
+    const list = items();
+    if (list.length === 0) return;
+    const index = Math.min(current.current, list.length - 1);
+    list.forEach((item, i) => {
+      item.tabIndex = i === index ? 0 : -1;
+    });
+  };
+
+  // Buttons enable and disable as the document changes (undo, redo), so the
+  // single tab stop is re-placed after every render.
+  React.useEffect(applyTabStops);
+
+  if (readOnly) return null;
+
+  const handleFocus = (event: React.FocusEvent<HTMLDivElement>) => {
+    const index = items().indexOf(event.target as HTMLElement);
+    if (index < 0) return;
+    current.current = index;
+    applyTabStops();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!ROVING_KEYS.has(event.key)) return;
+    const list = items();
+    if (list.length === 0) return;
+    event.preventDefault();
+    const index = list.indexOf(document.activeElement as HTMLElement);
+    const last = list.length - 1;
+    const next =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? last
+          : event.key === "ArrowRight"
+            ? index >= last
+              ? 0
+              : index + 1
+            : index <= 0
+              ? last
+              : index - 1;
+    list[next].focus();
+  };
+
   return (
-    <div className={classes} role="toolbar" aria-label="Editor formatting">
+    <div
+      ref={ref}
+      className={[styles.toolbar, className].filter(Boolean).join(" ")}
+      role="toolbar"
+      aria-label={ariaLabel}
+      aria-orientation="horizontal"
+      onFocus={handleFocus}
+      onKeyDown={handleKeyDown}
+    >
       {children}
     </div>
   );
@@ -785,12 +827,10 @@ function EditorToolbarGroup({
 }
 
 function EditorToolbarButton({ format, className }: EditorToolbarButtonProps) {
-  const { toggleFormat, isFormatActive, disabled, readOnly, editor, mode, toolbarIcons } =
-    useEditorContext();
+  const { toggleFormat, isFormatActive, disabled, readOnly, editor, mode } = useEditorContext();
   const meta = FORMAT_META[format];
   const isAction = ACTION_FORMATS.has(format);
   const active = isAction ? false : isFormatActive(format);
-  const IconComponent = meta.icon;
 
   // Action buttons (undo/redo) have special disable logic
   let isDisabled = disabled || readOnly;
@@ -803,45 +843,20 @@ function EditorToolbarButton({ format, className }: EditorToolbarButtonProps) {
     }
   }
 
-  const iconState: EditorToolbarIconRenderState = {
-    format,
-    active,
-    disabled,
-    readOnly,
-    isDisabled,
-    mode,
-  };
-
-  const iconOverride = toolbarIcons?.[format];
-  const renderedOverride =
-    typeof iconOverride === "function" ? iconOverride(iconState) : iconOverride;
-
-  const classes = [styles.toolbarButton, active && styles.toolbarButtonActive, className]
-    .filter(Boolean)
-    .join(" ");
-
   return (
-    <button
-      type="button"
-      className={classes}
+    <IconButton
+      variant="ghost"
+      size="sm"
+      className={className}
       onClick={() => toggleFormat(format)}
       disabled={isDisabled}
       aria-label={meta.label}
       title={`${meta.label} (${meta.shortcut})`}
-      {...(isAction ? {} : { "aria-pressed": active })}
+      pressed={isAction ? undefined : active}
     >
-      {iconOverride !== undefined ? (
-        renderedOverride
-      ) : (
-        <IconComponent size={16} weight={active ? "bold" : "regular"} />
-      )}
-    </button>
+      <Icon icon={meta.icon} size="sm" />
+    </IconButton>
   );
-}
-
-function EditorSeparator({ className }: EditorSeparatorProps) {
-  const classes = [styles.separator, className].filter(Boolean).join(" ");
-  return <div className={classes} role="separator" aria-orientation="vertical" />;
 }
 
 function EditorStatusIndicator({
@@ -862,14 +877,26 @@ function EditorStatusIndicator({
 
   return (
     <span className={classes} aria-live="polite" role="status">
+      {status === "error" && (
+        <WarningCircle aria-hidden="true" weight="bold" className={styles.errorIcon} />
+      )}
       {label}
     </span>
   );
 }
 
 function EditorContentArea({ className }: EditorContentProps) {
-  const { value, setValue, placeholder, disabled, readOnly, editor, mode, contentRef } =
-    useEditorContext();
+  const {
+    value,
+    setValue,
+    placeholder,
+    disabled,
+    readOnly,
+    editor,
+    mode,
+    contentRef,
+    textboxProps,
+  } = useEditorContext();
 
   if (mode === "rich" && editor && _EditorContent) {
     const TipTapContent = _EditorContent;
@@ -881,7 +908,8 @@ function EditorContentArea({ className }: EditorContentProps) {
     );
   }
 
-  // Textarea fallback for markdown mode
+  // Textarea fallback for markdown mode. Disabled is read-only plus
+  // aria-disabled, so the text can still be selected and copied.
   const classes = [styles.content, className].filter(Boolean).join(" ");
   return (
     <div className={classes}>
@@ -891,9 +919,9 @@ function EditorContentArea({ className }: EditorContentProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        disabled={disabled}
-        readOnly={readOnly}
-        aria-label={placeholder}
+        readOnly={readOnly || disabled}
+        aria-disabled={disabled || undefined}
+        {...textboxProps}
       />
     </div>
   );
@@ -902,13 +930,15 @@ function EditorContentArea({ className }: EditorContentProps) {
 function EditorStatusBar({
   showWordCount = true,
   showCharCount = true,
+  children,
   className,
 }: EditorStatusBarProps) {
   const { wordCount, charCount, maxLength } = useEditorContext();
 
   const classes = [styles.statusBar, className].filter(Boolean).join(" ");
 
-  const isOverLimit = maxLength !== undefined && charCount > maxLength;
+  const over = maxLength !== undefined ? charCount - maxLength : 0;
+  const isOverLimit = over > 0;
   const isNearLimit = maxLength !== undefined && !isOverLimit && charCount >= maxLength * 0.9;
 
   const charLimitClasses = [
@@ -920,20 +950,22 @@ function EditorStatusBar({
     .join(" ");
 
   return (
-    <div className={classes} aria-label="Editor statistics">
-      <div className={styles.statusBarLeft} />
-      <div className={styles.statusBarRight}>
+    <div className={classes} role="group" aria-label="Editor statistics">
+      <div className={styles.statusBarStart}>{children}</div>
+      <div className={styles.statusBarEnd}>
         {showWordCount && (
-          <span className={styles.statusBarItem}>
-            {wordCount} {wordCount === 1 ? "Word" : "Words"}
-          </span>
+          <span className={styles.statusBarItem}>{plural(wordCount, "word", "words")}</span>
         )}
-        {showWordCount && showCharCount && <EditorSeparator />}
+        {showWordCount && showCharCount && (
+          <Separator orientation="vertical" length="control" className={styles.statusSeparator} />
+        )}
         {showCharCount && (
           <span className={charLimitClasses}>
-            {maxLength !== undefined
-              ? `${charCount} / ${maxLength}`
-              : `${charCount} ${charCount === 1 ? "Character" : "Characters"}`}
+            {maxLength === undefined
+              ? plural(charCount, "character", "characters")
+              : isOverLimit
+                ? `${charCount} / ${maxLength}, ${over} over`
+                : `${charCount} / ${maxLength}`}
           </span>
         )}
       </div>
@@ -946,26 +978,15 @@ function EditorStatusBar({
 // ============================================
 
 export const Editor = Object.assign(EditorRoot, {
+  Root: EditorRoot,
   /** Start resolving TipTap before first render (optional). */
   preload: loadTipTapDeps,
   Toolbar: EditorToolbar,
   ToolbarGroup: EditorToolbarGroup,
   ToolbarButton: EditorToolbarButton,
-  Separator: EditorSeparator,
   StatusIndicator: EditorStatusIndicator,
   Content: EditorContentArea,
   StatusBar: EditorStatusBar,
 });
-
-export {
-  EditorRoot,
-  EditorToolbar,
-  EditorToolbarGroup,
-  EditorToolbarButton,
-  EditorSeparator,
-  EditorStatusIndicator,
-  EditorContentArea,
-  EditorStatusBar,
-};
 
 export { useEditorContext };

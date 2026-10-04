@@ -117,8 +117,8 @@
 
   padding-block: var(--fui-raw-space-2, #{measurements.raw-space(2)});
   padding-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  border-radius: var(--fui-radius-sm, #{tokens.$fui-radius-sm});
-  background: var(--fui-bg-tertiary, #{tokens.$fui-bg-tertiary});
+  border-radius: var(--fui-radius-indicator, #{tokens.$fui-radius-indicator});
+  background: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
   overflow-wrap: anywhere;
 }
 
@@ -168,9 +168,8 @@
 @mixin link {
   color: inherit;
   text-decoration: underline;
-  // Em offset scales with the inherited font size (prose links render at
-  // several sizes); matches the Link component's hover/dotted variants.
-  text-underline-offset: 0.2em;
+  // One offset for every link: Link and Button link read the same token.
+  text-underline-offset: var(--fui-link-underline-offset, #{tokens.$fui-link-underline-offset});
   overflow-wrap: anywhere;
 
   &:focus-visible {

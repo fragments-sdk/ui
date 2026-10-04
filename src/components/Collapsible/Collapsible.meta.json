@@ -1,0 +1,168 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Collapsible",
+  "description": "Shows or hides one region of content behind a trigger.",
+  "category": "layout",
+  "tags": ["collapsible", "expandable", "accordion", "disclosure", "toggle"],
+  "status": "stable",
+  "sourcePath": "src/components/Collapsible/index.tsx",
+  "exportName": "Collapsible",
+  "propsSummary": [
+    "children: node (required)",
+    "defaultOpen: boolean (default: false)",
+    "open: boolean",
+    "onOpenChange: function",
+    "disabled: boolean (default: false)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Collapsible.Trigger and Collapsible.Content components",
+      "required": true
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Whether the collapsible is initially open (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when the trigger opens or closes the content - (open: boolean, eventDetails) => void",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Whether the trigger is inert (focusable, dimmed once)",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Detail most readers do not need",
+      "Optional or advanced settings",
+      "Navigation sections that fold away",
+      "Building a disclosure the other components do not cover"
+    ],
+    "whenNot": [
+      "Several sections that should coordinate (use Accordion)",
+      "Content that must overlay the page (use Dialog or Popover)",
+      "Action lists (use Menu)"
+    ],
+    "guidelines": [
+      "The trigger should say what opens, not 'click here'",
+      "defaultOpen for content most users want on arrival",
+      "Keep the trigger to a short phrase",
+      "The caret always leads; a bespoke trigger uses render and draws its own glyph"
+    ],
+    "accessibility": [
+      "Trigger must have aria-expanded to indicate state",
+      "Content region needs aria-labelledby pointing to trigger",
+      "Keyboard: Enter/Space toggles open state",
+      "Focus should remain on trigger after toggle"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Starts closed and opens on click.",
+      "code": "<Collapsible>\n  <Collapsible.Trigger>Click to expand</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>This content is hidden by default and revealed when the trigger is clicked.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Default Open",
+      "description": "Starts open for content most users want.",
+      "code": "<Collapsible defaultOpen>\n  <Collapsible.Trigger>Section Title</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>This content is visible by default. Click the trigger to collapse.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Custom Trigger",
+      "description": "A bespoke trigger through render owns its own glyph.",
+      "code": "<Collapsible>\n  <Collapsible.Trigger render={<Button variant=\"ghost\" size=\"sm\" />}>Show more details</Collapsible.Trigger>\n  <Collapsible.Content keepMounted>\n    <p>Hidden details that appear when triggered.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Locked shut and skipped by the keyboard.",
+      "code": "<Collapsible disabled>\n  <Collapsible.Trigger>Cannot toggle (disabled)</Collapsible.Trigger>\n  <Collapsible.Content>\n    <p>This content cannot be shown because the collapsible is disabled.</p>\n  </Collapsible.Content>\n</Collapsible>"
+    },
+    {
+      "name": "Multiple Sections",
+      "description": "Independent regions that ignore each other.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>\n  <Collapsible defaultOpen>\n    <Collapsible.Trigger>Getting Started</Collapsible.Trigger>\n    <Collapsible.Content>\n      <p>Introduction and setup instructions.</p>\n    </Collapsible.Content>\n  </Collapsible>\n  <Collapsible>\n    <Collapsible.Trigger>Advanced Usage</Collapsible.Trigger>\n    <Collapsible.Content>\n      <p>Advanced configuration options.</p>\n    </Collapsible.Content>\n  </Collapsible>\n  <Collapsible>\n    <Collapsible.Trigger>API Reference</Collapsible.Trigger>\n    <Collapsible.Content>\n      <p>Complete API documentation.</p>\n    </Collapsible.Content>\n  </Collapsible>\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Accordion",
+      "relationship": "alternative",
+      "note": "Use Accordion for multiple exclusive collapsible sections"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "used-by",
+      "note": "Sidebar uses Collapsible for section expand/collapse"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for dropdown navigation with actions"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "defaultOpen: boolean - initial open state (default: false)",
+      "open: boolean - controlled open state",
+      "onOpenChange: (open, eventDetails) => void - state change callback",
+      "disabled: boolean - prevents interaction",
+      "Collapsible.Trigger render?: element - a bespoke trigger that owns its glyph",
+      "Collapsible.Content keepMounted?: boolean, hiddenUntilFound?: boolean"
+    ],
+    "a11yRules": ["A11Y_EXPANDED_STATE", "A11Y_REGION_LABEL", "A11Y_KEYBOARD_NAV"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root", "Trigger", "Content"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.800Z"
+  },
+  "cssVariables": [
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-font-weight-semibold",
+    "--fui-hit-area",
+    "--fui-icon-xs",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-10",
+    "--fui-raw-space-12",
+    "--fui-raw-space-6",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-slot",
+      "value": "collapsible",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "collapsible-trigger",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "collapsible-content",
+      "fixture": "populated"
+    }
+  ]
+}

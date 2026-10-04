@@ -32,6 +32,7 @@ const TYPOGRAPHY_CLASSES: Record<TypographyRole, string> = {
   "title-sm": styles.titleSm,
   "title-md": styles.titleMd,
   "title-lg": styles.titleLg,
+  display: styles.display,
   code: styles.code,
 };
 

@@ -1,0 +1,199 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Message",
+  "description": "Displays user or assistant conversation turns, including sending, streaming and failure states.",
+  "category": "ai",
+  "tags": ["message", "chat", "ai", "conversation", "bubble"],
+  "status": "stable",
+  "sourcePath": "src/components/Message/index.tsx",
+  "exportName": "Message",
+  "propsSummary": [
+    "from: user|assistant (required)",
+    "children: node (required)",
+    "status: pending|streaming|complete|error (default: complete)",
+    "timestamp: object",
+    "avatar: node",
+    "actions: node",
+    "onRetry: function"
+  ],
+  "props": {
+    "from": {
+      "type": "enum",
+      "description": "Who wrote the message: the user's bubble sits at the end, the assistant's reply is flush",
+      "required": true,
+      "values": ["user", "assistant"]
+    },
+    "children": {
+      "type": "node",
+      "description": "Message parts, usually Message.Content",
+      "required": true
+    },
+    "status": {
+      "type": "enum",
+      "description": "Where the message stands: pending shows Sending…, streaming a still caret at the end, error a failure block",
+      "default": "complete",
+      "required": false,
+      "values": ["pending", "streaming", "complete", "error"]
+    },
+    "timestamp": {
+      "type": "object",
+      "description": "When the message was sent; shown in the meta line",
+      "required": false
+    },
+    "avatar": {
+      "type": "node",
+      "description": "Opt-in avatar slot, usually Message.Avatar. No avatar is drawn by default",
+      "required": false
+    },
+    "actions": {
+      "type": "node",
+      "description": "Actions for the message (copy, regenerate), shown on hover or focus where a pointer hovers, always on touch",
+      "required": false
+    },
+    "onRetry": {
+      "type": "function",
+      "description": "Retry a failed message; the failure block offers Try again",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Individual turns in a chat transcript",
+      "AI assistant and chatbot interfaces",
+      "User and assistant turns that must read differently",
+      "Turns carrying copy, regenerate, or feedback actions"
+    ],
+    "whenNot": [
+      "Plain text with no chat context (use Text)",
+      "Notifications (use Alert or Toast)",
+      "Threads with nested replies (use Card with a custom layout)"
+    ],
+    "guidelines": [
+      "Always set from; it places the turn and picks the reading",
+      "Events such as a model switch or a joined user are ConversationList.Event, not a message",
+      "A string from the assistant renders as markdown; from the user it keeps its line breaks",
+      "status covers pending, streaming and error; error adds the failure block with Try again when onRetry is set",
+      "No avatars by default; pass avatar when a conversation has more than two people",
+      "The user's bubble caps at 80% of the measure so the two sides stay distinct",
+      "Show one waiting pattern: ThinkingIndicator before the reply starts, the caret while it streams"
+    ],
+    "accessibility": [
+      "A streaming message sets aria-busy until it completes",
+      "The failure block is an alert with its words and a labelled Try again",
+      "Actions are reachable by keyboard and shown on focus; they are always visible on touch",
+      "The timestamp is a time element with a machine-readable date"
+    ]
+  },
+  "examples": [
+    {
+      "name": "User Message",
+      "description": "The user's words in a band bubble at the end, capped at 80% of the measure.",
+      "code": "<Message from=\"user\">\n  <Message.Content>Which files break the workspace rules?</Message.Content>\n</Message>"
+    },
+    {
+      "name": "Assistant Message",
+      "description": "The reply is flush and renders markdown.",
+      "code": "<Message from=\"assistant\">\n  <Message.Content>{\"Two files use a raw `button`.\"}</Message.Content>\n</Message>"
+    },
+    {
+      "name": "Streaming",
+      "description": "A still caret at the end while the reply arrives.",
+      "code": "const partial = \"Two files need updated imports…\";\n\n<Message from=\"assistant\" status=\"streaming\">\n  <Message.Content>{partial}</Message.Content>\n</Message>"
+    },
+    {
+      "name": "Sending",
+      "description": "The meta line says Sending… until the message lands.",
+      "code": "<Message from=\"user\" status=\"pending\">\n  <Message.Content>Summarise the changes on main.</Message.Content>\n</Message>"
+    },
+    {
+      "name": "Failed",
+      "description": "The failure block says what happened and offers Try again.",
+      "code": "const partial = \"The reply was interrupted.\";\nconst retry = () => {};\n\n<Message from=\"assistant\" status=\"error\" onRetry={retry}>\n  <Message.Content>{partial}</Message.Content>\n</Message>"
+    },
+    {
+      "name": "With Timestamp",
+      "description": "A relative time in the meta line.",
+      "code": "const sentAt = new Date(2026, 9, 4, 10, 30);\n\n<Message from=\"user\" timestamp={sentAt}>\n  <Message.Content>Thanks!</Message.Content>\n</Message>"
+    },
+    {
+      "name": "With Actions",
+      "description": "Copy and regenerate beside the meta line.",
+      "code": "import { Copy } from \"@phosphor-icons/react\";\n\nconst reply = \"Two files need updated imports.\";\n\n<Message\n  from=\"assistant\"\n  actions={\n    <IconButton variant=\"ghost\" size=\"sm\" aria-label=\"Copy reply\">\n      <Icon icon={Copy} size=\"sm\" />\n    </IconButton>\n  }\n>\n  <Message.Content>{reply}</Message.Content>\n</Message>"
+    },
+    {
+      "name": "With Avatar",
+      "description": "Opt in when more than two people talk.",
+      "code": "<Message from=\"user\" avatar={<Message.Avatar>AL</Message.Avatar>}>\n  <Message.Content>Can you check main?</Message.Content>\n</Message>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "ConversationList",
+      "relationship": "parent",
+      "note": "Messages are typically used within ConversationList"
+    },
+    {
+      "component": "Avatar",
+      "relationship": "child",
+      "note": "Use Avatar component for custom avatar content"
+    },
+    {
+      "component": "ThinkingIndicator",
+      "relationship": "sibling",
+      "note": "Show ThinkingIndicator while awaiting assistant response"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "from: \"user\" | \"assistant\" - places the turn",
+      "children: ReactNode - message parts",
+      "status: \"pending\" | \"streaming\" | \"complete\" | \"error\" - message state",
+      "timestamp: Date - when the message was sent",
+      "avatar: ReactNode - opt-in avatar slot",
+      "actions: ReactNode - message actions",
+      "onRetry: () => void - Try again on a failed message",
+      "Error.children: ReactNode - what went wrong (defaults: Not sent. / This reply didn't finish.)",
+      "Avatar.src: string - image URL for avatar",
+      "Avatar.alt: string - alt text for image avatar"
+    ],
+    "a11yRules": ["A11Y_COLOR_CONTRAST", "A11Y_MOTION_PREFERENCE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Content", "Actions", "Timestamp", "Avatar", "Error"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:00.333Z"
+  },
+  "cssVariables": [
+    "--fui-bg-secondary",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-radius-control",
+    "--fui-radius-surface",
+    "--fui-raw-space-2",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-from",
+      "value": "user",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-from",
+      "value": "assistant",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-status",
+      "value": "complete",
+      "fixture": "populated"
+    }
+  ]
+}

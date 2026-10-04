@@ -1,0 +1,154 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ThinkingIndicator",
+  "description": "Shows assistant progress with optional timing and steps, retaining a completion message when work stops.",
+  "category": "ai",
+  "tags": ["thinking", "ai", "working", "plan", "steps", "status"],
+  "status": "stable",
+  "sourcePath": "src/components/ThinkingIndicator/index.tsx",
+  "exportName": "ThinkingIndicator",
+  "propsSummary": [
+    "active: boolean (default: true)",
+    "label: ReactNode (default: Thinking…)",
+    "doneLabel: ReactNode (default: Done)",
+    "showElapsed: boolean (default: false)",
+    "children: ThinkingIndicator.Steps"
+  ],
+  "props": {
+    "active": {
+      "type": "boolean",
+      "description": "Whether the assistant is still working; when false the row stays and shows doneLabel",
+      "default": "true",
+      "required": false
+    },
+    "label": {
+      "type": "node",
+      "description": "What the assistant is doing",
+      "default": "Thinking…",
+      "required": false
+    },
+    "doneLabel": {
+      "type": "node",
+      "description": "What the row says once work stops",
+      "default": "Done",
+      "required": false
+    },
+    "showElapsed": {
+      "type": "boolean",
+      "description": "Show how long the work has run, outside the live region; frozen once work stops",
+      "default": "false",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "ThinkingIndicator.Steps (label, foldable, defaultOpen) holding ThinkingIndicator.Step (label, status idle|pending|complete|error, detail children)",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "An assistant is working on a reply",
+      "An agent runs a plan of steps and you want to show where it stands"
+    ],
+    "whenNot": [
+      "A generic wait with a known place for the result: use Loading or Skeleton",
+      "Determinate progress: use Progress"
+    ],
+    "guidelines": [
+      "One waiting pattern: the work wash and the label sheen, never dots or a pulse",
+      "Keep it mounted when work stops so the region can say it finished",
+      "Steps carry their state in a mark and in words: a ring waits, a dot works, a tick is done, a danger glyph and \"Failed:\" failed",
+      "Fold long plans behind \"N of M done\""
+    ],
+    "accessibility": [
+      "The label is a role=\"status\" region that stays mounted; it swaps to doneLabel when work stops",
+      "Elapsed time sits outside the region so it is not read every second",
+      "The list is an ordered list named with its count; the current step is a status and reads \"Now:\", finished steps read \"Done:\"",
+      "The sweep and sheen stop under reduced motion; the wash stays"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Working",
+      "description": "The live line while the assistant works.",
+      "code": "<ThinkingIndicator showElapsed />"
+    },
+    {
+      "name": "Finished",
+      "description": "The row stays and says it finished.",
+      "code": "<ThinkingIndicator active={false} doneLabel=\"Thought for 12s\" />"
+    },
+    {
+      "name": "Plan",
+      "description": "A plan under the live line, folded behind its count.",
+      "code": "<ThinkingIndicator label=\"Checking the request…\">\n  <ThinkingIndicator.Steps label=\"Plan\" foldable>\n    <ThinkingIndicator.Step label=\"Read the request\" status=\"complete\" />\n    <ThinkingIndicator.Step label=\"Scan changed files\" status=\"pending\">12 of 40 files</ThinkingIndicator.Step>\n    <ThinkingIndicator.Step label=\"Write the summary\" />\n  </ThinkingIndicator.Steps>\n</ThinkingIndicator>"
+    },
+    {
+      "name": "Failed step",
+      "description": "A failed step says so in words beside the danger glyph.",
+      "code": "<ThinkingIndicator active={false} doneLabel=\"Stopped\">\n  <ThinkingIndicator.Steps>\n    <ThinkingIndicator.Step label=\"Read the request\" status=\"complete\" />\n    <ThinkingIndicator.Step label=\"Fetch the pull request\" status=\"error\" />\n  </ThinkingIndicator.Steps>\n</ThinkingIndicator>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Message",
+      "relationship": "sibling",
+      "note": "Show ThinkingIndicator while the assistant reply has not started"
+    },
+    {
+      "component": "ConversationList",
+      "relationship": "parent",
+      "note": "Sits at the end of the conversation log"
+    },
+    {
+      "component": "Progress",
+      "relationship": "alternative",
+      "note": "Use Progress for determinate progress"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "active: boolean (default: true)",
+      "label: ReactNode (default: Thinking…)",
+      "doneLabel: ReactNode (default: Done)",
+      "showElapsed: boolean (default: false)",
+      "children: ThinkingIndicator.Steps"
+    ],
+    "a11yRules": ["A11Y_ARIA_LIVE", "A11Y_MOTION_PREFERENCE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Steps", "Step", "Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.747Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-color-danger-text",
+    "--fui-control-checked-bg",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-icon-sm",
+    "--fui-icon-xs",
+    "--fui-radius-control",
+    "--fui-radius-full",
+    "--fui-raw-space-6",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-status",
+      "value": "complete",
+      "fixture": "populated"
+    }
+  ]
+}

@@ -1,131 +1,86 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Prompt.module.scss';
-import { Loading } from '../Loading';
-import { Select, type SelectOption, type SelectValue } from '../Select';
+import * as React from "react";
+import { ArrowUp, CaretDown, Plus, Stop, WarningCircle, X } from "@phosphor-icons/react";
+import { Icon } from "../Icon";
+import { IconButton } from "../IconButton";
+import { Menu } from "../Menu";
+import { useControllableState } from "../../utils/controllable-state";
+import { isComposingEnter } from "../../utils/isComposingEnter";
+import styles from "./Prompt.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type PromptPlacement = 'inline' | 'fixed' | 'sticky';
-
-export type PromptVariant = 'outline' | 'ghost';
-
-export interface PromptProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onSubmit' | 'defaultValue'> {
+export interface PromptProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange" | "onSubmit" | "defaultValue"
+> {
   children: React.ReactNode;
-  /** Controlled input value */
+  /** Controlled text. */
   value?: string;
-  /** Default value for uncontrolled usage */
+  /** Initial text when uncontrolled. */
   defaultValue?: string;
-  /** Callback when value changes */
-  onChange?: (value: string) => void;
-  /** Callback when form is submitted */
+  /** Called with the new text on every edit. */
+  onValueChange?: (value: string) => void;
+  /** Called with the text when the person sends it. */
   onSubmit?: (value: string) => void;
-  /** Placeholder text for the textarea */
+  /** @default "Ask, search or chat…" */
   placeholder?: string;
-  /** Disable the entire prompt */
+  /** Nothing can be typed or sent. */
   disabled?: boolean;
-  /** Show loading state (disables submit) */
-  loading?: boolean;
-  /** Minimum number of rows */
+  /** The text can be read and selected but not changed or sent. */
+  readOnly?: boolean;
+  /** The text cannot be sent as it is; pair with `errorMessage`. */
+  invalid?: boolean;
+  /** Why the text cannot be sent, shown with a danger glyph inside the composer. */
+  errorMessage?: React.ReactNode;
+  /** The send is in flight: Submit shows a spinner after a second and swallows presses. */
+  pending?: boolean;
+  /** The assistant is responding: the work wash plays, typing stays open and Submit turns into Stop. */
+  working?: boolean;
+  /** Stop the response. With `working`, Submit becomes a Stop button. */
+  onStop?: () => void;
+  /** Rows the text area starts at. @default 1 */
   minRows?: number;
-  /** Maximum number of rows */
+  /** Rows the text area grows to before it scrolls. @default 8 */
   maxRows?: number;
-  /** Enable auto-resize based on content */
-  autoResize?: boolean;
-  /** Submit on Enter key (Shift+Enter for newline) */
+  /** Enter sends and Shift+Enter breaks the line. @default true */
   submitOnEnter?: boolean;
-  /** Files added to the prompt, by any of the three routes people actually
-   * use: the attach button, a paste, or a drop anywhere on the card. Providing
-   * it is what turns all three on. */
+  /** Files added by the attach button, a paste or a drop. Providing it turns all three on. */
   onFiles?: (files: File[]) => void;
-  /** `accept` for the attach button's picker, e.g. `"image/*"`. */
+  /** `accept` for the attach picker, for example `"image/*"`. */
   accept?: string;
-  /** Where the card sits: `inline` in the flow, `fixed` to the viewport bottom,
-   * `sticky` to the content area (offset by `--fui-prompt-inset-left`).
-   * @default "inline" */
-  placement?: PromptPlacement;
-  /** Card chrome. `outline` keeps the toolbar as a filled footer under a rule;
-   * `ghost` makes the whole card one writing surface with the controls floating
-   * on it — the shape most agent composers use.
-   * @default "outline" */
-  variant?: PromptVariant;
 }
 
 export interface PromptTextareaProps extends Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-  'value' | 'defaultValue' | 'onChange' | 'rows' | 'disabled' | 'children'
+  "value" | "defaultValue" | "rows" | "disabled" | "readOnly" | "children"
 > {
-  /** Override placeholder from context */
+  /** Override the prompt's placeholder. */
   placeholder?: string;
-  /** Composed with internal state update logic */
-  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
-  /** Composed with internal submit-on-enter logic */
-  onKeyDown?: React.KeyboardEventHandler<HTMLTextAreaElement>;
-  /** Composed with the prompt's paste-to-attach behaviour */
-  onPaste?: React.ClipboardEventHandler<HTMLTextAreaElement>;
 }
 
-export interface PromptToolbarProps {
+export interface PromptToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface PromptTabsProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export interface PromptTabProps {
-  children: React.ReactNode;
-  /** Whether this tab is currently active */
-  active?: boolean;
-  /** Click handler */
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  className?: string;
-}
-
-export interface PromptActionsProps {
+export interface PromptActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
-  className?: string;
 }
 
-export interface PromptInfoProps {
+export interface PromptInfoProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export interface PromptActionButtonProps {
-  children: React.ReactNode;
-  /** Accessible label for the button */
-  'aria-label': string;
-  /** Click handler */
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  /** Disabled state */
-  disabled?: boolean;
-  className?: string;
-}
-
-export interface PromptModeButtonProps {
-  children: React.ReactNode;
-  /** Click handler */
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  /** Whether this mode is currently active */
-  active?: boolean;
-  /** Disabled state */
-  disabled?: boolean;
-  className?: string;
-}
-
-/** One thing attached to the prompt, as the strip needs to render it. */
+/** One thing attached to the prompt. */
 export interface PromptAttachment {
   id: string;
   name: string;
-  /** Size in bytes. Shown beside the name when known. */
+  /** Size in bytes, shown beside the name when known. */
   size?: number;
-  /** Object URL or data URI. An image gets a thumbnail instead of an icon. */
+  /** Object URL or data URI; an image gets a thumbnail. */
   previewUrl?: string;
 }
 
@@ -137,12 +92,11 @@ export interface PromptAttachmentsProps {
 }
 
 export interface PromptAttachProps {
-  /** Accessible name.
-   * @default "Attach files" */
-  'aria-label'?: string;
+  /** Accessible name. @default "Attach files" */
+  "aria-label"?: string;
   /** Custom glyph. Defaults to a plus. */
   children?: React.ReactNode;
-  /** Overrides the prompt's own `accept` for this control. */
+  /** Overrides the prompt's `accept`. */
   accept?: string;
   /** @default true */
   multiple?: boolean;
@@ -150,88 +104,43 @@ export interface PromptAttachProps {
   className?: string;
 }
 
-export interface PromptSelectProps {
-  /** Leading glyph — says what the choice is about, so the visible text can be
-   * the choice itself. */
+export interface PromptPickerOption {
+  value: string;
+  label: React.ReactNode;
+  disabled?: boolean;
+}
+
+export interface PromptPickerProps {
+  /** What the choice is about (Model, Agent); read before the choice. */
+  "aria-label": string;
+  /** Leading glyph. */
   icon?: React.ReactNode;
-  /** Accessible name. The trigger shows the current choice, not this. */
-  'aria-label': string;
-  /** Controlled value */
-  value?: SelectValue | null;
-  /** Default value for uncontrolled usage */
-  defaultValue?: SelectValue;
-  /** Called when the choice changes */
-  onValueChange?: (value: SelectValue | null) => void;
-  /** The choices. Omit and pass `Select.Item` children for richer options. */
-  options?: SelectOption[];
-  children?: React.ReactNode;
-  /** Shown before anything is chosen */
+  options: PromptPickerOption[];
+  /** Controlled value. */
+  value?: string;
+  /** Initial value when uncontrolled. */
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  /** Shown before anything is chosen. @default "Choose" */
   placeholder?: string;
-  /** Disabled independently of the prompt's own disabled state */
   disabled?: boolean;
   className?: string;
 }
 
-export interface PromptUsageProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
 export interface PromptSubmitProps {
-  /** Custom submit icon/content */
+  /** Custom glyph. Defaults to an up arrow. */
   children?: React.ReactNode;
-  /** Override aria-label */
-  'aria-label'?: string;
+  /** Accessible name of the send action. @default "Send" */
+  "aria-label"?: string;
+  /** Accessible name of the stop action while working. @default "Stop" */
+  stopLabel?: string;
+  /**
+   * Menu items for other ways to send (queue, send later). A click still
+   * sends; right-click, a long press, ArrowDown, Shift+F10 or the context-menu
+   * key opens the menu.
+   */
+  menu?: React.ReactNode;
   className?: string;
-}
-
-// ============================================
-// Icons
-// ============================================
-
-function PlusIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z" />
-    </svg>
-  );
-}
-
-function ArrowUpIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M205.66,117.66a8,8,0,0,1-11.32,0L136,59.31V216a8,8,0,0,1-16,0V59.31L61.66,117.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0l72,72A8,8,0,0,1,205.66,117.66Z" />
-    </svg>
-  );
 }
 
 // ============================================
@@ -243,16 +152,19 @@ interface PromptContextValue {
   setValue: (value: string) => void;
   placeholder: string;
   disabled: boolean;
-  loading: boolean;
+  readOnly: boolean;
+  invalid: boolean;
+  errorId?: string;
+  pending: boolean;
+  working: boolean;
+  onStop?: () => void;
   minRows: number;
   maxRows: number;
-  autoResize: boolean;
   submitOnEnter: boolean;
   handleSubmit: () => void;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   accept?: string;
-  /** Undefined when the consumer has not opted into files at all, which is how
-   * Attach knows to disable itself and the root knows not to accept drops. */
+  /** Undefined when the consumer has not opted into files. */
   onFiles?: (files: File[]) => void;
 }
 
@@ -261,97 +173,78 @@ const PromptContext = React.createContext<PromptContextValue | null>(null);
 function usePromptContext() {
   const context = React.useContext(PromptContext);
   if (!context) {
-    throw new Error('Prompt compound components must be used within a Prompt');
+    throw new Error("Prompt compound components must be used within a Prompt");
   }
   return context;
 }
 
-// ============================================
-// Hooks
-// ============================================
-
-function useControllableState<T>(
-  controlledValue: T | undefined,
-  defaultValue: T,
-  onChange?: (value: T) => void
-): [T, (value: T) => void] {
-  const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
-  const isControlled = controlledValue !== undefined;
-  const value = isControlled ? controlledValue : uncontrolledValue;
-
-  const setValue = React.useCallback(
-    (newValue: T) => {
-      if (!isControlled) {
-        setUncontrolledValue(newValue);
-      }
-      onChange?.(newValue);
-    },
-    [isControlled, onChange]
-  );
-
-  return [value, setValue];
+function supportsFieldSizing(): boolean {
+  return typeof CSS !== "undefined" && typeof CSS.supports === "function"
+    ? CSS.supports("field-sizing", "content")
+    : false;
 }
 
 // ============================================
-// Components
+// Root: the composer is one field
 // ============================================
 
 function PromptRoot({
   children,
   value: controlledValue,
-  defaultValue = '',
-  onChange,
+  defaultValue = "",
+  onValueChange,
   onSubmit,
-  placeholder = 'Ask, Search or Chat...',
+  placeholder = "Ask, search or chat…",
   disabled = false,
-  loading = false,
+  readOnly = false,
+  invalid = false,
+  errorMessage,
+  pending = false,
+  working = false,
+  onStop,
   minRows = 1,
   maxRows = 8,
-  autoResize = true,
   submitOnEnter = true,
-  placement = 'inline',
-  variant = 'outline',
   onFiles,
   accept,
   className,
   ...htmlProps
 }: PromptProps) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const errorId = React.useId();
   const [dragging, setDragging] = React.useState(false);
-  // Drag events fire for every element the pointer crosses inside the card, so
-  // a naive enter/leave pair flickers as the cursor moves between children.
-  // Counting them means the highlight only drops when the pointer has actually
-  // left the composer.
+  // Drag events fire for every element the pointer crosses inside the card;
+  // counting them drops the drop target only when the pointer has left.
   const dragDepth = React.useRef(0);
-
-  const [value, setValue] = useControllableState(
-    controlledValue,
-    defaultValue,
-    onChange
-  );
+  const [value, setValue] = useControllableState(controlledValue, defaultValue, onValueChange);
 
   const handleSubmit = React.useCallback(() => {
-    if (disabled || loading || !value.trim()) return;
+    if (disabled || readOnly || pending || working || !value.trim()) return;
     onSubmit?.(value);
-  }, [disabled, loading, value, onSubmit]);
+  }, [disabled, readOnly, pending, working, value, onSubmit]);
 
   const acceptFiles = React.useCallback(
     (files: File[]) => {
-      if (!onFiles || disabled || loading || files.length === 0) return;
+      if (!onFiles || disabled || readOnly || files.length === 0) return;
       onFiles(files);
     },
-    [onFiles, disabled, loading]
+    [onFiles, disabled, readOnly]
   );
 
+  const showError = invalid && errorMessage != null;
   const contextValue: PromptContextValue = {
     value,
     setValue,
     placeholder,
     disabled,
-    loading,
+    readOnly,
+    invalid,
+    errorId: showError ? errorId : undefined,
+    pending,
+    working,
+    onStop,
     minRows,
     maxRows,
-    autoResize,
     submitOnEnter,
     handleSubmit,
     textareaRef,
@@ -359,43 +252,36 @@ function PromptRoot({
     onFiles: onFiles ? acceptFiles : undefined,
   };
 
-  const dropHandlers = onFiles
-    ? {
-        onDragEnter: (event: React.DragEvent<HTMLDivElement>) => {
-          if (!event.dataTransfer.types.includes('Files')) return;
-          dragDepth.current += 1;
-          setDragging(true);
-        },
-        onDragOver: (event: React.DragEvent<HTMLDivElement>) => {
-          if (!event.dataTransfer.types.includes('Files')) return;
-          // Without this the browser navigates to the dropped file.
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'copy';
-        },
-        onDragLeave: () => {
-          dragDepth.current = Math.max(0, dragDepth.current - 1);
-          if (dragDepth.current === 0) setDragging(false);
-        },
-        onDrop: (event: React.DragEvent<HTMLDivElement>) => {
-          if (!event.dataTransfer.types.includes('Files')) return;
-          event.preventDefault();
-          dragDepth.current = 0;
-          setDragging(false);
-          acceptFiles(Array.from(event.dataTransfer.files));
-        },
-      }
-    : null;
+  const hasFiles = (event: React.DragEvent) => event.dataTransfer.types.includes("Files");
+  const dropHandlers =
+    onFiles && !disabled && !readOnly
+      ? {
+          onDragEnter: (event: React.DragEvent<HTMLDivElement>) => {
+            if (!hasFiles(event)) return;
+            dragDepth.current += 1;
+            setDragging(true);
+          },
+          onDragOver: (event: React.DragEvent<HTMLDivElement>) => {
+            if (!hasFiles(event)) return;
+            // Without this the browser navigates to the dropped file.
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+          },
+          onDragLeave: () => {
+            dragDepth.current = Math.max(0, dragDepth.current - 1);
+            if (dragDepth.current === 0) setDragging(false);
+          },
+          onDrop: (event: React.DragEvent<HTMLDivElement>) => {
+            if (!hasFiles(event)) return;
+            event.preventDefault();
+            dragDepth.current = 0;
+            setDragging(false);
+            acceptFiles(Array.from(event.dataTransfer.files));
+          },
+        }
+      : null;
 
-  const classes = [
-    styles.prompt,
-    placement === 'fixed' && styles.fixed,
-    placement === 'sticky' && styles.sticky,
-    variant === 'ghost' && styles.ghost,
-    dragging && styles.dragging,
-    disabled && styles.disabled,
-    loading && styles.loading,
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [styles.prompt, className].filter(Boolean).join(" ");
 
   return (
     <PromptContext.Provider value={contextValue}>
@@ -404,24 +290,43 @@ function PromptRoot({
         {...dropHandlers}
         className={classes}
         data-disabled={disabled || undefined}
-        data-loading={loading || undefined}
-        data-placement={placement}
-        data-variant={variant}
+        data-readonly={readOnly || undefined}
+        data-invalid={invalid || undefined}
+        data-pending={pending || undefined}
+        data-working={working || undefined}
         data-dragging={dragging || undefined}
+        aria-busy={working || undefined}
       >
         {children}
+        {showError && (
+          <p id={errorId} className={styles.error}>
+            <Icon icon={WarningCircle} size="sm" className={styles.errorIcon} />
+            {errorMessage}
+          </p>
+        )}
+        {dragging && (
+          <span className={styles.dropHint} aria-hidden="true">
+            Drop to attach
+          </span>
+        )}
       </div>
     </PromptContext.Provider>
   );
 }
 
+// ============================================
+// Textarea: grows from minRows to maxRows
+// ============================================
+
 function PromptTextarea({
   placeholder: overridePlaceholder,
   className,
+  style,
   onChange,
   onKeyDown,
   onPaste,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
+  "aria-describedby": describedBy,
   ...htmlProps
 }: PromptTextareaProps) {
   const {
@@ -429,189 +334,133 @@ function PromptTextarea({
     setValue,
     placeholder,
     disabled,
-    loading,
+    readOnly,
+    invalid,
+    errorId,
+    pending,
+    working,
     minRows,
     maxRows,
-    autoResize,
     submitOnEnter,
     handleSubmit,
     textareaRef,
     onFiles,
   } = usePromptContext();
 
-  const adjustHeight = React.useCallback(() => {
+  // field-sizing grows the box in CSS; older engines get the measured fallback.
+  React.useLayoutEffect(() => {
     const textarea = textareaRef.current;
-    if (!textarea || !autoResize) return;
+    if (!textarea || supportsFieldSizing()) return;
+    textarea.style.height = "auto";
+    const computed = window.getComputedStyle(textarea);
+    const line = parseFloat(computed.lineHeight) || parseFloat(computed.fontSize) * 1.5;
+    const padding = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
+    const height = Math.min(
+      Math.max(textarea.scrollHeight, minRows * line + padding),
+      maxRows * line + padding
+    );
+    textarea.style.height = `${height}px`;
+  }, [value, minRows, maxRows, textareaRef]);
 
-    // Reset height to auto to get the correct scrollHeight
-    textarea.style.height = 'auto';
-
-    // Calculate min and max heights based on rows
-    const computedStyle = window.getComputedStyle(textarea);
-    const fontSize = parseFloat(computedStyle.fontSize);
-    const computedLineHeight = parseFloat(computedStyle.lineHeight);
-    const lineHeight = Number.isFinite(computedLineHeight) ? computedLineHeight : fontSize * 1.5;
-    const paddingBlock =
-      parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
-    const minHeight = minRows * lineHeight + paddingBlock;
-    const maxHeight = maxRows * lineHeight + paddingBlock;
-
-    // Set the height, clamped to min/max
-    const newHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
-    textarea.style.height = `${newHeight}px`;
-  }, [textareaRef, autoResize, minRows, maxRows]);
-
-  React.useEffect(() => {
-    adjustHeight();
-  }, [value, adjustHeight]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange?.(e);
-    if (e.defaultPrevented) return;
-    setValue(e.target.value);
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(event);
+    if (event.defaultPrevented) return;
+    setValue(event.target.value);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    onKeyDown?.(e);
-    if (e.defaultPrevented) return;
-    if (submitOnEnter && e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    // Enter confirms an IME candidate before it means send.
+    if (isComposingEnter(event)) return;
+    if (submitOnEnter && event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      // While a send is in flight or the assistant works, Enter does nothing;
+      // a consumer that queues messages handles it in its own onKeyDown.
+      if (!pending && !working) handleSubmit();
     }
   };
 
-  // Pasting a screenshot is how people actually attach one. The clipboard
-  // carries it as a file with no name, so it gets one here — a bare "image.png"
-  // in the strip is worse than useless when there are two of them.
-  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    onPaste?.(e);
-    if (e.defaultPrevented || !onFiles) return;
-    const files = Array.from(e.clipboardData.files);
+  // A pasted screenshot arrives as a file named "image.png"; name it so two
+  // of them can be told apart in the strip.
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    onPaste?.(event);
+    if (event.defaultPrevented || !onFiles) return;
+    const files = Array.from(event.clipboardData.files);
     if (files.length === 0) return;
-    e.preventDefault();
+    event.preventDefault();
     onFiles(
       files.map((file, index) =>
-        file.name && file.name !== 'image.png'
+        file.name && file.name !== "image.png"
           ? file
-          : new File([file], `pasted-${index + 1}.${file.type.split('/')[1] || 'png'}`, {
+          : new File([file], `pasted-${index + 1}.${file.type.split("/")[1] || "png"}`, {
               type: file.type,
             })
       )
     );
   };
 
-  const classes = [styles.textarea, className].filter(Boolean).join(' ');
+  const rows = {
+    "--_fui-prompt-min-rows": minRows,
+    "--_fui-prompt-max-rows": maxRows,
+  } as React.CSSProperties;
+  const classes = [styles.textarea, className].filter(Boolean).join(" ");
+  const describedByIds = [describedBy, errorId].filter(Boolean).join(" ") || undefined;
 
   return (
     <textarea
       ref={textareaRef}
       {...htmlProps}
       className={classes}
+      style={{ ...rows, ...style }}
       value={value}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       placeholder={overridePlaceholder ?? placeholder}
-      disabled={disabled || loading}
+      disabled={disabled}
+      readOnly={readOnly}
       rows={minRows}
       aria-label={ariaLabel ?? overridePlaceholder ?? placeholder}
+      aria-invalid={invalid || undefined}
+      aria-describedby={describedByIds}
     />
   );
 }
 
-function PromptToolbar({ children, className }: PromptToolbarProps) {
-  const classes = [styles.toolbar, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
-}
+// ============================================
+// Toolbar parts, on the same field plane
+// ============================================
 
-function PromptTabs({ children, className }: PromptTabsProps) {
-  const classes = [styles.tabs, className].filter(Boolean).join(' ');
+function PromptToolbar({ children, className, ...htmlProps }: PromptToolbarProps) {
+  const classes = [styles.toolbar, className].filter(Boolean).join(" ");
   return (
-    <div className={classes}>
-      <div className={styles.tabsInner}>{children}</div>
+    <div {...htmlProps} className={classes}>
+      {children}
     </div>
   );
 }
 
-function PromptTab({ children, active = false, onClick, className }: PromptTabProps) {
-  const classes = [
-    styles.tabButton,
-    active && styles.tabButtonActive,
-    className,
-  ].filter(Boolean).join(' ');
-  return (
-    <button type="button" className={classes} onClick={onClick} aria-pressed={active}>
-      {children}
-    </button>
-  );
-}
-
-function PromptActions({ children, className }: PromptActionsProps) {
+function PromptActions({ children, className, ...htmlProps }: PromptActionsProps) {
   if (!children) return null;
-  const classes = [styles.actions, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
-}
-
-function PromptInfo({ children, className }: PromptInfoProps) {
-  const classes = [styles.info, className].filter(Boolean).join(' ');
-  return <div className={classes}>{children}</div>;
-}
-
-function PromptActionButton({
-  children,
-  'aria-label': ariaLabel,
-  onClick,
-  disabled: buttonDisabled,
-  className,
-}: PromptActionButtonProps) {
-  const { disabled, loading } = usePromptContext();
-  const isDisabled = disabled || loading || buttonDisabled;
-
-  const classes = [styles.actionButton, className].filter(Boolean).join(' ');
-
+  const classes = [styles.actions, className].filter(Boolean).join(" ");
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-      disabled={isDisabled}
-      aria-label={ariaLabel}
-    >
+    <div {...htmlProps} className={classes}>
       {children}
-    </button>
+    </div>
   );
 }
 
-function PromptModeButton({
-  children,
-  onClick,
-  active = false,
-  disabled: buttonDisabled,
-  className,
-}: PromptModeButtonProps) {
-  const { disabled, loading } = usePromptContext();
-  const isDisabled = disabled || loading || buttonDisabled;
-
-  const classes = [
-    styles.modeButton,
-    active && styles.modeButtonActive,
-    className,
-  ].filter(Boolean).join(' ');
-
+function PromptInfo({ children, className, ...htmlProps }: PromptInfoProps) {
+  const classes = [styles.info, className].filter(Boolean).join(" ");
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-      disabled={isDisabled}
-      aria-pressed={active}
-    >
+    <span {...htmlProps} className={classes}>
       {children}
-    </button>
+    </span>
   );
 }
 
-/** Bytes as something a person reads at a glance, not as a precise count. */
+/** Bytes as something a person reads at a glance. */
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   const kb = bytes / 1024;
@@ -619,22 +468,16 @@ function formatSize(bytes: number): string {
   return `${(kb / 1024).toFixed(kb / 1024 < 10 ? 1 : 0)} MB`;
 }
 
-/**
- * What is going with the message. Renders above the textarea rather than under
- * the toolbar, because these are part of what you are sending and not a
- * setting on the sending.
- */
+/** What goes with the message: chips on the surface plane, above the text. */
 function PromptAttachments({ items, onRemove, className }: PromptAttachmentsProps) {
   if (items.length === 0) return null;
-  const classes = [styles.attachments, className].filter(Boolean).join(' ');
-
+  const classes = [styles.attachments, className].filter(Boolean).join(" ");
   return (
     <ul className={classes} aria-label="Attachments">
       {items.map((item) => (
         <li key={item.id} className={styles.attachment}>
           {item.previewUrl ? (
-            // Decorative: the filename beside it is the accessible name, and a
-            // thumbnail of a screenshot has no description worth inventing.
+            // Decorative: the file name beside it is the accessible name.
             <img src={item.previewUrl} alt="" className={styles.attachmentThumb} />
           ) : null}
           <span className={styles.attachmentName} title={item.name}>
@@ -650,7 +493,7 @@ function PromptAttachments({ items, onRemove, className }: PromptAttachmentsProp
               onClick={() => onRemove(item.id)}
               aria-label={`Remove ${item.name}`}
             >
-              <CloseIcon />
+              <Icon icon={X} size="xs" />
             </button>
           )}
         </li>
@@ -659,40 +502,33 @@ function PromptAttachments({ items, onRemove, className }: PromptAttachmentsProp
   );
 }
 
-/**
- * The attach control. Does nothing on its own — it opens a picker and hands
- * the result to the prompt's `onFiles`, the same callback that paste and drop
- * go through, so a consumer writes one handler for all three.
- */
+/** Opens a picker and hands the files to the prompt's `onFiles`, like paste and drop. */
 function PromptAttach({
-  'aria-label': ariaLabel = 'Attach files',
+  "aria-label": ariaLabel = "Attach files",
   children,
   accept: acceptOverride,
   multiple = true,
   disabled: buttonDisabled,
   className,
 }: PromptAttachProps) {
-  const { disabled, loading, accept, onFiles } = usePromptContext();
+  const { disabled, readOnly, accept, onFiles } = usePromptContext();
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const isDisabled = disabled || loading || buttonDisabled || !onFiles;
-
-  const classes = [styles.attach, className].filter(Boolean).join(' ');
+  const isDisabled = disabled || readOnly || buttonDisabled || !onFiles;
 
   return (
     <>
-      <button
-        type="button"
-        className={classes}
+      <IconButton
+        variant="ghost"
+        size="sm"
+        className={className}
         onClick={() => inputRef.current?.click()}
         disabled={isDisabled}
         aria-label={ariaLabel}
       >
-        {children ?? <PlusIcon />}
-      </button>
-      {/* `hidden` rather than a class: the button above is the control, and
-          this must be out of the accessibility tree entirely or it reads as a
-          second, unlabelled one. A hidden input still opens its picker when
-          clicked programmatically. */}
+        {children ?? <Icon icon={Plus} size="md" />}
+      </IconButton>
+      {/* `hidden`: the button is the control; the input stays out of the
+          accessibility tree and still opens its picker when clicked. */}
       <input
         ref={inputRef}
         type="file"
@@ -701,8 +537,8 @@ function PromptAttach({
         multiple={multiple}
         onChange={(event) => {
           const files = Array.from(event.target.files ?? []);
-          // Reset first, or picking the same file twice in a row is a no-op.
-          event.target.value = '';
+          // Reset first, or picking the same file twice is a no-op.
+          event.target.value = "";
           onFiles?.(files);
         }}
       />
@@ -710,87 +546,181 @@ function PromptAttach({
   );
 }
 
-/**
- * A choice that scopes the submission — model, agent, tone, which project this
- * runs against. `ModeButton` covers a setting you toggle; this covers one you
- * pick from a list, which every non-trivial composer ends up needing.
- *
- * It is a `Select` throughout, in its ghost variant, so the popup, keyboard
- * handling and selection state are the same ones the rest of the library uses.
- * The trigger shows the current choice rather than a field label, because in a
- * toolbar the choice is the only part worth the width — what kind of choice it
- * is comes from the icon and the accessible name.
- */
-function PromptSelect({
+/** A choice that scopes the send (model, agent), as a menu of radio items. */
+function PromptPicker({
+  "aria-label": ariaLabel,
   icon,
-  'aria-label': ariaLabel,
   options,
-  children,
-  placeholder,
-  disabled: selectDisabled,
+  value: controlledValue,
+  defaultValue,
+  onValueChange,
+  placeholder = "Choose",
+  disabled: pickerDisabled,
   className,
-  ...selectProps
-}: PromptSelectProps) {
-  const { disabled, loading } = usePromptContext();
-  const classes = [styles.select, className].filter(Boolean).join(' ');
+}: PromptPickerProps) {
+  const { disabled } = usePromptContext();
+  const [value, setValue] = useControllableState<string | undefined>(
+    controlledValue,
+    defaultValue,
+    onValueChange as ((value: string | undefined) => void) | undefined
+  );
+  const current = options.find((option) => option.value === value);
+  const classes = [styles.picker, className].filter(Boolean).join(" ");
 
   return (
-    <Select
-      {...selectProps}
-      size="sm"
-      variant="ghost"
-      options={options}
-      placeholder={placeholder}
-      disabled={disabled || loading || selectDisabled}
-    >
-      <Select.Trigger className={classes} icon={icon} aria-label={ariaLabel} />
-      {/* No children: Content renders what `options` describes, which is how a
-          hint or anything else the root knows about an option survives being
-          composed into a custom trigger. */}
-      <Select.Content>{children}</Select.Content>
-    </Select>
+    <Menu modal={false}>
+      <Menu.Trigger className={classes} disabled={disabled || pickerDisabled}>
+        {icon != null && (
+          <span className={styles.pickerIcon} aria-hidden="true">
+            {icon}
+          </span>
+        )}
+        <span className={styles.hidden}>{ariaLabel}: </span>
+        <span className={styles.pickerValue}>{current?.label ?? placeholder}</span>
+        <Icon icon={CaretDown} size="xs" className={styles.pickerCaret} />
+      </Menu.Trigger>
+      <Menu.Content side="top" align="start">
+        <Menu.RadioGroup value={value} onValueChange={(next) => setValue(next)}>
+          {options.map((option) => (
+            <Menu.RadioItem key={option.value} value={option.value} disabled={option.disabled}>
+              {option.label}
+            </Menu.RadioItem>
+          ))}
+        </Menu.RadioGroup>
+      </Menu.Content>
+    </Menu>
   );
 }
 
-function PromptUsage({ children, className }: PromptUsageProps) {
-  const classes = [styles.usage, className].filter(Boolean).join(' ');
-  return <span className={classes}>{children}</span>;
-}
+const LONG_PRESS_MS = 600;
 
+/** Send: the accent action. Turns into Stop while the assistant works. */
 function PromptSubmit({
   children,
-  'aria-label': ariaLabel = 'Submit',
+  "aria-label": ariaLabel = "Send",
+  stopLabel = "Stop",
+  menu,
   className,
 }: PromptSubmitProps) {
-  const { disabled, loading, handleSubmit, value } = usePromptContext();
-  const isDisabled = disabled || loading || !value.trim();
+  const { disabled, readOnly, pending, working, onStop, handleSubmit, value } = usePromptContext();
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const allowOpen = React.useRef(false);
+  const longPress = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressClick = React.useRef(false);
 
-  const classes = [
-    styles.submit,
-    loading && styles.submitLoading,
-    className,
-  ].filter(Boolean).join(' ');
+  React.useEffect(
+    () => () => {
+      if (longPress.current) clearTimeout(longPress.current);
+    },
+    []
+  );
+
+  if (working && onStop) {
+    return (
+      <button
+        type="button"
+        className={[styles.submit, styles.stop, className].filter(Boolean).join(" ")}
+        onClick={onStop}
+        disabled={disabled}
+        aria-label={stopLabel}
+      >
+        <Icon icon={Stop} size="md" weight="fill" />
+      </button>
+    );
+  }
+
+  const isDisabled = disabled || readOnly || working || !value.trim();
+  const classes = [styles.submit, className].filter(Boolean).join(" ");
+  const glyph = (
+    <>
+      <span className={styles.submitGlyph}>{children ?? <Icon icon={ArrowUp} size="md" />}</span>
+      <span className={styles.submitSpinner} aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75">
+          <path d="M14 8a6 6 0 1 1-4.15-5.71" strokeLinecap="round" />
+        </svg>
+      </span>
+    </>
+  );
+  const send = () => {
+    if (suppressClick.current) {
+      suppressClick.current = false;
+      return;
+    }
+    if (!pending) handleSubmit();
+  };
+
+  if (!menu) {
+    return (
+      <button
+        type="button"
+        className={classes}
+        onClick={send}
+        disabled={isDisabled}
+        aria-label={ariaLabel}
+        aria-busy={pending || undefined}
+        data-pending={pending || undefined}
+      >
+        {glyph}
+      </button>
+    );
+  }
+
+  const openMenu = () => {
+    allowOpen.current = true;
+    setMenuOpen(true);
+  };
+  const cancelLongPress = () => {
+    if (longPress.current) clearTimeout(longPress.current);
+    longPress.current = null;
+  };
 
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={handleSubmit}
-      disabled={isDisabled}
-      aria-label={ariaLabel}
+    <Menu
+      open={menuOpen}
+      onOpenChange={(open) => {
+        // A plain click sends; only the menu gestures open the menu.
+        if (open && !allowOpen.current) return;
+        allowOpen.current = false;
+        setMenuOpen(open);
+      }}
     >
-      {loading ? (
-        <Loading
-          size="sm"
-          kind="spinner"
-          color="current"
-          label="Submitting"
-          className={styles.submitSpinner}
-        />
-      ) : (
-        children ?? <ArrowUpIcon />
-      )}
-    </button>
+      <Menu.Trigger
+        className={classes}
+        onClick={send}
+        disabled={isDisabled}
+        aria-label={ariaLabel}
+        aria-busy={pending || undefined}
+        data-pending={pending || undefined}
+        onContextMenu={(event) => {
+          event.preventDefault();
+          openMenu();
+        }}
+        onKeyDown={(event) => {
+          if (
+            event.key === "ArrowDown" ||
+            event.key === "ContextMenu" ||
+            (event.key === "F10" && event.shiftKey)
+          ) {
+            event.preventDefault();
+            openMenu();
+          }
+        }}
+        onPointerDown={() => {
+          cancelLongPress();
+          longPress.current = setTimeout(() => {
+            suppressClick.current = true;
+            openMenu();
+          }, LONG_PRESS_MS);
+        }}
+        onPointerUp={cancelLongPress}
+        onPointerLeave={cancelLongPress}
+      >
+        {glyph}
+      </Menu.Trigger>
+      <Menu.Content side="top" align="end">
+        {menu}
+      </Menu.Content>
+    </Menu>
   );
 }
 
@@ -801,16 +731,11 @@ function PromptSubmit({
 export const Prompt = Object.assign(PromptRoot, {
   Textarea: PromptTextarea,
   Toolbar: PromptToolbar,
-  Tabs: PromptTabs,
-  Tab: PromptTab,
   Actions: PromptActions,
   Info: PromptInfo,
-  ActionButton: PromptActionButton,
-  ModeButton: PromptModeButton,
-  Select: PromptSelect,
+  Picker: PromptPicker,
   Attach: PromptAttach,
   Attachments: PromptAttachments,
-  Usage: PromptUsage,
   Submit: PromptSubmit,
 });
 
@@ -818,18 +743,12 @@ export {
   PromptRoot,
   PromptTextarea,
   PromptToolbar,
-  PromptTabs,
-  PromptTab,
   PromptActions,
   PromptInfo,
-  PromptActionButton,
-  PromptModeButton,
-  PromptSelect,
+  PromptPicker,
   PromptAttach,
   PromptAttachments,
-  PromptUsage,
   PromptSubmit,
 };
 
-// Export hook for external use
 export { usePromptContext };

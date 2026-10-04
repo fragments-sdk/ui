@@ -6,305 +6,307 @@
 @use "../../recipes/layout";
 @use "../../recipes/popup";
 @use "../../recipes/target";
+@use "../../recipes/focus";
+@use "../../recipes/typography";
 
-.wrapper {
-  @include field.wrapper;
-}
+// What the shell checks on its input: the shell carries none of the input's
+// own attributes, so its states read them through :has().
+$_input-disabled: ":has(.input:is(:disabled, [data-disabled]))";
+$_input-readonly: ":has(.input:is([readonly], [data-readonly]))";
+$_input-invalid: ':has(.input:is([aria-invalid="true"], [data-invalid]))';
 
-.label {
-  @include field.label;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.helper {
-  @include field.helper;
-}
+@layer fui.components {
+  // ============================================
+  // The shell: the field Input draws — band fill, the 3:1 field edge, the
+  // control radius, the shared track. Chips wrap inside it and grow it.
+  // ============================================
 
-.helperError,
-.errorMessage {
-  @include field.error;
-}
-
-// Input + trigger wrapper.
-// --_field-h is the shared control-height track (same ladder as Input/Select).
-// Inner text + chips fill the content box after wrapper pad only.
-// min-height (not height) preserves chip wrapping.
-.inputWrapper {
-  @include field.size("md");
-  @include field.shell;
-
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: action.gap("sm");
-  width: 100%;
-  min-width: layout.measure("field-minimum");
-  padding-inline-end: var(--fui-raw-space-4, 4px);
-
-  &:focus-within {
-    @include field.focus-state;
-  }
-
-  &:has([data-disabled]) {
-    @include field.disabled-state;
-  }
-
-  .wrapper[data-invalid] & {
-    @include field.invalid-state;
-
-    // Focused while invalid keeps the danger edge and takes the danger ring,
-    // the same pairing Input and Textarea render.
-    &:focus-within {
-      @include field.invalid-focus-state;
-    }
-  }
-
-  @include high-contrast-outline;
-}
-
-// Size variants for input wrapper — override --_field-h.
-.inputWrapperSm {
-  @include field.size("sm");
-}
-
-.inputWrapperMd {
-  @include field.size("md");
-}
-
-.inputWrapperLg {
-  @include field.size("lg");
-}
-
-// Text input
-.input {
-  flex: 1;
-  min-width: layout.measure("inline-floor");
-  min-block-size: 0;
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  background: transparent;
-  border: none;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  outline: none;
-  box-shadow: none;
-
-  &:focus,
-  &:focus-visible,
-  &[data-focus-visible] {
-    outline: none;
-    box-shadow: none;
-  }
-
-  &::placeholder {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
-
-  &:disabled,
-  &[data-disabled] {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-    cursor: not-allowed;
-  }
-}
-
-// Chips container (multi-select) — flows inline within inputWrapper
-.chips {
-  display: contents;
-}
-
-// Individual chip (multi-select) — matches Chip component outlined xs
-.chip {
-  @include action.base;
-  @include action.size("micro");
-
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  white-space: nowrap;
-  max-width: layout.measure("compact-content");
-}
-
-.chipLabel {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// Chip remove button — round icon button inside the pill
-.chipRemove {
-  @include button-reset;
-  @include target.hit-area("micro");
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: action.icon-size("sm");
-  height: action.icon-size("sm");
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  cursor: pointer;
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-}
-
-// Chevron trigger button
-.trigger {
-  @include button-reset;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  min-width: 0;
-  min-height: 0;
-  width: action.track("micro");
-  height: action.track("micro");
-  margin-left: auto;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  cursor: pointer;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
-  margin-inline-end: var(--fui-raw-space-2, 2px);
-
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  &[data-disabled] {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-    cursor: not-allowed;
-  }
-
-  svg {
-    @include action.glyph("sm");
-    transition: transform var(--fui-transition-fast, $fui-transition-fast);
-  }
-
-  &[data-popup-open] svg {
-    transform: rotate(180deg);
-  }
-}
-
-// Positioner — z-index must exceed Dialog positioner (51)
-.positioner {
-  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
-  outline: none;
-}
-
-// Popup container
-.popup {
-  @include popup.container;
-  @include popup.viewport;
-
-  min-width: var(--anchor-width);
-
-  // Animation
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-// Individual option
-.item {
-  @include popup.row;
-
-  // Base UI Combobox sets [data-highlighted] on KEYBOARD nav only — it does NOT add it
-  // on pointer hover (verified in-browser) — so :hover is required for mouse users.
-  // Both map to the one shared neutral highlight.
-  &:hover,
-  &[data-highlighted] {
-    @include popup.highlight-state;
-  }
-
-  &[data-selected] {
-    @include popup.selected-state;
-
-    // Selected + active: stronger accent-tinted wash so it still reads as selected.
-    &:hover,
-    &[data-highlighted] {
-      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    }
-  }
-
-  &[data-disabled] {
-    @include popup.disabled-state;
-  }
-}
-
-// Selection indicator (checkmark)
-.itemIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-icon-sm, $fui-icon-sm);
-  height: var(--fui-icon-sm, $fui-icon-sm);
-  margin-left: auto;
-  color: var(--fui-color-accent, $fui-color-accent);
-
-  svg {
-    width: var(--fui-icon-xs, $fui-icon-xs);
-    height: var(--fui-icon-xs, $fui-icon-xs);
-  }
-}
-
-// Empty state
-.empty {
-  @include popup.row;
-
-  justify-content: center;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-// Group container
-.group {
-  &:not(:first-child)::before {
-    content: "";
-    display: block;
-    @include popup.group-separator;
-  }
-}
-
-// Group label
-.groupLabel {
-  @include popup.group-label;
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
   .inputWrapper {
-    transition: none;
+    @include interactive-base;
+    @include field.size("md");
+    @include field.shell;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: action.gap("sm");
+    width: 100%;
+    min-width: layout.measure("field-minimum");
+    // The trigger sits 4 from the end edge, the same as Input's clear button.
+    padding-inline-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    cursor: text;
+
+    &[data-size="xs"] {
+      @include field.size-xs;
+    }
+
+    &[data-size="sm"] {
+      @include field.size("sm");
+    }
+
+    &[data-size="lg"] {
+      @include field.size("lg");
+
+      gap: action.gap("md");
+    }
+
+    // Chips wrap: a few px above and below keep a wrapped row off the edge.
+    &[data-chips] {
+      padding-block: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    }
+
+    @media (hover: hover) {
+      &:hover:not(#{$_input-disabled}, #{$_input-readonly}, #{$_input-invalid}) {
+        border-color: color-mix(
+          in oklab,
+          var(--fui-text-primary, #{$fui-text-primary}) 55%,
+          var(--fui-field-border, #{$fui-field-border})
+        );
+      }
+    }
+
+    // The ring is the shell's, for keyboard focus inside it only.
+    &:has(:focus-visible) {
+      @include field.focus-state;
+    }
+
+    &#{$_input-readonly} {
+      @include field.readonly-state;
+    }
+
+    &#{$_input-invalid} {
+      @include field.invalid-state;
+
+      &:has(:focus-visible) {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    // Dimmed once, on the box; the input, chips and trigger inside read 1.
+    &#{$_input-disabled} {
+      @include field.disabled-state;
+    }
+
+    @include high-contrast-outline;
   }
 
+  // Text input: takes the shell's type role (and its coarse-pointer 16px).
+  .input {
+    font: inherit;
+    flex: 1;
+    align-self: stretch;
+    min-width: layout.measure("inline-floor");
+    min-block-size: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    // The shell draws the ring through :has(:focus-visible).
+    @include focus.delegated;
+
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+
+    &:is(:disabled, [data-disabled]) {
+      cursor: not-allowed;
+    }
+  }
+
+  // ============================================
+  // Chips (multiple): the Chip look — 24 tall at the control radius, band
+  // fill and the hairline, an 11px ink 1 label, a remove glyph with a 24/44
+  // hit area. Inside the field the chip's own edge separates it from the band.
+  // ============================================
+
+  .chips {
+    display: contents;
+  }
+
+  .chip {
+    @include typography.role("ui-compact");
+
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    max-width: layout.measure("compact-content");
+    block-size: action.track("micro");
+    padding-inline: action.inline-inset("micro")
+      var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-primary, $fui-text-primary);
+    white-space: nowrap;
+
+    // Base UI highlights a chip as the arrow keys walk the chips.
+    &[data-highlighted] {
+      @include focus.ring;
+    }
+  }
+
+  .chipLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chipRemove {
+    @include button-reset;
+    @include action.motion;
+    @include target.hit-area("micro");
+
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    block-size: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    svg {
+      @include action.glyph("micro");
+    }
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    &:focus-visible {
+      @include focus.ring;
+    }
+  }
+
+  // ============================================
+  // The trigger: a quiet 24px icon button at the field end, hover gated to
+  // pointers that hover; no turn when open.
+  // ============================================
+
+  .trigger {
+    @include button-reset;
+    @include action.motion;
+    @include action.icon-only("micro");
+
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    svg {
+      @include action.glyph("micro");
+    }
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
+
+    &:focus-visible {
+      @include focus.ring;
+    }
+
+    &:is(:disabled, [data-disabled]) {
+      cursor: not-allowed;
+    }
+  }
+
+  // Positioner — z-index must exceed Dialog positioner (51)
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
+  }
+
+  // Popup container
   .popup {
-    transition: none;
+    @include popup.container;
+    @include popup.viewport;
+
+    min-width: var(--anchor-width);
+
+    @include popup.motion;
   }
 
-  .trigger svg {
-    transition: none;
+  // The listbox draws nothing of its own; the popup is the surface.
+  .list {
+    display: contents;
+  }
+
+  // Individual option
+  .item {
+    @include popup.row;
+
+    // Base UI moves [data-highlighted] with the pointer as well as the keys,
+    // so one row is lit at a time.
+    &[data-highlighted] {
+      @include popup.highlight-state;
+    }
+
+    // The highlight paints over the selection wash, so a selected row keeps its
+    // wash and ring while highlighted.
+    &[data-selected] {
+      @include popup.selected-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
+  }
+
+  // The check on the chosen row, in ink 1, at the row end: with the wash and
+  // the ring it is the third mark, never the only one.
+  .itemIndicator {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    color: var(--fui-text-primary, $fui-text-primary);
+
+    svg {
+      @include action.glyph("sm");
+    }
+  }
+
+  // Empty names the query and loading says it is searching: a row at the row
+  // inset in ink 2. Both are live regions that stay mounted, so with nothing to
+  // say they collapse to no height rather than leave the tree.
+  .empty,
+  .status {
+    @include popup.row;
+    @include typography.role("body-compact");
+
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    &:empty {
+      min-block-size: 0;
+      padding-block: 0;
+    }
+  }
+
+  // Group container
+  .group {
+    &:not(:first-child)::before {
+      content: "";
+      display: block;
+      @include popup.group-separator;
+    }
+  }
+
+  // Group label
+  .groupLabel {
+    @include popup.group-label;
   }
 }

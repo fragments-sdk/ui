@@ -34,10 +34,46 @@ describe("Main", () => {
     expect(screen.getByText("Footer").tagName).toBe("FOOTER");
   });
 
-  it("defaults to a full-width main landmark", () => {
+  it("defaults to a full-width main landmark with the skip-link id", () => {
     render(<Main>Workspace</Main>);
 
     expect(screen.getByRole("main")).toHaveAttribute("data-main-measure", "full");
+    expect(screen.getByRole("main")).toHaveAttribute("id", "main-content");
+  });
+
+  it("gives a section or div no default id", () => {
+    render(
+      <>
+        <Main as="section" data-testid="section">
+          Section
+        </Main>
+        <Main as="div" data-testid="div">
+          Div
+        </Main>
+      </>
+    );
+
+    expect(screen.getByTestId("section")).not.toHaveAttribute("id");
+    expect(screen.getByTestId("div").tagName).toBe("DIV");
+  });
+
+  it("accepts only page-region elements", () => {
+    // @ts-expect-error a list is not a page region
+    render(<Main as="ul">List</Main>);
+  });
+
+  it("renders Main.Title as the page h1, or h2 on request", () => {
+    render(
+      <Main>
+        <Main.Header>
+          <Main.Title>Overview</Main.Title>
+          <Main.Title as="h2">Repositories</Main.Title>
+        </Main.Header>
+      </Main>
+    );
+
+    expect(screen.getByRole("heading", { level: 1, name: "Overview" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Repositories" })).toBeInTheDocument();
   });
 
   it("supports semantic adapters while forwarding native props, classes, and refs", () => {
@@ -98,13 +134,28 @@ describe("Main", () => {
 
     expect(root).toContain("padding: layout.page-gutter();");
     expect(root).not.toMatch(/\bbackground(?:-color)?:/);
-    expect(narrow).toContain('max-width: layout.measure("page-narrow");');
+    expect(narrow).toContain('max-inline-size: layout.measure("page-narrow");');
+  });
+
+  it("sets the title at the display role and the description at 12px ink 2 on a token measure", () => {
+    expect(classDeclarations(mainStyles, "title")).toContain(
+      '@include typography.role("title-lg");'
+    );
+    expect(classDeclarations(mainStyles, "title")).toContain("var(--fui-text-primary");
+    const description = classDeclarations(mainStyles, "description");
+    expect(description).toContain('@include typography.role("body-compact");');
+    expect(description).toContain("var(--fui-text-secondary");
+    expect(description).toContain("var(--fui-main-description-max-inline");
+    expect(mainStyles).not.toContain("68ch");
+    expect(mainStyles).not.toMatch(/\b(max-|min-)?(width|height):/);
   });
 
   it("has no accessibility violations", async () => {
     const { container } = render(
       <Main>
-        <Main.Header>Page title</Main.Header>
+        <Main.Header>
+          <Main.Title>Page title</Main.Title>
+        </Main.Header>
         <Main.Description>Supporting context</Main.Description>
         <Main.Content>Page content</Main.Content>
         <Main.Footer>Page actions</Main.Footer>

@@ -1,100 +1,112 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/feedback" as feedback;
+@use "../../recipes/radius" as radius;
 @use "../../recipes/typography" as typography;
 
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
-  text-align: center;
-  font-family: var(--fui-font-sans, $fui-font-sans);
+@layer fui.tokens, fui.base, fui.components;
 
-  // Icon and actions sit a section step (16) away from the copy, netted
-  // against the flex gap so the copy block keeps its own text rhythm.
-  > .icon {
-    margin-block-end: calc(
-      var(--fui-raw-space-16, #{measurements.raw-space(16)}) - var(
-          --fui-feedback-text-gap,
-          var(--fui-raw-space-4, #{measurements.raw-space(4)})
-        )
+@layer fui.components {
+  // Start-aligned, like the copy around it: a band icon tile, a title-sm
+  // title, ink-2 copy at the reading measure, then the actions. Size changes
+  // the padding and the measure token only; type and icon never move.
+  .emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
+    text-align: start;
+    font-family: var(--fui-font-sans, #{$fui-font-sans});
+
+    // Icon and actions sit 12 away from the copy, netted against the flex gap
+    // so the copy block keeps its own text rhythm.
+    > .icon {
+      margin-block-end: calc(
+        var(--fui-raw-space-12, #{measurements.raw-space(12)}) - var(
+            --fui-feedback-text-gap,
+            var(--fui-raw-space-4, #{measurements.raw-space(4)})
+          )
+      );
+    }
+
+    > .actions {
+      margin-block-start: calc(
+        var(--fui-raw-space-12, #{measurements.raw-space(12)}) - var(
+            --fui-feedback-text-gap,
+            var(--fui-raw-space-4, #{measurements.raw-space(4)})
+          )
+      );
+    }
+  }
+
+  .sm {
+    --_fui-empty-measure: var(
+      --fui-feedback-empty-max-inline-sm,
+      #{$fui-feedback-empty-max-inline}
     );
+
+    padding-block: var(--fui-raw-space-24, #{measurements.raw-space(24)});
+    padding-inline: var(--fui-raw-space-16, #{measurements.raw-space(16)});
   }
 
-  > .actions {
-    margin-block-start: calc(
-      var(--fui-raw-space-16, #{measurements.raw-space(16)}) - var(
-          --fui-feedback-text-gap,
-          var(--fui-raw-space-4, #{measurements.raw-space(4)})
-        )
+  .md {
+    --_fui-empty-measure: var(
+      --fui-feedback-empty-max-inline-md,
+      #{$fui-feedback-empty-max-inline}
     );
+
+    padding-block: var(--fui-raw-space-32, #{measurements.raw-space(32)});
+    padding-inline: var(--fui-raw-space-24, #{measurements.raw-space(24)});
   }
-}
 
-.sm {
-  @include feedback.empty-state("sm");
-}
+  // A 36px tile on the band plane. Its corner nests inside the surface corner
+  // across the 12 the tile keeps from the copy, so it never out-rounds a card.
+  .icon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    inline-size: calc(
+      var(--fui-raw-space-32, #{measurements.raw-space(32)}) +
+        var(--fui-raw-space-4, #{measurements.raw-space(4)})
+    );
+    block-size: calc(
+      var(--fui-raw-space-32, #{measurements.raw-space(32)}) +
+        var(--fui-raw-space-4, #{measurements.raw-space(4)})
+    );
+    border-radius: radius.nested(
+      var(--fui-radius-surface, #{$fui-radius-surface}),
+      var(--fui-raw-space-12, #{measurements.raw-space(12)})
+    );
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
 
-.md {
-  @include feedback.empty-state("md");
-}
-
-.lg {
-  @include feedback.empty-state("lg");
-}
-
-// Reserved-but-empty region: a dashed hairline says the space belongs to
-// content that has not arrived, without claiming the weight of a real card.
-.outline {
-  justify-content: center;
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) dashed
-    var(--fui-border-default, $fui-border-default);
-  border-radius: var(--fui-card-radius, var(--fui-radius-lg, $fui-radius-lg));
-}
-
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-
-  svg {
-    inline-size: var(--_fui-feedback-empty-icon-size, var(--fui-icon-2xl, #{$fui-icon-2xl}));
-    block-size: var(--_fui-feedback-empty-icon-size, var(--fui-icon-2xl, #{$fui-icon-2xl}));
+    svg {
+      inline-size: var(--fui-icon-lg, #{measurements.target-value("icon", "lg")});
+      block-size: var(--fui-icon-lg, #{measurements.target-value("icon", "lg")});
+    }
   }
-}
 
-// The size recipe (feedback.empty-state) authors the type channels per size;
-// the md role is the fallback when a size class is missing.
-.title {
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--_fui-feedback-empty-title-size, #{typography.font-size("ui-standard")});
-  font-weight: var(--_fui-feedback-empty-title-weight, #{typography.weight("ui-standard")});
-  line-height: var(--_fui-feedback-empty-title-line, #{typography.line-height("ui-standard")});
-  letter-spacing: var(--_fui-feedback-empty-title-tracking, #{typography.tracking("ui-standard")});
-}
+  .title {
+    @include typography.role("title-sm");
 
-.description {
-  max-inline-size: var(
-    --_fui-feedback-empty-max-inline,
-    var(--fui-overlay-tooltip-max, #{measurements.target-value("overlay", "tooltip-max")})
-  );
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  font-size: var(--_fui-feedback-empty-copy-size, #{typography.font-size("body-compact")});
-  font-weight: var(--_fui-feedback-empty-copy-weight, #{typography.weight("body-compact")});
-  line-height: var(--_fui-feedback-empty-copy-line, #{typography.line-height("body-compact")});
-  letter-spacing: var(--_fui-feedback-empty-copy-tracking, #{typography.tracking("body-compact")});
-}
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-primary, #{$fui-text-primary});
+  }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-feedback-transient-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  .description {
+    @include typography.role("body-compact");
+
+    max-inline-size: var(--_fui-empty-measure, #{$fui-feedback-empty-max-inline});
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+  }
+
+  // At most two verbs, start-aligned with the copy.
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
 }

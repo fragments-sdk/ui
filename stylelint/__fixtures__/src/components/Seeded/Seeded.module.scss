@@ -1,0 +1,11 @@
+@use "../../tokens/seeds";
+@use "../../tokens/variables" as *;
+
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  .seeded {
+    color: var(--fui-seed-brand);
+    background: var(--fui-bg-primary, $fui-bg-primary);
+  }
+}

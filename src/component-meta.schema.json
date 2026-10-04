@@ -1,0 +1,441 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Component metadata",
+  "description": "Source-backed CSS reads and observed DOM attributes, with editorial catalog fields used by documentation and agent consumers. Provenance records catalog extraction only. Each attribute row names an attribute value and a named state fixture; it is an observation, not a complete state API. Empty tables mean no observations are published.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "const": "../../component-meta.schema.json"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["stable", "beta", "deprecated", "experimental"]
+    },
+    "sourcePath": {
+      "type": "string",
+      "pattern": "^src/components/[A-Za-z]+/index\\.tsx$"
+    },
+    "exportName": {
+      "type": "string"
+    },
+    "propsSummary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "props": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "default": {},
+          "required": {
+            "type": "boolean"
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["type", "description"]
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "when": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "whenNot": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "guidelines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accessibility": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "choose": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "dont": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "bad": {
+                "type": "string"
+              },
+              "good": {
+                "type": "string"
+              }
+            },
+            "required": ["reason", "bad", "good"]
+          }
+        }
+      },
+      "required": ["when", "whenNot"]
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "args": {
+            "type": "object"
+          },
+          "canonical": {
+            "type": "boolean"
+          }
+        },
+        "required": ["name", "description", "code"]
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "alternative",
+              "parent",
+              "child",
+              "sibling",
+              "composition",
+              "complementary",
+              "used-by"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": ["component", "relationship", "note"]
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "version"]
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "propsSummary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scenarioTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "a11yRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "pattern": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["pattern", "message"]
+          }
+        },
+        "compoundChildren": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "required": {
+                "type": "boolean"
+              },
+              "accepts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        },
+        "canonicalUsage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "performanceBudget": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": []
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "compositionPattern": {
+          "type": "string",
+          "enum": ["compound", "simple", "controlled", "wrapper"]
+        },
+        "subComponents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requiredChildren": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commonPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": []
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["manual", "extracted", "merged", "migrated"]
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "frameworkSupport": {
+          "type": "string",
+          "enum": ["native", "manual-only"]
+        },
+        "sourceHash": {
+          "type": "string"
+        },
+        "extractedAt": {
+          "type": "string"
+        }
+      },
+      "required": ["source", "verified"]
+    },
+    "cssVariables": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^--fui-[\\w-]+$"
+      },
+      "description": "Public custom properties read directly by the component runtime style modules. Inherited recipe reads are not enumerated."
+    },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^(data|aria)-[\\w-]+$|^role$"
+          },
+          "value": {
+            "type": "string"
+          },
+          "fixture": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["name", "value", "fixture"]
+      },
+      "uniqueItems": true
+    },
+    "matrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "const": "auto"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            ]
+          }
+        },
+        "forced": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "worstCase": {
+          "type": "object"
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "setupModule": {
+          "type": "string"
+        },
+        "wrapperModule": {
+          "type": "string"
+        },
+        "wrapperExport": {
+          "type": "string"
+        },
+        "css": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "theme": {
+          "enum": ["light", "dark"]
+        },
+        "providers": {
+          "type": "array"
+        },
+        "dynamicRegions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "name",
+    "description",
+    "category",
+    "sourcePath",
+    "exportName",
+    "propsSummary",
+    "props",
+    "usage",
+    "provenance",
+    "cssVariables",
+    "attributes"
+  ]
+}

@@ -1,0 +1,4 @@
+// A moving transition in a module with no prefers-reduced-motion handling.
+.mover {
+  transition: transform var(--fui-duration-fast, $fui-duration-fast);
+}

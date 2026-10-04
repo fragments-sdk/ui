@@ -1,29 +1,51 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/layout";
+@use "../../recipes/typography";
 
-.root {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  min-height: 100%;
-  margin-inline: auto;
-  padding: layout.page-gutter();
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.full {
-  max-width: none;
-}
+@layer fui.components {
+  // The one gutter owner (16). AppShell.Main pads nothing.
+  .root {
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 100%;
+    margin-inline: auto;
+    padding: layout.page-gutter();
+  }
 
-.narrow {
-  max-width: layout.measure("page-narrow");
-}
+  .full {
+    max-inline-size: none;
+  }
 
-.header,
-.description,
-.content,
-.footer {
-  min-width: 0;
-}
+  .narrow {
+    max-inline-size: layout.measure("page-narrow");
+  }
 
-.description {
-  max-width: 68ch;
+  .header,
+  .description,
+  .content,
+  .footer {
+    min-inline-size: 0;
+  }
+
+  .title {
+    @include typography.role("title-lg");
+
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-primary, #{$fui-text-primary});
+  }
+
+  .description {
+    @include typography.role("body-compact");
+
+    max-inline-size: var(--fui-main-description-max-inline, #{$fui-main-description-max-inline});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+
+    > * {
+      margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    }
+  }
 }

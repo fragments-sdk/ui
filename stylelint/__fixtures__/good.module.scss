@@ -1,0 +1,60 @@
+// Doctrine-clean styles: the lint must stay silent here (stylelint/doctrine.test.ts).
+.good {
+  color: var(--fui-text-primary, $fui-text-primary);
+  padding: var(--fui-raw-space-4, $fui-raw-space-4) 0;
+  border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-control, $fui-radius-control);
+  line-height: 1;
+  transition: opacity var(--fui-duration-fast, $fui-duration-fast)
+    var(--fui-ease-out, $fui-ease-out);
+}
+
+.good[data-disabled],
+.good[data-disabled]:hover,
+.good:is([data-disabled], [aria-disabled="true"]),
+.good:not([data-disabled]) .icon,
+.good:has([data-disabled]) .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+.layered {
+  z-index: var(--fui-overlay-layer-modal, $fui-overlay-layer-modal);
+}
+
+.stacked {
+  z-index: 1;
+}
+
+.ring {
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, $fui-stroke-hairline)
+    var(--fui-control-selected-border, $fui-control-selected-border);
+}
+
+.mover {
+  transition: transform var(--fui-duration-fast, $fui-duration-fast);
+  // An infinite loop turns at a constant speed: linear is not an easing there.
+  animation: spin var(--fui-duration-spin, $fui-duration-spin) linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.good input {
+  font: inherit;
+}
+
+@media (pointer: coarse) {
+  .good input {
+    font-size: 16px;
+  }
+
+  .good .typed {
+    font-size: max(16px, var(--fui-type-body-compact-size, $fui-type-body-compact-size));
+  }
+}
+
+.swatch {
+  /* stylelint-disable-next-line fui/color/no-literal -- the swatch shows the literal it names */
+  background-color: #6366f1;
+}

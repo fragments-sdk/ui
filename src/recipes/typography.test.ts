@@ -45,8 +45,8 @@ describe("typography recipe", () => {
         expect(body).toContain("font-family: var(--fui-font-mono");
         expect(body).toContain("JetBrains Mono Variable");
       } else {
-        expect(body).toContain("font-family: var(--fui-font-sans");
-        expect(body).toContain("Onest Variable");
+        // The default face is the system stack; no brand font ships in the library.
+        expect(body).toContain("font-family: var(--fui-font-sans, system-ui,");
       }
 
       if (wrapsTitle) {

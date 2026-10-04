@@ -2,164 +2,135 @@
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/field";
-@use "../../recipes/layout";
 @use "../../recipes/typography";
 
-// Fallbacks for the field recipe's size hooks when no size class has set them.
+// Fallbacks for the field recipe's size hooks when no size has set them.
 $_track: field.track("md");
 $_stroke: field.stroke();
 $_block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
 
-.wrapper {
-  @include field.wrapper;
-}
-
-.label {
-  @include field.label;
-}
-
-.required {
-  margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-.helper {
-  @include field.helper;
-}
-
-.helperError,
-.errorMessage {
-  @include field.error;
-}
-
-.textarea {
-  @include interactive-base;
-  @include field.shell;
-
-  display: block;
-  width: 100%;
-  min-block-size: max(
-    var(--_fui-field-track, #{$_track}),
-    calc(
-      var(--fui-textarea-min-rows, 1) * 1lh + 2 *
-        var(--_fui-textarea-block-inset, #{$_block-inset}) + 2 *
-        var(--_fui-field-stroke, #{$_stroke})
-    )
+// The block size of n rows: the lines, the block inset and the edge.
+@function _rows($count) {
+  @return calc(
+    #{$count} * 1lh + 2 * var(--_fui-textarea-block-inset, #{$_block-inset}) + 2 *
+      var(--_fui-field-stroke, #{$_stroke})
   );
-  max-block-size: calc(
-    var(--fui-textarea-max-rows, 9999) * 1lh + 2 *
-      var(--_fui-textarea-block-inset, #{$_block-inset}) + 2 * var(--_fui-field-stroke, #{$_stroke})
-  );
-  padding-block: var(--_fui-textarea-block-inset, #{$_block-inset});
+}
 
-  &::placeholder {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  // The field and its counter stack; with no counter the wrapper draws no box.
+  .passthrough {
+    display: contents;
   }
 
-  &:focus-visible {
-    @include field.focus-state;
+  .withCounter {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  @include high-contrast-outline;
-
-  // Single-line: same track as Input — height lock, horizontal pad only.
-  &[rows="1"] {
-    block-size: var(--_fui-field-track, #{$_track});
-    min-block-size: var(--_fui-field-track, #{$_track});
-    padding-block: calc(
-      (var(--_fui-field-track, #{$_track}) - 1lh - 2 * var(--_fui-field-stroke, #{$_stroke})) / 2
-    );
-    overflow-y: hidden;
-  }
-}
-
-// Size variants
-.sm {
-  @include field.size("sm");
-
-  --_fui-textarea-block-inset: var(--fui-raw-space-6, #{measurements.raw-space(6)});
-}
-
-.md {
-  @include field.size("md");
-
-  --_fui-textarea-block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-}
-
-.lg {
-  @include field.size("lg");
-
-  --_fui-textarea-block-inset: var(--fui-raw-space-10, #{measurements.raw-space(10)});
-}
-
-// Resize variants
-.resize-none {
-  resize: none;
-}
-
-.resize-vertical {
-  resize: vertical;
-}
-
-.resize-horizontal {
-  resize: horizontal;
-}
-
-.resize-both {
-  resize: both;
-}
-
-// Error state via aria-invalid attribute (replaces JS class toggle: `error && styles.error`)
-.error,
-.textarea[aria-invalid] {
-  @include field.invalid-state;
-
-  &:focus-visible {
-    @include field.invalid-focus-state;
-  }
-}
-
-// Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
-.wrapper:has([aria-invalid]) .helper {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// Footer row — helper + character counter side by side
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: layout.gap("sm");
-  min-block-size: typography.line-height("caption");
-
-  &:empty {
-    display: none;
-  }
-}
-
-// Character counter
-.charCount {
-  @include typography.role("caption");
-
-  margin-block-start: var(
-    --fui-field-message-gap,
-    var(--fui-raw-space-4, #{measurements.raw-space(4)})
-  );
-  margin-inline-start: auto;
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  white-space: nowrap;
-}
-
-.charCountOver {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
   .textarea {
-    transition: none;
+    // Inherit first, so the size's type role below wins over it.
+    font: inherit;
+
+    @include interactive-base;
+    @include field.size("md", $typed: false);
+    @include field.shell;
+    @include field.coarse-typed-text;
+
+    --_fui-textarea-block-inset: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+
+    display: block;
+    width: 100%;
+    padding-block: var(--_fui-textarea-block-inset, #{$_block-inset});
+    // Grows with its text from minRows to maxRows, then scrolls. Where
+    // field-sizing is not supported the field holds minRows and scrolls.
+    field-sizing: content;
+    min-block-size: max(
+      var(--_fui-field-track, #{$_track}),
+      _rows(var(--_fui-textarea-min-rows, 3))
+    );
+    max-block-size: _rows(var(--_fui-textarea-max-rows, 1e4));
+    resize: vertical;
+
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+
+    &[data-size="xs"] {
+      @include field.size-xs($typed: false);
+
+      --_fui-textarea-block-inset: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+
+      @include field.coarse-typed-text;
+    }
+
+    &[data-size="sm"] {
+      @include field.size("sm", $typed: false);
+
+      --_fui-textarea-block-inset: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+
+      @include field.coarse-typed-text;
+    }
+
+    &[data-size="lg"] {
+      @include field.size("lg", $typed: false);
+
+      --_fui-textarea-block-inset: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+
+      @include field.coarse-typed-text;
+    }
+
+    // One row is the field track: the inset centres the line, so a one-row
+    // textarea lines up with an Input beside it and grows from there.
+    &[data-single-row] {
+      --_fui-textarea-block-inset: calc(
+        (var(--_fui-field-track, #{$_track}) - 1lh - 2 * var(--_fui-field-stroke, #{$_stroke})) / 2
+      );
+    }
+
+    &[data-resize="none"] {
+      resize: none;
+    }
+
+    @include field.hover-state;
+
+    &[readonly] {
+      @include field.readonly-state;
+    }
+
+    &:focus-visible {
+      @include field.focus-state;
+    }
+
+    &:is([aria-invalid="true"], [data-invalid]) {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    @include high-contrast-outline;
+  }
+
+  // The counter: ink 3 at the caption size, figures that line up, at the end
+  // under the field. Past the limit it says so in words, in the danger ink.
+  .counter {
+    @include typography.role("caption");
+
+    justify-self: end;
+    margin-block-start: var(
+      --fui-field-message-gap,
+      var(--fui-raw-space-4, #{measurements.raw-space(4)})
+    );
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &[data-over] {
+      color: var(--fui-color-danger-text, $fui-color-danger-text);
+    }
   }
 }

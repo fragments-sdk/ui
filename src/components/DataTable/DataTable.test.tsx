@@ -1,6 +1,16 @@
+import { resolve } from "node:path";
+
+import * as sass from "sass";
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { EmptyState } from "../EmptyState";
 import { DataTable, createColumns } from "./index";
+
+const flatStyles = sass
+  .compile(resolve(process.cwd(), "src/components/DataTable/DataTable.module.scss"), {
+    style: "expanded",
+  })
+  .css.replace(/\s+/g, " ");
 
 // @tanstack/react-table resolves through a lazy import(); preloading it makes
 // every render below synchronous, so assertions can stay synchronous too.
@@ -51,19 +61,25 @@ describe("DataTable", () => {
       <DataTable
         columns={columns}
         data={[]}
-        emptyMessage="Nothing here"
+        emptyState={<EmptyState.Title as="p">Nothing here</EmptyState.Title>}
         caption="People Table"
         aria-label="People"
       />
     );
     expect(screen.getByText("Nothing here")).toBeInTheDocument();
+    expect(screen.getByText("Nothing here").closest("tr")).toHaveAttribute(
+      "data-table-state",
+      "empty"
+    );
+    // The header stays real over an empty result.
+    expect(screen.getAllByRole("columnheader")).toHaveLength(2);
     expect(screen.getByRole("table", { name: /people/i })).toBeInTheDocument();
     expect(screen.getByText("People Table")).toBeInTheDocument();
   });
 
-  it('defaults to "No data available" empty message', () => {
+  it('defaults to a one-line "No data" EmptyState', () => {
     render(<DataTable columns={columns} data={[]} aria-label="People" />);
-    expect(screen.getByText("No data available")).toBeInTheDocument();
+    expect(screen.getByText("No data").tagName).toBe("P");
   });
 
   it("supports sortable columns with aria-sort", async () => {
@@ -94,13 +110,6 @@ describe("DataTable", () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
     expect(handleClick.mock.calls[0][0]).toEqual(data[0]);
     expect(handleClick.mock.calls[0][1]).toBeDefined();
-  });
-
-  it("applies striped class when striped prop is true", () => {
-    const { container } = render(
-      <DataTable columns={columns} data={data} striped aria-label="People" />
-    );
-    expect(container.querySelector(".striped")).toBeInTheDocument();
   });
 
   it("createColumns helper generates proper column defs", () => {
@@ -211,13 +220,14 @@ describe("DataTable", () => {
   });
 
   it("forwards wrapper props to the outer container", () => {
+    const wrapperProps = { id: "people-table-wrapper", "data-testid": "people-table-wrapper" };
     const { container } = render(
       <DataTable
         columns={columns}
         data={data}
         aria-label="People"
         wrapperClassName="custom-wrapper"
-        wrapperProps={{ id: "people-table-wrapper", "data-testid": "people-table-wrapper" }}
+        wrapperProps={wrapperProps}
       />
     );
 
@@ -313,8 +323,20 @@ describe("DataTable", () => {
     expect(childRows).toHaveLength(2);
     expect(childRows[0]).toHaveAttribute("data-depth", "1");
     const treeCell = childRows[0].querySelector("td");
-    expect(treeCell).toHaveStyle("--fui-table-tree-depth: 1");
-    expect(treeCell?.getAttribute("style")).not.toContain("padding-left");
+    const treeContent = treeCell?.firstElementChild as HTMLElement;
+    expect(treeContent).toHaveStyle("--fui-table-tree-depth: 1");
+    expect(treeCell?.getAttribute("style") ?? "").not.toContain("padding");
+    // A leaf keeps a spacer the width of the expand control, so its text lines
+    // up with an expandable sibling's.
+    expect(treeContent.querySelector("[aria-hidden='true']")).toBeInTheDocument();
+    // Sub-rows sit on the band; it yields to the selection wash.
+    expect(childRows[0]).toHaveClass("subRow");
+    expect(flatStyles).toMatch(/:where\(\.subRow\) \{ background-color: var\(--fui-bg-secondary/);
+    // The tree content is a block-level flex row, so the row keeps its track.
+    expect(flatStyles).toMatch(/\.treeContent \{[^}]*display: flex;/);
+    // The expand control is the 24 IconButton, with no size override.
+    expect(screen.getByLabelText("Collapse row")).toHaveClass("xs");
+    expect(flatStyles).not.toContain("expandButton");
   });
 
   it("applies per-column alignment via data-align", () => {
@@ -332,22 +354,70 @@ describe("DataTable", () => {
     expect(headers[1]).toHaveAttribute("data-align", "right");
   });
 
-  it("maps the deprecated density alias to the canonical attribute", () => {
-    render(<DataTable columns={columns} data={data} density="condensed" aria-label="People" />);
-    expect(screen.getByRole("table")).toHaveAttribute("data-density", "compact");
-  });
-
-  it("gives canonical density explicit precedence over legacy size", () => {
-    render(
-      <DataTable columns={columns} data={data} density="relaxed" size="sm" aria-label="People" />
+  it("renders loading rows under the real header and marks the table busy", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={data} loading skeletonRows={3} aria-label="People" />
     );
-    expect(screen.getByRole("table")).toHaveAttribute("data-density", "relaxed");
-  });
-
-  it("renders skeleton rows while loading and marks the table busy", () => {
-    render(<DataTable columns={columns} data={[]} loading skeletonRows={3} aria-label="People" />);
     expect(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
     expect(screen.queryByText("Alice")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("columnheader")).toHaveLength(2);
+    const rows = container.querySelectorAll('tr[data-table-state="loading"]');
+    expect(rows).toHaveLength(3);
+    expect(rows[0].querySelectorAll("td")).toHaveLength(2);
+  });
+
+  it("renders the error box with a retry under the real header", async () => {
+    const user = userEvent.setup();
+    const onRetry = vi.fn();
+    render(
+      <DataTable
+        columns={columns}
+        data={[]}
+        error="The people list did not load. Check your connection and try again."
+        onRetry={onRetry}
+        aria-label="People"
+      />
+    );
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("did not load");
+    expect(alert.closest("tr")).toHaveAttribute("data-table-state", "error");
+    expect(screen.getAllByRole("columnheader")).toHaveLength(2);
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets loading win over an error, and the error win over empty", () => {
+    const { rerender } = render(
+      <DataTable columns={columns} data={[]} loading error="Failed" aria-label="People" />
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    rerender(<DataTable columns={columns} data={[]} error="Failed" aria-label="People" />);
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.queryByText("No data")).not.toBeInTheDocument();
+  });
+
+  it("composes Table: the rows, cells and sheet are Table's", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={data} bordered aria-label="People" />
+    );
+    expect(container.querySelector(".bordered")).toBeInTheDocument();
+    expect(container.querySelector("tbody tr")).toHaveClass("row");
+    expect(container.querySelector("tbody td")).toHaveClass("td");
+    expect(screen.getByRole("table")).not.toHaveAttribute("data-density");
+  });
+
+  it("gives the sort button the 24 pointer hit area", () => {
+    expect(flatStyles).toMatch(/\.sortButton \{[^}]*position: relative;/);
+    expect(flatStyles).toMatch(
+      /\.sortButton::after \{[^}]*block-size: max\(100%, var\(--fui-control-height-xs/
+    );
+  });
+
+  it("shows a sort glyph on every sortable column at rest", () => {
+    render(<DataTable columns={columns} data={data} sortable aria-label="People" />);
+    for (const header of screen.getAllByRole("columnheader")) {
+      expect(header.querySelector("button svg")).toBeInTheDocument();
+    }
   });
 
   it("renders a custom empty state when there is no data", () => {
@@ -355,7 +425,12 @@ describe("DataTable", () => {
       <DataTable
         columns={columns}
         data={[]}
-        emptyState={<div>Nothing here yet</div>}
+        emptyState={
+          <>
+            <EmptyState.Title>Nothing here yet</EmptyState.Title>
+            <EmptyState.Description>Add a person to see them here.</EmptyState.Description>
+          </>
+        }
         aria-label="People"
       />
     );

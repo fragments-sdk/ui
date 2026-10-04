@@ -1,0 +1,162 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ScrollArea",
+  "description": "Scrolls overflowing content with a slim scrollbar and optional edge fades.",
+  "category": "layout",
+  "tags": ["scroll", "overflow", "scrollbar", "container", "layout"],
+  "status": "stable",
+  "sourcePath": "src/components/ScrollArea/index.tsx",
+  "exportName": "ScrollArea",
+  "propsSummary": [
+    "children: node (required)",
+    "orientation: horizontal|vertical|both (default: vertical)",
+    "scrollbarVisibility: auto|always (default: auto)",
+    "showFades: boolean (default: false)",
+    "className: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Scrollable content",
+      "required": true
+    },
+    "orientation": {
+      "type": "enum",
+      "description": "Scroll direction",
+      "default": "vertical",
+      "required": false,
+      "values": ["horizontal", "vertical", "both"]
+    },
+    "scrollbarVisibility": {
+      "type": "enum",
+      "description": "When the thin scrollbar shows: auto while scrolling, on hover and while focus is inside; always all the time",
+      "default": "auto",
+      "required": false,
+      "values": ["auto", "always"]
+    },
+    "showFades": {
+      "type": "boolean",
+      "description": "Show gradient fade indicators at scroll edges",
+      "default": "false",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Names the viewport as a region, read when it takes the keyboard",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Content that overflows a fixed-size container",
+      "Tab bars or chip rows that may run past the edge",
+      "Scrollable panels, sidebars, and menu content"
+    ],
+    "whenNot": [
+      "Whole-page scrolling (use the native body scroll)",
+      "Content that can never overflow"
+    ],
+    "guidelines": [
+      "orientation constrains which axis can scroll",
+      "showFades hints at hidden content when nothing else does",
+      "scrollbarVisibility=\"auto\" shows the thumb only while the area is used, without shifting layout",
+      "The container needs a fixed height or the area cannot scroll"
+    ],
+    "accessibility": [
+      "Preserves native scroll behavior and keyboard support across both axes",
+      "A viewport that scrolls and holds nothing focusable takes the keyboard; the area rings outside its edge, clear of the fades",
+      "aria-label or aria-labelledby names the viewport as a region",
+      "The scrollbar shows while focus is inside"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Vertical",
+      "description": "Scrolls down with a thin, always-visible thumb.",
+      "code": "import { Box } from '@/components/Box';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Box>\n  <ScrollArea style={{ height: '200px' }}>\n    <Box inset=\"compact\">\n      <Stack gap=\"sm\">\n        <Text>Row 1</Text>\n        <Text>Row 2</Text>\n        <Text>Row 3</Text>\n        <Text>Row 4</Text>\n        <Text>Row 5</Text>\n        <Text>Row 6</Text>\n        <Text>Row 7</Text>\n        <Text>Row 8</Text>\n        <Text>Row 9</Text>\n        <Text>Row 10</Text>\n        <Text>Row 11</Text>\n        <Text>Row 12</Text>\n      </Stack>\n    </Box>\n  </ScrollArea>\n</Box>"
+    },
+    {
+      "name": "Horizontal",
+      "description": "Keeps an overflowing row of chips on one line.",
+      "code": "import { Box } from '@/components/Box';\nimport { Chip } from '@/components/Chip';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\n\n<Box>\n  <ScrollArea orientation=\"horizontal\">\n    <Stack direction=\"row\" gap=\"sm\">\n      <Chip>React</Chip>\n      <Chip>TypeScript</Chip>\n      <Chip>Accessibility</Chip>\n      <Chip>Docs</Chip>\n      <Chip>Playground</Chip>\n      <Chip>CLI</Chip>\n      <Chip>Tokens</Chip>\n      <Chip>Workspace</Chip>\n      <Chip>Patterns</Chip>\n      <Chip>Registry</Chip>\n    </Stack>\n  </ScrollArea>\n</Box>"
+    },
+    {
+      "name": "With Fades",
+      "description": "Edge fades signal there is more content each way.",
+      "code": "import { Box } from '@/components/Box';\nimport { Chip } from '@/components/Chip';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\n\n<Box>\n  <ScrollArea orientation=\"horizontal\" showFades>\n    <Stack direction=\"row\" gap=\"sm\">\n      <Chip>React</Chip>\n      <Chip>TypeScript</Chip>\n      <Chip>Accessibility</Chip>\n      <Chip>Docs</Chip>\n      <Chip>Playground</Chip>\n      <Chip>CLI</Chip>\n      <Chip>Tokens</Chip>\n      <Chip>Workspace</Chip>\n      <Chip>Patterns</Chip>\n      <Chip>Registry</Chip>\n    </Stack>\n  </ScrollArea>\n</Box>"
+    },
+    {
+      "name": "Always Scrollbar",
+      "description": "The thumb stays visible for content that is always scrolled.",
+      "code": "import { Box } from '@/components/Box';\nimport { ScrollArea } from '@/components/ScrollArea';\nimport { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Box>\n  <ScrollArea scrollbarVisibility=\"always\" style={{ height: '200px' }}>\n    <Box inset=\"compact\">\n      <Stack gap=\"sm\">\n        <Text>Row 1</Text>\n        <Text>Row 2</Text>\n        <Text>Row 3</Text>\n        <Text>Row 4</Text>\n        <Text>Row 5</Text>\n        <Text>Row 6</Text>\n        <Text>Row 7</Text>\n        <Text>Row 8</Text>\n        <Text>Row 9</Text>\n        <Text>Row 10</Text>\n        <Text>Row 11</Text>\n        <Text>Row 12</Text>\n      </Stack>\n    </Box>\n  </ScrollArea>\n</Box>"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "orientation: horizontal|vertical|both - scroll direction",
+      "scrollbarVisibility: auto|always - scrollbar display mode",
+      "showFades: boolean - gradient edge indicators"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"],
+    "commonPatterns": [
+      "<ScrollArea orientation=\"horizontal\"><div style={{ display: \"flex\", gap: 8 }}>{items}</div></ScrollArea>",
+      "<ScrollArea style={{ height: 300 }}>{longContent}</ScrollArea>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.867Z"
+  },
+  "cssVariables": [
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-radius-full",
+    "--fui-raw-space-32",
+    "--fui-raw-space-48",
+    "--fui-raw-space-6",
+    "--fui-scrollbar-thumb",
+    "--fui-scrollbar-thumb-hover"
+  ],
+  "attributes": [
+    {
+      "name": "data-orientation",
+      "value": "vertical",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-scroll-x",
+      "value": "none",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-scroll-y",
+      "value": "none",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-scrollbar-visibility",
+      "value": "auto",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "scroll-area",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "scroll-area-viewport",
+      "fixture": "populated"
+    }
+  ]
+}

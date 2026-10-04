@@ -1,179 +1,116 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/target" as target;
 @use "../../recipes/tone" as tone;
+@use "../../recipes/typography" as typography;
 
-// The tone publishes the shared ramp (recipes/_tone.scss); the variant decides
-// which channel paints the surface. Neutral is the absence of a tone class.
-.badge {
-  @include tone.channels-neutral(secondary);
+@layer fui.tokens, fui.base, fui.components;
 
-  display: inline-flex;
-  align-items: center;
-  box-sizing: border-box;
-  inline-size: max-content;
-  gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  padding-block: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
-  border-radius: var(--fui-badge-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-  white-space: nowrap;
-}
+@layer fui.components {
+  // One badge: the 20px step, the indicator corner, 11/550. The tone class
+  // publishes the shared ramp (recipes/_tone.scss); neutral is the absence of
+  // a tone class and paints the band with secondary ink.
+  .badge {
+    --_fui-tone-tint: var(--fui-bg-secondary, #{$fui-bg-secondary});
+    --_fui-tone-tint-hover: var(--fui-bg-active, #{$fui-bg-active});
+    --_fui-tone-ink: var(--fui-text-secondary, #{$fui-text-secondary});
 
-// Sizes
-.sm {
-  @include representation.badge("sm");
+    @include typography.role("ui-compact");
 
-  padding-inline: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-}
-
-.md {
-  @include representation.badge("md");
-
-  padding-inline: var(--fui-raw-space-6, #{measurements.raw-space(6)});
-}
-
-.lg {
-  @include representation.badge("lg");
-
-  padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-}
-
-// Tones
-.toneAccent {
-  @include tone.channels("accent");
-}
-
-.toneInfo {
-  @include tone.channels("info");
-}
-
-.toneSuccess {
-  @include tone.channels("success");
-}
-
-.toneWarning {
-  @include tone.channels("warning");
-}
-
-.toneDanger {
-  @include tone.channels("danger");
-}
-
-// Variants
-.soft {
-  background-color: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
-}
-
-.outline {
-  background-color: transparent;
-  border-color: var(--_fui-tone-line, var(--fui-border-strong, #{$fui-border-strong}));
-  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
-}
-
-// Filter-pill chrome: transparent at rest, `active` wears the shared selected
-// surface. Tones colour the ink only.
-.ghost {
-  border-radius: var(--fui-radius-l3, #{$fui-radius-l3});
-  background-color: transparent;
-  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
-  transition:
-    color var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &.active {
-    border-color: var(--fui-border, $fui-border);
-    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-    color: var(--fui-text-primary, $fui-text-primary);
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: representation.badge-track("sm");
+    padding-inline: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    border-radius: var(--fui-radius-indicator, #{$fui-radius-indicator});
+    background-color: var(--_fui-tone-tint, var(--fui-bg-secondary, #{$fui-bg-secondary}));
+    color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
+    vertical-align: middle;
+    white-space: nowrap;
   }
-}
 
-.dot {
-  inline-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
-  block-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
-  border-radius: var(--fui-radius-full, #{$fui-radius-full});
-  background-color: var(--fui-badge-dot-color, currentColor);
-  flex-shrink: 0;
-
-  .sm & {
-    inline-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-    block-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  .toneAccent {
+    @include tone.channels("accent");
   }
-}
 
-// "Still happening", as distinct from "is in this state". A live badge and a
-// settled one are otherwise the same object, and the difference between them is
-// the one thing a status board is scanned for — so it is carried by the only
-// motion the component has. Opacity only: nothing reflows, and a reader who has
-// asked for less motion loses the breathing and keeps the badge.
-.dotPulse {
-  animation: fui-badge-dot-pulse var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out infinite;
-}
-
-@keyframes fui-badge-dot-pulse {
-  50% {
-    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+  .toneInfo {
+    @include tone.channels("info");
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .dotPulse {
-    animation: none;
+  .toneSuccess {
+    @include tone.channels("success");
   }
-}
 
-.icon {
-  display: inline-flex;
-  align-items: center;
+  .toneWarning {
+    @include tone.channels("warning");
+  }
 
-  .sm & {
+  .toneDanger {
+    @include tone.channels("danger");
+  }
+
+  // A long label truncates inside its container; the badge never wraps.
+  .label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dot {
+    flex: 0 0 auto;
+    inline-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    block-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    border-radius: var(--fui-radius-full, #{$fui-radius-full});
+    background-color: currentColor;
+  }
+
+  .icon {
     @include representation.glyph("xs");
+
+    display: inline-flex;
+    align-items: center;
+
+    > svg {
+      inline-size: 100%;
+      block-size: 100%;
+    }
   }
 
-  .md & {
-    @include representation.glyph("sm");
+  .badge:has(.remove) {
+    padding-inline-end: var(--fui-raw-space-2, #{measurements.raw-space(2)});
   }
 
-  .lg & {
-    @include representation.glyph("md");
-  }
+  // Remove: a 16px glyph tile inside the badge, the tone's hover tint behind
+  // it where the pointer can hover, and the 24/44 hit area drawn around it.
+  .remove {
+    @include action.base;
+    @include action.inline;
+    @include action.motion;
+    @include target.hit-area("micro");
 
-  > svg {
-    inline-size: 100%;
-    block-size: 100%;
-  }
-}
+    inline-size: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    block-size: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    border: 0;
+    border-radius: var(--fui-radius-indicator, #{$fui-radius-indicator});
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
 
-.badge:has(.remove) {
-  padding-inline-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-}
+    > svg {
+      @include representation.glyph("xs");
+    }
 
-.remove {
-  @include action.base;
-  @include action.inline;
-  @include target.hit-area("compact");
+    @include action.hover {
+      background-color: var(--_fui-tone-tint-hover, var(--fui-bg-active, #{$fui-bg-active}));
+    }
 
-  inline-size: 1em;
-  block-size: 1em;
-  margin-inline-start: calc(-1 * var(--fui-raw-space-2, #{measurements.raw-space(2)}));
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  border: 0;
-  background: transparent;
-  color: color-mix(in srgb, currentColor 60%, transparent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  cursor: pointer;
-
-  &:hover {
-    color: currentColor;
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-
-    color: currentColor;
+    @include focus.visible;
   }
 }

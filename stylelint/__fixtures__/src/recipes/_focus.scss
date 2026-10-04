@@ -1,0 +1,11 @@
+// The focus recipe is the one place an outline may be removed: a delegated ring
+// is drawn by another box (stylelint/doctrine.test.ts expects silence here).
+@mixin delegated {
+  outline: none;
+}
+
+@mixin highlight-row {
+  &:focus-visible {
+    @include delegated;
+  }
+}

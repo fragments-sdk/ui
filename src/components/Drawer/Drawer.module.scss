@@ -1,308 +1,127 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/action" as action;
 @use "../../recipes/overlay" as overlay;
 
-.backdrop {
-  @include overlay.backdrop;
+@layer fui.tokens, fui.base, fui.components;
 
-  opacity: 0;
-  transition: opacity var(--fui-transition-normal, $fui-transition-normal);
-
-  &[data-open] {
-    opacity: 1;
+// The Dialog sheet on an edge: the same raised plane, header, body and footer,
+// inset from the viewport by the safe-area frame. It fades like a dialog and
+// moves only under a swipe, settling back along `transform` when a swipe is
+// let go short of dismissing.
+@layer fui.components {
+  .backdrop {
+    @include overlay.backdrop;
+    @include overlay.motion;
   }
 
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-  }
-}
+  .viewport {
+    @include overlay.safe-viewport;
 
-.viewport {
-  @include overlay.safe-viewport;
-
-  position: fixed;
-  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
-  inset: 0;
-  pointer-events: none;
-
-  &[data-open] {
-    pointer-events: auto;
-  }
-}
-
-.popup {
-  @include overlay.modal-shell;
-
-  position: fixed;
-  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
-  display: flex;
-  flex-direction: column;
-  pointer-events: auto;
-  opacity: 0;
-  transition:
-    opacity var(--fui-transition-normal, $fui-transition-normal),
-    transform var(--fui-transition-normal, $fui-transition-normal);
-
-  &[data-open] {
-    opacity: 1;
-    transform: translate(0, 0);
-  }
-}
-
-.content {
-  display: flex;
-  min-block-size: 0;
-  block-size: 100%;
-  flex-direction: column;
-}
-
-.side-right {
-  @include overlay.side-panel-geometry("end");
-
-  transform: translateX(
-    calc(#{overlay.side-panel-offscreen("end")} + var(--drawer-swipe-movement-x, 0px))
-  );
-
-  &[data-open] {
-    transform: translateX(var(--drawer-swipe-movement-x, 0px));
+    position: fixed;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
+    inset: 0;
+    pointer-events: none;
   }
 
-  &[data-starting-style],
-  &[data-ending-style] {
-    transform: translateX(overlay.side-panel-offscreen("end"));
-  }
-}
-
-.side-left {
-  @include overlay.side-panel-geometry("start");
-
-  transform: translateX(
-    calc(#{overlay.side-panel-offscreen("start")} + var(--drawer-swipe-movement-x, 0px))
-  );
-
-  &[data-open] {
-    transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    transform: translateX(overlay.side-panel-offscreen("start"));
-  }
-}
-
-.side-top {
-  inset-block-start: var(
-    --_fui-overlay-safe-top,
-    var(--fui-raw-space-16, #{measurements.raw-space(16)})
-  );
-  inset-inline: var(
-      --_fui-overlay-safe-left,
-      var(--fui-raw-space-16, #{measurements.raw-space(16)})
-    )
-    var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  transform: translateY(
-    calc(#{overlay.side-panel-offscreen("top")} + var(--drawer-swipe-movement-y, 0px))
-  );
-
-  &[data-open] {
-    transform: translateY(var(--drawer-swipe-movement-y, 0px));
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    transform: translateY(overlay.side-panel-offscreen("top"));
-  }
-}
-
-.side-bottom {
-  inset-block-end: var(
-    --_fui-overlay-safe-bottom,
-    var(--fui-raw-space-16, #{measurements.raw-space(16)})
-  );
-  inset-inline: var(
-      --_fui-overlay-safe-left,
-      var(--fui-raw-space-16, #{measurements.raw-space(16)})
-    )
-    var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  transform: translateY(
-    calc(#{overlay.side-panel-offscreen("bottom")} + var(--drawer-swipe-movement-y, 0px))
-  );
-
-  &[data-open] {
-    transform: translateY(var(--drawer-swipe-movement-y, 0px));
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    transform: translateY(overlay.side-panel-offscreen("bottom"));
-  }
-}
-
-.popup[data-swiping] {
-  transition-duration: 0s;
-}
-
-.side-left,
-.side-right {
-  &.width-sm {
-    inline-size: min(
-      #{overlay.drawer-inline("sm")},
-      var(
-        --_fui-overlay-safe-inline,
-        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-md {
-    inline-size: min(
-      #{overlay.drawer-inline("md")},
-      var(
-        --_fui-overlay-safe-inline,
-        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-lg {
-    inline-size: min(
-      #{overlay.drawer-inline("lg")},
-      var(
-        --_fui-overlay-safe-inline,
-        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-xl {
-    inline-size: min(
-      #{overlay.drawer-inline("xl")},
-      var(
-        --_fui-overlay-safe-inline,
-        calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-full {
-    inline-size: var(
-      --_fui-overlay-safe-inline,
-      calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-    );
-  }
-}
-
-.side-top,
-.side-bottom {
-  &.width-sm {
-    block-size: min(
-      #{overlay.drawer-block("sm")},
-      var(
-        --_fui-overlay-safe-block,
-        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-md {
-    block-size: min(
-      #{overlay.drawer-block("md")},
-      var(
-        --_fui-overlay-safe-block,
-        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-lg {
-    block-size: min(
-      #{overlay.drawer-block("lg")},
-      var(
-        --_fui-overlay-safe-block,
-        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-xl {
-    block-size: min(
-      #{overlay.drawer-block("xl")},
-      var(
-        --_fui-overlay-safe-block,
-        calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-      )
-    );
-  }
-
-  &.width-full {
-    block-size: var(
-      --_fui-overlay-safe-block,
-      calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-    );
-  }
-}
-
-.header {
-  @include overlay.header;
-}
-
-.title {
-  @include overlay.modal-title;
-
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-.description {
-  @include overlay.description;
-
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.body {
-  @include overlay.body;
-
-  min-block-size: 0;
-  flex: 1;
-  overflow: auto;
-}
-
-.footer {
-  @include overlay.footer;
-}
-
-.close {
-  @include button-reset;
-  @include interactive-base;
-  @include overlay.close;
-}
-
-.popup:has(.close) .header {
-  padding-inline-end: calc(
-    var(--fui-overlay-close-inset, var(--fui-raw-space-12, #{measurements.raw-space(12)})) +
-      #{action.track("sm")} +
-      var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
-  );
-}
-
-.swipeArea {
-  position: fixed;
-  z-index: var(--fui-overlay-layer-swipe, #{$fui-overlay-layer-swipe});
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .backdrop,
   .popup {
-    transition: none;
+    @include overlay.modal-shell;
+
+    position: fixed;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
+    pointer-events: auto;
+
+    @include overlay.motion($also: transform);
+
+    &[data-swiping] {
+      transition-duration: 0s;
+    }
   }
 
-  .popup,
-  .popup[data-starting-style],
-  .popup[data-ending-style] {
-    transform: none;
+  .content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+
+  .start,
+  .end {
+    @include overlay.side-panel-geometry("end");
+
+    transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  }
+
+  .start {
+    inset-inline: var(
+        --_fui-overlay-safe-left,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      )
+      auto;
+  }
+
+  .bottom {
+    inset-block-end: var(
+      --_fui-overlay-safe-bottom,
+      var(--fui-raw-space-16, #{measurements.raw-space(16)})
+    );
+    inset-inline: var(
+        --_fui-overlay-safe-left,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      )
+      var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  }
+
+  $_safe-inline: var(
+    --_fui-overlay-safe-inline,
+    calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+  );
+  $_safe-block: var(
+    --_fui-overlay-safe-block,
+    calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+  );
+
+  @each $size in sm, md, lg {
+    .start.#{$size},
+    .end.#{$size} {
+      inline-size: min(#{overlay.drawer-inline($size)}, #{$_safe-inline});
+    }
+
+    .bottom.#{$size} {
+      block-size: min(#{overlay.drawer-block($size)}, #{$_safe-block});
+    }
+  }
+
+  .header {
+    @include overlay.header;
+  }
+
+  .title {
+    @include overlay.modal-title;
+  }
+
+  .description {
+    @include overlay.description;
+  }
+
+  .body {
+    @include overlay.body;
+  }
+
+  .footer {
+    @include overlay.footer;
+  }
+
+  .close {
+    @include overlay.modal-close;
+  }
+
+  .popup:has(.close) .header {
+    @include overlay.header-beside-close;
+  }
+
+  .swipeArea {
+    position: fixed;
+    z-index: var(--fui-overlay-layer-swipe, #{$fui-overlay-layer-swipe});
   }
 }

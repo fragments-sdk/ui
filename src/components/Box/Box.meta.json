@@ -1,0 +1,166 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Box",
+  "description": "Places content on a chosen plane with optional borders, corners and inset spacing.",
+  "category": "layout",
+  "tags": ["layout", "container", "plane", "surface", "primitive", "box"],
+  "status": "stable",
+  "sourcePath": "src/components/Box/index.tsx",
+  "exportName": "Box",
+  "propsSummary": [
+    "children: node",
+    "as: div|section|article|aside|main|header|footer|nav|span (default: div)",
+    "plane: canvas|band|surface|raised",
+    "border: boolean|block-start|block-end",
+    "radius: none|control|nested|surface",
+    "inset: none|compact|default",
+    "className: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Content to render inside the box",
+      "required": false
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "div",
+      "required": false,
+      "values": ["div", "section", "article", "aside", "main", "header", "footer", "nav", "span"]
+    },
+    "plane": {
+      "type": "enum",
+      "description": "The plane the box paints: canvas (page floor), band (recessed strip), surface (card plane) or raised (lifted plane). Omit for a transparent box.",
+      "required": false,
+      "values": ["canvas", "band", "surface", "raised"]
+    },
+    "border": {
+      "type": "union",
+      "description": "The one hairline: true on every side, or a single logical block side.",
+      "required": false,
+      "values": ["true", "false", "block-start", "block-end"]
+    },
+    "radius": {
+      "type": "enum",
+      "description": "Corner role. nested is the concentric corner for a box inset inside a surface.",
+      "required": false,
+      "values": ["none", "control", "nested", "surface"]
+    },
+    "inset": {
+      "type": "enum",
+      "description": "Inner inset from the surface inset recipe: compact (12) or default (16).",
+      "required": false,
+      "values": ["none", "compact", "default"]
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class; use it for one-off sizing",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Putting a region on a named plane: canvas, band, surface or raised",
+      "A hairline-separated strip or a bordered region without Card's header and footer",
+      "Rendering a semantic element with the surface inset"
+    ],
+    "whenNot": [
+      "Spacing a row or column of siblings (use Stack)",
+      "Two-dimensional layouts (use Grid)",
+      "Header/body/footer surfaces (use Card)",
+      "Ink and type (use Text)",
+      "Scrolling regions (use ScrollArea)",
+      "State callouts (use Alert)",
+      "Lifting a box with a shadow: only floating surfaces cast shadow"
+    ],
+    "guidelines": [
+      "Pick the plane by role, never by colour: canvas is the page floor, band a recessed strip, surface the card plane, raised a lifted plane",
+      "Use radius=\"nested\" for a box inside a surface so the corners stay concentric",
+      "Parent owns spacing: put Boxes in a Stack with a gap instead of adding margins",
+      "Size a Box with className when it must be fixed; the props carry no raw dimensions"
+    ],
+    "accessibility": [
+      "Choose a semantic as value (section, aside, nav) for landmark regions",
+      "A plane is decoration: never let it carry meaning on its own"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Band",
+      "description": "A recessed strip on the band plane with the compact inset.",
+      "code": "<Box plane=\"band\" radius=\"control\" inset=\"compact\">\n  Recessed strip on the band plane\n</Box>"
+    },
+    {
+      "name": "Surface",
+      "description": "A bordered region on the surface plane.",
+      "code": "<Box plane=\"surface\" border radius=\"surface\" inset=\"default\">\n  Bordered region on the surface plane\n</Box>"
+    },
+    {
+      "name": "Nested",
+      "description": "A band tile inside a surface keeps its corners concentric.",
+      "code": "import { Box } from '@/components/Box';\n\n<Box plane=\"surface\" border radius=\"surface\" inset=\"compact\">\n  <Box plane=\"band\" radius=\"nested\" inset=\"compact\">\n    Inner tile at the nested corner\n  </Box>\n</Box>"
+    },
+    {
+      "name": "Block Border",
+      "description": "A single hairline on one logical side divides two strips.",
+      "code": "<Box border=\"block-end\" inset=\"compact\">\n  Hairline below only\n</Box>"
+    },
+    {
+      "name": "Planes",
+      "description": "The four planes side by side.",
+      "code": "import { Box } from '@/components/Box';\nimport { Stack } from '@/components/Stack';\n\n<Box plane=\"canvas\" inset=\"default\">\n  <Stack gap=\"sm\">\n    <Box plane=\"band\" radius=\"control\" inset=\"compact\">Band</Box>\n    <Box plane=\"surface\" border radius=\"surface\" inset=\"compact\">Surface</Box>\n    <Box plane=\"raised\" border radius=\"surface\" inset=\"compact\">Raised</Box>\n  </Stack>\n</Box>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Stack",
+      "relationship": "alternative",
+      "note": "Use Stack for directional layouts with gap"
+    },
+    {
+      "component": "Grid",
+      "relationship": "alternative",
+      "note": "Use Grid for column-based layouts"
+    },
+    {
+      "component": "Card",
+      "relationship": "alternative",
+      "note": "Use Card for content containers with structure"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "as: div|section|article|... - HTML element",
+      "plane: canvas|band|surface|raised - the plane painted",
+      "border: boolean|block-start|block-end - the one hairline",
+      "radius: none|control|nested|surface - corner role",
+      "inset: none|compact|default - surface inset",
+      "All standard HTMLElement props are forwarded to the rendered element"
+    ],
+    "a11yRules": ["A11Y_SEMANTIC_HTML"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.126Z"
+  },
+  "cssVariables": [
+    "--fui-app-canvas-bg",
+    "--fui-bg-elevated",
+    "--fui-bg-primary",
+    "--fui-bg-secondary",
+    "--fui-border",
+    "--fui-radius-control",
+    "--fui-radius-none",
+    "--fui-radius-surface",
+    "--fui-stroke-hairline",
+    "--fui-text-primary"
+  ],
+  "attributes": []
+}

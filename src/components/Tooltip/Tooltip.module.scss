@@ -1,77 +1,43 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/overlay" as overlay;
+@use "../../recipes/popup" as popup;
+@use "../../recipes/typography" as typography;
 
-.positioner {
-  z-index: var(--fui-overlay-layer-tooltip, #{$fui-overlay-layer-tooltip});
-  pointer-events: none;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.popup {
-  @include overlay.tooltip;
-
-  overflow-wrap: break-word;
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1);
+// The one inverse floating surface: no edge, no arrow, opens and closes at
+// once. A shortcut follows the text at the regular weight.
+@layer fui.components {
+  .positioner {
+    z-index: var(--fui-overlay-layer-tooltip, #{$fui-overlay-layer-tooltip});
+    pointer-events: none;
   }
 
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  &[data-instant] {
-    transition-duration: 0ms;
-  }
-}
-
-.arrow {
-  @include overlay.arrow-box;
-
-  background-color: var(--fui-bg-inverse, $fui-bg-inverse);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-bg-inverse, $fui-bg-inverse);
-
-  &[data-side="top"] {
-    bottom: calc(
-      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
-    );
-  }
-
-  &[data-side="bottom"] {
-    top: calc(
-      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
-    );
-  }
-
-  &[data-side="left"] {
-    right: calc(
-      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
-    );
-  }
-
-  &[data-side="right"] {
-    left: calc(
-      var(--fui-overlay-arrow-size, var(--fui-raw-space-10, #{measurements.raw-space(10)})) / -2
-    );
-  }
-}
-
-.trigger {
-  display: inline-flex;
-}
-
-@media (prefers-reduced-motion: reduce) {
   .popup {
-    transition: none;
+    @include overlay.tooltip;
+
+    overflow-wrap: break-word;
+
+    @include popup.motion;
+  }
+
+  .shortcut {
+    margin-inline-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    font: inherit;
+    font-weight: typography.weight("caption");
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+    white-space: nowrap;
+  }
+
+  // Carries the hover for a disabled control, which takes no pointer events.
+  .disabledHost {
+    display: inline-flex;
+    cursor: not-allowed;
+
+    > * {
+      pointer-events: none;
+    }
   }
 }

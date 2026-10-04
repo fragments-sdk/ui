@@ -1,209 +1,92 @@
 @use "../../recipes/layout";
-@use "../../tokens/mixins" as *;
 @use "../../tokens/variables" as *;
-@use "../../tokens/measurements.generated" as measurements;
 
-.stack {
-  display: flex;
-  gap: var(--fui-stack-gap, #{layout.gap("md")});
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Direction
-.row {
-  flex-direction: row;
-}
-
-.column {
-  flex-direction: column;
-}
-
-// Responsive direction
-.directionResponsive {
-  flex-direction: var(--fui-stack-direction, column);
-
-  @include breakpoint-sm {
-    flex-direction: var(--fui-stack-direction-sm, var(--fui-stack-direction, column));
+@layer fui.components {
+  .stack {
+    display: flex;
+    gap: layout.gap("md");
   }
 
-  @include breakpoint-md {
-    flex-direction: var(
-      --fui-stack-direction-md,
-      var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
-    );
+  // Direction
+  .row {
+    flex-direction: row;
   }
 
-  @include breakpoint-lg {
-    flex-direction: var(
-      --fui-stack-direction-lg,
-      var(
-        --fui-stack-direction-md,
-        var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
-      )
-    );
+  .column {
+    flex-direction: column;
   }
 
-  @include breakpoint-xl {
-    flex-direction: var(
-      --fui-stack-direction-xl,
-      var(
-        --fui-stack-direction-lg,
-        var(
-          --fui-stack-direction-md,
-          var(--fui-stack-direction-sm, var(--fui-stack-direction, column))
-        )
-      )
-    );
-  }
-}
-
-// Responsive gap
-.gapResponsive {
-  gap: var(--fui-stack-gap, #{layout.gap("none")});
-
-  @include breakpoint-sm {
-    gap: var(--fui-stack-gap-sm, var(--fui-stack-gap, 0));
+  // Gap: the one layout scale (0, 4, 8, 12, 16, 24).
+  @each $gap in ("none", "xs", "sm", "md", "lg", "xl") {
+    .gap-#{$gap} {
+      gap: layout.gap($gap);
+    }
   }
 
-  @include breakpoint-md {
-    gap: var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)));
+  // Align (cross-axis)
+  .align-start {
+    align-items: flex-start;
   }
 
-  @include breakpoint-lg {
-    gap: var(
-      --fui-stack-gap-lg,
-      var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))
-    );
+  .align-center {
+    align-items: center;
   }
 
-  @include breakpoint-xl {
-    gap: var(
-      --fui-stack-gap-xl,
-      var(
-        --fui-stack-gap-lg,
-        var(--fui-stack-gap-md, var(--fui-stack-gap-sm, var(--fui-stack-gap, 0)))
-      )
-    );
-  }
-}
-
-// Align (cross-axis)
-.align-start {
-  align-items: flex-start;
-}
-
-.align-center {
-  align-items: center;
-}
-
-.align-end {
-  align-items: flex-end;
-}
-
-.align-stretch {
-  align-items: stretch;
-}
-
-.align-baseline {
-  align-items: baseline;
-}
-
-// Justify (main-axis)
-.justify-start {
-  justify-content: flex-start;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-end {
-  justify-content: flex-end;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-// Wrap
-.wrap {
-  flex-wrap: wrap;
-}
-
-// Separator
-.separator {
-  flex-shrink: 0;
-  background-color: var(--fui-border, $fui-border);
-
-  &[data-orientation="horizontal"] {
-    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    width: 100%;
+  .align-end {
+    align-items: flex-end;
   }
 
-  &[data-orientation="vertical"] {
-    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    align-self: stretch;
-  }
-}
-
-.directionResponsive[data-direction-base="row"] > .separator {
-  width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-  height: auto;
-  align-self: stretch;
-}
-
-.directionResponsive[data-direction-base="column"] > .separator {
-  width: 100%;
-  height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-}
-
-@include breakpoint-sm {
-  .directionResponsive[data-direction-sm="row"] > .separator {
-    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    height: auto;
-    align-self: stretch;
+  .align-stretch {
+    align-items: stretch;
   }
 
-  .directionResponsive[data-direction-sm="column"] > .separator {
-    width: 100%;
-    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-  }
-}
-
-@include breakpoint-md {
-  .directionResponsive[data-direction-md="row"] > .separator {
-    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    height: auto;
-    align-self: stretch;
+  .align-baseline {
+    align-items: baseline;
   }
 
-  .directionResponsive[data-direction-md="column"] > .separator {
-    width: 100%;
-    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-  }
-}
-
-@include breakpoint-lg {
-  .directionResponsive[data-direction-lg="row"] > .separator {
-    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    height: auto;
-    align-self: stretch;
+  // Justify (main-axis)
+  .justify-start {
+    justify-content: flex-start;
   }
 
-  .directionResponsive[data-direction-lg="column"] > .separator {
-    width: 100%;
-    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-  }
-}
-
-@include breakpoint-xl {
-  .directionResponsive[data-direction-xl="row"] > .separator {
-    width: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-    height: auto;
-    align-self: stretch;
+  .justify-center {
+    justify-content: center;
   }
 
-  .directionResponsive[data-direction-xl="column"] > .separator {
-    width: 100%;
-    height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+  .justify-end {
+    justify-content: flex-end;
+  }
+
+  .justify-between {
+    justify-content: space-between;
+  }
+
+  // Wrap
+  .wrap {
+    flex-wrap: wrap;
+  }
+
+  // Collapse: children share the row while the Stack is at least
+  // --_fui-stack-collapse wide and take a full line each below it. The basis
+  // flips sign at the threshold, so the Stack answers its own width with no
+  // query and no ancestor container.
+  .collapse {
+    flex-wrap: wrap;
+
+    > * {
+      flex-grow: 1;
+      flex-basis: calc((var(--_fui-stack-collapse) - 100%) * 999);
+    }
+  }
+
+  // A divider inside a list: a hidden li that only carries the Separator.
+  .divider {
+    display: flex;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 }

@@ -1,0 +1,6 @@
+// A popup recipe reads only the popup roles (stylelint/doctrine.test.ts).
+@mixin motion {
+  transition-duration: var(--fui-duration-enter);
+  transition-duration: var(--fui-duration-normal);
+  scale: var(--fui-popup-from);
+}

@@ -1,37 +1,42 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Alert } from '.';
+import * as React from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { Alert } from ".";
+import { Button } from "../Button";
+import { Card } from "../Card";
+import { Stack } from "../Stack";
 
 /**
- * Alert surfaces contextual feedback messages tied to user actions or system
- * status. It is a compound component: compose Alert.Icon, Alert.Body,
- * Alert.Title, Alert.Content, Alert.Actions, Alert.Action, and Alert.Close.
+ * Alert marks an inline state the reader should act on. The tone spends its
+ * colour on the tint fill, the icon and the title; body copy stays ink 1. It is
+ * a compound component: compose Alert.Icon, Alert.Body, Alert.Title,
+ * Alert.Content, Alert.Actions, Alert.Action and Alert.Close.
  */
 const meta = {
-  title: 'Feedback/Alert',
+  title: "Feedback/Alert",
   component: Alert,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component:
-          'Contextual feedback messages for user actions or system status with tones.',
+          "An inline state worth stopping for: information, a warning or an error, with one way forward.",
       },
     },
   },
   argTypes: {
     tone: {
-      control: 'select',
-      options: ['info', 'success', 'warning', 'danger'],
-      description: 'Tone',
+      control: "select",
+      options: ["info", "warning", "danger"],
+      description: "Tone",
     },
   },
   args: {
-    tone: 'info',
+    tone: "info",
     children: (
       <>
         <Alert.Icon />
         <Alert.Body>
-          <Alert.Content>Your session will expire in 15 minutes.</Alert.Content>
+          <Alert.Content>The next check runs at 15:00.</Alert.Content>
         </Alert.Body>
       </>
     ),
@@ -47,21 +52,8 @@ export const Info: Story = {
     <Alert tone="info">
       <Alert.Icon />
       <Alert.Body>
-        <Alert.Content>
-          Your session will expire in 15 minutes. Save your work to avoid losing changes.
-        </Alert.Content>
-      </Alert.Body>
-    </Alert>
-  ),
-};
-
-export const Success: Story = {
-  render: () => (
-    <Alert tone="success">
-      <Alert.Icon />
-      <Alert.Body>
-        <Alert.Title>Payment processed</Alert.Title>
-        <Alert.Content>Your order #12345 has been confirmed.</Alert.Content>
+        <Alert.Title>Scan scheduled</Alert.Title>
+        <Alert.Content>The next check runs at 15:00 against the main branch.</Alert.Content>
       </Alert.Body>
     </Alert>
   ),
@@ -72,8 +64,8 @@ export const Warning: Story = {
     <Alert tone="warning">
       <Alert.Icon />
       <Alert.Body>
-        <Alert.Title>Storage almost full</Alert.Title>
-        <Alert.Content>You have used 90% of your storage quota.</Alert.Content>
+        <Alert.Title>Contract out of date</Alert.Title>
+        <Alert.Content>Two token files changed since the last approval.</Alert.Content>
       </Alert.Body>
     </Alert>
   ),
@@ -84,24 +76,25 @@ export const Error: Story = {
     <Alert tone="danger">
       <Alert.Icon />
       <Alert.Body>
-        <Alert.Title>Upload failed</Alert.Title>
-        <Alert.Content>The file could not be uploaded. Try again.</Alert.Content>
+        <Alert.Title>The check could not run</Alert.Title>
+        <Alert.Content>The workflow token expired on 2 October.</Alert.Content>
       </Alert.Body>
     </Alert>
   ),
 };
 
-export const WithAction: Story = {
+export const WithActions: Story = {
   render: () => (
     <Alert tone="warning">
       <Alert.Icon />
       <Alert.Body>
-        <Alert.Title>Update available</Alert.Title>
-        <Alert.Content>A new version is available with security fixes.</Alert.Content>
-        <Alert.Actions>
-          <Alert.Action onClick={() => {}}>Update now</Alert.Action>
-        </Alert.Actions>
+        <Alert.Title>Contract out of date</Alert.Title>
+        <Alert.Content>Review the changed token files before the next merge.</Alert.Content>
       </Alert.Body>
+      <Alert.Actions>
+        <Alert.Action>Review changes</Alert.Action>
+        <Alert.Action>Snooze</Alert.Action>
+      </Alert.Actions>
     </Alert>
   ),
 };
@@ -111,9 +104,54 @@ export const Dismissible: Story = {
     <Alert tone="info">
       <Alert.Icon />
       <Alert.Body>
-        <Alert.Content>You can customize notification preferences in Settings.</Alert.Content>
+        <Alert.Content>Repository connected. The first scan starts shortly.</Alert.Content>
       </Alert.Body>
       <Alert.Close />
     </Alert>
+  ),
+};
+
+export const Controlled: Story = {
+  render: function ControlledStory() {
+    const [open, setOpen] = React.useState(true);
+    return (
+      <Stack gap="sm">
+        <Alert tone="info" open={open} onOpenChange={setOpen}>
+          <Alert.Icon />
+          <Alert.Body>
+            <Alert.Content>The scan finished with no new findings.</Alert.Content>
+          </Alert.Body>
+          <Alert.Close />
+        </Alert>
+        {!open && (
+          <div>
+            <Button variant="soft" size="sm" onClick={() => setOpen(true)}>
+              Show the notice again
+            </Button>
+          </div>
+        )}
+      </Stack>
+    );
+  },
+};
+
+export const InsideACard: Story = {
+  render: () => (
+    <Card>
+      <Card.Header>
+        <Card.Title>Workflow</Card.Title>
+      </Card.Header>
+      <Card.Body>
+        <Alert tone="danger">
+          <Alert.Icon />
+          <Alert.Body>
+            <Alert.Content>The workflow token expired. Renew it to resume checks.</Alert.Content>
+          </Alert.Body>
+          <Alert.Actions>
+            <Alert.Action>Renew token</Alert.Action>
+          </Alert.Actions>
+        </Alert>
+      </Card.Body>
+    </Card>
   ),
 };

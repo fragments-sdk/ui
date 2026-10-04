@@ -81,13 +81,14 @@
   @error "Unknown activity size '#{$size}'. Expected sm, md, lg, or xl.";
 }
 
+// The badge owns one step of its own; md and lg sit on the control heights.
 @function badge-track($size) {
   @if $size == "sm" {
-    @return var(--fui-badge-track-sm, #{_raw(20)});
+    @return var(--fui-badge-track-sm, #{measurements.target-value("badgeTrack", "sm")});
   } @else if $size == "md" {
-    @return var(--fui-badge-track-md, #{_raw(24)});
+    @return action.track("micro");
   } @else if $size == "lg" {
-    @return var(--fui-badge-track-lg, #{action.track("sm")});
+    @return action.track("sm");
   }
 
   @error "Unknown badge size '#{$size}'. Expected sm, md, or lg.";
@@ -133,34 +134,12 @@
   flex: 0 0 auto;
 }
 
-@mixin skeleton($kind, $size) {
-  @if $kind == "avatar" {
-    @if $size == "sm" {
-      inline-size: avatar-size("sm");
-      block-size: avatar-size("sm");
-    } @else if $size == "md" {
-      inline-size: avatar-size("md");
-      block-size: avatar-size("md");
-    } @else if $size == "lg" {
-      inline-size: avatar-size("lg");
-      block-size: avatar-size("lg");
-    } @else {
-      @error "Unknown skeleton size '#{$size}'. Expected sm, md, or lg.";
-    }
-  } @else if $kind == "button" or $kind == "field" {
-    @if $size == "sm" or $size == "md" or $size == "lg" {
-      block-size: action.track($size);
-    } @else {
-      @error "Unknown skeleton size '#{$size}'. Expected sm, md, or lg.";
-    }
-  } @else {
-    @error "Unknown skeleton kind '#{$kind}'. Expected avatar, button, or field.";
-  }
-}
-
 @mixin badge($size) {
   @if $size == "sm" {
     @include typography.role("ui-compact");
+
+    // Badges take the strong weight; the compact role is regular.
+    font-weight: typography.weight("ui-standard");
   } @else if $size == "md" or $size == "lg" {
     @include typography.role("ui-standard");
   } @else {
@@ -188,7 +167,10 @@
 
   --_fui-chart-tooltip-item-gap: #{_raw(8)};
 
-  min-inline-size: var(--fui-layout-measure-inline-floor, #{measurements.target-value("layoutMeasure", "inline-floor")});
+  min-inline-size: var(
+    --fui-layout-measure-inline-floor,
+    #{measurements.target-value("layoutMeasure", "inline-floor")}
+  );
   padding-block: _raw(8);
   padding-inline: _raw(12);
 }

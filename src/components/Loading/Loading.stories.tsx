@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Loading } from ".";
 
 /**
- * Loading indicator for showing progress or waiting states. Offers spinner,
- * dots, pulse, and Fragments draw-on kinds plus `Loading.Inline` and `Loading.Screen` helpers.
+ * One 16px spinner in the surrounding ink. Nothing shows for the first second
+ * (`delay`); the stories pass `delay={0}` so the spinner is visible at once.
  */
 const meta = {
   title: "Feedback/Loading",
@@ -12,35 +12,18 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "Loading indicator with spinner, dots, pulse, and Fragments draw-on kinds.",
+        component: "One spinner, shown after a second of quiet, in the ink it sits in.",
       },
     },
   },
   argTypes: {
-    size: {
-      control: "select",
-      options: ["sm", "md", "lg", "xl"],
-      description: "Size of the loading indicator",
-    },
-    kind: {
-      control: "select",
-      options: ["spinner", "dots", "pulse", "fragments"],
-      description: "Which animation plays",
-    },
-    color: {
-      control: "select",
-      options: ["accent", "current", "muted"],
-      description: "Colour",
-    },
-    centered: { control: "boolean" },
+    inline: { control: "boolean" },
     fill: { control: "boolean" },
-    overlay: { control: "boolean" },
+    delay: { control: "number" },
   },
   args: {
-    size: "md",
-    kind: "spinner",
-    color: "accent",
-    label: "Loading...",
+    label: "Loading findings",
+    delay: 0,
   },
 } satisfies Meta<typeof Loading>;
 
@@ -48,26 +31,28 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Spinner: Story = {
-  args: { kind: "spinner" },
+export const Default: Story = {};
+
+export const AfterTheDelay: Story = {
+  args: { delay: 1000 },
 };
 
-export const Dots: Story = {
-  args: { kind: "dots" },
+export const Inline: Story = {
+  render: (args) => (
+    <p style={{ margin: 0 }}>
+      Checking the contract <Loading {...args} inline label="Checking the contract" />
+    </p>
+  ),
 };
 
-export const Pulse: Story = {
-  args: { kind: "pulse" },
+export const Fill: Story = {
+  render: (args) => (
+    <div style={{ blockSize: 120, inlineSize: 240 }}>
+      <Loading {...args} fill label="Loading the chart" />
+    </div>
+  ),
 };
 
-export const Large: Story = {
-  args: { kind: "spinner", size: "xl" },
-};
-
-export const Muted: Story = {
-  args: { kind: "spinner", color: "muted" },
-};
-
-export const Fragments: Story = {
-  args: { kind: "fragments", size: "xl", color: "current" },
+export const Screen: Story = {
+  render: () => <Loading.Screen delay={0} label="Opening the workspace" showLabel />,
 };

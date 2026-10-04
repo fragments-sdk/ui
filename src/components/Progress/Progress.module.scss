@@ -2,223 +2,125 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/typography" as typography;
 
-// Root container
-.root {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  inline-size: 100%;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Header with label and value
-.header {
-  @include typography.role("ui-standard");
+// One 4px track on the band at the control radius; the fill is the selection
+// colour, scaled from the start edge. Work not yet counted is a short run that
+// travels the track; under reduced motion it is the whole track at half
+// strength, never a bar parked at the start.
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-}
+@layer fui.components {
+  @keyframes fui-progress-run {
+    from {
+      transform: translateX(-100%);
+    }
 
-// Label text
-.label {
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-// Value display
-.value {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-// Track (background bar)
-.track {
-  position: relative;
-  inline-size: 100%;
-  block-size: var(--_progress-track-size, var(--fui-raw-space-6, #{measurements.raw-space(6)}));
-  overflow: hidden;
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-}
-
-.trackSm {
-  --_progress-track-size: var(
-    --fui-progress-track-sm,
-    var(--fui-raw-space-4, #{measurements.raw-space(4)})
-  );
-}
-
-.trackMd {
-  --_progress-track-size: var(
-    --fui-progress-track-md,
-    var(--fui-raw-space-6, #{measurements.raw-space(6)})
-  );
-}
-
-.trackLg {
-  --_progress-track-size: var(
-    --fui-progress-track-lg,
-    var(--fui-raw-space-8, #{measurements.raw-space(8)})
-  );
-}
-
-// Indicator (filled portion)
-.indicator {
-  block-size: 100%;
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  transition: inline-size var(--fui-transition-normal, $fui-transition-normal);
-}
-
-// Tones (accent is the absence of a tone class)
-.indicatorNeutral {
-  background-color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-.indicatorSuccess {
-  background-color: var(--fui-color-success, $fui-color-success);
-}
-
-.indicatorWarning {
-  background-color: var(--fui-color-warning, $fui-color-warning);
-}
-
-.indicatorDanger {
-  background-color: var(--fui-color-danger, $fui-color-danger);
-}
-
-// Indeterminate animation
-.indicatorIndeterminate {
-  inline-size: 50%;
-  animation: indeterminate var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out infinite;
-}
-
-@keyframes indeterminate {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-// Circular progress. The ring geometry (`--fui-progress-diameter`, `--fui-progress-dash-*`)
-// is authored on the instance from geometry.ts; the md ring is the fallback.
-.circular {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--fui-progress-diameter, var(--fui-raw-space-48, #{measurements.raw-space(48)}));
-  block-size: var(--fui-progress-diameter, var(--fui-raw-space-48, #{measurements.raw-space(48)}));
-}
-
-.circularSvg {
-  inline-size: 100%;
-  block-size: 100%;
-  transform: rotate(-90deg);
-}
-
-.circularTrack {
-  stroke: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  fill: none;
-}
-
-.circularIndicator {
-  stroke: var(--fui-color-accent, $fui-color-accent);
-  fill: none;
-  stroke-linecap: round;
-  transform-origin: center;
-  transition: stroke-dashoffset var(--fui-transition-normal, $fui-transition-normal);
-}
-
-.circularIndicatorNeutral {
-  stroke: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-.circularIndicatorSuccess {
-  stroke: var(--fui-color-success, $fui-color-success);
-}
-
-.circularIndicatorWarning {
-  stroke: var(--fui-color-warning, $fui-color-warning);
-}
-
-.circularIndicatorDanger {
-  stroke: var(--fui-color-danger, $fui-color-danger);
-}
-
-.circularIndicatorIndeterminate {
-  animation: circularIndeterminate var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out
-    infinite;
-}
-
-@keyframes circularIndeterminate {
-  0% {
-    stroke-dashoffset: var(
-      --fui-progress-dash-full,
-      var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    );
-    transform: rotate(0deg);
-  }
-  50% {
-    stroke-dashoffset: var(
-      --fui-progress-dash-quarter,
-      var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    );
-  }
-  100% {
-    stroke-dashoffset: var(
-      --fui-progress-dash-full,
-      var(--fui-raw-space-0, #{measurements.raw-space(0)})
-    );
-    transform: rotate(360deg);
-  }
-}
-
-.circularValue {
-  position: absolute;
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.circularValueCompact {
-  @include typography.role("ui-compact");
-}
-
-.circularValueStandard {
-  @include typography.role("ui-standard");
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .indicator,
-  .circularIndicator {
-    transition: none;
+    to {
+      transform: translateX(340%);
+    }
   }
 
-  .indicatorIndeterminate,
-  .circularIndicatorIndeterminate {
-    animation: none;
-  }
-}
+  @keyframes fui-progress-run-rtl {
+    from {
+      transform: translateX(100%);
+    }
 
-@media (forced-colors: active) {
+    to {
+      transform: translateX(-340%);
+    }
+  }
+
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    inline-size: 100%;
+  }
+
+  // Label and value: 11px in ink 2, the value in tabular figures.
+  .header {
+    @include typography.role("ui-compact");
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+  }
+
+  .label {
+    min-inline-size: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .value {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+  }
+
   .track {
-    background-color: GrayText;
+    position: relative;
+    inline-size: 100%;
+    block-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    overflow: hidden;
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
   }
 
   .indicator {
-    background-color: Highlight;
+    block-size: 100%;
+    background-color: var(--fui-control-checked-bg, #{$fui-control-checked-bg});
+    transform-origin: left center;
+    transition: transform var(--fui-duration-enter-lg, #{$fui-duration-enter-lg})
+      var(--fui-ease-standard, #{$fui-ease-standard});
+
+    &:dir(rtl) {
+      transform-origin: right center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
-  .circularTrack {
-    stroke: GrayText;
+  // Tones (accent is the absence of a tone class)
+  .indicatorNeutral {
+    background-color: var(--fui-bg-inverse, #{$fui-bg-inverse});
   }
 
-  .circularIndicator {
-    stroke: Highlight;
+  .indicatorWarning {
+    background-color: var(--fui-color-warning, #{$fui-color-warning});
+  }
+
+  .indicatorDanger {
+    background-color: var(--fui-color-danger, #{$fui-color-danger});
+  }
+
+  .indicatorIndeterminate {
+    inline-size: 30%;
+    animation: fui-progress-run var(--fui-duration-pulse, #{$fui-duration-pulse})
+      var(--fui-ease-standard, #{$fui-ease-standard}) infinite;
+
+    &:dir(rtl) {
+      animation-name: fui-progress-run-rtl;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      inline-size: 100%;
+      animation: none;
+      opacity: 0.5;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .track {
+      background-color: GrayText;
+    }
+
+    .indicator {
+      background-color: Highlight;
+    }
   }
 }

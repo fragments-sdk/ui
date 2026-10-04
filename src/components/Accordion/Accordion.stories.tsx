@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Accordion } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Accordion } from ".";
 
 /**
  * Accordion presents vertically stacked, collapsible content sections for
@@ -7,36 +7,29 @@ import { Accordion } from '.';
  * Accordion.Trigger, and Accordion.Content inside the root.
  */
 const meta = {
-  title: 'Layout/Accordion',
+  title: "Layout/Accordion",
   component: Accordion,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component:
-          'Vertically stacked, collapsible content sections for progressive disclosure.',
+        component: "Vertically stacked, collapsible content sections for progressive disclosure.",
       },
     },
   },
   argTypes: {
-    type: {
-      control: 'select',
-      options: ['single', 'multiple'],
-      description: 'Whether one or multiple items can be open',
-    },
-    collapsible: {
-      control: 'boolean',
-      description: 'Whether all items can be closed (single mode only)',
+    multiple: {
+      control: "boolean",
+      description: "Let several items stay open at once",
     },
     headingLevel: {
-      control: 'select',
-      options: ['2', '3', '4', '5', '6'],
-      description: 'Semantic heading level for accordion triggers',
+      control: "select",
+      options: ["2", "3", "4", "5", "6"],
+      description: "Semantic heading level for accordion triggers",
     },
   },
   args: {
-    type: 'single',
-    collapsible: true,
+    multiple: false,
     children: (
       <Accordion.Item value="item-1">
         <Accordion.Trigger>Section</Accordion.Trigger>
@@ -52,7 +45,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Single: Story = {
   render: () => (
-    <Accordion type="single" collapsible defaultValue="item-1">
+    <Accordion defaultValue={["item-1"]}>
       <Accordion.Item value="item-1">
         <Accordion.Trigger>What is Fragments UI?</Accordion.Trigger>
         <Accordion.Content>
@@ -73,7 +66,7 @@ export const Single: Story = {
 
 export const Multiple: Story = {
   render: () => (
-    <Accordion type="multiple" defaultValue={['features', 'pricing']}>
+    <Accordion multiple defaultValue={["features", "pricing"]}>
       <Accordion.Item value="features">
         <Accordion.Trigger>Features</Accordion.Trigger>
         <Accordion.Content>Comprehensive components with theming support.</Accordion.Content>
@@ -92,7 +85,7 @@ export const Multiple: Story = {
 
 export const WithDisabledItem: Story = {
   render: () => (
-    <Accordion type="single" collapsible>
+    <Accordion>
       <Accordion.Item value="available">
         <Accordion.Trigger>Available Section</Accordion.Trigger>
         <Accordion.Content>This section can be expanded and collapsed.</Accordion.Content>

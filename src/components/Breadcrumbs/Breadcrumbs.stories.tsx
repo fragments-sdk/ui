@@ -3,9 +3,8 @@ import { Breadcrumbs } from ".";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Breadcrumbs show the current page location within a hierarchy and let users
- * navigate back through parent pages. It is a compound component: compose
- * Breadcrumbs.Item children, marking the last one with `current`.
+ * Breadcrumbs show where the page sits in a hierarchy and link back up it.
+ * Compose Breadcrumbs.Item children; the last one is the current page.
  */
 const meta = {
   title: "Navigation/Breadcrumbs",
@@ -15,18 +14,18 @@ const meta = {
     renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Breadcrumb navigation showing the current page location within a hierarchy.",
+        component: "The trail of pages above the current one. The last item is the current page.",
       },
     },
   },
   argTypes: {
     maxItems: {
       control: "number",
-      description: "Maximum visible items before collapsing middle items with ellipsis",
+      description: "The most items to show; past it, the items after the first fold into a menu",
     },
     label: {
       control: "text",
-      description: "Custom aria-label for the breadcrumb nav landmark",
+      description: "Names the navigation landmark",
     },
   },
   args: {
@@ -34,7 +33,7 @@ const meta = {
       <>
         <Breadcrumbs.Item href="#">Home</Breadcrumbs.Item>
         <Breadcrumbs.Item href="#">Products</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Current Page</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Current page</Breadcrumbs.Item>
       </>
     ),
   },
@@ -50,7 +49,7 @@ export const Default: Story = {
       <Breadcrumbs.Item href="#">Home</Breadcrumbs.Item>
       <Breadcrumbs.Item href="#">Products</Breadcrumbs.Item>
       <Breadcrumbs.Item href="#">Category</Breadcrumbs.Item>
-      <Breadcrumbs.Item current>Current Page</Breadcrumbs.Item>
+      <Breadcrumbs.Item>Current page</Breadcrumbs.Item>
     </Breadcrumbs>
   ),
 };
@@ -62,17 +61,29 @@ export const Collapsed: Story = {
       <Breadcrumbs.Item href="#">Category</Breadcrumbs.Item>
       <Breadcrumbs.Item href="#">Subcategory</Breadcrumbs.Item>
       <Breadcrumbs.Item href="#">Section</Breadcrumbs.Item>
-      <Breadcrumbs.Item current>Current Page</Breadcrumbs.Item>
+      <Breadcrumbs.Item>Current page</Breadcrumbs.Item>
     </Breadcrumbs>
   ),
 };
 
-export const CustomSeparator: Story = {
+export const RouterLinks: Story = {
   render: () => (
-    <Breadcrumbs separator=">">
+    <Breadcrumbs>
+      <Breadcrumbs.Item render={<a href="#workspace" />}>Workspace</Breadcrumbs.Item>
+      <Breadcrumbs.Item render={<a href="#repositories" />}>Repositories</Breadcrumbs.Item>
+      <Breadcrumbs.Item>Overview</Breadcrumbs.Item>
+    </Breadcrumbs>
+  ),
+};
+
+export const LongLabels: Story = {
+  render: () => (
+    <Breadcrumbs>
       <Breadcrumbs.Item href="#">Home</Breadcrumbs.Item>
-      <Breadcrumbs.Item href="#">Settings</Breadcrumbs.Item>
-      <Breadcrumbs.Item current>Profile</Breadcrumbs.Item>
+      <Breadcrumbs.Item href="#">
+        A section whose title runs well past the crumb width
+      </Breadcrumbs.Item>
+      <Breadcrumbs.Item>A current page whose title also runs past the width</Breadcrumbs.Item>
     </Breadcrumbs>
   ),
 };
@@ -82,7 +93,7 @@ export const CustomLandmarkLabel: Story = {
     <Breadcrumbs label="Documentation breadcrumbs">
       <Breadcrumbs.Item href="#">Docs</Breadcrumbs.Item>
       <Breadcrumbs.Item href="#">Components</Breadcrumbs.Item>
-      <Breadcrumbs.Item current>Breadcrumbs</Breadcrumbs.Item>
+      <Breadcrumbs.Item>Breadcrumbs</Breadcrumbs.Item>
     </Breadcrumbs>
   ),
 };

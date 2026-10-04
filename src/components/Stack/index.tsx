@@ -1,43 +1,25 @@
 import * as React from "react";
-import { resolveLayoutGap } from "../../utils/layout-spacing";
+import { Separator } from "../Separator";
 import styles from "./Stack.module.scss";
 
-type Direction = "row" | "column";
-type GapToken = "none" | "xs" | "sm" | "md" | "lg" | "xl";
-/** Gap accepts string tokens or numbers (1-8) mapping to the spacing scale */
-type GapScale = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
-type Gap = GapToken | GapScale;
-
-/** Responsive value — either a single value or per-breakpoint overrides */
-export interface ResponsiveDirection {
-  /** Default (mobile-first) */
-  base?: Direction;
-  /** ≥640px */
-  sm?: Direction;
-  /** ≥768px */
-  md?: Direction;
-  /** ≥1024px */
-  lg?: Direction;
-  /** ≥1280px */
-  xl?: Direction;
-}
-
-/** Responsive gap value */
-export interface ResponsiveGap {
-  /** Default (mobile-first) */
-  base?: GapToken;
-  /** ≥640px */
-  sm?: GapToken;
-  /** ≥768px */
-  md?: GapToken;
-  /** ≥1024px */
-  lg?: GapToken;
-  /** ≥1280px */
-  xl?: GapToken;
-}
+export type StackDirection = "row" | "column";
+export type StackGap = "none" | "xs" | "sm" | "md" | "lg" | "xl";
+export type StackAlign = "start" | "center" | "end" | "stretch" | "baseline";
+export type StackJustify = "start" | "center" | "end" | "between";
+export type StackElement =
+  | "div"
+  | "section"
+  | "nav"
+  | "article"
+  | "aside"
+  | "header"
+  | "footer"
+  | "main"
+  | "ul"
+  | "ol";
 
 /**
- * Flexbox layout component for vertical or horizontal stacking with consistent spacing.
+ * Flexbox layout for vertical or horizontal stacking with consistent spacing.
  * @see https://usefragments.com/components/stack
  */
 export interface StackProps extends Omit<
@@ -45,44 +27,35 @@ export interface StackProps extends Omit<
   "children" | "style" | "className"
 > {
   children: React.ReactNode;
-  /**
-   * Stack direction.
-   * - A string for fixed direction: `"row"` or `"column"`
-   * - An object for responsive direction: `{ base: "column", md: "row" }`
-   */
-  direction?: Direction | ResponsiveDirection;
-  /**
-   * Gap between items.
-   * - A string for fixed gap: `"sm"`, `"md"`, etc.
-   * - An object for responsive gap: `{ base: "sm", md: "lg" }`
-   */
-  gap?: Gap | ResponsiveGap;
-  align?: "start" | "center" | "end" | "stretch" | "baseline";
-  justify?: "start" | "center" | "end" | "between";
+  /** Direction children flow in
+   * @default "column" */
+  direction?: StackDirection;
+  /** Space between children, on the layout gap scale (0, 4, 8, 12, 16, 24)
+   * @default "md" */
+  gap?: StackGap;
+  /** Cross-axis alignment */
+  align?: StackAlign;
+  /** Main-axis distribution */
+  justify?: StackJustify;
+  /** Let children wrap onto new lines */
   wrap?: boolean;
   /**
-   * Render a separator between each child.
-   * - `true` renders a default 1px border line
-   * - A ReactNode renders custom content between children
+   * Draw a Separator between children (horizontal in a column, vertical in a
+   * row). Inside `ul`/`ol` each divider is a hidden `li`. Ignored when
+   * `collapseBelow` is set, since the flow can change under it.
    */
-  separator?: boolean | React.ReactNode;
-  as?: "div" | "section" | "nav" | "article" | "aside" | "header" | "footer" | "main" | "ul" | "ol";
+  divided?: boolean;
+  /**
+   * A CSS length. The children sit side by side in equal shares while the
+   * Stack itself is at least this wide, and stack into a column below it.
+   * Measured against the Stack's own width, never the viewport, so it holds
+   * inside panes and cards. Implies a row; `direction` is ignored.
+   */
+  collapseBelow?: string;
+  /** Host element; `ul` and `ol` keep list semantics, dividers included */
+  as?: StackElement;
   className?: string;
   style?: React.CSSProperties;
-}
-
-function isResponsiveDirection(
-  direction: StackProps["direction"]
-): direction is ResponsiveDirection {
-  return typeof direction === "object" && direction !== null;
-}
-
-function isResponsiveGap(gap: StackProps["gap"]): gap is ResponsiveGap {
-  return typeof gap === "object" && gap !== null;
-}
-
-function isNumericGap(gap: StackProps["gap"]): gap is GapScale {
-  return typeof gap === "number";
 }
 
 const StackRoot = React.forwardRef<HTMLElement, StackProps>(function Stack(
@@ -93,7 +66,8 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(function Stack(
     align,
     justify,
     wrap = false,
-    separator,
+    divided = false,
+    collapseBelow,
     as: Component = "div",
     className,
     style,
@@ -101,132 +75,49 @@ const StackRoot = React.forwardRef<HTMLElement, StackProps>(function Stack(
   },
   ref
 ) {
-  let directionClass: string;
-  let gapClass: string | false;
-  let inlineStyle: React.CSSProperties | undefined;
-
-  // Handle responsive direction
-  if (isResponsiveDirection(direction)) {
-    directionClass = styles.directionResponsive ?? "";
-    const vars: Record<string, string> = {};
-    const baseDirection = direction.base ?? "column";
-    const smDirection = direction.sm ?? baseDirection;
-    const mdDirection = direction.md ?? smDirection;
-    const lgDirection = direction.lg ?? mdDirection;
-    const xlDirection = direction.xl ?? lgDirection;
-    vars["--fui-stack-direction"] = baseDirection;
-    vars["--fui-stack-direction-sm"] = smDirection;
-    vars["--fui-stack-direction-md"] = mdDirection;
-    vars["--fui-stack-direction-lg"] = lgDirection;
-    vars["--fui-stack-direction-xl"] = xlDirection;
-    inlineStyle = vars as unknown as React.CSSProperties;
-  } else {
-    directionClass = styles[direction] ?? "";
-  }
-
-  // Handle responsive gap
-  if (isResponsiveGap(gap)) {
-    gapClass = styles.gapResponsive ?? false;
-    const gapVars: Record<string, string> = {};
-    if (gap.base) gapVars["--fui-stack-gap"] = resolveLayoutGap(gap.base);
-    if (gap.sm) gapVars["--fui-stack-gap-sm"] = resolveLayoutGap(gap.sm);
-    if (gap.md) gapVars["--fui-stack-gap-md"] = resolveLayoutGap(gap.md);
-    if (gap.lg) gapVars["--fui-stack-gap-lg"] = resolveLayoutGap(gap.lg);
-    if (gap.xl) gapVars["--fui-stack-gap-xl"] = resolveLayoutGap(gap.xl);
-    inlineStyle = { ...inlineStyle, ...gapVars } as React.CSSProperties;
-  } else if (isNumericGap(gap)) {
-    gapClass = false;
-    inlineStyle = {
-      ...inlineStyle,
-      "--fui-stack-gap": resolveLayoutGap(gap),
-    } as React.CSSProperties;
-  } else {
-    gapClass = false;
-    inlineStyle = {
-      ...inlineStyle,
-      "--fui-stack-gap": resolveLayoutGap(gap),
-    } as React.CSSProperties;
-  }
+  const collapsing = collapseBelow != null;
+  const flow: StackDirection = collapsing ? "row" : direction;
 
   const classes = [
     styles.stack,
-    directionClass,
-    gapClass,
+    styles[flow],
+    styles[`gap-${gap}`],
     align && styles[`align-${align}`],
     justify && styles[`justify-${justify}`],
     wrap && styles.wrap,
+    collapsing && styles.collapse,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
-  const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
+  const mergedStyle = collapsing
+    ? ({ "--_fui-stack-collapse": collapseBelow, ...style } as React.CSSProperties)
+    : style;
 
-  // Interleave separator between children when provided
   let content: React.ReactNode = children;
-  if (separator) {
-    const validChildren = React.Children.toArray(children).filter(Boolean);
-    if (validChildren.length > 1) {
-      const responsiveDirection = isResponsiveDirection(direction);
-      const resolvedDir = responsiveDirection ? (direction.base ?? "column") : direction;
-      const separatorEl =
-        separator === true ? (
-          <div
-            className={styles.separator}
-            data-orientation={resolvedDir === "row" ? "vertical" : "horizontal"}
-            role={responsiveDirection ? undefined : "separator"}
-            aria-hidden={responsiveDirection ? true : undefined}
-          />
-        ) : (
-          separator
-        );
-
-      const items: React.ReactNode[] = [];
-      validChildren.forEach((child, idx) => {
-        items.push(child);
-        if (idx < validChildren.length - 1) {
-          const childKey =
-            React.isValidElement(child) && child.key != null ? child.key : `idx-${idx}`;
-          items.push(<React.Fragment key={`sep-${childKey}`}>{separatorEl}</React.Fragment>);
-        }
-      });
-      content = items;
-    }
+  if (divided && !collapsing) {
+    const items = React.Children.toArray(children).filter(Boolean);
+    const isList = Component === "ul" || Component === "ol";
+    const orientation = flow === "row" ? "vertical" : "horizontal";
+    content = items.flatMap((child, index) => {
+      if (index === 0) return [child];
+      const key = `divider-${React.isValidElement(child) && child.key != null ? child.key : index}`;
+      // Inside a list the divider is a hidden list item, so the list only
+      // ever holds li children and its item count stays true.
+      const divider = isList ? (
+        <li key={key} aria-hidden="true" className={styles.divider}>
+          <Separator orientation={orientation} />
+        </li>
+      ) : (
+        <Separator key={key} orientation={orientation} />
+      );
+      return [divider, child];
+    });
   }
 
   return (
-    <Component
-      {...htmlProps}
-      ref={ref as React.Ref<never>}
-      className={classes}
-      style={mergedStyle}
-      data-direction-base={
-        isResponsiveDirection(direction) ? (direction.base ?? "column") : direction
-      }
-      data-direction-sm={
-        isResponsiveDirection(direction) ? (direction.sm ?? direction.base ?? "column") : direction
-      }
-      data-direction-md={
-        isResponsiveDirection(direction)
-          ? (direction.md ?? direction.sm ?? direction.base ?? "column")
-          : direction
-      }
-      data-direction-lg={
-        isResponsiveDirection(direction)
-          ? (direction.lg ?? direction.md ?? direction.sm ?? direction.base ?? "column")
-          : direction
-      }
-      data-direction-xl={
-        isResponsiveDirection(direction)
-          ? (direction.xl ??
-            direction.lg ??
-            direction.md ??
-            direction.sm ??
-            direction.base ??
-            "column")
-          : direction
-      }
-    >
+    <Component {...htmlProps} ref={ref as React.Ref<never>} className={classes} style={mergedStyle}>
       {content}
     </Component>
   );

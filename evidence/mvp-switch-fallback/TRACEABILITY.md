@@ -5,12 +5,12 @@ and the UI-notes tarball exclusion.
 
 ## Realized surface
 
-| Artifact | Authority | Consumer reach |
-| -------- | --------- | -------------- |
-| `Switch` | `libs/ui/src/components/Switch/index.tsx` + `Switch.module.scss` | `@usefragments/ui` root export; Docs/Cloud; `Toggle` alias identity |
-| Token vocabulary | `libs/ui/src/tokens/_variables.scss` | `./styles` / `./globals` published CSS; SCSS `./tokens` |
-| Dual-fallback gate | `libs/ui/src/tokens/token-fallback-contract.test.ts` | Prevents the transparent-off-state class of bug on every published sheet |
-| Chrome fixture | `libs/ui/evidence/mvp-switch-fallback/generate-fixture.mjs` | Human/Chrome only; not a geometry baseline |
+| Artifact           | Authority                                                        | Consumer reach                                                           |
+| ------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `Switch`           | `libs/ui/src/components/Switch/index.tsx` + `Switch.module.scss` | `@usefragments/ui` root export; Docs/Cloud; `Toggle` alias identity      |
+| Token vocabulary   | `libs/ui/src/tokens/_variables.scss`                             | `./styles` / `./globals` published CSS; SCSS `./tokens`                  |
+| Dual-fallback gate | `libs/ui/src/tokens/token-fallback-contract.test.ts`             | Prevents the transparent-off-state class of bug on every published sheet |
+| Chrome fixture     | `libs/ui/evidence/mvp-switch-fallback/generate-fixture.mjs`      | Human/Chrome only; not a geometry baseline                               |
 
 ## Acceptance map
 
@@ -29,7 +29,7 @@ Current ledger at this SHA:
 - 182 cases in `libs/ui/geometry/cases.json`
 - 179 `pending`, 3 `manual-pending`, 0 approved
 - `baselines.json` `baselines: []`
-- DESIGN.md target-lineup `status: "pending"`
+- the geometry target lineup at `status: "pending"`
 
 Linux-x64 CI is the only pixel authority. This role does not mint or approve
 PNGs on macOS.

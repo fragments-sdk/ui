@@ -1,280 +1,191 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, expectNoA11yViolations } from "../../test/utils";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Header } from "../Header";
+import { Main } from "../Main";
+import { Sidebar, useSidebar } from "../Sidebar";
 import { AppShell } from "./index";
 
-// Mock matchMedia for Sidebar/AppShell which use useIsMobile
-Object.defineProperty(window, "matchMedia", {
-  writable: true,
-  value: vi.fn().mockImplementation((query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+const shellStyles = readFileSync(
+  resolve(process.cwd(), "src/components/AppShell/AppShell.module.scss"),
+  "utf8"
+);
+
+function mockMatchMedia(matches: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    configurable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+}
+
+beforeEach(() => {
+  mockMatchMedia(false);
 });
 
+function Glyph() {
+  return <svg aria-hidden="true" />;
+}
+
+function renderShell(props: Partial<React.ComponentProps<typeof AppShell>> = {}) {
+  return render(
+    <AppShell data-testid="shell" {...props}>
+      <AppShell.Header>
+        <Header>
+          <Header.SkipLink />
+          <Header.Trigger />
+          <Header.Brand>Fragments</Header.Brand>
+        </Header>
+      </AppShell.Header>
+      <AppShell.Sidebar aria-label="Workspace">
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item icon={<Glyph />} active>
+              Overview
+            </Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+        <Sidebar.Footer>
+          <Sidebar.CollapseToggle />
+        </Sidebar.Footer>
+      </AppShell.Sidebar>
+      <AppShell.Main data-testid="main-slot">
+        <Main>
+          <Main.Header>
+            <Main.Title>Overview</Main.Title>
+          </Main.Header>
+        </Main>
+      </AppShell.Main>
+      <AppShell.Aside aria-label="Details">Details</AppShell.Aside>
+    </AppShell>
+  );
+}
+
 describe("AppShell", () => {
-  it("renders children in a layout container", () => {
-    render(
-      <AppShell>
-        <AppShell.Main>Main Content</AppShell.Main>
-      </AppShell>
-    );
-    expect(screen.getByText("Main Content")).toBeInTheDocument();
+  it("renders one banner, one main, the sidebar and the aside", () => {
+    renderShell();
+    // A <header> inside <main> is not a banner; the test DOM does not scope roles, so count by hand.
+    const banners = [...document.querySelectorAll("header")].filter((el) => !el.closest("main"));
+    expect(banners).toHaveLength(1);
+    expect(banners[0]!.querySelector("header")).toBeNull();
+    expect(screen.getAllByRole("main")).toHaveLength(1);
+    expect(screen.getByRole("main")).toHaveAttribute("id", "main-content");
+    expect(screen.getByRole("complementary", { name: "Workspace" })).toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: "Details" })).toBeInTheDocument();
   });
 
-  it('renders the main region with role="main"', () => {
+  it("keeps the main slot a plain scroll region with no padding class", () => {
+    renderShell();
+    const slot = screen.getByTestId("main-slot");
+    expect(slot.tagName).toBe("DIV");
+    expect(slot.className).toMatch(/main/);
+    expect(slot.className).not.toMatch(/padding|floating/i);
+  });
+
+  it("sets data-layout and the sidebar state on the root", async () => {
+    const user = userEvent.setup();
+    renderShell({ layout: "sidebar" });
+    const shell = screen.getByTestId("shell");
+    expect(shell).toHaveAttribute("data-layout", "sidebar");
+    expect(shell).toHaveAttribute("data-sidebar-state", "expanded");
+    await user.click(screen.getByRole("button", { name: "Collapse sidebar" }));
+    expect(shell).toHaveAttribute("data-sidebar-state", "collapsed");
+  });
+
+  it("holds the sidebar state: defaultCollapsed and onCollapsedChange", async () => {
+    const user = userEvent.setup();
+    const onCollapsedChange = vi.fn();
+    renderShell({ defaultCollapsed: true, onCollapsedChange });
+    expect(document.querySelector("aside[data-state]")).toHaveAttribute("data-state", "collapsed");
+    await user.click(screen.getByRole("button", { name: "Expand sidebar" }));
+    expect(onCollapsedChange).toHaveBeenCalledWith(false);
+  });
+
+  it("shows Header.Trigger for an offcanvas rail and hides it when the rail is back", async () => {
+    const user = userEvent.setup();
+    renderShell({ collapsible: "offcanvas", defaultCollapsed: true });
+    await user.click(screen.getByRole("button", { name: "Toggle navigation" }));
+    expect(document.querySelector("aside[data-state]")).toHaveAttribute("data-state", "expanded");
+    // Back in view, the rail hides the trigger from md up through CSS.
+    expect(screen.getByRole("button", { name: "Toggle navigation" })).toHaveClass("triggerBelowMd");
+  });
+
+  it("uses a Sidebar.Provider above it and warns about its own state props", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    function State() {
+      return <span data-testid="state">{useSidebar().state}</span>;
+    }
+    render(
+      <Sidebar.Provider defaultCollapsed>
+        <State />
+        <AppShell defaultCollapsed={false}>
+          <AppShell.Main>Content</AppShell.Main>
+        </AppShell>
+      </Sidebar.Provider>
+    );
+    expect(screen.getByTestId("state")).toHaveTextContent("collapsed");
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("AppShell: defaultCollapsed"));
+    warn.mockRestore();
+  });
+
+  it("hides the aside when visible is false", () => {
     render(
       <AppShell>
         <AppShell.Main>Content</AppShell.Main>
+        <AppShell.Aside visible={false}>Details</AppShell.Aside>
       </AppShell>
     );
-    expect(screen.getByRole("main")).toBeInTheDocument();
+    expect(screen.queryByText("Details")).not.toBeInTheDocument();
   });
 
-  it.each([
-    ["none", "paddingNone"],
-    ["sm", "paddingSm"],
-    ["md", "paddingMd"],
-    ["lg", "paddingLg"],
-  ] as const)('maps padding="%s" to the corresponding spacing class', (padding, className) => {
+  it("forwards props to slots", () => {
     render(
-      <AppShell>
-        <AppShell.Main padding={padding}>Content</AppShell.Main>
+      <AppShell className="custom-shell" data-testid="shell">
+        <AppShell.Header data-testid="header" className="custom-header">
+          Bar
+        </AppShell.Header>
+        <AppShell.Main>Content</AppShell.Main>
       </AppShell>
     );
-
-    expect(screen.getByRole("main")).toHaveClass(className);
-  });
-
-  it("keeps explicit padding ownership on the floating main surface", () => {
-    render(
-      <AppShell>
-        <AppShell.Main padding="none" variant="floating">
-          Content
-        </AppShell.Main>
-      </AppShell>
-    );
-
-    expect(screen.getByRole("main")).toHaveClass("mainFloating", "paddingNone");
-  });
-
-  it("renders header, sidebar, and main slots", () => {
-    render(
-      <AppShell>
-        <AppShell.Header>Header Content</AppShell.Header>
-        <AppShell.Sidebar>Sidebar Content</AppShell.Sidebar>
-        <AppShell.Main>Main Content</AppShell.Main>
-      </AppShell>
-    );
-    expect(screen.getByText("Header Content")).toBeInTheDocument();
-    expect(screen.getByText("Sidebar Content")).toBeInTheDocument();
-    expect(screen.getByText("Main Content")).toBeInTheDocument();
-  });
-
-  it("forwards active-indicator placement to the sidebar", () => {
-    render(
-      <AppShell>
-        <AppShell.Sidebar activeIndicator="end">Sidebar</AppShell.Sidebar>
-        <AppShell.Main>Main</AppShell.Main>
-      </AppShell>
-    );
-
-    expect(document.querySelector("aside")).toHaveAttribute("data-active-indicator", "end");
-  });
-
-  it("renders aside slot when visible", () => {
-    render(
-      <AppShell>
-        <AppShell.Main>Main</AppShell.Main>
-        <AppShell.Aside visible>Aside Panel</AppShell.Aside>
-      </AppShell>
-    );
-    expect(screen.getByText("Aside Panel")).toBeInTheDocument();
-  });
-
-  it("hides aside when visible is false", () => {
-    render(
-      <AppShell>
-        <AppShell.Main>Main</AppShell.Main>
-        <AppShell.Aside visible={false}>Hidden Aside</AppShell.Aside>
-      </AppShell>
-    );
-    expect(screen.queryByText("Hidden Aside")).not.toBeInTheDocument();
+    expect(screen.getByTestId("shell").className).toContain("custom-shell");
+    const header = screen.getByTestId("header");
+    expect(header.tagName).toBe("HEADER");
+    expect(header.className).toContain("custom-header");
   });
 
   it("has no accessibility violations", async () => {
-    const { container } = render(
-      <AppShell>
-        <AppShell.Main>Content</AppShell.Main>
-      </AppShell>
-    );
+    const { container } = renderShell();
     await expectNoA11yViolations(container);
   });
+});
 
-  it("preserves root style props while applying internal CSS variables", () => {
-    const { container } = render(
-      <AppShell style={{ backgroundColor: "rgb(1, 2, 3)" }}>
-        <AppShell.Header>Header</AppShell.Header>
-        <AppShell.Main>Content</AppShell.Main>
-      </AppShell>
-    );
-
-    const root = container.firstElementChild as HTMLElement;
-    expect(root.style.backgroundColor).toBe("rgb(1, 2, 3)");
-    expect(root.style.getPropertyValue("--appshell-header-height")).toBe(
-      "var(--fui-appshell-header-height, 56px)"
-    );
+describe("AppShell styles", () => {
+  it("never animates the grid and sizes columns from the slots", () => {
+    expect(shellStyles).not.toMatch(/transition/);
+    expect(shellStyles).toContain("grid-template-columns: auto minmax(0, 1fr) auto");
+    expect(shellStyles).not.toContain("--appshell-");
   });
 
-  it("collapses header track to 0px when no AppShell.Header is rendered", () => {
-    const { container } = render(
-      <AppShell>
-        <AppShell.Main>Content</AppShell.Main>
-      </AppShell>
-    );
-
-    const root = container.firstElementChild as HTMLElement;
-    expect(root.style.getPropertyValue("--appshell-header-height")).toBe("0px");
+  it("puts the aside on the surface plane at the wide token width", () => {
+    const aside = shellStyles.slice(shellStyles.indexOf(".aside {"));
+    expect(aside.slice(0, aside.indexOf("@include below-lg"))).toContain("var(--fui-bg-primary");
+    expect(shellStyles).toContain("var(--fui-appshell-sidebar-width-wide");
   });
 
-  describe("layout structures", () => {
-    it('sets data-layout="default" for default layout', () => {
-      const { container } = render(
-        <AppShell layout="default">
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(container.querySelector('[data-layout="default"]')).toBeInTheDocument();
-    });
-
-    it('sets data-layout="sidebar" for sidebar layout', () => {
-      const { container } = render(
-        <AppShell layout="sidebar">
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(container.querySelector('[data-layout="sidebar"]')).toBeInTheDocument();
-    });
-  });
-
-  describe("legacy layout backwards compatibility", () => {
-    it('accepts layout="sidebar-floating" and resolves to sidebar structure', () => {
-      const { container } = render(
-        <AppShell layout="sidebar-floating">
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      // data-layout preserves original value for E2E tests
-      expect(container.querySelector('[data-layout="sidebar-floating"]')).toBeInTheDocument();
-    });
-
-    it('accepts layout="floating" and resolves to sidebar structure', () => {
-      const { container } = render(
-        <AppShell layout="floating">
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(container.querySelector('[data-layout="floating"]')).toBeInTheDocument();
-    });
-  });
-
-  describe("per-slot variant prop", () => {
-    it('accepts variant="floating" on AppShell.Main', () => {
-      render(
-        <AppShell layout="sidebar">
-          <AppShell.Main variant="floating">Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(screen.getByRole("main")).toBeInTheDocument();
-    });
-
-    it('accepts variant="floating" on AppShell.Aside', () => {
-      render(
-        <AppShell layout="sidebar">
-          <AppShell.Main>Content</AppShell.Main>
-          <AppShell.Aside variant="floating">Aside</AppShell.Aside>
-        </AppShell>
-      );
-      expect(screen.getByText("Aside")).toBeInTheDocument();
-    });
-
-    it('accepts variant="floating" on AppShell.Sidebar', () => {
-      render(
-        <AppShell layout="sidebar">
-          <AppShell.Sidebar variant="floating">Nav</AppShell.Sidebar>
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(screen.getByText("Nav")).toBeInTheDocument();
-    });
-  });
-
-  describe("per-slot bg prop", () => {
-    it("applies bg to AppShell.Main as inline backgroundColor", () => {
-      render(
-        <AppShell>
-          <AppShell.Main bg="rgb(10, 20, 30)">Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(screen.getByRole("main").style.backgroundColor).toBe("rgb(10, 20, 30)");
-    });
-
-    it("applies bg to AppShell.Header as inline backgroundColor", () => {
-      const { container } = render(
-        <AppShell>
-          <AppShell.Header bg="rgb(40, 50, 60)">Header</AppShell.Header>
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      const header = container.querySelector('[class*="header"]') as HTMLElement;
-      expect(header.style.backgroundColor).toBe("rgb(40, 50, 60)");
-    });
-
-    it("applies bg to AppShell.Aside as inline backgroundColor", () => {
-      render(
-        <AppShell>
-          <AppShell.Main>Content</AppShell.Main>
-          <AppShell.Aside bg="rgb(70, 80, 90)">Aside</AppShell.Aside>
-        </AppShell>
-      );
-      const aside = screen.getByText("Aside").closest("aside") as HTMLElement;
-      expect(aside.style.backgroundColor).toBe("rgb(70, 80, 90)");
-    });
-
-    it("applies bg to AppShell.Sidebar via inline style on inner Sidebar", () => {
-      const { container } = render(
-        <AppShell>
-          <AppShell.Sidebar bg="rgb(100, 110, 120)">Nav</AppShell.Sidebar>
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      // The bg is applied as inline backgroundColor on the inner Sidebar <aside> root
-      const sidebarAside = container.querySelector('[class*="sidebar"] > aside') as HTMLElement;
-      expect(sidebarAside.style.backgroundColor).toBe("rgb(100, 110, 120)");
-    });
-
-    it("applies bg to AppShell root", () => {
-      const { container } = render(
-        <AppShell bg="rgb(5, 10, 15)">
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      const root = container.firstElementChild as HTMLElement;
-      expect(root.style.backgroundColor).toBe("rgb(5, 10, 15)");
-    });
-
-    it("does not set backgroundColor when bg is not provided", () => {
-      render(
-        <AppShell>
-          <AppShell.Main>Content</AppShell.Main>
-        </AppShell>
-      );
-      expect(screen.getByRole("main").style.backgroundColor).toBe("");
-    });
+  it("draws one opaque hairline, no shadow, no floating chrome, logical properties", () => {
+    expect(shellStyles).not.toMatch(/box-shadow|color-mix|floating|radius/i);
+    expect(shellStyles).not.toMatch(/--fui-border-(subtle|default|strong)/);
+    expect(shellStyles).not.toMatch(/\b(margin|padding|border)-(left|right|top|bottom)\b/);
+    expect(shellStyles).not.toMatch(/(^|\s)(top|left|right|bottom|width|height):/m);
   });
 });

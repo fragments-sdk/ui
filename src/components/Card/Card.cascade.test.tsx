@@ -18,18 +18,18 @@ describe("Card cascade contract", () => {
   it("routes root padding through one requested-inset channel", () => {
     expect(cardSource).toContain("--_card-root-requested-inset");
     expect(cardSource).not.toContain("--_card-root-forced-inset");
-    expect(cardSource).not.toMatch(/\.padding(?:None|Sm|Md|Lg)\s*\{[^}]*\bpadding:/s);
+    expect(cardSource).not.toMatch(/\.padding(?:None|Md)\s*\{[^}]*\bpadding:/s);
   });
 
   it("keeps body padding independent from the root inset", () => {
     expect(cardSource).toContain("--_card-body-inset");
     render(
-      <Card variant="soft" padding="lg">
+      <Card padding="none">
         <Card.Body padding="md">Panel body</Card.Body>
       </Card>
     );
 
-    expect(screen.getByRole("article")).toHaveClass("soft", "paddingLg");
+    expect(screen.getByRole("article")).toHaveClass("paddingNone");
     expect(screen.getByText("Panel body")).toHaveClass("body", "paddingMd");
   });
 
@@ -37,7 +37,7 @@ describe("Card cascade contract", () => {
     render(
       <Card
         className={fixtureStyles.consumerOverride}
-        padding="lg"
+        padding="md"
         style={{ padding: 31, backgroundColor: "rgb(12, 34, 56)" }}
       >
         Customized
@@ -45,7 +45,7 @@ describe("Card cascade contract", () => {
     );
 
     const card = screen.getByRole("article");
-    expect(card).toHaveClass("paddingLg", fixtureStyles.consumerOverride);
+    expect(card).toHaveClass("paddingMd", fixtureStyles.consumerOverride);
     expect(card).toHaveStyle({ padding: "31px", backgroundColor: "rgb(12, 34, 56)" });
     expect(fixtureSource).not.toMatch(/\b\d+px\b/);
     expect(fixtureSource).not.toContain("!important");

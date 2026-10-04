@@ -1,0 +1,227 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "RadioGroup",
+  "description": "Selects one option from a mutually exclusive set.",
+  "category": "inputs",
+  "tags": ["form", "radio", "selection", "options"],
+  "status": "stable",
+  "sourcePath": "src/components/RadioGroup/index.tsx",
+  "exportName": "RadioGroup",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "onValueChange: function",
+    "orientation: horizontal|vertical (default: vertical)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "required: boolean (default: false)",
+    "name: string",
+    "label: string",
+    "helperText: string",
+    "invalid: boolean (default: false)",
+    "errorMessage: node",
+    "variant: outline",
+    "id: string",
+    "children: node (required)"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Controlled selected value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default value (uncontrolled)",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Callback when selection changes",
+      "required": false
+    },
+    "orientation": {
+      "type": "enum",
+      "description": "Layout orientation",
+      "default": "vertical",
+      "required": false,
+      "values": ["horizontal", "vertical"]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable every option; the group dims once",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "The chosen option cannot be changed; item rows stop hovering",
+      "default": "false",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "A value must be chosen before the form submits",
+      "default": "false",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Group label",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the group",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The value fails validation: every circle takes the danger edge and errorMessage shows under the group",
+      "default": "false",
+      "required": false
+    },
+    "errorMessage": {
+      "type": "node",
+      "description": "Message shown with a warning icon under the group while invalid; wired to the radiogroup's aria-describedby",
+      "required": false
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Chrome. Omit for the inline radio beside its label; 'outline' renders each item as a full-width choice card (surface, hairline, surface radius) whose hairline turns into the selection ring when chosen.",
+      "required": false,
+      "values": ["outline"]
+    },
+    "id": {
+      "type": "string",
+      "description": "ID for the element with role=radiogroup (the ref lands there too)",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "RadioGroup.Item elements",
+      "required": true
+    }
+  },
+  "usage": {
+    "when": [
+      "Exactly one answer out of two to five",
+      "Options rule each other out",
+      "Every option should be visible without opening anything"
+    ],
+    "whenNot": [
+      "Several answers allowed (use a Checkbox group)",
+      "Long lists (use Select)",
+      "A single on/off (use Switch)",
+      "Options need searching (use Combobox)"
+    ],
+    "guidelines": [
+      "Pre-select a sensible default whenever one exists",
+      "Order options predictably: alphabetical, by frequency, or by cost",
+      "Keep labels short",
+      "Put the trade-off in each item's helperText"
+    ],
+    "accessibility": [
+      "The group carries its own label",
+      "Arrow keys move between options",
+      "The selected option reads as checked"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Three options stacked, the first already chosen.",
+      "code": "<RadioGroup defaultValue=\"option1\" label=\"Select an option\">\n  <RadioGroup.Item value=\"option1\" label=\"Option 1\" />\n  <RadioGroup.Item value=\"option2\" label=\"Option 2\" />\n  <RadioGroup.Item value=\"option3\" label=\"Option 3\" />\n</RadioGroup>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Each option carries the trade-off under its label.",
+      "code": "<RadioGroup defaultValue=\"standard\" label=\"Shipping Method\">\n  <RadioGroup.Item\n    value=\"standard\"\n    label=\"Standard\"\n    helperText=\"5-7 business days\"\n  />\n  <RadioGroup.Item\n    value=\"express\"\n    label=\"Express\"\n    helperText=\"2-3 business days\"\n  />\n  <RadioGroup.Item\n    value=\"overnight\"\n    label=\"Overnight\"\n    helperText=\"Next business day\"\n  />\n</RadioGroup>"
+    },
+    {
+      "name": "Horizontal",
+      "description": "One row — good for short labels like sizes.",
+      "code": "<RadioGroup orientation=\"horizontal\" defaultValue=\"small\" label=\"Size\">\n  <RadioGroup.Item value=\"small\" label=\"S\" />\n  <RadioGroup.Item value=\"medium\" label=\"M\" />\n  <RadioGroup.Item value=\"large\" label=\"L\" />\n  <RadioGroup.Item value=\"xlarge\" label=\"XL\" />\n</RadioGroup>"
+    },
+    {
+      "name": "With Group Helper Text",
+      "description": "One note under the whole group instead of per option.",
+      "code": "<RadioGroup defaultValue=\"standard\" label=\"Plan\" helperText=\"You can change your plan at any time\">\n  <RadioGroup.Item value=\"free\" label=\"Free\" />\n  <RadioGroup.Item value=\"standard\" label=\"Standard\" />\n  <RadioGroup.Item value=\"pro\" label=\"Pro\" />\n</RadioGroup>"
+    },
+    {
+      "name": "With Error",
+      "description": "invalid draws the danger edge on every circle; errorMessage prints the reason with an icon.",
+      "code": "<RadioGroup\n  label=\"Required selection\"\n  invalid\n  errorMessage=\"Choose an option to continue.\"\n>\n  <RadioGroup.Item value=\"a\" label=\"Option A\" />\n  <RadioGroup.Item value=\"b\" label=\"Option B\" />\n</RadioGroup>"
+    },
+    {
+      "name": "Disabled",
+      "description": "The choice stays visible but nothing can change it.",
+      "code": "<RadioGroup disabled defaultValue=\"locked\" label=\"Locked selection\">\n  <RadioGroup.Item value=\"locked\" label=\"This is locked\" />\n  <RadioGroup.Item value=\"other\" label=\"Cannot select\" />\n</RadioGroup>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Checkbox",
+      "relationship": "alternative",
+      "note": "Use Checkbox for multiple selections"
+    },
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for many options or limited space"
+    },
+    {
+      "component": "Switch",
+      "relationship": "alternative",
+      "note": "Use Switch for binary on/off choices"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - selected value",
+      "onValueChange: (value: string) => void",
+      "orientation: horizontal|vertical (default: vertical)",
+      "variant: outline - each item a full-width choice card; omit for the inline control",
+      "label: string - group label",
+      "helperText: string - helper text below the group",
+      "invalid: boolean - danger edge on every circle; pair with errorMessage",
+      "errorMessage: node - message with an icon under the group while invalid",
+      "disabled: boolean - disable all options (dims once)",
+      "readOnly: boolean - lock the chosen option",
+      "RadioGroup.Item: value, label, helperText, disabled, trailing (a short value at the end of the row on the label's line; pairs with variant=outline for plan pickers)"
+    ],
+    "a11yRules": ["A11Y_RADIO_GROUP", "A11Y_LABEL_REQUIRED", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.692Z"
+  },
+  "cssVariables": [
+    "--fui-control-checked-bg",
+    "--fui-control-checked-border",
+    "--fui-control-checked-color",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-field-bg",
+    "--fui-field-border",
+    "--fui-icon-sm",
+    "--fui-radius-surface",
+    "--fui-raw-space-12",
+    "--fui-raw-space-4",
+    "--fui-raw-space-6",
+    "--fui-stroke-hairline",
+    "--fui-text-primary"
+  ],
+  "attributes": []
+}

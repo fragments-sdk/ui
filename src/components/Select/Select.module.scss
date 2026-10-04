@@ -1,307 +1,225 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
 @use "../../recipes/field";
 @use "../../recipes/layout";
 @use "../../recipes/popup";
 
-.wrapper {
-  @include field.wrapper;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.label {
-  @include field.label;
-}
+@layer fui.components {
+  // The trigger is the field shell Input draws: band fill, the 3:1 field
+  // edge, the control radius, the shared track. Open darkens the edge to the
+  // hover colour and holds it; the focus ring stays for the keyboard.
+  .trigger {
+    @include button-reset;
+    @include interactive-base;
+    @include field.size("md", $typed: false);
+    @include field.shell;
 
-.helper {
-  @include field.helper;
-}
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: action.gap("md");
+    width: 100%;
+    min-width: layout.measure("field-minimum");
+    text-align: start;
 
-.helperError,
-.errorMessage {
-  @include field.error;
-}
+    &[data-size="xs"] {
+      @include field.size-xs($typed: false);
 
-// Trigger button
-.trigger {
-  @include button-reset;
-  @include interactive-base;
-  @include field.size("md");
-  @include field.shell;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: action.gap("md");
-  width: 100%;
-  min-width: layout.measure("field-minimum");
-  text-align: left;
-
-  &:focus-visible,
-  &[data-popup-open] {
-    @include field.focus-state;
-  }
-
-  .wrapper[data-invalid] & {
-    @include field.invalid-state;
-
-    // Focused while invalid keeps the danger edge and takes the danger ring,
-    // the same pairing Input and Textarea render. Without it the ring stays
-    // accent-coloured and the control reads half-valid at the moment the user
-    // is actually in it.
-    &:focus-visible,
-    &[data-popup-open] {
-      @include field.invalid-focus-state;
+      gap: action.gap("sm");
     }
+
+    &[data-size="sm"] {
+      @include field.size("sm", $typed: false);
+
+      gap: action.gap("sm");
+    }
+
+    &[data-size="lg"] {
+      @include field.size("lg", $typed: false);
+
+      gap: action.gap("lg");
+    }
+
+    @include field.hover-state;
+
+    &[data-popup-open]:not([data-readonly]) {
+      border-color: color-mix(
+        in oklab,
+        var(--fui-text-primary, #{$fui-text-primary}) 55%,
+        var(--fui-field-border, #{$fui-field-border})
+      );
+    }
+
+    &:focus-visible {
+      @include field.focus-state;
+    }
+
+    // Read-only still opens to show the choices, so it needs its own cue: the
+    // dashed edge, and no caret promising a change.
+    &[data-readonly] {
+      @include field.readonly-state;
+    }
+
+    &:is([aria-invalid="true"], [data-invalid]) {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    &:is(:disabled, [data-disabled]) {
+      @include field.disabled-state;
+    }
+
+    @include high-contrast-outline;
   }
 
-  @include high-contrast-outline;
-}
-
-// Trigger size variants
-.triggerSm {
-  @include field.size("sm");
-
-  gap: action.gap("sm");
-}
-
-.triggerLg {
-  @include field.size("lg");
-
-  gap: action.gap("lg");
-}
-
-// Ghost trigger — the same control with the field shell taken off, for
-// toolbars and dense rows where a bordered field would read as a form rather
-// than as a setting. Deliberately identical in padding, radius, type scale and
-// hover to the other compact controls that share those rows, so a select sits
-// among them as a sibling instead of a fourth vocabulary.
-//
-// Must be declared after `.trigger` and the size variants: it unsets what they
-// set, and they are all single-class selectors.
-.triggerGhost {
-  width: auto;
-  min-width: 0;
-  border: none;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  background-color: transparent;
-  box-shadow: none;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  &:hover:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  &:active:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-
-  // Open is a held state, not a hover: the control stays lit while the popup
-  // it owns is on screen.
-  &[data-popup-open] {
-    border-color: transparent;
-    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  // No shell to fill, so disabled reads as recession rather than as a
-  // greyed-out box.
-  &:disabled,
-  &[data-disabled] {
-    background-color: transparent;
-    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
-  }
-}
-
-// Ghost sizes to its content and may shrink; the wrapper has to allow both or
-// the trigger measures against its label and escapes a tight row.
-.wrapperGhost {
-  display: inline-flex;
-  min-width: 0;
-}
-
-// Leading adornment on the trigger
-.triggerIcon {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-// Value display
-.value {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-
-  &[data-placeholder] {
+  // Leading adornment on the trigger
+  .triggerIcon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
-}
 
-// Placeholder text
-.placeholder {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
+  // Value display
+  .value {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
 
-// The qualifier on an option — recessed, because it tells you which one this is
-// rather than being the thing you are choosing.
-.hint {
-  margin-inline-start: var(--fui-space-1, $fui-space-1);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-}
-
-// Chevron icon
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  transition: transform var(--fui-transition-fast, $fui-transition-fast);
-
-  [data-popup-open] > & {
-    transform: rotate(180deg);
-  }
-
-  svg {
-    @include action.glyph("md");
-  }
-}
-
-.triggerSm :is(.triggerIcon, .icon) svg {
-  @include action.glyph("sm");
-}
-
-.triggerLg :is(.triggerIcon, .icon) svg {
-  @include action.glyph("lg");
-}
-
-// Positioner — z-index must exceed Dialog positioner (51)
-.positioner {
-  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
-  outline: none;
-}
-
-// Popup container
-.popup {
-  @include popup.container;
-  @include popup.viewport;
-
-  min-width: var(--anchor-width);
-
-  // Animation
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-// Individual option
-.item {
-  @include popup.row;
-
-  // Base UI sets [data-highlighted] on pointer-hover AND keyboard nav → one indicator.
-  &[data-highlighted] {
-    @include popup.highlight-state;
-  }
-
-  &[data-selected] {
-    @include popup.selected-state;
-
-    // Selected + active: stronger accent-tinted wash so it still reads as selected.
-    &[data-highlighted] {
-      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
+    &[data-placeholder] {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
     }
   }
 
-  &[data-disabled] {
-    @include popup.disabled-state;
-  }
-}
-
-// Selection indicator (checkmark)
-.itemIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--fui-icon-sm, $fui-icon-sm);
-  height: var(--fui-icon-sm, $fui-icon-sm);
-  margin-left: auto;
-  color: var(--fui-color-accent, $fui-color-accent);
-
-  svg {
-    width: var(--fui-icon-xs, $fui-icon-xs);
-    height: var(--fui-icon-xs, $fui-icon-xs);
-  }
-}
-
-// Group container
-.group {
-  &:not(:first-child)::before {
-    content: "";
-    display: block;
-    @include popup.group-separator;
-  }
-}
-
-// Group label
-.groupLabel {
-  @include popup.group-label;
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
-  .trigger {
-    transition: none;
+  // Placeholder text
+  .placeholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
+  // The qualifier on an option — recessed, because it tells you which one this is
+  // rather than being the thing you are choosing.
+  .hint {
+    margin-inline-start: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+  }
+
+  // The caret: ink 2, no turn when open (small floating things do not move).
+  .icon {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    svg {
+      @include action.glyph("sm");
+    }
+
+    [data-readonly] > & {
+      display: none;
+    }
+  }
+
+  // The leading glyph follows the action glyph ladder; the caret sits one step
+  // under it, so the value leads.
+  .triggerIcon svg {
+    @include action.glyph("md");
+  }
+
+  .trigger[data-size="xs"] .triggerIcon svg {
+    @include action.glyph("micro");
+  }
+
+  .trigger[data-size="sm"] .triggerIcon svg {
+    @include action.glyph("sm");
+  }
+
+  .trigger[data-size="lg"] .triggerIcon svg {
+    @include action.glyph("lg");
+  }
+
+  .trigger:is([data-size="xs"], [data-size="sm"]) .icon svg {
+    @include action.glyph("micro");
+  }
+
+  .trigger[data-size="lg"] .icon svg {
+    @include action.glyph("md");
+  }
+
+  // Positioner — z-index must exceed Dialog positioner (51)
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
+  }
+
+  // Popup container
   .popup {
-    transition: none;
+    @include popup.container;
+    @include popup.viewport;
+
+    min-width: var(--anchor-width);
+
+    @include popup.motion;
   }
 
-  .icon svg {
-    transition: none;
+  // Individual option
+  .item {
+    @include popup.row;
+
+    // Base UI sets [data-highlighted] on pointer-hover AND keyboard nav → one indicator.
+    &[data-highlighted] {
+      @include popup.highlight-state;
+    }
+
+    // The highlight paints over the selection wash, so a selected row keeps its
+    // wash and ring while highlighted.
+    &[data-selected] {
+      @include popup.selected-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
   }
-}
 
-// Arrow
-.arrow {
-  width: var(--fui-raw-space-10, 10px);
-  height: var(--fui-raw-space-10, 10px);
-  transform: rotate(45deg);
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
+  // The check on the chosen row, in ink 1, at the row end: with the wash and
+  // the ring it is the third mark, never the only one.
+  .itemIndicator {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    color: var(--fui-text-primary, $fui-text-primary);
 
-  &[data-side="top"] {
-    border-top: none;
-    border-left: none;
+    svg {
+      @include action.glyph("sm");
+    }
   }
 
-  &[data-side="bottom"] {
-    border-bottom: none;
-    border-right: none;
+  // Group container
+  .group {
+    &:not(:first-child)::before {
+      content: "";
+      display: block;
+      @include popup.group-separator;
+    }
+  }
+
+  // Group label
+  .groupLabel {
+    @include popup.group-label;
   }
 }

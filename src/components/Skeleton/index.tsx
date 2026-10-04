@@ -6,11 +6,11 @@ import styles from "./Skeleton.module.scss";
 // ============================================
 
 export type SkeletonShape =
-  | "text" // Single line of text, height: 1em
-  | "heading" // Heading text, height: 1.5em
-  | "avatar" // Circular, uses size prop
-  | "button" // Button shape, uses size prop
-  | "input" // Form input height
+  | "text" // One line of body text: a 10px bar
+  | "heading" // One line of a title: a 12px bar
+  | "avatar" // A square at the indicator radius, sized from Avatar
+  | "control" // A button or field at its control track and radius
+  | "row" // One list or table row: the 32px track holding a text bar
   | "rect"; // Rectangle, requires explicit dimensions or fill
 
 export type SkeletonSize = "sm" | "md" | "lg";
@@ -23,12 +23,13 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   shape?: SkeletonShape;
   /**
-   * Size for the avatar, button, and input shapes.
+   * Size for the avatar (24, 32, 40) and control (28, 32, 40) shapes.
    * @default 'md'
    */
   size?: SkeletonSize;
   /**
-   * Width in pixels or CSS value. Auto-determined for most shapes.
+   * Width in pixels or CSS value. Auto-determined for most shapes. On `row`
+   * it sets the width of the bar inside the row.
    */
   width?: number | string;
   /**
@@ -40,15 +41,6 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
    * Useful when parent has explicit dimensions.
    */
   fill?: boolean;
-  /**
-   * Border radius override. Auto-determined for most shapes.
-   */
-  radius?: "none" | "sm" | "md" | "lg" | "full";
-  /**
-   * Disable animation for reduced motion preference.
-   * @default false
-   */
-  static?: boolean;
 }
 
 export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
@@ -60,57 +52,59 @@ export interface SkeletonTextProps extends Omit<React.HTMLAttributes<HTMLDivElem
    * @default 80
    */
   lastLineWidth?: number;
-  /** Gap between lines. Uses spacing tokens. */
-  gap?: "sm" | "md";
 }
 
 // ============================================
 // Component
 // ============================================
 
+function length(value: number | string) {
+  return typeof value === "number" ? `${value}px` : value;
+}
+
 const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonBase(
-  {
-    shape = "rect",
-    size = "md",
-    width,
-    height,
-    fill = false,
-    radius,
-    static: isStatic = false,
-    className,
-    ...htmlProps
-  },
+  { shape = "rect", size = "md", width, height, fill = false, className, style, ...htmlProps },
   ref
 ) {
+  const sized = shape === "avatar" || shape === "control";
+
+  if (shape === "row") {
+    return (
+      <div
+        ref={ref}
+        {...htmlProps}
+        className={[styles.row, className].filter(Boolean).join(" ")}
+        style={height !== undefined ? { ...style, height: length(height) } : style}
+        aria-hidden="true"
+      >
+        <div
+          className={[styles.skeleton, styles.text].join(" ")}
+          style={width !== undefined ? { width: length(width) } : undefined}
+        />
+      </div>
+    );
+  }
+
   const classes = [
     styles.skeleton,
     styles[shape],
-    shape === "avatar" && styles[`avatar-${size}`],
-    shape === "button" && styles[`button-${size}`],
-    shape === "input" && styles[`input-${size}`],
+    sized && styles[`${shape}-${size}`],
     fill && styles.fill,
-    radius && styles[`radius-${radius}`],
-    isStatic && styles.static,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
-  const style: React.CSSProperties = {};
-
-  if (width !== undefined) {
-    style.width = typeof width === "number" ? `${width}px` : width;
-  }
-  if (height !== undefined) {
-    style.height = typeof height === "number" ? `${height}px` : height;
-  }
+  const dimensions: React.CSSProperties = { ...style };
+  if (width !== undefined) dimensions.width = length(width);
+  if (height !== undefined) dimensions.height = length(height);
 
   return (
     <div
       ref={ref}
       {...htmlProps}
       className={classes}
-      style={Object.keys(style).length > 0 ? style : undefined}
+      style={Object.keys(dimensions).length > 0 ? dimensions : undefined}
       aria-hidden="true"
     />
   );
@@ -123,16 +117,15 @@ const SkeletonBase = React.forwardRef<HTMLDivElement, SkeletonProps>(function Sk
 function SkeletonText({
   lines = 3,
   lastLineWidth = 80,
-  gap = "sm",
   className,
   ...htmlProps
 }: SkeletonTextProps) {
-  const containerClasses = [styles.textContainer, styles[`gap-${gap}`], className]
-    .filter(Boolean)
-    .join(" ");
-
   return (
-    <div {...htmlProps} className={containerClasses} aria-hidden="true">
+    <div
+      {...htmlProps}
+      className={[styles.textContainer, className].filter(Boolean).join(" ")}
+      aria-hidden="true"
+    >
       {Array.from({ length: lines }, (_, lineIdx) => {
         const isLast = lineIdx === lines - 1;
         return (
@@ -148,29 +141,9 @@ function SkeletonText({
 }
 
 // ============================================
-// Skeleton.Circle - Shorthand for the avatar shape
-// ============================================
-
-function SkeletonCircle({
-  size = "md",
-  className,
-}: {
-  size?: SkeletonSize | number;
-  className?: string;
-}) {
-  if (typeof size === "number") {
-    return (
-      <SkeletonBase shape="rect" width={size} height={size} radius="full" className={className} />
-    );
-  }
-  return <SkeletonBase shape="avatar" size={size} className={className} />;
-}
-
-// ============================================
 // Compound Component
 // ============================================
 
 export const Skeleton = Object.assign(SkeletonBase, {
   Text: SkeletonText,
-  Circle: SkeletonCircle,
 });

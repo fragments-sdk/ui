@@ -1,0 +1,203 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "AppShell",
+  "description": "Frames the application with header, sidebar, main and optional aside regions, sharing sidebar state.",
+  "category": "layout",
+  "tags": ["layout", "shell", "scaffold", "dashboard", "app-layout"],
+  "status": "stable",
+  "sourcePath": "src/components/AppShell/index.tsx",
+  "exportName": "AppShell",
+  "propsSummary": [
+    "children: node (required)",
+    "layout: default|sidebar (default: default)",
+    "collapsed / defaultCollapsed / onCollapsedChange: the desktop rail",
+    "open / defaultOpen / onOpenChange: the mobile panel",
+    "collapsible: icon|offcanvas|none (default: icon)",
+    "enableKeyboardShortcut: boolean (default: true)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "AppShell.Header, AppShell.Sidebar, AppShell.Main, AppShell.Aside",
+      "required": true
+    },
+    "layout": {
+      "type": "enum",
+      "description": "`default`: the header spans the top. `sidebar`: the rail runs the full height and the header sits beside it.",
+      "default": "default",
+      "required": false,
+      "values": ["default", "sidebar"]
+    },
+    "collapsed": {
+      "type": "boolean",
+      "description": "Desktop: the rail is collapsed (controlled)",
+      "required": false
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "description": "Desktop: the rail starts collapsed",
+      "default": false,
+      "required": false
+    },
+    "onCollapsedChange": {
+      "type": "function",
+      "description": "Called when the rail collapses or expands",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Mobile: the panel is open (controlled)",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Mobile: the panel starts open",
+      "default": false,
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when the mobile panel opens or closes",
+      "required": false
+    },
+    "collapsible": {
+      "type": "enum",
+      "description": "How the rail collapses: to its glyphs, off the canvas, or never",
+      "default": "icon",
+      "required": false,
+      "values": ["icon", "offcanvas", "none"]
+    },
+    "enableKeyboardShortcut": {
+      "type": "boolean",
+      "description": "Toggle the sidebar with Cmd/Ctrl+B",
+      "default": true,
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Dashboards and internal tools",
+      "Apps with persistent sidebar navigation",
+      "Layouts needing header, sidebar and main together",
+      "Navigation that must become a modal panel on small screens"
+    ],
+    "whenNot": [
+      "Marketing and landing pages",
+      "Content-first sites with no app navigation",
+      "Single-screen tools with no chrome"
+    ],
+    "guidelines": [
+      "Put a Main inside AppShell.Main: Main owns the 16 gutter and the <main> landmark; the slot adds neither",
+      "AppShell is the Sidebar.Provider: set sidebar state here, not on AppShell.Sidebar",
+      "Columns follow the slots' own token widths, so collapsing is instant and an absent slot takes no room",
+      "Every plane is canvas except the aside, which is the surface plane",
+      "Header.Trigger shows on small screens and when the rail is off the canvas",
+      "The aside drops under main below lg"
+    ],
+    "accessibility": [
+      "AppShell.Header is the banner landmark; a Header inside it renders a div",
+      "Main renders <main id=\"main-content\"> for Header.SkipLink",
+      "Below md the sidebar is a modal dialog with a focus trap, Escape and a scrim",
+      "Cmd/Ctrl+B toggles the sidebar"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default Layout",
+      "description": "Header across the top, the rail below it.",
+      "code": "import { AppShell } from '@/components/AppShell';\nimport { Header } from '@/components/Header';\nimport { Main } from '@/components/Main';\nimport { Sidebar } from '@/components/Sidebar';\n\n<AppShell>\n  <AppShell.Header>\n    <Header>\n      <Header.SkipLink />\n      <Header.Trigger />\n      <Header.Brand href=\"/\">Fragments</Header.Brand>\n    </Header>\n  </AppShell.Header>\n  <AppShell.Sidebar>\n    <Sidebar.Nav>\n      <Sidebar.Section label=\"Workspace\">\n        <Sidebar.Item href=\"/overview\" active>Overview</Sidebar.Item>\n        <Sidebar.Item href=\"/findings\">Findings</Sidebar.Item>\n      </Sidebar.Section>\n    </Sidebar.Nav>\n  </AppShell.Sidebar>\n  <AppShell.Main>\n    <Main>\n      <Main.Header><Main.Title>Overview</Main.Title></Main.Header>\n    </Main>\n  </AppShell.Main>\n</AppShell>"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Full-height rail with the brand, a header with search, and a page masthead.",
+      "code": "import { House as HouseIcon, File as FileIcon, ListBullets as ListIcon } from \"@phosphor-icons/react\";\nimport { AppShell } from '@/components/AppShell';\nimport { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\nimport { Input } from '@/components/Input';\nimport { Main } from '@/components/Main';\nimport { Sidebar } from '@/components/Sidebar';\n\nconst content = <p>No findings need attention.</p>;\n\n<AppShell layout=\"sidebar\">\n  <AppShell.Header>\n    <Header>\n      <Header.SkipLink />\n      <Header.Trigger />\n      <Header.Search>\n        <Input placeholder=\"Search…\" aria-label=\"Search\" />\n      </Header.Search>\n      <Header.Actions>\n        <Button>New check</Button>\n      </Header.Actions>\n    </Header>\n  </AppShell.Header>\n  <AppShell.Sidebar>\n    <Sidebar.Header>Fragments</Sidebar.Header>\n    <Sidebar.Nav>\n      <Sidebar.Section label=\"Workspace\">\n        <Sidebar.Item icon={<HouseIcon />} href=\"/overview\" active>Overview</Sidebar.Item>\n        <Sidebar.Item icon={<ListIcon />} href=\"/findings\" badge=\"12\">Findings</Sidebar.Item>\n        <Sidebar.Item icon={<FileIcon />} href=\"/settings\">Settings</Sidebar.Item>\n      </Sidebar.Section>\n    </Sidebar.Nav>\n    <Sidebar.Footer>\n      <Sidebar.CollapseToggle />\n    </Sidebar.Footer>\n  </AppShell.Sidebar>\n  <AppShell.Main>\n    <Main>\n      <Main.Header>\n        <Main.Title>Overview</Main.Title>\n        <Main.Description>Every repository passed its last check.</Main.Description>\n      </Main.Header>\n      <Main.Content>{content}</Main.Content>\n    </Main>\n  </AppShell.Main>\n</AppShell>"
+    },
+    {
+      "name": "With Aside Panel",
+      "description": "A complementary panel on the surface plane at the wide sidebar width.",
+      "code": "import { AppShell } from '@/components/AppShell';\nimport { Main } from '@/components/Main';\n\nconst page = <Main.Content><p>Select a finding to review its details.</p></Main.Content>;\nconst details = <Main.Content><p>The selected finding is ready for review.</p></Main.Content>;\n\n<AppShell>\n  <AppShell.Main>\n    <Main>{page}</Main>\n  </AppShell.Main>\n  <AppShell.Aside aria-label=\"Details\">\n    <Main as=\"div\">{details}</Main>\n  </AppShell.Aside>\n</AppShell>"
+    },
+    {
+      "name": "Offcanvas Rail",
+      "description": "Collapsing takes the rail off the canvas; Header.Trigger brings it back.",
+      "code": "import { AppShell } from '@/components/AppShell';\nimport { Header } from '@/components/Header';\nimport { Sidebar } from '@/components/Sidebar';\n\nconst nav = (\n  <Sidebar.Nav>\n    <Sidebar.Section label=\"Workspace\">\n      <Sidebar.Item href=\"/overview\" active>Overview</Sidebar.Item>\n      <Sidebar.Item href=\"/findings\">Findings</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n);\nconst page = <p>Workspace overview</p>;\n\n<AppShell collapsible=\"offcanvas\" defaultCollapsed>\n  <AppShell.Header>\n    <Header>\n      <Header.Trigger />\n      <Header.Brand href=\"/\">Fragments</Header.Brand>\n    </Header>\n  </AppShell.Header>\n  <AppShell.Sidebar>{nav}</AppShell.Sidebar>\n  <AppShell.Main>{page}</AppShell.Main>\n</AppShell>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Theme",
+      "relationship": "parent",
+      "note": "AppShell sits inside the Theme provider"
+    },
+    {
+      "component": "Header",
+      "relationship": "child",
+      "note": "Header goes inside AppShell.Header"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "child",
+      "note": "Sidebar content goes inside AppShell.Sidebar; AppShell is its provider"
+    },
+    {
+      "component": "Main",
+      "relationship": "child",
+      "note": "Main goes inside AppShell.Main and owns the gutter and the <main> landmark"
+    }
+  ],
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Header", "Sidebar", "Main", "Aside"],
+    "commonPatterns": [
+      "<AppShell><AppShell.Header><Header>{bar}</Header></AppShell.Header><AppShell.Sidebar>{nav}</AppShell.Sidebar><AppShell.Main><Main>{page}</Main></AppShell.Main></AppShell>",
+      "<AppShell layout=\"sidebar\" collapsible=\"offcanvas\"><AppShell.Header><Header><Header.Trigger />{bar}</Header></AppShell.Header><AppShell.Sidebar>{nav}</AppShell.Sidebar><AppShell.Main><Main>{page}</Main></AppShell.Main></AppShell>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.550Z"
+  },
+  "cssVariables": [
+    "--fui-app-canvas-bg",
+    "--fui-appshell-sidebar-width-wide",
+    "--fui-bg-primary",
+    "--fui-border",
+    "--fui-header-z-index",
+    "--fui-stroke-hairline",
+    "--fui-text-primary"
+  ],
+  "attributes": [
+    {
+      "name": "data-layout",
+      "value": "default",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-sidebar-state",
+      "value": "expanded",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "app-shell",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "scroll-area",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "scroll-area-viewport",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "app-shell-main",
+      "fixture": "populated"
+    }
+  ]
+}

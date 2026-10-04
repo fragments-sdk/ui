@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { TableOfContents } from ".";
 
 /**
- * TableOfContents is the canonical in-page navigation primitive — a sticky
- * sidebar of heading links with a quiet, flush hierarchy and ink-weight active
- * state. Use it for docs, long-form content, or filterable grouped
- * lists; agents should compose `TableOfContents.Item`/`TableOfContents.Group`
- * rather than hand-rolling a nav landmark.
+ * TableOfContents is the in-page navigation primitive: a sidebar of heading
+ * links with a quiet, flush hierarchy and the section in view marked. Use it
+ * for docs, long-form content, or filterable grouped lists; compose
+ * `TableOfContents.Item` and `TableOfContents.Group` rather than hand-rolling
+ * a nav landmark. Nesting a group indents its items one step.
  */
 const meta = {
   title: "Navigation/TableOfContents",
@@ -16,27 +16,21 @@ const meta = {
     docs: {
       description: {
         component:
-          "Sticky sidebar navigation for long-form content or filterable lists. Prefer this over a hand-rolled in-page nav.",
+          "In-page navigation for long-form content or filterable lists. Prefer this over a hand-rolled in-page nav.",
       },
     },
   },
   argTypes: {
-    title: { control: "text", description: "Visible title above the list" },
-    label: { control: "text", description: "Accessible label for the nav landmark" },
-    hideTitle: { control: "boolean", description: "Hide the visible title" },
-    hideSubItems: {
-      control: "boolean",
-      description: "Hide indented items and nested groups",
-    },
+    title: { control: "text", description: "The title above the list; null shows none" },
+    label: { control: "text", description: "Names the navigation landmark" },
   },
   args: {
-    title: "On This Page",
-    hideSubItems: false,
+    title: "On this page",
     children: (
       <>
-        <TableOfContents.Item id="introduction">Introduction</TableOfContents.Item>
-        <TableOfContents.Item id="getting-started">Getting Started</TableOfContents.Item>
-        <TableOfContents.Item id="api-reference">API Reference</TableOfContents.Item>
+        <TableOfContents.Item targetId="introduction">Introduction</TableOfContents.Item>
+        <TableOfContents.Item targetId="getting-started">Getting started</TableOfContents.Item>
+        <TableOfContents.Item targetId="api-reference">API reference</TableOfContents.Item>
       </>
     ),
   },
@@ -49,34 +43,31 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <TableOfContents {...args}>
-      <TableOfContents.Item id="introduction">Introduction</TableOfContents.Item>
-      <TableOfContents.Item id="getting-started">Getting Started</TableOfContents.Item>
-      <TableOfContents.Item id="installation" indent>
-        Installation
-      </TableOfContents.Item>
-      <TableOfContents.Item id="configuration" indent>
-        Configuration
-      </TableOfContents.Item>
-      <TableOfContents.Item id="api-reference">API Reference</TableOfContents.Item>
-      <TableOfContents.Item id="examples">Examples</TableOfContents.Item>
+      <TableOfContents.Item targetId="introduction">Introduction</TableOfContents.Item>
+      <TableOfContents.Group label="Getting started" collapsible={false}>
+        <TableOfContents.Item targetId="installation">Installation</TableOfContents.Item>
+        <TableOfContents.Item targetId="configuration">Configuration</TableOfContents.Item>
+      </TableOfContents.Group>
+      <TableOfContents.Item targetId="api-reference">API reference</TableOfContents.Item>
+      <TableOfContents.Item targetId="examples">Examples</TableOfContents.Item>
     </TableOfContents>
   ),
 };
 
 export const NestedGroups: Story = {
   render: () => (
-    <TableOfContents title="Components" hideSubItems={false}>
-      <TableOfContents.Item id="all" active>
+    <TableOfContents title="Components">
+      <TableOfContents.Item targetId="all" active>
         All
       </TableOfContents.Item>
       <TableOfContents.Group label="Primitives" trailing={<span>3</span>}>
-        <TableOfContents.Item id="button">Button</TableOfContents.Item>
-        <TableOfContents.Item id="card">Card</TableOfContents.Item>
-        <TableOfContents.Item id="input">Input</TableOfContents.Item>
+        <TableOfContents.Item targetId="button">Button</TableOfContents.Item>
+        <TableOfContents.Item targetId="card">Card</TableOfContents.Item>
+        <TableOfContents.Item targetId="input">Input</TableOfContents.Item>
       </TableOfContents.Group>
       <TableOfContents.Group label="Custom" defaultOpen={false}>
-        <TableOfContents.Item id="features">Features</TableOfContents.Item>
-        <TableOfContents.Item id="plans">Plans</TableOfContents.Item>
+        <TableOfContents.Item targetId="features">Features</TableOfContents.Item>
+        <TableOfContents.Item targetId="plans">Plans</TableOfContents.Item>
       </TableOfContents.Group>
     </TableOfContents>
   ),
@@ -84,34 +75,17 @@ export const NestedGroups: Story = {
 
 export const WithActiveItem: Story = {
   render: () => (
-    <TableOfContents hideSubItems={false}>
-      <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
-      <TableOfContents.Item id="setup" active>
+    <TableOfContents>
+      <TableOfContents.Item targetId="overview">Overview</TableOfContents.Item>
+      <TableOfContents.Item targetId="setup" active>
         Setup
       </TableOfContents.Item>
-      <TableOfContents.Item id="usage" indent>
-        Basic Usage
-      </TableOfContents.Item>
-      <TableOfContents.Item id="advanced" indent>
-        Advanced
-      </TableOfContents.Item>
-      <TableOfContents.Item id="props">Props</TableOfContents.Item>
-      <TableOfContents.Item id="accessibility">Accessibility</TableOfContents.Item>
-    </TableOfContents>
-  ),
-};
-
-export const TopLevelOnly: Story = {
-  render: () => (
-    <TableOfContents hideSubItems>
-      <TableOfContents.Item id="overview">Overview</TableOfContents.Item>
-      <TableOfContents.Item id="basic-usage" indent>
-        Basic usage
-      </TableOfContents.Item>
-      <TableOfContents.Item id="advanced-usage" indent>
-        Advanced usage
-      </TableOfContents.Item>
-      <TableOfContents.Item id="accessibility">Accessibility</TableOfContents.Item>
+      <TableOfContents.Group label="Usage" collapsible={false}>
+        <TableOfContents.Item targetId="usage">Basic usage</TableOfContents.Item>
+        <TableOfContents.Item targetId="advanced">Advanced</TableOfContents.Item>
+      </TableOfContents.Group>
+      <TableOfContents.Item targetId="props">Props</TableOfContents.Item>
+      <TableOfContents.Item targetId="accessibility">Accessibility</TableOfContents.Item>
     </TableOfContents>
   ),
 };
@@ -119,22 +93,22 @@ export const TopLevelOnly: Story = {
 export const CustomTitle: Story = {
   render: () => (
     <TableOfContents title="Contents">
-      <TableOfContents.Item id="chapter-1">Chapter 1: The Beginning</TableOfContents.Item>
-      <TableOfContents.Item id="chapter-2">Chapter 2: The Middle</TableOfContents.Item>
-      <TableOfContents.Item id="chapter-3">Chapter 3: The End</TableOfContents.Item>
+      <TableOfContents.Item targetId="chapter-1">Chapter 1: The beginning</TableOfContents.Item>
+      <TableOfContents.Item targetId="chapter-2">Chapter 2: The middle</TableOfContents.Item>
+      <TableOfContents.Item targetId="chapter-3">Chapter 3: The end</TableOfContents.Item>
     </TableOfContents>
   ),
 };
 
 export const NoTitle: Story = {
-  args: { hideTitle: true },
+  args: { title: null },
   render: (args) => (
     <TableOfContents {...args}>
-      <TableOfContents.Item id="section-a">Section A</TableOfContents.Item>
-      <TableOfContents.Item id="section-b" active>
+      <TableOfContents.Item targetId="section-a">Section A</TableOfContents.Item>
+      <TableOfContents.Item targetId="section-b" active>
         Section B
       </TableOfContents.Item>
-      <TableOfContents.Item id="section-c">Section C</TableOfContents.Item>
+      <TableOfContents.Item targetId="section-c">Section C</TableOfContents.Item>
     </TableOfContents>
   ),
 };

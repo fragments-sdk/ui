@@ -1,0 +1,20 @@
+// A clipping container for FocusRecipe.states.tsx: a scroll viewport cuts an
+// outside ring, so a control inside it draws the inset ring (the same mixin the
+// Sidebar rows use). Fixture-only; unlayered, so it wins over the control's own
+// outside ring.
+
+@use "../recipes/focus";
+@use "../tokens/variables" as *;
+
+.clip {
+  overflow: auto;
+  inline-size: max-content;
+  padding: 0;
+  border-radius: var(--fui-radius-control, $fui-radius-control);
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, $fui-stroke-hairline)
+    var(--fui-border, $fui-border);
+}
+
+.clip > * {
+  @include focus.visible($inset: true);
+}

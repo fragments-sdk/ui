@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "note": "Doctrine lint violations that predate the gate, counted per file and rule. Fixing one fails the lane until `pnpm run lint:styles --prune` shrinks this file; never raise a count by hand.",
+  "violations": {
+    "src/measurements/MeasurementTargets.module.scss": {
+      "fui/elevation/shadow-allowlist": 1
+    },
+    "src/recipes/_tone.scss": {
+      "fui/elevation/background-planes": 2
+    },
+    "src/recipes/_working.scss": {
+      "fui/elevation/background-planes": 1
+    },
+    "src/styles/globals.scss": {
+      "fui/elevation/background-planes": 2,
+      "fui/motion/no-literal-duration": 1,
+      "fui/motion/no-literal-easing": 1
+    }
+  }
+}

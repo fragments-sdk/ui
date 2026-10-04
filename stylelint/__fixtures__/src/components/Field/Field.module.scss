@@ -1,0 +1,17 @@
+// Rule R6 field type: the configured `.control` sets font: inherit at zero specificity, so a
+// composed control's own class still wins; the `:where()` rule counts as the base rule.
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  :where(.control) {
+    font: inherit;
+
+    @media (pointer: coarse) {
+      font-size: 16px;
+    }
+  }
+
+  .control {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}

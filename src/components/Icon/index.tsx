@@ -1,41 +1,47 @@
-"use client";
-
 import * as React from "react";
 import { MEASUREMENT_PROFILES, measurementPx } from "../../measurements";
 import styles from "./Icon.module.scss";
 
+/** Any icon component that takes `size` (and, optionally, `weight`). Icon
+ * passes nothing else to the glyph. */
 type AnyIconComponent = React.ComponentType<any>;
-type IconComponentProps<TIcon extends AnyIconComponent> = React.ComponentPropsWithoutRef<TIcon>;
 
+/** The glyph ladder: 12, 14, 16, 18 and 24. Nothing above 24 belongs in a
+ * control-scale interface. */
 export type IconSize = "xs" | "sm" | "md" | "lg" | "xl";
-export type IconTone = "accent" | "info" | "success" | "warning" | "danger";
-export type IconColor = "primary" | "secondary" | "tertiary";
+/** The three weights the system draws. */
+export type IconWeight = "regular" | "bold" | "fill";
+/** One ink axis: the two quiet text inks, the accent ink, and the four status
+ * inks. Omit it to inherit `currentColor`. */
+export type IconTone =
+  | "secondary"
+  | "tertiary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "danger";
 
-export type IconProps<TIcon extends AnyIconComponent = AnyIconComponent> = Omit<
-  React.HTMLAttributes<HTMLSpanElement>,
-  "color"
-> & {
-  /** The icon component to render */
-  icon: TIcon;
-  /** Size of the icon. `xl` is the largest step (24px); the glyph inherits
-   * `currentColor` and the surrounding line height.
+export interface IconProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, "color"> {
+  /** The icon component to render. */
+  icon: AnyIconComponent;
+  /** A step on the glyph ladder: xs 12, sm 14, md 16, lg 18, xl 24.
    * @default "md" */
   size?: IconSize;
-  /** Optional style/weight hint forwarded when the icon component supports a `weight` prop */
-  weight?: string;
-  /** Semantic colour. Reserve `success`, `warning` and `danger` for real
-   * state; `accent` is the brand spend. Omit to inherit `currentColor`. */
+  /** The glyph weight, forwarded to icon components that take one.
+   * @default "regular" */
+  weight?: IconWeight;
+  /** The glyph ink. `secondary` and `tertiary` follow the text ladder;
+   * `accent` is the accent ink; the status inks mark real state only. Omit to
+   * inherit `currentColor`. */
   tone?: IconTone;
-  /** Text-hierarchy colour, the same axis as Text's `color`. `tone` wins when
-   * both are set. Omit to inherit `currentColor`. */
-  color?: IconColor;
-  /** Additional props forwarded to the underlying icon component (typed from `icon`) */
-  iconProps?: Partial<IconComponentProps<TIcon>>;
-};
+}
 
 const iconTargets = MEASUREMENT_PROFILES.targets.icon;
 
 const TONE_CLASS: Record<IconTone, string> = {
+  secondary: styles.toneSecondary,
+  tertiary: styles.toneTertiary,
   accent: styles.toneAccent,
   info: styles.toneInfo,
   success: styles.toneSuccess,
@@ -43,51 +49,32 @@ const TONE_CLASS: Record<IconTone, string> = {
   danger: styles.toneDanger,
 };
 
-const COLOR_CLASS: Record<IconColor, string> = {
-  primary: styles.colorPrimary,
-  secondary: styles.colorSecondary,
-  tertiary: styles.colorTertiary,
-};
-
 const IconRoot = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
-  { icon: IconComponent, size = "md", weight = "regular", tone, color, iconProps, className, style, ...htmlProps },
+  { icon: IconComponent, size = "md", weight = "regular", tone, className, ...htmlProps },
   ref
 ) {
-  const classes = [
-    styles.icon,
-    styles[size],
-    tone ? TONE_CLASS[tone] : color ? COLOR_CLASS[color] : undefined,
-    className,
-  ]
+  const classes = [styles.icon, styles[size], tone ? TONE_CLASS[tone] : undefined, className]
     .filter(Boolean)
     .join(" ");
 
-  const resolvedIconProps = {
-    ...(iconProps as Record<string, unknown> | undefined),
-  };
-
-  // Provide sensible defaults for icon libraries that support common props.
-  if (!("size" in resolvedIconProps)) {
-    resolvedIconProps.size = measurementPx(iconTargets[size], `targets.icon.${size}`);
-  }
-  if (weight && !("weight" in resolvedIconProps)) {
-    resolvedIconProps.weight = weight;
-  }
+  // Decorative until labelled: an unlabelled icon is hidden from assistive
+  // technology; a labelled one is announced once, as an image. An explicit
+  // `aria-hidden` or `role` from the caller wins.
+  const labelled = Boolean(htmlProps["aria-label"] || htmlProps["aria-labelledby"]);
+  const a11yProps = labelled
+    ? { role: htmlProps.role ?? "img" }
+    : { "aria-hidden": htmlProps["aria-hidden"] ?? true };
 
   return (
-    <span ref={ref} {...htmlProps} className={classes} style={style}>
-      <IconComponent {...resolvedIconProps} />
+    <span ref={ref} {...htmlProps} {...a11yProps} className={classes}>
+      <IconComponent
+        size={measurementPx(iconTargets[size], `targets.icon.${size}`)}
+        weight={weight}
+      />
     </span>
   );
 });
 
-type IconComponentSignature = <TIcon extends AnyIconComponent = AnyIconComponent>(
-  props: IconProps<TIcon> & React.RefAttributes<HTMLSpanElement>
-) => React.ReactElement | null;
-
 export const Icon = Object.assign(IconRoot, {
   Root: IconRoot,
-}) as typeof IconRoot &
-  IconComponentSignature & {
-    Root: typeof IconRoot;
-  };
+});

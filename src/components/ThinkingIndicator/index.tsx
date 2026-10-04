@@ -1,233 +1,211 @@
 "use client";
 
 import * as React from "react";
+import { CaretRight, Check, WarningCircle } from "@phosphor-icons/react";
+import { Icon } from "../Icon";
 import styles from "./ThinkingIndicator.module.scss";
-import { Loading } from "../Loading";
 
 // ============================================
 // Types
 // ============================================
 
-export type ThinkingKind = "dots" | "pulse" | "spinner";
-/** Shared lifecycle axis: `idle` waits, `pending`/`streaming` are in flight. */
-export type StepStatus = "idle" | "pending" | "streaming" | "complete" | "error";
+/** Where one step stands: waiting, under way, done or failed. */
+export type StepStatus = "idle" | "pending" | "complete" | "error";
 
-export interface ThinkingStep {
-  id: string;
-  label: string;
-  status?: StepStatus;
-}
-
-export interface ThinkingIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Whether thinking is active */
+export interface ThinkingIndicatorProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
+  /** Whether the assistant is still working. When false the row stays and says it finished. */
   active?: boolean;
-  /** Status text */
-  label?: string;
-  /** Animation style */
-  kind?: ThinkingKind;
-  /** Show elapsed time */
+  /** What the assistant is doing. @default "Thinking…" */
+  label?: React.ReactNode;
+  /** What the row says once work stops. @default "Done" */
+  doneLabel?: React.ReactNode;
+  /** Show how long the work has run (frozen once it stops). */
   showElapsed?: boolean;
-  /** Multi-step progress */
-  steps?: ThinkingStep[];
+  /** `ThinkingIndicator.Steps` for a plan under the live line. */
+  children?: React.ReactNode;
 }
 
-export interface ThinkingStepsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ThinkingStepsProps extends Omit<
+  React.OlHTMLAttributes<HTMLOListElement>,
+  "children"
+> {
+  /** What the list is, read with its count. @default "Steps" */
+  label?: string;
+  /** Fold the list behind an "N of M done" toggle. */
+  foldable?: boolean;
+  /** Whether a foldable list starts open. @default true */
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }
 
-export interface ThinkingStepProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Step label */
-  label: string;
-  /** Step status */
+export interface ThinkingStepProps extends Omit<React.LiHTMLAttributes<HTMLLIElement>, "children"> {
+  /** What the step does. */
+  label: React.ReactNode;
+  /** Where the step stands. @default "idle" */
   status?: StepStatus;
+  /** Optional detail under the label (a file name, a count). */
+  children?: React.ReactNode;
 }
 
 // ============================================
-// Context
+// Elapsed time
 // ============================================
 
-interface ThinkingIndicatorContextValue {
-  active: boolean;
-  kind: ThinkingKind;
+function formatElapsed(ms: number): string {
+  const seconds = Math.floor(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}m ${seconds % 60}s`;
 }
 
-const ThinkingIndicatorContext = React.createContext<ThinkingIndicatorContextValue | null>(null);
-
-function useThinkingIndicatorContext() {
-  const context = React.useContext(ThinkingIndicatorContext);
-  if (!context) {
-    throw new Error(
-      "ThinkingIndicator compound components must be used within a ThinkingIndicator"
-    );
-  }
-  return context;
-}
-
-// ============================================
-// Hooks
-// ============================================
-
-function useElapsedTime(active: boolean): string {
+/** Milliseconds since `active` last turned true; holds its last value once it turns false. */
+function useElapsed(active: boolean, enabled: boolean): number {
   const [elapsed, setElapsed] = React.useState(0);
-  const startTimeRef = React.useRef<number>(Date.now());
+  const [wasActive, setWasActive] = React.useState(active);
+  if (active !== wasActive) {
+    setWasActive(active);
+    if (active) setElapsed(0);
+  }
 
   React.useEffect(() => {
-    if (!active) {
-      setElapsed(0);
-      return;
-    }
-
-    startTimeRef.current = Date.now();
-    const interval = setInterval(() => {
-      setElapsed(Date.now() - startTimeRef.current);
-    }, 1000);
-
+    if (!active || !enabled) return;
+    const start = Date.now();
+    const interval = setInterval(() => setElapsed(Date.now() - start), 1000);
     return () => clearInterval(interval);
-  }, [active]);
+  }, [active, enabled]);
 
-  if (elapsed < 1000) return "";
-
-  const seconds = Math.floor(elapsed / 1000);
-  if (seconds < 60) return `${seconds}s`;
-
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}m ${remainingSeconds}s`;
+  return elapsed;
 }
 
 // ============================================
-// Icons
+// Steps
 // ============================================
 
-function CheckIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
+const STEP_PREFIX: Record<StepStatus, string> = {
+  idle: "",
+  pending: "Now: ",
+  complete: "Done: ",
+  error: "",
+};
 
-function ErrorIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}
-
-// ============================================
-// Sub-components
-// ============================================
-
-function ThinkingSteps({ children, className, ...htmlProps }: ThinkingStepsProps) {
-  const classes = [styles.steps, className].filter(Boolean).join(" ");
+function ThinkingStep({
+  label,
+  status = "idle",
+  children,
+  className,
+  ...htmlProps
+}: ThinkingStepProps) {
+  const classes = [styles.step, className].filter(Boolean).join(" ");
 
   return (
-    <div {...htmlProps} className={classes}>
-      {children}
-    </div>
-  );
-}
-
-function ThinkingStep({ label, status = "idle", className, ...htmlProps }: ThinkingStepProps) {
-  const classes = [
-    styles.step,
-    styles[`step${status.charAt(0).toUpperCase() + status.slice(1)}`],
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  return (
-    <div {...htmlProps} className={classes}>
-      <span className={styles.stepIndicator}>
-        {status === "complete" && <CheckIcon />}
-        {status === "error" && <ErrorIcon />}
-        {(status === "pending" || status === "streaming") && (
-          <Loading
-            size="sm"
-            kind="spinner"
-            color="current"
-            label=""
-            role="presentation"
-            aria-hidden="true"
-          />
-        )}
-        {status === "idle" && <span className={styles.stepDot} />}
+    <li {...htmlProps} className={classes} data-status={status}>
+      <span className={styles.mark} aria-hidden="true">
+        {status === "complete" && <Icon icon={Check} size="xs" weight="bold" />}
+        {status === "error" && <Icon icon={WarningCircle} size="sm" />}
       </span>
-      <span className={styles.stepLabel}>{label}</span>
+      <span className={styles.stepBody}>
+        <span className={styles.stepLabel} role={status === "pending" ? "status" : undefined}>
+          {STEP_PREFIX[status] && <span className={styles.hidden}>{STEP_PREFIX[status]}</span>}
+          {status === "error" && <span className={styles.failed}>Failed: </span>}
+          {label}
+        </span>
+        {children != null && <span className={styles.detail}>{children}</span>}
+      </span>
+    </li>
+  );
+}
+
+function countSteps(children: React.ReactNode) {
+  let total = 0;
+  let done = 0;
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement<ThinkingStepProps>(child)) return;
+    total += 1;
+    if (child.props.status === "complete") done += 1;
+  });
+  return { total, done };
+}
+
+function ThinkingSteps({
+  label = "Steps",
+  foldable = false,
+  defaultOpen = true,
+  children,
+  className,
+  id,
+  ...htmlProps
+}: ThinkingStepsProps) {
+  const [open, setOpen] = React.useState(defaultOpen);
+  const autoId = React.useId();
+  const listId = id ?? `${autoId}-steps`;
+  const { total, done } = countSteps(children);
+  const summary = `${done} of ${total} done`;
+  const shown = !foldable || open;
+
+  return (
+    <div className={[styles.steps, className].filter(Boolean).join(" ")}>
+      {foldable && (
+        <button
+          type="button"
+          className={styles.fold}
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <Icon icon={CaretRight} size="xs" className={styles.caret} />
+          {summary}
+        </button>
+      )}
+      <ol
+        {...htmlProps}
+        id={listId}
+        className={styles.list}
+        aria-label={`${label}: ${summary}`}
+        hidden={!shown}
+      >
+        {children}
+      </ol>
     </div>
   );
 }
 
 // ============================================
-// Main Component
+// Root
 // ============================================
 
 function ThinkingIndicatorRoot({
   active = true,
-  label = "Thinking...",
-  kind = "dots",
+  label = "Thinking…",
+  doneLabel = "Done",
   showElapsed = false,
-  steps,
+  children,
   className,
   ...htmlProps
 }: ThinkingIndicatorProps) {
-  const elapsedTime = useElapsedTime(active && showElapsed);
-
-  const contextValue: ThinkingIndicatorContextValue = {
-    active,
-    kind,
-  };
-
-  if (!active) return null;
-
-  const classes = [styles.thinkingIndicator, className].filter(Boolean).join(" ");
+  const elapsed = useElapsed(active, showElapsed);
+  const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
-    <ThinkingIndicatorContext.Provider value={contextValue}>
-      <div {...htmlProps} className={classes} role="status" aria-label={label} aria-live="polite">
-        <div className={styles.main}>
-          <Loading
-            size="sm"
-            kind={kind}
-            color="muted"
-            label=""
-            role="presentation"
-            aria-hidden="true"
-          />
-          <span className={styles.label}>{label}</span>
-          {showElapsed && elapsedTime && <span className={styles.elapsed}>{elapsedTime}</span>}
-        </div>
-
-        {steps && steps.length > 0 && (
-          <ThinkingSteps>
-            {steps.map((step) => (
-              <ThinkingStep key={step.id} label={step.label} status={step.status} />
-            ))}
-          </ThinkingSteps>
+    <div {...htmlProps} className={classes} data-active={active || undefined}>
+      <div className={styles.row}>
+        <span className={styles.liveMark} aria-hidden="true">
+          {!active && <Icon icon={Check} size="xs" weight="bold" />}
+        </span>
+        <span className={styles.label} role="status">
+          {active ? label : doneLabel}
+        </span>
+        {showElapsed && elapsed >= 1000 && (
+          <span className={styles.elapsed}>
+            <span className={styles.hidden}>{active ? "Elapsed " : "Took "}</span>
+            {formatElapsed(elapsed)}
+          </span>
         )}
       </div>
-    </ThinkingIndicatorContext.Provider>
+      {children}
+    </div>
   );
 }
 
@@ -236,10 +214,7 @@ function ThinkingIndicatorRoot({
 // ============================================
 
 export const ThinkingIndicator = Object.assign(ThinkingIndicatorRoot, {
+  Root: ThinkingIndicatorRoot,
   Steps: ThinkingSteps,
   Step: ThinkingStep,
 });
-
-export { ThinkingIndicatorRoot, ThinkingSteps, ThinkingStep };
-
-export { useThinkingIndicatorContext };

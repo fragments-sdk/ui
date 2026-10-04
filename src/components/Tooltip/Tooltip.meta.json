@@ -1,0 +1,193 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Tooltip",
+  "description": "Shows a one-line hint when a control is hovered or focused.",
+  "category": "overlays",
+  "tags": ["tooltip", "hint", "help", "hover", "contextual"],
+  "status": "stable",
+  "sourcePath": "src/components/Tooltip/index.tsx",
+  "exportName": "Tooltip",
+  "propsSummary": [
+    "children: element (required)",
+    "content: node (required)",
+    "shortcut: node",
+    "side: top|bottom|left|right (default: top)",
+    "align: start|center|end (default: center)",
+    "delay: number (default: 500, 0 inside the warm window)",
+    "closeDelay: number (default: 0)",
+    "disabled: boolean (default: false)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "closeOnClick: boolean (default: true)",
+    "contentProps: object"
+  ],
+  "props": {
+    "children": {
+      "type": "element",
+      "description": "The element that triggers the tooltip",
+      "required": true
+    },
+    "content": {
+      "type": "node",
+      "description": "Content to display in the tooltip",
+      "required": true
+    },
+    "shortcut": {
+      "type": "node",
+      "description": "A keyboard shortcut shown after the text, such as ⌘K",
+      "required": false
+    },
+    "side": {
+      "type": "enum",
+      "description": "Which side to show the tooltip",
+      "default": "top",
+      "required": false,
+      "values": ["top", "bottom", "left", "right"]
+    },
+    "align": {
+      "type": "enum",
+      "description": "Alignment along the side",
+      "default": "center",
+      "required": false,
+      "values": ["start", "center", "end"]
+    },
+    "delay": {
+      "type": "number",
+      "description": "Rest before opening (ms). Defaults to the provider's delay, or 500 with a 300ms warm window after another tip closes",
+      "default": "500",
+      "required": false
+    },
+    "closeDelay": {
+      "type": "number",
+      "description": "Delay before hiding (ms)",
+      "default": "0",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Render the child alone, with no tip",
+      "default": "false",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Callback when open state changes",
+      "required": false
+    },
+    "contentProps": {
+      "type": "object",
+      "description": "Props for the tip surface: id, className and data-* attributes",
+      "required": false
+    },
+    "closeOnClick": {
+      "type": "boolean",
+      "description": "Whether pressing the trigger closes the tip until the pointer leaves",
+      "default": "true",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Naming icon-only buttons",
+      "Showing text that had to be truncated",
+      "Surfacing a keyboard shortcut",
+      "One line of help, no more"
+    ],
+    "whenNot": [
+      "Help longer than a line — use Popover",
+      "Anything the user must not miss — use Alert",
+      "Content they need to click — use Popover or Menu",
+      "Touch-first screens, where there is no hover"
+    ],
+    "guidelines": [
+      "Under 80 characters",
+      "Sentence case, no trailing period",
+      "Never just repeat the visible label",
+      "Always leave a non-hover path to the same information",
+      "Put a keyboard shortcut in shortcut, not in the text",
+      "A disabled control is wrapped automatically so its tip still shows on hover",
+      "Wrap a toolbar in Tooltip.Provider to share one rest and warm window",
+      "contentProps sets attributes on the tip surface"
+    ],
+    "accessibility": [
+      "Opens on keyboard focus, not only hover",
+      "The open delay stops tooltips flashing while the pointer crosses the screen",
+      "Do not put anything critical here — treat it as a hint, not a label"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Appears after a short delay above the trigger.",
+      "code": "<Tooltip content=\"Save your changes\">\n  <Button>Save</Button>\n</Tooltip>"
+    },
+    {
+      "name": "Positions",
+      "description": "Four sides; it flips if the edge is too close.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"md\" align=\"center\" wrap>\n  <Tooltip content=\"Top tooltip\" side=\"top\">\n    <Button variant=\"soft\">Top</Button>\n  </Tooltip>\n  <Tooltip content=\"Bottom tooltip\" side=\"bottom\">\n    <Button variant=\"soft\">Bottom</Button>\n  </Tooltip>\n  <Tooltip content=\"Left tooltip\" side=\"left\">\n    <Button variant=\"soft\">Left</Button>\n  </Tooltip>\n  <Tooltip content=\"Right tooltip\" side=\"right\">\n    <Button variant=\"soft\">Right</Button>\n  </Tooltip>\n</Stack>"
+    },
+    {
+      "name": "With Shortcut",
+      "description": "A shortcut follows the text at the regular weight.",
+      "code": "<Tooltip content=\"Undo\" shortcut=\"⌘Z\">\n  <Button variant=\"ghost\">Undo</Button>\n</Tooltip>"
+    },
+    {
+      "name": "With Content Props",
+      "description": "contentProps lands on the popup element itself.",
+      "code": "<Tooltip\n  content=\"Styled through contentProps\"\n  contentProps={{ id: 'custom-tooltip-popup' }}\n>\n  <Button variant=\"soft\">Custom popup</Button>\n</Tooltip>"
+    },
+    {
+      "name": "On a disabled control",
+      "description": "The tip still explains why the control is off.",
+      "code": "<Tooltip content=\"Pick canonical components first\">\n  <Button disabled>Activate workspace rules</Button>\n</Tooltip>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Popover",
+      "relationship": "alternative",
+      "note": "Use Popover for interactive or longer content"
+    },
+    {
+      "component": "Alert",
+      "relationship": "alternative",
+      "note": "Use Alert for critical information that must be visible"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "content: ReactNode - tip text",
+      "shortcut: ReactNode - keyboard shortcut after the text",
+      "side: top|bottom|left|right - position (default: top)",
+      "delay: number - rest before opening (default: 500; 0 inside the 300ms warm window)",
+      "closeOnClick: boolean - a press quiets the tip (default: true)",
+      "contentProps: HTMLAttributes & data-* - tip surface props",
+      "Tooltip.Provider delay/closeDelay/timeout - shared rest and warm window (500/0/300)"
+    ],
+    "a11yRules": ["A11Y_TOOLTIP_FOCUS", "A11Y_TOOLTIP_ROLE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Provider"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:07.058Z"
+  },
+  "cssVariables": ["--fui-overlay-layer-tooltip", "--fui-raw-space-8"],
+  "attributes": []
+}

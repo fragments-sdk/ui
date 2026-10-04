@@ -1,11 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { DataTable } from '.';
-import type { ColumnDef, DataTableProps } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { EmptyState } from "../EmptyState";
+import { DataTable } from ".";
+import type { ColumnDef, DataTableProps } from ".";
 
 /**
  * Data table with sorting, selection, and column management, powered by
  * TanStack Table. Requires `columns` and `data`; supports sortable headers,
- * checkbox selection, clickable rows, striped/bordered styling, and sizes.
+ * checkbox selection, clickable rows, tree rows, the sheet, and the loading,
+ * empty and error states. It composes Table: one 32px row track.
  */
 
 type User = {
@@ -17,69 +19,59 @@ type User = {
 };
 
 const columns: ColumnDef<User>[] = [
-  { accessorKey: 'name', header: 'Name' },
-  { accessorKey: 'email', header: 'Email' },
-  { accessorKey: 'role', header: 'Role' },
-  { accessorKey: 'status', header: 'Status' },
+  { accessorKey: "name", header: "Name" },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "role", header: "Role" },
+  { accessorKey: "status", header: "Status" },
 ];
 
 const data: User[] = [
   {
-    id: '1',
-    name: 'Alice Johnson',
-    email: 'alice@example.com',
-    role: 'Admin',
-    status: 'active',
+    id: "1",
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    role: "Admin",
+    status: "active",
   },
   {
-    id: '2',
-    name: 'Bob Chen',
-    email: 'bob@example.com',
-    role: 'Member',
-    status: 'pending',
+    id: "2",
+    name: "Bob Chen",
+    email: "bob@example.com",
+    role: "Member",
+    status: "pending",
   },
   {
-    id: '3',
-    name: 'Carol Smith',
-    email: 'carol@example.com',
-    role: 'Member',
-    status: 'active',
+    id: "3",
+    name: "Carol Smith",
+    email: "carol@example.com",
+    role: "Member",
+    status: "active",
   },
 ];
 
 const meta = {
-  title: 'Display/DataTable',
+  title: "Display/DataTable",
   component: DataTable,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Data table with sorting, selection, and column management.',
+        component: "Data table with sorting, selection, and column management.",
       },
     },
   },
   argTypes: {
-    density: {
-      control: 'select',
-      options: ['compact', 'regular', 'relaxed'],
-      description: 'Canonical row density',
-    },
-    size: {
-      control: 'select',
-      options: ['sm', 'md'],
-      description: 'Deprecated density alias',
-    },
-    sortable: { control: 'boolean', description: 'Enable column sorting' },
-    selectable: { control: 'boolean', description: 'Enable row selection' },
+    sortable: { control: "boolean", description: "Enable column sorting" },
+    selectable: { control: "boolean", description: "Enable row selection" },
     showCheckbox: {
-      control: 'boolean',
-      description: 'Show checkbox column (requires selectable)',
+      control: "boolean",
+      description: "Show checkbox column (requires selectable)",
     },
-    striped: { control: 'boolean', description: 'Alternating row backgrounds' },
-    bordered: { control: 'boolean', description: 'Bordered container' },
-    captionHidden: { control: 'boolean' },
+    bordered: { control: "boolean", description: "The sheet: surface plane, hairline, radius" },
+    loading: { control: "boolean", description: "Placeholder rows under the real header" },
+    captionHidden: { control: "boolean" },
   },
-  args: { columns, data, density: 'regular' },
+  args: { columns, data },
 } satisfies Meta<DataTableProps<User>>;
 
 export default meta;
@@ -96,7 +88,7 @@ export const Sortable: Story = {
     data,
     sortable: true,
     bordered: true,
-    caption: 'Team members',
+    caption: "Team members",
     captionHidden: true,
   },
 };
@@ -112,23 +104,73 @@ export const CheckboxSelection: Story = {
   },
 };
 
-export const Striped: Story = {
-  args: { columns, data, striped: true, size: 'sm' },
-};
-
 export const ClickableRows: Story = {
   args: {
     columns,
     data,
     onRowClick: (row: User) => alert(row.name),
-    size: 'sm',
   },
+};
+
+export const Selected: Story = {
+  args: {
+    columns,
+    data,
+    selectable: true,
+    showCheckbox: true,
+    getRowId: (row: User) => row.id,
+    rowSelection: { "2": true },
+  },
+};
+
+export const TreeRows: Story = {
+  args: {
+    columns: [
+      { accessorKey: "name", header: "Name" },
+      { accessorKey: "role", header: "Kind" },
+    ] as ColumnDef<User>[],
+    data: [
+      {
+        id: "src",
+        name: "src",
+        email: "",
+        role: "Folder",
+        status: "",
+        subRows: [
+          { id: "components", name: "components", email: "", role: "Folder", status: "" },
+          { id: "index", name: "index.ts", email: "", role: "File", status: "" },
+        ],
+      } as User,
+      { id: "package", name: "package.json", email: "", role: "File", status: "" },
+    ],
+    getRowId: (row: User) => row.id,
+    getSubRows: (row: User) => (row as User & { subRows?: User[] }).subRows,
+    expanded: { src: true },
+  },
+};
+
+export const Loading: Story = {
+  args: { columns, data: [], loading: true, skeletonRows: 4 },
 };
 
 export const Empty: Story = {
   args: {
     columns,
     data: [],
-    emptyMessage: 'No users match your search criteria',
+    emptyState: (
+      <>
+        <EmptyState.Title>No users match your search</EmptyState.Title>
+        <EmptyState.Description>Try a shorter name or clear a filter.</EmptyState.Description>
+      </>
+    ),
+  },
+};
+
+export const LoadFailed: Story = {
+  args: {
+    columns,
+    data: [],
+    error: "The team list did not load. Check your connection, then retry.",
+    onRetry: () => undefined,
   },
 };

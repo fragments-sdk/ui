@@ -1,189 +1,108 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/typography" as typography;
 
-.text {
-  font-family: var(--fui-font-sans, $fui-font-sans);
-  color: var(--fui-text-primary, $fui-text-primary);
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Label roles: the small list heading and the eyebrow.
-.role-section-label {
-  @include typography.role("ui-compact");
-}
-
-// Eyebrow: the small label that names a surface above its statement (page
-// label, card section head). Caption size, semibold, natural case, always
-// tertiary ink — it is never the thing the reader is meant to look at.
-.role-eyebrow {
-  @include typography.role("caption");
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-@each $role
-  in (
-    "caption",
-    "ui-compact",
-    "ui-standard",
-    "body-compact",
-    "body-relaxed",
-    "title-sm",
-    "title-md",
-    "title-lg",
-    "display",
-    "code"
-  )
-{
-  .role-#{$role} {
-    @include typography.role($role);
+@layer fui.components {
+  .text {
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-primary, #{$fui-text-primary});
   }
-}
 
-// Scale steps, for text with no role
-.scale-2xs {
-  font-size: var(--fui-font-size-2xs, $fui-font-size-2xs);
-}
+  // The ladder: 11 (caption, control), 12 (body, code), 15 (title), 24
+  // (display). Each role maps to one generated type role.
+  .role-caption {
+    @include typography.role("caption");
+  }
 
-.scale-xs {
-  font-size: var(--fui-font-size-xs, $fui-font-size-xs);
-}
+  .role-control {
+    @include typography.role("ui-compact");
+  }
 
-.scale-sm {
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-}
+  .role-body {
+    @include typography.role("body-compact");
+  }
 
-.scale-base {
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
-}
+  .role-title {
+    @include typography.role("title-sm");
+  }
 
-.scale-md {
-  font-size: var(--fui-font-size-md, $fui-font-size-md);
-}
+  .role-display {
+    @include typography.role("title-lg");
+  }
 
-.scale-lg {
-  font-size: var(--fui-font-size-lg, $fui-font-size-lg);
-}
+  // Code sits on the body step in the mono face: the generated code role is
+  // 14, off the ladder, so the size and line come from body.
+  .role-code {
+    @include typography.role("code");
 
-.scale-xl {
-  font-size: var(--fui-font-size-xl, $fui-font-size-xl);
-}
+    font-size: typography.font-size("body-compact");
+    line-height: typography.line-height("body-compact");
+  }
 
-.scale-2xl {
-  font-size: var(--fui-font-size-2xl, $fui-font-size-2xl);
-}
+  // The small heading over a list or a group: 11 at the strong weight in
+  // tertiary ink, natural case. It is never the thing the reader looks at.
+  .role-section-label {
+    @include typography.role("caption");
 
-.scale-3xl {
-  font-size: var(--fui-font-size-3xl, $fui-font-size-3xl);
-  line-height: var(--fui-line-height-display, $fui-line-height-display);
-  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
-}
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  }
 
-.scale-4xl {
-  font-size: var(--fui-font-size-4xl, $fui-font-size-4xl);
-  line-height: var(--fui-line-height-display, $fui-line-height-display);
-  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
-}
+  .strong {
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
+  }
 
-// Font weights
-.weight-normal {
-  font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
-}
+  // Ink
+  .color-primary {
+    color: var(--fui-text-primary, #{$fui-text-primary});
+  }
 
-.weight-medium {
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-}
+  .color-secondary {
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+  }
 
-.weight-semibold {
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-}
+  .color-tertiary {
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  }
 
-.weight-bold {
-  font-weight: var(--fui-font-weight-bold, $fui-font-weight-bold);
-}
+  .color-accent {
+    color: var(--fui-color-accent-text, #{$fui-color-accent-text});
+  }
 
-// Text colors
-.color-primary {
-  color: var(--fui-text-primary, $fui-text-primary);
-}
+  // Semantic inks, for a run of text that carries a state on its own. Text
+  // uses the same *-text stop as Badge so inline ink and badges stay one
+  // family; the words still have to say it.
+  .color-success {
+    color: var(--fui-color-success-text, #{$fui-color-success-text});
+  }
 
-.color-secondary {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
+  .color-warning {
+    color: var(--fui-color-warning-text, #{$fui-color-warning-text});
+  }
 
-.color-tertiary,
-.color-muted {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
+  .color-danger {
+    color: var(--fui-color-danger-text, #{$fui-color-danger-text});
+  }
 
-.color-accent {
-  color: var(--fui-color-accent, $fui-color-accent);
-}
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-// Semantic colours, for a run of text that carries a state on its own — a
-// count going over budget, an inline "expired", a figure in the red. Where
-// there is a component for the job (Badge, Alert, Callout) use that instead:
-// this is for the cases where the state is one word inside a line, and
-// wrapping it in a box would be more chrome than the fact is worth. Colour is
-// never the only carrier — the words still have to say it. Text uses the
-// same *-text stop as Badge so inline ink and chips stay one family.
-.color-success {
-  color: var(--fui-color-success-text, $fui-color-success-text);
-}
+  .lineClamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--fui-line-clamp, 2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-.color-warning {
-  color: var(--fui-color-warning-text, $fui-color-warning-text);
-}
-
-.color-danger {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// Font family
-.mono {
-  font-family: var(--fui-font-mono, $fui-font-mono);
-}
-
-// Truncation
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// Line clamp (multi-line truncation)
-.lineClamp {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--fui-line-clamp, 2);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-// Letter-spacing presets for dense UI chrome and display numerics.
-// "tight" = labels / nav chrome, "tighter" = headings / stat values,
-// "tightest" = large display numerics.
-.tracking-normal {
-  letter-spacing: var(--fui-letter-spacing-normal, $fui-letter-spacing-normal);
-}
-
-.tracking-tight {
-  letter-spacing: var(--fui-letter-spacing-tight, $fui-letter-spacing-tight);
-}
-
-.tracking-tighter {
-  // -0.02em == the display tracking token
-  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
-}
-
-.tracking-tightest {
-  letter-spacing: var(--fui-letter-spacing-display, $fui-letter-spacing-display);
-}
-
-// Tabular (fixed-width) numerals — digits align in columns so updating
-// numbers don't jitter. Essential for stat values and tables.
-.tabularNums {
-  font-variant-numeric: tabular-nums;
+  // Tabular figures: digits align in columns, and an updating number does
+  // not jitter.
+  .tabularNums {
+    font-variant-numeric: tabular-nums;
+  }
 }

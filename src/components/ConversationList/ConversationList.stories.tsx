@@ -1,13 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import * as React from "react";
 import { ConversationList } from ".";
-import { Avatar } from "../Avatar";
+import { EmptyState } from "../EmptyState";
 import { Message } from "../Message";
+import { ThinkingIndicator } from "../ThinkingIndicator";
 
 /**
- * Scrollable message container with auto-scroll and history loading.
- * Holds message children, with autoScroll behavior (true/false/"smart"),
- * an optional empty state, and ConversationList.DateSeparator /
- * ConversationList.TypingIndicator subcomponents.
+ * The conversation log. It follows new content while the reader is at the
+ * end, holds their place when they scroll up, counts what arrives meanwhile
+ * ("3 new messages" under the log), keeps the place when earlier messages
+ * load, and marks day breaks and events with `ConversationList.Event`.
  */
 const meta = {
   title: "Ai/ConversationList",
@@ -16,28 +18,41 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "Scrollable message container with auto-scroll and history loading.",
+        component: "The conversation log: follows new content, holds the reader's place.",
       },
     },
   },
+  decorators: [
+    (Story) => (
+      <div style={{ display: "flex", blockSize: 420 }}>
+        <Story />
+      </div>
+    ),
+  ],
   argTypes: {
-    showAvatars: {
-      control: "boolean",
-      description: "Show avatars for messages and typing indicators",
+    autoScroll: {
+      control: "inline-radio",
+      options: ["smart", false],
+      description: "Follow new content while the reader is at the end",
     },
-    loadingHistory: {
-      control: "boolean",
-      description: "Show loading spinner at top while loading history",
+    history: {
+      control: "inline-radio",
+      options: ["idle", "loading", "error"],
+      description: "Where earlier messages stand",
     },
   },
   args: {
     autoScroll: "smart",
-    showAvatars: true,
-    loadingHistory: false,
+    history: "idle",
     children: (
       <>
-        <div>Hello!</div>
-        <div>Hi there! How can I help you today?</div>
+        <ConversationList.Event date={new Date()} />
+        <Message from="user">
+          <Message.Content>Which files break the contract?</Message.Content>
+        </Message>
+        <Message from="assistant">
+          <Message.Content>{"Two files use a raw `button`."}</Message.Content>
+        </Message>
       </>
     ),
   },
@@ -47,73 +62,74 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Basic: Story = {
-  render: (args) => (
-    <ConversationList {...args} style={{ height: 280 }}>
-      <div>Hello!</div>
-      <div>Hi there! How can I help you today?</div>
-      <div>Can you explain React hooks?</div>
-    </ConversationList>
-  ),
+export const Basic: Story = {};
+
+export const WithEvent: Story = {
+  args: {
+    children: (
+      <>
+        <Message from="user">
+          <Message.Content>Check main.</Message.Content>
+        </Message>
+        <ConversationList.Event>Switched to the larger model</ConversationList.Event>
+        <Message from="assistant">
+          <Message.Content>{"Main follows the contract."}</Message.Content>
+        </Message>
+      </>
+    ),
+  },
 };
 
-export const WithDateSeparators: Story = {
+// The indicator is a compound with a `.Root` part, so it renders here rather
+// than in args, which must stay acyclic.
+export const Thinking: Story = {
   render: (args) => (
-    <ConversationList {...args} style={{ height: 280 }}>
-      <ConversationList.DateSeparator date={new Date(Date.now() - 86400000)} />
-      <div>A message from yesterday</div>
-      <ConversationList.DateSeparator date={new Date()} />
-      <div>And a message from today!</div>
-    </ConversationList>
-  ),
-};
-
-export const WithoutAvatars: Story = {
-  args: { showAvatars: false },
-  render: (args) => (
-    <ConversationList {...args} style={{ height: 280 }}>
-      <Message role="user">
-        <Message.Content>
-          Can this transcript be more compact without letting my message run across the full
-          conversation measure?
-        </Message.Content>
+    <ConversationList {...args}>
+      <Message from="user">
+        <Message.Content>Summarise the drift on main.</Message.Content>
       </Message>
-      <Message role="assistant">
-        <Message.Content>Yes. Hide avatars at the conversation level.</Message.Content>
-      </Message>
-    </ConversationList>
-  ),
-};
-
-export const WithTypingIndicator: Story = {
-  render: (args) => (
-    <ConversationList {...args} style={{ height: 280 }}>
-      <div>What is TypeScript?</div>
-      <ConversationList.TypingIndicator
-        name="Assistant"
-        avatar={<Avatar size="sm" name="Assistant" />}
-      />
+      <ThinkingIndicator label="Reading the contract…" showElapsed />
     </ConversationList>
   ),
 };
 
 export const LoadingHistory: Story = {
-  args: { loadingHistory: true },
-  render: (args) => (
-    <ConversationList {...args} style={{ height: 280 }}>
-      <div>This is the latest message</div>
-    </ConversationList>
-  ),
+  args: { history: "loading" },
+};
+
+export const HistoryFailed: Story = {
+  args: { history: "error", onRetryHistory: () => {} },
 };
 
 export const Empty: Story = {
-  render: (args) => (
-    <ConversationList
-      {...args}
-      style={{ height: 280 }}
-      emptyState={<div>Start the conversation</div>}
-    >
-      {null}
+  args: {
+    children: null,
+    emptyState: (
+      <EmptyState>
+        <EmptyState.Title>Ask about your design system</EmptyState.Title>
+      </EmptyState>
+    ),
+  },
+};
+
+function Live() {
+  const [count, setCount] = React.useState(6);
+  React.useEffect(() => {
+    const timer = window.setInterval(() => setCount((n) => n + 1), 1500);
+    return () => window.clearInterval(timer);
+  }, []);
+  return (
+    <ConversationList>
+      {Array.from({ length: count }, (_, i) => (
+        <Message key={i} from={i % 2 ? "assistant" : "user"}>
+          <Message.Content>{`Message ${i + 1}`}</Message.Content>
+        </Message>
+      ))}
     </ConversationList>
-  ),
+  );
+}
+
+/** Scroll up while messages arrive: the place holds and the count grows. */
+export const Arriving: Story = {
+  render: () => <Live />,
 };

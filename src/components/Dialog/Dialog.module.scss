@@ -1,147 +1,79 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/action" as action;
 @use "../../recipes/overlay" as overlay;
 
-.backdrop {
-  @include overlay.backdrop;
+@layer fui.tokens, fui.base, fui.components;
 
-  opacity: 0;
-  transition: opacity var(--fui-transition-normal, $fui-transition-normal);
-
-  &[data-open] {
-    opacity: 1;
+@layer fui.components {
+  .backdrop {
+    @include overlay.backdrop;
+    @include overlay.motion;
   }
 
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-  }
-}
+  .positioner {
+    @include overlay.safe-viewport;
 
-.positioner {
-  @include overlay.safe-viewport;
-
-  position: fixed;
-  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-block: var(
-      --_fui-overlay-safe-top,
-      var(--fui-raw-space-16, #{measurements.raw-space(16)})
-    )
-    var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  padding-inline: var(
-      --_fui-overlay-safe-left,
-      var(--fui-raw-space-16, #{measurements.raw-space(16)})
-    )
-    var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-  overflow: auto;
-}
-
-.popup {
-  @include overlay.modal-shell;
-
-  position: relative;
-  inline-size: 100%;
-  max-inline-size: overlay.dialog-max("md");
-  opacity: 0;
-  transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-md, #{$fui-anim-offset-md})));
-  transition:
-    opacity var(--fui-transition-normal, $fui-transition-normal),
-    transform var(--fui-transition-normal, $fui-transition-normal);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+    position: fixed;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(
+        --_fui-overlay-safe-top,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      )
+      var(--_fui-overlay-safe-bottom, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+    padding-inline: var(
+        --_fui-overlay-safe-left,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      )
+      var(--_fui-overlay-safe-right, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
   }
 
-  &[data-starting-style] {
-    opacity: 0;
-    transform: scale(0.95) translateY(calc(-1 * var(--fui-anim-offset-md, #{$fui-anim-offset-md})));
-  }
-
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95) translateY(var(--fui-anim-offset-md, #{$fui-anim-offset-md}));
-  }
-}
-
-.sm {
-  max-inline-size: overlay.dialog-max("sm");
-}
-
-.md {
-  max-inline-size: overlay.dialog-max("md");
-}
-
-.lg {
-  max-inline-size: overlay.dialog-max("lg");
-}
-
-.xl {
-  max-inline-size: overlay.dialog-max("xl");
-}
-
-.full {
-  max-inline-size: var(
-    --_fui-overlay-safe-inline,
-    calc(100dvw - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
-  );
-}
-
-.header {
-  @include overlay.header;
-}
-
-.title {
-  @include overlay.modal-title;
-
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-.description {
-  @include overlay.description;
-
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-.body {
-  @include overlay.body;
-}
-
-.footer {
-  @include overlay.footer;
-}
-
-.close {
-  @include button-reset;
-  @include interactive-base;
-  @include overlay.close;
-}
-
-.popup:has(.close) .header {
-  padding-inline-end: calc(
-    var(--fui-overlay-close-inset, var(--fui-raw-space-12, #{measurements.raw-space(12)})) +
-      #{action.track("sm")} +
-      var(--fui-overlay-section-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}))
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .backdrop,
   .popup {
-    transition: none;
+    @include overlay.modal-shell;
+
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: overlay.dialog-max("md");
+
+    @include overlay.motion;
   }
 
-  .popup,
-  .popup[data-starting-style],
-  .popup[data-ending-style] {
-    transform: none;
+  .sm {
+    max-inline-size: overlay.dialog-max("sm");
+  }
+
+  .lg {
+    max-inline-size: overlay.dialog-max("lg");
+  }
+
+  .header {
+    @include overlay.header;
+  }
+
+  .title {
+    @include overlay.modal-title;
+  }
+
+  .description {
+    @include overlay.description;
+  }
+
+  .body {
+    @include overlay.body;
+  }
+
+  .footer {
+    @include overlay.footer;
+  }
+
+  .close {
+    @include overlay.modal-close;
+  }
+
+  .popup:has(.close) .header {
+    @include overlay.header-beside-close;
   }
 }

@@ -26,8 +26,6 @@ $_row-track: measurements.target-value("controlTrack", "md");
 $_section-track: measurements.target-value("controlTrack", "micro");
 $_gutter: _navigation("sidebarGutter");
 $_leading-box: _navigation("sidebarLeadingBox");
-$_active-rail: _navigation("sidebarRail");
-$_active-dot: _navigation("sidebarDot");
 
 // Build-time twins for the `--fui-navigation-*` hooks `properties` authors, so
 // consumers can write `var(--fui-navigation-gutter, #{navigation.gutter()})`.
@@ -43,12 +41,6 @@ $_active-dot: _navigation("sidebarDot");
 @function leading-box() {
   @return $_leading-box;
 }
-@function active-rail() {
-  @return $_active-rail;
-}
-@function active-dot() {
-  @return $_active-dot;
-}
 @function label-optical-y() {
   @return _navigation("sidebarLabelOffset");
 }
@@ -57,14 +49,12 @@ $_active-dot: _navigation("sidebarDot");
 }
 
 @mixin properties {
-  --fui-navigation-row-track: var(--fui-control-track-md, #{$_row-track});
-  --fui-navigation-section-track: var(--fui-control-track-micro, #{$_section-track});
+  --fui-navigation-row-track: var(--fui-control-height-md, #{$_row-track});
+  --fui-navigation-section-track: var(--fui-control-height-xs, #{$_section-track});
   --fui-navigation-gutter: #{$_gutter};
   --fui-navigation-inline-inset: #{$_gutter};
   --fui-navigation-content-gap: #{$_gutter};
   --fui-navigation-leading-box: #{$_leading-box};
-  --fui-navigation-active-rail: #{$_active-rail};
-  --fui-navigation-active-dot: #{$_active-dot};
   --fui-navigation-label-optical-y: #{_navigation("sidebarLabelOffset")};
 }
 
@@ -73,15 +63,24 @@ $_active-dot: _navigation("sidebarDot");
   @include typography.role("ui-compact");
 
   box-sizing: border-box;
-  min-block-size: var(--fui-navigation-row-track, #{$_row-track});
+  // A nav row is a stacked target: under a coarse pointer the row itself takes
+  // the hit-area floor (44px), since it cannot grow a hit area into its
+  // neighbours.
+  min-block-size: max(
+    var(--fui-navigation-row-track, #{$_row-track}),
+    var(--fui-hit-area, #{tokens.$fui-hit-area})
+  );
   padding-inline: var(--fui-navigation-inline-inset, #{$_gutter});
   gap: var(--fui-navigation-content-gap, #{$_gutter});
 }
 
+/// A group name over nav rows (Sidebar sections, TableOfContents groups): the
+/// caption size at the semibold weight (11/550), on the shorter section track.
 @mixin section-row {
   @include properties;
   @include typography.role("caption");
 
+  font-weight: var(--fui-font-weight-semibold, #{tokens.$fui-font-weight-semibold});
   box-sizing: border-box;
   min-block-size: var(--fui-navigation-section-track, #{$_section-track});
   padding-inline: var(--fui-navigation-inline-inset, #{$_gutter});
@@ -99,67 +98,5 @@ $_active-dot: _navigation("sidebarDot");
   > img {
     inline-size: var(--fui-icon-md, #{measurements.target-value("icon", "md")});
     block-size: var(--fui-icon-md, #{measurements.target-value("icon", "md")});
-  }
-}
-
-@mixin active-indicator($placement) {
-  @include properties;
-
-  position: relative;
-
-  @if $placement == "start" {
-    &::before {
-      content: "";
-      position: absolute;
-      inset-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-      inset-inline-start: calc(-1 * var(--fui-navigation-gutter, #{$_gutter}));
-      inline-size: var(--fui-navigation-active-rail, #{$_active-rail});
-    }
-  } @else if $placement == "end" {
-    &::after {
-      content: "";
-      position: absolute;
-      inset-block-start: 50%;
-      inset-inline-end: var(--fui-navigation-inline-inset, #{$_gutter});
-      inline-size: var(--fui-navigation-active-dot, #{$_active-dot});
-      block-size: var(--fui-navigation-active-dot, #{$_active-dot});
-      border-radius: var(--fui-radius-full, #{tokens.$fui-radius-full});
-      transform: translateY(-50%);
-    }
-  } @else {
-    @error "Unknown navigation indicator placement '#{$placement}'. Expected start or end.";
-  }
-}
-
-@mixin collapsed-shell {
-  @include properties;
-
-  inline-size: #{_navigation("sidebarCollapsedWidth")};
-  justify-items: center;
-}
-
-/// Mobile navigation links (NavigationMenu drawer, Header mobile nav) are popup
-/// rows: secondary ink at rest, hover wash, nested radius. Sidebar keeps its own
-/// rail-indicator grammar and does not use these.
-@mixin link-states {
-  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
-  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
-  text-decoration: none;
-  transition: background-color var(--fui-transition-fast, #{tokens.$fui-transition-fast});
-
-  &:hover {
-    background-color: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
-    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
-  }
-}
-
-@mixin link-active {
-  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
-  font-weight: var(--fui-font-weight-medium, #{tokens.$fui-font-weight-medium});
-  background-color: var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg});
-
-  &:hover {
-    background-color: var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg});
-    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   }
 }

@@ -1,10 +1,15 @@
+import { resolve } from "node:path";
+
 import * as React from "react";
+import * as sass from "sass";
 import { describe, it, expect, vi } from "vitest";
 import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { ComponentDefaultsProvider } from "../ComponentDefaults";
 import { Tabs, type TabsChangeEventDetails } from "./index";
 
-function renderTabs(props: Partial<React.ComponentProps<typeof Tabs>> = {}) {
+function renderTabs(
+  props: Partial<React.ComponentProps<typeof Tabs>> & { "data-testid"?: string } = {}
+) {
   return render(
     <Tabs defaultValue="tab1" {...props}>
       <Tabs.List>
@@ -21,14 +26,39 @@ function renderTabs(props: Partial<React.ComponentProps<typeof Tabs>> = {}) {
   );
 }
 
+const flatStyles = sass
+  .compile(resolve(process.cwd(), "src/components/Tabs/Tabs.module.scss"), { style: "expanded" })
+  .css.replace(/\s+/g, " ");
+
 describe("Tabs", () => {
+  it("keeps every focus ring inside the scrolling row", () => {
+    const reach = "calc(var(--fui-focus-ring-width, 2px) + var(--fui-focus-ring-offset, 2px))";
+    // Ghost: the row pads by the ring's reach and pulls back by the same.
+    expect(flatStyles).toContain(
+      `.listGhost { gap: var(--fui-raw-space-16, 16px); padding: ${reach};`
+    );
+    expect(flatStyles).toContain(`margin: calc(-1 * ${reach});`);
+    expect(flatStyles).toMatch(
+      /\.indicator \{[^}]*inset-block-end: calc\(var\(--fui-focus-ring-width/
+    );
+    // Soft: the segment draws its ring inside the edge.
+    expect(flatStyles).toMatch(
+      /\.listSoft \.tabSoft:focus-visible \{[^}]*outline-offset: calc\(-1 \* var\(--fui-focus-ring-offset/
+    );
+  });
+
+  it("grows the ghost hit area in the block axis only, so short names never overflow", () => {
+    expect(flatStyles).toMatch(/\.tabGhost \{[^}]*min-inline-size: var\(--fui-hit-area, 24px\);/);
+    expect(flatStyles).toMatch(/\.tabGhost::after \{[^}]*inline-size: 100%;/);
+  });
+
   it("renders tablist and tab roles", () => {
     renderTabs();
     expect(screen.getByRole("tablist")).toBeInTheDocument();
     expect(screen.getAllByRole("tab")).toHaveLength(3);
   });
 
-  it("exposes stable styling slots and the resolved list variant", () => {
+  it("exposes stable styling slots and the root variant", () => {
     renderTabs({ variant: "soft", "data-testid": "tabs-example" });
 
     expect(screen.getByTestId("tabs-example")).toHaveAttribute("data-slot", "tabs");
@@ -185,13 +215,7 @@ describe("Tabs", () => {
     expect(onValueChange.mock.calls[0][1]?.reason).toBe("initial");
   });
 
-  it("supports vertical orientation", () => {
-    renderTabs({ orientation: "vertical" });
-    const tablist = screen.getByRole("tablist");
-    expect(tablist).toHaveAttribute("aria-orientation", "vertical");
-  });
-
-  it("uses the provider control size when size is omitted", () => {
+  it("lands a larger provider default on the md step", () => {
     render(
       <ComponentDefaultsProvider controlSize="lg">
         <Tabs defaultValue="tab1">
@@ -203,7 +227,8 @@ describe("Tabs", () => {
       </ComponentDefaultsProvider>
     );
 
-    expect(screen.getByRole("tab", { name: /tab one/i })).toHaveClass("tabLg");
+    expect(screen.getByRole("tab", { name: /tab one/i })).toHaveClass("tabMd");
+    expect(screen.getByRole("tablist")).toHaveAttribute("data-size", "md");
   });
 
   it("keeps explicit size over the provider control size", () => {
@@ -220,7 +245,123 @@ describe("Tabs", () => {
 
     const tab = screen.getByRole("tab", { name: /tab one/i });
     expect(tab).toHaveClass("tabSm");
-    expect(tab).not.toHaveClass("tabLg");
+    expect(tab).not.toHaveClass("tabMd");
+  });
+
+  it("draws the underline indicator only in the ghost row", () => {
+    const { container, rerender } = render(
+      <Tabs defaultValue="tab1">
+        <Tabs.List>
+          <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    );
+    expect(container.querySelector(".indicator")).toBeInTheDocument();
+
+    rerender(
+      <Tabs defaultValue="tab1" variant="soft">
+        <Tabs.List>
+          <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    );
+    expect(container.querySelector(".indicator")).not.toBeInTheDocument();
+    expect(screen.getByRole("tablist")).toHaveClass("listSoft");
+  });
+
+  it("forwards HTML props, data attributes and refs to the tab", () => {
+    const ref = React.createRef<HTMLElement>();
+    render(
+      <Tabs defaultValue="tab1">
+        <Tabs.List>
+          <Tabs.Tab
+            ref={ref}
+            value="tab1"
+            id="layers-tab"
+            data-tip="Every layer"
+            aria-describedby="hint"
+          >
+            Layers
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    );
+
+    const tab = screen.getByRole("tab", { name: /layers/i });
+    expect(tab).toHaveAttribute("id", "layers-tab");
+    expect(tab).toHaveAttribute("data-tip", "Every layer");
+    expect(tab).toHaveAttribute("aria-describedby", "hint");
+    expect(ref.current).toBe(tab);
+  });
+
+  it("draws a quieter count and a dot whose words reach screen readers", () => {
+    render(
+      <Tabs defaultValue="tab1">
+        <Tabs.List>
+          <Tabs.Tab value="tab1" count={12}>
+            Findings
+          </Tabs.Tab>
+          <Tabs.Tab value="tab2" dot="New activity">
+            Pages
+          </Tabs.Tab>
+          <Tabs.Tab value="tab3" dot>
+            Changes
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    );
+
+    const findings = screen.getByRole("tab", { name: "Findings 12" });
+    expect(findings.querySelector('[data-slot="tabs-count"]')).toHaveTextContent("12");
+    expect(screen.getByRole("tab", { name: "Pages New activity" })).toBeInTheDocument();
+    const changes = screen.getByRole("tab", { name: "Changes" });
+    expect(changes.querySelector('[data-slot="tabs-dot"]')).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("reports a second press on the open tab through onReselect", async () => {
+    const user = userEvent.setup();
+    const onReselect = vi.fn();
+    renderTabs({ onReselect });
+
+    await user.click(screen.getByRole("tab", { name: /tab two/i }));
+    expect(onReselect).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("tab", { name: /tab two/i }));
+    expect(onReselect).toHaveBeenCalledTimes(1);
+    expect(onReselect).toHaveBeenCalledWith("tab2");
+  });
+
+  it("keeps actions outside the tablist and its arrow keys", () => {
+    render(
+      <Tabs defaultValue="tab1">
+        <Tabs.List aria-label="Panel" actions={<button type="button">Filter</button>}>
+          <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    );
+
+    const action = screen.getByRole("button", { name: "Filter" });
+    expect(screen.getByRole("tablist")).not.toContainElement(action);
+    expect(action.closest('[data-slot="tabs-actions"]')).toBeInTheDocument();
+  });
+
+  it("opens the tab an arrow key reaches with activateOnFocus", async () => {
+    const user = userEvent.setup();
+    render(
+      <Tabs defaultValue="tab1">
+        <Tabs.List activateOnFocus>
+          <Tabs.Tab value="tab1">Tab One</Tabs.Tab>
+          <Tabs.Tab value="tab2">Tab Two</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="tab1">Panel One</Tabs.Panel>
+        <Tabs.Panel value="tab2">Panel Two</Tabs.Panel>
+      </Tabs>
+    );
+
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("tab", { name: /tab two/i })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText("Panel Two")).toBeInTheDocument();
   });
 
   it("has no accessibility violations", async () => {
@@ -297,28 +438,6 @@ describe("Tabs", () => {
       await user.tab();
       await user.keyboard("{End}");
       expect(screen.getByRole("tab", { name: /tab three/i })).toHaveFocus();
-    });
-
-    it("ArrowDown navigates tabs in vertical orientation", async () => {
-      const user = userEvent.setup();
-      renderTabs({ orientation: "vertical" });
-
-      await user.tab();
-      expect(screen.getByRole("tab", { name: /tab one/i })).toHaveFocus();
-
-      await user.keyboard("{ArrowDown}");
-      expect(screen.getByRole("tab", { name: /tab two/i })).toHaveFocus();
-    });
-
-    it("ArrowUp navigates tabs backward in vertical orientation", async () => {
-      const user = userEvent.setup();
-      renderTabs({ orientation: "vertical", defaultValue: "tab2" });
-
-      await user.tab();
-      expect(screen.getByRole("tab", { name: /tab two/i })).toHaveFocus();
-
-      await user.keyboard("{ArrowUp}");
-      expect(screen.getByRole("tab", { name: /tab one/i })).toHaveFocus();
     });
   });
 });

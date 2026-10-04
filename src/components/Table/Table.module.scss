@@ -1,140 +1,161 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/focus";
+@use "../../recipes/selection";
+@use "../../recipes/surface";
 @use "../../recipes/table-chrome" as table-chrome;
 
-.wrapper {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.table {
-  @include table-chrome.root;
+@layer fui.components {
+  .wrapper {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 
-  @each $density in ("compact", "regular", "relaxed") {
-    &[data-density="#{$density}"] {
-      @include table-chrome.density($density);
+    // While a wide table overflows the wrapper is a tab stop; its ring sits inside the edge.
+    @include focus.visible(true);
+  }
+
+  .table {
+    @include table-chrome.root;
+  }
+
+  .caption {
+    @include table-chrome.caption;
+  }
+
+  .captionHidden {
+    @include visually-hidden;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  // The wrapper scrolls a wide table inline, which makes it the head's
+  // scrollport on both axes: a head can only stick inside it. A bounded table
+  // (maxHeight) scrolls its rows in the wrapper and the head sticks to the top.
+  // It fills its plane only once rows pass under it, so a table at rest draws
+  // no band on the surface around it. Its line is drawn by the cells (an inset
+  // hairline) so it travels with the head.
+  .thead {
+    > tr {
+      @include table-chrome.row;
+      @include high-contrast-outline;
+
+      border-block-end: 0;
     }
   }
-}
 
-.caption {
-  @include table-chrome.caption;
-}
+  .bounded {
+    overflow: auto;
+    overscroll-behavior: contain;
 
-.captionHidden {
-  @include visually-hidden;
-}
+    > .table > .thead {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 1;
+    }
 
-.tabular {
-  font-variant-numeric: tabular-nums;
-}
+    &[data-scrolled] > .table > .thead {
+      background-color: var(--fui-bg-primary, #{$fui-bg-primary});
+    }
+  }
 
-.thead {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 1;
+  .th {
+    @include table-chrome.header-cell;
 
-  > tr {
+    box-shadow: inset 0 calc(-1 * var(--fui-table-divider-size, #{$fui-stroke-hairline})) 0 0
+      var(--fui-border, #{$fui-border});
+    white-space: nowrap;
+  }
+
+  .headerContent {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  // Rows are transparent over the plane the table sits on. Hover is instant (no
+  // transition) and paints over the row, so a selected row keeps its wash and
+  // ring underneath.
+  .row {
     @include table-chrome.row;
     @include high-contrast-outline;
-  }
-}
 
-.th {
-  @include table-chrome.header-cell;
+    &:last-child {
+      border-block-end: 0;
+    }
 
-  white-space: nowrap;
-}
-
-.headerContent {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-raw-space-4, 4px);
-}
-
-.row {
-  @include table-chrome.row;
-
-  --fui-table-row-base-bg: var(
-    --fui-table-bg,
-    var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
-  );
-  --fui-table-row-bg: var(--fui-table-row-base-bg);
-
-  background-color: var(--fui-table-row-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-  @include high-contrast-outline;
-
-  &:last-child {
-    border-block-end: 0;
+    @media (hover: hover) {
+      &:not(.stateRow):hover {
+        background-image: linear-gradient(
+          var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover})),
+          var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}))
+        );
+      }
+    }
   }
 
-  &:hover {
-    --fui-table-row-bg: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-}
-
-.td {
-  @include table-chrome.body-cell;
-}
-
-// Unbordered ledger edge: the first column starts at the surrounding surface's
-// own inset so a table inside a card reads as part of the card, not a box within
-// a box. A bordered table owns its frame and keeps the recipe's inline inset.
-.wrapper:not(.bordered) > .table {
-  > .thead > .row > .th:first-child,
-  > .tbody > .row > .td:first-child,
-  > .tfoot > .row > .td:first-child {
-    padding-inline-start: 0;
-  }
-}
-
-.selected {
-  --fui-table-row-bg: var(
-    --fui-table-row-selected-bg,
-    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
-  );
-
-  .td:first-child {
-    box-shadow: inset var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))
-      0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
+  .td {
+    @include table-chrome.body-cell;
   }
 
-  &:dir(rtl) .td:first-child {
-    box-shadow: inset
-      calc(-1 * var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))) 0 0
-      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
-  }
-}
-
-.tfoot {
-  border-block-start: var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))
-    solid var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
-}
-
-.striped {
-  .tbody .row:nth-child(even),
-  .tbody .row[data-band="alt"] {
-    --fui-table-row-base-bg: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
+  // The outer column starts 12 in, so content never meets a selected row's
+  // ring; the other cells pad 8. Only this table's own cells, not a nested
+  // table's.
+  .wrapper > .table {
+    > .thead > .row > .th:first-child,
+    > .tbody > .row > .td:first-child,
+    > .tfoot > .row > .td:first-child {
+      @include table-chrome.edge-cell;
+    }
   }
 
-  .tbody .row[data-band="default"] {
-    --fui-table-row-base-bg: var(--fui-main-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
+  // Wash and ring: the cells draw the ring. A collapsed divider paints over a
+  // cell's inset top edge in some engines, so the dividers on both sides of a
+  // selected row go clear and the ring alone draws its edges.
+  .row:has(+ .selected),
+  .selected {
+    border-block-end-color: transparent;
   }
-}
 
-.bordered {
-  overflow-x: auto;
-  overflow-y: hidden;
-  border: var(--fui-table-divider-size, var(--fui-stroke-hairline, $fui-stroke-hairline)) solid
-    var(--fui-table-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-}
+  .selected {
+    @include selection.selected-cells(
+      ".td",
+      $wash: var(
+          --fui-table-row-selected-bg,
+          var(--fui-control-selected-bg, #{$fui-control-selected-bg})
+        ),
+      $ring: var(
+          --fui-table-row-selected-border,
+          var(--fui-control-selected-border, #{$fui-control-selected-border})
+        )
+    );
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .row {
-    transition: none;
+  .tfoot {
+    border-block-start: var(
+        --fui-table-divider-size,
+        var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+      )
+      solid var(--fui-border, #{$fui-border});
+  }
+
+  // Empty and loading rows: the empty row is one full-width cell holding a
+  // compact EmptyState; loading rows keep the track and the cell insets.
+  .stateCell {
+    padding: 0;
+  }
+
+  // The sheet: the one static surface (plane, hairline, surface corner).
+  .bordered {
+    @include surface.plane;
+
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 }

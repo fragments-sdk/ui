@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { announce, mountAnnouncer, type Politeness } from "./announcer";
 
 // ============================================
 // Unique ID Generator
@@ -38,8 +39,10 @@ export function useId(prefix?: string): string {
 // ============================================
 
 /**
- * Hook to announce messages to screen readers via a live region.
- * Creates an ARIA live region that persists for the component lifetime.
+ * Hook to announce messages to screen readers through the shared announcer: one
+ * polite and one assertive live region per document, mounted empty while any
+ * component using this hook is mounted. The same message posted twice before it
+ * lands is announced once.
  *
  * @returns An object with an announce function
  *
@@ -55,72 +58,15 @@ export function useId(prefix?: string): string {
  * ```
  */
 export function useAnnounce(): {
-  announce: (message: string, priority?: "polite" | "assertive") => void;
+  announce: (message: string, priority?: Politeness) => void;
 } {
-  const politeRef = React.useRef<HTMLDivElement | null>(null);
-  const assertiveRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => mountAnnouncer(), []);
 
-  React.useEffect(() => {
-    // Create live regions on mount
-    const polite = document.createElement("div");
-    polite.setAttribute("aria-live", "polite");
-    polite.setAttribute("aria-atomic", "true");
-    polite.setAttribute("role", "status");
-    Object.assign(polite.style, {
-      position: "absolute",
-      width: "1px",
-      height: "1px",
-      padding: "0",
-      margin: "-1px",
-      overflow: "hidden",
-      clip: "rect(0, 0, 0, 0)",
-      whiteSpace: "nowrap",
-      border: "0",
-    });
-    document.body.appendChild(polite);
-    politeRef.current = polite;
-
-    const assertive = document.createElement("div");
-    assertive.setAttribute("aria-live", "assertive");
-    assertive.setAttribute("aria-atomic", "true");
-    assertive.setAttribute("role", "alert");
-    Object.assign(assertive.style, {
-      position: "absolute",
-      width: "1px",
-      height: "1px",
-      padding: "0",
-      margin: "-1px",
-      overflow: "hidden",
-      clip: "rect(0, 0, 0, 0)",
-      whiteSpace: "nowrap",
-      border: "0",
-    });
-    document.body.appendChild(assertive);
-    assertiveRef.current = assertive;
-
-    // Cleanup on unmount
-    return () => {
-      polite.remove();
-      assertive.remove();
-    };
+  const say = React.useCallback((message: string, priority: Politeness = "polite") => {
+    announce(message, priority);
   }, []);
 
-  const announce = React.useCallback(
-    (message: string, priority: "polite" | "assertive" = "polite") => {
-      const region = priority === "assertive" ? assertiveRef.current : politeRef.current;
-      if (region) {
-        // Clear and re-set to ensure announcement
-        region.textContent = "";
-        // Use requestAnimationFrame to ensure the clear is processed
-        requestAnimationFrame(() => {
-          region.textContent = message;
-        });
-      }
-    },
-    []
-  );
-
-  return { announce };
+  return { announce: say };
 }
 
 // ============================================

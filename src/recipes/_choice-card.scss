@@ -1,0 +1,54 @@
+// The choice card: a checkbox or radio whose whole card picks (the outline
+// Checkbox and RadioGroup items). It is a surface, not a raised panel:
+//
+// - at rest, the surface fill and one opaque hairline at the control radius,
+//   with no shadow and no outer ring;
+// - hover, only where the pointer can hover, adds the hover tint on top;
+// - keyboard focus anywhere inside draws the one focus ring around the card;
+// - chosen, the card takes the selection marking: the wash,
+//   and its hairline turns into the 1px selection ring;
+// - disabled dims once, on the card, through the component's disabled state.
+//
+// The box inside keeps its own checked fill; the card only says which one.
+// UIR-D142.
+
+@use "../tokens/variables" as tokens;
+@use "action";
+@use "field";
+@use "focus";
+@use "selection";
+
+$_chosen: ":has([data-checked], [data-indeterminate])";
+
+/// The card's look and states. `$chosen` is the selector, on the card, that
+/// means the control inside is on.
+@mixin root($chosen: $_chosen) {
+  @include action.motion;
+
+  box-sizing: border-box;
+  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
+    var(--fui-border, #{tokens.$fui-border});
+  border-radius: var(--fui-radius-control, #{tokens.$fui-radius-control});
+  background-color: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+
+  @include action.hover {
+    @include selection.hover-tint;
+  }
+
+  &:has(:focus-visible) {
+    @include focus.ring;
+  }
+
+  &#{$chosen} {
+    @include selection.selected($edge: "border");
+  }
+}
+
+/// The card's geometry: the same inset on every side, so a two-line card (label
+/// and help) breathes as much above and below as at its edges, and the field
+/// track as the floor, so a one-line card sits level with an input beside it.
+@mixin size($size) {
+  min-block-size: field.track($size);
+  padding: field.inline-inset($size);
+}

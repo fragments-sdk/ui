@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { expectNoA11yViolations, render, screen, userEvent } from "../../test/utils";
 import { Chip } from "./index";
 
 const chipStyles = readFileSync(
@@ -10,145 +10,138 @@ const chipStyles = readFileSync(
 );
 
 describe("Chip", () => {
-  it("renders with correct text", () => {
-    render(<Chip>Tag</Chip>);
-    expect(screen.getByRole("button", { name: "Tag" })).toHaveClass("xs");
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it("keeps explicit sizes available", () => {
-    render(<Chip size="lg">Large tag</Chip>);
-    expect(screen.getByRole("button", { name: "Large tag" })).toHaveClass("lg");
+  it("renders a static tag as a span when it neither selects nor clicks", () => {
+    render(<Chip>Design</Chip>);
+    expect(screen.getByText("Design")).toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.getByText("Design").closest("span.chip")).not.toBeNull();
   });
 
-  it("applies variant classes", () => {
-    render(<Chip variant="outline">Outlined</Chip>);
-    expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("outline");
+  it("becomes a toggle button with aria-pressed when selected is set", () => {
+    const { rerender } = render(<Chip selected={false}>Filter</Chip>);
+    const chip = screen.getByRole("button", { name: "Filter" });
+    expect(chip).toHaveAttribute("aria-pressed", "false");
+    expect(chip).not.toHaveClass("selected");
+
+    rerender(<Chip selected>Filter</Chip>);
+    expect(screen.getByRole("button", { name: "Filter" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Filter" })).toHaveClass("chip", "selected");
   });
 
-  it("sets aria-pressed for selected state", () => {
-    const { rerender } = render(<Chip selected>Active</Chip>);
-    expect(screen.getByRole("button", { name: "Active" })).toHaveAttribute("aria-pressed", "true");
-
-    rerender(<Chip selected={false}>Active</Chip>);
-    expect(screen.getByRole("button", { name: "Active" })).toHaveAttribute("aria-pressed", "false");
-  });
-
-  it("renders remove button with aria-label when onRemove is provided", () => {
-    const handleRemove = vi.fn();
-    render(<Chip onRemove={handleRemove}>Removable</Chip>);
-    expect(screen.getByRole("button", { name: /remove removable/i })).toBeInTheDocument();
-  });
-
-  it("fires onRemove when remove button is clicked", async () => {
-    const handleRemove = vi.fn();
+  it("fires onClick and becomes a button for it", async () => {
     const user = userEvent.setup();
-    render(<Chip onRemove={handleRemove}>Delete me</Chip>);
-    await user.click(screen.getByRole("button", { name: /remove delete me/i }));
-    expect(handleRemove).toHaveBeenCalledTimes(1);
+    const onClick = vi.fn();
+    render(<Chip onClick={onClick}>Clickable</Chip>);
+    await user.click(screen.getByRole("button", { name: "Clickable" }));
+    expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it("keeps selected removable controls adjacent for the shared selection surface", () => {
+  it("removes through its own labelled control", async () => {
+    const user = userEvent.setup();
+    const onRemove = vi.fn();
+    render(<Chip onRemove={onRemove}>Tag</Chip>);
+    const remove = screen.getByRole("button", { name: "Remove Tag" });
+    await user.click(remove);
+    expect(onRemove).toHaveBeenCalledOnce();
+    expect(remove.querySelector("svg")).not.toBeNull();
+  });
+
+  it("names the remove control with removeLabel for a non-text label", () => {
     render(
-      <Chip selected onRemove={() => {}}>
+      <Chip onRemove={() => {}} removeLabel="Remove reviewer Ada">
+        <strong>Ada</strong>
+      </Chip>
+    );
+    expect(screen.getByRole("button", { name: "Remove reviewer Ada" })).toBeInTheDocument();
+  });
+
+  it("keeps a removable toggle as two sibling buttons, never nested", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    const onRemove = vi.fn();
+    render(
+      <Chip selected onClick={onClick} onRemove={onRemove}>
         Selected
       </Chip>
     );
+    const toggle = screen.getByRole("button", { name: "Selected" });
+    const remove = screen.getByRole("button", { name: "Remove Selected" });
+    expect(toggle.contains(remove)).toBe(false);
+    expect(toggle.parentElement).toBe(remove.parentElement);
+    expect(toggle.parentElement).toHaveClass("chip", "selected", "removable");
 
-    const chip = screen.getByRole("button", { name: "Selected" });
-    const remove = screen.getByRole("button", { name: /remove selected/i });
-    expect(chip).toHaveAttribute("aria-pressed", "true");
-    expect(chip.nextElementSibling).toBe(remove);
+    await user.click(remove);
+    expect(onRemove).toHaveBeenCalledOnce();
+    expect(onClick).not.toHaveBeenCalled();
   });
 
-  it("fires onClick callback", async () => {
-    const handleClick = vi.fn();
+  it("paints one look: band, hairline, control radius, selection at rest, gated hover", () => {
+    expect(chipStyles).toContain("background-color: var(--fui-bg-secondary");
+    expect(chipStyles).toContain("border-radius: var(--fui-radius-control");
+    expect(chipStyles).toContain('@include selection.selected($edge: "border")');
+    expect(chipStyles).toContain('@include target.hit-area("micro")');
+    expect(chipStyles).not.toMatch(/radius-full|tone\.channels|\.outline|interactive-base/);
+  });
+
+  it("Chip.Group is a named group that reports onValueChange", async () => {
     const user = userEvent.setup();
-    render(<Chip onClick={handleClick}>Clickable</Chip>);
-    await user.click(screen.getByRole("button", { name: "Clickable" }));
-    expect(handleClick).toHaveBeenCalledTimes(1);
-  });
-
-  it("defaults to the soft variant on the neutral tone", () => {
-    render(<Chip>Plain</Chip>);
-    const chip = screen.getByRole("button", { name: "Plain" });
-    expect(chip).toHaveClass("soft");
-    expect(chip).not.toHaveClass("solid");
-  });
-
-  it("publishes the shared tone ramp per tone and variant", () => {
+    const onValueChange = vi.fn();
     render(
-      <>
-        <Chip tone="danger">Held</Chip>
-        <Chip tone="success" variant="outline">
-          Passing
-        </Chip>
-        <Chip tone="warning" onRemove={() => {}}>
-          Lapsed
-        </Chip>
-      </>
+      <Chip.Group aria-label="Filters" defaultValue={["open"]} onValueChange={onValueChange}>
+        <Chip value="open">Open</Chip>
+        <Chip value="closed">Closed</Chip>
+      </Chip.Group>
     );
-    expect(screen.getByRole("button", { name: "Held" })).toHaveClass("toneDanger", "soft");
-    expect(screen.getByRole("button", { name: "Passing" })).toHaveClass("toneSuccess", "outline");
-    expect(screen.getByRole("button", { name: "Lapsed" }).parentElement).toHaveAttribute(
-      "data-tone",
-      "warning"
-    );
-    expect(chipStyles).toContain('@include tone.channels("danger")');
-    expect(chipStyles).not.toContain(".solid");
+    expect(screen.getByRole("group", { name: "Filters" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Open" })).toHaveAttribute("aria-pressed", "true");
+
+    await user.click(screen.getByRole("button", { name: "Closed" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["open", "closed"]);
+    expect(screen.getByRole("button", { name: "Closed" })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("Chip.Group supports non-string chip children without value collisions", async () => {
     const user = userEvent.setup();
-    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const onValueChange = vi.fn();
     render(
-      <Chip.Group>
-        <Chip>
-          <span>Alpha</span>
+      <Chip.Group aria-label="People" onValueChange={onValueChange}>
+        <Chip value="ada">
+          <strong>Ada</strong>
         </Chip>
-        <Chip>
-          <span>Beta</span>
+        <Chip value="grace">
+          <strong>Grace</strong>
         </Chip>
       </Chip.Group>
     );
-
-    const alpha = screen.getByRole("button", { name: "Alpha" });
-    const beta = screen.getByRole("button", { name: "Beta" });
-
-    await user.click(alpha);
-    await user.click(beta);
-
-    expect(alpha).toHaveAttribute("aria-pressed", "true");
-    expect(beta).toHaveAttribute("aria-pressed", "true");
-    expect(warning).toHaveBeenCalledWith(
-      "Chip.Group: Chips with non-string children should provide a `value` prop."
-    );
-    warning.mockRestore();
+    await user.click(screen.getByRole("button", { name: "Grace" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["grace"]);
+    expect(screen.getByRole("button", { name: "Ada" })).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("Chip.Group forwards DOM props to the group root", () => {
+  it("Chip.Group warns in development without a name", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const unnamed = {} as { "aria-label": string };
     render(
-      <Chip.Group data-testid="chip-group" aria-label="Filters">
-        <Chip value="one">One</Chip>
+      <Chip.Group {...unnamed}>
+        <Chip value="a">A</Chip>
       </Chip.Group>
     );
-    expect(screen.getByTestId("chip-group")).toHaveAttribute("aria-label", "Filters");
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("[Chip.Group]"));
   });
 
   it("has no accessibility violations", async () => {
-    const { container } = render(<Chip>Accessible chip</Chip>);
-    await expectNoA11yViolations(container);
-  });
-
-  it("uses only the published field-selection token family for selected surfaces", () => {
-    expect(chipStyles).toContain("--fui-field-selection-bg");
-    expect(chipStyles).toContain("--fui-field-selection-bg-hover");
-    expect(chipStyles).toContain("--fui-field-selection-border");
-    expect(chipStyles).toContain("--fui-field-selection-color");
-    expect(chipStyles).not.toContain("--fui-color-accent-tint");
-    expect(chipStyles).not.toMatch(/\$fui-color-success-/);
-    expect(chipStyles).toMatch(
-      /&:active:not\(:disabled\)\s*\{\s*background-color:\s*var\(--fui-field-selection-bg-hover,\s*\$fui-bg-hover\);/
+    const { container } = render(
+      <Chip.Group aria-label="Topics">
+        <Chip value="design">Design</Chip>
+        <Chip value="code" onRemove={() => {}}>
+          Code
+        </Chip>
+      </Chip.Group>
     );
-    expect(chipStyles).not.toContain("var(--fui-field-selection-bg-hover, $fui-bg-active)");
+    await expectNoA11yViolations(container);
   });
 });

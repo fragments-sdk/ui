@@ -1,0 +1,87 @@
+// One live style rule per flagged line (stylelint/doctrine.test.ts reads them by line).
+.hairline {
+  --fui-border-soft: transparent;
+  border-radius: 6px;
+  height: var(--fui-button-height-md, $fui-button-height-md);
+  font-weight: var(--fui-font-weight-bold, $fui-font-weight-bold);
+  padding: 12px;
+  font-size: 13px;
+  font-family: "Fragments Sans", sans-serif;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.shimmer {
+  transition: background-position var(--fui-duration-fast, $fui-duration-fast);
+  animation: fade-in var(--fui-duration-fast, $fui-duration-fast);
+}
+
+.raised {
+  box-shadow: 0 4px 12px var(--fui-text-primary, $fui-text-primary);
+}
+
+.edged {
+  border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
+  box-shadow: var(--fui-shadow-popup, $fui-shadow-popup);
+}
+
+.field:focus-visible {
+  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, $fui-stroke-hairline)
+    var(--fui-border, $fui-border);
+}
+
+.row[data-selected]:hover {
+  box-shadow: none;
+}
+
+// Disabled dims the outer element once; each form of the marker dims a child here.
+.item[data-disabled] .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+.item[disabled] .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+.item:disabled .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+.item[aria-disabled="true"] .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+.item {
+  &[data-disabled] > .label {
+    opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+  }
+}
+
+.item:is([data-disabled]) .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+.item:where([disabled], [aria-disabled="true"]) .icon {
+  opacity: var(--fui-opacity-disabled, $fui-opacity-disabled);
+}
+
+@font-face {
+  font-family: Example;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
+}
+
+.menuPopup[data-starting-style] {
+  transform: scale(0.95);
+}
+
+.retired {
+  border-radius: var(--fui-radius-md, $fui-radius-md);
+}
+
+.offLadder {
+  background-color: var(--fui-text-tertiary, $fui-text-tertiary);
+}

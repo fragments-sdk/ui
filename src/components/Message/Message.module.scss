@@ -1,186 +1,173 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/action" as action;
+@use "../../recipes/feedback" as feedback;
 @use "../../recipes/layout" as layout;
-@use "../../recipes/prose" as prose;
 @use "../../recipes/typography" as typography;
+@use "../../recipes/working" as working;
 
-.message {
-  display: flex;
-  gap: layout.gap("md");
-  padding: layout.gap("md");
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+@layer fui.tokens, fui.base, fui.components;
 
-  &:hover .actions,
-  &:focus-within .actions {
-    opacity: 1;
+@layer fui.components {
+  @include working.keyframes;
+
+  .message {
+    display: flex;
+    gap: layout.gap("sm");
+    min-inline-size: 0;
   }
-}
 
-.withoutAvatar {
-  &.assistant .content {
-    background: transparent;
+  // The user's bubble sits at the end; the reply is flush and full width.
+  .message[data-from="user"] {
+    flex-direction: row-reverse;
+    margin-inline-start: auto;
+    // Cap against the conversation, not the bubble's own shrink-wrapped width.
+    max-inline-size: 80%;
   }
-}
-
-.user {
-  flex-direction: row-reverse;
-  margin-inline-start: auto;
-
-  // Cap against the conversation width, not the bubble's own shrink-wrapped
-  // width. On .content the percentage resolves against an already-collapsed
-  // parent and squeezes short messages until they break mid-word.
-  max-inline-size: 80%;
 
   .body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: layout.gap("xs");
+    min-inline-size: 0;
+  }
+
+  .message[data-from="user"] .body {
     align-items: flex-end;
   }
 
   .content {
-    background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+    @include typography.role("body-compact");
+
+    min-inline-size: 0;
+    max-inline-size: 100%;
     color: var(--fui-text-primary, $fui-text-primary);
-  }
-}
-
-.assistant .content {
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-.system {
-  max-inline-size: 100%;
-  justify-content: center;
-
-  .content {
-    background-color: var(--fui-color-info-wash, $fui-color-info-wash);
-    color: var(--fui-text-secondary, $fui-text-secondary);
-    text-align: center;
+    overflow-wrap: anywhere;
   }
 
-  .avatar {
-    display: none;
-  }
-}
-
-.error .content {
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-color-danger-border, $fui-color-danger-border);
-  background: var(--fui-color-danger-wash, $fui-color-danger-wash);
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// In-flight messages dim with the one disabled opacity until they land.
-.pending {
-  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
-}
-
-.avatar {
-  flex-shrink: 0;
-}
-
-.avatarUser,
-.avatarAssistant {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-.avatarSystem {
-  background-color: var(--fui-color-info-tint, $fui-color-info-tint);
-  color: var(--fui-color-info-text, $fui-color-info-text);
-}
-
-.avatarImage {
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
-
-.body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: layout.gap("xs");
-  min-inline-size: 0;
-}
-
-.content {
-  @include prose.root;
-
-  --fui-markdown-text: currentColor;
-
-  padding-block: layout.gap("sm");
-  padding-inline: layout.gap("md");
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  // break-word, not anywhere: `anywhere` drops min-content to a single
-  // character, collapsing every shrink-to-fit ancestor around the bubble.
-  overflow-wrap: break-word;
-
-  p {
-    @include prose.paragraph;
+  // The bubble: the band, the surface corner, no edge.
+  .message[data-from="user"] .content {
+    padding-block: layout.gap("sm");
+    padding-inline: layout.gap("md");
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
   }
 
-  code {
-    @include prose.inline-code;
+  .text {
+    white-space: pre-wrap;
   }
 
-  pre {
-    @include prose.code-block("compact");
+  // Streaming: the work wash and sweep play over the reply (held still under
+  // reduced motion), with a still caret in ink 1 after the last word.
+  .message[data-status="streaming"] .content {
+    @include working.area;
 
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-    background-color: var(--fui-bg-subtle, $fui-bg-subtle);
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+  }
 
-    code {
-      padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-      background: none;
-      font: inherit;
-      letter-spacing: inherit;
+  .caret {
+    display: inline-block;
+    block-size: 1em;
+    margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    border-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid
+      var(--fui-text-primary, $fui-text-primary);
+    vertical-align: text-bottom;
+  }
+
+  // ============================================
+  // Meta line: time and actions
+  // ============================================
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: layout.gap("sm");
+    min-block-size: action.track("micro");
+  }
+
+  .message[data-from="user"] .meta {
+    flex-direction: row-reverse;
+  }
+
+  .timestamp {
+    @include typography.role("caption");
+
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: layout.gap("xs");
+  }
+
+  // Where a pointer hovers, actions wait for hover or focus; on touch they stay.
+  @media (hover: hover) {
+    .actions {
+      opacity: 0;
+      transition: opacity var(--fui-duration-micro, $fui-duration-micro)
+        var(--fui-ease-standard, $fui-ease-standard);
+    }
+
+    .message:hover .actions,
+    .message:focus-within .actions {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .actions {
+        transition: none;
+      }
     }
   }
 
-  ul {
-    @include prose.list("disc");
+  // ============================================
+  // Avatar: opt-in, a rounded square
+  // ============================================
+
+  .avatar {
+    @include typography.role("caption");
+
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    inline-size: action.track("micro");
+    block-size: action.track("micro");
+    overflow: hidden;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    color: var(--fui-text-secondary, $fui-text-secondary);
   }
 
-  ol {
-    @include prose.list("decimal");
-  }
-}
-
-.streaming::after {
-  content: "";
-  display: inline-block;
-  inline-size: 0.5em;
-  block-size: 1em;
-  margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
-  background-color: currentColor;
-  animation: blink var(--fui-duration-pulse, $fui-duration-pulse) step-end infinite;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
+  .avatarImage {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
   }
 
-  50% {
-    opacity: 0;
+  // ============================================
+  // Failure: the errbox under the message; the bubble is never tinted
+  // ============================================
+
+  .error {
+    @include feedback.errbox;
+
+    max-inline-size: 100%;
   }
-}
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("xs");
-  opacity: 0;
-  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
-}
+  .errorIcon {
+    @include feedback.errbox-icon;
+  }
 
-.timestamp {
-  @include typography.role("caption");
+  .errorWords {
+    @include feedback.errbox-words;
+  }
 
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .streaming::after {
-    animation: none;
+  .errorActions {
+    @include feedback.errbox-actions;
   }
 }

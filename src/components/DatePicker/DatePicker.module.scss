@@ -3,450 +3,407 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/field";
+@use "../../recipes/focus";
 @use "../../recipes/layout";
 @use "../../recipes/popup";
 @use "../../recipes/surface";
 @use "../../recipes/typography";
 
-.wrapper {
-  @include field.wrapper;
-}
+// The open (or hovered) trigger edge: ink 1 mixed into the field line.
+$_edge-strong: color-mix(
+  in oklab,
+  var(--fui-text-primary, #{$fui-text-primary}) 55%,
+  var(--fui-field-border, #{$fui-field-border})
+);
 
-.label {
-  @include field.label;
-}
+// One day cell: the md control track (32).
+$_day: action.track("md");
 
-.helper {
-  @include field.helper;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.helperError,
-.errorMessage {
-  @include field.error;
-}
-
-// ============================================
-// Trigger
-// ============================================
-
-.trigger {
-  @include button-reset;
-  @include interactive-base;
-  @include field.size("md");
-  @include field.shell;
-
-  display: inline-flex;
-  align-items: center;
-  gap: action.gap("md");
-  width: 100%;
-  min-width: layout.measure("field-minimum");
-  text-align: left;
-
-  &:focus-visible,
-  &[data-popup-open] {
-    @include field.focus-state;
+@layer fui.components {
+  .wrapper {
+    @include field.wrapper;
   }
 
-  // Error border, matching Input. Set from the wrapper's data-invalid so the
-  // control reads as failed, not just the message beneath it.
-  .wrapper[data-invalid] & {
-    @include field.invalid-state;
+  .label {
+    @include field.label;
+  }
 
-    // Focused while invalid keeps the danger edge and takes the danger ring,
-    // the same pairing Input and Textarea render.
-    &:focus-visible,
+  .helper {
+    @include field.helper;
+  }
+
+  .errorMessage {
+    @include field.error;
+
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  .errorIcon {
+    flex-shrink: 0;
+    inline-size: var(--fui-icon-xs, $fui-icon-xs);
+    block-size: var(--fui-icon-xs, $fui-icon-xs);
+  }
+
+  // ============================================
+  // Trigger: the Input shell. Open darkens the edge; only focus rings it.
+  // ============================================
+
+  .trigger {
+    @include button-reset;
+    @include field.size("md", $typed: false);
+    @include field.shell;
+    @include field.hover-state;
+    @include focus.visible;
+
+    display: inline-flex;
+    align-items: center;
+    gap: action.gap("md");
+    inline-size: 100%;
+    min-inline-size: layout.measure("field-minimum");
+    text-align: start;
+    cursor: pointer;
+
     &[data-popup-open] {
-      @include field.invalid-focus-state;
+      border-color: $_edge-strong;
+    }
+
+    // The error edge, matching Input. Set from the wrapper's data-invalid so the
+    // control reads as failed, not just the message beneath it.
+    .wrapper[data-invalid] & {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    &[data-readonly] {
+      @include field.readonly-state;
+
+      cursor: default;
+    }
+
+    &:disabled {
+      @include field.disabled-state;
+    }
+
+    @include high-contrast-outline;
+
+    @media (forced-colors: active) {
+      border-color: CanvasText;
     }
   }
 
-  @include high-contrast-outline;
-}
+  .triggerSm {
+    @include field.size("sm", $typed: false);
 
-.triggerSm {
-  @include field.size("sm");
-
-  gap: action.gap("sm");
-}
-
-.triggerLg {
-  @include field.size("lg");
-
-  gap: action.gap("lg");
-}
-
-.triggerIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  svg {
-    @include action.glyph("md");
-  }
-}
-
-.triggerSm .triggerIcon svg {
-  @include action.glyph("sm");
-}
-
-.triggerLg .triggerIcon svg {
-  @include action.glyph("lg");
-}
-
-.triggerValue {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.triggerPlaceholder {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-// ============================================
-// Positioner & Popup
-// ============================================
-
-.positioner {
-  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
-  outline: none;
-}
-
-.popup {
-  @include popup.container;
-
-  padding: surface.inset("compact");
-
-  // Animation
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1);
+    gap: action.gap("sm");
   }
 
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
+  .triggerIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fui-text-secondary, $fui-text-secondary);
 
-// ============================================
-// Calendar
-// ============================================
-
-.calendar {
-  @include typography.role("body-compact");
-
-  // Square size shared by weekday headers + day cells/buttons (32px grid).
-  --_day-size: #{action.track("md")};
-
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-.months {
-  display: flex;
-  gap: var(--fui-space-4, $fui-space-4);
-}
-
-.month {
-  // Individual month container
-}
-
-.monthCaption {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: var(--fui-space-2, $fui-space-2);
-}
-
-.captionLabel {
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-
-// ============================================
-// Navigation
-// ============================================
-
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
-
-.navButton {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("sm");
-
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
+    svg {
+      @include action.glyph("md");
+    }
   }
 
-  svg {
+  .triggerSm .triggerIcon svg {
     @include action.glyph("sm");
   }
-}
 
-.chevron {
-  display: none; // We use custom chevron icons
-}
-
-// ============================================
-// Grid
-// ============================================
-
-.monthGrid {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-.weekdays {
-  // Weekday header row
-}
-
-.weekday {
-  @include typography.role("ui-compact");
-
-  width: var(--_day-size, #{action.track("md")});
-  height: var(--_day-size, #{action.track("md")});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  text-align: center;
-  vertical-align: middle;
-}
-
-.weeks {
-  // Weeks container
-}
-
-.week {
-  // Week row
-}
-
-// ============================================
-// Day cells
-// ============================================
-
-.day {
-  width: var(--_day-size, #{action.track("md")});
-  height: var(--_day-size, #{action.track("md")});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  text-align: center;
-  vertical-align: middle;
-  position: relative;
-}
-
-.dayButton {
-  @include button-reset;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--_day-size, #{action.track("md")});
-  height: var(--_day-size, #{action.track("md")});
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  font-size: var(--fui-font-size-sm, $fui-font-size-sm);
-  color: var(--fui-text-primary, $fui-text-primary);
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+  .triggerValue,
+  .triggerPlaceholder {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
-// ============================================
-// Day states
-// ============================================
-
-.today > .dayButton {
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-    var(--fui-border-strong, $fui-border-strong);
-  background-color: color-mix(in srgb, var(--fui-bg-hover, $fui-bg-hover) 55%, transparent);
-}
-
-.selected > .dayButton {
-  @include popup.selected-state;
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-
-  &:hover {
-    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-  }
-}
-
-// Days outside the visible month recede but stay clickable; they borrow the
-// disabled opacity because the kit has no separate muted-opacity token yet.
-.outside > .dayButton {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
-}
-
-.disabled > .dayButton {
-  @include disabled-state;
-
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  pointer-events: none;
-}
-
-.focused > .dayButton {
-  @include focus-ring;
-}
-
-// ============================================
-// Range highlights
-// ============================================
-
-.rangeStart,
-.rangeEnd,
-.rangeMiddle {
-  position: relative;
-}
-
-.rangeMiddle {
-  &::before {
-    content: "";
-    position: absolute;
-    inset: var(--fui-raw-space-2, 2px) 0;
-    background-color: color-mix(
-      in srgb,
-      var(--fui-color-accent, $fui-color-accent) 10%,
-      transparent
-    );
-    z-index: 0;
+  .triggerValue {
+    font-variant-numeric: tabular-nums;
   }
 
-  > .dayButton {
-    position: relative;
-    z-index: 1;
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: transparent;
-  }
-}
-
-.rangeStart {
-  &::before {
-    content: "";
-    position: absolute;
-    inset: var(--fui-raw-space-2, 2px) 0 var(--fui-raw-space-2, 2px) 50%;
-    background-color: color-mix(
-      in srgb,
-      var(--fui-color-accent, $fui-color-accent) 10%,
-      transparent
-    );
-    z-index: 0;
+  .triggerPlaceholder {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  > .dayButton {
-    position: relative;
-    z-index: 1;
-    @include popup.selected-state;
-    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
+  // ============================================
+  // Popup: raised, popup corner, popup shadow, instant
+  // ============================================
 
-    &:hover {
-      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    }
+  .positioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
   }
 
-  // When start equals end, no range band
-  &.rangeEnd::before {
-    display: none;
-  }
-}
-
-.rangeEnd {
-  &::before {
-    content: "";
-    position: absolute;
-    inset: var(--fui-raw-space-2, 2px) 50% var(--fui-raw-space-2, 2px) 0;
-    background-color: color-mix(
-      in srgb,
-      var(--fui-color-accent, $fui-color-accent) 10%,
-      transparent
-    );
-    z-index: 0;
-  }
-
-  > .dayButton {
-    position: relative;
-    z-index: 1;
-    @include popup.selected-state;
-    font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-
-    &:hover {
-      background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    }
-  }
-}
-
-// ============================================
-// Preset buttons
-// ============================================
-
-.preset {
-  @include button-reset;
-  @include popup.row;
-
-  width: 100%;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-text-primary, $fui-text-primary);
-  white-space: nowrap;
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
-// ============================================
-// Reduced motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
   .popup {
-    transition: none;
+    @include popup.container;
+    @include popup.motion;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding: surface.inset("compact");
+  }
+
+  // ============================================
+  // Calendar
+  // ============================================
+
+  .calendar {
+    @include typography.role("body-compact");
+
+    position: relative;
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .months {
+    display: flex;
+    gap: var(--fui-raw-space-24, #{measurements.raw-space(24)});
+  }
+
+  .month {
+    position: relative;
+  }
+
+  .monthCaption {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    margin-block-end: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
+
+  .captionLabel {
+    @include typography.role("body-compact");
+
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+
+  // ============================================
+  // Navigation: ghost icon buttons on the 24 track
+  // ============================================
+
+  .nav {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .navButton {
+    @include button-reset;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    block-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    cursor: pointer;
+    pointer-events: auto;
+
+    @include focus.visible;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--fui-bg-hover, $fui-bg-hover);
+        color: var(--fui-text-primary, $fui-text-primary);
+      }
+    }
+
+    &:disabled {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+      cursor: default;
+    }
+
+    svg {
+      @include action.glyph("sm");
+    }
+  }
+
+  .chevron {
+    display: none; // Custom chevron icons render in its place.
+  }
+
+  // ============================================
+  // Grid
+  // ============================================
+
+  .monthGrid {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  .weekday {
+    @include typography.role("caption");
+
+    inline-size: $_day;
+    block-size: $_day;
+    padding: 0;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .weekdays,
+  .weeks,
+  .week {
+    // react-day-picker hooks; the grid needs no extra paint here.
+  }
+
+  .day {
+    position: relative;
+    inline-size: $_day;
+    block-size: $_day;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
   }
 
   .dayButton {
-    transition: none;
+    @include button-reset;
+
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: $_day;
+    block-size: $_day;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    @include focus.visible;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--fui-bg-hover, $fui-bg-hover);
+      }
+    }
   }
 
+  // ============================================
+  // Day markings
+  // ============================================
+
+  // Today: the strong field line as an inset, nothing else.
+  .today > .dayButton {
+    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
+      var(--fui-field-border, $fui-field-border);
+  }
+
+  // Picked days (single, range start and end) take the checked fill.
+  .selected > .dayButton,
+  .rangeStart > .dayButton,
+  .rangeEnd > .dayButton {
+    background-color: var(--fui-control-checked-bg, $fui-control-checked-bg);
+    color: var(--fui-control-checked-color, $fui-control-checked-color);
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    box-shadow: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--fui-control-checked-bg-hover, $fui-control-checked-bg-hover);
+      }
+    }
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+  }
+
+  // Days outside the shown month recede to ink 3 and stay clickable.
+  .outside > .dayButton {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  .disabled > .dayButton {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    text-decoration: line-through;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  // ============================================
+  // Range band: the selection tint behind the days between the ends
+  // ============================================
+
+  .rangeMiddle::before,
+  .rangeStart::before,
+  .rangeEnd::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    z-index: 0;
+    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
+  }
+
+  .rangeMiddle {
+    &::before {
+      inset-inline: 0;
+    }
+
+    > .dayButton {
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+  }
+
+  .rangeStart::before {
+    inset-inline: 50% 0;
+  }
+
+  .rangeEnd::before {
+    inset-inline: 0 50%;
+  }
+
+  // Start and end on one day: no band.
+  .rangeStart.rangeEnd::before {
+    display: none;
+  }
+
+  // ============================================
+  // Loading: the calendar's footprint as a skeleton
+  // ============================================
+
+  .calendarSkeleton {
+    display: flex;
+    gap: var(--fui-raw-space-24, #{measurements.raw-space(24)});
+  }
+
+  .calendarSkeletonMonth {
+    inline-size: calc(#{$_day} * 7);
+    block-size: calc(
+      var(--fui-control-height-xs, #{$fui-control-height-xs}) +
+        var(--fui-raw-space-8, #{measurements.raw-space(8)}) + #{$_day} * 7
+    );
+  }
+
+  // ============================================
+  // Presets: library Buttons, full width, start-aligned
+  // ============================================
+
   .preset {
-    transition: none;
+    justify-content: flex-start;
   }
 }

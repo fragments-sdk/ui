@@ -1,0 +1,221 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ColorPicker",
+  "description": "Selects a color through a visual picker and hexadecimal input.",
+  "category": "inputs",
+  "tags": ["color", "picker", "input", "hex", "swatch", "theme"],
+  "status": "stable",
+  "dependencies": [
+    {
+      "name": "react-colorful",
+      "version": ">=5.0.0",
+      "reason": "Optional — renders the visual picker surface; the swatch and hex input work without it."
+    }
+  ],
+  "sourcePath": "src/components/ColorPicker/index.tsx",
+  "exportName": "ColorPicker",
+  "propsSummary": [
+    "label: string",
+    "value: string",
+    "defaultValue: string (default: #000000)",
+    "onValueChange: function",
+    "helperText: string",
+    "invalid: boolean (default: false)",
+    "errorMessage: string",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "size: sm|md (default: md)"
+  ],
+  "props": {
+    "label": {
+      "type": "string",
+      "description": "Label text above the picker",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled color value in hex format (#RRGGBB)",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Default color for uncontrolled usage",
+      "default": "#000000",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new #rrggbb value whenever it changes",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text below the picker (preferred)",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Marks the value invalid: danger edges plus the error message",
+      "default": false,
+      "required": false
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Words shown under the picker while it is invalid",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the color picker",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Shows the value without letting it change",
+      "default": false,
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Control size",
+      "values": ["sm", "md"],
+      "default": "md",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Theme and brand customisation",
+      "Any colour the user must pick freely",
+      "Design tool inputs"
+    ],
+    "whenNot": [
+      "A fixed palette (use RadioGroup with swatches)",
+      "Showing a colour without editing it (use a tinted Badge)",
+      "Status colour that should come from a token"
+    ],
+    "guidelines": [
+      "Label says what the colour is for",
+      "Use helperText for constraints, such as contrast rules",
+      "Offer presets next to the picker for the common choices",
+      "Shorthand (#f50) and a missing hash are accepted and normalised to #rrggbb",
+      "The hex field always shows; a bad hex is flagged inline, never reverted"
+    ],
+    "accessibility": [
+      "The group is labelled by the label; the swatch and hex field carry their own names",
+      "Helper and error text are linked with aria-describedby",
+      "The picker popup is reachable from the keyboard",
+      "Users can type a hex instead of dragging",
+      "An invalid value shows an icon and words, not colour alone"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Swatch opens the picker; the hex field accepts typing.",
+      "code": "<ColorPicker\n  label=\"Brand Color\"\n  defaultValue=\"#3b82f6\"\n/>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Supporting line says where the colour will be used.",
+      "code": "<ColorPicker\n  label=\"Primary Color\"\n  defaultValue=\"#10b981\"\n  helperText=\"This color will be used for buttons and links\"\n/>"
+    },
+    {
+      "name": "Controlled",
+      "description": "The parent owns the value and sees every change.",
+      "code": "const [color, setColor] = React.useState('#10b981');\n\n<ColorPicker label=\"Accent\" value={color} onValueChange={setColor} />"
+    },
+    {
+      "name": "Multiple Pickers",
+      "description": "A stacked set reads as one palette.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '280px' }}>\n  <ColorPicker label=\"Primary\" defaultValue=\"#3b82f6\" />\n  <ColorPicker label=\"Secondary\" defaultValue=\"#64748b\" />\n</div>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Three swatch sizes: sm, md, lg.",
+      "code": "<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '280px' }}>\n  <ColorPicker label=\"Small\" defaultValue=\"#3b82f6\" size=\"sm\" />\n  <ColorPicker label=\"Medium (default)\" defaultValue=\"#3b82f6\" size=\"md\" />\n</div>"
+    },
+    {
+      "name": "Invalid",
+      "description": "Red border on the hex field, and the reason below it.",
+      "code": "<ColorPicker\n  label=\"Brand Color\"\n  defaultValue=\"#7c3aed\"\n  invalid\n  errorMessage=\"This color fails contrast against the page background\"\n/>"
+    },
+    {
+      "name": "Read Only",
+      "description": "The value is shown and copyable but cannot change.",
+      "code": "<ColorPicker label=\"Brand Color\" defaultValue=\"#3b82f6\" readOnly helperText=\"Set by your organisation\" />"
+    },
+    {
+      "name": "Disabled",
+      "description": "Swatch will not open and the hex field will not accept typing.",
+      "code": "<ColorPicker\n  label=\"Locked Color\"\n  defaultValue=\"#64748b\"\n  helperText=\"This color cannot be changed\"\n  disabled\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "ColorPicker is a specialized input for colors"
+    },
+    {
+      "component": "RadioGroup",
+      "relationship": "alternative",
+      "note": "Use RadioGroup for predefined color choices"
+    },
+    {
+      "component": "Field",
+      "relationship": "parent",
+      "note": "ColorPicker uses Field internally for structure"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled hex color (#rrggbb)",
+      "defaultValue: string - initial color for uncontrolled usage",
+      "onValueChange: (color: string) => void - change handler",
+      "label: string - field label",
+      "helperText: string - helper text",
+      "invalid + errorMessage: boolean + string - danger edges with words",
+      "disabled / readOnly: boolean - lock interaction",
+      "size: sm|md - control size"
+    ],
+    "a11yRules": ["A11Y_LABEL_REQUIRED", "A11Y_FOCUS_VISIBLE", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root", "preload"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:53.238Z"
+  },
+  "cssVariables": [
+    "--fui-bg-elevated",
+    "--fui-colorpicker-hue-height",
+    "--fui-colorpicker-pointer-size",
+    "--fui-colorpicker-size",
+    "--fui-field-border",
+    "--fui-font-mono",
+    "--fui-icon-xs",
+    "--fui-overlay-layer-anchored",
+    "--fui-popup-container-inset",
+    "--fui-radius-control",
+    "--fui-radius-indicator",
+    "--fui-radius-popup",
+    "--fui-raw-space-12",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-shadow-sm",
+    "--fui-text-primary"
+  ],
+  "attributes": [
+    {
+      "name": "data-readonly",
+      "value": "true",
+      "fixture": "populated"
+    }
+  ]
+}

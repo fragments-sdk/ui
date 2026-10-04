@@ -1,0 +1,365 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "DataTable",
+  "description": "Interactive table — sort, select, expand, and click through rows of data.",
+  "category": "display",
+  "status": "stable",
+  "tags": ["table", "data", "grid", "list", "sorting", "tanstack"],
+  "dependencies": [
+    {
+      "name": "@tanstack/react-table",
+      "version": ">=8.0.0",
+      "reason": "Optional — powers sorting, selection, and expansion; without it DataTable renders a static, non-interactive table."
+    }
+  ],
+  "sourcePath": "src/components/DataTable/index.tsx",
+  "exportName": "DataTable",
+  "propsSummary": [
+    "columns: ColumnDef[] - column definitions",
+    "data: T[] - row data array",
+    "sortable: boolean - enable sorting",
+    "selectable: boolean - enable row selection",
+    "showCheckbox: boolean - add checkbox column",
+    "getSubRows: (row) => T[] - enable expandable rows",
+    "onRowClick: (row, event) => void - row activation handler with event access",
+    "getRowProps: (row) => HTMLAttributes<HTMLTableRowElement> - row-level ARIA, role, data, class, and event props",
+    "emptyState: ReactNode - EmptyState parts for an empty result",
+    "loading / skeletonRows - placeholder rows under the real header",
+    "error / onRetry / retryLabel - the error box for a failed load",
+    "bordered: boolean - the sheet (surface plane, hairline, surface radius)",
+    "maxHeight: number | string - bound the height; rows scroll inside and the head sticks",
+    "wrapperClassName / wrapperProps - style and configure the outer wrapper div"
+  ],
+  "props": {
+    "columns": {
+      "type": "array",
+      "description": "Column definitions",
+      "required": true
+    },
+    "data": {
+      "type": "array",
+      "description": "Data array",
+      "required": true
+    },
+    "getRowId": {
+      "type": "function",
+      "description": "Unique key extractor for each row",
+      "required": false
+    },
+    "sortable": {
+      "type": "boolean",
+      "description": "Enable sorting",
+      "required": false
+    },
+    "sorting": {
+      "type": "array",
+      "description": "Controlled sorting state",
+      "required": false
+    },
+    "onSortingChange": {
+      "type": "function",
+      "description": "Sorting change handler",
+      "required": false
+    },
+    "selectable": {
+      "type": "boolean",
+      "description": "Enable row selection",
+      "required": false
+    },
+    "showCheckbox": {
+      "type": "boolean",
+      "description": "Show checkbox column for row selection",
+      "required": false
+    },
+    "rowSelection": {
+      "type": "object",
+      "description": "Controlled selection state",
+      "required": false
+    },
+    "onRowSelectionChange": {
+      "type": "function",
+      "description": "Selection change handler",
+      "required": false
+    },
+    "onRowClick": {
+      "type": "function",
+      "description": "Row click handler",
+      "required": false
+    },
+    "getRowProps": {
+      "type": "function",
+      "description": "Props applied to each rendered data row. Use this for row-level ARIA labels, roles, and data attributes.",
+      "required": false
+    },
+    "getSubRows": {
+      "type": "function",
+      "description": "Extract sub-rows from a row for expandable tree tables",
+      "required": false
+    },
+    "expanded": {
+      "type": "union",
+      "description": "Controlled expanded state",
+      "required": false
+    },
+    "onExpandedChange": {
+      "type": "function",
+      "description": "Expanded state change handler",
+      "required": false
+    },
+    "emptyState": {
+      "type": "node",
+      "description": "What an empty result says: EmptyState parts (`EmptyState.Title`,\n`EmptyState.Description`, `EmptyState.Actions`) rendered in a compact\nEmptyState under the real header. Defaults to a one-line \"No data\".",
+      "required": false
+    },
+    "loading": {
+      "type": "boolean",
+      "description": "When true, render placeholder rows (one bar per cell) instead of data.",
+      "required": false
+    },
+    "skeletonRows": {
+      "type": "number",
+      "description": "Number of placeholder rows to show while loading (default 6).",
+      "required": false
+    },
+    "error": {
+      "type": "node",
+      "description": "A failed load: what went wrong and what to do, shown in an error box\nunder the real header. Ignored while `loading`.",
+      "required": false
+    },
+    "onRetry": {
+      "type": "function",
+      "description": "Retry the failed load. Shows a retry button in the error box.",
+      "required": false
+    },
+    "retryLabel": {
+      "type": "string",
+      "description": "Label for the retry button.",
+      "required": false,
+      "default": "\"Retry\""
+    },
+    "hideHeader": {
+      "type": "boolean",
+      "description": "Hide the column header row (e.g. stacked per-group tables share one).",
+      "required": false
+    },
+    "caption": {
+      "type": "string",
+      "description": "Visible caption for the table (recommended for accessibility)",
+      "required": false
+    },
+    "captionHidden": {
+      "type": "boolean",
+      "description": "Hide the caption visually but keep it for screen readers",
+      "required": false
+    },
+    "bordered": {
+      "type": "boolean",
+      "description": "Draw the sheet: the surface plane, a hairline border and the surface radius",
+      "required": false
+    },
+    "maxHeight": {
+      "type": "union",
+      "description": "Bound the table's height: the rows scroll inside it and the head sticks",
+      "required": false
+    },
+    "wrapperClassName": {
+      "type": "string",
+      "description": "Additional class name for the outer wrapper div",
+      "required": false
+    },
+    "wrapperProps": {
+      "type": "object",
+      "description": "Props forwarded to the outer wrapper div",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Rows need sorting, selection, or expansion",
+      "Users scan and compare several attributes per row",
+      "A row click opens the record behind it"
+    ],
+    "whenNot": [
+      "The data is read-only and static (use Table)",
+      "Each item is a single line (use List)",
+      "Narrow screens where a card list reads better"
+    ],
+    "guidelines": [
+      "Cap visible columns near 5–7; push the rest behind a row click",
+      "Right-align numbers, left-align text",
+      "Always set emptyState — a bare grid reads as broken",
+      "Pass error and onRetry for a failed load; loading wins over error, error over empty",
+      "Clickable rows need getRowProps for a role and an accessible name",
+      "Every row is the 32px control track; there is no density or stripe option"
+    ],
+    "accessibility": [
+      "Headers stay real th elements with scope",
+      "Sortable headers are buttons — reachable by keyboard",
+      "Selection checkboxes carry their own labels",
+      "Expand toggles report aria-expanded"
+    ],
+    "dont": [
+      {
+        "reason": "Do not use DataTable for a simple static comparison.",
+        "bad": "<DataTable />",
+        "good": "<Table aria-label=\"Plan comparison\">\n            <Table.Head>\n              <Table.Row>\n                <Table.HeaderCell>Plan</Table.HeaderCell>\n                <Table.HeaderCell>Price</Table.HeaderCell>\n              </Table.Row>\n            </Table.Head>\n            <Table.Body>\n              <Table.Row>\n                <Table.Cell>Starter</Table.Cell>\n                <Table.Cell>$0</Table.Cell>\n              </Table.Row>\n            </Table.Body>\n          </Table>"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Columns and data are the only required props; everything else is opt-in.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"status\", header: \"Status\" },\n          ]}\n          data={[\n            { name: \"Ada Lovelace\", status: \"Active\" },\n            { name: \"Grace Hopper\", status: \"Pending\" },\n          ]}\n          aria-label=\"Team members\"\n        />",
+      "canonical": true
+    },
+    {
+      "name": "Loading",
+      "description": "Placeholder rows, one bar per cell, sit under the real header so the page never jumps.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"status\", header: \"Status\" },\n          ]}\n          data={[]}\n          loading\n          skeletonRows={3}\n          aria-label=\"Loading team members\"\n        />"
+    },
+    {
+      "name": "Rich Cells",
+      "description": "A cell renderer drops any component — avatar, badge — straight into the column.",
+      "code": "<DataTable\n          columns={[\n            {\n              accessorKey: \"name\",\n              header: \"Name\",\n              cell: ({ row }) => (\n                <Stack direction=\"row\" gap=\"sm\" align=\"center\">\n                  <Avatar name={row.original.name} size=\"sm\" />\n                  <span>{row.original.name}</span>\n                </Stack>\n              ),\n            },\n            { accessorKey: \"role\", header: \"Role\" },\n            {\n              accessorKey: \"status\",\n              header: \"Status\",\n              cell: ({ row }) => (\n                <Badge tone={row.original.status === \"Active\" ? \"success\" : \"warning\"}>\n                  {row.original.status}\n                </Badge>\n              ),\n            },\n          ]}\n          data={[\n            { name: \"Ada Lovelace\", role: \"Engineer\", status: \"Active\" },\n            { name: \"Grace Hopper\", role: \"Admiral\", status: \"Pending\" },\n          ]}\n          bordered\n          aria-label=\"Team members\"\n        />"
+    },
+    {
+      "name": "Sortable",
+      "description": "Click a header to sort; click it again to reverse.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"amount\", header: \"Amount\" },\n          ]}\n          data={[\n            { name: \"Subscription\", amount: \"$24.00\" },\n            { name: \"Usage\", amount: \"$12.00\" },\n          ]}\n          sortable\n          bordered\n          caption=\"Recent transactions\"\n          captionHidden\n          aria-label=\"Transactions\"\n        />"
+    },
+    {
+      "name": "Checkbox Selection",
+      "description": "The header checkbox toggles every row at once.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"status\", header: \"Status\" },\n          ]}\n          data={[\n            { id: \"ada\", name: \"Ada Lovelace\", status: \"Active\" },\n            { id: \"grace\", name: \"Grace Hopper\", status: \"Pending\" },\n          ]}\n          getRowId={(row) => row.id}\n          selectable\n          showCheckbox\n          bordered\n          aria-label=\"Team members\"\n        />"
+    },
+    {
+      "name": "Expandable Rows",
+      "description": "Children fold away under their parent, like a file tree; depth shows by indent alone.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"type\", header: \"Type\" },\n          ]}\n          data={[\n            {\n              id: \"src\",\n              name: \"src\",\n              type: \"folder\",\n              subRows: [{ id: \"components\", name: \"components\", type: \"folder\", subRows: [] }],\n            },\n            { id: \"package\", name: \"package.json\", type: \"file\", subRows: [] },\n          ]}\n          getRowId={(row) => row.id}\n          getSubRows={(row) => row.subRows}\n          bordered\n          aria-label=\"File tree\"\n        />"
+    },
+    {
+      "name": "With Filters",
+      "description": "Filter controls sit outside the table; you own the filtering.",
+      "code": "<Stack gap=\"sm\">\n          <Input type=\"search\" aria-label=\"Search users\" placeholder=\"Search...\" />\n          <DataTable\n            columns={[\n              { accessorKey: \"name\", header: \"Name\" },\n              { accessorKey: \"status\", header: \"Status\" },\n            ]}\n            data={[{ name: \"Ada Lovelace\", status: \"Active\" }]}\n            sortable\n            bordered\n            emptyState={\n              <EmptyState.Title as=\"p\">No users match the current filters</EmptyState.Title>\n            }\n            aria-label=\"Filtered team members\"\n          />\n        </Stack>"
+    },
+    {
+      "name": "Clickable Rows",
+      "description": "Mouse or keyboard opens the row; getRowProps supplies its name.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"method\", header: \"Method\" },\n            { accessorKey: \"path\", header: \"Path\" },\n          ]}\n          data={[{ method: \"GET\", path: \"/v1/components\" }]}\n          getRowProps={(row) => ({\n            role: \"button\",\n            \"aria-label\": `Open ${row.method} ${row.path}`,\n          })}\n          onRowClick={() => undefined}\n          aria-label=\"API endpoints\"\n        />"
+    },
+    {
+      "name": "Empty State",
+      "description": "A compact EmptyState replaces the rows and keeps the headers in place.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"status\", header: \"Status\" },\n          ]}\n          data={[]}\n          emptyState={\n            <>\n              <EmptyState.Title>No users match your search</EmptyState.Title>\n              <EmptyState.Description>Try a shorter name or clear a filter.</EmptyState.Description>\n            </>\n          }\n          aria-label=\"Search results\"\n        />"
+    },
+    {
+      "name": "Error",
+      "description": "A failed load shows the error box under the real header, with one way out.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Name\" },\n            { accessorKey: \"status\", header: \"Status\" },\n          ]}\n          data={[]}\n          error=\"The team list did not load. Check your connection, then retry.\"\n          onRetry={() => undefined}\n          aria-label=\"Team members\"\n        />"
+    },
+    {
+      "name": "Long Cell Content",
+      "description": "Oversized values scroll inside the table instead of stretching the page.",
+      "code": "<DataTable\n          columns={[\n            { accessorKey: \"name\", header: \"Administrator\" },\n            { accessorKey: \"status\", header: \"Recovery policy\" },\n          ]}\n          data={[\n            {\n              name: \"A very long localized administrator identity that remains distinguishable\",\n              status:\n                \"Pending confirmation of the detailed workspace recovery policy and notification workflow\",\n            },\n          ]}\n          bordered\n          aria-label=\"Long localized team member data\"\n        />"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Table",
+      "relationship": "alternative",
+      "note": "Use Table for simple semantic HTML tables"
+    },
+    {
+      "component": "EmptyState",
+      "relationship": "sibling",
+      "note": "Use EmptyState for empty table states"
+    },
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Use Badge for status columns"
+    },
+    {
+      "component": "Menu",
+      "relationship": "sibling",
+      "note": "Use Menu for filter dropdowns"
+    },
+    {
+      "component": "Checkbox",
+      "relationship": "sibling",
+      "note": "Built-in checkbox selection via showCheckbox"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "columns: ColumnDef[] - column definitions",
+      "data: T[] - row data array",
+      "sortable: boolean - enable sorting",
+      "selectable: boolean - enable row selection",
+      "showCheckbox: boolean - add checkbox column",
+      "getSubRows: (row) => T[] - enable expandable rows",
+      "onRowClick: (row, event) => void - row activation handler with event access",
+      "getRowProps: (row) => HTMLAttributes<HTMLTableRowElement> - row-level ARIA, role, data, class, and event props",
+      "emptyState: ReactNode - EmptyState parts for an empty result",
+      "loading / skeletonRows - placeholder rows under the real header",
+      "error / onRetry / retryLabel - the error box for a failed load",
+      "bordered: boolean - the sheet (surface plane, hairline, surface radius)",
+      "maxHeight: number | string - bound the height; rows scroll inside and the head sticks",
+      "wrapperClassName / wrapperProps - style and configure the outer wrapper div"
+    ],
+    "a11yRules": ["A11Y_TABLE_HEADERS", "A11Y_TABLE_SORT"]
+  },
+  "ai": {
+    "compositionPattern": "simple",
+    "subComponents": ["Root", "Columns", "preload"],
+    "commonPatterns": [
+      "<DataTable columns={createColumns([{key:\"name\",header:\"Name\"},{key:\"status\",header:\"Status\"}])} data={[{name:\"Item 1\",status:\"Active\"}]} />"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-secondary",
+    "--fui-control-height-xs",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-icon-xs",
+    "--fui-radius-indicator",
+    "--fui-raw-space-0",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-table-row-active-bg",
+    "--fui-text-primary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-align",
+      "value": "right",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-table-state",
+      "value": "loading",
+      "fixture": "loading"
+    }
+  ],
+  "matrix": {
+    "axes": {
+      "size": "auto",
+      "theme": ["light", "dark"]
+    },
+    "forced": ["loading", "empty", "focus"],
+    "worstCase": {
+      "data": "Long localized cell values and enough rows to require horizontal and vertical overflow handling"
+    }
+  },
+  "preview": {
+    "providers": [],
+    "dynamicRegions": []
+  }
+}

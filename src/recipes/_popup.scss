@@ -1,7 +1,10 @@
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
 @use "../tokens/mixins" as mixins;
+@use "focus";
 @use "overlay";
+@use "selection";
+@use "surface";
 @use "typography";
 
 $_container-inset: measurements.raw-space(4);
@@ -21,36 +24,68 @@ $_viewport-rows: 4.5;
   --fui-popup-indicator-box: var(--fui-raw-space-16, #{measurements.raw-space(16)});
   --fui-popup-separator-size: var(--fui-stroke-hairline, #{$_separator-size});
   --fui-popup-separator-gap: var(--fui-raw-space-4, #{$_separator-gap});
-  --fui-popup-offset: var(--fui-raw-space-4, #{measurements.raw-space(4)});
   --fui-popup-viewport-rows: #{$_viewport-rows};
-  --_fui-popup-effective-row-pitch: var(--fui-popup-row-pitch, #{$_row-pitch});
-
-  @media (pointer: coarse) {
-    --_fui-popup-effective-row-pitch: var(--fui-raw-space-48, #{measurements.raw-space(48)});
-  }
+  // A row is its own hit target: stacked rows cannot grow a hit area into
+  // their neighbours, so the row takes the hit-area floor (44px under a
+  // coarse pointer) when that is taller than the pitch.
+  --_fui-popup-effective-row-pitch: max(
+    var(--fui-popup-row-pitch, #{$_row-pitch}),
+    var(--fui-hit-area, #{tokens.$fui-hit-area})
+  );
 }
 
-/// A pick list drawn in the page flow: the popup box without elevation.
+/// A pick list drawn in the page flow: a static surface (the surface plane and
+/// its hairline, no shadow) with the popup corner and inset.
 @mixin inline-container {
+  @include properties;
+  @include surface.plane;
+
+  border-radius: var(--fui-radius-popup, #{tokens.$fui-radius-popup});
+  padding: var(--fui-popup-container-inset, #{$_container-inset});
+}
+
+/// The floating pick list (Menu, Select, Combobox, Command, DatePicker): the
+/// floating surface, which draws no edge.
+@mixin container {
   @include properties;
   @include overlay.surface;
 
   padding: var(--fui-popup-container-inset, #{$_container-inset});
-  box-shadow: none;
 }
 
-/// The floating pick list (Menu, Select, Combobox, Command, DatePicker).
-@mixin container {
-  @include inline-container;
+/// How a small floating thing (menu, select and combobox lists, popover, tooltip,
+/// toast) arrives and leaves: Base UI's starting and ending styles, read through
+/// the instant roles. Both durations are 0 and `--fui-popup-from` is 1, so the
+/// popup appears and leaves in one frame with no scale. A theme that wants motion
+/// sets the three roles; reduced motion still keeps the scale at 1.
+@mixin motion {
+  transform-origin: var(--transform-origin);
+  transition-property: opacity, scale;
+  transition-duration: var(--fui-duration-enter, #{tokens.$fui-duration-enter});
+  transition-timing-function: var(--fui-ease-standard, #{tokens.$fui-ease-standard});
 
-  box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    scale: var(--fui-popup-from, #{tokens.$fui-popup-from});
+  }
+
+  &[data-ending-style] {
+    transition-duration: var(--fui-duration-exit, #{tokens.$fui-duration-exit});
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &[data-starting-style],
+    &[data-ending-style] {
+      scale: none;
+    }
+  }
 }
 
 @mixin viewport {
   box-sizing: border-box;
   max-block-size: calc(
-    2 * var(--fui-popup-container-inset, #{$_container-inset}) + 2 *
-      var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")}) +
+    2 * var(--fui-popup-container-inset, #{$_container-inset}) +
       var(--fui-popup-viewport-rows, #{$_viewport-rows}) *
       var(--_fui-popup-effective-row-pitch, #{$_row-pitch}) +
       (var(--fui-popup-viewport-rows, #{$_viewport-rows}) - 0.5) *
@@ -73,19 +108,32 @@ $_viewport-rows: 4.5;
   padding-block: var(--fui-popup-row-block-inset, #{$_row-inset});
   padding-inline: var(--fui-popup-row-inline-inset, #{$_row-inset});
   gap: var(--fui-popup-row-content-gap, #{$_row-inset});
-  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
+  border-radius: var(--fui-radius-row, #{tokens.$fui-radius-row});
+
+  @include focus.highlight-row;
 }
 
+/// The highlighted (hovered or keyboard-active) row: the hover tint painted
+/// over the row, so a selected row keeps its wash and ring underneath.
 @mixin highlight-state {
-  background: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
+  @include selection.hover-tint;
+
+  // Forced colours repaint the wash as Canvas; the system highlight pair
+  // marks the active row instead.
+  @media (forced-colors: active) {
+    background: Highlight;
+    color: HighlightText;
+  }
 }
 
+/// The selected row: wash and ring. A field popup reads its selection hook first.
 @mixin selected-state {
-  background: var(
-    --fui-field-selection-bg,
-    var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg})
+  @include selection.selected(
+    var(
+      --fui-field-selection-bg,
+      var(--fui-control-selected-bg, #{tokens.$fui-control-selected-bg})
+    )
   );
-  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }
 
 @mixin disabled-state {
@@ -109,4 +157,9 @@ $_viewport-rows: 4.5;
   block-size: var(--fui-popup-separator-size, #{$_separator-size});
   margin-block: var(--fui-popup-separator-gap, #{$_separator-gap});
   background: var(--fui-border, #{tokens.$fui-border});
+
+  // A background rule is repainted as Canvas under forced colours.
+  @media (forced-colors: active) {
+    background: CanvasText;
+  }
 }

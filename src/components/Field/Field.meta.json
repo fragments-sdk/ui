@@ -1,0 +1,155 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Field",
+  "description": "Owns the label, description and error for one form control.",
+  "category": "inputs",
+  "tags": ["form", "field", "validation", "label", "error", "input", "accessible"],
+  "status": "stable",
+  "sourcePath": "src/components/Field/index.tsx",
+  "exportName": "Field",
+  "propsSummary": [
+    "children: node (required)",
+    "name: string",
+    "disabled: boolean",
+    "invalid: boolean",
+    "validate: function",
+    "validationMode: onSubmit|onBlur|onChange",
+    "validationDebounceTime: number"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Field content (Label, Control, Description, Error)",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "description": "Field name, used for error distribution from Form",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disables the field: dimmed once, and its control cannot be used",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Marks the field invalid: the control takes the danger edge and Field.Error shows",
+      "required": false
+    },
+    "validate": {
+      "type": "function",
+      "description": "Custom validation function returning error string(s) or null",
+      "required": false
+    },
+    "validationMode": {
+      "type": "enum",
+      "description": "When to trigger validation",
+      "required": false,
+      "values": ["onSubmit", "onBlur", "onChange"]
+    },
+    "validationDebounceTime": {
+      "type": "number",
+      "description": "Debounce time in ms for onChange validation",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Any labelled Input, Textarea, Select, Combobox or NumberField",
+      "One error message per failure reason, not one catch-all",
+      "A custom control needs a real label and description",
+      "Server errors must land on the field that caused them"
+    ],
+    "whenNot": [
+      "Naming a group of controls (use Fieldset)",
+      "A control with no visible label, such as a toolbar filter (give the control an aria-label)"
+    ],
+    "guidelines": [
+      "Every Field gets a Field.Label",
+      "Input, Textarea, Select, Combobox and NumberField join the field as direct children",
+      "Wrap a custom control in Field.Control so it joins the field context",
+      "Give each Field.Error a match so the message fits the failure; with no children it shows the browser's message",
+      "Nest inside Form to route server errors by field name"
+    ],
+    "accessibility": [
+      "Label links to the control",
+      "Description links via aria-describedby",
+      "Field.Error is an alert with an icon, so the failure never relies on colour alone",
+      "data-disabled and data-invalid are available for styling"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Single field",
+      "description": "Label, control and description wired together.",
+      "code": "<Field name=\"email\">\n  <Field.Label>Email address</Field.Label>\n  <Input type=\"email\" placeholder=\"jane@example.com\" />\n  <Field.Description>We will never share your email.</Field.Description>\n</Field>"
+    },
+    {
+      "name": "Two-column layout",
+      "description": "Grid places two short fields side by side and one full-width.",
+      "code": "<Grid columns={2} gap=\"md\">\n  <Field name=\"firstName\">\n    <Field.Label>First Name</Field.Label>\n    <Input placeholder=\"Jane\" />\n  </Field>\n  <Field name=\"lastName\">\n    <Field.Label>Last Name</Field.Label>\n    <Input placeholder=\"Doe\" />\n  </Field>\n  <Grid.Item colSpan=\"full\">\n    <Field name=\"email\">\n      <Field.Label>Email</Field.Label>\n      <Input type=\"email\" placeholder=\"jane@example.com\" />\n      <Field.Error match=\"typeMismatch\">Enter a valid email address</Field.Error>\n    </Field>\n  </Grid.Item>\n</Grid>"
+    },
+    {
+      "name": "Invalid",
+      "description": "invalid marks the field failed and reveals Field.Error.",
+      "code": "<Field name=\"username\" invalid>\n  <Field.Label>Username</Field.Label>\n  <Input defaultValue=\"ada lovelace\" />\n  <Field.Error match>Usernames cannot contain spaces</Field.Error>\n</Field>"
+    },
+    {
+      "name": "Select in a Field",
+      "description": "The trigger takes the label; the error lands under it.",
+      "code": "<Field name=\"team\" invalid>\n  <Field.Label>Team</Field.Label>\n  <Select placeholder=\"Choose a team\">\n    <Select.Trigger />\n    <Select.Content>\n      <Select.Item value=\"design\">Design</Select.Item>\n      <Select.Item value=\"engineering\">Engineering</Select.Item>\n    </Select.Content>\n  </Select>\n  <Field.Error match>Choose a team.</Field.Error>\n</Field>"
+    },
+    {
+      "name": "Custom validation",
+      "description": "validate runs on change and feeds Field.Error.",
+      "code": "<Field\n  name=\"age\"\n  validate={(value) => {\n    const num = Number(value);\n    if (isNaN(num) || num < 18) return 'Must be 18 or older';\n    return null;\n  }}\n  validationMode=\"onChange\"\n  validationDebounceTime={500}\n>\n  <Field.Label>Age</Field.Label>\n  <Input type=\"number\" placeholder=\"18\" />\n  <Field.Description>You must be at least 18 years old.</Field.Description>\n  <Field.Error match=\"customError\" />\n</Field>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Input",
+      "relationship": "child",
+      "note": "Input, Textarea, Select, Combobox and NumberField take their label from Field"
+    },
+    {
+      "component": "Form",
+      "relationship": "parent",
+      "note": "Wrap in Form for server-side error distribution"
+    },
+    {
+      "component": "Fieldset",
+      "relationship": "sibling",
+      "note": "Use Fieldset to group related fields"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "name: string - field name for error distribution",
+      "invalid: boolean - danger edge on the control and Field.Error shown",
+      "validate: (value) => string | null - custom validation",
+      "validationMode: onSubmit|onBlur|onChange - validation trigger",
+      "Kit controls join as direct children; Field.Control wraps a custom control",
+      "Field.Error match: valueMissing|typeMismatch|customError|... - granular errors; no children shows the browser message"
+    ],
+    "a11yRules": ["A11Y_FIELD_LABEL", "A11Y_FIELD_ERROR", "A11Y_FIELD_DESCRIPTION"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Label", "Control", "Description", "Error", "Validity", "Required"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.733Z"
+  },
+  "cssVariables": [
+    "--fui-font-weight-normal",
+    "--fui-icon-sm",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

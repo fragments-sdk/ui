@@ -3,17 +3,22 @@
 import * as React from "react";
 import { Drawer as BaseDrawer } from "@base-ui/react/drawer";
 import styles from "./Drawer.module.scss";
+import { useThemePortalProps } from "../Theme/context";
+import { resolveNativeButton } from "../../utils/native-button";
+import { useOverflowFocusable } from "../../utils/overflow-focusable";
 
 // ============================================
 // Types
 // ============================================
 
 /**
- * Slide-in panel for navigation, forms, or supplementary content.
- * Now backed by Base UI's stable Drawer (v1.3.0) with native swipe gestures.
+ * An edge panel for an inspector, a navigation list or a mobile sheet: the
+ * raised sheet inset from one edge, with a fixed header and footer and a body
+ * that scrolls on its own. It fades in and follows a swipe.
  * @see https://usefragments.com/components/drawer
  */
-export type DrawerWidth = "sm" | "md" | "lg" | "xl" | "full";
+export type DrawerSide = "start" | "end" | "bottom";
+export type DrawerSize = "sm" | "md" | "lg";
 
 export interface DrawerProps {
   children: React.ReactNode;
@@ -21,43 +26,41 @@ export interface DrawerProps {
   open?: boolean;
   /** Default open state */
   defaultOpen?: boolean;
-  /** Called when open state changes */
+  /** Called when the open state changes */
   onOpenChange?: (open: boolean) => void;
-  /** Called after open/close animation completes */
+  /** Called after the open or close transition finishes */
   onOpenChangeComplete?: (open: boolean) => void;
-  /** Whether the drawer blocks interaction with the rest of the page.
+  /** `true` draws the scrim and blocks the page; `"trap-focus"` keeps focus inside without a
+   * scrim (a side inspector); `false` leaves the page usable.
    * @default true */
   modal?: boolean | "trap-focus";
-  /** Swipe direction to dismiss.
-   * @default derived from `side` prop on Content */
-  swipeDirection?: "up" | "down" | "left" | "right";
-  /** Preset snap-point heights for bottom-sheet drawers */
-  snapPoints?: number[];
-  /** Disable outside-click dismissal */
+  /** Snap points for a bottom sheet: fractions of the viewport height, pixels, or px/rem strings */
+  snapPoints?: Array<number | string>;
+  /** Keep the drawer open on an outside press */
   disablePointerDismissal?: boolean;
 }
 
+type BasePopupProps = React.ComponentProps<typeof BaseDrawer.Popup>;
+
 export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Which edge the drawer slides from.
-   * @default "right" */
-  side?: "left" | "right" | "top" | "bottom";
-  /** Drawer width (for left/right) or height (for top/bottom). `full` spans the safe viewport.
+  /** The edge the drawer sits on. `start` and `end` follow the writing direction.
+   * @default "end" */
+  side?: DrawerSide;
+  /** Width on the start and end edges, height on the bottom edge.
    * @default "md"
-   * @see https://usefragments.com/components/drawer#widths */
-  width?: DrawerWidth;
-  /** Whether to show the backdrop overlay (default: true). Set to false for non-modal bottom panels. */
-  backdrop?: boolean;
-  /** Whether to autofocus an element on open (default: true) */
-  initialFocus?: boolean;
-  /** Props applied to the Base UI Drawer.Viewport wrapper */
-  viewportProps?: React.HTMLAttributes<HTMLDivElement>;
+   * @see https://usefragments.com/components/drawer#sizes */
+  size?: DrawerSize;
+  /** Where focus goes when the drawer opens.
+   * @default true */
+  initialFocus?: BasePopupProps["initialFocus"];
+  /** Where focus goes when the drawer closes.
+   * @default true */
+  finalFocus?: BasePopupProps["finalFocus"];
 }
 
-export interface DrawerTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  asChild?: boolean;
-}
+/** The trigger. Pass `render` to make a library control (a Button) the trigger. */
+export type DrawerTriggerProps = React.ComponentProps<typeof BaseDrawer.Trigger>;
 
 export interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -82,35 +85,45 @@ export interface DrawerFooterProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface DrawerCloseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children?: React.ReactNode;
-  asChild?: boolean;
-}
+/** A close control. With no children and no `render` it draws the corner X. */
+export type DrawerCloseProps = React.ComponentProps<typeof BaseDrawer.Close>;
 
 export interface DrawerSwipeAreaProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Swipe direction to open the drawer */
-  swipeDirection?: "up" | "down" | "left" | "right";
-  /** Disable swipe detection */
+  /** Disable swipe-to-open */
   disabled?: boolean;
 }
 
-type DrawerSide = NonNullable<DrawerContentProps["side"]>;
-type DrawerSwipeDirection = NonNullable<DrawerProps["swipeDirection"]>;
+type SwipeDirection = "up" | "down" | "left" | "right";
 
-const SWIPE_DIRECTION_BY_SIDE: Record<DrawerSide, DrawerSwipeDirection> = {
-  left: "left",
-  right: "right",
-  top: "up",
-  bottom: "down",
-};
+/** A drawer is dismissed by swiping it back toward its own edge. */
+function swipeFor(side: DrawerSide, rtl: boolean): SwipeDirection {
+  if (side === "bottom") return "down";
+  const towardStart = side === "start" ? !rtl : rtl;
+  return towardStart ? "left" : "right";
+}
 
-const DrawerContentSideContext = React.createContext<(side: DrawerSide) => void>(() => {});
+interface DrawerContextValue {
+  modal: boolean | "trap-focus";
+  side: DrawerSide;
+  setSide: (side: DrawerSide) => void;
+}
 
-function getAsChildElement(children: React.ReactNode, componentName: string): React.ReactElement {
-  if (!React.isValidElement(children)) {
-    throw new Error(`${componentName} with asChild requires a single valid React element child.`);
-  }
-  return children;
+const DrawerContext = React.createContext<DrawerContextValue>({
+  modal: true,
+  side: "end",
+  setSide: () => {},
+});
+
+function classes(...names: Array<string | false | undefined>) {
+  return names.filter(Boolean).join(" ");
+}
+
+function useIsRtl() {
+  const [rtl, setRtl] = React.useState(false);
+  React.useEffect(() => {
+    setRtl(document.documentElement.dir === "rtl");
+  }, []);
+  return rtl;
 }
 
 // ============================================
@@ -148,84 +161,68 @@ function DrawerRoot({
   onOpenChange,
   onOpenChangeComplete,
   modal = true,
-  swipeDirection,
   snapPoints,
   disablePointerDismissal,
 }: DrawerProps) {
-  const [contentSide, setContentSide] = React.useState<DrawerSide>("right");
-  const resolvedSwipeDirection = swipeDirection ?? SWIPE_DIRECTION_BY_SIDE[contentSide];
+  const [side, setSide] = React.useState<DrawerSide>("end");
+  const rtl = useIsRtl();
+  const value = React.useMemo(() => ({ modal, side, setSide }), [modal, side]);
 
   return (
-    <DrawerContentSideContext.Provider value={setContentSide}>
+    <DrawerContext.Provider value={value}>
       <BaseDrawer.Root
         open={open}
         defaultOpen={defaultOpen}
         onOpenChange={onOpenChange}
         onOpenChangeComplete={onOpenChangeComplete}
         modal={modal}
-        swipeDirection={resolvedSwipeDirection}
+        swipeDirection={swipeFor(side, rtl)}
         snapPoints={snapPoints}
         disablePointerDismissal={disablePointerDismissal}
       >
         {children}
       </BaseDrawer.Root>
-    </DrawerContentSideContext.Provider>
+    </DrawerContext.Provider>
   );
 }
 
-function DrawerTrigger({ children, asChild, className, ...htmlProps }: DrawerTriggerProps) {
-  if (asChild) {
-    const child = getAsChildElement(children, "Drawer.Trigger");
-    return (
-      <BaseDrawer.Trigger {...htmlProps} className={className} render={child}>
-        {null}
-      </BaseDrawer.Trigger>
-    );
-  }
-
+function DrawerTrigger({ render, nativeButton, ...props }: DrawerTriggerProps) {
   return (
-    <BaseDrawer.Trigger {...htmlProps} className={className}>
-      {children}
-    </BaseDrawer.Trigger>
+    <BaseDrawer.Trigger
+      {...props}
+      render={render}
+      nativeButton={resolveNativeButton(render, nativeButton)}
+    />
   );
 }
 
 function DrawerContent({
   children,
-  side = "right",
-  width = "md",
-  backdrop = true,
+  side = "end",
+  size = "md",
   initialFocus = true,
-  viewportProps,
+  finalFocus,
   className,
   ...htmlProps
 }: DrawerContentProps) {
-  const registerContentSide = React.useContext(DrawerContentSideContext);
-  const { className: viewportClassName, ...viewportHtmlProps } = viewportProps ?? {};
-  const popupClasses = [styles.popup, styles[`side-${side}`], styles[`width-${width}`], className]
-    .filter(Boolean)
-    .join(" ");
+  const portalProps = useThemePortalProps();
+  const { modal, setSide } = React.useContext(DrawerContext);
 
   React.useEffect(() => {
-    registerContentSide(side);
-
-    return () => {
-      registerContentSide("right");
-    };
-  }, [registerContentSide, side]);
+    setSide(side);
+  }, [setSide, side]);
 
   return (
-    <BaseDrawer.Portal>
-      {backdrop && <BaseDrawer.Backdrop className={styles.backdrop} />}
-      <BaseDrawer.Viewport
-        {...viewportHtmlProps}
-        className={[styles.viewport, viewportClassName].filter(Boolean).join(" ")}
-      >
+    <BaseDrawer.Portal {...portalProps}>
+      {modal === true && <BaseDrawer.Backdrop className={styles.backdrop} />}
+      <BaseDrawer.Viewport className={styles.viewport}>
         <BaseDrawer.Popup
           initialFocus={initialFocus}
+          finalFocus={finalFocus}
           {...htmlProps}
           data-side={side}
-          className={popupClasses}
+          data-size={size}
+          className={classes(styles.popup, styles[side], styles[size], className)}
         >
           <BaseDrawer.Content className={styles.content}>{children}</BaseDrawer.Content>
         </BaseDrawer.Popup>
@@ -235,93 +232,87 @@ function DrawerContent({
 }
 
 function DrawerHeader({ children, className, ...htmlProps }: DrawerHeaderProps) {
-  const classes = [styles.header, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} className={classes(styles.header, className)}>
       {children}
     </div>
   );
 }
 
 function DrawerTitle({ children, className, ...htmlProps }: DrawerTitleProps) {
-  const classes = [styles.title, className].filter(Boolean).join(" ");
   return (
-    <BaseDrawer.Title {...htmlProps} className={classes}>
+    <BaseDrawer.Title {...htmlProps} className={classes(styles.title, className)}>
       {children}
     </BaseDrawer.Title>
   );
 }
 
 function DrawerDescription({ children, className, ...htmlProps }: DrawerDescriptionProps) {
-  const classes = [styles.description, className].filter(Boolean).join(" ");
   return (
-    <BaseDrawer.Description {...htmlProps} className={classes}>
+    <BaseDrawer.Description {...htmlProps} className={classes(styles.description, className)}>
       {children}
     </BaseDrawer.Description>
   );
 }
 
 function DrawerBody({ children, className, ...htmlProps }: DrawerBodyProps) {
-  const classes = [styles.body, className].filter(Boolean).join(" ");
+  const ref = useOverflowFocusable<HTMLDivElement>();
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} ref={ref} className={classes(styles.body, className)}>
       {children}
     </div>
   );
 }
 
 function DrawerFooter({ children, className, ...htmlProps }: DrawerFooterProps) {
-  const classes = [styles.footer, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} className={classes}>
+    <div {...htmlProps} className={classes(styles.footer, className)}>
       {children}
     </div>
   );
 }
 
-function DrawerClose({ children, asChild, className, ...htmlProps }: DrawerCloseProps) {
-  if (!children) {
+function DrawerClose({ children, render, nativeButton, className, ...props }: DrawerCloseProps) {
+  if (children == null && render == null) {
     return (
       <BaseDrawer.Close
-        {...htmlProps}
-        data-drawer-close
         aria-label="Close drawer"
-        className={[styles.close, className].filter(Boolean).join(" ")}
+        {...props}
+        data-drawer-close=""
+        className={classes(styles.close, typeof className === "string" && className)}
       >
         <CloseIcon />
       </BaseDrawer.Close>
     );
   }
 
-  if (asChild) {
-    const child = getAsChildElement(children, "Drawer.Close");
-    return (
-      <BaseDrawer.Close {...htmlProps} data-drawer-close className={className} render={child}>
-        {null}
-      </BaseDrawer.Close>
-    );
-  }
-
   return (
-    <BaseDrawer.Close {...htmlProps} data-drawer-close className={className}>
+    <BaseDrawer.Close
+      {...props}
+      data-drawer-close=""
+      className={className}
+      render={render}
+      nativeButton={resolveNativeButton(render, nativeButton)}
+    >
       {children}
     </BaseDrawer.Close>
   );
 }
 
-function DrawerSwipeArea({
-  swipeDirection,
-  disabled,
-  className,
-  ...htmlProps
-}: DrawerSwipeAreaProps) {
-  const classes = [styles.swipeArea, className].filter(Boolean).join(" ");
+/** An invisible strip on the drawer's edge that opens it with a swipe toward the page. */
+function DrawerSwipeArea({ disabled, className, ...htmlProps }: DrawerSwipeAreaProps) {
+  const { side } = React.useContext(DrawerContext);
+  const rtl = useIsRtl();
+  const dismiss = swipeFor(side, rtl);
+  const open: SwipeDirection = dismiss === "down" ? "up" : dismiss === "left" ? "right" : "left";
+
   return (
     <BaseDrawer.SwipeArea
       {...htmlProps}
-      swipeDirection={swipeDirection}
+      swipeDirection={open}
       disabled={disabled}
-      className={classes}
+      data-side={side}
+      className={classes(styles.swipeArea, className)}
     />
   );
 }
@@ -343,15 +334,3 @@ export const Drawer = Object.assign(DrawerRoot, {
 });
 
 // Re-export individual components for tree-shaking
-export {
-  DrawerRoot,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerBody,
-  DrawerFooter,
-  DrawerClose,
-  DrawerSwipeArea,
-};

@@ -78,17 +78,11 @@
       "properties": {
         "caseId": {
           "enum": [
-            "geometry/harness/control-sizing/default/md/light/manual-zoom-200",
             "geometry/foundations/field-track/default/md/light/manual-zoom-200",
             "geometry/foundations/typography/default/ui-standard/light/manual-zoom-200"
           ]
         },
-        "storyId": {
-          "enum": [
-            "cloud-control-sizing--control-sizing",
-            "foundations-measurement-targets--target-lineup"
-          ]
-        },
+        "storyId": { "enum": ["foundations-measurement-targets--target-lineup"] },
         "route": { "type": "string", "pattern": "^/iframe\\.html\\?id=[a-z0-9-]+--[a-z0-9-]+$" },
         "selectorValue": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
         "captureMethod": { "const": "browser-ui" },

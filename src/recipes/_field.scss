@@ -1,11 +1,12 @@
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
 @use "../tokens/mixins" as mixins;
+@use "focus";
 @use "typography";
 
 @function track($size) {
   @if $size == "sm" or $size == "md" or $size == "lg" {
-    @return var(--fui-field-track-#{$size}, #{measurements.target-value("fieldTrack", $size)});
+    @return var(--fui-control-height-#{$size}, #{measurements.target-value("controlTrack", $size)});
   }
 
   @error "Unknown field size '#{$size}'. Expected sm, md, or lg.";
@@ -26,17 +27,55 @@
   @return var(--fui-stroke-hairline, #{measurements.target-value("stroke", "hairline")});
 }
 
-@mixin size($size) {
+/// A field's track, inline inset, stroke and type role. A field that takes
+/// typed text (`$typed`, the default) is at least 16px under a coarse pointer,
+/// the size below which a touch browser zooms the page on focus; its track
+/// does not change. A trigger that only shows a value (Select) passes false.
+@mixin size($size, $typed: true) {
   --_fui-field-track: #{track($size)};
   --_fui-field-inline-inset: #{inline-inset($size)};
   --_fui-field-stroke: #{stroke()};
 
+  $role: null;
   @if $size == "sm" {
-    @include typography.role("ui-compact");
+    $role: "ui-compact";
   } @else if $size == "md" or $size == "lg" {
-    @include typography.role("body-compact");
+    $role: "body-compact";
   } @else {
     @error "Unknown field size '#{$size}'. Expected sm, md, or lg.";
+  }
+  @include typography.role($role);
+
+  @if $typed {
+    @include coarse-typed-text($role);
+  }
+}
+
+/// The 24 step below `size("sm")`: the micro track, the xs inline inset and
+/// the compact type role, on the same channels. `$typed` as for `size()`.
+@mixin size-xs($typed: true) {
+  @include size("sm", $typed: false);
+
+  --_fui-field-track: var(
+    --fui-control-height-xs,
+    #{measurements.target-value("controlTrack", "micro")}
+  );
+  --_fui-field-inline-inset: var(
+    --fui-field-inline-inset-xs,
+    #{measurements.target-value("fieldInlineInset", "xs")}
+  );
+
+  @if $typed {
+    @include coarse-typed-text("ui-compact");
+  }
+}
+
+/// Typed text under a coarse pointer: 16px, or the type role's own size when a
+/// theme scales it above 16px. For a text-entry element that does not take
+/// `size()`, pass the role it sets.
+@mixin coarse-typed-text($role: "body-compact") {
+  @media (pointer: coarse) {
+    font-size: max(16px, #{typography.font-size($role)});
   }
 }
 
@@ -51,10 +90,14 @@ $_message-gap: measurements.raw-space(4);
   grid-template-columns: minmax(0, 1fr);
 }
 
+/// The field label: ink 1 at the body size and the strong weight, on the type
+/// ladder, the same for every field, group and slider label.
 @mixin label {
-  @include typography.role("ui-standard");
+  @include typography.role("body-compact");
 
   margin-block-end: var(--fui-field-label-gap, #{$_label-gap});
+  font-weight: var(--fui-font-weight-semibold, #{tokens.$fui-font-weight-semibold});
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }
 
 @mixin helper {
@@ -76,33 +119,56 @@ $_message-gap: measurements.raw-space(4);
   // Fallbacks are the md defaults; `size()` sets the channels per field size.
   min-block-size: var(--_fui-field-track, #{track("md")});
   padding-inline: var(--_fui-field-inline-inset, #{inline-inset("md")});
-  border: var(--_fui-field-stroke, #{stroke()}) solid var(--fui-border, #{tokens.$fui-border});
-  border-radius: var(--fui-radius-md, #{tokens.$fui-radius-md});
-  background: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
+  border: var(--_fui-field-stroke, #{stroke()}) solid
+    var(--fui-field-border, #{tokens.$fui-field-border});
+  border-radius: var(--fui-radius-control, #{tokens.$fui-radius-control});
+  background: var(--fui-field-bg, #{tokens.$fui-field-bg});
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }
 
-// One ring for every field state: the edge takes the state colour, the ring
-// is that colour at 34%. Focus, open popup, and focus-within all use it.
-@mixin _ring($color) {
-  outline: var(--fui-focus-ring-width, #{tokens.$fui-focus-ring-width}) solid
-    color-mix(in srgb, #{$color} 34%, transparent);
-  outline-offset: var(--fui-focus-ring-offset, #{tokens.$fui-focus-ring-offset});
+// Focus is the one focus geometry (recipes/focus), in the ring colour in every
+// state: the edge keeps its own state colour, the ring does not change hue.
+@mixin _ring {
+  @include focus.ring;
+}
+
+/// Hover darkens the edge toward ink 1, only where the pointer can hover, and
+/// never on a disabled, read-only or invalid field (the invalid edge keeps its
+/// colour). Include on the element that draws the edge.
+@mixin hover-state {
+  $not: ':disabled, [data-disabled], [aria-disabled="true"], [readonly], [data-readonly], [aria-invalid="true"], [data-invalid]';
+
+  @media (hover: hover) {
+    &:hover:not(#{$not}) {
+      border-color: color-mix(
+        in oklab,
+        var(--fui-text-primary, #{tokens.$fui-text-primary}) 55%,
+        var(--fui-field-border, #{tokens.$fui-field-border})
+      );
+    }
+  }
 }
 
 @mixin focus-state {
-  border-color: var(--fui-color-accent, #{tokens.$fui-color-accent});
-  @include _ring(var(--fui-focus-ring-color, #{tokens.$fui-focus-ring-color}));
+  @include _ring;
 }
 
+/// Invalid: the edge in the danger text colour. The field also shows an icon
+/// and words; colour is never the only signal.
 @mixin invalid-state {
-  border-color: var(--fui-color-danger, #{tokens.$fui-color-danger});
+  border-color: var(--fui-color-danger-text, #{tokens.$fui-color-danger-text});
 }
 
-// Invalid and focused: the danger edge stays, the ring takes the danger hue.
+// Invalid and focused: the danger edge stays, the ring is the focus ring.
 @mixin invalid-focus-state {
-  border-color: var(--fui-color-danger, #{tokens.$fui-color-danger});
-  @include _ring(var(--fui-color-danger, #{tokens.$fui-color-danger}));
+  border-color: var(--fui-color-danger-text, #{tokens.$fui-color-danger-text});
+  @include _ring;
+}
+
+/// Read-only: the band fill and a dashed edge. Still focusable; no hover.
+@mixin readonly-state {
+  border-style: dashed;
+  background: var(--fui-field-bg, #{tokens.$fui-field-bg});
 }
 
 @mixin disabled-state {

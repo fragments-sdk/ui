@@ -1,39 +1,33 @@
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ColorPicker } from ".";
-import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Color selection control with a swatch, hex input, and visual picker.
- * Accepts controlled `value` or uncontrolled `defaultValue` hex strings,
- * sizes sm/md/lg, an optional hex input, and an error state.
+ * A square swatch that opens a colour canvas, beside a hex field that always
+ * shows the value. A bad hex is flagged inline with words, never reverted.
  */
 const meta = {
   title: "Forms/ColorPicker",
   component: ColorPicker,
   tags: ["autodocs"],
   parameters: {
-    renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Color selection control with hex input and visual picker.",
+        component:
+          "Swatch + hex field colour picker. Sizes sm and md; invalid, disabled and read-only states.",
       },
     },
   },
   argTypes: {
-    size: {
-      control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Size variant",
-    },
-    showInput: { control: "boolean", description: "Show the hex input field" },
-    error: { control: "boolean", description: "Show error styling" },
+    size: { control: "inline-radio", options: ["sm", "md"] },
+    invalid: { control: "boolean" },
+    readOnly: { control: "boolean" },
     disabled: { control: "boolean" },
   },
   args: {
-    label: "Brand Color",
+    label: "Brand color",
     defaultValue: "#3b82f6",
     size: "md",
-    showInput: true,
   },
 } satisfies Meta<typeof ColorPicker>;
 
@@ -41,36 +35,47 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { label: "Brand Color", defaultValue: "#3b82f6" },
-};
+export const Default: Story = {};
 
 export const WithHelperText: Story = {
-  args: {
-    label: "Primary Color",
-    defaultValue: "#10b981",
-    helperText: "This color will be used for buttons and links",
+  args: { helperText: "Used for buttons and links" },
+};
+
+export const Controlled: Story = {
+  render: () => {
+    function Example() {
+      const [color, setColor] = React.useState("#10b981");
+      return (
+        <div style={{ display: "grid", gap: 8, maxInlineSize: 280 }}>
+          <ColorPicker label="Accent" value={color} onValueChange={setColor} />
+          <span>Value: {color}</span>
+        </div>
+      );
+    }
+    return <Example />;
   },
 };
 
-export const SwatchOnly: Story = {
-  args: { defaultValue: "#ef4444", size: "sm", showInput: false },
+export const Sizes: Story = {
+  render: () => (
+    <div style={{ display: "grid", gap: 16, maxInlineSize: 280 }}>
+      <ColorPicker label="Small" defaultValue="#3b82f6" size="sm" />
+      <ColorPicker label="Medium" defaultValue="#3b82f6" size="md" />
+    </div>
+  ),
 };
 
-export const ErrorState: Story = {
+export const Invalid: Story = {
   args: {
-    label: "Brand Color",
-    defaultValue: "#000000",
-    error: true,
-    helperText: "Please select a valid brand color",
+    invalid: true,
+    errorMessage: "This color fails contrast against the page background",
   },
+};
+
+export const ReadOnly: Story = {
+  args: { readOnly: true, helperText: "Set by your organisation" },
 };
 
 export const Disabled: Story = {
-  args: {
-    label: "Locked Color",
-    defaultValue: "#64748b",
-    helperText: "This color cannot be changed",
-    disabled: true,
-  },
+  args: { disabled: true, helperText: "This color cannot be changed" },
 };

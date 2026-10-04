@@ -1,107 +1,123 @@
-import * as React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, expectNoA11yViolations } from '../../test/utils';
-import { Text } from './index';
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it, vi } from "vitest";
+import { expectNoA11yViolations, render, screen } from "../../test/utils";
+import { Text, type TextProps } from "./index";
 
-describe('Text', () => {
-  it('renders a span by default', () => {
+const textStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Text/Text.module.scss"),
+  "utf8"
+);
+
+describe("Text", () => {
+  it("renders a span on the body role by default", () => {
     render(<Text>Hello</Text>);
-    const el = screen.getByText('Hello');
-    expect(el.tagName).toBe('SPAN');
+    const el = screen.getByText("Hello");
+    expect(el.tagName).toBe("SPAN");
+    expect(el).toHaveClass("text", "role-body");
   });
 
   it('renders as a different element via "as" prop', () => {
     render(<Text as="h1">Heading</Text>);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Heading');
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Heading");
   });
 
-  it('applies scale, weight, and color classes', () => {
-    render(<Text scale="lg" weight="semibold" color="secondary">Styled</Text>);
-    const el = screen.getByText('Styled');
-    expect(el).toHaveClass('scale-lg');
-    expect(el).toHaveClass('weight-semibold');
-    expect(el).toHaveClass('color-secondary');
+  it.each(["caption", "control", "body", "title", "display", "code", "section-label"] as const)(
+    "applies the %s role",
+    (role) => {
+      render(<Text type={role}>{role}</Text>);
+      expect(screen.getByText(role)).toHaveClass(`role-${role}`);
+    }
+  );
+
+  it("maps the roles onto the 11/12/15/24 ladder", () => {
+    expect(textStyles).toMatch(/\.role-caption \{\s*@include typography\.role\("caption"\)/);
+    expect(textStyles).toMatch(/\.role-control \{\s*@include typography\.role\("ui-compact"\)/);
+    expect(textStyles).toMatch(/\.role-body \{\s*@include typography\.role\("body-compact"\)/);
+    expect(textStyles).toMatch(/\.role-title \{\s*@include typography\.role\("title-sm"\)/);
+    expect(textStyles).toMatch(/\.role-display \{\s*@include typography\.role\("title-lg"\)/);
+    expect(textStyles).toMatch(
+      /\.role-code \{[\s\S]*font-size: typography\.font-size\("body-compact"\)/
+    );
+    expect(textStyles).not.toMatch(/ui-standard|body-relaxed|title-md|\("display"\)/);
   });
 
-  it('applies bold weight class', () => {
-    render(<Text weight="bold">Bold text</Text>);
-    expect(screen.getByText('Bold text')).toHaveClass('weight-bold');
+  it("draws the section label at the strong weight in tertiary ink", () => {
+    expect(textStyles).toMatch(
+      /\.role-section-label \{[\s\S]*font-weight: var\(--fui-font-weight-semibold[\s\S]*color: var\(--fui-text-tertiary/
+    );
   });
 
-  it('applies muted color class (alias for tertiary)', () => {
-    render(<Text color="muted">Muted text</Text>);
-    expect(screen.getByText('Muted text')).toHaveClass('color-muted');
+  it("takes the strong weight from a boolean", () => {
+    render(<Text strong>Strong</Text>);
+    expect(screen.getByText("Strong")).toHaveClass("strong");
   });
 
-  it('applies semantic color classes', () => {
-    const { rerender } = render(<Text color="warning">Over budget</Text>);
-    expect(screen.getByText('Over budget')).toHaveClass('color-warning');
-
-    rerender(<Text color="danger">Expired</Text>);
-    expect(screen.getByText('Expired')).toHaveClass('color-danger');
-
-    rerender(<Text color="success">Passing</Text>);
-    expect(screen.getByText('Passing')).toHaveClass('color-success');
-
-    rerender(<Text color="accent">healthy-ui</Text>);
-    expect(screen.getByText('healthy-ui')).toHaveClass('color-accent');
+  it("applies the ink ladder and the semantic inks", () => {
+    const { rerender } = render(<Text color="secondary">Ink</Text>);
+    expect(screen.getByText("Ink")).toHaveClass("color-secondary");
+    for (const color of ["tertiary", "accent", "success", "warning", "danger"] as const) {
+      rerender(<Text color={color}>Ink</Text>);
+      expect(screen.getByText("Ink")).toHaveClass(`color-${color}`);
+    }
   });
 
-  it('applies the md scale class (alias for base)', () => {
-    render(<Text scale="md">Medium text</Text>);
-    expect(screen.getByText('Medium text')).toHaveClass('scale-md');
+  it("inks accent with the accent's text stop, never the fill", () => {
+    expect(textStyles).toContain("color: var(--fui-color-accent-text");
+    expect(textStyles).not.toMatch(/var\(--fui-color-accent,/);
   });
 
-  it('applies the eyebrow role class', () => {
-    render(<Text role="eyebrow">Overview</Text>);
-    expect(screen.getByText('Overview')).toHaveClass('role-eyebrow');
+  it("drops the parallel scale system from the API", () => {
+    // @ts-expect-error scale was cut at v4: use a role
+    const scaled: TextProps = { children: "x", scale: "lg" };
+    // @ts-expect-error weight was cut at v4: use strong
+    const weighted: TextProps = { children: "x", weight: "semibold" };
+    // @ts-expect-error letterSpacing was cut at v4: tracking belongs to the role
+    const tracked: TextProps = { children: "x", letterSpacing: "tight" };
+    // @ts-expect-error muted was cut at v4: use tertiary
+    const muted: TextProps = { children: "x", color: "muted" };
+    // @ts-expect-error the 14/16/20/32 roles were cut at v4
+    const offLadder: TextProps = { children: "x", type: "body-relaxed" };
+    expect([scaled, weighted, tracked, muted, offLadder]).toHaveLength(5);
   });
 
-  it('applies the section-label role class', () => {
-    render(<Text role="section-label">Label</Text>);
-    expect(screen.getByText('Label')).toHaveClass('role-section-label');
+  it("takes the step as type and keeps role as the ARIA attribute", () => {
+    render(
+      <Text type="caption" role="status">
+        Saved
+      </Text>
+    );
+    const el = screen.getByRole("status");
+    expect(el).toHaveTextContent("Saved");
+    expect(el).toHaveClass("role-caption");
   });
 
-  it.each([
-    'caption',
-    'ui-compact',
-    'ui-standard',
-    'body-compact',
-    'body-relaxed',
-    'title-sm',
-    'title-md',
-    'title-lg',
-    'code',
-  ] as const)('applies the semantic %s role deterministically', (role) => {
-    render(<Text role={role}>{role}</Text>);
-    expect(screen.getByText(role)).toHaveClass(`role-${role}`);
+  it("applies truncate, line clamp and tabular figures", () => {
+    render(
+      <Text truncate lineClamp={2} tabularNums>
+        Long text
+      </Text>
+    );
+    const el = screen.getByText("Long text");
+    expect(el).toHaveClass("truncate", "lineClamp", "tabularNums");
+    expect(el.style.getPropertyValue("--fui-line-clamp")).toBe("2");
   });
 
-  it('warns and ignores scale selectors when an untyped spread supplies a role', () => {
-    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const UnsafeText = Text as unknown as React.ComponentType<Record<string, unknown>>;
-
-    render(<UnsafeText role="body-relaxed" scale="lg">Semantic copy</UnsafeText>);
-
-    expect(screen.getByText('Semantic copy')).toHaveClass('role-body-relaxed');
-    expect(screen.getByText('Semantic copy')).not.toHaveClass('scale-lg');
-    expect(warning).toHaveBeenCalledOnce();
-    warning.mockRestore();
-  });
-
-  it('applies truncate class', () => {
-    render(<Text truncate>Long text that should truncate</Text>);
-    expect(screen.getByText('Long text that should truncate')).toHaveClass('truncate');
-  });
-
-  it('forwards ref', () => {
+  it("forwards ref", () => {
     const ref = vi.fn();
     render(<Text ref={ref}>Ref</Text>);
     expect(ref).toHaveBeenCalled();
   });
 
-  it('has no accessibility violations', async () => {
-    const { container } = render(<Text>Accessible text</Text>);
+  it("has no accessibility violations", async () => {
+    const { container } = render(
+      <div>
+        <Text as="h2" type="title">
+          Title
+        </Text>
+        <Text as="p">Accessible text</Text>
+      </div>
+    );
     await expectNoA11yViolations(container);
   });
 });

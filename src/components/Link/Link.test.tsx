@@ -1,88 +1,88 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Link } from './index';
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Link } from "./index";
 
-describe('Link', () => {
-  it('renders an anchor element', () => {
+const linkStyles = readFileSync(
+  resolve(process.cwd(), "src/components/Link/Link.module.scss"),
+  "utf8"
+);
+
+describe("Link", () => {
+  it("renders an anchor element", () => {
     render(<Link href="/page">Go</Link>);
-    const link = screen.getByRole('link', { name: 'Go' });
-    expect(link.tagName).toBe('A');
-    expect(link).toHaveAttribute('href', '/page');
+    const link = screen.getByRole("link", { name: "Go" });
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "/page");
   });
 
-  it('applies tone and underline classes', () => {
-    render(<Link href="#" tone="neutral" underline="always">Styled</Link>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('toneNeutral');
-    expect(link).toHaveClass('underline-always');
-  });
-
-  it('defaults to the accent tone and layers the hierarchy colour on a neutral link', () => {
+  it("defaults to the accent tone and takes neutral", () => {
     const { rerender } = render(<Link href="#">Plain</Link>);
-    expect(screen.getByRole('link')).toHaveClass('toneAccent');
+    expect(screen.getByRole("link")).toHaveClass("link", "toneAccent");
 
-    rerender(<Link href="#" tone="neutral" color="tertiary">Quiet</Link>);
-    expect(screen.getByRole('link')).toHaveClass('toneNeutral', 'colorTertiary');
+    rerender(
+      <Link href="#" tone="neutral">
+        Quiet
+      </Link>
+    );
+    expect(screen.getByRole("link")).toHaveClass("toneNeutral");
   });
 
-  it('applies the dotted underline class', () => {
-    render(<Link href="#" underline="dotted">Dotted</Link>);
-    expect(screen.getByRole('link')).toHaveClass('underline-dotted');
+  it("is always underlined at the shared offset, with neutral at ink 1", () => {
+    expect(linkStyles).toContain("text-decoration-line: underline");
+    expect(linkStyles).toContain("--fui-link-underline-offset");
+    expect(linkStyles).toContain("text-decoration-thickness: var(--fui-stroke-hairline");
+    expect(linkStyles).toMatch(/\.toneNeutral\s*\{\s*color: var\(--fui-text-primary/);
+    expect(linkStyles).not.toContain("--fui-text-secondary");
+    expect(linkStyles).not.toMatch(/--fui-color-accent\b|underline-none|interactive-base/);
   });
 
-  it('adds external link attributes', () => {
-    render(<Link href="https://example.com" external>External</Link>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  it("adds external link attributes", () => {
+    render(
+      <Link href="https://example.com" external>
+        External
+      </Link>
+    );
+    const link = screen.getByRole("link");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it('forwards ref', () => {
+  it("forwards ref", () => {
     const ref = vi.fn();
-    render(<Link ref={ref} href="#">Ref</Link>);
+    render(
+      <Link ref={ref} href="#">
+        Ref
+      </Link>
+    );
     expect(ref).toHaveBeenCalled();
   });
 
-  it('renders as child element when asChild is true', () => {
-    render(
-      <Link asChild tone="neutral">
-        <button type="button">Click me</button>
-      </Link>
-    );
-    const btn = screen.getByRole('button', { name: 'Click me' });
-    expect(btn.tagName).toBe('BUTTON');
-    expect(btn).toHaveClass('link');
-    expect(btn).toHaveClass('toneNeutral');
-  });
-
-  it('merges classNames when asChild is true', () => {
-    render(
-      <Link asChild tone="accent">
-        <a href="/test" className="custom-class">Test</a>
-      </Link>
-    );
-    const link = screen.getByRole('link', { name: 'Test' });
-    expect(link).toHaveClass('link');
-    expect(link).toHaveClass('custom-class');
-  });
-
-  it('composes child and Link event handlers when asChild is true', async () => {
+  it("moves the look and props onto a rendered element", async () => {
     const user = userEvent.setup();
-    const childClick = vi.fn();
-    const parentClick = vi.fn();
+    const ownClick = vi.fn();
+    const linkClick = vi.fn();
 
     render(
-      <Link asChild onClick={parentClick}>
-        <button type="button" onClick={childClick}>Composed</button>
+      <Link
+        tone="neutral"
+        onClick={linkClick}
+        render={<a href="/test" className="custom-class" onClick={ownClick} />}
+      >
+        Test
       </Link>
     );
+    const link = screen.getByRole("link", { name: "Test" });
+    expect(link).toHaveClass("link", "toneNeutral", "custom-class");
+    expect(link).toHaveAttribute("href", "/test");
 
-    await user.click(screen.getByRole('button', { name: 'Composed' }));
-    expect(childClick).toHaveBeenCalledTimes(1);
-    expect(parentClick).toHaveBeenCalledTimes(1);
+    await user.click(link);
+    expect(ownClick).toHaveBeenCalledTimes(1);
+    expect(linkClick).toHaveBeenCalledTimes(1);
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(<Link href="/page">Accessible link</Link>);
     await expectNoA11yViolations(container);
   });

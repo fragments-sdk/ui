@@ -1,45 +1,35 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Link } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Stack } from "../Stack";
+import { Text } from "../Text";
+import { Link } from ".";
 
 /**
- * Styled anchor element for navigation. Supports internal and external links
- * with consistent visual treatment, tones, and underline behaviors.
+ * Inline navigation with real link semantics. Always underlined at the shared
+ * offset; accent reads the link ink, neutral steps ink 2 to ink 1 on hover.
  */
 const meta = {
-  title: 'Navigation/Link',
+  title: "Navigation/Link",
   component: Link,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
-        component: 'Styled anchor element for internal and external navigation.',
+        component: "Inline navigation, always underlined, in the link ink or the neutral ink.",
       },
     },
   },
   argTypes: {
     tone: {
-      control: 'select',
-      options: ['accent', 'neutral'],
-      description: 'Colour: accent link ink, or neutral body text until hovered',
+      control: "select",
+      options: ["accent", "neutral"],
+      description: "accent: the link ink; neutral: ink 2, ink 1 on hover",
     },
-    color: {
-      control: 'select',
-      options: ['primary', 'secondary', 'tertiary'],
-      description: 'Text-hierarchy colour for a neutral link',
-    },
-    underline: {
-      control: 'select',
-      options: ['always', 'hover', 'none', 'dotted'],
-      description: 'Underline behavior',
-    },
-    external: { control: 'boolean' },
-    asChild: { control: 'boolean' },
+    external: { control: "boolean" },
   },
   args: {
-    href: '#',
-    tone: 'accent',
-    underline: 'hover',
-    children: 'Learn more about our services',
+    href: "#",
+    tone: "accent",
+    children: "Learn more about our services",
   },
 } satisfies Meta<typeof Link>;
 
@@ -48,25 +38,38 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { href: '#', children: 'Learn more about our services' },
+  args: { href: "#", children: "Learn more about our services" },
 };
 
 export const Neutral: Story = {
-  args: { href: '#', tone: 'neutral', children: 'Secondary link' },
+  args: { href: "#", tone: "neutral", children: "Quiet footer link" },
 };
 
-export const Tertiary: Story = {
-  args: { href: '#', tone: 'neutral', color: 'tertiary', children: 'Quiet metadata link' },
-};
-
-export const AlwaysUnderlined: Story = {
-  args: { href: '#', underline: 'always', children: 'Always underlined' },
+export const InProse: Story = {
+  render: () => (
+    <Text>
+      Read the <Link href="#guide">migration guide</Link> before upgrading, or browse the{" "}
+      <Link href="#changelog" tone="neutral">
+        changelog
+      </Link>
+      .
+    </Text>
+  ),
 };
 
 export const External: Story = {
   args: {
-    href: 'https://example.com',
+    href: "https://example.com",
     external: true,
-    children: 'View documentation',
+    children: "View documentation",
   },
+};
+
+/** `render` moves the look onto another element, such as a router link. */
+export const Render: Story = {
+  render: () => (
+    <Stack direction="row" gap="md">
+      <Link render={<a href="#pricing" data-router-link="" />}>Client-side navigation</Link>
+    </Stack>
+  ),
 };

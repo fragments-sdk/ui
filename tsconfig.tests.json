@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["node", "vite/client", "vitest/globals"]
+  },
+  "include": [
+    "src/scss.d.ts",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.stories.tsx",
+    "src/test"
+  ]
+}

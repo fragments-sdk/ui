@@ -1,0 +1,169 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ConversationList",
+  "description": "Follows new messages at the end, preserving position during scrolling and history loading.",
+  "category": "ai",
+  "tags": ["conversation", "chat", "messages", "scroll", "ai", "list"],
+  "status": "stable",
+  "sourcePath": "src/components/ConversationList/index.tsx",
+  "exportName": "ConversationList",
+  "propsSummary": [
+    "children: node (required)",
+    "label: string (default: Conversation)",
+    "autoScroll: smart|false (default: smart)",
+    "onScrollTop: function",
+    "history: idle|loading|error (default: idle)",
+    "onRetryHistory: function",
+    "emptyState: node"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Messages, events and the thinking indicator",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "description": "Accessible name of the log",
+      "default": "Conversation",
+      "required": false
+    },
+    "autoScroll": {
+      "type": "enum",
+      "description": "smart follows new content while the reader is at the end; false never moves the reader",
+      "default": "smart",
+      "required": false,
+      "values": ["smart", "false"]
+    },
+    "onScrollTop": {
+      "type": "function",
+      "description": "Called when the reader reaches the top, to load earlier messages",
+      "required": false
+    },
+    "history": {
+      "type": "enum",
+      "description": "Where earlier messages stand: idle, loading (a status line) or error (an errbox with Retry)",
+      "default": "idle",
+      "required": false,
+      "values": ["idle", "loading", "error"]
+    },
+    "onRetryHistory": {
+      "type": "function",
+      "description": "Retry loading earlier messages after history=error",
+      "required": false
+    },
+    "emptyState": {
+      "type": "node",
+      "description": "What shows when there are no messages",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Chat interfaces holding many messages",
+      "Transcripts that should follow new arrivals",
+      "Paging back through older message history",
+      "Runs of messages grouped day by day"
+    ],
+    "whenNot": [
+      "Plain item lists with no chat context (use List)",
+      "A single message (use Message directly)",
+      "Layouts that never scroll"
+    ],
+    "guidelines": [
+      "Give the log a parent with a definite height; it fills it and scrolls",
+      "autoScroll=\"smart\" follows only while the reader is at the end; away from it, new messages are counted under the log",
+      "Implement onScrollTop and set history while earlier messages load; the reader's place holds",
+      "ConversationList.Event marks a day break (date) or something that happened (a model switch)",
+      "Put ThinkingIndicator last while the reply has not started",
+      "Give new conversations an emptyState"
+    ],
+    "accessibility": [
+      "The log is role=log with a name and polite announcements",
+      "The scroller takes keyboard focus and draws its ring inside the edge",
+      "Loading history is a status; a failed load is an errbox with a labelled Retry",
+      "The jump button names what it does: N new messages or Jump to latest",
+      "Event hairlines are decorative; dates are time elements"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic",
+      "description": "Messages in a log that follows new arrivals.",
+      "code": "const reply = \"Two files need updated imports.\";\n\n<ConversationList>\n  <Message from=\"user\">\n    <Message.Content>Which files break the workspace rules?</Message.Content>\n  </Message>\n  <Message from=\"assistant\">\n    <Message.Content>{reply}</Message.Content>\n  </Message>\n</ConversationList>"
+    },
+    {
+      "name": "With Events",
+      "description": "A day break and a model switch.",
+      "code": "const yesterday = new Date(2026, 9, 3);\n\n<ConversationList>\n  <ConversationList.Event date={yesterday} />\n  <Message from=\"user\">\n    <Message.Content>Check main.</Message.Content>\n  </Message>\n  <ConversationList.Event>Switched to the larger model</ConversationList.Event>\n</ConversationList>"
+    },
+    {
+      "name": "Thinking",
+      "description": "The indicator sits last until the reply starts.",
+      "code": "const waiting = true;\nconst messages = [<Message key=\"question\" from=\"user\"><Message.Content>Check main.</Message.Content></Message>];\n\n<ConversationList>\n  {messages}\n  {waiting && <ThinkingIndicator label=\"Reading the request…\" />}\n</ConversationList>"
+    },
+    {
+      "name": "Loading History",
+      "description": "Earlier messages load at the top; the reader's place holds.",
+      "code": "const loading = true;\nconst loadEarlier = () => {};\nconst messages = [<Message key=\"question\" from=\"user\"><Message.Content>Check main.</Message.Content></Message>];\n\n<ConversationList onScrollTop={loadEarlier} history={loading ? \"loading\" : \"idle\"}>\n  {messages}\n</ConversationList>"
+    },
+    {
+      "name": "History Failed",
+      "description": "A failed load says so and offers Retry.",
+      "code": "const loadEarlier = () => {};\nconst messages = [<Message key=\"question\" from=\"user\"><Message.Content>Check main.</Message.Content></Message>];\n\n<ConversationList history=\"error\" onRetryHistory={loadEarlier}>\n  {messages}\n</ConversationList>"
+    },
+    {
+      "name": "Empty",
+      "description": "A first-run state when there are no messages.",
+      "code": "<ConversationList emptyState={<EmptyState><EmptyState.Title>Ask about your design system</EmptyState.Title></EmptyState>}>\n  {[]}\n</ConversationList>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Message",
+      "relationship": "child",
+      "note": "ConversationList contains Message components"
+    },
+    {
+      "component": "ThinkingIndicator",
+      "relationship": "child",
+      "note": "Show ThinkingIndicator at bottom while awaiting response"
+    },
+    {
+      "component": "Prompt",
+      "relationship": "sibling",
+      "note": "Typically paired with Prompt for input"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - messages, events, thinking indicator",
+      "label: string - accessible name (default: \"Conversation\")",
+      "autoScroll: \"smart\" | false - follow behaviour (default: \"smart\")",
+      "onScrollTop: () => void - load earlier messages",
+      "history: \"idle\" | \"loading\" | \"error\" - earlier messages state",
+      "onRetryHistory: () => void - retry after a failed load",
+      "emptyState: ReactNode - empty conversation content",
+      "Event.date: Date - a day break (Today, Yesterday, or the date)",
+      "Event.children: ReactNode - something that happened"
+    ],
+    "a11yRules": ["A11Y_ARIA_ROLES", "A11Y_MOTION_PREFERENCE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Event"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:53.889Z"
+  },
+  "cssVariables": [
+    "--fui-border",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

@@ -1,100 +1,132 @@
+@use "sass:map";
 @use "../../tokens/variables" as *;
-@use "../../recipes/representation" as representation;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/typography" as typography;
 
-// ============================================
-// Avatar Component Styles
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.avatar {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  user-select: none;
-}
+// The avatar sits on the control tracks (xs 24, sm 28, md 32, lg 40). The
+// initials step follows the type ladder: 11 on the two small tracks, 12 at
+// 32, 15 at 40. A group overlaps only as far as its 2px ring can go without
+// reaching a wide pair of initials (CW): none on the 24 track, 2 on 28 and
+// 32, 4 on 40.
+$_sizes: (
+  "xs": (
+    track: var(--fui-control-height-xs, #{$fui-control-height-xs}),
+    type: "caption",
+    overlap: 0,
+  ),
+  "sm": (
+    track: var(--fui-control-height-sm, #{$fui-control-height-sm}),
+    type: "caption",
+    overlap: 2,
+  ),
+  "md": (
+    track: var(--fui-control-height-md, #{$fui-control-height-md}),
+    type: "body-compact",
+    overlap: 2,
+  ),
+  "lg": (
+    track: var(--fui-control-height-lg, #{$fui-control-height-lg}),
+    type: "title-sm",
+    overlap: 4,
+  ),
+);
 
-// ============================================
-// Size Variants
-// ============================================
-
-@each $size in ("xs", "sm", "md", "lg", "xl") {
-  .#{$size} {
-    @include representation.avatar($size);
+@layer fui.components {
+  // A rounded square at the indicator corner. The band shows while a photo
+  // loads and behind the placeholder glyph; initials sit on the accent's
+  // soft fill in its ink.
+  .avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: var(--fui-radius-indicator, #{$fui-radius-indicator});
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    user-select: none;
   }
-}
 
-// Shape is paint applied after the size recipe's circular default.
-.square {
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-}
+  @each $size, $spec in $_sizes {
+    .#{$size} {
+      @include typography.role(map.get($spec, type));
 
-// ============================================
-// Image
-// ============================================
-
-.image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-// ============================================
-// Initials / Fallback
-// ============================================
-
-.initials {
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--avatar-initials-color, var(--fui-text-inverse, $fui-text-inverse));
-  line-height: 1;
-}
-
-.fallback {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 100%;
-  block-size: 100%;
-}
-
-.fallbackIcon {
-  width: 60%;
-  height: 60%;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-// ============================================
-// Avatar Group
-// ============================================
-
-.group {
-  display: inline-flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
-}
-
-@each $size in ("xs", "sm", "md", "lg", "xl") {
-  .group .#{$size}.groupItem {
-    @include representation.avatar-group-item($size);
+      inline-size: map.get($spec, track);
+      block-size: map.get($spec, track);
+    }
   }
-}
 
-// Must match the specificity of `.group .<size>.groupItem` above (and follow it
-// in source order), otherwise the leading avatar keeps its negative margin and
-// the whole stack sits offset from the content around it.
-.group .groupItem:last-child {
-  margin-inline-start: 0;
-}
+  .named {
+    background-color: var(--fui-color-accent-tint, #{$fui-color-accent-tint});
+    color: var(--fui-color-accent-text, #{$fui-color-accent-text});
+  }
 
-// Overflow count indicator
-.overflow {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
+  .image {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
 
   .initials {
-    color: var(--fui-text-secondary, $fui-text-secondary);
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .fallbackIcon {
+    inline-size: 60%;
+    block-size: 60%;
+  }
+
+  // ============================================
+  // Avatar Group
+  // ============================================
+
+  // Each avatar after the first overlaps the one before it (on the 24 track it
+  // meets it); a ring in the plane the group sits on (the canvas by default)
+  // keeps them apart. Set `--_fui-avatar-ring` on the group to the surface it
+  // sits on.
+  .group {
+    --_fui-avatar-ring: var(--fui-app-canvas-bg, #{$fui-body-bg});
+
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .groupItem {
+    box-shadow: 0 0 0 var(--fui-stroke-default, #{measurements.target-value("stroke", "default")})
+      var(--_fui-avatar-ring, var(--fui-app-canvas-bg, #{$fui-body-bg}));
+  }
+
+  @each $size, $spec in $_sizes {
+    @if map.get($spec, overlap) > 0 {
+      .group-#{$size} > .groupItem + .groupItem {
+        margin-inline-start: calc(
+          -1 *
+            var(
+              --fui-raw-space-#{map.get($spec, overlap)},
+              #{measurements.raw-space(map.get($spec, overlap))}
+            )
+        );
+      }
+    }
+  }
+
+  // The +N tile: the band with secondary ink, never a person's colour.
+  .overflow {
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
   }
 }

@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { ComponentDefaultsProvider } from "../ComponentDefaults";
 import { ToggleGroup } from "./index";
 
 const toggleGroupStyles = readFileSync(
@@ -9,138 +11,143 @@ const toggleGroupStyles = readFileSync(
   "utf8"
 );
 
-function renderToggleGroup(props: Partial<React.ComponentProps<typeof ToggleGroup>> = {}) {
-  const defaultProps = {
-    value: "a",
-    onChange: vi.fn(),
-    ...props,
-  };
-
-  return {
-    onChange: defaultProps.onChange,
-    ...render(
-      <ToggleGroup {...defaultProps}>
-        <ToggleGroup.Item value="a">Option A</ToggleGroup.Item>
-        <ToggleGroup.Item value="b">Option B</ToggleGroup.Item>
-        <ToggleGroup.Item value="c" disabled>
-          Option C
-        </ToggleGroup.Item>
-      </ToggleGroup>
-    ),
-  };
+function Options() {
+  return (
+    <>
+      <ToggleGroup.Item value="a">Option A</ToggleGroup.Item>
+      <ToggleGroup.Item value="b">Option B</ToggleGroup.Item>
+      <ToggleGroup.Item value="c" disabled>
+        Option C
+      </ToggleGroup.Item>
+    </>
+  );
 }
 
 describe("ToggleGroup", () => {
-  it("renders with radiogroup role", () => {
-    renderToggleGroup();
-    expect(screen.getByRole("radiogroup")).toBeInTheDocument();
-  });
-
-  it("renders items with radio role", () => {
-    renderToggleGroup();
-    expect(screen.getAllByRole("radio")).toHaveLength(3);
-  });
-
-  it("marks selected item with aria-checked", () => {
-    renderToggleGroup({ value: "b" });
-    const optionB = screen.getByRole("radio", { name: /option b/i });
-    expect(optionB).toHaveAttribute("aria-checked", "true");
-
-    const optionA = screen.getByRole("radio", { name: /option a/i });
-    expect(optionA).toHaveAttribute("aria-checked", "false");
-  });
-
-  it("calls onChange when an item is clicked", async () => {
-    const user = userEvent.setup();
-    const { onChange } = renderToggleGroup();
-
-    await user.click(screen.getByRole("radio", { name: /option b/i }));
-    expect(onChange).toHaveBeenCalledWith("b");
-  });
-
-  it("does not call onChange for disabled items", async () => {
-    const user = userEvent.setup();
-    const { onChange } = renderToggleGroup();
-
-    const disabledItem = screen.getByRole("radio", { name: /option c/i });
-    expect(disabledItem).toBeDisabled();
-
-    await user.click(disabledItem);
-    expect(onChange).not.toHaveBeenCalled();
-  });
-
-  it("uses a connected rail by default without accidental item gaps", () => {
-    renderToggleGroup();
-    const group = screen.getByRole("radiogroup");
-    expect(group.className).toContain("soft");
-    expect(group.className).not.toMatch(/gap-/);
-    // Adjacent items share a flush edge; only outer corners are rounded.
-    expect(toggleGroupStyles).not.toMatch(/^\.item\s*\{[^}]*border-radius/m);
-    expect(toggleGroupStyles).toMatch(
-      /\.soft\s*\{[\s\S]*&:first-child\s*\{[\s\S]*border-start-start-radius/
+  it("renders a named group of toggle buttons", () => {
+    render(
+      <ToggleGroup aria-label="Options" defaultValue="a">
+        <Options />
+      </ToggleGroup>
+    );
+    expect(screen.getByRole("group", { name: "Options" })).toHaveClass("group", "size-md");
+    expect(screen.getByRole("button", { name: "Option A" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByRole("button", { name: "Option B" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
     );
   });
 
-  it("gives the open ghost variant compact spacing by default", () => {
-    renderToggleGroup({ variant: "ghost" });
-    const group = screen.getByRole("radiogroup");
-    expect(group.className).toContain("ghost");
-    expect(group.className).toContain("gap-xs");
-  });
-
-  it("keeps the outline variant connected even when a gap is requested", () => {
-    renderToggleGroup({ variant: "outline", gap: "sm" });
-    const group = screen.getByRole("radiogroup");
-    expect(group.className).toContain("outline");
-    expect(group.className).not.toMatch(/gap-/);
-  });
-
-  it("uses the shared segmented selection across all visual variants", () => {
-    const selectedBlocks = toggleGroupStyles.match(
-      /&\.selected\s*\{\s*@include segmented-selection;\s*\}/g
+  it("single: reports the chosen string and keeps a chosen segment chosen", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <ToggleGroup aria-label="Options" defaultValue="a" onValueChange={onValueChange}>
+        <Options />
+      </ToggleGroup>
     );
-    expect(selectedBlocks).toHaveLength(3);
-    expect(toggleGroupStyles).not.toContain("--fui-toggle-group-selected");
-    expect(toggleGroupStyles).toMatch(/\.ghost\s*\{[\s\S]*border-radius:\s*var\(--fui-radius-full/);
+
+    await user.click(screen.getByRole("button", { name: "Option B" }));
+    expect(onValueChange).toHaveBeenLastCalledWith("b");
+    expect(screen.getByRole("button", { name: "Option B" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByRole("button", { name: "Option A" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+    onValueChange.mockClear();
+    await user.click(screen.getByRole("button", { name: "Option B" }));
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Option B" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
   });
 
-  it("applies size class", () => {
-    renderToggleGroup({ size: "sm" });
-    const group = screen.getByRole("radiogroup");
-    expect(group.className).toContain("size-sm");
+  it("single controlled: follows the value prop", async () => {
+    const user = userEvent.setup();
+    function Controlled() {
+      const [value, setValue] = React.useState("a");
+      return (
+        <>
+          <ToggleGroup aria-label="Options" value={value} onValueChange={setValue}>
+            <Options />
+          </ToggleGroup>
+          <output data-testid="value">{value}</output>
+        </>
+      );
+    }
+    render(<Controlled />);
+    await user.click(screen.getByRole("button", { name: "Option B" }));
+    expect(screen.getByTestId("value")).toHaveTextContent("b");
+    expect(screen.getByRole("button", { name: "Option B" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
   });
 
-  it("manages tabIndex correctly for selected item", () => {
-    renderToggleGroup({ value: "a" });
-    const optionA = screen.getByRole("radio", { name: /option a/i });
-    const optionB = screen.getByRole("radio", { name: /option b/i });
-
-    expect(optionA).toHaveAttribute("tabindex", "0");
-    expect(optionB).toHaveAttribute("tabindex", "-1");
-  });
-
-  it("calls onValueChange alias when an item is clicked", async () => {
+  it("multiple: reports a string array and lets every option toggle", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    renderToggleGroup({ onChange: undefined, onValueChange });
+    render(
+      <ToggleGroup aria-label="Options" multiple defaultValue={["a"]} onValueChange={onValueChange}>
+        <Options />
+      </ToggleGroup>
+    );
 
-    await user.click(screen.getByRole("radio", { name: /option b/i }));
-    expect(onValueChange).toHaveBeenCalledWith("b");
+    await user.click(screen.getByRole("button", { name: "Option B" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["a", "b"]);
+    await user.click(screen.getByRole("button", { name: "Option A" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["b"]);
   });
 
-  it("prefers onChange over onValueChange when both provided", async () => {
+  it("does not change for disabled items", async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
     const onValueChange = vi.fn();
-    renderToggleGroup({ onChange, onValueChange });
-
-    await user.click(screen.getByRole("radio", { name: /option b/i }));
-    expect(onChange).toHaveBeenCalledWith("b");
+    render(
+      <ToggleGroup aria-label="Options" defaultValue="a" onValueChange={onValueChange}>
+        <Options />
+      </ToggleGroup>
+    );
+    await user.click(screen.getByRole("button", { name: "Option C" }));
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
+  it("draws one look: the segmented track and the thumb on the pressed segment", () => {
+    expect(toggleGroupStyles).toContain("@include segmented.track($role)");
+    expect(toggleGroupStyles).toContain('@include segmented.segment("[data-pressed]")');
+    expect(toggleGroupStyles).not.toMatch(/\.ghost|\.outline|\.soft|gap-/);
+  });
+
+  it("applies size and fullWidth, xs included, from the prop or an xs region", () => {
+    render(
+      <>
+        <ToggleGroup aria-label="Small" size="xs" fullWidth defaultValue="a">
+          <Options />
+        </ToggleGroup>
+        <ComponentDefaultsProvider controlSize="xs">
+          <ToggleGroup aria-label="Region" defaultValue="a">
+            <Options />
+          </ToggleGroup>
+        </ComponentDefaultsProvider>
+      </>
+    );
+    expect(screen.getByRole("group", { name: "Small" })).toHaveClass("size-xs", "fullWidth");
+    expect(screen.getByRole("group", { name: "Region" })).toHaveClass("size-xs");
+  });
+
   it("has no accessibility violations", async () => {
-    const { container } = renderToggleGroup();
+    const { container } = render(
+      <ToggleGroup aria-label="Options" defaultValue="a">
+        <Options />
+      </ToggleGroup>
+    );
     await expectNoA11yViolations(container);
   });
 });

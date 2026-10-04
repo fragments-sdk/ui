@@ -1,0 +1,141 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "AlertDialog",
+  "description": "Requests a required decision, focusing the safest answer and preventing dismissal by outside presses.",
+  "category": "overlays",
+  "tags": ["alert-dialog", "confirm", "confirmation", "destructive", "decision", "modal"],
+  "status": "stable",
+  "sourcePath": "src/components/AlertDialog/index.tsx",
+  "exportName": "AlertDialog",
+  "propsSummary": [
+    "children: node (required)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "AlertDialog parts (AlertDialog.Trigger, AlertDialog.Content)",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state (uncontrolled)",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when the open state changes; Escape and Cancel close it",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Confirming a destructive or irreversible action",
+      "An authority action: activating workspace rules, granting an exception, a bypass",
+      "A choice that must be answered before work continues"
+    ],
+    "whenNot": [
+      "A task with fields (use Dialog)",
+      "A notice the user does not answer (use Toast or Alert)",
+      "A reversible action (act, then offer undo in a Toast)"
+    ],
+    "guidelines": [
+      "Title asks the question; the description names the consequence",
+      "Two answers: AlertDialog.Cancel and one AlertDialog.Action whose label is the verb",
+      "Pass render={<Button />} to Cancel and Action; a destructive Action takes tone=\"danger\"",
+      "Focus opens on Cancel; set initialFocus only when the safe answer lives elsewhere",
+      "An Action press in the first half second after opening is ignored, so the click or Return that opened the dialog cannot answer it"
+    ],
+    "accessibility": [
+      "role=\"alertdialog\" labelled by AlertDialog.Title and described by AlertDialog.Description",
+      "Traps focus; focus opens on AlertDialog.Cancel and returns to the trigger",
+      "Escape closes; an outside press does not"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "A destructive confirmation.",
+      "code": "<AlertDialog>\n  <AlertDialog.Trigger render={<Button variant=\"soft\" />}>Delete branch</AlertDialog.Trigger>\n  <AlertDialog.Content>\n    <AlertDialog.Header>\n      <AlertDialog.Title>Delete the branch?</AlertDialog.Title>\n      <AlertDialog.Description>Its 3 open findings close with it.</AlertDialog.Description>\n    </AlertDialog.Header>\n    <AlertDialog.Footer>\n      <AlertDialog.Cancel render={<Button variant=\"ghost\" />}>Cancel</AlertDialog.Cancel>\n      <AlertDialog.Action render={<Button variant=\"solid\" tone=\"danger\" />}>Delete branch</AlertDialog.Action>\n    </AlertDialog.Footer>\n  </AlertDialog.Content>\n</AlertDialog>"
+    },
+    {
+      "name": "Authority action",
+      "description": "A consequential, non-destructive decision with a body.",
+      "code": "<AlertDialog>\n  <AlertDialog.Trigger render={<Button variant=\"soft\" />}>Activate workspace rules</AlertDialog.Trigger>\n  <AlertDialog.Content width=\"md\">\n    <AlertDialog.Header>\n      <AlertDialog.Title>Activate the workspace rules?</AlertDialog.Title>\n    </AlertDialog.Header>\n    <AlertDialog.Body>\n      <p>Every pull request is checked against 12 canonical components from now on.</p>\n    </AlertDialog.Body>\n    <AlertDialog.Footer>\n      <AlertDialog.Cancel render={<Button variant=\"ghost\" />}>Not now</AlertDialog.Cancel>\n      <AlertDialog.Action render={<Button variant=\"solid\" />}>Activate</AlertDialog.Action>\n    </AlertDialog.Footer>\n  </AlertDialog.Content>\n</AlertDialog>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Use Dialog for a task with fields or a long read"
+    },
+    {
+      "component": "Toast",
+      "relationship": "alternative",
+      "note": "For a reversible action, act and offer undo in a Toast"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "open: boolean - controlled open state",
+      "onOpenChange: (open) => void - open state handler",
+      "AlertDialog.Content width: sm|md - sheet width (default: sm)",
+      "AlertDialog.Content initialFocus: boolean|ref|function - focus target on open (default: AlertDialog.Cancel)",
+      "AlertDialog.Content finalFocus: boolean|ref|function - focus target on close (default: true)",
+      "AlertDialog.Cancel: closes; takes focus on open",
+      "AlertDialog.Action onClick: runs, then closes; ignored for 500ms after opening",
+      "AlertDialog.Trigger, Cancel, Action render: element - render a library control"
+    ],
+    "a11yRules": ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Header",
+      "Title",
+      "Description",
+      "Body",
+      "Footer",
+      "Cancel",
+      "Action"
+    ],
+    "requiredChildren": ["Content"],
+    "commonPatterns": [
+      "<AlertDialog><AlertDialog.Trigger render={<Button variant=\"soft\" />}>{verb}</AlertDialog.Trigger><AlertDialog.Content><AlertDialog.Header><AlertDialog.Title>{question}</AlertDialog.Title><AlertDialog.Description>{consequence}</AlertDialog.Description></AlertDialog.Header><AlertDialog.Footer><AlertDialog.Cancel render={<Button variant=\"ghost\" />}>Cancel</AlertDialog.Cancel><AlertDialog.Action render={<Button variant=\"solid\" tone=\"danger\" />}>{verb}</AlertDialog.Action></AlertDialog.Footer></AlertDialog.Content></AlertDialog>"
+    ]
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": false,
+    "frameworkSupport": "native"
+  },
+  "cssVariables": ["--fui-overlay-layer-modal", "--fui-raw-space-16"],
+  "attributes": [
+    {
+      "name": "data-alert-dialog-action",
+      "value": "",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-alert-dialog-cancel",
+      "value": "",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-width",
+      "value": "sm",
+      "fixture": "populated"
+    }
+  ]
+}

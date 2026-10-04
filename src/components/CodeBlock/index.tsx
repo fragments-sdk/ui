@@ -2,15 +2,22 @@
 
 import * as React from "react";
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { CaretDown, CaretUp, Check, Copy } from "@phosphor-icons/react";
+import { Icon } from "../Icon";
+import { IconButton } from "../IconButton";
+import { Tabs } from "../Tabs";
+import { FUI_CSS_VARIABLES_THEME } from "./css-variables-theme";
+import styles from "./CodeBlock.module.scss";
+import { isDevelopmentBuild, isProductionBuild } from "../../utils/env";
+
 // ============================================
 // Lazy-loaded dependency (shiki)
 // ============================================
 
-type ShikiThemeInput = string | typeof import("./css-variables-theme").FUI_CSS_VARIABLES_THEME;
+type ShikiTheme = typeof FUI_CSS_VARIABLES_THEME;
+type CodeToHtml = (code: string, options: { lang: string; theme: ShikiTheme }) => Promise<string>;
 
-let _codeToHtml:
-  | ((code: string, options: { lang: string; theme: ShikiThemeInput }) => Promise<string>)
-  | null = null;
+let _codeToHtml: CodeToHtml | null = null;
 let _shikiLoadPromise: Promise<void> | null = null;
 let _shikiFailed = false;
 
@@ -21,7 +28,7 @@ async function loadShikiDeps() {
     _shikiLoadPromise = (async () => {
       try {
         const shiki = await import("shiki");
-        _codeToHtml = shiki.codeToHtml;
+        _codeToHtml = shiki.codeToHtml as unknown as CodeToHtml;
       } catch {
         _shikiFailed = true;
       }
@@ -29,12 +36,6 @@ async function loadShikiDeps() {
   }
   await _shikiLoadPromise;
 }
-import { Button } from "../Button";
-import { IconButton } from "../IconButton";
-import { TabsRoot, TabsList, Tab, TabsPanel, type TabsVariant } from "../Tabs";
-import { FUI_CSS_VARIABLES_THEME } from "./css-variables-theme";
-import styles from "./CodeBlock.module.scss";
-import { isDevelopmentBuild, isProductionBuild } from "../../utils/env";
 
 export type CodeBlockLanguage =
   | "tsx"
@@ -80,41 +81,23 @@ const LANGUAGE_ALIASES: Partial<Record<CodeBlockLanguage, string>> = {
   text: "plaintext",
 };
 
-/** Available syntax highlighting themes */
-export type CodeBlockTheme =
-  | "css-variables"
-  | "synthwave-84"
-  | "github-dark"
-  | "github-light"
-  | "one-dark-pro"
-  | "dracula"
-  | "nord"
-  | "monokai"
-  | "vitesse-dark"
-  | "vitesse-light"
-  | "min-dark"
-  | "min-light";
+/** One step of the code type: `md` for documents and replies, `sm` for dense panels. */
+export type CodeBlockSize = "sm" | "md";
 
-export type CodeBlockCopyPlacement = "auto" | "header" | "overlay";
-
-export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface CodeBlockProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Code string to display */
   code: string;
-  /** Programming language for syntax highlighting */
+  /** Programming language for syntax highlighting. @default "tsx" */
   language?: CodeBlockLanguage;
-  /** Syntax highlighting theme. Default follows `--fui-code-token-*` via shiki css-variables. */
-  theme?: CodeBlockTheme;
-  /** Show copy button */
+  /** A file name or label, shown in a header inside the block beside the copy action. */
+  title?: React.ReactNode;
+  /** Code type step. @default "md" */
+  size?: CodeBlockSize;
+  /** Show the copy action. @default true */
   showCopy?: boolean;
-  /** Optional title above code block (external label) */
-  title?: string;
-  /** Optional filename shown in header bar inside code block */
-  filename?: string;
-  /** Optional caption below code block */
-  caption?: string;
   /** Show line numbers */
   showLineNumbers?: boolean;
-  /** Starting line number (default: 1) */
+  /** Starting line number. @default 1 */
   startLineNumber?: number;
   /** Highlight specific lines (e.g., [1, 3, '5-7']) */
   highlightLines?: (number | string)[];
@@ -122,110 +105,24 @@ export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   addedLines?: (number | string)[];
   /** Lines marked as removed in diff view */
   removedLines?: (number | string)[];
-  /** Enable word wrapping for long lines */
+  /** Wrap long lines instead of scrolling sideways */
   wordWrap?: boolean;
-  /** Maximum height in pixels (enables scrolling) */
+  /** Maximum height in pixels; the code scrolls past it */
   maxHeight?: number;
-  /** Allow collapsing/expanding the code block */
+  /** Fold long code to `collapsedLines` with a "Show N more lines" bar */
   collapsible?: boolean;
-  /** Initial collapsed state (only applies when collapsible is true) */
+  /** Start folded (only with `collapsible`) */
   defaultCollapsed?: boolean;
-  /** Number of lines to show when collapsed */
+  /** Lines shown while folded. @default 5 */
   collapsedLines?: number;
-  /**
-   * Collapse control copy. `lines` keeps “Show N more lines” / “Show less”
-   * (docs prose). `expand` is one right-aligned Expand / Collapse control
-   * for preview+code capsules.
-   */
-  collapseAction?: "lines" | "expand";
-  /** Compact mode with reduced padding */
-  compact?: boolean;
-  /** Show a persistent copy button (always visible, uses Button component) */
-  persistentCopy?: boolean;
-  /** Placement of copy button when not using persistent copy */
-  copyPlacement?: CodeBlockCopyPlacement;
-  /** Custom background color for the code block (useful when the content area is pure black or dark gray) */
-  bg?: string;
-  /** Callback fired when the copy button is clicked and copy succeeds */
+  /** Called after the code reaches the clipboard */
   onCopy?: () => void;
 }
 
-function CopyIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-    </svg>
-  );
-}
+type CopyState = "idle" | "copied" | "failed";
 
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
-function ChevronDownIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-}
-
-function ChevronUpIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="18 15 12 9 6 15" />
-    </svg>
-  );
-}
+/** How long the copy result stays on screen. */
+const COPY_RESULT_MS = 2000;
 
 function escapeHtml(str: string): string {
   return str
@@ -586,11 +483,9 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   {
     code,
     language = "tsx",
-    theme = "css-variables",
-    showCopy = true,
     title,
-    filename,
-    caption,
+    size = "md",
+    showCopy = true,
     showLineNumbers = false,
     startLineNumber = 1,
     highlightLines,
@@ -601,30 +496,27 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     collapsible = false,
     defaultCollapsed = false,
     collapsedLines = 5,
-    collapseAction = "lines",
-    compact = false,
-    persistentCopy = false,
-    copyPlacement = "auto",
-    bg,
     onCopy,
     className,
+    style,
     ...htmlProps
   },
   ref
 ) {
-  const [copied, setCopied] = useState(false);
-  const [highlight, setHighlight] = useState<{ html: string; loading: boolean }>({
-    html: "",
-    loading: true,
-  });
+  const codeId = React.useId();
+  const [copyState, setCopyState] = useState<CopyState>("idle");
+  // Bumped on every copy, so a second copy while the words show restarts their clock.
+  const [copyRun, setCopyRun] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [highlighted, setHighlighted] = useState<{ key: string; html: string } | null>(null);
 
   const trimmedCode = useMemo(() => normalizeCode(code, language), [code, language]);
   const codeLines = trimmedCode.split("\n");
   const totalLines = codeLines.length;
   const shouldShowCollapse = collapsible && totalLines > collapsedLines;
+  const hiddenLines = totalLines - collapsedLines;
 
-  // Compute visible code when collapsed
+  // Folded code shows only its first lines; copy always takes the whole thing.
   const visibleCode =
     shouldShowCollapse && isCollapsed ? codeLines.slice(0, collapsedLines).join("\n") : trimmedCode;
 
@@ -632,22 +524,31 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
   const addedSet = useMemo(() => parseLineSpec(addedLines), [addedLines]);
   const removedSet = useMemo(() => parseLineSpec(removedLines), [removedLines]);
   const hasDiff = addedSet.size > 0 || removedSet.size > 0;
-  const resolvedCopyPlacement =
-    copyPlacement === "auto" ? (filename ? "header" : "overlay") : copyPlacement;
-  const shouldShowHeaderCopy = showCopy && !persistentCopy && resolvedCopyPlacement === "header";
-  const shouldShowOverlayCopy = showCopy && !persistentCopy && resolvedCopyPlacement === "overlay";
-  const shouldRenderHeader = Boolean(filename) || shouldShowHeaderCopy;
 
-  // Apply syntax highlighting
+  // Everything that changes the highlighted markup; a stale result never shows.
+  const highlightKey = [
+    language,
+    showLineNumbers,
+    startLineNumber,
+    [...highlightSet].join(","),
+    [...addedSet].join(","),
+    [...removedSet].join(","),
+    visibleCode,
+  ].join("|");
+
+  // Plain code until the highlighter resolves: same text, same box, no shift.
+  const plainHtml = useMemo(
+    () => `<pre><code>${escapeHtml(visibleCode)}</code></pre>`,
+    [visibleCode]
+  );
+  const isHighlighted = highlighted?.key === highlightKey;
+  const html = isHighlighted ? highlighted.html : plainHtml;
+
   useEffect(() => {
     let cancelled = false;
-    setHighlight((prev) => ({ ...prev, loading: true }));
 
-    const run = async () => {
+    const run = async (): Promise<string | null> => {
       await loadShikiDeps();
-
-      const fallbackHtml = `<pre class="shiki"><code>${escapeHtml(visibleCode)}</code></pre>`;
-
       if (_shikiFailed || !_codeToHtml) {
         if (_shikiFailed && isDevelopmentBuild()) {
           console.warn(
@@ -655,15 +556,15 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
               "Install it with: npm install shiki"
           );
         }
-        return fallbackHtml;
+        return null;
       }
-
       try {
         const resolvedLang = LANGUAGE_ALIASES[language] || language;
-        const shikiTheme: ShikiThemeInput =
-          theme === "css-variables" ? FUI_CSS_VARIABLES_THEME : theme;
-        const html = await _codeToHtml(visibleCode, { lang: resolvedLang, theme: shikiTheme });
-        return processShikiHtml(html, {
+        const markup = await _codeToHtml(visibleCode, {
+          lang: resolvedLang,
+          theme: FUI_CSS_VARIABLES_THEME,
+        });
+        return processShikiHtml(markup, {
           showLineNumbers,
           startLineNumber,
           highlightLines: highlightSet,
@@ -674,13 +575,13 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
         if (!isProductionBuild()) {
           console.error("Syntax highlighting failed:", err);
         }
-        return fallbackHtml;
+        return null;
       }
     };
 
-    run().then((html) => {
-      if (!cancelled) {
-        setHighlight({ html, loading: false });
+    void run().then((markup) => {
+      if (!cancelled && markup !== null) {
+        setHighlighted({ key: highlightKey, html: markup });
       }
     });
 
@@ -688,9 +589,9 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
       cancelled = true;
     };
   }, [
+    highlightKey,
     visibleCode,
     language,
-    theme,
     showLineNumbers,
     startLineNumber,
     highlightSet,
@@ -698,142 +599,98 @@ const CodeBlockBase = React.forwardRef<HTMLDivElement, CodeBlockProps>(function 
     removedSet,
   ]);
 
+  // The result clears itself after COPY_RESULT_MS. The timer lives in an effect so it comes
+  // back whenever the effects reconnect (hidden then shown again, or a development remount);
+  // a timer set in the click handler would be cleared there and leave the words up for good.
+  useEffect(() => {
+    if (copyState === "idle") return;
+    const timer = window.setTimeout(() => setCopyState("idle"), COPY_RESULT_MS);
+    return () => window.clearTimeout(timer);
+  }, [copyState, copyRun]);
+
   const handleCopy = useCallback(async () => {
+    let result: CopyState = "copied";
     try {
-      // Always copy the full code, even when collapsed
       await navigator.clipboard.writeText(trimmedCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
       onCopy?.();
-    } catch (err) {
-      if (!isProductionBuild()) {
-        console.error("Failed to copy:", err);
-      }
+    } catch {
+      // The refusal is said on screen ("Couldn’t copy"), so nothing goes to the console.
+      result = "failed";
     }
+    setCopyState(result);
+    setCopyRun((run) => run + 1);
   }, [trimmedCode, onCopy]);
 
-  const toggleCollapsed = useCallback(() => {
-    setIsCollapsed((prev) => !prev);
-  }, []);
-
   const classNames = [
-    styles.container,
+    styles.root,
     showLineNumbers && styles.withLineNumbers,
     hasDiff && styles.withDiff,
     wordWrap && styles.wordWrap,
-    compact && styles.compact,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
-  const wrapperClasses = [
-    styles.wrapper,
-    persistentCopy && styles.persistentCopyWrapper,
-    shouldShowOverlayCopy && styles.withCopyOverlay,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const copyResult =
+    copyState === "copied" ? "Copied" : copyState === "failed" ? "Couldn’t copy" : "";
 
-  const codeContainerStyle: React.CSSProperties = maxHeight ? { maxHeight, overflow: "auto" } : {};
-  const wrapperStyle: React.CSSProperties | undefined = bg
-    ? { ["--fui-code-bg" as string]: bg }
-    : undefined;
+  const copy = showCopy ? (
+    <div className={styles.copy} data-slot="code-block-copy">
+      <span className={styles.copyStatus} role="status" data-state={copyState}>
+        {copyResult}
+      </span>
+      <IconButton variant="ghost" size="sm" aria-label="Copy code" onClick={handleCopy}>
+        <Icon icon={copyState === "copied" ? Check : Copy} size="sm" />
+      </IconButton>
+    </div>
+  ) : null;
 
   return (
-    <div ref={ref} {...htmlProps} className={classNames} data-slot="code-block">
-      {title && (
-        <div className={styles.title} data-slot="code-block-title">
-          {title}
+    <div
+      ref={ref}
+      {...htmlProps}
+      className={classNames}
+      style={style}
+      data-slot="code-block"
+      data-language={language}
+      data-size={size}
+      data-copy={showCopy ? (title ? "header" : "overlay") : undefined}
+      data-highlighted={isHighlighted ? "" : undefined}
+    >
+      {title ? (
+        <div className={styles.header} data-slot="code-block-header">
+          <span className={styles.title}>{title}</span>
+          {copy}
         </div>
+      ) : (
+        copy
       )}
-      <div className={wrapperClasses} style={wrapperStyle} data-slot="code-block-frame">
-        {shouldRenderHeader && (
-          <div className={styles.header}>
-            <span className={styles.filename}>{filename ?? ""}</span>
-            {shouldShowHeaderCopy && (
-              <IconButton
-                variant="ghost"
-                size="sm"
-                onClick={handleCopy}
-                className={`${styles.copyButton} ${copied ? styles.copied : ""}`}
-                aria-label={copied ? "Copied!" : "Copy code"}
-              >
-                {copied ? (
-                  <CheckIcon className={styles.icon} />
-                ) : (
-                  <CopyIcon className={styles.icon} />
-                )}
-              </IconButton>
-            )}
-          </div>
-        )}
-        {shouldShowOverlayCopy && (
-          <IconButton
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className={`${styles.copyButton} ${styles.copyOverlay} ${copied ? styles.copied : ""}`}
-            aria-label={copied ? "Copied!" : "Copy code"}
-          >
-            {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
-          </IconButton>
-        )}
-        {highlight.loading ? (
-          <div className={styles.loading} style={codeContainerStyle}>
-            <pre>
-              <code>{visibleCode}</code>
-            </pre>
-          </div>
-        ) : (
-          <div
-            className={styles.codeContainer}
-            style={codeContainerStyle}
-            dangerouslySetInnerHTML={{ __html: highlight.html }}
-          />
-        )}
-        {persistentCopy && (
-          <IconButton
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className={`${styles.persistentCopy} ${styles.copyButton} ${styles.copyOverlay} ${copied ? styles.copied : ""}`}
-            aria-label={copied ? "Copied!" : "Copy code"}
-          >
-            {copied ? <CheckIcon className={styles.icon} /> : <CopyIcon className={styles.icon} />}
-          </IconButton>
-        )}
-        {shouldShowCollapse && (
-          <Button
-            variant="ghost"
-            size="sm"
-            fullWidth
-            onClick={toggleCollapsed}
-            className={
-              collapseAction === "expand"
-                ? `${styles.collapseButton} ${styles.collapseExpand}`
-                : styles.collapseButton
-            }
-            aria-expanded={!isCollapsed}
-            aria-label={isCollapsed ? "Expand code" : "Collapse code"}
-          >
-            {collapseAction === "expand" ? (
-              <span>{isCollapsed ? "Expand" : "Collapse"}</span>
-            ) : isCollapsed ? (
-              <>
-                <ChevronDownIcon className={styles.icon} />
-                <span>Show {totalLines - collapsedLines} more lines</span>
-              </>
-            ) : (
-              <>
-                <ChevronUpIcon className={styles.icon} />
-                <span>Show less</span>
-              </>
-            )}
-          </Button>
-        )}
-      </div>
-      {caption && <div className={styles.caption}>{caption}</div>}
+      <div
+        id={codeId}
+        className={styles.code}
+        data-slot="code-block-code"
+        role="region"
+        aria-label={typeof title === "string" ? title : "Code"}
+        tabIndex={0}
+        style={maxHeight ? { maxBlockSize: maxHeight } : undefined}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      {shouldShowCollapse && (
+        <button
+          type="button"
+          className={styles.collapse}
+          aria-expanded={!isCollapsed}
+          aria-controls={codeId}
+          onClick={() => setIsCollapsed((prev) => !prev)}
+        >
+          <Icon icon={isCollapsed ? CaretDown : CaretUp} size="sm" />
+          <span>
+            {isCollapsed
+              ? `Show ${hiddenLines} more ${hiddenLines === 1 ? "line" : "lines"}`
+              : "Show less"}
+          </span>
+        </button>
+      )}
     </div>
   );
 });
@@ -853,7 +710,17 @@ export interface CodeBlockTab {
   language?: CodeBlockLanguage;
 }
 
-export interface TabbedCodeBlockProps {
+export interface TabbedCodeBlockProps extends Pick<
+  CodeBlockProps,
+  | "size"
+  | "showCopy"
+  | "showLineNumbers"
+  | "wordWrap"
+  | "maxHeight"
+  | "collapsible"
+  | "defaultCollapsed"
+  | "collapsedLines"
+> {
   /** Array of code tabs */
   tabs: CodeBlockTab[];
   /** Default selected tab (by tab value, or label when value is omitted) */
@@ -862,31 +729,9 @@ export interface TabbedCodeBlockProps {
   value?: string;
   /** Called when the selected tab changes */
   onValueChange?: (value: string) => void;
-  /** Show copy button */
-  showCopy?: boolean;
-  /** Placement of copy button when not using persistent copy */
-  copyPlacement?: CodeBlockCopyPlacement;
-  /** Show line numbers */
-  showLineNumbers?: boolean;
-  /** Syntax highlighting theme (applies to all tabs) */
-  theme?: CodeBlockTheme;
-  /** Tab list chrome: `soft` (default) is the filled rail, `ghost` the underline strip. */
-  tabsVariant?: TabsVariant;
-  /** Enable word wrapping for long lines */
-  wordWrap?: boolean;
-  /** Maximum height in pixels (enables scrolling) */
-  maxHeight?: number;
-  /** Allow collapsing/expanding each tab's code (forwarded to every panel) */
-  collapsible?: boolean;
-  /** Initial collapsed state (only applies when collapsible is true) */
-  defaultCollapsed?: boolean;
-  /** Number of lines to show when collapsed */
-  collapsedLines?: number;
-  /** Forwarded to every panel (see CodeBlock `collapseAction`) */
-  collapseAction?: "lines" | "expand";
   /** Additional class name */
   className?: string;
-  /** Callback fired when a tab's copy button is clicked. Receives the tab label. */
+  /** Called after a tab's code reaches the clipboard. Receives the tab label. */
   onCopy?: (tabLabel: string) => void;
 }
 
@@ -895,63 +740,43 @@ function TabbedCodeBlock({
   defaultTab,
   value,
   onValueChange,
-  showCopy = true,
-  copyPlacement = "auto",
-  showLineNumbers = false,
-  theme,
-  tabsVariant = "soft",
-  wordWrap,
-  maxHeight,
-  collapsible,
-  defaultCollapsed,
-  collapsedLines,
-  collapseAction,
   className,
   onCopy,
+  ...blockProps
 }: TabbedCodeBlockProps) {
   const defaultValue = defaultTab || tabs[0]?.value || tabs[0]?.label || "";
 
   return (
     <div className={className}>
-      <TabsRoot defaultValue={defaultValue} value={value} onValueChange={onValueChange}>
-        <TabsList variant={tabsVariant}>
+      <Tabs defaultValue={defaultValue} value={value} onValueChange={onValueChange}>
+        <Tabs.List>
           {tabs.map((tab, index) => {
             const tabValue = tab.value ?? tab.label;
             return (
-              <Tab key={`${tabValue}-${index}`} value={tabValue}>
+              <Tabs.Tab key={`${tabValue}-${index}`} value={tabValue}>
                 {tab.label}
-              </Tab>
+              </Tabs.Tab>
             );
           })}
-        </TabsList>
+        </Tabs.List>
         {tabs.map((tab, index) => {
           const tabValue = tab.value ?? tab.label;
           return (
-            <TabsPanel
+            <Tabs.Panel
               key={`${tabValue}-panel-${index}`}
               value={tabValue}
-              flush
               className={styles.tabbedPanel}
             >
               <CodeBlockBase
+                {...blockProps}
                 code={tab.code}
                 language={tab.language}
-                theme={theme}
-                showCopy={showCopy}
-                copyPlacement={copyPlacement}
-                showLineNumbers={showLineNumbers}
-                wordWrap={wordWrap}
-                maxHeight={maxHeight}
-                collapsible={collapsible}
-                defaultCollapsed={defaultCollapsed}
-                collapsedLines={collapsedLines}
-                collapseAction={collapseAction}
                 onCopy={onCopy ? () => onCopy(tab.label) : undefined}
               />
-            </TabsPanel>
+            </Tabs.Panel>
           );
         })}
-      </TabsRoot>
+      </Tabs>
     </div>
   );
 }
@@ -963,5 +788,3 @@ function TabbedCodeBlock({
 export const CodeBlock = Object.assign(CodeBlockBase, {
   Tabbed: TabbedCodeBlock,
 });
-
-export { TabbedCodeBlock };

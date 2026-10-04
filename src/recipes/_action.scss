@@ -1,4 +1,6 @@
 @use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+@use "../tokens/mixins";
 @use "typography";
 
 @function _raw($step) {
@@ -7,9 +9,9 @@
 
 @function track($role) {
   @if $role == "micro" {
-    @return var(--fui-control-track-micro, #{measurements.target-value("controlTrack", "micro")});
+    @return var(--fui-control-height-xs, #{measurements.target-value("controlTrack", "micro")});
   } @else if $role == "sm" or $role == "md" or $role == "lg" {
-    @return var(--fui-control-track-#{$role}, #{measurements.target-value("controlTrack", $role)});
+    @return var(--fui-control-height-#{$role}, #{measurements.target-value("controlTrack", $role)});
   }
 
   @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
@@ -51,7 +53,8 @@
   } @else if $role == "sm" {
     @return _raw(10);
   } @else if $role == "md" {
-    @return _raw(12);
+    // Every default control on the product screen insets 10, as a field does.
+    @return _raw(10);
   } @else if $role == "lg" {
     @return _raw(16);
   }
@@ -65,7 +68,7 @@
   } @else if $role == "sm" {
     @return _raw(8);
   } @else if $role == "md" {
-    @return _raw(10);
+    @return _raw(8);
   } @else if $role == "lg" {
     @return _raw(12);
   }
@@ -81,28 +84,48 @@
   gap: var(--_fui-action-gap, #{gap("md")});
   min-block-size: var(--_fui-action-track, #{track("md")});
   padding-inline: var(--_fui-action-inline-inset, #{inline-inset("md")});
-  font-size: var(--_fui-action-type-size, #{typography.font-size("ui-standard")});
-  line-height: var(--_fui-action-type-line, #{typography.line-height("ui-standard")});
-  font-weight: var(--_fui-action-type-weight, #{typography.weight("ui-standard")});
-  letter-spacing: var(--_fui-action-type-tracking, #{typography.tracking("ui-standard")});
-  font-family: var(--_fui-action-type-family, #{typography.font-family("ui-standard")});
+  font-size: var(--_fui-action-type-size, #{typography.font-size("ui-compact")});
+  line-height: var(--_fui-action-type-line, #{typography.line-height("ui-compact")});
+  // The weight is the component's call (UIR-D141): the
+  // control role is regular, and a button or a selected segment opts into
+  // `weight("strong")`.
+  font-weight: var(--_fui-action-type-weight, #{typography.weight("ui-compact")});
+  letter-spacing: var(--_fui-action-type-tracking, #{typography.tracking("ui-compact")});
+  font-family: var(--_fui-action-type-family, #{typography.font-family("ui-compact")});
 }
 
+/// The control label: the compact role's 11px at every step but lg, which
+/// takes 12 (the body role's size and line), at the role's regular weight. A
+/// component that wants the strong weight says so with `weight("strong")`; the
+/// step never forces it.
 @mixin typography($role) {
-  @if $role == "micro" or $role == "sm" {
+  @if $role == "micro" or $role == "sm" or $role == "md" {
     --_fui-action-type-size: #{typography.font-size("ui-compact")};
     --_fui-action-type-line: #{typography.line-height("ui-compact")};
     --_fui-action-type-weight: #{typography.weight("ui-compact")};
     --_fui-action-type-tracking: #{typography.tracking("ui-compact")};
     --_fui-action-type-family: #{typography.font-family("ui-compact")};
-  } @else if $role == "md" or $role == "lg" {
-    --_fui-action-type-size: #{typography.font-size("ui-standard")};
-    --_fui-action-type-line: #{typography.line-height("ui-standard")};
-    --_fui-action-type-weight: #{typography.weight("ui-standard")};
-    --_fui-action-type-tracking: #{typography.tracking("ui-standard")};
-    --_fui-action-type-family: #{typography.font-family("ui-standard")};
+  } @else if $role == "lg" {
+    --_fui-action-type-size: #{typography.font-size("body-compact")};
+    --_fui-action-type-line: #{typography.line-height("body-compact")};
+    --_fui-action-type-weight: #{typography.weight("body-compact")};
+    --_fui-action-type-tracking: #{typography.tracking("body-compact")};
+    --_fui-action-type-family: #{typography.font-family("body-compact")};
   } @else {
     @error "Unknown action role '#{$role}'. Expected micro, sm, md, or lg.";
+  }
+}
+
+/// The label weight, the component's call: `regular` (the control role's own)
+/// or `strong` (buttons, the selected segment, the selected tab). Include it
+/// after `size`, which resets the weight to the role's.
+@mixin weight($weight) {
+  @if $weight == "regular" {
+    --_fui-action-type-weight: var(--fui-font-weight-normal, #{tokens.$fui-font-weight-normal});
+  } @else if $weight == "strong" {
+    --_fui-action-type-weight: var(--fui-font-weight-semibold, #{tokens.$fui-font-weight-semibold});
+  } @else {
+    @error "Unknown action weight '#{$weight}'. Expected regular or strong.";
   }
 }
 
@@ -135,4 +158,128 @@
   padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
   font: inherit;
   letter-spacing: inherit;
+}
+
+// ============================================
+// States: hover, press, disabled, pending
+// ============================================
+
+// An action that cannot be pressed right now: no hover, no press, no scale.
+$_inert: ":disabled, [data-disabled], [aria-disabled='true'], [data-pending]";
+// A trigger that opens a popup never scales: the popup appears from it.
+$_popup-trigger: "[aria-haspopup]:not([aria-haspopup='false'])";
+
+// The micro role (`m.micro`) as one transition value.
+$_micro: var(--fui-duration-micro, #{tokens.$fui-duration-micro})
+  var(--fui-ease-standard, #{tokens.$fui-ease-standard});
+
+/// The micro transition for hover and press (`m.micro`): colour, edge and the
+/// press scale in `--fui-duration-micro` on the one standard easing, never the
+/// focus outline. Reduced motion drops it: the state lands at once.
+@mixin motion {
+  transition-property: background-color, border-color, color, box-shadow, opacity, scale;
+  transition-duration: var(--fui-duration-micro, #{tokens.$fui-duration-micro});
+  transition-timing-function: var(--fui-ease-standard, #{tokens.$fui-ease-standard});
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/// Hover: only where the pointer can hover, and never on an inert action.
+@mixin hover {
+  @media (hover: hover) {
+    &:hover:not(#{$_inert}) {
+      @content;
+    }
+  }
+}
+
+/// Press: the press colours (`@content`) while held, plus the press scale
+/// (`$scale: false` when a variant only adds colours). A popup trigger, an inert
+/// action and reduced motion never scale; a component opts out with
+/// `--_fui-action-press-scale: 1`.
+@mixin press($scale: true) {
+  &:active:not(#{$_inert}) {
+    @content;
+  }
+
+  @if $scale {
+    @media (prefers-reduced-motion: no-preference) {
+      &:active:not(#{$_inert}, #{$_popup-trigger}) {
+        scale: var(--_fui-action-press-scale, var(--fui-press-scale, #{tokens.$fui-press-scale}));
+      }
+    }
+  }
+}
+
+/// Disabled: dimmed once, here, on the outer element; the cursor stays
+/// `not-allowed`. `aria-disabled` covers the focusable-disabled option.
+@mixin disabled {
+  &:disabled,
+  &[data-disabled],
+  &[aria-disabled="true"] {
+    @include mixins.disabled-state;
+  }
+}
+
+/// Pending: for a second nothing changes; then the label (`$label`, kept in
+/// place so the width holds) fades and a spinner (`$spinner`) turns in its
+/// place. The component sets `data-pending` and `aria-busy` and swallows the
+/// press. Include `pending-keyframes` once at the module's top level.
+@mixin pending($label, $spinner) {
+  position: relative;
+
+  > #{$label} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: inherit;
+    min-inline-size: 0;
+    transition: opacity #{$_micro};
+  }
+
+  > #{$spinner} {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity #{$_micro};
+
+    > svg {
+      inline-size: var(--_fui-action-icon-size, #{icon-size("md")});
+      block-size: var(--_fui-action-icon-size, #{icon-size("md")});
+    }
+  }
+
+  &[data-pending] {
+    > #{$label},
+    > #{$spinner} {
+      transition-delay: var(--fui-pending-delay, #{tokens.$fui-pending-delay});
+    }
+
+    > #{$label} {
+      opacity: 0;
+    }
+
+    > #{$spinner} {
+      opacity: 1;
+    }
+
+    > #{$spinner} > svg {
+      animation: fui-action-spin var(--fui-duration-spin, #{tokens.$fui-duration-spin}) linear
+        infinite;
+    }
+  }
+}
+
+@mixin pending-keyframes {
+  @keyframes fui-action-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
 }

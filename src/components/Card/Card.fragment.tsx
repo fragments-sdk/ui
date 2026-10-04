@@ -45,73 +45,64 @@ export default defineFragment(Card, {
       ),
       note: "Footer parks the actions below the content.",
     },
-    Outline: {
+    Metric: {
       render: (
-        <Card variant="outline">
-          <Card.Body>Related content</Card.Body>
-        </Card>
-      ),
-      note: "Hairline border on a transparent surface, for dense layouts.",
-    },
-    Soft: {
-      render: (
-        <Card variant="soft">
+        <Card>
           <Card.Body>
-            <Text scale="xl" weight="semibold">
+            <Text as="p" type="display" tabularNums>
               94%
             </Text>
-            <Text scale="sm" color="secondary">
+            <Text as="p" color="secondary">
               Component coverage
             </Text>
           </Card.Body>
         </Card>
       ),
-      note: "Quiet tint fill: metric tiles and dashboard panels read as one system.",
+      note: "A metric tile is the same surface: the figure on the display step, tabular.",
     },
     Panel: {
       render: (
-        <Card variant="soft" padding="none">
+        <Card padding="none">
           <Card.Header divided>
             <Card.Title>Overview</Card.Title>
           </Card.Header>
           <Card.Body padding="md">Panel content</Card.Body>
         </Card>
       ),
-      note: "Divided header; the body owns its own spacing.",
-    },
-    Accent: {
-      render: (
-        <Card variant="soft" tone="accent" padding="lg">
-          <Card.Header>
-            <Card.Title>Finish setting up governance</Card.Title>
-            <Card.Description>Run the first scan to start tracking drift.</Card.Description>
-          </Card.Header>
-        </Card>
-      ),
-      note: "Earned-moment capsule: accent hairline and wash, for the few surfaces that deserve emphasis.",
+      note: "A 40px divided head with the line below and no fill; the body owns its own spacing.",
     },
     "Danger Tone": {
       render: (
-        <Card variant="soft" tone="danger">
+        <Card tone="danger">
           <Card.Header>
             <Card.Title>Merge held</Card.Title>
             <Card.Description>Two blocking findings need a decision.</Card.Description>
           </Card.Header>
         </Card>
       ),
-      note: "The same capsule carrying state: the wash and hairline follow the tone.",
+      note: "The only state chrome: the edge in the danger ink, no wash.",
     },
     Interactive: {
       render: (
-        <Card as="section" onClick={() => undefined}>
+        <Card render={<a href="#details" />}>
           <Card.Header>
             <Card.Title>Open details</Card.Title>
-            <Card.Description>This card is interactive</Card.Description>
+            <Card.Description>The whole card is one link</Card.Description>
           </Card.Header>
-          <Card.Body>Activate the card to view more.</Card.Body>
         </Card>
       ),
-      note: "onClick adds keyboard and button behaviour to the whole surface.",
+      note: "render makes the card a real link or button: gated hover tint, press scale, focus ring. Inside a button the parts draw as spans.",
+    },
+    Selected: {
+      render: (
+        <Card selected render={<button type="button" aria-pressed="true" />}>
+          <Card.Header>
+            <Card.Title>Team plan</Card.Title>
+            <Card.Description>Chosen</Card.Description>
+          </Card.Header>
+        </Card>
+      ),
+      note: "The chosen card: the selection wash, and the hairline turns into the ring.",
     },
     "Section Root": {
       render: (
@@ -126,7 +117,7 @@ export default defineFragment(Card, {
     },
     "Nested Heading": {
       render: (
-        <Card variant="soft" padding="none">
+        <Card padding="none">
           <Card.Header divided>
             <Card.Title as="h4">Nested panel</Card.Title>
           </Card.Header>
@@ -169,14 +160,16 @@ export default defineFragment(Card, {
       "Navigation items (use List or Sidebar)",
     ],
     guidelines: [
-      "Keep one variant per context — mixed variants read as noise",
+      "One surface: the surface plane, the hairline, the surface corner, no shadow",
       "Cards sharing a grid row should size uniformly",
-      "tone is earned: accent, warning and danger paint the capsule — reserve it for one surface per page",
-      "soft with padding=\"none\" plus Card.Header divided and Card.Body padding is the dashboard panel",
-      "Prefer a Button or Link inside the card over making the whole card clickable",
+      'tone="danger" is the only state chrome; put other state in a Badge or Alert inside',
+      'padding="none" plus Card.Header divided and Card.Body padding is the panel',
+      "A feature mosaic is Grid.Item colSpan and rowSpan around a Card",
+      "Prefer a Button or Link inside the card; when the whole card acts, pass render",
     ],
     accessibility: [
-      'Card is a semantic container (article/div/section); onClick adds keyboard and role="button" behavior, but explicit Button or Link actions are preferred',
+      "Card is a semantic container (article/div/section); render={<a href />} or render={<button />} makes it one real interactive element",
+      "A selected card pairs selected with aria-pressed on a button or aria-current on a link",
       "Card titles should be appropriate heading levels",
     ],
     dont: [
@@ -184,7 +177,7 @@ export default defineFragment(Card, {
         reason: "Do not use a Card as a modal surface.",
         bad: "<Card>Confirm deletion</Card>",
         good: (
-          <Card variant="outline">
+          <Card>
             <Card.Body>Inline summary</Card.Body>
           </Card>
         ),
@@ -192,7 +185,7 @@ export default defineFragment(Card, {
     ],
   },
   matrix: {
-    axes: { variant: "auto", tone: "auto", padding: "auto", theme: ["light", "dark"] },
+    axes: { tone: "auto", padding: "auto", theme: ["light", "dark"] },
     forced: ["hover", "focus"],
     worstCase: { children: "A long localized heading and dense multi-line supporting content" },
   },
@@ -221,13 +214,13 @@ export default defineFragment(Card, {
   },
   contract: {
     propsSummary: [
-      "variant: solid|soft|outline (default: solid)",
-      "tone: neutral|accent|warning|danger (default: neutral) - non-neutral paints the earned-moment capsule",
-      "padding: none|sm|md|lg (default: md) - none + Card.Header divided + Card.Body padding = panel",
-      "as: article|div|section (default: article) - card root element",
-      "onClick: (event) => void - click handler on root (adds role/button keyboard behavior)",
+      "tone: neutral|danger (default: neutral) - danger draws the edge in the danger ink",
+      "padding: none|md (default: md) - md is the compact inset (12); none + Card.Header divided + Card.Body padding = panel",
+      "selected: boolean - the selection wash and ring",
+      "as: article|div|section (default: article) - static card root element",
+      "render: ReactElement - a real link or button for an interactive card",
       "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer",
-      "Card.Body padding: none|sm|md|lg - use for panel body spacing",
+      "Card.Body padding: none|md - use for panel body spacing",
     ],
     a11yRules: ["A11Y_CARD_HEADING", "A11Y_CARD_INTERACTIVE"],
   },

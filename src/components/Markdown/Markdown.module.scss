@@ -1,141 +1,210 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/prose" as prose;
+@use "../../recipes/typography" as typography;
 
-.markdown {
-  @include prose.root;
+@layer fui.tokens, fui.base, fui.components;
 
-  overflow-wrap: anywhere;
-  color: var(--fui-markdown-text, var(--fui-text-secondary, #{$fui-text-secondary}));
+// Chat-scale prose: the body role at 12/18 in ink 1. The prose recipe is
+// written for long-form reading (16/24); the overrides below sit after each
+// recipe include so the module wins without changing the shared recipe.
+@mixin _body {
+  font-size: typography.font-size("body-compact");
+  line-height: typography.line-height("body-compact");
+}
 
-  p {
-    @include prose.paragraph;
-  }
+@layer fui.components {
+  .markdown {
+    @include prose.root;
+    @include _body;
 
-  @for $level from 1 through 6 {
-    h#{$level} {
-      @include prose.heading($level);
+    overflow-wrap: anywhere;
+    color: var(--fui-text-primary, $fui-text-primary);
 
+    > * + * {
+      margin-block-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    }
+
+    > * + :is(h1, h2, h3, h4, h5, h6) {
+      margin-block-start: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    }
+
+    p {
+      @include prose.paragraph;
+      @include _body;
+    }
+
+    // Two heading steps at chat scale: h1 and h2 take the small title (15),
+    // h3 to h6 the body size at the strong weight.
+    h1,
+    h2 {
+      @include typography.role("title-sm");
+
+      margin-inline: 0;
       color: var(--fui-text-primary, $fui-text-primary);
     }
-  }
 
-  a {
-    @include prose.link;
+    h3,
+    h4,
+    h5,
+    h6 {
+      @include typography.role("body-compact");
 
-    color: var(--fui-link-ink, #{$fui-link-ink});
-
-    &:hover {
-      text-decoration: underline;
+      margin-inline: 0;
+      color: var(--fui-text-primary, $fui-text-primary);
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
     }
-  }
 
-  ul {
-    @include prose.list("disc");
-  }
+    a {
+      @include prose.link;
 
-  ol {
-    @include prose.list("decimal");
-  }
+      color: var(--fui-link-ink, #{$fui-link-ink});
+    }
 
-  // Markdown's tight list items carry one inline run of text + <strong> +
-  // <code>. The prose recipe's per-item subgrid fragments that run: every
-  // element child becomes its own grid row and the bare text auto-places into
-  // the marker column. Markdown lists therefore fall back to block items with
-  // a hanging absolute marker (the recipe still supplies the marker content
-  // and counter).
-  ul,
-  ol {
-    display: block;
-    padding-inline-start: calc(var(--fui-raw-space-20, 20px) + var(--fui-raw-space-8, 8px));
+    ul {
+      @include prose.list("disc");
+      @include _body;
+    }
 
-    > li {
-      position: relative;
+    ol {
+      @include prose.list("decimal");
+      @include _body;
+    }
+
+    // Markdown's tight list items carry one inline run of text + <strong> +
+    // <code>. The prose recipe's per-item subgrid fragments that run, so
+    // markdown lists fall back to block items with a hanging marker (the
+    // recipe still supplies the marker content and counter).
+    ul,
+    ol {
       display: block;
-      min-inline-size: 0;
+      padding-inline-start: var(--fui-raw-space-20, #{measurements.raw-space(20)});
 
-      &::before {
-        position: absolute;
-        inset-inline-start: calc(
-          -1 * (var(--fui-raw-space-20, 20px) + var(--fui-raw-space-8, 8px))
-        );
-        inline-size: var(--fui-raw-space-20, 20px);
-        text-align: end;
+      > li {
+        position: relative;
+        display: block;
+        min-inline-size: 0;
+
+        &::before {
+          position: absolute;
+          inset-inline-start: calc(-1 * var(--fui-raw-space-20, #{measurements.raw-space(20)}));
+          inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+          text-align: end;
+          color: var(--fui-text-secondary, $fui-text-secondary);
+        }
       }
     }
-  }
 
-  li + li {
-    margin-block-start: var(--fui-raw-space-4, 4px);
-  }
+    li + li {
+      margin-block-start: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    }
 
-  // GFM task items are `<li><input type="checkbox"> label text</li>`. The
-  // checkbox replaces the bullet; block items already keep it inline with the
-  // label. `task-list-item` is remark-gfm's runtime class, so the selector
-  // must stay global — a module-scoped `.task-list-item` gets hashed and
-  // never matches.
-  li:global(.task-list-item) {
-    &::before {
-      content: none;
+    // GFM task items: the checkbox replaces the bullet. `task-list-item` is
+    // remark-gfm's runtime class, so the selector stays global.
+    li:global(.task-list-item) {
+      &::before {
+        content: none;
+      }
+    }
+
+    // Inline code: the band and the indicator corner, a step under the body.
+    // A fence's code belongs to its CodeBlock, so these prose rules skip it.
+    code:not([data-slot="code-block"] code) {
+      @include prose.inline-code;
+
+      font-size: typography.font-size("caption");
+      line-height: inherit;
+    }
+
+    // Fences render through CodeBlock; a bare <pre> (an override that returns
+    // one) still reads as the band. CodeBlock's own <pre> keeps its styles.
+    pre:not([data-slot="code-block"] pre) {
+      @include prose.code-block("compact");
+
+      font-size: typography.font-size("body-compact");
+      line-height: typography.line-height("body-compact");
+      border-radius: var(--fui-radius-surface, $fui-radius-surface);
+      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+
+      code {
+        padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+        background: none;
+        font: inherit;
+        letter-spacing: inherit;
+      }
+    }
+
+    blockquote {
+      @include prose.blockquote;
+      @include _body;
+
+      padding-inline-start: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+      color: var(--fui-text-secondary, $fui-text-secondary);
+    }
+
+    hr {
+      @include prose.rule;
+
+      margin-block: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    }
+
+    // Wide tables scroll inside a focusable region, so a keyboard can scroll them.
+    .tableRegion {
+      max-inline-size: 100%;
+      overflow-x: auto;
+      border-radius: var(--fui-radius-control, $fui-radius-control);
+
+      @include focus.visible;
+    }
+
+    // The table takes its natural width, at least the lane, so a wide one scrolls in its
+    // region instead of squeezing every cell into a broken column.
+    table {
+      @include typography.role("body-compact");
+
+      inline-size: max-content;
+      min-inline-size: 100%;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th,
+    td {
+      padding-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+      padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+      border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
+      text-align: start;
+    }
+
+    th {
+      background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    }
+
+    img {
+      @include prose.media;
+
+      border-radius: var(--fui-radius-control, $fui-radius-control);
+    }
+
+    input[type="checkbox"] {
+      margin-inline-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    }
+
+    strong {
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
     }
   }
 
-  code {
-    @include prose.inline-code;
-  }
-
-  pre {
-    @include prose.code-block("default");
-
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-    background-color: var(--fui-code-bg, $fui-code-bg);
-
-    code {
-      padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-      background: none;
-      font: inherit;
-      letter-spacing: inherit;
-    }
-  }
-
-  blockquote {
-    @include prose.blockquote;
-
-    color: var(--fui-text-secondary, $fui-text-secondary);
-  }
-
-  hr {
-    @include prose.rule;
-  }
-
-  table {
-    @include prose.table;
-
-    inline-size: 100%;
-    border-collapse: collapse;
-  }
-
-  th,
-  td {
-    border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
-    text-align: start;
-  }
-
-  th {
-    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  }
-
-  img {
-    @include prose.media;
-
-    border-radius: var(--fui-radius-md, $fui-radius-md);
-  }
-
-  input[type="checkbox"] {
-    margin-inline-end: var(--fui-raw-space-4, 4px);
-  }
-
-  strong {
-    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  // Streaming: a still caret in ink 1 after the last block's text.
+  .streaming > :last-child::after {
+    content: "";
+    display: inline-block;
+    block-size: 1em;
+    margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    border-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)}) solid
+      var(--fui-text-primary, $fui-text-primary);
+    vertical-align: text-bottom;
   }
 }

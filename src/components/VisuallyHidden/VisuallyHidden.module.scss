@@ -1,6 +1,55 @@
+@use "../../recipes/focus";
+@use "../../recipes/overlay";
+@use "../../recipes/typography";
 @use "../../tokens/mixins" as *;
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 
-// Screen reader only - hides content visually but keeps it accessible.
-.visuallyHidden {
-  @include visually-hidden;
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  // Screen reader only - hides content visually but keeps it accessible.
+  .visuallyHidden {
+    @include visually-hidden;
+  }
+
+  // Focusable reveal: while focus is inside, the content floats as a raised
+  // chip at the top inline-start corner — the skip link. It floats, so it is
+  // the floating surface: raised, the popup shadow and no edge.
+  .focusable:focus-within {
+    @include overlay.surface;
+
+    position: fixed;
+    inset-block-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    inset-inline-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    z-index: var(--fui-overlay-layer-tooltip, #{$fui-overlay-layer-tooltip});
+    display: inline-flex;
+    align-items: center;
+    inline-size: auto;
+    block-size: var(--fui-control-height-md, #{$fui-control-height-md});
+    padding-block: 0;
+    padding-inline: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    white-space: nowrap;
+
+    @include typography.role("ui-standard");
+
+    // The chip draws the ring; the focused child inside it does not.
+    &:has(:focus-visible) {
+      @include focus.ring;
+    }
+
+    :focus-visible {
+      @include focus.delegated;
+    }
+
+    :where(a) {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
 }

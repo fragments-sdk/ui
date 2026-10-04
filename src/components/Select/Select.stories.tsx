@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Select } from ".";
+import { Field } from "../Field";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Select is a dropdown for choosing from a list of options. It is a compound
- * component requiring Select.Trigger and Select.Content children, with
- * Select.Item entries (optionally organized via Select.Group).
+ * Select chooses one option from a short list. It is a compound component:
+ * Select.Trigger and Select.Content, with Select.Item entries (optionally in a
+ * Select.Group). Label, description and error come from Field.
  */
 const meta = {
   title: "Forms/Select",
@@ -15,31 +16,36 @@ const meta = {
     renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Dropdown for choosing from a list of options.",
+        component: "Choose one option from a short list. Wrap it in a Field for its label.",
       },
     },
   },
   argTypes: {
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Size variant",
+      options: ["xs", "sm", "md", "lg"],
+      description: "Trigger height on the control track",
     },
     disabled: { control: "boolean", description: "Disable the select" },
+    readOnly: { control: "boolean", description: "Opens to show the choices; cannot change" },
+    invalid: { control: "boolean", description: "The danger edge and aria-invalid" },
     required: { control: "boolean", description: "Whether a selection is required" },
     placeholder: { control: "text", description: "Placeholder text when no value selected" },
   },
   args: { placeholder: "Select a fruit", size: "md" },
   render: (args) => (
-    <Select {...args}>
-      <Select.Trigger />
-      <Select.Content>
-        <Select.Item value="apple">Apple</Select.Item>
-        <Select.Item value="banana">Banana</Select.Item>
-        <Select.Item value="orange">Orange</Select.Item>
-        <Select.Item value="grape">Grape</Select.Item>
-      </Select.Content>
-    </Select>
+    <Field invalid={args.invalid}>
+      <Field.Label>Fruit</Field.Label>
+      <Select {...args}>
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="apple">Apple</Select.Item>
+          <Select.Item value="banana">Banana</Select.Item>
+          <Select.Item value="orange">Orange</Select.Item>
+          <Select.Item value="grape">Grape</Select.Item>
+        </Select.Content>
+      </Select>
+    </Field>
   ),
 } satisfies Meta<typeof Select>;
 
@@ -70,22 +76,22 @@ export const WithGroups: Story = {
   ),
 };
 
-export const WithLabelAndHelper: Story = {
-  args: {
-    label: "Timezone",
-    placeholder: "Select a timezone",
-    helperText: "Used for reminders and calendar notifications.",
-  },
+export const WithDescription: Story = {
+  args: { placeholder: "Select a timezone" },
   render: (args) => (
-    <Select {...args}>
-      <Select.Trigger />
-      <Select.Content>
-        <Select.Item value="pt">Pacific Time</Select.Item>
-        <Select.Item value="mt">Mountain Time</Select.Item>
-        <Select.Item value="ct">Central Time</Select.Item>
-        <Select.Item value="et">Eastern Time</Select.Item>
-      </Select.Content>
-    </Select>
+    <Field>
+      <Field.Label>Timezone</Field.Label>
+      <Select {...args}>
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="pt">Pacific Time</Select.Item>
+          <Select.Item value="mt">Mountain Time</Select.Item>
+          <Select.Item value="ct">Central Time</Select.Item>
+          <Select.Item value="et">Eastern Time</Select.Item>
+        </Select.Content>
+      </Select>
+      <Field.Description>Used for reminders and calendar notifications.</Field.Description>
+    </Field>
   ),
 };
 
@@ -103,17 +109,29 @@ export const OptionsProp: Story = {
   ),
 };
 
-export const ErrorState: Story = {
-  args: { label: "Country", placeholder: "Select a country", error: "Please select a country" },
+export const Invalid: Story = {
+  args: { placeholder: "Select a country", invalid: true },
   render: (args) => (
-    <Select {...args}>
-      <Select.Trigger />
-      <Select.Content>
-        <Select.Item value="us">United States</Select.Item>
-        <Select.Item value="uk">United Kingdom</Select.Item>
-      </Select.Content>
-    </Select>
+    <Field invalid>
+      <Field.Label>Country</Field.Label>
+      <Select {...args}>
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="us">United States</Select.Item>
+          <Select.Item value="uk">United Kingdom</Select.Item>
+        </Select.Content>
+      </Select>
+      <Field.Error match>Choose a country to continue.</Field.Error>
+    </Field>
   ),
+};
+
+export const ReadOnly: Story = {
+  args: { readOnly: true, defaultValue: "orange" },
+};
+
+export const Small: Story = {
+  args: { size: "sm", defaultValue: "apple" },
 };
 
 export const Disabled: Story = {

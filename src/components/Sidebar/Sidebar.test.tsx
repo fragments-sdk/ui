@@ -1,9 +1,14 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, it, expect, vi, beforeAll } from "vitest";
-import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import * as React from "react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { compiledModuleRules } from "../../test/compiled-css";
+import { render, screen, userEvent, expectNoA11yViolations, waitFor } from "../../test/utils";
+import { MEASUREMENT_PROFILES } from "../../measurements";
 import { Badge } from "../Badge";
-import { Sidebar } from "./index";
+import { Theme } from "../Theme";
+import { Sidebar, useSidebar } from "./index";
+import sidebarMeta from "./Sidebar.meta.json";
 
 const sidebarStyles = readFileSync(
   resolve(process.cwd(), "src/components/Sidebar/Sidebar.module.scss"),
@@ -13,6 +18,7 @@ const sidebarStyles = readFileSync(
 function mockMatchMedia(matches: boolean) {
   Object.defineProperty(window, "matchMedia", {
     writable: true,
+    configurable: true,
     value: vi.fn().mockImplementation((query: string) => ({
       matches,
       media: query,
@@ -26,10 +32,13 @@ function mockMatchMedia(matches: boolean) {
   });
 }
 
-// Mock matchMedia for jsdom
-beforeAll(() => {
+beforeEach(() => {
   mockMatchMedia(false);
 });
+
+function Icon() {
+  return <svg aria-hidden="true" />;
+}
 
 function renderSidebar(props: Partial<React.ComponentProps<typeof Sidebar>> = {}) {
   return render(
@@ -37,291 +46,438 @@ function renderSidebar(props: Partial<React.ComponentProps<typeof Sidebar>> = {}
       <Sidebar.Header>Header Content</Sidebar.Header>
       <Sidebar.Nav aria-label="Main">
         <Sidebar.Section label="Section One">
-          <Sidebar.Item icon={<span>I</span>}>Dashboard</Sidebar.Item>
-          <Sidebar.Item icon={<span>I</span>} active>
+          <Sidebar.Item icon={<Icon />}>Dashboard</Sidebar.Item>
+          <Sidebar.Item icon={<Icon />} active>
             Settings
           </Sidebar.Item>
-          <Sidebar.Item icon={<span>I</span>} disabled>
+          <Sidebar.Item icon={<Icon />} disabled>
             Disabled
           </Sidebar.Item>
         </Sidebar.Section>
       </Sidebar.Nav>
-      <Sidebar.Footer>Footer Content</Sidebar.Footer>
+      <Sidebar.Footer>
+        <Sidebar.CollapseToggle />
+      </Sidebar.Footer>
     </Sidebar>
   );
 }
 
 describe("Sidebar", () => {
-  it("renders as an aside element", () => {
+  it("renders the rail as a labelled aside with a nav landmark", () => {
     renderSidebar();
     const aside = document.querySelector("aside");
-    expect(aside).toBeInTheDocument();
-  });
-
-  it("renders compound sub-components", () => {
-    renderSidebar();
+    expect(aside).toHaveAttribute("aria-label", "Test sidebar");
+    expect(aside).toHaveAttribute("data-state", "expanded");
+    expect(screen.getByRole("navigation", { name: "Main" })).toBeInTheDocument();
     expect(screen.getByText("Header Content")).toBeInTheDocument();
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
-    expect(screen.getByText("Settings")).toBeInTheDocument();
-    expect(screen.getByText("Footer Content")).toBeInTheDocument();
   });
 
-  it("renders nav landmark", () => {
+  it("scrolls the nav inside a ScrollArea with fades", () => {
     renderSidebar();
-    expect(screen.getByRole("navigation", { name: /main/i })).toBeInTheDocument();
+    const nav = screen.getByRole("navigation", { name: "Main" });
+    expect(nav.querySelector('[data-orientation="vertical"]')).toBeInTheDocument();
   });
 
-  it("uses ScrollArea with fade indicators in nav content", () => {
+  it('marks the current item with aria-current="page" and data-active', () => {
     renderSidebar();
-    const scrollAreaRoot = screen
-      .getByRole("navigation", { name: /main/i })
-      .querySelector('[data-orientation="vertical"]');
-    expect(scrollAreaRoot).toBeInTheDocument();
+    const current = screen.getByText("Settings").closest("button");
+    expect(current).toHaveAttribute("aria-current", "page");
+    expect(current).toHaveAttribute("data-active");
   });
 
-  it("renders section with label", () => {
-    renderSidebar();
-    expect(screen.getByText("Section One")).toBeInTheDocument();
-  });
-
-  it('marks active item with aria-current="page"', () => {
-    renderSidebar();
-    const activeItem = screen.getByText("Settings").closest("[aria-current]");
-    expect(activeItem).toHaveAttribute("aria-current", "page");
-  });
-
-  it("exposes the selected active-indicator placement", () => {
-    renderSidebar({ activeIndicator: "end" });
-    expect(document.querySelector("aside")).toHaveAttribute("data-active-indicator", "end");
-  });
-
-  it("derives optical rails and disclosure height from shared geometry", () => {
-    expect(sidebarStyles).not.toMatch(/\d+(?:\.\d+)?rem/);
-    expect(sidebarStyles).not.toContain("max-height: 500px");
-    expect(sidebarStyles).toContain("grid-template-rows: 0fr;");
-    expect(sidebarStyles).toContain("grid-template-rows: 1fr;");
-    expect(sidebarStyles).toContain("width: var(--fui-navigation-active-rail, #{$_active-rail});");
-    expect(sidebarStyles).toContain('height: #{action.track("lg")};');
-    expect(sidebarStyles).toContain("height: #{navigation.collapsed-width()};");
-  });
-
-  it("disables items with disabled prop", () => {
-    renderSidebar();
-    const disabledItem = screen.getByText("Disabled").closest("button");
-    expect(disabledItem).toHaveAttribute("tabindex", "-1");
-  });
-
-  it("renders item badges with the shared Badge component", () => {
-    render(
-      <Sidebar aria-label="Test sidebar">
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section One">
-            <Sidebar.Item badge="3">Analytics</Sidebar.Item>
-          </Sidebar.Section>
-        </Sidebar.Nav>
-      </Sidebar>
-    );
-
-    const badge = screen.getByText("3").closest(".badge");
-    expect(badge).toHaveClass("badge", "sm", "soft");
-    expect(badge?.parentElement).toHaveClass("itemBadge");
-  });
-
-  it("keeps section labels in their natural case", () => {
-    expect(sidebarStyles).not.toMatch(/text-transform:\s*uppercase/);
-  });
-
-  it("does not wrap explicit Badge elements passed to item badges", () => {
-    render(
-      <Sidebar aria-label="Test sidebar">
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section One">
-            <Sidebar.Item badge={<Badge tone="info">7</Badge>}>Findings</Sidebar.Item>
-          </Sidebar.Section>
-        </Sidebar.Nav>
-      </Sidebar>
-    );
-
-    expect(document.querySelectorAll(".badge")).toHaveLength(1);
-    expect(screen.getByText("7").closest(".badge")).toHaveClass("toneInfo");
-  });
-
-  it("supports data-state attribute", () => {
-    renderSidebar();
-    const aside = document.querySelector("aside");
-    expect(aside).toHaveAttribute("data-state");
-  });
-
-  it("makes the closed mobile drawer inert", async () => {
-    mockMatchMedia(true);
-    renderSidebar({ defaultOpen: false });
-
-    await vi.waitFor(() => {
-      const aside = document.querySelector("aside");
-      expect(aside).toHaveAttribute("aria-hidden", "true");
-      expect(aside).toHaveAttribute("inert");
-      expect(aside).toHaveAttribute("data-state", "closed");
-    });
-
-    mockMatchMedia(false);
-  });
-
-  it("uses icon collapse width when collapsed with icons", () => {
-    renderSidebar({ collapsed: true });
-    const aside = document.querySelector("aside");
-    expect(aside).toHaveStyle(
-      "--sidebar-effective-collapsed-width: var(--fui-navigation-sidebar-collapsed-width, 56px)"
-    );
-    expect(aside).toHaveAttribute("data-icon-collapse", "icons");
-  });
-
-  it("collapses fully when collapsed with no item icons and keeps toggle visible", () => {
-    render(
-      <Sidebar collapsed aria-label="Text-only sidebar">
-        <Sidebar.Header>
-          Header Content
-          <Sidebar.CollapseToggle />
-        </Sidebar.Header>
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section One">
-            <Sidebar.Item>Dashboard</Sidebar.Item>
-            <Sidebar.Item active>Settings</Sidebar.Item>
-          </Sidebar.Section>
-        </Sidebar.Nav>
-      </Sidebar>
-    );
-
-    const aside = document.querySelector("aside");
-    expect(aside).toHaveStyle("--sidebar-effective-collapsed-width: 0px");
-    expect(aside).toHaveAttribute("data-icon-collapse", "none");
-    expect(screen.getByRole("button", { name: /expand sidebar/i })).toBeInTheDocument();
-  });
-
-  it("composes child click handler in Sidebar.Item asChild mode", async () => {
-    const user = userEvent.setup();
-    const childClick = vi.fn();
-    const onItemClick = vi.fn();
-
-    render(
-      <Sidebar aria-label="Test sidebar">
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section One">
-            <Sidebar.Item asChild icon={<span>I</span>} onClick={onItemClick}>
-              <a href="#dashboard" onClick={childClick}>
-                Dashboard
-              </a>
-            </Sidebar.Item>
-          </Sidebar.Section>
-        </Sidebar.Nav>
-      </Sidebar>
-    );
-
-    await user.click(screen.getByRole("link", { name: /dashboard/i }));
-
-    expect(childClick).toHaveBeenCalled();
-    expect(onItemClick).toHaveBeenCalled();
-    expect(onItemClick.mock.calls[0][0]).toBeDefined();
-  });
-
-  it("marks a multiline item so its label stops truncating", () => {
-    const { container } = render(
-      <Sidebar aria-label="Test sidebar">
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section">
-            <Sidebar.Item multiline onClick={() => {}}>
-              <span>Title</span>
-              <span>Status · 2h ago</span>
-            </Sidebar.Item>
-          </Sidebar.Section>
-        </Sidebar.Nav>
-      </Sidebar>
-    );
-
-    expect(container.querySelector(".itemMultiline")).toBeInTheDocument();
-  });
-
-  it("passes event object to Sidebar.SubItem onClick", async () => {
-    const user = userEvent.setup();
+  it("takes disabled rows out of the tab order", async () => {
     const onClick = vi.fn();
-
     render(
-      <Sidebar aria-label="Test sidebar">
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section">
-            <Sidebar.Item icon={<span>I</span>} hasSubmenu defaultExpanded>
-              Parent
+      <Sidebar>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item disabled onClick={onClick}>
+              Disabled
             </Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    const row = screen.getByText("Disabled").closest("button")!;
+    expect(row).toHaveAttribute("tabindex", "-1");
+    expect(row).toHaveAttribute("aria-disabled", "true");
+    await userEvent.click(row);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("marks a working row busy", () => {
+    render(
+      <Sidebar>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item working>Indexing</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    const row = screen.getByText("Indexing").closest("button");
+    expect(row).toHaveAttribute("aria-busy", "true");
+    expect(row).toHaveAttribute("data-working");
+  });
+
+  it("wraps plain badge content in a neutral Badge and keeps explicit Badges", () => {
+    render(
+      <Sidebar>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item badge="3">Analytics</Sidebar.Item>
+            <Sidebar.Item badge={<Badge tone="danger">New</Badge>}>Reports</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    expect(screen.getByText("3").closest(".badge")?.parentElement).toHaveClass("itemBadge");
+    expect(screen.getAllByText("New")).toHaveLength(1);
+  });
+
+  it("renders a link through href and a router link through render", async () => {
+    const onClick = vi.fn();
+    const RouterLink = React.forwardRef<HTMLAnchorElement, React.ComponentProps<"a">>(
+      function RouterLink(props, ref) {
+        return <a ref={ref} data-router="" {...props} />;
+      }
+    );
+    render(
+      <Sidebar>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item href="#home">Home</Sidebar.Item>
+            <Sidebar.Item render={<RouterLink href="#settings" />} onClick={onClick} active>
+              Settings
+            </Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "#home");
+    const routed = screen.getByRole("link", { name: "Settings" });
+    expect(routed).toHaveAttribute("data-router");
+    expect(routed).toHaveAttribute("aria-current", "page");
+    expect(routed).toHaveClass("item");
+    await userEvent.click(routed);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens a submenu in place and passes the event to sub-items", async () => {
+    const onSubClick = vi.fn();
+    render(
+      <Sidebar>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item hasSubmenu>Projects</Sidebar.Item>
             <Sidebar.Submenu>
-              <Sidebar.SubItem onClick={onClick}>Child</Sidebar.SubItem>
+              <Sidebar.SubItem onClick={onSubClick}>Alpha</Sidebar.SubItem>
             </Sidebar.Submenu>
           </Sidebar.Section>
         </Sidebar.Nav>
       </Sidebar>
     );
-
-    await user.click(screen.getByRole("button", { name: "Child" }));
-    expect(onClick).toHaveBeenCalled();
-    expect(onClick.mock.calls[0][0]).toBeDefined();
+    const parent = screen.getByRole("button", { name: "Projects" });
+    expect(parent).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(parent);
+    expect(parent).toHaveAttribute("aria-expanded", "true");
+    expect(parent.closest("li")).toHaveAttribute("data-expanded");
+    await userEvent.click(screen.getByRole("button", { name: "Alpha" }));
+    expect(onSubClick).toHaveBeenCalledWith(expect.objectContaining({ type: "click" }));
   });
 
-  it("forwards html props to desktop compound parts", () => {
+  it("opens and closes a collapsible section instantly", async () => {
     render(
-      <Sidebar aria-label="Test sidebar">
-        <Sidebar.Header data-testid="header" data-part="header">
-          Header
-        </Sidebar.Header>
-        <Sidebar.Nav aria-label="Main" data-testid="nav" data-part="nav">
-          <Sidebar.Section data-testid="section" data-part="section" label="Section One">
-            <Sidebar.Item icon={<span>I</span>}>Dashboard</Sidebar.Item>
+      <Sidebar>
+        <Sidebar.Nav>
+          <Sidebar.Section label="Projects" collapsible>
+            <Sidebar.Item>Alpha</Sidebar.Item>
           </Sidebar.Section>
         </Sidebar.Nav>
-        <Sidebar.Footer data-testid="footer" data-part="footer">
-          Footer
-        </Sidebar.Footer>
-        <Sidebar.CollapseToggle data-testid="collapse-toggle" data-part="collapse-toggle" />
-        <Sidebar.Rail data-testid="rail" data-part="rail" />
       </Sidebar>
     );
-
-    expect(screen.getByTestId("header")).toHaveAttribute("data-part", "header");
-    expect(screen.getByTestId("nav")).toHaveAttribute("data-part", "nav");
-    expect(screen.getByTestId("section")).toHaveAttribute("data-part", "section");
-    expect(screen.getByTestId("footer")).toHaveAttribute("data-part", "footer");
-    expect(screen.getByTestId("collapse-toggle")).toHaveAttribute("data-part", "collapse-toggle");
-    expect(screen.getByTestId("rail")).toHaveAttribute("data-part", "rail");
+    const trigger = screen.getByRole("button", { name: "Projects" });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById(trigger.getAttribute("aria-controls")!)).toHaveAttribute(
+      "hidden"
+    );
   });
 
-  it("forwards props to mobile Trigger/Overlay and composes overlay click", async () => {
+  it("collapses to glyphs, keeps labels for assistive tech and shows the toggle", async () => {
+    const onCollapsedChange = vi.fn();
+    renderSidebar({ onCollapsedChange });
+    const toggle = screen.getByRole("button", { name: "Collapse sidebar" });
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(toggle);
+    expect(onCollapsedChange).toHaveBeenCalledWith(true);
+    const aside = document.querySelector("aside")!;
+    expect(aside).toHaveAttribute("data-state", "collapsed");
+    expect(screen.getByText("Dashboard")).toHaveClass("itemLabelHidden");
+    expect(screen.getByRole("button", { name: "Dashboard" })).toBeInTheDocument();
+    expect(screen.queryByText("Section One")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Expand sidebar" })).toBeInTheDocument();
+  });
+
+  it("hides the rail when offcanvas collapsed or collapsed with no glyphs", () => {
+    const { unmount } = render(
+      <Sidebar collapsible="offcanvas" defaultCollapsed>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item icon={<Icon />}>Home</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    expect(document.querySelector("aside")).toHaveAttribute("data-hidden");
+    unmount();
+
+    render(
+      <Sidebar defaultCollapsed>
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item>Home</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    expect(document.querySelector("aside")).toHaveAttribute("data-hidden");
+  });
+
+  it("keeps the collapsed rail when the glyph rows sit inside an app's own component", () => {
+    function Nav() {
+      return (
+        <Sidebar.Nav>
+          <Sidebar.Section>
+            <Sidebar.Item icon={<Icon />}>Home</Sidebar.Item>
+          </Sidebar.Section>
+        </Sidebar.Nav>
+      );
+    }
+    render(
+      <Sidebar defaultCollapsed>
+        <Nav />
+      </Sidebar>
+    );
+    expect(document.querySelector("aside")).not.toHaveAttribute("data-hidden");
+    expect(screen.getByRole("button", { name: "Home" })).toBeVisible();
+  });
+
+  it("never collapses with collapsible none", () => {
+    renderSidebar({ collapsible: "none", defaultCollapsed: true });
+    expect(document.querySelector("aside")).toHaveAttribute("data-state", "expanded");
+    expect(screen.queryByRole("button", { name: /collapse sidebar/i })).not.toBeInTheDocument();
+  });
+
+  it("lets the provider own the state and warns about state props on the rail", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    function State() {
+      const { state } = useSidebar();
+      return <output>{state}</output>;
+    }
+    render(
+      <Sidebar.Provider defaultCollapsed>
+        <Sidebar defaultCollapsed={false}>
+          <Sidebar.Nav>
+            <Sidebar.Section>
+              <Sidebar.Item icon={<Icon />}>Home</Sidebar.Item>
+            </Sidebar.Section>
+          </Sidebar.Nav>
+        </Sidebar>
+        <State />
+      </Sidebar.Provider>
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("collapsed");
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("defaultCollapsed"));
+    warn.mockRestore();
+  });
+
+  it("returns inert defaults outside a sidebar so rows work in any panel", () => {
+    function State() {
+      const { state, isMobile } = useSidebar();
+      return <output>{`${state}:${isMobile}`}</output>;
+    }
+    render(
+      <>
+        <ul>
+          <Sidebar.Item active>Inbox</Sidebar.Item>
+        </ul>
+        <State />
+      </>
+    );
+    expect(screen.getByRole("button", { name: "Inbox" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("status")).toHaveTextContent("expanded:false");
+  });
+
+  it("opens as a modal panel below md and closes on Escape", async () => {
     mockMatchMedia(true);
-    const user = userEvent.setup();
-    const overlayClick = vi.fn();
-
+    const onOpenChange = vi.fn();
+    function Opener() {
+      const { setOpen } = useSidebar();
+      return (
+        <button type="button" onClick={() => setOpen(true)}>
+          Open
+        </button>
+      );
+    }
     render(
-      <Sidebar defaultOpen aria-label="Mobile sidebar">
-        <Sidebar.Trigger data-testid="trigger" data-part="trigger" />
-        <Sidebar.Overlay data-testid="overlay" data-part="overlay" onClick={overlayClick} />
-        <Sidebar.Nav aria-label="Main">
-          <Sidebar.Section label="Section One">
-            <Sidebar.Item icon={<span>I</span>}>Dashboard</Sidebar.Item>
-          </Sidebar.Section>
+      <Sidebar.Provider onOpenChange={onOpenChange}>
+        <Opener />
+        <Sidebar aria-label="Workspace">
+          <Sidebar.Nav>
+            <Sidebar.Section>
+              <Sidebar.Item>Home</Sidebar.Item>
+            </Sidebar.Section>
+          </Sidebar.Nav>
+          <Sidebar.Footer>
+            <Sidebar.CollapseToggle />
+          </Sidebar.Footer>
+        </Sidebar>
+      </Sidebar.Provider>
+    );
+    expect(document.querySelector("aside")).toBeNull();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = await screen.findByRole("dialog", { name: "Workspace" });
+    expect(dialog).toHaveClass("panel");
+    expect(screen.queryByRole("button", { name: /collapse sidebar/i })).not.toBeInTheDocument();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
+  });
+
+  it("gives the modal panel a visible close that closes it", async () => {
+    mockMatchMedia(true);
+    const onOpenChange = vi.fn();
+    render(
+      <Sidebar.Provider defaultOpen onOpenChange={onOpenChange}>
+        <Sidebar aria-label="Workspace">
+          <Sidebar.Nav>
+            <Sidebar.Section>
+              <Sidebar.Item>Home</Sidebar.Item>
+            </Sidebar.Section>
+          </Sidebar.Nav>
+        </Sidebar>
+      </Sidebar.Provider>
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Workspace" });
+    const close = screen.getByRole("button", { name: "Close navigation" });
+    expect(dialog.contains(close)).toBe(true);
+    await userEvent.click(close);
+    await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
+  });
+
+  it("opens the modal panel inside the nearest nested Theme scope", async () => {
+    mockMatchMedia(true);
+    const { container } = render(
+      <Theme mode="light">
+        <Theme mode="dark" brand="#16a34a">
+          <Sidebar.Provider defaultOpen>
+            <Sidebar aria-label="Workspace">
+              <Sidebar.Nav>
+                <Sidebar.Section>
+                  <Sidebar.Item>Home</Sidebar.Item>
+                </Sidebar.Section>
+              </Sidebar.Nav>
+            </Sidebar>
+          </Sidebar.Provider>
+        </Theme>
+      </Theme>
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Workspace" });
+    expect(container.contains(dialog)).toBe(false);
+    const scope = dialog.closest<HTMLElement>("[data-fui-theme]");
+    expect(scope).toHaveAttribute("data-theme", "dark");
+    expect(scope?.style.getPropertyValue("--fui-seed-brand")).toBe("#16a34a");
+  });
+
+  it("shows only the collapsed content in a collapsed rail's header, never clipped words", async () => {
+    const { rerender } = render(
+      <Sidebar aria-label="Workspace" defaultCollapsed>
+        <Sidebar.Header>Fragments</Sidebar.Header>
+        <Sidebar.Nav>
+          <Sidebar.Item icon={<Icon />}>Home</Sidebar.Item>
         </Sidebar.Nav>
       </Sidebar>
     );
-
-    const trigger = await screen.findByTestId("trigger");
-    const overlay = await screen.findByTestId("overlay");
-
-    expect(trigger).toHaveAttribute("data-part", "trigger");
-    expect(overlay).toHaveAttribute("data-part", "overlay");
-
-    await user.click(overlay);
-    expect(overlayClick).toHaveBeenCalled();
-
-    mockMatchMedia(false);
+    expect(screen.queryByText("Fragments")).not.toBeInTheDocument();
+    rerender(
+      <Sidebar aria-label="Workspace" defaultCollapsed>
+        <Sidebar.Header collapsedContent={<span>F</span>}>Fragments</Sidebar.Header>
+        <Sidebar.Nav>
+          <Sidebar.Item icon={<Icon />}>Home</Sidebar.Item>
+        </Sidebar.Nav>
+      </Sidebar>
+    );
+    expect(screen.getByText("F")).toBeInTheDocument();
   });
 
   it("has no accessibility violations", async () => {
     const { container } = renderSidebar();
     await expectNoA11yViolations(container);
+  });
+
+  describe("styles", () => {
+    let compiledRules: CSSStyleRule[] | undefined;
+
+    function compiledValues(selector: string, property: string): string[] {
+      if (!compiledRules) {
+        compiledRules = compiledModuleRules("src/components/Sidebar/Sidebar.module.scss").filter(
+          (rule): rule is CSSStyleRule => rule.type === CSSRule.STYLE_RULE
+        );
+      }
+      return compiledRules
+        .filter((rule) => rule.selectorText.split(/,\s*/).includes(selector))
+        .map((rule) => rule.style.getPropertyValue(property))
+        .filter(Boolean);
+    }
+
+    const md = MEASUREMENT_PROFILES.targets.controlTrack.md;
+
+    it("claims the target size the rows actually have", () => {
+      const accessibility = sidebarMeta.usage.accessibility;
+      expect(accessibility.some((line) => line.includes(`at least ${md} tall`))).toBe(true);
+      expect(accessibility.some((line) => /coarse pointer.*44px/.test(line))).toBe(true);
+    });
+
+    it("draws rows on the md track with the hit-area floor", () => {
+      expect(md).toBe("32px");
+      for (const selector of [".item", ".subItem"]) {
+        expect(compiledValues(selector, "--fui-navigation-row-track")).toContain(
+          `var(--fui-control-height-md, ${md})`
+        );
+        expect(compiledValues(selector, "min-block-size")).toContain(
+          `max(var(--fui-navigation-row-track, ${md}), var(--fui-hit-area, 24px))`
+        );
+      }
+      expect(compiledValues(".sectionAction::after", "block-size")).toContain(
+        `max(100%, var(--fui-control-height-md, ${md}), var(--fui-hit-area, 24px))`
+      );
+      // The collapsible section label reaches the 24 pointer floor.
+      expect(compiledValues(".sectionTrigger::after", "block-size")).toContain(
+        "max(100%, var(--fui-control-height-xs, 24px), var(--fui-hit-area, 24px))"
+      );
+    });
+
+    it("puts the rail on the canvas with one opaque hairline and no motion", () => {
+      expect(compiledValues(".root", "background-color").join(" ")).toContain(
+        "--fui-app-canvas-bg"
+      );
+      expect(sidebarStyles).toContain("border-inline-end: $_line;");
+      expect(sidebarStyles).not.toMatch(/transition:\s*(width|grid-template)/);
+      expect(sidebarStyles).not.toMatch(/box-shadow:\s*var\(--fui-shadow/);
+      expect(sidebarStyles).not.toContain("color-mix(");
+      expect(sidebarStyles).not.toContain("--fui-color-accent");
+      expect(sidebarStyles).not.toMatch(/text-transform:\s*uppercase/);
+      expect(sidebarStyles).not.toMatch(/\b(left|right):|margin-left|text-align:\s*left/);
+    });
+
+    it("marks the current row with the selection wash and ring at the regular weight", () => {
+      const current = compiledValues(".item[data-active]", "box-shadow");
+      expect(current.join(" ")).toContain("--fui-sidebar-item-active-border");
+      expect(compiledValues(".item", "font-weight").join(" ")).toContain(
+        "--fui-font-weight-normal"
+      );
+    });
   });
 });

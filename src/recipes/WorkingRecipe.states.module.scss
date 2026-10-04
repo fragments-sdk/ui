@@ -1,0 +1,34 @@
+// Fixture-only classes for WorkingRecipe.states.tsx: a list row an agent is working
+// on, and the words it is working toward. Unlayered.
+
+@use "../recipes/working";
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
+
+@include working.keyframes;
+
+.rows {
+  display: grid;
+  gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+  padding: var(--fui-raw-space-8, #{measurements.raw-space(8)})
+    var(--fui-raw-space-12, #{measurements.raw-space(12)});
+  border-radius: var(--fui-radius-row, #{tokens.$fui-radius-row});
+
+  &[data-working] {
+    @include working.area;
+  }
+}
+
+.words[data-working] {
+  @include working.text;
+}

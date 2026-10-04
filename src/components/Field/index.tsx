@@ -1,27 +1,35 @@
 "use client";
 
 import * as React from "react";
+import { WarningCircle } from "@phosphor-icons/react";
 import {
   Field as BaseField,
   type FieldControlProps as BaseFieldControlProps,
   type FieldValidityState,
 } from "@base-ui/react/field";
-import { useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
 import styles from "./Field.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
+/**
+ * The one owner of a control's label, description and error. Input, Textarea,
+ * Select, Combobox and NumberField carry no label or message props of their
+ * own: compose them inside a Field.
+ * @see https://usefragments.com/components/field
+ */
 export interface FieldProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  /** Field name, used to route a Form's server errors to this field */
   name?: string;
+  /** Disables the field: dimmed once here, and its control cannot be used */
   disabled?: boolean;
+  /** Marks the field invalid: the control takes the danger edge and Field.Error shows */
   invalid?: boolean;
   validate?: (value: unknown) => string | string[] | null | Promise<string | string[] | null>;
   validationMode?: "onSubmit" | "onBlur" | "onChange";
   validationDebounceTime?: number;
-  size?: ControlSize;
 }
 
 export interface FieldLabelProps {
@@ -43,6 +51,7 @@ export interface FieldDescriptionProps {
 }
 
 export interface FieldErrorProps {
+  /** What went wrong and how to fix it. Omit to show the browser's validation message. */
   children?: React.ReactNode;
   match?:
     | "valueMissing"
@@ -77,11 +86,9 @@ function FieldRoot({
   validate,
   validationMode,
   validationDebounceTime,
-  size: sizeProp,
   className,
   ...htmlProps
 }: FieldProps) {
-  const size = useResolvedControlSize(sizeProp);
   const classes = [styles.root, className].filter(Boolean).join(" ");
 
   return (
@@ -93,7 +100,6 @@ function FieldRoot({
       validate={validate}
       validationMode={validationMode}
       validationDebounceTime={validationDebounceTime}
-      data-size={size}
       className={classes}
     >
       {children}
@@ -107,11 +113,10 @@ function FieldLabel({ children, className }: FieldLabelProps) {
 }
 
 /**
- * Connects any child component to the Field context.
- * Wraps the child with Base UI's Field.Control via the `render` prop,
- * which merges aria attributes and field state onto the child element.
- *
- * Works with Input, Textarea, Checkbox, Switch, Select, or any element.
+ * Connects any child element to the Field context. Wraps the child with Base
+ * UI's Field.Control via the `render` prop, which merges the aria attributes
+ * and field state onto it. Input, Textarea, Select, Combobox and NumberField
+ * join the field on their own and need no Field.Control.
  */
 function FieldControl({ children, className, ...controlProps }: FieldControlProps) {
   const classes = [styles.control, className].filter(Boolean).join(" ");
@@ -123,12 +128,23 @@ function FieldDescription({ children, className }: FieldDescriptionProps) {
   return <BaseField.Description className={classes}>{children}</BaseField.Description>;
 }
 
+/**
+ * The invalid message: a danger glyph plus the words, announced when it
+ * appears. Colour is never the only signal.
+ */
 function FieldError({ children, match, className }: FieldErrorProps) {
   const classes = [styles.error, className].filter(Boolean).join(" ");
   return (
     <BaseField.Error
       match={match}
       className={classes}
+      role="alert"
+      render={(props) => (
+        <div {...props}>
+          <WarningCircle className={styles.errorIcon} aria-hidden="true" weight="bold" />
+          <span className={styles.errorWords}>{props.children}</span>
+        </div>
+      )}
       {...(children === undefined ? {} : { children })}
     />
   );
@@ -138,6 +154,7 @@ function FieldValidity({ children }: FieldValidityProps) {
   return <BaseField.Validity>{children}</BaseField.Validity>;
 }
 
+/** The required mark beside a label: a quiet asterisk, hidden from assistive tech (the control carries `required`). */
 function FieldRequired({ children = "*", className, ...htmlProps }: FieldRequiredProps) {
   return (
     <span
@@ -162,13 +179,3 @@ export const Field = Object.assign(FieldRoot, {
   Validity: FieldValidity,
   Required: FieldRequired,
 });
-
-export {
-  FieldRoot,
-  FieldLabel,
-  FieldControl,
-  FieldDescription,
-  FieldError,
-  FieldValidity,
-  FieldRequired,
-};

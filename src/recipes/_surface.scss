@@ -1,4 +1,5 @@
 @use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
 
 @function inset($role) {
   @if $role == "panel" or $role == "compact" or $role == "default" or $role == "roomy" {
@@ -10,4 +11,16 @@
 
 @mixin apply-inset($role) {
   padding: inset($role);
+}
+
+/// The one static surface (cards, panels, in-flow lists): the surface plane, an
+/// opaque hairline and the surface corner. It casts no shadow (UIR-D145);
+/// only floating things do, through `overlay.surface`.
+@mixin plane {
+  box-sizing: border-box;
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  background-color: var(--fui-bg-primary, #{tokens.$fui-bg-primary});
+  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
+    var(--fui-border, #{tokens.$fui-border});
+  border-radius: var(--fui-radius-surface, #{tokens.$fui-radius-surface});
 }

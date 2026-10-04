@@ -1,210 +1,41 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-@use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/layout";
+@use "../../recipes/action";
 @use "../../recipes/segmented";
 
-// ============================================
-// Group Container
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.group {
-  display: inline-flex;
-  align-items: stretch;
-  isolation: isolate;
-}
+// One look (UIR-D143): the segmented control. The band track with one opaque
+// hairline at the control radius, pad 2 and gap 2; each segment transparent in
+// ink 2 at the segment radius; the chosen one on the lifted thumb in ink 1 at
+// the strong weight. The same track as soft Tabs.
 
-// Gap variants
-.gap-xs {
-  gap: layout.gap("xs");
-}
-
-.gap-sm {
-  gap: layout.gap("sm");
-}
-
-// ============================================
-// Item base styles
-// ============================================
-
-.item {
-  @include button-reset;
-  @include interactive-base;
-
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  position: relative;
-  border: 0;
-  white-space: nowrap;
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    box-shadow var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast);
-
-  &.selected {
-    color: var(--fui-text-primary, $fui-text-primary);
+@layer fui.components {
+  .group {
+    @include action.disabled;
   }
 
-  &:focus-visible {
-    z-index: 1;
+  @each $size, $role in (xs: "micro", sm: "sm", md: "md", lg: "lg") {
+    .size-#{$size} {
+      @include segmented.track($role);
+    }
   }
-
-  &.disabled {
-    @include disabled-state;
-  }
-}
-
-// ============================================
-// Size variants
-// ============================================
-
-.size-sm {
-  @include segmented.rail("sm");
 
   .item {
-    @include segmented.item("sm");
-
-    svg {
-      @include segmented.glyph("sm");
-    }
+    @include button-reset;
+    @include segmented.segment("[data-pressed]");
+    @include action.disabled;
   }
-}
 
-.size-md {
-  @include segmented.rail("md");
+  // Full width: the track fills its container and the segments share it.
+  .fullWidth {
+    display: flex;
+    inline-size: 100%;
 
-  .item {
-    @include segmented.item("md");
-
-    svg {
-      @include segmented.glyph("md");
-    }
-  }
-}
-
-.size-lg {
-  @include segmented.rail("lg");
-
-  .item {
-    @include segmented.item("lg");
-
-    svg {
-      @include segmented.glyph("lg");
-    }
-  }
-}
-
-// ============================================
-// Soft variant: filled rail with an inset tonal selection
-// ============================================
-
-.soft {
-  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-2, 2px);
-  background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-
-  .item {
-    min-block-size: calc(
-      var(--_fui-segmented-track, #{segmented.track("md")}) - var(--fui-raw-space-2, 2px) -
-        var(--fui-raw-space-2, 2px)
-    );
-    background-color: transparent;
-    // Connected segments: only outer corners are rounded (the item base carries
-    // no radius). Per-item full radius left a rail-colored notch between items
-    // that reads as a gap.
-
-    &:first-child {
-      border-start-start-radius: var(--fui-radius-md, $fui-radius-md);
-      border-end-start-radius: var(--fui-radius-md, $fui-radius-md);
-    }
-
-    &:last-child {
-      border-start-end-radius: var(--fui-radius-md, $fui-radius-md);
-      border-end-end-radius: var(--fui-radius-md, $fui-radius-md);
-    }
-
-    &:only-child {
-      border-radius: var(--fui-radius-md, $fui-radius-md);
-    }
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-    }
-
-    &.selected {
-      @include segmented-selection;
-    }
-  }
-}
-
-// ============================================
-// Ghost variant: open cluster of pills, no rail
-// ============================================
-
-.ghost {
-  .item {
-    background-color: transparent;
-    border-radius: var(--fui-radius-full, $fui-radius-full);
-    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px) transparent;
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-    }
-
-    &.selected {
-      @include segmented-selection;
-    }
-  }
-}
-
-// ============================================
-// Outline variant: connected transparent segments
-// ============================================
-
-.outline {
-  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  background-color: transparent;
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-
-  .item {
-    background-color: transparent;
-
-    &:first-child {
-      border-start-start-radius: var(--fui-radius-lg, $fui-radius-lg);
-      border-end-start-radius: var(--fui-radius-lg, $fui-radius-lg);
-    }
-
-    &:last-child {
-      border-start-end-radius: var(--fui-radius-lg, $fui-radius-lg);
-      border-end-end-radius: var(--fui-radius-lg, $fui-radius-lg);
-    }
-
-    & + .item::before {
-      content: "";
-      position: absolute;
-      inset-block: var(--fui-raw-space-6, 6px);
-      inset-inline-start: 0;
-      inline-size: var(--fui-stroke-hairline, 1px);
-      background-color: var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-      transition: opacity var(--fui-transition-fast, $fui-transition-fast);
-    }
-
-    &.selected::before,
-    &.selected + .item::before {
-      opacity: 0;
-    }
-
-    &:hover:not(:disabled):not(.selected) {
-      background-color: var(--fui-bg-hover, $fui-bg-hover);
-    }
-
-    &.selected {
-      @include segmented-selection;
+    .item {
+      flex: 1 1 0;
+      min-inline-size: 0;
+      overflow: hidden;
     }
   }
 }

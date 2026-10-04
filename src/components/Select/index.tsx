@@ -1,11 +1,16 @@
 "use client";
 
 import * as React from "react";
+import { CaretDown, Check } from "@phosphor-icons/react";
 import { Select as BaseSelect } from "@base-ui/react/select";
-import { useResolvedControlSize } from "../ComponentDefaults";
-import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
-import { POPUP_OFFSET_PX, resolvePopupViewportRows } from "../../recipes/popup";
+import { CONTROL_SIZES, useResolvedControlSize } from "../ComponentDefaults";
+import {
+  POPUP_COLLISION_PADDING_PX,
+  POPUP_OFFSET_PX,
+  resolvePopupViewportRows,
+} from "../../recipes/popup";
 import styles from "./Select.module.scss";
+import { useThemePortalProps } from "../Theme/context";
 
 // ============================================
 // Types
@@ -13,7 +18,7 @@ import styles from "./Select.module.scss";
 
 export type SelectValue = string;
 
-export type SelectVariant = "outline" | "ghost";
+export type SelectSize = "xs" | "sm" | "md" | "lg";
 
 export interface SelectOption {
   value: SelectValue;
@@ -26,30 +31,33 @@ export interface SelectOption {
 }
 
 /**
- * Select dropdown for choosing from a list of options.
+ * Choose one option from a short list. The trigger is the field shell; label,
+ * description and error come from Field.
  * @see https://usefragments.com/components/select
  */
-export interface SelectProps extends FormFieldProps {
+export interface SelectProps {
   children?: React.ReactNode;
   /** Controlled selected value */
   value?: SelectValue | null;
   /** Default value for uncontrolled usage */
   defaultValue?: SelectValue;
-  /** Called when selection changes */
+  /** Called when the selection changes */
   onValueChange?: (value: SelectValue | null) => void;
-  /** Alias for onValueChange */
-  onChange?: (value: SelectValue | null) => void;
   /** Controlled open state */
   open?: boolean;
   /** Default open state */
   defaultOpen?: boolean;
   /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
-  // disabled inherited from FormFieldProps
+  /** Whether the select is disabled */
+  disabled?: boolean;
   /** Whether the user cannot choose a different option */
   readOnly?: boolean;
   /** Whether a selection is required */
   required?: boolean;
+  /** Marks the selection invalid: the danger edge and `aria-invalid` on the
+   * trigger. Say why in a Field.Error; inside a Field, its `invalid` does the same. */
+  invalid?: boolean;
   /** Form field name */
   name?: string;
   /** ID of the form that owns the hidden input */
@@ -62,16 +70,9 @@ export interface SelectProps extends FormFieldProps {
   placeholder?: string;
   /** Convenience API for simple selects (renders Select.Item entries when children are omitted) */
   options?: SelectOption[];
-  /** Size variant.
+  /** Trigger height on the shared control track: 24, 28, 32 or 40.
    * @default "md" */
-  size?: "sm" | "md" | "lg";
-  /** Chrome. `outline` is the bordered field shell; `ghost` drops it for a
-   * compact, borderless control — for toolbars and dense rows, where a bordered
-   * field reads as a form. Pair with `size="sm"`.
-   * @default "outline" */
-  variant?: SelectVariant;
-  /** Wrapper class name */
-  className?: string;
+  size?: SelectSize;
 }
 
 export interface SelectTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -107,48 +108,6 @@ export interface SelectGroupLabelProps extends React.HTMLAttributes<HTMLElement>
 }
 
 // ============================================
-// Icons
-// ============================================
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
-// ============================================
 // Context for Select state
 // ============================================
 
@@ -158,10 +117,9 @@ interface SelectContextValue {
   items: Map<SelectValue, React.ReactNode>;
   registerItem: (value: SelectValue, content: React.ReactNode) => void;
   unregisterItem: (value: SelectValue) => void;
-  size: "sm" | "md" | "lg";
-  variant: SelectVariant;
-  /** Mirrors the wrapper's `data-invalid` onto the trigger as `aria-invalid`,
-   * so assistive tech hears the state the danger edge is painting. */
+  size: SelectSize;
+  /** Puts `aria-invalid` on the trigger, so assistive tech hears the state
+   * the danger edge is painting. */
   invalid?: boolean;
   /** Items built from the `options` prop, so a custom composition can put the
    * trigger where it wants without having to re-render the list itself — and
@@ -175,7 +133,6 @@ const SelectContext = React.createContext<SelectContextValue>({
   registerItem: () => {},
   unregisterItem: () => {},
   size: "md",
-  variant: "outline",
   optionItems: null,
 });
 
@@ -211,35 +168,27 @@ function collectDeclaredItems(children: React.ReactNode, map: Map<SelectValue, R
 // Components
 // ============================================
 
-const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function SelectRoot(
-  {
-    children,
-    value,
-    defaultValue,
-    onValueChange,
-    onChange,
-    open,
-    defaultOpen,
-    onOpenChange,
-    disabled,
-    readOnly,
-    required,
-    name,
-    form,
-    autoComplete,
-    inputRef,
-    placeholder,
-    options,
-    label,
-    helperText,
-    error,
-    size: sizeProp,
-    variant = "outline",
-    className,
-  }: SelectProps,
-  ref
-) {
-  const size = useResolvedControlSize(sizeProp);
+function SelectRoot({
+  children,
+  value,
+  defaultValue,
+  onValueChange,
+  open,
+  defaultOpen,
+  onOpenChange,
+  disabled,
+  readOnly,
+  required,
+  invalid = false,
+  name,
+  form,
+  autoComplete,
+  inputRef,
+  placeholder,
+  options,
+  size: sizeProp,
+}: SelectProps) {
+  const size = useResolvedControlSize(sizeProp, CONTROL_SIZES);
   // Track current value for controlled and uncontrolled modes
   const [internalValue, setInternalValue] = React.useState<SelectValue | null | undefined>(
     value ?? defaultValue ?? null
@@ -298,9 +247,9 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
         // Uncontrolled mode
         setInternalValue(newValue);
       }
-      (onChange ?? onValueChange)?.(newValue);
+      onValueChange?.(newValue);
     },
-    [readOnly, value, onChange, onValueChange]
+    [readOnly, value, onValueChange]
   );
 
   // Labels declared up-front via children/options, so the trigger can show the
@@ -320,12 +269,6 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
     return merged;
   }, [declaredItems, items]);
 
-  const { helperId, errorId, hasError, errorMessage } = useFormFieldIds("select", {
-    label,
-    helperText,
-    error,
-  });
-
   const contextValue = React.useMemo(
     () => ({
       placeholder,
@@ -334,9 +277,8 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
       registerItem,
       unregisterItem,
       size,
-      variant,
       optionItems,
-      invalid: hasError,
+      invalid,
     }),
     [
       placeholder,
@@ -345,53 +287,33 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(function Select
       registerItem,
       unregisterItem,
       size,
-      variant,
       optionItems,
-      hasError,
+      invalid,
     ]
   );
 
-  const wrapperClasses = [styles.wrapper, variant === "ghost" && styles.wrapperGhost, className]
-    .filter(Boolean)
-    .join(" ");
-  const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
-
   return (
     <SelectContext.Provider value={contextValue}>
-      <div ref={ref} className={wrapperClasses} data-invalid={hasError || undefined}>
-        <BaseSelect.Root
-          value={value !== undefined || readOnly ? selectedValue : undefined}
-          defaultValue={value === undefined && !readOnly ? defaultValue : undefined}
-          onValueChange={handleValueChange}
-          open={open}
-          defaultOpen={defaultOpen}
-          onOpenChange={onOpenChange}
-          disabled={disabled}
-          readOnly={readOnly}
-          required={required}
-          name={name}
-          form={form}
-          autoComplete={autoComplete}
-          inputRef={inputRef}
-          aria-describedby={mergeAriaIds(errorId, helperId)}
-        >
-          {label && <BaseSelect.Label className={styles.label}>{label}</BaseSelect.Label>}
-          {resolvedChildren}
-        </BaseSelect.Root>
-        {helperText && (
-          <span id={helperId} className={helperClasses}>
-            {helperText}
-          </span>
-        )}
-        {errorMessage && (
-          <span id={errorId} className={styles.errorMessage}>
-            {errorMessage}
-          </span>
-        )}
-      </div>
+      <BaseSelect.Root
+        value={value !== undefined || readOnly ? selectedValue : undefined}
+        defaultValue={value === undefined && !readOnly ? defaultValue : undefined}
+        onValueChange={handleValueChange}
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={onOpenChange}
+        disabled={disabled}
+        readOnly={readOnly}
+        required={required}
+        name={name}
+        form={form}
+        autoComplete={autoComplete}
+        inputRef={inputRef}
+      >
+        {resolvedChildren}
+      </BaseSelect.Root>
     </SelectContext.Provider>
   );
-});
+}
 
 function SelectTrigger({
   children,
@@ -403,18 +325,7 @@ function SelectTrigger({
   const context = React.useContext(SelectContext);
   const placeholderText = placeholder ?? context.placeholder;
 
-  const classes = [
-    styles.trigger,
-    context.size === "sm" && styles.triggerSm,
-    context.size === "lg" && styles.triggerLg,
-    // Ghost unsets the field shell and the size mixin's box. Both are single
-    // classes like this one, so it wins on being declared after them in
-    // Select.module.scss — the one place that ordering is guaranteed.
-    context.variant === "ghost" && styles.triggerGhost,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const classes = [styles.trigger, className].filter(Boolean).join(" ");
 
   // Get the selected item's children from the registry
   const selectedContent = context.value != null ? context.items.get(context.value) : null;
@@ -428,6 +339,7 @@ function SelectTrigger({
     <BaseSelect.Trigger
       {...htmlProps}
       className={classes}
+      data-size={context.size}
       aria-invalid={context.invalid || undefined}
     >
       {children ?? (
@@ -435,7 +347,7 @@ function SelectTrigger({
           {icon && <span className={styles.triggerIcon}>{icon}</span>}
           <span className={styles.value}>{displayContent}</span>
           <BaseSelect.Icon className={styles.icon}>
-            <ChevronDownIcon />
+            <CaretDown aria-hidden="true" weight="bold" />
           </BaseSelect.Icon>
         </>
       )}
@@ -451,6 +363,7 @@ function SelectContent({
   maxVisibleItems,
   ...htmlProps
 }: SelectContentProps) {
+  const portalProps = useThemePortalProps();
   const { optionItems } = React.useContext(SelectContext);
   const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
 
@@ -463,8 +376,16 @@ function SelectContent({
       : htmlProps.style;
 
   return (
-    <BaseSelect.Portal>
-      <BaseSelect.Positioner sideOffset={sideOffset} align={align} className={styles.positioner}>
+    <BaseSelect.Portal {...portalProps}>
+      {/* Side placement, never item-aligned: the list opens 4 under the
+          trigger like every other floating list, so the offset always applies. */}
+      <BaseSelect.Positioner
+        alignItemWithTrigger={false}
+        sideOffset={sideOffset}
+        collisionPadding={POPUP_COLLISION_PADDING_PX}
+        align={align}
+        className={styles.positioner}
+      >
         <BaseSelect.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
           {children ?? optionItems}
         </BaseSelect.Popup>
@@ -489,7 +410,7 @@ function SelectItem({ children, value, disabled, className, ...htmlProps }: Sele
     <BaseSelect.Item {...htmlProps} value={value} disabled={disabled} className={classes}>
       <BaseSelect.ItemText>{children}</BaseSelect.ItemText>
       <BaseSelect.ItemIndicator className={styles.itemIndicator}>
-        <CheckIcon />
+        <Check aria-hidden="true" weight="bold" />
       </BaseSelect.ItemIndicator>
     </BaseSelect.Item>
   );

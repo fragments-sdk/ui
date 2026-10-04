@@ -1,22 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { render, expectNoA11yViolations } from "../../test/utils";
+import { render, screen, expectNoA11yViolations } from "../../test/utils";
 import { Icon } from "./index";
 
 type MockIconProps = {
   size?: number | string;
   weight?: string;
-  tone?: "warm" | "cool";
 };
 
 function MockIcon(props: MockIconProps) {
-  return (
-    <svg
-      data-testid="mock-icon"
-      data-size={props.size}
-      data-weight={props.weight}
-      data-tone={props.tone}
-    />
-  );
+  return <svg data-testid="mock-icon" data-size={props.size} data-weight={props.weight} />;
 }
 
 describe("Icon", () => {
@@ -31,7 +23,7 @@ describe("Icon", () => {
     ["xs", 12],
     ["sm", 14],
     ["md", 16],
-    ["lg", 20],
+    ["lg", 18],
     ["xl", 24],
   ] as const)("passes the generated %s pixel size to the icon", (size, pixels) => {
     const { container } = render(<Icon icon={MockIcon} size={size} />);
@@ -47,7 +39,7 @@ describe("Icon", () => {
     }
   );
 
-  it.each(["accent", "info", "success", "warning", "danger"] as const)(
+  it.each(["secondary", "tertiary", "accent", "info", "success", "warning", "danger"] as const)(
     "applies the %s tone class",
     (tone) => {
       const { container } = render(<Icon icon={MockIcon} tone={tone} />);
@@ -57,34 +49,79 @@ describe("Icon", () => {
     }
   );
 
-  it("applies the text-hierarchy colour class and lets tone win over it", () => {
-    const { container, rerender } = render(<Icon icon={MockIcon} color="tertiary" />);
-    expect(container.firstChild).toHaveClass("colorTertiary");
-
-    rerender(<Icon icon={MockIcon} color="tertiary" tone="warning" />);
-    expect(container.firstChild).toHaveClass("toneWarning");
-    expect(container.firstChild).not.toHaveClass("colorTertiary");
+  it("inherits currentColor when no tone is set", () => {
+    const { container } = render(<Icon icon={MockIcon} />);
+    expect((container.firstChild as HTMLElement).className).not.toMatch(/tone/);
   });
 
-  it("forwards custom icon props to arbitrary icon components", () => {
-    const { container } = render(<Icon icon={MockIcon} iconProps={{ tone: "warm" }} />);
-    const svg = container.querySelector('[data-testid="mock-icon"]');
-    expect(svg).toHaveAttribute("data-tone", "warm");
+  it.each(["regular", "bold", "fill"] as const)("forwards the %s weight to the glyph", (weight) => {
+    const { container } = render(<Icon icon={MockIcon} weight={weight} />);
+    expect(container.querySelector('[data-testid="mock-icon"]')).toHaveAttribute(
+      "data-weight",
+      weight
+    );
   });
 
-  it("does not override an explicit iconProps.size", () => {
-    const { container } = render(<Icon icon={MockIcon} size="lg" iconProps={{ size: 99 }} />);
-    const svg = container.querySelector('[data-testid="mock-icon"]');
-    expect(svg).toHaveAttribute("data-size", "99");
+  it("defaults the glyph weight to regular", () => {
+    const { container } = render(<Icon icon={MockIcon} />);
+    expect(container.querySelector('[data-testid="mock-icon"]')).toHaveAttribute(
+      "data-weight",
+      "regular"
+    );
   });
 
-  it("does not add aria-hidden by default (wrapping span is presentational)", () => {
-    const { container } = render(<Icon icon={MockIcon} aria-hidden="true" />);
+  it("has no color or iconProps escape hatch", () => {
+    // Type-level only: each cut prop is a compile error.
+    const cut = () => [
+      // @ts-expect-error -- color merged into tone at v4
+      <Icon key="color" icon={MockIcon} color="tertiary" />,
+      // @ts-expect-error -- iconProps cut at v4
+      <Icon key="props" icon={MockIcon} iconProps={{ size: 99 }} />,
+      // @ts-expect-error -- 2xl is off the glyph ladder
+      <Icon key="2xl" icon={MockIcon} size="2xl" />,
+    ];
+    expect(cut).toBeTypeOf("function");
+  });
+
+  it("ships hidden from assistive technology by default", () => {
+    const { container } = render(<Icon icon={MockIcon} />);
     expect(container.firstChild).toHaveAttribute("aria-hidden", "true");
+    expect(container.firstChild).not.toHaveAttribute("role");
   });
 
-  it("has no accessibility violations", async () => {
-    const { container } = render(<Icon icon={MockIcon} aria-hidden="true" />);
+  it("is announced once, as an image, when labelled", () => {
+    render(<Icon icon={MockIcon} aria-label="Close" />);
+    const icon = screen.getByRole("img", { name: "Close" });
+    expect(icon.tagName).toBe("SPAN");
+    expect(icon).toHaveAttribute("aria-label", "Close");
+    expect(icon).not.toHaveAttribute("aria-hidden");
+  });
+
+  it("treats aria-labelledby as a label", () => {
+    render(
+      <>
+        <span id="icon-name">Settings</span>
+        <Icon icon={MockIcon} aria-labelledby="icon-name" />
+      </>
+    );
+    expect(screen.getByRole("img", { name: "Settings" })).not.toHaveAttribute("aria-hidden");
+  });
+
+  it("lets an explicit aria-hidden or role win", () => {
+    const { container, rerender } = render(<Icon icon={MockIcon} aria-hidden={false} />);
+    expect(container.firstChild).toHaveAttribute("aria-hidden", "false");
+
+    rerender(<Icon icon={MockIcon} aria-label="Status" role="presentation" />);
+    expect(container.firstChild).toHaveAttribute("role", "presentation");
+  });
+
+  it("has no accessibility violations, hidden or labelled", async () => {
+    const { container } = render(
+      <div>
+        <Icon icon={MockIcon} />
+        <Icon icon={MockIcon} aria-label="Close" />
+      </div>
+    );
     await expectNoA11yViolations(container);
   });
 });

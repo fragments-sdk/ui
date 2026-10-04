@@ -30,7 +30,9 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+// Typed from the component, not the meta: every story renders its own
+// children, and JSX stays out of component-level args (Storybook docs).
+type Story = StoryObj<typeof Fieldset>;
 
 export const TwoColumnLayout: Story = {
   render: () => (

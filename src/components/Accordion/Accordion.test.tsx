@@ -5,7 +5,7 @@ import { Accordion } from "./index";
 
 function renderAccordion(props: Partial<React.ComponentProps<typeof Accordion>> = {}) {
   return render(
-    <Accordion {...(props as any)}>
+    <Accordion {...props}>
       <Accordion.Item value="one">
         <Accordion.Trigger>Item One</Accordion.Trigger>
         <Accordion.Content>Content One</Accordion.Content>
@@ -42,9 +42,9 @@ describe("Accordion", () => {
     expect(screen.getByText("Content One")).toBeInTheDocument();
   });
 
-  it("single type only allows one item open at a time", async () => {
+  it("keeps one item open at a time by default", async () => {
     const user = userEvent.setup();
-    renderAccordion({ type: "single", collapsible: true });
+    renderAccordion();
 
     const triggerOne = screen.getByRole("button", { name: /item one/i });
     const triggerTwo = screen.getByRole("button", { name: /item two/i });
@@ -57,9 +57,9 @@ describe("Accordion", () => {
     expect(triggerOne).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("multiple type allows multiple items open at once", async () => {
+  it("multiple lets several items stay open", async () => {
     const user = userEvent.setup();
-    renderAccordion({ type: "multiple" });
+    renderAccordion({ multiple: true });
 
     const triggerOne = screen.getByRole("button", { name: /item one/i });
     const triggerTwo = screen.getByRole("button", { name: /item two/i });
@@ -72,7 +72,7 @@ describe("Accordion", () => {
   });
 
   it("links trigger aria-controls to content id", async () => {
-    renderAccordion({ defaultValue: "one" });
+    renderAccordion({ defaultValue: ["one"] });
 
     const trigger = screen.getByRole("button", { name: /item one/i });
     const contentId = trigger.getAttribute("aria-controls");
@@ -104,6 +104,7 @@ describe("Accordion", () => {
     );
 
     const trigger = screen.getByRole("button", { name: /disabled item/i });
+    expect(trigger).toHaveAttribute("data-disabled");
     await user.click(trigger);
     expect(trigger).toHaveAttribute("aria-expanded", "false");
   });
@@ -111,7 +112,7 @@ describe("Accordion", () => {
   it("supports controlled value prop", async () => {
     const onValueChange = vi.fn();
     render(
-      <Accordion value="one" onValueChange={onValueChange}>
+      <Accordion value={["one"]} onValueChange={onValueChange}>
         <Accordion.Item value="one">
           <Accordion.Trigger>Item One</Accordion.Trigger>
           <Accordion.Content>Content One</Accordion.Content>
@@ -129,64 +130,38 @@ describe("Accordion", () => {
     const user = userEvent.setup();
     const triggerTwo = screen.getByRole("button", { name: /item two/i });
     await user.click(triggerTwo);
-    expect(onValueChange).toHaveBeenCalledWith("two");
+    expect(onValueChange.mock.calls[0][0]).toEqual(["two"]);
   });
 
   it("supports defaultValue for uncontrolled usage", () => {
-    renderAccordion({ defaultValue: "two" });
+    renderAccordion({ defaultValue: ["two"] });
     const trigger = screen.getByRole("button", { name: /item two/i });
     expect(trigger).toHaveAttribute("aria-expanded", "true");
   });
 
-  it("collapsible prop allows full collapse in single type", async () => {
+  it("closes the open item when it is pressed again", async () => {
     const user = userEvent.setup();
-    renderAccordion({ type: "single", collapsible: true, defaultValue: "one" });
+    const onValueChange = vi.fn();
+    renderAccordion({ defaultValue: ["one"], onValueChange });
 
     const trigger = screen.getByRole("button", { name: /item one/i });
     expect(trigger).toHaveAttribute("aria-expanded", "true");
 
     await user.click(trigger);
     expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(onValueChange.mock.calls[0][0]).toEqual([]);
   });
 
-  it("emits undefined when a single collapsible accordion fully closes", async () => {
+  it("honors a canceled change", async () => {
     const user = userEvent.setup();
-    const onValueChange = vi.fn();
-
-    renderAccordion({
-      type: "single",
-      collapsible: true,
-      defaultValue: "one",
-      onValueChange,
+    const onValueChange = vi.fn((_value: string[], details: { cancel: () => void }) => {
+      details.cancel();
     });
-
-    await user.click(screen.getByRole("button", { name: /item one/i }));
-
-    expect(onValueChange).toHaveBeenCalledWith(undefined);
-  });
-
-  it("non-collapsible single type prevents full collapse", async () => {
-    const user = userEvent.setup();
-    renderAccordion({ type: "single", collapsible: false, defaultValue: "one" });
-
-    const trigger = screen.getByRole("button", { name: /item one/i });
-    expect(trigger).toHaveAttribute("aria-expanded", "true");
-
-    await user.click(trigger);
-    // Should stay open because collapsible=false
-    expect(trigger).toHaveAttribute("aria-expanded", "true");
-  });
-
-  it("honors a canceled trigger click", async () => {
-    const user = userEvent.setup();
-    const onValueChange = vi.fn();
 
     render(
       <Accordion onValueChange={onValueChange}>
         <Accordion.Item value="one">
-          <Accordion.Trigger onClick={(event) => event.preventDefault()}>
-            Item One
-          </Accordion.Trigger>
+          <Accordion.Trigger>Item One</Accordion.Trigger>
           <Accordion.Content>Content One</Accordion.Content>
         </Accordion.Item>
       </Accordion>
@@ -195,23 +170,14 @@ describe("Accordion", () => {
     const trigger = screen.getByRole("button", { name: /item one/i });
     await user.click(trigger);
 
-    expect(onValueChange).not.toHaveBeenCalled();
+    expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(trigger).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("keeps arrow-key focus native instead of using accordion roving focus", async () => {
-    const user = userEvent.setup();
+  it("leads each trigger with the caret", () => {
     renderAccordion();
-
-    const triggerOne = screen.getByRole("button", { name: /item one/i });
-    const triggerTwo = screen.getByRole("button", { name: /item two/i });
-
-    triggerOne.focus();
-    await user.keyboard("{ArrowDown}");
-    expect(triggerOne).toHaveFocus();
-
-    await user.tab();
-    expect(triggerTwo).toHaveFocus();
+    const trigger = screen.getByRole("button", { name: /item one/i });
+    expect(trigger.firstElementChild?.tagName.toLowerCase()).toBe("svg");
   });
 
   it("forwards html props to trigger and content", async () => {
@@ -270,7 +236,7 @@ describe("Accordion", () => {
 
     fireEvent(content, new Event("beforematch"));
 
-    expect(onValueChange).toHaveBeenCalledWith("one");
+    expect(onValueChange.mock.calls[0][0]).toEqual(["one"]);
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(content).not.toHaveAttribute("hidden");
   });
@@ -282,7 +248,7 @@ describe("Accordion", () => {
   });
 
   it("has no accessibility violations", async () => {
-    const { container } = renderAccordion({ defaultValue: "one" });
+    const { container } = renderAccordion({ defaultValue: ["one"] });
     await expectNoA11yViolations(container);
   });
 });

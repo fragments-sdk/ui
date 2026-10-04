@@ -1,100 +1,97 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
+@use "../../recipes/selection";
 @use "../../recipes/target";
 
-.iconButton {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include high-contrast-outline;
+@layer fui.tokens, fui.base, fui.components;
 
-  border-radius: var(--fui-radius-l2, $fui-radius-l2);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
-  background-color: transparent;
-  flex-shrink: 0;
+@layer fui.components {
+  @include action.pending-keyframes;
 
-  &:hover:not(:disabled):not([data-disabled]) {
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
+  .iconButton {
+    @include button-reset;
+    @include action.base;
+    @include action.motion;
+    // Every size reaches the hit-area floor: 24px for a pointer, 44px for touch.
+    @include target.hit-area("micro");
+    @include high-contrast-outline;
 
-  // Tactile press. 0.96 exactly: lower reads as exaggerated. Rides the
-  // interactive-base transition, so a release mid-press eases back.
-  @media (prefers-reduced-motion: no-preference) {
-    &:active:not(:disabled):not([data-disabled]) {
-      scale: 0.96;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
+    background-color: transparent;
+    flex-shrink: 0;
+
+    @include action.hover {
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    // The press scale (0.985), never on a popup trigger.
+    @include action.press;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    @include action.disabled;
+    @include action.pending(".label", ".spinner");
+
+    svg {
+      display: block;
     }
   }
 
-  svg {
-    display: block;
+  // Sizes on the one track: the width is the track height.
+  @each $size, $role in (xs: "micro", sm: "sm", md: "md", lg: "lg") {
+    .#{$size} {
+      @include action.icon-only($role);
+
+      svg {
+        @include action.glyph($role);
+      }
+    }
   }
-}
 
-.sm {
-  @include action.icon-only("sm");
-  @include target.hit-area("compact");
+  // Variants. Hover paints over the button (the hover tint is an image), so a
+  // pressed toggle keeps its wash and ring underneath.
+  .ghost {
+    @include action.hover {
+      @include selection.hover-tint;
+    }
 
-  svg {
-    @include action.glyph("sm");
+    @include action.press($scale: false) {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
   }
-}
 
-.md {
-  @include action.icon-only("md");
-
-  svg {
-    @include action.glyph("md");
-  }
-}
-
-.lg {
-  @include action.icon-only("lg");
-
-  svg {
-    @include action.glyph("lg");
-  }
-}
-
-// Variants
-.ghost {
-  &:hover:not(:disabled):not([data-disabled]) {
+  // The neutral secondary, the same tint as Button soft: the hover tint at
+  // rest, the press tint on hover and press, and the soft edge (the strong
+  // edge under high contrast, none otherwise).
+  .soft {
+    border-color: var(--fui-button-soft-border, $fui-button-soft-border);
     background-color: var(--fui-bg-hover, $fui-bg-hover);
+
+    &:not(.pressed) {
+      @include action.hover {
+        background-color: var(--fui-bg-active, $fui-bg-active);
+      }
+    }
+
+    &.pressed {
+      @include action.hover {
+        @include selection.hover-tint;
+      }
+    }
+
+    @include action.press($scale: false) {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
   }
 
-  &:active:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
+  // Pressed is a persistent toggle selection, not the pointer-down state:
+  // the wash and the ring (UIR-D142).
+  .pressed {
+    @include selection.selected;
   }
-}
-
-.soft {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-
-  &:hover:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  &:active:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-}
-
-.outline {
-  border-color: var(--fui-border, $fui-border);
-
-  &:hover:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    border-color: var(--fui-border-strong, $fui-border-strong);
-  }
-
-  &:active:not(:disabled):not([data-disabled]) {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-}
-
-// Pressed is a persistent toggle selection, not the pointer-down state.
-.pressed {
-  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-  color: var(--fui-text-primary, $fui-text-primary);
 }

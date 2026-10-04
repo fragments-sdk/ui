@@ -1,11 +1,12 @@
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { DatePicker } from ".";
+import { DatePicker, type DateRange } from ".";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Date picker with a calendar dropdown for single dates or date ranges,
- * built on react-day-picker. Compose DatePicker.Trigger, DatePicker.Content,
- * and DatePicker.Calendar. Supports modes single/range and disabled dates.
+ * Date picker with a calendar popup for single dates or date ranges. Compose
+ * DatePicker.Trigger, DatePicker.Content and DatePicker.Calendar. One value,
+ * one `onValueChange`, typed by `mode`.
  */
 const meta = {
   title: "Forms/DatePicker",
@@ -15,36 +16,24 @@ const meta = {
     renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Date picker with calendar dropdown for dates or ranges.",
+        component: "Date picker with a calendar popup for dates or ranges.",
       },
     },
   },
   argTypes: {
-    mode: {
-      control: "select",
-      options: ["single", "range"],
-      description: "Selection mode",
-    },
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Trigger size variant",
+      options: ["sm", "md"],
+      description: "Trigger size",
     },
     disabled: { control: "boolean" },
-    fixedWeeks: { control: "boolean", description: "Always show 6 rows" },
+    readOnly: { control: "boolean" },
+    invalid: { control: "boolean" },
   },
   args: {
-    mode: "single",
-    size: "md",
+    label: "Start date",
     placeholder: "Pick a date",
-    children: (
-      <>
-        <DatePicker.Trigger />
-        <DatePicker.Content>
-          <DatePicker.Calendar />
-        </DatePicker.Content>
-      </>
-    ),
+    children: null,
   },
 } satisfies Meta<typeof DatePicker>;
 
@@ -52,27 +41,75 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const parts = (
+  <>
+    <DatePicker.Trigger />
+    <DatePicker.Content>
+      <DatePicker.Calendar />
+    </DatePicker.Content>
+  </>
+);
+
 export const Default: Story = {
-  render: (args) => (
-    <DatePicker {...args}>
-      <DatePicker.Trigger />
-      <DatePicker.Content>
-        <DatePicker.Calendar />
-      </DatePicker.Content>
-    </DatePicker>
-  ),
+  render: (args) => <DatePicker {...args}>{parts}</DatePicker>,
+};
+
+export const Controlled: Story = {
+  render: function ControlledStory(args) {
+    const [value, setValue] = React.useState<Date | null>(new Date(2026, 9, 3));
+    return (
+      <DatePicker
+        label={args.label}
+        placeholder={args.placeholder}
+        size={args.size}
+        mode="single"
+        value={value}
+        onValueChange={setValue}
+      >
+        {parts}
+      </DatePicker>
+    );
+  },
 };
 
 export const Range: Story = {
-  args: { mode: "range", placeholder: "Select date range", numberOfMonths: 2 },
-  render: (args) => (
-    <DatePicker {...args}>
-      <DatePicker.Trigger />
-      <DatePicker.Content>
-        <DatePicker.Calendar />
-      </DatePicker.Content>
-    </DatePicker>
-  ),
+  render: function RangeStory(args) {
+    const [value, setValue] = React.useState<DateRange | null>({
+      from: new Date(2026, 9, 3),
+      to: new Date(2026, 9, 9),
+    });
+    return (
+      <DatePicker
+        placeholder={args.placeholder}
+        size={args.size}
+        label="Window"
+        mode="range"
+        numberOfMonths={2}
+        value={value}
+        onValueChange={setValue}
+      >
+        {parts}
+      </DatePicker>
+    );
+  },
+};
+
+export const WithPresets: Story = {
+  render: (args) => {
+    const today = new Date();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+    return (
+      <DatePicker {...args}>
+        <DatePicker.Trigger />
+        <DatePicker.Content>
+          <DatePicker.Preset date={today}>Today</DatePicker.Preset>
+          <DatePicker.Preset date={nextWeek}>In a week</DatePicker.Preset>
+          <DatePicker.Calendar />
+        </DatePicker.Content>
+      </DatePicker>
+    );
+  },
 };
 
 export const DisabledDates: Story = {
@@ -80,52 +117,38 @@ export const DisabledDates: Story = {
     placeholder: "Select a future date",
     disabledDates: (date: Date) => date < new Date(),
   },
+  render: (args) => <DatePicker {...args}>{parts}</DatePicker>,
+};
+
+export const WithHelperText: Story = {
+  args: { helperText: "Choose when the project begins." },
+  render: (args) => <DatePicker {...args}>{parts}</DatePicker>,
+};
+
+export const Sizes: Story = {
   render: (args) => (
-    <DatePicker {...args}>
-      <DatePicker.Trigger />
-      <DatePicker.Content>
-        <DatePicker.Calendar />
-      </DatePicker.Content>
-    </DatePicker>
+    <div style={{ display: "grid", gap: 16 }}>
+      <DatePicker {...args} size="sm">
+        {parts}
+      </DatePicker>
+      <DatePicker {...args} size="md">
+        {parts}
+      </DatePicker>
+    </div>
   ),
 };
 
-export const WithLabel: Story = {
-  args: {
-    label: "Start Date",
-    placeholder: "Pick a date",
-    helperText: "Choose when the project begins.",
-  },
-  render: (args) => (
-    <DatePicker {...args}>
-      <DatePicker.Trigger />
-      <DatePicker.Content>
-        <DatePicker.Calendar />
-      </DatePicker.Content>
-    </DatePicker>
-  ),
+export const Invalid: Story = {
+  args: { invalid: true, errorMessage: "Pick a start date before the end date" },
+  render: (args) => <DatePicker {...args}>{parts}</DatePicker>,
 };
 
-export const ErrorState: Story = {
-  args: { label: "Start Date", placeholder: "Pick a date" },
-  render: (args) => (
-    <DatePicker {...args} error="Please select a start date">
-      <DatePicker.Trigger />
-      <DatePicker.Content>
-        <DatePicker.Calendar />
-      </DatePicker.Content>
-    </DatePicker>
-  ),
+export const ReadOnly: Story = {
+  args: { readOnly: true, defaultValue: new Date(2026, 9, 3) },
+  render: (args) => <DatePicker {...args}>{parts}</DatePicker>,
 };
 
 export const Disabled: Story = {
-  args: { placeholder: "Pick a date", disabled: true },
-  render: (args) => (
-    <DatePicker {...args}>
-      <DatePicker.Trigger />
-      <DatePicker.Content>
-        <DatePicker.Calendar />
-      </DatePicker.Content>
-    </DatePicker>
-  ),
+  args: { disabled: true },
+  render: (args) => <DatePicker {...args}>{parts}</DatePicker>,
 };

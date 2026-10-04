@@ -1,0 +1,309 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Combobox",
+  "description": "Filters a list of options as the user types.",
+  "category": "inputs",
+  "tags": ["combobox", "autocomplete", "search", "select", "typeahead", "form", "multiselect"],
+  "status": "stable",
+  "sourcePath": "src/components/Combobox/index.tsx",
+  "exportName": "Combobox",
+  "propsSummary": [
+    "multiple: boolean (default: false)",
+    "value: union",
+    "defaultValue: union",
+    "onValueChange: union",
+    "onInputValueChange: function",
+    "children: node (required)",
+    "open: boolean",
+    "defaultOpen: boolean",
+    "onOpenChange: function",
+    "required: boolean",
+    "name: string",
+    "placeholder: string",
+    "autoHighlight: boolean (default: true)",
+    "size: xs|sm|md|lg (default: md)",
+    "invalid: boolean",
+    "readOnly: boolean",
+    "loading: boolean",
+    "disabled: boolean"
+  ],
+  "props": {
+    "multiple": {
+      "type": "boolean",
+      "description": "Allow multiple selections with chips",
+      "default": "false",
+      "required": false
+    },
+    "value": {
+      "type": "union",
+      "description": "Controlled selected value (string for single, string[] for multiple)",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "union",
+      "description": "Default selected value (uncontrolled)",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "union",
+      "description": "Called when selection changes",
+      "required": false
+    },
+    "onInputValueChange": {
+      "type": "function",
+      "description": "Called with the typed query as it changes",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "Combobox input and content",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state of the dropdown",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Initial open state for uncontrolled usage",
+      "default": "false",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when dropdown open state changes",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Marks the field required for form validation",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text for the input",
+      "required": false
+    },
+    "autoHighlight": {
+      "type": "boolean",
+      "description": "Auto-highlight first matching item while filtering",
+      "default": "true",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Field height on the shared control track: 24, 28, 32 or 40",
+      "default": "md",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the combobox",
+      "default": "false",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The danger edge and aria-invalid; say why in a Field.Error",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Shows the value on a dashed edge without letting it change",
+      "default": "false",
+      "required": false
+    },
+    "loading": {
+      "type": "boolean",
+      "description": "Options are on their way: the list says Searching… and is aria-busy",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Lists too long to scan by eye",
+      "The user roughly knows the value they want",
+      "Autocomplete or typeahead",
+      "Multi-select from a searchable list"
+    ],
+    "whenNot": [
+      "Under five options (use Select or RadioGroup)",
+      "Free-form text with no known options (use Input)",
+      "Short list nobody needs to search (use Select)",
+      "Actions rather than values (use Menu)"
+    ],
+    "guidelines": [
+      "Wrap in a Field for the label, description and error",
+      "Placeholder names what is searchable",
+      "With no match the list names the query; override it with Combobox.Empty when you have better wording",
+      "Set loading while options load from a server; the list says so",
+      "Group related options with Combobox.Group in long lists",
+      "Filtering keeps wrapper composition, so groups and fragments survive",
+      "Keep option text short and searchable",
+      "multiple turns selections into removable chips"
+    ],
+    "accessibility": [
+      "Arrow keys, Enter, and Escape all work",
+      "Typing filters the list in place",
+      "Options sit inside a listbox; Field.Label names the input",
+      "The empty and loading rows are polite status messages",
+      "The open button is named Show options and every chip remove button names its chip"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Type to narrow the list; unmatched queries show a no-results row.",
+      "code": "<StatefulCombobox placeholder=\"Select a fruit\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"apple\">Apple</Combobox.Item>\n    <Combobox.Item value=\"banana\">Banana</Combobox.Item>\n    <Combobox.Item value=\"orange\">Orange</Combobox.Item>\n    <Combobox.Item value=\"grape\">Grape</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+    },
+    {
+      "name": "Multiple Selection",
+      "description": "Each pick becomes a removable chip in the field.",
+      "code": "<StatefulCombobox multiple placeholder=\"Select fruits…\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"apple\">Apple</Combobox.Item>\n    <Combobox.Item value=\"banana\">Banana</Combobox.Item>\n    <Combobox.Item value=\"orange\">Orange</Combobox.Item>\n    <Combobox.Item value=\"grape\">Grape</Combobox.Item>\n    <Combobox.Item value=\"mango\">Mango</Combobox.Item>\n    <Combobox.Item value=\"kiwi\">Kiwi</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+    },
+    {
+      "name": "In a Field",
+      "description": "Field gives the input its label and description.",
+      "code": "<Field>\n  <Field.Label>Assignee</Field.Label>\n  <StatefulCombobox placeholder=\"Search assignees…\">\n    <Combobox.Input />\n    <Combobox.Content>\n      <Combobox.Item value=\"alice\">Alice Johnson</Combobox.Item>\n      <Combobox.Item value=\"bob\">Bob Chen</Combobox.Item>\n      <Combobox.Item value=\"carol\">Carol Smith</Combobox.Item>\n    </Combobox.Content>\n  </StatefulCombobox>\n  <Field.Description>Type to filter the list of available assignees.</Field.Description>\n</Field>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The danger edge with the reason under the field.",
+      "code": "<Field invalid>\n  <Field.Label>Reviewer</Field.Label>\n  <Combobox placeholder=\"Search reviewers…\" invalid>\n    <Combobox.Input />\n    <Combobox.Content>\n      <Combobox.Item value=\"alice\">Alice</Combobox.Item>\n    </Combobox.Content>\n  </Combobox>\n  <Field.Error match>Choose a reviewer.</Field.Error>\n</Field>"
+    },
+    {
+      "name": "With Groups",
+      "description": "Headed sections stay intact while filtering.",
+      "code": "<StatefulCombobox placeholder=\"Search countries…\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <>\n      <Combobox.Group>\n        <Combobox.GroupLabel>North America</Combobox.GroupLabel>\n        <Combobox.Item value=\"us\">United States</Combobox.Item>\n        <Combobox.Item value=\"ca\">Canada</Combobox.Item>\n        <Combobox.Item value=\"mx\">Mexico</Combobox.Item>\n      </Combobox.Group>\n      <Combobox.Group>\n        <Combobox.GroupLabel>Europe</Combobox.GroupLabel>\n        <Combobox.Item value=\"uk\">United Kingdom</Combobox.Item>\n        <Combobox.Item value=\"de\">Germany</Combobox.Item>\n        <Combobox.Item value=\"fr\">France</Combobox.Item>\n      </Combobox.Group>\n      <Combobox.Empty>No matching country</Combobox.Empty>\n    </>\n  </Combobox.Content>\n</StatefulCombobox>"
+    },
+    {
+      "name": "With Empty State",
+      "description": "Combobox.Empty replaces the default no-results wording.",
+      "code": "<StatefulCombobox placeholder=\"Filter languages…\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Empty>No language matches that search</Combobox.Empty>\n    <Combobox.Item value=\"js\">JavaScript</Combobox.Item>\n    <Combobox.Item value=\"ts\">TypeScript</Combobox.Item>\n    <Combobox.Item value=\"py\">Python</Combobox.Item>\n    <Combobox.Item value=\"rs\">Rust</Combobox.Item>\n    <Combobox.Item value=\"go\">Go</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+    },
+    {
+      "name": "Loading",
+      "description": "While options load, the list says Searching… instead of no match.",
+      "code": "const repositories = [\"fragments/web\", \"fragments/api\", \"fragments/docs\"];\n\n<Combobox loading placeholder=\"Search repositories…\" defaultOpen>\n  <Combobox.Input aria-label=\"Repository\" />\n  <Combobox.Content>\n    {repositories.map((repo) => (\n      <Combobox.Item key={repo} value={repo}>\n        {repo}\n      </Combobox.Item>\n    ))}\n  </Combobox.Content>\n</Combobox>"
+    },
+    {
+      "name": "Scrollable List",
+      "description": "Caps at four rows and half-shows the fifth as a scroll hint.",
+      "code": "<StatefulCombobox placeholder=\"Search languages…\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Empty>No results found</Combobox.Empty>\n    <Combobox.Item value=\"js\">JavaScript</Combobox.Item>\n    <Combobox.Item value=\"ts\">TypeScript</Combobox.Item>\n    <Combobox.Item value=\"py\">Python</Combobox.Item>\n    <Combobox.Item value=\"rs\">Rust</Combobox.Item>\n    <Combobox.Item value=\"go\">Go</Combobox.Item>\n    <Combobox.Item value=\"rb\">Ruby</Combobox.Item>\n    <Combobox.Item value=\"java\">Java</Combobox.Item>\n    <Combobox.Item value=\"swift\">Swift</Combobox.Item>\n    <Combobox.Item value=\"kt\">Kotlin</Combobox.Item>\n    <Combobox.Item value=\"cpp\">C++</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+    },
+    {
+      "name": "Custom Max Visible Items",
+      "description": "maxVisibleItems raises the cap to six rows.",
+      "code": "<StatefulCombobox placeholder=\"Search cities…\">\n  <Combobox.Input />\n  <Combobox.Content maxVisibleItems={6}>\n    <Combobox.Empty>No results found</Combobox.Empty>\n    <Combobox.Item value=\"nyc\">New York</Combobox.Item>\n    <Combobox.Item value=\"lon\">London</Combobox.Item>\n    <Combobox.Item value=\"tok\">Tokyo</Combobox.Item>\n    <Combobox.Item value=\"par\">Paris</Combobox.Item>\n    <Combobox.Item value=\"syd\">Sydney</Combobox.Item>\n    <Combobox.Item value=\"ber\">Berlin</Combobox.Item>\n    <Combobox.Item value=\"tor\">Toronto</Combobox.Item>\n    <Combobox.Item value=\"sin\">Singapore</Combobox.Item>\n    <Combobox.Item value=\"dub\">Dubai</Combobox.Item>\n    <Combobox.Item value=\"sao\">São Paulo</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Dimmed and unfocusable.",
+      "code": "<Combobox disabled placeholder=\"Search…\">\n  <Combobox.Input />\n  <Combobox.Content>\n    <Combobox.Item value=\"1\">Option 1</Combobox.Item>\n  </Combobox.Content>\n</Combobox>"
+    },
+    {
+      "name": "Explicit Trigger",
+      "description": "showTrigger={false} hands the open control to your own Combobox.Trigger.",
+      "code": "<StatefulCombobox placeholder=\"Search assignees…\">\n  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>\n    <Combobox.Input showTrigger={false} />\n    <Combobox.Trigger aria-label=\"Open assignee list\" />\n  </div>\n  <Combobox.Content>\n    <Combobox.Item value=\"alice\">Alice</Combobox.Item>\n    <Combobox.Item value=\"bob\">Bob</Combobox.Item>\n    <Combobox.Item value=\"carol\">Carol</Combobox.Item>\n  </Combobox.Content>\n</StatefulCombobox>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select when search/filtering is not needed"
+    },
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Use Input for free-form text entry"
+    },
+    {
+      "component": "Listbox",
+      "relationship": "sibling",
+      "note": "Use Listbox for inline option lists"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string | string[] - controlled selected value",
+      "onValueChange: (value) => void - selection handler",
+      "onInputValueChange: (query) => void - typed query",
+      "multiple: boolean - enable multi-select with chips",
+      "When multiple=true, value/defaultValue must be string[] (single mode uses string|null)",
+      "placeholder: string - input placeholder text",
+      "invalid: boolean - danger edge plus aria-invalid; pair with Field.Error",
+      "loading: boolean - Searching… status and aria-busy list",
+      "disabled / readOnly: boolean",
+      "size: xs|sm|md|lg (default: md) - 24, 28, 32 or 40",
+      "autoHighlight: boolean - auto-highlight first match",
+      "Combobox.Input showTrigger: boolean - hide built-in trigger when using Combobox.Trigger explicitly",
+      "maxVisibleItems: number - max visible options before scrolling (default 4)",
+      "Label, description and error come from Field parts, never from Combobox props"
+    ],
+    "a11yRules": ["A11Y_COMBOBOX_KEYBOARD", "A11Y_COMBOBOX_LABEL", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Input",
+      "Trigger",
+      "Content",
+      "Item",
+      "ItemIndicator",
+      "Empty",
+      "Group",
+      "GroupLabel"
+    ],
+    "requiredChildren": ["Input", "Content"],
+    "commonPatterns": [
+      "<Combobox placeholder=\"Search…\"><Combobox.Input /><Combobox.Content><Combobox.Item value=\"opt1\">{label1}</Combobox.Item><Combobox.Item value=\"opt2\">{label2}</Combobox.Item></Combobox.Content></Combobox>",
+      "<Combobox multiple placeholder=\"Select items…\"><Combobox.Input /><Combobox.Content><Combobox.Item value=\"opt1\">{label1}</Combobox.Item><Combobox.Item value=\"opt2\">{label2}</Combobox.Item></Combobox.Content></Combobox>",
+      "<Combobox placeholder=\"Search…\"><Combobox.Input showTrigger={false} /><Combobox.Trigger aria-label=\"Open\" /><Combobox.Content>...</Combobox.Content></Combobox>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:53.524Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-bg-secondary",
+    "--fui-border",
+    "--fui-field-border",
+    "--fui-overlay-layer-anchored",
+    "--fui-radius-control",
+    "--fui-radius-indicator",
+    "--fui-raw-space-16",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-chips",
+      "value": "true",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    }
+  ]
+}

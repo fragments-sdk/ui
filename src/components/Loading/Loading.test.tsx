@@ -1,70 +1,76 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { act } from "@testing-library/react";
+import { compiledModuleRules } from "../../test/compiled-css";
 import { render, screen, expectNoA11yViolations } from "../../test/utils";
 import { Loading } from "./index";
 
+const rules = compiledModuleRules("src/components/Loading/Loading.module.scss");
+const styleRules = (list: CSSRule[]) =>
+  list.filter((rule): rule is CSSStyleRule => rule.type === CSSRule.STYLE_RULE);
+
+function declared(className: string, property: string) {
+  return styleRules(rules)
+    .filter((rule) => rule.selectorText.split(",").some((part) => part.trim() === `.${className}`))
+    .map((rule) => rule.style.getPropertyValue(property))
+    .filter(Boolean);
+}
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe("Loading", () => {
-  it('renders with role="status"', () => {
-    render(<Loading />);
-    expect(screen.getByRole("status")).toBeInTheDocument();
+  it('renders a status named "Loading…" by default', () => {
+    render(<Loading delay={0} />);
+    expect(screen.getByRole("status", { name: "Loading…" })).toBeInTheDocument();
   });
 
-  it('has default aria-label "Loading..."', () => {
-    render(<Loading />);
-    expect(screen.getByRole("status")).toHaveAttribute("aria-label", "Loading...");
+  it("shows nothing for the first second, then the spinner and its words", () => {
+    vi.useFakeTimers();
+    const { container } = render(<Loading label="Loading findings" />);
+    const status = screen.getByRole("status", { name: "Loading findings" });
+    expect(container.querySelector("svg")).toBeNull();
+    expect(status).toHaveTextContent("");
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    expect(container.querySelector("svg")).not.toBeNull();
+    expect(status).toHaveTextContent("Loading findings");
   });
 
-  it("accepts custom aria-label", () => {
-    render(<Loading label="Saving data..." />);
-    expect(screen.getByRole("status")).toHaveAttribute("aria-label", "Saving data...");
-  });
-
-  it.each(["sm", "md", "lg", "xl"] as const)(
-    "reserves the %s activity footprint for every visual variant",
-    (size) => {
-      const { rerender } = render(<Loading size={size} kind="spinner" />);
-      const status = screen.getByRole("status");
-      expect(status).toHaveClass(size, "spinner");
-
-      rerender(<Loading size={size} kind="dots" />);
-      expect(status).toHaveClass(size, "dots");
-
-      rerender(<Loading size={size} kind="pulse" />);
-      expect(status).toHaveClass(size, "pulse");
-    }
-  );
-
-  it('renders Loading.Inline with role="status"', () => {
-    render(<Loading.Inline label="Uploading..." />);
-    expect(screen.getByRole("status")).toHaveAttribute("aria-label", "Uploading...");
-  });
-
-  it('renders Loading.Screen with role="status"', () => {
-    render(<Loading.Screen label="Loading page..." />);
-    expect(screen.getAllByRole("status")).toHaveLength(1);
-    expect(screen.getByRole("status")).toHaveAttribute("aria-label", "Loading page...");
-  });
-
-  it("offers a themeable brand loader without adding a second announcement", async () => {
-    const { container } = render(
-      <Loading.Screen kind="fragments" color="current" label="Opening workspace" showLabel />
-    );
-    expect(screen.getAllByRole("status")).toHaveLength(1);
-    expect(screen.getByText("Opening workspace")).toBeVisible();
+  it("shows at once with delay={0}", () => {
+    const { container } = render(<Loading delay={0} />);
     expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
-    expect(container.querySelector("svg")).toHaveAttribute("stroke", "currentColor");
-    expect(container.querySelector(".color-current")).toBeInTheDocument();
-    await expectNoA11yViolations(container);
   });
 
-  it.each(["sm", "md", "lg", "xl"] as const)("renders the brand at %s size", (size) => {
-    const { container } = render(<Loading kind="fragments" size={size} label="Loading content" />);
-    expect(screen.getByRole("status")).toHaveClass(size);
-    expect(container.querySelector("svg")).toHaveAttribute("viewBox");
-    expect(container.querySelectorAll("path[pathLength='1']")).toHaveLength(3);
+  it("takes the surrounding ink and one 16px size", () => {
+    expect(declared("loading", "color")).toContain("currentColor");
+    expect(declared("loading", "--_fui-loading-size").join(" ")).toContain("--fui-icon-md");
+    expect(declared("inline", "--_fui-loading-size")).toContain("1em");
+  });
+
+  it("turns on the spin token and is never stopped under reduced motion", () => {
+    const animation = declared("spinner", "animation").join(" ");
+    expect(animation).toContain("fui-loading-spin");
+    expect(animation).toContain("--fui-duration-spin");
+  });
+
+  it("inline and fill set their classes", () => {
+    const { rerender } = render(<Loading delay={0} inline />);
+    expect(screen.getByRole("status").className).toMatch(/inline/);
+    rerender(<Loading delay={0} fill />);
+    expect(screen.getByRole("status").className).toMatch(/fill/);
+  });
+
+  it("Loading.Screen is one status on the canvas and can show its label", () => {
+    render(<Loading.Screen delay={0} label="Opening the workspace" showLabel />);
+    const status = screen.getByRole("status", { name: "Opening the workspace" });
+    expect(status).toHaveTextContent("Opening the workspace");
+    expect(declared("screen", "background-color").join(" ")).toContain("--fui-app-canvas-bg");
   });
 
   it("has no accessibility violations", async () => {
-    const { container } = render(<Loading label="Loading content" />);
+    const { container } = render(<Loading delay={0} label="Loading findings" />);
     await expectNoA11yViolations(container);
   });
 });

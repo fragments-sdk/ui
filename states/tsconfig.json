@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": false,
+    "noEmit": true,
+    "types": ["node", "vite/client"]
+  },
+  "include": ["./playwright.config.ts", "./states.spec.ts", "./app/**/*.tsx"]
+}

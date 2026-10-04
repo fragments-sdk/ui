@@ -1,230 +1,218 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/boolean-range" as boolean;
+@use "../../recipes/choice-card";
 @use "../../recipes/field" as field;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
 
-// Wrapper for checkbox + label
-.wrapper {
-  cursor: pointer;
+@layer fui.tokens, fui.base, fui.components;
 
-  &[data-size="sm"] {
-    @include boolean.row("sm");
-  }
+// The checkbox: one 16px box on the band with the
+// strong field edge, at the checkbox radius; checked = the selection fill and
+// the on-selection mark. The label is body-compact; the field label role (and
+// its strong weight) belongs to field labels, not to option labels.
 
-  &[data-size="md"] {
-    @include boolean.row("md");
-  }
+// r.check: min(4px, r × 0.5). No role token exists, so the formula reads the
+// one radius input; `--fui-checkbox-radius` stays the consumer hook.
+$_radius: var(--fui-checkbox-radius, min(4px, calc(var(--fui-radius, #{$fui-radius}) * 0.5)));
+$_mark: boolean.mark-size("md");
+$_label-role: "body-compact";
+$_hover-edge: color-mix(
+  in oklab,
+  var(--fui-text-primary, #{$fui-text-primary}) 55%,
+  var(--fui-field-border, #{$fui-field-border})
+);
+$_box-inert: "[data-disabled], [data-readonly], [data-invalid]";
+$_on: "[data-checked], [data-indeterminate]";
 
-  &[data-size="lg"] {
-    @include boolean.row("lg");
-  }
+@layer fui.components {
+  // Box + label row.
+  .wrapper {
+    // The boolean row at md, with the option-label role in place of the
+    // recipe row's ui-standard.
+    --_fui-boolean-mark-offset: calc((#{typography.line-height($_label-role)} - #{$_mark}) / 2);
 
-  &[data-disabled] {
-    @include disabled-state;
-  }
-}
+    display: grid;
+    grid-template-columns: $_mark minmax(0, 1fr);
+    column-gap: boolean.label-gap("md");
+    align-items: start;
+    cursor: pointer;
+    @include typography.role($_label-role);
 
-// The checkbox box itself
-.checkbox {
-  @include interactive-base;
-  @include boolean.mark("md");
-  @include target.hit-area("micro");
+    &[data-disabled] {
+      @include disabled-state;
+    }
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  margin-block-start: var(--_fui-boolean-mark-offset, 0);
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-checkbox-radius, var(--fui-radius-sm, #{$fui-radius-sm}));
-  cursor: inherit;
-  @include high-contrast-outline;
+    &[data-readonly] {
+      cursor: default;
+    }
 
-  &:hover:not([data-disabled]) {
-    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
+    // Hovering the label hovers the box, where the pointer can hover.
+    @media (hover: hover) {
+      &:hover > .checkbox:not(#{$_on}):not(#{$_box-inert}) {
+        border-color: $_hover-edge;
+      }
 
-  &:focus-visible {
-    @include field.focus-state;
-  }
-
-  &[data-checked],
-  &[data-indeterminate] {
-    background-color: var(--fui-control-checked-bg, $fui-color-accent);
-    border-color: var(--fui-control-checked-border, $fui-color-accent);
-    box-shadow: inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline}) 0
-      color-mix(in srgb, var(--fui-control-checked-color, #{$fui-color-on-accent}) 24%, transparent);
-  }
-
-  &[data-checked]:hover:not([data-disabled]),
-  &[data-indeterminate]:hover:not([data-disabled]) {
-    background-color: var(--fui-control-checked-bg-hover, $fui-color-accent-hover);
-    border-color: var(--fui-control-checked-border-hover, $fui-color-accent-hover);
-  }
-
-  &[data-invalid] {
-    border-color: var(--fui-color-danger, $fui-color-danger);
-  }
-
-  &[data-invalid][data-checked],
-  &[data-invalid][data-indeterminate] {
-    background-color: var(--fui-color-danger-tint, $fui-color-danger-tint);
-    border-color: var(--fui-color-danger, $fui-color-danger);
-    box-shadow: inset 0 0 0 1px
-      color-mix(in srgb, var(--fui-color-danger-text, #{$fui-color-danger-text}) 35%, transparent);
-  }
-}
-
-// Size variants
-.sm {
-  @include boolean.mark("sm");
-}
-
-.md {
-  // Default size
-}
-
-.lg {
-  @include boolean.mark("lg");
-  @include target.hit-area("compact");
-}
-
-// Indicator (checkmark or dash)
-.indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fui-control-checked-color, $fui-color-on-accent);
-
-  svg {
-    width: var(--fui-icon-xs, $fui-icon-xs);
-    height: var(--fui-icon-xs, $fui-icon-xs);
-  }
-
-  // Animation: the mark draws itself in (stroke-dashoffset over the
-  // pathLength-normalized glyphs) instead of popping. Opacity keeps the
-  // un-draw exit from lingering.
-  opacity: 0;
-  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
-
-  svg :is(polyline, line) {
-    stroke-dasharray: 24;
-    stroke-dashoffset: 24;
-    transition: stroke-dashoffset var(--fui-transition-normal, $fui-transition-normal);
-  }
-
-  [data-checked] > &,
-  [data-indeterminate] > & {
-    opacity: 1;
-
-    svg :is(polyline, line) {
-      stroke-dashoffset: 0;
+      &:hover > .checkbox:is(#{$_on}):not([data-disabled], [data-readonly]) {
+        background-color: var(--fui-control-checked-bg-hover, $fui-control-checked-bg-hover);
+        border-color: var(--fui-control-checked-bg-hover, $fui-control-checked-bg-hover);
+      }
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+  // The box.
+  .checkbox {
+    @include interactive-base;
+    @include boolean.mark("md");
+    @include target.hit-area("micro");
+    @include field.hover-state;
 
-    svg :is(polyline, line) {
-      transition: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    margin-block-start: var(--_fui-boolean-mark-offset, 0);
+    background-color: var(--fui-field-bg, $fui-field-bg);
+    border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-field-border);
+    border-radius: $_radius;
+    cursor: inherit;
+    @include high-contrast-outline;
+
+    &:focus-visible {
+      @include field.focus-state;
+    }
+
+    &:is(#{$_on}) {
+      background-color: var(--fui-control-checked-bg, $fui-control-checked-bg);
+      border-color: var(--fui-control-checked-border, $fui-control-checked-bg);
+    }
+
+    @media (hover: hover) {
+      &:is(#{$_on}):hover:not([data-disabled], [data-readonly]) {
+        background-color: var(--fui-control-checked-bg-hover, $fui-control-checked-bg-hover);
+        border-color: var(--fui-control-checked-bg-hover, $fui-control-checked-bg-hover);
+      }
+    }
+
+    // Read-only: band fill and a dashed edge, no hover. A checked read-only box
+    // keeps its fill.
+    &[data-readonly]:not(#{$_on}) {
+      @include field.readonly-state;
+    }
+
+    // Invalid: the danger edge. A checked box keeps its fill; the message under
+    // the label carries the icon and the words.
+    &[data-invalid] {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
     }
   }
 
-  [data-invalid][data-checked] > &,
-  [data-invalid][data-indeterminate] > & {
-    color: var(--fui-color-danger-text, $fui-color-danger-text);
-  }
-}
-
-// Size variant indicators
-.sm .indicator svg {
-  width: var(--fui-icon-xs, $fui-icon-xs);
-  height: var(--fui-icon-xs, $fui-icon-xs);
-}
-
-.lg .indicator svg {
-  width: var(--fui-icon-md, $fui-icon-md);
-  height: var(--fui-icon-md, $fui-icon-md);
-}
-
-// Label content
-.content {
-  min-inline-size: 0;
-}
-
-.label {
-  color: var(--fui-text-primary, $fui-text-primary);
-  user-select: none;
-}
-
-.helper {
-  display: block;
-  @include field.helper;
-}
-
-// ============================================
-// Outline variant: full-width bordered surface that mirrors the RadioGroup
-// outline variant. Selection state is driven by `:has([data-checked])` so the
-// styling reacts to the same control state the rest of the component uses.
-// ============================================
-.wrapperOutline {
-  width: 100%;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-default, $fui-border-default);
-  background: transparent;
-  transition:
-    background var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    box-shadow var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not([data-disabled]) {
-    background: var(--fui-bg-hover, $fui-bg-hover);
-    border-color: var(--fui-border-strong, $fui-border-strong);
-  }
-
-  &:focus-within:not([data-disabled]) {
-    @include focus-ring;
-    border-color: var(--fui-control-checked-border, $fui-color-accent);
-  }
-
-  &:has([data-checked]),
-  &:has([data-indeterminate]) {
-    background: color-mix(
-      in srgb,
-      var(--fui-control-checked-bg, #{$fui-color-accent}) 13%,
-      transparent
-    );
-    border-color: color-mix(
-      in srgb,
-      var(--fui-control-checked-border, #{$fui-color-accent}) 62%,
-      transparent
-    );
-    box-shadow: 0 0 0 1px
-      color-mix(in srgb, var(--fui-control-checked-border, #{$fui-color-accent}) 28%, transparent);
-  }
-
-  &[data-size="sm"] {
-    @include boolean.card("sm");
-  }
-
-  &[data-size="md"] {
-    @include boolean.card("md");
-  }
-
-  &[data-size="lg"] {
-    @include boolean.card("lg");
-  }
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
+  // The mark (check or dash).
   .indicator {
-    transition: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fui-control-checked-color, $fui-control-checked-color);
+
+    svg {
+      width: var(--fui-icon-xs, $fui-icon-xs);
+      height: var(--fui-icon-xs, $fui-icon-xs);
+    }
+
+    // The mark draws itself in (stroke-dashoffset over the pathLength-normalised
+    // glyphs) in the micro role; opacity keeps the exit from lingering.
+    opacity: 0;
+    transition: opacity var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
+
+    svg :is(polyline, line) {
+      stroke-dasharray: 24;
+      stroke-dashoffset: 24;
+      transition: stroke-dashoffset var(--fui-duration-micro, $fui-duration-micro)
+        var(--fui-ease-standard, $fui-ease-standard);
+    }
+
+    :is(#{$_on}) > & {
+      opacity: 1;
+
+      svg :is(polyline, line) {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      svg :is(polyline, line) {
+        transition: none;
+      }
+    }
+  }
+
+  // Label, helper and message.
+  .content {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .label {
+    color: var(--fui-text-primary, $fui-text-primary);
+    user-select: none;
+  }
+
+  .helper {
+    @include field.helper;
+  }
+
+  .error {
+    @include field.error;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  .errorIcon {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-sm, $fui-icon-sm);
+    block-size: var(--fui-icon-sm, $fui-icon-sm);
+    margin-block: calc(
+      (#{typography.line-height("caption")} - var(--fui-icon-sm, #{$fui-icon-sm})) / 2
+    );
+  }
+
+  .errorWords {
+    min-inline-size: 0;
+  }
+
+  // ============================================
+  // Outline: the choice card. The card draws the one focus ring around itself,
+  // so the box inside does not draw a second one. The card takes the surface
+  // radius (a choice card is a card), not the recipe's control radius.
+  // ============================================
+  .wrapperOutline {
+    @include choice-card.root;
+    @include choice-card.size("md");
+
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+    width: 100%;
+
+    // Read-only: no hover tint (the recipe gates only disabled actions).
+    &[data-readonly] {
+      background-image: none;
+    }
+
+    > .checkbox:focus-visible {
+      @include focus.delegated;
+    }
   }
 }

@@ -1,131 +1,135 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { describe, it, expect, vi, beforeAll } from "vitest";
-import { fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { act, fireEvent } from "@testing-library/react";
+import { compiledModuleRules } from "../../test/compiled-css";
 import { render, screen, expectNoA11yViolations } from "../../test/utils";
 import { Message } from "../Message";
 import { ConversationList } from "./index";
 
-const conversationListStyles = readFileSync(
-  resolve(process.cwd(), "src/components/ConversationList/ConversationList.module.scss"),
-  "utf8"
-);
+const cssText = compiledModuleRules("src/components/ConversationList/ConversationList.module.scss")
+  .map((rule) => rule.cssText)
+  .join("\n");
 
-// jsdom does not implement scrollTo
-beforeAll(() => {
-  Element.prototype.scrollTo = vi.fn();
-});
+function setScroll(
+  element: HTMLElement,
+  { scrollTop, scrollHeight, clientHeight }: Record<string, number>
+) {
+  Object.defineProperty(element, "scrollHeight", { configurable: true, value: scrollHeight });
+  Object.defineProperty(element, "clientHeight", { configurable: true, value: clientHeight });
+  element.scrollTop = scrollTop;
+}
 
 describe("ConversationList", () => {
-  it("keeps conversation chrome on neutral surfaces and the body foreground", () => {
-    expect(conversationListStyles).toContain("color: var(--fui-text-primary, $fui-text-primary);");
-    expect(conversationListStyles).toContain(
-      "background-color: var(--fui-bg-secondary, $fui-bg-secondary);"
-    );
-    expect(conversationListStyles).not.toContain("--fui-color-accent");
-  });
-
-  it("renders children as messages", () => {
+  it("is a named, focusable, polite log", () => {
     render(
-      <ConversationList>
-        <div>Message 1</div>
-        <div>Message 2</div>
+      <ConversationList label="Chat with the assistant">
+        <Message from="user">
+          <Message.Content>Hello</Message.Content>
+        </Message>
       </ConversationList>
     );
-    expect(screen.getByText("Message 1")).toBeInTheDocument();
-    expect(screen.getByText("Message 2")).toBeInTheDocument();
+    const log = screen.getByRole("log", { name: "Chat with the assistant" });
+    expect(log).toHaveAttribute("aria-live", "polite");
+    expect(log).toHaveAttribute("tabindex", "0");
+    expect(screen.getByText("Hello")).toBeInTheDocument();
   });
 
-  it("renders empty state when no children", () => {
-    render(<ConversationList emptyState={<div>No messages yet</div>}>{null}</ConversationList>);
+  it("renders the empty state when there are no messages", () => {
+    render(<ConversationList emptyState={<p>No messages yet</p>}>{[]}</ConversationList>);
     expect(screen.getByText("No messages yet")).toBeInTheDocument();
   });
 
-  it('renders DateSeparator with role="separator"', () => {
-    const date = new Date(2025, 0, 15);
+  it("reads events and day breaks as text in the log", () => {
+    const date = new Date();
     render(
       <ConversationList>
-        <ConversationList.DateSeparator date={date} />
-        <div>Message</div>
+        <ConversationList.Event date={date} />
+        <ConversationList.Event>Switched to a faster model</ConversationList.Event>
       </ConversationList>
     );
-    expect(screen.getByRole("separator")).toBeInTheDocument();
+    expect(screen.getByText("Today").tagName).toBe("TIME");
+    expect(screen.getByText("Switched to a faster model")).toBeInTheDocument();
+    expect(screen.queryByRole("separator")).toBeNull();
   });
 
-  it("renders DateSeparator with custom format function", () => {
-    const date = new Date(2025, 0, 15);
+  it("announces loading history once as a status", () => {
     render(
-      <ConversationList>
-        <ConversationList.DateSeparator date={date} format={() => "Custom Date"} />
-      </ConversationList>
-    );
-    expect(screen.getByText("Custom Date")).toBeInTheDocument();
-  });
-
-  it("renders TypingIndicator with accessible label", () => {
-    const { container } = render(
-      <ConversationList>
-        <ConversationList.TypingIndicator name="Claude" />
-      </ConversationList>
-    );
-    expect(screen.getByRole("status", { name: "Claude is typing" })).toBeInTheDocument();
-    expect(container.querySelector(".typingDot")).not.toBeInTheDocument();
-  });
-
-  it("hides message and typing-indicator avatars without retaining their outer inset", async () => {
-    const { container } = render(
-      <ConversationList showAvatars={false}>
-        <Message role="assistant">
-          <Message.Content>Avatarless response</Message.Content>
+      <ConversationList history="loading">
+        <Message from="user">
+          <Message.Content>Hi</Message.Content>
         </Message>
-        <ConversationList.TypingIndicator
-          name="Claude"
-          avatar={<span data-testid="typing-avatar">C</span>}
-        />
       </ConversationList>
     );
-
-    expect(container.querySelector('[data-role="assistant"] svg')).not.toBeInTheDocument();
-    expect(container.querySelector('[data-role="assistant"]')).toHaveClass("withoutAvatar");
-    expect(screen.queryByTestId("typing-avatar")).not.toBeInTheDocument();
-    expect(screen.getByRole("status", { name: "Claude is typing" })).toHaveClass("withoutAvatar");
-    await expectNoA11yViolations(container);
+    const statuses = screen.getAllByRole("status");
+    expect(statuses).toHaveLength(1);
+    expect(statuses[0]).toHaveTextContent("Loading history…");
   });
 
-  it("shows loading history spinner when loadingHistory is true", () => {
+  it("offers Retry when history fails", () => {
+    const onRetryHistory = vi.fn();
     render(
-      <ConversationList loadingHistory>
-        <div>Message</div>
+      <ConversationList history="error" onRetryHistory={onRetryHistory}>
+        <Message from="user">
+          <Message.Content>Hi</Message.Content>
+        </Message>
       </ConversationList>
     );
-    expect(screen.getByText("Loading history...")).toBeInTheDocument();
+    expect(screen.getByText("Couldn't load earlier messages.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+    expect(onRetryHistory).toHaveBeenCalledOnce();
   });
 
-  it("composes root onScroll and passes event to onScrollTop", () => {
+  it("composes onScroll and asks for history at the top", () => {
     const onScroll = vi.fn();
     const onScrollTop = vi.fn();
-    const { container } = render(
+    render(
       <ConversationList onScroll={onScroll} onScrollTop={onScrollTop}>
-        <div>Message</div>
+        <Message from="user">
+          <Message.Content>Hi</Message.Content>
+        </Message>
       </ConversationList>
     );
-
-    const root = container.firstElementChild as HTMLDivElement;
-    Object.defineProperty(root, "scrollTop", { value: 0, configurable: true });
-    Object.defineProperty(root, "scrollHeight", { value: 1000, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 500, configurable: true });
-
-    fireEvent.scroll(root);
-    expect(onScroll).toHaveBeenCalled();
+    const log = screen.getByRole("log");
+    fireEvent.scroll(log);
+    expect(onScroll).toHaveBeenCalledOnce();
     expect(onScrollTop).toHaveBeenCalled();
-    expect(onScrollTop.mock.calls[0][0]).toBeDefined();
+  });
+
+  it("offers a jump to the latest when the reader scrolls up", () => {
+    render(
+      <ConversationList>
+        <Message from="user">
+          <Message.Content>Hi</Message.Content>
+        </Message>
+      </ConversationList>
+    );
+    const log = screen.getByRole("log");
+    setScroll(log, { scrollTop: 0, scrollHeight: 1000, clientHeight: 200 });
+    // First scroll after a layout change only settles; the second is the reader.
+    fireEvent.scroll(log);
+    setScroll(log, { scrollTop: 100, scrollHeight: 1000, clientHeight: 200 });
+    fireEvent.scroll(log);
+    const jump = screen.getByRole("button", { name: "Jump to latest" });
+    act(() => {
+      fireEvent.click(jump);
+    });
+    expect(screen.queryByRole("button", { name: "Jump to latest" })).toBeNull();
+  });
+
+  it("anchors the log itself and rings focus inside its edge", () => {
+    expect(cssText).toContain("overflow-anchor: none");
+    expect(cssText).toMatch(/\.?_?scroller[^{]*:focus-visible/);
   });
 
   it("has no accessibility violations", async () => {
     const { container } = render(
       <ConversationList>
-        <div>Message 1</div>
-        <div>Message 2</div>
+        <ConversationList.Event date={new Date()} />
+        <Message from="user">
+          <Message.Content>Hello</Message.Content>
+        </Message>
+        <Message from="assistant">
+          <Message.Content>Hi, how can I help?</Message.Content>
+        </Message>
       </ConversationList>
     );
     await expectNoA11yViolations(container);

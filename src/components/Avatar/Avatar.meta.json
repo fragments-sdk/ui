@@ -1,0 +1,148 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Avatar",
+  "description": "Shows who someone is — their photo, or their initials when there is none.",
+  "category": "display",
+  "tags": ["user", "profile", "image", "identity"],
+  "status": "stable",
+  "sourcePath": "src/components/Avatar/index.tsx",
+  "exportName": "Avatar",
+  "propsSummary": [
+    "src: string",
+    "alt: string (default: )",
+    "initials: string",
+    "name: string",
+    "fallback: node",
+    "size: xs|sm|md|lg (default: xs)",
+    "imageProps: object"
+  ],
+  "props": {
+    "src": {
+      "type": "string",
+      "description": "Image source URL",
+      "required": false
+    },
+    "alt": {
+      "type": "string",
+      "description": "Alt text for the image",
+      "default": "",
+      "required": false
+    },
+    "initials": {
+      "type": "string",
+      "description": "Fallback initials (1-2 characters)",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name - used to generate initials",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "The control track: xs 24, sm 28, md 32, lg 40",
+      "default": "xs",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    },
+    "imageProps": {
+      "type": "object",
+      "description": "Additional props for the underlying img element (except src/alt/className/style)",
+      "required": false
+    },
+    "fallback": {
+      "type": "node",
+      "description": "Visual fallback rendered after initials and before the generic glyph",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "A row, comment, or card needs to say who",
+      "Several people belong to one thing — use Avatar.Group"
+    ],
+    "whenNot": [
+      "The picture is content, not identity (use Image)",
+      "A profile hero at display size (build the layout yourself)"
+    ],
+    "guidelines": [
+      "Pass name even when you pass src — it is the fallback and the label",
+      "Hold one size per context; xs (24) for rows, lg (40) at most",
+      "Avatar.Group max caps the stack and counts the rest",
+      "imageProps carries loading, decoding, referrerPolicy"
+    ],
+    "accessibility": [
+      "alt describes the person, not the word \"avatar\"",
+      "Initials come from name, so screen readers get the whole name",
+      "Purely decorative? Pass alt=\"\""
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "A photo, cropped to the circle and centred.",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar\n  src=\"https://i.pravatar.cc/150?u=jane\"\n  alt=\"Jane Doe\"\n  name=\"Jane Doe\"\n/>"
+    },
+    {
+      "name": "With Initials",
+      "description": "No src, so the name collapses to initials.",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar name=\"John Smith\" />"
+    },
+    {
+      "name": "Sizes",
+      "description": "The control tracks: 24, 28, 32 and 40.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <Avatar name=\"Jane Doe\" size=\"xs\" />\n  <Avatar name=\"Jane Doe\" size=\"sm\" />\n  <Avatar name=\"Jane Doe\" size=\"md\" />\n  <Avatar name=\"Jane Doe\" size=\"lg\" />\n</Stack>"
+    },
+    {
+      "name": "Group",
+      "description": "Overlapping stack with a count for whoever did not fit.",
+      "code": "import { Avatar } from '@/components/Avatar';\n\n<Avatar.Group max={3}>\n  <Avatar name=\"Alice Johnson\" />\n  <Avatar name=\"Bob Smith\" />\n  <Avatar name=\"Carol Williams\" />\n  <Avatar name=\"David Brown\" />\n  <Avatar name=\"Eve Davis\" />\n</Avatar.Group>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Image",
+      "relationship": "alternative",
+      "note": "Use Image for content pictures that are not a person or entity"
+    },
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Pair with Badge to show presence or role beside a name"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "src: string - image URL",
+      "name: string - used for initials fallback",
+      "size: xs|sm|md|lg (default: xs) - control track 24/28/32/40",
+      "imageProps: ImgHTMLAttributes - advanced img attributes"
+    ],
+    "a11yRules": ["A11Y_IMG_ALT"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Group"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.743Z"
+  },
+  "cssVariables": [
+    "--fui-app-canvas-bg",
+    "--fui-bg-secondary",
+    "--fui-color-accent-text",
+    "--fui-color-accent-tint",
+    "--fui-control-height-lg",
+    "--fui-control-height-md",
+    "--fui-control-height-sm",
+    "--fui-control-height-xs",
+    "--fui-font-weight-semibold",
+    "--fui-radius-indicator",
+    "--fui-stroke-default",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

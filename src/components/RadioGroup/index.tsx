@@ -3,8 +3,8 @@
 import * as React from "react";
 import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
 import { Radio as BaseRadio } from "@base-ui/react/radio";
-import { mergeAriaIds, useFormFieldIds } from "../../utils/aria";
-import { useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
+import { WarningCircle } from "@phosphor-icons/react";
+import { mergeAriaIds } from "../../utils/aria";
 import styles from "./RadioGroup.module.scss";
 
 // ============================================
@@ -23,13 +23,11 @@ export interface RadioGroupProps extends Omit<
   value?: string;
   /** Default value (uncontrolled) */
   defaultValue?: string;
-  /** Callback when value changes */
+  /** Called with the chosen value when the user picks an option */
   onValueChange?: (value: string) => void;
-  /** Alias for onValueChange */
-  onChange?: (value: string) => void;
   /** Orientation of the radio group */
   orientation?: "horizontal" | "vertical";
-  /** Whether the group is disabled */
+  /** Whether the group is disabled. Dims the whole group once. */
   disabled?: boolean;
   /** Whether the selected value cannot be changed by the user */
   readOnly?: boolean;
@@ -45,44 +43,42 @@ export interface RadioGroupProps extends Omit<
   label?: string;
   /** Helper text shown below the group */
   helperText?: string;
-  /** Show error styling. When a string is provided, it is displayed as an error message. */
-  error?: boolean | string;
-  /** Size variant */
-  size?: "sm" | "md" | "lg";
   /**
-   * Chrome. Omit it for the inline radio circle next to a label (form-control
-   * style); `outline` renders each item as a full-width bordered surface with
-   * the radio circle tucked inside — high-stakes choices, surveys, plan pickers.
+   * Whether the value fails validation. Every circle takes the danger edge and
+   * `errorMessage` shows under the group with an icon.
+   */
+  invalid?: boolean;
+  /** Message shown under the group while `invalid` is true */
+  errorMessage?: React.ReactNode;
+  /**
+   * Chrome. Omit it for the inline radio circle next to a label; `outline`
+   * renders each item as a full-width choice card with the circle inside it,
+   * for high-stakes choices, surveys and plan pickers.
    */
   variant?: "outline";
-  /** Class applied to the outer wrapper (label + group + error) */
-  wrapperClassName?: string;
-  /** Class applied to the inner radio group container */
-  groupClassName?: string;
-  /** ID applied to the inner element with `role="radiogroup"`. The inherited `id` remains on the outer field wrapper for compatibility. */
-  groupId?: string;
-  /** Children (Radio.Item components) */
+  /** Children (RadioGroup.Item components) */
   children: React.ReactNode;
 }
 
-export interface RadioItemProps {
+export interface RadioItemProps extends Omit<
+  React.HTMLAttributes<HTMLLabelElement>,
+  "children" | "defaultValue" | "onChange"
+> {
   /** The value for this radio item */
   value: string;
   /** Label text */
   label?: string;
   /** Helper text shown below the label */
   helperText?: string;
-  /** @deprecated Use helperText instead. Description text below the label. */
-  description?: string;
   /**
-   * A value at the end of the row, on the label's line — a price, a count,
+   * A value at the end of the row, on the label's line: a price, a count,
    * a date. Read by the label's accessible name, so keep it short and put
    * the explanation in `helperText`.
    */
   trailing?: React.ReactNode;
   /** Whether this item is disabled */
   disabled?: boolean;
-  /** Accessible name for icon-only mode */
+  /** Accessible name when there is no visible label */
   "aria-label"?: string;
   /** Accessible labelled-by relationship */
   "aria-labelledby"?: string;
@@ -90,18 +86,24 @@ export interface RadioItemProps {
   "aria-describedby"?: string;
   /** Additional class name */
   className?: string;
-  /** Class applied directly to the radio control */
-  controlClassName?: string;
-  /** Class applied to the item text content wrapper */
-  contentClassName?: string;
 }
 
 // ============================================
-// Context for size + variant
+// Group context: chrome and the group's inert states, so item labels dim and
+// stop hovering with the group.
 // ============================================
 
-const RadioSizeContext = React.createContext<ControlSize>("md");
-const RadioVariantContext = React.createContext<"outline" | undefined>(undefined);
+interface RadioGroupContextValue {
+  variant: "outline" | undefined;
+  disabled: boolean;
+  readOnly: boolean;
+}
+
+const RadioGroupContext = React.createContext<RadioGroupContextValue>({
+  variant: undefined,
+  disabled: false,
+  readOnly: false,
+});
 
 // ============================================
 // Radio Item Component
@@ -111,52 +113,31 @@ function RadioItem({
   value,
   label,
   helperText,
-  description,
   trailing,
   disabled = false,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy,
   className,
-  controlClassName,
-  contentClassName,
+  ...htmlProps
 }: RadioItemProps) {
-  const resolvedHelperText = helperText ?? description;
-  const size = React.useContext(RadioSizeContext);
-  const variant = React.useContext(RadioVariantContext);
+  const group = React.useContext(RadioGroupContext);
   const id = React.useId();
   const labelId = label ? `radio-label-${id}` : undefined;
-  const descriptionId = resolvedHelperText ? `radio-desc-${id}` : undefined;
+  const helperId = helperText ? `radio-helper-${id}` : undefined;
   const trailingId = trailing != null ? `radio-trailing-${id}` : undefined;
 
-  const radioClasses = [
-    styles.radio,
-    size === "sm" && styles.radioSm,
-    size === "lg" && styles.radioLg,
-    controlClassName,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const wrapperClasses = [
-    styles.itemWrapper,
-    variant === "outline" && styles.itemWrapperOutline,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  // If no label/description, render just the radio
-  if (!label && !resolvedHelperText) {
+  // No visible text: the circle alone, named by aria-label or aria-labelledby.
+  if (!label && !helperText) {
     return (
       <BaseRadio.Root
+        {...(htmlProps as Record<string, unknown>)}
         value={value}
         disabled={disabled}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
-        data-size={size}
-        className={[radioClasses, className].filter(Boolean).join(" ")}
+        className={[styles.radio, className].filter(Boolean).join(" ")}
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
@@ -165,33 +146,42 @@ function RadioItem({
 
   return (
     <label
-      className={wrapperClasses}
-      data-disabled={disabled || undefined}
-      data-has-description={resolvedHelperText ? true : undefined}
+      {...htmlProps}
+      className={[
+        styles.itemWrapper,
+        group.variant === "outline" && styles.itemWrapperOutline,
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      // The group's disabled state dims once on the group wrapper; the item
+      // still carries the state so its label stops hovering.
+      data-disabled={disabled || group.disabled || undefined}
+      data-readonly={group.readOnly || undefined}
       data-has-trailing={trailing != null ? true : undefined}
-      data-size={size}
     >
       <BaseRadio.Root
         value={value}
         disabled={disabled}
         aria-label={ariaLabel}
         aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId, trailingId)}
-        aria-describedby={mergeAriaIds(ariaDescribedBy, descriptionId)}
-        data-size={size}
-        className={radioClasses}
+        aria-describedby={mergeAriaIds(ariaDescribedBy, helperId)}
+        className={styles.radio}
       >
         <BaseRadio.Indicator className={styles.indicator} />
       </BaseRadio.Root>
-      <div className={[styles.content, contentClassName].filter(Boolean).join(" ")}>
-        <span id={labelId} className={styles.label}>
-          {label}
-        </span>
-        {resolvedHelperText && (
-          <span id={descriptionId} className={styles.helper}>
-            {resolvedHelperText}
+      <span className={styles.content}>
+        {label && (
+          <span id={labelId} className={styles.label}>
+            {label}
           </span>
         )}
-      </div>
+        {helperText && (
+          <span id={helperId} className={styles.helper}>
+            {helperText}
+          </span>
+        )}
+      </span>
       {trailing != null && (
         <span id={trailingId} className={styles.trailing}>
           {trailing}
@@ -210,7 +200,6 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
     value,
     defaultValue,
     onValueChange,
-    onChange,
     orientation = "vertical",
     disabled = false,
     readOnly = false,
@@ -220,14 +209,12 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
     inputRef,
     label,
     helperText,
-    error,
-    size: sizeProp,
+    invalid = false,
+    errorMessage,
     variant,
-    wrapperClassName,
-    groupClassName,
-    groupId,
     children,
     className,
+    id,
     "aria-label": ariaLabel,
     "aria-labelledby": ariaLabelledBy,
     "aria-describedby": ariaDescribedBy,
@@ -235,70 +222,66 @@ const RadioGroupRoot = React.forwardRef<HTMLDivElement, RadioGroupProps>(functio
   }: RadioGroupProps,
   ref
 ) {
-  const size = useResolvedControlSize(sizeProp);
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("radio-group", {
-    label,
-    helperText,
-    error,
-  });
+  const generatedId = React.useId();
+  const groupId = id ?? `radio-group-${generatedId}`;
+  const hasError = invalid;
+  const showError = hasError && errorMessage != null && errorMessage !== false;
+  const labelId = label ? `${groupId}-label` : undefined;
+  const helperId = helperText ? `${groupId}-helper` : undefined;
+  const errorId = showError ? `${groupId}-error` : undefined;
 
-  const groupClasses = [styles.group, styles[orientation], className, groupClassName]
-    .filter(Boolean)
-    .join(" ");
-
-  const handleValueChange = onChange ?? onValueChange;
+  const context = React.useMemo(
+    () => ({ variant, disabled, readOnly }),
+    [variant, disabled, readOnly]
+  );
 
   return (
-    <RadioSizeContext.Provider value={size}>
-      <RadioVariantContext.Provider value={variant}>
-        <div
+    <RadioGroupContext.Provider value={context}>
+      <div
+        {...htmlProps}
+        className={[styles.wrapper, className].filter(Boolean).join(" ")}
+        data-disabled={disabled || undefined}
+      >
+        {label && (
+          <span id={labelId} className={styles.groupLabel}>
+            {label}
+          </span>
+        )}
+        {/* The ref and id land on the element with role="radiogroup". */}
+        <BaseRadioGroup
           ref={ref}
-          {...htmlProps}
-          className={[styles.wrapper, wrapperClassName].filter(Boolean).join(" ")}
-          data-size={size}
+          id={groupId}
+          value={value}
+          defaultValue={defaultValue}
+          onValueChange={onValueChange}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+          name={name}
+          form={form}
+          inputRef={inputRef}
+          aria-label={ariaLabel}
+          aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
+          aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
+          data-invalid={hasError || undefined}
+          aria-invalid={hasError || undefined}
+          className={[styles.group, styles[orientation]].join(" ")}
         >
-          {label && (
-            <span id={labelId} className={styles.groupLabel}>
-              {label}
-            </span>
-          )}
-          <BaseRadioGroup
-            id={groupId}
-            value={value}
-            defaultValue={defaultValue}
-            onValueChange={handleValueChange}
-            disabled={disabled}
-            readOnly={readOnly}
-            required={required}
-            name={name}
-            form={form}
-            inputRef={inputRef}
-            aria-label={ariaLabel}
-            aria-labelledby={mergeAriaIds(ariaLabelledBy, labelId)}
-            aria-describedby={mergeAriaIds(ariaDescribedBy, errorId, helperId)}
-            data-size={size}
-            data-invalid={hasError || undefined}
-            aria-invalid={hasError || undefined}
-            className={groupClasses}
-          >
-            {children}
-          </BaseRadioGroup>
-          {helperText && (
-            <span
-              id={helperId}
-              className={hasError ? [styles.helper, styles.error].join(" ") : styles.helper}
-            >
-              {helperText}
-            </span>
-          )}
-          {errorMessage && (
-            <span id={errorId} className={styles.error}>
-              {errorMessage}
-            </span>
-          )}
-        </div>
-      </RadioVariantContext.Provider>
-    </RadioSizeContext.Provider>
+          {children}
+        </BaseRadioGroup>
+        {helperText && (
+          <span id={helperId} className={styles.helper}>
+            {helperText}
+          </span>
+        )}
+        {showError && (
+          <span id={errorId} className={styles.error}>
+            <WarningCircle className={styles.errorIcon} aria-hidden="true" weight="bold" />
+            <span className={styles.errorWords}>{errorMessage}</span>
+          </span>
+        )}
+      </div>
+    </RadioGroupContext.Provider>
   );
 });
 

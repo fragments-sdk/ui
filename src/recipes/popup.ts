@@ -1,6 +1,15 @@
 import { MEASUREMENT_PROFILES, measurementPx } from "../measurements";
 
-export const POPUP_OFFSET_PX = measurementPx(MEASUREMENT_PROFILES.rawSpace["4"], "rawSpace.4");
+/** The gap between a popup and its anchor (`--fui-popup-offset`). */
+export const POPUP_OFFSET_PX = measurementPx(
+  MEASUREMENT_PROFILES.targets.popup.offset,
+  "targets.popup.offset"
+);
+/** The viewport inset a popup keeps when it flips or shifts (`--fui-popup-collision-padding`). */
+export const POPUP_COLLISION_PADDING_PX = measurementPx(
+  MEASUREMENT_PROFILES.targets.popup["collision-padding"],
+  "targets.popup.collision-padding"
+);
 export const POPUP_VIEWPORT_ROWS = 4.5;
 
 export function resolvePopupViewportRows(maxVisibleItems?: number): number {

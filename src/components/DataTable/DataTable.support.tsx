@@ -1,35 +1,5 @@
 import * as React from "react";
 
-// Skeleton placeholder rows shown while `loading`. Keeps the table's
-// column rhythm so the populated state doesn't jump on arrival.
-export function DataTableSkeletonRows({
-  rowCount,
-  columnCount,
-  rowClassName,
-  cellClassName,
-  barClassName,
-}: {
-  rowCount: number;
-  columnCount: number;
-  rowClassName: string;
-  cellClassName: string;
-  barClassName: string;
-}) {
-  return (
-    <>
-      {Array.from({ length: rowCount }).map((_, r) => (
-        <tr key={r} className={rowClassName} aria-hidden="true">
-          {Array.from({ length: columnCount }).map((_, c) => (
-            <td key={c} className={cellClassName}>
-              <span className={barClassName} style={{ width: `${45 + ((r + c) % 4) * 14}%` }} />
-            </td>
-          ))}
-        </tr>
-      ))}
-    </>
-  );
-}
-
 const NAV_KEYS = new Set(["ArrowDown", "ArrowUp", "Home", "End"]);
 
 // Roving arrow-key navigation across focusable (clickable) rows. Enter /

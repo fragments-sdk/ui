@@ -22,18 +22,11 @@ export function publicUiPrimitiveNames(): string[] {
 }
 
 const config: FragmentsConfig = {
-  // The compiler always retains brownfield `.contract.json` discovery. This
-  // authored glob is the v3 source surface as components migrate one at a time.
-  include: ["src/**/*.fragment.tsx"],
-  exclude: ["**/node_modules/**"],
-  components: [
-    "src/**/index.tsx",
-    "src/**/*.tsx",
-    // ThemeToggle remains a physical module behind the public Theme identity.
-    // Scope this exception to component discovery so its stylesheet still
-    // participates in governance source discovery.
-    "!src/components/ThemeToggle/**",
-  ],
+  // Co-located JSON metadata is the catalog source. TSX fixtures remain available
+  // to author and inspect examples without defining duplicate catalog entries.
+  include: ["src/**/*.meta.json"],
+  exclude: ["**/node_modules/**", "**/*.fragment.tsx"],
+  components: ["src/**/index.tsx", "src/**/*.tsx"],
   framework: "react",
   performance: "standard",
   tokens: {

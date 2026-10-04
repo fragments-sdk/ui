@@ -1,0 +1,269 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Sidebar",
+  "description": "Navigates through a collapsible desktop rail that becomes a modal panel on smaller screens.",
+  "category": "layout",
+  "tags": ["sidebar", "navigation", "rail", "menu", "layout"],
+  "status": "stable",
+  "sourcePath": "src/components/Sidebar/index.tsx",
+  "exportName": "Sidebar",
+  "propsSummary": [
+    "children: node (required)",
+    "collapsed: boolean",
+    "defaultCollapsed: boolean (default: false)",
+    "onCollapsedChange: function",
+    "open: boolean",
+    "defaultOpen: boolean (default: false)",
+    "onOpenChange: function",
+    "collapsible: icon|offcanvas|none (default: icon)",
+    "enableKeyboardShortcut: boolean (default: true)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Sidebar content (use Sidebar.Header, Sidebar.Nav, Sidebar.Section, etc.)",
+      "required": true
+    },
+    "collapsed": {
+      "type": "boolean",
+      "description": "Desktop: the rail is collapsed (controlled). Ignored inside a Sidebar.Provider or AppShell.",
+      "required": false
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "description": "Initial collapsed state (uncontrolled)",
+      "default": false,
+      "required": false
+    },
+    "onCollapsedChange": {
+      "type": "function",
+      "description": "Called when collapsed state changes",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Mobile: the panel is open (controlled)",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Initial open state (uncontrolled)",
+      "default": false,
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when open state changes",
+      "required": false
+    },
+    "collapsible": {
+      "type": "enum",
+      "description": "How the rail collapses: to its glyphs (icon), off the canvas (offcanvas), or never (none)",
+      "default": "icon",
+      "required": false,
+      "values": ["icon", "offcanvas", "none"]
+    },
+    "enableKeyboardShortcut": {
+      "type": "boolean",
+      "description": "Toggle with Cmd/Ctrl+B",
+      "default": true,
+      "required": false
+    },
+    "aria-label": {
+      "type": "string",
+      "description": "Accessible label for the rail and the mobile panel",
+      "default": "Sidebar navigation",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Primary navigation for an app shell",
+      "Navigation that must collapse to icons or hide entirely",
+      "Grouped destinations with active state"
+    ],
+    "whenNot": [
+      "Top-level horizontal navigation (use Header)",
+      "Temporary side panels for one task (use Drawer)",
+      "In-page section links (use TableOfContents)"
+    ],
+    "guidelines": [
+      "Give every item an icon so the collapsed rail stays readable; with no glyphs, collapsing hides the rail",
+      "collapsible=\"icon\" shrinks to the glyph rail; \"offcanvas\" takes it off the canvas, and Header.Trigger brings it back",
+      "Sidebar.Header shows collapsedContent alone while the rail is collapsed; give it the brand mark so a full brand never clips",
+      "Set state on Sidebar when it stands alone; wrap in Sidebar.Provider (or AppShell) when a header trigger or other code must drive it, and set state there",
+      "The current item takes the selection wash and ring at the regular weight; mark it with active",
+      "Sidebar.Item and Sidebar.SubItem take render for router links",
+      "Sidebar rows also work outside a Sidebar, for example in a Drawer for a header's mobile navigation",
+      "Use Sidebar.MenuSkeleton inside a Section while navigation data loads"
+    ],
+    "accessibility": [
+      "The rail is a labelled <aside>; Sidebar.Nav is a labelled <nav>",
+      "aria-current=\"page\" on the current item",
+      "aria-expanded on items with submenus and on collapsible section labels",
+      "Below md the panel is a modal dialog: focus trap, a visible close, Escape closes, the scrim closes",
+      "Cmd/Ctrl+B toggles the sidebar",
+      "Collapsed rows keep their label for assistive tech and show it in a tooltip",
+      "Rows are at least 32px tall (the md control track) and the section action has a 32px hit area; under a coarse pointer both reach the 44px hit-area floor"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "A rail with sections, the current item and a collapse toggle.",
+      "code": "import { House as HouseIcon, ListBullets as ListIcon } from \"@phosphor-icons/react\";\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar>\n  <Sidebar.Header>Workspace</Sidebar.Header>\n  <Sidebar.Nav>\n    <Sidebar.Section label=\"Workspace\">\n      <Sidebar.Item icon={<HouseIcon />} href=\"/overview\" active>Overview</Sidebar.Item>\n      <Sidebar.Item icon={<ListIcon />} href=\"/findings\">Findings</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n  <Sidebar.Footer>\n    <Sidebar.CollapseToggle />\n  </Sidebar.Footer>\n</Sidebar>"
+    },
+    {
+      "name": "Collapsed",
+      "description": "Collapsed to the glyphs; labels show in tooltips.",
+      "code": "import { House as HouseIcon, ListBullets as ListIcon } from \"@phosphor-icons/react\";\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar defaultCollapsed>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HouseIcon />} active>Overview</Sidebar.Item>\n      <Sidebar.Item icon={<ListIcon />}>Findings</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n  <Sidebar.Footer>\n    <Sidebar.CollapseToggle />\n  </Sidebar.Footer>\n</Sidebar>"
+    },
+    {
+      "name": "Row States",
+      "description": "Badges, a working row and a disabled row.",
+      "code": "import { ListBullets as ListIcon, Gear as GearIcon, ChartBar as ChartIcon } from \"@phosphor-icons/react\";\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section label=\"Inbox\">\n      <Sidebar.Item icon={<ListIcon />} badge=\"12\" active>Findings</Sidebar.Item>\n      <Sidebar.Item icon={<GearIcon />} working>Setup</Sidebar.Item>\n      <Sidebar.Item icon={<ChartIcon />} disabled>Adoption</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Submenu",
+      "description": "A row opens a nested list.",
+      "code": "import { Gear as GearIcon } from \"@phosphor-icons/react\";\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<GearIcon />} hasSubmenu defaultExpanded>Settings</Sidebar.Item>\n      <Sidebar.Submenu>\n        <Sidebar.SubItem href=\"/settings/general\" active>General</Sidebar.SubItem>\n        <Sidebar.SubItem href=\"/settings/members\">Members</Sidebar.SubItem>\n      </Sidebar.Submenu>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Provider & Header Trigger",
+      "description": "Sidebar.Provider holds the state so Header.Trigger can open the mobile panel.",
+      "code": "import { House as HouseIcon } from \"@phosphor-icons/react\";\nimport { Header } from '@/components/Header';\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar.Provider collapsible=\"offcanvas\">\n  <Header>\n    <Header.Trigger />\n    <Header.Brand href=\"/\">Workspace</Header.Brand>\n  </Header>\n  <Sidebar>\n    <Sidebar.Nav>\n      <Sidebar.Section>\n        <Sidebar.Item icon={<HouseIcon />} active>Overview</Sidebar.Item>\n      </Sidebar.Section>\n    </Sidebar.Nav>\n    <Sidebar.Footer>\n      <Sidebar.CollapseToggle />\n    </Sidebar.Footer>\n  </Sidebar>\n</Sidebar.Provider>"
+    },
+    {
+      "name": "Router Links",
+      "description": "render moves the row's look and props onto a router link.",
+      "code": "import RouterLink from \"next/link\";\nimport { House as HouseIcon } from \"@phosphor-icons/react\";\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section>\n      <Sidebar.Item icon={<HouseIcon />} render={<RouterLink href=\"/overview\" />} active>Overview</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Section Action",
+      "description": "A collapsible section with one action beside its label.",
+      "code": "import { Plus as PlusIcon, Folder as RepoIcon } from \"@phosphor-icons/react\";\nimport { Sidebar } from '@/components/Sidebar';\n\n<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section\n      label=\"Repositories\"\n      collapsible\n      action={<Sidebar.SectionAction aria-label=\"Add repository\"><PlusIcon /></Sidebar.SectionAction>}\n    >\n      <Sidebar.Item icon={<RepoIcon />}>web</Sidebar.Item>\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    },
+    {
+      "name": "With Loading Skeleton",
+      "description": "Placeholder rows while navigation loads.",
+      "code": "import { Sidebar } from '@/components/Sidebar';\n\n<Sidebar>\n  <Sidebar.Nav>\n    <Sidebar.Section label=\"Workspace\">\n      <Sidebar.MenuSkeleton count={4} />\n    </Sidebar.Section>\n  </Sidebar.Nav>\n</Sidebar>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "AppShell",
+      "relationship": "parent",
+      "note": "AppShell.Sidebar wraps Sidebar and holds its state"
+    },
+    {
+      "component": "Header",
+      "relationship": "sibling",
+      "note": "Header.Trigger opens the mobile panel and brings back a hidden rail"
+    },
+    {
+      "component": "Drawer",
+      "relationship": "composition",
+      "note": "Sidebar rows in a Drawer give a header-only app its mobile navigation"
+    },
+    {
+      "component": "Menu",
+      "relationship": "composition",
+      "note": "Use Menu for contextual actions within the sidebar"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "collapsed / defaultCollapsed / onCollapsedChange - the desktop rail",
+      "open / defaultOpen / onOpenChange - the mobile panel",
+      "collapsible: icon|offcanvas|none",
+      "Sidebar.Provider holds the state when something outside the rail drives it",
+      "Sidebar.Item active|disabled|working|badge|href|render|hasSubmenu|expanded",
+      "Sidebar.Section label|action|collapsible|defaultOpen",
+      "useSidebar() - state and toggleSidebar; inert defaults outside a sidebar"
+    ],
+    "a11yRules": ["A11Y_NAV_LANDMARK", "A11Y_FOCUS_TRAP", "A11Y_ESCAPE_CLOSE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Provider",
+      "Header",
+      "Nav",
+      "Section",
+      "SectionAction",
+      "Item",
+      "SubItem",
+      "Submenu",
+      "Footer",
+      "CollapseToggle",
+      "MenuSkeleton"
+    ],
+    "requiredChildren": ["Nav"],
+    "commonPatterns": [
+      "<Sidebar><Sidebar.Header>{applicationName}</Sidebar.Header><Sidebar.Nav><Sidebar.Section><Sidebar.Item icon={icon} active>{label}</Sidebar.Item></Sidebar.Section></Sidebar.Nav><Sidebar.Footer><Sidebar.CollapseToggle /></Sidebar.Footer></Sidebar>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:03.784Z"
+  },
+  "cssVariables": [
+    "--fui-app-canvas-bg",
+    "--fui-appshell-sidebar-width",
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-border",
+    "--fui-control-selected-bg",
+    "--fui-control-selected-border",
+    "--fui-font-weight-normal",
+    "--fui-font-weight-semibold",
+    "--fui-navigation-content-gap",
+    "--fui-navigation-gutter",
+    "--fui-navigation-label-optical-y",
+    "--fui-navigation-leading-box",
+    "--fui-navigation-row-track",
+    "--fui-navigation-sidebar-collapsed-width",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-12",
+    "--fui-raw-space-16",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-sidebar-item-active-bg",
+    "--fui-sidebar-item-active-border",
+    "--fui-sidebar-item-active-color",
+    "--fui-sidebar-item-color",
+    "--fui-sidebar-item-hover-bg",
+    "--fui-sidebar-item-hover-color",
+    "--fui-sidebar-item-icon-color",
+    "--fui-sidebar-section-label-size",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-collapsible",
+      "value": "icon",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-expanded",
+      "value": "",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-open",
+      "value": "true",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-state",
+      "value": "expanded",
+      "fixture": "populated"
+    }
+  ]
+}

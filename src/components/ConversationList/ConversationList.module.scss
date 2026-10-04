@@ -1,113 +1,116 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/feedback" as feedback;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/layout" as layout;
-@use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
 
-// ============================================
-// Conversation List Root
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.conversationList {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  color: var(--fui-text-primary, $fui-text-primary);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-
-  // Smooth scroll on reduced motion
-  @media (prefers-reduced-motion: reduce) {
-    scroll-behavior: auto;
+@layer fui.components {
+  .root {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+    color: var(--fui-text-primary, $fui-text-primary);
   }
-}
 
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: layout.gap("md");
-  padding: layout.gap("lg");
-  min-height: 100%;
-  // Own the full height of the conversation. As a shrinkable flex item it was
-  // squashed to the height of the scroll port while its messages overflowed
-  // past it — the list still scrolled, because the overflow lands on the
-  // scroller, but this element reported a constant height no matter how much
-  // was in it. Anything measuring the conversation, auto-scroll included, was
-  // measuring the window rather than the content.
-  flex-shrink: 0;
-}
+  // The log scrolls; a keyboard reaches it and sees the ring inside its edge.
+  .scroller {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    // The list anchors the reader itself; the browser's anchoring would fight it.
+    overflow-anchor: none;
 
-// ============================================
-// Loading History
-// ============================================
+    @include focus.visible(true);
+  }
 
-.loadingHistory {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: layout.gap("sm");
-  padding: layout.gap("md");
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  @include typography.role("caption");
-}
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: layout.gap("lg");
+    // Own the full height of the conversation, so anything measuring it
+    // measures the messages rather than the scroll port.
+    flex-shrink: 0;
+    min-block-size: 100%;
+    padding: layout.gap("lg");
+    box-sizing: border-box;
+  }
 
-// ============================================
-// Date Separator
-// ============================================
+  // ============================================
+  // Earlier messages: in flow above the log, never scrolled out of view
+  // ============================================
 
-.dateSeparator {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("sm");
-  padding-block: layout.gap("sm");
-}
+  .history {
+    @include typography.role("caption");
 
-.dateSeparatorLine {
-  flex: 1;
-  height: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-  background-color: var(--fui-border, $fui-border);
-}
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: layout.gap("sm");
+    padding-block-start: layout.gap("lg");
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
 
-.dateSeparatorText {
-  @include typography.role("ui-compact");
+  .historyError {
+    @include feedback.errbox;
 
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  white-space: nowrap;
-}
+    flex: 0 0 auto;
+    margin-block-start: layout.gap("lg");
+    margin-inline: layout.gap("lg");
+  }
 
-// ============================================
-// Typing Indicator
-// ============================================
+  .historyErrorIcon {
+    @include feedback.errbox-icon;
+  }
 
-.typingIndicator {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("sm");
-  padding: layout.gap("sm");
-}
+  .historyErrorWords {
+    @include feedback.errbox-words;
+  }
 
-.withoutAvatar {
-  padding-inline: 0;
-}
+  .historyErrorActions {
+    @include feedback.errbox-actions;
+  }
 
-.typingAvatar {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: representation.avatar-size("sm");
-  block-size: representation.avatar-size("sm");
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
+  // ============================================
+  // Jump to latest: in flow under the log, never floating over it
+  // ============================================
 
-.typingContent {
-  display: flex;
-  align-items: center;
-  padding-block: layout.gap("sm");
-  padding-inline: layout.gap("md");
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
+  .jump {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    padding-block: layout.gap("sm");
+  }
+
+  // ============================================
+  // Event: a day break or something that happened, read in the log
+  // ============================================
+
+  .event {
+    @include typography.role("caption");
+
+    display: flex;
+    align-items: center;
+    gap: layout.gap("md");
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  .eventLine {
+    flex: 1 1 auto;
+    block-size: var(--fui-stroke-hairline, $fui-stroke-hairline);
+    background-color: var(--fui-border, $fui-border);
+  }
+
+  .eventText {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
 }

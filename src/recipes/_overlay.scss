@@ -1,5 +1,7 @@
+@use "sass:list";
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;
+@use "../tokens/mixins" as mixins;
 @use "action" as action;
 @use "feedback" as feedback;
 @use "surface" as surface;
@@ -106,6 +108,31 @@
   background-color: var(--fui-backdrop, #{tokens.$fui-backdrop});
 }
 
+/// How a large overlay (dialog, drawer) and its scrim arrive and leave: a fade
+/// on Base UI's starting and ending styles, in `--fui-duration-enter-lg` and out
+/// in `--fui-duration-exit-lg`, on the one easing. Nothing travels or scales, so
+/// reduced motion keeps the same fade. `$also` names properties the caller moves
+/// for its own reasons (a drawer settling back after a swipe), never on enter
+/// or exit; reduced motion drops them.
+@mixin motion($also: ()) {
+  transition-property: list.join(opacity, $also, $separator: comma);
+  transition-duration: var(--fui-duration-enter-lg, #{tokens.$fui-duration-enter-lg});
+  transition-timing-function: var(--fui-ease-standard, #{tokens.$fui-ease-standard});
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  &[data-ending-style] {
+    transition-duration: var(--fui-duration-exit-lg, #{tokens.$fui-duration-exit-lg});
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
+  }
+}
+
 /// The Drawer geometry for an edge-anchored modal panel: fixed on the modal
 /// layer, inset by the safe-area frame, one drawer width. Callers must also
 /// include `safe-viewport` somewhere on or above the panel. $side: start | end.
@@ -134,74 +161,140 @@
 /// A complete side panel for hosts that are not the Drawer component
 /// (mobile navigation): the floating surface on the Drawer geometry.
 @mixin side-panel($side) {
-  @include surface;
+  @include surface(overlay);
   @include safe-viewport;
   @include typography.role("body-compact");
   @include side-panel-geometry($side);
 }
 
 /// Every floating panel (modal, drawer, popover, popup list, toast) is the
-/// same object: elevated fill, hairline edge, the outer radius level, one shadow.
-@mixin surface {
+/// same object: the raised plane, the popup shadow and its corner, no edge
+/// (UIR-D145: the shadow's own hairline ring is the boundary). `$radius`
+/// names the corner role: `popup` for anchored panels, `overlay` for modals and
+/// drawers. Forced colours drop the shadow, so an outline keeps the shape.
+@mixin surface($radius: popup) {
+  @if $radius != popup and $radius != overlay {
+    @error "Unknown floating radius '#{$radius}'. Expected popup or overlay.";
+  }
+
   box-sizing: border-box;
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   background-color: var(--fui-bg-elevated, #{tokens.$fui-bg-elevated});
-  border: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
-    var(--fui-border, #{tokens.$fui-border});
-  border-radius: var(--fui-radius-l1, #{tokens.$fui-radius-l1});
-  box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
-}
+  border: 0;
+  @if $radius == overlay {
+    border-radius: var(--fui-radius-overlay, #{tokens.$fui-radius-overlay});
+  } @else {
+    border-radius: var(--fui-radius-popup, #{tokens.$fui-radius-popup});
+  }
+  box-shadow: var(--fui-shadow-popup, #{tokens.$fui-shadow-popup});
 
-@mixin modal-shell {
-  @include surface;
-  @include typography.role("body-compact");
-
-  max-block-size: var(--_fui-overlay-safe-block, calc(100dvh - #{_raw(32)}));
-  overflow: auto;
-}
-
-@mixin _section-inline-inset {
-  padding-inline: #{surface.inset("roomy")};
-
-  @media (max-width: 479px) {
-    padding-inline: #{surface.inset("default")};
+  @media (forced-colors: active) {
+    outline: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid CanvasText;
   }
 }
 
-@mixin header {
-  @include _section-inline-inset;
+// The modal sheet shared by Dialog, AlertDialog and Drawer: the floating panel
+// (raised, overlay corner, popup shadow, no edge) as a flex column whose body is
+// the only scroll region, so the header, close and footer stay put. Every
+// section takes the dialog pad (16) at the inline edges; the panel's own 8
+// block pad plus each section's 8 make 16 at the top, between sections and at
+// the foot. The footer is the raised plane too: no band, and a line only while
+// the body above it overflows (the edge its content scrolls under).
+$_sheet-pad: _raw(16);
+$_sheet-half: _raw(8);
 
-  display: grid;
-  gap: var(--fui-overlay-section-gap, #{_raw(8)});
-  padding-block: #{_raw(12)};
-}
-
-@mixin body {
-  @include _section-inline-inset;
+@mixin modal-shell {
+  @include surface(overlay);
   @include typography.role("body-compact");
 
-  padding-block: 0 #{_raw(12)};
+  display: flex;
+  flex-direction: column;
+  max-block-size: var(--_fui-overlay-safe-block, calc(100dvh - #{_raw(32)}));
+  padding-block: $_sheet-half;
+  overflow: hidden;
 }
 
-@mixin footer {
-  @include _section-inline-inset;
+@mixin header {
+  display: grid;
+  flex: none;
+  gap: var(--fui-feedback-text-gap, #{_raw(4)});
+  padding-block: $_sheet-half;
+  padding-inline: $_sheet-pad;
+}
 
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--fui-overlay-section-gap, #{_raw(8)});
-  padding-block: #{_raw(8)};
-  border-top: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
-    var(--fui-border, #{tokens.$fui-border});
-  background-color: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+/// Keeps the header's words clear of the corner X.
+@mixin header-beside-close {
+  padding-inline-end: calc(
+    var(--fui-overlay-close-inset, #{_raw(12)}) + #{action.track("sm")} + #{$_sheet-half}
+  );
 }
 
 @mixin modal-title {
-  @include typography.role("title-md");
+  @include typography.role("title-sm");
+
+  margin: 0;
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
 }
 
 @mixin description {
   @include typography.role("body-compact");
+
+  margin: 0;
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+}
+
+@mixin body {
+  @include typography.role("body-compact");
+
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding-block: $_sheet-half;
+  padding-inline: $_sheet-pad;
+  overflow: auto;
+  overscroll-behavior: contain;
+
+  // In the tab order only while it overflows (useOverflowFocusable).
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+@mixin footer {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $_sheet-half;
+  padding-block: $_sheet-half;
+  padding-inline: $_sheet-pad;
+
+  // The scroll edge: one hairline across the sheet, shown only while the body
+  // before the footer overflows (useOverflowFocusable marks it), so content
+  // scrolled under the footer has an edge to pass beneath. A short body keeps
+  // the plain plane. A border, not a fill, so forced colours keep it; it fades
+  // in the micro role, and reduced motion drops the fade.
+  &::before {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    border-block-start: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline}) solid
+      var(--fui-border, #{tokens.$fui-border});
+    content: "";
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--fui-duration-micro, #{tokens.$fui-duration-micro})
+      var(--fui-ease-standard, #{tokens.$fui-ease-standard});
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  [data-fui-overflowing] ~ &::before {
+    opacity: 1;
+  }
 }
 
 @mixin anchored-title {
@@ -216,10 +309,11 @@
   position: absolute;
   inset-block-start: var(--fui-overlay-close-inset, #{_raw(12)});
   inset-inline-end: var(--fui-overlay-close-inset, #{_raw(12)});
-  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
+  border-radius: var(--fui-radius-control, #{tokens.$fui-radius-control});
   color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
 
-  &:hover {
+  // Hover only where the pointer can hover, never on an inert close.
+  @include action.hover {
     background-color: var(--fui-bg-hover, #{tokens.$fui-bg-hover});
     color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   }
@@ -273,9 +367,12 @@
   transform: rotate(45deg);
 }
 
-/// The one inverse floating surface: compact, no edge, nested radius level.
+/// The one inverse floating surface: compact, no edge, the tooltip corner.
 @mixin tooltip {
   @include typography.role("ui-compact");
+
+  // Tooltips take the strong weight; the compact role is regular.
+  font-weight: typography.weight("ui-standard");
 
   box-sizing: border-box;
   max-inline-size: var(
@@ -286,6 +383,13 @@
   padding-inline: _raw(8);
   color: var(--fui-text-inverse, #{tokens.$fui-text-inverse});
   background-color: var(--fui-bg-inverse, #{tokens.$fui-bg-inverse});
-  border-radius: var(--fui-radius-l2, #{tokens.$fui-radius-l2});
-  box-shadow: var(--fui-shadow-md, #{tokens.$fui-shadow-md});
+  border-radius: var(--fui-radius-tooltip, #{tokens.$fui-radius-tooltip});
+  box-shadow: var(--fui-shadow-popup, #{tokens.$fui-shadow-popup});
+}
+
+/// The modal sheet's corner X: an h28 ghost square on the control corner, ink 2.
+@mixin modal-close {
+  @include mixins.button-reset;
+  @include mixins.interactive-base;
+  @include close;
 }

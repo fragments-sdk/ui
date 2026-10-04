@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
-import { useResolvedControlSize, type ControlSize } from "../ComponentDefaults";
+import { useResolvedControlSize } from "../ComponentDefaults";
+import { useScrollEdges } from "../ScrollArea/use-scroll-edges";
 import styles from "./Tabs.module.scss";
 
 // ============================================
@@ -11,6 +12,7 @@ import styles from "./Tabs.module.scss";
 
 export type TabValue = string;
 export type TabsVariant = "ghost" | "soft";
+export type TabsSize = "sm" | "md";
 export type TabsChangeEventDetails = Parameters<
   NonNullable<React.ComponentProps<typeof BaseTabs.Root>["onValueChange"]>
 >[1];
@@ -19,7 +21,10 @@ export type TabsChangeEventDetails = Parameters<
  * Tabbed navigation for switching between content panels.
  * @see https://usefragments.com/components/tabs
  */
-export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
+export interface TabsProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "defaultValue" | "onChange"
+> {
   children: React.ReactNode;
   /** Default active tab value (uncontrolled) */
   defaultValue?: TabValue;
@@ -27,47 +32,70 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "d
   value?: TabValue;
   /** Called when the active tab changes */
   onValueChange?: (value: TabValue, eventDetails: TabsChangeEventDetails) => void;
-  /** Tab layout direction.
-   * @default "horizontal" */
-  orientation?: "horizontal" | "vertical";
-  /** Tab list chrome (default for Tabs.List): `ghost` draws a rule under the
-   * active tab, `soft` is a filled rail with a selected segment.
+  /** Called when the tab already open is pressed again (it may close what covers its panel). */
+  onReselect?: (value: TabValue) => void;
+  /** Tab row chrome: `ghost` draws a 2px ink underline under the open tab,
+   * `soft` is the segmented control (band track, lifted thumb).
    * @default "ghost" */
   variant?: TabsVariant;
-  /** Tab control size. Defaults to the component-default control size. */
-  size?: ControlSize;
+  /** Tab height: sm 28, md 32. Defaults to the component-default control size. */
+  size?: TabsSize;
 }
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Tab list chrome.
-   * @default "ghost"
-   * @see https://usefragments.com/components/tabs#variants */
-  variant?: TabsVariant;
-  /** Tab control size. Defaults to the nearest Tabs root or provider default. */
-  size?: ControlSize;
+  /** Arrow keys open the tab they reach, instead of only moving focus.
+   * @default false */
+  activateOnFocus?: boolean;
+  /** Controls beside the tabs, outside the tablist and its arrow-key navigation. */
+  actions?: React.ReactNode;
 }
 
-export interface TabProps {
+type BaseTabProps = React.ComponentPropsWithoutRef<typeof BaseTabs.Tab>;
+
+export interface TabProps extends Omit<BaseTabProps, "className" | "children" | "value"> {
   children: React.ReactNode;
   value: TabValue;
-  disabled?: boolean;
+  className?: string;
+  /** A quieter figure after the name (how many there are, or `…` while counting). */
+  count?: React.ReactNode;
+  /** A dot after the name: something changed in the tab. A string is read to screen readers. */
+  dot?: boolean | string;
+}
+
+type BasePanelProps = React.ComponentPropsWithoutRef<typeof BaseTabs.Panel>;
+
+export interface TabsPanelProps extends Omit<BasePanelProps, "className" | "children" | "value"> {
+  children: React.ReactNode;
+  value: TabValue;
   className?: string;
 }
 
-export interface TabsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-  value: TabValue;
-  keepMounted?: boolean;
-  flush?: boolean;
+// ============================================
+// Context
+// ============================================
+
+interface TabsContextValue {
+  variant: TabsVariant;
+  size: TabsSize;
+  activeValue: TabValue | undefined;
+  onReselect?: (value: TabValue) => void;
 }
 
-// ============================================
-// Context for variant
-// ============================================
+const TabsContext = React.createContext<TabsContextValue>({
+  variant: "ghost",
+  size: "md",
+  activeValue: undefined,
+});
 
-const TabsVariantContext = React.createContext<TabsVariant>("ghost");
-const TabsSizeContext = React.createContext<ControlSize>("md");
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
+}
+
+function assignRef<T>(ref: React.ForwardedRef<T>, node: T | null) {
+  if (typeof ref === "function") ref(node);
+  else if (ref) ref.current = node;
+}
 
 // ============================================
 // Components
@@ -78,90 +106,172 @@ function TabsRoot({
   defaultValue,
   value,
   onValueChange,
-  orientation = "horizontal",
+  onReselect,
   variant = "ghost",
   size: sizeProp,
   className,
   ...htmlProps
 }: TabsProps) {
-  const size = useResolvedControlSize(sizeProp);
-  const classes = [styles.root, className].filter(Boolean).join(" ");
+  const resolved = useResolvedControlSize(sizeProp);
+  // The ladder holds two tab steps; a larger default lands on md.
+  const size: TabsSize = resolved === "sm" ? "sm" : "md";
+  const [observedValue, setObservedValue] = React.useState<TabValue | undefined>(defaultValue);
+  const controlled = value !== undefined;
+  const activeValue = controlled ? value : observedValue;
+
+  const handleValueChange = React.useCallback(
+    (next: TabValue, details: TabsChangeEventDetails) => {
+      onValueChange?.(next, details);
+      if (!controlled && !details.isCanceled) setObservedValue(next);
+    },
+    [controlled, onValueChange]
+  );
+
+  const context = React.useMemo(
+    () => ({ variant, size, activeValue, onReselect }),
+    [variant, size, activeValue, onReselect]
+  );
 
   return (
-    <TabsVariantContext.Provider value={variant}>
-      <TabsSizeContext.Provider value={size}>
-        <BaseTabs.Root
-          {...htmlProps}
-          defaultValue={defaultValue}
-          value={value}
-          onValueChange={onValueChange}
-          orientation={orientation}
-          className={classes}
-          data-slot="tabs"
-        >
-          {children}
-        </BaseTabs.Root>
-      </TabsSizeContext.Provider>
-    </TabsVariantContext.Provider>
+    <TabsContext.Provider value={context}>
+      <BaseTabs.Root
+        {...htmlProps}
+        defaultValue={defaultValue}
+        value={value}
+        onValueChange={handleValueChange}
+        className={cx(styles.root, className)}
+        data-slot="tabs"
+        data-variant={variant}
+        data-size={size}
+      >
+        {children}
+      </BaseTabs.Root>
+    </TabsContext.Provider>
   );
 }
 
-function TabsList({ children, variant, size: sizeProp, className, ...htmlProps }: TabsListProps) {
-  const rootVariant = React.useContext(TabsVariantContext);
-  const rootSize = React.useContext(TabsSizeContext);
-  const size = sizeProp ?? rootSize;
-  const resolvedVariant = variant ?? rootVariant;
-  const classes = [styles.list, resolvedVariant === "soft" && styles.listSoft, className]
-    .filter(Boolean)
-    .join(" ");
+const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
+  { children, activateOnFocus = false, actions, className, ...htmlProps },
+  forwardedRef
+) {
+  const { variant, size, activeValue } = React.useContext(TabsContext);
+  const listRef = React.useRef<HTMLDivElement | null>(null);
+  const edges = useScrollEdges(listRef, { orientation: "horizontal", dir: htmlProps.dir });
 
-  return (
-    <TabsVariantContext.Provider value={resolvedVariant}>
-      <TabsSizeContext.Provider value={size}>
-        <BaseTabs.List
-          {...htmlProps}
-          className={classes}
-          data-slot="tabs-list"
-          data-variant={resolvedVariant}
-        >
-          {children}
-          {resolvedVariant === "ghost" && <BaseTabs.Indicator className={styles.indicator} />}
-        </BaseTabs.List>
-      </TabsSizeContext.Provider>
-    </TabsVariantContext.Provider>
+  const setListRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      listRef.current = node;
+      assignRef(forwardedRef, node);
+    },
+    [forwardedRef]
   );
-}
 
-function Tab({ children, value, disabled, className }: TabProps) {
-  const variant = React.useContext(TabsVariantContext);
-  const size = React.useContext(TabsSizeContext);
-  const variantClass = variant === "soft" ? styles.tabSoft : styles.tabGhost;
-  const sizeClass = size === "sm" ? styles.tabSm : size === "lg" ? styles.tabLg : styles.tabMd;
-  const classes = [styles.tab, sizeClass, variantClass, className].filter(Boolean).join(" ");
+  // The open tab scrolls into view when the row overflows.
+  React.useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    const tab = list.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+    if (!tab) return;
+    const view = list.ownerDocument.defaultView;
+    const pad = Number.parseFloat(view?.getComputedStyle(list).scrollPaddingInlineStart ?? "") || 0;
+    const listRect = list.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+    if (tabRect.left < listRect.left + pad) {
+      list.scrollLeft -= listRect.left + pad - tabRect.left;
+    } else if (tabRect.right > listRect.right - pad) {
+      list.scrollLeft += tabRect.right - (listRect.right - pad);
+    }
+  }, [activeValue]);
 
   return (
-    <BaseTabs.Tab value={value} disabled={disabled} className={classes} data-slot="tabs-tab">
-      {children}
+    <div className={styles.bar} data-slot="tabs-bar" data-variant={variant}>
+      <BaseTabs.List
+        {...htmlProps}
+        ref={setListRef}
+        activateOnFocus={activateOnFocus}
+        className={cx(
+          styles.list,
+          variant === "soft" ? styles.listSoft : styles.listGhost,
+          className
+        )}
+        data-slot="tabs-list"
+        data-variant={variant}
+        data-size={size}
+        data-scroll-x={edges.x}
+      >
+        {children}
+        {variant === "ghost" && <BaseTabs.Indicator className={styles.indicator} />}
+      </BaseTabs.List>
+      {actions != null && actions !== false ? (
+        <div className={styles.actions} data-slot="tabs-actions">
+          {actions}
+        </div>
+      ) : null}
+    </div>
+  );
+});
+
+const Tab = React.forwardRef<HTMLElement, TabProps>(function Tab(
+  { children, value, count, dot, className, onPointerDown, onClick, ...tabProps },
+  forwardedRef
+) {
+  const { variant, size, onReselect } = React.useContext(TabsContext);
+  // Whether the tab was already open when the press began: a press can open
+  // it on focus before the click lands.
+  const openAtPress = React.useRef<boolean | null>(null);
+  const label = typeof children === "string" ? children : undefined;
+  const hasCount = count !== undefined && count !== null && count !== false && count !== "";
+
+  return (
+    <BaseTabs.Tab
+      {...tabProps}
+      ref={forwardedRef}
+      value={value}
+      className={cx(
+        styles.tab,
+        size === "sm" ? styles.tabSm : styles.tabMd,
+        variant === "soft" ? styles.tabSoft : styles.tabGhost,
+        className
+      )}
+      data-slot="tabs-tab"
+      onPointerDown={(event) => {
+        openAtPress.current = event.currentTarget.hasAttribute("data-active");
+        onPointerDown?.(event);
+      }}
+      onClick={(event) => {
+        onClick?.(event);
+        const wasOpen = openAtPress.current ?? event.currentTarget.hasAttribute("data-active");
+        openAtPress.current = null;
+        if (wasOpen && onReselect && !event.defaultPrevented) onReselect(value);
+      }}
+    >
+      <span className={styles.label} data-label={label}>
+        {children}
+      </span>
+      {hasCount ? (
+        <span className={styles.count} data-slot="tabs-count">
+          {count}
+        </span>
+      ) : null}
+      {dot ? (
+        <span
+          className={styles.dot}
+          data-slot="tabs-dot"
+          aria-hidden={typeof dot === "string" ? undefined : true}
+        >
+          {typeof dot === "string" ? <span className={styles.dotWords}>{dot}</span> : null}
+        </span>
+      ) : null}
     </BaseTabs.Tab>
   );
-}
+});
 
-function TabsPanel({
-  children,
-  value,
-  keepMounted = false,
-  flush = false,
-  className,
-  ...htmlProps
-}: TabsPanelProps) {
-  const classes = [styles.panel, flush && styles.panelFlush, className].filter(Boolean).join(" ");
-
+function TabsPanel({ children, value, className, ...panelProps }: TabsPanelProps) {
   return (
     <BaseTabs.Panel
-      {...htmlProps}
+      {...panelProps}
       value={value}
-      keepMounted={keepMounted}
-      className={classes}
+      className={cx(styles.panel, className)}
       data-slot="tabs-panel"
     >
       {children}
@@ -178,6 +288,3 @@ export const Tabs = Object.assign(TabsRoot, {
   Tab: Tab,
   Panel: TabsPanel,
 });
-
-// Re-export individual components
-export { TabsRoot, TabsList, Tab, TabsPanel };

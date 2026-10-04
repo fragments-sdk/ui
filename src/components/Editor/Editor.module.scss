@@ -1,282 +1,274 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/action" as action;
 @use "../../recipes/field" as field;
+@use "../../recipes/focus";
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
-@use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
-// Editing-area floor per size preset, in whole row tracks: three, five and ten
-// times the regular table row track (120, 200 and 400 at the shipped scale).
-@function _min-block($size) {
-  $rows: 5;
+// The writing area's inset and its floor: `rows` lines of body text, as
+// Textarea counts them, plus the inset above and below.
+$_inset: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+$_floor: calc(
+  var(--_fui-editor-rows, 8) *
+    var(--fui-type-body-compact-line, #{measurements.typography-value("body-compact", "line")}) +
+    2 * #{$_inset}
+);
 
-  @if $size == "sm" {
-    $rows: 3;
-  } @else if $size == "lg" {
-    $rows: 10;
-  } @else if $size != "md" {
-    @error "Unknown editor size '#{$size}'. Expected sm, md, or lg.";
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  .root {
+    @include field.wrapper;
+
+    inline-size: 100%;
+    min-inline-size: 0;
   }
 
-  @return calc(#{$rows} * var(--fui-raw-space-40, #{measurements.raw-space(40)}));
-}
-
-.editor {
-  @include form-group-surface;
-
-  display: flex;
-  flex-direction: column;
-  inline-size: 100%;
-  min-inline-size: 0;
-  overflow: hidden;
-
-  &:focus-within:not([data-disabled]) {
-    @include field.focus-state;
+  .label {
+    @include field.label;
   }
 
-  &[data-disabled] {
-    @include disabled-state;
-
-    pointer-events: none;
+  .helper {
+    @include field.helper;
   }
 
-  &[data-readonly] .contentTextarea {
-    cursor: default;
+  .error {
+    @include field.error;
+
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
   }
 
-  @each $size in ("sm", "md", "lg") {
-    &[data-size="#{$size}"] {
-      .content,
-      .contentTextarea,
-      :global(.tiptap) {
-        min-block-size: _min-block($size);
+  .errorIcon {
+    flex-shrink: 0;
+    inline-size: var(--fui-icon-xs, $fui-icon-xs);
+    block-size: var(--fui-icon-xs, $fui-icon-xs);
+  }
+
+  // One band: the field fill, the strong edge, the surface corner. The toolbar
+  // and status bar sit on it with hairline dividers, no planes of their own.
+  .editor {
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    min-inline-size: 0;
+    overflow: hidden;
+    border: field.stroke() solid var(--fui-field-border, $fui-field-border);
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+    background: var(--fui-field-bg, $fui-field-bg);
+    color: var(--fui-text-primary, $fui-text-primary);
+
+    @include field.hover-state;
+
+    // The ring belongs to the writing area: a focused toolbar button rings
+    // itself, not the whole field.
+    &:has(.content :focus):not([data-disabled]) {
+      @include field.focus-state;
+    }
+
+    &[data-invalid] {
+      @include field.invalid-state;
+
+      &:has(.content :focus) {
+        @include field.invalid-focus-state;
       }
     }
-  }
-}
 
-.toolbar,
-.statusBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: layout.gap("sm");
-  padding-block: layout.gap("xs");
-  padding-inline: layout.gap("sm");
-  background-color: color-mix(
-    in srgb,
-    var(--fui-form-group-bg, $fui-bg-secondary) 72%,
-    transparent
-  );
-}
+    &[data-readonly] {
+      @include field.readonly-state;
+    }
 
-.toolbar {
-  border-block-end: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
-}
+    // Disabled dims the field and shows the not-allowed cursor every disabled
+    // field shows, but keeps scroll and selection: text can still be copied.
+    &[data-disabled] {
+      @include field.disabled-state;
+    }
 
-.toolbarGroup,
-.statusBarLeft,
-.statusBarRight {
-  display: flex;
-  align-items: center;
-  gap: layout.gap("xs");
-}
-
-.toolbarButton {
-  @include button-reset;
-  @include action.base;
-  @include action.icon-only("sm");
-  @include target.hit-area("compact");
-
-  border: var(--fui-stroke-hairline, 1px) solid transparent;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  background-color: transparent;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    border-color: var(--fui-form-group-border, $fui-border);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  &:active:not(:disabled) {
-    border-color: var(--fui-field-selection-border, $fui-color-accent);
-    background-color: var(--fui-field-selection-bg, $fui-bg-hover);
-  }
-
-  &:focus-visible {
-    @include focus-ring;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-
-  svg {
-    @include action.glyph("sm");
-  }
-}
-
-.toolbarButtonActive {
-  border-color: var(--fui-field-selection-border, $fui-color-accent);
-  background-color: var(--fui-field-selection-bg, $fui-bg-hover);
-  color: var(--fui-text-primary, $fui-text-primary);
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-    color-mix(in srgb, var(--fui-field-selection-border, $fui-color-accent) 55%, transparent);
-}
-
-.separator {
-  inline-size: var(--fui-stroke-hairline, 1px);
-  block-size: var(--fui-icon-md, $fui-icon-md);
-  margin-inline: layout.gap("xs");
-  background-color: var(--fui-form-group-border, $fui-border);
-  flex-shrink: 0;
-}
-
-.statusIndicator,
-.statusBarItem {
-  @include typography.role("caption");
-
-  white-space: nowrap;
-}
-
-.statusIndicator {
-  padding-inline: layout.gap("sm");
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-.statusError,
-.statusBarItemError {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-.statusBarItemWarning {
-  color: var(--fui-color-warning-text, $fui-color-warning-text);
-}
-
-.content {
-  flex: 1;
-  min-block-size: _min-block("md");
-  overflow-y: auto;
-}
-
-.contentRich :global(.tiptap) {
-  @include prose.root;
-
-  min-block-size: _min-block("md");
-  padding: layout.gap("lg");
-  outline: none;
-
-  &:focus-visible {
-    outline: none;
-  }
-
-  p {
-    @include prose.paragraph;
-  }
-
-  @for $level from 1 through 6 {
-    h#{$level} {
-      @include prose.heading($level);
+    @media (forced-colors: active) {
+      border-color: CanvasText;
     }
   }
 
-  blockquote {
-    @include prose.blockquote;
-
-    color: var(--fui-text-secondary, $fui-text-secondary);
-    font-style: italic;
+  .toolbar,
+  .statusBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: layout.gap("sm");
+    padding-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    padding-inline: var(--fui-raw-space-6, #{measurements.raw-space(6)});
   }
 
-  code {
-    @include prose.inline-code;
+  .toolbar {
+    justify-content: flex-start;
+    border-block-end: field.stroke() solid var(--fui-border, $fui-border);
   }
 
-  a {
-    @include prose.link;
-
-    color: var(--fui-color-accent, $fui-color-accent);
-    cursor: pointer;
+  // A trailing group (status, a verb) sits at the end edge.
+  .toolbarGroup:last-child:not(:first-child) {
+    margin-inline-start: auto;
   }
 
-  ul {
-    @include prose.list("disc");
+  .toolbarGroup,
+  .statusBarStart,
+  .statusBarEnd {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
   }
 
-  ol {
-    @include prose.list("decimal");
+  .statusBar {
+    min-block-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    padding-inline: $_inset;
+    border-block-start: field.stroke() solid var(--fui-border, $fui-border);
   }
 
-  s {
-    text-decoration: line-through;
+  .statusBarEnd {
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    margin-inline-start: auto;
   }
-}
 
-// TipTap's Placeholder extension is not a dependency, so the empty-document
-// placeholder is driven from the wrapper's own data-placeholder attribute.
-// An empty ProseMirror doc is exactly one paragraph holding a trailing break.
-.contentRich[data-placeholder]:has(
-    :global(.tiptap) > p:only-child > br:global(.ProseMirror-trailingBreak)
-  ) {
-  position: relative;
+  .statusIndicator,
+  .statusBarItem {
+    @include typography.role("caption");
 
-  &::before {
-    @include typography.role("body-relaxed");
-
-    content: attr(data-placeholder);
-    position: absolute;
-    inset-block-start: layout.gap("lg");
-    inset-inline-start: layout.gap("lg");
-    inset-inline-end: layout.gap("lg");
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
     color: var(--fui-text-tertiary, $fui-text-tertiary);
-    pointer-events: none;
-  }
-}
-
-.contentTextarea {
-  @include button-reset;
-  @include typography.role("body-relaxed");
-
-  // button-reset marks pressables select-none; typed text must stay selectable.
-  user-select: text;
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-  min-block-size: _min-block("md");
-  padding: layout.gap("lg");
-  border: 0;
-  background: transparent;
-  resize: none;
-  overflow-y: auto;
-
-  &::placeholder {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
-  &:focus-visible {
-    outline: none;
+  .statusSeparator {
+    block-size: var(--fui-icon-xs, $fui-icon-xs);
   }
 
-  &:disabled {
-    cursor: not-allowed;
+  .statusError,
+  .statusBarItemError {
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
   }
-}
 
-.statusBar {
-  border-block-start: var(--fui-stroke-hairline, 1px) solid
-    var(--fui-form-group-border, $fui-border);
-  background-color: color-mix(
-    in srgb,
-    var(--fui-form-group-bg, $fui-bg-secondary) 56%,
-    transparent
-  );
-}
+  .statusBarItemWarning {
+    color: var(--fui-color-warning-text, $fui-color-warning-text);
+  }
 
-.statusBarRight {
-  margin-inline-start: auto;
+  .content {
+    flex: 1;
+    min-block-size: $_floor;
+    overflow-y: auto;
+  }
+
+  .contentRich :global(.tiptap) {
+    @include prose.root;
+    @include typography.role("body-compact");
+    @include field.coarse-typed-text;
+
+    min-block-size: $_floor;
+    padding: $_inset;
+    // The field rings through :has(:focus).
+    @include focus.delegated;
+
+    p {
+      @include prose.paragraph;
+      @include typography.role("body-compact");
+    }
+
+    // One heading step on the type ladder (15).
+    h1,
+    h2,
+    h3 {
+      @include typography.role("title-sm");
+
+      margin-inline: 0;
+    }
+
+    blockquote {
+      @include prose.blockquote;
+
+      color: var(--fui-text-secondary, $fui-text-secondary);
+    }
+
+    code {
+      @include prose.inline-code;
+    }
+
+    a {
+      @include prose.link;
+
+      color: var(--fui-link-ink, $fui-link-ink);
+      cursor: pointer;
+    }
+
+    ul {
+      @include prose.list("disc");
+    }
+
+    ol {
+      @include prose.list("decimal");
+    }
+
+    s {
+      text-decoration: line-through;
+    }
+  }
+
+  // TipTap's Placeholder extension is not a dependency, so the empty-document
+  // placeholder is driven from the wrapper's own data-placeholder attribute.
+  // An empty ProseMirror doc is exactly one paragraph holding a trailing break.
+  .contentRich[data-placeholder]:has(
+      :global(.tiptap) > p:only-child > br:global(.ProseMirror-trailingBreak)
+    ) {
+    position: relative;
+
+    &::before {
+      @include typography.role("body-compact");
+
+      content: attr(data-placeholder);
+      position: absolute;
+      inset-block-start: $_inset;
+      inset-inline: $_inset;
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+      pointer-events: none;
+    }
+  }
+
+  .contentTextarea {
+    @include button-reset;
+
+    // The role below sets size and line height; inherit the rest of the face.
+    font: inherit;
+
+    @include typography.role("body-compact");
+    @include field.coarse-typed-text("body-compact");
+
+    // button-reset marks pressables select-none; typed text must stay selectable.
+    user-select: text;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: $_floor;
+    padding: $_inset;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    resize: none;
+    overflow-y: auto;
+
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+
+    &:focus-visible {
+      @include focus.delegated;
+    }
+
+    &[aria-disabled="true"] {
+      cursor: not-allowed;
+    }
+  }
 }

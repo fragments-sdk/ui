@@ -1,5 +1,6 @@
 import { defineFragment } from "@usefragments/core";
 import { Avatar } from "../Avatar";
+import { EmptyState } from "../EmptyState";
 import { Badge } from "../Badge";
 import { Input } from "../Input";
 import { Stack } from "../Stack";
@@ -53,7 +54,7 @@ export default defineFragment(DataTable, {
           aria-label="Loading team members"
         />
       ),
-      note: "Skeleton rows hold the table's height so the page never jumps.",
+      note: "Placeholder rows, one bar per cell, sit under the real header so the page never jumps.",
     },
     "Rich Cells": {
       render: (
@@ -149,16 +150,15 @@ export default defineFragment(DataTable, {
           getRowId={(row) => row.id}
           getSubRows={(row) => row.subRows}
           bordered
-          density="compact"
           aria-label="File tree"
         />
       ),
-      note: "Children fold away under their parent, like a file tree.",
+      note: "Children fold away under their parent, like a file tree; depth shows by indent alone.",
     },
     "With Filters": {
       render: (
         <Stack gap="sm">
-          <Input aria-label="Search users" placeholder="Search..." withFieldWrapper={false} />
+          <Input type="search" aria-label="Search users" placeholder="Search..." />
           <DataTable
             columns={[
               { accessorKey: "name", header: "Name" },
@@ -167,7 +167,9 @@ export default defineFragment(DataTable, {
             data={[{ name: "Ada Lovelace", status: "Active" }]}
             sortable
             bordered
-            emptyMessage="No users match the current filters"
+            emptyState={
+              <EmptyState.Title as="p">No users match the current filters</EmptyState.Title>
+            }
             aria-label="Filtered team members"
           />
         </Stack>
@@ -187,30 +189,10 @@ export default defineFragment(DataTable, {
             "aria-label": `Open ${row.method} ${row.path}`,
           })}
           onRowClick={() => undefined}
-          density="compact"
           aria-label="API endpoints"
         />
       ),
       note: "Mouse or keyboard opens the row; getRowProps supplies its name.",
-    },
-    Striped: {
-      render: (
-        <DataTable
-          columns={[
-            { accessorKey: "method", header: "Method" },
-            { accessorKey: "path", header: "Path" },
-          ]}
-          data={[
-            { method: "GET", path: "/v1/components" },
-            { method: "POST", path: "/v1/fragments" },
-          ]}
-          striped
-          density="compact"
-          sortable
-          aria-label="API endpoints"
-        />
-      ),
-      note: "Row tint alternates so tightly packed rows stay readable.",
     },
     "Empty State": {
       render: (
@@ -220,11 +202,31 @@ export default defineFragment(DataTable, {
             { accessorKey: "status", header: "Status" },
           ]}
           data={[]}
-          emptyMessage="No users match your search criteria"
+          emptyState={
+            <>
+              <EmptyState.Title>No users match your search</EmptyState.Title>
+              <EmptyState.Description>Try a shorter name or clear a filter.</EmptyState.Description>
+            </>
+          }
           aria-label="Search results"
         />
       ),
-      note: "emptyMessage replaces the rows and keeps the headers in place.",
+      note: "A compact EmptyState replaces the rows and keeps the headers in place.",
+    },
+    Error: {
+      render: (
+        <DataTable
+          columns={[
+            { accessorKey: "name", header: "Name" },
+            { accessorKey: "status", header: "Status" },
+          ]}
+          data={[]}
+          error="The team list did not load. Check your connection, then retry."
+          onRetry={() => undefined}
+          aria-label="Team members"
+        />
+      ),
+      note: "A failed load shows the error box under the real header, with one way out.",
     },
     "Long Cell Content": {
       render: (
@@ -261,9 +263,10 @@ export default defineFragment(DataTable, {
     guidelines: [
       "Cap visible columns near 5–7; push the rest behind a row click",
       "Right-align numbers, left-align text",
-      "Always set emptyMessage — a bare grid reads as broken",
+      "Always set emptyState — a bare grid reads as broken",
+      "Pass error and onRetry for a failed load; loading wins over error, error over empty",
       "Clickable rows need getRowProps for a role and an accessible name",
-      "Reach for density, not the deprecated size prop",
+      "Every row is the 32px control track; there is no density or stripe option",
     ],
     accessibility: [
       "Headers stay real th elements with scope",
@@ -338,9 +341,11 @@ export default defineFragment(DataTable, {
       "getSubRows: (row) => T[] - enable expandable rows",
       "onRowClick: (row, event) => void - row activation handler with event access",
       "getRowProps: (row) => HTMLAttributes<HTMLTableRowElement> - row-level ARIA, role, data, class, and event props",
-      "density: compact|regular|relaxed - row density (size is deprecated)",
-      "striped: boolean - alternating row backgrounds",
-      "bordered: boolean - bordered container",
+      "emptyState: ReactNode - EmptyState parts for an empty result",
+      "loading / skeletonRows - placeholder rows under the real header",
+      "error / onRetry / retryLabel - the error box for a failed load",
+      "bordered: boolean - the sheet (surface plane, hairline, surface radius)",
+      "maxHeight: number | string - bound the height; rows scroll inside and the head sticks",
       "wrapperClassName / wrapperProps - style and configure the outer wrapper div",
     ],
     a11yRules: ["A11Y_TABLE_HEADERS", "A11Y_TABLE_SORT"],

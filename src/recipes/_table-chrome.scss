@@ -2,85 +2,42 @@
 @use "../tokens/variables" as tokens;
 @use "typography" as typography;
 
+// The table's chrome on Glass: one row track (the control track, 32px), the
+// column heads in ui-compact ink 2, the cells in body-compact ink 1, and a
+// hairline `--fui-border` between rows. There is no density axis: every table
+// row is the same height as every other control row in the library.
+
+$_tree-indent-step: measurements.raw-space(24);
+$_divider-size: measurements.target-value("stroke", "hairline");
+$_cell-inline-inset: measurements.raw-space(8);
+$_cell-edge-inset: measurements.raw-space(12);
+$_cell-block-inset: measurements.raw-space(4);
+
 @mixin properties {
-  --fui-table-row-track-compact: var(--fui-raw-space-32, #{measurements.raw-space(32)});
-  --fui-table-row-track-regular: var(--fui-raw-space-40, #{measurements.raw-space(40)});
-  --fui-table-row-track-relaxed: var(--fui-raw-space-48, #{measurements.raw-space(48)});
-  --fui-table-cell-inline-inset-compact: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  --fui-table-cell-inline-inset-regular: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  --fui-table-cell-inline-inset-relaxed: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-  --fui-table-cell-block-inset-compact: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  --fui-table-cell-block-inset-regular: var(--fui-raw-space-10, #{measurements.raw-space(10)});
-  --fui-table-cell-block-inset-relaxed: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  // The header sits tighter than the rows it labels: a column head is chrome,
-  // not a record, so it keeps the pre-ledger inset while cells breathe.
-  --fui-table-header-block-inset-compact: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-  --fui-table-header-block-inset-regular: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  --fui-table-header-block-inset-relaxed: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+  --fui-table-row-track: var(--fui-control-height-md, #{tokens.$fui-control-height-md});
+  --fui-table-cell-inline-inset: var(--fui-raw-space-8, #{$_cell-inline-inset});
+  --fui-table-cell-edge-inset: var(--fui-raw-space-12, #{$_cell-edge-inset});
+  --fui-table-cell-block-inset: var(--fui-raw-space-4, #{$_cell-block-inset});
   --fui-table-tree-indent-step: var(--fui-raw-space-24, #{$_tree-indent-step});
   --fui-table-divider-size: var(--fui-stroke-hairline, #{$_divider-size});
 }
 
+$_row-track: var(
+  --fui-table-row-track,
+  var(--fui-control-height-md, #{tokens.$fui-control-height-md})
+);
+$_inline-inset: var(--fui-table-cell-inline-inset, #{$_cell-inline-inset});
+$_block-inset: var(--fui-table-cell-block-inset, #{$_cell-block-inset});
 
-@function row-track($density) {
-  @if $density == "compact" or $density == "regular" or $density == "relaxed" {
-    @return var(--fui-table-row-track-#{$density});
-  }
-
-  @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
+/// The outer column's leading inset: 12, so content never meets a selected
+/// row's ring. Every other cell pads 8.
+@mixin edge-cell {
+  padding-inline-start: var(--fui-table-cell-edge-inset, #{$_cell-edge-inset});
 }
-
-@function cell-inline-inset($density) {
-  @if $density == "compact" or $density == "regular" or $density == "relaxed" {
-    @return var(--fui-table-cell-inline-inset-#{$density});
-  }
-
-  @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
-}
-
-@function cell-block-inset($density) {
-  @if $density == "compact" or $density == "regular" or $density == "relaxed" {
-    @return var(--fui-table-cell-block-inset-#{$density});
-  }
-
-  @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
-}
-
-@function header-block-inset($density) {
-  @if $density == "compact" or $density == "regular" or $density == "relaxed" {
-    @return var(--fui-table-header-block-inset-#{$density});
-  }
-
-  @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
-}
-
-@mixin density($density) {
-  @if $density != "compact" and $density != "regular" and $density != "relaxed" {
-    @error "Unknown table density '#{$density}'. Expected compact, regular, or relaxed.";
-  }
-
-  --_fui-table-row-track: #{row-track($density)};
-  --_fui-table-cell-inline-inset: #{cell-inline-inset($density)};
-  --_fui-table-cell-block-inset: #{cell-block-inset($density)};
-  --_fui-table-header-block-inset: #{header-block-inset($density)};
-
-  @if $density == "compact" {
-    @include typography.role("ui-compact");
-  } @else {
-    @include typography.role("body-compact");
-  }
-}
-
-// Fallbacks are the regular-density defaults; `properties` sets the channels
-// per density on the table root.
-$_tree-indent-step: measurements.raw-space(24);
-$_divider-size: measurements.target-value("stroke", "hairline");
-$_cell-inline-inset: cell-inline-inset("regular");
-$_cell-block-inset: cell-block-inset("regular");
-$_row-track: row-track("regular");
 
 @mixin root {
   @include properties;
+  @include typography.role("body-compact");
 
   inline-size: 100%;
   border-collapse: collapse;
@@ -99,32 +56,33 @@ $_row-track: row-track("regular");
 @mixin header-cell {
   @include typography.role("ui-compact");
 
-  padding-block: var(
-    --_fui-table-header-block-inset,
-    var(--_fui-table-cell-block-inset, #{$_cell-block-inset})
-  );
-  padding-inline: var(--_fui-table-cell-inline-inset, #{$_cell-inline-inset});
+  padding-block: $_block-inset;
+  padding-inline: $_inline-inset;
   color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
   text-align: start;
   vertical-align: middle;
 }
 
 @mixin body-cell {
-  padding-block: var(--_fui-table-cell-block-inset, #{$_cell-block-inset});
-  padding-inline: var(--_fui-table-cell-inline-inset, #{$_cell-inline-inset});
+  padding-block: $_block-inset;
+  padding-inline: $_inline-inset;
   color: var(--fui-text-primary, #{tokens.$fui-text-primary});
   vertical-align: middle;
 }
 
 @mixin row {
-  height: var(--_fui-table-row-track, #{$_row-track});
+  // A row is a stacked target: under a coarse pointer it takes the hit-area
+  // floor (44px) when that is taller than the track.
+  height: max(#{$_row-track}, var(--fui-hit-area, #{tokens.$fui-hit-area}));
   border-block-end: var(--fui-table-divider-size, #{$_divider-size}) solid
-    var(--fui-table-border, var(--fui-border, #{tokens.$fui-border}));
+    var(--fui-border, #{tokens.$fui-border});
 }
 
-@mixin tree-cell {
+/// A tree row's indent, on the content inside its first data cell (not the
+/// cell, so the cell keeps its edge inset): one step per level of
+/// `--fui-table-tree-depth`.
+@mixin tree-indent {
   padding-inline-start: calc(
-    var(--_fui-table-cell-inline-inset, #{$_cell-inline-inset}) + var(--fui-table-tree-depth, 0) *
-      var(--fui-table-tree-indent-step, #{$_tree-indent-step})
+    var(--fui-table-tree-depth, 0) * var(--fui-table-tree-indent-step, #{$_tree-indent-step})
   );
 }

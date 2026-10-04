@@ -1,0 +1,183 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "TableOfContents",
+  "description": "Indexes a long page and marks the section currently in view.",
+  "category": "navigation",
+  "tags": [
+    "toc",
+    "table-of-contents",
+    "navigation",
+    "sidebar",
+    "scroll-spy",
+    "headings",
+    "tree",
+    "hierarchy"
+  ],
+  "status": "stable",
+  "sourcePath": "src/components/TableOfContents/index.tsx",
+  "exportName": "TableOfContents",
+  "propsSummary": [
+    "children: node (required)",
+    "label: string (default: Table of contents)",
+    "title: node (default: On this page)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "TableOfContents.Item or TableOfContents.Group elements; none renders nothing",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "description": "Names the navigation landmark",
+      "default": "Table of contents",
+      "required": false
+    },
+    "title": {
+      "type": "node",
+      "description": "The title above the list; null shows none",
+      "default": "On this page",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Docs, articles, and other long reads",
+      "Reference pages with many sections",
+      "Filterable sidebars grouped by category",
+      "Anything past three headings"
+    ],
+    "whenNot": [
+      "Pages with one or two sections",
+      "Site navigation (use Sidebar or Header)",
+      "Steps in an order (use Stepper)"
+    ],
+    "guidelines": [
+      "Drive the active item from an IntersectionObserver scroll spy",
+      "Group nests items one level deeper under a labelled header that folds at once",
+      "Pass collapsible={false} for a header that is only a label",
+      "Item targetId must match the real heading id",
+      "Items smooth-scroll — call preventDefault() in onClick to take over",
+      "Group is uncontrolled and open by default; pass open and onOpenChange to drive it",
+      "Pass title={null} to show no title"
+    ],
+    "accessibility": [
+      "Uses <nav aria-label=\"Table of contents\"> for landmark navigation",
+      "The section in view is marked with aria-current=\"location\"",
+      "Items are links; in-page links smooth-scroll unless reduced motion is requested",
+      "A folding group header is a real <button> with aria-expanded; its items sit in a nested list",
+      "Focus-visible ring on keyboard navigation"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Top-level sections, with one group nested a level deeper.",
+      "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"introduction\">Introduction</TableOfContents.Item>\n  <TableOfContents.Group label=\"Getting started\" collapsible={false}>\n    <TableOfContents.Item targetId=\"installation\">Installation</TableOfContents.Item>\n    <TableOfContents.Item targetId=\"configuration\">Configuration</TableOfContents.Item>\n  </TableOfContents.Group>\n  <TableOfContents.Item targetId=\"api-reference\">API reference</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"examples\">Examples</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "Nested Groups",
+      "description": "Groups fold at once; one starts closed.",
+      "code": "<TableOfContents title=\"Components\">\n  <TableOfContents.Item targetId=\"all\" active>All</TableOfContents.Item>\n  <TableOfContents.Group label=\"Primitives\" trailing={<span>3</span>}>\n    <TableOfContents.Item targetId=\"button\">Button</TableOfContents.Item>\n    <TableOfContents.Item targetId=\"card\">Card</TableOfContents.Item>\n    <TableOfContents.Item targetId=\"input\">Input</TableOfContents.Item>\n  </TableOfContents.Group>\n  <TableOfContents.Group label=\"Custom\" defaultOpen={false}>\n    <TableOfContents.Item targetId=\"features\">Features</TableOfContents.Item>\n    <TableOfContents.Item targetId=\"plans\">Plans</TableOfContents.Item>\n  </TableOfContents.Group>\n</TableOfContents>"
+    },
+    {
+      "name": "With Active Item",
+      "description": "The section in view takes the selection wash and ring.",
+      "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"setup\" active>Setup</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"props\">Props</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "Custom Title",
+      "description": "Renames the title above the list.",
+      "code": "<TableOfContents title=\"Contents\">\n  <TableOfContents.Item targetId=\"chapter-1\">Chapter 1: The beginning</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"chapter-2\">Chapter 2: The middle</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"chapter-3\">Chapter 3: The end</TableOfContents.Item>\n</TableOfContents>"
+    },
+    {
+      "name": "No Title",
+      "description": "title={null} shows the list alone.",
+      "code": "<TableOfContents title={null}>\n  <TableOfContents.Item targetId=\"section-a\">Section A</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"section-b\" active>Section B</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"section-c\">Section C</TableOfContents.Item>\n</TableOfContents>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Breadcrumbs",
+      "relationship": "complementary",
+      "note": "Breadcrumbs show hierarchy, TOC shows page sections"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "complementary",
+      "note": "Sidebar for site nav, TOC for in-page nav"
+    },
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Tabs for switching views, TOC for scrolling to sections"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "title: node - visible heading (default \"On this page\"); null shows none",
+      "label: string - aria-label for nav landmark",
+      "TableOfContents.Item targetId: string - heading id to scroll to",
+      "TableOfContents.Item active: boolean - the section in view (selection wash and ring)",
+      "TableOfContents.Item leading/trailing: node - optional adornments before/after the label",
+      "TableOfContents.Group label: node - header text for the group; its items nest one level deeper",
+      "TableOfContents.Group defaultOpen / open / onOpenChange - uncontrolled or controlled open state (default open)",
+      "TableOfContents.Group collapsible: boolean - false renders a static label (default true)",
+      "TableOfContents.Group trailing/leading: node - optional adornments on the group header row",
+      "Forwards standard nav/anchor DOM props; TableOfContents.Item onClick can prevent default smooth scroll"
+    ],
+    "a11yRules": ["A11Y_NAV_LANDMARK", "A11Y_ARIA_CURRENT", "A11Y_ARIA_EXPANDED"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item", "Group"],
+    "requiredChildren": ["Item", "Group"],
+    "commonPatterns": [
+      "<TableOfContents>{headings.map(h => <TableOfContents.Item key={h.id} targetId={h.id} active={activeId === h.id}>{h.text}</TableOfContents.Item>)}</TableOfContents>",
+      "<TableOfContents>{groups.map(g => <TableOfContents.Group key={g.label} label={g.label} trailing={g.count}>{g.items.map(i => <TableOfContents.Item key={i.id} targetId={i.id} active={activeId === i.id}>{i.label}</TableOfContents.Item>)}</TableOfContents.Group>)}</TableOfContents>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.685Z"
+  },
+  "cssVariables": [
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-icon-xs",
+    "--fui-navigation-inline-inset",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-12",
+    "--fui-raw-space-2",
+    "--fui-raw-space-24",
+    "--fui-raw-space-32",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-active",
+      "value": "true",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-depth",
+      "value": "0",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-depth",
+      "value": "1",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "table-of-contents",
+      "fixture": "populated"
+    }
+  ]
+}

@@ -1,99 +1,48 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Text } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Text } from ".";
+import { Stack } from "../Stack";
 
 /**
- * Text is the canonical typography primitive. Every heading, paragraph, label,
- * and inline string in the design system routes through it for consistent scale,
- * weight, color, and font — agents should reuse it rather than styling raw
- * `<p>`/`<span>`/`<h1>` elements by hand.
+ * Text is the typography primitive. Every heading, paragraph, label and
+ * inline string routes through one of its roles on the 11/12/15/24 ladder,
+ * at the regular or the strong weight. Agents should reuse it rather than
+ * styling raw elements.
  */
 const meta = {
-  title: 'Display/Text',
+  title: "Display/Text",
   component: Text,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'Typography component for rendering text with consistent styling and semantic elements. Prefer this over raw <p>, <span>, or heading tags.',
+          "Typography on the 11/12/15/24 ladder. A step (`type`) owns size, line height, weight and tracking; strong adds the strong weight.",
       },
     },
   },
   argTypes: {
-    as: {
-      control: 'select',
-      options: [
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'p',
-        'span',
-        'label',
-        'div',
-        'strong',
-        'em',
-        'small',
-        'mark',
-        'del',
-        'ins',
-        'sub',
-        'sup',
-        'time',
-        'address',
-        'blockquote',
-        'cite',
-        'code',
-        'abbr',
-      ],
-      description: 'HTML element to render',
+    type: {
+      control: "select",
+      options: ["caption", "control", "body", "title", "display", "code", "section-label"],
+      description: "The step on the type ladder",
     },
-    role: {
-      control: 'select',
-      options: [
-        'caption',
-        'ui-compact',
-        'ui-standard',
-        'body-compact',
-        'body-relaxed',
-        'title-sm',
-        'title-md',
-        'title-lg',
-        'code',
-        'section-label',
-        'eyebrow',
-      ],
-      description: 'Typography role (owns the whole setting)',
-    },
-    scale: {
-      control: 'select',
-      options: ['2xs', 'xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'],
-      description: 'Type-scale step for text with no role',
-    },
-    weight: {
-      control: 'select',
-      options: ['normal', 'medium', 'semibold', 'bold'],
-      description: 'Font weight',
-    },
+    strong: { control: "boolean", description: "The strong weight" },
     color: {
-      control: 'select',
-      options: ['primary', 'secondary', 'tertiary', 'muted', 'accent', 'success', 'warning', 'danger'],
-      description: 'Text color (muted is an alias for tertiary)',
+      control: "select",
+      options: ["primary", "secondary", "tertiary", "accent", "success", "warning", "danger"],
+      description: "Ink",
     },
-    font: {
-      control: 'select',
-      options: ['sans', 'mono'],
-      description: 'Font family',
+    as: {
+      control: "select",
+      options: ["span", "p", "h1", "h2", "h3", "label", "code", "time"],
+      description: "HTML element to render",
     },
-    truncate: { control: 'boolean', description: 'Truncate with ellipsis on overflow' },
+    truncate: { control: "boolean" },
+    tabularNums: { control: "boolean" },
   },
   args: {
-    children: 'The quick brown fox jumps over the lazy dog',
-    scale: 'md',
-    weight: 'normal',
-    color: 'primary',
+    children: "The contract is active on web.",
+    type: "body",
   },
 } satisfies Meta<typeof Text>;
 
@@ -101,57 +50,71 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { children: 'The quick brown fox jumps over the lazy dog' },
+export const Default: Story = {};
+
+export const Ladder: Story = {
+  render: () => (
+    <Stack gap="sm">
+      <Text as="h1" type="display">
+        Two findings block the merge
+      </Text>
+      <Text as="h2" type="title">
+        Pull request 412
+      </Text>
+      <Text as="p">Two token files changed since the last approval.</Text>
+      <Text type="caption" color="tertiary">
+        Checked 2 minutes ago
+      </Text>
+      <Text type="control">Repository</Text>
+      <Text type="code">fragments-sdk/fragments@c46ff42</Text>
+      <Text as="p" type="section-label">
+        On this page
+      </Text>
+    </Stack>
+  ),
 };
 
-export const Heading: Story = {
-  args: { as: 'h1', scale: '3xl', weight: 'semibold', children: 'Page title' },
+export const Strong: Story = {
+  args: { strong: true, children: "Section header in the strong weight" },
 };
 
-export const Paragraph: Story = {
-  args: {
-    as: 'p',
-    scale: 'md',
-    color: 'secondary',
-    children:
-      'This is a paragraph of body text that demonstrates the Text component using a semantic paragraph element.',
-  },
+export const Inks: Story = {
+  render: () => (
+    <Stack gap="xs">
+      <Text>Primary ink</Text>
+      <Text color="secondary">Secondary ink</Text>
+      <Text color="tertiary">Tertiary ink</Text>
+      <Text>
+        Checked <Text color="accent">fragments-sdk/fragments</Text> today.
+      </Text>
+      <Text color="success">All checks pass</Text>
+      <Text color="warning">91% of context used</Text>
+      <Text color="danger">The token expired</Text>
+    </Stack>
+  ),
 };
 
-export const SectionLabel: Story = {
-  args: { as: 'p', role: 'section-label', children: 'On This Page' },
-};
-
-export const Bold: Story = {
-  args: { weight: 'bold', children: 'Bold weight text' },
-};
-
-export const Secondary: Story = {
-  args: { color: 'secondary', children: 'Secondary color text' },
-};
-
-export const SemanticColor: Story = {
-  args: { scale: 'xs', color: 'warning', children: '91% of context used' },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'For a run of text that carries a state on its own. Reach for Badge or Alert when the state deserves a container — this is for when it is one figure inside a line and a box would be more chrome than the fact is worth. The words still have to carry the meaning; the colour only reinforces it.',
-      },
-    },
-  },
-};
-
-export const Monospace: Story = {
-  args: { font: 'mono', scale: 'sm', children: 'npm install @usefragments/ui' },
+export const TabularFigures: Story = {
+  args: { type: "display", tabularNums: true, children: "1,204" },
 };
 
 export const Truncated: Story = {
-  args: {
-    truncate: true,
-    style: { display: 'block', maxWidth: '200px' },
-    children:
-      'This is a very long text that will be truncated with an ellipsis when it overflows the container.',
-  },
+  render: () => (
+    <div style={{ maxInlineSize: 200 }}>
+      <Text as="p" truncate>
+        fragments-sdk/a-repository-with-a-very-long-name changed its token files
+      </Text>
+    </div>
+  ),
+};
+
+export const LineClamp: Story = {
+  render: () => (
+    <div style={{ maxInlineSize: 240 }}>
+      <Text as="p" lineClamp={2}>
+        Two token files changed since the last approval, and one canonical component was replaced by
+        a local copy in the settings page.
+      </Text>
+    </div>
+  ),
 };

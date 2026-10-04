@@ -1,1 +1,11 @@
 storybook-static/
+
+# State harness and server-component fixture output
+states/.output/
+fixtures/rsc/.output/
+fixtures/rsc/.next/
+fixtures/rsc/next-env.d.ts
+geometry/.output/
+contrast/.output/
+# Generated contract kit output: never hand-edited, never committed
+/fragments/

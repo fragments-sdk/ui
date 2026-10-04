@@ -1,0 +1,20 @@
+.loose {
+  color: var(--fui-text-primary, $fui-text-primary);
+}
+@layer fui.components {
+  .early {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+@layer fui.tokens, fui.base, fui.components;
+@layer app {
+  .other {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+@media (pointer: coarse) {
+  .late {
+    color: var(--fui-text-primary, $fui-text-primary);
+  }
+}
+@layer fui.components, fui.base;

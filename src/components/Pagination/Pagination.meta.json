@@ -1,0 +1,182 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Pagination",
+  "description": "Steps through content split across numbered pages.",
+  "category": "navigation",
+  "tags": ["pagination", "paging", "pages", "navigation"],
+  "status": "stable",
+  "sourcePath": "src/components/Pagination/index.tsx",
+  "exportName": "Pagination",
+  "propsSummary": [
+    "children: node (required)",
+    "totalPages: number (required)",
+    "page: number",
+    "defaultPage: number (default: 1)",
+    "onPageChange: function",
+    "siblingCount: number (default: 1)",
+    "size: sm | md",
+    "renderLink: function"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Pagination.Previous, Pagination.Items and Pagination.Next",
+      "required": true
+    },
+    "totalPages": {
+      "type": "number",
+      "description": "Total number of pages; renders nothing when there are none",
+      "required": true
+    },
+    "page": {
+      "type": "number",
+      "description": "Controlled current page (1-indexed)",
+      "required": false
+    },
+    "defaultPage": {
+      "type": "number",
+      "description": "Default page (uncontrolled)",
+      "default": "1",
+      "required": false
+    },
+    "onPageChange": {
+      "type": "function",
+      "description": "Called when page changes",
+      "required": false
+    },
+    "siblingCount": {
+      "type": "number",
+      "description": "Pages shown on each side of the current one; the first and last page always show",
+      "default": "1",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Item size; resolves through ComponentDefaults when omitted",
+      "values": ["sm", "md"],
+      "required": false
+    },
+    "renderLink": {
+      "type": "function",
+      "description": "Makes every page a link: (page) => the element to render, such as an anchor or a router link. Pressing it still calls onPageChange",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Data sets served a page at a time",
+      "Tables and lists with a known total",
+      "Search results past the first screen"
+    ],
+    "whenNot": [
+      "Everything already fits on one page",
+      "Content that loads as the user scrolls",
+      "Switching between panels (use Tabs)",
+      "Steps in an order (use Stepper)"
+    ],
+    "guidelines": [
+      "Sit it directly below what it pages",
+      "The first and last page always show; siblingCount sets how many neighbours show",
+      "The current page takes the selection wash and ring, not the brand accent",
+      "Pass renderLink when each page has its own URL",
+      "The root forwards id, aria-*, data-*, and handlers to <nav>",
+      "A step's onClick runs first — call preventDefault() to stop the change"
+    ],
+    "accessibility": [
+      "Uses nav element with aria-label=\"Pagination\"",
+      "aria-current=\"page\" marks the current page",
+      "Previous/Next have descriptive aria-labels",
+      "Steps at the boundaries are disabled buttons, even in link mode"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Neighbours around the current page, ends always reachable.",
+      "code": "<Pagination totalPages={10} defaultPage={1}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "Many Pages",
+      "description": "The first and last page stay; gaps fold into an ellipsis.",
+      "code": "<Pagination totalPages={20} defaultPage={10}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "Compact",
+      "description": "Drops the neighbours when space is tight.",
+      "code": "<Pagination totalPages={20} defaultPage={10} siblingCount={0}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "Controlled",
+      "description": "You hold the page number in state.",
+      "code": "<Pagination totalPages={5} page={3}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    },
+    {
+      "name": "Link Pages",
+      "description": "Each page is a link to its own URL.",
+      "code": "<Pagination totalPages={8} defaultPage={3} renderLink={(page) => <a href={`?page=${page}`} />}>\n  <Pagination.Previous />\n  <Pagination.Items />\n  <Pagination.Next />\n</Pagination>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Table",
+      "relationship": "sibling",
+      "note": "Commonly paired for table pagination"
+    },
+    {
+      "component": "Listbox",
+      "relationship": "alternative",
+      "note": "Use Listbox for small sets of options"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "totalPages: number - total page count (required); nothing renders at 0",
+      "page: number - controlled current page (1-indexed)",
+      "defaultPage: number - initial page (default: 1)",
+      "onPageChange: (page) => void - page change handler",
+      "siblingCount: number - pages around current (default: 1); first and last always show",
+      "size: sm | md - item size",
+      "renderLink: (page) => ReactElement - link pages",
+      "Forwards standard HTML nav attributes to the root element"
+    ],
+    "a11yRules": ["A11Y_NAV_LABEL", "A11Y_CURRENT_PAGE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Previous", "Next", "Items"],
+    "requiredChildren": ["Items"],
+    "commonPatterns": [
+      "<Pagination totalPages={totalPages} page={currentPage} onPageChange={setPage}><Pagination.Previous /><Pagination.Items /><Pagination.Next /></Pagination>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:01.648Z"
+  },
+  "cssVariables": [
+    "--fui-font-weight-normal",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": [
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "sm",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "pagination",
+      "fixture": "populated"
+    }
+  ]
+}

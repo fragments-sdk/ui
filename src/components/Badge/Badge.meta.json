@@ -1,0 +1,148 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Badge",
+  "description": "Labels a status, count, or category without pulling focus: one 20px step at the indicator corner.",
+  "category": "display",
+  "tags": ["status", "label", "tag", "count", "chip"],
+  "status": "stable",
+  "sourcePath": "src/components/Badge/index.tsx",
+  "exportName": "Badge",
+  "propsSummary": [
+    "children: node (required)",
+    "tone: neutral|accent|info|success|warning|danger (default: neutral)",
+    "dot: boolean (default: false)",
+    "icon: node",
+    "onRemove: function",
+    "announce: boolean (default: false)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Badge label text",
+      "required": true
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Colour. `neutral` is the band with secondary ink; the semantic tones paint their soft fill and ink.",
+      "default": "neutral",
+      "required": false,
+      "values": ["neutral", "accent", "info", "success", "warning", "danger"]
+    },
+    "dot": {
+      "type": "boolean",
+      "description": "A status dot in the tone's ink before the label",
+      "default": "false",
+      "required": false
+    },
+    "icon": {
+      "type": "node",
+      "description": "Optional icon element before the text",
+      "required": false
+    },
+    "onRemove": {
+      "type": "function",
+      "description": "Makes the badge removable. Called when X is clicked.",
+      "required": false
+    },
+    "announce": {
+      "type": "boolean",
+      "description": "Opt into role=\"status\" live announcement semantics",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Marking item status: active, pending, archived",
+      "Showing a count inline",
+      "Tagging or categorising content",
+      "Flagging what is new or changed"
+    ],
+    "whenNot": [
+      "Real errors that need attention — use Alert",
+      "Anything longer than a few words — use Alert",
+      "Clickable filters or a selected filter — use Chip or ToggleGroup",
+      "View switching — use Tabs or links"
+    ],
+    "guidelines": [
+      "Under 20 characters; a longer label truncates",
+      "dot for live status, always beside words",
+      "Neutral is the band with secondary ink; tones are soft fill plus tone ink",
+      "onRemove for user-created tags only, never system labels"
+    ],
+    "accessibility": [
+      "The text must carry the meaning — colour alone never does",
+      "Removable badges need a named dismiss button",
+      "Badges are silent to screen readers unless you pass announce",
+      "Do not make a badge the only signal that something changed"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Tones",
+      "description": "Neutral on the band; the semantic tones on their soft fill.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge>Draft</Badge>\n  <Badge tone=\"success\">Passing</Badge>\n  <Badge tone=\"warning\">Stale</Badge>\n  <Badge tone=\"danger\">Blocked</Badge>\n  <Badge tone=\"info\">Queued</Badge>\n</Stack>"
+    },
+    {
+      "name": "With Dot",
+      "description": "A status dot in the tone's ink, beside words.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge tone=\"success\" dot>Online</Badge>\n  <Badge tone=\"warning\" dot>Degraded</Badge>\n  <Badge tone=\"danger\" dot>Offline</Badge>\n</Stack>"
+    },
+    {
+      "name": "Removable",
+      "description": "Dismissible tags the user added themselves.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" wrap>\n  <Badge onRemove={() => {}}>react</Badge>\n  <Badge tone=\"info\" onRemove={() => {}}>typescript</Badge>\n</Stack>"
+    },
+    {
+      "name": "Announced Status",
+      "description": "Looks the same, but screen readers now hear the change.",
+      "code": "<Badge tone=\"success\" announce>Saved</Badge>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Alert",
+      "relationship": "alternative",
+      "note": "Use Alert for prominent, longer messages with actions"
+    },
+    {
+      "component": "Chip",
+      "relationship": "sibling",
+      "note": "Chip is interactive (clickable/filterable); Badge is display-only"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - badge label (required)",
+      "tone: neutral|accent|info|success|warning|danger - colour",
+      "dot: boolean - status dot in the tone's ink",
+      "icon: ReactNode - leading glyph",
+      "onRemove: () => void - makes badge removable",
+      "announce: boolean - opt into role=\"status\" + auto status aria-label"
+    ],
+    "a11yRules": ["A11Y_BADGE_CONTRAST", "A11Y_BADGE_DISMISS", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.941Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-secondary",
+    "--fui-font-weight-semibold",
+    "--fui-radius-full",
+    "--fui-radius-indicator",
+    "--fui-raw-space-16",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-raw-space-6",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

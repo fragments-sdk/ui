@@ -6,7 +6,7 @@
 //
 // Usage in SCSS (recommended):
 //   @use '@usefragments/ui/styles' with (
-//     $fui-brand: #6366f1,
+//     $fui-brand: #e11d48,
 //     $fui-radius-style: "rounded"
 //   );
 //
@@ -23,15 +23,15 @@
 // Consumers set these via @use ... with().
 // Values are forwarded to the seed/token chain below.
 
-$fui-brand: #f56138 !default;
+$fui-brand: #3d5ae8 !default;
 $fui-neutral: "paper" !default;
 $fui-radius-style: "default" !default;
-// Status seeds (see tokens/_seeds.scss): Cloud Surfaces rust / forest /
-// amber / slate-blue. Washes derive from these.
-$fui-danger: #c44732 !default;
-$fui-success: #2c8c5f !default;
-$fui-warning: #c4922a !default;
-$fui-info: #3d7aa8 !default;
+// Status seeds (see tokens/_seeds.scss). Tints, texts and on-fills derive
+// from these at runtime.
+$fui-danger: #d13d1f !default;
+$fui-success: #2fbf8f !default;
+$fui-warning: #f2a100 !default;
+$fui-info: oklch(0.58 0.13 245) !default;
 
 // Configure seeds BEFORE loading variables.
 // Sass module singleton: once configured here, every subsequent
@@ -49,6 +49,7 @@ $fui-info: #3d7aa8 !default;
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as *;
 @use "../tokens/property-registrations" as prop-reg;
+@use "../recipes/focus";
 
 // ============================================
 // Cascade Layer Order Declaration
@@ -56,17 +57,20 @@ $fui-info: #3d7aa8 !default;
 // Establishes the priority order for the cascade.
 // Consumer styles outside any @layer always win over layered styles.
 // Within layers: tokens < base < components (declared first = lowest priority).
+// Every component module repeats this statement before its own layer block, so
+// the order holds whichever stylesheet loads first (UIR-D122).
 // Browser support: ~97% (Chrome 99+, Firefox 97+, Safari 15.4+)
 @layer fui.tokens, fui.base, fui.components;
-
-// Output typed @property registrations (must be top-level, can't be in @layer)
-@include prop-reg.fui-property-registrations;
 
 // ============================================
 // Tokens Layer — CSS custom properties & theming
 // ============================================
+// The typed @property registrations sit in the layer too: every engine with
+// cascade layers registers them there, and nothing the library ships is
+// unlayered.
 
 @layer fui.tokens {
+  @include prop-reg.fui-property-registrations;
   @include fui-css-variables;
 }
 
@@ -83,28 +87,19 @@ $fui-info: #3d7aa8 !default;
   }
 
   // Base Element Resets
-  // Use real specificity (not :where()) for font-size so it overrides
-  // the browser default 16px. This makes 1rem = 14px throughout.
-  html {
-    font-size: #{$fui-base-font-size};
+  // The library never sets the root font size: the host's 16px (or the reader's
+  // own setting) is 1rem, and type and space scale with it.
+  :where(html) {
     scroll-behavior: smooth;
   }
 
   :where(body) {
     margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
     font-size: inherit;
-    font-family: var(
-      --fui-font-sans,
-      "Onest",
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif
-    );
+    font-family: var(--fui-font-sans, #{$fui-font-sans});
     line-height: var(--fui-line-height-normal, $fui-line-height-normal);
     background-color: var(--fui-body-bg, #{$fui-body-bg});
-    color: var(--fui-text-primary, #171717);
+    color: var(--fui-text-primary, #{$fui-text-primary});
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings:
@@ -129,7 +124,7 @@ $fui-info: #3d7aa8 !default;
     color: var(--fui-link-ink, #{$fui-link-ink});
     text-decoration: underline;
     text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
-    text-underline-offset: 0.2em;
+    text-underline-offset: var(--fui-link-underline-offset, #{$fui-link-underline-offset});
     transition: text-decoration-color 0.15s ease;
 
     &:hover {
@@ -140,9 +135,9 @@ $fui-info: #3d7aa8 !default;
   ::selection {
     background-color: var(
       --fui-selection-bg,
-      color-mix(in srgb, var(--fui-color-accent, #f56138) 18%, transparent)
+      color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 18%, transparent)
     );
-    color: var(--fui-selection-color, var(--fui-text-primary, #171717));
+    color: var(--fui-selection-color, var(--fui-text-primary, #{$fui-text-primary}));
   }
 
   // Scrollbar Styles — transparent by default, visible on hover of the
@@ -160,18 +155,19 @@ $fui-info: #3d7aa8 !default;
   ::-webkit-scrollbar-thumb {
     background-color: transparent;
     border-radius: var(--fui-radius-full, #{$fui-radius-full});
-    transition: background-color var(--fui-transition-fast, $fui-transition-fast);
+    transition: background-color var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
   }
 
   // Reveal thumb when the scrollable element (or any ancestor) is hovered.
   // :hover bubbles up the tree, so hovering a child of a scroll container
   // still triggers the container's thumb to appear.
   :where(*:hover)::-webkit-scrollbar-thumb {
-    background-color: var(--fui-text-tertiary, #8a8a8a);
+    background-color: var(--fui-text-tertiary, #{$fui-text-tertiary});
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--fui-text-secondary, #525252);
+    background-color: var(--fui-text-secondary, #{$fui-text-secondary});
   }
 
   // Firefox scrollbar — hidden at rest, shown on hover.
@@ -181,36 +177,25 @@ $fui-info: #3d7aa8 !default;
   }
 
   :where(*:hover) {
-    scrollbar-color: var(--fui-text-tertiary, #8a8a8a) transparent;
+    scrollbar-color: var(--fui-text-tertiary, #{$fui-text-tertiary}) transparent;
   }
 
-  // Accessibility: Reduced Motion
+  // Accessibility: Reduced Motion. Each recipe holds its own motion still
+  // (overlays fade, the skeleton band stops, the working wash stays) and essential
+  // progress keeps turning (UIR-D102), so there is no blanket override of
+  // animation or transition timing here; it would stop the spinner and cut the
+  // overlay fade (UIR-D140). Only smooth scrolling is turned off.
   @media (prefers-reduced-motion: reduce) {
-    :where(*, *::before, *::after) {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+    :where(*) {
       scroll-behavior: auto !important;
     }
   }
 
-  // Accessibility: Focus Visible
-  :where(:focus:not(:focus-visible)) {
-    outline: none;
-  }
-
+  // Accessibility: Focus Visible. Anything focusable that no component styles
+  // still draws the one focus geometry (recipes/focus): a 2px ring, 2px
+  // outside, following the corners. Pointer focus draws nothing, which the
+  // engine already decides through :focus-visible.
   :where(:focus-visible) {
-    outline: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-      color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 24%, transparent);
-    outline-offset: var(--fui-focus-ring-offset, #{$fui-focus-ring-offset});
-    box-shadow:
-      0 0 0
-        calc(
-          var(--fui-focus-ring-width, #{$fui-focus-ring-width}) +
-            var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-        )
-        color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 10%, transparent),
-      0 10px 24px -16px
-        color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 18%, transparent);
+    @include focus.ring;
   }
 }

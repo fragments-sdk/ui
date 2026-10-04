@@ -1,150 +1,141 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Box } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Box } from ".";
+import { Stack } from "../Stack";
+import { Text } from "../Text";
 
 /**
- * Box is the primitive layout container for applying spacing, backgrounds, and
- * borders. It renders any semantic element via the `as` prop and is the
- * building block for custom layouts not covered by Stack or Grid.
+ * Box puts content on one of the four planes (canvas, band, surface, raised),
+ * with an optional hairline, a corner role and a surface inset. Layout, ink,
+ * scrolling and shadow belong to Stack, Grid, Text, ScrollArea and the
+ * floating surfaces.
  */
 const meta = {
-  title: 'Layout/Box',
+  title: "Layout/Box",
   component: Box,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'Primitive layout container for applying spacing, backgrounds, and borders.',
+          "Puts content on a plane, with an optional hairline, a corner role and a surface inset.",
       },
     },
   },
   argTypes: {
     as: {
-      control: 'select',
-      options: ['div', 'section', 'article', 'aside', 'main', 'header', 'footer', 'nav', 'span'],
-      description: 'HTML element to render',
+      control: "select",
+      options: ["div", "section", "article", "aside", "main", "header", "footer", "nav", "span"],
+      description: "HTML element to render",
     },
-    padding: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Padding on all sides',
+    plane: {
+      control: "select",
+      options: [undefined, "canvas", "band", "surface", "raised"],
+      description: "The plane the box paints",
     },
-    paddingX: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Horizontal padding',
+    border: {
+      control: "select",
+      options: [false, true, "block-start", "block-end"],
+      description: "The one hairline",
     },
-    paddingY: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Vertical padding',
+    radius: {
+      control: "select",
+      options: ["none", "control", "nested", "surface"],
+      description: "Corner role",
     },
-    margin: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl', 'auto'],
-      description: 'Margin on all sides',
+    inset: {
+      control: "select",
+      options: ["none", "compact", "default"],
+      description: "Surface inset",
     },
-    marginX: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl', 'auto'],
-      description: 'Horizontal margin',
-    },
-    marginY: {
-      control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl', 'auto'],
-      description: 'Vertical margin',
-    },
-    background: {
-      control: 'select',
-      options: ['none', 'primary', 'secondary', 'tertiary', 'elevated'],
-      description: 'Background color',
-    },
-    rounded: {
-      control: 'select',
-      options: ['none', 'sm', 'md', 'lg', 'full'],
-      description: 'Border radius',
-    },
-    borderColor: {
-      control: 'select',
-      options: ['default', 'strong', 'accent', 'danger'],
-      description: 'Border color variant',
-    },
-    shadow: {
-      control: 'select',
-      options: ['none', 'sm', 'md', 'lg'],
-      description: 'Box shadow',
-    },
-    overflow: {
-      control: 'select',
-      options: ['hidden', 'auto', 'scroll', 'visible'],
-      description: 'Overflow behavior',
-    },
-    color: {
-      control: 'select',
-      options: ['primary', 'secondary', 'tertiary', 'accent', 'inverse'],
-      description: 'Text color',
-    },
-    display: {
-      control: 'select',
-      options: ['none', 'block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid'],
-      description: 'Display type',
-    },
-    border: { control: 'boolean', description: 'Show border' },
-    borderTop: { control: 'boolean', description: 'Show top border only' },
-    borderBottom: { control: 'boolean', description: 'Show bottom border only' },
-    borderLeft: { control: 'boolean', description: 'Show left border only' },
-    borderRight: { control: 'boolean', description: 'Show right border only' },
-  },
-  args: {
-    padding: 'md',
-    background: 'secondary',
-    rounded: 'md',
-    children: 'Content with padding and background',
   },
 } satisfies Meta<typeof Box>;
 
 export default meta;
-
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    padding: 'md',
-    background: 'secondary',
-    rounded: 'md',
-    children: 'Content with padding and background',
+    plane: "surface",
+    border: true,
+    radius: "surface",
+    inset: "default",
+    children: "A bordered region on the surface plane",
   },
 };
 
-export const Bordered: Story = {
-  args: { padding: 'lg', border: true, rounded: 'md', children: 'Bordered content area' },
+export const Planes: Story = {
+  render: () => (
+    <Box plane="canvas" inset="default">
+      <Stack gap="sm">
+        <Box plane="band" radius="control" inset="compact">
+          Band: a recessed strip
+        </Box>
+        <Box plane="surface" border radius="surface" inset="compact">
+          Surface: the card plane
+        </Box>
+        <Box plane="raised" border radius="surface" inset="compact">
+          Raised: a lifted plane
+        </Box>
+      </Stack>
+    </Box>
+  ),
 };
 
-export const Elevated: Story = {
-  args: {
-    padding: 'lg',
-    rounded: 'md',
-    shadow: 'md',
-    background: 'primary',
-    children: 'Elevated content with shadow',
-  },
+export const Nested: Story = {
+  render: () => (
+    <Box plane="surface" border radius="surface" inset="compact">
+      <Stack gap="sm">
+        <Text>The outer surface uses the surface corner.</Text>
+        <Box plane="band" radius="nested" inset="compact">
+          The inner tile follows the nested corner, so the curves stay concentric.
+        </Box>
+      </Stack>
+    </Box>
+  ),
 };
 
-export const DirectionalPadding: Story = {
-  args: {
-    paddingX: 'xl',
-    paddingY: 'sm',
-    background: 'tertiary',
-    rounded: 'sm',
-    children: 'Wide horizontal padding, short vertical',
-  },
+export const BlockBorders: Story = {
+  render: () => (
+    <Box plane="surface" border radius="surface">
+      <Box border="block-end" inset="compact">
+        Hairline below
+      </Box>
+      <Box inset="compact">Middle strip</Box>
+      <Box border="block-start" inset="compact">
+        Hairline above
+      </Box>
+    </Box>
+  ),
 };
 
-export const DirectionalBorders: Story = {
-  args: {
-    padding: 'md',
-    borderTop: true,
-    borderBottom: true,
-    children: 'Top and bottom borders only',
-  },
+export const Insets: Story = {
+  render: () => (
+    <Stack gap="sm">
+      {(["none", "compact", "default"] as const).map((inset) => (
+        <Box key={inset} plane="band" radius="control" inset={inset}>
+          inset=&quot;{inset}&quot;
+        </Box>
+      ))}
+    </Stack>
+  ),
+};
+
+export const Radii: Story = {
+  render: () => (
+    <Stack direction="row" gap="sm">
+      {(["none", "control", "nested", "surface"] as const).map((radius) => (
+        <Box key={radius} plane="surface" border radius={radius} inset="compact">
+          {radius}
+        </Box>
+      ))}
+    </Stack>
+  ),
+};
+
+export const Semantic: Story = {
+  render: () => (
+    <Box as="aside" plane="band" radius="surface" inset="default" aria-label="Repository summary">
+      Rendered as an aside landmark on the band plane.
+    </Box>
+  ),
 };

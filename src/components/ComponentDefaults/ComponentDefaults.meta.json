@@ -1,0 +1,90 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ComponentDefaults",
+  "description": "Utility provider that sets the default control size for every control below it.",
+  "category": "utilities",
+  "tags": ["provider", "defaults", "size", "utility"],
+  "status": "stable",
+  "sourcePath": "src/components/ComponentDefaults/index.tsx",
+  "exportName": "ComponentDefaultsProvider",
+  "propsSummary": ["children: node (required)", "controlSize: xs|sm|md|lg"],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Subtree that inherits the defaults",
+      "required": true
+    },
+    "controlSize": {
+      "type": "enum",
+      "description": "Default size for controls that do not pass their own size prop. A control without the step renders its nearest one (xs falls back to sm).",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    }
+  },
+  "usage": {
+    "when": [
+      "A region needs every control at one size (dense table toolbars, compact sidebars, inspector panels)",
+      "A subtree should default to xs, sm or lg controls without repeating the size prop"
+    ],
+    "whenNot": [
+      "Sizing a single control (pass its size prop)",
+      "Changing spacing or typography (use tokens, not control size)"
+    ],
+    "guidelines": [
+      "The one entry point for default control size: it renders no element and paints nothing",
+      "Nest providers to override the size for a smaller region; an omitted controlSize inherits the parent",
+      "An explicit size prop on a control always wins over the provider default",
+      "Composes with the theme scale: the provider picks the step (xs 24, sm 28, md 32, lg 40), --fui-scale multiplies every step",
+      "A control that draws no xs step renders sm inside an xs region"
+    ],
+    "accessibility": [
+      "xs and sm controls still meet the kit's minimum target size through the hit-area recipe"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Dense Toolbar",
+      "description": "Every control in the toolbar defaults to sm without repeating the prop.",
+      "code": "<ComponentDefaultsProvider controlSize=\"sm\">\n  <Stack direction=\"row\" gap=\"sm\">\n    <Button variant=\"soft\">Filter</Button>\n    <Button variant=\"ghost\">Export</Button>\n  </Stack>\n</ComponentDefaultsProvider>"
+    },
+    {
+      "name": "Nested Override",
+      "description": "A nested provider narrows the default for one region.",
+      "code": "<ComponentDefaultsProvider controlSize=\"lg\">\n  <Button>Large by default</Button>\n  <ComponentDefaultsProvider controlSize=\"sm\">\n    <Button>Small in this region</Button>\n  </ComponentDefaultsProvider>\n</ComponentDefaultsProvider>"
+    },
+    {
+      "name": "Inspector",
+      "description": "An xs region: IconButton and Button draw the 24px step.",
+      "code": "import { Plus } from \"@phosphor-icons/react\";\n\n<ComponentDefaultsProvider controlSize=\"xs\">\n  <Stack direction=\"row\" gap=\"xs\">\n    <IconButton aria-label=\"Add\">\n      <Plus aria-hidden />\n    </IconButton>\n    <Button variant=\"ghost\">Reset</Button>\n  </Stack>\n</ComponentDefaultsProvider>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Theme",
+      "relationship": "sibling",
+      "note": "Theme sets --fui-scale; the provider picks the step that scale multiplies"
+    },
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "Controls resolve their size through useResolvedControlSize"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "controlSize: xs|sm|md|lg - default size for controls below the provider",
+      "CONTROL_SIZES - the four steps, smallest first",
+      "useComponentDefaults() - read the merged defaults",
+      "useResolvedControlSize(explicit, steps?) - explicit > provider (clamped to steps) > md"
+    ],
+    "a11yRules": []
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-09-03T00:00:00.000Z"
+  },
+  "cssVariables": [],
+  "attributes": []
+}

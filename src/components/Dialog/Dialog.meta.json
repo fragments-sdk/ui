@@ -1,0 +1,184 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Dialog",
+  "description": "Blocks the page with one focused task the user finishes or dismisses.",
+  "category": "overlays",
+  "status": "stable",
+  "tags": ["modal", "dialog", "overlay", "popup", "confirmation"],
+  "sourcePath": "src/components/Dialog/index.tsx",
+  "exportName": "Dialog",
+  "propsSummary": [
+    "open: boolean - controlled open state",
+    "onOpenChange: (open) => void - open state handler",
+    "Dialog.Content initialFocus?: boolean|ref|function - focus target on open (default: true)",
+    "Dialog.Content finalFocus?: boolean|ref|function - focus target on close (default: true)",
+    "Dialog.Content width: sm|md|lg - sheet width (default: md)",
+    "Dialog.Trigger, Dialog.Close render: element - render a library control"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": true
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state",
+      "required": false
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "description": "Default open state",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called when the open state changes",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Collecting input the user must finish in one pass",
+      "Content that needs acknowledgment before continuing",
+      "Isolating a step in a longer workflow"
+    ],
+    "whenNot": [
+      "A decision the user must answer, such as a destructive confirmation (use AlertDialog)",
+      "A short hint (use Tooltip)",
+      "A list of actions (use Menu)",
+      "Contextual content that should not block (use Popover)",
+      "Feedback the user does not act on (use Toast or Alert)"
+    ],
+    "guidelines": [
+      "One task per dialog",
+      "Title states the task; body states the consequence",
+      "Pair the primary action with an explicit cancel",
+      "Escape and an outside press dismiss; for a destructive choice use AlertDialog",
+      "Pass render={<Button />} to Dialog.Trigger — the bare trigger ships unstyled"
+    ],
+    "accessibility": [
+      "Traps focus while open",
+      "Escape closes",
+      "Focus returns to the trigger on close",
+      "role=\"dialog\" with title and description wired to aria attributes"
+    ],
+    "dont": [
+      {
+        "reason": "Do not use a Dialog for a non-blocking notification.",
+        "bad": "<Dialog>Saved</Dialog>",
+        "good": "<Alert tone=\"info\">\n            <Alert.Icon />\n            <Alert.Body>\n              <Alert.Title>Settings sync pending</Alert.Title>\n              <Alert.Content>Changes reach every workspace within a minute.</Alert.Content>\n            </Alert.Body>\n          </Alert>"
+      },
+      {
+        "reason": "Do not omit an accessible title and explicit close action from a Dialog.",
+        "bad": "<Dialog><Dialog.Content>Focused task</Dialog.Content></Dialog>",
+        "good": "<Dialog defaultOpen>\n            <Dialog.Content>\n              <Dialog.Title>Account settings</Dialog.Title>\n              <Dialog.Body>Update your workspace preferences.</Dialog.Body>\n              <Dialog.Close>Close</Dialog.Close>\n            </Dialog.Content>\n          </Dialog>"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Header, body, and footer in the standard layout.",
+      "code": "<Dialog>\n          <Dialog.Trigger render={<Button>Open dialog</Button>} />\n          <Dialog.Content>\n            <Dialog.Close />\n            <Dialog.Header>\n              <Dialog.Title>Dialog title</Dialog.Title>\n              <Dialog.Description>Focused supporting content.</Dialog.Description>\n            </Dialog.Header>\n            <Dialog.Body>Dialog body</Dialog.Body>\n            <Dialog.Footer>\n              <Dialog.Close render={<Button variant=\"ghost\">Close</Button>} />\n            </Dialog.Footer>\n          </Dialog.Content>\n        </Dialog>",
+      "canonical": true
+    },
+    {
+      "name": "Large",
+      "description": "Wider surface for denser content.",
+      "code": "<Dialog>\n          <Dialog.Trigger render={<Button>Open large dialog</Button>} />\n          <Dialog.Content width=\"lg\">\n            <Dialog.Close />\n            <Dialog.Header>\n              <Dialog.Title>Detailed settings</Dialog.Title>\n            </Dialog.Header>\n            <Dialog.Body>Complex content</Dialog.Body>\n            <Dialog.Footer>\n              <Dialog.Close render={<Button variant=\"ghost\">Close</Button>} />\n            </Dialog.Footer>\n          </Dialog.Content>\n        </Dialog>"
+    },
+    {
+      "name": "No Initial Focus",
+      "description": "Skips autofocus when you place focus yourself.",
+      "code": "<Dialog>\n          <Dialog.Trigger render={<Button variant=\"soft\">Open settings</Button>} />\n          <Dialog.Content initialFocus={false}>\n            <Dialog.Header>\n              <Dialog.Title>Settings</Dialog.Title>\n              <Dialog.Description>Choose a settings area to edit.</Dialog.Description>\n            </Dialog.Header>\n            <Dialog.Body>Settings content</Dialog.Body>\n            <Dialog.Footer>\n              <Dialog.Close render={<Button variant=\"ghost\">Close</Button>} />\n            </Dialog.Footer>\n          </Dialog.Content>\n        </Dialog>"
+    },
+    {
+      "name": "Long Title",
+      "description": "A wrapping title keeps the close control reachable.",
+      "code": "<Dialog>\n          <Dialog.Trigger render={<Button>Open long title dialog</Button>} />\n          <Dialog.Content>\n            <Dialog.Close />\n            <Dialog.Header>\n              <Dialog.Title>\n                Confirm the localized account recovery policy for every workspace administrator\n              </Dialog.Title>\n              <Dialog.Description>\n                The title wraps while the close affordance and recovery action remain reachable.\n              </Dialog.Description>\n            </Dialog.Header>\n            <Dialog.Footer>\n              <Dialog.Close render={<Button variant=\"ghost\">Close</Button>} />\n            </Dialog.Footer>\n          </Dialog.Content>\n        </Dialog>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Popover",
+      "relationship": "alternative",
+      "note": "Use Popover for non-modal contextual content"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for action lists"
+    },
+    {
+      "component": "Alert",
+      "relationship": "sibling",
+      "note": "Use Alert for inline notifications"
+    },
+    {
+      "component": "AlertDialog",
+      "relationship": "sibling",
+      "note": "Use AlertDialog for a decision the user must answer"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "open: boolean - controlled open state",
+      "onOpenChange: (open) => void - open state handler",
+      "Dialog.Content initialFocus?: boolean|ref|function - focus target on open (default: true)",
+      "Dialog.Content finalFocus?: boolean|ref|function - focus target on close (default: true)",
+      "Dialog.Content width: sm|md|lg - sheet width (default: md)",
+      "Dialog.Trigger, Dialog.Close render: element - render a library control"
+    ],
+    "a11yRules": ["A11Y_DIALOG_FOCUS", "A11Y_DIALOG_ESCAPE", "A11Y_DIALOG_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "Trigger",
+      "Content",
+      "Close",
+      "Header",
+      "Title",
+      "Description",
+      "Body",
+      "Footer"
+    ],
+    "requiredChildren": ["Content"],
+    "commonPatterns": [
+      "<Dialog><Dialog.Trigger render={<Button />}>Open</Dialog.Trigger><Dialog.Content><Dialog.Header><Dialog.Title>{title}</Dialog.Title></Dialog.Header><Dialog.Body>{content}</Dialog.Body><Dialog.Footer><Dialog.Close render={<Button variant=\"ghost\" />}>Cancel</Dialog.Close><Button>Confirm</Button></Dialog.Footer></Dialog.Content></Dialog>",
+      "<Dialog><Dialog.Trigger render={<Button variant=\"soft\" />}>Open settings</Dialog.Trigger><Dialog.Content initialFocus={false}>...</Dialog.Content></Dialog>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false
+  },
+  "cssVariables": ["--fui-overlay-layer-modal", "--fui-raw-space-16"],
+  "attributes": [
+    {
+      "name": "data-dialog-close",
+      "value": "",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-width",
+      "value": "md",
+      "fixture": "populated"
+    }
+  ],
+  "matrix": {
+    "axes": {
+      "width": ["sm", "md", "lg"],
+      "theme": ["light", "dark"]
+    },
+    "forced": ["open", "focus", "reduced-motion"],
+    "worstCase": {
+      "title": "A long localized dialog title that wraps while the close affordance remains reachable"
+    }
+  },
+  "preview": {
+    "providers": [],
+    "dynamicRegions": []
+  }
+}

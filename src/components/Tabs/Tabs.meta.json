@@ -1,0 +1,248 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Tabs",
+  "description": "Swaps between sibling panels without leaving the page.",
+  "category": "navigation",
+  "tags": ["tabs", "navigation", "panels", "content-switcher"],
+  "status": "stable",
+  "sourcePath": "src/components/Tabs/index.tsx",
+  "exportName": "Tabs",
+  "propsSummary": [
+    "children: node (required)",
+    "defaultValue: string",
+    "value: string",
+    "onValueChange: function",
+    "onReselect: function",
+    "variant: ghost|soft (default: ghost)",
+    "size: sm|md"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Tab list and panels (use Tabs.List, Tabs.Tab, Tabs.Panel)",
+      "required": true
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initially active tab (uncontrolled)",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled active tab value",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called when active tab changes",
+      "required": false
+    },
+    "variant": {
+      "type": "enum",
+      "description": "Tab row chrome: ghost draws a 2px ink underline under the open tab, soft is the segmented control (band track, lifted thumb)",
+      "default": "ghost",
+      "required": false,
+      "values": ["ghost", "soft"]
+    },
+    "onReselect": {
+      "type": "function",
+      "description": "Called when the open tab is pressed again (it may close what covers its panel)",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Tab height: sm 28, md 32. Defaults to the component-default control size",
+      "required": false,
+      "values": ["sm", "md"]
+    }
+  },
+  "usage": {
+    "when": [
+      "Sibling sections of equal weight",
+      "Cutting scroll on a long page",
+      "Settings split by category",
+      "One data set seen several ways"
+    ],
+    "whenNot": [
+      "Moving between pages (use Sidebar or header navigation)",
+      "Steps in an order (use Stepper)",
+      "Content the user compares side by side",
+      "More options than fit in a row (use Select)"
+    ],
+    "guidelines": [
+      "One or two words per label",
+      "Order by how often each panel is used",
+      "Past five or six tabs, split the page instead",
+      "Keep panels comparable in depth",
+      "Soft (segmented) inside cards and panels, ghost at page level",
+      "Counts go in the count slot, not in the label"
+    ],
+    "accessibility": [
+      "Arrow keys move between tabs; activateOnFocus opens the tab they reach",
+      "Actions sit outside the tablist, so arrow keys skip them",
+      "A dot's words are read with the tab name",
+      "The panel takes focus with the shared focus ring"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Ghost",
+      "description": "A 2px ink underline marks the open panel.",
+      "code": "<Tabs defaultValue=\"overview\" variant=\"ghost\">\n  <Tabs.List>\n    <Tabs.Tab value=\"overview\">Overview</Tabs.Tab>\n    <Tabs.Tab value=\"analytics\">Analytics</Tabs.Tab>\n    <Tabs.Tab value=\"settings\">Settings</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"overview\">\n    <p>Overview content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"analytics\">\n    <p>Analytics content goes here.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"settings\">\n    <p>Settings content goes here.</p>\n  </Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "name": "Soft",
+      "description": "The segmented control suits panels inside a card.",
+      "code": "<Tabs defaultValue=\"all\" variant=\"soft\">\n  <Tabs.List>\n    <Tabs.Tab value=\"all\">All</Tabs.Tab>\n    <Tabs.Tab value=\"active\">Active</Tabs.Tab>\n    <Tabs.Tab value=\"archived\">Archived</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"all\">\n    <p>Showing all items.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"active\">\n    <p>Showing active items only.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"archived\">\n    <p>Showing archived items.</p>\n  </Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "name": "With Disabled",
+      "description": "An unavailable panel stays visible but unreachable.",
+      "code": "<Tabs defaultValue=\"general\" variant=\"ghost\">\n  <Tabs.List>\n    <Tabs.Tab value=\"general\">General</Tabs.Tab>\n    <Tabs.Tab value=\"security\">Security</Tabs.Tab>\n    <Tabs.Tab value=\"billing\" disabled>Billing</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value=\"general\">\n    <p>General settings panel.</p>\n  </Tabs.Panel>\n  <Tabs.Panel value=\"security\">\n    <p>Security settings panel.</p>\n  </Tabs.Panel>\n</Tabs>"
+    },
+    {
+      "name": "Panel Tabs",
+      "description": "Counts, a changed dot and actions outside the tablist.",
+      "code": "import { Plus } from \"@phosphor-icons/react\";\n\nconst [tab, setTab] = React.useState(\"layers\");\nconst reveal = () => {};\n\n<Tabs value={tab} onValueChange={setTab} onReselect={reveal} variant=\"soft\" size=\"md\">\n  <Tabs.List aria-label=\"Side panel\" activateOnFocus actions={<IconButton aria-label=\"Add page\"><Plus /></IconButton>}>\n    <Tabs.Tab value=\"layers\" count={24}>Layers</Tabs.Tab>\n    <Tabs.Tab value=\"pages\" dot=\"New activity\">Pages</Tabs.Tab>\n  </Tabs.List>\n</Tabs>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for many options in compact space"
+    },
+    {
+      "component": "Menu",
+      "relationship": "alternative",
+      "note": "Use Menu for action-based navigation"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: string - controlled active tab",
+      "defaultValue: string - initial active tab",
+      "onValueChange: (value) => void - tab change handler",
+      "onReselect: (value) => void - second press on the open tab",
+      "variant: ghost|soft - tab row chrome, set on the root only",
+      "size: sm|md - tab height, set on the root only",
+      "Tabs.List activateOnFocus?: boolean, actions?: node",
+      "Tabs.Tab count?: node, dot?: boolean|string, forwards HTML props and render"
+    ],
+    "a11yRules": ["A11Y_TABS_KEYBOARD", "A11Y_TABS_LABELS"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["List", "Tab", "Panel"],
+    "requiredChildren": ["List", "Panel"],
+    "commonPatterns": [
+      "<Tabs defaultValue=\"tab1\"><Tabs.List><Tabs.Tab value=\"tab1\">{label1}</Tabs.Tab><Tabs.Tab value=\"tab2\">{label2}</Tabs.Tab></Tabs.List><Tabs.Panel value=\"tab1\">{content1}</Tabs.Panel><Tabs.Panel value=\"tab2\">{content2}</Tabs.Panel></Tabs>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.871Z"
+  },
+  "cssVariables": [
+    "--fui-border",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-focus-ring-offset",
+    "--fui-focus-ring-width",
+    "--fui-font-sans",
+    "--fui-font-weight-normal",
+    "--fui-font-weight-semibold",
+    "--fui-hit-area",
+    "--fui-radius-control",
+    "--fui-radius-full",
+    "--fui-raw-space-0",
+    "--fui-raw-space-16",
+    "--fui-raw-space-24",
+    "--fui-raw-space-6",
+    "--fui-raw-space-8",
+    "--fui-stroke-default",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-label",
+      "value": "Overview",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-label",
+      "value": "Findings",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-label",
+      "value": "Settings",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-scroll-x",
+      "value": "none",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "sm",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs-bar",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs-list",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs-tab",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs-count",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs-dot",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "tabs-panel",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-variant",
+      "value": "ghost",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-variant",
+      "value": "soft",
+      "fixture": "populated"
+    }
+  ]
+}

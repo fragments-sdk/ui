@@ -1,0 +1,82 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/typography";
+
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  .root {
+    min-inline-size: 0;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  // One row: a 24 rounded-square avatar, then the sentence and its time.
+  // Rows part on a hairline.
+  .row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    padding-block: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+
+    &:first-child {
+      padding-block-start: 0;
+    }
+
+    &:last-child {
+      padding-block-end: 0;
+    }
+
+    & + & {
+      border-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+        var(--fui-border, $fui-border);
+    }
+  }
+
+  .text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    min-inline-size: 0;
+  }
+
+  .line {
+    @include typography.role("ui-standard");
+
+    margin: 0;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    overflow-wrap: anywhere;
+  }
+
+  .actor {
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+  }
+
+  .time {
+    @include typography.role("caption");
+
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .avatarSkeleton {
+    flex-shrink: 0;
+    inline-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+    block-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
+  }
+
+  // The verb sits at the end edge.
+  .more {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
+}

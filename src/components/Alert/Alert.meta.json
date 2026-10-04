@@ -1,0 +1,161 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Alert",
+  "description": "Highlights information, warnings or errors inline, with context and a clear next action.",
+  "category": "feedback",
+  "tags": ["notification", "message", "feedback", "banner", "error", "warning"],
+  "status": "stable",
+  "sourcePath": "src/components/Alert/index.tsx",
+  "exportName": "Alert",
+  "propsSummary": [
+    "children: node (required)",
+    "tone: info|warning|danger (default: info)",
+    "open: boolean",
+    "onOpenChange: function"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Alert content - use Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Close sub-components",
+      "required": true
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Tone; sets the tint fill, the icon, the title ink and the live-region role",
+      "default": "info",
+      "required": false,
+      "values": ["info", "warning", "danger"]
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled visibility. Leave unset and the alert hides itself once Alert.Close is pressed.",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Called with false when Alert.Close is pressed",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Flagging a risk before the user hits it",
+      "A failure the user must fix, said where it happened",
+      "Standing information that must stay on screen"
+    ],
+    "whenNot": [
+      "A one-word status or a pass verdict (use Badge)",
+      "A confirmation that should fade away (use Toast)",
+      "An invalid field (use the Input error prop)",
+      "A decision the user must make first (use Dialog)",
+      "A neutral note with no state (use Text or Box)"
+    ],
+    "guidelines": [
+      "Match tone to real stakes; an error that is not an error trains people to ignore you",
+      "There is no success tone: a pass goes to a Badge verdict and a confirmation to Toast",
+      "Every danger alert says what to do next",
+      "Add Alert.Title only when the message needs two lines",
+      "At most two actions; Alert.Action is a small soft Button and they wrap under the copy",
+      "Only dismissible when losing the message costs nothing; use open and onOpenChange to bring it back",
+      "Alert.Action and Alert.Close default to type=\"button\", so they are safe inside a form",
+      "Alert.Close runs your onClick and still respects preventDefault()"
+    ],
+    "accessibility": [
+      "role=\"alert\" (warning, danger) means assistive tech announces it on arrival; info uses role=\"status\"",
+      "aria-labelledby and aria-describedby point only at a Title and Content that render",
+      "Alert.Close is labelled \"Dismiss alert\" unless you pass your own aria-label",
+      "Icon plus wording carry the tone, never colour alone"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Info",
+      "description": "Neutral context — nothing went wrong, nothing needs doing.",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      Your session will expire in 15 minutes. Save your work to avoid losing changes.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Warning",
+      "description": "Nothing is broken yet — act before it is.",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Storage almost full</Alert.Title>\n    <Alert.Content>\n      You have used 90% of your storage quota. Consider deleting unused files.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Error",
+      "description": "Something failed; say what to do about it.",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"danger\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Upload failed</Alert.Title>\n    <Alert.Content>\n      The file could not be uploaded. Check your connection and try again.\n    </Alert.Content>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "With Action",
+      "description": "One small soft button; a second verb wraps beside it, never more.",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"warning\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Title>Update available</Alert.Title>\n    <Alert.Content>\n      A new version is available with important security fixes.\n    </Alert.Content>\n    <Alert.Actions>\n      <Alert.Action onClick={() => {}}>Update now</Alert.Action>\n    </Alert.Actions>\n  </Alert.Body>\n</Alert>"
+    },
+    {
+      "name": "Dismissible",
+      "description": "A close button suits news the user can safely ignore.",
+      "code": "import { Alert } from '@/components/Alert';\n\n<Alert tone=\"info\">\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>\n      You can customize your notification preferences in Settings.\n    </Alert.Content>\n  </Alert.Body>\n  <Alert.Close />\n</Alert>"
+    },
+    {
+      "name": "Controlled",
+      "description": "open and onOpenChange let the page bring a dismissed alert back.",
+      "code": "import { Alert } from '@/components/Alert';\n\nconst [open, setOpen] = React.useState(true);\n\n<Alert tone=\"info\" open={open} onOpenChange={setOpen}>\n  <Alert.Icon />\n  <Alert.Body>\n    <Alert.Content>The scan finished with no new findings.</Alert.Content>\n  </Alert.Body>\n  <Alert.Close />\n</Alert>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Badge",
+      "relationship": "alternative",
+      "note": "Use Badge for compact, inline status labels"
+    },
+    {
+      "component": "Toast",
+      "relationship": "alternative",
+      "note": "Use Toast for transient notifications that auto-dismiss"
+    },
+    {
+      "component": "Dialog",
+      "relationship": "sibling",
+      "note": "Use Dialog for blocking confirmations"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "tone: info|warning|danger - tint, icon, title ink and live-region role",
+      "open / onOpenChange - controlled visibility",
+      "Sub-components: Alert.Icon, Alert.Body, Alert.Title, Alert.Content, Alert.Actions, Alert.Action, Alert.Close",
+      "Alert.Action is a soft small Button; Alert.Close is a ghost xs IconButton; both default type=\"button\""
+    ],
+    "a11yRules": [
+      "A11Y_ALERT_ROLE",
+      "A11Y_ALERT_DISMISS",
+      "A11Y_ALERT_CONTRAST",
+      "A11Y_TARGET_SIZE_MIN"
+    ]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Icon", "Body", "Title", "Content", "Actions", "Action", "Close"],
+    "requiredChildren": ["Body"],
+    "commonPatterns": [
+      "<Alert tone=\"info\"><Alert.Icon /><Alert.Body><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
+      "<Alert tone=\"warning\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body></Alert>",
+      "<Alert tone=\"danger\"><Alert.Icon /><Alert.Body><Alert.Title>{title}</Alert.Title><Alert.Content>{message}</Alert.Content></Alert.Body><Alert.Close /></Alert>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:50.066Z"
+  },
+  "cssVariables": [
+    "--fui-control-height-xs",
+    "--fui-feedback-text-gap",
+    "--fui-font-weight-semibold",
+    "--fui-icon-md",
+    "--fui-radius-surface",
+    "--fui-raw-space-10",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-text-primary"
+  ],
+  "attributes": []
+}

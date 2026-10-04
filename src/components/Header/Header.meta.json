@@ -1,0 +1,179 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Header",
+  "description": "Groups the brand, navigation, dropdowns, search, actions and navigation trigger in a top bar.",
+  "category": "layout",
+  "tags": ["header", "navigation", "navbar", "brand", "layout", "dropdown"],
+  "status": "stable",
+  "sourcePath": "src/components/Header/index.tsx",
+  "exportName": "Header",
+  "propsSummary": [
+    "children: node (required)",
+    "position: static|sticky (default: static)",
+    "elevatedOnScroll: boolean|{ threshold?: number }"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Header content: Header.Brand, Header.Nav, Header.Search, Header.Actions, Header.Trigger, Header.SkipLink",
+      "required": true
+    },
+    "position": {
+      "type": "enum",
+      "description": "`sticky` keeps the bar at the top of its scroll container",
+      "default": "static",
+      "required": false,
+      "values": ["static", "sticky"]
+    },
+    "elevatedOnScroll": {
+      "type": "boolean|object",
+      "description": "Draw the bottom hairline once the page scrolls (no shadow). Object form accepts { threshold?: number }, default 16.",
+      "default": false,
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Top-level navigation for an app or site",
+      "Inside AppShell.Header",
+      "Anywhere brand, nav and actions share one row"
+    ],
+    "whenNot": [
+      "Section headings inside a page (use Main.Header)",
+      "Toolbars scoped to one panel",
+      "Sidebar-only navigation (use Sidebar)"
+    ],
+    "guidelines": [
+      "Header.Actions sits on the trailing edge on its own; there is no spacer part",
+      "Omit Header.Brand when the sidebar already shows the product name",
+      "Header.NavMenu groups related pages behind one trigger; mark the group active when the current page is inside it",
+      "Inside AppShell or Sidebar.Provider, Header.Trigger opens the sidebar's mobile panel and shows only while the rail is out of view",
+      "Without a sidebar, open a Drawer of Sidebar.Item rows from Header.Trigger for small screens",
+      "Pass render={<RouterLink />} to Brand or NavItem for router links",
+      "Header.SkipLink should be the first child"
+    ],
+    "accessibility": [
+      "Renders a banner landmark (<header>)",
+      "Header.SkipLink jumps keyboard users to #main-content",
+      "Header.Nav is a labelled navigation landmark (default \"Main navigation\")",
+      "The current item carries aria-current=\"page\"; a disabled item is aria-disabled and leaves the tab order",
+      "Header.Trigger has an accessible label and aria-expanded; inside a sidebar it also sets aria-controls",
+      "Header.NavMenu is a Base UI menu: click or Enter opens it, arrow keys move, Escape closes",
+      "Nav items keep a 32px track and a hit area that grows to 44px under a coarse pointer"
+    ]
+  },
+  "examples": [
+    {
+      "name": "App Bar",
+      "description": "Brand, nav with the current page marked, and one action.",
+      "code": "import { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\n\n<Header>\n  <Header.SkipLink />\n  <Header.Brand href=\"/\">Fragments</Header.Brand>\n  <Header.Nav>\n    <Header.NavItem href=\"/overview\" active>Overview</Header.NavItem>\n    <Header.NavItem href=\"/findings\">Findings</Header.NavItem>\n    <Header.NavItem href=\"/settings\">Settings</Header.NavItem>\n  </Header.Nav>\n  <Header.Actions>\n    <Button variant=\"soft\">Sign in</Button>\n  </Header.Actions>\n</Header>"
+    },
+    {
+      "name": "With Dropdown Nav",
+      "description": "Header.NavMenu groups related pages behind one trigger.",
+      "code": "import { Header } from '@/components/Header';\n\n<Header>\n  <Header.Brand href=\"/\">Fragments</Header.Brand>\n  <Header.Nav>\n    <Header.NavItem href=\"/overview\">Overview</Header.NavItem>\n    <Header.NavMenu label=\"Workspace\" active>\n      <Header.NavMenuItem href=\"/findings\">Findings</Header.NavMenuItem>\n      <Header.NavMenuItem href=\"/settings\" active>Settings</Header.NavMenuItem>\n    </Header.NavMenu>\n  </Header.Nav>\n</Header>"
+    },
+    {
+      "name": "With Search",
+      "description": "Search between brand and actions; the Input owns its fill.",
+      "code": "import { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\nimport { Input } from '@/components/Input';\n\n<Header>\n  <Header.Brand href=\"/\">Fragments</Header.Brand>\n  <Header.Search>\n    <Input placeholder=\"Search…\" aria-label=\"Search\" />\n  </Header.Search>\n  <Header.Actions>\n    <Button>New check</Button>\n  </Header.Actions>\n</Header>"
+    },
+    {
+      "name": "Sticky Marketing Bar",
+      "description": "Sticks to the top and draws the hairline once the page scrolls.",
+      "code": "import { Button } from '@/components/Button';\nimport { Header } from '@/components/Header';\n\n<Header position=\"sticky\" elevatedOnScroll>\n  <Header.SkipLink />\n  <Header.Brand render={<a href=\"/\" />}>Fragments</Header.Brand>\n  <Header.Nav>\n    <Header.NavItem href=\"/docs\">Docs</Header.NavItem>\n    <Header.NavItem href=\"/pricing\">Pricing</Header.NavItem>\n  </Header.Nav>\n  <Header.Actions>\n    <Button>Start trial</Button>\n  </Header.Actions>\n</Header>"
+    },
+    {
+      "name": "Mobile Navigation",
+      "description": "Without a sidebar, the trigger opens a Drawer of Sidebar.Item rows.",
+      "code": "import { Drawer } from '@/components/Drawer';\nimport { Header } from '@/components/Header';\nimport { Sidebar } from '@/components/Sidebar';\n\nconst [open, setOpen] = React.useState(false);\n\n<>\n  <Header>\n    <Header.Trigger aria-expanded={open} onClick={() => setOpen(true)} />\n    <Header.Brand href=\"/\">Fragments</Header.Brand>\n  </Header>\n  <Drawer open={open} onOpenChange={setOpen}>\n    <Drawer.Content side=\"start\">\n      <Drawer.Header><Drawer.Title>Navigation</Drawer.Title></Drawer.Header>\n      <Drawer.Body>\n        <Sidebar.Nav>\n          <Sidebar.Section>\n            <Sidebar.Item href=\"/overview\" active>Overview</Sidebar.Item>\n            <Sidebar.Item href=\"/findings\">Findings</Sidebar.Item>\n          </Sidebar.Section>\n        </Sidebar.Nav>\n      </Drawer.Body>\n    </Drawer.Content>\n  </Drawer>\n</>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "AppShell",
+      "relationship": "parent",
+      "note": "Header usually sits inside AppShell.Header"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "sibling",
+      "note": "Header.Trigger opens the sidebar's mobile panel and brings back a hidden rail"
+    },
+    {
+      "component": "Drawer",
+      "relationship": "sibling",
+      "note": "Without a sidebar, Header.Trigger opens a Drawer of Sidebar.Item rows"
+    },
+    {
+      "component": "Theme",
+      "relationship": "child",
+      "note": "The colour-mode control (a ToggleGroup wired to useTheme) commonly sits in Header.Actions"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "position: static|sticky - positioning behaviour",
+      "elevatedOnScroll: boolean|{ threshold?: number } - the scroll hairline",
+      "Header.Brand and Header.NavItem take render for router links",
+      "Header.NavItem active|disabled",
+      "Header.NavMenu label|active|disabled - a Base UI menu group",
+      "Header.NavMenuItem href|active|disabled|render",
+      "Header.Trigger reads Sidebar.Provider when present"
+    ],
+    "a11yRules": ["A11Y_HEADER_LANDMARK", "A11Y_NAV_LABEL", "A11Y_SKIP_LINK", "A11Y_BUTTON_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": [
+      "SkipLink",
+      "Trigger",
+      "Brand",
+      "Nav",
+      "NavItem",
+      "NavMenu",
+      "NavMenuItem",
+      "Search",
+      "Actions"
+    ],
+    "commonPatterns": [
+      "<Header><Header.Brand href=\"/\">{appName}</Header.Brand><Header.Nav><Header.NavItem href=\"/home\" active>Home</Header.NavItem></Header.Nav><Header.Actions>{actions}</Header.Actions></Header>",
+      "<Header position=\"sticky\" elevatedOnScroll><Header.Brand render={link}>{appName}</Header.Brand><Header.Nav>{links}</Header.Nav><Header.Actions>{actions}</Header.Actions></Header>",
+      "<Header><Header.Nav><Header.NavItem href=\"/home\">Home</Header.NavItem><Header.NavMenu label=\"Docs\" active><Header.NavMenuItem href=\"/cli\" active>CLI</Header.NavMenuItem></Header.NavMenu></Header.Nav></Header>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:58.820Z"
+  },
+  "cssVariables": [
+    "--fui-app-canvas-bg",
+    "--fui-appshell-header-height",
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-border",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-header-z-index",
+    "--fui-overlay-layer-anchored",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-16",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-position",
+      "value": "static",
+      "fixture": "populated"
+    }
+  ]
+}

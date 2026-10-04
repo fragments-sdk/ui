@@ -4,10 +4,10 @@ import { Button } from "../Button";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Drawer is a panel that slides in from a screen edge, extending the Dialog
- * pattern with slide animations and edge positioning. It is a compound
- * component: compose Drawer.Trigger, Drawer.Content, Drawer.Header,
- * Drawer.Body, and Drawer.Footer inside the root.
+ * Drawer is the Dialog sheet on an edge: start and end follow the writing
+ * direction, bottom is the mobile sheet. It fades in place and follows a swipe
+ * back toward its edge to dismiss. Compose Drawer.Trigger, Drawer.Content,
+ * Drawer.Header, Drawer.Body and Drawer.Footer inside the root.
  */
 const meta = {
   title: "Feedback/Drawer",
@@ -17,23 +17,22 @@ const meta = {
     renderStates: RENDER_STATES,
     docs: {
       description: {
-        component: "Slide-in panel for navigation, forms, or supplementary content.",
+        component: "Edge panel for an inspector, a navigation list or a mobile sheet.",
       },
     },
   },
   argTypes: {
     open: { control: "boolean", description: "Controlled open state" },
-    defaultOpen: {
-      control: "boolean",
-      description: "Default open state (uncontrolled)",
-    },
+    defaultOpen: { control: "boolean", description: "Default open state (uncontrolled)" },
     modal: {
-      control: "boolean",
-      description: "Whether the drawer blocks interaction with the page",
+      control: "select",
+      options: [true, "trap-focus", false],
+      description: "true draws the scrim; trap-focus keeps focus inside without one",
     },
   },
   args: {
     modal: true,
+    children: null,
   },
 } satisfies Meta<typeof Drawer>;
 
@@ -42,24 +41,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => (
-    <Drawer>
-      <Drawer.Trigger asChild>
-        <Button>Open Drawer</Button>
-      </Drawer.Trigger>
+  render: (args) => (
+    <Drawer modal={args.modal}>
+      <Drawer.Trigger render={<Button variant="soft" />}>Open drawer</Drawer.Trigger>
       <Drawer.Content>
-        <Drawer.Close />
         <Drawer.Header>
-          <Drawer.Title>Drawer Title</Drawer.Title>
-          <Drawer.Description>A panel sliding in from the right.</Drawer.Description>
+          <Drawer.Title>Edit repository</Drawer.Title>
+          <Drawer.Description>Changes apply on the next check.</Drawer.Description>
+          <Drawer.Close />
         </Drawer.Header>
         <Drawer.Body>
-          <p>Drawer content goes here.</p>
+          <p>The body scrolls on its own; the header and footer stay put.</p>
         </Drawer.Body>
         <Drawer.Footer>
-          <Drawer.Close asChild>
-            <Button variant="soft">Cancel</Button>
-          </Drawer.Close>
+          <Drawer.Close render={<Button variant="ghost" />}>Cancel</Drawer.Close>
           <Button variant="solid">Save</Button>
         </Drawer.Footer>
       </Drawer.Content>
@@ -67,19 +62,59 @@ export const Default: Story = {
   ),
 };
 
-export const LeftSide: Story = {
+export const Sides: Story = {
   render: () => (
-    <Drawer>
-      <Drawer.Trigger asChild>
-        <Button variant="soft">Open Left</Button>
-      </Drawer.Trigger>
-      <Drawer.Content side="left">
-        <Drawer.Close />
+    <div style={{ display: "flex", gap: 8 }}>
+      {(["start", "end", "bottom"] as const).map((side) => (
+        <Drawer key={side}>
+          <Drawer.Trigger render={<Button variant="soft" />}>{side}</Drawer.Trigger>
+          <Drawer.Content side={side}>
+            <Drawer.Header>
+              <Drawer.Title>On the {side} edge</Drawer.Title>
+              <Drawer.Close />
+            </Drawer.Header>
+            <Drawer.Body>
+              <p>Swipe back toward the edge to dismiss.</p>
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer>
+      ))}
+    </div>
+  ),
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: 8 }}>
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <Drawer key={size}>
+          <Drawer.Trigger render={<Button variant="soft" />}>{size}</Drawer.Trigger>
+          <Drawer.Content size={size}>
+            <Drawer.Header>
+              <Drawer.Title>Size {size}</Drawer.Title>
+              <Drawer.Close />
+            </Drawer.Header>
+            <Drawer.Body>
+              <p>Width on the start and end edges, height on the bottom edge.</p>
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer>
+      ))}
+    </div>
+  ),
+};
+
+export const Inspector: Story = {
+  render: () => (
+    <Drawer modal="trap-focus">
+      <Drawer.Trigger render={<Button variant="soft" />}>Inspect</Drawer.Trigger>
+      <Drawer.Content side="end" size="sm">
         <Drawer.Header>
-          <Drawer.Title>Navigation</Drawer.Title>
+          <Drawer.Title>Details</Drawer.Title>
+          <Drawer.Close />
         </Drawer.Header>
         <Drawer.Body>
-          <p>Left-side drawer for navigation or filters.</p>
+          <p>No scrim: the page stays visible while focus stays here.</p>
         </Drawer.Body>
       </Drawer.Content>
     </Drawer>
@@ -88,35 +123,14 @@ export const LeftSide: Story = {
 
 export const BottomSheet: Story = {
   render: () => (
-    <Drawer>
-      <Drawer.Trigger asChild>
-        <Button variant="soft">Open Bottom Sheet</Button>
-      </Drawer.Trigger>
-      <Drawer.Content side="bottom" width="sm">
+    <Drawer snapPoints={[0.4, 1]}>
+      <Drawer.Trigger render={<Button variant="soft" />}>Open sheet</Drawer.Trigger>
+      <Drawer.Content side="bottom" size="lg">
         <Drawer.Header>
           <Drawer.Title>Actions</Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
-          <p>Bottom sheet for mobile-style actions.</p>
-        </Drawer.Body>
-      </Drawer.Content>
-    </Drawer>
-  ),
-};
-
-export const NonModal: Story = {
-  render: () => (
-    <Drawer modal={false}>
-      <Drawer.Trigger asChild>
-        <Button>Open Non-Modal</Button>
-      </Drawer.Trigger>
-      <Drawer.Content side="right" width="md">
-        <Drawer.Close />
-        <Drawer.Header>
-          <Drawer.Title>Details</Drawer.Title>
-        </Drawer.Header>
-        <Drawer.Body>
-          <p>The rest of the page stays interactive.</p>
+          <p>Snaps at 40% and full height.</p>
         </Drawer.Body>
       </Drawer.Content>
     </Drawer>

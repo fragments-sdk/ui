@@ -3,251 +3,147 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/layout";
-@use "../../recipes/tone" as tone;
+@use "../../recipes/selection";
+@use "../../recipes/target";
 
-@mixin selected-surface {
-  background-color: var(--fui-field-selection-bg, $fui-bg-hover);
-  color: var(--fui-field-selection-color, $fui-text-primary);
+@layer fui.tokens, fui.base, fui.components;
 
-  &:hover:not(:disabled) {
-    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
+// One look (UIR-D146): the micro track (24), the control radius, the band fill
+// with one opaque hairline, the compact label in ink 2, truncated. Colour is
+// never decorative: a chip is never toned. Selected is the selection
+// (UIR-D142): the wash with the ring as its edge, at rest.
+
+$_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+$_pad: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+
+@layer fui.components {
+  .chip {
+    @include button-reset;
+    @include action.base;
+    @include action.size("micro");
+    @include action.motion;
+
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    border: $_hairline solid var(--fui-border, $fui-border);
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    white-space: nowrap;
+    cursor: default;
+
+    @include action.disabled;
   }
 
-  &:active:not(:disabled) {
-    background-color: var(--fui-field-selection-bg-hover, $fui-bg-hover);
-    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-      var(--fui-field-selection-border, $fui-border-strong);
-  }
-}
+  // A chip that toggles (a button, or the button inside a removable chip).
+  .interactive {
+    cursor: pointer;
 
-.chip {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
+    &:focus-visible {
+      @include focus-ring;
+    }
 
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  white-space: nowrap;
-}
+    &:not(.removable) {
+      @include action.hover {
+        @include selection.hover-tint;
 
-.withRemove {
-  border-start-end-radius: var(--fui-radius-none, #{$fui-radius-none});
-  border-end-end-radius: var(--fui-radius-none, #{$fui-radius-none});
-}
+        color: var(--fui-text-primary, $fui-text-primary);
+      }
+    }
 
-// Sizes
-.xs {
-  @include action.size("micro");
-}
+    &.removable {
+      @media (hover: hover) {
+        &:has(> .body:hover:not(:disabled)) {
+          @include selection.hover-tint;
 
-.sm {
-  @include action.size("sm");
-}
-
-.md {
-  @include action.size("md");
-}
-
-.lg {
-  @include action.size("lg");
-}
-
-// Tones publish the shared ramp; neutral is the absence of a tone class.
-.chip {
-  @include tone.channels-neutral;
-  --_fui-tone-line: var(--fui-border, #{$fui-border});
-}
-
-.toneAccent {
-  @include tone.channels("accent");
-}
-
-.toneInfo {
-  @include tone.channels("info");
-}
-
-.toneSuccess {
-  @include tone.channels("success");
-}
-
-.toneWarning {
-  @include tone.channels("warning");
-}
-
-.toneDanger {
-  @include tone.channels("danger");
-}
-
-// Variants — chrome only. Hover and pressed climb the tone's own ramp so a
-// tinted chip never washes to neutral grey under the pointer.
-.soft {
-  background-color: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
-
-  &:hover:not(:disabled) {
-    background-color: var(--_fui-tone-tint-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--_fui-tone-tint-active, var(--fui-bg-active, #{$fui-bg-active}));
-  }
-
-  &.selected {
-    @include selected-surface;
-  }
-}
-
-.outline {
-  background-color: transparent;
-  color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--_fui-tone-line, var(--fui-border, #{$fui-border}));
-
-  &:hover:not(:disabled) {
-    background-color: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
-  }
-
-  &.selected {
-    @include selected-surface;
-    border-color: var(--fui-field-selection-border, $fui-border-strong);
-  }
-}
-
-// Avatar slot
-.avatar {
-  display: flex;
-  align-items: center;
-
-  img {
-    inline-size: var(--fui-icon-md, $fui-icon-md);
-    block-size: var(--fui-icon-md, $fui-icon-md);
-    border-radius: var(--fui-radius-full, $fui-radius-full);
-    object-fit: cover;
-  }
-
-  .xs & {
-    img {
-      inline-size: var(--fui-icon-sm, $fui-icon-sm);
-      block-size: var(--fui-icon-sm, $fui-icon-sm);
+          color: var(--fui-text-primary, $fui-text-primary);
+        }
+      }
     }
   }
 
-  .sm & {
-    img {
-      inline-size: var(--fui-icon-sm, $fui-icon-sm);
-      block-size: var(--fui-icon-sm, $fui-icon-sm);
+  .selected {
+    @include selection.selected($edge: "border");
+  }
+
+  .label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+
+    > svg,
+    > img {
+      @include action.glyph("micro");
+    }
+
+    > img {
+      border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
+      object-fit: cover;
     }
   }
-}
 
-// Icon slot
-.icon {
-  display: flex;
-  align-items: center;
-}
-
-// Remove button
-.removableChip {
-  @include tone.channels-neutral;
-
-  display: inline-flex;
-  align-items: stretch;
-}
-
-.removableChip[data-tone="accent"] {
-  @include tone.channels("accent");
-}
-
-.removableChip[data-tone="info"] {
-  @include tone.channels("info");
-}
-
-.removableChip[data-tone="success"] {
-  @include tone.channels("success");
-}
-
-.removableChip[data-tone="warning"] {
-  @include tone.channels("warning");
-}
-
-.removableChip[data-tone="danger"] {
-  @include tone.channels("danger");
-}
-
-.remove {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  border-start-end-radius: var(--fui-radius-full, $fui-radius-full);
-  border-end-end-radius: var(--fui-radius-full, $fui-radius-full);
-  border-start-start-radius: var(--fui-radius-none, #{$fui-radius-none});
-  border-end-start-radius: var(--fui-radius-none, #{$fui-radius-none});
-  background-color: transparent;
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
-  border-inline-start-color: var(--fui-border, $fui-border);
-
-  .removableChip[data-size="xs"] & {
-    @include action.icon-only("micro");
+  // A removable chip: the label part and the remove control sit side by side.
+  .removable {
+    padding-inline-end: $_pad;
   }
 
-  .removableChip[data-size="sm"] & {
-    @include action.icon-only("sm");
+  // The toggle inside a removable chip inherits the chip's look.
+  .body {
+    @include button-reset;
+
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
+    min-inline-size: 0;
+    align-self: stretch;
+    border-radius: inherit;
+    color: inherit;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
   }
 
-  .removableChip[data-size="md"] & {
-    @include action.icon-only("md");
+  // The remove control: an X glyph, the indicator radius, the micro hit area
+  // (24 for a pointer, 44 coarse) and its own label.
+  .remove {
+    @include button-reset;
+    @include target.hit-area("micro");
+    @include action.motion;
+
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    inline-size: calc(#{action.icon-size("micro")} + 2 * #{$_pad});
+    block-size: calc(#{action.icon-size("micro")} + 2 * #{$_pad});
+    border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    > svg {
+      @include action.glyph("micro");
+    }
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
   }
 
-  .removableChip[data-size="lg"] & {
-    @include action.icon-only("lg");
+  // Chip.Group
+  .group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: layout.gap("xs");
   }
-
-  &:hover:not(:disabled) {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-}
-
-// The remove button wears the chip's own surface so the compound control
-// reads as one object.
-.soft + .remove {
-  background-color: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
-
-  &:hover:not(:disabled) {
-    background-color: var(--_fui-tone-tint-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--_fui-tone-tint-active, var(--fui-bg-active, #{$fui-bg-active}));
-  }
-}
-
-.outline + .remove {
-  background-color: transparent;
-  color: var(--_fui-tone-ink, var(--fui-text-secondary, #{$fui-text-secondary}));
-
-  &:hover:not(:disabled) {
-    background-color: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
-  }
-}
-
-.selected + .remove {
-  @include selected-surface;
-  border-inline-start-color: transparent;
-}
-
-// Chip.Group
-.group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: layout.gap("sm");
 }

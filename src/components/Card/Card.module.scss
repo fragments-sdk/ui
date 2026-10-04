@@ -2,197 +2,110 @@
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
+@use "../../recipes/focus" as focus;
+@use "../../recipes/radius" as radius;
+@use "../../recipes/selection" as selection;
 @use "../../recipes/surface" as surface;
 @use "../../recipes/typography" as typography;
 
-// The private inset channels are element-scoped signals between a card's own
-// classes, but custom properties inherit by default — a Card nested inside
-// another Card (docs previews, dashboard panels) would receive the outer
-// card's requested inset and lose its padding. Register them as
-// non-inheriting so each card resolves only its own channels.
-@property --_card-root-requested-inset {
-  syntax: "*";
-  inherits: false;
-}
-
-@property --_card-body-inset {
-  syntax: "*";
-  inherits: false;
-}
-
-// The earned-moment capsule: a tone-tinted hairline, a radial wash from the
-// top-right corner and the softer capsule radius. Any variant can wear it; the
-// tone decides the colour. Reserve it for the few surfaces that earn emphasis
-// (demo banner, upgrade panel, onboarding resume), never for routine content.
-@mixin _capsule($line, $wash) {
-  position: relative;
-  overflow: hidden;
-  border-color: $line;
-  border-radius: var(--fui-card-accent-radius, #{$fui-card-accent-radius});
-  box-shadow: none;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(90% 70% at 100% -10%, $wash, transparent 62%);
-  }
-}
+@layer fui.tokens, fui.base, fui.components;
 
 @layer fui.components {
+  // The private inset channels are element-scoped signals between a card's own
+  // classes, but custom properties inherit by default — a Card nested inside
+  // another surface would receive the outer card's requested inset and lose
+  // its padding. Register them as non-inheriting so each card resolves only
+  // its own channels.
+  @property --_card-root-requested-inset {
+    syntax: "*";
+    inherits: false;
+  }
+
+  @property --_card-body-inset {
+    syntax: "*";
+    inherits: false;
+  }
+
+  // The one surface: opaque surface, opaque hairline, surface corner, no
+  // shadow (surface.plane). Padding is the compact inset.
   .card {
-    @include surface-elevated;
+    @include surface.plane;
     @include typography.role("body-compact");
     @include high-contrast-outline;
 
-    padding: var(--_card-root-requested-inset, #{surface.inset("default")});
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-    border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
-    border-radius: var(--fui-card-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-    box-shadow: var(--fui-card-shadow, none);
-    transition:
-      box-shadow var(--fui-transition-fast, $fui-transition-fast),
-      border-color var(--fui-transition-fast, $fui-transition-fast),
-      background-color var(--fui-transition-fast, $fui-transition-fast),
-      transform var(--fui-transition-fast, $fui-transition-fast);
+    // The corner a child plane (an Alert) takes inside the card: concentric
+    // with the card corner across the compact inset.
+    --_fui-nested-radius: #{radius.nested(
+        var(--fui-radius-surface, #{$fui-radius-surface}),
+        surface.inset("compact")
+      )};
 
-    // A divided header paints full-bleed chrome; clip it to the card radius.
+    display: block;
+    padding: var(--_card-root-requested-inset, #{surface.inset("compact")});
+
+    // A divided header draws a full-bleed line; clip it to the card corner.
     &:has(> .headerDivided) {
       overflow: hidden;
     }
   }
 
-  // Variants — the surface only. Colour is the tone's job.
-  .solid {
-    background-color: var(--fui-card-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-    border-color: var(--fui-card-border, var(--fui-border, #{$fui-border}));
-    box-shadow: var(--fui-card-shadow, none);
-  }
-
-  // Quiet tint fill: metric tiles and dashboard panels read as one system
-  // rather than separate hero cards. Panels add `padding="none"` and let
-  // `Card.Header divided` + `Card.Body padding` own their inset.
-  .soft {
-    background-color: var(
-      --fui-card-stat-bg,
-      var(
-        --fui-card-bg,
-        color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 2%, transparent)
-      )
-    );
-    border-color: var(
-      --fui-card-stat-border,
-      var(--fui-card-border, var(--fui-border, #{$fui-border}))
-    );
-    box-shadow: var(--fui-card-stat-shadow, var(--fui-card-shadow, none));
-  }
-
-  .outline {
-    background-color: transparent;
-    border-color: var(
-      --fui-card-outlined-border,
-      var(--fui-card-border, var(--fui-border-strong, #{$fui-border-strong}))
-    );
-    box-shadow: none;
-  }
-
-  // Tones — chroma is earned by state: accent = the moment, danger = a merge
-  // is held, warning = enforcement lapsed. Neutral is the absence of a class.
-  .toneAccent {
-    @include _capsule(
-      var(--fui-card-accent-border, #{$fui-card-accent-border}),
-      var(--fui-color-accent-wash, #{$fui-color-accent-wash})
-    );
-  }
-
+  // The only state chrome: a held card draws its edge in the danger ink.
   .toneDanger {
-    @include _capsule(
-      var(--fui-color-danger-border, #{$fui-color-danger-border}),
-      var(--fui-color-danger-wash, #{$fui-color-danger-wash})
-    );
+    border-color: var(--fui-color-danger-text, #{$fui-color-danger-text});
   }
 
-  .toneWarning {
-    @include _capsule(
-      var(--fui-color-warning-border, #{$fui-color-warning-border}),
-      var(--fui-color-warning-wash, #{$fui-color-warning-wash})
-    );
-  }
-
-  // Padding
   .paddingNone {
     --_card-root-requested-inset: #{surface.inset("panel")};
   }
 
-  .paddingSm {
+  .paddingMd {
     --_card-root-requested-inset: #{surface.inset("compact")};
   }
 
-  .paddingMd {
-    --_card-root-requested-inset: #{surface.inset("default")};
-  }
-
-  .paddingLg {
-    --_card-root-requested-inset: #{surface.inset("roomy")};
-  }
-
-  // Interactive card (when onClick is provided).
-  // Card renders as an `article`/`div`/`section` (never a real `<button>`), so
-  // applying `button-reset` here was gratuitous — and it was silently wiping
-  // out variant-applied borders and backgrounds (the reset sets
-  // `border: none; background: transparent`). Keep only the clickable
-  // affordances; variants keep their surface and border untouched.
+  // An interactive card is a real link or button (`render`). The hover tint
+  // paints over the surface where the pointer can hover, the press scales it,
+  // and keyboard focus draws the ring. Nothing else moves.
   .interactive {
-    @include interactive-base;
+    @include action.motion;
 
-    display: block;
-    width: 100%;
-    text-align: left;
+    inline-size: 100%;
+    text-align: start;
+    text-decoration: none;
     cursor: pointer;
-    font: inherit;
-    color: inherit;
 
-    &:hover {
-      background-color: var(--fui-card-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-      border-color: var(--fui-card-hover-border, var(--fui-border-strong, #{$fui-border-strong}));
-      box-shadow: none;
+    @include action.hover {
+      @include selection.hover-tint;
     }
 
-    &:active {
-      background-color: var(--fui-card-active-bg, var(--fui-bg-active, $fui-bg-active));
-      box-shadow: var(
-        --fui-card-active-shadow,
-        inset 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-          var(--fui-raw-space-2, #{measurements.raw-space(2)})
-          color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 12%, transparent)
-      );
-    }
+    @include action.press;
+    @include focus.visible;
+  }
+
+  // Chosen: the selection wash, and the hairline turns into the ring.
+  .selected {
+    @include selection.selected($edge: "border");
   }
 
   .header {
     display: grid;
     gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
-    margin-bottom: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    margin-block-end: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   }
 
-  // Full-bleed panel-header region on the control-md track, canonical inset,
-  // and a hairline bottom divider. No trailing margin — it sits flush above the
-  // panel body, which manages its own padding. Use with `padding="none"`.
-  // Title cluster (left) and trailing controls (right) pin to opposite edges —
-  // wrap Title + Description in a stack so space-between has two children.
+  // A 40px head with the hairline below and no fill (the sheet head). The
+  // title cluster and the trailing controls pin to opposite edges; wrap
+  // Title + Description in a stack so there are two children.
   .headerDivided {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-    min-height: #{action.track("md")};
-    padding: #{surface.inset("compact")};
-    margin-bottom: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    background-color: var(--fui-card-header-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
-    border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-      var(--fui-border, $fui-border);
+    min-block-size: #{action.track("lg")};
+    padding-block: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding-inline: #{surface.inset("compact")};
+    margin-block-end: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    border-block-end: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, #{$fui-border});
 
     // Multi-line copy: top-align trailing controls with the title line.
     &:has(.description) {
@@ -200,70 +113,49 @@
     }
   }
 
+  // Title, Description and Body draw as spans inside a button card; block
+  // keeps them on their own lines either way.
   .title {
     @include typography.role("title-sm");
 
+    display: block;
     margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    color: var(--fui-text-primary, $fui-text-primary);
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    font-weight: var(--fui-font-weight-semibold, #{$fui-font-weight-semibold});
   }
 
   .description {
     @include typography.role("body-compact");
 
+    display: block;
     margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    color: var(--fui-text-secondary, $fui-text-secondary);
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
   }
 
   .body {
     @include typography.role("body-compact");
 
+    display: block;
     padding: var(--_card-body-inset, var(--fui-raw-space-0, #{measurements.raw-space(0)}));
-    color: var(--fui-text-primary, $fui-text-primary);
+    color: var(--fui-text-primary, #{$fui-text-primary});
   }
 
   .body.paddingNone {
     --_card-body-inset: #{surface.inset("panel")};
   }
 
-  .body.paddingSm {
-    --_card-body-inset: #{surface.inset("compact")};
-  }
-
   .body.paddingMd {
-    --_card-body-inset: #{surface.inset("default")};
-  }
-
-  .body.paddingLg {
-    --_card-body-inset: #{surface.inset("roomy")};
+    --_card-body-inset: #{surface.inset("compact")};
   }
 
   .footer {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-    margin-top: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-    padding-top: var(--fui-raw-space-16, #{measurements.raw-space(16)});
-    border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-      var(--fui-border, $fui-border);
-  }
-
-  // ============================================
-  // Accessibility: Reduced Motion
-  // ============================================
-
-  @media (prefers-reduced-motion: reduce) {
-    .card {
-      transition: none;
-    }
-
-    .interactive {
-      &:hover {
-        transform: none;
-      }
-
-      &:active {
-        transform: none;
-      }
-    }
+    margin-block-start: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    padding-block-start: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    border-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, #{$fui-border});
   }
 }

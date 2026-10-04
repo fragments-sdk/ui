@@ -1,63 +1,56 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/layout";
 
-.group {
-  display: flex;
-  flex-direction: row;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Gap sizes
-.gapNone {
-  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+// The fused group (split button): children touch, the outer corners keep the
+// control radius, the inner corners go square, and one opaque hairline divides
+// every pair whatever the child's variant, so two soft or ghost halves never
+// read as one blob. UIR-D146.
 
-  > * {
-    position: relative;
+$_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+
+@layer fui.components {
+  .group {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    vertical-align: middle;
+    isolation: isolate;
+
+    > * {
+      position: relative;
+      margin: 0;
+    }
+
+    > *:not(:first-child) {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+
+    > *:not(:last-child) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    // The divider sits on the seam, over the child's own (transparent) edge.
+    > * + *::before {
+      content: "";
+      position: absolute;
+      inset-block: calc(-1 * #{$_hairline});
+      inset-inline-start: calc(-1 * #{$_hairline});
+      z-index: 1;
+      inline-size: $_hairline;
+      background-color: var(--fui-border, #{$fui-border});
+      pointer-events: none;
+
+      @media (forced-colors: active) {
+        background-color: CanvasText;
+      }
+    }
+
+    // A focused half lifts over the divider so its ring is never cut.
+    > *:focus-visible {
+      z-index: 2;
+    }
   }
-
-  > *:not(:first-child) {
-    margin-inline-start: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
-    border-start-start-radius: var(--fui-radius-none, #{$fui-radius-none});
-    border-end-start-radius: var(--fui-radius-none, #{$fui-radius-none});
-  }
-
-  > *:not(:last-child) {
-    border-start-end-radius: var(--fui-radius-none, #{$fui-radius-none});
-    border-end-end-radius: var(--fui-radius-none, #{$fui-radius-none});
-  }
-
-  > *:hover,
-  > *:focus-visible {
-    z-index: 1;
-  }
-}
-
-.gap-xs {
-  gap: layout.gap("xs");
-}
-
-.gap-sm {
-  gap: layout.gap("sm");
-}
-
-.gap-md {
-  gap: layout.gap("md");
-}
-
-// Wrap
-.wrap {
-  flex-wrap: wrap;
-}
-
-// Alignment
-.align-start {
-  justify-content: flex-start;
-}
-
-.align-center {
-  justify-content: center;
-}
-
-.align-end {
-  justify-content: flex-end;
 }

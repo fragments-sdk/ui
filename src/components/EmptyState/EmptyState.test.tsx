@@ -1,60 +1,80 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, expectNoA11yViolations } from '../../test/utils';
-import { EmptyState } from './index';
+import { describe, it, expect } from "vitest";
+import { render, screen, expectNoA11yViolations } from "../../test/utils";
+import { EmptyState, type EmptyStateProps } from "./index";
 
-describe('EmptyState', () => {
-  it('renders children', () => {
+describe("EmptyState", () => {
+  it("renders children", () => {
     render(
       <EmptyState>
         <EmptyState.Title>No results</EmptyState.Title>
       </EmptyState>
     );
-    expect(screen.getByText('No results')).toBeInTheDocument();
+    expect(screen.getByText("No results")).toBeInTheDocument();
   });
 
-  it('renders all compound sub-components', () => {
+  it("renders all compound sub-components", () => {
     render(
       <EmptyState>
         <EmptyState.Icon>ICON</EmptyState.Icon>
         <EmptyState.Title>Empty</EmptyState.Title>
         <EmptyState.Description>Nothing to show</EmptyState.Description>
-        <EmptyState.Actions><button>Add item</button></EmptyState.Actions>
+        <EmptyState.Actions>
+          <button>Add item</button>
+        </EmptyState.Actions>
       </EmptyState>
     );
-    expect(screen.getByText('ICON')).toHaveClass('icon');
-    expect(screen.getByText('Empty').tagName).toBe('H3');
-    expect(screen.getByText('Nothing to show').tagName).toBe('P');
-    expect(screen.getByRole('button', { name: 'Add item' })).toBeInTheDocument();
+    expect(screen.getByText("ICON")).toHaveClass("icon");
+    expect(screen.getByText("Empty").tagName).toBe("H3");
+    expect(screen.getByText("Nothing to show").tagName).toBe("P");
+    expect(screen.getByRole("button", { name: "Add item" })).toBeInTheDocument();
   });
 
-  it('applies size class', () => {
+  it("applies size class", () => {
     const { container } = render(
-      <EmptyState size="lg">
-        <EmptyState.Title>Large</EmptyState.Title>
+      <EmptyState size="sm">
+        <EmptyState.Title>Small</EmptyState.Title>
       </EmptyState>
     );
-    expect(container.firstElementChild).toHaveClass('lg');
+    expect(container.firstElementChild).toHaveClass("sm");
   });
 
-  it('applies custom className', () => {
+  it("hides the decorative icon tile from assistive tech", () => {
+    render(
+      <EmptyState>
+        <EmptyState.Icon>ICON</EmptyState.Icon>
+        <EmptyState.Title>Empty</EmptyState.Title>
+      </EmptyState>
+    );
+    expect(screen.getByText("ICON")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("carries no cut props", () => {
+    // @ts-expect-error size lg is cut: size drives padding only
+    const large: EmptyStateProps = { size: "lg", children: "x" };
+    // @ts-expect-error variant is cut: the state never draws its own frame
+    const outline: EmptyStateProps = { variant: "outline", children: "x" };
+    expect([large, outline]).toHaveLength(2);
+  });
+
+  it("applies custom className", () => {
     const { container } = render(
       <EmptyState className="custom">
         <EmptyState.Title>Custom</EmptyState.Title>
       </EmptyState>
     );
-    expect(container.firstElementChild).toHaveClass('custom');
+    expect(container.firstElementChild).toHaveClass("custom");
   });
 
-  it('defaults to md size', () => {
+  it("defaults to md size", () => {
     const { container } = render(
       <EmptyState>
         <EmptyState.Title>Default</EmptyState.Title>
       </EmptyState>
     );
-    expect(container.firstElementChild).toHaveClass('md');
+    expect(container.firstElementChild).toHaveClass("md");
   });
 
-  it('has no accessibility violations', async () => {
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <EmptyState>
         <EmptyState.Icon>ICON</EmptyState.Icon>
@@ -65,21 +85,27 @@ describe('EmptyState', () => {
     await expectNoA11yViolations(container);
   });
 
-  it('forwards DOM props on compound sub-components', () => {
+  it("forwards DOM props on compound sub-components", () => {
     render(
       <EmptyState>
-        <EmptyState.Icon data-testid="icon" title="placeholder">ICON</EmptyState.Icon>
-        <EmptyState.Title data-testid="title" id="empty-title">Empty</EmptyState.Title>
-        <EmptyState.Description data-testid="desc" aria-live="polite">Nothing here</EmptyState.Description>
+        <EmptyState.Icon data-testid="icon" title="placeholder">
+          ICON
+        </EmptyState.Icon>
+        <EmptyState.Title data-testid="title" id="empty-title">
+          Empty
+        </EmptyState.Title>
+        <EmptyState.Description data-testid="desc" aria-live="polite">
+          Nothing here
+        </EmptyState.Description>
         <EmptyState.Actions data-testid="actions" role="group">
           <button>Add</button>
         </EmptyState.Actions>
       </EmptyState>
     );
 
-    expect(screen.getByTestId('icon')).toHaveAttribute('title', 'placeholder');
-    expect(screen.getByTestId('title')).toHaveAttribute('id', 'empty-title');
-    expect(screen.getByTestId('desc')).toHaveAttribute('aria-live', 'polite');
-    expect(screen.getByTestId('actions')).toHaveAttribute('role', 'group');
+    expect(screen.getByTestId("icon")).toHaveAttribute("title", "placeholder");
+    expect(screen.getByTestId("title")).toHaveAttribute("id", "empty-title");
+    expect(screen.getByTestId("desc")).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByTestId("actions")).toHaveAttribute("role", "group");
   });
 });

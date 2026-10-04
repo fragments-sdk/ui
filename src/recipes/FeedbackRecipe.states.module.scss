@@ -1,0 +1,28 @@
+// Fixture-only classes for FeedbackRecipe.states.tsx: the slot a loading request
+// fills, and the errbox drawn where a request failed. Unlayered.
+
+@use "../recipes/feedback";
+@use "../tokens/measurements.generated" as measurements;
+
+// The slot holds the result's final geometry while it loads.
+.slot {
+  display: grid;
+  align-items: center;
+  block-size: var(--fui-raw-space-32, #{measurements.raw-space(32)});
+}
+
+.errbox {
+  @include feedback.errbox;
+}
+
+.errboxIcon {
+  @include feedback.errbox-icon;
+}
+
+.errboxWords {
+  @include feedback.errbox-words;
+}
+
+.errboxActions {
+  @include feedback.errbox-actions;
+}

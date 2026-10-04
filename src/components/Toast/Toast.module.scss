@@ -1,160 +1,205 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/mixins" as *;
+@use "../../tokens/mixins";
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/feedback" as feedback;
-@use "../../recipes/tone" as tone;
+@use "../../recipes/loading" as loading;
+@use "../../recipes/overlay" as overlay;
+@use "../../recipes/typography" as typography;
 
-.container {
-  position: fixed;
-  z-index: var(--fui-overlay-layer-toast, #{$fui-overlay-layer-toast});
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
-  inline-size: min(
-    var(--fui-overlay-popover-md, #{measurements.target-value("overlay", "popover-md")}),
-    calc(
-      100% - var(
-          --fui-feedback-viewport-inset-left,
-          max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-left))
-        ) - var(
-          --fui-feedback-viewport-inset-right,
-          max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-right))
-        )
-    )
-  );
-  pointer-events: none;
+@layer fui.tokens, fui.base, fui.components;
 
-  > * {
-    pointer-events: auto;
-  }
-}
+// The toast is always the raised plane on the popup shadow, no edge and no
+// tone fill. The tone shows only as the icon's ink. Title 12/550 in ink 1,
+// body 12 in ink 2. It appears and leaves in place: no keyframes, no scale.
+@layer fui.components {
+  .viewport {
+    position: fixed;
+    z-index: var(--fui-overlay-layer-toast, #{$fui-overlay-layer-toast});
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    inline-size: min(
+      var(--fui-overlay-popover-md, #{measurements.target-value("overlay", "popover-md")}),
+      calc(
+        100% - var(
+            --fui-feedback-viewport-inset-left,
+            max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-left))
+          ) - var(
+            --fui-feedback-viewport-inset-right,
+            max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-right))
+          )
+      )
+    );
+    pointer-events: none;
 
-.topleft {
-  @include feedback.viewport-stack("top-left");
-}
-
-.topcenter {
-  @include feedback.viewport-stack("top-center");
-}
-
-.topright {
-  @include feedback.viewport-stack("top-right");
-}
-
-.bottomleft {
-  @include feedback.viewport-stack("bottom-left");
-}
-
-.bottomcenter {
-  @include feedback.viewport-stack("bottom-center");
-}
-
-.bottomright {
-  @include feedback.viewport-stack("bottom-right");
-}
-
-.toast {
-  @include feedback.transient;
-  @include high-contrast-outline;
-
-  // Neutral: an elevated surface with secondary description ink. Tones
-  // republish the same three channels from the shared ramp.
-  --_fui-tone-wash: var(--fui-bg-elevated, #{$fui-bg-elevated});
-  --_fui-tone-line: var(--fui-border, #{$fui-border});
-  --_fui-tone-ink: var(--fui-text-primary, #{$fui-text-primary});
-  --_toast-ink-soft: var(--fui-text-secondary, #{$fui-text-secondary});
-
-  background-color: var(--_fui-tone-wash);
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--_fui-tone-line);
-  border-radius: var(--fui-radius-l1, $fui-radius-l1);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-  animation: toastEnter var(--fui-transition-normal, $fui-transition-normal);
-}
-
-.toast:has(.description) {
-  align-items: flex-start;
-}
-
-@keyframes toastEnter {
-  from {
-    opacity: 0;
-    transform: translateY(var(--fui-anim-offset-md, #{$fui-anim-offset-md})) scale(0.95);
+    > * {
+      pointer-events: auto;
+    }
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  .bottomEnd {
+    @include feedback.viewport-stack("bottom-right");
+
+    right: auto;
+    inset-inline-end: var(
+      --fui-feedback-viewport-inset-right,
+      max(var(--fui-raw-space-16, #{measurements.raw-space(16)}), env(safe-area-inset-right))
+    );
   }
-}
 
-// Tones paint wash, hairline and ink from the shared ramp; the description
-// drops to the same ink so the toast reads as one tinted object.
-.toneSuccess {
-  @include tone.channels("success");
-
-  --_toast-ink-soft: var(--_fui-tone-ink);
-}
-
-.toneDanger {
-  @include tone.channels("danger");
-
-  --_toast-ink-soft: var(--_fui-tone-ink);
-}
-
-.toneWarning {
-  @include tone.channels("warning");
-
-  --_toast-ink-soft: var(--_fui-tone-ink);
-}
-
-.toneInfo {
-  @include tone.channels("info");
-
-  --_toast-ink-soft: var(--_fui-tone-ink);
-}
-
-.icon {
-  @include feedback.icon;
-
-  color: var(--_toast-ink-soft);
-
-  svg {
-    inline-size: 100%;
-    block-size: 100%;
+  .bottomCenter {
+    @include feedback.viewport-stack("bottom-center");
   }
-}
 
-.toast:has(.description) .icon {
-  margin-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
-}
+  .topCenter {
+    @include feedback.viewport-stack("top-center");
+  }
 
-.content {
-  display: grid;
-  flex: 1;
-  gap: var(--fui-feedback-text-gap, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
-  min-inline-size: 0;
-}
-
-.title {
-  @include feedback.title;
-
-  color: var(--_fui-tone-ink);
-}
-
-.description {
-  @include feedback.body;
-
-  color: var(--_toast-ink-soft);
-}
-
-// The action and close are kit buttons; only their placement lives here.
-.action,
-.close {
-  flex-shrink: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
   .toast {
-    animation: none;
+    @include overlay.surface;
+    @include typography.role("body-compact");
+
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fui-raw-space-10, #{measurements.raw-space(10)});
+    min-inline-size: min(
+      var(--fui-overlay-popover-sm, #{measurements.target-value("overlay", "popover-sm")}),
+      100%
+    );
+    padding-block: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding-inline: var(--fui-raw-space-12, #{measurements.raw-space(12)})
+      var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    overflow: hidden;
+
+    &:focus-visible {
+      @include mixins.focus-ring;
+    }
+
+    // A swipe follows the pointer, then the toast leaves in place.
+    &[data-swiping] {
+      transition: none;
+    }
+
+    &[data-limited] {
+      display: none;
+    }
+  }
+
+  // One line tall and dropped by the content's 2px inset, so the glyph sits on
+  // the title's line.
+  .icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    block-size: #{typography.line-height("body-compact")};
+    margin-block-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+
+    svg {
+      inline-size: var(--fui-icon-md, #{$fui-icon-md});
+      block-size: var(--fui-icon-md, #{$fui-icon-md});
+    }
+
+    &[data-tone="success"] {
+      color: var(--fui-color-success-text, #{$fui-color-success-text});
+    }
+
+    &[data-tone="warning"] {
+      color: var(--fui-color-warning-text, #{$fui-color-warning-text});
+    }
+
+    &[data-tone="danger"] {
+      color: var(--fui-color-danger-text, #{$fui-color-danger-text});
+    }
+  }
+
+  .spinner svg {
+    @include loading.spinner;
+  }
+
+  @include loading.keyframes;
+
+  .content {
+    display: grid;
+    flex: 1 1 auto;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    min-inline-size: 0;
+    padding-block: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+  }
+
+  .titleRow {
+    display: flex;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    align-items: baseline;
+    min-inline-size: 0;
+  }
+
+  // A live toast's title and description are a heading and a paragraph; they
+  // keep the static toast's box, with no element margins.
+  .title {
+    @include typography.role("body-compact");
+
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    font-weight: typography.weight("ui-standard");
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    overflow-wrap: anywhere;
+  }
+
+  .count {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    font-variant-numeric: tabular-nums;
+  }
+
+  .description {
+    @include typography.role("body-compact");
+
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    align-items: center;
+  }
+
+  .shortcut {
+    margin-inline-start: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    font-family: inherit;
+    font-size: inherit;
+    font-variant-numeric: tabular-nums;
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  }
+
+  .close {
+    flex: 0 0 auto;
+  }
+
+  // The busy line: two pixels along the foot of the toast, neutral ink.
+  .progress {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    block-size: var(--fui-stroke-default, #{$fui-stroke-default});
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
+
+    &::after {
+      content: "";
+      display: block;
+      inline-size: var(--_toast-progress, 0%);
+      block-size: 100%;
+      background-color: var(--fui-border-strong, #{$fui-border-strong});
+    }
+
+    @media (forced-colors: active) {
+      &::after {
+        background-color: Highlight;
+      }
+    }
   }
 }

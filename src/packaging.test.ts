@@ -157,6 +157,8 @@ describe("measurements public subpath", () => {
 
   it("wires generated profiles and fixed targets into the built stylesheet", () => {
     const css = readFileSync(resolve(packageRoot, "dist/assets/ui.css"), "utf8");
+    // Derived tokens re-resolve on any themed element, at specificity 0.
+    const THEMED = ":where(:root, [data-fui-theme])";
     const declaration = (selector: string, property: string) => {
       const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const match = css.match(
@@ -166,79 +168,84 @@ describe("measurements public subpath", () => {
       return match?.[1].trim();
     };
 
-    // Catalog lengths read --fui-scale (UIR-D27); hairlines of 2px and under stay fixed.
-    const scaled = (value: string) => {
+    // One unit policy (UIR-D65): type and space are rem against the 16px host; hairlines of
+    // 2px and under, strokes and radius stay px. Catalog lengths read --fui-scale (UIR-D27).
+    const host = Number.parseFloat(MEASUREMENT_PROFILES.spacing.baseFontSize);
+    const rem = (value: string) => {
       const match = /^([0-9]+(?:\.[0-9]+)?)px$/.exec(value);
-      return match && Number(match[1]) > 2 ? `calc(var(--fui-scale, 1) * ${value})` : value;
+      if (match === null || Number(match[1]) <= 2) return value;
+      return `${Number((Number(match[1]) / host).toFixed(6))}rem`;
+    };
+    const scaled = (value: string) => {
+      const match = /^([0-9]+(?:\.[0-9]+)?)(px|rem)$/.exec(value);
+      if (match === null || (match[2] === "px" && Number(match[1]) <= 2)) return value;
+      return `calc(var(--fui-scale, 1) * ${value})`;
     };
 
     for (const [step, value] of Object.entries(MEASUREMENT_PROFILES.rawSpace)) {
       const property = `--fui-raw-space-${step}`;
-      expect(declaration(":root", property)).toBe(scaled(value));
+      expect(declaration(THEMED, property)).toBe(scaled(rem(value)));
       expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
     }
 
-    for (const [group, values] of Object.entries(MEASUREMENT_PROFILES.targets)) {
+    // The control track is the one height family (UIR-D90); the field track emits nothing.
+    const targetProperty = (group: string, name: string) => {
+      if (group === "controlTrack") return `--fui-control-height-${name === "micro" ? "xs" : name}`;
+      if (group === "fieldTrack") return null;
       const groupName = group.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
+      return `--fui-${groupName}-${name}`;
+    };
+    for (const [group, values] of Object.entries(MEASUREMENT_PROFILES.targets)) {
       for (const [name, value] of Object.entries(values)) {
-        const property = `--fui-${groupName}-${name}`;
-        expect(declaration(":root", property)).toBe(scaled(value));
+        const property = targetProperty(group, name);
+        if (property === null) continue;
+        expect(declaration(THEMED, property)).toBe(scaled(group === "stroke" ? value : rem(value)));
         expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
       }
     }
 
+    // Two weights only (UIR-D88): a role reads the weight input, so a font package moves it.
     for (const [role, record] of Object.entries(MEASUREMENT_PROFILES.typography)) {
       for (const [name, value] of Object.entries(record)) {
         const property = `--fui-type-${role}-${name}`;
-        expect(declaration(":root", property)).toBe(String(value));
+        const expected =
+          name === "weight"
+            ? `var(--fui-font-weight-${value === 400 ? "normal" : "semibold"}, ${String(value)})`
+            : name === "size" || name === "line"
+              ? rem(String(value))
+              : String(value);
+        expect(declaration(THEMED, property)).toBe(expected);
         expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
       }
     }
 
-    // The single spacing record lands on :root; every step reads --fui-scale (UIR-D27).
-    expect(declaration(":root", "--fui-base-unit")).toBe(MEASUREMENT_PROFILES.spacing.baseUnit);
-    for (const step of Object.keys(MEASUREMENT_PROFILES.spacing.multipliers)) {
-      if (step === "px") continue;
-      expect(declaration(":root", `--fui-space-${step}`)).toMatch(
-        /^calc\(var\(--fui-scale, 1\) \* [0-9.]+rem\)$/
-      );
+    // v4 hard cut: the legacy space, type-size, weight and height aliases ship nothing.
+    for (const removed of [
+      /--fui-base-unit:/,
+      /--fui-space-[a-z0-9]+:/,
+      /--fui-font-size-[a-z0-9]+:/,
+      /--fui-font-weight-(?:medium|bold):/,
+      /--fui-button-height-[a-z]+:/,
+      /--fui-control-track-[a-z]+:/,
+      /--fui-input-height(?:-[a-z]+)?:/,
+      /--fui-field-track-[a-z]+:/,
+    ]) {
+      expect(css).not.toMatch(removed);
     }
     expect(css).not.toMatch(/\[data-fui-density/);
-
-    // The compatibility alias chain still ships at :root. It used to be asserted
-    // only inside the density selectors, so deleting those (UIR-D36) would have
-    // left it unguarded (cold review of #607).
-    for (const size of ["xs", "sm", "md", "lg"] as const) {
-      expect(declaration(":root", `--fui-control-height-${size}`)).toBe(
-        MEASUREMENT_PROFILES.targets.controlTrack[size === "xs" ? "micro" : size]
-      );
-      expect(declaration(":root", `--fui-button-height-${size}`)).toBe(
-        `var(--fui-control-height-${size})`
-      );
-    }
-    for (const [alias, expected] of [
-      ["--fui-input-height-sm", "var(--fui-field-track-sm)"],
-      ["--fui-input-height", "var(--fui-field-track-md)"],
-      ["--fui-input-height-lg", "var(--fui-field-track-lg)"],
-    ] as const) {
-      expect(declaration(":root", alias)).toBe(expected);
-    }
     // `--fui-target-size-min` used to be `var(--fui-touch-sm)` inside the density
-    // selectors. At :root both are emitted as literals from the same measurement,
+    // selectors. At the root both are emitted as literals from the same measurement,
     // rounded to different precisions, so guard that they are still the same length.
-    const rem = (property: string) => Number.parseFloat(declaration(":root", property) ?? "");
-    expect(rem("--fui-target-size-min")).toBeCloseTo(rem("--fui-touch-sm"), 3);
+    const remOf = (property: string) => Number.parseFloat(declaration(THEMED, property) ?? "");
+    expect(remOf("--fui-target-size-min")).toBeCloseTo(remOf("--fui-touch-sm"), 3);
 
+    // A radius style writes only the radius input; every role re-derives from it.
     for (const [radiusStyle, profile] of Object.entries(MEASUREMENT_PROFILES.radius)) {
-      for (const [size, value] of Object.entries(profile)) {
-        expect(declaration(`[data-fui-radius-style=${radiusStyle}]`, `--fui-radius-${size}`)).toBe(
-          value
-        );
-      }
+      expect(declaration(`[data-fui-radius-style=${radiusStyle}]`, "--fui-radius")).toBe(
+        radiusStyle === "default" ? "5px" : profile.md
+      );
     }
-
-    expect(declaration(":root", "--fui-button-height-md")).toBe("var(--fui-control-height-md)");
-    expect(declaration(":root", "--fui-input-height")).toBe("var(--fui-field-track-md)");
+    expect(css).not.toMatch(/--fui-radius-(?:sm|md|lg|xl):/);
   });
 
   it("ships ESM, CommonJS, and literal declarations with symbol parity", async () => {
@@ -408,7 +415,7 @@ describe("published ./styles default CSS includes tokens (P0 packaging)", () => 
     const css = readFileSync(cssPath, "utf8");
     expect(css).toMatch(/:root\b/);
     expect(css).toMatch(/--fui-text-primary\s*:/);
-    // Dark-mode surface (data-theme and/or .dark) must ship in the default sheet.
-    expect(css).toMatch(/\[data-theme=["']dark["']\]|\.dark\b/);
+    // Dark-mode surface (data-theme, quoted or minified) must ship in the default sheet.
+    expect(css).toMatch(/\[data-theme=["']?dark["']?\]/);
   });
 });

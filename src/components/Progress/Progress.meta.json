@@ -1,0 +1,164 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Progress",
+  "description": "Shows how far along a task is, as one thin bar.",
+  "category": "feedback",
+  "tags": ["progress", "loading", "indicator", "percentage", "status"],
+  "status": "stable",
+  "sourcePath": "src/components/Progress/index.tsx",
+  "exportName": "Progress",
+  "propsSummary": [
+    "value: number (default: null)",
+    "min: number (default: 0)",
+    "max: number (default: 100)",
+    "tone: accent|neutral|warning|danger (default: accent)",
+    "role: progressbar|meter (default: progressbar)",
+    "label: string",
+    "showValue: boolean (default: false)",
+    "formatValue: function"
+  ],
+  "props": {
+    "value": {
+      "type": "number",
+      "description": "Current value, between min and max. Null for work not yet counted.",
+      "default": "null",
+      "required": false
+    },
+    "min": {
+      "type": "number",
+      "description": "Minimum value",
+      "default": "0",
+      "required": false
+    },
+    "max": {
+      "type": "number",
+      "description": "Maximum value",
+      "default": "100",
+      "required": false
+    },
+    "tone": {
+      "type": "enum",
+      "description": "Fill colour. accent is the selection colour of work in progress; neutral is a meter whose maximum is not a verdict; warning and danger carry a quota near or over its limit. A full bar is never a success.",
+      "default": "accent",
+      "required": false,
+      "values": ["accent", "neutral", "warning", "danger"]
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text above the progress bar",
+      "required": false
+    },
+    "showValue": {
+      "type": "boolean",
+      "description": "Show the value beside the label",
+      "default": "false",
+      "required": false
+    },
+    "formatValue": {
+      "type": "function",
+      "description": "Custom formatter for displayed progress value",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Upload and download progress",
+      "Percentage of a task finished",
+      "How much of a form is filled in",
+      "Waits where you know the duration"
+    ],
+    "whenNot": [
+      "You cannot say how long — use Loading",
+      "Discrete steps — use a stepper",
+      "Status with no number — use Badge"
+    ],
+    "guidelines": [
+      "Pass a value when you know the percentage; pass null when you do not",
+      "Add a label whenever the bar alone leaves the purpose unclear",
+      "warning and danger carry state, not decoration; a finished task says so in words, not in green",
+      "tone=\"neutral\" with role=\"meter\" for a magnitude where full is not success",
+      "Values outside min and max are clamped before display",
+      "Pass aria-valuetext and aria-label to localise what a screen reader hears"
+    ],
+    "accessibility": [
+      "Reports role=\"progressbar\" with aria-valuenow",
+      "role=\"meter\" is accepted for scalar readings inside a known range",
+      "The label is tied to the bar",
+      "Work not yet counted reports aria-busy and the value text \"Loading\"; under reduced motion it holds still at half strength"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Determinate bar with its percentage spelled out.",
+      "code": "<Progress value={60} label=\"Uploading\" showValue />"
+    },
+    {
+      "name": "Tones",
+      "description": "Colour carries state only: work in progress, a quota running out, a quota spent.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"md\">\n  <Progress value={75} label=\"Processing\" showValue />\n  <Progress value={82} tone=\"warning\" label=\"Storage nearly full\" showValue />\n  <Progress value={100} tone=\"danger\" label=\"Storage full\" showValue />\n</Stack>"
+    },
+    {
+      "name": "Meter",
+      "description": "A reading where hitting the top is not a win.",
+      "code": "<Progress\n  value={42}\n  tone=\"neutral\"\n  role=\"meter\"\n  label=\"Seats used\"\n  showValue\n/>"
+    },
+    {
+      "name": "Indeterminate",
+      "description": "value={null}: a short run travels the track until the work is counted.",
+      "code": "<Progress value={null} label=\"Counting files\" />"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Badge",
+      "relationship": "alternative",
+      "note": "Use Badge for status without percentage"
+    },
+    {
+      "component": "Alert",
+      "relationship": "sibling",
+      "note": "Use Alert for completion messages"
+    },
+    {
+      "component": "Loading",
+      "relationship": "alternative",
+      "note": "Use Loading when there is no bar to fill"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value: number|null - progress value (null while not yet counted)",
+      "tone: accent|neutral|warning|danger - fill colour",
+      "label: string - descriptive label",
+      "showValue: boolean - display the value",
+      "Determinate display values are clamped (and invalid min/max ranges render as 0%)"
+    ],
+    "a11yRules": ["A11Y_PROGRESS_ROLE", "A11Y_PROGRESS_VALUE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:02.339Z"
+  },
+  "cssVariables": [
+    "--fui-bg-inverse",
+    "--fui-bg-secondary",
+    "--fui-color-danger",
+    "--fui-color-warning",
+    "--fui-control-checked-bg",
+    "--fui-duration-enter-lg",
+    "--fui-duration-pulse",
+    "--fui-ease-standard",
+    "--fui-radius-control",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

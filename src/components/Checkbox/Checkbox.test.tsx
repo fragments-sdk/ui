@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { CSSProperties } from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
 import { Field } from "../Field";
@@ -9,20 +10,11 @@ const checkboxStyles = readFileSync(
   resolve(process.cwd(), "src/components/Checkbox/Checkbox.module.scss"),
   "utf8"
 );
-const componentProperties = readFileSync(
-  resolve(process.cwd(), "src/tokens/_component-properties.scss"),
-  "utf8"
-);
 
 describe("Checkbox", () => {
   it("renders a checkbox role", () => {
     render(<Checkbox aria-label="Accept" />);
     expect(screen.getByRole("checkbox")).toBeInTheDocument();
-  });
-
-  it("exposes its resolved geometry size", () => {
-    render(<Checkbox aria-label="Accept" size="lg" />);
-    expect(screen.getByRole("checkbox")).toHaveAttribute("data-size", "lg");
   });
 
   it("toggles checked state on click", async () => {
@@ -76,26 +68,35 @@ describe("Checkbox", () => {
     expect(screen.getByText("I agree")).toBeInTheDocument();
   });
 
-  it("renders description text", () => {
-    render(<Checkbox label="Subscribe" description="Get weekly updates" />);
-    expect(screen.getByText("Get weekly updates")).toBeInTheDocument();
-  });
-
-  it("renders helperText (preferred API)", () => {
+  it("names the box by its label and describes it by its helper text", () => {
     render(<Checkbox label="Subscribe" helperText="Get weekly updates" />);
-    expect(screen.getByText("Get weekly updates")).toBeInTheDocument();
+    const checkbox = screen.getByRole("checkbox", { name: "Subscribe" });
+    expect(checkbox).toHaveAccessibleDescription("Get weekly updates");
   });
 
-  it("prefers helperText over description when both are provided", () => {
-    render(
-      <Checkbox
-        label="Subscribe"
-        helperText="Preferred helper text"
-        description="Legacy description text"
-      />
+  it("shows the error message with an icon and wires it to the box while invalid", () => {
+    const { container, rerender } = render(
+      <Checkbox label="Accept the terms" invalid errorMessage="Accept the terms to continue." />
     );
-    expect(screen.getByText("Preferred helper text")).toBeInTheDocument();
-    expect(screen.queryByText("Legacy description text")).not.toBeInTheDocument();
+    const checkbox = screen.getByRole("checkbox", { name: "Accept the terms" });
+    expect(checkbox).toHaveAttribute("aria-invalid", "true");
+    expect(checkbox).toHaveAttribute("data-invalid");
+    expect(checkbox).toHaveAccessibleDescription("Accept the terms to continue.");
+    expect(container.querySelector("svg[aria-hidden='true']")).not.toBeNull();
+
+    rerender(<Checkbox label="Accept the terms" errorMessage="Accept the terms to continue." />);
+    expect(screen.queryByText("Accept the terms to continue.")).not.toBeInTheDocument();
+    expect(screen.getByRole("checkbox")).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("drops the cut aliases at the type level", () => {
+    // @ts-expect-error onChange was cut in v4; use onCheckedChange.
+    render(<Checkbox aria-label="Accept" onChange={() => {}} />);
+    // @ts-expect-error size was cut in v4; there is one box size.
+    render(<Checkbox aria-label="Accept" size="sm" />);
+    // @ts-expect-error description was cut in v4; use helperText.
+    render(<Checkbox label="Accept" description="Old" />);
+    expect(screen.getAllByRole("checkbox").length).toBeGreaterThan(0);
   });
 
   it("disables the checkbox", () => {
@@ -191,25 +192,43 @@ describe("Checkbox", () => {
     expect(validate).toHaveBeenLastCalledWith(true, expect.anything());
   });
 
+  it("delivers exactly one click to an ancestor per user click", async () => {
+    const handleAncestorClick = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <div onClick={handleAncestorClick}>
+        <Checkbox label="Accept" />
+      </div>
+    );
+
+    await user.click(screen.getByRole("checkbox"));
+    expect(handleAncestorClick).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByText("Accept"));
+    expect(handleAncestorClick).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+  });
+
   it("has no accessibility violations", async () => {
     const { container } = render(<Checkbox label="Accessible checkbox" />);
     await expectNoA11yViolations(container);
   });
 
-  it("uses the published component-owned radius for control anatomy", () => {
-    const radiusUses = checkboxStyles.match(
-      /border-radius:\s*var\(--fui-checkbox-radius,\s*var\(--fui-radius-sm,\s*#\{\$fui-radius-sm\}\)\);/g
+  it("paints the box on the band at the checkbox radius with no sheen", () => {
+    expect(checkboxStyles).toMatch(
+      /\$_radius:\s*var\(--fui-checkbox-radius,\s*min\(4px,\s*calc\(var\(--fui-radius,/
     );
-
-    expect(componentProperties).toContain("--fui-checkbox-radius: var(--fui-radius-l3);");
-    expect(checkboxStyles).not.toMatch(/\.checkbox\s*\{[\s\S]*?--fui-checkbox-radius\s*:/);
-    expect(radiusUses).toHaveLength(1);
-    expect(checkboxStyles).toContain("border-radius: var(--fui-radius-md, $fui-radius-md);");
+    expect(checkboxStyles).toMatch(/background-color:\s*var\(--fui-field-bg,/);
+    expect(checkboxStyles).not.toMatch(/--fui-radius-indicator/);
+    expect(checkboxStyles).not.toMatch(/box-shadow/);
+    expect(checkboxStyles).not.toMatch(/--fui-color-danger(?!-text)/);
+    // The outline card's edge and states come from the choice-card recipe.
+    expect(checkboxStyles).toMatch(/\.wrapperOutline\s*\{\s*@include choice-card\.root;/);
   });
 
   it("allows an application ancestor to override the public control radius", () => {
     render(
-      <div data-testid="radius-scope" style={{ "--fui-checkbox-radius": "12px" }}>
+      <div data-testid="radius-scope" style={{ "--fui-checkbox-radius": "12px" } as CSSProperties}>
         <Checkbox aria-label="Rounded control" data-testid="rounded-control" />
       </div>
     );
@@ -220,8 +239,5 @@ describe("Checkbox", () => {
     expect(screen.getByTestId("rounded-control")).not.toHaveStyle({
       "--fui-checkbox-radius": "12px",
     });
-    expect(checkboxStyles).toContain(
-      "border-radius: var(--fui-checkbox-radius, var(--fui-radius-sm, #{$fui-radius-sm}));"
-    );
   });
 });

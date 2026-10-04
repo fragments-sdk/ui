@@ -1,4 +1,26 @@
+// The segmented control (the `thumb` marking): one look for every
+// control that picks one of a few options in place: ToggleGroup and soft Tabs.
+//
+// - `track($size)`: the band track with one opaque hairline, the control radius,
+//   pad 2 and gap 2. The track is the control's height; segments fill it.
+// - `segment($selected)`: each option, transparent on the track, regular ink 2,
+//   the segment radius. Hover (only where the pointer can hover) adds the hover
+//   tint and ink 1; the selected segment sits on the lifted thumb in ink 1 at
+//   the strong weight. Colour moves in the micro role; the thumb never travels.
+// - `glyph($size)`: the icon inside a segment.
+//
+// `rail($size)` and `item($size)` are the bare geometry under that look, for a
+// row of options that is not segmented (the ghost tab row). UIR-D143.
+
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as tokens;
 @use "action";
+@use "focus";
+@use "selection";
+
+$_pad: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+$_hairline: var(--fui-stroke-hairline, #{tokens.$fui-stroke-hairline});
+$_inert: ":disabled, [data-disabled], [aria-disabled='true']";
 
 @function track($size) {
   @return action.track($size);
@@ -23,4 +45,75 @@
 
 @mixin glyph($size) {
   @include action.glyph($size);
+}
+
+/// The track: the band with one opaque hairline at the control radius, pad 2
+/// between the edge and the segments and gap 2 between segments. Its height is
+/// the control track of `$size`, edge and pad included.
+@mixin track($size) {
+  @include rail($size);
+  // The label step, inherited by every segment on the track.
+  @include action.typography($size);
+
+  gap: $_pad;
+  padding: $_pad;
+  border: $_hairline solid var(--fui-border, #{tokens.$fui-border});
+  border-radius: var(--fui-radius-control, #{tokens.$fui-radius-control});
+  background-color: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+
+  // Forced colours repaint the band as Canvas; the edge keeps the track whole.
+  @media (forced-colors: active) {
+    border-color: CanvasText;
+  }
+}
+
+/// One option on the track. `$selected` is the selector, on the segment itself,
+/// that means "chosen" (`[data-pressed]`, `[data-active]`, `.selected`). The
+/// size comes from the track the segment sits in. `$ring-inset` draws the focus
+/// ring inside the edge, for a track that scrolls and so clips an outside ring.
+@mixin segment($selected, $ring-inset: false) {
+  @include action.base;
+  @include action.motion;
+
+  position: relative;
+  // The track's height less its two edges and its two pads.
+  min-block-size: calc(
+    var(--_fui-segmented-track, #{action.track("md")}) - 2 * #{$_pad} - 2 * #{$_hairline}
+  );
+  padding-inline: var(--_fui-segmented-inline-inset, #{action.inline-inset("md")});
+  gap: var(--_fui-segmented-gap, #{action.gap("md")});
+  border: 0;
+  border-radius: var(--fui-radius-segment, #{tokens.$fui-radius-segment});
+  background-color: transparent;
+  color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
+  white-space: nowrap;
+
+  svg {
+    inline-size: var(--_fui-segmented-icon-size, #{action.icon-size("md")});
+    block-size: var(--_fui-segmented-icon-size, #{action.icon-size("md")});
+    flex: 0 0 auto;
+  }
+
+  @include action.hover {
+    @include selection.hover-tint;
+
+    color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+  }
+
+  @include focus.visible($ring-inset);
+
+  &:focus-visible {
+    z-index: 1;
+  }
+
+  &#{$selected} {
+    @include thumb;
+  }
+}
+
+/// The chosen segment: the lifted thumb (surface fill, hairline ring, the small
+/// shadow) in ink 1 at the strong weight.
+@mixin thumb {
+  @include selection.thumb;
+  @include action.weight("strong");
 }

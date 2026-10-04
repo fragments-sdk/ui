@@ -39,8 +39,8 @@ const STORYBOOK_ERROR_SELECTOR = [
 ].join(", ");
 
 const geometryRoot = dirname(fileURLToPath(import.meta.url));
+// Artifact paths are relative to the package root, so results read the same from any checkout.
 const uiRoot = resolve(geometryRoot, "..");
-const repoRoot = resolve(uiRoot, "../..");
 const outputRoot = requiredAbsoluteEnvironmentPath("GEOMETRY_OUTPUT_ROOT");
 const caseResultsRoot = join(outputRoot, "case-results");
 const screenshotsRoot = join(outputRoot, "screenshots");
@@ -51,6 +51,10 @@ const baseUrl = requiredEnvironment("GEOMETRY_BASE_URL");
 const casePrefix = process.env.GEOMETRY_CASE_PREFIX || null;
 const pixelAuthoritative = process.env.GEOMETRY_PIXEL_AUTHORITATIVE === "1";
 const updatingBaselines = process.env.GEOMETRY_UPDATE_BASELINES === "1";
+
+/** Chromium on macOS serializes the `BlinkMacSystemFont` alias as `"system-ui"`; Linux keeps the name. Cases record the macOS form. */
+const computedStyle = (property: string, value: string) =>
+  property === "font-family" ? value.replaceAll("BlinkMacSystemFont", '"system-ui"') : value;
 
 type GeometryResultRow = {
   caseId: string;
@@ -126,9 +130,9 @@ function toPosixPath(value: string): string {
 }
 
 function repositoryRelative(path: string): string {
-  const value = relative(repoRoot, path);
+  const value = relative(uiRoot, path);
   if (value === "" || value === ".." || value.startsWith(`..${sep}`)) {
-    throw new Error(`Artifact is outside the repository: ${path}`);
+    throw new Error(`Artifact is outside the package: ${path}`);
   }
   return toPosixPath(value);
 }
@@ -139,7 +143,6 @@ function sha256(value: Buffer): string {
 
 function sanitizeMessage(message: string): string {
   return message
-    .replaceAll(repoRoot, "<repo>")
     .replaceAll(uiRoot, "<ui>")
     .replaceAll(process.cwd(), "<cwd>")
     .replace(/[\r\n]+/g, " ")
@@ -249,13 +252,6 @@ function storyUrl(geometryCase: GeometryCase): string {
   url.searchParams.set("id", geometryCase.storyId);
   url.searchParams.set("viewMode", "story");
   url.searchParams.set("globals", `theme:${geometryCase.scenario.colorScheme}`);
-  const density = geometryCase.caseId.split("/")[3];
-  if (
-    geometryCase.storyId === "foundations-measurement-targets--target-lineup" &&
-    (density === "compact" || density === "default" || density === "relaxed")
-  ) {
-    url.searchParams.set("args", `density:${density}`);
-  }
   return url.toString();
 }
 
@@ -285,6 +281,13 @@ async function prepareStory(page: Page, geometryCase: GeometryCase): Promise<voi
   await page
     .locator("#storybook-root")
     .waitFor({ state: "attached", timeout: STORY_READY_TIMEOUT });
+  // The root is in the static HTML; wait for the story itself, or fall through to the error
+  // check below when Storybook renders an error display instead.
+  await page
+    .locator("#storybook-root > *")
+    .first()
+    .waitFor({ state: "attached", timeout: STORY_READY_TIMEOUT })
+    .catch(() => undefined);
   const storyError = page.locator(STORYBOOK_ERROR_SELECTOR);
   if ((await storyError.count()) > 0 && (await storyError.first().isVisible())) {
     throw new GeometryOperationError(
@@ -597,12 +600,12 @@ async function executeAssertion(
           break;
         }
         case "style": {
-          const actual = await selectorLocator(
-            page,
-            geometryCase.selectors[assertion.target]
-          ).evaluate(
-            (element, property) => getComputedStyle(element).getPropertyValue(property).trim(),
-            assertion.property
+          const actual = computedStyle(
+            assertion.property,
+            await selectorLocator(page, geometryCase.selectors[assertion.target]).evaluate(
+              (element, property) => getComputedStyle(element).getPropertyValue(property).trim(),
+              assertion.property
+            )
           );
           computed.push({
             op: assertion.op,

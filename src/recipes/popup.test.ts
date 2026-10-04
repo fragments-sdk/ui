@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { POPUP_OFFSET_PX, POPUP_VIEWPORT_ROWS, resolvePopupViewportRows } from "./popup";
+import {
+  POPUP_COLLISION_PADDING_PX,
+  POPUP_OFFSET_PX,
+  POPUP_VIEWPORT_ROWS,
+  resolvePopupViewportRows,
+} from "./popup";
 
 describe("popup geometry", () => {
   it("shares the generated four-pixel positioner offset", () => {
     expect(POPUP_OFFSET_PX).toBe(4);
+  });
+
+  it("keeps eight pixels from the viewport edge", () => {
+    expect(POPUP_COLLISION_PADDING_PX).toBe(8);
   });
 
   it("defaults to four complete rows plus a continuation cue", () => {

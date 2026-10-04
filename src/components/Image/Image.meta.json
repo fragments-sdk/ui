@@ -1,0 +1,194 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Image",
+  "description": "Frames pictures with loading feedback and a fallback when the image fails.",
+  "category": "display",
+  "tags": ["image", "media", "photo", "picture", "visual"],
+  "status": "stable",
+  "sourcePath": "src/components/Image/index.tsx",
+  "exportName": "Image",
+  "propsSummary": [
+    "src: string (required)",
+    "alt: string (required)",
+    "aspectRatio: 1:1|4:3|16:9|auto (default: auto)",
+    "objectFit: cover|contain (default: cover)",
+    "width: union",
+    "height: union",
+    "radius: none|control|nested|surface (default: none)",
+    "fallback: node",
+    "className: string",
+    "style: object",
+    "imgProps: object",
+    "onImageLoad: function",
+    "onImageError: function"
+  ],
+  "props": {
+    "src": {
+      "type": "string",
+      "description": "Image source URL",
+      "required": true
+    },
+    "alt": {
+      "type": "string",
+      "description": "What the image shows; also the words the built-in error fallback prints",
+      "required": true
+    },
+    "aspectRatio": {
+      "type": "enum",
+      "description": "The frame's aspect ratio",
+      "default": "auto",
+      "required": false,
+      "values": ["1:1", "4:3", "16:9", "auto"]
+    },
+    "objectFit": {
+      "type": "enum",
+      "description": "How the image fills the frame: cover crops, contain letterboxes on the band",
+      "default": "cover",
+      "required": false,
+      "values": ["cover", "contain"]
+    },
+    "width": {
+      "type": "union",
+      "description": "Width of the image container",
+      "required": false
+    },
+    "height": {
+      "type": "union",
+      "description": "Height of the image container",
+      "required": false
+    },
+    "radius": {
+      "type": "enum",
+      "description": "Corner role. none leaves the corner to the container that clips it",
+      "default": "none",
+      "required": false,
+      "values": ["none", "control", "nested", "surface"]
+    },
+    "fallback": {
+      "type": "node",
+      "description": "Replaces the built-in error fallback (band, glyph and the alt words)",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional class name",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "Inline styles",
+      "required": false
+    },
+    "imgProps": {
+      "type": "object",
+      "description": "Additional props for the underlying img element (except src/alt/size/style/events)",
+      "required": false
+    },
+    "onImageLoad": {
+      "type": "function",
+      "description": "Called when the underlying img element loads",
+      "required": false
+    },
+    "onImageError": {
+      "type": "function",
+      "description": "Called when the underlying img element fails to load",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Product shots, thumbnails, and hero art",
+      "Uploads you do not control and cannot trust to load"
+    ],
+    "whenNot": [
+      "A person (use Avatar)",
+      "A symbol (use Icon)",
+      "Pure decoration behind content (use a CSS background)"
+    ],
+    "guidelines": [
+      "Set aspectRatio so a grid holds its shape before the file arrives",
+      "objectFit=\"contain\" for graphics, \"cover\" for photography",
+      "Leave radius at none inside a card or frame that already clips its corner",
+      "The built-in fallback prints the alt words; pass fallback only to say something more useful",
+      "imgProps, onImageLoad, and onImageError expose the raw img when you need it"
+    ],
+    "accessibility": [
+      "alt is required — describe what the picture shows",
+      "Decoration takes alt=\"\"",
+      "Words baked into an image must be repeated in alt"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "src plus alt — the shape follows the file.",
+      "code": "<Image\n  src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop\"\n  alt=\"Code on a screen\"\n  width={300}\n/>"
+    },
+    {
+      "name": "Aspect Ratios",
+      "description": "Lock the frame so a grid stays even whatever the file is.",
+      "code": "<div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop\"\n    alt=\"Square image\"\n    aspectRatio=\"1:1\"\n    width={100}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=150&fit=crop\"\n    alt=\"4:3 image\"\n    aspectRatio=\"4:3\"\n    width={120}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=320&h=180&fit=crop\"\n    alt=\"16:9 image\"\n    aspectRatio=\"16:9\"\n    width={160}\n  />\n</div>"
+    },
+    {
+      "name": "Corner Roles",
+      "description": "none leaves the corner to the container; control, nested and surface are the radius roles.",
+      "code": "<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop\"\n    alt=\"none corner\"\n    radius=\"none\"\n    width={80}\n    height={80}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop\"\n    alt=\"control corner\"\n    radius=\"control\"\n    width={80}\n    height={80}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop\"\n    alt=\"nested corner\"\n    radius=\"nested\"\n    width={80}\n    height={80}\n  />\n  <Image\n    src=\"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=200&h=200&fit=crop\"\n    alt=\"surface corner\"\n    radius=\"surface\"\n    width={80}\n    height={80}\n  />\n</div>"
+    },
+    {
+      "name": "Broken Source",
+      "description": "A dead URL shows the band, a glyph and the alt words, never a broken-image icon.",
+      "code": "<Image\n  src=\"https://invalid-url.example/image.jpg\"\n  alt=\"Team photo from the offsite\"\n  aspectRatio=\"4:3\"\n  width={240}\n  radius=\"control\"\n/>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "child",
+      "note": "Common pattern to use Image at top of product cards"
+    },
+    {
+      "component": "Avatar",
+      "relationship": "alternative",
+      "note": "Use Avatar for user profile pictures"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "src: string - image URL (required)",
+      "alt: string - accessibility text and the error fallback words (required)",
+      "aspectRatio: 1:1|4:3|16:9|auto - frame ratio",
+      "objectFit: cover|contain - image fitting",
+      "radius: none|control|nested|surface - corner role",
+      "fallback: ReactNode - replaces the built-in error fallback",
+      "imgProps/onImageLoad/onImageError - low-level img customization and events"
+    ],
+    "a11yRules": ["A11Y_IMG_ALT", "A11Y_IMG_DECORATIVE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.379Z"
+  },
+  "cssVariables": [
+    "--fui-bg-secondary",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-radius-control",
+    "--fui-radius-surface",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-state",
+      "value": "loading",
+      "fixture": "populated"
+    }
+  ]
+}

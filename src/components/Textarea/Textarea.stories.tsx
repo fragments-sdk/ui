@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Textarea } from ".";
+import { Field } from "../Field";
+import { Stack } from "../Stack";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
- * Textarea is the canonical multi-line text input. Use it for comments,
- * descriptions, bios, and message composition — agents should reuse it (with
- * its built-in label, helper text, validation states, and character counter)
- * rather than styling a raw `<textarea>`.
+ * Textarea is the canonical multi-line text input. It grows with its text from
+ * `minRows` to `maxRows`, then scrolls; `maxLength` shows a counter. Label,
+ * description and error come from Field.
  */
 const meta = {
   title: "Forms/Textarea",
@@ -17,83 +18,104 @@ const meta = {
     docs: {
       description: {
         component:
-          "Multi-line text input for longer form content with label, helper text, and validation states. Prefer this over a raw <textarea>.",
+          "Multi-line text input for longer form content. Compose it in a Field for the label, description and error. Prefer this over a raw <textarea>.",
       },
     },
   },
   argTypes: {
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Size variant",
+      options: ["xs", "sm", "md", "lg"],
+      description: "Type size, inset and one-row height on the shared control ladder",
     },
     resize: {
       control: "select",
-      options: ["none", "vertical", "horizontal", "both"],
-      description: "Resize behavior",
+      options: ["none", "vertical"],
+      description: "Whether the person can drag the height",
     },
-    disabled: { control: "boolean", description: "Disabled state" },
-    error: { control: "boolean", description: "Error state" },
-    showCharCount: {
-      control: "boolean",
-      description: "Show character counter when maxLength is set",
-    },
+    minRows: { control: "number" },
+    maxRows: { control: "number" },
+    disabled: { control: "boolean" },
+    readOnly: { control: "boolean" },
+    invalid: { control: "boolean" },
   },
   args: {
-    label: "Description",
-    placeholder: "Enter a description...",
+    placeholder: "What does this change do?",
     size: "md",
-    rows: 3,
+    minRows: 3,
   },
+  render: (args) => (
+    <Field>
+      <Field.Label>Description</Field.Label>
+      <Textarea {...args} />
+    </Field>
+  ),
 } satisfies Meta<typeof Textarea>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { label: "Description", placeholder: "Enter a description..." },
+export const Default: Story = {};
+
+export const WithCounter: Story = {
+  render: (args) => (
+    <Field>
+      <Field.Label>Bio</Field.Label>
+      <Textarea {...args} placeholder={undefined} maxLength={200} />
+      <Field.Description>Shown on your profile.</Field.Description>
+    </Field>
+  ),
 };
 
-export const WithHelperText: Story = {
-  args: {
-    label: "Bio",
-    placeholder: "Tell us about yourself...",
-    helperText: "Max 500 characters",
-    maxLength: 500,
-  },
+export const OverTheLimit: Story = {
+  render: (args) => (
+    <Field invalid>
+      <Field.Label>Summary</Field.Label>
+      <Textarea
+        {...args}
+        invalid
+        maxLength={40}
+        defaultValue="This summary runs well past the forty character limit."
+      />
+      <Field.Error match>Shorten the summary to 40 characters.</Field.Error>
+    </Field>
+  ),
 };
 
-export const ErrorState: Story = {
-  args: {
-    label: "Comments",
-    placeholder: "Add your comments...",
-    error: true,
-    helperText: "This field is required",
-  },
+export const Invalid: Story = {
+  render: (args) => (
+    <Field invalid>
+      <Field.Label>Comments</Field.Label>
+      <Textarea {...args} />
+      <Field.Error match>Add a comment.</Field.Error>
+    </Field>
+  ),
+};
+
+export const GrowToCeiling: Story = {
+  args: { minRows: 1, maxRows: 6 },
+};
+
+export const ReadOnly: Story = {
+  args: { readOnly: true, defaultValue: "Moves the billing page onto the shared layout." },
 };
 
 export const Disabled: Story = {
-  args: { label: "Notes", placeholder: "Cannot edit...", disabled: true },
+  render: (args) => (
+    <Field disabled>
+      <Field.Label>Notes</Field.Label>
+      <Textarea {...args} disabled />
+    </Field>
+  ),
 };
 
-export const CustomRows: Story = {
-  args: {
-    label: "Long Description",
-    placeholder: "Enter detailed information...",
-    rows: 6,
-  },
-};
-
-export const WithCharacterCounter: Story = {
-  args: {
-    label: "Bio",
-    placeholder: "Tell us about yourself...",
-    maxLength: 200,
-    showCharCount: true,
-  },
-};
-
-export const Large: Story = {
-  args: { label: "Large", size: "lg", placeholder: "Large textarea" },
+export const Sizes: Story = {
+  render: (args) => (
+    <Stack gap="md">
+      {(["xs", "sm", "md", "lg"] as const).map((size) => (
+        <Textarea key={size} {...args} aria-label={`Size ${size}`} size={size} minRows={1} />
+      ))}
+    </Stack>
+  ),
 };

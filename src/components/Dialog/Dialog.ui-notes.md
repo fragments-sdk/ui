@@ -92,6 +92,13 @@
   remains explicit under D-129; same-server native Enter passed 3/3 with the required event order and
   lifecycle. Console remained 0/0 and the isolated tagged suite passed 15/15 in 33.1 seconds.
 
+## 2026-10-03 — access tokens: cascade layers, coarse pointer, forced colours
+
+- **What changed** — every rule sits in `@layer fui.components`, after `@layer fui.tokens, fui.base, fui.components;`, so an adopter's unlayered class wins at any specificity (UIR-D122); the target mixin's hit area rises to `--fui-hit-area`: 44px under a coarse pointer, 24px floor otherwise (UIR-D120).
+- **What works** — `fui/layer/components-layer` passes on the module and `check:layers` on the built stylesheet; the Sass compiles. No fixture of its own covers the rest yet.
+- **What doesn't** — screens are not compared visually; forced colours are proven only where a fixture says so above.
+- **Candidates** — a states fixture that renders this component under the coarse project and forced colours.
+
 ## 2026-09-04 — Wave 0 vocabulary migration
 
 - **What changed** — `Dialog.Content size` is `width` (UIR-D16); the panel widths moved into the hash-guarded measurement catalog as `--fui-overlay-*` (UIR-D15). No other prop renamed.
@@ -106,3 +113,39 @@
 
 - **What changed** — nothing. Dialog is listed here only because the lane re-ran its suite alongside the navigation components after `overlay.backdrop` was extracted from the shape Dialog already used.
 - **Not re-checked in this lane** — Dialog was browser-verified under UIR-D40; no UIR-D41 edit touches it.
+
+## 2026-10-03 — `@base-ui/react` 1.8.0
+
+- **Outside presses** — a press that began before the dialog opened no longer dismisses it on release. Touch dismissal without a backdrop and the scroll-lock handoff with other overlays are fixed upstream.
+- **Outside clicks under Firefox touch emulation** — the same probe artefact as Popover (see its notes): Playwright's Firefox with `hasTouch` clicks with no `pointerdown`, so an outside mouse click no longer dismisses there. Separately, a backdrop tap does not dismiss under Firefox touch emulation at 1.6.0 or 1.8.0, while Chromium's does; not a regression, and not yet checked on a device.
+
+## 2026-10-03 — popups keep their theme scope
+
+- **What changed** — the portal spreads `useThemePortalProps()`, so a popup opened inside a nested `Theme` renders with that scope's `data-fui-theme`, mode, inputs and chrome instead of the page's. Outside a scope it adds nothing.
+
+## 2026-10-03 — feedback recipes: still popups, overlay fade, loading, dismiss
+
+- **What changed** — the popup fades: 200ms in, 100ms out, opacity only, on the standard ease (`overlay.motion`, UIR-D133); no scale or travel. New `Dialog.states.tsx` (`@family:overlays`): populated, loading (skeleton text in the body), error (errbox in the body), overflow and lifecycleDismiss.
+- **What works** — `MotionRecipe.states.tsx` reads the real `transitionrun` timings of panel and scrim: both run opacity alone at 200ms in and 100ms out, rest at an identity transform, and under reduced motion transition opacity only. `Escape` closes and returns focus.
+- **What doesn't** — `empty` is argued n/a.
+- **Candidates** — none from this pass.
+
+## 2026-10-03 — v4 surface and token pass
+
+- **Floating surface** — `overlay.surface` is shadow only: the raised plane, `--fui-shadow-popup` and the popup radius (overlay radius for a modal or side panel), no border and no footer band. Forced colours keep a CanvasText hairline.
+- **Not browser-checked** in the token pass; the component lane owns the visual check.
+
+## 2026-10-03 — Glass v4 Overlays (PR4)
+
+- **What changed** — `modal` cut (a Dialog is always modal; non-modal content is a Popover or a `trap-focus` Drawer); `width` is `sm | md | lg` (`xl`, `full` cut); `asChild` on Trigger/Close is now Base UI `render`; `initialFocus`/`finalFocus` take the primitive's full type (boolean, ref or function). Decisions moved to the new AlertDialog.
+- **Surface** — header, body, footer and title come from the `overlay.modal-*` recipes (shared with AlertDialog and Drawer): title-sm, 16px dialog pad, footer on the raised plane with no band and no line, body the only scroll region. A body that overflows joins the tab order (`useOverflowFocusable`), which clears the axe `scrollable-region-focusable` baseline the states overflow fixture carried.
+- **What works** — unit tests (21) green: render trigger, initialFocus ref, scrim always present, short body out of the tab order, focus trap and return.
+- **What doesn't** — not browser-checked in this lane; states/geometry lanes not run. (Review fix: the sheet partial is folded into `recipes/overlay`; the `overlay.modal-*` recipes now carry the 16px pad and title-sm, and `_sheet.scss` is deleted.)
+- **Candidates** — regenerate `fragments.json` from the updated `Dialog.fragment.tsx`.
+
+## 2026-10-04 — the footer's scroll edge
+
+- **What changed** — the footer draws one `--fui-border` hairline across the sheet, only while the body above it overflows. `useOverflowFocusable` now marks the body `data-fui-overflowing` (even when its `tabIndex` is authored) and the footer's `::before` reads that mark. The edge is a border, so forced colours keep it; it fades in over the micro duration, with no fade under reduced motion. A body that fits has no line, so a short dialog stays one plane.
+- **What works** — unit tests: the overflowing body is marked and its next sibling is the footer; the short body is not; the recipe draws the hairline only after the mark, with no shadow or fill. States: `populated` checks the edge is hidden and `overflow` checks it is drawn, one solid hairline in the border colour, spanning the sheet.
+- **What doesn't** — the edge shows for the whole time the body overflows, not only once it has scrolled; content that is scrolled to its end still has the line.
+- **Candidates** — hide the edge at the scroll end (a scroll-driven timeline once every engine has one).

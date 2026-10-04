@@ -1,5 +1,8 @@
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Card } from ".";
+import { Button } from "../Button";
+import { Grid } from "../Grid";
 import { Progress } from "../Progress";
 import { Stack } from "../Stack";
 import { Text } from "../Text";
@@ -7,9 +10,10 @@ import { RENDER_STATES } from "../../storybook/render-states";
 import fixtureStyles from "./Card.consumer-fixture.module.scss";
 
 /**
- * Card is a container for grouping related content into a distinct surface. It
- * is a compound component: compose Card.Header, Card.Title, Card.Description,
- * Card.Body, and Card.Footer inside the root.
+ * Card groups related content on the one surface: the surface plane, the
+ * hairline, the surface corner and no shadow. It is a compound component:
+ * compose Card.Header, Card.Title, Card.Description, Card.Body and
+ * Card.Footer inside the root. render makes the whole card one link or button.
  */
 const meta = {
   title: "Layout/Card",
@@ -22,20 +26,19 @@ const meta = {
     },
   },
   argTypes: {
-    variant: {
-      control: "select",
-      options: ["solid", "soft", "outline"],
-      description: "Surface chrome",
-    },
     tone: {
       control: "select",
-      options: ["neutral", "accent", "warning", "danger"],
-      description: "Earned-moment capsule; neutral is the plain card",
+      options: ["neutral", "danger"],
+      description: "danger draws the edge in the danger ink",
     },
     padding: {
       control: "select",
-      options: ["none", "sm", "md", "lg"],
-      description: "Internal padding size",
+      options: ["none", "md"],
+      description: "md is the compact inset (12)",
+    },
+    selected: {
+      control: "boolean",
+      description: "The selection wash and ring",
     },
     as: {
       control: "select",
@@ -44,7 +47,6 @@ const meta = {
     },
   },
   args: {
-    variant: "solid",
     tone: "neutral",
     padding: "md",
     children: (
@@ -75,30 +77,19 @@ export const Default: Story = {
   ),
 };
 
-export const Outline: Story = {
+export const Metric: Story = {
   render: () => (
-    <Card variant="outline">
-      <Card.Header>
-        <Card.Title>Outline Card</Card.Title>
-      </Card.Header>
-      <Card.Body>Content with border.</Card.Body>
-    </Card>
-  ),
-};
-
-export const Soft: Story = {
-  render: () => (
-    <Card variant="soft" style={{ width: 280 }}>
+    <Card style={{ inlineSize: 280, maxInlineSize: "100%" }}>
       <Stack gap="md">
         <Stack gap="xs">
-          <Text as="strong" scale="2xl" weight="bold" letterSpacing="tighter" tabularNums>
+          <Text as="p" type="display" tabularNums>
             94%
           </Text>
-          <Text as="p" scale="sm" color="secondary">
+          <Text as="p" color="secondary">
             Component coverage
           </Text>
         </Stack>
-        <Progress value={94} tone="success" size="sm" />
+        <Progress value={94} />
       </Stack>
     </Card>
   ),
@@ -106,57 +97,29 @@ export const Soft: Story = {
 
 export const Panel: Story = {
   render: () => (
-    <Card variant="soft" padding="none" style={{ width: 360 }}>
+    <Card padding="none" style={{ inlineSize: 360, maxInlineSize: "100%" }}>
       <Card.Header divided>
         <Card.Title>System states</Card.Title>
       </Card.Header>
       <Card.Body padding="md">
-        <Text as="p" scale="sm" color="secondary">
-          Use panel cards for bordered dashboard regions with their own internal header and body
-          rhythm.
+        <Text as="p" color="secondary">
+          A panel owns its own head and body rhythm: a 40px head with the line below, then the body
+          inset.
         </Text>
       </Card.Body>
     </Card>
   ),
 };
 
-export const Accent: Story = {
-  render: () => (
-    <Card variant="soft" tone="accent" padding="lg" style={{ width: 420 }}>
-      <Stack gap="sm">
-        <Card.Title>Finish setting up governance</Card.Title>
-        <Text as="p" scale="sm" color="secondary">
-          Your contract is authored — run the first scan to start tracking drift.
-        </Text>
-      </Stack>
-    </Card>
-  ),
-};
-
-export const Tones: Story = {
-  render: () => (
-    <Stack gap="md" style={{ width: 420 }}>
-      {(["accent", "warning", "danger"] as const).map((tone) => (
-        <Card key={tone} variant="soft" tone={tone}>
-          <Card.Title>{tone}</Card.Title>
-          <Text as="p" scale="sm" color="secondary">
-            The capsule carries state; the variant stays the same.
-          </Text>
-        </Card>
-      ))}
-    </Stack>
-  ),
-};
-
 export const PanelWithAside: Story = {
   render: () => (
-    <Card variant="soft" padding="none" style={{ width: 420 }}>
+    <Card padding="none" style={{ inlineSize: 420, maxInlineSize: "100%" }}>
       <Card.Header divided>
         <Stack gap="none">
           <Card.Title>Adoption</Card.Title>
           <Card.Description>Trailing controls pin to the end edge.</Card.Description>
         </Stack>
-        <Text as="span" scale="xs" color="secondary">
+        <Text as="span" type="caption" color="secondary">
           3m
         </Text>
       </Card.Header>
@@ -165,9 +128,76 @@ export const PanelWithAside: Story = {
   ),
 };
 
+export const DangerTone: Story = {
+  render: () => (
+    <Card tone="danger" style={{ inlineSize: 420, maxInlineSize: "100%" }}>
+      <Card.Header>
+        <Card.Title>Merge held</Card.Title>
+        <Card.Description>Two blocking findings need a decision.</Card.Description>
+      </Card.Header>
+    </Card>
+  ),
+};
+
+export const Interactive: Story = {
+  render: () => (
+    <Stack gap="md" style={{ inlineSize: 360, maxInlineSize: "100%" }}>
+      <Card render={<a href="#web" />}>
+        <Card.Title>web</Card.Title>
+        <Card.Description>The whole card is one link.</Card.Description>
+      </Card>
+      <Card render={<button type="button" />}>
+        <Card.Title>Run the check</Card.Title>
+        <Card.Description>The whole card is one button.</Card.Description>
+      </Card>
+    </Stack>
+  ),
+};
+
+export const Selected: Story = {
+  render: function SelectedStory() {
+    const plans = ["Repository", "Team", "Enterprise"];
+    const [chosen, setChosen] = React.useState("Team");
+    return (
+      <Stack direction="row" gap="md" wrap>
+        {plans.map((plan) => (
+          <Card
+            key={plan}
+            selected={plan === chosen}
+            render={<button type="button" aria-pressed={plan === chosen} />}
+            onClick={() => setChosen(plan)}
+            style={{ inlineSize: 160, maxInlineSize: "100%" }}
+          >
+            <Card.Title>{plan}</Card.Title>
+          </Card>
+        ))}
+      </Stack>
+    );
+  },
+};
+
+export const Mosaic: Story = {
+  render: () => (
+    <Grid columns={3} gap="md" style={{ inlineSize: 640, maxInlineSize: "100%" }}>
+      <Grid.Item colSpan={2} rowSpan={2}>
+        <Card style={{ height: "100%" }}>
+          <Card.Title>Coverage</Card.Title>
+          <Card.Body>A feature tile spans two columns and two rows.</Card.Body>
+        </Card>
+      </Grid.Item>
+      <Card>
+        <Card.Title>Findings</Card.Title>
+      </Card>
+      <Card>
+        <Card.Title>Merges</Card.Title>
+      </Card>
+    </Grid>
+  ),
+};
+
 export const NestedHeading: Story = {
   render: () => (
-    <Card variant="soft" padding="none" style={{ width: 360 }}>
+    <Card padding="none" style={{ inlineSize: 360, maxInlineSize: "100%" }}>
       <Card.Header divided>
         <Card.Title as="h4">Nested panel</Card.Title>
       </Card.Header>
@@ -180,13 +210,18 @@ export const NestedHeading: Story = {
 
 export const WithFooter: Story = {
   render: () => (
-    <Card>
+    <Card style={{ inlineSize: 420, maxInlineSize: "100%" }}>
       <Card.Header>
-        <Card.Title>Card with Footer</Card.Title>
+        <Card.Title>Card with footer</Card.Title>
         <Card.Description>Complete card layout</Card.Description>
       </Card.Header>
       <Card.Body>Main content area.</Card.Body>
-      <Card.Footer>Footer actions go here</Card.Footer>
+      <Card.Footer>
+        <Button variant="soft" size="sm">
+          Cancel
+        </Button>
+        <Button size="sm">Save</Button>
+      </Card.Footer>
     </Card>
   ),
 };
@@ -202,13 +237,13 @@ export const ContentOnly: Story = {
 export const GeometryMatrix: Story = {
   render: () => (
     <Stack gap="md" data-geometry-family="surfaces/card">
-      {(["none", "sm", "md", "lg"] as const).map((padding) => (
+      {(["none", "md"] as const).map((padding) => (
         <Card key={padding} padding={padding} data-geometry-size={padding}>
           <Card.Title>{padding}</Card.Title>
           <Card.Body>Inset reference</Card.Body>
         </Card>
       ))}
-      <Card variant="soft" padding="none" data-geometry-scenario="panel-inset">
+      <Card padding="none" data-geometry-scenario="panel-inset">
         <Card.Header divided>
           <Card.Title>A localized heading that may wrap without clipping</Card.Title>
         </Card.Header>
@@ -221,12 +256,8 @@ export const GeometryMatrix: Story = {
 export const CascadeFixture: Story = {
   render: () => (
     <Stack gap="md" data-geometry-family="surfaces/card-cascade">
-      <Card padding="lg" className={fixtureStyles.consumerOverride}>
-        Unlayered consumer override
-      </Card>
-      <Card padding="lg" style={{ padding: 31, backgroundColor: "rgb(12, 34, 56)" }}>
-        Inline override
-      </Card>
+      <Card className={fixtureStyles.consumerOverride}>Unlayered consumer override</Card>
+      <Card style={{ padding: 31, backgroundColor: "rgb(12, 34, 56)" }}>Inline override</Card>
     </Stack>
   ),
 };

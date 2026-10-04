@@ -1,0 +1,114 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "VisuallyHidden",
+  "description": "Keeps text in the accessibility tree while taking it off the screen.",
+  "category": "utilities",
+  "tags": ["accessibility", "a11y", "screen-reader", "hidden", "sr-only"],
+  "status": "stable",
+  "sourcePath": "src/components/VisuallyHidden/index.tsx",
+  "exportName": "VisuallyHidden",
+  "propsSummary": [
+    "children: node (required)",
+    "as: span|div (default: span)",
+    "focusable: boolean (default: false)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Content to hide visually",
+      "required": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "span",
+      "required": false,
+      "values": ["span", "div"]
+    },
+    "focusable": {
+      "type": "boolean",
+      "description": "Reveal the content while focus is inside it, as a chip (surface plane, strong hairline, control height, control radius, focus ring) pinned to the top inline-start corner. Use it for skip links.",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "An icon-only control needs a name",
+      "A link's text is vague out of context",
+      "A skip link needs to hide until focused"
+    ],
+    "whenNot": [
+      "Nobody should see or hear it (render nothing)",
+      "The content is just collapsed (use aria-expanded)"
+    ],
+    "guidelines": [
+      "Every icon-only button gets one",
+      "Say the action, not the icon: \"Search\", not \"magnifier\"",
+      "Keep it short — it is read aloud",
+      "Visible text beats hidden text whenever there is room",
+      "A skip link uses focusable, so it shows while it holds focus"
+    ],
+    "accessibility": [
+      "Screen readers announce it; the layout never moves",
+      "Focusable children inside still receive focus; with focusable they also become visible",
+      "Required for WCAG 2.1 on icon-only controls"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Icon Button Label",
+      "description": "The only thing telling a screen reader what this button does.",
+      "code": "import { MagnifyingGlass } from '@phosphor-icons/react';\nimport { Button } from '@/components/Button';\nimport { VisuallyHidden } from '@/components/VisuallyHidden';\n\n<Button variant=\"ghost\">\n  <MagnifyingGlass aria-hidden />\n  <VisuallyHidden>Search</VisuallyHidden>\n</Button>"
+    },
+    {
+      "name": "Supplementary Text",
+      "description": "Gives a vague link the context sighted readers get from layout.",
+      "code": "import { Link } from '@/components/Link';\nimport { VisuallyHidden } from '@/components/VisuallyHidden';\n\n<Link href=\"#features\">\n  Read more\n  <VisuallyHidden> about our accessibility features</VisuallyHidden>\n</Link>"
+    },
+    {
+      "name": "Skip Link",
+      "description": "Hidden until focused, then it shows as a chip and jumps keyboard users past the nav.",
+      "code": "import { VisuallyHidden } from '@/components/VisuallyHidden';\n\n<VisuallyHidden focusable>\n  <a href=\"#main-content\">Skip to main content</a>\n</VisuallyHidden>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "Use inside icon-only buttons for accessible labels"
+    },
+    {
+      "component": "Icon",
+      "relationship": "sibling",
+      "note": "Pair with icons to provide text alternatives"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - hidden text (required)",
+      "as: span|div - HTML element",
+      "focusable: boolean - reveal as a chip while focus is inside (skip links)",
+      "Forwards standard DOM props (id, aria-*, data-*, className, handlers)"
+    ],
+    "a11yRules": ["A11Y_SR_ONLY", "A11Y_ICON_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:06.625Z"
+  },
+  "cssVariables": [
+    "--fui-control-height-md",
+    "--fui-overlay-layer-tooltip",
+    "--fui-radius-control",
+    "--fui-raw-space-12",
+    "--fui-raw-space-8"
+  ],
+  "attributes": []
+}

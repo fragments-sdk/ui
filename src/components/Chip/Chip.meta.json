@@ -1,0 +1,167 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Chip",
+  "description": "A compact value: a tag, a filter or an applied selection, in one untoned look.",
+  "category": "inputs",
+  "tags": ["chip", "tag", "filter", "selection", "multi-select", "action"],
+  "status": "stable",
+  "sourcePath": "src/components/Chip/index.tsx",
+  "exportName": "Chip",
+  "propsSummary": [
+    "children: node (required)",
+    "selected: boolean",
+    "icon: node",
+    "onRemove: function",
+    "removeLabel: string",
+    "value: string",
+    "disabled: boolean (default: false)",
+    "onClick: function"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Chip label; truncates when the chip runs out of room",
+      "required": true
+    },
+    "selected": {
+      "type": "boolean",
+      "description": "Selected state. Setting it (or onClick, or Chip.Group) makes the chip a toggle button with aria-pressed; selected paints the selection wash and ring",
+      "required": false
+    },
+    "icon": {
+      "type": "node",
+      "description": "Leading glyph or avatar",
+      "required": false
+    },
+    "onRemove": {
+      "type": "function",
+      "description": "Makes the chip removable: an X control with its own label and a micro hit area",
+      "required": false
+    },
+    "removeLabel": {
+      "type": "string",
+      "description": "Accessible name of the remove control; defaults to \"Remove <label>\" for a text label",
+      "required": false
+    },
+    "value": {
+      "type": "string",
+      "description": "Value identifier used by Chip.Group for selection tracking",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Dims the chip once and disables its controls",
+      "default": "false",
+      "required": false
+    },
+    "onClick": {
+      "type": "function",
+      "description": "Click handler; makes the chip a button",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Filtering a list by tag or category",
+      "Multi-select from a compact set",
+      "Showing filters the user can dismiss"
+    ],
+    "whenNot": [
+      "Read-only status — use Badge",
+      "Switching views — use Tabs",
+      "On/off state — use Switch",
+      "A main call to action — use Button"
+    ],
+    "guidelines": [
+      "One to three words per chip; long labels truncate",
+      "One look, never toned: a chip that reports a state is a Badge",
+      "A static tag renders a span; it becomes a button only when it selects or clicks",
+      "Chip.Group when chips share selection state; name it with aria-label",
+      "onRemove only when the chip is genuinely dismissible",
+      "Pass an explicit value when children are custom JSX"
+    ],
+    "accessibility": [
+      "A selectable chip is a toggle button; selection is reported via aria-pressed",
+      "A static tag is plain text, not a button",
+      "Chip.Group renders role=\"group\" and needs aria-label or aria-labelledby",
+      "The remove control carries its own label (\"Remove design\") and a 24px hit area",
+      "Disabled chips are skipped by keyboard and pointer"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Tag",
+      "description": "A static tag: a span, no button.",
+      "code": "<Chip>Design</Chip>"
+    },
+    {
+      "name": "With Icon",
+      "description": "A leading glyph or avatar.",
+      "code": "import { Hash } from '@phosphor-icons/react';\n\n<Chip icon={<Hash />}>release</Chip>"
+    },
+    {
+      "name": "Selectable",
+      "description": "A toggle: the selection wash with the ring as its edge.",
+      "code": "const [selected, setSelected] = React.useState(true);\n\n<Chip selected={selected} onClick={() => setSelected((value) => !value)}>\n  Open\n</Chip>"
+    },
+    {
+      "name": "Removable",
+      "description": "The X control has its own label and a micro hit area.",
+      "code": "<Chip onRemove={() => {}}>design</Chip>"
+    },
+    {
+      "name": "Group",
+      "description": "Shared selection, reported through onValueChange.",
+      "code": "const [value, setValue] = React.useState(['open']);\n\n<Chip.Group aria-label=\"Status filters\" value={value} onValueChange={setValue}>\n  <Chip value=\"open\">Open</Chip>\n  <Chip value=\"draft\">Draft</Chip>\n  <Chip value=\"merged\">Merged</Chip>\n</Chip.Group>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Badge reports a state in colour; Chip is an untoned value, static or selectable"
+    },
+    {
+      "component": "ToggleGroup",
+      "relationship": "alternative",
+      "note": "Use ToggleGroup for mutually exclusive options"
+    },
+    {
+      "component": "Button",
+      "relationship": "alternative",
+      "note": "Use Button for primary actions, Chip for selection/filtering"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: ReactNode - label (required), truncates",
+      "selected: boolean - toggle state via aria-pressed, selection wash and ring",
+      "icon: ReactNode - leading glyph or avatar",
+      "onRemove / removeLabel - labelled remove control",
+      "Chip.Group: value / defaultValue / onValueChange(string[]), role=group, aria-label required"
+    ],
+    "a11yRules": ["A11Y_CHIP_SELECTION", "A11Y_CHIP_DISMISS"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Group"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:54.270Z"
+  },
+  "cssVariables": [
+    "--fui-bg-hover",
+    "--fui-bg-secondary",
+    "--fui-border",
+    "--fui-radius-control",
+    "--fui-radius-indicator",
+    "--fui-raw-space-2",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

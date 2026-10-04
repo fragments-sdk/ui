@@ -1,180 +1,267 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/layout";
+@use "../../recipes/action";
+@use "../../recipes/focus";
 @use "../../recipes/segmented";
+@use "../../recipes/target";
 
-// Root container
-.root {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--fui-font-sans, $fui-font-sans);
+$_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+$_fade: var(--fui-raw-space-24, #{measurements.raw-space(24)});
+$_mask-none: linear-gradient(black, black);
+// How far an outside focus ring reaches past its control: width plus offset.
+$_ring-room: calc(
+  var(--fui-focus-ring-width, #{$fui-focus-ring-width}) +
+    var(--fui-focus-ring-offset, #{$fui-focus-ring-offset})
+);
 
-  &[data-orientation="vertical"] {
-    flex-direction: row;
-  }
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Tab list container (ghost: a rule under the row, the indicator tracks the active tab)
-.list {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: layout.gap("xs");
-  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-border, $fui-border);
-  padding-inline: layout.gap("xs");
-
-  &[data-orientation="vertical"] {
+@layer fui.components {
+  .root {
+    display: flex;
     flex-direction: column;
+    min-inline-size: 0;
+    font-family: var(--fui-font-sans, $fui-font-sans);
+  }
+
+  // The bar holds the tablist and, outside it, the actions. The ghost row
+  // draws its hairline here, under the whole bar.
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    min-inline-size: 0;
+
+    &[data-variant="ghost"] {
+      border-block-end: $_hairline solid var(--fui-border, $fui-border);
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    margin-inline-start: auto;
+  }
+
+  // The tablist scrolls inline when its tabs overflow; the edge that still
+  // hides tabs fades out.
+  .list {
+    position: relative;
+    display: flex;
     align-items: stretch;
-    border-bottom: none;
-    border-right: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-      var(--fui-border, $fui-border);
-    padding-block: layout.gap("xs");
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    scroll-padding-inline: $_fade;
+    mask-image: var(--_fui-tabs-mask, #{$_mask-none});
+    -webkit-mask-image: var(--_fui-tabs-mask, #{$_mask-none});
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &[data-scroll-x="end"] {
+      --_fui-tabs-mask: linear-gradient(to right, black calc(100% - #{$_fade}), transparent);
+    }
+
+    &[data-scroll-x="start"] {
+      --_fui-tabs-mask: linear-gradient(to right, transparent, black #{$_fade});
+    }
+
+    &[data-scroll-x="both"] {
+      --_fui-tabs-mask: linear-gradient(
+        to right,
+        transparent,
+        black #{$_fade},
+        black calc(100% - #{$_fade}),
+        transparent
+      );
+    }
+
+    &[data-scroll-x="end"]:dir(rtl) {
+      --_fui-tabs-mask: linear-gradient(to right, transparent, black #{$_fade});
+    }
+
+    &[data-scroll-x="start"]:dir(rtl) {
+      --_fui-tabs-mask: linear-gradient(to right, black calc(100% - #{$_fade}), transparent);
+    }
+
+    @media (forced-colors: active) {
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+  }
+
+  // Ghost: tabs 16 apart; the list sits over the bar's hairline so the
+  // indicator covers it. The row scrolls, so it clips: it pads by the focus
+  // ring's reach and pulls back by the same, which keeps the outside ring
+  // inside the scrollport and every tab where it was.
+  .listGhost {
+    gap: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    padding: $_ring-room;
+    margin: calc(-1 * #{$_ring-room});
+    margin-block-end: calc(-1 * (#{$_ring-room} + #{$_hairline}));
+  }
+
+  // Soft: the segmented control (recipes/segmented), shared with ToggleGroup.
+  .listSoft {
+    flex: 0 1 auto;
+    inline-size: fit-content;
+
+    &[data-size="sm"] {
+      @include segmented.track("sm");
+    }
+
+    &[data-size="md"] {
+      @include segmented.track("md");
+    }
+  }
+
+  .tab {
+    @include button-reset;
+
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .tabSm {
+    @include segmented.item("sm");
+
+    svg {
+      @include segmented.glyph("sm");
+    }
+  }
+
+  .tabMd {
+    @include segmented.item("md");
+
+    svg {
+      @include segmented.glyph("md");
+    }
+  }
+
+  // Ghost: regular ink 2 at rest; hover brightens the words only; the open
+  // tab is ink 1 at the strong weight over the indicator.
+  .tabGhost {
+    @include action.motion;
+    @include target.hit-area("compact");
+
+    // A short name still meets the pointer floor by its own width; the hit
+    // area grows only in the block axis, so it never overflows the row and
+    // sets the edge fade off.
+    min-inline-size: var(--fui-hit-area, #{$fui-hit-area});
     padding-inline: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  }
-}
 
-// Variant: soft (filled rail with a selected segment)
-.listSoft {
-  border-bottom: none;
-  border: 0;
-  background-color: var(
-    --fui-tabs-pills-bg,
-    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
-  );
-  border-radius: var(--fui-radius-l1, $fui-radius-l1);
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  gap: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-    var(
-      --fui-tabs-pills-border,
-      color-mix(in srgb, var(--fui-border, #{$fui-border}) 72%, transparent)
-    );
-  width: fit-content;
-}
+    &::after {
+      inline-size: 100%;
+    }
 
-// Individual tab button
-.tab {
-  @include button-reset;
-  @include interactive-base;
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
 
-  position: relative;
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  white-space: nowrap;
-  border-radius: var(--fui-radius-l3, $fui-radius-l3);
+    @include action.hover {
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
 
-  &:hover:not([data-disabled]) {
-    color: var(--fui-text-primary, $fui-text-primary);
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
+    @include focus.visible;
+
+    &[data-active] {
+      @include action.weight("strong");
+
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    @include action.disabled;
   }
 
-  &[data-active] {
-    color: var(--fui-text-primary, $fui-text-primary);
+  // Soft: a segment on the track. The track scrolls, so the ring is inset.
+  .listSoft .tabSoft {
+    @include segmented.segment("[data-active]", $ring-inset: true);
+    @include action.disabled;
   }
 
-  &[data-disabled] {
+  // The name keeps the strong weight's width at rest, so opening a tab never
+  // moves its neighbours.
+  .label {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+
+    &[data-label]::after {
+      content: attr(data-label);
+      block-size: 0;
+      overflow: hidden;
+      visibility: hidden;
+      font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+      user-select: none;
+      pointer-events: none;
+    }
+  }
+
+  .count {
     color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+    font-variant-numeric: tabular-nums;
   }
-}
 
-.tabSm {
-  @include segmented.item("sm");
+  .dot {
+    flex: 0 0 auto;
+    inline-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    block-size: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    background-color: currentColor;
 
-  svg {
-    @include segmented.glyph("sm");
+    @media (forced-colors: active) {
+      background-color: CanvasText;
+    }
   }
-}
 
-.tabMd {
-  @include segmented.item("md");
-
-  svg {
-    @include segmented.glyph("md");
+  .dotWords {
+    @include visually-hidden;
   }
-}
 
-.tabLg {
-  @include segmented.item("lg");
-
-  svg {
-    @include segmented.glyph("lg");
-  }
-}
-
-// Tab in the ghost variant: the indicator carries the selection, the tab stays flat
-.tabGhost {
-  border-radius: var(--fui-radius-none, #{$fui-radius-none});
-
-  &:hover:not([data-disabled]) {
-    background-color: transparent;
-  }
-}
-
-// Tab in the soft variant: a segment on the rail
-.tabSoft {
-  border-radius: var(--fui-radius-l2, $fui-radius-l2);
-  transition:
-    background-color var(--fui-transition-fast, $fui-transition-fast),
-    color var(--fui-transition-fast, $fui-transition-fast),
-    box-shadow var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not([data-disabled]):not([data-active]) {
-    background-color: var(--fui-tabs-pill-hover-bg, transparent);
+  // The ghost indicator: a 2px ink 1 bar under the open tab. It moves by
+  // transform only, in the micro role; its width lands at once. `left` stays
+  // physical: Base UI measures `--active-tab-left` from the list's left edge
+  // in every direction.
+  .indicator {
+    position: absolute;
+    inset-block-end: $_ring-room;
+    left: 0;
+    z-index: 1;
+    inline-size: var(--active-tab-width);
+    block-size: var(--fui-stroke-default, #{$fui-stroke-default});
+    // The bar is drawn in ink 1, the open tab's own colour.
     color: var(--fui-text-primary, $fui-text-primary);
+    background-color: currentColor;
+    transform: translateX(var(--active-tab-left));
+    transition: transform var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
+    pointer-events: none;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    @media (forced-colors: active) {
+      background-color: CanvasText;
+    }
   }
 
-  &[data-active] {
-    @include segmented-selection;
+  // The panel carries no padding: the parent owns spacing.
+  .panel {
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+
+    &[data-hidden] {
+      display: none;
+    }
+
+    @include focus.visible;
   }
-}
-
-// Animated indicator (ghost variant)
-.indicator {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: var(--fui-stroke-default, #{$fui-stroke-default});
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-
-  // Use CSS variables from Base UI for position
-  width: var(--active-tab-width);
-  transform: translateX(var(--active-tab-left));
-  transition:
-    width var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  [data-orientation="vertical"] & {
-    bottom: auto;
-    left: auto;
-    right: 0;
-    top: 0;
-    width: var(--fui-stroke-default, #{$fui-stroke-default});
-    height: var(--active-tab-height);
-    transform: translateY(var(--active-tab-top));
-  }
-}
-
-// Tab panel content
-.panel {
-  padding-block: layout.gap("sm");
-  padding-inline: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  outline: none;
-
-  &[data-hidden] {
-    display: none;
-  }
-
-  // Focus visible for keyboard navigation
-  &:focus-visible {
-    @include focus-ring;
-    border-radius: var(--fui-radius-l2, $fui-radius-l2);
-  }
-}
-
-// Panel with no padding (for custom layouts)
-.panelFlush {
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
 }

@@ -1,8 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import type { Preview } from "@storybook/react";
-import "@fontsource-variable/onest";
 import "@fontsource-variable/jetbrains-mono";
-import { ThemeProvider, type ThemeMode } from "../src/components/Theme";
+import { Theme, type ThemeMode } from "../src/components/Theme";
 import {
   RADIUS_OPTIONS,
   resolveRadius,
@@ -15,7 +14,7 @@ import "../src/styles/globals.scss";
  *
  * This is the reference for the "styles filter through" contract that Fragments
  * Cloud's live-Storybook embed depends on: the global stylesheet is imported
- * here and every story is wrapped in the design system's ThemeProvider, so a
+ * here and every story is wrapped in the design system's Theme, so a
  * published build renders components with their real tokens and theming. A
  * consuming team wires the same two things in their own `.storybook/preview`.
  */
@@ -67,9 +66,9 @@ function StorybookThemeProvider({
   }, [scale]);
 
   return (
-    <ThemeProvider mode={theme} defaultMode={theme} storageKey="">
+    <Theme mode={theme} defaultMode={theme} storageKey="">
       {children}
-    </ThemeProvider>
+    </Theme>
   );
 }
 

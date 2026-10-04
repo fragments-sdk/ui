@@ -1,30 +1,77 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as mixins;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/field";
+@use "../../recipes/typography";
 
-.root {
-  @include field.wrapper;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.label {
-  @include field.label;
+@layer fui.components {
+  // Disabled dims the label here and the control on its own box, each once.
+  // The description and error keep full ink: they say why the field is shut,
+  // and dimmed words fail contrast. The label dims the same way whether the
+  // Field is disabled or only its control is.
+  .root {
+    @include field.wrapper;
 
-  &[data-disabled] {
-    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+    &[data-disabled],
+    &:has(:is(input, textarea, select):disabled) {
+      cursor: not-allowed;
+    }
   }
-}
 
-.control {
-  // Minimal styles — users bring styled controls via render prop
-}
+  // The label is the field recipe's: ink 1 at the body size and the strong
+  // weight, on the type ladder.
+  .label {
+    @include field.label;
 
-.description {
-  @include field.helper;
-}
+    &[data-disabled],
+    .root:has(:is(input, textarea, select):disabled) & {
+      @include mixins.disabled-state;
+    }
+  }
 
-.error {
-  @include field.error;
-}
+  // Minimal styles: users bring styled controls via the render prop. Zero
+  // specificity, so the composed control's own type role always wins; a bare
+  // input takes the field's font, and 16px under a coarse pointer.
+  :where(.control) {
+    font: inherit;
+    @include field.coarse-typed-text;
+  }
 
-.required {
-  margin-inline-start: var(--fui-raw-space-2, 2px);
+  .description {
+    @include field.helper;
+  }
+
+  // The invalid message: a 14px danger glyph beside the words, both in the
+  // danger ink, at the caption size.
+  .error {
+    @include field.error;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  .errorIcon {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-sm, $fui-icon-sm);
+    block-size: var(--fui-icon-sm, $fui-icon-sm);
+    // Centre the glyph on the first line of the words.
+    margin-block: calc(
+      (#{typography.line-height("caption")} - var(--fui-icon-sm, #{$fui-icon-sm})) / 2
+    );
+  }
+
+  .errorWords {
+    min-inline-size: 0;
+  }
+
+  // The required mark is quiet: ink 3, not the danger colour, which belongs
+  // to the invalid state.
+  .required {
+    margin-inline-start: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+  }
 }

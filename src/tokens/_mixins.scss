@@ -4,12 +4,12 @@
 
 @use "variables" as *;
 @use "measurements.generated" as measurements;
+@use "../recipes/focus";
+@use "../recipes/selection";
 
-// Focus ring for keyboard accessibility
+// Focus ring for keyboard accessibility: the one focus geometry (recipes/focus).
 @mixin focus-ring {
-  outline: var(--fui-focus-ring-width, #{$fui-focus-ring-width}) solid
-    var(--fui-focus-ring-color, #{$fui-focus-ring-color});
-  outline-offset: var(--fui-focus-ring-offset, #{$fui-focus-ring-offset});
+  @include focus.ring;
 }
 
 // Reset button styles
@@ -34,19 +34,26 @@
 
 // The one disabled treatment. Form controls keep `:disabled`; non-form
 // pressables carry `aria-disabled` and read this through `[aria-disabled]`.
+// Dimmed once: the outermost disabled element dims, and every element inside
+// it reads an opacity of 1 here, so a disabled control in a disabled fieldset
+// stays at 0.45 rather than compounding to 0.2.
 @mixin disabled-state {
-  opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+  opacity: var(--_fui-disabled-opacity, var(--fui-opacity-disabled, #{$fui-opacity-disabled}));
   cursor: not-allowed;
+
+  > * {
+    --_fui-disabled-opacity: 1;
+  }
 }
 
 // Base interactive element
+// The micro role (`m.micro`): colour, edge and the press scale
+// in `--fui-duration-micro` on the one standard easing, the same transition as
+// `recipes/action` `motion`.
 @mixin interactive-base {
-  transition:
-    background-color var(--fui-transition-fast, #{$fui-transition-fast}),
-    border-color var(--fui-transition-fast, #{$fui-transition-fast}),
-    box-shadow var(--fui-transition-fast, #{$fui-transition-fast}),
-    opacity var(--fui-transition-fast, #{$fui-transition-fast}),
-    scale var(--fui-transition-fast, #{$fui-transition-fast});
+  transition-property: background-color, border-color, box-shadow, opacity, scale;
+  transition-duration: var(--fui-duration-micro, #{$fui-duration-micro});
+  transition-timing-function: var(--fui-ease-standard, #{$fui-ease-standard});
 
   &:focus-visible {
     @include focus-ring;
@@ -60,28 +67,19 @@
   }
 }
 
-// Card surface
-@mixin surface-elevated {
-  background-color: var(--fui-bg-elevated, #{$fui-bg-elevated});
+// A grouped field set (Fieldset, Editor): the band plane, its hairline and
+// the surface corner. A static card reads `surface.plane` (recipes/surface).
+@mixin form-group-surface {
+  background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
   border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
     var(--fui-border, #{$fui-border});
-  border-radius: var(--fui-radius-l1, #{$fui-radius-l1});
+  border-radius: var(--fui-radius-surface, #{$fui-radius-surface});
 }
 
-@mixin form-group-surface {
-  background-color: var(--fui-form-group-bg, var(--fui-bg-secondary, #{$fui-bg-secondary}));
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-form-group-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-radius-l1, #{$fui-radius-l1});
-}
-
-// The shared selected treatment for segmented controls: Tabs pills, ToggleGroup
-// items, Prompt mode buttons. One surface, one hairline, one ink.
+// The shared selected treatment for segmented controls: soft Tabs, ToggleGroup
+// items, Prompt mode buttons. The lifted thumb (recipes/selection).
 @mixin segmented-selection {
-  color: var(--fui-text-primary, #{$fui-text-primary});
-  background-color: var(--fui-control-selected-bg, #{$fui-control-selected-bg});
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-    var(--fui-control-selected-border, #{$fui-control-selected-border});
+  @include selection.thumb;
 }
 
 // Responsive breakpoint mixins (mobile-first, min-width)
@@ -184,6 +182,7 @@
   margin: calc(-1 * var(--fui-stroke-hairline, #{$fui-stroke-hairline}));
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }

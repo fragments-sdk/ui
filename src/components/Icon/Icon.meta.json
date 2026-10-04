@@ -1,0 +1,136 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Icon",
+  "description": "Sizes any icon onto the glyph ladder and gives it one ink.",
+  "category": "display",
+  "tags": ["icon", "visual", "symbol", "graphic"],
+  "status": "stable",
+  "sourcePath": "src/components/Icon/index.tsx",
+  "exportName": "Icon",
+  "propsSummary": [
+    "style: object",
+    "icon: union (required)",
+    "size: xs|sm|md|lg|xl (default: md)",
+    "weight: regular|bold|fill (default: regular)",
+    "tone: secondary|tertiary|accent|info|success|warning|danger"
+  ],
+  "props": {
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    },
+    "icon": {
+      "type": "union",
+      "description": "Icon component to render",
+      "required": true
+    },
+    "size": {
+      "type": "enum",
+      "description": "A step on the glyph ladder: xs 12, sm 14, md 16, lg 18, xl 24",
+      "default": "md",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg", "xl"]
+    },
+    "weight": {
+      "type": "enum",
+      "description": "The glyph weight, forwarded to icon components that take one",
+      "default": "regular",
+      "required": false,
+      "values": ["regular", "bold", "fill"]
+    },
+    "tone": {
+      "type": "enum",
+      "description": "The glyph ink: secondary and tertiary follow the text ladder, accent is the accent ink, the status inks mark real state only. Omit to inherit currentColor",
+      "required": false,
+      "values": ["secondary", "tertiary", "accent", "info", "success", "warning", "danger"]
+    }
+  },
+  "usage": {
+    "when": [
+      "A symbol sits beside text, inside a button, or leads a list item",
+      "State needs a glanceable marker"
+    ],
+    "whenNot": ["Artwork or illustration (use Image)", "Multi-color or animated graphics"],
+    "guidelines": [
+      "Reserve the success, warning, and danger tones for real state",
+      "Hold one size per context",
+      "Use the bold weight beside strong text and fill for a filled state; regular everywhere else",
+      "Nothing above 24: a bigger glyph is an illustration, not an icon"
+    ],
+    "accessibility": [
+      "Icons ship aria-hidden — they are decoration until you label them",
+      "aria-label (or aria-labelledby) labels a meaningful icon: it renders role=\"img\" and is no longer hidden",
+      "An icon-only button needs VisuallyHidden text",
+      "Color alone never carries the message"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Inherits the size and color of its surroundings.",
+      "code": "<Icon icon={Heart} />"
+    },
+    {
+      "name": "Sizes",
+      "description": "Steps tuned to the type scale, so icons never float off the baseline.",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Star} size=\"xs\" />\n  <Icon icon={Star} size=\"sm\" />\n  <Icon icon={Star} size=\"md\" />\n  <Icon icon={Star} size=\"lg\" />\n  <Icon icon={Star} size=\"xl\" />\n</div>"
+    },
+    {
+      "name": "Tones",
+      "description": "One ink axis: the quiet text inks for glyphs beside secondary copy, the status inks for real state.",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Heart} tone=\"secondary\" />\n  <Icon icon={Heart} tone=\"tertiary\" />\n  <Icon icon={Check} tone=\"success\" />\n  <Icon icon={Warning} tone=\"warning\" />\n  <Icon icon={Warning} tone=\"danger\" />\n  <Icon icon={Info} tone=\"accent\" />\n</div>"
+    },
+    {
+      "name": "Weights",
+      "description": "Regular by default; bold beside strong text; fill for a filled state.",
+      "code": "<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>\n  <Icon icon={Heart} weight=\"regular\" />\n  <Icon icon={Heart} weight=\"bold\" />\n  <Icon icon={Heart} weight=\"fill\" />\n</div>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Button",
+      "relationship": "child",
+      "note": "Use inside icon-only buttons with VisuallyHidden label"
+    },
+    {
+      "component": "VisuallyHidden",
+      "relationship": "sibling",
+      "note": "Pair with VisuallyHidden for accessible icon-only elements"
+    },
+    {
+      "component": "Badge",
+      "relationship": "child",
+      "note": "Can be used as badge icon prop"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "icon: React component - icon component (required)",
+      "size: xs|sm|md|lg|xl - a step on the 12/14/16/18/24 glyph ladder",
+      "weight: regular|bold|fill - the glyph weight",
+      "tone: secondary|tertiary|accent|info|success|warning|danger - one ink axis; omit to inherit currentColor"
+    ],
+    "a11yRules": ["A11Y_ICON_LABEL", "A11Y_COLOR_CONTRAST"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:58.998Z"
+  },
+  "cssVariables": [
+    "--fui-color-accent-text",
+    "--fui-color-danger-text",
+    "--fui-color-info-text",
+    "--fui-color-success-text",
+    "--fui-color-warning-text",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

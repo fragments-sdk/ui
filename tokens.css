@@ -1,0 +1,155 @@
+/*
+ * @usefragments/ui public tokens at the default seed, as literal values.
+ * Written by scripts/tokens-css.mjs from the built stylesheet. Do not edit by hand:
+ * `pnpm run generate:tokens-css` rewrites it and `pnpm run check:tokens-css` fails on any
+ * difference from the runtime. The runtime never reads this file.
+ */
+
+:root {
+  --fui-bg-primary: #fbfaf8;
+  --fui-text-primary: #1b1916;
+
+  --fui-bg-secondary: #f1efec;
+  --fui-bg-elevated: #fbfaf8;
+  --fui-bg-hover: #1b19160f;
+  --fui-bg-active: #1b19161c;
+
+  --fui-text-secondary: #4f4b45;
+  --fui-text-tertiary: #67625a;
+
+  --fui-border: #e2dfda;
+  --fui-border-strong: #d4d0ca;
+
+  --fui-color-on-accent: #ffffff;
+  --fui-color-accent-hover: #344dc8;
+  --fui-color-accent-active: #2e44b0;
+  --fui-color-accent-text: #334bb5;
+  --fui-color-danger-text: #a80400;
+  --fui-color-danger-fill-hover: #b4341b;
+  --fui-color-danger-fill-active: #9f2e18;
+  --fui-color-success-text: #006e44;
+  --fui-color-success-fill-hover: #4cc89f;
+  --fui-color-success-fill-active: #61ceaa;
+  --fui-color-warning-text: #824800;
+  --fui-color-warning-fill-hover: #f4ae24;
+  --fui-color-warning-fill-active: #f5b83d;
+  --fui-color-info-text: #005c9b;
+  --fui-color-info-fill-hover: #4392ca;
+  --fui-color-info-fill-active: #599fd0;
+  --fui-color-accent: #3d5ae8;
+  --fui-color-danger: #d13d1f;
+  --fui-color-success: #2fbf8f;
+  --fui-color-warning: #f2a100;
+  --fui-color-info: #2580c1;
+  --fui-color-accent-tint: #e2e8f8;
+  --fui-color-accent-wash: #eef1f8;
+  --fui-color-accent-tint-hover: #d4dbf3;
+  --fui-color-accent-tint-active: #c9d2ef;
+  --fui-color-accent-wash-active: #dfe4f3;
+  --fui-color-danger-tint: #fae6e0;
+  --fui-color-danger-wash: #fbf0ec;
+  --fui-color-danger-tint-hover: #f3d4ce;
+  --fui-color-danger-tint-active: #eec7c1;
+  --fui-color-danger-wash-active: #f4ddd9;
+  --fui-color-success-tint: #e7f3eb;
+  --fui-color-success-wash: #f1f6f1;
+  --fui-color-success-tint-hover: #d4e9de;
+  --fui-color-success-tint-active: #c7e1d4;
+  --fui-color-success-wash-active: #deece3;
+  --fui-color-warning-tint: #fbebd6;
+  --fui-color-warning-wash: #fbf2e7;
+  --fui-color-warning-tint-hover: #f1dec5;
+  --fui-color-warning-tint-active: #ead4b8;
+  --fui-color-warning-wash-active: #f1e5d5;
+  --fui-color-info-tint: #e5ecf3;
+  --fui-color-info-wash: #f0f3f5;
+  --fui-color-info-tint-hover: #d2e1ec;
+  --fui-color-info-tint-active: #c5d8e6;
+  --fui-color-info-wash-active: #dde7ee;
+
+  --fui-focus-ring-color: #3d5ae8;
+  --fui-selection-bg: #3d5ae82e;
+  --fui-control-selected-bg: #3d5ae81f;
+
+  --fui-raw-space-2: 2px;
+  --fui-raw-space-4: 4px;
+  --fui-raw-space-6: 6px;
+  --fui-raw-space-8: 8px;
+  --fui-raw-space-10: 10px;
+  --fui-raw-space-12: 12px;
+  --fui-raw-space-16: 16px;
+  --fui-raw-space-20: 20px;
+  --fui-raw-space-24: 24px;
+  --fui-raw-space-32: 32px;
+  --fui-raw-space-40: 40px;
+  --fui-raw-space-48: 48px;
+  --fui-raw-space-64: 64px;
+
+  --fui-radius-control: 5px;
+  --fui-radius-indicator: 3px;
+  --fui-radius-surface: 12px;
+  --fui-radius-row: 8px;
+  --fui-radius-tooltip: 4px;
+  --fui-radius-segment: 2px;
+  --fui-radius-full: 9999px;
+
+  --fui-type-caption-size: 11px;
+  --fui-type-ui-standard-size: 14px;
+  --fui-type-body-compact-size: 12px;
+  --fui-type-body-relaxed-size: 16px;
+  --fui-type-display-size: 32px;
+  --fui-type-title-sm-size: 15px;
+  --fui-type-title-md-size: 20px;
+  --fui-type-title-lg-size: 24px;
+}
+
+:root[data-theme="dark"] {
+  --fui-bg-primary: #1a1918;
+  --fui-text-primary: #eee9e0;
+
+  --fui-bg-secondary: #242322;
+  --fui-bg-elevated: #1f1e1c;
+  --fui-bg-hover: #eee9e014;
+  --fui-bg-active: #eee9e024;
+
+  --fui-text-secondary: #b8b3aa;
+  --fui-text-tertiary: #99948b;
+
+  --fui-border: #2c2a28;
+  --fui-border-strong: #373532;
+
+  --fui-color-accent-text: #7aa4ff;
+  --fui-color-danger-text: #ff7b5c;
+  --fui-color-success-text: #42cc9c;
+  --fui-color-warning-text: #f5a40d;
+  --fui-color-info-text: #63b9fe;
+  --fui-color-accent-tint: #20273d;
+  --fui-color-accent-wash: #1d202a;
+  --fui-color-accent-tint-hover: #27314d;
+  --fui-color-accent-tint-active: #2d3958;
+  --fui-color-accent-wash-active: #242b3b;
+  --fui-color-danger-tint: #3b231d;
+  --fui-color-danger-wash: #2b1e1b;
+  --fui-color-danger-tint-hover: #4b2a22;
+  --fui-color-danger-tint-active: #573026;
+  --fui-color-danger-wash-active: #3c2620;
+  --fui-color-success-tint: #24332b;
+  --fui-color-success-wash: #1f2621;
+  --fui-color-success-tint-hover: #263f34;
+  --fui-color-success-tint-active: #28493b;
+  --fui-color-success-wash-active: #22332b;
+  --fui-color-warning-tint: #3b2f1f;
+  --fui-color-warning-wash: #2a241c;
+  --fui-color-warning-tint-hover: #4a381e;
+  --fui-color-warning-tint-active: #553f1d;
+  --fui-color-warning-wash-active: #3a2e1b;
+  --fui-color-info-tint: #202c36;
+  --fui-color-info-wash: #1d2327;
+  --fui-color-info-tint-hover: #263746;
+  --fui-color-info-tint-active: #2a4052;
+  --fui-color-info-wash-active: #232f38;
+
+  --fui-focus-ring-color: #6890ff;
+  --fui-selection-bg: #3d5ae838;
+  --fui-control-selected-bg: #587cff1f;
+}

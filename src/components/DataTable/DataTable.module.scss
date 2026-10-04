@@ -1,324 +1,193 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
-@use "../../recipes/action" as action;
+@use "../../recipes/feedback" as feedback;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/table-chrome" as table-chrome;
 @use "../../recipes/target" as target;
-@use "../../recipes/typography" as typography;
 
-.wrapper {
-  --fui-data-table-bg: var(--fui-table-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  --fui-data-table-header-bg: var(
-    --fui-table-header-bg,
-    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 5%, transparent)
-  );
+// DataTable composes Table: rows, cells, the head, the selection marking, the
+// hover tint, the sheet and the empty and loading rows all come from Table.
+// This module only adds what a data table has and a plain table does not:
+// sorting, clickable rows, tree rows, column alignment and the error row.
 
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.table {
-  @include table-chrome.root;
+@layer fui.components {
+  .fixedLayout {
+    table-layout: fixed;
+  }
 
-  @each $density in ("compact", "regular", "relaxed") {
-    &[data-density="#{$density}"] {
-      @include table-chrome.density($density);
+  // ============================================
+  // Sorting: the glyph is always there, ink 3 at rest, ink 1 on the sorted
+  // column, so a sortable column reads as sortable before it is hovered.
+  // ============================================
+
+  // The words are 16 tall; the hit area reaches the 24 pointer floor (44
+  // under a coarse pointer) without moving the head.
+  .sortButton {
+    @include button-reset;
+    @include focus.visible($inset: true);
+    @include target.hit-area("micro");
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    max-inline-size: 100%;
+    padding: 0;
+    border-radius: var(--fui-radius-indicator, #{$fui-radius-indicator});
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--fui-text-primary, #{$fui-text-primary});
+      }
+    }
+
+    &[data-sorted] {
+      color: var(--fui-text-primary, #{$fui-text-primary});
     }
   }
-}
 
-.caption {
-  @include table-chrome.caption;
-}
-
-.captionHidden {
-  @include visually-hidden;
-}
-
-.thead {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 1;
-}
-
-.headerRow,
-.row {
-  @include table-chrome.row;
-  @include high-contrast-outline;
-}
-
-.headerRow {
-  border-block-end-color: var(--fui-table-header-border, var(--fui-border, #{$fui-border}));
-}
-
-.th {
-  @include table-chrome.header-cell;
-
-  background: var(
-    --fui-data-table-header-bg,
-    var(--fui-data-table-bg, var(--fui-bg-primary, #{$fui-bg-primary}))
-  );
-  white-space: nowrap;
-  user-select: none;
-}
-
-.headerContent,
-.sortButton {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-raw-space-4, 4px);
-}
-
-.sortButton {
-  @include button-reset;
-  @include interactive-base;
-
-  justify-content: space-between;
-  inline-size: 100%;
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  color: inherit;
-  text-align: start;
-  transition: color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-}
-
-.sortIndicator {
-  display: inline-flex;
-  align-items: center;
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-  flex-shrink: 0;
-  opacity: 0;
-  transition: opacity var(--fui-transition-fast, $fui-transition-fast);
-
-  svg {
-    inline-size: var(--fui-icon-xs, $fui-icon-xs);
-    block-size: var(--fui-icon-xs, $fui-icon-xs);
+  .sortLabel {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .sortButton:hover &,
-  .sortButton:focus-visible & {
-    opacity: 1;
-  }
-}
+  .sortGlyph {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
 
-.th[aria-sort="ascending"] .sortIndicator,
-.th[aria-sort="descending"] .sortIndicator {
-  opacity: 1;
-}
+    svg {
+      inline-size: var(--fui-icon-xs, #{$fui-icon-xs});
+      block-size: var(--fui-icon-xs, #{$fui-icon-xs});
+    }
 
-.row {
-  transition: background-color var(--fui-transition-fast, $fui-transition-fast);
-
-  &:last-child {
-    border-block-end: 0;
+    .sortButton[data-sorted] & {
+      color: var(--fui-text-primary, #{$fui-text-primary});
+    }
   }
 
-  &:hover {
-    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-}
+  // ============================================
+  // Clickable rows: a press tint laid as an image over the row (the hover tint
+  // and the selection wash stay underneath), the inset focus ring.
+  // ============================================
 
-.td {
-  @include table-chrome.body-cell;
-}
+  .clickable {
+    @include focus.visible($inset: true);
 
-.treeCell {
-  @include table-chrome.tree-cell;
-}
-
-.clickable {
-  cursor: pointer;
-
-  &:focus-visible {
-    @include focus-ring;
+    cursor: pointer;
   }
 
-  &:active {
-    background-color: var(--fui-table-row-active-bg, var(--fui-bg-active, #{$fui-bg-active}));
-  }
-}
-
-.selected {
-  background-color: var(
-    --fui-table-row-selected-bg,
-    color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
-  );
-
-  .td:first-child {
-    box-shadow: inset var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))
-      0 0 var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
-  }
-
-  &:dir(rtl) .td:first-child {
-    box-shadow: inset
-      calc(-1 * var(--fui-table-divider-size, var(--fui-stroke-hairline, #{$fui-stroke-hairline}))) 0 0
-      var(--fui-table-row-selected-border, var(--fui-border-strong, #{$fui-border-strong}));
-  }
-}
-
-.striped {
-  .row:nth-child(even) {
-    background-color: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
-  }
-
-  .clickable:hover {
-    background-color: var(--fui-table-row-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
-  }
-
-  .selected {
-    background-color: var(
-      --fui-table-row-selected-bg,
-      color-mix(in srgb, var(--fui-text-primary, #{$fui-text-primary}) 8%, transparent)
+  tr.clickable:active:not([data-table-state]) {
+    background-image: linear-gradient(
+      var(--fui-table-row-active-bg, var(--fui-bg-active, #{$fui-bg-active})),
+      var(--fui-table-row-active-bg, var(--fui-bg-active, #{$fui-bg-active}))
     );
   }
-}
 
-.bordered {
-  /* Keep the rounded corners clipping the table, but never trap the
-     horizontal scroll the wrapper needs for wide tables. */
-  overflow-x: auto;
-  overflow-y: hidden;
-  border: var(--fui-table-divider-size, var(--fui-stroke-hairline, $fui-stroke-hairline)) solid
-    var(--fui-table-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  background: var(--fui-data-table-bg, var(--fui-bg-primary, #{$fui-bg-primary}));
-}
+  // ============================================
+  // Tree rows: sub-rows sit on the band, under their parent, and depth shows
+  // by indent. The band yields to the selection wash (zero specificity). The
+  // expand control is the 24 IconButton.
+  // ============================================
 
-.fixedLayout {
-  table-layout: fixed;
-}
-
-.th[data-align="right"],
-.td[data-align="right"] {
-  text-align: end;
-}
-
-.th[data-align="right"] .headerContent,
-.th[data-align="right"] .sortButton {
-  justify-content: flex-end;
-}
-
-.th[data-align="center"],
-.td[data-align="center"] {
-  text-align: center;
-}
-
-.th[data-align="center"] .headerContent,
-.th[data-align="center"] .sortButton {
-  justify-content: center;
-}
-
-.truncate {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.skeletonBar {
-  display: block;
-  block-size: var(--fui-raw-space-10, 10px);
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, currentColor 8%, transparent) 25%,
-    color-mix(in srgb, currentColor 14%, transparent) 50%,
-    color-mix(in srgb, currentColor 8%, transparent) 75%
-  );
-  background-size: 200% 100%;
-  animation: dataTableShimmer var(--fui-duration-shimmer, $fui-duration-shimmer) ease-in-out
-    infinite;
-}
-
-@keyframes dataTableShimmer {
-  from {
-    background-position: 200% 0;
+  :where(.subRow) {
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
   }
 
-  to {
-    background-position: -200% 0;
-  }
-}
+  // A block-level flex row, so the cell holds no line box beside it and the
+  // row keeps the 32 track.
+  .treeContent {
+    @include table-chrome.tree-indent;
 
-.checkboxCell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.expandCell {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--fui-raw-space-4, 4px);
-}
-
-.expandButton {
-  @include button-reset;
-  @include action.base;
-  @include action.icon-only("sm");
-  @include target.hit-area("compact");
-
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    max-inline-size: 100%;
   }
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
-
-.expandIcon {
-  @include action.glyph("sm");
-
-  transition: transform var(--fui-transition-fast, $fui-transition-fast);
-}
-
-.expandIconOpen {
-  transform: rotate(90deg);
-}
-
-.subRow {
-  background-color: var(--fui-table-subrow-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
-}
-
-.emptyState {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-block: var(--fui-raw-space-48, 48px);
-  padding-inline: var(--fui-raw-space-24, 24px);
-}
-
-.emptyMessage {
-  @include typography.role("body-compact");
-
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-// Virtualizer spacer rows: height is measured state set inline; the chrome
-// reset lives here so the spacer never paints a cell.
-.virtualSpacer {
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  border: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .row,
-  .sortButton,
-  .sortIndicator,
-  .expandIcon {
-    transition: none;
+  .expandSpacer {
+    flex: 0 0 auto;
+    inline-size: var(--fui-control-height-xs, #{$fui-control-height-xs});
   }
 
-  .skeletonBar {
-    animation: none;
+  .expandGlyph {
+    transition: rotate var(--fui-duration-micro, #{$fui-duration-micro})
+      var(--fui-ease-standard, #{$fui-ease-standard});
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .expandGlyphOpen {
+    rotate: 90deg;
+
+    &:dir(rtl) {
+      rotate: -90deg;
+    }
+  }
+
+  // ============================================
+  // Columns
+  // ============================================
+
+  .alignEnd {
+    text-align: end;
+
+    > * {
+      justify-content: flex-end;
+    }
+  }
+
+  .alignCenter {
+    text-align: center;
+
+    > * {
+      justify-content: center;
+    }
+  }
+
+  .truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  // ============================================
+  // Error row: the errbox under the real header.
+  // ============================================
+
+  .errorCell {
+    padding: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
+
+  .errbox {
+    @include feedback.errbox($inset: var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  }
+
+  .errboxIcon {
+    @include feedback.errbox-icon;
+  }
+
+  .errboxWords {
+    @include feedback.errbox-words;
+  }
+
+  .errboxActions {
+    @include feedback.errbox-actions;
+  }
+
+  // Virtualizer spacer rows: height is measured state set inline; the chrome
+  // reset lives here so the spacer never paints a cell.
+  .virtualSpacer {
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    border: 0;
   }
 }

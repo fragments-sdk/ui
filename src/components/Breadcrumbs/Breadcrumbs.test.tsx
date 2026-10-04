@@ -1,62 +1,103 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, userEvent, expectNoA11yViolations } from '../../test/utils';
-import { Breadcrumbs } from './index';
+import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Breadcrumbs } from "./index";
 
-describe('Breadcrumbs', () => {
-  it('renders a nav landmark with aria-label "Breadcrumb"', () => {
+describe("Breadcrumbs", () => {
+  it('renders a nav landmark named "Breadcrumb"', () => {
     render(
       <Breadcrumbs>
         <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Page</Breadcrumbs.Item>
       </Breadcrumbs>
     );
-    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toBeInTheDocument();
   });
 
-  it('supports custom breadcrumb nav label and root props', () => {
+  it("takes a custom label and root props", () => {
     render(
       <Breadcrumbs label="Path" id="crumbs" data-testid="crumbs">
         <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Page</Breadcrumbs.Item>
       </Breadcrumbs>
     );
 
-    const nav = screen.getByRole('navigation', { name: 'Path' });
-    expect(nav).toHaveAttribute('id', 'crumbs');
-    expect(nav).toHaveAttribute('data-testid', 'crumbs');
+    const nav = screen.getByRole("navigation", { name: "Path" });
+    expect(nav).toHaveAttribute("id", "crumbs");
+    expect(nav).toHaveAttribute("data-testid", "crumbs");
   });
 
-  it('marks current page with aria-current="page"', () => {
+  it("makes the last item the current page: not a link, aria-current, no separator after it", () => {
     render(
       <Breadcrumbs>
         <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Current</Breadcrumbs.Item>
+        <Breadcrumbs.Item href="/settings">Settings</Breadcrumbs.Item>
       </Breadcrumbs>
     );
-    expect(screen.getByText('Current').closest('[aria-current="page"]')).toBeInTheDocument();
+
+    expect(screen.queryByRole("link", { name: "Settings" })).not.toBeInTheDocument();
+    const current = screen.getByText("Settings");
+    expect(current).toHaveAttribute("aria-current", "page");
+
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    expect(items[0].querySelector("svg")).not.toBeNull();
+    expect(items[1].querySelector("svg")).toBeNull();
   });
 
-  it('renders separator between items', () => {
+  it("hides the separator from assistive tech", () => {
     render(
-      <Breadcrumbs separator=">">
+      <Breadcrumbs>
         <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Page</Breadcrumbs.Item>
       </Breadcrumbs>
     );
-    expect(screen.getByText('>')).toBeInTheDocument();
+    const separator = screen.getAllByRole("listitem")[0].querySelector("svg");
+    expect(separator).toHaveAttribute("aria-hidden", "true");
   });
 
-  it('renders items as links when href is provided', () => {
+  it("renders an item with href as a link", () => {
     render(
       <Breadcrumbs>
         <Breadcrumbs.Item href="/about">About</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Contact</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Contact</Breadcrumbs.Item>
       </Breadcrumbs>
     );
-    expect(screen.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about');
+    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
   });
 
-  it('lets a plain item hand clicks to its own control', async () => {
+  it("renders an item through render, for router links", () => {
+    const RouterLink = React.forwardRef<
+      HTMLAnchorElement,
+      { to: string } & React.ComponentProps<"a">
+    >(function RouterLink({ to, ...props }, ref) {
+      return <a ref={ref} href={to} data-router="" {...props} />;
+    });
+    render(
+      <Breadcrumbs>
+        <Breadcrumbs.Item render={<RouterLink to="/repos" />}>Repositories</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Overview</Breadcrumbs.Item>
+      </Breadcrumbs>
+    );
+    const link = screen.getByRole("link", { name: "Repositories" });
+    expect(link).toHaveAttribute("href", "/repos");
+    expect(link).toHaveAttribute("data-router");
+  });
+
+  it("renders an item with only onClick as a button", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <Breadcrumbs>
+        <Breadcrumbs.Item onClick={onClick}>Workspace</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Page</Breadcrumbs.Item>
+      </Breadcrumbs>
+    );
+    await user.click(screen.getByRole("button", { name: "Workspace" }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets a plain item hand clicks to its own control", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
     render(
@@ -66,40 +107,69 @@ describe('Breadcrumbs', () => {
             Switch
           </button>
         </Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Page</Breadcrumbs.Item>
       </Breadcrumbs>
     );
-    const control = screen.getByRole('button', { name: 'Switch' });
-    expect(control.parentElement?.className).not.toMatch(/link/);
+    const control = screen.getByRole("button", { name: "Switch" });
+    expect(control.parentElement?.className).not.toMatch(/crumb/);
     await user.click(control);
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('collapses middle items when maxItems is set', async () => {
+  it("folds the items after the first into a menu past maxItems", async () => {
     const user = userEvent.setup();
     render(
-      <Breadcrumbs maxItems={2}>
+      <Breadcrumbs maxItems={3}>
         <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
-        <Breadcrumbs.Item href="/a">A</Breadcrumbs.Item>
-        <Breadcrumbs.Item href="/b">B</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>C</Breadcrumbs.Item>
+        <Breadcrumbs.Item href="/a">Alpha</Breadcrumbs.Item>
+        <Breadcrumbs.Item href="/b">Beta</Breadcrumbs.Item>
+        <Breadcrumbs.Item href="/c">Gamma</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Delta</Breadcrumbs.Item>
       </Breadcrumbs>
     );
-    // Middle items should be collapsed with an ellipsis button
-    expect(screen.getByRole('button', { name: /show collapsed/i })).toBeInTheDocument();
-    expect(screen.queryByText('A')).not.toBeInTheDocument();
 
-    // Expand collapsed items
-    await user.click(screen.getByRole('button', { name: /show collapsed/i }));
-    expect(screen.getByText('A')).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Gamma" })).toBeInTheDocument();
+    expect(screen.queryByText("Alpha")).not.toBeInTheDocument();
+
+    const trigger = screen.getByRole("button", { name: "Show collapsed breadcrumbs" });
+    expect(trigger).toHaveTextContent("…");
+    await user.click(trigger);
+
+    const alpha = await screen.findByRole("menuitem", { name: "Alpha" });
+    expect(alpha).toHaveAttribute("href", "/a");
+    expect(screen.getByRole("menuitem", { name: "Beta" })).toHaveAttribute("href", "/b");
   });
 
-  it('has no accessibility violations', async () => {
+  it("does not fold when maxItems is below 2 or the trail fits", () => {
+    render(
+      <Breadcrumbs maxItems={1}>
+        <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
+        <Breadcrumbs.Item href="/a">Alpha</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Page</Breadcrumbs.Item>
+      </Breadcrumbs>
+    );
+    expect(screen.queryByRole("button", { name: /collapsed/ })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+  });
+
+  it("has no accessibility violations", async () => {
     const { container } = render(
       <Breadcrumbs>
         <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
         <Breadcrumbs.Item href="/products">Products</Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Widget</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Widget</Breadcrumbs.Item>
+      </Breadcrumbs>
+    );
+    await expectNoA11yViolations(container);
+  });
+
+  it("has no accessibility violations when folded", async () => {
+    const { container } = render(
+      <Breadcrumbs maxItems={2}>
+        <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
+        <Breadcrumbs.Item href="/a">Alpha</Breadcrumbs.Item>
+        <Breadcrumbs.Item>Widget</Breadcrumbs.Item>
       </Breadcrumbs>
     );
     await expectNoA11yViolations(container);

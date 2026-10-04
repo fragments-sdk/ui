@@ -1,13 +1,31 @@
-.root {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fui-raw-space-16, 16px);
-}
+@use "../../tokens/measurements.generated" as measurements;
 
-.actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: var(--fui-raw-space-8, 8px);
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  // Fields stack 16 apart; the parent owns the spacing.
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+  }
+
+  // The lock: a fieldset that draws nothing, so its children are the form's
+  // own flex items.
+  .lock {
+    display: contents;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  // At most two verbs, right-aligned.
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
 }

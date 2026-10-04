@@ -129,14 +129,12 @@ describe("published component token references", () => {
     }).css;
 
     expect(compiled).not.toMatch(/\$fui-[a-z0-9-]+/);
+    // Off fills the strong field line; off hover mixes it toward ink; the
+    // thumb is the accent's ink. Each read keeps a concrete fallback.
+    expect(compiled).toMatch(/background-color:\s*var\(--fui-field-border, #[0-9a-fA-F]+\)/);
     expect(compiled).toMatch(
-      /--_switch-off-bg:\s*light-dark\(\s*color-mix\(\s*in srgb,\s*var\(--fui-bg-elevated, #[0-9a-fA-F]+\)/
+      /color-mix\(\s*in oklab,\s*var\(--fui-field-border, #[0-9a-fA-F]+\) 86%,\s*var\(--fui-text-primary, #[0-9a-fA-F]+\)\s*\)/
     );
-    expect(compiled).toMatch(
-      /--_switch-off-bg:[\s\S]*var\(--fui-text-primary, #[0-9a-fA-F]+\)[\s\S]*;/,
-    );
-    expect(compiled).toMatch(
-      /--_switch-thumb-bg:[\s\S]*var\(--fui-bg-primary, #[0-9a-fA-F]+\)/,
-    );
+    expect(compiled).toMatch(/color:\s*var\(--fui-color-on-accent, #[0-9a-fA-F]+\)/);
   });
 });

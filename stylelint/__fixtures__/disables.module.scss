@@ -1,0 +1,5 @@
+// A disable with no reason that suppresses nothing (stylelint/doctrine.test.ts).
+.quiet {
+  /* stylelint-disable-next-line fui/color/no-literal */
+  color: var(--fui-text-primary, $fui-text-primary);
+}

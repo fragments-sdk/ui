@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Hash, User } from "@phosphor-icons/react";
 import { Stack } from "../Stack";
 import { Chip } from ".";
 
 /**
- * Interactive pill-shaped element for filtering, selecting, and tagging.
- * Supports selected state, removable chips via onRemove, and multi-select
- * sets through Chip.Group.
+ * A compact value: a tag, a filter or an applied selection. One look, never
+ * toned; a static tag renders a span, a selectable chip a toggle button.
  */
 const meta = {
   title: "Forms/Chip",
@@ -14,109 +15,87 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "Interactive pill for filtering, selecting, and tagging.",
+        component:
+          "A compact value: 24 high, the band fill with one hairline, the control radius, truncated.",
       },
     },
   },
   argTypes: {
-    variant: {
-      control: "select",
-      options: ["soft", "outline"],
-      description: "Chrome family",
-    },
-    tone: {
-      control: "select",
-      options: ["neutral", "accent", "info", "success", "warning", "danger"],
-      description: "Shared tone ramp",
-    },
-    size: {
-      control: "select",
-      options: ["xs", "sm", "md", "lg"],
-      description: "Chip size",
-    },
-    selected: { control: "boolean", description: "Selection state" },
+    selected: { control: "boolean", description: "Selected state; makes the chip a toggle" },
     disabled: { control: "boolean" },
   },
-  args: { variant: "soft", tone: "neutral", size: "xs", children: "Default" },
+  args: { children: "Design" },
 } satisfies Meta<typeof Chip>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { children: "Default" },
+/** A static tag: a span, no button. */
+export const Tag: Story = {
+  args: { children: "Design" },
 };
 
-export const Outline: Story = {
-  args: { variant: "outline", children: "Outline" },
-};
-
-const TONES = ["accent", "info", "success", "warning", "danger"] as const;
-
-export const Tones: Story = {
+export const WithIcon: Story = {
   render: () => (
-    <Stack direction="column" gap="sm">
-      <Stack direction="row" gap="sm" wrap>
-        {TONES.map((tone) => (
-          <Chip key={tone} tone={tone}>
-            {tone}
-          </Chip>
-        ))}
-      </Stack>
-      <Stack direction="row" gap="sm" wrap>
-        {TONES.map((tone) => (
-          <Chip key={tone} variant="outline" tone={tone}>
-            {tone}
-          </Chip>
-        ))}
-      </Stack>
+    <Stack direction="row" gap="xs">
+      <Chip icon={<Hash />}>release</Chip>
+      <Chip icon={<User />}>Ada Lovelace</Chip>
     </Stack>
   ),
 };
 
-export const Selected: Story = {
-  render: () => (
-    <Stack direction="row" gap="sm" wrap>
-      <Chip selected>Soft</Chip>
-      <Chip variant="outline" selected>
-        Outlined
-      </Chip>
-    </Stack>
-  ),
+/** Selected is the selection: the wash with the ring as its edge. */
+export const Selectable: Story = {
+  render: function SelectableStory() {
+    const [selected, setSelected] = useState(true);
+    return (
+      <Stack direction="row" gap="xs">
+        <Chip selected={selected} onClick={() => setSelected((value) => !value)}>
+          Open
+        </Chip>
+        <Chip selected={false}>Closed</Chip>
+      </Stack>
+    );
+  },
 };
 
 export const Removable: Story = {
-  args: { children: "TypeScript", onRemove: () => {} },
+  render: function RemovableStory() {
+    const [tags, setTags] = useState(["design", "frontend", "a11y"]);
+    return (
+      <Stack direction="row" gap="xs">
+        {tags.map((tag) => (
+          <Chip key={tag} onRemove={() => setTags((all) => all.filter((t) => t !== tag))}>
+            {tag}
+          </Chip>
+        ))}
+      </Stack>
+    );
+  },
 };
 
-export const SelectedRemovable: Story = {
+export const Group: Story = {
+  render: function GroupStory() {
+    const [value, setValue] = useState<string[]>(["open"]);
+    return (
+      <Chip.Group aria-label="Status filters" value={value} onValueChange={setValue}>
+        <Chip value="open">Open</Chip>
+        <Chip value="draft">Draft</Chip>
+        <Chip value="merged">Merged</Chip>
+      </Chip.Group>
+    );
+  },
+};
+
+export const Truncated: Story = {
   render: () => (
-    <Stack direction="row" gap="sm" wrap>
-      <Chip selected onRemove={() => {}}>
-        Soft
-      </Chip>
-      <Chip variant="outline" selected onRemove={() => {}}>
-        Outlined
-      </Chip>
-      <Chip tone="info" onRemove={() => {}}>
-        Info
-      </Chip>
-    </Stack>
+    <div style={{ maxInlineSize: 160 }}>
+      <Chip onRemove={() => {}}>packages/engine/src/compiler/core/loader.ts</Chip>
+    </div>
   ),
 };
 
 export const Disabled: Story = {
-  args: { disabled: true, selected: true, children: "Disabled" },
-};
-
-export const Group: Story = {
-  render: () => (
-    <Chip.Group defaultValue={["react"]}>
-      <Chip value="react">React</Chip>
-      <Chip value="vue">Vue</Chip>
-      <Chip value="angular">Angular</Chip>
-      <Chip value="svelte">Svelte</Chip>
-    </Chip.Group>
-  ),
+  args: { disabled: true, selected: false, children: "Unavailable" },
 };

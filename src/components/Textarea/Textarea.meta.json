@@ -1,0 +1,236 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Textarea",
+  "description": "Collects multi-line text; grows with its text from minRows to maxRows, then scrolls.",
+  "category": "inputs",
+  "tags": ["input", "text", "form", "multiline"],
+  "status": "stable",
+  "sourcePath": "src/components/Textarea/index.tsx",
+  "exportName": "Textarea",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "placeholder: string",
+    "minRows: number (default: 3)",
+    "maxRows: number",
+    "resize: none|vertical (default: vertical)",
+    "size: xs|sm|md|lg (default: md)",
+    "invalid: boolean (default: false)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "maxLength: number",
+    "onValueChange: (value: string) => void",
+    "onChange: native change event",
+    "name: string",
+    "required: boolean",
+    "className: string"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Controlled value",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initial value for uncontrolled use",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text",
+      "required": false
+    },
+    "minRows": {
+      "type": "number",
+      "description": "Rows shown when empty; the field grows from here as text is added",
+      "default": "3",
+      "required": false
+    },
+    "maxRows": {
+      "type": "number",
+      "description": "Rows the field grows to before it scrolls. Omit to grow without limit",
+      "required": false
+    },
+    "resize": {
+      "type": "enum",
+      "description": "Whether the person can drag the height. Width never resizes: it would break the column measure",
+      "default": "vertical",
+      "required": false,
+      "values": ["none", "vertical"]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Type size, inset and one-row height on the shared control ladder",
+      "default": "md",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The danger edge and aria-invalid; say why in a Field.Error",
+      "default": "false",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Dims the field and blocks input",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Shows the text on a dashed edge without letting it change",
+      "default": "false",
+      "required": false
+    },
+    "maxLength": {
+      "type": "number",
+      "description": "The most characters allowed. Setting it shows a counter under the field",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new value on every change",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "The native change event",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Marks the field required for form validation",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Class on the textarea",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Collecting multi-line text (comments, descriptions)",
+      "Free-form text input that may span multiple lines",
+      "Message composition fields"
+    ],
+    "whenNot": [
+      "Single-line input (use Input)",
+      "Rich text editing (use Editor)",
+      "A chat composer with a toolbar (use Prompt)",
+      "Selecting from predefined options (use Select)"
+    ],
+    "guidelines": [
+      "Wrap in a Field for the label, description and error",
+      "Set minRows to the expected answer length and maxRows where the layout has a ceiling",
+      "Placeholder shows an example, not the label",
+      "maxLength shows the counter; past the limit it says so in words",
+      "Use resize=\"none\" only when the layout truly cannot flex"
+    ],
+    "accessibility": [
+      "Field.Label names the textarea and Field.Description describes it",
+      "Field.Error is announced when it appears",
+      "Error text says what to fix, not just that it failed"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Three rows that grow with the text.",
+      "code": "<Field>\n  <Field.Label>Description</Field.Label>\n  <Textarea placeholder=\"What does this change do?\" />\n</Field>"
+    },
+    {
+      "name": "With counter",
+      "description": "maxLength shows a live count under the field.",
+      "code": "<Field>\n  <Field.Label>Bio</Field.Label>\n  <Textarea maxLength={200} />\n  <Field.Description>Shown on your profile.</Field.Description>\n</Field>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The danger edge with the reason under the field.",
+      "code": "<Field invalid>\n  <Field.Label>Comments</Field.Label>\n  <Textarea />\n  <Field.Error match>Add a comment.</Field.Error>\n</Field>"
+    },
+    {
+      "name": "Grow to a ceiling",
+      "description": "Starts at one row, grows to six, then scrolls.",
+      "code": "<Field>\n  <Field.Label>Notes</Field.Label>\n  <Textarea minRows={1} maxRows={6} />\n</Field>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Four steps on the control ladder.",
+      "code": "<Stack gap=\"sm\">\n  <Textarea aria-label=\"Extra small\" size=\"xs\" minRows={1} />\n  <Textarea aria-label=\"Small\" size=\"sm\" minRows={1} />\n  <Textarea aria-label=\"Medium\" size=\"md\" minRows={1} />\n  <Textarea aria-label=\"Large\" size=\"lg\" minRows={1} />\n</Stack>"
+    },
+    {
+      "name": "Fixed height",
+      "description": "resize=\"none\" removes the drag handle.",
+      "code": "<Field>\n  <Field.Label>Notes</Field.Label>\n  <Textarea resize=\"none\" />\n</Field>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Field",
+      "relationship": "parent",
+      "note": "Field supplies the label, description and error"
+    },
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for single-line text"
+    },
+    {
+      "component": "Prompt",
+      "relationship": "alternative",
+      "note": "Use Prompt for a chat composer"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "minRows / maxRows: grows with its text between them, then scrolls",
+      "size: xs|sm|md|lg (default: md)",
+      "invalid: boolean - danger edge plus aria-invalid; pair with Field.Error",
+      "maxLength: number - shows the counter automatically",
+      "resize: none|vertical (default: vertical)",
+      "onValueChange: (value: string) => void; onChange stays the native event",
+      "Label, description and error come from Field parts, never from Textarea props",
+      "...native textarea attributes are supported (readOnly, autoComplete, onKeyDown, etc.)"
+    ],
+    "a11yRules": ["A11Y_LABEL_REQUIRED"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.217Z"
+  },
+  "cssVariables": [
+    "--fui-color-danger-text",
+    "--fui-field-message-gap",
+    "--fui-raw-space-10",
+    "--fui-raw-space-4",
+    "--fui-raw-space-6",
+    "--fui-raw-space-8",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-resize",
+      "value": "vertical",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    }
+  ]
+}

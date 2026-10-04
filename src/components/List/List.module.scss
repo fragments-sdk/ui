@@ -1,71 +1,198 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/focus" as focus;
 @use "../../recipes/layout" as layout;
 @use "../../recipes/prose" as prose;
+@use "../../recipes/selection" as selection;
+@use "../../recipes/typography" as typography;
 
-.list {
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+@layer fui.tokens, fui.base, fui.components;
+
+// A list on Glass reads at the body size, not the reading size: 12px in ink 1,
+// with its markers in ink 3. The shared prose recipe draws the grid and the
+// markers at the long-form reading size, so each kind sets the body type and
+// the marker ink after it.
+@mixin _list($kind) {
+  @include prose.list($kind);
+
+  // Its own block: the recipe ends in nested rules, and a declaration after
+  // them would mix the two.
+  & {
+    @include typography.role("body-compact");
+  }
+
+  > li::before,
+  > li > .iconWrapper {
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+  }
 }
 
-// Markers
-.none {
-  @include prose.list("none");
-}
+@layer fui.components {
+  .list {
+    margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+  }
 
-.disc {
-  @include prose.list("disc");
-}
+  // Markers. `decimal` is not a marker prop: an `ol` draws it.
+  .none {
+    @include _list("none");
+  }
 
-.decimal {
-  @include prose.list("decimal");
-}
+  .disc {
+    @include _list("disc");
+  }
 
-.icon {
-  @include prose.list("icon");
-}
+  .decimal {
+    @include _list("decimal");
+  }
 
-// Gap
-.gap-none {
-  row-gap: layout.gap("none");
-}
+  .icon {
+    @include _list("icon");
+  }
 
-.gap-xs {
-  row-gap: layout.gap("xs");
-}
+  // Gap
+  .gap-none {
+    row-gap: layout.gap("none");
+  }
 
-.gap-sm {
-  row-gap: layout.gap("sm");
-}
+  .gap-xs {
+    row-gap: layout.gap("xs");
+  }
 
-.gap-md {
-  row-gap: layout.gap("md");
-}
+  .gap-sm {
+    row-gap: layout.gap("sm");
+  }
 
-.gap-lg {
-  row-gap: layout.gap("lg");
-}
+  // List item
+  .item {
+    color: var(--fui-text-primary, #{$fui-text-primary});
+  }
 
-.gap-xl {
-  row-gap: layout.gap("xl");
-}
+  // An item with its own glyph: the glyph takes the marker column.
+  .list > .iconItem::before {
+    content: none;
+  }
 
-// List item
-.item {
-  color: var(--fui-text-primary, $fui-text-primary);
-}
+  .iconItem {
+    align-items: start;
+  }
 
-.iconItem {
-  align-items: start;
-}
+  .iconWrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    block-size: typography.line-height("body-compact");
 
-.iconWrapper {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-inline-size: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-}
+    svg {
+      inline-size: var(--fui-icon-xs, #{$fui-icon-xs});
+      block-size: var(--fui-icon-xs, #{$fui-icon-xs});
+    }
+  }
 
-.itemContent {
-  min-inline-size: 0;
+  .itemContent {
+    min-inline-size: 0;
+  }
+
+  // ============================================
+  // List.Row: the interactive row. 32px on the control radius, the hover tint
+  // where the pointer can hover, the press tint while held, the selection wash
+  // and ring on the chosen row. Under a coarse pointer the row itself grows to
+  // the hit-area floor (44px): stacked rows have no room to lend.
+  // ============================================
+
+  .list > .rowItem {
+    display: block;
+    grid-column: 1 / -1;
+    min-inline-size: 0;
+
+    &::before {
+      content: none;
+    }
+  }
+
+  // The focus ring sits outside the row: inset, it covered the chosen row's
+  // own inset ring, so focus hid the selection. A list does not clip its rows.
+  .row {
+    @include button-reset;
+    @include typography.role("body-compact");
+    @include focus.visible;
+    @include high-contrast-outline;
+
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    inline-size: 100%;
+    min-block-size: max(
+      var(--fui-control-height-md, #{$fui-control-height-md}),
+      var(--fui-hit-area, #{$fui-hit-area})
+    );
+    padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    text-align: start;
+    text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled, [aria-disabled="true"]) {
+        @include selection.hover-tint;
+      }
+    }
+
+    &:active:not(:disabled, [aria-disabled="true"]) {
+      background-image: linear-gradient(
+        var(--fui-bg-active, #{$fui-bg-active}),
+        var(--fui-bg-active, #{$fui-bg-active})
+      );
+    }
+
+    &[data-selected],
+    &[aria-current]:not([aria-current="false"]),
+    &[aria-pressed="true"] {
+      @include selection.selected;
+
+      .rowIcon {
+        color: var(--fui-text-primary, #{$fui-text-primary});
+      }
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+      @include disabled-state;
+    }
+  }
+
+  .rowIcon {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+
+    svg {
+      inline-size: var(--fui-icon-md, #{$fui-icon-md});
+      block-size: var(--fui-icon-md, #{$fui-icon-md});
+    }
+  }
+
+  .rowLabel {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .rowMeta {
+    @include typography.role("ui-compact");
+
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }

@@ -1,4 +1,5 @@
 import { defineFragment } from "@usefragments/core";
+import { Field } from "../Field";
 import { Select } from "./index";
 
 export default defineFragment(Select, {
@@ -12,16 +13,19 @@ export default defineFragment(Select, {
   states: {
     Default: {
       render: (
-        <Select label="Team" placeholder="Choose a team">
-          <Select.Trigger />
-          <Select.Content>
-            <Select.Item value="design">Design</Select.Item>
-            <Select.Item value="engineering">Engineering</Select.Item>
-            <Select.Item value="product">Product</Select.Item>
-          </Select.Content>
-        </Select>
+        <Field>
+          <Field.Label>Team</Field.Label>
+          <Select placeholder="Choose a team">
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Item value="design">Design</Select.Item>
+              <Select.Item value="engineering">Engineering</Select.Item>
+              <Select.Item value="product">Product</Select.Item>
+            </Select.Content>
+          </Select>
+        </Field>
       ),
-      note: "Label, placeholder, three options.",
+      note: "A Field label, a placeholder, three options.",
       canonical: true,
     },
     "With Groups": {
@@ -46,29 +50,37 @@ export default defineFragment(Select, {
     },
     "With Label and Helper Text": {
       render: (
-        <Select label="Timezone" helperText="Used for reminders and calendar notifications.">
-          <Select.Trigger placeholder="Select a timezone" />
-          <Select.Content>
-            <Select.Item value="pt">Pacific Time</Select.Item>
-            <Select.Item value="mt">Mountain Time</Select.Item>
-            <Select.Item value="ct">Central Time</Select.Item>
-            <Select.Item value="et">Eastern Time</Select.Item>
-          </Select.Content>
-        </Select>
+        <Field>
+          <Field.Label>Timezone</Field.Label>
+          <Select>
+            <Select.Trigger placeholder="Select a timezone" />
+            <Select.Content>
+              <Select.Item value="pt">Pacific Time</Select.Item>
+              <Select.Item value="mt">Mountain Time</Select.Item>
+              <Select.Item value="ct">Central Time</Select.Item>
+              <Select.Item value="et">Eastern Time</Select.Item>
+            </Select.Content>
+          </Select>
+          <Field.Description>Used for reminders and calendar notifications.</Field.Description>
+        </Field>
       ),
-      note: "Helper text explains what the choice affects.",
+      note: "A Field description explains what the choice affects.",
     },
     "Error State": {
       render: (
-        <Select label="Team" placeholder="Choose a team" error="Choose a team before continuing">
-          <Select.Trigger />
-          <Select.Content>
-            <Select.Item value="design">Design</Select.Item>
-            <Select.Item value="engineering">Engineering</Select.Item>
-          </Select.Content>
-        </Select>
+        <Field invalid>
+          <Field.Label>Team</Field.Label>
+          <Select placeholder="Choose a team" invalid>
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Item value="design">Design</Select.Item>
+              <Select.Item value="engineering">Engineering</Select.Item>
+            </Select.Content>
+          </Select>
+          <Field.Error match>Choose a team before continuing.</Field.Error>
+        </Field>
       ),
-      note: "Red border, and the message replaces helper text.",
+      note: "The danger edge, with the reason in a Field.Error beside an icon.",
     },
     "With Disabled Options": {
       render: (
@@ -117,17 +129,17 @@ export default defineFragment(Select, {
       ),
       note: "maxVisibleItems raises the cap to six rows.",
     },
-    Ghost: {
+    "Read Only": {
       render: (
-        <Select variant="ghost" size="sm" aria-label="Sort order" defaultValue="newest">
-          <Select.Trigger />
+        <Select readOnly defaultValue="engineering">
+          <Select.Trigger aria-label="Team" />
           <Select.Content>
-            <Select.Item value="newest">Newest first</Select.Item>
-            <Select.Item value="oldest">Oldest first</Select.Item>
+            <Select.Item value="design">Design</Select.Item>
+            <Select.Item value="engineering">Engineering</Select.Item>
           </Select.Content>
         </Select>
       ),
-      note: "Ghost drops the field shell for toolbars and dense rows.",
+      note: "A dashed edge and no caret: it opens to show the choices but cannot change.",
     },
     Disabled: {
       render: (
@@ -155,15 +167,18 @@ export default defineFragment(Select, {
     },
     "Long Localized Option": {
       render: (
-        <Select label="Workspace region" placeholder="Choose a workspace region">
-          <Select.Trigger />
-          <Select.Content>
-            <Select.Item value="eu-central">
-              Central European workspace with localized administrator recovery requirements
-            </Select.Item>
-            <Select.Item value="us-east">United States East</Select.Item>
-          </Select.Content>
-        </Select>
+        <Field>
+          <Field.Label>Workspace region</Field.Label>
+          <Select placeholder="Choose a workspace region">
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Item value="eu-central">
+                Central European workspace with localized administrator recovery requirements
+              </Select.Item>
+              <Select.Item value="us-east">United States East</Select.Item>
+            </Select.Content>
+          </Select>
+        </Field>
       ),
       note: "The trigger grows to fit a long label instead of clipping it.",
     },
@@ -182,8 +197,8 @@ export default defineFragment(Select, {
     ],
     guidelines: [
       'Placeholder names the decision, e.g. "Choose a team"',
-      "Set label so the field is announced",
-      "helperText for guidance, error for the failure reason",
+      "Wrap in a Field: Field.Label names it, Field.Description guides, Field.Error gives the reason",
+      "Set invalid with a Field.Error; colour is never the only signal",
       "Group related options with Select.Group",
       "Keep option text short",
       "Order options predictably: alphabetical, by frequency, or by category",
@@ -197,13 +212,18 @@ export default defineFragment(Select, {
       {
         reason: "Do not use Select for a list of actions.",
         bad: "<Select>Delete</Select>",
-        good: <Select label="Choose a value" options={[{ value: "design", label: "Design" }]} />,
+        good: (
+          <Field>
+            <Field.Label>Team</Field.Label>
+            <Select options={[{ value: "design", label: "Design" }]} />
+          </Field>
+        ),
       },
     ],
   },
   matrix: {
-    axes: { size: "auto", variant: "auto", theme: ["light", "dark"] },
-    forced: ["open", "focus", "disabled", "error"],
+    axes: { size: "auto", theme: ["light", "dark"] },
+    forced: ["open", "focus", "disabled", "error", "readonly"],
     worstCase: {
       options: "A long localized option label that remains readable inside the bounded list",
     },
@@ -231,16 +251,14 @@ export default defineFragment(Select, {
     propsSummary: [
       "value: string | null - controlled selected value",
       "onValueChange: (value: string | null) => void - selection handler",
-      "onChange: (value: string | null) => void - alias for onValueChange",
-      "label: string - visible label text",
-      "helperText: string - helper text below field",
-      "error: boolean | string - error styling and message",
+      "invalid: boolean - the danger edge and aria-invalid; say why in a Field.Error",
       "placeholder: string - placeholder text",
       "disabled: boolean - disable select",
-      "size: sm|md|lg (default: md)",
-      "variant: outline|ghost (default: outline) - ghost is borderless, for toolbars",
+      "readOnly: boolean - opens to show the choices, cannot change; dashed edge",
+      "size: xs|sm|md|lg (default: md) - 24, 28, 32 or 40",
       "options: SelectOption[] - convenience API for simple option lists",
-      "maxVisibleItems: number - max visible options before scrolling (default 4)",
+      "Select.Content maxVisibleItems: number - max visible options before scrolling (default 4)",
+      "Label, description and error come from Field (Field.Label, Field.Description, Field.Error)",
       "Select.Trigger accepts an icon prop for a leading adornment",
     ],
     a11yRules: ["A11Y_SELECT_KEYBOARD", "A11Y_SELECT_LABEL"],

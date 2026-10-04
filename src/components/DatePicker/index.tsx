@@ -2,11 +2,15 @@
 
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui/react/popover";
-import { useFormFieldIds, type FormFieldProps } from "../../utils/aria";
-import { POPUP_OFFSET_PX } from "../../recipes/popup";
-import { useResolvedControlSize } from "../ComponentDefaults";
-import styles from "./DatePicker.module.scss";
+import { WarningCircle } from "@phosphor-icons/react";
+import { mergeAriaIds } from "../../utils/aria";
+import { POPUP_COLLISION_PADDING_PX, POPUP_OFFSET_PX } from "../../recipes/popup";
 import { isDevelopmentBuild } from "../../utils/env";
+import { Button } from "../Button";
+import { useResolvedControlSize } from "../ComponentDefaults";
+import { Skeleton } from "../Skeleton";
+import { useThemePortalProps } from "../Theme/context";
+import styles from "./DatePicker.module.scss";
 
 // ============================================
 // Types (self-owned — no external dependency for types)
@@ -16,41 +20,37 @@ export type DateRange = { from: Date | undefined; to?: Date | undefined };
 export type Matcher = Date | DateRange | ((date: Date) => boolean) | Date[];
 type Locale = { [key: string]: unknown };
 
-export interface DatePickerProps extends FormFieldProps {
+export type DatePickerSize = "sm" | "md";
+
+interface DatePickerBaseProps {
   children: React.ReactNode;
   /** Wrapper class name */
   className?: string;
-  /** Selection mode */
-  mode?: "single" | "range";
-  /** Controlled date (single mode) */
-  selected?: Date | null;
-  /** Controlled range (range mode) */
-  selectedRange?: DateRange | null;
-  /** Single selection callback */
-  onSelect?: (date: Date | null) => void;
-  /** Alias for onSelect (consistent with Input/Select onChange convention) */
-  onChange?: (date: Date | null) => void;
-  /** Range selection callback */
-  onRangeSelect?: (range: DateRange | null) => void;
-  /** Number of months displayed side-by-side */
-  numberOfMonths?: number;
+  /** Visible label; it names the trigger through aria-labelledby */
+  label?: string;
+  /** Helper text shown below the field */
+  helperText?: string;
+  /** Marks the value invalid: danger edge plus the error message */
+  invalid?: boolean;
+  /** Words shown under the field while it is invalid */
+  errorMessage?: string;
   /** Disable the picker */
   disabled?: boolean;
-  /** Size variant.
+  /** Show the value without letting it change (the calendar stays shut) */
+  readOnly?: boolean;
+  /** Number of months displayed side-by-side */
+  numberOfMonths?: number;
+  /** Trigger size.
    * @default "md" */
-  size?: "sm" | "md" | "lg";
+  size?: DatePickerSize;
   /** react-day-picker Matcher for disabled dates */
   disabledDates?: Matcher | Matcher[];
   /** Trigger placeholder text */
   placeholder?: string;
-  /** date-fns locale for i18n */
+  /** date-fns locale: drives the calendar and the default Intl formatting */
   locale?: Locale;
-  /** Always show 6 rows */
-  fixedWeeks?: boolean;
-  /** Custom trigger date formatter */
-  formatDate?: (date: Date) => string;
-  /** Custom trigger range formatter */
-  formatRange?: (range: DateRange) => string;
+  /** Formats one date for the trigger; a range joins two with an en dash */
+  format?: (date: Date) => string;
   /** Controlled popover open state */
   open?: boolean;
   /** Popover open state change callback */
@@ -58,6 +58,24 @@ export interface DatePickerProps extends FormFieldProps {
   /** Hidden input name for forms */
   name?: string;
 }
+
+export interface DatePickerSingleProps extends DatePickerBaseProps {
+  mode?: "single";
+  /** The selected date (controlled) */
+  value?: Date | null;
+  /** The initially selected date (uncontrolled) */
+  defaultValue?: Date | null;
+  onValueChange?: (value: Date | null) => void;
+}
+
+export interface DatePickerRangeProps extends DatePickerBaseProps {
+  mode: "range";
+  value?: DateRange | null;
+  defaultValue?: DateRange | null;
+  onValueChange?: (value: DateRange | null) => void;
+}
+
+export type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps;
 
 export interface DatePickerTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
@@ -76,7 +94,10 @@ export interface DatePickerCalendarProps {
   className?: string;
 }
 
-export interface DatePickerPresetProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface DatePickerPresetProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "children" | "color"
+> {
   children: React.ReactNode;
   /** Date to select (single mode) */
   date?: Date;
@@ -163,14 +184,14 @@ interface DatePickerContextValue {
   disabledDates?: Matcher | Matcher[];
   placeholder: string;
   locale?: Locale;
-  fixedWeeks: boolean;
   formatDate: (date: Date) => string;
   formatRange: (range: DateRange) => string;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  isControlledOpen: boolean;
-  size: "sm" | "md" | "lg";
-  name?: string;
+  size: DatePickerSize;
+  readOnly: boolean;
+  labelId?: string;
+  describedBy?: string;
   /** Mirrors the wrapper's `data-invalid` onto the trigger as `aria-invalid`,
    * so assistive tech hears the state the danger edge is painting. */
   invalid?: boolean;
@@ -194,25 +215,35 @@ function useDatePickerContext() {
 // optional peer. `date-fns` remains an optional peer only for consumers who pass
 // their own `formatDate`/`formatRange`; the default path never imports it, so a
 // bundler that pulls DatePicker into the graph does not fail on a missing peer.
-const longDateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-});
-const mediumDateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "2-digit",
-  year: "numeric",
-});
+const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
-function defaultFormatDate(date: Date): string {
-  return longDateFormatter.format(date);
+function intlFormatter(code: string, style: "long" | "medium"): Intl.DateTimeFormat {
+  const key = `${code}|${style}`;
+  let formatter = formatterCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(
+      code,
+      style === "long"
+        ? { month: "long", day: "numeric", year: "numeric" }
+        : { month: "short", day: "numeric", year: "numeric" }
+    );
+    formatterCache.set(key, formatter);
+  }
+  return formatter;
 }
 
-function defaultFormatRange(range: DateRange): string {
+function localeCode(locale?: Locale): string {
+  const code = locale?.code;
+  return typeof code === "string" ? code : "en-US";
+}
+
+/** Ranges join their two ends with a spaced en dash. */
+const RANGE_SEPARATOR = " \u2013 ";
+
+function joinRange(range: DateRange, formatOne: (date: Date) => string): string {
   if (!range.from) return "";
-  if (!range.to) return mediumDateFormatter.format(range.from);
-  return `${mediumDateFormatter.format(range.from)} - ${mediumDateFormatter.format(range.to)}`;
+  if (!range.to) return formatOne(range.from);
+  return `${formatOne(range.from)}${RANGE_SEPARATOR}${formatOne(range.to)}`;
 }
 
 function formatDateForHiddenInput(date?: Date): string {
@@ -321,222 +352,177 @@ function getCalendarClassNames() {
 // Components
 // ============================================
 
-const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(function DatePickerRoot(
-  {
-    children,
-    label,
-    helperText,
-    error,
-    className,
-    mode = "single",
-    selected: selectedProp,
-    selectedRange: selectedRangeProp,
-    onSelect,
-    onChange: onChangeProp,
-    onRangeSelect,
-    numberOfMonths = 1,
-    disabled = false,
-    size: sizeProp,
-    disabledDates,
-    placeholder,
-    locale,
-    fixedWeeks = false,
-    formatDate: formatDateProp,
-    formatRange: formatRangeProp,
-    open: openProp,
-    onOpenChange,
-    name,
-  }: DatePickerProps,
-  ref
-) {
-  const size = useResolvedControlSize(sizeProp);
-  // Warm the calendar dependency while the popover is still closed.
-  React.useEffect(() => {
-    void loadDayPickerDeps();
-  }, []);
-  const [internalSelected, setInternalSelected] = React.useState<Date | null>(selectedProp ?? null);
-  const [internalRange, setInternalRange] = React.useState<DateRange | null>(
-    selectedRangeProp ?? null
-  );
-  const [internalOpen, setInternalOpen] = React.useState(false);
-
-  const isControlledOpen = openProp !== undefined;
-  const isOpen = isControlledOpen ? openProp : internalOpen;
-
-  // Sync controlled selected
-  React.useEffect(() => {
-    if (selectedProp !== undefined) {
-      setInternalSelected(selectedProp);
-    }
-  }, [selectedProp]);
-
-  // Sync controlled range
-  React.useEffect(() => {
-    if (selectedRangeProp !== undefined) {
-      setInternalRange(selectedRangeProp);
-    }
-  }, [selectedRangeProp]);
-
-  const handleOpenChange = React.useCallback(
-    (newOpen: boolean) => {
-      if (!isControlledOpen) {
-        setInternalOpen(newOpen);
-      }
-      onOpenChange?.(newOpen);
-    },
-    [isControlledOpen, onOpenChange]
-  );
-
-  const resolvedOnSelect = onSelect ?? onChangeProp;
-
-  const setSelected = React.useCallback(
-    (date: Date | null) => {
-      if (selectedProp === undefined) {
-        setInternalSelected(date);
-      }
-      resolvedOnSelect?.(date);
-
-      // Auto-close after single selection (controlled and uncontrolled).
-      if (date) {
-        setTimeout(() => {
-          handleOpenChange(false);
-        }, 150);
-      }
-    },
-    [selectedProp, resolvedOnSelect, handleOpenChange]
-  );
-
-  const setSelectedRange = React.useCallback(
-    (range: DateRange | null) => {
-      if (selectedRangeProp === undefined) {
-        setInternalRange(range);
-      }
-      onRangeSelect?.(range);
-
-      // Range mode never auto-closes. The user closes manually via
-      // click-outside, Escape, or clicking the trigger again. This
-      // matches shadcn behavior and avoids premature close on first
-      // click or preset selection.
-    },
-    [selectedRangeProp, onRangeSelect]
-  );
-
-  const defaultPlaceholder = mode === "range" ? "Select date range" : "Pick a date";
-
-  const { labelId, helperId, errorId, hasError, errorMessage } = useFormFieldIds("datepicker", {
-    label,
-    helperText,
-    error,
-  });
-
-  const contextValue = React.useMemo<DatePickerContextValue>(
-    () => ({
-      mode,
-      selected: selectedProp !== undefined ? selectedProp : internalSelected,
-      selectedRange: selectedRangeProp !== undefined ? selectedRangeProp : internalRange,
-      setSelected,
-      setSelectedRange,
-      numberOfMonths,
-      disabled,
-      disabledDates,
-      placeholder: placeholder ?? defaultPlaceholder,
-      locale,
-      fixedWeeks,
-      formatDate: formatDateProp ?? defaultFormatDate,
-      formatRange: formatRangeProp ?? defaultFormatRange,
-      isOpen,
-      setIsOpen: handleOpenChange,
-      isControlledOpen,
-      size,
-      name,
-      invalid: hasError,
-    }),
-    [
-      mode,
-      selectedProp,
-      internalSelected,
-      selectedRangeProp,
-      internalRange,
-      setSelected,
-      setSelectedRange,
-      numberOfMonths,
-      disabled,
+const DatePickerRoot = React.forwardRef<HTMLDivElement, DatePickerProps>(
+  function DatePickerRoot(props, ref) {
+    const {
+      children,
+      label,
+      helperText,
+      invalid = false,
+      errorMessage,
+      className,
+      mode = "single",
+      numberOfMonths = 1,
+      disabled = false,
+      readOnly = false,
+      size: sizeProp,
       disabledDates,
       placeholder,
-      defaultPlaceholder,
       locale,
-      fixedWeeks,
-      formatDateProp,
-      formatRangeProp,
-      isOpen,
-      handleOpenChange,
-      isControlledOpen,
-      size,
+      format,
+      open: openProp,
+      onOpenChange,
       name,
-      hasError,
-    ]
-  );
+    } = props;
+    const resolvedSize = useResolvedControlSize(sizeProp);
+    const size: DatePickerSize = resolvedSize === "sm" ? "sm" : "md";
+    // Warm the calendar dependency while the popover is still closed.
+    React.useEffect(() => {
+      void loadDayPickerDeps();
+    }, []);
 
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
-  const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
+    const isRange = mode === "range";
+    const controlled = props.value !== undefined;
+    const [internalValue, setInternalValue] = React.useState<Date | DateRange | null>(
+      props.defaultValue ?? null
+    );
+    const value = controlled ? (props.value ?? null) : internalValue;
 
-  return (
-    <DatePickerContext.Provider value={contextValue}>
-      {/* data-invalid lets the trigger pick up the error border; without it only
+    const [internalOpen, setInternalOpen] = React.useState(false);
+    const isControlledOpen = openProp !== undefined;
+    const isOpen = readOnly ? false : isControlledOpen ? openProp : internalOpen;
+
+    const handleOpenChange = React.useCallback(
+      (newOpen: boolean) => {
+        if (readOnly && newOpen) return;
+        if (!isControlledOpen) setInternalOpen(newOpen);
+        onOpenChange?.(newOpen);
+      },
+      [isControlledOpen, onOpenChange, readOnly]
+    );
+
+    const onValueChange = props.onValueChange as
+      | ((value: Date | DateRange | null) => void)
+      | undefined;
+
+    const setSelected = React.useCallback(
+      (date: Date | null) => {
+        if (!controlled) setInternalValue(date);
+        onValueChange?.(date);
+        // A single pick is the whole job: close at once (popups are instant).
+        if (date) handleOpenChange(false);
+      },
+      [controlled, onValueChange, handleOpenChange]
+    );
+
+    // A range stays open: the second click, Escape or an outside click closes it.
+    const setSelectedRange = React.useCallback(
+      (range: DateRange | null) => {
+        if (!controlled) setInternalValue(range);
+        onValueChange?.(range);
+      },
+      [controlled, onValueChange]
+    );
+
+    const baseId = React.useId();
+    const labelId = label ? `datepicker-label-${baseId}` : undefined;
+    const helperId = helperText ? `datepicker-helper-${baseId}` : undefined;
+    const hasError = invalid;
+    const errorId = hasError && errorMessage ? `datepicker-error-${baseId}` : undefined;
+
+    const code = localeCode(locale);
+    const formatDate = format ?? ((date: Date) => intlFormatter(code, "long").format(date));
+    const formatRangeEnd = format ?? ((date: Date) => intlFormatter(code, "medium").format(date));
+
+    const selected = !isRange && value instanceof Date ? value : null;
+    const selectedRange = isRange && value && !(value instanceof Date) ? value : null;
+
+    const contextValue: DatePickerContextValue = {
+      mode,
+      selected,
+      selectedRange,
+      setSelected,
+      setSelectedRange,
+      numberOfMonths,
+      disabled,
+      disabledDates,
+      placeholder: placeholder ?? (isRange ? "Select date range" : "Pick a date"),
+      locale,
+      formatDate,
+      formatRange: (range) => joinRange(range, formatRangeEnd),
+      isOpen,
+      setIsOpen: handleOpenChange,
+      size,
+      readOnly,
+      labelId,
+      describedBy: mergeAriaIds(helperId, errorId),
+      invalid: hasError,
+    };
+
+    const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
+
+    return (
+      <DatePickerContext.Provider value={contextValue}>
+        {/* data-invalid lets the trigger pick up the error border; without it only
           the message turns red and the control still looks valid. */}
-      <div ref={ref} className={wrapperClasses} data-invalid={hasError || undefined}>
-        {label && (
-          <span id={labelId} className={styles.label}>
-            {label}
-          </span>
+        <div
+          ref={ref}
+          className={wrapperClasses}
+          data-invalid={hasError || undefined}
+          data-readonly={readOnly || undefined}
+        >
+          {label && (
+            <span id={labelId} className={styles.label}>
+              {label}
+            </span>
+          )}
+          <BasePopover.Root open={isOpen} onOpenChange={handleOpenChange}>
+            {children}
+          </BasePopover.Root>
+          {helperText && (
+            <span id={helperId} className={styles.helper}>
+              {helperText}
+            </span>
+          )}
+          {errorId && (
+            <span id={errorId} className={styles.errorMessage}>
+              <WarningCircle aria-hidden="true" weight="bold" className={styles.errorIcon} />
+              {errorMessage}
+            </span>
+          )}
+        </div>
+        {name && (
+          <input
+            type="hidden"
+            name={name}
+            value={
+              isRange
+                ? selectedRange
+                  ? `${formatDateForHiddenInput(selectedRange.from)},${formatDateForHiddenInput(selectedRange.to)}`
+                  : ""
+                : formatDateForHiddenInput(selected ?? undefined)
+            }
+          />
         )}
-        <BasePopover.Root open={isOpen} onOpenChange={handleOpenChange}>
-          {children}
-        </BasePopover.Root>
-        {helperText && (
-          <span id={helperId} className={helperClasses}>
-            {helperText}
-          </span>
-        )}
-        {errorMessage && (
-          <span id={errorId} className={styles.errorMessage}>
-            {errorMessage}
-          </span>
-        )}
-      </div>
-      {name && (
-        <input
-          type="hidden"
-          name={name}
-          value={
-            mode === "single"
-              ? formatDateForHiddenInput(contextValue.selected ?? undefined)
-              : contextValue.selectedRange
-                ? `${formatDateForHiddenInput(contextValue.selectedRange.from)},${formatDateForHiddenInput(contextValue.selectedRange.to)}`
-                : ""
-          }
-        />
-      )}
-    </DatePickerContext.Provider>
-  );
-});
+      </DatePickerContext.Provider>
+    );
+  }
+);
 
 function DatePickerTrigger({
   children,
   placeholder,
   className,
   type = "button",
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
   ...htmlProps
 }: DatePickerTriggerProps) {
   const ctx = useDatePickerContext();
+  const valueId = React.useId();
   const placeholderText = placeholder ?? ctx.placeholder;
 
-  const classes = [
-    styles.trigger,
-    ctx.size === "sm" && styles.triggerSm,
-    ctx.size === "lg" && styles.triggerLg,
-    className,
-  ]
+  const classes = [styles.trigger, ctx.size === "sm" && styles.triggerSm, className]
     .filter(Boolean)
     .join(" ");
 
@@ -547,6 +533,10 @@ function DatePickerTrigger({
     displayText = ctx.formatRange(ctx.selectedRange);
   }
 
+  // The visible label names the trigger, followed by what it currently holds.
+  const labelledBy =
+    ariaLabelledBy ?? (ctx.labelId && !children ? `${ctx.labelId} ${valueId}` : ctx.labelId);
+
   return (
     <BasePopover.Trigger
       {...htmlProps}
@@ -554,13 +544,19 @@ function DatePickerTrigger({
       className={classes}
       disabled={ctx.disabled}
       aria-invalid={ctx.invalid || undefined}
+      aria-labelledby={labelledBy}
+      aria-describedby={mergeAriaIds(ariaDescribedBy, ctx.describedBy)}
+      data-readonly={ctx.readOnly || undefined}
     >
       {children ?? (
         <>
           <span className={styles.triggerIcon}>
             <CalendarIcon />
           </span>
-          <span className={displayText ? styles.triggerValue : styles.triggerPlaceholder}>
+          <span
+            id={valueId}
+            className={displayText ? styles.triggerValue : styles.triggerPlaceholder}
+          >
             {displayText ?? placeholderText}
           </span>
         </>
@@ -576,14 +572,16 @@ function DatePickerContent({
   align = "start",
   ...htmlProps
 }: DatePickerContentProps) {
+  const portalProps = useThemePortalProps();
   const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
 
   return (
-    <BasePopover.Portal>
+    <BasePopover.Portal {...portalProps}>
       <BasePopover.Positioner
         side="bottom"
         align={align}
         sideOffset={sideOffset}
+        collisionPadding={POPUP_COLLISION_PADDING_PX}
         className={styles.positioner}
       >
         <BasePopover.Popup {...htmlProps} className={popupClasses}>
@@ -591,6 +589,20 @@ function DatePickerContent({
         </BasePopover.Popup>
       </BasePopover.Positioner>
     </BasePopover.Portal>
+  );
+}
+
+/** The calendar's footprint while react-day-picker resolves: caption, weekday
+ * row and six weeks of cells, so the popup never jumps when it arrives. */
+function CalendarSkeleton({ months }: { months: number }) {
+  return (
+    <div className={styles.calendarSkeleton} aria-hidden="true">
+      {Array.from({ length: months }, (_, index) => (
+        <div key={index} className={styles.calendarSkeletonMonth}>
+          <Skeleton fill />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -611,9 +623,7 @@ function DatePickerCalendar({
 
   const rdpReady = useDayPickerDeps();
   if (!rdpReady || !_DayPicker || !_UI) {
-    // react-day-picker is an optional peer: render nothing while it resolves,
-    // and nothing at all when a consumer mounts <DatePicker> without it.
-    return null;
+    return <CalendarSkeleton months={monthCount} />;
   }
   const DayPicker = _DayPicker;
   const UI = _UI;
@@ -624,6 +634,17 @@ function DatePickerCalendar({
     ? { ...calendarClassNames, [UI.Root]: [styles.calendar, className].join(" ") }
     : calendarClassNames;
 
+  // Fixed weeks always: six rows, so the popup height never jumps by month.
+  const shared = {
+    numberOfMonths: monthCount,
+    disabled: ctx.disabledDates,
+    locale: ctx.locale,
+    fixedWeeks: true,
+    classNames: calendarClasses,
+    components,
+    showOutsideDays: true,
+  };
+
   if (ctx.mode === "range") {
     const rangeSelected = ctx.selectedRange
       ? { from: ctx.selectedRange.from ?? undefined, to: ctx.selectedRange.to ?? undefined }
@@ -631,38 +652,26 @@ function DatePickerCalendar({
 
     return (
       <DayPicker
+        {...shared}
         mode="range"
         selected={rangeSelected}
-        onSelect={(range: any) => {
+        onSelect={(range: { from?: Date; to?: Date } | undefined) => {
           ctx.setSelectedRange(
             range ? { from: range.from ?? undefined, to: range.to ?? undefined } : null
           );
         }}
-        numberOfMonths={monthCount}
-        disabled={ctx.disabledDates}
-        locale={ctx.locale}
-        fixedWeeks={ctx.fixedWeeks}
-        classNames={calendarClasses}
-        components={components}
-        showOutsideDays
       />
     );
   }
 
   return (
     <DayPicker
+      {...shared}
       mode="single"
       selected={ctx.selected ?? undefined}
-      onSelect={(date: any) => {
+      onSelect={(date: Date | undefined) => {
         ctx.setSelected(date ?? null);
       }}
-      numberOfMonths={monthCount}
-      disabled={ctx.disabledDates}
-      locale={ctx.locale}
-      fixedWeeks={ctx.fixedWeeks}
-      classNames={calendarClasses}
-      components={components}
-      showOutsideDays
     />
   );
 }
@@ -673,28 +682,31 @@ function DatePickerPreset({
   range,
   className,
   onClick,
-  ...htmlProps
+  ...buttonProps
 }: DatePickerPresetProps) {
   const ctx = useDatePickerContext();
-  const classes = [styles.preset, className].filter(Boolean).join(" ");
 
-  const handleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      onClick?.(event);
-      if (event.defaultPrevented) return;
-      if (ctx.mode === "single" && date) {
-        ctx.setSelected(date);
-      } else if (ctx.mode === "range" && range) {
-        ctx.setSelectedRange(range);
-      }
-    },
-    [ctx, date, range, onClick]
-  );
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) return;
+    if (ctx.mode === "single" && date) {
+      ctx.setSelected(date);
+    } else if (ctx.mode === "range" && range) {
+      ctx.setSelectedRange(range);
+    }
+  };
 
   return (
-    <button type="button" {...htmlProps} className={classes} onClick={handleClick}>
+    <Button
+      type="button"
+      {...buttonProps}
+      variant="ghost"
+      size="sm"
+      className={[styles.preset, className].filter(Boolean).join(" ")}
+      onClick={handleClick}
+    >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -703,6 +715,7 @@ function DatePickerPreset({
 // ============================================
 
 export const DatePicker = Object.assign(DatePickerRoot, {
+  Root: DatePickerRoot,
   Trigger: DatePickerTrigger,
   Content: DatePickerContent,
   Calendar: DatePickerCalendar,
@@ -710,12 +723,3 @@ export const DatePicker = Object.assign(DatePickerRoot, {
   /** Start resolving react-day-picker before first render (optional). */
   preload: loadDayPickerDeps,
 });
-
-// Re-export individual components
-export {
-  DatePickerRoot,
-  DatePickerTrigger,
-  DatePickerContent,
-  DatePickerCalendar,
-  DatePickerPreset,
-};

@@ -1,0 +1,184 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Accordion",
+  "description": "Stacks sections that expand one at a time, or several at once.",
+  "category": "layout",
+  "tags": ["accordion", "collapse", "expand", "disclosure", "faq"],
+  "status": "stable",
+  "sourcePath": "src/components/Accordion/index.tsx",
+  "exportName": "Accordion",
+  "propsSummary": [
+    "multiple: boolean (default: false)",
+    "value: string[]",
+    "defaultValue: string[]",
+    "onValueChange: function",
+    "children: node (required)",
+    "headingLevel: union (default: 3)",
+    "disabled: boolean"
+  ],
+  "props": {
+    "multiple": {
+      "type": "boolean",
+      "description": "Let several items stay open at once; a single accordion closes the open item when another opens or when it is pressed again",
+      "default": "false",
+      "required": false
+    },
+    "value": {
+      "type": "array",
+      "description": "Controlled open items",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "array",
+      "description": "Items open at first (uncontrolled)",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the open items - (value: string[], eventDetails) => void",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "Accordion items (use Accordion.Item with Accordion.Trigger and Accordion.Content)",
+      "required": true
+    },
+    "headingLevel": {
+      "type": "union",
+      "description": "Semantic heading level for accordion triggers",
+      "default": "3",
+      "required": false,
+      "values": ["2", "3", "4", "5", "6"]
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Make every item inert",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Answers most readers skip",
+      "Settings grouped by area",
+      "Long forms broken into stages",
+      "Navigation with nested children"
+    ],
+    "whenNot": [
+      "Content everyone needs to read",
+      "A line or two — just show it",
+      "Steps in an order (use Stepper)",
+      "Switching between panels (use Tabs)"
+    ],
+    "guidelines": [
+      "Headers should say what is inside",
+      "Single mode when one answer at a time is enough",
+      "Multiple mode when sections get compared",
+      "Open the section most readers came for",
+      "Never nest an accordion inside an accordion"
+    ],
+    "accessibility": [
+      "Keyboard navigation with Enter/Space to toggle",
+      "Uses proper ARIA expanded/controls attributes",
+      "Focus is visible on accordion triggers"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Basic",
+      "description": "Opening one section closes the last.",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion defaultValue={['item-1']}>\n  <Accordion.Item value=\"item-1\">\n    <Accordion.Trigger>What is Fragments UI?</Accordion.Trigger>\n    <Accordion.Content>\n      Fragments UI is a modern React component library built on Base UI primitives, providing accessible and customizable components.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"item-2\">\n    <Accordion.Trigger>How do I install it?</Accordion.Trigger>\n    <Accordion.Content>\n      Install via npm or pnpm: pnpm add @usefragments/ui\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"item-3\">\n    <Accordion.Trigger>Is it accessible?</Accordion.Trigger>\n    <Accordion.Content>\n      Yes! All components follow WAI-ARIA guidelines and support keyboard navigation.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+    },
+    {
+      "name": "Multiple Open",
+      "description": "Sections stay open so answers can be compared.",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion multiple defaultValue={['features', 'pricing']}>\n  <Accordion.Item value=\"features\">\n    <Accordion.Trigger>Features</Accordion.Trigger>\n    <Accordion.Content>\n      Comprehensive component library with theming support, accessibility built-in, and TypeScript-first development.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"pricing\">\n    <Accordion.Trigger>Pricing</Accordion.Trigger>\n    <Accordion.Content>\n      Free and open source. MIT licensed for both personal and commercial use.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"support\">\n    <Accordion.Trigger>Support</Accordion.Trigger>\n    <Accordion.Content>\n      Community support via GitHub issues and discussions.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+    },
+    {
+      "name": "With Disabled",
+      "description": "An unavailable section stays visible but inert.",
+      "code": "import { Accordion } from '@/components/Accordion';\n\n<Accordion defaultValue={['available']}>\n  <Accordion.Item value=\"available\">\n    <Accordion.Trigger>Notification preferences</Accordion.Trigger>\n    <Accordion.Content>\n      Choose which events send you an email and how often digests arrive.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"disabled\" disabled>\n    <Accordion.Trigger>Billing history</Accordion.Trigger>\n    <Accordion.Content>\n      Unavailable until a payment method is on file.\n    </Accordion.Content>\n  </Accordion.Item>\n  <Accordion.Item value=\"another\">\n    <Accordion.Trigger>Connected accounts</Accordion.Trigger>\n    <Accordion.Content>\n      Review the services linked to this workspace and revoke the ones you no longer use.\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Use Tabs for horizontal switching between related views"
+    },
+    {
+      "component": "Dialog",
+      "relationship": "alternative",
+      "note": "Use Dialog for focused content that interrupts the flow"
+    },
+    {
+      "component": "Card",
+      "relationship": "complementary",
+      "note": "Accordion items can contain Card-like content"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "multiple: boolean - several items open at once (default: false)",
+      "value/defaultValue: string[] - the open items",
+      "onValueChange: (value: string[], eventDetails) => void",
+      "headingLevel: 2-6 - the heading each trigger sits in (default: 3)",
+      "Accordion.Item disabled?: boolean - inert item, dimmed once",
+      "Accordion.Trigger forwards button props; Accordion.Content keepMounted?, hiddenUntilFound?"
+    ],
+    "a11yRules": ["A11Y_DISCLOSURE_KEYBOARD", "A11Y_FOCUS_VISIBLE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item", "Trigger", "Content"],
+    "requiredChildren": ["Item"],
+    "commonPatterns": [
+      "<Accordion><Accordion.Item value=\"item-1\"><Accordion.Trigger>{title}</Accordion.Trigger><Accordion.Content>{content}</Accordion.Content></Accordion.Item></Accordion>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:49.840Z"
+  },
+  "cssVariables": [
+    "--fui-border",
+    "--fui-duration-micro",
+    "--fui-ease-standard",
+    "--fui-font-weight-semibold",
+    "--fui-hit-area",
+    "--fui-icon-xs",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-10",
+    "--fui-raw-space-12",
+    "--fui-raw-space-6",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-slot",
+      "value": "accordion",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "accordion-item",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "accordion-trigger",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "accordion-content",
+      "fixture": "populated"
+    }
+  ]
+}

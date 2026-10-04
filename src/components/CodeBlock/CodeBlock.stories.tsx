@@ -2,9 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { CodeBlock } from ".";
 
 /**
- * Syntax-highlighted code display with copy, theming, diff view, line
- * numbers, and collapsible sections. The required `code` prop holds the
- * content; `language` and `theme` control highlighting.
+ * Syntax-highlighted code on the band: mono 12 (11 at `size="sm"`), a visible
+ * copy action that says "Copied" or "Couldn't copy", line numbers, marked
+ * lines, a diff view and one fold. Colours follow the theme through one
+ * css-variables highlighter theme.
  */
 const meta = {
   title: "Display/CodeBlock",
@@ -59,41 +60,20 @@ const meta = {
       ],
       description: "Programming language for syntax highlighting",
     },
-    theme: {
-      control: "select",
-      options: [
-        "css-variables",
-        "synthwave-84",
-        "github-dark",
-        "github-light",
-        "one-dark-pro",
-        "dracula",
-        "nord",
-        "monokai",
-        "vitesse-dark",
-        "vitesse-light",
-        "min-dark",
-        "min-light",
-      ],
-      description: "Syntax highlighting theme",
-    },
-    copyPlacement: {
-      control: "select",
-      options: ["auto", "header", "overlay"],
-      description: "Where to place the copy button",
+    size: {
+      control: "inline-radio",
+      options: ["sm", "md"],
+      description: "Code type step",
     },
     showCopy: { control: "boolean" },
     showLineNumbers: { control: "boolean" },
     wordWrap: { control: "boolean" },
     collapsible: { control: "boolean" },
     defaultCollapsed: { control: "boolean" },
-    compact: { control: "boolean" },
-    persistentCopy: { control: "boolean" },
   },
   args: {
     code: "import { Button } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Click me</Button>;\n}",
     language: "tsx",
-    theme: "css-variables",
   },
 } satisfies Meta<typeof CodeBlock>;
 
@@ -103,9 +83,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const WithFilename: Story = {
+export const WithTitle: Story = {
   args: {
-    filename: "app.tsx",
+    title: "app.tsx",
     code: "import { Button, Card } from '@usefragments/ui';\n\nfunction App() {\n  return <Button>Get Started</Button>;\n}",
   },
 };
@@ -131,7 +111,6 @@ export const DiffView: Story = {
 export const Bash: Story = {
   args: {
     language: "bash",
-    title: "Installation",
     code: "npm install @usefragments/ui",
   },
 };
@@ -143,6 +122,35 @@ export const Collapsible: Story = {
     collapsible: true,
     defaultCollapsed: true,
     collapsedLines: 4,
-    code: "export function UserProfile({ userId }: { userId: string }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  if (loading) return <div>Loading...</div>;\n  if (error) return <div>Error</div>;\n  return <h1>{user.name}</h1>;\n}",
+    code: "export function UserProfile({ userId }: { userId: string }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  if (loading) return <Loading />;\n  if (error) return <div>Error</div>;\n  return <h1>{user.name}</h1>;\n}",
   },
+};
+
+export const HighlightedLines: Story = {
+  args: {
+    language: "typescript",
+    showLineNumbers: true,
+    highlightLines: [2],
+    code: 'const status = await check();\nif (status === "blocked") notify(owner);\nreturn status;',
+  },
+};
+
+export const Small: Story = {
+  args: {
+    size: "sm",
+    language: "bash",
+    title: "Run in CI",
+    code: "npx @usefragments/cli check --ci",
+  },
+};
+
+export const Tabbed: Story = {
+  render: () => (
+    <CodeBlock.Tabbed
+      tabs={[
+        { label: "pnpm", language: "bash", code: "pnpm add @usefragments/ui" },
+        { label: "npm", language: "bash", code: "npm install @usefragments/ui" },
+      ]}
+    />
+  ),
 };

@@ -2,7 +2,8 @@ import * as React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { render, screen, userEvent, waitFor, act, expectNoA11yViolations } from "../../test/utils";
-import { Tooltip } from "./index";
+import { Tooltip, TOOLTIP_COLD_DELAY_MS, TOOLTIP_WARM_WINDOW_MS } from "./index";
+import styles from "./Tooltip.module.scss";
 
 describe("Tooltip", () => {
   beforeEach(() => {
@@ -238,6 +239,121 @@ describe("Tooltip", () => {
       vi.advanceTimersByTime(600);
     });
     expect(screen.queryByText("Updated delay tooltip")).not.toBeInTheDocument();
+  });
+
+  it("opens after a 500ms rest by default, then at once inside the warm window", async () => {
+    // Move the clock past any window an earlier test's clock opened.
+    vi.setSystemTime(Date.now() + 60_000);
+    render(
+      <>
+        <Tooltip content="First tip">
+          <button>First</button>
+        </Tooltip>
+        <Tooltip content="Second tip">
+          <button>Second</button>
+        </Tooltip>
+      </>
+    );
+
+    const first = screen.getByRole("button", { name: "First" });
+    fireEvent.mouseEnter(first);
+    fireEvent.mouseMove(first);
+    await act(async () => {
+      vi.advanceTimersByTime(TOOLTIP_COLD_DELAY_MS - 100);
+    });
+    expect(screen.queryByText("First tip")).not.toBeInTheDocument();
+    await act(async () => {
+      vi.advanceTimersByTime(150);
+    });
+    expect(screen.getByText("First tip")).toBeInTheDocument();
+
+    fireEvent.mouseLeave(first);
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(screen.queryByText("First tip")).not.toBeInTheDocument();
+
+    const second = screen.getByRole("button", { name: "Second" });
+    fireEvent.mouseEnter(second);
+    fireEvent.mouseMove(second);
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(screen.getByText("Second tip")).toBeInTheDocument();
+
+    fireEvent.mouseLeave(second);
+    await act(async () => {
+      vi.advanceTimersByTime(TOOLTIP_WARM_WINDOW_MS + 50);
+    });
+    fireEvent.mouseEnter(first);
+    fireEvent.mouseMove(first);
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(screen.queryByText("First tip")).not.toBeInTheDocument();
+  });
+
+  it("shows a shortcut after the text", async () => {
+    render(
+      <Tooltip content="Search" shortcut="⌘K" open>
+        <button>Search</button>
+      </Tooltip>
+    );
+
+    const kbd = await screen.findByText("⌘K");
+    expect(kbd.tagName).toBe("KBD");
+    expect(kbd).toHaveClass(styles.shortcut);
+  });
+
+  it("wraps a disabled control so its tip still shows on hover", async () => {
+    render(
+      <Tooltip content="Needs a contract first" delay={0}>
+        <button disabled>Activate</button>
+      </Tooltip>
+    );
+
+    const host = screen.getByRole("button", { name: "Activate" }).parentElement as HTMLElement;
+    expect(host).toHaveAttribute("data-tooltip-disabled-host");
+    fireEvent.mouseEnter(host);
+    fireEvent.mouseMove(host);
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(screen.getByText("Needs a contract first")).toBeInTheDocument();
+  });
+
+  it("spreads contentProps onto the tip surface", async () => {
+    render(
+      <Tooltip content="Tip" open contentProps={{ id: "tip-id", className: "extra" }}>
+        <button>Trigger</button>
+      </Tooltip>
+    );
+
+    const tip = (await screen.findByText("Tip")).closest("#tip-id") as HTMLElement;
+    expect(tip).toHaveClass(styles.popup);
+    expect(tip).toHaveClass("extra");
+  });
+
+  it("closes on press by default", async () => {
+    render(
+      <Tooltip content="Copy" delay={0}>
+        <button>Copy</button>
+      </Tooltip>
+    );
+
+    const trigger = screen.getByRole("button", { name: "Copy" });
+    fireEvent.mouseEnter(trigger);
+    fireEvent.mouseMove(trigger);
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(screen.getByText("Copy", { selector: `.${styles.popup}` })).toBeInTheDocument();
+
+    fireEvent.click(trigger);
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(screen.queryByText("Copy", { selector: `.${styles.popup}` })).not.toBeInTheDocument();
   });
 
   it("has no accessibility violations when open", async () => {

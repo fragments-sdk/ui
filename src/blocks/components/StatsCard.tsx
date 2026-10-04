@@ -1,78 +1,76 @@
-'use client';
-
-import * as React from 'react';
-import { Card } from '../../components/Card';
-import { Stack } from '../../components/Stack';
-import { Text } from '../../components/Text';
-import { Badge } from '../../components/Badge';
+import * as React from "react";
+import { Badge } from "../../components/Badge";
+import { Card } from "../../components/Card";
+import { Icon, type IconProps } from "../../components/Icon";
+import { Skeleton } from "../../components/Skeleton";
+import { Text } from "../../components/Text";
+import styles from "./StatsCard.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export interface StatsCardProps {
+export type StatsCardChangeTone = "neutral" | "success" | "danger";
+
+export interface StatsCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Metric label displayed above the value */
   title: string;
-  /** The primary metric value */
-  value: string | number;
-  /** Change indicator text (e.g., "+12.5%") */
+  /** The primary metric value. Null or undefined shows an em dash in ink 3. */
+  value?: string | number | null;
+  /** Change text; words carry the direction (e.g. "+12.5%") */
   change?: string;
-  /** Semantic variant for the change badge */
-  changeTone?: 'success' | 'warning' | 'danger';
-  /** Optional icon rendered in the top-right corner */
-  icon?: React.ReactNode;
-  /** Additional CSS class name */
-  className?: string;
+  /** Whether the change is good (`success`) or bad (`danger`). Neutral unless the caller says.
+   * @default "neutral" */
+  changeTone?: StatsCardChangeTone;
+  /** An icon component (Phosphor or any SVG component), drawn neutral in a tile */
+  icon?: IconProps["icon"];
+  /** Shows a skeleton in place of the value and change */
+  loading?: boolean;
 }
 
 // ============================================
 // Component
 // ============================================
 
-export const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
-  function StatsCard(
-    { title, value, change, changeTone = 'success', icon, className },
-    ref
-  ) {
-    return (
-      <Card className={className}>
+export const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(function StatsCard(
+  { title, value, change, changeTone = "neutral", icon, loading = false, className, ...htmlProps },
+  ref
+) {
+  const empty = value === undefined || value === null || value === "";
+
+  return (
+    <div ref={ref} {...htmlProps} className={[styles.root, className].filter(Boolean).join(" ")}>
+      <Card>
         <Card.Body>
-          <div ref={ref} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <Stack gap="xs">
-              <Text scale="sm" color="tertiary">
-                {title}
-              </Text>
-              <Text as="p" scale="2xl" weight="semibold">
-                {value}
-              </Text>
-              {change && (
-                <Stack direction="row" gap="xs" align="center">
-                  <Badge tone={changeTone} size="sm">
-                    {change}
-                  </Badge>
-                </Stack>
+          <div className={styles.layout}>
+            <div className={styles.figures} aria-busy={loading || undefined}>
+              <Text color="tertiary">{title}</Text>
+              {loading ? (
+                <>
+                  <Skeleton shape="heading" width="60%" />
+                  <Skeleton shape="text" width="30%" />
+                </>
+              ) : (
+                <>
+                  <Text as="p" type="display" tabularNums color={empty ? "tertiary" : undefined}>
+                    {empty ? "—" : value}
+                  </Text>
+                  {change && (
+                    <span className={styles.change}>
+                      <Badge tone={changeTone}>{change}</Badge>
+                    </span>
+                  )}
+                </>
               )}
-            </Stack>
+            </div>
             {icon && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 40,
-                  height: 40,
-                  borderRadius: 'var(--fui-radius-md)',
-                  backgroundColor: 'var(--fui-bg-secondary)',
-                  color: 'var(--fui-text-secondary)',
-                  flexShrink: 0,
-                }}
-              >
-                {icon}
-              </div>
+              <span className={styles.tile} aria-hidden="true">
+                <Icon icon={icon} size="md" tone="secondary" />
+              </span>
             )}
           </div>
         </Card.Body>
       </Card>
-    );
-  }
-);
+    </div>
+  );
+});

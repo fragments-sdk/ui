@@ -39,9 +39,10 @@ npm install react-day-picker date-fns  # DatePicker
 import "@usefragments/ui/styles";
 ```
 
-**Custom theming (SCSS)** — create a `.scss` file with `@use '@usefragments/ui/styles' with (...)` to set your seed values, then import your SCSS (and skip the prebuilt CSS, or load tokens only via SCSS):
+**Custom theming (SCSS)** — create a `.scss` file with `@use '@usefragments/ui/scss' with (...)` to set your seed values. The Sass entry emits tokens and base styles. Import the prebuilt component CSS first, then your configured SCSS so its seeds take precedence:
 
 ```tsx
+import "@usefragments/ui/styles";
 import "./styles/globals.scss"; // your @use … with (…) seed overrides
 ```
 
@@ -59,14 +60,20 @@ const nextConfig = {
 Then use components:
 
 ```tsx
-import { Button, Card, Input, Grid } from "@usefragments/ui";
+import { Button, Card, Field, Input, Grid } from "@usefragments/ui";
 
 function App() {
   return (
     <Card>
       <Grid columns={2} gap="md">
-        <Input label="Email" type="email" />
-        <Input label="Name" />
+        <Field>
+          <Field.Label>Email</Field.Label>
+          <Input type="email" />
+        </Field>
+        <Field>
+          <Field.Label>Name</Field.Label>
+          <Input />
+        </Field>
       </Grid>
       <Button variant="primary">Submit</Button>
     </Card>
@@ -98,14 +105,14 @@ function App() {
 | ConversationList  | Ai         | Scrollable message container with auto-scroll and history loading                                                                                                                                                          |
 | Dialog            | Feedback   | Modal overlay for focused user interactions. Use for confirmations, forms, or content requiring full attention.                                                                                                            |
 | EmptyState        | Feedback   | Placeholder for empty content areas. Provides context, guidance, and actions when no data is available.                                                                                                                    |
-| Field             | Forms      | Compositional form field wrapper providing validation, labels, descriptions, and error messages. Use for advanced form needs beyond baked-in Input/Textarea props.                                                         |
+| Field             | Forms      | The label, description and error for one control. Input, Textarea, Select, Combobox and NumberField take their label from it.                                                                                              |
 | Fieldset          | Forms      | Groups related form fields with an accessible legend. Use to organize forms into logical sections.                                                                                                                         |
-| Form              | Forms      | Form wrapper that handles server-side error distribution to Field components. Pairs with Field for complete form validation.                                                                                               |
+| Form              | Forms      | Form wrapper that hands server errors to its Fields and locks every control while a submit is pending.                                                                                                                     |
 | Grid              | Layout     | Responsive grid layout for arranging items in columns with consistent spacing                                                                                                                                              |
 | Header            | Navigation | Composable header with slots for brand, navigation, search, and actions. Supports dropdown nav groups via Header.NavMenu. Designed for use within AppShell with responsive mobile support.                                 |
 | Icon              | Display    | Wrapper for Phosphor icons with consistent sizing and semantic colors. Provides standardized icon rendering across the design system.                                                                                      |
 | Image             | Display    | Responsive image component with aspect ratio control, loading states, and error fallbacks. Handles image display with consistent styling.                                                                                  |
-| Input             | Forms      | Text input field for single-line user data entry                                                                                                                                                                           |
+| Input             | Forms      | Single-line text field. type="search" adds a clear button, Escape to clear and a live match count.                                                                                                                         |
 | Link              | Navigation | Styled anchor element for navigation. Supports internal and external links with consistent visual treatment.                                                                                                               |
 | List              | Display    | Compound component for rendering ordered or unordered lists with consistent styling. Supports bullet, numbered, and icon-prefixed items.                                                                                   |
 | Listbox           | Forms      | Controlled listbox for search results, autocomplete dropdowns, and command menus. Provides Menu-like styling without requiring a trigger.                                                                                  |
@@ -113,6 +120,7 @@ function App() {
 | Markdown          | Display    | Renders markdown strings as styled prose using react-markdown and remark-gfm. Supports headings, lists, tables, code blocks, blockquotes, and more.                                                                        |
 | Menu              | Feedback   | Dropdown menu for actions and commands. Use for contextual actions, overflow menus, or grouped commands.                                                                                                                   |
 | Message           | Ai         | Individual chat message display with role-based styling                                                                                                                                                                    |
+| NumberField       | Forms      | Numeric field that steps with the arrow keys, scrubs from a short label and reads its unit with the value.                                                                                                                 |
 | Popover           | Feedback   | Rich content overlay anchored to a trigger element. Use for forms, detailed information, or interactive content that should stay in context.                                                                               |
 | Progress          | Feedback   | Visual indicator of task completion or loading state. Available in linear and circular variants.                                                                                                                           |
 | Prompt            | Ai         | Multi-line input with toolbar for AI/chat interfaces                                                                                                                                                                       |
@@ -150,20 +158,20 @@ All fragment and block previews are authored source snippets, not runtime-serial
 
 ### Seeds
 
-Seven seeds drive every derived token. Set them with the SCSS `@use ... with()` syntax on the styles entry point:
+Seven seeds drive every derived token. Set them with the SCSS `@use ... with()` syntax on the Sass entry point:
 
 ```scss
 // styles/globals.scss
 
 // Minimal setup — just your brand color
-@use "@usefragments/ui/styles" with (
+@use "@usefragments/ui/scss" with (
   $fui-brand: #0066ff
 );
 ```
 
 ```scss
 // Full customization
-@use "@usefragments/ui/styles" with (
+@use "@usefragments/ui/scss" with (
   $fui-brand: #0066ff,
   $fui-radius-style: "rounded",
   $fui-danger: #dc2626,
@@ -173,17 +181,18 @@ Seven seeds drive every derived token. Set them with the SCSS `@use ... with()` 
 
 #### Available Seeds
 
-| Seed                | Type   | Default     | Description                                                                 |
-| ------------------- | ------ | ----------- | --------------------------------------------------------------------------- |
-| `$fui-brand`        | Color  | `#f56138`   | Brand color — derives the accent ramp, focus rings and the dark-mode accent |
-| `$fui-neutral`      | String | `"paper"`   | The neutral ramp: warm cream canvas, white cards, warm charcoal dark mode   |
-| `$fui-radius-style` | String | `"default"` | Corner radius style                                                         |
-| `$fui-danger`       | Color  | `#c44732`   | Danger semantic color                                                       |
-| `$fui-success`      | Color  | `#2c8c5f`   | Success semantic color                                                      |
-| `$fui-warning`      | Color  | `#c4922a`   | Warning semantic color                                                      |
-| `$fui-info`         | Color  | `#3d7aa8`   | Info semantic color                                                         |
+| Seed                | Type   | Default                | Description                                                                 |
+| ------------------- | ------ | ---------------------- | --------------------------------------------------------------------------- |
+| `$fui-brand`        | Color  | `#3d5ae8`              | Brand color — derives the accent ramp, focus rings and the dark-mode accent |
+| `$fui-neutral`      | Color  | `"paper"`              | The neutral every plane, ink and line is a lightness step of                |
+| `$fui-radius-style` | String | `"default"`            | Corner radius style                                                         |
+| `$fui-danger`       | Color  | `#d13d1f`              | Danger semantic color                                                       |
+| `$fui-success`      | Color  | `#2fbf8f`              | Success semantic color                                                      |
+| `$fui-warning`      | Color  | `#f2a100`              | Warning semantic color                                                      |
+| `$fui-info`         | Color  | `oklch(0.58 0.13 245)` | Info semantic color                                                         |
 
-`"paper"` is the only neutral ramp that ships: one light theme, one dark theme. Any other `$fui-neutral` value fails the build.
+`$fui-neutral` takes `"paper"` (a warm grey) or any colour. Its chroma is capped at 0.04, so every
+plane keeps its ink contrast however vivid the neutral is.
 
 #### Radius Styles
 
@@ -197,12 +206,62 @@ Seven seeds drive every derived token. Set them with the SCSS `@use ... with()` 
 
 ### Runtime attributes
 
-The compiled stylesheet also answers two attributes on `<html>` (or any ancestor), so a page can switch without a rebuild:
+The compiled stylesheet also answers these attributes on `<html>` or a scope element, so a page
+can switch without a rebuild:
 
-| Attribute               | Values                                  | Effect                                  |
-| ----------------------- | --------------------------------------- | --------------------------------------- |
-| `data-theme`            | `light` · `dark`                        | Colour scheme (`ThemeProvider` sets it) |
-| `data-fui-radius-style` | `sharp` · `subtle` · `rounded` · `pill` | Radius profile; absent = `default`      |
+| Attribute               | Values                                  | Effect                                                           |
+| ----------------------- | --------------------------------------- | ---------------------------------------------------------------- |
+| `data-theme`            | `light` · `dark` (`system` on a scope)  | Colour scheme (`Theme` sets it)                                  |
+| `data-fui-theme`        | present                                 | A theme scope: every role re-derives from the inputs set on it   |
+| `data-chrome`           | `accent` · `ink`                        | Primary action chrome: the accent ramp, or ink on the page plane |
+| `data-fui-radius-style` | `sharp` · `subtle` · `rounded` · `pill` | Radius profile on `<html>`; absent = `default`                   |
+
+### Theme at runtime
+
+`Theme` at the root owns `<html>`: the mode, its storage, and
+any inputs you pass. Add `ThemeScript` to `<head>` so a reload paints the stored mode first. It is a
+server component, so it works in a server layout:
+
+```tsx
+import { Theme, ThemeScript } from "@usefragments/ui";
+
+export function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript brand="#0066ff" />
+      </head>
+      <body>
+        <Theme brand="#0066ff">{children}</Theme>
+      </body>
+    </html>
+  );
+}
+```
+
+A `Theme` inside another `Theme` scopes a subtree instead. It renders one
+`<div data-fui-theme>`, and every role inside re-derives from the inputs it sets, so a dark panel
+on a light page, an ink toolbar or a rebranded preview all hold contrast. Popups opened inside the
+scope (Dialog, Popover, Menu, Tooltip and the rest) carry it into their portal.
+
+```tsx
+<Theme mode="dark" brand="#16a34a">
+  <SettingsPanel />
+</Theme>
+```
+
+| Input             | Sets                 | Notes                                      |
+| ----------------- | -------------------- | ------------------------------------------ |
+| `brand`           | `--fui-seed-brand`   | Any CSS colour                             |
+| `neutral`         | `--fui-seed-neutral` | `"paper"` or any CSS colour; chroma capped |
+| `radius`          | `--fui-radius`       | A number is pixels                         |
+| `scale`           | `--fui-scale`        | Multiplier on every measurement            |
+| `font`            | `--fui-font-sans`    | Sans-serif stack                           |
+| `pressScale`      | `--fui-press-scale`  | Scale while pressed; `1` turns it off      |
+| `primaryChrome`   | `data-chrome`        | `accent` or `ink`                          |
+| `danger` … `info` | `--fui-seed-*`       | Tone colours                               |
+
+Without React, set the same custom properties on any element with `data-fui-theme`.
 
 ### Shared state tokens
 
@@ -268,7 +327,7 @@ $fui-bg-secondary: #f1f5f9;
 // ...many more
 
 // After: just seeds
-@use "@usefragments/ui/styles" with (
+@use "@usefragments/ui/scss" with (
   $fui-brand: #0066ff
 );
 ```
@@ -303,7 +362,6 @@ API-key header. There is no MCP npm package or local stdio process to install.
 The library includes composition blocks — named patterns showing how components wire together for common use cases:
 
 - **Login Form** — Email/password authentication form
-- **Dashboard Layout** — Featured card with metrics grid
 - **Stats Card** — Metric tile with delta badge
 - **Activity Feed** — Avatar-led activity list
 

@@ -1,3 +1,4 @@
+import { Activity } from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { CodeBlock } from "./index";
@@ -19,7 +20,7 @@ describe("CodeBlock", () => {
     expect(container.querySelector("code")).toBeInTheDocument();
   });
 
-  it("defaults to the css-variables theme and does not pin data-theme", async () => {
+  it("highlights with the css-variables theme and never pins data-theme", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
     const root = container.querySelector('[data-slot="code-block"]');
     expect(root).not.toHaveAttribute("data-theme");
@@ -31,32 +32,49 @@ describe("CodeBlock", () => {
     );
   });
 
-  it("exposes stable styling slots without adding public props", async () => {
+  it("names its language, size and slots on the root", async () => {
     const { container } = render(
-      <CodeBlock code="const x = 1;" title="Example" data-testid="code-example" />
+      <CodeBlock code="echo hi" language="bash" size="sm" title="install.sh" data-testid="cb" />
     );
-
-    const root = screen.getByTestId("code-example");
+    const root = screen.getByTestId("cb");
     expect(root).toHaveAttribute("data-slot", "code-block");
-    expect(root).toContainElement(container.querySelector('[data-slot="code-block-frame"]'));
-    expect(root).toContainElement(container.querySelector('[data-slot="code-block-title"]'));
+    expect(root).toHaveAttribute("data-language", "bash");
+    expect(root).toHaveAttribute("data-size", "sm");
+    expect(root).toContainElement(container.querySelector('[data-slot="code-block-header"]'));
+    expect(root).toContainElement(container.querySelector('[data-slot="code-block-code"]'));
     await waitForHighlight(container);
   });
 
-  it("renders a copy button by default", async () => {
+  it("shows plain code with no highlight until shiki resolves", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
-    expect(screen.getByRole("button", { name: /copy code/i })).toBeInTheDocument();
+    const root = container.querySelector('[data-slot="code-block"]');
+    expect(root).not.toHaveAttribute("data-highlighted");
+    expect(container.querySelector("pre code")).toHaveTextContent("const x = 1;");
     await waitForHighlight(container);
+    expect(root).toHaveAttribute("data-highlighted");
   });
 
-  it("uses overlay copy placement by default when filename is not provided", async () => {
+  it("renders a visible copy action by default, over the code without a title", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
+    expect(screen.getByRole("button", { name: "Copy code" })).toBeVisible();
+    expect(container.querySelector('[data-slot="code-block"]')).toHaveAttribute(
+      "data-copy",
+      "overlay"
+    );
     expect(container.querySelector(`.${styles.header}`)).not.toBeInTheDocument();
-    expect(container.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
     await waitForHighlight(container);
   });
 
-  it("hides copy button when showCopy is false", async () => {
+  it("puts the title and the copy action in the header", async () => {
+    const { container } = render(<CodeBlock code="x = 1" title="app.ts" />);
+    const header = container.querySelector(`.${styles.header}`);
+    expect(header).toHaveTextContent("app.ts");
+    expect(header).toContainElement(screen.getByRole("button", { name: "Copy code" }));
+    expect(screen.getByRole("region", { name: "app.ts" })).toHaveAttribute("tabindex", "0");
+    await waitForHighlight(container);
+  });
+
+  it("hides the copy action when showCopy is false", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" showCopy={false} />);
     expect(screen.queryByRole("button", { name: /copy/i })).not.toBeInTheDocument();
     await waitForHighlight(container);
@@ -65,51 +83,74 @@ describe("CodeBlock", () => {
   it("shows language-highlighted content after shiki resolves", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" language="typescript" />);
     await waitFor(() => {
-      // shiki wraps output in a pre.shiki element with syntax-highlighted spans
       const shikiPre = container.querySelector("pre.shiki");
       expect(shikiPre).toBeInTheDocument();
       expect(shikiPre?.querySelector("code")).toBeInTheDocument();
     });
   });
 
-  it("renders title and caption when provided", async () => {
-    const { container } = render(
-      <CodeBlock code="x = 1" title="Example" caption="A simple example" />
-    );
-    expect(screen.getByText("Example")).toBeInTheDocument();
-    expect(screen.getByText("A simple example")).toBeInTheDocument();
-    await waitForHighlight(container);
+  it("announces Copied, then clears", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const onCopy = vi.fn();
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText },
+      writable: true,
+      configurable: true,
+    });
+
+    render(<CodeBlock code="const x = 1;" onCopy={onCopy} />);
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Copied");
+    expect(screen.getByRole("status")).toHaveAttribute("data-state", "copied");
+    expect(onCopy).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(""), {
+      timeout: 3000,
+    });
   });
 
-  it("renders filename in header", async () => {
-    const { container } = render(<CodeBlock code="x = 1" filename="app.ts" />);
-    expect(screen.getByText("app.ts")).toBeInTheDocument();
-    expect(container.querySelector(`.${styles.header}`)).toBeInTheDocument();
-    expect(container.querySelector(`.${styles.copyOverlay}`)).not.toBeInTheDocument();
-    await waitForHighlight(container);
+  it("still clears Copied after its effects disconnect and reconnect", async () => {
+    // Hiding the block (or a development remount) runs the effects' cleanup but keeps the
+    // state, so the timer that clears the words has to come back with the effects.
+    const user = userEvent.setup();
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: vi.fn().mockResolvedValue(undefined) },
+      writable: true,
+      configurable: true,
+    });
+
+    const block = (mode: "visible" | "hidden") => (
+      <Activity mode={mode}>
+        <CodeBlock code="const x = 1;" />
+      </Activity>
+    );
+    const { rerender } = render(block("visible"));
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Copied");
+    rerender(block("hidden"));
+    rerender(block("visible"));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(""), {
+      timeout: 3000,
+    });
   });
 
-  it("supports explicit copy placement variants", async () => {
-    const { container: headerContainer } = render(
-      <CodeBlock code="const x = 1;" copyPlacement="header" />
-    );
-    expect(headerContainer.querySelector(`.${styles.header}`)).toBeInTheDocument();
-    expect(headerContainer.querySelector(`.${styles.copyOverlay}`)).not.toBeInTheDocument();
+  it("says Couldn't copy when the clipboard refuses", async () => {
+    const user = userEvent.setup();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onCopy = vi.fn();
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: vi.fn().mockRejectedValue(new Error("denied")) },
+      writable: true,
+      configurable: true,
+    });
 
-    const { container: overlayContainer } = render(
-      <CodeBlock code="const x = 1;" copyPlacement="overlay" filename="app.tsx" />
-    );
-    expect(overlayContainer.querySelector(`.${styles.header}`)).toBeInTheDocument();
-    expect(overlayContainer.querySelector(`.${styles.copyOverlay}`)).toBeInTheDocument();
-    await waitForHighlight(headerContainer);
-    await waitForHighlight(overlayContainer);
-  });
-
-  it("keeps persistent copy visible with a trailing content gutter", async () => {
-    const { container } = render(<CodeBlock code="npx @usefragments/cli init" persistentCopy />);
-    expect(container.querySelector(`.${styles.persistentCopyWrapper}`)).toBeInTheDocument();
-    expect(container.querySelector(`.${styles.persistentCopy}`)).toBeInTheDocument();
-    await waitForHighlight(container);
+    render(<CodeBlock code="const x = 1;" onCopy={onCopy} />);
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Couldn\u2019t copy");
+    expect(screen.getByRole("status")).toHaveAttribute("data-state", "failed");
+    expect(onCopy).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
   });
 
   it("copies code to clipboard on copy button click", async () => {
@@ -122,7 +163,7 @@ describe("CodeBlock", () => {
     });
 
     render(<CodeBlock code="const x = 1;" />);
-    await user.click(screen.getByRole("button", { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
     expect(writeText).toHaveBeenCalledWith("const x = 1;");
   });
 
@@ -142,7 +183,7 @@ describe("CodeBlock", () => {
         `}
       />
     );
-    await user.click(screen.getByRole("button", { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
 
     expect(writeText).toHaveBeenCalledWith(`<Chart
   data={data}
@@ -176,7 +217,7 @@ describe("CodeBlock", () => {
       codequality: gl-code-quality-report.json`}
       />
     );
-    await user.click(screen.getByRole("button", { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
 
     expect(writeText).toHaveBeenCalledWith(`fragments_governance:
   image: node:22
@@ -201,25 +242,31 @@ describe("CodeBlock", () => {
     </Card>`}
       />
     );
-    await user.click(screen.getByRole("button", { name: /copy code/i }));
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
 
     expect(writeText).toHaveBeenCalledWith(`<Card>
   <Card.Header>Title</Card.Header>
 </Card>`);
   });
 
-  it("supports collapsible mode", async () => {
+  it("folds long code behind one Show more bar", async () => {
     const user = userEvent.setup();
     const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join("\n");
-    render(<CodeBlock code={longCode} collapsible defaultCollapsed collapsedLines={5} />);
-    // Should show expand button
-    const expandBtn = screen.getByRole("button", { name: /expand code/i });
-    expect(expandBtn).toBeInTheDocument();
-    expect(expandBtn).toHaveAttribute("aria-expanded", "false");
+    const { container } = render(
+      <CodeBlock code={longCode} collapsible defaultCollapsed collapsedLines={5} />
+    );
+    const expand = screen.getByRole("button", { name: "Show 15 more lines" });
+    expect(expand).toHaveAttribute("aria-expanded", "false");
+    expect(expand).toHaveAttribute(
+      "aria-controls",
+      container.querySelector('[data-slot="code-block-code"]')?.id
+    );
+    expect(container.querySelector("pre")).not.toHaveTextContent("line 6");
 
-    await user.click(expandBtn);
-    const collapseBtn = screen.getByRole("button", { name: /collapse code/i });
-    expect(collapseBtn).toHaveAttribute("aria-expanded", "true");
+    await user.click(expand);
+    const collapse = screen.getByRole("button", { name: "Show less" });
+    expect(collapse).toHaveAttribute("aria-expanded", "true");
+    expect(container.querySelector("pre")).toHaveTextContent("line 20");
   });
 
   it("supports controlled tabbed mode with explicit tab values", async () => {
@@ -256,31 +303,21 @@ describe("CodeBlock", () => {
         ]}
       />
     );
-    const expandBtn = screen.getByRole("button", { name: /expand code/i });
+    const expandBtn = screen.getByRole("button", { name: "Show 15 more lines" });
     expect(expandBtn).toHaveAttribute("aria-expanded", "false");
-    expect(expandBtn).toHaveTextContent("Show 15 more lines");
-  });
-
-  it("uses Expand / Collapse copy when collapseAction is expand", async () => {
-    const user = userEvent.setup();
-    const longCode = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join("\n");
-    render(
-      <CodeBlock
-        code={longCode}
-        collapsible
-        defaultCollapsed
-        collapsedLines={6}
-        collapseAction="expand"
-      />
-    );
-    const expandBtn = screen.getByRole("button", { name: /expand code/i });
-    expect(expandBtn).toHaveTextContent("Expand");
-    await user.click(expandBtn);
-    expect(screen.getByRole("button", { name: /collapse code/i })).toHaveTextContent("Collapse");
   });
 
   it("has no accessibility violations", async () => {
     const { container } = render(<CodeBlock code="const x = 1;" />);
+    await waitForHighlight(container);
+    await expectNoA11yViolations(container);
+  });
+
+  it("has no accessibility violations with a title, line numbers and a fold", async () => {
+    const longCode = Array.from({ length: 8 }, (_, i) => `line ${i + 1}`).join("\n");
+    const { container } = render(
+      <CodeBlock code={longCode} title="lines.txt" showLineNumbers collapsible collapsedLines={3} />
+    );
     await waitForHighlight(container);
     await expectNoA11yViolations(container);
   });

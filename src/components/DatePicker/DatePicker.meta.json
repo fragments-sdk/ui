@@ -1,0 +1,307 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "DatePicker",
+  "description": "Selects a date or date range from a calendar.",
+  "category": "inputs",
+  "tags": ["date", "picker", "calendar", "range", "form", "input"],
+  "status": "stable",
+  "dependencies": [
+    {
+      "name": "react-day-picker",
+      "version": ">=9.0.0",
+      "reason": "Optional — renders the calendar popup; the trigger and form field work without it."
+    }
+  ],
+  "sourcePath": "src/components/DatePicker/index.tsx",
+  "exportName": "DatePicker",
+  "propsSummary": [
+    "children: node (required)",
+    "className: string",
+    "mode: single|range (default: single)",
+    "value: object",
+    "defaultValue: object",
+    "onValueChange: function",
+    "numberOfMonths: number (default: 1)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "size: sm|md (default: md)",
+    "disabledDates: union",
+    "placeholder: string",
+    "locale: object",
+    "format: function",
+    "open: boolean",
+    "onOpenChange: function",
+    "name: string",
+    "label: string",
+    "helperText: string",
+    "invalid: boolean (default: false)",
+    "errorMessage: string"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "DatePicker trigger and content",
+      "required": true
+    },
+    "className": {
+      "type": "string",
+      "description": "Wrapper class name",
+      "required": false
+    },
+    "mode": {
+      "type": "enum",
+      "description": "Selection mode",
+      "default": "single",
+      "required": false,
+      "values": ["single", "range"]
+    },
+    "value": {
+      "type": "object",
+      "description": "Controlled value: Date | null in single mode, DateRange | null in range mode",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "object",
+      "description": "Initial value for uncontrolled use, typed by mode",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new value, typed by mode: (date: Date | null) in single mode, (range: DateRange | null) in range mode",
+      "required": false
+    },
+    "numberOfMonths": {
+      "type": "number",
+      "description": "Number of months displayed side-by-side",
+      "default": "1",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable the picker",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Shows the value with a dashed edge; the calendar stays shut",
+      "default": false,
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Trigger size",
+      "default": "md",
+      "required": false,
+      "values": ["sm", "md"]
+    },
+    "disabledDates": {
+      "type": "union",
+      "description": "Dates to disable (react-day-picker Matcher | Matcher[])",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Trigger placeholder text",
+      "required": false
+    },
+    "locale": {
+      "type": "object",
+      "description": "date-fns locale for i18n",
+      "required": false
+    },
+    "format": {
+      "type": "function",
+      "description": "Formats one date for the trigger. Defaults to Intl in the locale (long for single, medium for each range end); ranges join with an en dash",
+      "required": false
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled popover open state",
+      "required": false
+    },
+    "onOpenChange": {
+      "type": "function",
+      "description": "Popover open state change callback",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Hidden input name for forms",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible label text above the date picker",
+      "required": false
+    },
+    "helperText": {
+      "type": "string",
+      "description": "Helper text shown below the date picker",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Marks the value invalid: the danger edge, aria-invalid and the error message",
+      "default": false,
+      "required": false
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Words shown under the trigger while invalid, with a warning icon",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "A date the user picks off a calendar",
+      "A start and end date together",
+      "Filtering by date"
+    ],
+    "whenNot": [
+      "Time on its own (use a dedicated TimePicker)",
+      "A handful of known dates (use Select)",
+      "Typed date entry (use Input with a date mask)"
+    ],
+    "guidelines": [
+      "Pair range mode with numberOfMonths={2} so both ends are visible",
+      "size=\"sm\" lines the trigger up with other dense toolbar controls",
+      "Offer at most a few presets for the common ranges: Today, Last 7 days, Last 30 days",
+      "disabledDates blocks past or unavailable days before the user tries",
+      "Placeholder names the date, not the action",
+      "A single pick closes the calendar at once; a range stays open until Escape or an outside click",
+      "DatePicker.Trigger defaults to type=\"button\", so it is safe inside a form"
+    ],
+    "accessibility": [
+      "The visible label names the trigger, followed by the current value (aria-labelledby)",
+      "Helper and error text describe the trigger (aria-describedby); invalid sets aria-invalid",
+      "The calendar grid is fully keyboard navigable; arrow keys move between days",
+      "Escape closes the calendar and focus returns to the trigger",
+      "Read-only keeps the trigger focusable but holds the calendar shut"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Trigger opens one month; today carries the strong line.",
+      "code": "<DatePicker label=\"Start date\" placeholder=\"Pick a date\">\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Controlled",
+      "description": "One value and one callback.",
+      "code": "const [date, setDate] = React.useState<Date | null>(null);\n\n<DatePicker label=\"Start date\" value={date} onValueChange={setDate}>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Small Trigger",
+      "description": "Matches the height of other sm toolbar controls.",
+      "code": "<DatePicker size=\"sm\" label=\"Last scanned\" placeholder=\"Any time\">\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Date Range",
+      "description": "Two months side by side so both ends of the range are visible.",
+      "code": "import type { DateRange } from \"@/components/DatePicker\";\n\nconst [range, setRange] = React.useState<DateRange | null>(null);\n\n<DatePicker\n  mode=\"range\"\n  label=\"Window\"\n  numberOfMonths={2}\n  value={range}\n  onValueChange={setRange}\n>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Disabled Dates",
+      "description": "Days before today are struck through and unclickable.",
+      "code": "<DatePicker\n  label=\"Ships on\"\n  placeholder=\"Select a future date\"\n  disabledDates={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}\n>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "With Presets",
+      "description": "A few ghost buttons above the calendar skip the common ranges.",
+      "code": "const today = new Date(2026, 9, 4);\nconst weekAgo = new Date(2026, 8, 28);\n\n<DatePicker mode=\"range\" label=\"Window\" numberOfMonths={2}>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Preset range={{ from: today, to: today }}>Today</DatePicker.Preset>\n    <DatePicker.Preset range={{ from: weekAgo, to: today }}>Last 7 days</DatePicker.Preset>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "With Helper Text",
+      "description": "Label above the trigger, supporting text below it.",
+      "code": "<DatePicker\n  label=\"Renewal date\"\n  placeholder=\"Pick a date\"\n  helperText=\"Billing restarts on this day each month.\"\n>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The danger edge on the trigger, and the reason below it with an icon.",
+      "code": "<DatePicker\n  label=\"Start date\"\n  placeholder=\"Pick a date\"\n  invalid\n  errorMessage=\"Pick a start date before the end date\"\n>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Read Only",
+      "description": "The value with a dashed edge; the calendar stays shut.",
+      "code": "<DatePicker label=\"Start date\" defaultValue={new Date(2026, 9, 3)} readOnly>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    },
+    {
+      "name": "Disabled",
+      "description": "Dimmed; the calendar will not open.",
+      "code": "<DatePicker label=\"Start date\" placeholder=\"Pick a date\" disabled>\n  <DatePicker.Trigger />\n  <DatePicker.Content>\n    <DatePicker.Calendar />\n  </DatePicker.Content>\n</DatePicker>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select for choosing from a list of options"
+    },
+    {
+      "component": "Input",
+      "relationship": "sibling",
+      "note": "Use Input for free-form text date entry"
+    },
+    {
+      "component": "Popover",
+      "relationship": "composition",
+      "note": "DatePicker uses Popover for the calendar dropdown"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "mode: \"single\" | \"range\" - selection mode",
+      "value / defaultValue: Date | null (single) or DateRange | null (range)",
+      "onValueChange: (value) => void - typed by mode",
+      "numberOfMonths: number - months visible (default 1)",
+      "size: \"sm\" | \"md\" - trigger size (default md)",
+      "label: string - visible label text, names the trigger",
+      "helperText: string - helper text below field",
+      "invalid: boolean + errorMessage: string - danger edge, aria-invalid and message",
+      "readOnly: boolean - value shown, calendar held shut",
+      "disabled: boolean - disable picker",
+      "disabledDates: Matcher - dates to disable",
+      "format: (date) => string - one formatter; Intl by locale otherwise; ranges join with an en dash",
+      "DatePicker.Trigger: button props supported (type defaults to \"button\")"
+    ],
+    "a11yRules": ["A11Y_DATEPICKER_KEYBOARD", "A11Y_DATEPICKER_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root", "Trigger", "Content", "Calendar", "Preset", "preload"],
+    "requiredChildren": ["Trigger", "Content"],
+    "commonPatterns": [
+      "<DatePicker size=\"sm\" label=\"Due\" value={date} onValueChange={setDate}><DatePicker.Trigger /><DatePicker.Content><DatePicker.Calendar /></DatePicker.Content></DatePicker>",
+      "<DatePicker mode=\"range\" label=\"Window\" numberOfMonths={2} value={range} onValueChange={setRange}><DatePicker.Trigger /><DatePicker.Content><DatePicker.Calendar /></DatePicker.Content></DatePicker>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:54.712Z"
+  },
+  "cssVariables": [
+    "--fui-bg-hover",
+    "--fui-control-checked-bg",
+    "--fui-control-checked-bg-hover",
+    "--fui-control-checked-color",
+    "--fui-control-height-xs",
+    "--fui-control-selected-bg",
+    "--fui-field-border",
+    "--fui-font-weight-normal",
+    "--fui-font-weight-semibold",
+    "--fui-icon-xs",
+    "--fui-overlay-layer-anchored",
+    "--fui-radius-control",
+    "--fui-raw-space-24",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

@@ -3,6 +3,8 @@
 import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui/react/tooltip";
 import styles from "./Tooltip.module.scss";
+import { useThemePortalProps } from "../Theme/context";
+import { POPUP_COLLISION_PADDING_PX, POPUP_OFFSET_PX } from "../../recipes/popup";
 
 // ============================================
 // Types
@@ -11,187 +13,217 @@ import styles from "./Tooltip.module.scss";
 export type TooltipSide = "top" | "bottom" | "left" | "right";
 export type TooltipAlign = "start" | "center" | "end";
 
-export interface TooltipProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  "content" | "defaultChecked"
-> {
-  /** The element that triggers the tooltip */
+/** How long a pointer rests on a trigger before the first tip opens. */
+export const TOOLTIP_COLD_DELAY_MS = 500;
+/** How long after a tip hides the next one opens at once. */
+export const TOOLTIP_WARM_WINDOW_MS = 300;
+
+/**
+ * A short label for a control, on the inverse fill. It opens after a rest
+ * (500ms), at once while another tip has just closed (300ms window) and at
+ * once on keyboard focus; a press quiets it until the pointer leaves.
+ * @see https://usefragments.com/components/tooltip
+ */
+export interface TooltipProps {
+  /** The control the tip labels. A disabled control is wrapped so it still shows the tip on hover. */
   children: React.ReactElement;
-  /** Content to display in the tooltip */
+  /** The tip text */
   content: React.ReactNode;
-  /** Which side to show the tooltip */
+  /** A keyboard shortcut shown after the text, such as "⌘K" */
+  shortcut?: React.ReactNode;
+  /** @default "top" */
   side?: TooltipSide;
-  /** Alignment along the side */
+  /** @default "center" */
   align?: TooltipAlign;
-  /** Offset from the trigger (px) */
-  sideOffset?: number;
-  /** Delay before showing (ms) */
+  /** Rest before opening (ms). Defaults to the provider's delay, or 500 with the warm window. */
   delay?: number;
-  /** Delay before hiding (ms) */
+  /** Delay before hiding (ms).
+   * @default 0 */
   closeDelay?: number;
-  /** Whether the tooltip is disabled */
+  /** Render the child alone, with no tip */
   disabled?: boolean;
-  /** Show arrow pointing to trigger */
-  arrow?: boolean;
   /** Controlled open state */
   open?: boolean;
   /** Default open state */
   defaultOpen?: boolean;
-  /** Callback when open state changes */
+  /** Called when the open state changes */
   onOpenChange?: (open: boolean) => void;
-  /** Whether clicking the trigger closes the tooltip.
-   * @default false */
+  /** Whether pressing the trigger closes the tip until the pointer leaves.
+   * @default true */
   closeOnClick?: boolean;
-  /** Explicit props for the tooltip popup element (preferred over top-level HTMLAttributes for clarity) */
-  contentProps?: React.HTMLAttributes<HTMLDivElement>;
+  /** Props for the tip surface (id, className, data attributes) */
+  contentProps?: TooltipContentProps;
 }
+
+/** Props for the tip surface: HTML attributes and `data-*` attributes. */
+export type TooltipContentProps = React.HTMLAttributes<HTMLDivElement> & {
+  [attribute: `data-${string}`]: string | number | boolean | undefined;
+};
 
 export interface TooltipProviderProps {
   children: React.ReactNode;
-  /** Default delay for all tooltips (ms) */
+  /** Rest before the first tip opens (ms).
+   * @default 500 */
   delay?: number;
-  /** Default close delay for all tooltips (ms) */
+  /** Delay before hiding (ms).
+   * @default 0 */
   closeDelay?: number;
-  /** Timeout for instant open when moving between tooltips (ms) */
+  /** How long after a tip hides the next one opens at once (ms).
+   * @default 300 */
   timeout?: number;
-  /** Alias for `delay` (Radix convention) */
-  delayDuration?: number;
-  /** Alias for `timeout` (Radix convention) */
-  skipDelayDuration?: number;
+}
+
+// ============================================
+// Warm window for tips outside a provider
+// ============================================
+
+const TooltipProviderContext = React.createContext(false);
+
+let warmUntil = 0;
+let warmVersion = 0;
+let coolTimer: ReturnType<typeof setTimeout> | undefined;
+const warmListeners = new Set<() => void>();
+
+function emitWarm() {
+  warmVersion += 1;
+  for (const listener of warmListeners) listener();
+}
+
+function markWarm() {
+  warmUntil = Date.now() + TOOLTIP_WARM_WINDOW_MS;
+  emitWarm();
+  clearTimeout(coolTimer);
+  coolTimer = setTimeout(emitWarm, TOOLTIP_WARM_WINDOW_MS);
+}
+
+function subscribeWarm(listener: () => void) {
+  warmListeners.add(listener);
+  return () => {
+    warmListeners.delete(listener);
+  };
+}
+
+/** Re-renders when a tip hides and when the window ends; the clock decides. */
+function useWarm() {
+  React.useSyncExternalStore(
+    subscribeWarm,
+    () => warmVersion,
+    () => 0
+  );
+  return Date.now() < warmUntil;
+}
+
+function isDisabledControl(child: React.ReactElement) {
+  const props = (child.props ?? {}) as { disabled?: unknown };
+  return props.disabled === true;
 }
 
 // ============================================
 // Components
 // ============================================
 
-const TooltipProviderContext = React.createContext(false);
-
 /**
- * Tooltip - Shows contextual information on hover/focus
- *
  * @example
  * ```tsx
- * <Tooltip content="Save your changes">
- *   <Button>Save</Button>
+ * <Tooltip content="Save" shortcut="⌘S">
+ *   <IconButton aria-label="Save" icon={<SaveIcon />} />
  * </Tooltip>
  * ```
  */
 function TooltipRoot({
   children,
   content,
+  shortcut,
   side = "top",
   align = "center",
-  sideOffset = 6,
   delay,
   closeDelay,
   disabled = false,
-  arrow = true,
   open,
   defaultOpen,
   onOpenChange,
-  closeOnClick = false,
+  closeOnClick = true,
   contentProps,
-  className,
-  style,
-  ...htmlProps
 }: TooltipProps) {
-  const hasExternalProvider = React.useContext(TooltipProviderContext);
-  const renderTrigger = React.useCallback(
-    (triggerProps: React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> }) => {
-      const childProps = children.props as Record<string, unknown>;
-      const mergedProps: Record<string, unknown> = { ...childProps, ...triggerProps };
+  const portalProps = useThemePortalProps();
+  const hasProvider = React.useContext(TooltipProviderContext);
+  const isWarm = useWarm();
 
-      for (const [key, triggerHandler] of Object.entries(triggerProps)) {
-        const childHandler = childProps[key];
-        if (
-          key.startsWith("on") &&
-          typeof triggerHandler === "function" &&
-          typeof childHandler === "function"
-        ) {
-          mergedProps[key] = (...args: unknown[]) => {
-            (childHandler as (...event: unknown[]) => void)(...args);
-            (triggerHandler as (...event: unknown[]) => void)(...args);
-          };
-        }
-      }
-
-      return React.cloneElement(children, mergedProps);
+  const handleOpenChange = React.useCallback(
+    (next: boolean) => {
+      if (!next && !hasProvider) markWarm();
+      onOpenChange?.(next);
     },
-    [children]
+    [hasProvider, onOpenChange]
   );
 
   if (disabled || !children) {
     return children ?? null;
   }
 
-  const {
-    className: contentClassName,
-    style: contentStyle,
-    ...contentHtmlProps
-  } = contentProps ?? {};
+  const restDelay = delay ?? (hasProvider ? undefined : isWarm ? 0 : TOOLTIP_COLD_DELAY_MS);
 
-  const tooltipNode = (
-    <BaseTooltip.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
-      <BaseTooltip.Trigger closeOnClick={closeOnClick} render={renderTrigger} />
-      <BaseTooltip.Portal>
+  // A disabled control takes no pointer events, so a host span carries the
+  // hover for it; keyboard users never land on a disabled control.
+  const trigger = isDisabledControl(children) ? (
+    <span className={styles.disabledHost} data-tooltip-disabled-host="">
+      {children}
+    </span>
+  ) : (
+    children
+  );
+
+  const { className: contentClassName, ...contentHtmlProps } = contentProps ?? {};
+
+  return (
+    <BaseTooltip.Root open={open} defaultOpen={defaultOpen} onOpenChange={handleOpenChange}>
+      <BaseTooltip.Trigger
+        delay={restDelay}
+        closeDelay={closeDelay}
+        closeOnClick={closeOnClick}
+        render={trigger}
+      />
+      <BaseTooltip.Portal {...portalProps}>
         <BaseTooltip.Positioner
           side={side}
           align={align}
-          sideOffset={sideOffset}
+          sideOffset={POPUP_OFFSET_PX}
+          collisionPadding={POPUP_COLLISION_PADDING_PX}
           className={styles.positioner}
         >
           <BaseTooltip.Popup
-            {...htmlProps}
             {...contentHtmlProps}
-            className={[styles.popup, className, contentClassName].filter(Boolean).join(" ")}
-            style={{ ...(style ?? {}), ...(contentStyle ?? {}) }}
+            className={[styles.popup, contentClassName].filter(Boolean).join(" ")}
           >
             {content}
-            {arrow && <BaseTooltip.Arrow className={styles.arrow} />}
+            {shortcut != null && <kbd className={styles.shortcut}>{shortcut}</kbd>}
           </BaseTooltip.Popup>
         </BaseTooltip.Positioner>
       </BaseTooltip.Portal>
     </BaseTooltip.Root>
   );
-
-  // Only create a local provider when no shared provider exists, or when a local delay override is requested.
-  if (!hasExternalProvider || delay !== undefined || closeDelay !== undefined) {
-    return (
-      <BaseTooltip.Provider delay={delay ?? 400} closeDelay={closeDelay ?? 0}>
-        {tooltipNode}
-      </BaseTooltip.Provider>
-    );
-  }
-
-  return tooltipNode;
 }
 
 /**
- * TooltipProvider - Manages shared delay behavior for multiple tooltips
+ * Shares one rest and one warm window across a group of tips (a toolbar).
  *
  * @example
  * ```tsx
- * <TooltipProvider delay={200}>
- *   <Tooltip content="First">...</Tooltip>
- *   <Tooltip content="Second">...</Tooltip>
+ * <TooltipProvider>
+ *   <Tooltip content="Bold">...</Tooltip>
+ *   <Tooltip content="Italic">...</Tooltip>
  * </TooltipProvider>
  * ```
  */
 export function TooltipProvider({
   children,
-  delay,
+  delay = TOOLTIP_COLD_DELAY_MS,
   closeDelay = 0,
-  timeout,
-  delayDuration,
-  skipDelayDuration,
+  timeout = TOOLTIP_WARM_WINDOW_MS,
 }: TooltipProviderProps) {
-  // Resolve Radix-compatible aliases
-  const resolvedDelay = delay ?? delayDuration ?? 400;
-  const resolvedTimeout = timeout ?? skipDelayDuration ?? 400;
-
   return (
     <TooltipProviderContext.Provider value={true}>
-      <BaseTooltip.Provider delay={resolvedDelay} closeDelay={closeDelay} timeout={resolvedTimeout}>
+      <BaseTooltip.Provider delay={delay} closeDelay={closeDelay} timeout={timeout}>
         {children}
       </BaseTooltip.Provider>
     </TooltipProviderContext.Provider>
@@ -199,6 +231,5 @@ export function TooltipProvider({
 }
 
 export const Tooltip = Object.assign(TooltipRoot, {
-  Root: TooltipRoot,
   Provider: TooltipProvider,
 });

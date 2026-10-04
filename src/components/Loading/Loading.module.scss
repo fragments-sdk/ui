@@ -1,307 +1,83 @@
 @use "../../tokens/variables" as *;
-@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/layout" as layout;
+@use "../../recipes/loading" as loading;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
 
-// ============================================
-// Loading Base
-// ============================================
+@layer fui.tokens, fui.base, fui.components;
 
-.loading {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-}
+@layer fui.components {
+  // One spinner, 16px, in the surrounding ink. It turns at a constant speed
+  // and keeps turning under reduced motion (essential progress).
+  .loading {
+    --_fui-loading-size: #{representation.icon-size("md")};
 
-// ============================================
-// Sizes
-// ============================================
-
-@each $size in ("sm", "md", "lg", "xl") {
-  .#{$size} {
-    @include representation.activity($size);
-  }
-}
-
-// ============================================
-// Colors
-// ============================================
-
-.color-accent {
-  color: var(--fui-color-accent, $fui-color-accent);
-}
-
-.color-current {
-  color: currentColor;
-}
-
-.color-muted {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-
-// ============================================
-// Layout Modifiers
-// ============================================
-
-.centered {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.fill {
-  inline-size: 100%;
-  block-size: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// ============================================
-// Spinner kind
-// ============================================
-
-.spinnerIcon {
-  inline-size: 100%;
-  block-size: 100%;
-  animation: spin var(--fui-duration-spin, $fui-duration-spin) linear infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-// ============================================
-// Dots kind
-// ============================================
-
-// `.dots`/`.pulse` on the root are kind hooks only — sizing lives on the
-// inner track. Sharing one class between root and track let the track's
-// 100% × 100% override the root's fixed activity footprint (rendered 0 × 0).
-.dotsTrack {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  inline-size: 100%;
-  block-size: 100%;
-}
-
-.dot {
-  inline-size: 25%;
-  block-size: 25%;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: currentColor;
-  animation: bounce var(--fui-duration-pulse, $fui-duration-pulse) ease-in-out infinite;
-
-  &:nth-child(1) {
-    animation-delay: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-inline-size: var(--_fui-loading-size, #{representation.icon-size("md")});
+    min-block-size: var(--_fui-loading-size, #{representation.icon-size("md")});
+    color: currentColor;
+    vertical-align: middle;
   }
 
-  &:nth-child(2) {
-    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 8);
+  // Inside a line of text the spinner takes the text's size.
+  .inline {
+    --_fui-loading-size: 1em;
+
+    vertical-align: -0.125em;
   }
 
-  &:nth-child(3) {
-    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 4);
+  .fill {
+    display: flex;
+    inline-size: 100%;
+    block-size: 100%;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
-  }
-}
+  .spinner,
+  .screenSpinner {
+    inline-size: var(--_fui-loading-size, #{representation.icon-size("md")});
+    block-size: var(--_fui-loading-size, #{representation.icon-size("md")});
+    flex: 0 0 auto;
 
-@keyframes bounce {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
-  }
-  30% {
-    transform: translateY(-30%);
-    opacity: 1;
-  }
-}
-
-// ============================================
-// Pulse kind
-// ============================================
-
-.pulseTrack {
-  position: relative;
-  inline-size: 100%;
-  block-size: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pulseRing {
-  position: absolute;
-  inline-size: 100%;
-  block-size: 100%;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: currentColor;
-  opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
-  animation: pulseRing var(--fui-duration-pulse, $fui-duration-pulse) ease-out infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
-  }
-}
-
-.pulseDot {
-  inline-size: 50%;
-  block-size: 50%;
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  background-color: currentColor;
-  z-index: 1;
-}
-
-@keyframes pulseRing {
-  0% {
-    transform: scale(0.5);
-    opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-}
-
-// ============================================
-// Overlay
-// ============================================
-
-.fragmentsIcon {
-  inline-size: 100%;
-  block-size: 100%;
-  overflow: visible;
-}
-
-.fragmentsTrack {
-  opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
-}
-
-.fragmentsDrawing path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: drawFragment calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 1.2)
-    cubic-bezier(0.45, 0, 0.2, 1) infinite;
-
-  &:nth-child(2) {
-    animation-delay: calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 0.08);
+    @include loading.spinner;
   }
 
-  &:nth-child(3) {
-    animation-delay: calc(var(--fui-duration-shimmer, #{$fui-duration-shimmer}) * 0.16);
+  @include loading.keyframes;
+
+  // The label is read, not shown.
+  .label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    stroke-dashoffset: 0;
+  // ============================================
+  // Screen: the canvas, waiting
+  // ============================================
+
+  .screen {
+    --_fui-loading-size: #{representation.icon-size("md")};
+
+    position: fixed;
+    inset: 0;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: layout.gap("sm");
+    background-color: var(--fui-app-canvas-bg, #{$fui-body-bg});
+    color: var(--fui-text-secondary, $fui-text-secondary);
   }
-}
 
-@keyframes drawFragment {
-  0%,
-  8% {
-    stroke-dashoffset: 1;
-    opacity: 0;
+  .screenLabel {
+    @include typography.role("body-compact");
+
+    color: var(--fui-text-secondary, $fui-text-secondary);
   }
-  12% {
-    opacity: 1;
-  }
-  48%,
-  68% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  96%,
-  100% {
-    stroke-dashoffset: -1;
-    opacity: 0;
-  }
-}
-
-.overlayBackdrop {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--fui-backdrop, $fui-backdrop);
-  z-index: var(--fui-overlay-layer-backdrop, #{$fui-overlay-layer-backdrop});
-}
-
-.overlay {
-  // Additional styling if needed when in overlay mode
-}
-
-// ============================================
-// Inline
-// ============================================
-
-.inline {
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
-}
-
-// The inline spinner scales with the surrounding text, so its box is an em
-// measure rather than a glyph step; the md icon is the fallback.
-.inline-sm {
-  --_loading-inline-size: 0.875em;
-}
-
-.inline-md {
-  --_loading-inline-size: 1.125em;
-}
-
-.inlineSpinner {
-  inline-size: var(--_loading-inline-size, var(--fui-icon-md, #{$fui-icon-md}));
-  block-size: var(--_loading-inline-size, var(--fui-icon-md, #{$fui-icon-md}));
-  animation: spin var(--fui-duration-spin, $fui-duration-spin) linear infinite;
-  color: currentColor;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
-  }
-}
-
-// ============================================
-// Screen (Full-screen loading)
-// ============================================
-
-.screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  color: var(--fui-text-primary, $fui-text-primary);
-  z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
-}
-
-.screenLabel {
-  @include typography.role("body-compact");
-
-  color: var(--fui-text-secondary, $fui-text-secondary);
 }

@@ -1,4 +1,6 @@
+import { resolve } from "node:path";
 import { act, render, screen } from "@testing-library/react";
+import * as sass from "sass";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ScrollArea } from ".";
 
@@ -84,26 +86,120 @@ describe("ScrollArea", () => {
     expect(container.firstChild).toHaveAttribute("data-orientation", "horizontal");
   });
 
-  it("defaults to vertical with inert state attributes and no observers", () => {
+  it("defaults to vertical with no fades and one set of observers", () => {
     const { container } = render(<ScrollArea>Content</ScrollArea>);
 
     expect(container.firstChild).toHaveAttribute("data-orientation", "vertical");
     expect(viewport(container)).toHaveAttribute("data-scroll-x", "none");
     expect(viewport(container)).toHaveAttribute("data-scroll-y", "none");
-    expect(resizeObservers).toHaveLength(0);
-    expect(mutationObservers).toHaveLength(0);
-    expect(frameCallbacks.size).toBe(0);
-  });
-
-  it("enables fade indicators explicitly", () => {
-    const { container } = render(<ScrollArea showFades>Content</ScrollArea>);
-
-    expect(container.firstChild).toHaveAttribute("data-orientation", "vertical");
-    expect(viewport(container)).toHaveAttribute("data-scroll-x", "none");
-    expect(viewport(container)).toHaveAttribute("data-scroll-y", "none");
+    expect(viewport(container)).toHaveAttribute("data-scrollbar-visibility", "auto");
     expect(resizeObservers).toHaveLength(1);
     expect(mutationObservers).toHaveLength(1);
     expect(frameCallbacks.size).toBe(1);
+  });
+
+  it("keeps fades off until showFades asks for them", () => {
+    const { container } = render(
+      <ScrollArea>
+        <div>Tall content</div>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    setMetrics(element, { clientHeight: 100, scrollHeight: 300, scrollTop: 0 });
+    flushFrame();
+
+    expect(element).toHaveAttribute("data-scroll-y", "none");
+  });
+
+  it("enables fade indicators explicitly", () => {
+    const { container } = render(
+      <ScrollArea showFades>
+        <div>Tall content</div>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    setMetrics(element, { clientHeight: 100, scrollHeight: 300, scrollTop: 0 });
+    flushFrame();
+
+    expect(element).toHaveAttribute("data-scroll-y", "end");
+  });
+
+  it("lets a scrolling viewport with nothing focusable take the keyboard as a named region", () => {
+    const { container } = render(
+      <ScrollArea aria-label="Build log">
+        <p>Line one</p>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    expect(element).not.toHaveAttribute("tabindex");
+
+    setMetrics(element, { clientHeight: 100, scrollHeight: 300, scrollTop: 0 });
+    flushFrame();
+
+    expect(element).toHaveAttribute("tabindex", "0");
+    expect(element).toHaveAttribute("role", "region");
+    expect(element).toHaveAttribute("aria-label", "Build log");
+    expect(container.firstChild).not.toHaveAttribute("aria-label");
+  });
+
+  it("leaves the keyboard to focusable content", () => {
+    const { container } = render(
+      <ScrollArea>
+        <a href="#one">One</a>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    setMetrics(element, { clientHeight: 100, scrollHeight: 300, scrollTop: 0 });
+    flushFrame();
+
+    expect(element).not.toHaveAttribute("tabindex");
+  });
+
+  it("takes the keyboard back when its only focusable child is disabled", () => {
+    const { container } = render(
+      <ScrollArea aria-label="Actions">
+        <button type="button">Retry</button>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    setMetrics(element, { clientHeight: 100, scrollHeight: 300, scrollTop: 0 });
+    flushFrame();
+    expect(element).not.toHaveAttribute("tabindex");
+
+    expect(mutationObservers[0].observe).toHaveBeenCalledWith(
+      element,
+      expect.objectContaining({
+        attributes: true,
+        attributeFilter: ["disabled", "href", "tabindex", "contenteditable"],
+      })
+    );
+    screen.getByRole("button").setAttribute("disabled", "");
+    act(() => {
+      mutationObservers[0].callback([], mutationObservers[0] as unknown as MutationObserver);
+    });
+    flushFrame();
+
+    expect(element).toHaveAttribute("tabindex", "0");
+  });
+
+  it("marks the viewport while it scrolls so auto shows the scrollbar", () => {
+    vi.useFakeTimers();
+    try {
+      const { container } = render(<ScrollArea>Content</ScrollArea>);
+      const element = viewport(container);
+
+      act(() => {
+        element.dispatchEvent(new Event("scroll"));
+      });
+      expect(element).toHaveAttribute("data-scrolling");
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(element).not.toHaveAttribute("data-scrolling");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("reads both axes independently on the scheduled layout frame", () => {
@@ -204,5 +300,20 @@ describe("ScrollArea", () => {
     expect(frameCallbacks.size).toBe(0);
     expect(resizeObserver.disconnect).toHaveBeenCalledOnce();
     expect(mutationObserver.disconnect).toHaveBeenCalledOnce();
+  });
+});
+
+describe("ScrollArea focus ring", () => {
+  const css = sass
+    .compile(resolve(process.cwd(), "src/components/ScrollArea/ScrollArea.module.scss"), {
+      style: "expanded",
+    })
+    .css.replace(/\s+/g, " ");
+
+  it("rings the root outside its edge, clear of the viewport's edge mask", () => {
+    expect(css).toMatch(
+      /\.root:has\(> \.viewport:focus-visible\) \{ outline: [^;]+ solid [^;]+; outline-offset: var\(--fui-focus-ring-offset/
+    );
+    expect(css).toMatch(/\.viewport:focus-visible \{ outline: none; \}/);
   });
 });

@@ -2,467 +2,313 @@
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action" as action;
+@use "../../recipes/focus";
 @use "../../recipes/layout" as layout;
-@use "../../recipes/navigation" as navigation;
-@use "../../recipes/overlay" as overlay;
 @use "../../recipes/popup" as popup;
+@use "../../recipes/selection";
+@use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
 
-// ============================================
-// Header Root
-// ============================================
+$_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+$_track: action.track("md");
 
-.header {
-  @include navigation.properties;
-  // Container query context: children respond to header width, not viewport
-  @include container(fui-header);
+@layer fui.tokens, fui.base, fui.components;
 
-  display: flex;
-  align-items: center;
-  // A header always spans its container. Without this it collapses to
-  // min-content when placed inside a flex/grid parent that centers its items.
-  width: 100%;
-  height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
-  min-height: var(--header-height, var(--fui-appshell-header-height, $fui-appshell-header-height));
-  background-color: var(--fui-app-main-bg, var(--fui-main-bg, #{$fui-main-bg}));
-  padding: 0 var(--fui-space-4, $fui-space-4);
-  z-index: var(--fui-header-z-index, $fui-header-z-index);
-}
+@layer fui.components {
+  // ============================================
+  // Root: the canvas plane, the header height token, the 16 page gutter
+  // ============================================
 
-.fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-}
+  .header {
+    // Children answer the bar's width, not the viewport's.
+    @include container(fui-header);
 
-.sticky {
-  position: sticky;
-  top: 0;
-}
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    block-size: var(--fui-appshell-header-height, #{$fui-appshell-header-height});
+    flex-shrink: 0;
+    padding-inline: layout.page-gutter();
+    background-color: var(--fui-app-canvas-bg, #{$fui-body-bg});
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    z-index: var(--fui-header-z-index, #{$fui-header-z-index});
+  }
 
-.elevatedOnScroll {
-  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid transparent;
-  transition: border-color var(--fui-transition-fast, $fui-transition-fast);
-}
+  .sticky {
+    position: sticky;
+    inset-block-start: 0;
+  }
 
-.scrolled {
-  border-bottom-color: var(--fui-border, $fui-border);
-}
+  // The hairline that appears once the page scrolls: an edge, never a shadow.
+  .elevatedOnScroll {
+    border-block-end: $_hairline solid transparent;
+    transition: border-color var(--fui-duration-micro, #{$fui-duration-micro})
+      var(--fui-ease-standard, #{$fui-ease-standard});
 
-.containerPage {
-  padding-inline: clamp(var(--fui-space-4, $fui-space-4), 4vw, var(--fui-space-12, $fui-space-12));
+    &[data-scrolled="true"] {
+      border-block-end-color: var(--fui-border, #{$fui-border});
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
 
   .container {
-    max-width: calc(var(--fui-space-12, $fui-space-12) * 31);
-    margin-inline: auto;
-  }
-}
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    inline-size: 100%;
+    min-inline-size: 0;
 
-.container {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-4, $fui-space-4);
-  width: 100%;
-  max-width: 100%;
-
-  // Compact gap when header container is narrow (replaces viewport media query)
-  @include container-max($fui-breakpoint-md, fui-header) {
-    gap: var(--fui-space-1, $fui-space-1);
+    @include container-max($fui-breakpoint-md, fui-header) {
+      gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    }
   }
-}
 
-.navCentered {
-  .container {
-    position: relative;
+  // ============================================
+  // Brand: the product name at the small title role
+  // ============================================
+
+  .brand {
+    @include typography.role("title-sm");
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    flex-shrink: 0;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    text-decoration: none;
+
+    @include focus.visible;
+
+    img,
+    svg {
+      inline-size: auto;
+    }
   }
+
+  // ============================================
+  // Navigation: md rows, regular weight, ink 2
+  // ============================================
 
   .nav {
+    display: none;
+
     @include container-min($fui-breakpoint-md, fui-header) {
-      position: absolute;
-      inset-block: 0;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
-}
-
-// ============================================
-// Brand
-// ============================================
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  text-decoration: none;
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
-  font-size: var(--fui-font-size-base, $fui-font-size-base);
-  flex-shrink: 0;
-
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  img,
-  svg {
-    width: auto;
-  }
-}
-
-// ============================================
-// Navigation
-// ============================================
-
-.nav {
-  display: none;
-
-  // Show navigation when header has enough space
-  @include container-min($fui-breakpoint-md, fui-header) {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.navList {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-1, $fui-space-1);
-  list-style: none;
-  margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
-
-.navItem {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.size("md");
-
-  display: flex;
-  align-items: center;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-
-  &:active {
-    background-color: var(--fui-bg-active, $fui-bg-active);
-  }
-}
-
-.navItemActive {
-  // Persistent navigation selection shares the same neutral role as Sidebar
-  // and Tabs. Do not use --fui-bg-active here: that token is for the brief
-  // pointer-down state.
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-
-  &.navItem:hover,
-  &.navItem:active {
-    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-}
-
-// ============================================
-// NavMenu (dropdown trigger)
-// ============================================
-
-.navMenuTrigger {
-  gap: var(--fui-space-1, $fui-space-1);
-  cursor: pointer;
-}
-
-.navMenuChevron {
-  transition: transform var(--fui-transition-fast, $fui-transition-fast);
-  flex-shrink: 0;
-
-  [data-popup-open] > & {
-    transform: rotate(180deg);
-  }
-}
-
-// ============================================
-// NavMenu Popup (dropdown content)
-// ============================================
-
-.navMenuPositioner {
-  z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
-  outline: none;
-}
-
-.navMenuPopup {
-  @include popup.container;
-
-  min-width: layout.measure("field-minimum");
-
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  &[data-open] {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  &[data-starting-style],
-  &[data-ending-style] {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-.navMenuItem {
-  @include button-reset;
-  @include popup.row;
-
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-
-  &[data-highlighted] {
-    @include popup.highlight-state;
-  }
-}
-
-.navMenuItemActive {
-  // Match the persistent navigation treatment in both light and dark themes.
-  background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-
-  &[data-highlighted] {
-    background-color: var(--fui-control-selected-bg, $fui-control-selected-bg);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .navMenuPopup {
-    transition: none;
-    transform: none;
-
-    &[data-starting-style],
-    &[data-ending-style] {
-      transform: none;
+      display: flex;
+      align-items: center;
+      min-inline-size: 0;
     }
   }
 
-  .navMenuChevron {
-    transition: none;
-  }
-}
-
-// ============================================
-// Search
-// ============================================
-
-.search {
-  display: none;
-  background-color: var(--fui-header-search-bg, var(--fui-bg-subtle, #{$fui-bg-subtle}));
-  border-radius: var(--fui-button-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-
-  // Show search when header has enough space
-  @include container-min($fui-breakpoint-md, fui-header) {
+  .navList {
     display: flex;
     align-items: center;
-  }
-}
-
-.searchExpandable {
-  display: flex;
-}
-
-// ============================================
-// Actions
-// ============================================
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  margin-left: auto;
-}
-
-// ============================================
-// Trigger (Mobile menu button)
-// ============================================
-
-.trigger {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("lg");
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-primary, $fui-text-primary);
-  flex-shrink: 0;
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-  }
-
-  svg {
-    @include action.glyph("lg");
-  }
-}
-
-// ============================================
-// Spacer
-// ============================================
-
-.spacer {
-  flex: 1;
-}
-
-// ============================================
-// Mobile Nav Drawer
-// ============================================
-
-.mobileNavBackdrop {
-  @include overlay.backdrop;
-
-  animation: mobileNavFadeIn var(--fui-transition-normal, $fui-transition-normal);
-}
-
-// The mobile nav is the Drawer surface: same frame, width, layer and chrome.
-.mobileNavDrawer {
-  @include overlay.side-panel("end");
-
-  animation: mobileNavSlideIn var(--fui-transition-normal, $fui-transition-normal);
-}
-
-.mobileNavHeader {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: var(--fui-space-3, $fui-space-3) var(--fui-space-4, $fui-space-4);
-  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--fui-border, $fui-border);
-}
-
-.mobileNavClose {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include action.icon-only("md");
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  &:hover {
-    background-color: var(--fui-bg-hover, $fui-bg-hover);
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-}
-
-.mobileNavBody {
-  flex: 1;
-  overflow-y: auto;
-  // Same gutter as NavigationMenu.drawerBody so both mobile navs inset their
-  // rows identically (UIR-D42).
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-navigation-gutter, #{navigation.gutter()});
-}
-
-.mobileNavLink {
-  @include button-reset;
-  @include navigation.row;
-  @include navigation.link-states;
-
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.mobileNavLinkActive {
-  @include navigation.link-active;
-}
-
-.mobileNavActions {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-space-2, $fui-space-2);
-  padding: var(--fui-space-3, $fui-space-3) 0 var(--fui-space-2, $fui-space-2);
-}
-
-@keyframes mobileNavFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes mobileNavSlideIn {
-  from {
-    transform: translateX(overlay.side-panel-offscreen("end"));
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mobileNavBackdrop,
-  .mobileNavDrawer {
-    animation: none;
-  }
-}
-
-// ============================================
-// Skip Link (Accessibility)
-// ============================================
-
-.skipLink {
-  @include visually-hidden;
-
-  position: absolute;
-  top: var(--fui-space-2, $fui-space-2);
-  left: var(--fui-space-2, $fui-space-2);
-  // Top of the layer scale: a skip link must win over every overlay.
-  z-index: var(--fui-overlay-layer-tooltip, #{$fui-overlay-layer-tooltip});
-  padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  color: var(--fui-text-primary, $fui-text-primary);
-  border: var(--fui-stroke-default, #{$fui-stroke-default}) solid
-    var(--fui-color-accent, $fui-color-accent);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  text-decoration: none;
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-
-  &:focus {
-    position: absolute;
-    width: auto;
-    height: auto;
-    clip: auto;
-    white-space: normal;
+    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
     margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-    padding: var(--fui-space-2, $fui-space-2) var(--fui-space-4, $fui-space-4);
-    overflow: visible;
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    list-style: none;
+  }
 
-    @include focus-ring;
+  .navListItem {
+    display: flex;
+  }
+
+  .navItem {
+    @include button-reset;
+    @include action.base;
+    @include action.size("md");
+    @include action.weight("regular");
+    @include action.motion;
+
+    @include target.hit-area("compact");
+
+    block-size: $_track;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+
+    @include focus.visible;
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, #{$fui-bg-hover});
+      color: var(--fui-text-primary, #{$fui-text-primary});
+    }
+
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, #{$fui-bg-active});
+      color: var(--fui-text-primary, #{$fui-text-primary});
+    }
+
+    @include action.disabled;
+
+    &[data-popup-open] {
+      background-color: var(--fui-bg-hover, #{$fui-bg-hover});
+      color: var(--fui-text-primary, #{$fui-text-primary});
+    }
+  }
+
+  // The current nav item: the wash and ring every chosen thing takes, at the
+  // item's regular weight. Hover tints over it.
+  .navItemActive {
+    @include selection.current;
+
+    &.navItem {
+      @include action.hover {
+        @include selection.current;
+        @include selection.hover-tint;
+      }
+    }
+
+    &[data-popup-open] {
+      @include selection.current;
+      @include selection.hover-tint;
+    }
+  }
+
+  // ============================================
+  // NavMenu: a nav item that opens a floating list
+  // ============================================
+
+  .navMenuTrigger {
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  // The chevron turns in the same frame the list appears.
+  .navMenuChevron {
+    @include action.glyph("micro");
+
+    color: var(--fui-text-tertiary, #{$fui-text-tertiary});
+
+    [data-popup-open] > & {
+      rotate: 180deg;
+    }
+  }
+
+  .navMenuPositioner {
+    z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
+  }
+
+  .navMenuPopup {
+    @include popup.container;
+    @include popup.motion;
+
+    min-inline-size: layout.measure("menu-min");
+  }
+
+  .navMenuItem {
+    @include button-reset;
+    @include popup.row;
+
+    inline-size: 100%;
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &[data-highlighted] {
+      // Above the include, so its forced-colours pair still wins.
+      color: var(--fui-text-primary, #{$fui-text-primary});
+
+      @include popup.highlight-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
+  }
+
+  .navMenuItemActive {
+    @include selection.current;
+
+    // The highlight tints over the current wash; the ring stays.
+    &[data-highlighted] {
+      @include selection.hover-tint;
+    }
+  }
+
+  // ============================================
+  // Search: the slot for an Input, which owns its own fill
+  // ============================================
+
+  .search {
+    display: none;
+    min-inline-size: 0;
+
+    @include container-min($fui-breakpoint-md, fui-header) {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .searchExpandable {
+    display: flex;
+    align-items: center;
+  }
+
+  // ============================================
+  // Actions: the trailing cluster, right-aligned
+  // ============================================
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    margin-inline-start: auto;
+  }
+
+  // ============================================
+  // Trigger: the navigation button
+  // ============================================
+
+  .trigger {
+    @include button-reset;
+    @include action.base;
+    @include action.icon-only("md");
+    @include action.motion;
+
+    @include target.hit-area("compact");
+
+    flex-shrink: 0;
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    cursor: pointer;
+
+    @include focus.visible;
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, #{$fui-bg-hover});
+      color: var(--fui-text-primary, #{$fui-text-primary});
+    }
+
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, #{$fui-bg-active});
+      color: var(--fui-text-primary, #{$fui-text-primary});
+    }
+
+    svg {
+      @include action.glyph("md");
+    }
+  }
+
+  // Without a sidebar to read, the trigger shows only while the bar is narrow.
+  .triggerStandalone {
+    @include container-min($fui-breakpoint-md, fui-header) {
+      display: none;
+    }
+  }
+
+  // Beside a sidebar the trigger is in the markup from the first paint (server
+  // render included) and hides from md up, where the rail is in view. A rail
+  // collapsed off the canvas drops this class, so the trigger brings it back.
+  .triggerBelowMd {
+    @include breakpoint-md {
+      display: none;
+    }
   }
 }

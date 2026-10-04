@@ -1,23 +1,39 @@
 "use client";
 
 import * as React from "react";
+import { CaretDown, Check, X } from "@phosphor-icons/react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
-import { useResolvedControlSize } from "../ComponentDefaults";
-import { mergeAriaIds, useFormFieldIds, type FormFieldProps } from "../../utils/aria";
-import { POPUP_OFFSET_PX, resolvePopupViewportRows } from "../../recipes/popup";
+import { CONTROL_SIZES, useResolvedControlSize } from "../ComponentDefaults";
+import {
+  POPUP_COLLISION_PADDING_PX,
+  POPUP_OFFSET_PX,
+  resolvePopupViewportRows,
+} from "../../recipes/popup";
 import styles from "./Combobox.module.scss";
+import { useThemePortalProps } from "../Theme/context";
 
 // ============================================
 // Types
 // ============================================
 
-interface ComboboxCommonProps extends FormFieldProps {
+export type ComboboxSize = "xs" | "sm" | "md" | "lg";
+
+interface ComboboxCommonProps {
   children: React.ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Called as the query changes; fetch async items here and pass `loading` meanwhile. */
+  onInputValueChange?: (query: string) => void;
+  disabled?: boolean;
   required?: boolean;
   readOnly?: boolean;
+  /** Marks the value invalid: the danger edge and `aria-invalid` on the input.
+   * Say why in a Field.Error; inside a Field, its `invalid` does the same. */
+  invalid?: boolean;
+  /** Items are being fetched: the list shows a "Searching…" row, announced
+   * politely, and the popup is `aria-busy`. */
+  loading?: boolean;
   name?: string;
   form?: string;
   autoComplete?: string;
@@ -25,11 +41,9 @@ interface ComboboxCommonProps extends FormFieldProps {
   placeholder?: string;
   /** Auto-highlight first matching item while filtering */
   autoHighlight?: boolean;
-  /** Size variant.
+  /** Field height on the shared control track: 24, 28, 32 or 40.
    * @default "md" */
-  size?: "sm" | "md" | "lg";
-  /** Wrapper class name */
-  className?: string;
+  size?: ComboboxSize;
 }
 
 export interface ComboboxSingleProps extends ComboboxCommonProps {
@@ -41,8 +55,6 @@ export interface ComboboxSingleProps extends ComboboxCommonProps {
   defaultValue?: string;
   /** Called when selection changes */
   onValueChange?: (value: string | null) => void;
-  /** Alias for onValueChange */
-  onChange?: (value: string | null) => void;
 }
 
 export interface ComboboxMultipleProps extends ComboboxCommonProps {
@@ -54,8 +66,6 @@ export interface ComboboxMultipleProps extends ComboboxCommonProps {
   defaultValue?: string[];
   /** Called when selection changes */
   onValueChange?: (value: string[]) => void;
-  /** Alias for onValueChange */
-  onChange?: (value: string[]) => void;
 }
 
 export type ComboboxProps = ComboboxSingleProps | ComboboxMultipleProps;
@@ -100,68 +110,6 @@ export interface ComboboxGroupLabelProps extends React.HTMLAttributes<HTMLElemen
 }
 
 // ============================================
-// Icons
-// ============================================
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}
-
-// ============================================
 // Context for Combobox state
 // ============================================
 
@@ -175,12 +123,13 @@ interface ComboboxContextValue {
   incrementItemsVersion: () => void;
   explicitTriggerCount: number;
   registerTrigger: () => () => void;
-  size: "sm" | "md" | "lg";
-  // Id applied to Combobox.Input so a native <label htmlFor> can target it.
-  inputId?: string;
-  /** Mirrors the wrapper's `data-invalid` onto the input as `aria-invalid`, so
-   * assistive tech hears the state the danger edge is painting. */
+  size: ComboboxSize;
+  /** Puts `aria-invalid` on the input, so assistive tech hears the state the
+   * danger edge is painting. */
   invalid?: boolean;
+  loading?: boolean;
+  /** The current query, so the empty row can name it. */
+  query: string;
 }
 
 const EMPTY_STATIC_LABELS = new Map<string, string>();
@@ -194,6 +143,7 @@ const ComboboxContext = React.createContext<ComboboxContextValue>({
   explicitTriggerCount: 0,
   registerTrigger: () => () => {},
   size: "md",
+  query: "",
 });
 
 const EMPTY_FILTERED_ITEM_INDICES = new Map<string, number>();
@@ -314,39 +264,49 @@ function containsEmptySlot(node: React.ReactNode): boolean {
   return found;
 }
 
+/** Split top-level Empty slots from the options, so only options sit in the listbox. */
+function partitionEmptySlots(node: React.ReactNode): {
+  options: React.ReactNode[];
+  empties: React.ReactNode[];
+} {
+  const options: React.ReactNode[] = [];
+  const empties: React.ReactNode[] = [];
+  // toArray keys each child, so the two arrays render without key warnings.
+  for (const child of React.Children.toArray(node)) {
+    if (React.isValidElement(child) && child.type === ComboboxEmpty) empties.push(child);
+    else options.push(child);
+  }
+  return { options, empties };
+}
+
 // ============================================
 // Components
 // ============================================
 
-const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function ComboboxRoot(
-  {
-    children,
-    value,
-    defaultValue,
-    onValueChange,
-    onChange,
-    multiple = false,
-    open,
-    defaultOpen,
-    onOpenChange,
-    disabled,
-    required,
-    readOnly,
-    name,
-    form,
-    autoComplete,
-    inputRef,
-    placeholder,
-    autoHighlight = true,
-    label,
-    helperText,
-    error,
-    size: sizeProp,
-    className,
-  }: ComboboxProps,
-  ref
-) {
-  const size = useResolvedControlSize(sizeProp);
+function ComboboxRoot({
+  children,
+  value,
+  defaultValue,
+  onValueChange,
+  multiple = false,
+  open,
+  defaultOpen,
+  onOpenChange,
+  onInputValueChange,
+  disabled,
+  required,
+  readOnly,
+  invalid = false,
+  loading = false,
+  name,
+  form,
+  autoComplete,
+  inputRef,
+  placeholder,
+  autoHighlight = true,
+  size: sizeProp,
+}: ComboboxProps) {
+  const size = useResolvedControlSize(sizeProp, CONTROL_SIZES);
   const staticItems = React.useMemo(() => collectStaticItems(children), [children]);
   const staticValues = React.useMemo(() => staticItems.map((item) => item.value), [staticItems]);
   const staticLabels = React.useMemo(
@@ -357,6 +317,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
   const [internalValue, setInternalValue] = React.useState<string | string[] | null>(
     value ?? defaultValue ?? (multiple ? [] : null)
   );
+  const [query, setQuery] = React.useState("");
 
   // Sync with controlled value
   React.useEffect(() => {
@@ -384,6 +345,14 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     [onOpenChange]
   );
 
+  const handleInputValueChange = React.useCallback(
+    (nextQuery: string) => {
+      setQuery(nextQuery);
+      onInputValueChange?.(nextQuery);
+    },
+    [onInputValueChange]
+  );
+
   // Convert value → label for input display
   const itemToStringLabel = React.useCallback(
     (itemValue: string) =>
@@ -399,19 +368,6 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
     return [currentValue];
   }, [currentValue]);
 
-  const {
-    id: fieldId,
-    labelId,
-    helperId,
-    errorId,
-    hasError,
-    errorMessage,
-  } = useFormFieldIds("combobox", { label, helperText, error });
-  // Base UI's <Combobox.Label> only labels a Trigger; the form control here is
-  // <Combobox.Input>, so we render a native <label htmlFor> and put a matching id on
-  // the input (passed via context) instead. Avoids the Base UI label-misuse warning.
-  const inputId = label ? `combobox-input-${fieldId}` : undefined;
-
   const contextValue = React.useMemo(
     () => ({
       placeholder,
@@ -424,8 +380,9 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       explicitTriggerCount,
       registerTrigger,
       size,
-      inputId,
-      invalid: hasError,
+      invalid,
+      loading,
+      query,
     }),
     [
       placeholder,
@@ -437,36 +394,33 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
       explicitTriggerCount,
       registerTrigger,
       size,
-      inputId,
-      hasError,
+      invalid,
+      loading,
+      query,
     ]
   );
 
-  const wrapperClasses = [styles.wrapper, className].filter(Boolean).join(" ");
-  const helperClasses = [styles.helper, hasError && styles.helperError].filter(Boolean).join(" ");
-
-  // data-invalid lets the shell pick up the error border, the same hook Select,
-  // DatePicker and RadioGroup use; without it `error` renders only the message.
-  const wrapperContent = (inner: React.ReactNode) => (
-    <div ref={ref} className={wrapperClasses} data-invalid={hasError || undefined}>
-      {inner}
-      {helperText && (
-        <span id={helperId} className={helperClasses}>
-          {helperText}
-        </span>
-      )}
-      {errorMessage && (
-        <span id={errorId} className={styles.errorMessage}>
-          {errorMessage}
-        </span>
-      )}
-    </div>
-  );
+  const shared = {
+    items: staticValues,
+    open,
+    defaultOpen,
+    onOpenChange: (nextOpen: boolean) => handleOpenChange(nextOpen),
+    onInputValueChange: handleInputValueChange,
+    disabled,
+    required,
+    readOnly,
+    name,
+    form,
+    autoComplete,
+    inputRef,
+    autoHighlight,
+    itemToStringLabel,
+  };
 
   if (multiple) {
     const controlledValue = value as string[] | undefined;
     const uncontrolledValue = defaultValue as string[] | undefined;
-    const emitChange = (onChange ?? onValueChange) as ((value: string[]) => void) | undefined;
+    const emitChange = onValueChange as ((value: string[]) => void) | undefined;
     const handleValueChange = (newValue: string[]) => {
       if (controlledValue === undefined) {
         setInternalValue(newValue);
@@ -476,42 +430,22 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
 
     return (
       <ComboboxContext.Provider value={contextValue}>
-        {wrapperContent(
-          <BaseCombobox.Root<string, true>
-            items={staticValues}
-            value={controlledValue}
-            defaultValue={uncontrolledValue}
-            onValueChange={handleValueChange}
-            open={open}
-            defaultOpen={defaultOpen}
-            onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
-            disabled={disabled}
-            required={required}
-            readOnly={readOnly}
-            name={name}
-            form={form}
-            autoComplete={autoComplete}
-            inputRef={inputRef}
-            multiple
-            autoHighlight={autoHighlight}
-            itemToStringLabel={itemToStringLabel}
-            aria-describedby={mergeAriaIds(errorId, helperId)}
-          >
-            {label && (
-              <label id={labelId} htmlFor={inputId} className={styles.label}>
-                {label}
-              </label>
-            )}
-            {children}
-          </BaseCombobox.Root>
-        )}
+        <BaseCombobox.Root<string, true>
+          {...shared}
+          value={controlledValue}
+          defaultValue={uncontrolledValue}
+          onValueChange={handleValueChange}
+          multiple
+        >
+          {children}
+        </BaseCombobox.Root>
       </ComboboxContext.Provider>
     );
   }
 
   const controlledValue = value as string | null | undefined;
   const uncontrolledValue = defaultValue as string | undefined;
-  const emitChange = (onChange ?? onValueChange) as ((value: string | null) => void) | undefined;
+  const emitChange = onValueChange as ((value: string | null) => void) | undefined;
   const handleValueChange = (newValue: string | null) => {
     if (controlledValue === undefined) {
       setInternalValue(newValue);
@@ -521,38 +455,18 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxProps>(function Co
 
   return (
     <ComboboxContext.Provider value={contextValue}>
-      {wrapperContent(
-        <BaseCombobox.Root<string, false>
-          items={staticValues}
-          value={controlledValue}
-          defaultValue={uncontrolledValue ?? null}
-          onValueChange={handleValueChange}
-          open={open}
-          defaultOpen={defaultOpen}
-          onOpenChange={(nextOpen) => handleOpenChange(nextOpen)}
-          disabled={disabled}
-          required={required}
-          readOnly={readOnly}
-          name={name}
-          form={form}
-          autoComplete={autoComplete}
-          inputRef={inputRef}
-          multiple={false}
-          autoHighlight={autoHighlight}
-          itemToStringLabel={itemToStringLabel}
-          aria-describedby={mergeAriaIds(errorId, helperId)}
-        >
-          {label && (
-            <label id={labelId} htmlFor={inputId} className={styles.label}>
-              {label}
-            </label>
-          )}
-          {children}
-        </BaseCombobox.Root>
-      )}
+      <BaseCombobox.Root<string, false>
+        {...shared}
+        value={controlledValue}
+        defaultValue={uncontrolledValue ?? null}
+        onValueChange={handleValueChange}
+        multiple={false}
+      >
+        {children}
+      </BaseCombobox.Root>
     </ComboboxContext.Provider>
   );
-});
+}
 
 function ComboboxInput({
   className,
@@ -561,81 +475,63 @@ function ComboboxInput({
   ...htmlProps
 }: ComboboxInputProps) {
   const context = React.useContext(ComboboxContext);
-  const wrapperSizeClass =
-    context.size === "sm"
-      ? styles.inputWrapperSm
-      : context.size === "lg"
-        ? styles.inputWrapperLg
-        : undefined;
   const classes = [styles.input, className].filter(Boolean).join(" ");
-  const wrapperClasses = [styles.inputWrapper, wrapperSizeClass].filter(Boolean).join(" ");
   const renderTrigger = showTrigger && context.explicitTriggerCount === 0;
-  const inputId = context.inputId ?? htmlProps.id;
   const inputPlaceholder = placeholder ?? context.placeholder;
-
-  if (context.multiple) {
-    return (
-      <BaseCombobox.InputGroup className={wrapperClasses}>
-        {context.selectedValues.length > 0 && (
-          <BaseCombobox.Chips className={styles.chips}>
-            {context.selectedValues.map((chipValue) => (
-              <BaseCombobox.Chip key={chipValue} className={styles.chip}>
-                <span className={styles.chipLabel}>
-                  {context.staticLabels.get(chipValue) ??
-                    context.itemsRef.current.get(chipValue) ??
-                    chipValue}
-                </span>
-                <BaseCombobox.ChipRemove className={styles.chipRemove}>
-                  <XIcon />
-                </BaseCombobox.ChipRemove>
-              </BaseCombobox.Chip>
-            ))}
-          </BaseCombobox.Chips>
-        )}
-        <BaseCombobox.Input
-          {...htmlProps}
-          placeholder={context.selectedValues.length === 0 ? inputPlaceholder : undefined}
-          id={inputId}
-          className={classes}
-          aria-invalid={context.invalid || undefined}
-        />
-        {renderTrigger && (
-          <BaseCombobox.Trigger className={styles.trigger}>
-            <ChevronDownIcon />
-          </BaseCombobox.Trigger>
-        )}
-      </BaseCombobox.InputGroup>
-    );
-  }
+  const hasChips = Boolean(context.multiple) && context.selectedValues.length > 0;
 
   return (
-    <BaseCombobox.InputGroup className={wrapperClasses}>
+    <BaseCombobox.InputGroup
+      className={styles.inputWrapper}
+      data-size={context.size}
+      data-chips={hasChips || undefined}
+    >
+      {hasChips && (
+        <BaseCombobox.Chips className={styles.chips}>
+          {context.selectedValues.map((chipValue) => {
+            const chipLabel =
+              context.staticLabels.get(chipValue) ??
+              context.itemsRef.current.get(chipValue) ??
+              chipValue;
+            return (
+              <BaseCombobox.Chip key={chipValue} className={styles.chip}>
+                <span className={styles.chipLabel}>{chipLabel}</span>
+                <BaseCombobox.ChipRemove
+                  className={styles.chipRemove}
+                  aria-label={`Remove ${chipLabel}`}
+                >
+                  <X aria-hidden="true" weight="bold" />
+                </BaseCombobox.ChipRemove>
+              </BaseCombobox.Chip>
+            );
+          })}
+        </BaseCombobox.Chips>
+      )}
       <BaseCombobox.Input
         {...htmlProps}
-        placeholder={inputPlaceholder}
-        id={inputId}
+        placeholder={hasChips ? undefined : inputPlaceholder}
         className={classes}
         aria-invalid={context.invalid || undefined}
       />
-      {renderTrigger && (
-        <BaseCombobox.Trigger className={styles.trigger}>
-          <ChevronDownIcon />
-        </BaseCombobox.Trigger>
-      )}
+      {renderTrigger && <ComboboxTriggerButton />}
     </BaseCombobox.InputGroup>
   );
 }
 
-function ComboboxTrigger({ children, className, ...htmlProps }: ComboboxTriggerProps) {
-  const { registerTrigger } = React.useContext(ComboboxContext);
-  React.useEffect(() => registerTrigger(), [registerTrigger]);
+// The open control: a quiet 24px icon button at the field end.
+function ComboboxTriggerButton({ children, className, ...htmlProps }: ComboboxTriggerProps) {
   const classes = [styles.trigger, className].filter(Boolean).join(" ");
-
   return (
-    <BaseCombobox.Trigger {...htmlProps} className={classes}>
-      {children ?? <ChevronDownIcon />}
+    <BaseCombobox.Trigger aria-label="Show options" {...htmlProps} className={classes}>
+      {children ?? <CaretDown aria-hidden="true" weight="bold" />}
     </BaseCombobox.Trigger>
   );
+}
+
+function ComboboxTrigger(props: ComboboxTriggerProps) {
+  const { registerTrigger } = React.useContext(ComboboxContext);
+  React.useEffect(() => registerTrigger(), [registerTrigger]);
+  return <ComboboxTriggerButton {...props} />;
 }
 
 function ComboboxContent({
@@ -646,6 +542,8 @@ function ComboboxContent({
   maxVisibleItems,
   ...htmlProps
 }: ComboboxContentProps) {
+  const portalProps = useThemePortalProps();
+  const { loading, query } = React.useContext(ComboboxContext);
   const popupClasses = [styles.popup, className].filter(Boolean).join(" ");
   const filteredItems = BaseCombobox.useFilteredItems() as string[];
   const serializedFilteredItems = JSON.stringify(filteredItems);
@@ -658,14 +556,13 @@ function ComboboxContent({
     () => filterStaticChildren(children, visibleValues),
     [children, visibleValues]
   );
+  // Options live in the listbox; an author's Empty slot is a status, so it sits
+  // beside the list, never inside it.
+  const { options, empties } = partitionEmptySlots(filteredContent.children);
   // No matches and no author-supplied empty slot would leave a bare, collapsed
-  // popup, so fall back to a readable "no results" row.
-  const popupChildren =
-    filteredContent.visibleItemCount === 0 && !containsEmptySlot(children) ? (
-      <ComboboxEmpty>No results found</ComboboxEmpty>
-    ) : (
-      filteredContent.children
-    );
+  // popup, so fall back to a row that names the query.
+  const showFallbackEmpty =
+    !loading && filteredContent.visibleItemCount === 0 && !containsEmptySlot(children);
 
   const popupStyle =
     maxVisibleItems != null
@@ -676,17 +573,35 @@ function ComboboxContent({
       : htmlProps.style;
 
   return (
-    <BaseCombobox.Portal>
+    <BaseCombobox.Portal {...portalProps}>
       <BaseCombobox.Positioner
         side="bottom"
         sideOffset={sideOffset}
+        collisionPadding={POPUP_COLLISION_PADDING_PX}
         align={align}
         className={styles.positioner}
       >
-        <BaseCombobox.Popup {...htmlProps} className={popupClasses} style={popupStyle}>
-          <ComboboxFilteredItemIndexContext.Provider value={filteredItemIndices}>
-            {popupChildren}
-          </ComboboxFilteredItemIndexContext.Provider>
+        <BaseCombobox.Popup
+          {...htmlProps}
+          className={popupClasses}
+          style={popupStyle}
+          aria-busy={loading || undefined}
+        >
+          {/* Mounted always, so the change is announced; empty unless loading. */}
+          <BaseCombobox.Status className={styles.status}>
+            {loading ? "Searching…" : null}
+          </BaseCombobox.Status>
+          <BaseCombobox.List className={styles.list}>
+            <ComboboxFilteredItemIndexContext.Provider value={filteredItemIndices}>
+              {options}
+            </ComboboxFilteredItemIndexContext.Provider>
+          </BaseCombobox.List>
+          {!loading && empties}
+          {showFallbackEmpty && (
+            <ComboboxEmpty>
+              {query.trim() ? `No match for “${query.trim()}”` : "No options"}
+            </ComboboxEmpty>
+          )}
         </BaseCombobox.Popup>
       </BaseCombobox.Positioner>
     </BaseCombobox.Portal>
@@ -721,7 +636,7 @@ function ComboboxItem({ children, value, disabled, className, ...htmlProps }: Co
     >
       {children}
       <BaseCombobox.ItemIndicator className={styles.itemIndicator}>
-        <CheckIcon />
+        <Check aria-hidden="true" weight="bold" />
       </BaseCombobox.ItemIndicator>
     </BaseCombobox.Item>
   );
@@ -770,13 +685,3 @@ export const Combobox = Object.assign(ComboboxRoot, {
 });
 
 // Re-export individual components
-export {
-  ComboboxRoot,
-  ComboboxInput,
-  ComboboxTrigger,
-  ComboboxContent,
-  ComboboxItem,
-  ComboboxEmpty,
-  ComboboxGroup,
-  ComboboxGroupLabel,
-};

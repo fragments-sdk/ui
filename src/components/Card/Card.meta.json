@@ -1,0 +1,215 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Card",
+  "description": "Groups related content onto one bounded surface.",
+  "category": "layout",
+  "status": "stable",
+  "tags": ["container", "layout", "surface"],
+  "sourcePath": "src/components/Card/index.tsx",
+  "exportName": "Card",
+  "propsSummary": [
+    "tone: neutral|danger (default: neutral) - danger draws the edge in the danger ink",
+    "padding: none|md (default: md) - md is the compact inset (12); none + Card.Header divided + Card.Body padding = panel",
+    "selected: boolean - the selection wash and ring",
+    "as: article|div|section (default: article) - static card root element",
+    "render: ReactElement - a real link or button for an interactive card",
+    "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer",
+    "Card.Body padding: none|md - use for panel body spacing"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "",
+      "required": true
+    },
+    "tone": {
+      "type": "enum",
+      "description": "`danger` draws the edge in the danger ink, for a card whose content is\nheld (a blocked merge). There is no wash; the words inside say why.",
+      "required": false,
+      "values": ["danger", "neutral"],
+      "default": "neutral"
+    },
+    "padding": {
+      "type": "enum",
+      "description": "Inner padding: `md` is the compact surface inset (12); `none` lets a\ndivided header and `Card.Body` own their inset (a table sheet).",
+      "required": false,
+      "values": ["md", "none"],
+      "default": "md"
+    },
+    "selected": {
+      "type": "boolean",
+      "description": "Marks the card as the chosen one: the selection wash, and the hairline\nturns into the selection ring. Pair it with the ARIA state that fits the\nelement (`aria-pressed` on a button, `aria-current` on a link).",
+      "required": false,
+      "default": "false"
+    },
+    "as": {
+      "type": "enum",
+      "description": "Root element tag for a static card.",
+      "required": false,
+      "values": ["article", "div", "section"],
+      "default": "article"
+    },
+    "render": {
+      "type": "union",
+      "description": "Makes the card one interactive element: pass a real link or button,\n`render={<a href=\"/repos/web\" />}` or `render={<button type=\"button\" />}`.\nIt gains the hover tint, the press scale and the focus ring. A button\nholds phrasing content only, so any render other than a plain `<a>`\ndraws every part as a `span` (Title loses its heading level). Keep other\ncontrols out of an interactive card.",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Grouping related content behind one boundary",
+      "Previews, summaries, and dashboard tiles",
+      "Separating sections that spacing alone cannot"
+    ],
+    "whenNot": [
+      "Plain text that needs no grouping",
+      "Modal surfaces (use Dialog)",
+      "Navigation items (use List or Sidebar)"
+    ],
+    "guidelines": [
+      "One surface: the surface plane, the hairline, the surface corner, no shadow",
+      "Cards sharing a grid row should size uniformly",
+      "tone=\"danger\" is the only state chrome; put other state in a Badge or Alert inside",
+      "padding=\"none\" plus Card.Header divided and Card.Body padding is the panel",
+      "A feature mosaic is Grid.Item colSpan and rowSpan around a Card",
+      "Prefer a Button or Link inside the card; when the whole card acts, pass render"
+    ],
+    "accessibility": [
+      "Card is a semantic container (article/div/section); render={<a href />} or render={<button />} makes it one real interactive element",
+      "A selected card pairs selected with aria-pressed on a button or aria-current on a link",
+      "Card titles should be appropriate heading levels"
+    ],
+    "dont": [
+      {
+        "reason": "Do not use a Card as a modal surface.",
+        "bad": "<Card>Confirm deletion</Card>",
+        "good": "<Card>\n            <Card.Body>Inline summary</Card.Body>\n          </Card>"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Quiet surface with a title and description.",
+      "code": "<Card>\n          <Card.Header>\n            <Card.Title>Card title</Card.Title>\n            <Card.Description>A brief description</Card.Description>\n          </Card.Header>\n          <Card.Body>Related content</Card.Body>\n        </Card>",
+      "canonical": true
+    },
+    {
+      "name": "Content Only",
+      "description": "Body alone, when there is nothing to title.",
+      "code": "<Card>\n          <Card.Body>Just content, no header or footer.</Card.Body>\n        </Card>"
+    },
+    {
+      "name": "With Footer",
+      "description": "Footer parks the actions below the content.",
+      "code": "<Card>\n          <Card.Header>\n            <Card.Title>Card with footer</Card.Title>\n            <Card.Description>Complete card layout</Card.Description>\n          </Card.Header>\n          <Card.Body>Main content area.</Card.Body>\n          <Card.Footer>Footer actions go here</Card.Footer>\n        </Card>"
+    },
+    {
+      "name": "Metric",
+      "description": "A metric tile is the same surface: the figure on the display step, tabular.",
+      "code": "<Card>\n          <Card.Body>\n            <Text as=\"p\" type=\"display\" tabularNums>\n              94%\n            </Text>\n            <Text as=\"p\" color=\"secondary\">\n              Component coverage\n            </Text>\n          </Card.Body>\n        </Card>"
+    },
+    {
+      "name": "Panel",
+      "description": "A 40px divided head with the line below and no fill; the body owns its own spacing.",
+      "code": "<Card padding=\"none\">\n          <Card.Header divided>\n            <Card.Title>Overview</Card.Title>\n          </Card.Header>\n          <Card.Body padding=\"md\">Panel content</Card.Body>\n        </Card>"
+    },
+    {
+      "name": "Danger Tone",
+      "description": "The only state chrome: the edge in the danger ink, no wash.",
+      "code": "<Card tone=\"danger\">\n          <Card.Header>\n            <Card.Title>Merge held</Card.Title>\n            <Card.Description>Two blocking findings need a decision.</Card.Description>\n          </Card.Header>\n        </Card>"
+    },
+    {
+      "name": "Interactive",
+      "description": "render makes the card a real link or button: gated hover tint, press scale, focus ring. Inside a button the parts draw as spans.",
+      "code": "<Card render={<a href=\"#details\" />}>\n          <Card.Header>\n            <Card.Title>Open details</Card.Title>\n            <Card.Description>The whole card is one link</Card.Description>\n          </Card.Header>\n        </Card>"
+    },
+    {
+      "name": "Selected",
+      "description": "The chosen card: the selection wash, and the hairline turns into the ring.",
+      "code": "<Card selected render={<button type=\"button\" aria-pressed=\"true\" />}>\n          <Card.Header>\n            <Card.Title>Team plan</Card.Title>\n            <Card.Description>Chosen</Card.Description>\n          </Card.Header>\n        </Card>"
+    },
+    {
+      "name": "Section Root",
+      "description": "The as prop matches the surrounding document semantics.",
+      "code": "<Card as=\"section\" aria-labelledby=\"billing-card-title\">\n          <Card.Header>\n            <Card.Title id=\"billing-card-title\">Billing summary</Card.Title>\n          </Card.Header>\n          <Card.Body>Section semantics support the surrounding document outline.</Card.Body>\n        </Card>"
+    },
+    {
+      "name": "Nested Heading",
+      "description": "Pick the heading level the page outline expects.",
+      "code": "<Card padding=\"none\">\n          <Card.Header divided>\n            <Card.Title as=\"h4\">Nested panel</Card.Title>\n          </Card.Header>\n          <Card.Body padding=\"md\">Panel content</Card.Body>\n        </Card>"
+    },
+    {
+      "name": "Long Content",
+      "description": "Long titles and dense text wrap without breaking the surface.",
+      "code": "<Card>\n          <Card.Header>\n            <Card.Title>\n              A detailed localized account recovery policy for administrators across multiple\n              workspaces\n            </Card.Title>\n            <Card.Description>\n              Supporting content remains readable when translated strings take substantially more\n              space than the English source.\n            </Card.Description>\n          </Card.Header>\n          <Card.Body>\n            Recovery settings apply to every affected administrator and retain an auditable history\n            of the notification decision.\n          </Card.Body>\n        </Card>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Grid",
+      "relationship": "parent",
+      "note": "Use Grid + Card for responsive card layouts"
+    },
+    {
+      "component": "List",
+      "relationship": "alternative",
+      "note": "Use List for linear, text-first layouts"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "tone: neutral|danger (default: neutral) - danger draws the edge in the danger ink",
+      "padding: none|md (default: md) - md is the compact inset (12); none + Card.Header divided + Card.Body padding = panel",
+      "selected: boolean - the selection wash and ring",
+      "as: article|div|section (default: article) - static card root element",
+      "render: ReactElement - a real link or button for an interactive card",
+      "Sub-components: Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer",
+      "Card.Body padding: none|md - use for panel body spacing"
+    ],
+    "a11yRules": ["A11Y_CARD_HEADING", "A11Y_CARD_INTERACTIVE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Header", "Title", "Description", "Body", "Footer"],
+    "requiredChildren": ["Body"],
+    "commonPatterns": [
+      "<Card><Card.Body>{content}</Card.Body></Card>",
+      "<Card><Card.Header><Card.Title>{title}</Card.Title></Card.Header><Card.Body>{content}</Card.Body></Card>",
+      "<Card><Card.Header><Card.Title>{title}</Card.Title><Card.Description>{desc}</Card.Description></Card.Header><Card.Body>{content}</Card.Body><Card.Footer>{actions}</Card.Footer></Card>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false
+  },
+  "cssVariables": [
+    "--fui-border",
+    "--fui-color-danger-text",
+    "--fui-font-weight-semibold",
+    "--fui-radius-surface",
+    "--fui-raw-space-0",
+    "--fui-raw-space-12",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": [],
+  "matrix": {
+    "axes": {
+      "tone": "auto",
+      "padding": "auto",
+      "theme": ["light", "dark"]
+    },
+    "forced": ["hover", "focus"],
+    "worstCase": {
+      "children": "A long localized heading and dense multi-line supporting content"
+    }
+  },
+  "preview": {
+    "providers": [],
+    "dynamicRegions": []
+  }
+}

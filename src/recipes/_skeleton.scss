@@ -1,0 +1,55 @@
+// The placeholder that holds a loading shape: a band-coloured bar that pulses
+// toward the press tint and back, with no gradient and nothing travelling. The
+// press tint is ink at an alpha, so it is laid over the band by `::after` and
+// only its opacity moves (an opacity loop, which the motion rules allow).
+// UIR-D144.
+
+@use "../tokens/variables" as tokens;
+
+/// The band with no pulse.
+@mixin still {
+  &::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/// One fill for every placeholder bar: the band, and the press tint over it
+/// pulsing in and out over `--fui-duration-shimmer` on the standard easing.
+/// Under reduced motion the bar is a still band. Include `keyframes` once in
+/// the same module. The bar's own `::after` is taken.
+@mixin band {
+  position: relative;
+  background-color: var(--fui-bg-secondary, #{tokens.$fui-bg-secondary});
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--fui-bg-active, #{tokens.$fui-bg-active});
+    opacity: 0;
+    pointer-events: none;
+    animation: fui-skeleton-pulse var(--fui-duration-shimmer, #{tokens.$fui-duration-shimmer})
+      var(--fui-ease-standard, #{tokens.$fui-ease-standard}) infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @include still;
+  }
+}
+
+/// The pulse: the press tint fades in over the band, then out (`alternate`).
+/// Sass emits it where it is included, so a module that uses `band` includes it
+/// once at the top of its layer.
+@mixin keyframes {
+  @keyframes fui-skeleton-pulse {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}

@@ -1,34 +1,40 @@
 "use client";
 
 import * as React from "react";
-import { Button as BaseButton } from "@base-ui/react/button";
+import { Info, Warning, WarningCircle, X } from "@phosphor-icons/react";
+import { useDismiss } from "../../recipes/dismiss";
+import { Button, type ButtonProps } from "../Button";
+import { IconButton, type IconButtonProps } from "../IconButton";
 import styles from "./Alert.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type AlertTone = "info" | "success" | "warning" | "danger";
+/** A settled state worth stopping for. A pass goes to a Badge verdict and a
+ * transient confirmation to Toast, so there is no success tone. */
+export type AlertTone = "info" | "warning" | "danger";
 
 /**
- * Alert for contextual feedback messages (info, success, warning, danger).
+ * Alert for an inline state the reader should act on: information, a warning
+ * or an error.
  * @see https://usefragments.com/components/alert
  */
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Tone. Controls color and default icon.
+  /** Tone. Sets the tint, the default icon and the live-region role.
    * @default "info"
    * @see https://usefragments.com/components/alert#tones */
   tone?: AlertTone;
-  /** How much surface the tone claims. `tint` washes the whole card in the
-   * tone colour. `surface` keeps the card on the page's own background and
-   * spends the colour only on the hairline and the title — for a standing
-   * failure that owns the view, where a full wash would read as a red page.
-   * @default "tint" */
-  emphasis?: "tint" | "surface";
+  /** Controlled visibility. Leave unset and the alert hides itself once
+   * `Alert.Close` is pressed. */
+  open?: boolean;
+  /** Called with `false` when `Alert.Close` is pressed. */
+  onOpenChange?: (open: boolean) => void;
 }
 
 export interface AlertIconProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /** A replacement glyph. Defaults to the tone's icon. */
   children?: React.ReactNode;
 }
 
@@ -44,18 +50,10 @@ export interface AlertActionsProps extends React.HTMLAttributes<HTMLDivElement> 
   children: React.ReactNode;
 }
 
-export interface AlertActionProps extends Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "onClick"
-> {
-  children: React.ReactNode;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-}
+export type AlertActionProps = Omit<ButtonProps, "variant" | "size" | "tone">;
 
-export interface AlertCloseProps extends Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "children"
-> {
+export interface AlertCloseProps extends Omit<IconButtonProps, "children" | "variant" | "size"> {
+  /** A replacement glyph. Defaults to a cross. */
   children?: React.ReactNode;
 }
 
@@ -71,6 +69,8 @@ interface AlertContextValue {
   tone: AlertTone;
   titleId: string;
   descId: string;
+  registerTitle: () => () => void;
+  registerContent: () => () => void;
   dismiss: () => void;
 }
 
@@ -95,20 +95,28 @@ function composeEventHandlers<E extends { defaultPrevented: boolean }>(
   };
 }
 
+/** Counts mounted parts so the root only points aria ids at parts that render. */
+function usePartCount(): [boolean, () => () => void] {
+  const [count, setCount] = React.useState(0);
+  const register = React.useCallback(() => {
+    setCount((value) => value + 1);
+    return () => setCount((value) => value - 1);
+  }, []);
+  return [count > 0, register];
+}
+
 // ============================================
-// Tone Icons
+// Tone icons
 // ============================================
 
-const toneIcons: Record<AlertTone, string> = {
-  info: "i",
-  success: "\u2713",
-  warning: "!",
-  danger: "\u2717",
+const TONE_ICON: Record<AlertTone, React.ComponentType<{ weight?: "regular" | "bold" }>> = {
+  info: Info,
+  warning: Warning,
+  danger: WarningCircle,
 };
 
 const TONE_CLASS: Record<AlertTone, string> = {
   info: styles.toneInfo,
-  success: styles.toneSuccess,
   warning: styles.toneWarning,
   danger: styles.toneDanger,
 };
@@ -120,44 +128,41 @@ const TONE_CLASS: Record<AlertTone, string> = {
 function AlertRoot({
   children,
   tone = "info",
-  emphasis = "tint",
+  open,
+  onOpenChange,
   className,
   ...htmlProps
 }: AlertProps) {
-  const [dismissed, setDismissed] = React.useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(true);
+  const handleDismiss = React.useCallback(() => {
+    setUncontrolledOpen(false);
+    onOpenChange?.(false);
+  }, [onOpenChange]);
+  // Leaves at once; focus on its close button moves to the next item first.
+  const { ref, dismiss } = useDismiss<HTMLDivElement>({ onDismiss: handleDismiss });
   const titleId = React.useId();
   const descId = React.useId();
+  const [hasTitle, registerTitle] = usePartCount();
+  const [hasContent, registerContent] = usePartCount();
 
-  const dismiss = React.useCallback(() => {
-    setDismissed(true);
-  }, []);
+  const contextValue = React.useMemo<AlertContextValue>(
+    () => ({ tone, titleId, descId, registerTitle, registerContent, dismiss }),
+    [tone, titleId, descId, registerTitle, registerContent, dismiss]
+  );
 
-  if (dismissed) return null;
+  if (!(open ?? uncontrolledOpen)) return null;
 
-  const classes = [
-    styles.alert,
-    TONE_CLASS[tone],
-    emphasis === "surface" ? styles.surface : null,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const classes = [styles.alert, TONE_CLASS[tone], className].filter(Boolean).join(" ");
   const role = tone === "warning" || tone === "danger" ? "alert" : "status";
-
-  const contextValue: AlertContextValue = {
-    tone,
-    titleId,
-    descId,
-    dismiss,
-  };
 
   return (
     <AlertContext.Provider value={contextValue}>
       <div
-        {...htmlProps}
         role={role}
-        aria-labelledby={titleId}
-        aria-describedby={descId}
+        aria-labelledby={hasTitle ? titleId : undefined}
+        aria-describedby={hasContent ? descId : undefined}
+        {...htmlProps}
+        ref={ref}
         className={classes}
       >
         {children}
@@ -169,10 +174,11 @@ function AlertRoot({
 function AlertIcon({ children, className, ...htmlProps }: AlertIconProps) {
   const { tone } = useAlertContext();
   const classes = [styles.icon, className].filter(Boolean).join(" ");
+  const Glyph = TONE_ICON[tone];
 
   return (
     <span {...htmlProps} className={classes} aria-hidden="true">
-      {children ?? toneIcons[tone]}
+      {children ?? <Glyph weight="bold" />}
     </span>
   );
 }
@@ -186,21 +192,23 @@ function AlertBody({ children, className, ...htmlProps }: AlertBodyProps) {
   );
 }
 
-function AlertTitle({ children, className, ...htmlProps }: AlertTitleProps) {
-  const { titleId } = useAlertContext();
+function AlertTitle({ children, className, id, ...htmlProps }: AlertTitleProps) {
+  const { titleId, registerTitle } = useAlertContext();
+  React.useLayoutEffect(registerTitle, [registerTitle]);
   const classes = [styles.title, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} id={htmlProps.id ?? titleId} className={classes}>
+    <div {...htmlProps} id={id ?? titleId} className={classes}>
       {children}
     </div>
   );
 }
 
-function AlertContent({ children, className, ...htmlProps }: AlertContentProps) {
-  const { descId } = useAlertContext();
+function AlertContent({ children, className, id, ...htmlProps }: AlertContentProps) {
+  const { descId, registerContent } = useAlertContext();
+  React.useLayoutEffect(registerContent, [registerContent]);
   const classes = [styles.content, className].filter(Boolean).join(" ");
   return (
-    <div {...htmlProps} id={htmlProps.id ?? descId} className={classes}>
+    <div {...htmlProps} id={id ?? descId} className={classes}>
       {children}
     </div>
   );
@@ -215,18 +223,11 @@ function AlertActions({ children, className, ...htmlProps }: AlertActionsProps) 
   );
 }
 
-function AlertAction({
-  children,
-  onClick,
-  type = "button",
-  className,
-  ...htmlProps
-}: AlertActionProps) {
-  const classes = [styles.action, className].filter(Boolean).join(" ");
+function AlertAction({ children, ...buttonProps }: AlertActionProps) {
   return (
-    <BaseButton {...htmlProps} onClick={onClick} type={type} className={classes}>
+    <Button {...buttonProps} variant="soft" size="sm">
       {children}
-    </BaseButton>
+    </Button>
   );
 }
 
@@ -234,7 +235,6 @@ function AlertClose({
   children,
   className,
   onClick,
-  type = "button",
   "aria-label": ariaLabel = "Dismiss alert",
   ...htmlProps
 }: AlertCloseProps) {
@@ -242,15 +242,16 @@ function AlertClose({
   const classes = [styles.close, className].filter(Boolean).join(" ");
 
   return (
-    <BaseButton
+    <IconButton
       {...htmlProps}
+      variant="ghost"
+      size="xs"
       onClick={composeEventHandlers(onClick, dismiss)}
-      type={type}
       aria-label={ariaLabel}
       className={classes}
     >
-      {children ?? "\u00D7"}
-    </BaseButton>
+      {children ?? <X weight="bold" aria-hidden="true" />}
+    </IconButton>
   );
 }
 
@@ -267,16 +268,3 @@ export const Alert = Object.assign(AlertRoot, {
   Action: AlertAction,
   Close: AlertClose,
 });
-
-// Re-export individual components for tree-shaking
-export {
-  AlertRoot,
-  AlertIcon,
-  AlertBody,
-  AlertTitle,
-  AlertContent,
-  AlertActions,
-  AlertAction,
-  AlertClose,
-  useAlertContext,
-};

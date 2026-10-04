@@ -1,56 +1,73 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import styles from './Message.module.scss';
-import { Avatar } from '../Avatar';
-import { useOptionalConversationList } from '../ConversationList';
-import { Markdown } from '../Markdown';
+import * as React from "react";
+import { WarningCircle } from "@phosphor-icons/react";
+import { Button } from "../Button";
+import { Icon } from "../Icon";
+import { Markdown } from "../Markdown";
+import styles from "./Message.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type MessageRole = 'user' | 'assistant' | 'system';
-export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
+/** Who wrote the message. Events (a model switch, a joined user) are ConversationList.Event. */
+export type MessageFrom = "user" | "assistant";
+export type MessageStatus = "pending" | "streaming" | "complete" | "error";
 
 export interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Message role determines styling and alignment */
-  role: MessageRole;
-  /** Message content */
-  children: React.ReactNode;
-  /** Message status */
+  /** Who wrote the message: the user's bubble sits at the end, the assistant's reply is flush. */
+  from: MessageFrom;
+  /** Where the message stands. @default "complete" */
   status?: MessageStatus;
-  /** When the message was sent */
+  /** When the message was sent; shown in the meta line. */
   timestamp?: Date;
-  /** Custom avatar override */
+  /** Opt-in avatar slot, usually `<Message.Avatar>`. No avatar is drawn by default. */
   avatar?: React.ReactNode;
-  /** Hover actions (copy, regenerate) */
+  /** Actions for the message (copy, regenerate), shown on hover or focus where a pointer hovers. */
   actions?: React.ReactNode;
+  /** Retry a failed message. With `status="error"` the failure block offers "Try again". */
+  onRetry?: () => void;
+  children: React.ReactNode;
 }
 
 export interface MessageContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** A string from the assistant renders as markdown; from the user it keeps its line breaks. */
   children: React.ReactNode;
-  /** When true, renders string children as markdown */
-  markdown?: boolean;
 }
 
 export interface MessageActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export interface MessageTimestampProps extends React.HTMLAttributes<HTMLSpanElement> {
-  /** Date to format */
+export interface MessageTimestampProps extends Omit<
+  React.TimeHTMLAttributes<HTMLElement>,
+  "children"
+> {
+  /** Date to show. Defaults to the message's `timestamp`. */
   date?: Date;
-  /** Custom format function */
+  /** Custom format function. */
   format?: (date: Date) => string;
 }
 
-export interface MessageAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  /** Image URL for the avatar */
+export interface MessageAvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /** Image URL. */
   src?: string;
-  /** Alt text for image avatars */
+  /** Alt text for the image. */
   alt?: string;
+  /** Initials or a glyph when there is no image. */
+  children?: React.ReactNode;
+}
+
+export interface MessageErrorProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** What went wrong. @default "Not sent." for the user, "This reply didn't finish." for the assistant */
+  children?: React.ReactNode;
+  /** Retry handler; adds the "Try again" action. Defaults to the message's `onRetry`. */
+  onRetry?: () => void;
+  /** Label of the retry action. @default "Try again" */
+  retryLabel?: string;
+  /** More actions beside retry (for example "Ask differently"). */
+  actions?: React.ReactNode;
 }
 
 // ============================================
@@ -58,9 +75,10 @@ export interface MessageAvatarProps extends React.HTMLAttributes<HTMLDivElement>
 // ============================================
 
 interface MessageContextValue {
-  role: MessageRole;
+  from: MessageFrom;
   status: MessageStatus;
   timestamp?: Date;
+  onRetry?: () => void;
 }
 
 const MessageContext = React.createContext<MessageContextValue | null>(null);
@@ -68,109 +86,68 @@ const MessageContext = React.createContext<MessageContextValue | null>(null);
 function useMessageContext() {
   const context = React.useContext(MessageContext);
   if (!context) {
-    throw new Error('Message compound components must be used within a Message');
+    throw new Error("Message compound components must be used within a Message");
   }
   return context;
 }
 
 // ============================================
-// Helper Functions
+// Helpers
 // ============================================
 
 function formatTimestamp(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
+  const diff = Date.now() - date.getTime();
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
-
-  if (minutes < 1) return 'Just now';
+  if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
-
   return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 
-// ============================================
-// Icons
-// ============================================
-
-function UserIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-    </svg>
-  );
-}
-
-function AssistantIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z" />
-    </svg>
-  );
-}
-
-function SystemIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-    </svg>
-  );
+function hasPart(children: React.ReactNode, part: React.ElementType): boolean {
+  let found = false;
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === part) found = true;
+  });
+  return found;
 }
 
 // ============================================
-// Sub-components
+// Parts
 // ============================================
 
-function MessageContent({ children, markdown, className, ...htmlProps }: MessageContentProps) {
-  const { status } = useMessageContext();
+function MessageContent({ children, className, ...htmlProps }: MessageContentProps) {
+  const { from, status } = useMessageContext();
+  const streaming = status === "streaming";
+  const classes = [styles.content, className].filter(Boolean).join(" ");
 
-  const classes = [
-    styles.content,
-    status === 'streaming' && styles.streaming,
-    className,
-  ].filter(Boolean).join(' ');
-
-  const content = markdown && typeof children === 'string'
-    ? <Markdown content={children} />
-    : children;
+  let body: React.ReactNode = children;
+  if (typeof children === "string") {
+    body =
+      from === "assistant" ? (
+        <Markdown content={children} streaming={streaming} />
+      ) : (
+        <span className={styles.text}>{children}</span>
+      );
+  }
+  const caret = streaming && !(from === "assistant" && typeof children === "string");
 
   return (
     <div {...htmlProps} className={classes}>
-      {content}
+      {body}
+      {caret && <span className={styles.caret} aria-hidden="true" />}
     </div>
   );
 }
 
 function MessageActions({ children, className, ...htmlProps }: MessageActionsProps) {
-  const classes = [styles.actions, className].filter(Boolean).join(' ');
-
+  const classes = [styles.actions, className].filter(Boolean).join(" ");
   return (
     <div {...htmlProps} className={classes}>
       {children}
@@ -184,103 +161,111 @@ function MessageTimestamp({
   className,
   ...htmlProps
 }: MessageTimestampProps) {
-  const { timestamp } = useMessageContext();
-  const dateToFormat = date ?? timestamp;
+  const { status, timestamp } = useMessageContext();
+  const classes = [styles.timestamp, className].filter(Boolean).join(" ");
+  if (status === "pending") {
+    return <span className={classes}>Sending…</span>;
+  }
+  const value = date ?? timestamp;
+  if (!value) return null;
+  return (
+    <time {...htmlProps} className={classes} dateTime={value.toISOString()}>
+      {customFormat ? customFormat(value) : formatTimestamp(value)}
+    </time>
+  );
+}
 
-  if (!dateToFormat) return null;
-
-  const formatted = customFormat ? customFormat(dateToFormat) : formatTimestamp(dateToFormat);
-
-  const classes = [styles.timestamp, className].filter(Boolean).join(' ');
-
+function MessageAvatar({ src, alt = "", children, className, ...htmlProps }: MessageAvatarProps) {
+  const [failed, setFailed] = React.useState(false);
+  const classes = [styles.avatar, className].filter(Boolean).join(" ");
   return (
     <span {...htmlProps} className={classes}>
-      {formatted}
+      {src && !failed ? (
+        <img src={src} alt={alt} className={styles.avatarImage} onError={() => setFailed(true)} />
+      ) : (
+        children
+      )}
     </span>
   );
 }
 
-function MessageAvatar({ children, src, alt, className, ...htmlProps }: MessageAvatarProps) {
-  const { role } = useMessageContext();
-
-  const classes = [
-    styles.avatar,
-    styles[`avatar${role.charAt(0).toUpperCase() + role.slice(1)}`],
-    src && styles.avatarImage,
-    className,
-  ].filter(Boolean).join(' ');
-
-  const defaultIcon = role === 'user'
-    ? <UserIcon />
-    : role === 'assistant'
-      ? <AssistantIcon />
-      : <SystemIcon />;
-
-  if (children !== undefined) {
-    return (
-      <div {...htmlProps} className={classes}>
-        {children}
-      </div>
-    );
-  }
+function MessageError({
+  children,
+  onRetry,
+  retryLabel = "Try again",
+  actions,
+  className,
+  ...htmlProps
+}: MessageErrorProps) {
+  const context = useMessageContext();
+  const retry = onRetry ?? context.onRetry;
+  const words = children ?? (context.from === "user" ? "Not sent." : "This reply didn't finish.");
+  const classes = [styles.error, className].filter(Boolean).join(" ");
 
   return (
-    <Avatar
-      {...htmlProps}
-      src={src}
-      alt={alt ?? role}
-      size="sm"
-      fallback={defaultIcon}
-      className={classes}
-    />
+    <div {...htmlProps} className={classes} role="alert">
+      <span className={styles.errorIcon} aria-hidden="true">
+        <Icon icon={WarningCircle} size="md" />
+      </span>
+      <p className={styles.errorWords}>{words}</p>
+      {(retry || actions) && (
+        <div className={styles.errorActions}>
+          {retry && (
+            <Button variant="soft" size="sm" onClick={retry}>
+              {retryLabel}
+            </Button>
+          )}
+          {actions}
+        </div>
+      )}
+    </div>
   );
 }
 
 // ============================================
-// Main Component
+// Root
 // ============================================
 
 function MessageRoot({
-  role,
+  from,
   children,
-  status = 'complete',
+  status = "complete",
   timestamp,
   avatar,
   actions,
+  onRetry,
   className,
   ...htmlProps
 }: MessageProps) {
-  const conversationList = useOptionalConversationList();
-  const showAvatar = conversationList?.showAvatars !== false
-    && avatar !== null
-    && avatar !== false;
-  const contextValue: MessageContextValue = {
-    role,
-    status,
-    timestamp,
-  };
-
-  const classes = [
-    styles.message,
-    styles[role],
-    status === 'error' && styles.error,
-    status === 'pending' && styles.pending,
-    !showAvatar && styles.withoutAvatar,
-    className,
-  ].filter(Boolean).join(' ');
+  const contextValue = React.useMemo<MessageContextValue>(
+    () => ({ from, status, timestamp, onRetry }),
+    [from, status, timestamp, onRetry]
+  );
+  const classes = [styles.message, className].filter(Boolean).join(" ");
+  const showError = status === "error" && !hasPart(children, MessageError);
+  const showMeta =
+    (timestamp !== undefined || status === "pending") && !hasPart(children, MessageTimestamp);
 
   return (
     <MessageContext.Provider value={contextValue}>
       <div
         {...htmlProps}
         className={classes}
-        data-role={role}
+        data-from={from}
         data-status={status}
+        data-avatar={avatar ? "" : undefined}
+        aria-busy={status === "streaming" || undefined}
       >
-        {showAvatar && (avatar !== undefined ? avatar : <MessageAvatar />)}
+        {avatar}
         <div className={styles.body}>
           {children}
-          {actions && <MessageActions>{actions}</MessageActions>}
+          {showError && <MessageError />}
+          {(showMeta || actions) && (
+            <div className={styles.meta}>
+              {showMeta && <MessageTimestamp />}
+              {actions && <MessageActions>{actions}</MessageActions>}
+            </div>
+          )}
         </div>
       </div>
     </MessageContext.Provider>
@@ -296,14 +281,7 @@ export const Message = Object.assign(MessageRoot, {
   Actions: MessageActions,
   Timestamp: MessageTimestamp,
   Avatar: MessageAvatar,
+  Error: MessageError,
 });
-
-export {
-  MessageRoot,
-  MessageContent,
-  MessageActions,
-  MessageTimestamp,
-  MessageAvatar,
-};
 
 export { useMessageContext };

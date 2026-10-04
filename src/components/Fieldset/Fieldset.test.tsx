@@ -92,4 +92,40 @@ describe("Fieldset", () => {
     expect(legend).toHaveAttribute("id", "legend-id");
     expect(legend).toHaveAttribute("aria-live", "polite");
   });
+
+  it("is described by its description", () => {
+    render(
+      <Fieldset>
+        <Fieldset.Legend>Billing address</Fieldset.Legend>
+        <Fieldset.Description>Where invoices are sent.</Fieldset.Description>
+        <input aria-label="Street" />
+      </Fieldset>
+    );
+    const group = screen.getByRole("group", { name: "Billing address" });
+    expect(group).toHaveAccessibleDescription("Where invoices are sent.");
+  });
+
+  it("keeps an author's aria-describedby beside the description", () => {
+    render(
+      <>
+        <p id="extra">Required for tax.</p>
+        <Fieldset aria-describedby="extra">
+          <Fieldset.Legend>Billing address</Fieldset.Legend>
+          <Fieldset.Description>Where invoices are sent.</Fieldset.Description>
+        </Fieldset>
+      </>
+    );
+    expect(screen.getByRole("group")).toHaveAccessibleDescription(
+      "Required for tax. Where invoices are sent."
+    );
+  });
+
+  it("sets no aria-describedby without a description", () => {
+    render(
+      <Fieldset>
+        <Fieldset.Legend>Billing address</Fieldset.Legend>
+      </Fieldset>
+    );
+    expect(screen.getByRole("group")).not.toHaveAttribute("aria-describedby");
+  });
 });

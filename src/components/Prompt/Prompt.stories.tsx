@@ -1,66 +1,45 @@
-import { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { Prompt, type PromptAttachment } from '.';
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { Prompt, type PromptAttachment } from ".";
+import { Menu } from "../Menu";
 
 /**
- * Prompt is a multi-line input with toolbar for AI and chat interfaces.
- * It is a compound component composed from Prompt.Textarea, Prompt.Toolbar,
- * Prompt.Actions, Prompt.Info, and Prompt.Submit.
+ * The composer: one field on the band with the text area, a toolbar of
+ * pickers and attachments, and the send action. While the assistant works,
+ * Send becomes Stop and the text stays editable; Enter sends, Shift+Enter
+ * breaks the line. Files can be attached, pasted or dropped.
  */
 const meta = {
-  title: 'Ai/Prompt',
+  title: "Ai/Prompt",
   component: Prompt,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
-        component: 'Multi-line input with toolbar for AI and chat interfaces.',
+        component: "The composer for AI and chat: a field with a toolbar and the send action.",
       },
     },
   },
   argTypes: {
-    placement: {
-      control: 'select',
-      options: ['inline', 'fixed', 'sticky'],
-      description: 'Where the card sits: in the flow, fixed to the viewport, or sticky to the content area',
-    },
-    variant: {
-      control: 'inline-radio',
-      options: ['outline', 'ghost'],
-      description: 'Toolbar as a filled footer (outline), or one continuous writing surface (ghost)',
-    },
-    disabled: { control: 'boolean', description: 'Disable the entire prompt' },
-    loading: { control: 'boolean', description: 'Show loading state' },
-    submitOnEnter: {
-      control: 'boolean',
-      description: 'Submit on Enter (Shift+Enter for newline)',
-    },
-    autoResize: { control: 'boolean', description: 'Enable auto-resize based on content' },
-    placeholder: { control: 'text', description: 'Placeholder text for the textarea' },
+    disabled: { control: "boolean", description: "Nothing can be typed or sent" },
+    readOnly: { control: "boolean", description: "The text can be read and selected" },
+    invalid: { control: "boolean", description: "The message can't be sent as written" },
+    pending: { control: "boolean", description: "Sending: the action shows a spinner" },
+    working: { control: "boolean", description: "The assistant is responding" },
+    submitOnEnter: { control: "boolean", description: "Enter sends, Shift+Enter breaks the line" },
+    placeholder: { control: "text" },
   },
   args: {
-    placeholder: 'Ask, Search or Chat...',
-    placement: 'inline',
-    children: (
-      <>
-        <Prompt.Textarea />
-        <Prompt.Toolbar>
-          <Prompt.Actions />
-          <Prompt.Info>
-            <Prompt.Submit />
-          </Prompt.Info>
-        </Prompt.Toolbar>
-      </>
-    ),
+    children: null,
   },
   render: (args) => (
-    <Prompt {...args} onSubmit={(value) => console.log(value)}>
+    <Prompt {...args} onSubmit={() => {}}>
       <Prompt.Textarea />
       <Prompt.Toolbar>
-        <Prompt.Actions />
-        <Prompt.Info>
+        <Prompt.Attach />
+        <Prompt.Actions>
           <Prompt.Submit />
-        </Prompt.Info>
+        </Prompt.Actions>
       </Prompt.Toolbar>
     </Prompt>
   ),
@@ -72,96 +51,113 @@ type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};
 
-export const WithActions: Story = {
+const MODELS = [
+  { value: "fast", label: "Fast" },
+  { value: "thorough", label: "Thorough" },
+];
+
+export const WithPicker: Story = {
   render: (args) => (
-    <Prompt {...args} onSubmit={(value) => console.log(value)}>
+    <Prompt {...args} onSubmit={() => {}}>
       <Prompt.Textarea />
       <Prompt.Toolbar>
+        <Prompt.Attach />
+        <Prompt.Picker aria-label="Model" options={MODELS} defaultValue="fast" />
         <Prompt.Actions>
-          <Prompt.ActionButton aria-label="Add attachment">+</Prompt.ActionButton>
-          <Prompt.ModeButton active>Auto</Prompt.ModeButton>
-        </Prompt.Actions>
-        <Prompt.Info>
-          <Prompt.Usage>52% used</Prompt.Usage>
+          <Prompt.Info>1.2k tokens</Prompt.Info>
           <Prompt.Submit />
-        </Prompt.Info>
+        </Prompt.Actions>
       </Prompt.Toolbar>
     </Prompt>
   ),
 };
 
-/**
- * The shape an agent composer wants: no footer, no rule across the card, and
- * everything that scopes the run chosen on the same surface you are writing on.
- * Attach, paste or drop a file — all three arrive through `onFiles`.
- */
-export const AgentComposer: Story = {
-  args: {
-    variant: 'ghost',
-    minRows: 3,
-    submitOnEnter: false,
-    placeholder: 'What should be true when this is done?',
-  },
-  render: function AgentComposerStory(args) {
-    const [files, setFiles] = useState<PromptAttachment[]>([]);
+function Working() {
+  const [working, setWorking] = useState(true);
+  return (
+    <Prompt working={working} onStop={() => setWorking(false)} onSubmit={() => setWorking(true)}>
+      <Prompt.Textarea />
+      <Prompt.Toolbar>
+        <Prompt.Actions>
+          <Prompt.Submit />
+        </Prompt.Actions>
+      </Prompt.Toolbar>
+    </Prompt>
+  );
+}
 
-    return (
-      <Prompt
-        {...args}
-        onSubmit={(value) => console.log(value, files)}
-        accept="image/*,text/*"
-        onFiles={(added) =>
-          setFiles((current) => [
-            ...current,
-            ...added.map((file) => ({
-              id: `${file.name}-${current.length}`,
-              name: file.name,
-              size: file.size,
-              previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-            })),
-          ])
-        }
-      >
-        <Prompt.Attachments
-          items={files}
-          onRemove={(id) => setFiles((current) => current.filter((file) => file.id !== id))}
-        />
-        <Prompt.Textarea />
-        <Prompt.Toolbar>
-          <Prompt.Actions>
-            <Prompt.Attach />
-            <Prompt.Select
-              aria-label="Model"
-              defaultValue="claude-opus-4-8"
-              options={[
-                { value: 'claude-opus-4-8', label: 'Opus 4.8' },
-                { value: 'claude-sonnet-5', label: 'Sonnet 5' },
-                { value: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5' },
-              ]}
-            />
-            <Prompt.Select
-              aria-label="Working tree"
-              defaultValue="worktree"
-              options={[
-                { value: 'worktree', label: 'New worktree' },
-                { value: 'main', label: 'Mainline' },
-              ]}
-            />
-          </Prompt.Actions>
-          <Prompt.Info>
-            <Prompt.Usage>⌘↩ to send</Prompt.Usage>
-            <Prompt.Submit />
-          </Prompt.Info>
-        </Prompt.Toolbar>
-      </Prompt>
-    );
-  },
+/** While the assistant responds, Send becomes Stop and the text stays editable. */
+export const WhileWorking: Story = {
+  render: () => <Working />,
 };
 
-export const Loading: Story = {
-  args: { loading: true, defaultValue: 'Tell me about the weather...' },
+export const Sending: Story = {
+  args: { pending: true, defaultValue: "Summarise the drift on main." },
+};
+
+export const Invalid: Story = {
+  args: {
+    invalid: true,
+    errorMessage: "Messages can be up to 4,000 characters.",
+    defaultValue: "A very long message",
+  },
 };
 
 export const Disabled: Story = {
-  args: { disabled: true },
+  args: { disabled: true, placeholder: "Connect a repository to ask" },
+};
+
+function WithFiles() {
+  const [items, setItems] = useState<PromptAttachment[]>([
+    { id: "1", name: "contract.json", size: 2048 },
+    { id: "2", name: "drift-report-2026-10-03.csv", size: 81920 },
+  ]);
+  return (
+    <Prompt
+      onSubmit={() => {}}
+      onFiles={(files) =>
+        setItems((current) => [
+          ...current,
+          ...files.map((file) => ({ id: file.name, name: file.name, size: file.size })),
+        ])
+      }
+    >
+      <Prompt.Attachments
+        items={items}
+        onRemove={(id) => setItems((current) => current.filter((item) => item.id !== id))}
+      />
+      <Prompt.Textarea />
+      <Prompt.Toolbar>
+        <Prompt.Attach />
+        <Prompt.Actions>
+          <Prompt.Submit />
+        </Prompt.Actions>
+      </Prompt.Toolbar>
+    </Prompt>
+  );
+}
+
+export const WithAttachments: Story = {
+  render: () => <WithFiles />,
+};
+
+/** A right-click, ArrowDown or long-press on Send opens more ways to send. */
+export const WithSendMenu: Story = {
+  render: (args) => (
+    <Prompt {...args} onSubmit={() => {}}>
+      <Prompt.Textarea />
+      <Prompt.Toolbar>
+        <Prompt.Actions>
+          <Prompt.Submit
+            menu={
+              <>
+                <Menu.Item>Send without context</Menu.Item>
+                <Menu.Item>Schedule</Menu.Item>
+              </>
+            }
+          />
+        </Prompt.Actions>
+      </Prompt.Toolbar>
+    </Prompt>
+  ),
 };

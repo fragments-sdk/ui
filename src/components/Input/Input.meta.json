@@ -1,0 +1,239 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Input",
+  "description": "Collects single-line text, with search mode offering a clear button and live result count.",
+  "category": "inputs",
+  "tags": ["form", "input", "text", "search", "filter"],
+  "status": "stable",
+  "sourcePath": "src/components/Input/index.tsx",
+  "exportName": "Input",
+  "propsSummary": [
+    "value: string",
+    "defaultValue: string",
+    "placeholder: string",
+    "type: text|email|password|number|tel|url|search (default: text)",
+    "size: xs|sm|md|lg (default: md)",
+    "invalid: boolean (default: false)",
+    "disabled: boolean (default: false)",
+    "readOnly: boolean (default: false)",
+    "startAdornment: node",
+    "endAdornment: node",
+    "shortcut: string",
+    "count: string",
+    "onValueChange: (value: string) => void",
+    "onChange: native change event",
+    "className: string"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Current input value (controlled)",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initial value for uncontrolled use",
+      "required": false
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text shown when empty",
+      "required": false,
+      "constraints": ["Use for format hints only, not as a replacement for labels"]
+    },
+    "type": {
+      "type": "enum",
+      "description": "Native input type. search adds a leading glyph, a clear button, Escape to clear then leave, and the count slot",
+      "default": "text",
+      "required": false,
+      "values": ["text", "email", "password", "number", "tel", "url", "search"]
+    },
+    "size": {
+      "type": "enum",
+      "description": "Field height on the shared control track: 24, 28, 32 or 40",
+      "default": "md",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The danger edge and aria-invalid; say why in a Field.Error. Inside a Field, the Field's invalid does the same",
+      "default": "false",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Dims the field and blocks input",
+      "default": "false",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Shows the value on a dashed edge without letting it change",
+      "default": "false",
+      "required": false
+    },
+    "startAdornment": {
+      "type": "node",
+      "description": "Content before the text: a glyph or a prefix",
+      "required": false
+    },
+    "endAdornment": {
+      "type": "node",
+      "description": "Content after the text: a glyph, a suffix or an action",
+      "required": false
+    },
+    "shortcut": {
+      "type": "string",
+      "description": "A keyboard shortcut hint drawn at the end. Display only: the app owns the shortcut",
+      "required": false
+    },
+    "count": {
+      "type": "string",
+      "description": "type=\"search\" only: how many match (\"3 of 40\"), announced politely while there is a query",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new value on every change, the clear button and Escape included",
+      "required": false
+    },
+    "onChange": {
+      "type": "function",
+      "description": "The native change event",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Class on the field box",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Single-line answers: name, email, password, phone, URL",
+      "Filtering a list or a ledger as the person types (type=\"search\")",
+      "Short free-form values a list cannot cover"
+    ],
+    "whenNot": [
+      "Multi-line text (use Textarea)",
+      "Numbers people step or scrub (use NumberField)",
+      "Selecting from predefined options (use Select or Combobox)",
+      "Boolean input (use Checkbox or Switch)",
+      "Date/time input (use DatePicker)"
+    ],
+    "guidelines": [
+      "Wrap in a Field for the label, description and error",
+      "Match type to the data: it drives validation and mobile keyboards",
+      "Placeholder shows format; it never replaces the label",
+      "Set invalid with a Field.Error that says why",
+      "A search field takes count while it filters; Escape clears, then leaves the field",
+      "shortcut is a hint only; register the key in the app"
+    ],
+    "accessibility": [
+      "Field.Label names the input and Field.Description describes it",
+      "Field.Error is announced when it appears",
+      "The clear button is named Clear and keeps focus in the field",
+      "The search count is a polite status, silent while the query is empty"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "A Field gives the input its label.",
+      "code": "<Field>\n  <Field.Label>Name</Field.Label>\n  <Input placeholder=\"Ada Lovelace\" />\n</Field>"
+    },
+    {
+      "name": "With description",
+      "description": "Supporting text sits under the field and describes it.",
+      "code": "<Field>\n  <Field.Label>Password</Field.Label>\n  <Input type=\"password\" />\n  <Field.Description>At least 8 characters.</Field.Description>\n</Field>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The danger edge with the reason under the field.",
+      "code": "<Field invalid>\n  <Field.Label>Email</Field.Label>\n  <Input type=\"email\" defaultValue=\"invalid-email\" />\n  <Field.Error match>Enter a valid email address.</Field.Error>\n</Field>"
+    },
+    {
+      "name": "Search",
+      "description": "A filter with a clear button, Escape to clear and a live count.",
+      "code": "<Input\n  type=\"search\"\n  aria-label=\"Filter components\"\n  placeholder=\"Filter\"\n  count=\"3 of 71\"\n  shortcut=\"/\"\n/>"
+    },
+    {
+      "name": "Read only",
+      "description": "A dashed edge: the value can be read and copied, not changed.",
+      "code": "<Field>\n  <Field.Label>Repository</Field.Label>\n  <Input defaultValue=\"acme/web\" readOnly />\n</Field>"
+    },
+    {
+      "name": "Sizes",
+      "description": "Four heights on the control track: 24, 28, 32, 40.",
+      "code": "<Stack gap=\"sm\">\n  <Input aria-label=\"Extra small\" size=\"xs\" />\n  <Input aria-label=\"Small\" size=\"sm\" />\n  <Input aria-label=\"Medium\" size=\"md\" />\n  <Input aria-label=\"Large\" size=\"lg\" />\n</Stack>"
+    },
+    {
+      "name": "Adornments",
+      "description": "A prefix and a suffix inside the field.",
+      "code": "<Field>\n  <Field.Label>Price</Field.Label>\n  <Input startAdornment=\"$\" endAdornment=\"USD\" placeholder=\"0.00\" />\n</Field>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Field",
+      "relationship": "parent",
+      "note": "Field supplies the label, description and error"
+    },
+    {
+      "component": "Textarea",
+      "relationship": "alternative",
+      "note": "Use Textarea for multi-line text"
+    },
+    {
+      "component": "NumberField",
+      "relationship": "alternative",
+      "note": "Use NumberField for numbers people step or scrub"
+    },
+    {
+      "component": "Select",
+      "relationship": "alternative",
+      "note": "Use Select when choosing from predefined options"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "type: text|email|password|number|tel|url|search (default: text)",
+      "size: xs|sm|md|lg (default: md) - 24, 28, 32 or 40",
+      "invalid: boolean - danger edge plus aria-invalid; pair with Field.Error",
+      "count: string - search match count, a polite status",
+      "shortcut: string - display-only kbd hint; do not hand-roll kbd markup",
+      "onValueChange: (value: string) => void; onChange stays the native event",
+      "Label, description and error come from Field parts, never from Input props",
+      "...native input attributes are supported (autoComplete, required, inputMode, pattern, etc.)"
+    ],
+    "a11yRules": ["A11Y_INPUT_LABEL", "A11Y_INPUT_ERROR", "A11Y_INPUT_REQUIRED"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": []
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.208Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-bg-hover",
+    "--fui-field-border",
+    "--fui-radius-control",
+    "--fui-raw-space-4",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    }
+  ]
+}

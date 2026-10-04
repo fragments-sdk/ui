@@ -9,7 +9,11 @@ import * as sass from "sass";
 import {
   checkGeneratedArtifacts,
   measurementPaths,
+  remLength,
   scaledLength,
+  targetLength,
+  targetPropertyName,
+  typographyLength,
   validateMeasurements,
 } from "./generate-measurements.mjs";
 
@@ -36,9 +40,29 @@ const unitlessSize = copyMeasurements();
 unitlessSize.typography.caption.size = "12";
 assert.throws(() => validateMeasurements(unitlessSize), /must be a px, rem, or em length/);
 
+const thirdWeight = copyMeasurements();
+thirdWeight.typography.caption.weight = 500;
+assert.throws(() => validateMeasurements(thirdWeight), /weight must be 400 or 600/);
+
+const secondHeightFamily = copyMeasurements();
+secondHeightFamily.targets.fieldTrack.md = "34px";
+assert.throws(() => validateMeasurements(secondHeightFamily), /fieldTrack\.md must equal/);
+
+const farSpaceAlias = copyMeasurements();
+farSpaceAlias.legacy.space["2"] = "16";
+assert.throws(() => validateMeasurements(farSpaceAlias), /legacy\.space\.2 must be the nearest/);
+
+const unknownSpaceAlias = copyMeasurements();
+unknownSpaceAlias.legacy.space["2"] = "14";
+assert.throws(() => validateMeasurements(unknownSpaceAlias), /must name a rawSpace step/);
+
+const farTypeAlias = copyMeasurements();
+farTypeAlias.legacy.typography.fontSizeRole.xs = "caption";
+assert.throws(() => validateMeasurements(farTypeAlias), /fontSizeRole\.xs must be the nearest/);
+
 for (const role of Object.keys(generated.measurements.typography)) {
   const invalidFixedRole = copyMeasurements();
-  invalidFixedRole.typography[role].weight += 1;
+  invalidFixedRole.typography[role].tracking = "0.5em";
   assert.throws(
     () => validateMeasurements(invalidFixedRole),
     new RegExp(`typography\\.${role} must match the accepted fixed record`)
@@ -51,7 +75,10 @@ for (const group of Object.keys(generated.measurements.targets)) {
   invalidFixedTarget.targets[group][firstName] = "999px";
   assert.throws(
     () => validateMeasurements(invalidFixedTarget),
-    new RegExp(`targets\\.${group} must match the accepted fixed record`)
+    // The field track mirrors the control track, so its equality guard can fire first.
+    new RegExp(
+      `targets\\.${group} must match the accepted fixed record|fieldTrack\\.\\w+ must equal`
+    )
   );
 }
 
@@ -96,27 +123,51 @@ function cssDeclaration(selector, property) {
   return match[1].trim();
 }
 
+const host = generated.measurements.spacing.baseFontSize;
+assert.equal(host, "16px", "type and space are rem against a 16px host");
+
 for (const [step, value] of Object.entries(generated.measurements.rawSpace)) {
-  assert.equal(cssDeclaration(".fixed", `--fui-raw-space-${step}`), scaledLength(value));
+  assert.equal(
+    cssDeclaration(".fixed", `--fui-raw-space-${step}`),
+    scaledLength(remLength(value, host))
+  );
 }
 
 for (const [group, values] of Object.entries(generated.measurements.targets)) {
-  const groupName = group.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
   for (const [name, value] of Object.entries(values)) {
-    assert.equal(cssDeclaration(".fixed", `--fui-${groupName}-${name}`), scaledLength(value));
+    const property = targetPropertyName(group, name);
+    if (property === null) continue;
+    assert.equal(cssDeclaration(".fixed", property), targetLength(group, value, host));
   }
 }
+// One height family: the control height is emitted; the duplicate families are not.
+assert.equal(
+  cssDeclaration(".fixed", "--fui-control-height-md"),
+  "calc(var(--fui-scale, 1) * 2rem)"
+);
+assert.doesNotMatch(css, /--fui-(?:control|field)-track-[\w-]+\s*:/);
 
 for (const [role, record] of Object.entries(generated.measurements.typography)) {
   for (const [property, value] of Object.entries(record)) {
-    assert.equal(cssDeclaration(".fixed", `--fui-type-${role}-${property}`), String(value));
+    assert.equal(
+      cssDeclaration(".fixed", `--fui-type-${role}-${property}`),
+      typographyLength(property, value, host)
+    );
   }
 }
+assert.equal(cssDeclaration(".fixed", "--fui-type-body-compact-size"), "0.75rem");
+assert.equal(
+  cssDeclaration(".fixed", "--fui-type-title-sm-weight"),
+  "var(--fui-font-weight-semibold, 600)"
+);
 assert.doesNotMatch(css, /--fui-type-[\w-]+-family\s*:/);
 
 for (const [name, value] of Object.entries(generated.measurements.legacy.navigation)) {
   const property = name.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
-  assert.equal(cssDeclaration(".fixed", `--fui-navigation-${property}`), scaledLength(value));
+  assert.equal(
+    cssDeclaration(".fixed", `--fui-navigation-${property}`),
+    scaledLength(remLength(value, host))
+  );
 }
 
 const spacing = generated.measurements.spacing;
@@ -155,10 +206,9 @@ assert.equal(cssDeclaration(".fixed", "--fui-raw-space-2"), "2px");
   assert.ok(Math.abs(Number.parseFloat(match[1]) - expected) < 1e-9, "touch md rem projection");
 }
 
+// A radius profile writes only the one input, its md step; every role derives from it.
 for (const [name, profile] of Object.entries(generated.measurements.radius)) {
-  for (const [size, value] of Object.entries(profile)) {
-    assert.equal(cssDeclaration(`.radius-${name}`, `--fui-radius-${size}`), value);
-  }
+  assert.equal(cssDeclaration(`.radius-${name}`, "--fui-radius"), profile.md);
 }
 
 console.log("[measurements] generated TypeScript/Sass parity and fixed geometry verified");

@@ -1,5 +1,12 @@
 # Markdown — UI notes
 
+## 2026-10-03 — access tokens: cascade layers, coarse pointer, forced colours
+
+- **What changed** — every rule sits in `@layer fui.components`, after `@layer fui.tokens, fui.base, fui.components;`, so an adopter's unlayered class wins at any specificity (UIR-D122).
+- **What works** — `fui/layer/components-layer` passes on the module and `check:layers` on the built stylesheet; the Sass compiles. No fixture of its own covers the rest yet.
+- **What doesn't** — screens are not compared visually; forced colours are proven only where a fixture says so above.
+- **Candidates** — a states fixture that renders this component under the coarse project and forced colours.
+
 ## 2026-09-02 — fence highlighting (brief 08)
 
 MDX/prose fences use kit `CodeBlock`. JSX/TSX tag scopes now map to
@@ -67,3 +74,17 @@ What still does not work
 Improvement candidates
 
 - Route fenced blocks through `CodeBlock` so both surfaces share one frame.
+
+## 2026-10-03 — v4 surface and token pass
+
+- **Token reads** — the legacy reads are gone: `--fui-code-bg`, `--fui-radius-md`. Corners now read the radius roles (`control`, `surface`); motion reads `--fui-duration-*` with `--fui-ease-standard`; planes and lines follow MIGRATION-v4.md.
+- **Not browser-checked** in the token pass; the component lane owns the visual check.
+
+## 2026-10-03 — AI surface on Glass
+
+- **What changed** — chat scale: body 12 on 18 in ink 1, rhythm 8/16, h1–h2 at title-sm, h3–h6 at body-compact semibold, blockquotes in ink 2, inline code at the caption size on the band, tables at body-compact with tabular figures inside a named, focusable scroll region. Fences render through CodeBlock (copy, highlight, `data-language`). Link hover is no longer an ungated colour shift. New `streaming`: closes an open fence for display (`closeOpenFence`), puts a still ink-1 caret after the last block and sets `aria-busy`, without reflowing what is shown. The prose recipe is overridden inside this module (it is long-form 16 on 24 with a large heading scale).
+- **What works** — 11 unit tests, including fences through CodeBlock and the streaming fence close.
+- **What doesn't** — not browser-checked in this lane. The overrides sit in the module rather than in a chat density of the prose recipe.
+- **Candidates** — a `chat` density in `recipes/_prose.scss` so Markdown stops overriding it; footnotes and math.
+- **Wide tables** — a table takes its natural width, at least the lane, so a wide one scrolls in its focusable region instead of squeezing every cell into a broken column. The fixture waits for the parsed heading, since the harness lists its checks in a `<ul>` of its own.
+- **Fence isolation** — the prose rules for inline `code` and a bare `pre` skip a CodeBlock's own `code` and `pre`; they leaked into every fence (band, padding, a second scroller that a keyboard could not reach, flagged by axe in WebKit).

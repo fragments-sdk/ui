@@ -1,0 +1,217 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "NumberField",
+  "description": "Collects numeric values with arrow-key stepping, label scrubbing and optional units.",
+  "category": "inputs",
+  "tags": ["form", "number", "numeric", "stepper", "scrub", "unit", "input"],
+  "status": "beta",
+  "sourcePath": "src/components/NumberField/index.tsx",
+  "exportName": "NumberField",
+  "propsSummary": [
+    "value: number | null",
+    "defaultValue: number",
+    "onValueChange: (value: number | null) => void",
+    "onValueCommitted: (value: number | null) => void",
+    "min: number",
+    "max: number",
+    "step: number (default: 1)",
+    "largeStep: number (default: 10)",
+    "unit: string",
+    "scrub: node",
+    "format: Intl.NumberFormatOptions",
+    "size: xs|sm|md|lg (default: md)",
+    "invalid: boolean",
+    "disabled: boolean",
+    "readOnly: boolean",
+    "required: boolean",
+    "name: string"
+  ],
+  "props": {
+    "value": {
+      "type": "number",
+      "description": "Controlled value; null is empty",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "number",
+      "description": "Initial value for uncontrolled use",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the new value as it changes; null when cleared",
+      "required": false
+    },
+    "onValueCommitted": {
+      "type": "function",
+      "description": "Called once the value settles: on blur, Enter, a step or the end of a scrub",
+      "required": false
+    },
+    "min": {
+      "type": "number",
+      "description": "Lowest value; steps and scrubs clamp to it",
+      "required": false
+    },
+    "max": {
+      "type": "number",
+      "description": "Highest value; steps and scrubs clamp to it",
+      "required": false
+    },
+    "step": {
+      "type": "number",
+      "description": "The arrow-key step",
+      "default": "1",
+      "required": false
+    },
+    "largeStep": {
+      "type": "number",
+      "description": "The Shift + arrow step",
+      "default": "10",
+      "required": false
+    },
+    "unit": {
+      "type": "string",
+      "description": "A unit shown after the figures and read with the value",
+      "required": false
+    },
+    "scrub": {
+      "type": "node",
+      "description": "A short label at the start that scrubs the value when dragged",
+      "required": false
+    },
+    "format": {
+      "type": "object",
+      "description": "Intl.NumberFormat options for the shown value",
+      "required": false
+    },
+    "size": {
+      "type": "enum",
+      "description": "Field height on the shared control track: 24, 28, 32 or 40",
+      "values": ["xs", "sm", "md", "lg"],
+      "default": "md",
+      "required": false
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "The danger edge and aria-invalid; say why in a Field.Error",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Dims the field and blocks input",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "description": "Shows the value without letting it change",
+      "required": false
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Marks the field required for form validation",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Quantities, dimensions, percentages and other bounded numbers",
+      "Values people nudge more than they type: the arrow keys and the scrub label",
+      "A number that carries a unit"
+    ],
+    "whenNot": [
+      "Codes that look like numbers: postcodes, card numbers, phone numbers (use Input)",
+      "Picking a value on a continuous range by eye (use Slider)",
+      "Choosing from a short fixed set of numbers (use Select)"
+    ],
+    "guidelines": [
+      "Wrap in a Field for the label, description and error",
+      "Set min and max whenever the value has bounds; steps and scrubs clamp to them",
+      "Keep the scrub label to one or two characters: W, H, X, Y",
+      "Put the unit in unit, not in the label, so it is read with the value",
+      "Use onValueCommitted for work that should wait until the value settles"
+    ],
+    "accessibility": [
+      "The input keeps the text role with a numeric keyboard and a number role description",
+      "Arrow keys step by step, Shift + arrow by largeStep, Home and End jump to min and max",
+      "The scrub label is hidden from assistive tech; the keyboard does the same job",
+      "The unit is added to the input's description"
+    ]
+  },
+  "examples": [
+    {
+      "name": "With a unit",
+      "description": "A bounded width in pixels.",
+      "code": "<Field>\n  <Field.Label>Width</Field.Label>\n  <NumberField defaultValue={320} min={0} max={1440} unit=\"px\" />\n</Field>"
+    },
+    {
+      "name": "Scrub label",
+      "description": "Drag the W to scrub; the arrow keys still step.",
+      "code": "<Field>\n  <Field.Label>Width</Field.Label>\n  <NumberField defaultValue={240} min={0} scrub=\"W\" unit=\"px\" size=\"sm\" />\n</Field>"
+    },
+    {
+      "name": "Invalid",
+      "description": "The danger edge with the reason under the field.",
+      "code": "<Field invalid>\n  <Field.Label>Seats</Field.Label>\n  <NumberField defaultValue={0} min={0} invalid />\n  <Field.Error match>Add at least one seat.</Field.Error>\n</Field>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Field",
+      "relationship": "parent",
+      "note": "Field supplies the label, description and error"
+    },
+    {
+      "component": "Input",
+      "relationship": "alternative",
+      "note": "Use Input for number-like codes that never step"
+    },
+    {
+      "component": "Slider",
+      "relationship": "alternative",
+      "note": "Use Slider to pick a value on a range by eye"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "step / largeStep: arrow and Shift + arrow increments",
+      "unit: shown after the figures and read with the value",
+      "scrub: a drag label at the start",
+      "size: xs|sm|md|lg (default: md) - 24, 28, 32 or 40"
+    ],
+    "a11yRules": []
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-10-03T00:00:00.000Z"
+  },
+  "cssVariables": [
+    "--fui-field-border",
+    "--fui-font-weight-semibold",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-size",
+      "value": "md",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-size",
+      "value": "sm",
+      "fixture": "populated"
+    }
+  ]
+}

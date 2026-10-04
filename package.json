@@ -1,6 +1,6 @@
 {
   "name": "@usefragments/ui",
-  "version": "3.1.2",
+  "version": "4.0.0",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
@@ -31,6 +31,7 @@
     "./data-table-virtual": "./src/components/DataTable/DataTable.virtual.tsx",
     "./editor": "./src/components/Editor/index.tsx",
     "./styles": "./src/styles/globals.scss",
+    "./scss": "./src/styles/globals.scss",
     "./globals": "./src/styles/globals.scss",
     "./tokens": "./src/tokens/_variables.scss",
     "./mixins": "./src/tokens/_mixins.scss",
@@ -38,7 +39,6 @@
     "./recipes/navigation": "./src/recipes/_navigation.scss",
     "./recipes/prose": "./src/recipes/_prose.scss",
     "./fragments.json": "./fragments.json",
-    "./assets/*": "./src/assets/*",
     "./package.json": "./package.json"
   },
   "keywords": [
@@ -180,26 +180,37 @@
         "sass": "./src/styles/globals.scss",
         "default": "./dist/assets/ui.css"
       },
+      "./scss": "./src/styles/globals.scss",
       "./tokens": "./src/tokens/_variables.scss",
       "./mixins": "./src/tokens/_mixins.scss",
       "./recipes/navigation": "./src/recipes/_navigation.scss",
       "./fragments.json": "./fragments.json",
-      "./assets/*": "./src/assets/*",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "dev": "storybook dev -p 6006",
     "generate:measurements": "node scripts/generate-measurements.mjs",
-    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json && pnpm run typecheck:tests",
+    "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
     "check:measurements": "node scripts/generate-measurements.mjs --check && node scripts/check-measurement-parity.mjs",
-    "build": "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && tsc -p tsconfig.build.json && pnpm run typecheck:fragments",
+    "check:ledger": "node scripts/check-ledger.mjs",
+    "build": "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && node ./scripts/check-layers.mjs && node ./scripts/check-budgets.mjs && tsc -p tsconfig.build.json && pnpm run typecheck:fragments",
     "typecheck:fragments": "tsc -p tsconfig.fragments.json",
-    "lint": "eslint src geometry",
+    "lint": "eslint src geometry states fixtures contrast --ignore-pattern '**/.output/**' --ignore-pattern '**/.next/**' && pnpm run lint:styles",
+    "lint:styles": "node stylelint/run.mjs",
     "test": "vitest run",
     "test:geometry": "node geometry/run.mjs",
     "test:geometry:self": "node --test geometry/__tests__/*.test.mjs",
     "test:geometry:types": "tsc -p geometry/tsconfig.json --noEmit",
+    "test:states": "node states/run.mjs",
+    "test:states:types": "tsc -p states/tsconfig.json --noEmit",
+    "test:rsc": "node fixtures/rsc/run.mjs",
+    "test:contrast": "node contrast/run.mjs",
+    "test:contrast:types": "tsc -p contrast/tsconfig.json --noEmit",
+    "generate:tokens-css": "node scripts/tokens-css.mjs --write",
+    "check:tokens-css": "node --test scripts/__tests__/tokens-css.test.mjs && node scripts/tokens-css.mjs --check",
+    "check:layers": "node --test scripts/__tests__/check-layers.test.mjs && node scripts/check-layers.mjs",
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
@@ -257,11 +268,10 @@
     }
   },
   "dependencies": {
-    "@base-ui/react": "1.6.0",
+    "@base-ui/react": "1.8.0",
     "@phosphor-icons/react": "^2.1.10"
   },
   "devDependencies": {
-    "@fontsource-variable/onest": "5.3.0",
     "@fontsource-variable/jetbrains-mono": "5.2.8",
     "@playwright/test": "1.58.2",
     "@storybook/addon-a11y": "^8",
@@ -282,8 +292,13 @@
     "@usefragments/core": "workspace:*",
     "@vitejs/plugin-react": "^4.3.0",
     "ajv": "8.17.1",
+    "axe-core": "4.11.1",
     "date-fns": "^4.0.0",
+    "eslint": "^9.39.2",
     "jsdom": "^25.0.0",
+    "next": "^16.3.0",
+    "postcss-scss": "^4.0.9",
+    "postcss-value-parser": "^4.2.0",
     "react": "^19.0.0",
     "react-colorful": "^5.6.1",
     "react-day-picker": "^9.0.0",
@@ -292,7 +307,9 @@
     "sass": "^1.83.0",
     "shiki": "^3.0.0",
     "storybook": "^8",
+    "stylelint": "~17.14.1",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.54.0",
     "vite": "^6.0.0",
     "vitest": "^2.1.8",
     "vitest-axe": "^0.1.0"
@@ -307,11 +324,14 @@
     "!src/**/*.fragment.tsx",
     "!src/**/*.block.ts",
     "!src/blocks/",
-    "!src/assets/*.svg",
     "!src/**/*.stories.tsx",
+    "!src/**/*.states.tsx",
     "!src/**/*.ui-notes.md",
+    "!src/vocabulary.json",
+    "!src/vocabulary.ts",
     "!src/storybook/",
     "dist",
-    "fragments.json"
+    "fragments.json",
+    "tokens.css"
   ]
 }

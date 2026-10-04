@@ -1,0 +1,38 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/typography" as typography;
+
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  // A keycap: the press tint plays the well, so the key reads as sunk into
+  // whatever plane it sits on. No edge, no shadow, no new radius: the
+  // indicator corner, the caption step, the secondary ink for contrast.
+  .kbd {
+    @include typography.role("caption");
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    // A single glyph sits on a square cap; a word grows it sideways.
+    min-inline-size: var(--fui-kbd-height, 1.125rem);
+    block-size: var(--fui-kbd-height, 1.125rem);
+    padding-inline: var(--fui-kbd-padding-x, #{measurements.raw-space(4)});
+    font-variant-numeric: tabular-nums;
+    color: var(--fui-text-secondary, #{$fui-text-secondary});
+    background: var(--fui-bg-active, #{$fui-bg-active});
+    border-radius: var(--fui-radius-indicator, #{$fui-radius-indicator});
+    white-space: nowrap;
+  }
+
+  // One shortcut, keys side by side. The group draws nothing itself.
+  .group {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: var(--fui-kbd-gap, #{measurements.raw-space(2)});
+    font: inherit;
+  }
+}

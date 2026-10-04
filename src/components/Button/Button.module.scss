@@ -1,319 +1,233 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
-@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
+@use "../../recipes/target";
 @use "../../recipes/tone" as tone;
 
-// Two axes, one recipe. `tone` publishes the colour channels (fill, ink, wash,
-// line); `variant` decides which channel paints which slot. Every channel and
-// every slot carries a neutral fallback so a bare `.button` still renders.
+@layer fui.tokens, fui.base, fui.components;
 
-.button {
-  @include button-reset;
-  @include interactive-base;
-  @include action.base;
-  @include high-contrast-outline;
+@layer fui.components {
+  // Two axes, one recipe. `tone` publishes the colour channels (fill, ink, wash,
+  // line); `variant` decides which channel paints which slot. Every channel and
+  // every slot carries a neutral fallback so a bare `.button` still renders.
 
-  // Slots the variant paints.
-  --_button-bg: transparent;
-  --_button-bg-hover: var(--fui-bg-hover, #{$fui-bg-hover});
-  --_button-bg-active: var(--fui-bg-active, #{$fui-bg-active});
-  --_button-border: transparent;
-  --_button-border-hover: var(--_button-border, transparent);
-  --_button-color: var(--fui-text-primary, #{$fui-text-primary});
-  --_button-shadow: none;
-  --_button-shadow-hover: var(--_button-shadow, none);
-  --_button-shadow-active: var(--_button-shadow, none);
+  @include action.pending-keyframes;
 
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
-    var(--_button-border, transparent);
-  border-radius: var(--fui-button-radius, var(--fui-radius-lg, #{$fui-radius-lg}));
-  background: var(--_button-bg, transparent);
-  box-shadow: var(--_button-shadow, none);
-  color: var(--_button-color, var(--fui-text-primary, #{$fui-text-primary}));
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  white-space: nowrap;
+  .button {
+    @include button-reset;
+    @include action.base;
+    @include action.motion;
+    @include target.hit-area("micro");
+    @include high-contrast-outline;
 
-  // A composed link — `Button asChild` cloning an <a>, or an anchor rendered
-  // as a child — must wear the button's own foreground, never the global
-  // naked-link accent color (which would collide, e.g. accent-on-accent).
-  a {
-    color: inherit;
+    // Slots the variant paints.
+    --_button-bg: transparent;
+    --_button-bg-hover: var(--fui-bg-hover, #{$fui-bg-hover});
+    --_button-bg-active: var(--fui-bg-active, #{$fui-bg-active});
+    --_button-border: transparent;
+    --_button-border-hover: var(--_button-border, transparent);
+    --_button-color: var(--fui-text-primary, #{$fui-text-primary});
+    --_button-color-hover: var(--_button-color);
+
+    border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--_button-border, transparent);
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+    background: var(--_button-bg, transparent);
+    color: var(--_button-color, var(--fui-text-primary, #{$fui-text-primary}));
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    white-space: nowrap;
+
+    // A rendered anchor (`render={<a href />}`) wears the button's own
+    // foreground, never the global link ink.
     text-decoration: none;
+
+    @include action.hover {
+      border-color: var(--_button-border-hover, transparent);
+      background: var(--_button-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
+      color: var(--_button-color-hover, var(--_button-color));
+    }
+
+    // Press: the press tint, and the press scale (0.985) everywhere but a popup
+    // trigger, a pending or disabled button, and reduced motion.
+    @include action.press {
+      border-color: var(--_button-border-hover, transparent);
+      background: var(--_button-bg-active, var(--fui-bg-active, #{$fui-bg-active}));
+    }
+
+    // A pressed toggle (`render` onto a toggle) keeps the press colours.
+    &[data-pressed]:not(:disabled, [data-disabled], [aria-disabled="true"]) {
+      border-color: var(--_button-border-hover, transparent);
+      background: var(--_button-bg-active, var(--fui-bg-active, #{$fui-bg-active}));
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    @include action.disabled;
+    @include action.pending(".label", ".spinner");
   }
 
-  &:hover:not(:disabled):not([data-disabled]) {
-    border-color: var(--_button-border-hover, transparent);
-    background: var(--_button-bg-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
-    box-shadow: var(--_button-shadow-hover, none);
-  }
+  // ============================================
+  // Sizes: the one track (xs 24, sm 28, md 32, lg 40)
+  // ============================================
 
-  &:active:not(:disabled):not([data-disabled]),
-  &[data-pressed] {
-    border-color: var(--_button-border-hover, transparent);
-    background: var(--_button-bg-active, var(--fui-bg-active, #{$fui-bg-active}));
-    box-shadow: var(--_button-shadow-active, none);
-  }
+  .xs {
+    @include action.size("micro");
 
-  // Tactile press. 0.96 exactly: lower reads as exaggerated. Rides the
-  // interactive-base transition, so a release mid-press eases back.
-  @media (prefers-reduced-motion: no-preference) {
-    &:active:not(:disabled):not([data-disabled]):not(.link) {
-      scale: 0.96;
+    > svg,
+    > .label > svg {
+      @include action.glyph("micro");
     }
   }
 
-  &:focus-visible {
-    box-shadow:
-      0 0 0 var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-        color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 34%, transparent),
-      0 0 0
-        calc(
-          var(--fui-focus-ring-width, #{$fui-focus-ring-width}) +
-            var(--fui-stroke-hairline, #{$fui-stroke-hairline})
-        )
-        color-mix(in srgb, var(--fui-focus-ring-color, #{$fui-focus-ring-color}) 14%, transparent),
-      var(--_button-shadow, none);
+  .sm {
+    @include action.size("sm");
+
+    > svg,
+    > .label > svg {
+      @include action.glyph("sm");
+    }
   }
 
-  &:disabled,
-  &[data-disabled] {
-    box-shadow: none;
+  .md {
+    @include action.size("md");
+
+    > svg,
+    > .label > svg {
+      @include action.glyph("md");
+    }
   }
-}
 
-// ============================================
-// Sizes
-// ============================================
+  .lg {
+    @include action.size("lg");
 
-.sm {
-  @include action.size("sm");
-
-  > svg {
-    @include action.glyph("sm");
+    > svg,
+    > .label > svg {
+      @include action.glyph("lg");
+    }
   }
-}
 
-.md {
-  @include action.size("md");
+  // Optical alignment: icons (SVGs) carry built-in whitespace that makes
+  // symmetric padding look uneven. When an icon leads or trails text, reduce
+  // padding on the icon side so the content appears optically centered.
+  @each $size, $role in (xs: "micro", sm: "sm", md: "md", lg: "lg") {
+    .#{$size}:has(> svg:first-child:not(:last-child), > .label > svg:first-child:not(:last-child)) {
+      padding-inline-start: action.icon-side-inset($role);
+    }
 
-  > svg {
-    @include action.glyph("md");
+    .#{$size}:has(> svg:last-child:not(:first-child), > .label > svg:last-child:not(:first-child)) {
+      padding-inline-end: action.icon-side-inset($role);
+    }
   }
-}
 
-.lg {
-  @include action.size("lg");
+  // ============================================
+  // Tones: colour channels (recipes/_tone.scss)
+  // ============================================
+  // fill / fill-hover / fill-active / on-fill: the solid variant
+  // ink: the foreground of soft, ghost and link
+  // The accent tone is button chrome: it reads the `--fui-button-primary-*`
+  // consumer hooks first so a brand can restyle its primary action without
+  // touching the semantic ramp. Colour on an action is earned: soft and ghost
+  // never take a coloured tint, and danger reaches them as ink only.
 
-  > svg {
-    @include action.glyph("lg");
+  .toneNeutral {
+    @include tone.channels-neutral;
   }
-}
 
-// Optical alignment: icons (SVGs) carry built-in whitespace that makes
-// symmetric padding look uneven. When an icon leads or trails text, reduce
-// padding on the icon side so the content appears optically centered.
-.sm:not(.icon):has(> svg:first-child:not(:last-child)) {
-  padding-inline-start: action.icon-side-inset("sm");
-}
-.sm:not(.icon):has(> svg:last-child:not(:first-child)) {
-  padding-inline-end: action.icon-side-inset("sm");
-}
-.md:not(.icon):has(> svg:first-child:not(:last-child)) {
-  padding-inline-start: action.icon-side-inset("md");
-}
-.md:not(.icon):has(> svg:last-child:not(:first-child)) {
-  padding-inline-end: action.icon-side-inset("md");
-}
-.lg:not(.icon):has(> svg:first-child:not(:last-child)) {
-  padding-inline-start: action.icon-side-inset("lg");
-}
-.lg:not(.icon):has(> svg:last-child:not(:first-child)) {
-  padding-inline-end: action.icon-side-inset("lg");
-}
+  .toneAccent {
+    @include tone.channels("accent");
 
-// ============================================
-// Tones — colour channels (recipes/_tone.scss)
-// ============================================
-// fill / fill-hover / fill-active / on-fill → the solid variant
-// tint / tint-hover / tint-active           → the soft variant
-// wash / wash-active                        → hover and pressed of outline, ghost, link
-// ink                                       → foreground of soft, outline, ghost, link
-// line                                      → the outline border
-// The neutral and accent tones are button chrome: they read the
-// `--fui-button-neutral-*` / `--fui-button-primary-*` consumer hooks first so a
-// brand can restyle its primary action without touching the semantic ramp.
-
-.toneNeutral {
-  @include tone.channels-neutral;
-
-  --_fui-tone-ink: var(--fui-button-neutral-color, var(--fui-text-primary, #{$fui-text-primary}));
-  --_fui-tone-tint: var(--fui-button-neutral-bg, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  --_fui-tone-tint-hover: var(
-    --fui-button-neutral-bg-hover,
-    color-mix(
-      in srgb,
-      var(--fui-text-primary, #{$fui-text-primary}) 8%,
-      var(--fui-bg-tertiary, #{$fui-bg-tertiary})
-    )
-  );
-  --_fui-tone-tint-active: var(
-    --fui-button-neutral-bg-active,
-    color-mix(
-      in srgb,
-      var(--fui-text-primary, #{$fui-text-primary}) 14%,
-      var(--fui-bg-tertiary, #{$fui-bg-tertiary})
-    )
-  );
-  --_fui-tone-line: var(
-    --fui-button-neutral-border,
-    var(--fui-border-strong, #{$fui-border-strong})
-  );
-  --_button-line-hover: var(
-    --fui-button-neutral-border-hover,
-    var(--fui-border-strong, #{$fui-border-strong})
-  );
-}
-
-.toneAccent {
-  @include tone.channels("accent");
-
-  --_fui-tone-fill: var(--fui-button-primary-bg, var(--fui-color-accent, #{$fui-color-accent}));
-  --_fui-tone-fill-hover: var(
-    --fui-button-primary-bg-hover,
-    var(--fui-color-accent-hover, #{$fui-color-accent-hover})
-  );
-  --_fui-tone-fill-active: var(
-    --fui-button-primary-bg-active,
-    var(--fui-color-accent-active, #{$fui-color-accent-active})
-  );
-  --_fui-tone-on-fill: var(
-    --fui-button-primary-color,
-    var(--fui-color-on-accent, #{$fui-color-on-accent})
-  );
-  --_button-fill-line: var(--fui-button-primary-border, var(--_fui-tone-fill));
-  --_button-fill-line-hover: var(--fui-button-primary-border-hover, var(--_fui-tone-fill-hover));
-  --_button-line-hover: var(--fui-color-accent, #{$fui-color-accent});
-}
-
-.toneInfo {
-  @include tone.channels("info");
-}
-
-.toneSuccess {
-  @include tone.channels("success");
-}
-
-.toneWarning {
-  @include tone.channels("warning");
-}
-
-.toneDanger {
-  @include tone.channels("danger");
-}
-
-// ============================================
-// Variants — which channel paints which slot
-// ============================================
-
-.solid {
-  --_button-bg: var(--_fui-tone-fill, var(--fui-bg-inverse, #{$fui-bg-inverse}));
-  --_button-bg-hover: var(--_fui-tone-fill-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}));
-  --_button-bg-active: var(--_fui-tone-fill-active, var(--fui-bg-inverse, #{$fui-bg-inverse}));
-  --_button-border: var(
-    --_button-fill-line,
-    var(--_fui-tone-fill, var(--fui-bg-inverse, #{$fui-bg-inverse}))
-  );
-  --_button-border-hover: var(
-    --_button-fill-line-hover,
-    var(--_fui-tone-fill-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}))
-  );
-  --_button-color: var(--_fui-tone-on-fill, var(--fui-text-inverse, #{$fui-text-inverse}));
-  --_button-shadow: var(--fui-button-primary-shadow, none);
-  --_button-shadow-hover: var(--fui-button-primary-shadow, none);
-  --_button-shadow-active: var(--fui-button-primary-shadow-active, none);
-}
-
-// Soft hierarchy comes from its fill. The transparent border preserves
-// control geometry while leaving visible borders to `.outline`.
-.soft {
-  --_button-bg: var(--_fui-tone-tint, var(--fui-bg-tertiary, #{$fui-bg-tertiary}));
-  --_button-bg-hover: var(--_fui-tone-tint-hover, var(--fui-bg-hover, #{$fui-bg-hover}));
-  --_button-bg-active: var(--_fui-tone-tint-active, var(--fui-bg-active, #{$fui-bg-active}));
-  --_button-border: transparent;
-  --_button-border-hover: transparent;
-  --_button-color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
-  --_button-shadow: var(--fui-button-neutral-shadow, none);
-  --_button-shadow-hover: var(--fui-button-neutral-shadow, none);
-  --_button-shadow-active: var(--fui-button-neutral-shadow-active, none);
-}
-
-.outline {
-  --_button-bg: color-mix(in srgb, var(--fui-bg-elevated, #{$fui-bg-elevated}) 42%, transparent);
-  --_button-bg-hover: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
-  --_button-bg-active: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
-  --_button-border: var(--_fui-tone-line, var(--fui-border-strong, #{$fui-border-strong}));
-  --_button-border-hover: var(
-    --_button-line-hover,
-    var(--_fui-tone-ink, var(--fui-border-strong, #{$fui-border-strong}))
-  );
-  --_button-color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
-  --_button-shadow: var(--fui-button-outlined-shadow, #{$fui-button-outlined-shadow});
-  --_button-shadow-hover: var(--fui-button-neutral-shadow, none);
-  --_button-shadow-active: var(--fui-button-neutral-shadow-active, none);
-}
-
-.ghost {
-  --_button-bg: transparent;
-  --_button-bg-hover: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
-  --_button-bg-active: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
-  --_button-border: transparent;
-  --_button-border-hover: transparent;
-  --_button-color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
-  --_button-shadow: none;
-  --_button-shadow-hover: none;
-  --_button-shadow-active: none;
-}
-
-// Link: reads like a link, behaves like an action. Same open chrome as ghost,
-// but it defaults to the accent tone and underlines on hover so a tertiary
-// CTA ("View all →") is never mistaken for a toolbar ghost.
-.link {
-  --_button-bg: transparent;
-  --_button-bg-hover: var(--_fui-tone-wash, var(--fui-bg-hover, #{$fui-bg-hover}));
-  --_button-bg-active: var(--_fui-tone-wash-active, var(--fui-bg-active, #{$fui-bg-active}));
-  --_button-border: transparent;
-  --_button-border-hover: transparent;
-  --_button-color: var(--_fui-tone-ink, var(--fui-color-accent, #{$fui-color-accent}));
-  --_button-shadow: none;
-  --_button-shadow-hover: none;
-  --_button-shadow-active: none;
-
-  &:hover:not(:disabled):not([data-disabled]) {
-    text-decoration: underline;
-    text-underline-offset: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+    --_fui-tone-fill: var(--fui-button-primary-bg, var(--fui-color-accent, #{$fui-color-accent}));
+    --_fui-tone-fill-hover: var(
+      --fui-button-primary-bg-hover,
+      var(--fui-color-accent-hover, #{$fui-color-accent-hover})
+    );
+    --_fui-tone-fill-active: var(
+      --fui-button-primary-bg-active,
+      var(--fui-color-accent-active, #{$fui-color-accent-active})
+    );
+    --_fui-tone-on-fill: var(
+      --fui-button-primary-color,
+      var(--fui-color-on-accent, #{$fui-color-on-accent})
+    );
+    --_button-fill-line: var(--fui-button-primary-border, var(--_fui-tone-fill));
+    --_button-fill-line-hover: var(--fui-button-primary-border-hover, var(--_fui-tone-fill-hover));
   }
-}
 
-// Icon-only button (square aspect ratio)
-.icon {
-  inline-size: var(--_fui-action-track, #{action.track("md")});
-  block-size: var(--_fui-action-track, #{action.track("md")});
-  min-block-size: var(--_fui-action-track, #{action.track("md")});
-  padding-inline: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-}
+  .toneDanger {
+    @include tone.channels("danger");
+  }
 
-// Full width
-.fullWidth {
-  width: 100%;
-}
+  // ============================================
+  // Variants: which channel paints which slot
+  // ============================================
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
+  .solid {
+    --_button-bg: var(--_fui-tone-fill, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+    --_button-bg-hover: var(--_fui-tone-fill-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+    --_button-bg-active: var(--_fui-tone-fill-active, var(--fui-bg-inverse, #{$fui-bg-inverse}));
+    --_button-border: var(
+      --_button-fill-line,
+      var(--_fui-tone-fill, var(--fui-bg-inverse, #{$fui-bg-inverse}))
+    );
+    --_button-border-hover: var(
+      --_button-fill-line-hover,
+      var(--_fui-tone-fill-hover, var(--fui-bg-inverse, #{$fui-bg-inverse}))
+    );
+    --_button-color: var(--_fui-tone-on-fill, var(--fui-text-inverse, #{$fui-text-inverse}));
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .button {
-    transition: none;
+  // The neutral secondary: the hover tint at rest, the press tint on hover and
+  // press (the press tint plays the well role), no border. It reads on every
+  // plane, canvas or surface. Under high contrast the tint is not enough, so
+  // the soft edge (transparent at rest) turns to the strong edge.
+  .soft {
+    --_button-bg: var(--fui-bg-hover, #{$fui-bg-hover});
+    --_button-bg-hover: var(--fui-bg-active, #{$fui-bg-active});
+    --_button-bg-active: var(--fui-bg-active, #{$fui-bg-active});
+    --_button-border: var(--fui-button-soft-border, #{$fui-button-soft-border});
+    --_button-border-hover: var(--fui-button-soft-border, #{$fui-button-soft-border});
+    --_button-color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
+  }
+
+  .ghost {
+    --_button-bg: transparent;
+    --_button-bg-hover: var(--fui-bg-hover, #{$fui-bg-hover});
+    --_button-bg-active: var(--fui-bg-active, #{$fui-bg-active});
+    --_button-border: transparent;
+    --_button-border-hover: transparent;
+    --_button-color: var(--_fui-tone-ink, var(--fui-text-primary, #{$fui-text-primary}));
+  }
+
+  // Link: reads like a link, behaves like an action. Always underlined (one
+  // hairline at the shared link offset, the same rule as Link), never a fill,
+  // never a press scale. Accent takes the link ink; neutral steps ink 2 to
+  // ink 1 on hover.
+  .link {
+    --_fui-action-press-scale: 1;
+    --_button-bg: transparent;
+    --_button-bg-hover: transparent;
+    --_button-bg-active: transparent;
+    --_button-border: transparent;
+    --_button-border-hover: transparent;
+
+    text-decoration-line: underline;
+    text-decoration-thickness: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+    text-underline-offset: var(--fui-link-underline-offset, #{$fui-link-underline-offset});
+
+    &.toneAccent {
+      --_button-color: var(--fui-link-ink, #{$fui-link-ink});
+    }
+
+    &.toneNeutral {
+      --_button-color: var(--fui-text-secondary, #{$fui-text-secondary});
+      --_button-color-hover: var(--fui-text-primary, #{$fui-text-primary});
+    }
+  }
+
+  // Full width
+  .fullWidth {
+    width: 100%;
   }
 }

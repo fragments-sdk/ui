@@ -1,0 +1,48 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/action";
+@use "../../recipes/radius";
+@use "../../recipes/surface";
+
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  .root {
+    min-inline-size: 0;
+  }
+
+  .layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+  }
+
+  .figures {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    min-inline-size: 0;
+  }
+
+  .change {
+    display: inline-flex;
+  }
+
+  // The icon tile: the band fill on the corner nested inside the card, sized
+  // from the md action track.
+  .tile {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    inline-size: action.track("md");
+    block-size: action.track("md");
+    border-radius: radius.nested(
+      var(--fui-radius-surface, #{$fui-radius-surface}),
+      surface.inset("default")
+    );
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+  }
+}

@@ -1,492 +1,265 @@
 // ============================================
-// @usefragments/ui Token Derivation Functions
+// @usefragments/ui L1 derive: the runtime colour engine
 // ============================================
 //
-// Functions that derive complete token sets from seed values.
-// These enable the seed-based design system where users configure
-// ~5-10 seeds and everything else derives automatically.
+// Every function here returns a CSS expression, never a colour. The browser
+// evaluates it at style resolution from the L0 inputs (`--fui-seed-*`), so a
+// seed set on any themed element re-derives every role below it with no
+// build step and no JavaScript. Sass only writes the expressions once.
 //
+// The engine holds WCAG 2 for any sRGB seed, in both modes: text 4.5:1 and
+// indicators 3:1 against every plane. Three tools do it:
+//
+// 1. The pick. An on-colour is black or white, chosen at relative luminance
+//    0.1791, where both reach 4.58:1, so one of them always passes.
+// 2. The clamp. A role first takes the shape Glass gives it (accent text is
+//    the seed with L at most 0.46 in light), which sets how it looks.
+// 3. The solve. The clamped colour is then moved in linear-light sRGB until
+//    its luminance reaches the target against the planes it sits on: scaled
+//    toward black in light; scaled up, then mixed toward white, in dark. Hue
+//    holds because the channels scale together.
+//
+// A solve needs the luminance of what the colour sits on. Planes are fixed
+// lightness steps of the neutral, so their bounds are constants (light canvas
+// at least 0.82, dark band at most 0.018). The bounds hold up to neutral
+// chroma 0.04, so a plane caps the neutral's chroma there: any neutral keeps
+// every pair.
+// A tone's tint depends on the seed, so its luminance is computed from the
+// seed's own oklab channels and carried into the solve in the alpha channel.
 // ============================================
 
-@use "sass:color";
+@use "sass:list";
+@use "sass:map";
 @use "sass:math";
-@use "palettes" as *;
+@use "sass:string";
 
-// --------------------------------------------
-// Color Utility Functions
-// --------------------------------------------
+/// The neutral input every plane, ink and line is a lightness step of.
+$neutral: "var(--fui-seed-neutral)";
 
-/// Check if a color is considered "dark" (luminance < 0.5)
-/// @param {Color} $color - Color to check
-/// @return {Boolean} True if dark
-@function is-dark-color($color) {
-  // oklch lightness is perceptually uniform (0-1 range)
-  @return color.channel($color, "lightness", $space: oklch) < 0.5;
+/// Luminance bounds of the planes text and indicators sit on (see above).
+/// Light: the darkest plane is the canvas. Dark: the lightest is the band.
+$plane-floor-light: 0.82;
+$plane-ceiling-dark: 0.018;
+
+/// Solve targets, a little above the WCAG bars so 8-bit rounding in the
+/// painted colour never drops a pair under them (UIR-D108).
+$target-text: 4.6;
+$target-indicator: 3.1;
+
+/// The luminance where black and white text reach the same ratio.
+$pick-threshold: 0.1791;
+
+// Firefox keeps alpha to three decimals, so a carried luminance is padded
+// toward the safe side by more than half a step.
+$_carry-pad: 0.0006;
+
+@function _join($parts) {
+  $out: "";
+  @each $part in $parts {
+    $out: $out + $part;
+  }
+  @return string.unquote($out);
 }
 
-/// Get appropriate contrast color (black or white)
-/// @param {Color} $bg-color - Background color
-/// @return {Color} Black or white for best contrast
-@function contrast-color($bg-color) {
-  @if is-dark-color($bg-color) {
-    @return #ffffff;
-  } @else {
-    @return #000000;
-  }
-}
+/// The neutral chroma the plane bounds assume; a vivid neutral is capped here.
+$neutral-chroma-cap: 0.04;
 
-// --------------------------------------------
-// Accent Color Derivation
-// --------------------------------------------
-
-/// Derive hover state for accent color
-/// Handles extreme lightness values (near-black/near-white) by reversing
-/// the adjustment direction to ensure a visible hover state.
-/// @param {Color} $base - Base accent color
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Hover state color
-@function derive-accent-hover($base, $is-dark: false) {
-  $l: color.channel($base, "lightness", $space: oklch);
-
-  @if $is-dark {
-    @if $l > 0.85 {
-      // Very light accent on dark bg: darken for visible hover
-      @return color.adjust($base, $lightness: -0.05, $space: oklch);
-    }
-    // Standard dark mode: lighten for hover
-    @return color.adjust($base, $lightness: 0.04, $space: oklch);
-  } @else {
-    @if $l < 0.15 {
-      // Very dark accent on light bg: lighten for visible hover
-      @return color.adjust($base, $lightness: 0.09, $space: oklch);
-    }
-    // Standard light mode: darken for hover
-    @return color.adjust($base, $lightness: -0.05, $space: oklch);
-  }
-}
-
-/// Derive active state for accent color
-/// Handles extreme lightness values (near-black/near-white) by reversing
-/// the adjustment direction to ensure a visible active/pressed state.
-/// @param {Color} $base - Base accent color
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Active state color
-@function derive-accent-active($base, $is-dark: false) {
-  $l: color.channel($base, "lightness", $space: oklch);
-
-  @if $is-dark {
-    @if $l > 0.85 {
-      // Very light accent on dark bg: darken more for active
-      @return color.adjust($base, $lightness: -0.08, $space: oklch);
-    }
-    // Standard dark mode: lighten more for active
-    @return color.adjust($base, $lightness: 0.07, $space: oklch);
-  } @else {
-    @if $l < 0.15 {
-      // Very dark accent on light bg: lighten more for active
-      @return color.adjust($base, $lightness: 0.14, $space: oklch);
-    }
-    // Standard light mode: darken more for active
-    @return color.adjust($base, $lightness: -0.09, $space: oklch);
-  }
-}
-
-/// Derive the dark-mode accent from the brand.
-/// Chroma-aware: chroma is PRESERVED (never clamped), so a saturated brand stays
-/// vibrant in dark mode instead of washing out. Lightness is only lifted for
-/// near-grey/chroma-0 brands via the `0.95 - 2c` term — a vibrant brand (high c)
-/// keeps its own lightness, while a neutral grey brand (c≈0) lifts toward ~0.85 so
-/// it stays visible on dark surfaces where lightness is the only perceptual cue.
-/// Final lightness clamped to [0.55, 0.85]. Mirrors the runtime OKLCH derivation in
-/// _variables.scss (the SCSS-computed fallback for browsers without relative color).
-/// @param {Color} $brand - Brand color
-/// @return {Color} Dark-mode accent
-@function derive-dark-accent($brand) {
-  $l: color.channel($brand, "lightness", $space: oklch);
-  $c: color.channel($brand, "chroma", $space: oklch);
-  // color.channel returns lightness as a percentage; normalize to a unitless 0–1
-  // ratio so the comparisons below share a scale with the 0.55/0.85 bounds.
-  $l-num: $l;
-  @if not math.is-unitless($l) {
-    $l-num: math.div($l, 100%);
-  }
-  // grey-lift only kicks in for low-chroma brands; vibrant brands keep their own L.
-  $target-l: math.max($l-num, 0.95 - 2 * $c);
-  $clamped-l: math.max(0.55, math.min($target-l, 0.85));
-  @return oklch($clamped-l $c color.channel($brand, "hue", $space: oklch));
-}
-
-// --------------------------------------------
-// Contrast Correction
-// --------------------------------------------
-
-/// Progressively darken (light mode) or lighten (dark mode) a foreground
-/// color until it meets the given WCAG contrast target against a background.
-/// Used to guarantee AAA (7:1) text contrast on tinted palette surfaces.
-/// @param {Color} $fg - Foreground color to adjust
-/// @param {Color} $bg - Background color to check against
-/// @param {Number} $target - Target contrast ratio (default: 7 for AAA)
-/// @param {Boolean} $is-dark - Whether in dark mode (lighten instead of darken)
-/// @return {Color} Adjusted foreground color meeting the target ratio
-@function ensure-contrast($fg, $bg, $target: 7, $is-dark: false) {
-  $adjusted: $fg;
-  @for $i from 1 through 40 {
-    @if wcag-contrast($adjusted, $bg) < $target {
-      @if $is-dark {
-        $adjusted: color.adjust($adjusted, $lightness: 2%, $space: oklch);
-      } @else {
-        $adjusted: color.adjust($adjusted, $lightness: -2%, $space: oklch);
-      }
-    }
-  }
-  @return $adjusted;
-}
-
-// --------------------------------------------
-// Surface/Background Derivation
-// --------------------------------------------
-
-/// Derive surface/background tokens for the paper ramp.
-/// Maps shade levels to semantic surface tokens for visual depth layering.
-/// @param {Map} $palette - Neutral palette map
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Map} Surface token values
-@function derive-surfaces($palette, $is-dark: false, $palette-name: "paper") {
-  @if $is-dark {
-    // The cream canvas moved onto a warm charcoal plane with a real elevation
-    // ladder: bands step up from the page, cards step up from bands — the
-    // dark mirror of canvas / tinted band / white card in light mode.
-    @return (
-      primary: #171614,
-      // page background
-      secondary: #171614,
-      // shell/sidebar on the same plane
-      tertiary: #1e1c19,
-      // tinted section band, raised chrome
-      elevated: #262421,
-      // cards and overlays float clearly above bands
-      subtle: #1b1a17,
-      // barely-raised wells
-      // Interaction ladder: the ink at an alpha, so the same step reads on the
-      // page, the band and an elevated menu. Two points stronger than light.
-      hover: rgba(#f0ede9, 0.09),
-      selected: rgba(#f0ede9, 0.14),
-      active: rgba(#f0ede9, 0.16)
-    );
-  }
-
-  // Light mode — the warm gallery scheme: a cream page canvas, white cards
-  // floating above it, and a deeper cream band for nested sections.
-  // Hover/active are warm alpha tints so interaction chrome never goes cold
-  // grey on the warm canvas.
-  @return (
-    primary: #faf8f5,
-    // page canvas (cream)
-    secondary: #faf8f5,
-    // shell/sidebar on the same plane
-    tertiary: #f2ede7,
-    // tinted section band, hover-on-paper
-    elevated: #ffffff,
-    // cards and overlays float white
-    subtle: #fdfcfa,
-    // barely-raised wells
-    // Interaction ladder (hover < selected < active): the ink at an alpha so
-    // it composes on any surface.
-    hover: rgba(get-shade($palette, 900), 0.07),
-    selected: rgba(get-shade($palette, 900), 0.12),
-    active: rgba(get-shade($palette, 900), 0.14)
+/// A plane, ink or line: `oklch(from <neutral> L min(C, cap)×k h)`.
+@function plane($l, $k) {
+  @return _join(
+    ("oklch(from ", $neutral, " ", $l, " calc(min(c, ", $neutral-chroma-cap, ") * ", $k, ") h)")
   );
 }
 
-/// Derive document/application canvas tokens used by base body styles and
-/// large layout containers. Body and main share the paper canvas so app
-/// shells sit on one plane; raised component roles provide the contrast.
-/// @param {Map} $palette - Neutral palette map
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Map} Body and main background values
-@function derive-app-surfaces($palette, $is-dark: false, $palette-name: "paper") {
-  @if $is-dark {
-    @return (body: #171614, main: #171614);
-  }
-  @return (body: #faf8f5, main: #faf8f5);
+/// `color-mix(in srgb, a p%, b)`: hover and press steps toward black or
+/// white, mixed in sRGB so the result never leaves the gamut.
+@function mix($a, $percent, $b) {
+  @return _join(("color-mix(in srgb, ", $a, " ", $percent, ", ", $b, ")"));
 }
 
-// --------------------------------------------
-// Text Color Derivation
-// --------------------------------------------
-
-/// Derive text tokens for the paper ramp.
-/// Light mode applies ensure-contrast() to meet WCAG AAA (7:1) against the
-/// cream canvas; dark mode uses warm ink tiers so text keeps the scheme's
-/// warmth instead of snapping to pure white.
-/// @param {Map} $palette - Neutral palette map
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Map} Text token values
-@function derive-text($palette, $is-dark: false, $palette-name: "paper") {
-  @if $is-dark {
-    @return (
-      primary: #f0ede9,
-      // warm ink
-      secondary: #b6b0a8,
-      // muted
-      tertiary: #8d8780,
-      // faint / placeholder
-      inverse: #171614 // text on light (cream) accents
-    );
-  }
-
-  $bg: get-shade($palette, 50);
-
-  @return (
-    primary: get-shade($palette, 900),
-    // Main text (high contrast)
-    secondary: ensure-contrast(get-shade($palette, 600), $bg, 7),
-    tertiary: ensure-contrast(
-        color.mix(get-shade($palette, 600), get-shade($palette, 500), 20%),
-        $bg,
-        7
-      ),
-    inverse: get-shade($palette, 100) // Text on dark accents
-  );
-}
-
-// --------------------------------------------
-// Border Color Derivation
-// --------------------------------------------
-
-/// Derive border tokens for the paper ramp
-/// @param {Map} $palette - Neutral palette map
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Map} Border token values
-@function derive-borders($palette, $is-dark: false, $palette-name: "paper") {
-  @if $is-dark {
-    // Solid warm hairline + strong border on the charcoal plane.
-    @return (
-      default: #343029,
-      // hairline
-      strong: #4a4641 // strong border
-    );
-  }
-  // Warm-tinted hairlines so edges on the cream canvas never read as cold
-  // grey lines cutting through a warm scheme.
-  @return (default: rgba(60, 45, 30, 0.1), strong: rgba(60, 45, 30, 0.18));
-}
-
-// --------------------------------------------
-// Shadow Derivation
-// --------------------------------------------
-
-/// Derive shadow tokens based on mode
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Map} Shadow token values
-@function derive-shadows($is-dark: false) {
-  @if $is-dark {
-    // Dark mode: near-zero shadows — hairlines and alpha overlays carry
-    // elevation instead, matching dense product-chrome aesthetics.
-    @return (
-      sm: (
-        0 1px 2px 0 rgba(0, 0, 0, 0.15),
-      ),
-      md: (
-        0 2px 4px -1px rgba(0, 0, 0, 0.2),
-        0 1px 3px -2px rgba(0, 0, 0, 0.15),
-      ),
-      lg: (
-        0 8px 12px -3px rgba(0, 0, 0, 0.25),
-        0 3px 5px -4px rgba(0, 0, 0, 0.18),
-      )
-    );
-  } @else {
-    // Light mode: flatter aesthetic — near-zero shadows so layout reads
-    // as structure rather than floating chrome.
-    @return (
-      sm: (
-        0 1px 2px 0 rgba(0, 0, 0, 0.02),
-      ),
-      md: (
-        0 2px 4px -1px rgba(0, 0, 0, 0.04),
-        0 1px 3px -2px rgba(0, 0, 0, 0.03),
-      ),
-      lg: (
-        0 8px 12px -3px rgba(0, 0, 0, 0.06),
-        0 3px 5px -4px rgba(0, 0, 0, 0.04),
-      )
-    );
-  }
-}
-
-// --------------------------------------------
-// Scrollbar Derivation
-// --------------------------------------------
-
-/// Derive scrollbar tokens for the paper ramp
-/// @param {Map} $palette - Neutral palette map
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Map} Scrollbar token values
-@function derive-scrollbar($palette, $is-dark: false, $palette-name: "paper") {
-  @if $is-dark {
-    // Transparent track, strong-border thumb on the warm charcoal plane.
-    @return (track: transparent, thumb: #4a4641, thumb-hover: #b6b0a8);
-  }
-  @return (
-    track: get-shade($palette, 100),
-    thumb: get-shade($palette, 300),
-    thumb-hover: get-shade($palette, 400)
-  );
-}
-
-// --------------------------------------------
-// Semantic Color Backgrounds
-// --------------------------------------------
-
-/// Derive the compact tone tint (Badge, Chip, Button soft): the seed at an
-/// alpha, so it composes on any surface instead of into a fixed white/black.
-/// @param {Color} $color - The semantic color
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Tint colour
-@function derive-semantic-tint($color, $is-dark: false) {
-  @if $is-dark {
-    @return color.change($color, $alpha: 0.26);
-  }
-  @return color.change($color, $alpha: 0.18);
-}
-
-/// Derive the panel tone wash (Alert, Toast, Card, Message): the same seed at
-/// a lighter alpha, because a large area needs less chroma to read.
-/// @param {Color} $color - The semantic color
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Wash colour
-@function derive-semantic-wash($color, $is-dark: false) {
-  @if $is-dark {
-    @return color.change($color, $alpha: 0.16);
-  }
-  @return color.change($color, $alpha: 0.1);
-}
-
-/// Ink for text painted on a solid tone fill: whichever of white or the paper
-/// ink reads better against the seed. Warning and most accents take the ink;
-/// danger, info and success take white.
-/// @param {Color} $color - The tone fill
-/// @return {Color} On-fill ink
-@function derive-on-fill($color) {
-  $light: #ffffff;
-  $dark: #1d1c1a;
-  @if wcag-contrast($light, $color) >= wcag-contrast($dark, $color) {
+/// Both modes in one value. Each branch reads only inputs and constants, so
+/// `light-dark()` never sits inside another colour function.
+@function modes($light, $dark) {
+  @if $light == $dark {
     @return $light;
   }
-  @return $dark;
+  @return _join(("light-dark(", $light, ", ", $dark, ")"));
 }
 
-/// Derive hover state for semantic colors (like danger-hover)
-/// @param {Color} $color - The semantic color
-/// @return {Color} Hover state color
-@function derive-semantic-hover($color) {
-  @return color.adjust($color, $lightness: -0.05, $space: oklch);
-}
+// The private helpers below are emitted once per themed element by
+// `helpers()`. They hold channel keywords, so they only mean something when
+// substituted into a relative colour in linear-light sRGB.
 
-// --------------------------------------------
-// Focus Ring Derivation
-// --------------------------------------------
+/// Relative luminance of the origin colour, its channels clipped to sRGB.
+$_y: "var(--_fui-y)";
+/// The largest clipped channel (never zero), the headroom a scale-up has.
+$_max: "var(--_fui-max)";
 
-/// Derive focus ring color from brand/accent
-/// @param {Color} $brand - Brand color
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Focus ring color
-@function derive-focus-ring($brand, $is-dark: false) {
-  @if $is-dark {
-    // In dark mode with dark brand, use light focus ring
-    @if is-dark-color($brand) {
-      @return #f2f2f2;
-    }
-    @return $brand;
-  } @else {
-    // In light mode, use brand color
-    @return $brand;
+@function _helper-names($ratio) {
+  $id: "ind";
+  @if $ratio == $target-text {
+    $id: "text";
   }
+  @return (
+    k: "--_fui-k-#{$id}",
+    yt: "--_fui-yt-#{$id}",
+    k1: "--_fui-k1-#{$id}",
+    t: "--_fui-t-#{$id}"
+  );
 }
 
-// --------------------------------------------
-// Backdrop Derivation
-// --------------------------------------------
-
-/// Derive backdrop/overlay colors
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Backdrop color
-@function derive-backdrop($is-dark: false) {
-  @if $is-dark {
-    @return rgba(0, 0, 0, 0.8);
-  } @else {
-    @return rgba(0, 0, 0, 0.5);
+/// The helper custom properties, as a map of name to value.
+@function helpers() {
+  $out: (
+    "--_fui-y": string.unquote(
+        "(0.2126 * clamp(0, r, 1) + 0.7152 * clamp(0, g, 1) + 0.0722 * clamp(0, b, 1))"
+      ),
+    "--_fui-max": string.unquote("max(clamp(0, r, 1), clamp(0, g, 1), clamp(0, b, 1), 0.000001)"),
+  );
+  @each $ratio in ($target-text, $target-indicator) {
+    $names: _helper-names($ratio);
+    $y-safe: "max(#{$_y}, 0.000001)";
+    // Light: the scale toward black that lands on the target, capped at 1.
+    $k: "min(1, ((alpha + 0.05) / #{$ratio} - 0.05) / #{$y-safe})";
+    // Dark: the target, the scale toward it the headroom allows, then the
+    // share of white that covers the rest.
+    $yt: "(#{$ratio} * (alpha + 0.05) - 0.05)";
+    $k1: "min(max(1, var(#{map.get($names, yt)}) / #{$y-safe}), 1 / #{$_max})";
+    $y1: "min(#{$_y} * var(#{map.get($names, k1)}), 0.999999)";
+    $t: "clamp(0, (var(#{map.get($names, yt)}) - #{$y1}) / (1 - #{$y1}), 1)";
+    $out: map.merge(
+      $out,
+      (
+        map.get($names, k): string.unquote($k),
+        map.get($names, yt): string.unquote($yt),
+        map.get($names, k1): string.unquote($k1),
+        map.get($names, t): string.unquote($t),
+      )
+    );
   }
+  @return $out;
 }
 
-// --------------------------------------------
-// WCAG 2.1 Contrast Utilities
-// --------------------------------------------
-
-/// Linearize an sRGB channel (0-255) per WCAG 2.1
-/// @param {Number} $channel-8bit - Channel value 0-255
-/// @return {Number} Linear value 0-1
-@function _srgb-linearize($channel-8bit) {
-  $srgb: math.div($channel-8bit, 255);
-  @if $srgb <= 0.04045 {
-    @return math.div($srgb, 12.92);
-  } @else {
-    @return math.pow(math.div($srgb + 0.055, 1.055), 2.4);
-  }
-}
-
-/// WCAG 2.1 relative luminance
-/// @param {Color} $color - Color to measure
-/// @return {Number} Relative luminance 0-1
-@function _wcag-luminance($color) {
-  $r: _srgb-linearize(color.channel($color, "red", $space: rgb));
-  $g: _srgb-linearize(color.channel($color, "green", $space: rgb));
-  $b: _srgb-linearize(color.channel($color, "blue", $space: rgb));
-  @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
-}
-
-/// WCAG 2.1 contrast ratio between two colors
-/// @param {Color} $fg - Foreground color
-/// @param {Color} $bg - Background color
-/// @return {Number} Contrast ratio >= 1
-@function wcag-contrast($fg, $bg) {
-  $l1: _wcag-luminance($fg);
-  $l2: _wcag-luminance($bg);
-  $lighter: math.max($l1, $l2);
-  $darker: math.min($l1, $l2);
-  @return math.div($lighter + 0.05, $darker + 0.05);
-}
-
-// --------------------------------------------
-// Semantic Text Color Derivation
-// --------------------------------------------
-
-/// Derive a WCAG AA contrast-safe text color from a semantic color.
-/// Darkens (light mode) or lightens (dark mode) until 6:1 is met
-/// against ~white (light) or ~black (dark) page background.
-/// Target is 6:1 (above AA 4.5:1) to provide headroom for composited
-/// semantic backgrounds (rgba overlays) on tinted palette surfaces.
-/// @param {Color} $color - Base semantic color (e.g. danger, success)
-/// @param {Boolean} $is-dark - Whether in dark mode
-/// @return {Color} Adjusted color meeting 5.0:1 contrast on page bg
-@function derive-semantic-text($color, $is-dark: false) {
-  $target: 6;
-  $bg: #ffffff;
-  @if $is-dark {
-    $bg: #0a0a0a;
-  }
-  $adjusted: $color;
-
-  @for $i from 1 through 40 {
-    @if wcag-contrast($adjusted, $bg) < $target {
-      @if $is-dark {
-        $adjusted: color.adjust($adjusted, $lightness: 2%, $space: oklch);
-      } @else {
-        $adjusted: color.adjust($adjusted, $lightness: -2%, $space: oklch);
-      }
+/// Solve `$color` (whose alpha carries the plane luminance) to `$ratio`.
+@function _solve($color, $ratio, $is-dark) {
+  $names: _helper-names($ratio);
+  $channels: ();
+  @each $channel in (r, g, b) {
+    $c: "clamp(0, #{$channel}, 1)";
+    @if $is-dark {
+      $k1: "var(#{map.get($names, k1)})";
+      $t: "var(#{map.get($names, t)})";
+      $channels: list.append($channels, "calc(#{$c} * #{$k1} + #{$t} * (1 - #{$c} * #{$k1}))");
+    } @else {
+      $channels: list.append($channels, "calc(#{$c} * var(#{map.get($names, k)}))");
     }
   }
+  @return _join(
+    (
+      "color(from ",
+      $color,
+      " srgb-linear ",
+      list.nth($channels, 1),
+      " ",
+      list.nth($channels, 2),
+      " ",
+      list.nth($channels, 3),
+      " / 1)"
+    )
+  );
+}
 
-  @return $adjusted;
+/// Black or white, whichever reads on `$color` (white below 0.1791).
+@function pick($color) {
+  $c: "clamp(0, (#{$pick-threshold} - #{$_y}) * 1e7, 1)";
+  @return _join(("color(from ", $color, " srgb-linear ", $c, " ", $c, " ", $c, ")"));
+}
+
+/// The opposite of `pick()`: the direction a hover moves away from its label.
+@function off($color) {
+  $c: "clamp(0, (#{$_y} - #{$pick-threshold}) * 1e7, 1)";
+  @return _join(("color(from ", $color, " srgb-linear ", $c, " ", $c, " ", $c, ")"));
+}
+
+/// An indicator (checked fill, focus ring): the seed clamped to a lightness
+/// bound (L ≤ $l in light, L ≥ $l in dark), then solved to 3:1 against every
+/// plane.
+@function indicator($seed, $l, $is-dark) {
+  $plane: $plane-floor-light;
+  $bound: "min";
+  @if $is-dark {
+    $plane: $plane-ceiling-dark;
+    $bound: "max";
+  }
+  $clamped: "oklch(from #{$seed} #{$bound}(l, #{$l}) c h / #{$plane})";
+  @return _solve($clamped, $target-indicator, $is-dark);
+}
+
+/// Chroma bounds of a chart series: vivid enough to tell apart, even from an
+/// achromatic brand, and no louder than the selection.
+$series-chroma-min: 0.1;
+$series-chroma-max: 0.16;
+
+/// A chart series: the seed's hue turned by `$turn` degrees, set to lightness
+/// `$l` with chroma held between the series bounds, then solved to 3:1 against
+/// every plane like an indicator.
+@function series($seed, $turn, $l, $is-dark) {
+  $plane: $plane-floor-light;
+  @if $is-dark {
+    $plane: $plane-ceiling-dark;
+  }
+  $hue: "h";
+  @if $turn > 0 {
+    $hue: "calc(h + #{$turn})";
+  } @else if $turn < 0 {
+    $hue: "calc(h - #{-$turn})";
+  }
+  $shaped: "oklch(from #{$seed} #{$l} clamp(#{$series-chroma-min}, c, #{$series-chroma-max}) #{$hue} / #{$plane})";
+  @return _solve($shaped, $target-indicator, $is-dark);
+}
+
+// Oklab to relative luminance, written with products only (Firefox rejects
+// pow() on channel keywords). The rows are the oklab LMS matrix folded into
+// the sRGB luminance weights.
+@function _cube($x) {
+  @return "(#{$x}) * (#{$x}) * (#{$x})";
+}
+
+@function _oklab-luminance($l, $a, $b) {
+  $lp: "#{$l} + 0.3963377774 * #{$a} + 0.2158037573 * #{$b}";
+  $mp: "#{$l} - 0.1055613458 * #{$a} - 0.0638541728 * #{$b}";
+  $sp: "#{$l} - 0.0894841775 * #{$a} - 1.291485548 * #{$b}";
+  @return "(-0.0407745 * #{_cube($lp)} + 1.1124922 * #{_cube($mp)} - 0.0717176 * #{_cube($sp)})";
+}
+
+/// Luminance of `$percent` of the seed mixed in oklab into a surface of
+/// lightness `$surface-l`, from the seed's own oklab channels (the surface's
+/// near-zero chroma is left out).
+@function _tint-luminance($percent, $surface-l) {
+  $p: math.div($percent, 100%);
+  $q: 1 - $p;
+  @return _oklab-luminance("(#{$p} * l + #{$q} * #{$surface-l})", "(#{$p} * a)", "(#{$p} * b)");
+}
+
+/// Tone text: the seed clamped to a lightness bound (and chroma, in light),
+/// then solved to 4.5:1 against every plane and against its own tint.
+/// @param {Map} $shape - `l` bound, optional `c` cap, optional `c-scale`
+@function tone-text($seed, $shape, $tint-percent, $surface-l, $is-dark) {
+  $y-tint: _tint-luminance($tint-percent, $surface-l);
+  $carried: "max(0, min(#{$plane-floor-light}, #{$y-tint}) - #{$_carry-pad})";
+  $bound: "min";
+  @if $is-dark {
+    $carried: "min(1, max(#{$plane-ceiling-dark}, #{$y-tint}) + #{$_carry-pad})";
+    $bound: "max";
+  }
+  $carrier: "oklab(from #{$seed} l a b / #{$carried})";
+  $l: "#{$bound}(l, #{map.get($shape, l)})";
+  $c: "c";
+  @if map.get($shape, c-scale) {
+    $c: "calc(c * #{map.get($shape, c-scale)})";
+  } @else if map.get($shape, c) {
+    $c: "min(c, #{map.get($shape, c)})";
+  }
+  $clamped: "oklch(from #{$carrier} #{$l} #{$c} h / alpha)";
+  @return _solve($clamped, $target-text, $is-dark);
 }

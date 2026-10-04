@@ -2,12 +2,8 @@
 
 import * as React from "react";
 import styles from "./ScrollArea.module.scss";
-import {
-  detectRtlScrollModel,
-  readScrollAxes,
-  type ScrollAxesState,
-  type ScrollOrientation,
-} from "./scroll-state";
+import { type ScrollOrientation } from "./scroll-state";
+import { useScrollEdges } from "./use-scroll-edges";
 
 // ============================================
 // Types
@@ -15,25 +11,36 @@ import {
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  /** Scroll direction */
+  /** Scroll direction.
+   * @default "vertical" */
   orientation?: ScrollOrientation;
-  /** Scrollbar visibility behavior */
-  scrollbarVisibility?: "auto" | "always" | "hover";
-  /** Whether to show fade indicators at scroll edges. Defaults to false. */
+  /** When the thin scrollbar shows: `auto` while scrolling, on hover (where the pointer
+   * can hover) and while focus is inside; `always` all the time.
+   * @default "auto" */
+  scrollbarVisibility?: "auto" | "always";
+  /** Fade the edges that still hide content.
+   * @default false */
   showFades?: boolean;
+  /** Names the viewport as a region, read when it takes the keyboard (it scrolls and
+   * holds nothing focusable). */
+  "aria-label"?: string;
+  /** Names the scrolling region by another element's id. */
+  "aria-labelledby"?: string;
   /** Additional class name */
   className?: string;
 }
+
+// How long the scrollbar stays after the last scroll, in milliseconds.
+const SCROLLING_LINGER_MS = 800;
 
 // ============================================
 // Component
 // ============================================
 
 /**
- * ScrollArea - A styled scrollable container with customizable scrollbars.
- *
- * Provides thin, unobtrusive scrollbars that appear on hover or scroll,
- * with optional fade indicators to hint at overflowing content.
+ * A scrollable container with a thin scrollbar that shows while it is used,
+ * optional fades at the edges that still hide content, and a viewport that
+ * takes the keyboard when nothing inside it can.
  */
 function ScrollAreaRoot({
   children,
@@ -42,88 +49,62 @@ function ScrollAreaRoot({
   showFades = false,
   className,
   dir,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   ...htmlProps
 }: ScrollAreaProps) {
   const viewportRef = React.useRef<HTMLDivElement>(null);
-  const [axes, setAxes] = React.useState<ScrollAxesState>({ x: "none", y: "none" });
+  const edges = useScrollEdges(viewportRef, { orientation, dir });
 
+  // `auto` shows the scrollbar while scrolling: mark the viewport, then let
+  // the mark lapse once scrolling stops.
   React.useEffect(() => {
     const viewport = viewportRef.current;
-    if (!viewport || !showFades) return;
-
-    let frame: number | null = null;
-    const observedChildren = new Set<Element>();
-
-    const readAndCommit = () => {
-      frame = null;
-      const view = viewport.ownerDocument.defaultView;
-      const computedDirection = view?.getComputedStyle(viewport).direction;
-      const direction = (computedDirection || dir) === "rtl" ? "rtl" : "ltr";
-      const nextAxes = readScrollAxes(viewport, {
-        orientation,
-        direction,
-        rtlModel: direction === "rtl" ? detectRtlScrollModel(viewport.ownerDocument) : undefined,
-      });
-
-      setAxes((currentAxes) =>
-        currentAxes.x === nextAxes.x && currentAxes.y === nextAxes.y ? currentAxes : nextAxes
-      );
+    if (!viewport || scrollbarVisibility !== "auto") return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const onScroll = () => {
+      viewport.setAttribute("data-scrolling", "");
+      if (timer !== null) clearTimeout(timer);
+      timer = setTimeout(() => {
+        viewport.removeAttribute("data-scrolling");
+        timer = null;
+      }, SCROLLING_LINGER_MS);
     };
-
-    const schedule = () => {
-      if (frame === null) frame = requestAnimationFrame(readAndCommit);
-    };
-
-    const resizeObserver = new ResizeObserver(schedule);
-    const syncObservedChildren = () => {
-      const currentChildren = new Set(Array.from(viewport.children));
-      observedChildren.forEach((child) => {
-        if (!currentChildren.has(child)) {
-          resizeObserver.unobserve(child);
-          observedChildren.delete(child);
-        }
-      });
-      currentChildren.forEach((child) => {
-        if (!observedChildren.has(child)) {
-          resizeObserver.observe(child);
-          observedChildren.add(child);
-        }
-      });
-    };
-
-    const mutationObserver = new MutationObserver(() => {
-      syncObservedChildren();
-      schedule();
-    });
-
-    resizeObserver.observe(viewport);
-    syncObservedChildren();
-    mutationObserver.observe(viewport, { childList: true, subtree: true });
-    viewport.addEventListener("scroll", schedule, { passive: true });
-    schedule();
-
+    viewport.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      if (frame !== null) cancelAnimationFrame(frame);
-      viewport.removeEventListener("scroll", schedule);
-      resizeObserver.disconnect();
-      mutationObserver.disconnect();
-      observedChildren.clear();
+      viewport.removeEventListener("scroll", onScroll);
+      if (timer !== null) clearTimeout(timer);
+      viewport.removeAttribute("data-scrolling");
     };
-  }, [dir, orientation, showFades]);
+  }, [scrollbarVisibility]);
+
+  const scrollable = edges.x !== "none" || edges.y !== "none";
+  // A region that scrolls and holds nothing focusable takes the keyboard itself.
+  const focusable = scrollable && !edges.hasFocusable;
+  const labelled = Boolean(ariaLabel || ariaLabelledBy);
 
   const rootClasses = [styles.root, className].filter(Boolean).join(" ");
-  const visibleAxes = showFades ? axes : { x: "none" as const, y: "none" as const };
-
   const viewportClasses = [styles.viewport, styles[orientation]].filter(Boolean).join(" ");
 
   return (
-    <div {...htmlProps} className={rootClasses} data-orientation={orientation} dir={dir}>
+    <div
+      {...htmlProps}
+      className={rootClasses}
+      data-orientation={orientation}
+      data-slot="scroll-area"
+      dir={dir}
+    >
       <div
         ref={viewportRef}
         className={viewportClasses}
-        data-scroll-x={visibleAxes.x}
-        data-scroll-y={visibleAxes.y}
+        data-slot="scroll-area-viewport"
+        data-scroll-x={showFades ? edges.x : "none"}
+        data-scroll-y={showFades ? edges.y : "none"}
         data-scrollbar-visibility={scrollbarVisibility}
+        tabIndex={focusable ? 0 : undefined}
+        role={labelled ? "region" : undefined}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
       >
         {children}
       </div>
@@ -132,7 +113,7 @@ function ScrollAreaRoot({
 }
 
 // ============================================
-// Export
+// Export compound component
 // ============================================
 
 export const ScrollArea = Object.assign(ScrollAreaRoot, {

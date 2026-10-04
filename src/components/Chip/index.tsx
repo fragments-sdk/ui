@@ -1,150 +1,150 @@
 "use client";
 
 import * as React from "react";
+import { X } from "@phosphor-icons/react";
 import styles from "./Chip.module.scss";
 import { isProductionBuild } from "../../utils/env";
 
 /**
- * Chip for selections, filters, and tags. Use with Chip.Group for multi-select.
+ * A compact value: a tag, a filter, an applied selection. One look: 24 high,
+ * the band fill with one hairline, the control radius, truncated.
  * @see https://usefragments.com/components/chip
  */
-export type ChipVariant = "soft" | "outline";
-export type ChipTone = "neutral" | "accent" | "info" | "success" | "warning" | "danger";
-
-export interface ChipProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface ChipProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "children" | "value"
+> {
   children: React.ReactNode;
-  /** Chrome family — the same two Badge has.
-   *
-   * - `soft` (default): tinted pill for filters and tags.
-   * - `outline`: hairline-bordered, transparent.
-   * @default "soft"
-   * @see https://usefragments.com/components/chip#variants */
-  variant?: ChipVariant;
-  /** Colour. `neutral` is the plain chip; the other tones paint the shared
-   * tone ramp, the same one Badge and Button read.
-   * @default "neutral" */
-  tone?: ChipTone;
-  /** Chip size.
-   * @default "xs" */
-  size?: "xs" | "sm" | "md" | "lg";
-  /** Whether the chip is selected */
+  /** Selected state. Passing it (or `onClick`, or placing the chip in a
+   * Chip.Group) makes the chip a toggle button with `aria-pressed`; selected
+   * paints the selection wash and ring. A chip with neither is a static tag. */
   selected?: boolean;
-  /** Icon element rendered before the label */
+  /** Leading glyph or avatar. */
   icon?: React.ReactNode;
-  /** Avatar element rendered before the label */
-  avatar?: React.ReactNode;
-  /** Makes chip removable. Called when X is clicked. */
+  /** Makes the chip removable: a remove control with its own label follows
+   * the text. */
   onRemove?: () => void;
+  /** Accessible name of the remove control.
+   * @default "Remove <label>" for a text label, else "Remove" */
+  removeLabel?: string;
   /** Value identifier used by Chip.Group */
   value?: string;
 }
 
-export interface ChipGroupProps extends Omit<
+/** A chip group is one control to assistive tech: it needs a name. */
+type ChipGroupLabel =
+  | { "aria-label": string; "aria-labelledby"?: string }
+  | { "aria-label"?: string; "aria-labelledby": string };
+
+export type ChipGroupProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  "children" | "onChange"
-> {
-  children: React.ReactNode;
-  /** Controlled selected values */
-  value?: string[];
-  /** Default selected values (uncontrolled) */
-  defaultValue?: string[];
-  /** Called when selection changes */
-  onChange?: (value: string[]) => void;
-}
+  "children" | "onChange" | "role" | "defaultValue" | "aria-label" | "aria-labelledby"
+> &
+  ChipGroupLabel & {
+    children: React.ReactNode;
+    /** Controlled selected values */
+    value?: string[];
+    /** Default selected values (uncontrolled) */
+    defaultValue?: string[];
+    /** Called with the next selected values */
+    onValueChange?: (value: string[]) => void;
+  };
 
-const TONE_CLASS: Record<ChipTone, string | undefined> = {
-  neutral: undefined,
-  accent: styles.toneAccent,
-  info: styles.toneInfo,
-  success: styles.toneSuccess,
-  warning: styles.toneWarning,
-  danger: styles.toneDanger,
-};
-
-const ChipBase = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(
+const ChipBase = React.forwardRef<HTMLElement, ChipProps>(function Chip(
   {
     children,
-    variant = "soft",
-    tone = "neutral",
-    size: sizeProp,
-    selected = false,
+    selected,
     disabled = false,
     icon,
-    avatar,
     onRemove,
+    removeLabel,
     className,
     onClick,
     value: _value,
+    type = "button",
     ...htmlProps
   },
   ref
 ) {
-  const size = sizeProp ?? "xs";
+  const interactive = selected !== undefined || onClick !== undefined;
+  const removable = onRemove !== undefined;
 
-  const classes = [
-    styles.chip,
-    styles[size],
-    styles[variant],
-    TONE_CLASS[tone],
-    selected && styles.selected,
-    onRemove && styles.withRemove,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const handleRemoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onRemove?.();
-  };
-
-  const removeAriaLabel = `Remove ${typeof children === "string" ? children : "chip"}`;
-
-  const chipButton = (
-    <button
-      ref={ref}
-      type="button"
-      aria-pressed={selected}
-      disabled={disabled}
-      className={classes}
-      onClick={onClick}
-      {...htmlProps}
-    >
-      {avatar && (
-        <span className={styles.avatar} aria-hidden="true">
-          {avatar}
-        </span>
-      )}
+  const body = (
+    <>
       {icon && (
         <span className={styles.icon} aria-hidden="true">
           {icon}
         </span>
       )}
-      <span>{children}</span>
+      <span className={styles.label}>{children}</span>
+    </>
+  );
+
+  const chipClasses = [
+    styles.chip,
+    interactive && styles.interactive,
+    selected && styles.selected,
+    removable && styles.removable,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const removeControl = removable ? (
+    <button
+      type="button"
+      className={styles.remove}
+      onClick={(event) => {
+        event.stopPropagation();
+        onRemove?.();
+      }}
+      aria-label={removeLabel ?? (typeof children === "string" ? `Remove ${children}` : "Remove")}
+      disabled={disabled}
+    >
+      <X aria-hidden="true" />
+    </button>
+  ) : null;
+
+  // A static tag: no button, no pressed state.
+  if (!interactive) {
+    return (
+      <span
+        ref={ref as React.Ref<HTMLSpanElement>}
+        {...(htmlProps as React.HTMLAttributes<HTMLSpanElement>)}
+        className={chipClasses}
+        data-disabled={disabled || undefined}
+      >
+        {body}
+        {removeControl}
+      </span>
+    );
+  }
+
+  const toggle = (
+    <button
+      ref={removable ? undefined : (ref as React.Ref<HTMLButtonElement>)}
+      {...htmlProps}
+      type={type}
+      aria-pressed={selected ?? false}
+      disabled={disabled}
+      onClick={onClick}
+      className={removable ? styles.body : chipClasses}
+    >
+      {body}
     </button>
   );
 
-  if (!onRemove) {
-    return chipButton;
-  }
+  if (!removable) return toggle;
 
+  // A removable toggle: two sibling buttons inside one chip, never nested.
   return (
     <span
-      className={styles.removableChip}
+      ref={ref as React.Ref<HTMLSpanElement>}
+      className={chipClasses}
       data-disabled={disabled || undefined}
-      data-size={size}
-      data-tone={tone === "neutral" ? undefined : tone}
     >
-      {chipButton}
-      <button
-        type="button"
-        className={styles.remove}
-        onClick={handleRemoveClick}
-        aria-label={removeAriaLabel}
-        disabled={disabled}
-      >
-        &times;
-      </button>
+      {toggle}
+      {removeControl}
     </span>
   );
 });
@@ -156,12 +156,18 @@ function ChipGroupInner(
     children,
     value: controlledValue,
     defaultValue = EMPTY_CHIP_GROUP,
-    onChange,
+    onValueChange,
     className,
     ...htmlProps
   }: ChipGroupProps,
   ref: React.Ref<HTMLDivElement>
 ) {
+  if (!isProductionBuild() && !htmlProps["aria-label"] && !htmlProps["aria-labelledby"]) {
+    console.warn(
+      "[Chip.Group] A chip group needs an accessible name. Provide `aria-label` or `aria-labelledby`."
+    );
+  }
+
   const [internalValue, setInternalValue] = React.useState<string[]>(defaultValue);
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
@@ -175,15 +181,15 @@ function ChipGroupInner(
       if (!isControlled) {
         setInternalValue(next);
       }
-      onChange?.(next);
+      onValueChange?.(next);
     },
-    [currentValue, isControlled, onChange]
+    [currentValue, isControlled, onValueChange]
   );
 
   const classes = [styles.group, className].filter(Boolean).join(" ");
 
   return (
-    <div ref={ref} {...htmlProps} className={classes}>
+    <div ref={ref} {...htmlProps} role="group" className={classes}>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement<ChipProps>(child)) return child;
         const chipValue = (() => {
@@ -193,7 +199,7 @@ function ChipGroupInner(
           if (!isProductionBuild()) {
             // Non-string labels need an explicit value to avoid unstable group selection keys.
             console.warn(
-              "Chip.Group: Chips with non-string children should provide a `value` prop."
+              "[Chip.Group] Chips with non-string children should provide a `value` prop."
             );
           }
           return `__chip-${index}`;

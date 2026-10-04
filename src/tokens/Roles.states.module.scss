@@ -1,0 +1,44 @@
+// The nested-corner proof for Roles.states.tsx: a surface card holding a band
+// panel, the panel's corner from the radius recipe.
+
+@use "../tokens/measurements.generated" as measurements;
+@use "../tokens/variables" as *;
+@use "../recipes/radius";
+
+.card {
+  box-sizing: border-box;
+  inline-size: var(
+    --fui-layout-measure-grid-cell,
+    #{measurements.target-value("layoutMeasure", "grid-cell")}
+  );
+  background-color: var(--fui-bg-primary, $fui-bg-primary);
+  border: var(--fui-stroke-hairline, $fui-stroke-hairline) solid var(--fui-border, $fui-border);
+  border-radius: var(--fui-radius-surface, $fui-radius-surface);
+}
+
+.pad12 {
+  padding: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+}
+
+.pad4 {
+  padding: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+}
+
+.panel {
+  min-block-size: var(--fui-raw-space-32, #{measurements.raw-space(32)});
+  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+}
+
+.pad12 > .panel {
+  border-radius: radius.nested(
+    var(--fui-radius-surface, #{$fui-radius-surface}),
+    var(--fui-raw-space-12, #{measurements.raw-space(12)})
+  );
+}
+
+.pad4 > .panel {
+  border-radius: radius.nested(
+    var(--fui-radius-surface, #{$fui-radius-surface}),
+    var(--fui-raw-space-4, #{measurements.raw-space(4)})
+  );
+}

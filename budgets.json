@@ -1,0 +1,571 @@
+{
+  "version": 1,
+  "measurement": {
+    "unit": "raw UTF-8 bytes",
+    "css": "Sass-compiled, CSS-Modules-scoped component CSS before aggregate stylesheet assembly; unminified",
+    "js": "Larger ES/CommonJS total of all emitted modules owned by a component directory, including CSS class maps and virtual entries; shared modules and external dependencies excluded",
+    "headroomPercent": 5
+  },
+  "components": {
+    "Accordion": {
+      "baseline": {
+        "cssBytes": 4175,
+        "jsBytes": 4130
+      },
+      "cssBytes": 4384,
+      "jsBytes": 4337
+    },
+    "Alert": {
+      "baseline": {
+        "cssBytes": 5433,
+        "jsBytes": 7020
+      },
+      "cssBytes": 5705,
+      "jsBytes": 7371
+    },
+    "AlertDialog": {
+      "baseline": {
+        "cssBytes": 6793,
+        "jsBytes": 7074
+      },
+      "cssBytes": 7133,
+      "jsBytes": 7428
+    },
+    "AppShell": {
+      "baseline": {
+        "cssBytes": 2790,
+        "jsBytes": 3717
+      },
+      "cssBytes": 2930,
+      "jsBytes": 3903
+    },
+    "Avatar": {
+      "baseline": {
+        "cssBytes": 3889,
+        "jsBytes": 6386
+      },
+      "cssBytes": 4084,
+      "jsBytes": 6706
+    },
+    "Badge": {
+      "baseline": {
+        "cssBytes": 8455,
+        "jsBytes": 3576
+      },
+      "cssBytes": 8878,
+      "jsBytes": 3755
+    },
+    "Box": {
+      "baseline": {
+        "cssBytes": 1801,
+        "jsBytes": 3574
+      },
+      "cssBytes": 1892,
+      "jsBytes": 3753
+    },
+    "Breadcrumbs": {
+      "baseline": {
+        "cssBytes": 7397,
+        "jsBytes": 6974
+      },
+      "cssBytes": 7767,
+      "jsBytes": 7323
+    },
+    "Button": {
+      "baseline": {
+        "cssBytes": 16223,
+        "jsBytes": 6076
+      },
+      "cssBytes": 17035,
+      "jsBytes": 6380
+    },
+    "ButtonGroup": {
+      "baseline": {
+        "cssBytes": 1040,
+        "jsBytes": 1704
+      },
+      "cssBytes": 1092,
+      "jsBytes": 1790
+    },
+    "Card": {
+      "baseline": {
+        "cssBytes": 6555,
+        "jsBytes": 5388
+      },
+      "cssBytes": 6883,
+      "jsBytes": 5658
+    },
+    "Chart": {
+      "baseline": {
+        "cssBytes": 8015,
+        "jsBytes": 16522
+      },
+      "cssBytes": 8416,
+      "jsBytes": 17349
+    },
+    "Checkbox": {
+      "baseline": {
+        "cssBytes": 10336,
+        "jsBytes": 6055
+      },
+      "cssBytes": 10853,
+      "jsBytes": 6358
+    },
+    "Chip": {
+      "baseline": {
+        "cssBytes": 8259,
+        "jsBytes": 6103
+      },
+      "cssBytes": 8672,
+      "jsBytes": 6409
+    },
+    "CodeBlock": {
+      "baseline": {
+        "cssBytes": 10469,
+        "jsBytes": 22521
+      },
+      "cssBytes": 10993,
+      "jsBytes": 23648
+    },
+    "Collapsible": {
+      "baseline": {
+        "cssBytes": 3942,
+        "jsBytes": 3423
+      },
+      "cssBytes": 4140,
+      "jsBytes": 3595
+    },
+    "ColorPicker": {
+      "baseline": {
+        "cssBytes": 8249,
+        "jsBytes": 10612
+      },
+      "cssBytes": 8662,
+      "jsBytes": 11143
+    },
+    "Combobox": {
+      "baseline": {
+        "cssBytes": 21256,
+        "jsBytes": 17966
+      },
+      "cssBytes": 22319,
+      "jsBytes": 18865
+    },
+    "Command": {
+      "baseline": {
+        "cssBytes": 12400,
+        "jsBytes": 20036
+      },
+      "cssBytes": 13020,
+      "jsBytes": 21038
+    },
+    "ComponentDefaults": {
+      "baseline": {
+        "cssBytes": 0,
+        "jsBytes": 2388
+      },
+      "cssBytes": 0,
+      "jsBytes": 2508
+    },
+    "ConversationList": {
+      "baseline": {
+        "cssBytes": 4362,
+        "jsBytes": 10738
+      },
+      "cssBytes": 4581,
+      "jsBytes": 11275
+    },
+    "DataTable": {
+      "baseline": {
+        "cssBytes": 6034,
+        "jsBytes": 27384
+      },
+      "cssBytes": 6336,
+      "jsBytes": 28754
+    },
+    "DatePicker": {
+      "baseline": {
+        "cssBytes": 16798,
+        "jsBytes": 21806
+      },
+      "cssBytes": 17638,
+      "jsBytes": 22897
+    },
+    "Dialog": {
+      "baseline": {
+        "cssBytes": 11299,
+        "jsBytes": 5412
+      },
+      "cssBytes": 11864,
+      "jsBytes": 5683
+    },
+    "Drawer": {
+      "baseline": {
+        "cssBytes": 12735,
+        "jsBytes": 8207
+      },
+      "cssBytes": 13372,
+      "jsBytes": 8618
+    },
+    "Editor": {
+      "baseline": {
+        "cssBytes": 16589,
+        "jsBytes": 27487
+      },
+      "cssBytes": 17419,
+      "jsBytes": 28862
+    },
+    "EmptyState": {
+      "baseline": {
+        "cssBytes": 3083,
+        "jsBytes": 2450
+      },
+      "cssBytes": 3238,
+      "jsBytes": 2573
+    },
+    "Field": {
+      "baseline": {
+        "cssBytes": 2987,
+        "jsBytes": 3655
+      },
+      "cssBytes": 3137,
+      "jsBytes": 3838
+    },
+    "Fieldset": {
+      "baseline": {
+        "cssBytes": 2007,
+        "jsBytes": 3345
+      },
+      "cssBytes": 2108,
+      "jsBytes": 3513
+    },
+    "Form": {
+      "baseline": {
+        "cssBytes": 457,
+        "jsBytes": 1547
+      },
+      "cssBytes": 480,
+      "jsBytes": 1625
+    },
+    "Grid": {
+      "baseline": {
+        "cssBytes": 3598,
+        "jsBytes": 7464
+      },
+      "cssBytes": 3778,
+      "jsBytes": 7838
+    },
+    "Header": {
+      "baseline": {
+        "cssBytes": 19071,
+        "jsBytes": 11826
+      },
+      "cssBytes": 20025,
+      "jsBytes": 12418
+    },
+    "Icon": {
+      "baseline": {
+        "cssBytes": 1485,
+        "jsBytes": 3173
+      },
+      "cssBytes": 1560,
+      "jsBytes": 3332
+    },
+    "IconButton": {
+      "baseline": {
+        "cssBytes": 11183,
+        "jsBytes": 6155
+      },
+      "cssBytes": 11743,
+      "jsBytes": 6463
+    },
+    "Image": {
+      "baseline": {
+        "cssBytes": 2891,
+        "jsBytes": 4973
+      },
+      "cssBytes": 3036,
+      "jsBytes": 5222
+    },
+    "Input": {
+      "baseline": {
+        "cssBytes": 13816,
+        "jsBytes": 5671
+      },
+      "cssBytes": 14507,
+      "jsBytes": 5955
+    },
+    "Kbd": {
+      "baseline": {
+        "cssBytes": 1086,
+        "jsBytes": 1982
+      },
+      "cssBytes": 1141,
+      "jsBytes": 2082
+    },
+    "Link": {
+      "baseline": {
+        "cssBytes": 1210,
+        "jsBytes": 1910
+      },
+      "cssBytes": 1271,
+      "jsBytes": 2006
+    },
+    "List": {
+      "baseline": {
+        "cssBytes": 12209,
+        "jsBytes": 4736
+      },
+      "cssBytes": 12820,
+      "jsBytes": 4973
+    },
+    "Listbox": {
+      "baseline": {
+        "cssBytes": 6333,
+        "jsBytes": 9919
+      },
+      "cssBytes": 6650,
+      "jsBytes": 10415
+    },
+    "Loading": {
+      "baseline": {
+        "cssBytes": 2168,
+        "jsBytes": 4347
+      },
+      "cssBytes": 2277,
+      "jsBytes": 4565
+    },
+    "Main": {
+      "baseline": {
+        "cssBytes": 1582,
+        "jsBytes": 3834
+      },
+      "cssBytes": 1662,
+      "jsBytes": 4026
+    },
+    "Markdown": {
+      "baseline": {
+        "cssBytes": 12073,
+        "jsBytes": 6527
+      },
+      "cssBytes": 12677,
+      "jsBytes": 6854
+    },
+    "Menu": {
+      "baseline": {
+        "cssBytes": 8066,
+        "jsBytes": 10836
+      },
+      "cssBytes": 8470,
+      "jsBytes": 11378
+    },
+    "Message": {
+      "baseline": {
+        "cssBytes": 6895,
+        "jsBytes": 8148
+      },
+      "cssBytes": 7240,
+      "jsBytes": 8556
+    },
+    "NumberField": {
+      "baseline": {
+        "cssBytes": 8260,
+        "jsBytes": 4076
+      },
+      "cssBytes": 8673,
+      "jsBytes": 4280
+    },
+    "Pagination": {
+      "baseline": {
+        "cssBytes": 7043,
+        "jsBytes": 7810
+      },
+      "cssBytes": 7396,
+      "jsBytes": 8201
+    },
+    "Popover": {
+      "baseline": {
+        "cssBytes": 8669,
+        "jsBytes": 5597
+      },
+      "cssBytes": 9103,
+      "jsBytes": 5877
+    },
+    "Progress": {
+      "baseline": {
+        "cssBytes": 2842,
+        "jsBytes": 3909
+      },
+      "cssBytes": 2985,
+      "jsBytes": 4105
+    },
+    "Prompt": {
+      "baseline": {
+        "cssBytes": 22496,
+        "jsBytes": 20018
+      },
+      "cssBytes": 23621,
+      "jsBytes": 21019
+    },
+    "RadioGroup": {
+      "baseline": {
+        "cssBytes": 11650,
+        "jsBytes": 8071
+      },
+      "cssBytes": 12233,
+      "jsBytes": 8475
+    },
+    "ScrollArea": {
+      "baseline": {
+        "cssBytes": 5468,
+        "jsBytes": 9786
+      },
+      "cssBytes": 5742,
+      "jsBytes": 10276
+    },
+    "Select": {
+      "baseline": {
+        "cssBytes": 14277,
+        "jsBytes": 10762
+      },
+      "cssBytes": 14991,
+      "jsBytes": 11301
+    },
+    "Separator": {
+      "baseline": {
+        "cssBytes": 1340,
+        "jsBytes": 2768
+      },
+      "cssBytes": 1407,
+      "jsBytes": 2907
+    },
+    "Sidebar": {
+      "baseline": {
+        "cssBytes": 36160,
+        "jsBytes": 22813
+      },
+      "cssBytes": 37968,
+      "jsBytes": 23954
+    },
+    "Skeleton": {
+      "baseline": {
+        "cssBytes": 3296,
+        "jsBytes": 4813
+      },
+      "cssBytes": 3461,
+      "jsBytes": 5054
+    },
+    "Slider": {
+      "baseline": {
+        "cssBytes": 7809,
+        "jsBytes": 8382
+      },
+      "cssBytes": 8200,
+      "jsBytes": 8802
+    },
+    "Stack": {
+      "baseline": {
+        "cssBytes": 1527,
+        "jsBytes": 5074
+      },
+      "cssBytes": 1604,
+      "jsBytes": 5328
+    },
+    "Switch": {
+      "baseline": {
+        "cssBytes": 7853,
+        "jsBytes": 4678
+      },
+      "cssBytes": 8246,
+      "jsBytes": 4912
+    },
+    "Table": {
+      "baseline": {
+        "cssBytes": 9422,
+        "jsBytes": 6927
+      },
+      "cssBytes": 9894,
+      "jsBytes": 7274
+    },
+    "TableOfContents": {
+      "baseline": {
+        "cssBytes": 10989,
+        "jsBytes": 7530
+      },
+      "cssBytes": 11539,
+      "jsBytes": 7907
+    },
+    "Tabs": {
+      "baseline": {
+        "cssBytes": 17551,
+        "jsBytes": 8587
+      },
+      "cssBytes": 18429,
+      "jsBytes": 9017
+    },
+    "Text": {
+      "baseline": {
+        "cssBytes": 4036,
+        "jsBytes": 4220
+      },
+      "cssBytes": 4238,
+      "jsBytes": 4431
+    },
+    "Textarea": {
+      "baseline": {
+        "cssBytes": 8256,
+        "jsBytes": 3511
+      },
+      "cssBytes": 8669,
+      "jsBytes": 3687
+    },
+    "Theme": {
+      "baseline": {
+        "cssBytes": 0,
+        "jsBytes": 14381
+      },
+      "cssBytes": 0,
+      "jsBytes": 15101
+    },
+    "ThinkingIndicator": {
+      "baseline": {
+        "cssBytes": 10823,
+        "jsBytes": 7481
+      },
+      "cssBytes": 11365,
+      "jsBytes": 7856
+    },
+    "Toast": {
+      "baseline": {
+        "cssBytes": 6532,
+        "jsBytes": 16676
+      },
+      "cssBytes": 6859,
+      "jsBytes": 17510
+    },
+    "ToggleGroup": {
+      "baseline": {
+        "cssBytes": 9410,
+        "jsBytes": 3930
+      },
+      "cssBytes": 9881,
+      "jsBytes": 4127
+    },
+    "Tooltip": {
+      "baseline": {
+        "cssBytes": 2102,
+        "jsBytes": 5050
+      },
+      "cssBytes": 2208,
+      "jsBytes": 5303
+    },
+    "VisuallyHidden": {
+      "baseline": {
+        "cssBytes": 2412,
+        "jsBytes": 1704
+      },
+      "cssBytes": 2533,
+      "jsBytes": 1790
+    }
+  }
+}

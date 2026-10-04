@@ -1,140 +1,200 @@
 @use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/boolean-range" as boolean;
 @use "../../recipes/field" as field;
+@use "../../recipes/focus" as focus;
+@use "../../recipes/overlay" as overlay;
 @use "../../recipes/target" as target;
 @use "../../recipes/typography" as typography;
 
-.wrapper {
-  @include field.wrapper;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--fui-raw-space-8, 8px);
-}
+// The slider: a 4px track on the band with one
+// hairline at the control radius, the selection fill up to the thumb, and a
+// 16px surface thumb with the strong field edge and no shadow (only the switch
+// and segment thumbs take a shadow). The value bubble is a floating
+// raised surface. Disabled dims once, on the wrapper.
 
-.label {
-  @include typography.role("ui-standard");
-}
+$_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+$_hover-edge: color-mix(
+  in oklab,
+  var(--fui-text-primary, #{$fui-text-primary}) 55%,
+  var(--fui-field-border, #{$fui-field-border})
+);
 
-.value {
-  @include typography.role("ui-compact");
+@layer fui.components {
+  .wrapper {
+    @include field.wrapper;
 
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  min-width: max-content;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.root {
-  width: 100%;
-}
-
-.control {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.track {
-  @include boolean.slider-track;
-
-  position: relative;
-  width: 100%;
-  background-color: var(--fui-form-group-bg, $fui-bg-secondary);
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px) var(--fui-form-group-border, $fui-border);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  cursor: pointer;
-
-  &[data-disabled] {
-    @include disabled-state;
+    &[data-disabled] {
+      @include disabled-state;
+    }
   }
 
-  @include high-contrast-outline;
-}
-
-.indicator {
-  position: absolute;
-  height: 100%;
-  background-color: var(--fui-color-accent, $fui-color-accent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-}
-
-.thumb {
-  @include boolean.slider-thumb;
-  @include target.hit-area("compact");
-
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-color-accent, $fui-color-accent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
-  cursor: grab;
-  transition:
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    box-shadow var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover {
-    border-color: color-mix(in srgb, var(--fui-color-accent, $fui-color-accent) 58%, transparent);
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    margin-block-end: var(--fui-field-label-gap, #{measurements.raw-space(6)});
   }
 
-  &:active {
-    cursor: grabbing;
-    box-shadow: var(--fui-shadow-md, $fui-shadow-md);
+  .label {
+    @include field.label;
+
+    margin-block-end: 0;
   }
 
-  &:focus-visible {
-    @include focus-ring;
+  .value {
+    @include typography.role("ui-compact");
+
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    min-inline-size: max-content;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
   }
 
-  &[data-disabled] {
-    @include disabled-state;
+  .root {
+    inline-size: 100%;
   }
 
-  @media (pointer: coarse) {
-    --_fui-target-hit-size: #{target.hit-size("touch")};
+  // The control strip: the pointer target along the track. Its height follows
+  // the field track for the size, so a slider sits level with a field beside it.
+  .control {
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    min-block-size: field.track("md");
+
+    .wrapper[data-size="sm"] & {
+      min-block-size: field.track("sm");
+    }
+
+    .wrapper[data-size="lg"] & {
+      min-block-size: field.track("lg");
+    }
   }
 
-  @include high-contrast-outline;
-}
+  .track {
+    @include boolean.slider-track;
 
-.helper {
-  @include field.helper;
-}
+    position: relative;
+    box-sizing: border-box;
+    inline-size: 100%;
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
+    border: $_hairline solid var(--fui-border, $fui-border);
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    cursor: pointer;
 
-.helperError {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
+    .wrapper[data-invalid] & {
+      border-color: var(--fui-color-danger-text, $fui-color-danger-text);
+    }
 
-.dragValueBubble {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + var(--fui-space-2, $fui-space-2));
-  transform: translateX(-50%);
-  pointer-events: none;
-  white-space: nowrap;
-  padding: var(--fui-space-1, $fui-space-1) var(--fui-space-2, $fui-space-2);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  background: var(--fui-form-group-bg, $fui-bg-secondary);
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-form-group-border, $fui-border);
-  @include typography.role("ui-compact");
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
-}
+    .wrapper[data-readonly] & {
+      border-style: dashed;
+      cursor: default;
+    }
 
-.wrapper[data-invalid] .track {
-  box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-    var(--fui-color-danger-text, $fui-color-danger-text);
-}
+    @include high-contrast-outline;
+  }
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
+  // The fill covers the track's hairline, so the chosen part reads as one bar
+  // (Base UI sets its block size to the track's own).
+  .indicator {
+    position: absolute;
+    inset-block-start: calc(-1 * #{$_hairline});
+    background-color: var(--fui-control-checked-bg, $fui-control-checked-bg);
+    border-radius: inherit;
 
-@media (prefers-reduced-motion: reduce) {
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+  }
+
   .thumb {
-    transition: none;
+    @include boolean.slider-thumb;
+    @include target.hit-area("compact");
+
+    box-sizing: border-box;
+    background-color: var(--fui-bg-primary, $fui-bg-primary);
+    border: $_hairline solid var(--fui-field-border, $fui-field-border);
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    cursor: grab;
+    transition: border-color var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    // The range input inside takes keyboard focus; the thumb draws the ring.
+    &:has(:focus-visible) {
+      @include focus.ring;
+    }
+
+    .wrapper[data-readonly] & {
+      cursor: default;
+    }
+
+    @media (hover: hover) {
+      .wrapper:not([data-disabled], [data-readonly], [data-invalid]) &:hover {
+        border-color: $_hover-edge;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    @include high-contrast-outline;
+  }
+
+  .helper {
+    @include field.helper;
+  }
+
+  // The message: icon and words, never the danger colour alone.
+  .error {
+    @include field.error;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  .errorIcon {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-sm, $fui-icon-sm);
+    block-size: var(--fui-icon-sm, $fui-icon-sm);
+    margin-block: calc(
+      (#{typography.line-height("caption")} - var(--fui-icon-sm, #{$fui-icon-sm})) / 2
+    );
+  }
+
+  .errorWords {
+    min-inline-size: 0;
+  }
+
+  // The drag bubble: a floating raised surface above the thumb (the overlay
+  // recipe: raised fill, popup radius, popup shadow, no border).
+  .bubble {
+    @include overlay.surface;
+    @include typography.role("ui-compact");
+
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-end: calc(100% + var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+    translate: -50% 0;
+    padding-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+
+    &:dir(rtl) {
+      translate: 50% 0;
+    }
   }
 }

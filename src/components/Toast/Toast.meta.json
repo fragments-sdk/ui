@@ -1,0 +1,188 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Toast",
+  "description": "Briefly reports an outcome without blocking the page, using an icon to convey tone.",
+  "category": "feedback",
+  "tags": ["notification", "alert", "message", "feedback"],
+  "status": "stable",
+  "sourcePath": "src/components/Toast/index.tsx",
+  "exportName": "Toast",
+  "propsSummary": [
+    "title: ReactNode",
+    "description: ReactNode",
+    "tone: neutral|success|warning|danger (default: neutral)",
+    "action: { label, onClick, undo? }",
+    "busy: { done?, total?, onStop? }",
+    "onDismiss: function"
+  ],
+  "props": {
+    "title": {
+      "type": "node",
+      "description": "One line on what happened",
+      "required": false
+    },
+    "description": {
+      "type": "node",
+      "description": "One sentence more, if it helps",
+      "required": false
+    },
+    "tone": {
+      "type": "enum",
+      "description": "The outcome. Semantic tones draw an icon in the tone's ink; the plane, title and body never change colour. Only danger announces urgently.",
+      "default": "neutral",
+      "required": false,
+      "values": ["neutral", "success", "warning", "danger"]
+    },
+    "action": {
+      "type": "object",
+      "description": "One verb as a small ghost button { label, onClick, undo? }; undo shows the undo key and Mod+Z runs it while the toast is up",
+      "required": false
+    },
+    "busy": {
+      "type": "object",
+      "description": "Work in progress { done?, total?, onStop? }: a spinner, an 'N of M' count with a progress line, and Stop. A busy toast has no timer.",
+      "required": false
+    },
+    "onDismiss": {
+      "type": "function",
+      "description": "Draws the dismiss button",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Confirming an action landed",
+      "Reporting whether an operation worked",
+      "News the user does not have to act on",
+      "Messages that can disappear on their own"
+    ],
+    "whenNot": [
+      "Errors the user must resolve — use Dialog",
+      "Anything that must stay on screen — use Alert",
+      "Field-level validation — use form error states",
+      "Site-wide notices — use a banner"
+    ],
+    "guidelines": [
+      "One sentence, plus a title if it helps",
+      "Match the tone to what actually happened; most toasts are neutral news",
+      "Toasts stay at least five seconds and pause while hovered, focused or the window is in the background",
+      "Three on screen at most; the rest wait in order",
+      "One verb at most; an undo gets the undo key",
+      "useToast() returns toast, success, warning, danger, promise, update, dismiss and dismissAll"
+    ],
+    "accessibility": [
+      "Only the danger tone announces urgently; every other toast is polite",
+      "Leave enough time to read it: five seconds is the floor",
+      "Never let colour be the only signal: the icon and the words carry the outcome",
+      "Toast buttons do not take focus from the page on a press"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Neutral message with a title and one line under it.",
+      "code": "<Toast\n  title=\"Draft saved\"\n  description=\"Kept until you publish.\"\n/>"
+    },
+    {
+      "name": "Tones",
+      "description": "The icon carries the outcome; the plane stays raised.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"column\" gap=\"sm\">\n  <Toast title=\"Branch merged\" description=\"Checks passed on main.\" tone=\"success\" />\n  <Toast title=\"Usage near the limit\" description=\"9 of 10 seats in use.\" tone=\"warning\" />\n  <Toast title=\"Push failed\" description=\"The remote refused the branch.\" tone=\"danger\" />\n</Stack>"
+    },
+    {
+      "name": "With Undo",
+      "description": "One-tap way back from something destructive, with the undo key.",
+      "code": "<Toast\n  title=\"Deleted 3 findings\"\n  action={{ label: 'Undo', onClick: () => {}, undo: true }}\n  onDismiss={() => {}}\n/>"
+    },
+    {
+      "name": "Busy",
+      "description": "Work in progress with a count, a progress line and Stop.",
+      "code": "<Toast\n  title=\"Uploading files\"\n  busy={{ done: 3, total: 12, onStop: () => {} }}\n/>"
+    },
+    {
+      "name": "Live",
+      "description": "Toast.Provider owns timing and stacking; useToast dispatches.",
+      "code": "import { useToast } from \"@/components/Toast\";\n\nfunction SaveButton() {\n  const { success } = useToast();\n  return <Button onClick={() => success('Draft saved')}>Save</Button>;\n}\n\n<Toast.Provider position=\"bottom-end\">\n  <SaveButton />\n</Toast.Provider>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Alert",
+      "relationship": "alternative",
+      "note": "Use Alert for persistent inline messages"
+    },
+    {
+      "component": "Dialog",
+      "relationship": "alternative",
+      "note": "Use Dialog for messages requiring user action"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "title: ReactNode - one line on what happened",
+      "description: ReactNode - one sentence more",
+      "tone: neutral|success|warning|danger - icon ink only",
+      "action: { label, onClick, undo? } - one ghost verb",
+      "busy: { done?, total?, onStop? } - spinner, N of M, Stop, no timer",
+      "Toast.Provider: position bottom-end|bottom-center|top-center, duration (floor 5000)",
+      "useToast(): toast, success, warning, danger, promise, update, dismiss, dismissAll; toast({ id }) replaces in place"
+    ],
+    "a11yRules": ["A11Y_ALERT_ROLE", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Provider"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:06.259Z"
+  },
+  "cssVariables": [
+    "--fui-bg-secondary",
+    "--fui-border-strong",
+    "--fui-color-danger-text",
+    "--fui-color-success-text",
+    "--fui-color-warning-text",
+    "--fui-feedback-viewport-inset-left",
+    "--fui-feedback-viewport-inset-right",
+    "--fui-icon-md",
+    "--fui-overlay-layer-toast",
+    "--fui-overlay-popover-md",
+    "--fui-overlay-popover-sm",
+    "--fui-raw-space-0",
+    "--fui-raw-space-10",
+    "--fui-raw-space-12",
+    "--fui-raw-space-16",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-raw-space-6",
+    "--fui-raw-space-8",
+    "--fui-stroke-default",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-toast-action",
+      "value": "",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-tone",
+      "value": "neutral",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-tone",
+      "value": "success",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-tone",
+      "value": "warning",
+      "fixture": "populated"
+    }
+  ]
+}

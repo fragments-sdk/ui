@@ -72,6 +72,22 @@ describe("Field", () => {
     expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
   });
 
+  it("keeps data-invalid on a disabled field without announcing aria-invalid", () => {
+    const { container } = render(
+      <Field invalid disabled>
+        <Field.Label>Email</Field.Label>
+        <Field.Control>
+          <input />
+        </Field.Control>
+      </Field>
+    );
+    const control = screen.getByRole("textbox");
+    expect(container.firstElementChild).toHaveAttribute("data-invalid");
+    expect(control).toHaveAttribute("data-invalid");
+    expect(control).toBeDisabled();
+    expect(control).not.toHaveAttribute("aria-invalid");
+  });
+
   it("registers the rendered control name and current value for form validation", async () => {
     const validate = vi.fn(() => null);
     const user = userEvent.setup();
@@ -136,9 +152,9 @@ describe("Field", () => {
     expect(Field.Required).toBeDefined();
   });
 
-  it("applies the resolved field size and renders a decorative required marker", () => {
+  it("renders a decorative required marker", () => {
     render(
-      <Field size="sm" data-testid="field">
+      <Field data-testid="field">
         <Field.Label>
           Email <Field.Required />
         </Field.Label>
@@ -148,7 +164,6 @@ describe("Field", () => {
       </Field>
     );
 
-    expect(screen.getByTestId("field")).toHaveAttribute("data-size", "sm");
     expect(screen.getByText("*")).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByRole("textbox")).toHaveAccessibleName("Email");
   });
@@ -163,5 +178,39 @@ describe("Field", () => {
       </Field>
     );
     await expectNoA11yViolations(container);
+  });
+
+  it("shows the error with a danger glyph beside the words, as an alert", () => {
+    const { container } = render(
+      <Field invalid>
+        <Field.Label>Email</Field.Label>
+        <Field.Control>
+          <input />
+        </Field.Control>
+        <Field.Error match>Enter an email address.</Field.Error>
+      </Field>
+    );
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Enter an email address.");
+    expect(alert.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector(".errorWords")).toHaveTextContent("Enter an email address.");
+  });
+
+  it("shows the browser's own message when the error has no children", async () => {
+    const user = userEvent.setup();
+    render(
+      <Form aria-label="Sign up">
+        <Field name="email">
+          <Field.Label>Email</Field.Label>
+          <Field.Control>
+            <input required />
+          </Field.Control>
+          <Field.Error />
+        </Field>
+        <button type="submit">Submit</button>
+      </Form>
+    );
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+    expect((await screen.findByRole("alert")).textContent?.length).toBeGreaterThan(0);
   });
 });

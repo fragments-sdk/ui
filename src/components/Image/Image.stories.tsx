@@ -1,46 +1,45 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Image } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Image } from ".";
 
 /**
- * Image is a responsive image component with aspect-ratio control, loading
- * states, and error fallbacks. The src and alt props are required; alt must
- * describe the image content for accessibility.
+ * Image frames a picture on the band: a pulsing band while it loads, a short
+ * fade in, and a built-in fallback (glyph plus the alt words) when it fails.
+ * `src` and `alt` are required; `alt` says what the image shows.
  */
-const SAMPLE_SRC =
-  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop';
+const SAMPLE_SRC = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop";
 
 const meta = {
-  title: 'Display/Image',
+  title: "Display/Image",
   component: Image,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'Responsive image with aspect-ratio control, loading states, and error fallbacks.',
+          "Frames a picture on the band, with a loading pulse and a built-in error fallback.",
       },
     },
   },
   argTypes: {
     aspectRatio: {
-      control: 'select',
-      options: ['1:1', '4:3', '16:9', '21:9', 'auto'],
-      description: 'Aspect ratio of the image container',
+      control: "select",
+      options: ["1:1", "4:3", "16:9", "auto"],
+      description: "The frame's aspect ratio",
     },
     objectFit: {
-      control: 'select',
-      options: ['cover', 'contain', 'fill', 'none'],
-      description: 'How the image fits within its container',
+      control: "select",
+      options: ["cover", "contain"],
+      description: "How the image fills the frame",
     },
-    rounded: {
-      control: 'select',
-      options: ['none', 'sm', 'md', 'lg', 'full'],
-      description: 'Border radius',
+    radius: {
+      control: "select",
+      options: ["none", "control", "nested", "surface"],
+      description: "Corner role; none leaves the corner to the container",
     },
   },
   args: {
     src: SAMPLE_SRC,
-    alt: 'Code on a screen',
+    alt: "Code on a screen",
     width: 300,
   },
 } satisfies Meta<typeof Image>;
@@ -49,61 +48,47 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { src: SAMPLE_SRC, alt: 'Code on a screen', width: 300 },
+export const Default: Story = {};
+
+/** The three frames: square, 4:3 and 16:9. */
+export const AspectRatios: Story = {
+  render: (args) => (
+    <div style={{ display: "flex", gap: 12, alignItems: "start" }}>
+      <Image {...args} aspectRatio="1:1" width={160} />
+      <Image {...args} aspectRatio="4:3" width={200} />
+      <Image {...args} aspectRatio="16:9" width={240} />
+    </div>
+  ),
 };
 
-export const Square: Story = {
-  args: {
-    src: SAMPLE_SRC,
-    alt: 'Square crop',
-    aspectRatio: '1:1',
-    width: 200,
-  },
+/** `contain` letterboxes on the band; `cover` crops. */
+export const Fits: Story = {
+  render: (args) => (
+    <div style={{ display: "flex", gap: 12 }}>
+      <Image {...args} aspectRatio="1:1" width={160} objectFit="cover" />
+      <Image {...args} aspectRatio="1:1" width={160} objectFit="contain" />
+    </div>
+  ),
 };
 
-export const Widescreen: Story = {
-  args: {
-    src: SAMPLE_SRC,
-    alt: 'Widescreen crop',
-    aspectRatio: '16:9',
-    width: 320,
-    rounded: 'md',
-  },
+/** The corner roles. */
+export const Radii: Story = {
+  render: (args) => (
+    <div style={{ display: "flex", gap: 12 }}>
+      {(["none", "control", "nested", "surface"] as const).map((radius) => (
+        <Image key={radius} {...args} aspectRatio="4:3" width={160} radius={radius} />
+      ))}
+    </div>
+  ),
 };
 
-export const Rounded: Story = {
+/** A broken source shows the built-in fallback: the glyph and the alt words. */
+export const Broken: Story = {
   args: {
-    src: SAMPLE_SRC,
-    alt: 'Rounded image',
-    aspectRatio: '1:1',
-    rounded: 'full',
-    width: 120,
-    height: 120,
-  },
-};
-
-export const WithFallback: Story = {
-  args: {
-    src: 'https://invalid-url.example/image.jpg',
-    alt: 'Image that will fail to load',
-    width: 200,
-    height: 150,
-    rounded: 'md',
-    fallback: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          background: 'var(--fui-color-surface-secondary, #f4f4f5)',
-        }}
-      >
-        <span style={{ color: 'var(--fui-color-text-tertiary, #71717a)' }}>
-          No image
-        </span>
-      </div>
-    ),
+    src: "https://invalid-url.example/image.jpg",
+    alt: "Team photo from the offsite",
+    aspectRatio: "4:3",
+    width: 240,
+    radius: "control",
   },
 };

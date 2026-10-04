@@ -1,299 +1,84 @@
-@use "../../recipes/layout";
+@use "../../recipes/radius";
+@use "../../recipes/surface";
 @use "../../tokens/variables" as *;
-@use "../../tokens/measurements.generated" as measurements;
 
-.box {
-  box-sizing: border-box;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-// Structural spacing uses the same fixed recipe as Stack, Grid, and Main.
+// Box puts content on one of the four planes. Layout (Stack, Grid), ink
+// (Text), scrolling (ScrollArea) and shadow (floating surfaces) live elsewhere.
+@layer fui.components {
+  .box {
+    box-sizing: border-box;
+  }
 
-// Padding
-.p-none {
-  padding: layout.gap("none");
-}
-.p-xs {
-  padding: layout.gap("xs");
-}
-.p-sm {
-  padding: layout.gap("sm");
-}
-.p-md {
-  padding: layout.gap("md");
-}
-.p-lg {
-  padding: layout.gap("lg");
-}
-.p-xl {
-  padding: layout.gap("xl");
-}
+  // Planes: each one resets ink to the primary text colour.
+  .plane-canvas {
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    background-color: var(--fui-app-canvas-bg, #{$fui-body-bg});
+  }
 
-// Padding X
-.px-none {
-  padding-left: layout.gap("none");
-  padding-right: layout.gap("none");
-}
-.px-xs {
-  padding-left: layout.gap("xs");
-  padding-right: layout.gap("xs");
-}
-.px-sm {
-  padding-left: layout.gap("sm");
-  padding-right: layout.gap("sm");
-}
-.px-md {
-  padding-left: layout.gap("md");
-  padding-right: layout.gap("md");
-}
-.px-lg {
-  padding-left: layout.gap("lg");
-  padding-right: layout.gap("lg");
-}
-.px-xl {
-  padding-left: layout.gap("xl");
-  padding-right: layout.gap("xl");
-}
+  .plane-band {
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    background-color: var(--fui-bg-secondary, #{$fui-bg-secondary});
+  }
 
-// Padding Y
-.py-none {
-  padding-top: layout.gap("none");
-  padding-bottom: layout.gap("none");
-}
-.py-xs {
-  padding-top: layout.gap("xs");
-  padding-bottom: layout.gap("xs");
-}
-.py-sm {
-  padding-top: layout.gap("sm");
-  padding-bottom: layout.gap("sm");
-}
-.py-md {
-  padding-top: layout.gap("md");
-  padding-bottom: layout.gap("md");
-}
-.py-lg {
-  padding-top: layout.gap("lg");
-  padding-bottom: layout.gap("lg");
-}
-.py-xl {
-  padding-top: layout.gap("xl");
-  padding-bottom: layout.gap("xl");
-}
+  .plane-surface {
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    background-color: var(--fui-bg-primary, #{$fui-bg-primary});
+  }
 
-// Margin
-.m-none {
-  margin: layout.gap("none");
-}
-.m-xs {
-  margin: layout.gap("xs");
-}
-.m-sm {
-  margin: layout.gap("sm");
-}
-.m-md {
-  margin: layout.gap("md");
-}
-.m-lg {
-  margin: layout.gap("lg");
-}
-.m-xl {
-  margin: layout.gap("xl");
-}
-.m-auto {
-  margin: auto;
-}
+  .plane-raised {
+    color: var(--fui-text-primary, #{$fui-text-primary});
+    background-color: var(--fui-bg-elevated, #{$fui-bg-elevated});
+  }
 
-// Margin X
-.mx-none {
-  margin-left: layout.gap("none");
-  margin-right: layout.gap("none");
-}
-.mx-xs {
-  margin-left: layout.gap("xs");
-  margin-right: layout.gap("xs");
-}
-.mx-sm {
-  margin-left: layout.gap("sm");
-  margin-right: layout.gap("sm");
-}
-.mx-md {
-  margin-left: layout.gap("md");
-  margin-right: layout.gap("md");
-}
-.mx-lg {
-  margin-left: layout.gap("lg");
-  margin-right: layout.gap("lg");
-}
-.mx-xl {
-  margin-left: layout.gap("xl");
-  margin-right: layout.gap("xl");
-}
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
+  // The one hairline.
+  .border {
+    border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, #{$fui-border});
+  }
 
-// Margin Y
-.my-none {
-  margin-top: layout.gap("none");
-  margin-bottom: layout.gap("none");
-}
-.my-xs {
-  margin-top: layout.gap("xs");
-  margin-bottom: layout.gap("xs");
-}
-.my-sm {
-  margin-top: layout.gap("sm");
-  margin-bottom: layout.gap("sm");
-}
-.my-md {
-  margin-top: layout.gap("md");
-  margin-bottom: layout.gap("md");
-}
-.my-lg {
-  margin-top: layout.gap("lg");
-  margin-bottom: layout.gap("lg");
-}
-.my-xl {
-  margin-top: layout.gap("xl");
-  margin-bottom: layout.gap("xl");
-}
-.my-auto {
-  margin-top: auto;
-  margin-bottom: auto;
-}
+  .border-block-start {
+    border-block-start: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, #{$fui-border});
+  }
 
-// Background
-.bg-none {
-  background-color: transparent;
-}
-.bg-primary {
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-}
-.bg-secondary {
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-}
-.bg-tertiary {
-  background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);
-}
-.bg-elevated {
-  background-color: var(--fui-bg-elevated, $fui-bg-elevated);
-}
+  .border-block-end {
+    border-block-end: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid
+      var(--fui-border, #{$fui-border});
+  }
 
-// Border radius
-.rounded-none {
-  border-radius: var(--fui-radius-none, #{$fui-radius-none});
-}
-.rounded-sm {
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-}
-.rounded-md {
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-}
-.rounded-lg {
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-}
-.rounded-full {
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-}
+  // Corner roles.
+  .radius-none {
+    border-radius: var(--fui-radius-none, #{$fui-radius-none});
+  }
 
-// Border
-.border {
-  border: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-}
+  .radius-control {
+    border-radius: var(--fui-radius-control, #{$fui-radius-control});
+  }
 
-// Directional borders
-.borderTop {
-  border-top: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-}
-.borderBottom {
-  border-bottom: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-}
-.borderLeft {
-  border-left: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-}
-.borderRight {
-  border-right: var(--fui-stroke-hairline, #{$fui-stroke-hairline}) solid var(--fui-border, $fui-border);
-}
+  // A box inset by the compact surface pad inside a surface corner.
+  .radius-nested {
+    border-radius: radius.nested(
+      var(--fui-radius-surface, #{$fui-radius-surface}),
+      surface.inset("compact")
+    );
+  }
 
-// Border color
-.borderColor-default {
-  border-color: var(--fui-border-default, $fui-border-default);
-}
-.borderColor-strong {
-  border-color: var(--fui-border-strong, $fui-border-strong);
-}
-.borderColor-accent {
-  border-color: var(--fui-color-accent, $fui-color-accent);
-}
-.borderColor-danger {
-  border-color: var(--fui-color-danger-border, $fui-color-danger-border);
-}
+  .radius-surface {
+    border-radius: var(--fui-radius-surface, #{$fui-radius-surface});
+  }
 
-// Shadow
-.shadow-sm {
-  box-shadow: var(--fui-shadow-sm, $fui-shadow-sm);
-}
-.shadow-md {
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-}
-.shadow-lg {
-  box-shadow: var(--fui-shadow-lg, $fui-shadow-lg);
-}
-.shadow-none {
-  box-shadow: none;
-}
+  // Inset roles.
+  .inset-none {
+    padding: 0;
+  }
 
-// Overflow
-.overflow-hidden {
-  overflow: hidden;
-}
-.overflow-auto {
-  overflow: auto;
-}
-.overflow-scroll {
-  overflow: scroll;
-}
-.overflow-visible {
-  overflow: visible;
-}
+  .inset-compact {
+    @include surface.apply-inset("compact");
+  }
 
-// Text color
-.color-primary {
-  color: var(--fui-text-primary, $fui-text-primary);
-}
-.color-secondary {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
-.color-tertiary {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
-.color-accent {
-  color: var(--fui-color-accent, $fui-color-accent);
-}
-.color-inverse {
-  color: var(--fui-text-inverse, $fui-text-inverse);
-}
-
-// Display
-.display-block {
-  display: block;
-}
-.display-inline {
-  display: inline;
-}
-.display-inline-block {
-  display: inline-block;
-}
-.display-flex {
-  display: flex;
-}
-.display-inline-flex {
-  display: inline-flex;
-}
-.display-grid {
-  display: grid;
-}
-.display-none {
-  display: none;
+  .inset-default {
+    @include surface.apply-inset("default");
+  }
 }

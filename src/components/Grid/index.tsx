@@ -1,30 +1,19 @@
 import * as React from "react";
-import { resolveLayoutGap } from "../../utils/layout-spacing";
 import styles from "./Grid.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-type ColumnCount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-type GapScale = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
-
-/** Responsive value — either a single value or per-breakpoint overrides */
-export interface ResponsiveColumns {
-  /** Default (mobile-first) */
-  base?: ColumnCount;
-  /** ≥640px */
-  sm?: ColumnCount;
-  /** ≥768px */
-  md?: ColumnCount;
-  /** ≥1024px */
-  lg?: ColumnCount;
-  /** ≥1280px */
-  xl?: ColumnCount;
-}
+/** The column counts real layouts use. */
+export type GridColumns = 1 | 2 | 3 | 4 | 6 | 12;
+export type GridGap = "none" | "xs" | "sm" | "md" | "lg" | "xl";
+export type GridAlign = "start" | "center" | "end" | "stretch";
+export type GridColSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | "full";
+export type GridRowSpan = 1 | 2 | 3 | 4 | 5 | 6;
 
 /**
- * CSS Grid layout component with responsive columns.
+ * CSS Grid layout. Columns answer the grid's own width, never the viewport.
  * @see https://usefragments.com/components/grid
  */
 export interface GridProps extends Omit<
@@ -33,25 +22,25 @@ export interface GridProps extends Omit<
 > {
   children?: React.ReactNode;
   /**
-   * Number of columns.
-   * - A number (1-12) for fixed columns at all sizes
-   * - An object for responsive columns: `{ base: 1, md: 2, lg: 3 }`
-   * - `"auto"` for responsive auto-fill based on minChildWidth
+   * Column tracks.
+   * - A count (1, 2, 3, 4, 6, 12) for that many equal tracks. With
+   *   `minChildWidth` the count becomes a ceiling: tracks drop out as the
+   *   grid narrows so none is ever thinner than `minChildWidth`.
+   * - `"auto"` fills the row with as many `minChildWidth` tracks as fit.
+   * @default 1
    */
-  columns?: ColumnCount | ResponsiveColumns | "auto";
-  /** Minimum width for auto-fill columns (only used with columns="auto") */
+  columns?: GridColumns | "auto";
+  /** Narrowest a track may get, as a CSS length. Defaults to the grid-cell
+   * measure for `columns="auto"`; with a count it turns on the ceiling. */
   minChildWidth?: string;
-  /** Gap between grid items. Accepts string tokens or numbers (1-8) mapping to the spacing scale */
-  gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | GapScale;
-  /** Vertical alignment of items within their cells */
-  alignItems?: "start" | "center" | "end" | "stretch";
-  /** Horizontal alignment of items within their cells */
-  justifyItems?: "start" | "center" | "end" | "stretch";
-  /** Padding inside the grid container */
-  padding?: "none" | "sm" | "md" | "lg";
-  /** Additional class name */
+  /** Space between tracks, on the layout gap scale (0, 4, 8, 12, 16, 24)
+   * @default "md" */
+  gap?: GridGap;
+  /** Block-axis alignment of items within their cells */
+  alignItems?: GridAlign;
+  /** Inline-axis alignment of items within their cells */
+  justifyItems?: GridAlign;
   className?: string;
-  /** Inline styles */
   style?: React.CSSProperties;
 }
 
@@ -61,44 +50,31 @@ export interface GridItemProps extends Omit<
 > {
   children?: React.ReactNode;
   /** Number of columns this item spans */
-  colSpan?: ColumnCount | "full";
+  colSpan?: GridColSpan;
   /** Number of rows this item spans */
-  rowSpan?: 1 | 2 | 3 | 4 | 5 | 6;
+  rowSpan?: GridRowSpan;
   /** Override alignment for this item */
-  alignSelf?: "start" | "center" | "end" | "stretch";
+  alignSelf?: GridAlign;
   /**
    * Enable CSS subgrid so children align to parent grid tracks.
    * - `true` or `"rows"` — children align to parent row tracks
    * - `"columns"` — children align to parent column tracks
    * - `"both"` — children align to both row and column tracks
-   * Requires the item to span multiple rows/columns for visible effect.
    */
   subgrid?: boolean | "rows" | "columns" | "both";
-  /** Additional class name */
   className?: string;
   style?: React.CSSProperties;
 }
 
 // ============================================
-// Helpers
+// Grid
 // ============================================
 
-function isResponsiveColumns(columns: GridProps["columns"]): columns is ResponsiveColumns {
-  return typeof columns === "object" && columns !== null;
+function cap(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-const paddingClasses: Record<NonNullable<GridProps["padding"]>, string> = {
-  none: styles.paddingNone ?? "",
-  sm: styles.paddingSm ?? "",
-  md: styles.paddingMd ?? "",
-  lg: styles.paddingLg ?? "",
-};
-
-// ============================================
-// Grid Component
-// ============================================
-
-export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
+const GridRoot = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
   {
     children,
     columns = 1,
@@ -106,44 +82,23 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
     gap = "md",
     alignItems,
     justifyItems,
-    padding = "none",
     className,
     style,
     ...htmlProps
   },
   ref
 ) {
-  // Determine classes and style based on columns type
-  let columnsClass: string;
-  let inlineStyle: React.CSSProperties | undefined;
+  const auto = columns === "auto";
+  const capped = !auto && minChildWidth != null;
 
-  if (columns === "auto") {
-    columnsClass = styles.columnsAuto ?? "";
-    if (minChildWidth) {
-      inlineStyle = { "--fui-grid-min-child-width": minChildWidth } as React.CSSProperties;
-    }
-  } else if (isResponsiveColumns(columns)) {
-    columnsClass = styles.columnsResponsive ?? "";
-    const vars: Record<string, string> = {};
-    if (columns.base) vars["--fui-grid-cols"] = String(columns.base);
-    if (columns.sm) vars["--fui-grid-cols-sm"] = String(columns.sm);
-    if (columns.md) vars["--fui-grid-cols-md"] = String(columns.md);
-    if (columns.lg) vars["--fui-grid-cols-lg"] = String(columns.lg);
-    if (columns.xl) vars["--fui-grid-cols-xl"] = String(columns.xl);
-    inlineStyle = vars as unknown as React.CSSProperties;
-  } else {
-    columnsClass = styles[`columns${columns}`] ?? "";
-  }
-
-  inlineStyle = {
-    ...inlineStyle,
-    "--_fui-grid-gap": resolveLayoutGap(gap),
-  } as React.CSSProperties;
+  const vars: Record<string, string> = {};
+  if (minChildWidth != null) vars["--_fui-grid-min"] = minChildWidth;
+  if (capped) vars["--_fui-grid-max"] = String(columns);
 
   const classes = [
     styles.grid,
-    columnsClass,
-    paddingClasses[padding],
+    auto ? styles.columnsAuto : capped ? styles.columnsCapped : styles[`columns${columns}`],
+    styles[`gap-${gap}`],
     alignItems && styles[`align${cap(alignItems)}`],
     justifyItems && styles[`justify${cap(justifyItems)}`],
     className,
@@ -151,23 +106,24 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
     .filter(Boolean)
     .join(" ");
 
-  const mergedStyle = inlineStyle ? { ...inlineStyle, ...style } : style;
+  const mergedStyle =
+    Object.keys(vars).length > 0 ? ({ ...vars, ...style } as React.CSSProperties) : style;
 
   return (
     <div {...htmlProps} ref={ref} className={classes} style={mergedStyle}>
       {children}
     </div>
   );
-}) as GridComponent;
+});
 
 // ============================================
-// Grid.Item Sub-component
+// Grid.Item
 // ============================================
 
-const subgridClasses: Record<string, string> = {
-  rows: styles.subgridRows ?? "",
-  columns: styles.subgridColumns ?? "",
-  both: styles.subgridBoth ?? "",
+const subgridClasses: Record<string, string | undefined> = {
+  rows: styles.subgridRows,
+  columns: styles.subgridColumns,
+  both: styles.subgridBoth,
 };
 
 const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(function GridItem(
@@ -194,22 +150,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(function GridIt
   );
 });
 
-// ============================================
-// Utilities
-// ============================================
-
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-// ============================================
-// Compound component type
-// ============================================
-
-interface GridComponent extends React.ForwardRefExoticComponent<
-  GridProps & React.RefAttributes<HTMLDivElement>
-> {
-  Item: typeof GridItem;
-}
-
-(Grid as GridComponent).Item = GridItem;
+export const Grid = Object.assign(GridRoot, {
+  Root: GridRoot,
+  Item: GridItem,
+});

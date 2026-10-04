@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { Collapsible as BaseCollapsible } from "@base-ui/react/collapsible";
+import { CaretRight } from "@phosphor-icons/react";
 import styles from "./TableOfContents.module.scss";
 import { Text } from "../Text";
 
@@ -8,16 +10,18 @@ import { Text } from "../Text";
 // Types
 // ============================================
 
-export interface TableOfContentsProps extends React.HTMLAttributes<HTMLElement> {
+/**
+ * The index of the sections on a page, with the section in view marked.
+ * @see https://usefragments.com/components/table-of-contents
+ */
+export interface TableOfContentsProps extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
   children: React.ReactNode;
-  /** Label for the nav landmark (default: "Table of contents") */
+  /** Names the navigation landmark.
+   * @default "Table of contents" */
   label?: string;
-  /** Title displayed above the list (default: "On This Page") */
-  title?: string;
-  /** Hide the title */
-  hideTitle?: boolean;
-  /** Hide indented items and nested groups. Defaults to false. */
-  hideSubItems?: boolean;
+  /** The title above the list; `null` shows none.
+   * @default "On this page" */
+  title?: React.ReactNode;
 }
 
 export interface TableOfContentsItemProps extends Omit<
@@ -25,68 +29,49 @@ export interface TableOfContentsItemProps extends Omit<
   "children"
 > {
   children: React.ReactNode;
-  /** The heading ID to link to */
-  id: string;
-  /** Whether this item is currently active/visible */
+  /** The id of the heading this item scrolls to. The link points at `#targetId`
+   * unless `href` is given. */
+  targetId?: string;
+  /** The section in view: the selection wash and ring, and `aria-current="location"`. */
   active?: boolean;
-  /** Force depth=1 indent for items not nested in a Group. */
-  indent?: boolean;
-  /** Optional leading element (icon, dot, etc.) — rendered before the label */
+  /** A leading element (icon, dot), before the label. */
   leading?: React.ReactNode;
-  /** Optional trailing element (count, badge, etc.) — rendered after the label */
+  /** A trailing element (count), after the label. */
   trailing?: React.ReactNode;
 }
 
 export interface TableOfContentsGroupProps {
   children: React.ReactNode;
-  /** Label rendered in the group header row */
+  /** The group header's label. */
   label: React.ReactNode;
-  /** Optional trailing element on the header row (e.g., count badge) */
+  /** A trailing element on the header row (count). */
   trailing?: React.ReactNode;
-  /** Optional leading element on the header row (e.g., icon) */
+  /** A leading element on the header row (icon). */
   leading?: React.ReactNode;
-  /** Whether the group is initially open (uncontrolled). Defaults to true. */
+  /** Whether the group starts open (uncontrolled).
+   * @default true */
   defaultOpen?: boolean;
-  /** Controlled open state */
+  /** Whether the group is open (controlled). */
   open?: boolean;
-  /** Callback fired when open state changes */
+  /** Called when the header opens or closes the group. */
   onOpenChange?: (open: boolean) => void;
-  /** Allow toggling open/closed via the header button. Defaults to true. */
+  /** Whether the header opens and closes the group; `false` makes it a plain label
+   * over items that always show.
+   * @default true */
   collapsible?: boolean;
-  /** Disable expand/collapse — header renders as a non-interactive label */
-  disabled?: boolean;
-  /** Highlight the group label in accent — typically when a child is active. */
-  active?: boolean;
 }
 
 // ============================================
-// Context — tracks nesting depth for the rail
+// Context: nesting depth
 // ============================================
 
-interface TocContextValue {
-  depth: number;
-  hideSubItems: boolean;
-}
+const DepthContext = React.createContext(0);
 
-const TocContext = React.createContext<TocContextValue>({ depth: 0, hideSubItems: false });
+// Indent steps the styles draw; deeper nesting stays at the last step.
+const MAX_INDENT_DEPTH = 3;
 
-// ============================================
-// Icons
-// ============================================
-
-function ChevronIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="10"
-      height="10"
-      viewBox="0 0 256 256"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z" />
-    </svg>
-  );
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
 }
 
 // ============================================
@@ -96,34 +81,37 @@ function ChevronIcon() {
 function TableOfContentsRoot({
   children,
   label = "Table of contents",
-  title = "On This Page",
-  hideTitle = false,
-  hideSubItems = false,
+  title = "On this page",
   className,
   "aria-label": ariaLabel,
   ...htmlProps
 }: TableOfContentsProps) {
-  const classes = [styles.root, className].filter(Boolean).join(" ");
+  // No sections, no index.
+  if (React.Children.toArray(children).length === 0) return null;
 
   return (
-    <nav {...htmlProps} aria-label={ariaLabel ?? label} className={classes}>
-      {!hideTitle && (
-        <Text as="p" role="section-label" className={styles.title}>
+    <nav
+      {...htmlProps}
+      aria-label={ariaLabel ?? label}
+      className={cx(styles.root, className)}
+      data-slot="table-of-contents"
+    >
+      {title != null && title !== false ? (
+        <Text as="p" type="section-label" className={styles.title}>
           {title}
         </Text>
-      )}
-      <TocContext.Provider value={{ depth: 0, hideSubItems }}>
+      ) : null}
+      <DepthContext.Provider value={0}>
         <ul className={styles.list}>{children}</ul>
-      </TocContext.Provider>
+      </DepthContext.Provider>
     </nav>
   );
 }
 
 function TableOfContentsItem({
   children,
-  id,
+  targetId,
   active = false,
-  indent = false,
   leading,
   trailing,
   className,
@@ -131,36 +119,35 @@ function TableOfContentsItem({
   href,
   ...htmlProps
 }: TableOfContentsItemProps) {
-  const { depth, hideSubItems } = React.useContext(TocContext);
-  const effectiveDepth = depth > 0 ? depth : indent ? 1 : 0;
+  const depth = React.useContext(DepthContext);
 
-  if (hideSubItems && effectiveDepth > 0) return null;
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(event);
+    // An explicit href is a route, not an in-page anchor: let the browser (or a
+    // wrapping router link) own navigation.
+    if (event.defaultPrevented || href || !targetId) return;
 
-  const linkClasses = [styles.link, active && styles.active, className].filter(Boolean).join(" ");
-
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    onClick?.(e);
-    // An explicit href is a route, not an in-page anchor: let the browser
-    // (or a wrapping router link) own navigation.
-    if (e.defaultPrevented || href) return;
-
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-      const prefersReducedMotion =
+    event.preventDefault();
+    const target = document.getElementById(targetId);
+    if (target) {
+      const reducedMotion =
         typeof window.matchMedia === "function" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      el.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
-      window.history.replaceState(null, "", `#${id}`);
+      target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+      window.history.replaceState(null, "", `#${targetId}`);
     }
   };
 
   return (
-    <li className={styles.item} data-depth={effectiveDepth} data-active={active || undefined}>
+    <li
+      className={styles.item}
+      data-depth={Math.min(depth, MAX_INDENT_DEPTH)}
+      data-active={active || undefined}
+    >
       <a
         {...htmlProps}
-        href={href ?? `#${id}`}
-        className={linkClasses}
+        href={href ?? (targetId ? `#${targetId}` : undefined)}
+        className={cx(styles.link, active && styles.active, className)}
         onClick={handleClick}
         aria-current={active ? "location" : undefined}
       >
@@ -172,90 +159,59 @@ function TableOfContentsItem({
   );
 }
 
-function useControlledOpen(
-  controlled: boolean | undefined,
-  defaultValue: boolean,
-  onChange: ((open: boolean) => void) | undefined
-): [boolean, (next: boolean) => void] {
-  const [internal, setInternal] = React.useState(defaultValue);
-  const isControlled = controlled !== undefined;
-  const value = isControlled ? controlled : internal;
-  const setValue = React.useCallback(
-    (next: boolean) => {
-      if (!isControlled) setInternal(next);
-      onChange?.(next);
-    },
-    [isControlled, onChange]
-  );
-  return [value, setValue];
-}
-
-// Group renders a Fragment so its header <li> and children remain direct
-// siblings in the parent <ul>. This preserves list semantics and depth-based
-// indentation without adding a nested list inset.
+/**
+ * A titled set of items one level deeper. Its header opens and closes the set
+ * at once (no height motion); with `collapsible={false}` it is a plain label.
+ */
 function TableOfContentsGroup({
   children,
   label,
   leading,
   trailing,
   defaultOpen = true,
-  open: controlledOpen,
+  open,
   onOpenChange,
   collapsible = true,
-  disabled = false,
-  active = false,
 }: TableOfContentsGroupProps) {
-  const { depth, hideSubItems } = React.useContext(TocContext);
-  const [open, setOpen] = useControlledOpen(controlledOpen, defaultOpen, onOpenChange);
-
-  if (hideSubItems) return null;
-
-  const isToggleable = collapsible && !disabled;
-  const isOpen = isToggleable ? open : true;
-
-  const headerClasses = [
-    styles.groupHeader,
-    isToggleable && styles.groupHeaderInteractive,
-    active && styles.groupHeaderActive,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const depth = React.useContext(DepthContext);
+  const indent = Math.min(depth, MAX_INDENT_DEPTH);
 
   const headerContent = (
     <>
-      {isToggleable && (
-        <span className={styles.groupChevron} data-open={isOpen || undefined} aria-hidden="true">
-          <ChevronIcon />
-        </span>
-      )}
+      {collapsible ? (
+        <CaretRight className={styles.groupCaret} weight="bold" aria-hidden="true" />
+      ) : null}
       {leading != null && <span className={styles.leading}>{leading}</span>}
       <span className={styles.groupLabel}>{label}</span>
       {trailing != null && <span className={styles.trailing}>{trailing}</span>}
     </>
   );
 
-  return (
-    <>
-      <li className={styles.groupHeaderRow} data-depth={depth} data-active={active || undefined}>
-        {isToggleable ? (
-          <button
-            type="button"
-            className={headerClasses}
-            onClick={() => setOpen(!open)}
-            aria-expanded={isOpen}
-          >
-            {headerContent}
-          </button>
-        ) : (
-          <div className={headerClasses}>{headerContent}</div>
-        )}
+  const items = <DepthContext.Provider value={depth + 1}>{children}</DepthContext.Provider>;
+
+  if (!collapsible) {
+    return (
+      <li className={styles.group} data-depth={indent}>
+        <div className={styles.groupHeader}>{headerContent}</div>
+        <ul className={styles.list}>{items}</ul>
       </li>
-      {isOpen && (
-        <TocContext.Provider value={{ depth: depth + 1, hideSubItems }}>
-          {children}
-        </TocContext.Provider>
-      )}
-    </>
+    );
+  }
+
+  return (
+    <BaseCollapsible.Root
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange ? (next) => onOpenChange(next) : undefined}
+      render={<li className={styles.group} data-depth={indent} />}
+    >
+      <BaseCollapsible.Trigger className={cx(styles.groupHeader, styles.groupHeaderInteractive)}>
+        {headerContent}
+      </BaseCollapsible.Trigger>
+      <BaseCollapsible.Panel render={<ul className={cx(styles.list, styles.groupPanel)} />}>
+        {items}
+      </BaseCollapsible.Panel>
+    </BaseCollapsible.Root>
   );
 }
 
@@ -267,6 +223,3 @@ export const TableOfContents = Object.assign(TableOfContentsRoot, {
   Item: TableOfContentsItem,
   Group: TableOfContentsGroup,
 });
-
-// Re-export individual components
-export { TableOfContentsRoot, TableOfContentsItem, TableOfContentsGroup };

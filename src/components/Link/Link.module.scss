@@ -1,97 +1,48 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../recipes/action";
-@use "../../recipes/prose";
 
-.link {
-  @include interactive-base;
-  @include action.inline;
-  @include prose.link;
+@layer fui.tokens, fui.base, fui.components;
 
-  display: inline;
-  cursor: pointer;
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
+// A link is always underlined: one hairline at the shared offset
+// (`--fui-link-underline-offset`, the same rule as Button link and prose
+// links), never a fill on hover. Accent reads the link ink; neutral reads
+// ink 1. Neither changes colour on hover.
 
-  &:focus-visible {
-    @include focus-ring;
-  }
-}
+@layer fui.components {
+  .link {
+    @include action.inline;
 
-// Tone. The accent ink is `--fui-link-ink` (the read-safe step, gated by
-// read-safe-contrast.test.ts); hover keeps the same ink and underlines.
-.toneAccent {
-  color: var(--fui-link-ink, #{$fui-link-ink});
-}
-
-.toneNeutral {
-  color: var(--fui-text-primary, $fui-text-primary);
-
-  &:hover {
-    color: var(--fui-color-accent, $fui-color-accent);
-  }
-}
-
-// Text-hierarchy colour on a neutral link; hover steps one rung up the ladder.
-.colorPrimary {
-  color: var(--fui-text-primary, $fui-text-primary);
-
-  &:hover {
-    color: var(--fui-color-accent, $fui-color-accent);
-  }
-}
-
-.colorSecondary {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-
-  &:hover {
-    color: var(--fui-text-primary, $fui-text-primary);
-  }
-}
-
-.colorTertiary {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-
-  &:hover {
-    color: var(--fui-text-secondary, $fui-text-secondary);
-  }
-}
-
-// Underline styles
-.underline-always {
-  text-decoration: underline;
-  text-decoration-style: solid;
-  text-underline-offset: 0.2em;
-}
-
-.underline-hover {
-  text-decoration-line: none;
-  text-decoration-style: solid;
-  text-underline-offset: 0.2em;
-  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
-
-  &:hover {
+    display: inline;
+    cursor: pointer;
+    // The focus ring's shape: the indicator radius.
+    border-radius: var(--fui-radius-indicator, $fui-radius-indicator);
     text-decoration-line: underline;
     text-decoration-style: solid;
-    text-decoration-color: currentColor;
-    text-underline-offset: 0.2em;
+    text-decoration-thickness: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
+    text-underline-offset: var(--fui-link-underline-offset, #{$fui-link-underline-offset});
+    overflow-wrap: anywhere;
+    transition: color var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
   }
-}
 
-.underline-dotted {
-  text-decoration: underline dotted;
-  text-underline-offset: 0.2em;
-  text-decoration-thickness: from-font;
-  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
-
-  &:hover {
-    text-decoration-color: currentColor;
+  // The accent ink is `--fui-link-ink` (the read-safe step, gated by
+  // read-safe-contrast.test.ts); hover keeps it.
+  .toneAccent {
+    color: var(--fui-link-ink, #{$fui-link-ink});
   }
-}
 
-.underline-none {
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: none;
+  // Neutral reads ink 1 at rest, as running text does; the underline is the
+  // link's cue, so hover keeps the ink.
+  .toneNeutral {
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 }

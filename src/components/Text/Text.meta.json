@@ -1,0 +1,200 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Text",
+  "description": "Applies the 11/12/15/24 type ladder to any text element, without hand-rolling font rules.",
+  "category": "display",
+  "tags": ["text", "typography", "heading", "paragraph", "font"],
+  "status": "stable",
+  "sourcePath": "src/components/Text/index.tsx",
+  "exportName": "Text",
+  "propsSummary": [
+    "children: node (required)",
+    "as: h1|h2|h3|h4|h5|h6|p|span|label|div|strong|em|small|mark|del|ins|sub|sup|time|address|blockquote|cite|code|abbr (default: span)",
+    "type: caption|control|body|title|display|code|section-label (default: body)",
+    "strong: boolean",
+    "color: primary|secondary|tertiary|accent|success|warning|danger (default: \"primary\")",
+    "truncate: boolean",
+    "lineClamp: number",
+    "tabularNums: boolean"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Text content",
+      "required": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "span",
+      "required": false,
+      "values": [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "p",
+        "span",
+        "label",
+        "div",
+        "strong",
+        "em",
+        "small",
+        "mark",
+        "del",
+        "ins",
+        "sub",
+        "sup",
+        "time",
+        "address",
+        "blockquote",
+        "cite",
+        "code",
+        "abbr"
+      ]
+    },
+    "type": {
+      "type": "enum",
+      "description": "The step on the type ladder; a step owns size, line height, weight and tracking. caption and control 11, body 12, code 12 mono, title 15 strong, display 24 strong, section-label 11 strong in tertiary ink.",
+      "default": "body",
+      "required": false,
+      "values": ["caption", "control", "body", "title", "display", "code", "section-label"]
+    },
+    "color": {
+      "type": "enum",
+      "description": "Ink. accent is the accent's text ink for one word inside a line; success/warning/danger are for a run of text that carries a state on its own — prefer Badge or Alert when the state deserves a container.",
+      "default": "\"primary\"",
+      "required": false,
+      "values": ["primary", "secondary", "tertiary", "accent", "success", "warning", "danger"]
+    },
+    "truncate": {
+      "type": "boolean",
+      "description": "Truncate with ellipsis on overflow",
+      "required": false
+    },
+    "lineClamp": {
+      "type": "number",
+      "description": "Number of lines before truncating",
+      "required": false
+    },
+    "strong": {
+      "type": "boolean",
+      "description": "The strong weight on any role. A section's header is body in the strong weight, never a bigger step.",
+      "required": false
+    },
+    "tabularNums": {
+      "type": "boolean",
+      "description": "Tabular figures, so digits align and an updating number does not jitter",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Any text that should sit on the type scale",
+      "Headings and paragraphs that need real tags",
+      "Text that must truncate or clamp"
+    ],
+    "whenNot": [
+      "Rich or authored content (use Markdown)",
+      "A block of code (use CodeBlock); an inline digest is type=\"code\"",
+      "Anything clickable (use Link or Button)"
+    ],
+    "guidelines": [
+      "Pick the tag with as, the look with type — they are separate decisions",
+      "Never skip heading levels to get a smaller heading",
+      "A section header is body plus strong, never a bigger step",
+      "Color is for hierarchy and state, not decoration",
+      "Truncated text needs the full string in title or a tooltip"
+    ],
+    "accessibility": [
+      "as keeps the document outline intact for screen readers",
+      "Clamped text still exposes its full content to assistive tech"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Ladder",
+      "description": "Four sizes: 24, 15, 12 and 11.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack gap=\"sm\">\n  <Text as=\"h1\" type=\"display\">Two findings block the merge</Text>\n  <Text as=\"h2\" type=\"title\">Pull request 412</Text>\n  <Text as=\"p\">Two token files changed since the last approval.</Text>\n  <Text type=\"caption\" color=\"tertiary\">Checked 2 minutes ago</Text>\n</Stack>"
+    },
+    {
+      "name": "Strong",
+      "description": "A section header is body in the strong weight.",
+      "code": "<Text as=\"h3\" strong>Tokens</Text>"
+    },
+    {
+      "name": "Inks",
+      "description": "The ink ladder, the accent's text ink and the state inks.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack gap=\"xs\">\n  <Text>Primary</Text>\n  <Text color=\"secondary\">Secondary</Text>\n  <Text color=\"tertiary\">Tertiary</Text>\n  <Text color=\"accent\">fragments-sdk/fragments</Text>\n  <Text color=\"danger\">The token expired</Text>\n</Stack>"
+    },
+    {
+      "name": "Section Label",
+      "description": "The small heading over a list.",
+      "code": "<Text as=\"p\" type=\"section-label\">On this page</Text>"
+    },
+    {
+      "name": "Code",
+      "description": "A digest or a path on the body step in the mono face.",
+      "code": "<Text type=\"code\">c46ff42922e7c384</Text>"
+    },
+    {
+      "name": "Truncation",
+      "description": "One line with an ellipsis, or a clamp at two.",
+      "code": "<Text as=\"p\" truncate title=\"fragments-sdk/a-repository-with-a-very-long-name\">fragments-sdk/a-repository-with-a-very-long-name</Text>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Link",
+      "relationship": "sibling",
+      "note": "Use Link for clickable text"
+    },
+    {
+      "component": "CodeBlock",
+      "relationship": "alternative",
+      "note": "Use CodeBlock for code display"
+    },
+    {
+      "component": "Badge",
+      "relationship": "sibling",
+      "note": "Use Badge for labels/tags"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "as: string - HTML element",
+      "type: caption|control|body|title|display|code|section-label - the step on the type ladder (default body)",
+      "strong: boolean - the strong weight",
+      "color: primary|secondary|tertiary|accent|success|warning|danger - ink (accent = accent text ink; semantic inks for inline state)",
+      "truncate: boolean - enable truncation",
+      "lineClamp: number - max lines",
+      "tabularNums: boolean - tabular figures"
+    ],
+    "a11yRules": ["A11Y_HEADING_HIERARCHY", "A11Y_SEMANTIC_ELEMENTS"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:05.045Z"
+  },
+  "cssVariables": [
+    "--fui-color-accent-text",
+    "--fui-color-danger-text",
+    "--fui-color-success-text",
+    "--fui-color-warning-text",
+    "--fui-font-weight-semibold",
+    "--fui-line-clamp",
+    "--fui-raw-space-0",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

@@ -1,77 +1,100 @@
-@use '../../tokens/variables' as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../tokens/variables" as *;
+@use "../../recipes/radius" as radius;
+@use "../../recipes/skeleton" as skeleton;
+@use "../../recipes/surface" as surface;
+@use "../../recipes/typography" as typography;
 
-.imageContainer {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transition: opacity var(--fui-transition-normal, $fui-transition-normal);
-}
+@layer fui.components {
+  @include skeleton.keyframes;
 
-// Object fit variants
-.fit-cover {
-  object-fit: cover;
-}
+  // The frame sits on the band, so a slow or failed image never shows a hole.
+  .frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background-color: var(--fui-bg-secondary, $fui-bg-secondary);
 
-.fit-contain {
-  object-fit: contain;
-}
+    // While the image loads, the band pulses like a skeleton bar.
+    &[data-state="loading"] {
+      @include skeleton.band;
+    }
+  }
 
-.fit-fill {
-  object-fit: fill;
-}
+  .image {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    opacity: 0;
+    transition: opacity var(--fui-duration-micro, $fui-duration-micro)
+      var(--fui-ease-standard, $fui-ease-standard);
 
-.fit-none {
-  object-fit: none;
-}
+    [data-state="loaded"] > & {
+      opacity: 1;
+    }
 
-// Aspect ratio variants
-.aspect-1-1 {
-  aspect-ratio: 1 / 1;
-}
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
 
-.aspect-4-3 {
-  aspect-ratio: 4 / 3;
-}
+  .fit-cover {
+    object-fit: cover;
+  }
 
-.aspect-16-9 {
-  aspect-ratio: 16 / 9;
-}
+  .fit-contain {
+    object-fit: contain;
+  }
 
-.aspect-21-9 {
-  aspect-ratio: 21 / 9;
-}
+  .aspect-1-1 {
+    aspect-ratio: 1 / 1;
+  }
 
-// Border radius variants
-.rounded-sm {
-  border-radius: var(--fui-radius-sm, $fui-radius-sm);
-}
+  .aspect-4-3 {
+    aspect-ratio: 4 / 3;
+  }
 
-.rounded-md {
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-}
+  .aspect-16-9 {
+    aspect-ratio: 16 / 9;
+  }
 
-.rounded-lg {
-  border-radius: var(--fui-radius-lg, $fui-radius-lg);
-}
+  // Corner roles. `none` leaves the corner to the container that clips it.
+  .radius-control {
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+  }
 
-.rounded-full {
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-}
+  .radius-nested {
+    border-radius: radius.nested(
+      var(--fui-radius-surface, #{$fui-radius-surface}),
+      surface.inset("compact")
+    );
+  }
 
-// Fallback
-.fallback {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--fui-bg-secondary, $fui-bg-secondary);
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
+  .radius-surface {
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+  }
+
+  // The built-in error fallback: the band, a glyph and the alt words in
+  // caption ink 3, so a broken image says what was meant to be there.
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    padding: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    text-align: center;
+  }
+
+  .fallbackWords {
+    @include typography.role("caption");
+
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
 }

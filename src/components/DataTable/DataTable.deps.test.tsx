@@ -41,6 +41,6 @@ describe("DataTable without @tanstack/react-table", () => {
 
   it("shows the empty state when there is no data", async () => {
     render(<DataTable columns={columns} data={[]} aria-label="Empty" />);
-    expect(await screen.findByText("No data available")).toBeInTheDocument();
+    expect(await screen.findByText("No data")).toBeInTheDocument();
   });
 });

@@ -1,68 +1,77 @@
 "use client";
 
 import * as React from "react";
-import { Collapsible as BaseCollapsible } from "@base-ui/react/collapsible";
+import { Accordion as BaseAccordion } from "@base-ui/react/accordion";
+import { CaretRight } from "@phosphor-icons/react";
 import styles from "./Accordion.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type AccordionValue = string | string[];
+/** The values of the open items. */
+export type AccordionValue = string[];
 
-interface AccordionSharedProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
+type BaseRootProps = React.ComponentPropsWithoutRef<typeof BaseAccordion.Root>;
+type BaseItemProps = React.ComponentPropsWithoutRef<typeof BaseAccordion.Item>;
+type BaseTriggerProps = React.ComponentPropsWithoutRef<typeof BaseAccordion.Trigger>;
+type BasePanelProps = React.ComponentPropsWithoutRef<typeof BaseAccordion.Panel>;
+
+export type AccordionChangeEventDetails = Parameters<
+  NonNullable<BaseRootProps["onValueChange"]>
+>[1];
+export type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6;
+
+/**
+ * Stacked sections that open and close in place.
+ * @see https://usefragments.com/components/accordion
+ */
+export interface AccordionProps extends Omit<
+  BaseRootProps,
+  "className" | "children" | "value" | "defaultValue" | "onValueChange" | "orientation"
+> {
   children: React.ReactNode;
-  /** Whether items can be fully collapsed (only for type="single") */
-  collapsible?: boolean;
-  /**
-   * Heading level for accordion triggers (for semantic HTML).
-   * The trigger will be wrapped in an <h{level}> element.
-   * @default 3
-   */
-  headingLevel?: 2 | 3 | 4 | 5 | 6;
-}
-
-export interface AccordionSingleProps extends AccordionSharedProps {
-  /** Allow multiple items to be open at once */
-  type?: "single";
-  /** Controlled value for single mode */
-  value?: string;
-  /** Default value for uncontrolled usage */
-  defaultValue?: string;
-  /** Callback when value changes */
-  onValueChange?: (value: string | undefined) => void;
-}
-
-export interface AccordionMultipleProps extends AccordionSharedProps {
-  /** Allow multiple items to be open at once */
-  type: "multiple";
-  /** Controlled values for multiple mode */
-  value?: string[];
-  /** Default values for uncontrolled usage */
-  defaultValue?: string[];
-  /** Callback when value changes */
-  onValueChange?: (value: string[]) => void;
-}
-
-export type AccordionProps = AccordionSingleProps | AccordionMultipleProps;
-
-export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-  /** Unique value for this item */
-  value: string;
-  /** Disable this item */
+  className?: string;
+  /** Let several items stay open at once. A single accordion closes the open item when
+   * another opens, and closes it when it is pressed again.
+   * @default false */
+  multiple?: boolean;
+  /** The open items (controlled). */
+  value?: AccordionValue;
+  /** The items open at first (uncontrolled). */
+  defaultValue?: AccordionValue;
+  /** Called with the open items when one opens or closes. */
+  onValueChange?: (value: AccordionValue, eventDetails: AccordionChangeEventDetails) => void;
+  /** The heading level each trigger sits in.
+   * @default 3 */
+  headingLevel?: AccordionHeadingLevel;
+  /** Make every item inert. */
   disabled?: boolean;
 }
 
-export interface AccordionTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface AccordionItemProps extends Omit<
+  BaseItemProps,
+  "className" | "children" | "value"
+> {
   children: React.ReactNode;
+  className?: string;
+  /** Unique value for this item. */
+  value: string;
+  /** Make this item inert (focusable, dimmed once). */
+  disabled?: boolean;
 }
 
-export interface AccordionContentProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AccordionTriggerProps extends Omit<BaseTriggerProps, "className" | "children"> {
   children: React.ReactNode;
-  /** Keep panel content mounted while collapsed */
+  className?: string;
+}
+
+export interface AccordionContentProps extends Omit<BasePanelProps, "className" | "children"> {
+  children: React.ReactNode;
+  className?: string;
+  /** Keep the content mounted while closed. */
   keepMounted?: boolean;
-  /** Let browser find-in-page reveal collapsed content */
+  /** Let the browser's find-in-page reveal closed content. */
   hiddenUntilFound?: boolean;
 }
 
@@ -70,40 +79,10 @@ export interface AccordionContentProps extends React.HTMLAttributes<HTMLDivEleme
 // Context
 // ============================================
 
-interface AccordionContextValue {
-  type: "single" | "multiple";
-  openItems: string[];
-  toggle: (value: string) => void;
-  collapsible: boolean;
-  headingLevel: 2 | 3 | 4 | 5 | 6;
-}
+const HeadingLevelContext = React.createContext<AccordionHeadingLevel>(3);
 
-const AccordionContext = React.createContext<AccordionContextValue | null>(null);
-
-interface AccordionItemContextValue {
-  value: string;
-  isOpen: boolean;
-  disabled: boolean;
-  triggerId: string;
-  contentId: string;
-}
-
-const AccordionItemContext = React.createContext<AccordionItemContextValue | null>(null);
-
-function useAccordionContext() {
-  const context = React.useContext(AccordionContext);
-  if (!context) {
-    throw new Error("Accordion components must be used within an Accordion");
-  }
-  return context;
-}
-
-function useAccordionItemContext() {
-  const context = React.useContext(AccordionItemContext);
-  if (!context) {
-    throw new Error("Accordion.Trigger/Content must be used within an Accordion.Item");
-  }
-  return context;
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
 }
 
 // ============================================
@@ -112,194 +91,74 @@ function useAccordionItemContext() {
 
 function AccordionRoot({
   children,
-  type = "single",
+  multiple = false,
   value,
   defaultValue,
   onValueChange,
-  collapsible = false,
   headingLevel = 3,
   className,
-  ...htmlProps
+  ...rootProps
 }: AccordionProps) {
-  // Normalize value to array for internal handling
-  const normalizeValue = (val: AccordionValue | undefined): string[] => {
-    if (val === undefined) return [];
-    return Array.isArray(val) ? val : [val];
-  };
-
-  const [openItems, setOpenItems] = React.useState<string[]>(() => normalizeValue(defaultValue));
-
-  // Use controlled value if provided
-  const controlledOpenItems = value !== undefined ? normalizeValue(value) : undefined;
-  const currentOpenItems = controlledOpenItems ?? openItems;
-
-  const toggle = React.useCallback(
-    (itemValue: string) => {
-      const newItems = (() => {
-        if (type === "single") {
-          // For single, toggle or set new item
-          if (currentOpenItems.includes(itemValue)) {
-            return collapsible ? [] : currentOpenItems;
-          }
-          return [itemValue];
-        } else {
-          // For multiple, toggle item in array
-          if (currentOpenItems.includes(itemValue)) {
-            return currentOpenItems.filter((v) => v !== itemValue);
-          }
-          return [...currentOpenItems, itemValue];
-        }
-      })();
-
-      if (controlledOpenItems === undefined) {
-        setOpenItems(newItems);
-      }
-
-      if (type === "single") {
-        (onValueChange as AccordionSingleProps["onValueChange"] | undefined)?.(newItems[0]);
-      } else {
-        (onValueChange as AccordionMultipleProps["onValueChange"] | undefined)?.(newItems);
-      }
-    },
-    [type, currentOpenItems, collapsible, controlledOpenItems, onValueChange]
-  );
-
-  const classes = [styles.accordion, className].filter(Boolean).join(" ");
-
   return (
-    <AccordionContext.Provider
-      value={{ type, openItems: currentOpenItems, toggle, collapsible, headingLevel }}
-    >
-      <div {...htmlProps} className={classes} data-orientation="vertical">
+    <HeadingLevelContext.Provider value={headingLevel}>
+      <BaseAccordion.Root
+        {...rootProps}
+        multiple={multiple}
+        value={value}
+        defaultValue={defaultValue}
+        onValueChange={onValueChange as BaseRootProps["onValueChange"]}
+        className={cx(styles.accordion, className)}
+        data-slot="accordion"
+      >
         {children}
-      </div>
-    </AccordionContext.Provider>
+      </BaseAccordion.Root>
+    </HeadingLevelContext.Provider>
   );
 }
 
-function AccordionItem({
-  children,
-  value,
-  disabled = false,
-  className,
-  ...htmlProps
-}: AccordionItemProps) {
-  const { openItems, toggle } = useAccordionContext();
-  const isOpen = openItems.includes(value);
-  const baseId = React.useId();
-  const triggerId = `accordion-trigger-${baseId}`;
-  const contentId = `accordion-content-${baseId}`;
-
-  const classes = [
-    styles.item,
-    isOpen && styles.itemOpen,
-    disabled && styles.itemDisabled,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
+function AccordionItem({ children, className, ...itemProps }: AccordionItemProps) {
   return (
-    <AccordionItemContext.Provider value={{ value, isOpen, disabled, triggerId, contentId }}>
-      <BaseCollapsible.Root
-        open={isOpen}
-        disabled={disabled}
-        onOpenChange={(nextOpen, eventDetails) => {
-          // Trigger presses stay in AccordionTrigger so its public onClick can cancel them.
-          // Base owns the browser-only beforematch event used by hiddenUntilFound panels.
-          if (eventDetails.event.type === "beforematch" && nextOpen !== isOpen) {
-            toggle(value);
-          }
-        }}
-      >
-        <div
-          {...htmlProps}
-          className={classes}
-          data-state={isOpen ? "open" : "closed"}
-          data-disabled={disabled || undefined}
+    <BaseAccordion.Item
+      {...itemProps}
+      className={cx(styles.item, className)}
+      data-slot="accordion-item"
+    >
+      {children}
+    </BaseAccordion.Item>
+  );
+}
+
+/** The fold row inside its heading: a leading caret that turns a quarter when open, then the label. */
+const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTriggerProps>(
+  function AccordionTrigger({ children, className, ...triggerProps }, forwardedRef) {
+    const headingLevel = React.useContext(HeadingLevelContext);
+    const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6";
+
+    return (
+      <BaseAccordion.Header render={<Heading />} className={styles.heading}>
+        <BaseAccordion.Trigger
+          {...triggerProps}
+          ref={forwardedRef}
+          className={cx(styles.trigger, className)}
+          data-slot="accordion-trigger"
         >
-          {children}
-        </div>
-      </BaseCollapsible.Root>
-    </AccordionItemContext.Provider>
-  );
-}
+          <CaretRight className={styles.caret} weight="bold" aria-hidden="true" />
+          <span className={styles.label}>{children}</span>
+        </BaseAccordion.Trigger>
+      </BaseAccordion.Header>
+    );
+  }
+);
 
-function AccordionTrigger({
-  children,
-  className,
-  type: buttonType,
-  onClick,
-  ...htmlProps
-}: AccordionTriggerProps) {
-  const { toggle, headingLevel } = useAccordionContext();
-  const { value, isOpen, disabled, triggerId, contentId } = useAccordionItemContext();
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onClick?.(event);
-    if (event.defaultPrevented) return;
-    if (!disabled) {
-      toggle(value);
-    }
-  };
-
-  const classes = [styles.trigger, className].filter(Boolean).join(" ");
-
-  // Create the heading element dynamically based on headingLevel
-  const HeadingTag = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6";
-
+function AccordionContent({ children, className, ...panelProps }: AccordionContentProps) {
   return (
-    <HeadingTag className={styles.heading}>
-      <BaseCollapsible.Trigger
-        {...htmlProps}
-        type={buttonType ?? "button"}
-        id={triggerId}
-        className={classes}
-        onClick={handleClick}
-        aria-expanded={isOpen}
-        aria-controls={contentId}
-        data-state={isOpen ? "open" : "closed"}
-        disabled={disabled}
-      >
-        <span className={styles.triggerContent}>{children}</span>
-        <svg className={styles.chevron} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path
-            d="M4 6L8 10L12 6"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </BaseCollapsible.Trigger>
-    </HeadingTag>
-  );
-}
-
-function AccordionContent({
-  children,
-  keepMounted = false,
-  hiddenUntilFound = false,
-  className,
-  ...htmlProps
-}: AccordionContentProps) {
-  const { isOpen, triggerId, contentId } = useAccordionItemContext();
-
-  const classes = [styles.content, className].filter(Boolean).join(" ");
-
-  return (
-    <BaseCollapsible.Panel
-      {...htmlProps}
-      id={contentId}
-      className={classes}
-      data-state={isOpen ? "open" : "closed"}
-      role="region"
-      aria-labelledby={triggerId}
-      keepMounted={keepMounted || hiddenUntilFound}
-      hiddenUntilFound={hiddenUntilFound}
+    <BaseAccordion.Panel
+      {...panelProps}
+      className={cx(styles.content, className)}
+      data-slot="accordion-content"
     >
       <div className={styles.contentInner}>{children}</div>
-    </BaseCollapsible.Panel>
+    </BaseAccordion.Panel>
   );
 }
 
@@ -312,5 +171,3 @@ export const Accordion = Object.assign(AccordionRoot, {
   Trigger: AccordionTrigger,
   Content: AccordionContent,
 });
-
-export { AccordionRoot, AccordionItem, AccordionTrigger, AccordionContent };

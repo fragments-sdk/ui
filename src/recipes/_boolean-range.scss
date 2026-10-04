@@ -1,5 +1,4 @@
 @use "../tokens/measurements.generated" as measurements;
-@use "field";
 @use "typography";
 
 @function _raw($step) {
@@ -26,13 +25,9 @@
   @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
 }
 
-@function card-track($size) {
-  @return field.track($size);
-}
-
 @function switch-inline-size($size) {
   @if $size == "sm" or $size == "md" or $size == "lg" {
-    @return var(--fui-control-track-#{$size}, #{measurements.target-value("controlTrack", $size)});
+    @return var(--fui-control-height-#{$size}, #{measurements.target-value("controlTrack", $size)});
   }
 
   @error "Unknown boolean size '#{$size}'. Expected sm, md, or lg.";
@@ -87,16 +82,6 @@
 @mixin mark($size) {
   inline-size: mark-size($size);
   block-size: mark-size($size);
-}
-
-// A bordered surface reads as a card, not a field row: the same inset on
-// every side, so a two-line item (label + helper) breathes as much above and
-// below as it does at its edges. The field track still sets the floor so a
-// one-line card sits level with an input beside it.
-@mixin card($size) {
-  min-block-size: card-track($size);
-  padding: field.inline-inset($size);
-  box-sizing: border-box;
 }
 
 @mixin switch-track($size) {

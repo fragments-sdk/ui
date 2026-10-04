@@ -1,0 +1,161 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Markdown",
+  "description": "Renders Markdown headings, lists, tables, quotes and syntax-highlighted code at conversation scale.",
+  "category": "display",
+  "tags": ["markdown", "prose", "content", "text", "ai", "chat"],
+  "status": "stable",
+  "dependencies": [
+    {
+      "name": "react-markdown",
+      "version": ">=9.0.0",
+      "reason": "Optional — parses markdown; without it content renders as plain paragraphs."
+    },
+    {
+      "name": "remark-gfm",
+      "version": ">=4.0.0",
+      "reason": "Optional — adds GitHub-flavored markdown (tables, strikethrough, task lists)."
+    }
+  ],
+  "sourcePath": "src/components/Markdown/index.tsx",
+  "exportName": "Markdown",
+  "propsSummary": [
+    "content: string (required)",
+    "streaming: boolean (default: false)",
+    "components: object",
+    "className: string"
+  ],
+  "props": {
+    "content": {
+      "type": "string",
+      "description": "Markdown string to render",
+      "required": true
+    },
+    "streaming": {
+      "type": "boolean",
+      "description": "The text is still arriving: an open fence is closed for display, a still caret follows the last block, and the region is busy",
+      "default": false,
+      "required": false
+    },
+    "components": {
+      "type": "object",
+      "description": "Override map for markdown element components (e.g., { h1: MyHeading }). Accepts custom renderer component signatures used by react-markdown",
+      "required": false
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class name",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Rendering an LLM reply",
+      "Showing text a user wrote in Markdown",
+      "Docs or readme content inside the app"
+    ],
+    "whenNot": [
+      "The string has no formatting (use Text)",
+      "The user needs to edit it (use an editor)"
+    ],
+    "guidelines": [
+      "react-markdown and remark-gfm are peer dependencies; install both",
+      "The parser loads on demand, so the first frame is plain text; call Markdown.preload() at startup to skip it",
+      "Without react-markdown installed it degrades to plain paragraphs",
+      "Body reads 12 on 18 with compact headings, sized for replies and side panels",
+      "Fenced code renders through CodeBlock, with copy and highlighting",
+      "Set streaming while an assistant reply arrives; it never reflows what is already shown",
+      "components overrides how any element renders, including the built-in fence and table",
+      "react-markdown sanitises the content for you"
+    ],
+    "accessibility": [
+      "Output is real headings, lists and tables",
+      "Wide tables scroll in a named, focusable region",
+      "Links render as underlined anchors; images keep their alt text",
+      "A streaming reply sets aria-busy until it completes"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Headings, emphasis, lists, and quotes all pick up the type scale.",
+      "code": "<Markdown content={`# Hello World\n\nThis is a paragraph with **bold text** and *italic text*.\n\nHere is some \\`inline code\\` within a sentence.\n\n- First item\n- Second item\n- Third item\n\n> A blockquote for emphasis.\n`} />"
+    },
+    {
+      "name": "GFM Table",
+      "description": "remark-gfm adds tables and checkbox items on top of the basics.",
+      "code": "<Markdown content={`## Data Overview\n\n| Feature    | Status    | Priority |\n|------------|-----------|----------|\n| Markdown   | Done      | High     |\n| Tables     | Done      | Medium   |\n| Task Lists | Planned   | Low      |\n\nNotes:\n- [x] Support GFM tables\n- [x] Support task lists\n- [ ] Syntax highlighting\n`} />"
+    },
+    {
+      "name": "Code Block",
+      "description": "Fenced blocks get the same code surface as CodeBlock.",
+      "code": "<Markdown content={`## Code Example\n\nHere is a JavaScript function:\n\n```js\nfunction greet(name) {\n  return 'Hello, ' + name;\n}\n```\n\nAnd some inline code: \\`const x = 42;\\``} />"
+    },
+    {
+      "name": "Mixed Content",
+      "description": "A realistic document — the worst case worth checking.",
+      "code": "<Markdown content={`# Project Update\n\n## Summary\n\nThe project is progressing well. Here are the **key highlights**:\n\n1. Completed the *design system* components\n2. Added markdown rendering support\n3. Integrated with the documentation site\n\n### Performance Metrics\n\n| Metric      | Before | After |\n|-------------|--------|-------|\n| Bundle Size | 142kb  | 98kb  |\n| Load Time   | 1.2s   | 0.8s  |\n| Lighthouse  | 72     | 95    |\n\n> These improvements were achieved through tree-shaking and code splitting.\n\n### Next Steps\n\n- [ ] Add syntax highlighting\n- [ ] Support custom themes\n- [x] GFM table support\n`} />"
+    },
+    {
+      "name": "Streaming",
+      "description": "An assistant reply as it arrives; the open fence shows as code.",
+      "code": "const partialReply = \"## Summary\\n\\nTwo files need updated imports…\";\n\n<Markdown content={partialReply} streaming />"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Text",
+      "relationship": "alternative",
+      "note": "Use Text for plain, non-markdown text"
+    },
+    {
+      "component": "CodeBlock",
+      "relationship": "complementary",
+      "note": "CodeBlock can be used via components prop for syntax highlighting"
+    },
+    {
+      "component": "Message",
+      "relationship": "parent",
+      "note": "Message wraps Markdown when markdown prop is true"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "content: string - Markdown string to render",
+      "streaming: boolean - text still arriving (closes an open fence, still caret, aria-busy)",
+      "components: object - Override map for element components (react-markdown renderer components)",
+      "className: string - Additional CSS class",
+      "Forwards standard HTML div attributes to the wrapper element"
+    ],
+    "a11yRules": ["A11Y_SEMANTIC_HTML"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root", "preload"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:06.091Z"
+  },
+  "cssVariables": [
+    "--fui-bg-secondary",
+    "--fui-border",
+    "--fui-font-weight-semibold",
+    "--fui-link-ink",
+    "--fui-radius-control",
+    "--fui-radius-surface",
+    "--fui-raw-space-0",
+    "--fui-raw-space-12",
+    "--fui-raw-space-16",
+    "--fui-raw-space-2",
+    "--fui-raw-space-20",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
+    "--fui-text-primary",
+    "--fui-text-secondary"
+  ],
+  "attributes": []
+}

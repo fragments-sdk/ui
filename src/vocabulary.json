@@ -1,0 +1,10 @@
+{
+  "propVocabulary": {
+    "variant": ["solid", "soft", "outline", "ghost", "link"],
+    "tone": ["neutral", "accent", "info", "success", "warning", "danger"],
+    "size": ["xs", "sm", "md", "lg"],
+    "gap": ["none", "xs", "sm", "md", "lg", "xl"],
+    "status": ["idle", "pending", "streaming", "complete", "error"]
+  },
+  "bannedCopyWords": ["drift", "governance", "contract", "source of truth", "design file"]
+}

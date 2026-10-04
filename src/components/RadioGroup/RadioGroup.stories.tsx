@@ -25,22 +25,18 @@ const meta = {
       options: ["horizontal", "vertical"],
       description: "Layout orientation",
     },
-    size: {
-      control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Size variant",
-    },
     variant: {
       control: "select",
       options: [undefined, "outline"],
-      description: "Omit for the inline radio; outline renders each item as a bordered surface",
+      description: "Omit for the inline radio; outline renders each item as a choice card",
     },
     disabled: { control: "boolean", description: "Disable all options" },
+    readOnly: { control: "boolean", description: "Lock the chosen option" },
+    invalid: { control: "boolean", description: "Danger edge plus errorMessage" },
   },
   args: {
     label: "Select an option",
     defaultValue: "option1",
-    size: "md",
     orientation: "vertical",
     children: (
       <>
@@ -89,7 +85,12 @@ export const Horizontal: Story = {
 };
 
 export const WithError: Story = {
-  args: { label: "Required selection", defaultValue: undefined, error: "Please select an option" },
+  args: {
+    label: "Required selection",
+    defaultValue: undefined,
+    invalid: true,
+    errorMessage: "Choose an option to continue.",
+  },
   render: (args) => (
     <RadioGroup {...args}>
       <RadioGroup.Item value="a" label="Option A" />
@@ -104,6 +105,16 @@ export const Disabled: Story = {
     <RadioGroup {...args}>
       <RadioGroup.Item value="locked" label="This is locked" />
       <RadioGroup.Item value="other" label="Cannot select" />
+    </RadioGroup>
+  ),
+};
+
+export const ReadOnly: Story = {
+  args: { label: "Region", defaultValue: "eu", readOnly: true },
+  render: (args) => (
+    <RadioGroup {...args}>
+      <RadioGroup.Item value="eu" label="Europe" />
+      <RadioGroup.Item value="us" label="United States" />
     </RadioGroup>
   ),
 };

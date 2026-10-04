@@ -1,258 +1,247 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/boolean-range" as boolean;
+@use "../../recipes/choice-card";
 @use "../../recipes/field" as field;
+@use "../../recipes/focus" as focus;
+@use "../../recipes/radius" as radius;
 @use "../../recipes/target" as target;
+@use "../../recipes/typography" as typography;
 
-// Container wrapper
-.wrapper {
-  @include field.wrapper;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.groupLabel {
-  @include field.label;
-}
+// The radio: one 16px circle on the band with the
+// strong field edge, round by meaning (r.pill); checked = the selection fill
+// with the on-selection dot. Option labels are body-compact, like Checkbox.
 
-// Radio group
-.group {
-  display: flex;
-  gap: var(--fui-raw-space-12, 12px);
-}
+$_mark: boolean.mark-size("md");
+$_label-role: "body-compact";
+$_hover-edge: color-mix(
+  in oklab,
+  var(--fui-text-primary, #{$fui-text-primary}) 55%,
+  var(--fui-field-border, #{$fui-field-border})
+);
+$_dot: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+$_inert: "[data-disabled], [data-readonly], [data-invalid]";
 
-.vertical {
-  flex-direction: column;
-}
+@layer fui.components {
+  // Label + group + helper + message. A disabled group dims once, here.
+  .wrapper {
+    @include field.wrapper;
 
-.horizontal {
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-// Individual item wrapper
-.itemWrapper {
-  cursor: pointer;
-
-  &[data-size="sm"] {
-    @include boolean.row("sm");
+    &[data-disabled] {
+      @include disabled-state;
+    }
   }
 
-  &[data-size="md"] {
-    @include boolean.row("md");
+  .groupLabel {
+    @include field.label;
   }
 
-  &[data-size="lg"] {
-    @include boolean.row("lg");
+  .group {
+    display: flex;
+    gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
   }
 
-  &[data-disabled] {
-    @include disabled-state;
+  .vertical {
+    flex-direction: column;
   }
 
-  // A trailing value takes a third column so the label and helper keep
-  // theirs; it sits on the label's line at the end of the row.
-  &[data-has-trailing] {
-    grid-template-columns:
-      var(--_fui-boolean-mark-size, #{boolean.mark-size("md")}) minmax(0, 1fr)
-      auto;
-  }
-}
-
-.trailing {
-  justify-self: end;
-  text-align: end;
-  white-space: nowrap;
-}
-
-// The radio circle
-.radio {
-  @include interactive-base;
-  @include boolean.mark("md");
-  @include target.hit-area("micro");
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  margin-block-start: var(--_fui-boolean-mark-offset, 0);
-  background-color: var(--fui-bg-primary, $fui-bg-primary);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-strong, $fui-border-strong);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-  cursor: inherit;
-  @include high-contrast-outline;
-
-  &:hover:not([data-disabled]) {
-    border-color: var(--fui-text-tertiary, $fui-text-tertiary);
+  .horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  &:focus-visible {
-    @include field.focus-state;
+  // Circle + label row.
+  .itemWrapper {
+    // The boolean row at md, with the option-label role in place of the
+    // recipe row's ui-standard.
+    --_fui-boolean-mark-offset: calc((#{typography.line-height($_label-role)} - #{$_mark}) / 2);
+
+    display: grid;
+    grid-template-columns: $_mark minmax(0, 1fr);
+    column-gap: boolean.label-gap("md");
+    align-items: start;
+    cursor: pointer;
+    @include typography.role($_label-role);
+
+    &[data-disabled] {
+      @include disabled-state;
+    }
+
+    &[data-readonly] {
+      cursor: default;
+    }
+
+    // A trailing value takes a third column so the label and helper keep
+    // theirs; it sits on the label's line at the end of the row.
+    &[data-has-trailing] {
+      grid-template-columns: $_mark minmax(0, 1fr) auto;
+    }
+
+    // Hovering the label hovers an unchecked circle, where the pointer can hover.
+    @media (hover: hover) {
+      &:hover > .radio:not([data-checked], #{$_inert}) {
+        border-color: $_hover-edge;
+      }
+    }
   }
 
-  &[data-checked] {
-    background-color: color-mix(
-      in srgb,
-      var(--fui-control-checked-bg, #{$fui-color-accent}) 8%,
-      var(--fui-bg-primary, #{$fui-bg-primary})
+  .trailing {
+    justify-self: end;
+    text-align: end;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // The circle.
+  .radio {
+    @include interactive-base;
+    @include boolean.mark("md");
+    @include target.hit-area("micro");
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    margin-block-start: var(--_fui-boolean-mark-offset, 0);
+    background-color: var(--fui-field-bg, $fui-field-bg);
+    border: var(--fui-stroke-hairline, 1px) solid var(--fui-field-border, $fui-field-border);
+    border-radius: radius.pill($_mark);
+    cursor: inherit;
+    @include high-contrast-outline;
+
+    // A checked circle has nothing to do on hover (picking it again changes
+    // nothing), so only an unchecked circle hovers.
+    &:not([data-checked]) {
+      @include field.hover-state;
+    }
+
+    &:focus-visible {
+      @include field.focus-state;
+    }
+
+    &[data-checked] {
+      background-color: var(--fui-control-checked-bg, $fui-control-checked-bg);
+      border-color: var(--fui-control-checked-border, $fui-control-checked-bg);
+    }
+
+    &[data-readonly]:not([data-checked]) {
+      @include field.readonly-state;
+    }
+
+    &[data-invalid] {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
+    }
+  }
+
+  // The dot: one size, in the on-selection colour, in the micro role.
+  .indicator {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: $_dot;
+    block-size: $_dot;
+    // The dot is ink on the selection fill, so it paints in the text colour.
+    color: var(--fui-control-checked-color, $fui-control-checked-color);
+    background-color: currentcolor;
+    border-radius: radius.pill($_dot);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+    transition:
+      opacity var(--fui-duration-micro, $fui-duration-micro)
+        var(--fui-ease-standard, $fui-ease-standard),
+      transform var(--fui-duration-micro, $fui-duration-micro)
+        var(--fui-ease-standard, $fui-ease-standard);
+
+    [data-checked] > & {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+  }
+
+  // Label content.
+  .content {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .label {
+    color: var(--fui-text-primary, $fui-text-primary);
+    user-select: none;
+  }
+
+  .helper {
+    @include field.helper;
+  }
+
+  // The group message: icon and words, never the danger colour alone.
+  .error {
+    @include field.error;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  .errorIcon {
+    flex: 0 0 auto;
+    inline-size: var(--fui-icon-sm, $fui-icon-sm);
+    block-size: var(--fui-icon-sm, $fui-icon-sm);
+    margin-block: calc(
+      (#{typography.line-height("caption")} - var(--fui-icon-sm, #{$fui-icon-sm})) / 2
     );
-    border-color: var(--fui-control-checked-border, $fui-color-accent);
-    box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px)
-      color-mix(in srgb, var(--fui-control-checked-border, #{$fui-color-accent}) 55%, transparent);
   }
 
-  &[data-checked]:hover:not([data-disabled]) {
-    background-color: color-mix(
-      in srgb,
-      var(--fui-control-checked-bg-hover, #{$fui-color-accent-hover}) 12%,
-      var(--fui-bg-primary, #{$fui-bg-primary})
-    );
-    border-color: var(--fui-control-checked-border-hover, $fui-color-accent-hover);
+  .errorWords {
+    min-inline-size: 0;
   }
 
-  &[data-invalid] {
+  // ============================================
+  // Outline: each item is a choice card. The card draws the one focus ring (see
+  // the end of the file). The card takes the surface radius
+  // (a choice card is a card), not the recipe's control radius.
+  // ============================================
+  .itemWrapperOutline {
+    @include choice-card.root;
+    @include choice-card.size("md");
+
+    border-radius: var(--fui-radius-surface, $fui-radius-surface);
+    width: 100%;
+
+    // Read-only: no hover tint (the recipe gates only disabled actions).
+    &[data-readonly] {
+      background-image: none;
+    }
+  }
+
+  // An invalid group: every circle takes the danger edge.
+  .group[data-invalid] .radio {
     @include field.invalid-state;
 
     &:focus-visible {
       @include field.invalid-focus-state;
     }
   }
-}
 
-// Size variants
-.radioSm {
-  @include boolean.mark("sm");
-}
-
-.radioLg {
-  @include boolean.mark("lg");
-  @include target.hit-area("compact");
-}
-
-// The indicator dot - use absolute positioning for perfect centering
-.indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--fui-raw-space-8, 8px);
-  height: var(--fui-raw-space-8, 8px);
-  background-color: var(--fui-control-checked-bg, $fui-color-accent);
-  border-radius: var(--fui-radius-full, $fui-radius-full);
-
-  // Animation - use translate for centering combined with scale
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0);
-  transition:
-    opacity var(--fui-transition-fast, $fui-transition-fast),
-    transform var(--fui-transition-fast, $fui-transition-fast);
-
-  [data-checked] > & {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-.radioSm .indicator {
-  width: var(--fui-raw-space-6, 6px);
-  height: var(--fui-raw-space-6, 6px);
-}
-
-.radioLg .indicator {
-  width: var(--fui-raw-space-10, 10px);
-  height: var(--fui-raw-space-10, 10px);
-}
-
-// Label content
-.content {
-  min-inline-size: 0;
-}
-
-.label {
-  color: var(--fui-text-primary, $fui-text-primary);
-  user-select: none;
-}
-
-.helper {
-  display: block;
-  @include field.helper;
-}
-
-// Error message
-.error {
-  @include field.error;
-}
-
-// ============================================
-// Outline variant: each item is a full-width bordered surface that signals
-// selection via background + border tint while keeping the inline radio
-// circle as the canonical control. The `:has([data-checked])` selector is
-// the source of truth for selected styling — no extra attribute plumbing
-// required from JS.
-// ============================================
-// The outline variant uses a transparent base so the selected accent tint
-// reads as a deliberate state change rather than a small shift between two
-// grey surfaces. Mirrors the pattern used by the Checkbox outline variant.
-.itemWrapperOutline {
-  width: 100%;
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border-default, $fui-border-default);
-  background: transparent;
-  transition:
-    background var(--fui-transition-fast, $fui-transition-fast),
-    border-color var(--fui-transition-fast, $fui-transition-fast),
-    box-shadow var(--fui-transition-fast, $fui-transition-fast);
-
-  &:hover:not([data-disabled]) {
-    background: var(--fui-bg-hover, $fui-bg-hover);
-    border-color: var(--fui-border-strong, $fui-border-strong);
-  }
-
-  &:focus-within:not([data-disabled]) {
-    border-color: var(--fui-control-checked-border, $fui-color-accent);
-    @include focus-ring;
-  }
-
-  &:has([data-checked]) {
-    background: color-mix(
-      in srgb,
-      var(--fui-control-checked-bg, #{$fui-color-accent}) 13%,
-      transparent
-    );
-    border-color: color-mix(
-      in srgb,
-      var(--fui-control-checked-border, #{$fui-color-accent}) 62%,
-      transparent
-    );
-    box-shadow: 0 0 0 var(--fui-stroke-hairline, 1px)
-      color-mix(in srgb, var(--fui-control-checked-border, #{$fui-color-accent}) 28%, transparent);
-  }
-
-  &[data-size="sm"] {
-    @include boolean.card("sm");
-  }
-
-  &[data-size="md"] {
-    @include boolean.card("md");
-  }
-
-  &[data-size="lg"] {
-    @include boolean.card("lg");
-  }
-}
-
-.group[data-invalid] .radio {
-  @include field.invalid-state;
-
-  &:focus-visible {
-    @include field.invalid-focus-state;
-  }
-}
-
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
-
-@media (prefers-reduced-motion: reduce) {
-  .indicator {
-    transition: none;
+  // Inside a choice card the card draws the one focus ring, in every state.
+  .group .itemWrapperOutline > .radio:focus-visible {
+    @include focus.delegated;
   }
 }

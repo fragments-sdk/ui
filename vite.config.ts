@@ -1,7 +1,10 @@
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import preserveDirectives from "rollup-plugin-preserve-directives";
+import { componentSizeBudgets } from "./scripts/component-size-budgets.mjs";
+
+const sizeBudgets = componentSizeBudgets({ root: __dirname });
 
 export default defineConfig({
   plugins: [
@@ -9,10 +12,12 @@ export default defineConfig({
     // This library-only parser is also present when Storybook merges the Vite
     // config. Keep its transform surface to JavaScript/TypeScript so HTML and
     // stylesheets never reach Rollup's module parser.
+    // The plugin is typed against its own Rollup copy; Vite runs it unchanged.
     preserveDirectives({
       include: ["**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"],
       exclude: ["**/*.{scss,css,sass}"],
-    }),
+    }) as PluginOption,
+    sizeBudgets.plugin as PluginOption,
   ],
   build: {
     lib: {
@@ -55,6 +60,7 @@ export default defineConfig({
     outDir: "dist",
   },
   css: {
+    postcss: { plugins: [sizeBudgets.postcss] },
     modules: {
       localsConvention: "camelCase",
     },

@@ -1,0 +1,140 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Breadcrumbs",
+  "description": "Shows where the user is and links back up the hierarchy.",
+  "category": "navigation",
+  "tags": ["breadcrumbs", "navigation", "hierarchy", "wayfinding"],
+  "status": "stable",
+  "sourcePath": "src/components/Breadcrumbs/index.tsx",
+  "exportName": "Breadcrumbs",
+  "propsSummary": [
+    "children: node (required)",
+    "maxItems: number",
+    "label: string (default: Breadcrumb)"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Breadcrumb items (use Breadcrumbs.Item); the last one is the current page",
+      "required": true
+    },
+    "maxItems": {
+      "type": "number",
+      "description": "The most items to show; past it, the items after the first fold into one menu (needs at least 2)",
+      "required": false
+    },
+    "label": {
+      "type": "string",
+      "description": "Names the navigation landmark",
+      "default": "Breadcrumb",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Nested content more than two levels deep",
+      "Jumping back to a parent in one click",
+      "Documentation and catalogue hierarchies"
+    ],
+    "whenNot": [
+      "Flat structures with no parents (use Tabs or header navigation)",
+      "Steps in an order (use Stepper)",
+      "Primary navigation (use Sidebar or Header)"
+    ],
+    "guidelines": [
+      "End on the current page: the last item, never a link",
+      "Short labels — the trail is a path, not a summary",
+      "Set maxItems to fold long paths into one menu, keeping the first item and the tail",
+      "Pass render for router links; href renders a plain link",
+      "Set label to rename the landmark (defaults to \"Breadcrumb\")",
+      "Crumbs truncate at 192px so one long title cannot push the rest out"
+    ],
+    "accessibility": [
+      "Uses <nav aria-label=\"Breadcrumb\"> for landmark navigation",
+      "The last item is marked with aria-current=\"page\" and is not a link",
+      "Separators sit inside each item and are hidden from screen readers",
+      "The fold is a menu button named \"Show collapsed breadcrumbs\"; its crumbs are menu links"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "Each ancestor links; the last one is the current page.",
+      "code": "<Breadcrumbs>\n  <Breadcrumbs.Item href=\"#\">Home</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Products</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Category</Breadcrumbs.Item>\n  <Breadcrumbs.Item>Current page</Breadcrumbs.Item>\n</Breadcrumbs>"
+    },
+    {
+      "name": "Collapsed",
+      "description": "Past maxItems, the items after the first fold into one menu.",
+      "code": "<Breadcrumbs maxItems={3}>\n  <Breadcrumbs.Item href=\"#\">Home</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Category</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Subcategory</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Section</Breadcrumbs.Item>\n  <Breadcrumbs.Item>Current page</Breadcrumbs.Item>\n</Breadcrumbs>"
+    },
+    {
+      "name": "Router Links",
+      "description": "render makes the crumb your router's link.",
+      "code": "<Breadcrumbs>\n  <Breadcrumbs.Item render={<a href=\"#workspace\" />}>Workspace</Breadcrumbs.Item>\n  <Breadcrumbs.Item render={<a href=\"#repositories\" />}>Repositories</Breadcrumbs.Item>\n  <Breadcrumbs.Item>Overview</Breadcrumbs.Item>\n</Breadcrumbs>"
+    },
+    {
+      "name": "Custom Landmark Label",
+      "description": "Renames the landmark screen readers announce.",
+      "code": "<Breadcrumbs label=\"Documentation breadcrumbs\">\n  <Breadcrumbs.Item href=\"#\">Docs</Breadcrumbs.Item>\n  <Breadcrumbs.Item href=\"#\">Components</Breadcrumbs.Item>\n  <Breadcrumbs.Item>Breadcrumbs</Breadcrumbs.Item>\n</Breadcrumbs>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Use Tabs for flat, non-hierarchical navigation"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "complementary",
+      "note": "Breadcrumbs complement sidebar navigation for deep hierarchies"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "maxItems: number - fold the items after the first into one menu",
+      "label: string - nav landmark label (default \"Breadcrumb\")",
+      "Breadcrumbs.Item href: string - makes the item a link",
+      "Breadcrumbs.Item render: ReactElement - renders the crumb as this element (router links)",
+      "Breadcrumbs.Item onClick: function - a button crumb when there is no href or render",
+      "The last Breadcrumbs.Item is the current page (aria-current, not a link)"
+    ],
+    "a11yRules": ["A11Y_NAV_LANDMARK", "A11Y_ARIA_CURRENT", "A11Y_TARGET_SIZE_MIN"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item"],
+    "requiredChildren": ["Item"],
+    "commonPatterns": [
+      "<Breadcrumbs><Breadcrumbs.Item href=\"/\">Home</Breadcrumbs.Item><Breadcrumbs.Item href=\"/products\">Products</Breadcrumbs.Item><Breadcrumbs.Item>Widget</Breadcrumbs.Item></Breadcrumbs>"
+    ]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:51.312Z"
+  },
+  "cssVariables": [
+    "--fui-icon-xs",
+    "--fui-overlay-layer-anchored",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-4",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": [
+    {
+      "name": "data-slot",
+      "value": "breadcrumbs",
+      "fixture": "populated"
+    },
+    {
+      "name": "data-slot",
+      "value": "breadcrumbs-item",
+      "fixture": "populated"
+    }
+  ]
+}

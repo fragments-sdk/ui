@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { render, screen, userEvent, expectNoA11yViolations } from "../../test/utils";
+import { Field } from "../Field";
 import { Select } from "./index";
 
 function renderSelect(
@@ -120,6 +121,20 @@ describe("Select", () => {
     expect(screen.getByRole("combobox")).toBeDisabled();
   });
 
+  it("opens for browsing while readOnly without changing the value", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    renderSelect({ readOnly: true, onValueChange: onChange });
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveAttribute("aria-readonly", "true");
+
+    await user.click(trigger);
+    await user.click(await screen.findByRole("option", { name: "Banana" }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(trigger).toHaveTextContent("Pick one");
+  });
+
   it("does not select a new option when readOnly", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
@@ -196,6 +211,24 @@ describe("Select", () => {
     );
     await user.click(screen.getByRole("combobox"));
     expect(await screen.findByText("Fruits")).toBeInTheDocument();
+  });
+
+  it("names the group from its label and hides the label from the accessibility tree", async () => {
+    const user = userEvent.setup();
+    render(
+      <Select placeholder="Pick">
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Group>
+            <Select.GroupLabel>Fruits</Select.GroupLabel>
+            <Select.Item value="apple">Apple</Select.Item>
+          </Select.Group>
+        </Select.Content>
+      </Select>
+    );
+    await user.click(screen.getByRole("combobox"));
+    expect(await screen.findByRole("group", { name: "Fruits" })).toBeInTheDocument();
+    expect(screen.getByText("Fruits")).toHaveAttribute("aria-hidden", "true");
   });
 
   it("forwards html props to item and group labels", async () => {
@@ -354,21 +387,63 @@ describe("Select", () => {
     expect(await screen.findByRole("combobox")).toHaveTextContent("Pick one");
   });
 
-  // The `error` prop shipped once rendering only the message: no invalid edge
-  // and no aria-invalid, so the control looked and read as valid. Assert the
-  // rendered pair, not the source text — a source check cannot tell whether
-  // the attribute is present but the selector never matches.
-  it("marks the control invalid both visually and programmatically", () => {
-    const { container } = render(
-      <Select label="Framework" error errorMessage="Pick one">
-        <Select.Trigger />
+  // Invalid is the edge and aria-invalid together, never the edge alone.
+  it("marks the trigger invalid both visually and programmatically", () => {
+    render(
+      <Select invalid>
+        <Select.Trigger aria-label="Framework" />
         <Select.Content>
           <Select.Item value="react">React</Select.Item>
         </Select.Content>
       </Select>
     );
 
-    expect(container.querySelector("[data-invalid]")).not.toBeNull();
     expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("takes its label, description and error from Field", () => {
+    render(
+      <Field invalid>
+        <Field.Label>Framework</Field.Label>
+        <Select placeholder="Pick one">
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Item value="react">React</Select.Item>
+          </Select.Content>
+        </Select>
+        <Field.Description>The one your app renders with.</Field.Description>
+        <Field.Error match>Choose a framework.</Field.Error>
+      </Field>
+    );
+
+    const trigger = screen.getByRole("combobox", { name: "Framework" });
+    expect(trigger).toHaveAttribute("data-invalid");
+    expect(screen.getByRole("alert")).toHaveTextContent("Choose a framework.");
+  });
+
+  it("puts data-readonly on a read-only trigger, so it draws its own cue", () => {
+    renderSelect({ readOnly: true });
+    expect(screen.getByRole("combobox")).toHaveAttribute("data-readonly");
+  });
+
+  it("sets the size on the trigger", () => {
+    render(
+      <Select size="sm" placeholder="Pick one">
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Item value="a">A</Select.Item>
+        </Select.Content>
+      </Select>
+    );
+    expect(screen.getByRole("combobox")).toHaveAttribute("data-size", "sm");
+  });
+
+  it("opens beside the trigger, never item-aligned", async () => {
+    const user = userEvent.setup();
+    renderSelect({ value: "banana" });
+    await user.click(screen.getByRole("combobox"));
+    const listbox = await screen.findByRole("listbox");
+    const positioner = listbox.parentElement as HTMLElement;
+    expect(positioner.getAttribute("data-side")).not.toBe("none");
   });
 });

@@ -1,0 +1,195 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Stack",
+  "description": "Stacks children in a row or column with one consistent gap.",
+  "category": "layout",
+  "tags": ["stack", "layout", "flex", "spacing", "responsive"],
+  "status": "stable",
+  "sourcePath": "src/components/Stack/index.tsx",
+  "exportName": "Stack",
+  "propsSummary": [
+    "children: node (required)",
+    "direction: row|column (default: column)",
+    "gap: none|xs|sm|md|lg|xl (default: md)",
+    "align: start|center|end|stretch|baseline",
+    "justify: start|center|end|between",
+    "wrap: boolean (default: false)",
+    "divided: boolean (default: false)",
+    "collapseBelow: string",
+    "as: div|section|nav|article|aside|header|footer|main|ul|ol (default: div)",
+    "className: string",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "Elements to arrange",
+      "required": true
+    },
+    "direction": {
+      "type": "enum",
+      "description": "Direction children flow in",
+      "default": "column",
+      "required": false,
+      "values": ["row", "column"]
+    },
+    "gap": {
+      "type": "enum",
+      "description": "Space between children on the layout gap scale: 0, 4, 8, 12, 16, 24",
+      "default": "md",
+      "required": false,
+      "values": ["none", "xs", "sm", "md", "lg", "xl"]
+    },
+    "align": {
+      "type": "enum",
+      "description": "Cross-axis alignment",
+      "required": false,
+      "values": ["start", "center", "end", "stretch", "baseline"]
+    },
+    "justify": {
+      "type": "enum",
+      "description": "Main-axis alignment",
+      "required": false,
+      "values": ["start", "center", "end", "between"]
+    },
+    "wrap": {
+      "type": "boolean",
+      "description": "Allow items to wrap",
+      "default": "false",
+      "required": false
+    },
+    "divided": {
+      "type": "boolean",
+      "description": "Draw a Separator between children: horizontal in a column, vertical in a row. Inside ul/ol each divider is a hidden li, so the list stays valid. Ignored when collapseBelow is set.",
+      "default": "false",
+      "required": false
+    },
+    "collapseBelow": {
+      "type": "string",
+      "description": "A CSS length. Children share the row in equal parts while the Stack is at least this wide and stack into a column below it. Measured against the Stack's own width, never the viewport. Implies a row.",
+      "required": false
+    },
+    "as": {
+      "type": "enum",
+      "description": "HTML element to render",
+      "default": "div",
+      "required": false,
+      "values": [
+        "div",
+        "section",
+        "nav",
+        "article",
+        "aside",
+        "header",
+        "footer",
+        "main",
+        "ul",
+        "ol"
+      ]
+    },
+    "className": {
+      "type": "string",
+      "description": "",
+      "required": false
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Spacing a short row or column of elements",
+      "Any one-directional flexbox arrangement",
+      "A row that should fold into a column when its pane gets narrow (collapseBelow)"
+    ],
+    "whenNot": [
+      "Two-dimensional layouts (use Grid)",
+      "Grouping buttons into one control (use ButtonGroup)",
+      "Page shell regions (use AppShell)"
+    ],
+    "guidelines": [
+      "Set gap once on the parent instead of margins on children",
+      "gap reads the one layout scale; there is no numeric second scale",
+      "collapseBelow answers the Stack's own width, so it holds inside panes, cards and dialogs",
+      "Use as=\"nav\" or as=\"ul\" so the markup stays semantic",
+      "divided draws one Separator between children; lists stay valid"
+    ],
+    "accessibility": [
+      "Use semantic elements (nav, section, etc.) via \"as\" prop",
+      "Maintains source order for screen readers",
+      "No accessibility concerns with visual arrangement"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Vertical Stack",
+      "description": "Children flow top to bottom — the default.",
+      "code": "import { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack gap=\"sm\">\n  <Text>One</Text>\n  <Text>Two</Text>\n  <Text>Three</Text>\n</Stack>"
+    },
+    {
+      "name": "Horizontal Stack",
+      "description": "Children flow along the inline axis.",
+      "code": "import { Button } from '@/components/Button';\nimport { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"sm\" justify=\"end\">\n  <Button variant=\"ghost\">Cancel</Button>\n  <Button>Save</Button>\n</Stack>"
+    },
+    {
+      "name": "Collapse Below",
+      "description": "Side by side while the Stack is at least 32rem wide, a column below that.",
+      "code": "import { Field } from '@/components/Field';\nimport { Input } from '@/components/Input';\nimport { Stack } from '@/components/Stack';\n\n<Stack collapseBelow=\"32rem\" gap=\"md\">\n  <Field>\n    <Field.Label>First name</Field.Label>\n    <Input />\n  </Field>\n  <Field>\n    <Field.Label>Last name</Field.Label>\n    <Input />\n  </Field>\n</Stack>"
+    },
+    {
+      "name": "Divided",
+      "description": "One Separator between each child.",
+      "code": "import { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack gap=\"md\" divided>\n  <Text>Section one</Text>\n  <Text>Section two</Text>\n  <Text>Section three</Text>\n</Stack>"
+    },
+    {
+      "name": "Semantic List",
+      "description": "as=\"ul\" with dividers keeps only li children.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack as=\"ul\" gap=\"sm\" divided>\n  <li>Checkout</li>\n  <li>Billing</li>\n  <li>Settings</li>\n</Stack>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Grid",
+      "relationship": "alternative",
+      "note": "Use Grid for complex 2D layouts"
+    },
+    {
+      "component": "ButtonGroup",
+      "relationship": "sibling",
+      "note": "ButtonGroup is specialized for buttons"
+    },
+    {
+      "component": "Box",
+      "relationship": "sibling",
+      "note": "Box for single-element styling"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "direction: row|column - stack direction",
+      "gap: none|xs|sm|md|lg|xl - layout gap scale",
+      "align: start|center|end|stretch|baseline - cross-axis",
+      "justify: start|center|end|between - main-axis",
+      "wrap: boolean - allow wrapping",
+      "divided: boolean - a Separator between children",
+      "collapseBelow: CSS length - fold a row into a column below the Stack's own width",
+      "as: string - HTML element",
+      "Pass-through DOM props supported on the root (id, role, aria-*, data-*, handlers)"
+    ],
+    "a11yRules": ["A11Y_SEMANTIC_ELEMENTS"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:04.310Z"
+  },
+  "cssVariables": [],
+  "attributes": []
+}

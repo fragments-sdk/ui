@@ -17,11 +17,11 @@ describe("Form", () => {
     expect(container.querySelector("form")).toBeInTheDocument();
   });
 
-  it("calls onFormSubmit when submitted", async () => {
+  it("calls onSubmit when submitted", async () => {
     const handleSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
     const user = userEvent.setup();
     render(
-      <Form onFormSubmit={handleSubmit} aria-label="Test form">
+      <Form onSubmit={handleSubmit} aria-label="Test form">
         <button type="submit">Submit</button>
       </Form>
     );
@@ -127,5 +127,51 @@ describe("Form", () => {
       </Form>
     );
     await expectNoA11yViolations(container);
+  });
+
+  it("locks every control and reads busy while pending", () => {
+    render(
+      <Form pending aria-label="Profile form">
+        <Field name="name">
+          <Field.Label>Name</Field.Label>
+          <Field.Control>
+            <input />
+          </Field.Control>
+        </Field>
+        <Form.Actions>
+          <button type="submit">Save</button>
+        </Form.Actions>
+      </Form>
+    );
+    const form = screen.getByRole("form", { name: "Profile form" });
+    expect(form).toHaveAttribute("aria-busy", "true");
+    expect(screen.getByRole("textbox", { name: "Name" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+  });
+
+  it("keeps the fields mounted when pending settles", () => {
+    const { rerender } = render(
+      <Form pending aria-label="Profile form">
+        <input aria-label="Name" defaultValue="Ada" />
+      </Form>
+    );
+    const input = screen.getByRole("textbox", { name: "Name" });
+    rerender(
+      <Form aria-label="Profile form">
+        <input aria-label="Name" defaultValue="Ada" />
+      </Form>
+    );
+    expect(screen.getByRole("textbox", { name: "Name" })).toBe(input);
+    expect(input).toBeEnabled();
+    expect(screen.getByRole("form")).not.toHaveAttribute("aria-busy");
+  });
+
+  it("adds no group to the accessibility tree", () => {
+    render(
+      <Form aria-label="Profile form">
+        <input aria-label="Name" />
+      </Form>
+    );
+    expect(screen.queryByRole("group")).toBeNull();
   });
 });

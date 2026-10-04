@@ -1,55 +1,56 @@
 @use "../../tokens/variables" as *;
 @use "../../recipes/representation" as representation;
 
-.icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: currentColor;
-  line-height: 1;
+@layer fui.tokens, fui.base, fui.components;
 
-  > svg {
-    inline-size: 100%;
-    block-size: 100%;
+@layer fui.components {
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+    line-height: 1;
+
+    > svg {
+      inline-size: 100%;
+      block-size: 100%;
+    }
   }
-}
 
-@each $size in ("xs", "sm", "md", "lg", "xl") {
-  .#{$size} {
-    @include representation.glyph($size);
+  @each $size in ("xs", "sm", "md", "lg", "xl") {
+    .#{$size} {
+      @include representation.glyph($size);
+    }
   }
-}
 
-// Text-hierarchy colour (Text's `color` axis). Absence inherits currentColor.
-.colorPrimary {
-  color: var(--fui-text-primary, $fui-text-primary);
-}
+  // One ink axis. Absence inherits currentColor; the quiet inks follow the
+  // text ladder, accent is the accent ink (never the fill), and the status
+  // inks are the shared `*-text` stops (same as Badge and Text).
+  .toneSecondary {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
 
-.colorSecondary {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
+  .toneTertiary {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
 
-.colorTertiary {
-  color: var(--fui-text-tertiary, $fui-text-tertiary);
-}
+  .toneAccent {
+    color: var(--fui-color-accent-text, $fui-color-accent-text);
+  }
 
-// Tone paints the shared status ramp (same `*-text` stops as Badge and Text).
-.toneAccent {
-  color: var(--fui-color-accent, $fui-color-accent);
-}
+  .toneInfo {
+    color: var(--fui-color-info-text, $fui-color-info-text);
+  }
 
-.toneInfo {
-  color: var(--fui-color-info-text, $fui-color-info-text);
-}
+  .toneSuccess {
+    color: var(--fui-color-success-text, $fui-color-success-text);
+  }
 
-.toneSuccess {
-  color: var(--fui-color-success-text, $fui-color-success-text);
-}
+  .toneWarning {
+    color: var(--fui-color-warning-text, $fui-color-warning-text);
+  }
 
-.toneWarning {
-  color: var(--fui-color-warning-text, $fui-color-warning-text);
-}
-
-.toneDanger {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
+  .toneDanger {
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+  }
 }

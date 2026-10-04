@@ -2,75 +2,67 @@
 // @usefragments/ui Design Tokens
 // ============================================
 //
-// SEED-BASED DESIGN SYSTEM
-// ========================
-// This token system supports two configuration approaches:
+// L2 role tokens and their Sass twins.
 //
-// 1. SEED-BASED (Recommended for new projects):
-//    Configure ~5-10 seed values and everything derives automatically.
-//    See _seeds.scss for available seeds.
+// A theme is the L0 inputs on `:root` (see _seeds.scss): brand, neutral and
+// status seeds, radius, scale and font. Every colour role is derived from them
+// in the browser by the L1 engine (_derive.scss), so overriding an input on
+// `:root` or a `[data-fui-theme]` element rethemes that subtree at runtime
+// (set `--fui-seed-brand` to `#e11d48` on `:root`, for example).
 //
-//    Example:
-//      @use '@usefragments/ui/styles' with (
-//        $fui-brand: #0066ff,
-//        $fui-neutral: "ice",
-//      );
+// Comments in this file never hold a brace: static token readers parse it as
+// CSS and would read a commented rule as a real one.
 //
-// 2. CSS CUSTOM PROPERTIES (Runtime theming):
-//    Override CSS custom properties at runtime for dynamic theming.
+// Compile-time `@use '@usefragments/ui/styles' with ($fui-brand: …)` sets the
+// inputs' defaults. The `$fui-*` variables below are the twins every
+// component pairs with its token, `var(--fui-x, $fui-x)`.
 // ============================================
 
-// Import computed values from seed system
-@use "sass:string";
+@use "sass:list";
 @use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
 @use "computed" as computed;
+@use "defaults.generated" as defaults;
+@use "derive";
 @use "measurements.generated" as measurements;
+@use "seeds";
 
-// --------------------------------------------
-// Base Configuration
-// --------------------------------------------
-// Base font size: 14px (change to 16px for larger UI)
-// Base unit: 7px (change to 8px for standard 8pt grid)
-// All spacing and sizing derives from these values.
-
-$fui-base-font-size: computed.$computed-base-font-size !default;
-$fui-base-unit: computed.$computed-base-unit !default;
-
-// Helper function to convert base units to rem
-// Usage: fui-unit(2) = 2 * 7px = 14px = 1rem (when base is 14px)
-@function fui-unit($multiplier) {
-  @return calc(
-    #{$multiplier} * #{$fui-base-unit} / #{$fui-base-font-size} * 1rem *
-      var(--fui-scale, #{$fui-scale})
-  );
+/// The Glass default's painted value of a colour role, from
+/// _defaults.generated.scss (written by scripts/tokens-css.mjs).
+@function _twin($name, $mode: "light") {
+  $map: defaults.$light;
+  @if $mode == "dark" {
+    $map: defaults.$dark;
+  }
+  @if not map.has-key($map, $name) {
+    @error "No #{$mode} twin for --fui-#{$name} in _defaults.generated.scss. Add it to TWIN_TOKENS in scripts/tokens-css.mjs and run `pnpm run generate:tokens-css`.";
+  }
+  @return map.get($map, $name);
 }
+
+// --------------------------------------------
+// Units
+// --------------------------------------------
+// The library never sets the root font size. Type and space are rem against a
+// 16px host; borders and hairlines are px. The base font size is that host.
+
+$fui-base-font-size: measurements.spacing-value("baseFontSize") !default;
 
 // --------------------------------------------
 // Typography
 // --------------------------------------------
+// The default face is the system stack. A font package sets the family and the
+// two weights on top of it.
 $fui-font-sans:
-  "Onest Variable",
-  Onest,
+  system-ui,
   -apple-system,
   BlinkMacSystemFont,
   "Segoe UI",
-  system-ui,
   sans-serif !default;
 $fui-font-mono:
   "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace !default;
-
-// Legacy public typography variables are generated compatibility views. New
-// component work uses the semantic typography recipe.
-$fui-font-size-2xs: map.get(measurements.$legacy, "typography", "fontSize", "2xs") !default;
-$fui-font-size-xs: map.get(measurements.$legacy, "typography", "fontSize", "xs") !default;
-$fui-font-size-sm: map.get(measurements.$legacy, "typography", "fontSize", "sm") !default;
-$fui-font-size-base: map.get(measurements.$legacy, "typography", "fontSize", "base") !default;
-$fui-font-size-md: map.get(measurements.$legacy, "typography", "fontSize", "md") !default;
-$fui-font-size-lg: map.get(measurements.$legacy, "typography", "fontSize", "lg") !default;
-$fui-font-size-xl: map.get(measurements.$legacy, "typography", "fontSize", "xl") !default;
-$fui-font-size-2xl: map.get(measurements.$legacy, "typography", "fontSize", "2xl") !default;
-$fui-font-size-3xl: map.get(measurements.$legacy, "typography", "fontSize", "3xl") !default;
-$fui-font-size-4xl: map.get(measurements.$legacy, "typography", "fontSize", "4xl") !default;
 
 // Dropdown/popup list items — menus, selects, comboboxes, listboxes, command
 // palettes. One step below chrome text: a popup is a dense list scanned against
@@ -78,7 +70,9 @@ $fui-font-size-4xl: map.get(measurements.$legacy, "typography", "fontSize", "4xl
 // read heavier than the control. Named rather than inlined because Select,
 // Listbox and Combobox derive their scroll height from this exact number; a
 // literal in the mixin would let the height calcs drift out of step with it.
-$fui-popup-item-font-size: $fui-font-size-xs !default; // 12px
+$fui-popup-item-font-size: measurements.rem-length(
+  measurements.typography-value("body-compact", "size")
+) !default;
 
 $fui-font-weight-normal: map.get(
   measurements.$legacy,
@@ -86,19 +80,12 @@ $fui-font-weight-normal: map.get(
   "fontWeight",
   "normal"
 ) !default;
-$fui-font-weight-medium: map.get(
-  measurements.$legacy,
-  "typography",
-  "fontWeight",
-  "medium"
-) !default;
 $fui-font-weight-semibold: map.get(
   measurements.$legacy,
   "typography",
   "fontWeight",
   "semibold"
 ) !default;
-$fui-font-weight-bold: map.get(measurements.$legacy, "typography", "fontWeight", "bold") !default;
 
 $fui-line-height-tight: map.get(measurements.$legacy, "typography", "lineHeight", "tight") !default;
 $fui-line-height-normal: map.get(
@@ -149,23 +136,9 @@ $fui-letter-spacing-wide: map.get(
 ) !default;
 
 // --------------------------------------------
-// Spacing (derived from the measurement spacing record)
+// Spacing
 // --------------------------------------------
-// Micro-spacing for small internal alignments (margins, thumb offsets)
-$fui-space-px: computed.$computed-space-px !default;
-$fui-space-0-5: computed.$computed-space-0-5 !default;
-$fui-space-0-75: computed.$computed-space-0-75 !default;
-
-// Base unit grid spacing
-$fui-space-1: computed.$computed-space-1 !default;
-$fui-space-2: computed.$computed-space-2 !default;
-$fui-space-3: computed.$computed-space-3 !default;
-$fui-space-4: computed.$computed-space-4 !default;
-$fui-space-5: computed.$computed-space-5 !default;
-$fui-space-6: computed.$computed-space-6 !default;
-$fui-space-8: computed.$computed-space-8 !default;
-$fui-space-10: computed.$computed-space-10 !default;
-$fui-space-12: computed.$computed-space-12 !default;
+// One 4px scale, --fui-raw-space-*, read through the measurement catalog.
 
 // --------------------------------------------
 // Popup geometry
@@ -173,32 +146,54 @@ $fui-space-12: computed.$computed-space-12 !default;
 // The insets a popup list and its rows carry. Named rather than inlined because
 // Select, Listbox and Combobox size their scroll viewport from these exact
 // numbers to show N rows plus a half-peek hint. Left as literals in the mixin,
-// the two sides drifted: the height calcs charged $fui-space-2 of vertical
-// padding for a row `popup-item` pads with $fui-space-1, so every one of those
-// popups peeked further than its own "4.5 items" comment promised.
-$fui-popup-padding: $fui-space-1 !default; // container inset
+// the two sides drifted: the height calcs charged twice the vertical padding a
+// `popup-item` row pads with, so every one of those popups peeked further than
+// its own "4.5 items" comment promised.
+$fui-popup-padding: measurements.rem-length(measurements.raw-space(6)) !default; // container inset
 $fui-popup-row-gap: 1px !default; // flex gap between rows
-$fui-popup-item-padding-block: $fui-space-1 !default;
-$fui-popup-item-padding-inline: $fui-space-2 !default;
+$fui-popup-item-padding-block: measurements.rem-length(measurements.raw-space(6)) !default;
+$fui-popup-item-padding-inline: measurements.rem-length(measurements.raw-space(12)) !default;
 
 // --------------------------------------------
-// Border Radius (derived from radius-style seed)
+// Border radius
 // --------------------------------------------
-$fui-radius-sm: computed.$computed-radius-sm !default;
-$fui-radius-md: computed.$computed-radius-md !default;
-$fui-radius-lg: computed.$computed-radius-lg !default;
-$fui-radius-xl: computed.$computed-radius-xl !default;
+// The radius input (L0) and the roles derived from it (UIR-D115). Each role is a
+// formula of the input, so a scoped `--fui-radius` re-derives every corner
+// below it. A floor never exceeds the input, so a radius of 0 squares every
+// role. Nested and pill corners are recipe formulas (recipes/_radius.scss).
+// A named radius style (`$fui-radius-style`, or `[data-fui-radius-style]` at
+// runtime) sets the input from its profile; "default" is the Glass 5px.
+@function _radius-input($style) {
+  @if $style == "default" {
+    @return 5px;
+  }
+  @return computed.$computed-radius-md;
+}
+$fui-radius: _radius-input(seeds.$fui-radius-style) !default;
+/// Buttons, fields, segmented tracks: never rounder than a pill.
+$fui-radius-control: min(
+  $fui-radius,
+  math.div(measurements.target-value("controlTrack", "md"), 2)
+) !default;
+/// Small marks inside a control: switch and slider details, kbd, chips' marks.
+$fui-radius-indicator: $fui-radius * 0.6 !default;
+/// Floating lists and panels: rounder than a control, to a ceiling.
+$fui-radius-popup: min($fui-radius * 2.4, 18px) !default;
+/// Cards, panels and fields of content in the page flow.
+$fui-radius-surface: min($fui-radius * 2.4, 24px) !default;
+/// Dialogs and drawers: the popup corner.
+$fui-radius-overlay: $fui-radius-popup !default;
+/// A row inside a popup: concentric with the popup across its 4px inset.
+$fui-radius-row: max(min(2px, $fui-radius), $fui-radius-popup - measurements.raw-space(4)) !default;
+/// Tooltips: two pixels inside the control corner, at least 4px.
+$fui-radius-tooltip: max(min(4px, $fui-radius), $fui-radius-control - 2px) !default;
+/// The lifted segment: three pixels inside its track.
+$fui-radius-segment: max(min(2px, $fui-radius), $fui-radius-control - 3px) !default;
+
 $fui-radius-full: computed.$computed-radius-full !default;
-/// Square corners where a shape must not follow the radius profile (joined
+/// Square corners where a shape must not follow the radius input (joined
 /// segments, skeleton blocks, code gutters).
 $fui-radius-none: 0px !default;
-
-// Radius nesting levels. A surface (l1) holds controls (l2) which hold marks
-// (l3); each level maps onto the active radius profile, so concentric corners
-// stay concentric when a consumer switches `sharp`, `rounded`, or `pill`.
-$fui-radius-l1: $fui-radius-lg !default;
-$fui-radius-l2: $fui-radius-md !default;
-$fui-radius-l3: $fui-radius-sm !default;
 
 // --------------------------------------------
 // Strokes + control tracks (mirror the measurement CSS vars for SCSS fallbacks)
@@ -208,340 +203,272 @@ $fui-stroke-default: measurements.target-value("stroke", "default") !default;
 $fui-stroke-strong: measurements.target-value("stroke", "strong") !default;
 
 // The one disabled treatment: every disabled control fades by this amount.
-$fui-opacity-disabled: 0.5 !default;
+$fui-opacity-disabled: 0.45 !default;
 /// Dimmed-but-live: secondary glyphs, collapsed rails, decorative rules.
 $fui-opacity-muted: 0.7 !default;
 /// Barely-there: pulse rings and glow tracks that animate up from almost nothing.
 $fui-opacity-faint: 0.3 !default;
-/// Hairline drawn around a selected segmented item (transparent unless a theme wants it).
-$fui-control-selected-border: transparent !default;
 
-// Runtime multiplier on the base unit. `fui-unit()` reads it so a consumer can
-// scale the whole measurement system from one custom property.
+// Runtime multiplier on the measurement system: control heights, insets and
+// the popup offset read it, so a consumer scales them from one property.
 $fui-scale: 1 !default;
-$fui-control-track-micro: measurements.target-value("controlTrack", "micro") !default;
-$fui-control-track-sm: measurements.target-value("controlTrack", "sm") !default;
-$fui-control-track-md: measurements.target-value("controlTrack", "md") !default;
-$fui-control-track-lg: measurements.target-value("controlTrack", "lg") !default;
+
+// Press feedback: the scale an action takes while pressed; 1 turns it off.
+$fui-press-scale: 0.985 !default;
 
 // --------------------------------------------
-// Transitions
+// Motion (UIR-D116)
 // --------------------------------------------
-$fui-transition-fast: 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !default; // Snappy easeOut for chrome
-$fui-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1) !default; // Standard material-style easing
+// Small floating things appear and leave at once; only large overlays move.
+// One easing serves both directions.
+/// Hover and press colour, border colour, press scale.
+$fui-duration-micro: 100ms !default;
+/// Menus, selects, popovers, tooltips, toasts, disclosure: no motion.
+$fui-duration-enter: 0ms !default;
+$fui-duration-exit: 0ms !default;
+/// Dialog, drawer and scrim.
+$fui-duration-enter-lg: 200ms !default;
+$fui-duration-exit-lg: 100ms !default;
+/// A highlight leaves over this time and arrives at once (menu, table, nav rows).
+$fui-duration-highlight: 150ms !default;
+$fui-ease-standard: cubic-bezier(0.2, 0, 0, 1) !default;
+/// The scale and travel a small popup starts from: still.
+$fui-popup-from: 1 !default;
+$fui-popup-travel: 0px !default;
+/// A pending action shows its spinner after this delay.
+$fui-pending-delay: 1s !default;
 
 // --------------------------------------------
-// Colors - Light Mode (derived from brand/neutral seeds)
+// Colours: Sass twins of the runtime roles
 // --------------------------------------------
-// Accent colors (derived from $fui-brand seed)
-$fui-color-accent: computed.$computed-color-accent !default;
-$fui-color-on-accent: computed.$computed-color-on-accent !default;
-$fui-color-accent-hover: computed.$computed-color-accent-hover !default;
-$fui-color-accent-active: computed.$computed-color-accent-active !default;
+// Every colour role is derived in the browser from the L0 inputs (see the
+// fui-css-variables mixin and _derive.scss). These twins are the Glass
+// default's painted values, as literals, for the build-time half of
+// `var(--fui-x, $fui-x)`. They are read from _defaults.generated.scss, which
+// scripts/tokens-css.mjs writes from the runtime, so a twin always equals what
+// the engine paints at the default seed. Fills are the seeds themselves.
 
-// Semantic colors (from seeds or defaults)
-$fui-color-danger: computed.$computed-color-danger !default;
-$fui-color-danger-hover: computed.$computed-color-danger-hover !default;
-$fui-color-success: computed.$computed-color-success !default;
-$fui-color-warning: computed.$computed-color-warning !default;
-$fui-color-info: computed.$computed-color-info !default;
+// Fills: the seeds, verbatim.
+$fui-color-accent: seeds.$fui-brand !default;
+$fui-color-danger: seeds.$fui-danger !default;
+$fui-color-success: seeds.$fui-success !default;
+$fui-color-warning: seeds.$fui-warning !default;
+$fui-color-info: seeds.$fui-info !default;
 
-// Tone ramp (light). One derivation for accent and the four semantic tones:
-// tint = compact soft surface (Badge, Chip, Button soft), wash = panel surface
-// (Alert, Toast, Card, Message), text = contrast-derived ink, border = the ink
-// at an alpha, on-fill = ink on the solid seed. See `recipes/_tone.scss`.
-$fui-color-accent-tint: computed.$computed-color-accent-tint !default;
-$fui-color-danger-tint: computed.$computed-color-danger-tint !default;
-$fui-color-success-tint: computed.$computed-color-success-tint !default;
-$fui-color-warning-tint: computed.$computed-color-warning-tint !default;
-$fui-color-info-tint: computed.$computed-color-info-tint !default;
+// Accent states: black or white on the fill; hover and press move the fill
+// away from that label.
+$fui-color-on-accent: _twin("color-on-accent") !default;
+$fui-color-accent-hover: _twin("color-accent-hover") !default;
+$fui-color-accent-active: _twin("color-accent-active") !default;
+$fui-color-danger-hover: _twin("color-danger-hover") !default;
 
-$fui-color-accent-wash: computed.$computed-color-accent-wash !default;
-$fui-color-danger-wash: computed.$computed-color-danger-wash !default;
-$fui-color-success-wash: computed.$computed-color-success-wash !default;
-$fui-color-warning-wash: computed.$computed-color-warning-wash !default;
-$fui-color-info-wash: computed.$computed-color-info-wash !default;
+// Tone ramp. One derivation for accent and the four status tones:
+// tint = the seed mixed into the surface (Badge, Chip, Button soft), wash =
+// half that (Alert, Toast, Card, Message), text = the lightness-clamped seed
+// solved to 4.5:1 (it also draws a toned edge: lines are opaque), on-fill =
+// black or white on the seed. See `recipes/_tone.scss`.
 
-$fui-color-accent-text: computed.$computed-color-accent-text !default;
-$fui-color-danger-text: computed.$computed-color-danger-text !default;
-$fui-color-success-text: computed.$computed-color-success-text !default;
-$fui-color-warning-text: computed.$computed-color-warning-text !default;
-$fui-color-info-text: computed.$computed-color-info-text !default;
+$fui-color-accent-tint: _twin("color-accent-tint") !default;
+$fui-color-danger-tint: _twin("color-danger-tint") !default;
+$fui-color-success-tint: _twin("color-success-tint") !default;
+$fui-color-warning-tint: _twin("color-warning-tint") !default;
+$fui-color-info-tint: _twin("color-info-tint") !default;
 
-$fui-color-accent-border: color-mix(in srgb, $fui-color-accent-text 40%, transparent) !default;
-$fui-color-danger-border: color-mix(in srgb, $fui-color-danger-text 40%, transparent) !default;
-$fui-color-success-border: color-mix(in srgb, $fui-color-success-text 40%, transparent) !default;
-$fui-color-warning-border: color-mix(in srgb, $fui-color-warning-text 40%, transparent) !default;
-$fui-color-info-border: color-mix(in srgb, $fui-color-info-text 40%, transparent) !default;
+$fui-color-accent-wash: _twin("color-accent-wash") !default;
+$fui-color-danger-wash: _twin("color-danger-wash") !default;
+$fui-color-success-wash: _twin("color-success-wash") !default;
+$fui-color-warning-wash: _twin("color-warning-wash") !default;
+$fui-color-info-wash: _twin("color-info-wash") !default;
+
+$fui-color-accent-text: _twin("color-accent-text") !default;
+$fui-color-danger-text: _twin("color-danger-text") !default;
+$fui-color-success-text: _twin("color-success-text") !default;
+$fui-color-warning-text: _twin("color-warning-text") !default;
+$fui-color-info-text: _twin("color-info-text") !default;
 
 $fui-color-accent-on-fill: $fui-color-on-accent !default;
-$fui-color-danger-on-fill: computed.$computed-color-danger-on-fill !default;
-$fui-color-success-on-fill: computed.$computed-color-success-on-fill !default;
-$fui-color-warning-on-fill: computed.$computed-color-warning-on-fill !default;
-$fui-color-info-on-fill: computed.$computed-color-info-on-fill !default;
+$fui-color-danger-on-fill: _twin("color-danger-on-fill") !default;
+$fui-color-success-on-fill: _twin("color-success-on-fill") !default;
+$fui-color-warning-on-fill: _twin("color-warning-on-fill") !default;
+$fui-color-info-on-fill: _twin("color-info-on-fill") !default;
 
-$fui-color-accent-fill-hover: color-mix(
-  in srgb,
-  $fui-color-accent 88%,
-  $fui-color-accent-text
-) !default;
-$fui-color-danger-fill-hover: color-mix(
-  in srgb,
-  $fui-color-danger 88%,
-  $fui-color-danger-text
-) !default;
-$fui-color-success-fill-hover: color-mix(
-  in srgb,
-  $fui-color-success 88%,
-  $fui-color-success-text
-) !default;
-$fui-color-warning-fill-hover: color-mix(
-  in srgb,
-  $fui-color-warning 88%,
-  $fui-color-warning-text
-) !default;
-$fui-color-info-fill-hover: color-mix(in srgb, $fui-color-info 88%, $fui-color-info-text) !default;
+$fui-color-accent-fill-hover: _twin("color-accent-fill-hover") !default;
+$fui-color-danger-fill-hover: _twin("color-danger-fill-hover") !default;
+$fui-color-success-fill-hover: _twin("color-success-fill-hover") !default;
+$fui-color-warning-fill-hover: _twin("color-warning-fill-hover") !default;
+$fui-color-info-fill-hover: _twin("color-info-fill-hover") !default;
 
-$fui-color-accent-fill-active: color-mix(
-  in srgb,
-  $fui-color-accent 80%,
-  $fui-color-accent-text
-) !default;
-$fui-color-danger-fill-active: color-mix(
-  in srgb,
-  $fui-color-danger 80%,
-  $fui-color-danger-text
-) !default;
-$fui-color-success-fill-active: color-mix(
-  in srgb,
-  $fui-color-success 80%,
-  $fui-color-success-text
-) !default;
-$fui-color-warning-fill-active: color-mix(
-  in srgb,
-  $fui-color-warning 80%,
-  $fui-color-warning-text
-) !default;
-$fui-color-info-fill-active: color-mix(in srgb, $fui-color-info 80%, $fui-color-info-text) !default;
+$fui-color-accent-fill-active: _twin("color-accent-fill-active") !default;
+$fui-color-danger-fill-active: _twin("color-danger-fill-active") !default;
+$fui-color-success-fill-active: _twin("color-success-fill-active") !default;
+$fui-color-warning-fill-active: _twin("color-warning-fill-active") !default;
+$fui-color-info-fill-active: _twin("color-info-fill-active") !default;
 
-$fui-color-accent-tint-hover: color-mix(
-  in srgb,
-  $fui-color-accent-text 8%,
-  $fui-color-accent-tint
-) !default;
-$fui-color-danger-tint-hover: color-mix(
-  in srgb,
-  $fui-color-danger-text 8%,
-  $fui-color-danger-tint
-) !default;
-$fui-color-success-tint-hover: color-mix(
-  in srgb,
-  $fui-color-success-text 8%,
-  $fui-color-success-tint
-) !default;
-$fui-color-warning-tint-hover: color-mix(
-  in srgb,
-  $fui-color-warning-text 8%,
-  $fui-color-warning-tint
-) !default;
-$fui-color-info-tint-hover: color-mix(
-  in srgb,
-  $fui-color-info-text 8%,
-  $fui-color-info-tint
-) !default;
+$fui-color-accent-tint-hover: _twin("color-accent-tint-hover") !default;
+$fui-color-danger-tint-hover: _twin("color-danger-tint-hover") !default;
+$fui-color-success-tint-hover: _twin("color-success-tint-hover") !default;
+$fui-color-warning-tint-hover: _twin("color-warning-tint-hover") !default;
+$fui-color-info-tint-hover: _twin("color-info-tint-hover") !default;
 
-$fui-color-accent-tint-active: color-mix(
-  in srgb,
-  $fui-color-accent-text 14%,
-  $fui-color-accent-tint
-) !default;
-$fui-color-danger-tint-active: color-mix(
-  in srgb,
-  $fui-color-danger-text 14%,
-  $fui-color-danger-tint
-) !default;
-$fui-color-success-tint-active: color-mix(
-  in srgb,
-  $fui-color-success-text 14%,
-  $fui-color-success-tint
-) !default;
-$fui-color-warning-tint-active: color-mix(
-  in srgb,
-  $fui-color-warning-text 14%,
-  $fui-color-warning-tint
-) !default;
-$fui-color-info-tint-active: color-mix(
-  in srgb,
-  $fui-color-info-text 14%,
-  $fui-color-info-tint
-) !default;
+$fui-color-accent-tint-active: _twin("color-accent-tint-active") !default;
+$fui-color-danger-tint-active: _twin("color-danger-tint-active") !default;
+$fui-color-success-tint-active: _twin("color-success-tint-active") !default;
+$fui-color-warning-tint-active: _twin("color-warning-tint-active") !default;
+$fui-color-info-tint-active: _twin("color-info-tint-active") !default;
 
-$fui-color-accent-wash-active: color-mix(
-  in srgb,
-  $fui-color-accent-text 8%,
-  $fui-color-accent-wash
-) !default;
-$fui-color-danger-wash-active: color-mix(
-  in srgb,
-  $fui-color-danger-text 8%,
-  $fui-color-danger-wash
-) !default;
-$fui-color-success-wash-active: color-mix(
-  in srgb,
-  $fui-color-success-text 8%,
-  $fui-color-success-wash
-) !default;
-$fui-color-warning-wash-active: color-mix(
-  in srgb,
-  $fui-color-warning-text 8%,
-  $fui-color-warning-wash
-) !default;
-$fui-color-info-wash-active: color-mix(
-  in srgb,
-  $fui-color-info-text 8%,
-  $fui-color-info-wash
-) !default;
+$fui-color-accent-wash-active: _twin("color-accent-wash-active") !default;
+$fui-color-danger-wash-active: _twin("color-danger-wash-active") !default;
+$fui-color-success-wash-active: _twin("color-success-wash-active") !default;
+$fui-color-warning-wash-active: _twin("color-warning-wash-active") !default;
+$fui-color-info-wash-active: _twin("color-info-wash-active") !default;
 
-// Surface colors (derived from $fui-neutral palette)
-$fui-bg-primary: computed.$computed-bg-primary !default;
-$fui-bg-secondary: computed.$computed-bg-secondary !default;
-$fui-bg-tertiary: computed.$computed-bg-tertiary !default;
-$fui-bg-elevated: computed.$computed-bg-elevated !default;
-$fui-bg-subtle: computed.$computed-bg-subtle !default;
-$fui-bg-hover: computed.$computed-bg-hover !default;
-$fui-bg-active: computed.$computed-bg-active !default;
-// Persistent selection (nav, segmented controls, rows) — one step under active.
-$fui-control-selected-bg: computed.$computed-bg-selected !default;
-// The document canvas is the derived "paper" tone in light mode (carbon 100).
-// Body and main stay on that shared plane; raised component roles provide the
-// contrast instead of consumer-specific page overrides.
-$fui-body-bg: computed.$computed-body-bg !default;
-$fui-main-bg: computed.$computed-main-bg !default;
+// Planes (the Glass ladder: canvas, band, surface, raised).
+$fui-bg-primary: _twin("bg-primary") !default;
+$fui-bg-secondary: _twin("bg-secondary") !default;
+$fui-bg-elevated: _twin("bg-elevated") !default;
+$fui-body-bg: _twin("body-bg") !default;
+$fui-field-bg: _twin("field-bg") !default;
 
-// Text colors (derived from $fui-neutral palette)
-$fui-text-primary: computed.$computed-text-primary !default;
-$fui-text-secondary: computed.$computed-text-secondary !default;
-$fui-text-tertiary: computed.$computed-text-tertiary !default;
-$fui-text-inverse: computed.$computed-text-inverse !default;
+// Interaction: ink 1 at an alpha, so the steps read the same on every plane.
+$fui-bg-hover: _twin("bg-hover") !default;
+$fui-bg-active: _twin("bg-active") !default;
+// Persistent selection (nav, segmented controls, rows): the selection colour
+// at 12%, ringed in the selection colour.
+$fui-control-selected-bg: _twin("control-selected-bg") !default;
+$fui-control-selected-border: _twin("control-selected-border") !default;
+// Checked controls (Checkbox, Radio, Switch): the clamped selection colour.
+$fui-control-checked-bg: _twin("control-checked-bg") !default;
+$fui-control-checked-bg-hover: _twin("control-checked-bg-hover") !default;
+$fui-control-checked-color: _twin("control-checked-color") !default;
+// The soft action's edge (Button and IconButton soft): none, since the tint is
+// the boundary; the high-contrast tier gives it the strong edge.
+$fui-button-soft-border: transparent !default;
 
-// Inverse surface — a themed surface that flips relative to the active theme
-// (dark surface in light mode, light surface in dark mode). Used by tooltips
-// and any always-contrasting chip. Pairs with $fui-text-inverse for its text.
-$fui-bg-inverse: $fui-text-primary !default;
+// Inks.
+$fui-text-primary: _twin("text-primary") !default;
+$fui-text-secondary: _twin("text-secondary") !default;
+$fui-text-tertiary: _twin("text-tertiary") !default;
+$fui-text-inverse: _twin("text-inverse") !default;
 
-// Border colors (derived from $fui-neutral palette)
-$fui-border: computed.$computed-border !default;
-$fui-border-default: computed.$computed-border-default !default;
-$fui-border-strong: computed.$computed-border-strong !default;
+// Inverse surface: ink 1 as a plane (tooltips, always-contrasting chips),
+// paired with $fui-text-inverse.
+$fui-bg-inverse: _twin("bg-inverse") !default;
 
-// Shadows (light)
+// Lines. The field border is the >= 3:1 boundary of a field, checkbox or
+// switch; the hairline and strong edge are decorative.
+$fui-border: _twin("border") !default;
+$fui-border-strong: _twin("border-strong") !default;
+$fui-field-border: _twin("field-border") !default;
+
+// Shadows (light). Surfaces carry no shadow (UIR-D117): only floating things cast
+// the popup shadow, and the two thumbs on a track keep the small one.
 $fui-shadow-sm: computed.$computed-shadow-sm !default;
-$fui-shadow-md: computed.$computed-shadow-md !default;
-$fui-shadow-lg: computed.$computed-shadow-lg !default;
+$fui-shadow-popup:
+  0 0 0 0.5px rgba(0, 0, 0, 0.12),
+  0 2px 5px rgba(0, 0, 0, 0.06),
+  0 10px 24px rgba(0, 0, 0, 0.1) !default;
 
-// Focus ring (derived from $fui-brand)
-$fui-focus-ring-color: computed.$computed-focus-ring-color !default;
+// Focus ring: the selection colour in light, the brand lifted to L >= 0.70 in dark.
+$fui-focus-ring-color: _twin("focus-ring-color") !default;
 $fui-focus-ring-offset: 2px !default;
 $fui-focus-ring-width: 2px !default;
 
-// Scrollbar (derived from $fui-neutral palette)
+// Scrollbar
 $fui-scrollbar-width: 8px !default;
-$fui-scrollbar-track: computed.$computed-scrollbar-track !default;
-$fui-scrollbar-thumb: computed.$computed-scrollbar-thumb !default;
-$fui-scrollbar-thumb-hover: computed.$computed-scrollbar-thumb-hover !default;
+$fui-scrollbar-track: _twin("scrollbar-track") !default;
+$fui-scrollbar-thumb: _twin("scrollbar-thumb") !default;
+$fui-scrollbar-thumb-hover: _twin("scrollbar-thumb-hover") !default;
+
+// Overlay scrim
+$fui-backdrop: _twin("backdrop") !default;
 
 // --------------------------------------------
-// Colors - Dark Mode (derived from seeds)
+// Colours: dark twins
 // --------------------------------------------
-// Accent colors (brand used directly in dark mode; on-accent handles text contrast)
-$fui-dark-color-accent: computed.$computed-dark-color-accent !default;
-$fui-dark-color-on-accent: computed.$computed-dark-color-on-accent !default;
-$fui-dark-color-accent-hover: computed.$computed-dark-color-accent-hover !default;
-$fui-dark-color-accent-active: computed.$computed-dark-color-accent-active !default;
+$fui-dark-color-accent: seeds.$fui-brand !default;
+$fui-dark-color-on-accent: _twin("color-on-accent", "dark") !default;
+$fui-dark-color-accent-hover: _twin("color-accent-hover", "dark") !default;
+$fui-dark-color-accent-active: _twin("color-accent-active", "dark") !default;
 
-// True when the brand seed is the Fragments default (pine). When true, the
-// runtime (relative-color) dark accent is pinned to the exact SCSS-computed
-// sage values so the ~93% relative-color path and the SCSS fallback agree.
-// Any consumer-supplied $fui-brand flips this false and restores the reactive
-// OKLCH derivation that tracks --fui-seed-brand at runtime.
-$fui-brand-is-default: computed.$brand-is-fragments-default !default;
+$fui-dark-bg-primary: _twin("bg-primary", "dark") !default;
+$fui-dark-bg-secondary: _twin("bg-secondary", "dark") !default;
+$fui-dark-bg-elevated: _twin("bg-elevated", "dark") !default;
+$fui-dark-bg-hover: _twin("bg-hover", "dark") !default;
+$fui-dark-bg-active: _twin("bg-active", "dark") !default;
+$fui-dark-control-selected-bg: _twin("control-selected-bg", "dark") !default;
+$fui-dark-body-bg: _twin("body-bg", "dark") !default;
+$fui-dark-field-bg: _twin("field-bg", "dark") !default;
 
-$_rt-dark-accent: $fui-dark-color-accent;
-$_rt-dark-accent-hover: $fui-dark-color-accent-hover;
-$_rt-dark-accent-active: $fui-dark-color-accent-active;
-@if not $fui-brand-is-default {
-  $_rt-dark-accent: string.unquote(
-    "oklch(from var(--fui-seed-brand) clamp(0.55, max(l, calc(0.95 - 2 * c)), 0.85) c h)"
-  );
-  $_rt-dark-accent-hover: string.unquote(
-    "oklch(from var(--fui-seed-brand) clamp(0.6, max(calc(l + 0.06), calc(0.97 - 2 * c)), 0.9) c h)"
-  );
-  $_rt-dark-accent-active: string.unquote(
-    "oklch(from var(--fui-seed-brand) clamp(0.5, max(calc(l - 0.04), calc(0.9 - 2 * c)), 0.82) c h)"
-  );
+$fui-dark-text-primary: _twin("text-primary", "dark") !default;
+$fui-dark-text-secondary: _twin("text-secondary", "dark") !default;
+$fui-dark-text-tertiary: _twin("text-tertiary", "dark") !default;
+$fui-dark-text-inverse: _twin("text-inverse", "dark") !default;
+$fui-dark-bg-inverse: _twin("bg-inverse", "dark") !default;
+
+$fui-dark-border: _twin("border", "dark") !default;
+$fui-dark-border-strong: _twin("border-strong", "dark") !default;
+$fui-dark-field-border: _twin("field-border", "dark") !default;
+
+// Shadows (dark): the popup geometry with deeper stops.
+$fui-dark-shadow-sm: computed.$computed-dark-shadow-sm !default;
+$fui-dark-shadow-popup:
+  0 0 0 0.5px rgba(0, 0, 0, 0.4),
+  0 2px 5px rgba(0, 0, 0, 0.2),
+  0 10px 24px rgba(0, 0, 0, 0.3) !default;
+
+/// The layers of a shadow, as a comma list (a single layer is a space list).
+@function _shadow-layers($shadow) {
+  @if list.separator($shadow) == comma {
+    @return $shadow;
+  }
+  @return list.append((), $shadow, comma);
 }
 
-// Surface colors (dark) - derived from $fui-neutral palette
-$fui-dark-bg-primary: computed.$computed-dark-bg-primary !default;
-$fui-dark-bg-secondary: computed.$computed-dark-bg-secondary !default;
-$fui-dark-bg-tertiary: computed.$computed-dark-bg-tertiary !default;
-$fui-dark-bg-elevated: computed.$computed-dark-bg-elevated !default;
-$fui-dark-bg-subtle: computed.$computed-dark-bg-subtle !default;
-$fui-dark-bg-hover: computed.$computed-dark-bg-hover !default;
-$fui-dark-bg-active: computed.$computed-dark-bg-active !default;
-$fui-dark-control-selected-bg: computed.$computed-dark-bg-selected !default;
-$fui-dark-body-bg: computed.$computed-dark-body-bg !default;
-$fui-dark-main-bg: computed.$computed-dark-main-bg !default;
+/// A shadow that follows `color-scheme`: the light and dark values share their
+/// geometry, so each layer keeps its offsets and takes its colour stop from
+/// `light-dark()`. A scope that sets its own mode gets its own shadows.
+@function _shadow-modes($light, $dark) {
+  $light-layers: _shadow-layers($light);
+  $dark-layers: _shadow-layers($dark);
+  $out: ();
+  @for $i from 1 through list.length($light-layers) {
+    $layer: list.nth($light-layers, $i);
+    $dark-color: list.nth(list.nth($dark-layers, $i), -1);
+    $parts: ();
+    @for $j from 1 through list.length($layer) - 1 {
+      $parts: list.append($parts, list.nth($layer, $j), space);
+    }
+    $color: string.unquote("light-dark(#{list.nth($layer, -1)}, #{$dark-color})");
+    $out: list.append($out, list.append($parts, $color, space), comma);
+  }
+  @return $out;
+}
 
-// Text colors (dark) - derived from $fui-neutral palette
-$fui-dark-text-primary: computed.$computed-dark-text-primary !default;
-$fui-dark-text-secondary: computed.$computed-dark-text-secondary !default;
-$fui-dark-text-tertiary: computed.$computed-dark-text-tertiary !default;
-$fui-dark-text-inverse: computed.$computed-dark-text-inverse !default;
+$fui-dark-color-accent-tint: _twin("color-accent-tint", "dark") !default;
+$fui-dark-color-danger-tint: _twin("color-danger-tint", "dark") !default;
+$fui-dark-color-success-tint: _twin("color-success-tint", "dark") !default;
+$fui-dark-color-warning-tint: _twin("color-warning-tint", "dark") !default;
+$fui-dark-color-info-tint: _twin("color-info-tint", "dark") !default;
 
-// Inverse surface (dark) — light surface for tooltips/inverted chips in dark mode
-$fui-dark-bg-inverse: computed.$computed-dark-text-primary !default;
+$fui-dark-color-accent-wash: _twin("color-accent-wash", "dark") !default;
+$fui-dark-color-danger-wash: _twin("color-danger-wash", "dark") !default;
+$fui-dark-color-success-wash: _twin("color-success-wash", "dark") !default;
+$fui-dark-color-warning-wash: _twin("color-warning-wash", "dark") !default;
+$fui-dark-color-info-wash: _twin("color-info-wash", "dark") !default;
 
-// Border colors (dark) - derived from $fui-neutral palette
-$fui-dark-border: computed.$computed-dark-border !default;
-$fui-dark-border-default: computed.$computed-dark-border-default !default;
-$fui-dark-border-strong: computed.$computed-dark-border-strong !default;
+$fui-dark-color-accent-text: _twin("color-accent-text", "dark") !default;
+$fui-dark-color-danger-text: _twin("color-danger-text", "dark") !default;
+$fui-dark-color-success-text: _twin("color-success-text", "dark") !default;
+$fui-dark-color-warning-text: _twin("color-warning-text", "dark") !default;
+$fui-dark-color-info-text: _twin("color-info-text", "dark") !default;
 
-// Shadows (dark)
-$fui-dark-shadow-sm: computed.$computed-dark-shadow-sm !default;
-$fui-dark-shadow-md: computed.$computed-dark-shadow-md !default;
-$fui-dark-shadow-lg: computed.$computed-dark-shadow-lg !default;
+$fui-dark-focus-ring-color: _twin("focus-ring-color", "dark") !default;
 
-// Tone ramp (dark)
-$fui-dark-color-accent-tint: computed.$computed-dark-color-accent-tint !default;
-$fui-dark-color-danger-tint: computed.$computed-dark-color-danger-tint !default;
-$fui-dark-color-success-tint: computed.$computed-dark-color-success-tint !default;
-$fui-dark-color-warning-tint: computed.$computed-dark-color-warning-tint !default;
-$fui-dark-color-info-tint: computed.$computed-dark-color-info-tint !default;
-$fui-dark-color-accent-wash: computed.$computed-dark-color-accent-wash !default;
-$fui-dark-color-danger-wash: computed.$computed-dark-color-danger-wash !default;
-$fui-dark-color-success-wash: computed.$computed-dark-color-success-wash !default;
-$fui-dark-color-warning-wash: computed.$computed-dark-color-warning-wash !default;
-$fui-dark-color-info-wash: computed.$computed-dark-color-info-wash !default;
+$fui-dark-scrollbar-track: _twin("scrollbar-track", "dark") !default;
+$fui-dark-scrollbar-thumb: _twin("scrollbar-thumb", "dark") !default;
+$fui-dark-scrollbar-thumb-hover: _twin("scrollbar-thumb-hover", "dark") !default;
 
-// Semantic text colors (dark, WCAG AA contrast-safe)
-$fui-dark-color-accent-text: computed.$computed-dark-color-accent-text !default;
-$fui-dark-color-danger-text: computed.$computed-dark-color-danger-text !default;
-$fui-dark-color-success-text: computed.$computed-dark-color-success-text !default;
-$fui-dark-color-warning-text: computed.$computed-dark-color-warning-text !default;
-$fui-dark-color-info-text: computed.$computed-dark-color-info-text !default;
-
-// Dark mode focus ring
-$fui-dark-focus-ring-color: computed.$computed-dark-focus-ring-color !default;
-
-// Scrollbar (dark mode)
-$fui-dark-scrollbar-track: computed.$computed-dark-scrollbar-track !default;
-$fui-dark-scrollbar-thumb: computed.$computed-dark-scrollbar-thumb !default;
-$fui-dark-scrollbar-thumb-hover: computed.$computed-dark-scrollbar-thumb-hover !default;
-
-// Overlay/backdrop
-$fui-backdrop: computed.$computed-backdrop !default;
-$fui-dark-backdrop: computed.$computed-dark-backdrop !default;
+$fui-dark-backdrop: _twin("backdrop", "dark") !default;
 
 // --------------------------------------------
 // Breakpoints
@@ -555,23 +482,12 @@ $fui-breakpoint-xl: 1280px !default;
 // Component-specific tokens
 // --------------------------------------------
 
-// Interactive control heights are fixed geometry; the spacing scale cannot
-// resize a named control.
+// Interactive control heights: the one height family, fixed tracks times
+// --fui-scale; the spacing scale cannot resize a named control.
 $fui-control-height-xs: measurements.target-value("controlTrack", "micro") !default;
 $fui-control-height-sm: measurements.target-value("controlTrack", "sm") !default;
 $fui-control-height-md: measurements.target-value("controlTrack", "md") !default;
 $fui-control-height-lg: measurements.target-value("controlTrack", "lg") !default;
-
-// Legacy aliases — prefer --fui-control-height-* in new code
-$fui-button-height-xs: $fui-control-height-xs !default;
-$fui-button-height-sm: $fui-control-height-sm !default;
-$fui-button-height-md: $fui-control-height-md !default;
-$fui-button-height-lg: $fui-control-height-lg !default;
-$fui-button-outlined-shadow: none !default;
-
-$fui-input-height-sm: measurements.target-value("fieldTrack", "sm") !default;
-$fui-input-height: measurements.target-value("fieldTrack", "md") !default;
-$fui-input-height-lg: measurements.target-value("fieldTrack", "lg") !default;
 
 // Touch targets (from the measurement spacing record)
 $fui-touch-sm: computed.$computed-touch-sm !default;
@@ -582,11 +498,18 @@ $fui-touch-lg: computed.$computed-touch-lg !default;
 // Keep this token globally available to preserve a product-control floor for
 // touch/pointer targets. WCAG 2.2 allows 24px, but Fragments uses 32px so
 // field controls, toolbar buttons, tabs, and picker triggers align.
-$fui-target-size-min: map.get(measurements.$legacy, "touch", "minimum") !default;
+$fui-target-size-min: measurements.spacing-px-to-rem(
+  map.get(measurements.$legacy, "touch", "minimum")
+) !default;
 $fui-target-size-comfortable: $fui-touch-md !default;
 
-// Fixed icon geometry. The legacy rem records remain frozen for compatibility
-// auditing, while active Sass and runtime values project the accepted px targets.
+// The hit-area floor the target mixin draws with `::after` (UIR-D120): 24px for
+// a pointer, 44px under a coarse pointer. Px, not rem × scale: a smaller scale
+// must never shrink a target below the floor.
+$fui-hit-area: 24px !default;
+$fui-hit-area-coarse: 44px !default;
+
+// Fixed icon geometry, from the measurement catalog.
 $fui-icon-xs: measurements.target-value("icon", "xs") !default;
 $fui-icon-sm: measurements.target-value("icon", "sm") !default;
 $fui-icon-md: measurements.target-value("icon", "md") !default;
@@ -594,15 +517,15 @@ $fui-icon-lg: measurements.target-value("icon", "lg") !default;
 $fui-icon-xl: measurements.target-value("icon", "xl") !default;
 $fui-icon-2xl: measurements.target-value("icon", "2xl") !default;
 
-// Animation offsets
-$fui-anim-offset-sm: 4px !default; // Small slide animation
-$fui-anim-offset-md: 8px !default; // Medium slide animation
-
 // Ambient loop durations — infinite animations (spinners, pulses, shimmer).
 // Easing stays per-effect; duration is the system knob.
-$fui-duration-spin: 800ms !default; // Busy indicators
+$fui-duration-spin: 700ms !default; // Busy indicators
 $fui-duration-pulse: 1500ms !default; // Breathing / attention loops
-$fui-duration-shimmer: 2000ms !default; // Placeholder shimmer
+$fui-duration-shimmer: 1600ms !default; // Placeholder shimmer
+/// Where an agent works: the sweep across the working wash, and the sheen
+/// across working words (UIR-D131).
+$fui-working-sweep-duration: 1800ms !default;
+$fui-working-sheen-duration: 2400ms !default;
 
 // Overlay stacking layers (kept adjacent so relative order is auditable)
 $fui-overlay-layer-swipe: 49 !default;
@@ -612,36 +535,42 @@ $fui-overlay-layer-anchored: 52 !default;
 $fui-overlay-layer-toast: 55 !default;
 $fui-overlay-layer-tooltip: 60 !default;
 
-// Sidebar (multi-consumer — used by Sidebar, NavigationMenu, Theme)
+// Sidebar (multi-consumer — used by Sidebar and Theme)
 $fui-sidebar-item-height: computed.$computed-sidebar-item-height !default;
 
 // AppShell Layout
-$fui-appshell-header-height: map.get(
-  measurements.$legacy,
-  "navigation",
-  "appShellHeaderHeight"
+$fui-appshell-header-height: measurements.rem-length(
+  map.get(measurements.$legacy, "navigation", "appShellHeaderHeight")
 ) !default;
+$fui-appshell-sidebar-width: measurements.rem-length(
+  measurements.target-value("appshell", "sidebar-width")
+) !default;
+$fui-appshell-sidebar-width-wide: measurements.rem-length(
+  measurements.target-value("appshell", "sidebar-width-wide")
+) !default;
+
+// Floating placement (UIR-D119): the gap to the anchor and the viewport inset.
+$fui-popup-offset: measurements.rem-length(measurements.target-value("popup", "offset")) !default;
+$fui-popup-collision-padding: measurements.rem-length(
+  measurements.target-value("popup", "collision-padding")
+) !default;
+
+// Reading measures (UIR-D119): an empty state's copy wraps at 40 characters at
+// every size; the size sets padding only.
+$fui-feedback-empty-max-inline: 40ch !default;
+// A page description (Main.Description) wraps at 68 characters.
+$fui-main-description-max-inline: 68ch !default;
+
+// The gap between text and its link underline (UIR-D119): 3px at every
+// size, shared by Link, Button link and prose links.
+$fui-link-underline-offset: 3px !default;
 $fui-header-z-index: 40 !default;
 
-// CodeBlock background — shared with Markdown's <pre> prose styling — and
-// selection tint are runtime hooks so consuming apps can preserve their own
-// code-surface treatment without forking either component.
-// Light stop is the paper tertiary well — not a second dark grey.
-$fui-code-bg: light-dark(#{$fui-bg-tertiary}, #{$fui-dark-bg-tertiary}) !default;
-// Accent capsule — the tertiary well + wash/hairline, so the earned moment
-// sits *into* the page rather than floating a white slab on it (lifted-verdict
-// direction, 2026-08-22). Do not mix toward black: that paints a dark slab on
-// the light canvas.
-$fui-card-accent-bg: $fui-bg-tertiary !default;
-$fui-card-accent-border: color-mix(in srgb, $fui-color-accent 30%, $fui-border) !default;
-// Softer than a panel: the capsule is a moment, not another card.
-$fui-card-accent-radius: $fui-radius-xl !default;
-// Selection tint tracks the accent (pine light / sage dark), not the button
-// chrome — the ink-first default theme paints buttons with the inverse
-// surface, which would grey out code selection.
+// Code: the well is the band plane (CodeBlock, Markdown `pre`); the selection
+// tint tracks the accent.
 $fui-code-selection-bg: color-mix(
   in srgb,
-  var(--fui-color-accent, #f56138) 30%,
+  var(--fui-color-accent, #{$fui-color-accent}) 30%,
   transparent
 ) !default;
 // Default code ink follows primary text so unhighlighted fallback and shiki
@@ -649,7 +578,8 @@ $fui-code-selection-bg: color-mix(
 $fui-code-text: $fui-text-primary !default;
 // Syntax ink for CodeBlock's css-variables theme. Each light stop is ≥ 4.5:1
 // on the light code well; each dark stop is ≥ 4.5:1 on the dark code well
-// (gated by read-safe-contrast.test.ts).
+// (gated by read-safe-contrast.test.ts) and on a marked line, the hover tint
+// over the well (gated by the CodeBlock states fixture).
 $fui-code-token-keyword: #9a3412 !default;
 $fui-code-token-string: #166534 !default;
 $fui-code-token-comment: #5c5348 !default;
@@ -657,66 +587,349 @@ $fui-code-token-function: #1e3a8a !default;
 $fui-code-token-number: #92400e !default;
 $fui-code-token-punctuation: #3d3429 !default;
 $fui-code-token-variable: #3d3429 !default;
-$fui-dark-code-token-keyword: #f56138 !default;
+$fui-dark-code-token-keyword: #f77a55 !default;
 $fui-dark-code-token-string: #7dcea0 !default;
 $fui-dark-code-token-comment: #a89b8c !default;
 $fui-dark-code-token-function: #8cb4e8 !default;
 $fui-dark-code-token-number: #e8b86d !default;
 $fui-dark-code-token-punctuation: #c9c2b8 !default;
 $fui-dark-code-token-variable: #f0ede9 !default;
-// Prose/link ink. Light is a darker accent step so 4.5:1 holds on
-// --fui-app-main-bg; dark keeps the theme accent (already ≥ 4.5).
-$fui-link-ink: #9a3412 !default;
-$fui-dark-link-ink: $fui-dark-color-accent !default;
+// Prose/link ink: the accent text, 4.5:1 on every plane in both modes.
+$fui-link-ink: _twin("link-ink") !default;
+$fui-dark-link-ink: _twin("link-ink", "dark") !default;
+
+// Working (UIR-D118): the brand wash, edge and sweep while an agent works.
+$fui-working-from: _twin("working-from") !default;
+$fui-working-to: _twin("working-to") !default;
+$fui-working-wash: _twin("working-wash") !default;
+$fui-working-edge: _twin("working-edge") !default;
+$fui-dark-working-from: _twin("working-from", "dark") !default;
+$fui-dark-working-to: _twin("working-to", "dark") !default;
+$fui-dark-working-wash: _twin("working-wash", "dark") !default;
+$fui-dark-working-edge: _twin("working-edge", "dark") !default;
+
+// Chart series (UIR-D118): the brand and the neutral, never a status seed.
+$fui-chart-1: _twin("chart-1") !default;
+$fui-chart-2: _twin("chart-2") !default;
+$fui-chart-3: _twin("chart-3") !default;
+$fui-chart-4: _twin("chart-4") !default;
+$fui-chart-5: _twin("chart-5") !default;
+$fui-chart-6: _twin("chart-6") !default;
+$fui-dark-chart-1: _twin("chart-1", "dark") !default;
+$fui-dark-chart-2: _twin("chart-2", "dark") !default;
+$fui-dark-chart-3: _twin("chart-3", "dark") !default;
+$fui-dark-chart-4: _twin("chart-4", "dark") !default;
+$fui-dark-chart-5: _twin("chart-5", "dark") !default;
+$fui-dark-chart-6: _twin("chart-6", "dark") !default;
+
+// --------------------------------------------
+// Runtime colour roles
+// --------------------------------------------
+// The colour roles the engine derives (see _derive.scss). Each needs relative
+// colour syntax, so it is declared twice: the twin pair as a static fallback,
+// then its expression inside `@supports`.
+
+/// Planes, inks and lines (the Glass ladder): lightness and chroma factor of
+/// the neutral, light then dark.
+$_planes: (
+  "body-bg": (
+    (0.94, 0.5),
+    (0.182, 0.2),
+  ),
+  "bg-secondary": (
+    (0.953, 0.4),
+    (0.257, 0.2),
+  ),
+  "bg-primary": (
+    (0.985, 0.25),
+    (0.214, 0.2),
+  ),
+  "bg-elevated": (
+    (0.985, 0.25),
+    (0.235, 0.33),
+  ),
+  "text-primary": (
+    (0.216, 0.6),
+    (0.935, 1.05),
+  ),
+  "text-secondary": (
+    (0.415, 0.9),
+    (0.768, 1.15),
+  ),
+  "text-tertiary": (
+    (0.498, 1.15),
+    (0.668, 1.2),
+  ),
+  "border": (
+    (0.905, 0.6),
+    (0.286, 0.4),
+  ),
+  "border-strong": (
+    (0.86, 0.8),
+    (0.33, 0.55),
+  ),
+  "field-border": (
+    (0.62, 1.15),
+    (0.545, 1),
+  ),
+);
+
+/// The surface's lightness, light then dark: the plane every tint mixes into.
+$_surface-l: (0.985, 0.214);
+
+/// Tones: the text clamp per mode and the tint percentages (light, dark).
+/// The wash is half the tint.
+$_tones: (
+  "accent": (
+    seed: "var(--fui-seed-brand)",
+    light: (
+      l: 0.46,
+      c: 0.17,
+    ),
+    dark: (
+      l: 0.76,
+    ),
+    tint: (
+      12%,
+      20%,
+    ),
+  ),
+  "danger": (
+    seed: "var(--fui-seed-danger)",
+    light: (
+      l: 0.46,
+    ),
+    dark: (
+      l: 0.76,
+    ),
+    tint: (
+      11%,
+      20%,
+    ),
+  ),
+  "success": (
+    seed: "var(--fui-seed-success)",
+    light: (
+      l: 0.46,
+    ),
+    dark: (
+      l: 0.76,
+    ),
+    tint: (
+      12%,
+      18%,
+    ),
+  ),
+  "warning": (
+    seed: "var(--fui-seed-warning)",
+    light: (
+      l: 0.46,
+      c-scale: 0.8,
+    ),
+    dark: (
+      l: 0.78,
+    ),
+    tint: (
+      18%,
+      18%,
+    ),
+  ),
+  "info": (
+    seed: "var(--fui-seed-info)",
+    light: (
+      l: 0.46,
+    ),
+    dark: (
+      l: 0.76,
+    ),
+    tint: (
+      11%,
+      20%,
+    ),
+  ),
+);
+
+/// Chart series 2 to 5: a turn of the brand's hue and a lightness per mode
+/// (light, dark). Series 1 is the selection colour and series 6 is ink 3.
+/// Hues and lightness both step, so neighbours differ without colour vision.
+$_chart-series: (
+  2: (
+    turn: -60,
+    l: (
+      0.58,
+      0.8,
+    ),
+  ),
+  3: (
+    turn: 50,
+    l: (
+      0.44,
+      0.7,
+    ),
+  ),
+  4: (
+    turn: -150,
+    l: (
+      0.56,
+      0.86,
+    ),
+  ),
+  5: (
+    turn: 0,
+    l: (
+      0.34,
+      0.9,
+    ),
+  ),
+);
+
+/// Every role that needs relative colour syntax, name to expression.
+@function _engine-roles() {
+  $brand: "var(--fui-seed-brand)";
+  $checked: "var(--fui-control-checked-bg)";
+  $roles: ();
+
+  @each $name, $modes in $_planes {
+    $light: list.nth($modes, 1);
+    $dark: list.nth($modes, 2);
+    $roles: map.merge(
+      $roles,
+      (
+        $name: derive.modes(
+            derive.plane(list.nth($light, 1), list.nth($light, 2)),
+            derive.plane(list.nth($dark, 1), list.nth($dark, 2))
+          ),
+      )
+    );
+  }
+
+  $roles: map.merge(
+    $roles,
+    (
+      "color-on-accent": derive.pick($brand),
+      "color-accent-hover": derive.mix($brand, 86%, derive.off($brand)),
+      "color-accent-active": derive.mix($brand, 76%, derive.off($brand)),
+      // Selection: the brand clamped to L <= 0.55 (light) / >= 0.64 (dark),
+      // solved to 3:1 on every plane.
+      "control-checked-bg": derive.modes(
+          derive.indicator($brand, 0.55, false),
+          derive.indicator($brand, 0.64, true)
+        ),
+      "control-checked-bg-hover": derive.mix($checked, 86%, derive.off($checked)),
+      "control-checked-color": derive.pick($checked),
+      "focus-ring-color": derive.modes($checked, derive.indicator($brand, 0.7, true)),
+      // The working sweep's far stop: a pale turn of the brand, one value for
+      // both modes.
+      "working-to": string.unquote("oklch(from #{$brand} 0.86 calc(c * 0.32) calc(h - 95) / 0.28)"),
+    )
+  );
+
+  @each $index, $spec in $_chart-series {
+    $turn: map.get($spec, turn);
+    $l: map.get($spec, l);
+    $roles: map.merge(
+      $roles,
+      (
+        "chart-#{$index}": derive.modes(
+            derive.series($brand, $turn, list.nth($l, 1), false),
+            derive.series($brand, $turn, list.nth($l, 2), true)
+          ),
+      )
+    );
+  }
+
+  @each $tone, $spec in $_tones {
+    $seed: map.get($spec, seed);
+    $tint: map.get($spec, tint);
+    $roles: map.merge(
+      $roles,
+      (
+        "color-#{$tone}-text": derive.modes(
+            derive.tone-text(
+              $seed,
+              map.get($spec, light),
+              list.nth($tint, 1),
+              list.nth($_surface-l, 1),
+              false
+            ),
+            derive.tone-text(
+              $seed,
+              map.get($spec, dark),
+              list.nth($tint, 2),
+              list.nth($_surface-l, 2),
+              true
+            )
+          ),
+      )
+    );
+    @if $tone != "accent" {
+      $roles: map.merge(
+        $roles,
+        (
+          "color-#{$tone}-on-fill": derive.pick($seed),
+          "color-#{$tone}-fill-hover": derive.mix($seed, 86%, derive.off($seed)),
+          "color-#{$tone}-fill-active": derive.mix($seed, 76%, derive.off($seed)),
+        )
+      );
+    }
+  }
+  @return $roles;
+}
+
+/// The twin pair of a role, as one value.
+@function _static($name) {
+  $light: _twin($name);
+  $dark: _twin($name, "dark");
+  @if $light == $dark {
+    @return $light;
+  }
+  @return string.unquote("light-dark(#{$light}, #{$dark})");
+}
 
 // --------------------------------------------
 // CSS Custom Properties Export
 // --------------------------------------------
 // This mixin outputs CSS custom properties for runtime theming.
 // Call it in your root styles: @include fui-css-variables;
+//
+// L0 inputs live on `:root`, so an override on any element inherits. Every
+// derived token is declared on `:root` and on any `[data-fui-theme]` element:
+// a custom property resolves its `var()`s where it is declared, so a subtree
+// that sets its own inputs re-derives only under that attribute. `:where()`
+// keeps the specificity at zero, so an app's own `--fui-x` on `:root` still wins.
 
 @mixin fui-css-variables {
   :root {
     // Enable light-dark() automatic dark mode via color-scheme.
-    // Browsers supporting light-dark() (~92%) get automatic prefers-color-scheme support.
-    // Manual toggle via [data-theme="dark"] / .dark still works (sets color-scheme: dark).
+    // Manual toggle via [data-theme="dark"] sets color-scheme: dark.
     color-scheme: light dark;
 
-    // Base configuration
-    font-size: #{$fui-base-font-size};
-    --fui-base-font-size: #{$fui-base-font-size};
-    --fui-base-unit: #{$fui-base-unit};
-    @include measurements.emit-fixed-custom-properties;
+    // L0 inputs. Compile-time `@use … with ()` sets their defaults; any
+    // element can override them at runtime with no build and no JS.
+    --fui-seed-brand: #{seeds.$fui-brand};
+    --fui-seed-neutral: #{seeds.$fui-neutral-color};
+    --fui-seed-danger: #{seeds.$fui-danger};
+    --fui-seed-success: #{seeds.$fui-success};
+    --fui-seed-warning: #{seeds.$fui-warning};
+    --fui-seed-info: #{seeds.$fui-info};
+    --fui-radius: #{$fui-radius};
+    --fui-scale: #{$fui-scale};
+    --fui-font-sans: #{meta.inspect($fui-font-sans)};
+    --fui-press-scale: #{$fui-press-scale};
 
-    // Seed colors — the 5 configurable seeds exposed as custom properties.
-    // Tracks SCSS seed variables, so compile-time customization is reflected.
-    // Consumers can override at runtime: `document.documentElement.style.setProperty('--fui-seed-brand', '#0066ff')`
-    // The @supports block below derives accent/semantic tokens from these seeds
-    // using relative color syntax in OKLCH space (perceptually uniform).
-    --fui-seed-brand: #{$fui-color-accent};
-    --fui-seed-danger: #{$fui-color-danger};
-    --fui-seed-success: #{$fui-color-success};
-    --fui-seed-warning: #{$fui-color-warning};
-    --fui-seed-info: #{$fui-color-info};
+    // Primary chrome switch, read through the data-chrome attribute: 0 paints
+    // the primary action with the accent, 1 with ink 1.
+    --_fui-chrome: 0;
+
+    // Constants: no input reaches them, so they are declared once, here. The
+    // host size the rem values are written against.
+    --fui-base-font-size: #{$fui-base-font-size};
 
     // Typography
-    --fui-font-sans: #{$fui-font-sans};
     --fui-font-mono: #{$fui-font-mono};
-    --fui-font-size-2xs: #{$fui-font-size-2xs};
-    --fui-font-size-xs: #{$fui-font-size-xs};
-    --fui-font-size-sm: #{$fui-font-size-sm};
-    --fui-font-size-base: #{$fui-font-size-base};
-    --fui-font-size-md: #{$fui-font-size-md};
-    --fui-font-size-lg: #{$fui-font-size-lg};
-    --fui-font-size-xl: #{$fui-font-size-xl};
-    --fui-font-size-2xl: #{$fui-font-size-2xl};
-    --fui-font-size-3xl: #{$fui-font-size-3xl};
-    --fui-font-size-4xl: #{$fui-font-size-4xl};
-    --fui-popup-item-font-size: #{$fui-popup-item-font-size};
+    --fui-popup-item-font-size: var(--fui-type-body-compact-size);
     --fui-font-weight-normal: #{$fui-font-weight-normal};
-    --fui-font-weight-medium: #{$fui-font-weight-medium};
     --fui-font-weight-semibold: #{$fui-font-weight-semibold};
-    --fui-font-weight-bold: #{$fui-font-weight-bold};
     --fui-line-height-tight: #{$fui-line-height-tight};
     --fui-line-height-normal: #{$fui-line-height-normal};
     --fui-line-height-relaxed: #{$fui-line-height-relaxed};
@@ -726,22 +939,10 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-letter-spacing-normal: #{$fui-letter-spacing-normal};
     --fui-letter-spacing-display: #{$fui-letter-spacing-display};
     --fui-letter-spacing-wide: #{$fui-letter-spacing-wide};
+  }
 
-    // Spacing (micro)
-    --fui-space-px: #{$fui-space-px};
-    --fui-space-0-5: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-0-5});
-    --fui-space-0-75: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-0-75});
-
-    // Spacing
-    --fui-space-1: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-1});
-    --fui-space-2: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-2});
-    --fui-space-3: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-3});
-    --fui-space-4: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-4});
-    --fui-space-5: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-5});
-    --fui-space-6: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-6});
-    --fui-space-8: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-8});
-    --fui-space-10: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-10});
-    --fui-space-12: calc(var(--fui-scale, #{$fui-scale}) * #{$fui-space-12});
+  :where(:root, [data-fui-theme]) {
+    @include measurements.emit-fixed-custom-properties;
 
     // Popup geometry — the numbers Select/Listbox/Combobox derive their scroll
     // viewport from. Override these and the peek height follows.
@@ -750,31 +951,43 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-popup-item-padding-block: #{$fui-popup-item-padding-block};
     --fui-popup-item-padding-inline: #{$fui-popup-item-padding-inline};
 
-    // Border radius
-    --fui-radius-sm: #{$fui-radius-sm};
-    --fui-radius-md: #{$fui-radius-md};
-    --fui-radius-lg: #{$fui-radius-lg};
-    --fui-radius-xl: #{$fui-radius-xl};
+    // Radius roles from the `--fui-radius` input (UIR-D115). A control never rounds
+    // past a pill; popups and surfaces are rounder, to a ceiling; a row sits
+    // concentric inside its popup; every floor is capped by the input.
+    --fui-radius-control: min(var(--fui-radius), var(--fui-control-height-md) / 2);
+    --fui-radius-indicator: calc(var(--fui-radius) * 0.6);
+    --fui-radius-surface: min(var(--fui-radius) * 2.4, 24px);
+    --fui-radius-popup: min(var(--fui-radius) * 2.4, 18px);
+    --fui-radius-overlay: var(--fui-radius-popup);
+    --fui-radius-row: max(
+      min(2px, var(--fui-radius)),
+      var(--fui-radius-popup) - var(--fui-raw-space-4)
+    );
+    --fui-radius-tooltip: max(min(4px, var(--fui-radius)), var(--fui-radius-control) - 2px);
+    --fui-radius-segment: max(min(2px, var(--fui-radius)), var(--fui-radius-control) - 3px);
     --fui-radius-full: #{$fui-radius-full};
     --fui-radius-none: #{$fui-radius-none};
-    --fui-radius-l1: var(--fui-radius-lg);
-    --fui-radius-l2: var(--fui-radius-md);
-    --fui-radius-l3: var(--fui-radius-sm);
 
-    // Transitions
-    --fui-transition-fast: #{$fui-transition-fast};
     --fui-opacity-disabled: #{$fui-opacity-disabled};
     --fui-opacity-muted: #{$fui-opacity-muted};
     --fui-opacity-faint: #{$fui-opacity-faint};
-    --fui-scale: #{$fui-scale};
-    --fui-transition-normal: #{$fui-transition-normal};
 
-    // Motion primitives
-    --fui-anim-offset-sm: #{$fui-anim-offset-sm};
-    --fui-anim-offset-md: #{$fui-anim-offset-md};
+    // Motion roles (UIR-D116). Press scale is an input on `:root`.
+    --fui-duration-micro: #{$fui-duration-micro};
+    --fui-duration-enter: #{$fui-duration-enter};
+    --fui-duration-exit: #{$fui-duration-exit};
+    --fui-duration-enter-lg: #{$fui-duration-enter-lg};
+    --fui-duration-exit-lg: #{$fui-duration-exit-lg};
+    --fui-duration-highlight: #{$fui-duration-highlight};
+    --fui-ease-standard: #{$fui-ease-standard};
+    --fui-popup-from: #{$fui-popup-from};
+    --fui-popup-travel: #{$fui-popup-travel};
+    --fui-pending-delay: #{$fui-pending-delay};
     --fui-duration-spin: #{$fui-duration-spin};
     --fui-duration-pulse: #{$fui-duration-pulse};
     --fui-duration-shimmer: #{$fui-duration-shimmer};
+    --fui-working-sweep-duration: #{$fui-working-sweep-duration};
+    --fui-working-sheen-duration: #{$fui-working-sheen-duration};
 
     // Overlay stacking layers
     --fui-overlay-layer-swipe: #{$fui-overlay-layer-swipe};
@@ -784,55 +997,36 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
     --fui-overlay-layer-toast: #{$fui-overlay-layer-toast};
     --fui-overlay-layer-tooltip: #{$fui-overlay-layer-tooltip};
 
-    // Colors — Accent (light-dark for automatic dark mode)
-    --fui-color-accent: light-dark(#{$fui-color-accent}, #{$fui-dark-color-accent});
-    --fui-color-on-accent: light-dark(#{$fui-color-on-accent}, #{$fui-dark-color-on-accent});
-    --fui-color-accent-hover: light-dark(
-      #{$fui-color-accent-hover},
-      #{$fui-dark-color-accent-hover}
-    );
-    --fui-color-accent-active: light-dark(
-      #{$fui-color-accent-active},
-      #{$fui-dark-color-accent-active}
-    );
+    // Engine roles, static: the Glass default's twins, for an engine without
+    // relative colour syntax. The `@supports` block below derives them.
+    @each $name, $_expression in _engine-roles() {
+      --fui-#{$name}: #{_static($name)};
+    }
 
-    // Colors — Semantic (same in light/dark, no light-dark() needed)
-    --fui-color-danger: #{$fui-color-danger};
-    --fui-color-danger-hover: #{$fui-color-danger-hover};
-    --fui-color-success: #{$fui-color-success};
-    --fui-color-warning: #{$fui-color-warning};
-    --fui-color-info: #{$fui-color-info};
+    // Fills: the seeds, verbatim, in both modes.
+    --fui-color-accent: var(--fui-seed-brand);
+    --fui-color-danger: var(--fui-seed-danger);
+    --fui-color-success: var(--fui-seed-success);
+    --fui-color-warning: var(--fui-seed-warning);
+    --fui-color-info: var(--fui-seed-info);
+    --fui-color-accent-fill-hover: var(--fui-color-accent-hover);
+    --fui-color-accent-fill-active: var(--fui-color-accent-active);
+    --fui-color-accent-on-fill: var(--fui-color-on-accent);
+    --fui-color-danger-hover: var(--fui-color-danger-fill-hover);
 
-    // Colors — Tone ramp. Accent and the four semantic tones share one
-    // derivation; every surface is the seed (or its ink) at an alpha so it
-    // composes on the page, a band, a card or a menu alike.
-    @each $tone in (accent, danger, success, warning, info) {
+    // Tone ramp. The tint is the seed mixed into the surface; the wash is half
+    // of it; hover steps are the text over the tint. A toned edge reads the
+    // text: lines are opaque.
+    @each $tone, $spec in $_tones {
+      $seed: map.get($spec, seed);
+      $tint: map.get($spec, tint);
       --fui-color-#{$tone}-tint: light-dark(
-        color-mix(in srgb, var(--fui-color-#{$tone}) 18%, transparent),
-        color-mix(in srgb, var(--fui-color-#{$tone}) 26%, transparent)
+        color-mix(in oklab, #{$seed} #{list.nth($tint, 1)}, var(--fui-bg-primary)),
+        color-mix(in oklab, #{$seed} #{list.nth($tint, 2)}, var(--fui-bg-primary))
       );
       --fui-color-#{$tone}-wash: light-dark(
-        color-mix(in srgb, var(--fui-color-#{$tone}) 10%, transparent),
-        color-mix(in srgb, var(--fui-color-#{$tone}) 16%, transparent)
-      );
-      --fui-color-#{$tone}-text: light-dark(
-        color-mix(in srgb, var(--fui-color-#{$tone}) 72%, black),
-        color-mix(in srgb, var(--fui-color-#{$tone}) 78%, white 22%)
-      );
-      --fui-color-#{$tone}-border: color-mix(
-        in srgb,
-        var(--fui-color-#{$tone}-text) 40%,
-        transparent
-      );
-      --fui-color-#{$tone}-fill-hover: color-mix(
-        in srgb,
-        var(--fui-color-#{$tone}) 88%,
-        var(--fui-color-#{$tone}-text)
-      );
-      --fui-color-#{$tone}-fill-active: color-mix(
-        in srgb,
-        var(--fui-color-#{$tone}) 80%,
-        var(--fui-color-#{$tone}-text)
+        color-mix(in oklab, #{$seed} #{list.nth($tint, 1) * 0.5}, var(--fui-bg-primary)),
+        color-mix(in oklab, #{$seed} #{list.nth($tint, 2) * 0.5}, var(--fui-bg-primary))
       );
       --fui-color-#{$tone}-tint-hover: color-mix(
         in srgb,
@@ -850,180 +1044,69 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
         var(--fui-color-#{$tone}-wash)
       );
     }
-    // Ink on the solid seed is picked by contrast at build time (white or
-    // paper ink); accent keeps its own on-accent contract.
-    --fui-color-accent-on-fill: var(--fui-color-on-accent);
-    --fui-color-danger-on-fill: #{$fui-color-danger-on-fill};
-    --fui-color-success-on-fill: #{$fui-color-success-on-fill};
-    --fui-color-warning-on-fill: #{$fui-color-warning-on-fill};
-    --fui-color-info-on-fill: #{$fui-color-info-on-fill};
 
-    // Backdrop
-    --fui-backdrop: light-dark(#{$fui-backdrop}, #{$fui-dark-backdrop});
+    // Planes the engine does not derive directly.
+    --fui-app-canvas-bg: var(--fui-body-bg);
+    --fui-field-bg: var(--fui-bg-secondary);
+    --fui-bg-inverse: var(--fui-text-primary);
+    --fui-text-inverse: var(--fui-bg-primary);
 
-    // Surfaces
-    --fui-bg-primary: light-dark(#{$fui-bg-primary}, #{$fui-dark-bg-primary});
-    --fui-bg-secondary: light-dark(#{$fui-bg-secondary}, #{$fui-dark-bg-secondary});
-    --fui-bg-tertiary: light-dark(#{$fui-bg-tertiary}, #{$fui-dark-bg-tertiary});
-    --fui-bg-elevated: light-dark(#{$fui-bg-elevated}, #{$fui-dark-bg-elevated});
-    --fui-bg-subtle: light-dark(#{$fui-bg-subtle}, #{$fui-dark-bg-subtle});
-    // Interaction ladder: the ink at an alpha, so hover / pressed / selected
-    // read as the same steps on the page, the band and an elevated menu. Dark
-    // runs two points stronger. hover 7 < selected 12 < pressed 14 < selected+hover 16.
+    // Interaction ladder: ink 1 at an alpha, so hover and press read as the
+    // same steps on the canvas, the band and a raised menu.
     --fui-bg-hover: light-dark(
-      color-mix(in srgb, var(--fui-text-primary) 7%, transparent),
-      color-mix(in srgb, var(--fui-text-primary) 9%, transparent)
+      color-mix(in oklab, var(--fui-text-primary) 6%, transparent),
+      color-mix(in oklab, var(--fui-text-primary) 8%, transparent)
     );
     --fui-bg-active: light-dark(
-      color-mix(in srgb, var(--fui-text-primary) 14%, transparent),
-      color-mix(in srgb, var(--fui-text-primary) 16%, transparent)
+      color-mix(in oklab, var(--fui-text-primary) 11%, transparent),
+      color-mix(in oklab, var(--fui-text-primary) 14%, transparent)
     );
-    --fui-body-bg: light-dark(#{$fui-body-bg}, #{$fui-dark-body-bg});
-    --fui-main-bg: light-dark(#{$fui-main-bg}, #{$fui-dark-main-bg});
-    --fui-bg-inverse: light-dark(#{$fui-bg-inverse}, #{$fui-dark-bg-inverse});
+    --fui-backdrop: light-dark(
+      color-mix(in oklab, var(--fui-text-primary) 38%, transparent),
+      oklch(0 0 0 / 0.55)
+    );
 
-    // Text
-    --fui-text-primary: light-dark(#{$fui-text-primary}, #{$fui-dark-text-primary});
-    --fui-text-secondary: light-dark(#{$fui-text-secondary}, #{$fui-dark-text-secondary});
-    --fui-text-tertiary: light-dark(#{$fui-text-tertiary}, #{$fui-dark-text-tertiary});
-    --fui-text-inverse: light-dark(#{$fui-text-inverse}, #{$fui-dark-text-inverse});
-
-    // Borders
-    --fui-border: light-dark(#{$fui-border}, #{$fui-dark-border});
-    --fui-border-default: light-dark(#{$fui-border-default}, #{$fui-dark-border-default});
-    --fui-border-strong: light-dark(#{$fui-border-strong}, #{$fui-dark-border-strong});
-    --fui-border-subtle: color-mix(in srgb, var(--fui-border-default) 68%, transparent);
-
-    // Placeholder fills. A skeleton has to read as a *missing fact* against the
-    // card it sits in — a hairline-weight tint is invisible on paper, so the
-    // base leans on the border colour and the highlight is the shimmer stop.
-    --fui-skeleton: color-mix(in srgb, var(--fui-border-default) 62%, var(--fui-bg-secondary));
-    --fui-skeleton-hi: color-mix(in srgb, var(--fui-border-default) 24%, var(--fui-bg-secondary));
-
-    // Native browser text selection tracks the accent (pine in light, sage in
-    // dark) as a soft wash — matching the Flight Recorder accent-tint.
+    // Native browser text selection tracks the accent as a soft wash.
     // Component-selected states stay tuned per control density.
     --fui-selection-bg: light-dark(
-      color-mix(in srgb, var(--fui-color-accent, #f56138) 18%, transparent),
-      color-mix(in srgb, var(--fui-color-accent, #f56138) 22%, transparent)
+      color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 18%, transparent),
+      color-mix(in srgb, var(--fui-color-accent, #{$fui-color-accent}) 22%, transparent)
     );
     --fui-selection-color: var(--fui-text-primary);
 
-    // Persistent neutral selection for navigation, segmented controls, fields,
-    // and rows. Keep this separate from --fui-bg-active: active is the brief
-    // pointer-down state; selected must remain visible without dominating its
-    // surrounding surface.
-    --fui-control-selected-bg: light-dark(
-      color-mix(in srgb, var(--fui-text-primary) 12%, transparent),
-      color-mix(in srgb, var(--fui-text-primary) 14%, transparent)
-    );
-    --fui-control-selected-border: #{$fui-control-selected-border};
+    // Persistent selection for navigation, segmented controls, fields and
+    // rows: the selection colour at 12%, ringed in the selection colour. Keep
+    // it separate from --fui-bg-active, the brief pointer-down state.
+    --fui-control-selected-bg: color-mix(in oklab, var(--fui-control-checked-bg) 12%, transparent);
+    --fui-control-selected-border: var(--fui-control-checked-bg);
 
-    // Checked/value controls carry product meaning, so they follow the accent
-    // rather than button chrome. This keeps Checkbox, RadioGroup, and Switch
-    // stable when a consumer customizes primary actions independently.
-    --fui-control-checked-bg: var(--fui-color-accent);
-    --fui-control-checked-bg-hover: var(--fui-color-accent-hover);
-    --fui-control-checked-border: var(--fui-color-accent);
-    --fui-control-checked-border-hover: var(--fui-color-accent-hover);
-    --fui-control-checked-color: var(--fui-color-on-accent);
+    // Checked/value controls carry product meaning, so they follow the
+    // selection colour rather than button chrome.
+    --fui-control-checked-border: var(--fui-control-checked-bg);
+    --fui-control-checked-border-hover: var(--fui-control-checked-bg-hover);
 
-    // Field shells take their edge and ground from --fui-border / --fui-bg-primary
-    // through the field recipe; only selection chrome needs its own hooks.
+    // Field selection chrome. The shell's edge is --fui-field-border.
     --fui-field-selection-bg: var(--fui-control-selected-bg);
-    --fui-field-selection-bg-hover: light-dark(
-      color-mix(in srgb, var(--fui-text-primary) 16%, transparent),
-      color-mix(in srgb, var(--fui-text-primary) 18%, transparent)
-    );
-    --fui-field-selection-border: var(--fui-border-strong);
     --fui-field-selection-color: var(--fui-text-primary);
-    --fui-form-group-bg: color-mix(in srgb, var(--fui-bg-secondary) 48%, var(--fui-bg-primary));
-    --fui-form-group-border: var(--fui-border-default);
 
-    // Keyboard shortcut hints. Kept flatter than buttons so embedded input
-    // hints read as secondary chrome, not as nested actions.
-    --fui-kbd-height: 1.286rem; // 18px at 14px root
-    --fui-kbd-min-width: 1.714rem; // 24px
-    --fui-kbd-padding-x: var(--fui-space-0-75);
-    --fui-kbd-gap: calc(var(--fui-space-px) * 2);
-    --fui-kbd-bg: color-mix(in srgb, var(--fui-text-primary) 4%, transparent);
-    --fui-kbd-border: color-mix(in srgb, var(--fui-border-strong) 72%, transparent);
+    // Keyboard shortcut hints: geometry and ink only. The fill is the press
+    // tint (the well role) and the corner the indicator role.
+    --fui-kbd-height: 1.125rem; // 18px
+    --fui-kbd-min-width: 1.5rem; // 24px
+    --fui-kbd-padding-x: var(--fui-raw-space-4);
+    --fui-kbd-gap: var(--fui-raw-space-2);
     --fui-kbd-color: var(--fui-text-tertiary);
-    --fui-kbd-shadow: inset 0 1px 0
-      light-dark(
-        color-mix(in srgb, white 74%, transparent),
-        color-mix(in srgb, white 5%, transparent)
-      );
-    --fui-kbd-font-size: var(--fui-font-size-2xs);
-    --fui-kbd-radius: var(--fui-radius-sm);
-    --fui-kbd-reserved-width: 2.714rem; // 38px, enough for "⌘K"
+    --fui-kbd-font-size: var(--fui-type-caption-size);
+    --fui-kbd-reserved-width: 2.375rem; // 38px, enough for "⌘K"
 
-    // Button chrome. Every theme uses flat fills: hierarchy comes from colour,
-    // border, and state contrast rather than a second raised/gradient material.
-    //
-    // The Fragments default is ink-first: the primary action wears the inverse
-    // surface (near-black on paper, near-white on charcoal) with the accent
-    // reserved for meaning — links, selection, focus, "contract passing".
-    // A consumer-supplied $fui-brand switches primary chrome to the accent
-    // ramp so their brand colour actually paints their buttons (previously the
-    // chrome stayed pine regardless of seed).
-    @if $fui-brand-is-default {
-      --fui-button-primary-base: var(--fui-bg-inverse);
-      --fui-button-primary-hover: light-dark(
-        color-mix(in srgb, var(--fui-bg-inverse) 88%, white),
-        #ffffff
-      );
-      --fui-button-primary-active: light-dark(
-        color-mix(in srgb, var(--fui-bg-inverse) 92%, black),
-        color-mix(in srgb, var(--fui-bg-inverse) 94%, black)
-      );
-      --fui-button-primary-color: var(--fui-text-inverse);
-      --fui-button-radius: var(--fui-radius-xl);
-    } @else {
-      --fui-button-primary-base: var(--fui-color-accent);
-      --fui-button-primary-hover: var(--fui-color-accent-hover);
-      --fui-button-primary-active: var(--fui-color-accent-active);
-      --fui-button-primary-color: var(--fui-color-on-accent);
-      --fui-button-radius: var(--fui-radius-lg);
-    }
+    // Button chrome. The primary action wears the primary chrome (the accent
+    // ramp by default, so a brand seed paints the buttons); every other variant
+    // reads the planes and state tints directly. The soft edge is none at rest
+    // and the strong edge under high contrast.
+    @include _primary-chrome;
 
-    --fui-button-primary-border: var(--fui-button-primary-base);
-    --fui-button-primary-border-hover: var(--fui-button-primary-hover);
+    --fui-button-soft-border: #{$fui-button-soft-border};
 
-    --fui-button-primary-bg: var(--fui-button-primary-base);
-    --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
-    --fui-button-primary-bg-active: var(--fui-button-primary-active);
-    --fui-button-primary-shadow: none;
-    --fui-button-primary-shadow-active: none;
-
-    --fui-button-neutral-bg: light-dark(
-      color-mix(in srgb, var(--fui-bg-elevated) 94%, var(--fui-text-primary) 6%),
-      color-mix(in srgb, var(--fui-bg-elevated) 92%, var(--fui-text-primary) 8%)
-    );
-    --fui-button-neutral-bg-hover: light-dark(
-      color-mix(in srgb, var(--fui-bg-elevated) 90%, var(--fui-text-primary) 10%),
-      color-mix(in srgb, var(--fui-bg-elevated) 86%, var(--fui-text-primary) 14%)
-    );
-    --fui-button-neutral-bg-active: light-dark(
-      color-mix(in srgb, var(--fui-bg-elevated) 84%, var(--fui-text-primary) 16%),
-      color-mix(in srgb, var(--fui-bg-elevated) 80%, var(--fui-text-primary) 20%)
-    );
-    --fui-button-neutral-border: color-mix(
-      in srgb,
-      var(--fui-border-strong) 78%,
-      var(--fui-text-primary) 22%
-    );
-    --fui-button-neutral-border-hover: color-mix(
-      in srgb,
-      var(--fui-border-strong) 58%,
-      var(--fui-text-primary) 42%
-    );
-    --fui-button-neutral-color: var(--fui-text-primary);
-    --fui-button-outlined-shadow: none;
-    --fui-button-neutral-shadow: none;
-    --fui-button-neutral-shadow-active: none;
-
-    --fui-code-bg: #{$fui-code-bg};
     --fui-code-selection-bg: #{$fui-code-selection-bg};
     --fui-code-text: var(--fui-text-primary);
     --fui-code-token-keyword: light-dark(
@@ -1048,243 +1131,175 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
       #{$fui-code-token-variable},
       #{$fui-dark-code-token-variable}
     );
-    --fui-link-ink: light-dark(#{$fui-link-ink}, #{$fui-dark-link-ink});
-    --fui-card-accent-bg: var(--fui-bg-tertiary);
-    --fui-card-accent-border: color-mix(in srgb, var(--fui-color-accent) 30%, var(--fui-border));
-    --fui-card-accent-radius: #{$fui-card-accent-radius};
+    // Prose link ink: the accent text (4.5:1 on every plane, both modes).
+    --fui-link-ink: var(--fui-color-accent-text);
+    --fui-link-underline-offset: #{$fui-link-underline-offset};
 
-    // Product shell and navigation chrome. These stay neutral-first so a
-    // dashboard page reads as one system instead of brand-tinted islands.
-    --fui-app-canvas-bg: var(--fui-body-bg);
-    // Same surface order in both themes: the rail is recessed, the main
-    // reading sheet is raised. Light: tertiary paper rail, body-bg sheet.
-    // Dark keeps the lifted rail on a deeper body.
-    --fui-app-main-bg: var(--fui-body-bg);
-    --fui-app-sidebar-bg: var(--fui-bg-tertiary);
-    --fui-sidebar-bg: var(--fui-app-sidebar-bg);
-    --fui-sidebar-border: var(--fui-border-default);
+    // Working (UIR-D118): the selection as a wash, an edge and the sweep's near
+    // stop; the far stop is an engine role.
+    --fui-working-from: color-mix(in oklab, var(--fui-control-checked-bg) 30%, transparent);
+    --fui-working-wash: color-mix(in oklab, var(--fui-control-checked-bg) 9%, transparent);
+    --fui-working-edge: color-mix(in oklab, var(--fui-control-checked-bg) 24%, transparent);
+
+    // Chart series (UIR-D118): the selection, four turns of the brand (engine
+    // roles) and ink 3. No series reads a status seed.
+    --fui-chart-1: var(--fui-control-checked-bg);
+    --fui-chart-6: var(--fui-text-tertiary);
+
+    // Reading measures (UIR-D119).
+    --fui-feedback-empty-max-inline-sm: #{$fui-feedback-empty-max-inline};
+    --fui-feedback-empty-max-inline-md: #{$fui-feedback-empty-max-inline};
+    --fui-main-description-max-inline: #{$fui-main-description-max-inline};
+
+    // Navigation and table hooks: inks and state tints only. Planes and edges
+    // are read from the plane and line roles directly. The current item and a
+    // selected row are the selection: the wash plus its ring (UIR-D142).
     --fui-sidebar-item-color: var(--fui-text-secondary);
     --fui-sidebar-item-icon-color: var(--fui-text-tertiary);
-    --fui-sidebar-item-radius: var(--fui-radius-full);
-    --fui-sidebar-section-label-size: var(--fui-font-size-xs);
+    --fui-sidebar-section-label-size: var(--fui-type-caption-size);
     --fui-sidebar-item-hover-bg: var(--fui-bg-hover);
     --fui-sidebar-item-hover-color: var(--fui-text-primary);
     --fui-sidebar-item-active-bg: var(--fui-control-selected-bg);
-    --fui-sidebar-item-active-border: transparent;
+    --fui-sidebar-item-active-border: var(--fui-control-selected-border);
     --fui-sidebar-item-active-color: var(--fui-text-primary);
-    --fui-sidebar-item-active-indicator: transparent;
-    --fui-sidebar-footer-border: color-mix(in srgb, var(--fui-border-default) 68%, transparent);
-
-    // Card/panel surfaces.
-    --fui-badge-radius: var(--fui-radius-lg);
-    --fui-badge-dot-color: currentColor;
-    --fui-card-radius: var(--fui-radius-lg);
-    --fui-card-bg: color-mix(in srgb, var(--fui-bg-elevated) 92%, transparent);
-    // Full-bleed card chrome (for example `Card.Header divided`) shares the
-    // raised-neutral plane with shell controls. Keep the semantic alias
-    // component-specific so consumers can tune card hierarchy without
-    // changing every subtle surface.
-    --fui-card-header-bg: var(--fui-bg-subtle);
-    --fui-card-border: color-mix(in srgb, var(--fui-border-default) 86%, transparent);
-    --fui-card-outlined-border: var(--fui-card-border);
-    --fui-card-shadow: inset 0 1px 0
-      light-dark(
-        color-mix(in srgb, white 86%, transparent),
-        color-mix(in srgb, white 4%, transparent)
-      );
-    --fui-card-elevated-shadow:
-      var(--fui-card-shadow), 0 1px 2px color-mix(in srgb, black 8%, transparent),
-      0 16px 36px -28px color-mix(in srgb, black 34%, transparent);
-    --fui-card-hover-bg: color-mix(in srgb, var(--fui-bg-elevated) 88%, var(--fui-text-primary) 4%);
-    --fui-card-hover-border: color-mix(in srgb, var(--fui-border-strong) 86%, transparent);
-    --fui-card-active-bg: color-mix(
-      in srgb,
-      var(--fui-bg-elevated) 84%,
-      var(--fui-text-primary) 6%
-    );
-    --fui-card-active-shadow: inset 0 1px 2px color-mix(in srgb, black 12%, transparent);
-    --fui-card-panel-shadow: var(--fui-card-shadow);
-    --fui-card-stat-bg: color-mix(in srgb, var(--fui-bg-elevated) 74%, transparent);
-    --fui-card-stat-border: color-mix(in srgb, var(--fui-border-default) 78%, transparent);
-    --fui-card-stat-shadow: var(--fui-card-shadow);
-    --fui-panel-bg: color-mix(in srgb, var(--fui-bg-elevated) 74%, transparent);
-    --fui-panel-border: color-mix(in srgb, var(--fui-border-default) 78%, transparent);
-
-    // Tables.
-    --fui-table-bg: transparent;
-    --fui-table-border: var(--fui-border-default);
-    --fui-table-header-bg: color-mix(in srgb, var(--fui-text-primary) 5%, transparent);
-    --fui-table-header-border: var(--fui-border-strong);
     --fui-table-row-hover-bg: var(--fui-bg-hover);
     --fui-table-row-active-bg: var(--fui-bg-active);
     --fui-table-row-selected-bg: var(--fui-control-selected-bg);
-    --fui-table-row-selected-border: var(--fui-border-strong);
-    --fui-table-subrow-bg: color-mix(in srgb, var(--fui-bg-secondary) 62%, transparent);
+    --fui-table-row-selected-border: var(--fui-control-selected-border);
 
-    // Segmented controls / tabs.
-    --fui-tabs-pills-bg: color-mix(in srgb, var(--fui-text-primary) 5%, transparent);
-    --fui-tabs-pills-border: var(--fui-border-default);
-    --fui-tabs-pill-hover-bg: transparent;
-
-    // Header search is persistent shell chrome rather than a ghost action.
-    // One surface step above divided card headers keeps this global affordance
-    // easy to find in both themes without turning it into a selected control.
-    --fui-header-search-bg: var(--fui-bg-hover);
-
-    // Shadows (not <color> type — light-dark() can't be used, handled in dark overrides)
-    --fui-shadow-sm: #{$fui-shadow-sm};
-    --fui-shadow-md: #{$fui-shadow-md};
-    --fui-shadow-lg: #{$fui-shadow-lg};
+    // Shadows: one geometry each, colour stops that follow color-scheme. The
+    // popup shadow is the only drop shadow; the small one is for thumbs.
+    --fui-shadow-popup: #{_shadow-modes($fui-shadow-popup, $fui-dark-shadow-popup)};
+    --fui-shadow-sm: #{_shadow-modes($fui-shadow-sm, $fui-dark-shadow-sm)};
 
     // Focus
-    --fui-focus-ring-color: light-dark(#{$fui-focus-ring-color}, #{$fui-dark-focus-ring-color});
     --fui-focus-ring-offset: #{$fui-focus-ring-offset};
     --fui-focus-ring-width: #{$fui-focus-ring-width};
 
-    // Scrollbar
+    // Scrollbar: no track; the thumb is the strong edge, the field border on hover.
     --fui-scrollbar-width: #{$fui-scrollbar-width};
-    --fui-scrollbar-track: light-dark(#{$fui-scrollbar-track}, #{$fui-dark-scrollbar-track});
-    --fui-scrollbar-thumb: light-dark(#{$fui-scrollbar-thumb}, #{$fui-dark-scrollbar-thumb});
-    --fui-scrollbar-thumb-hover: light-dark(
-      #{$fui-scrollbar-thumb-hover},
-      #{$fui-dark-scrollbar-thumb-hover}
-    );
-
-    // Fixed component tracks plus compatibility aliases.
-    --fui-control-height-xs: #{$fui-control-height-xs};
-    --fui-control-height-sm: #{$fui-control-height-sm};
-    --fui-control-height-md: #{$fui-control-height-md};
-    --fui-control-height-lg: #{$fui-control-height-lg};
-    --fui-button-height-xs: var(--fui-control-height-xs);
-    --fui-button-height-sm: var(--fui-control-height-sm);
-    --fui-button-height-md: var(--fui-control-height-md);
-    --fui-button-height-lg: var(--fui-control-height-lg);
-    --fui-input-height-sm: var(--fui-field-track-sm);
-    --fui-input-height: var(--fui-field-track-md);
-    --fui-input-height-lg: var(--fui-field-track-lg);
+    --fui-scrollbar-track: transparent;
+    --fui-scrollbar-thumb: var(--fui-border-strong);
+    --fui-scrollbar-thumb-hover: var(--fui-field-border);
 
     // Touch targets (Fragments control floor: ≥32px)
     --fui-touch-sm: #{$fui-touch-sm};
     --fui-touch-md: #{$fui-touch-md};
     --fui-touch-lg: #{$fui-touch-lg};
     --fui-target-size-min: #{$fui-target-size-min};
+    --fui-hit-area: #{$fui-hit-area};
 
     // Sidebar
     --fui-sidebar-item-height: #{$fui-sidebar-item-height};
 
-    // AppShell Layout
+    // AppShell Layout (the sidebar widths are measurement targets)
     --fui-appshell-header-height: #{$fui-appshell-header-height};
     --fui-header-z-index: #{$fui-header-z-index};
   }
 
-  // Named runtime selectors use the same generated profiles as compile-time
-  // Sass seeds. Attribute specificity intentionally matches :root so these
-  // later rules can override the compiled default on either the document root
-  // or a scoped provider without inline numeric maps.
-  @each $radius-style in measurements.$radius-profile-names {
-    [data-fui-radius-style="#{$radius-style}"] {
-      @include measurements.emit-radius-profile($radius-style);
+  // A coarse pointer raises the hit-area floor; stacked rows read it as their
+  // height, so a touch row is the target (UIR-D120).
+  @media (pointer: coarse) {
+    :where(:root, [data-fui-theme]) {
+      --fui-hit-area: #{$fui-hit-area-coarse};
     }
   }
 
-  // Dark mode via data-theme attribute (manual toggle).
-  // Sets color-scheme: dark so light-dark() resolves to dark values.
-  // Explicit overrides kept as fallback for browsers without light-dark() (~8%).
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    @include _fui-dark-tokens;
+  // Named runtime selectors use the same generated profiles as compile-time
+  // Sass seeds. Attribute specificity intentionally beats the zero-specificity
+  // token block, so these rules override the compiled default on either the
+  // document root or a scoped provider without inline numeric maps.
+  // A profile sets the one radius input; every role re-derives from it.
+  // "default" is the Glass input, not the profile's own md step.
+  @each $radius-style in measurements.$radius-profile-names {
+    [data-fui-radius-style="#{$radius-style}"] {
+      @if $radius-style == "default" {
+        --fui-radius: 5px;
+      } @else {
+        @include measurements.emit-radius-profile($radius-style);
+      }
+    }
   }
 
-  // Dark mode via .dark class on html
-  :root.dark {
-    color-scheme: dark;
-    @include _fui-dark-tokens;
+  // ============================================
+  // Runtime colour derivation
+  // ============================================
+  // Every role below is a CSS expression of the L0 inputs (see _derive.scss),
+  // so a seed set on `:root` or a `[data-fui-theme]` element re-derives it with
+  // no build and no JS, holding 4.5:1 text and 3:1 indicators for any sRGB
+  // seed in both modes. Engines without relative colour syntax keep the
+  // static twins above.
+  @supports (color: oklch(from red l c h)) {
+    :where(:root, [data-fui-theme]) {
+      @each $name, $value in derive.helpers() {
+        #{$name}: #{$value};
+      }
+      @each $name, $expression in _engine-roles() {
+        --fui-#{$name}: #{$expression};
+      }
+    }
   }
 
-  // Light mode explicit override (for manual toggle back to light)
+  // Mode is the color-scheme switch: light-dark() in every role does the
+  // rest. The document takes it from data-theme; a scope that sets a mode
+  // takes it from its own data-theme, and paints its canvas and ink 1 so its
+  // text never sits on the page behind it.
+  :root[data-theme="dark"],
+  [data-fui-theme][data-theme="dark"] {
+    color-scheme: dark;
+  }
+
   :root[data-theme="light"],
-  :root.light {
+  [data-fui-theme][data-theme="light"] {
     color-scheme: light;
   }
 
-  // ============================================
-  // Runtime Color Derivation (Progressive Enhancement)
-  // ============================================
-  // Browsers supporting relative color syntax (~93%) get reactive tokens
-  // that auto-update when --fui-seed-* properties change at runtime.
-  // Derivation uses OKLCH space for perceptually uniform results.
-  // Browsers without support gracefully fall through to SCSS-computed values above.
-  // Usage: document.documentElement.style.setProperty('--fui-seed-brand', '#0066ff')
-  //   → accent, accent-hover, accent-active, focus-ring all update automatically.
-
-  @supports (color: oklch(from red l c h)) {
-    :root {
-      // Accent derived from seed-brand.
-      // Light mode: brand as-is. Dark mode: CHROMA-AWARE lift. Chroma is preserved
-      // (never clamped), so a saturated brand — e.g. blue-600 oklch(0.55 0.22 262) —
-      // stays a true, vibrant blue instead of a washed-out tint. Lightness is only
-      // lifted for near-grey/chroma-0 seeds, via the `0.95 - 2*c` term: a vibrant
-      // brand (high c) keeps its own lightness, while a neutral grey brand (c≈0) lifts
-      // toward ~0.85 so it stays visible on dark surfaces where lightness is the only
-      // perceptual cue. Final L is clamped to [0.55, 0.85].
-      // Dark half is gated: the Fragments default emits the exact SCSS-computed
-      // sage constants (#{$_rt-dark-accent}) so this path and the fallback agree;
-      // any consumer $fui-brand restores the reactive chroma-aware OKLCH lift.
-      --fui-color-accent: light-dark(var(--fui-seed-brand), #{$_rt-dark-accent});
-
-      // Auto-contrast text for elements on accent backgrounds (buttons, chips, etc.)
-      // Lightness > 0.6 → dark text; otherwise → white. Users can override this token.
-      --fui-color-on-accent: oklch(
-        from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0
-      );
-      --fui-color-accent-hover: light-dark(
-        oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.06)) c h),
-        #{$_rt-dark-accent-hover}
-      );
-      --fui-color-accent-active: light-dark(
-        oklch(from var(--fui-seed-brand) max(0.05, calc(l - 0.12)) c h),
-        #{$_rt-dark-accent-active}
-      );
-
-      // Semantic seeds drive the seed tokens; the ramp above mixes from them,
-      // so a runtime seed change re-derives every tint, wash, text and border.
-      --fui-color-danger: var(--fui-seed-danger);
-      --fui-color-success: var(--fui-seed-success);
-      --fui-color-warning: var(--fui-seed-warning);
-      --fui-color-info: var(--fui-seed-info);
-      --fui-color-danger-hover: oklch(from var(--fui-seed-danger) max(0.05, calc(l - 0.06)) c h);
-
-      // Focus ring follows the resolved accent so dark brands are lifted on
-      // dark surfaces instead of disappearing into the field chrome.
-      --fui-focus-ring-color: var(--fui-color-accent);
-    }
-
-    // Runtime-derived dark mode overrides (replaces SCSS-computed when supported).
-    // Chroma-aware lift mirroring the light-dark() dark half above: vibrant brands
-    // keep their own lightness + chroma; near-grey brands lift toward ~0.85. Chroma
-    // is never clamped, so saturated brands (e.g. blue-600) stay true in dark mode.
-    :root[data-theme="dark"],
-    :root.dark {
-      --fui-color-accent: #{$_rt-dark-accent};
-      --fui-color-on-accent: oklch(
-        from var(--fui-color-accent) calc(0 + (1 - clamp(0, calc((l - 0.6) * 999), 1))) 0 0
-      );
-      --fui-color-accent-hover: #{$_rt-dark-accent-hover};
-      --fui-color-accent-active: #{$_rt-dark-accent-active};
-      --fui-focus-ring-color: var(--fui-color-accent);
-    }
+  [data-fui-theme][data-theme="system"] {
+    color-scheme: light dark;
   }
 
-  // High contrast mode via system preference
+  [data-fui-theme][data-theme] {
+    background-color: var(--fui-body-bg, #{$fui-body-bg});
+    color: var(--fui-text-primary, #{$fui-text-primary});
+  }
+
+  // Primary chrome on any element: the roles re-resolve there, so a toolbar
+  // or a scope inherits the choice and reads its own ink and accent.
+  [data-chrome="accent"] {
+    --_fui-chrome: 0;
+    @include _primary-chrome;
+  }
+
+  [data-chrome="ink"] {
+    --_fui-chrome: 1;
+    @include _primary-chrome;
+  }
+
+  // High contrast via the system preference or the data attribute. A scope
+  // re-declares the roles it overrides, so it takes the overrides too.
   @media (prefers-contrast: more) {
-    :root {
+    :root,
+    [data-fui-theme] {
       @include _fui-high-contrast-tokens;
     }
   }
 
-  // High contrast mode via data attribute (manual toggle)
-  :root[data-high-contrast="true"] {
+  :root[data-high-contrast="true"],
+  :root[data-high-contrast="true"] [data-fui-theme] {
     @include _fui-high-contrast-tokens;
+  }
+
+  // Forced colours (UIR-D121): the boundary and focus roles take system
+  // colours, so an engine that does not force them paints what one that does
+  // would. It comes after high contrast and matches its selectors, so it wins
+  // when both apply.
+  @media (forced-colors: active) {
+    :root,
+    [data-fui-theme],
+    :root[data-high-contrast="true"],
+    :root[data-high-contrast="true"] [data-fui-theme] {
+      @include _fui-forced-colors-tokens;
+    }
   }
 
   // Global scrollbar styling
@@ -1320,6 +1335,38 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   }
 }
 
+// Primary chrome: the accent ramp at --_fui-chrome 0, ink 1 at 1. Ink chrome
+// labels the fill with the surface; hover and press mix ink 1 toward it.
+@mixin _primary-chrome {
+  --fui-button-primary-base: color-mix(
+    in srgb,
+    var(--fui-text-primary) calc(var(--_fui-chrome) * 100%),
+    var(--fui-color-accent)
+  );
+  --fui-button-primary-hover: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--fui-text-primary) 90%, var(--fui-bg-primary))
+      calc(var(--_fui-chrome) * 100%),
+    var(--fui-color-accent-hover)
+  );
+  --fui-button-primary-active: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--fui-text-primary) 82%, var(--fui-bg-primary))
+      calc(var(--_fui-chrome) * 100%),
+    var(--fui-color-accent-active)
+  );
+  --fui-button-primary-color: color-mix(
+    in srgb,
+    var(--fui-bg-primary) calc(var(--_fui-chrome) * 100%),
+    var(--fui-color-on-accent)
+  );
+  --fui-button-primary-border: var(--fui-button-primary-base);
+  --fui-button-primary-border-hover: var(--fui-button-primary-hover);
+  --fui-button-primary-bg: var(--fui-button-primary-base);
+  --fui-button-primary-bg-hover: var(--fui-button-primary-hover);
+  --fui-button-primary-bg-active: var(--fui-button-primary-active);
+}
+
 // High contrast mode support
 @mixin _fui-high-contrast-tokens {
   // Increase focus ring visibility
@@ -1328,72 +1375,24 @@ $fui-dark-link-ink: $fui-dark-color-accent !default;
   // Stronger borders for better visibility
   --fui-border: var(--fui-text-primary);
   --fui-border-strong: var(--fui-text-primary);
+  --fui-field-border: var(--fui-text-primary);
+  // A soft action's tint alone is no edge: it takes the strong one.
+  --fui-button-soft-border: var(--fui-border-strong);
 
   // Ensure minimum contrast on interactive elements (ink alpha works in both themes)
   --fui-bg-hover: color-mix(in srgb, var(--fui-text-primary) 18%, transparent);
   --fui-bg-active: color-mix(in srgb, var(--fui-text-primary) 26%, transparent);
-  --fui-field-selection-border: var(--fui-color-accent);
-  --fui-form-group-border: var(--fui-text-primary);
-  --fui-sidebar-item-active-border: var(--fui-text-primary);
   --fui-control-selected-border: var(--fui-text-primary);
 }
 
-// Private mixin for dark mode token values
-@mixin _fui-dark-tokens {
-  // Accent colors — brand used directly; on-accent handles text contrast
-  --fui-color-accent: #{$fui-dark-color-accent};
-  --fui-color-on-accent: #{$fui-dark-color-on-accent};
-  --fui-color-accent-hover: #{$fui-dark-color-accent-hover};
-  --fui-color-accent-active: #{$fui-dark-color-accent-active};
-
-  // Surfaces
-  --fui-bg-primary: #{$fui-dark-bg-primary};
-  --fui-bg-secondary: #{$fui-dark-bg-secondary};
-  --fui-bg-tertiary: #{$fui-dark-bg-tertiary};
-  --fui-bg-elevated: #{$fui-dark-bg-elevated};
-  --fui-bg-subtle: #{$fui-dark-bg-subtle};
-  --fui-bg-hover: color-mix(in srgb, var(--fui-text-primary) 9%, transparent);
-  --fui-bg-active: color-mix(in srgb, var(--fui-text-primary) 16%, transparent);
-  --fui-control-selected-bg: color-mix(in srgb, var(--fui-text-primary) 14%, transparent);
-  --fui-field-selection-bg-hover: color-mix(in srgb, var(--fui-text-primary) 18%, transparent);
-  --fui-body-bg: #{$fui-dark-body-bg};
-  --fui-main-bg: #{$fui-dark-main-bg};
-  --fui-app-main-bg: var(--fui-main-bg);
-  // Paper primary == secondary in dark, so a mix of the two is a no-op.
-  // Tertiary is the lifted rail; main stays the deeper body.
-  --fui-app-sidebar-bg: var(--fui-bg-tertiary);
-  --fui-sidebar-bg: var(--fui-app-sidebar-bg);
-  --fui-bg-inverse: #{$fui-dark-bg-inverse};
-
-  // Text
-  --fui-text-primary: #{$fui-dark-text-primary};
-  --fui-text-secondary: #{$fui-dark-text-secondary};
-  --fui-text-tertiary: #{$fui-dark-text-tertiary};
-  --fui-text-inverse: #{$fui-dark-text-inverse};
-
-  // Borders
-  --fui-border: #{$fui-dark-border};
-  --fui-border-default: #{$fui-dark-border-default};
-  --fui-border-strong: #{$fui-dark-border-strong};
-
-  // Shadows
-  --fui-shadow-sm: #{$fui-dark-shadow-sm};
-  --fui-shadow-md: #{$fui-dark-shadow-md};
-  --fui-shadow-lg: #{$fui-dark-shadow-lg};
-
-  // Semantic status recipe
-  @each $tone in (accent, danger, success, warning, info) {
-    --fui-color-#{$tone}-tint: color-mix(in srgb, var(--fui-color-#{$tone}) 26%, transparent);
-    --fui-color-#{$tone}-wash: color-mix(in srgb, var(--fui-color-#{$tone}) 16%, transparent);
-    --fui-color-#{$tone}-text: color-mix(in srgb, var(--fui-color-#{$tone}) 78%, white 22%);
-  }
-
-  // Focus & backdrop
-  --fui-focus-ring-color: #{$fui-dark-focus-ring-color};
-  --fui-backdrop: #{$fui-dark-backdrop};
-
-  // Scrollbar
-  --fui-scrollbar-track: #{$fui-dark-scrollbar-track};
-  --fui-scrollbar-thumb: #{$fui-dark-scrollbar-thumb};
-  --fui-scrollbar-thumb-hover: #{$fui-dark-scrollbar-thumb-hover};
+// Forced colours: the focus ring is Highlight; every boundary is CanvasText.
+// `--fui-focus-ring-color` is not a registered <color>, so the keyword reaches
+// `outline-color` as a system colour and forcing keeps it. Fills (checked,
+// selected, hover) are left to the forced-colours branch of each recipe.
+@mixin _fui-forced-colors-tokens {
+  --fui-focus-ring-color: Highlight;
+  --fui-border: CanvasText;
+  --fui-border-strong: CanvasText;
+  --fui-field-border: CanvasText;
+  --fui-control-selected-border: CanvasText;
 }

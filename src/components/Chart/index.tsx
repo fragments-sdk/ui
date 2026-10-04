@@ -1,59 +1,115 @@
 "use client";
 
 import * as React from "react";
+import { ChartLine, WarningCircle } from "@phosphor-icons/react";
 import { mergeAriaIds } from "../../utils/aria";
-import styles from "./Chart.module.scss";
 import { isDevelopmentBuild } from "../../utils/env";
+import { Button } from "../Button";
+import { EmptyState } from "../EmptyState";
+import { Skeleton } from "../Skeleton";
+import styles from "./Chart.module.scss";
 
 // ============================================
 // Types (self-owned — no external dependency for types)
 // ============================================
 
-export type ChartConfig = Record<
-  string,
-  {
-    label: string;
-    color: string;
-    icon?: React.ComponentType<Record<string, unknown>>;
-  }
->;
+/** Index into the six `--fui-chart-N` series tokens. */
+export type ChartSeries = 1 | 2 | 3 | 4 | 5 | 6;
 
-export interface ChartContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ChartConfigEntry {
+  /** Name read in the legend, the tooltip and by screen readers. */
+  label: string;
+  /** Which series colour (`--fui-chart-1` … `--fui-chart-6`) draws this key. */
+  series: ChartSeries;
+  /** Optional glyph shown in the legend in place of the swatch. */
+  icon?: React.ComponentType<Record<string, unknown>>;
+}
+
+export type ChartConfig = Record<string, ChartConfigEntry>;
+
+export interface ChartContainerProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
   config: ChartConfig;
   children: React.ReactElement;
   /** Non-visual summary announced to assistive technology users */
   summary?: string;
   /** Optional accessible data table or textual fallback */
   dataTable?: React.ReactNode;
+  /** Draw a skeleton at the chart's height while the data loads. */
+  loading?: boolean;
+  /**
+   * The empty state's title, shown when the chart child's `data` is an empty array.
+   * @default "No data to show"
+   */
+  empty?: React.ReactNode;
+  /** The empty state's copy under the title: why there is nothing yet. */
+  emptyDescription?: React.ReactNode;
+  /** The empty state's one way forward (a Button). */
+  emptyAction?: React.ReactNode;
+  /** When set, replaces the chart with an error box holding this message (the data failed to load). */
+  error?: React.ReactNode;
+  /** Retry the failed load. Shows a retry button in the error box. */
+  onRetry?: () => void;
+  /** Label for the retry button. @default "Retry" */
+  retryLabel?: string;
 }
+
+type ChartPayloadEntry = {
+  name?: string;
+  value?: number | string;
+  dataKey?: string | number;
+  color?: string;
+  fill?: string;
+  stroke?: string;
+  strokeDasharray?: string | number;
+  type?: string;
+  payload?: Record<string, unknown>;
+};
 
 export interface ChartTooltipContentProps {
   active?: boolean;
-  payload?: readonly {
-    name?: string;
-    value?: number | string;
-    dataKey?: string | number;
-    color?: string;
-    payload?: Record<string, unknown>;
-  }[];
+  payload?: readonly ChartPayloadEntry[];
   label?: string;
-  indicator?: "dot" | "line" | "dashed";
   hideLabel?: boolean;
-  hideIndicator?: boolean;
   labelFormatter?: (label: string, payload: ChartTooltipContentProps["payload"]) => React.ReactNode;
   valueFormatter?: (value: number | string) => string;
 }
 
 export interface ChartLegendContentProps {
-  payload?: readonly {
-    value?: string;
-    dataKey?: string | number;
-    color?: string;
-  }[];
+  payload?: readonly (ChartPayloadEntry & { value?: string })[];
 }
 
 // Internal-only type for recharts Legend props
 type RechartsLegendProps = Record<string, unknown>;
+
+// ============================================
+// Series colour and marker
+// ============================================
+
+function seriesColor(series: ChartSeries): string {
+  return `var(--fui-chart-${series})`;
+}
+
+const BLANK_FILLS = new Set(["none", "transparent", "#fff", "#ffffff", "white"]);
+
+/**
+ * The swatch follows the series: a dashed stroke reads as a dashed marker, a
+ * stroke-only series (a line) as a line, anything filled (bar, area, slice)
+ * as a dot.
+ */
+function markerFor(entry: ChartPayloadEntry): "dot" | "line" | "dashed" {
+  const dash =
+    entry.strokeDasharray ??
+    (entry.payload?.strokeDasharray as string | number | undefined) ??
+    undefined;
+  if (dash && String(dash) !== "0") return "dashed";
+  if (entry.type === "line" || entry.type === "plainline") return "line";
+  const fill = entry.fill?.toLowerCase();
+  if (entry.stroke && (!fill || BLANK_FILLS.has(fill))) return "line";
+  return "dot";
+}
 
 // ============================================
 // Lazy-loaded dependencies (recharts)
@@ -87,11 +143,18 @@ function loadChartDeps(): Promise<void> {
   return _chartLoadPromise;
 }
 
+type ChartDepsState = "pending" | "ready" | "failed";
+
+function readDepsState(): ChartDepsState {
+  if (_RechartsTooltip) return "ready";
+  return _chartFailed ? "failed" : "pending";
+}
+
 /** Kick off the lazy recharts load on mount and re-render once it settles. */
-function useChartDeps(): boolean {
+function useChartDeps(): ChartDepsState {
   const [, rerender] = React.useReducer((n: number) => n + 1, 0);
   React.useEffect(() => {
-    if (_RechartsTooltip || _chartFailed) return;
+    if (readDepsState() !== "pending") return;
     let active = true;
     void loadChartDeps().then(() => {
       if (active) rerender();
@@ -100,7 +163,7 @@ function useChartDeps(): boolean {
       active = false;
     };
   }, []);
-  return _RechartsTooltip !== null;
+  return readDepsState();
 }
 
 // ============================================
@@ -117,9 +180,19 @@ export function useChartConfig() {
   return ctx;
 }
 
+function entryColor(config: ChartConfig | null, key: string, entry: ChartPayloadEntry) {
+  const configEntry = config?.[key];
+  return configEntry ? seriesColor(configEntry.series) : entry.color;
+}
+
 // ============================================
 // ChartContainer
 // ============================================
+
+function hasNoData(child: React.ReactElement): boolean {
+  const data = (child.props as { data?: unknown }).data;
+  return Array.isArray(data) && data.length === 0;
+}
 
 export function ChartContainer({
   config,
@@ -128,11 +201,19 @@ export function ChartContainer({
   style,
   summary,
   dataTable,
+  loading = false,
+  empty,
+  emptyDescription,
+  emptyAction,
+  error,
+  onRetry,
+  retryLabel = "Retry",
   "aria-label": ariaLabel,
   "aria-describedby": ariaDescribedBy,
   ...htmlProps
 }: ChartContainerProps) {
   const chartId = React.useId();
+  const deps = useChartDeps();
   const frameRef = React.useRef<HTMLDivElement | null>(null);
   // Recharts only lays a chart out once it knows a pixel box. Percentage
   // sizing leaves the first paint blank until something else happens to
@@ -161,49 +242,44 @@ export function ChartContainer({
     return () => observer.disconnect();
   }, []);
 
+  const label = ariaLabel || "Chart";
+  const rootClasses = [styles.container, className].filter(Boolean).join(" ");
+
+  // One state at a time, most urgent first: the caller's error, then a
+  // missing recharts, then loading, then no data, then the chart itself.
+  const state: "error" | "unavailable" | "loading" | "empty" | "ready" = error
+    ? "error"
+    : deps === "failed"
+      ? "unavailable"
+      : loading
+        ? "loading"
+        : hasNoData(children)
+          ? "empty"
+          : "ready";
+
   const summaryId = summary ? `chart-summary-${chartId}` : undefined;
   const dataTableId = dataTable ? `chart-data-${chartId}` : undefined;
 
-  // Build CSS custom properties from config (--chart-<key>)
-  const cssVars = React.useMemo(() => {
-    const vars: Record<string, string> = {};
-    Object.entries(config).forEach(([key, val]) => {
-      vars[`--chart-${key}`] = val.color;
-    });
-    return vars;
-  }, [config]);
+  let body: React.ReactNode;
+  if (state === "ready") {
+    // Inject sizing props into the chart child (recharts API).
+    // Only pass `responsive` for custom component types to avoid leaking the
+    // prop to intrinsic DOM nodes in test/demo usage.
+    const measured = frame !== null && frame.width > 0 && frame.height > 0;
+    const chartChildProps: Record<string, unknown> = measured
+      ? { width: frame.width, height: frame.height }
+      : { width: "100%", height: "100%" };
 
-  const rootClasses = [styles.container, className].filter(Boolean).join(" ");
+    if (!measured && typeof children.type !== "string") {
+      chartChildProps.responsive = true;
+    }
 
-  // Inject sizing props into the chart child (recharts API).
-  // Only pass `responsive` for custom component types to avoid leaking the
-  // prop to intrinsic DOM nodes in test/demo usage.
-  const measured = frame !== null && frame.width > 0 && frame.height > 0;
-  const chartChildProps: Record<string, unknown> = measured
-    ? { width: frame.width, height: frame.height }
-    : { width: "100%", height: "100%" };
-
-  if (!measured && typeof children.type !== "string") {
-    chartChildProps.responsive = true;
-  }
-
-  const chartChild = React.cloneElement(
-    children as React.ReactElement<Record<string, unknown>>,
-    chartChildProps
-  );
-
-  return (
-    <ChartConfigContext.Provider value={config}>
-      <div
-        {...htmlProps}
-        ref={frameRef}
-        className={rootClasses}
-        style={{ ...cssVars, ...style }}
-        role="img"
-        aria-label={ariaLabel || "Chart"}
-        aria-describedby={mergeAriaIds(ariaDescribedBy, summaryId, dataTableId)}
-      >
-        {chartChild}
+    body = (
+      <>
+        {React.cloneElement(
+          children as React.ReactElement<Record<string, unknown>>,
+          chartChildProps
+        )}
         {summaryId && (
           <span id={summaryId} className={styles.srOnly}>
             {summary}
@@ -214,6 +290,67 @@ export function ChartContainer({
             {dataTable}
           </div>
         )}
+      </>
+    );
+  } else if (state === "loading") {
+    body = <Skeleton fill />;
+  } else if (state === "unavailable" && dataTable) {
+    body = <div className={styles.fallbackTable}>{dataTable}</div>;
+  } else if (state === "error") {
+    // A failed load is the errbox every data surface shows: the danger glyph,
+    // the words, and one way out.
+    body = (
+      <div className={styles.errbox} role="alert">
+        <span className={styles.errboxIcon} aria-hidden="true">
+          <WarningCircle weight="fill" />
+        </span>
+        <div className={styles.errboxWords}>{error}</div>
+        {onRetry ? (
+          <div className={styles.errboxActions}>
+            <Button variant="soft" size="sm" onClick={onRetry}>
+              {retryLabel}
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    );
+  } else {
+    const unavailable = state === "unavailable";
+    const description = unavailable ? summary : emptyDescription;
+    body = (
+      <EmptyState size="sm">
+        <EmptyState.Icon aria-hidden="true">
+          <ChartLine />
+        </EmptyState.Icon>
+        <EmptyState.Title as="p">
+          {unavailable ? "Chart unavailable" : (empty ?? "No data to show")}
+        </EmptyState.Title>
+        {description && <EmptyState.Description>{description}</EmptyState.Description>}
+        {!unavailable && emptyAction && <EmptyState.Actions>{emptyAction}</EmptyState.Actions>}
+      </EmptyState>
+    );
+  }
+
+  const drawn = state === "ready";
+
+  // The frame element stays the same across states so the resize observer
+  // keeps measuring it when loading gives way to the chart.
+  return (
+    <ChartConfigContext.Provider value={config}>
+      <div
+        {...htmlProps}
+        ref={frameRef}
+        className={[rootClasses, !drawn && styles.state].filter(Boolean).join(" ")}
+        style={style}
+        role={drawn || state === "loading" ? "img" : "group"}
+        aria-label={label}
+        aria-busy={state === "loading" || undefined}
+        aria-describedby={
+          drawn ? mergeAriaIds(ariaDescribedBy, summaryId, dataTableId) : ariaDescribedBy
+        }
+        data-state={state}
+      >
+        {body}
       </div>
     </ChartConfigContext.Provider>
   );
@@ -223,13 +360,17 @@ export function ChartContainer({
 // ChartTooltipContent
 // ============================================
 
+const MARKER_CLASS = {
+  dot: undefined,
+  line: styles.markerLine,
+  dashed: styles.markerDashed,
+} as const;
+
 export function ChartTooltipContent({
   active,
   payload,
   label,
-  indicator = "dot",
   hideLabel = false,
-  hideIndicator = false,
   labelFormatter,
   valueFormatter,
 }: ChartTooltipContentProps) {
@@ -238,6 +379,8 @@ export function ChartTooltipContent({
   if (!active || !payload?.length) return null;
 
   const formattedLabel = labelFormatter ? labelFormatter(String(label), payload) : label;
+  // One series needs no key: the swatch only maps colour to name.
+  const showMarker = payload.length > 1;
 
   return (
     <div className={styles.tooltip}>
@@ -245,30 +388,21 @@ export function ChartTooltipContent({
       <div className={styles.tooltipItems}>
         {payload.map((entry, i) => {
           const key = String(entry.dataKey ?? entry.name ?? i);
-          const configEntry = config?.[key];
-          const displayLabel = configEntry?.label ?? entry.name ?? key;
-          const color = entry.color ?? configEntry?.color;
+          const displayLabel = config?.[key]?.label ?? entry.name ?? key;
+          const color = entryColor(config, key, entry);
+          const marker = markerFor(entry);
           const displayValue = valueFormatter
             ? valueFormatter(entry.value ?? 0)
             : String(entry.value ?? "");
 
-          const indicatorClass = [
-            styles.tooltipIndicator,
-            indicator === "line" && styles.tooltipIndicatorLine,
-            indicator === "dashed" && styles.tooltipIndicatorDashed,
-          ]
-            .filter(Boolean)
-            .join(" ");
-
           return (
             <div key={key} className={styles.tooltipItem}>
-              {!hideIndicator && (
+              {showMarker && (
                 <span
-                  className={indicatorClass}
-                  style={{
-                    backgroundColor: indicator === "dashed" ? undefined : color,
-                    borderColor: color,
-                  }}
+                  className={[styles.marker, MARKER_CLASS[marker]].filter(Boolean).join(" ")}
+                  data-marker={marker}
+                  style={{ "--_fui-chart-marker-color": color } as React.CSSProperties}
+                  aria-hidden="true"
                 />
               )}
               <span className={styles.tooltipItemLabel}>{displayLabel}</span>
@@ -286,9 +420,7 @@ export function ChartTooltipContent({
 // ============================================
 
 type ChartTooltipProps = {
-  indicator?: "dot" | "line" | "dashed";
   hideLabel?: boolean;
-  hideIndicator?: boolean;
   labelFormatter?: ChartTooltipContentProps["labelFormatter"];
   valueFormatter?: ChartTooltipContentProps["valueFormatter"];
   content?: React.ReactNode | ((tooltipProps: Record<string, unknown>) => React.ReactNode);
@@ -296,32 +428,28 @@ type ChartTooltipProps = {
 };
 
 export function ChartTooltip({
-  indicator,
   hideLabel,
-  hideIndicator,
   labelFormatter,
   valueFormatter,
   content,
   ...props
 }: ChartTooltipProps) {
-  const chartReady = useChartDeps();
+  const deps = useChartDeps();
 
   const defaultContent = React.useCallback(
     (tooltipProps: Record<string, unknown>) => (
       <ChartTooltipContent
         {...(tooltipProps as ChartTooltipContentProps)}
-        indicator={indicator}
         hideLabel={hideLabel}
-        hideIndicator={hideIndicator}
         labelFormatter={labelFormatter}
         valueFormatter={valueFormatter}
       />
     ),
-    [indicator, hideLabel, hideIndicator, labelFormatter, valueFormatter]
+    [hideLabel, labelFormatter, valueFormatter]
   );
 
-  // Nothing until recharts resolves; nothing at all if it is not installed.
-  if (!chartReady || !_RechartsTooltip) {
+  // Nothing until recharts resolves; the container shows the fallback if it never does.
+  if (deps !== "ready" || !_RechartsTooltip) {
     return null;
   }
 
@@ -329,7 +457,8 @@ export function ChartTooltip({
 
   return (
     <RechartsTooltipComponent
-      cursor={{ stroke: "var(--fui-border)" }}
+      cursor={{ stroke: "var(--fui-border-strong)" }}
+      isAnimationActive={false}
       content={content ?? defaultContent}
       {...props}
     />
@@ -351,11 +480,25 @@ export function ChartLegendContent({ payload }: ChartLegendContentProps) {
         const key = String(entry.dataKey ?? entry.value ?? "");
         const configEntry = config?.[key];
         const label = configEntry?.label ?? entry.value ?? key;
-        const color = entry.color ?? configEntry?.color;
+        const color = entryColor(config, key, entry);
+        const marker = markerFor(entry);
+        const Glyph = configEntry?.icon;
+        const swatchStyle = { "--_fui-chart-marker-color": color } as React.CSSProperties;
 
         return (
           <div key={key} className={styles.legendItem}>
-            <span className={styles.legendDot} style={{ backgroundColor: color }} />
+            {Glyph ? (
+              <span className={styles.legendGlyph} style={swatchStyle} aria-hidden="true">
+                <Glyph />
+              </span>
+            ) : (
+              <span
+                className={[styles.marker, MARKER_CLASS[marker]].filter(Boolean).join(" ")}
+                data-marker={marker}
+                style={swatchStyle}
+                aria-hidden="true"
+              />
+            )}
             <span className={styles.legendLabel}>{label}</span>
           </div>
         );
@@ -373,13 +516,13 @@ type ChartLegendProps = RechartsLegendProps & {
 };
 
 export function ChartLegend({ content, ...props }: ChartLegendProps) {
-  const chartReady = useChartDeps();
+  const deps = useChartDeps();
 
   const defaultContent = (legendProps: Record<string, unknown>) => (
     <ChartLegendContent {...(legendProps as ChartLegendContentProps)} />
   );
 
-  if (!chartReady || !_RechartsLegend) {
+  if (deps !== "ready" || !_RechartsLegend) {
     return null;
   }
 

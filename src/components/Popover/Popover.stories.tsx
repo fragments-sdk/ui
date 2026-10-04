@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Popover } from ".";
+import { Button } from "../Button";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
@@ -26,30 +27,22 @@ const meta = {
   },
   args: {
     modal: false,
-    children: (
-      <>
-        <Popover.Trigger>Open Popover</Popover.Trigger>
-        <Popover.Content>
-          <Popover.Close />
-          <Popover.Title>Popover Title</Popover.Title>
-          <Popover.Description>This is a popover with some content.</Popover.Description>
-        </Popover.Content>
-      </>
-    ),
   },
 } satisfies Meta<typeof Popover>;
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+// Typed from the component, not the meta: every story renders its own
+// children, and JSX stays out of component-level args (Storybook docs).
+type Story = StoryObj<typeof Popover>;
 
 export const Default: Story = {
   render: (args) => (
     <Popover {...args}>
-      <Popover.Trigger>Open Popover</Popover.Trigger>
+      <Popover.Trigger render={<Button variant="soft" />}>Open popover</Popover.Trigger>
       <Popover.Content>
         <Popover.Close />
-        <Popover.Title>Popover Title</Popover.Title>
+        <Popover.Title>Popover title</Popover.Title>
         <Popover.Description>
           This is a popover with some content. It can contain text, forms, or other elements.
         </Popover.Description>
@@ -58,12 +51,28 @@ export const Default: Story = {
   ),
 };
 
+export const WithFooter: Story = {
+  render: (args) => (
+    <Popover {...args}>
+      <Popover.Trigger render={<Button variant="soft" />}>Evidence</Popover.Trigger>
+      <Popover.Content>
+        <Popover.Title>Checked 4 minutes ago</Popover.Title>
+        <Popover.Description>Three findings in two files.</Popover.Description>
+        <Popover.Footer>
+          <Popover.Close render={<Button variant="ghost" size="sm" />}>Dismiss</Popover.Close>
+          <Button size="sm">Open findings</Button>
+        </Popover.Footer>
+      </Popover.Content>
+    </Popover>
+  ),
+};
+
 export const WithArrow: Story = {
   render: (args) => (
     <Popover {...args}>
-      <Popover.Trigger>Info</Popover.Trigger>
+      <Popover.Trigger render={<Button variant="soft" />}>Info</Popover.Trigger>
       <Popover.Content arrow>
-        <Popover.Title>Quick Tip</Popover.Title>
+        <Popover.Title>Quick tip</Popover.Title>
         <Popover.Description>
           This popover has an arrow pointing to its trigger element.
         </Popover.Description>
@@ -75,7 +84,7 @@ export const WithArrow: Story = {
 export const TopSide: Story = {
   render: (args) => (
     <Popover {...args}>
-      <Popover.Trigger>Top</Popover.Trigger>
+      <Popover.Trigger render={<Button variant="soft" />}>Top</Popover.Trigger>
       <Popover.Content side="top" size="sm">
         <Popover.Description>Popover on top</Popover.Description>
       </Popover.Content>
@@ -86,7 +95,7 @@ export const TopSide: Story = {
 export const SmallSize: Story = {
   render: (args) => (
     <Popover {...args}>
-      <Popover.Trigger>Compact</Popover.Trigger>
+      <Popover.Trigger render={<Button variant="soft" />}>Compact</Popover.Trigger>
       <Popover.Content size="sm">
         <Popover.Description>A small, focused popover.</Popover.Description>
       </Popover.Content>
@@ -115,24 +124,12 @@ function VirtualAnchorDemo(args: React.ComponentProps<typeof Popover>) {
         Anchor element
       </div>
       <Popover {...args} open={open} onOpenChange={setOpen}>
-        <Popover.Trigger
-          style={{
-            position: "absolute",
-            width: 1,
-            height: 1,
-            overflow: "hidden",
-            clip: "rect(0 0 0 0)",
-          }}
-          onClick={() => setOpen(true)}
-        >
-          Open (off-screen trigger)
-        </Popover.Trigger>
+        <Popover.Trigger render={<Button variant="soft" />}>Open against the box</Popover.Trigger>
         <Popover.Content anchor={anchor} positionMethod="fixed">
           <Popover.Close />
           <Popover.Title>Anchored elsewhere</Popover.Title>
           <Popover.Description>
-            This content is positioned against the dashed box above, not the (visually hidden)
-            trigger button.
+            This content is positioned against the dashed box above, not the trigger button.
           </Popover.Description>
         </Popover.Content>
       </Popover>
@@ -142,9 +139,8 @@ function VirtualAnchorDemo(args: React.ComponentProps<typeof Popover>) {
 
 /**
  * Positions content against an arbitrary DOM element instead of the
- * trigger, via `anchor` + `positionMethod="fixed"`. Used by Fragments
- * Inspect's element-anchored detail view, where the "anchor" is a node in
- * the host page rather than something rendered by this popover's own tree.
+ * trigger, via `anchor` + `positionMethod="fixed"`: the anchor can be a node
+ * in a host page rather than something this popover renders.
  */
 export const VirtualAnchor: Story = {
   render: (args) => <VirtualAnchorDemo {...args} />,

@@ -2,6 +2,7 @@ import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { act, render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
+import { Field } from "../Field";
 import { Combobox } from "./index";
 
 type RenderComboboxProps =
@@ -12,7 +13,7 @@ function renderCombobox(props: RenderComboboxProps = {}) {
   if (props.multiple) {
     return render(
       <Combobox
-        placeholder={props.placeholder ?? "Search..."}
+        placeholder={props.placeholder ?? "Search…"}
         onValueChange={props.onValueChange}
         multiple
       >
@@ -28,7 +29,7 @@ function renderCombobox(props: RenderComboboxProps = {}) {
   }
 
   return render(
-    <Combobox placeholder={props.placeholder ?? "Search..."} onValueChange={props.onValueChange}>
+    <Combobox placeholder={props.placeholder ?? "Search…"} onValueChange={props.onValueChange}>
       <Combobox.Input />
       <Combobox.Content>
         <Combobox.Item value="react">React</Combobox.Item>
@@ -51,27 +52,33 @@ describe("Combobox", () => {
     expect(screen.getByPlaceholderText("Type to search")).toBeInTheDocument();
   });
 
-  it("labels the single-select input from the root label", () => {
+  it("labels the single-select input from a Field label", () => {
     render(
-      <Combobox label="Framework" placeholder="Search">
-        <Combobox.Input />
-        <Combobox.Content>
-          <Combobox.Item value="react">React</Combobox.Item>
-        </Combobox.Content>
-      </Combobox>
+      <Field>
+        <Field.Label>Framework</Field.Label>
+        <Combobox placeholder="Search">
+          <Combobox.Input />
+          <Combobox.Content>
+            <Combobox.Item value="react">React</Combobox.Item>
+          </Combobox.Content>
+        </Combobox>
+      </Field>
     );
 
     expect(screen.getByRole("combobox", { name: "Framework" })).toBeInTheDocument();
   });
 
-  it("labels the multi-select input from the root label", () => {
+  it("labels the multi-select input from a Field label", () => {
     render(
-      <Combobox label="Frameworks" placeholder="Search" multiple>
-        <Combobox.Input />
-        <Combobox.Content>
-          <Combobox.Item value="react">React</Combobox.Item>
-        </Combobox.Content>
-      </Combobox>
+      <Field>
+        <Field.Label>Frameworks</Field.Label>
+        <Combobox placeholder="Search" multiple>
+          <Combobox.Input />
+          <Combobox.Content>
+            <Combobox.Item value="react">React</Combobox.Item>
+          </Combobox.Content>
+        </Combobox>
+      </Field>
     );
 
     expect(screen.getByRole("combobox", { name: "Frameworks" })).toBeInTheDocument();
@@ -95,6 +102,30 @@ describe("Combobox", () => {
     const option = await screen.findByRole("option", { name: "React" });
     await user.click(option);
     expect(onChange).toHaveBeenCalledWith("react");
+  });
+
+  it("opens for browsing while readOnly without changing the value", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <Combobox readOnly placeholder="Search…" onValueChange={onChange}>
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+          <Combobox.Item value="vue">Vue</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+    const input = screen.getByRole("combobox");
+    expect(input).toHaveAttribute("readonly");
+    expect(input).toHaveAttribute("aria-readonly", "true");
+
+    await user.click(input);
+    await user.keyboard("{ArrowDown}");
+    await user.click(await screen.findByRole("option", { name: "Vue" }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(input).toHaveValue("");
   });
 
   it("does not select a new option when readOnly", async () => {
@@ -300,6 +331,24 @@ describe("Combobox", () => {
     expect(await screen.findByText("Frameworks")).toBeInTheDocument();
   });
 
+  it("names the group from its label and hides the label from the accessibility tree", async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox placeholder="Search">
+        <Combobox.Input />
+        <Combobox.Content>
+          <Combobox.Group>
+            <Combobox.GroupLabel>Frameworks</Combobox.GroupLabel>
+            <Combobox.Item value="react">React</Combobox.Item>
+          </Combobox.Group>
+        </Combobox.Content>
+      </Combobox>
+    );
+    await user.click(screen.getByRole("combobox"));
+    expect(await screen.findByRole("group", { name: "Frameworks" })).toBeInTheDocument();
+    expect(screen.getByText("Frameworks")).toHaveAttribute("aria-hidden", "true");
+  });
+
   it("forwards html props to item and labels", async () => {
     const user = userEvent.setup();
     render(
@@ -376,7 +425,7 @@ describe("Combobox", () => {
 
   it("has no accessibility violations", async () => {
     const { container } = render(
-      <Combobox placeholder="Search...">
+      <Combobox placeholder="Search…">
         <Combobox.Input aria-label="Search frameworks" />
         <Combobox.Content>
           <Combobox.Item value="react">React</Combobox.Item>
@@ -529,21 +578,93 @@ describe("Combobox", () => {
     expect(await screen.findByText("react")).toBeInTheDocument();
   });
 
-  // The `error` prop shipped once rendering only the message: no invalid edge
-  // and no aria-invalid, so the control looked and read as valid. Assert the
-  // rendered pair, not the source text — a source check cannot tell whether
-  // the attribute is present but the selector never matches.
-  it("marks the control invalid both visually and programmatically", () => {
-    const { container } = render(
-      <Combobox label="Framework" error errorMessage="Pick one">
-        <Combobox.Input />
+  // Invalid is the edge and aria-invalid together, never the edge alone.
+  it("marks the input invalid both visually and programmatically", () => {
+    render(
+      <Combobox invalid>
+        <Combobox.Input aria-label="Framework" />
         <Combobox.Content>
           <Combobox.Item value="react">React</Combobox.Item>
         </Combobox.Content>
       </Combobox>
     );
 
-    expect(container.querySelector("[data-invalid]")).not.toBeNull();
     expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("names its trigger and each chip's remove button", () => {
+    render(
+      <Combobox multiple defaultValue={["react"]}>
+        <Combobox.Input aria-label="Frameworks" />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+    expect(screen.getByRole("button", { name: "Show options" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove React" })).toBeInTheDocument();
+  });
+
+  it("puts the options inside a listbox", async () => {
+    const user = userEvent.setup();
+    renderCombobox();
+    await user.click(screen.getByRole("combobox"));
+    const option = await screen.findByRole("option", { name: "React" });
+    expect(option.closest('[role="listbox"]')).not.toBeNull();
+  });
+
+  it("names the query when nothing matches", async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox>
+        <Combobox.Input aria-label="Framework" />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+    await user.type(screen.getByRole("combobox"), "zzz");
+    expect(await screen.findByText("No match for “zzz”")).toBeInTheDocument();
+  });
+
+  it("says it is searching while loading, and the popup is busy", async () => {
+    const user = userEvent.setup();
+    render(
+      <Combobox loading>
+        <Combobox.Input aria-label="Framework" />
+        <Combobox.Content>{null}</Combobox.Content>
+      </Combobox>
+    );
+    await user.click(screen.getByRole("combobox"));
+    expect(await screen.findByText("Searching…")).toBeInTheDocument();
+    expect(screen.queryByText(/No match|No options/)).toBeNull();
+    expect(screen.getByRole("listbox").closest("[aria-busy]")).not.toBeNull();
+  });
+
+  it("hands each query to onInputValueChange", async () => {
+    const onInputValueChange = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <Combobox onInputValueChange={onInputValueChange}>
+        <Combobox.Input aria-label="Framework" />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+    await user.type(screen.getByRole("combobox"), "re");
+    expect(onInputValueChange).toHaveBeenLastCalledWith("re");
+  });
+
+  it("sets the size on the shell, the 24 step included", () => {
+    const { container } = render(
+      <Combobox size="xs">
+        <Combobox.Input aria-label="Framework" />
+        <Combobox.Content>
+          <Combobox.Item value="react">React</Combobox.Item>
+        </Combobox.Content>
+      </Combobox>
+    );
+    expect(container.querySelector(".inputWrapper")).toHaveAttribute("data-size", "xs");
   });
 });

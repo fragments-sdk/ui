@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Toast } from ".";
+import { Toast, useToast } from ".";
+import { Button } from "../Button";
+import { Stack } from "../Stack";
 import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
@@ -17,26 +19,22 @@ const meta = {
     docs: {
       description: {
         component:
-          "Brief, non-blocking notification messages. Prefer this (via Toast.Provider + useToast) over a hand-rolled notification system.",
+          "Brief, non-blocking notification messages on the raised plane. The tone shows only as the icon. Prefer this (via Toast.Provider + useToast) over a hand-rolled notification system.",
       },
     },
   },
   argTypes: {
     tone: {
       control: "select",
-      options: ["neutral", "success", "danger", "warning", "info"],
-      description: "Colour on the shared status ramp",
+      options: ["neutral", "success", "warning", "danger"],
+      description: "The outcome; semantic tones draw an icon in the tone's ink",
     },
-    title: { control: "text", description: "Toast title" },
-    description: { control: "text", description: "Additional message content" },
-    duration: {
-      control: "number",
-      description: "Auto-dismiss duration in ms (0 = no auto-dismiss)",
-    },
+    title: { control: "text", description: "One line on what happened" },
+    description: { control: "text", description: "One sentence more" },
   },
   args: {
-    title: "Notification",
-    description: "This is a toast message.",
+    title: "Draft saved",
+    description: "Kept until you publish.",
     tone: "neutral",
   },
 } satisfies Meta<typeof Toast>;
@@ -45,49 +43,83 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { title: "Heads up", description: "Something just happened.", tone: "neutral" },
+export const Default: Story = {};
+
+export const Tones: Story = {
+  render: () => (
+    <Stack direction="column" gap="sm">
+      <Toast title="Draft saved" description="Kept until you publish." />
+      <Toast title="Branch merged" description="Checks passed on main." tone="success" />
+      <Toast title="Usage near the limit" description="9 of 10 seats in use." tone="warning" />
+      <Toast title="Push failed" description="The remote refused the branch." tone="danger" />
+    </Stack>
+  ),
 };
 
-export const Success: Story = {
+export const WithUndo: Story = {
   args: {
-    title: "Success!",
-    description: "Your changes have been saved.",
-    tone: "success",
+    title: "Deleted 3 findings",
+    description: undefined,
+    action: { label: "Undo", onClick: () => {}, undo: true },
+    onDismiss: () => {},
   },
 };
 
-export const Error: Story = {
+export const Busy: Story = {
   args: {
-    title: "Error",
-    description: "Failed to save changes. Please try again.",
-    tone: "danger",
+    title: "Uploading files",
+    description: undefined,
+    busy: { done: 3, total: 12, onStop: () => {} },
   },
 };
 
-export const Warning: Story = {
-  args: {
-    title: "Warning",
-    description: "This action cannot be undone.",
-    tone: "warning",
-  },
-};
+function LiveDemo() {
+  const { toast, success, danger, promise } = useToast();
+  return (
+    <Stack direction="row" gap="sm">
+      <Button variant="soft" onClick={() => toast({ title: "Draft saved" })}>
+        Neutral
+      </Button>
+      <Button variant="soft" onClick={() => success("Branch merged", "Checks passed on main.")}>
+        Success
+      </Button>
+      <Button
+        variant="soft"
+        onClick={() => danger("Push failed", "The remote refused the branch.")}
+      >
+        Danger
+      </Button>
+      <Button
+        variant="soft"
+        onClick={() =>
+          toast({
+            title: "Deleted 3 findings",
+            action: { label: "Undo", onClick: () => success("Restored 3 findings"), undo: true },
+          })
+        }
+      >
+        Undo
+      </Button>
+      <Button
+        variant="soft"
+        onClick={() =>
+          void promise(new Promise((done) => setTimeout(done, 2000)), {
+            loading: "Deploying",
+            success: "Deployed",
+            error: "Deploy failed",
+          }).catch(() => {})
+        }
+      >
+        Promise
+      </Button>
+    </Stack>
+  );
+}
 
-export const Info: Story = {
-  args: {
-    title: "New Update",
-    description: "Version 2.0 is now available.",
-    tone: "info",
-  },
-};
-
-export const WithAction: Story = {
-  args: {
-    title: "File deleted",
-    description: "The file has been moved to trash.",
-    action: {
-      label: "Undo",
-      onClick: () => {},
-    },
-  },
+export const Live: Story = {
+  render: () => (
+    <Toast.Provider>
+      <LiveDemo />
+    </Toast.Provider>
+  ),
 };

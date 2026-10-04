@@ -1,128 +1,186 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/feedback" as feedback;
+@use "../../recipes/overlay" as overlay;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
 
-// Container
-.container {
-  width: 100%;
-  height: 100%;
-  font-family: var(--fui-font-sans, $fui-font-sans);
+@layer fui.tokens, fui.base, fui.components;
 
-  // Override recharts defaults to use FUI tokens
-  :global(.recharts-text) {
-    fill: var(--fui-text-secondary, $fui-text-secondary);
-    font-size: var(--fui-font-size-xs, $fui-font-size-xs);
+@layer fui.components {
+  // Container
+  .container {
+    width: 100%;
+    height: 100%;
+    font-family: var(--fui-font-sans, $fui-font-sans);
+
+    // Axis ticks and labels: 11 in ink2, tabular so columns of values align.
+    :global(.recharts-text) {
+      fill: var(--fui-text-secondary, $fui-text-secondary);
+      font-size: var(--fui-type-caption-size, #{measurements.typography-value("caption", "size")});
+      font-variant-numeric: tabular-nums;
+    }
+
+    :global(.recharts-cartesian-grid) line {
+      stroke: var(--fui-border, $fui-border);
+    }
+
+    :global(.recharts-cartesian-axis-line),
+    :global(.recharts-cartesian-axis-tick-line) {
+      stroke: var(--fui-border, $fui-border);
+    }
+
+    :global(.recharts-curve.recharts-tooltip-cursor) {
+      stroke: var(--fui-border-strong, $fui-border-strong);
+    }
+
+    :global(.recharts-rectangle.recharts-tooltip-cursor) {
+      fill: var(--fui-bg-hover, $fui-bg-hover);
+    }
   }
 
-  :global(.recharts-cartesian-grid) line {
-    stroke: var(--fui-border, $fui-border);
+  // Loading, empty, error and unavailable all sit in the chart's own box so
+  // the layout does not jump when the chart arrives. The state spans the box
+  // and starts at its inline start, like the copy around it; it centres on
+  // the block axis so it sits where the plot would.
+  .state {
+    display: grid;
+    place-items: center stretch;
+    min-block-size: var(--fui-control-height-lg, $fui-control-height-lg);
   }
 
-  :global(.recharts-cartesian-axis-line),
-  :global(.recharts-cartesian-axis-tick-line) {
-    stroke: var(--fui-border, $fui-border);
+  .errbox {
+    @include feedback.errbox;
   }
 
-  :global(.recharts-curve.recharts-tooltip-cursor) {
-    stroke: var(--fui-border, $fui-border);
+  .errboxIcon {
+    @include feedback.errbox-icon;
   }
 
-  :global(.recharts-rectangle.recharts-tooltip-cursor) {
-    fill: var(--fui-bg-hover, $fui-bg-hover);
+  .errboxWords {
+    @include feedback.errbox-words;
   }
-}
 
-.srOnly {
-  @include visually-hidden;
-}
+  .errboxActions {
+    @include feedback.errbox-actions;
+  }
 
-// Tooltip
-.tooltip {
-  @include representation.chart-tooltip;
+  .fallbackTable {
+    @include typography.role("caption");
 
-  background: var(--fui-bg-elevated, $fui-bg-elevated);
-  border: var(--fui-stroke-hairline, 1px) solid var(--fui-border, $fui-border);
-  border-radius: var(--fui-radius-md, $fui-radius-md);
-  box-shadow: var(--fui-shadow-md, $fui-shadow-md);
-}
+    align-self: stretch;
+    justify-self: stretch;
+    overflow: auto;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
 
-.tooltipLabel {
-  @include typography.role("ui-standard");
+  .srOnly {
+    @include visually-hidden;
+  }
 
-  color: var(--fui-text-primary, $fui-text-primary);
-  margin-block-end: var(--fui-raw-space-4, 4px);
-}
+  // Tooltip: a floating panel, so raised plane + popup shadow and no edge.
+  .tooltip {
+    @include representation.chart-tooltip;
+    @include typography.role("caption");
+    @include overlay.surface;
+  }
 
-.tooltipItems {
-  display: flex;
-  flex-direction: column;
-  gap: var(--_fui-chart-tooltip-item-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-}
+  .tooltipLabel {
+    @include typography.role("caption");
 
-.tooltipItem {
-  display: flex;
-  align-items: center;
-  gap: var(--_fui-chart-tooltip-item-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  justify-content: space-between;
-}
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    color: var(--fui-text-primary, $fui-text-primary);
+    margin-block-end: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
 
-.tooltipIndicator {
-  @include representation.chart-marker("dot");
+  .tooltipItems {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
 
-  flex-shrink: 0;
+  .tooltipItem {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
 
-  &.tooltipIndicatorLine {
+  .tooltipItemLabel {
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
+
+  .tooltipItemValue {
+    margin-inline-start: auto;
+    color: var(--fui-text-primary, $fui-text-primary);
+    font-weight: var(--fui-font-weight-semibold, $fui-font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Series swatch: shape follows the series (dot, line or dashed line).
+  .marker {
+    @include representation.chart-marker("dot");
+
+    flex-shrink: 0;
+    background-color: var(--_fui-chart-marker-color, currentColor);
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+    }
+  }
+
+  .markerLine {
     @include representation.chart-marker("line");
 
     border-radius: var(--fui-radius-full, $fui-radius-full);
   }
 
-  &.tooltipIndicatorDashed {
+  .markerDashed {
     @include representation.chart-marker("dashed");
 
     box-sizing: border-box;
-    border-block-start: var(--fui-chart-marker-stroke, var(--fui-raw-space-2, #{measurements.raw-space(2)})) dashed;
-    border-radius: var(--fui-radius-none, #{$fui-radius-none});
+    background-color: transparent;
+    border-block-start: var(
+        --fui-chart-marker-stroke,
+        var(--fui-raw-space-2, #{measurements.raw-space(2)})
+      )
+      dashed var(--_fui-chart-marker-color, currentColor);
+    border-radius: 0;
   }
-}
 
-.tooltipItemLabel {
-  color: var(--fui-text-secondary, $fui-text-secondary);
-}
+  // Legend
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)})
+      var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    padding-block-start: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+  }
 
-.tooltipItemValue {
-  font-weight: var(--fui-font-weight-medium, $fui-font-weight-medium);
-  color: var(--fui-text-primary, $fui-text-primary);
-  font-variant-numeric: tabular-nums;
-  margin-inline-start: auto;
-}
+  .legendItem {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
 
-// Legend
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
-  padding-block-start: var(--fui-raw-space-8, 8px);
-}
+  .legendGlyph {
+    display: inline-flex;
+    color: var(--_fui-chart-marker-color, currentColor);
+    inline-size: var(--fui-icon-xs, $fui-icon-xs);
+    block-size: var(--fui-icon-xs, $fui-icon-xs);
 
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: var(--fui-raw-space-4, 4px);
-}
+    > svg {
+      inline-size: 100%;
+      block-size: 100%;
+    }
+  }
 
-.legendDot {
-  @include representation.chart-marker("dot");
+  .legendLabel {
+    @include typography.role("caption");
 
-  flex-shrink: 0;
-}
-
-.legendLabel {
-  @include typography.role("ui-compact");
-
-  color: var(--fui-text-secondary, $fui-text-secondary);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+  }
 }

@@ -4,8 +4,8 @@ import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Switch is a binary on/off control for settings and preferences. It supports
- * controlled and uncontrolled checked state, an optional label, helper text,
- * and three sizes.
+ * controlled and uncontrolled checked state, an optional label beside the
+ * track, helper text, read-only and an invalid message. One 36×18 size.
  */
 const meta = {
   title: "Forms/Switch",
@@ -20,17 +20,13 @@ const meta = {
     },
   },
   argTypes: {
-    size: {
-      control: "select",
-      options: ["sm", "md", "lg"],
-      description: "Size variant",
-    },
     disabled: { control: "boolean", description: "Disable the switch" },
     readOnly: { control: "boolean", description: "Prevent the user from toggling" },
     required: { control: "boolean", description: "Mark the switch as required" },
+    invalid: { control: "boolean", description: "Show errorMessage under the label" },
     defaultChecked: { control: "boolean", description: "Default checked state (uncontrolled)" },
   },
-  args: { label: "Enable notifications", size: "md", defaultChecked: false },
+  args: { label: "Enable notifications", defaultChecked: false },
 } satisfies Meta<typeof Switch>;
 
 export default meta;
@@ -52,8 +48,20 @@ export const WithHelperText: Story = {
   },
 };
 
-export const Small: Story = {
-  args: { label: "Compact mode", size: "sm", defaultChecked: true },
+export const ReadOnly: Story = {
+  args: { label: "Managed by your organisation", readOnly: true, defaultChecked: true },
+};
+
+export const Invalid: Story = {
+  args: {
+    label: "Share findings with the team",
+    invalid: true,
+    errorMessage: "Sharing is off on this plan.",
+  },
+};
+
+export const IconOnly: Story = {
+  args: { label: undefined, "aria-label": "Dark mode" },
 };
 
 export const Disabled: Story = {

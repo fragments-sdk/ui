@@ -1,0 +1,184 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "ToggleGroup",
+  "description": "Selects among two to five options in a segmented control with a visible active choice.",
+  "category": "actions",
+  "tags": ["toggle", "group", "fragmented", "control", "tabs", "switch"],
+  "status": "stable",
+  "sourcePath": "src/components/ToggleGroup/index.tsx",
+  "exportName": "ToggleGroup",
+  "propsSummary": [
+    "value: string (string[] with multiple)",
+    "defaultValue: string (string[] with multiple)",
+    "onValueChange: function",
+    "multiple: boolean (default: false)",
+    "children: node (required)",
+    "size: xs|sm|md|lg (default: md)",
+    "fullWidth: boolean (default: false)",
+    "disabled: boolean (default: false)"
+  ],
+  "props": {
+    "value": {
+      "type": "string",
+      "description": "Chosen value (controlled): a string, or a string array with multiple",
+      "required": false
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initial value (uncontrolled): a string, or a string array with multiple",
+      "required": false
+    },
+    "onValueChange": {
+      "type": "function",
+      "description": "Called with the next value: (value: string) => void, or (value: string[]) => void with multiple. A chosen segment stays chosen when pressed again in single mode.",
+      "required": false
+    },
+    "multiple": {
+      "type": "boolean",
+      "description": "Let several options stay pressed; the value becomes a string array",
+      "default": "false",
+      "required": false
+    },
+    "children": {
+      "type": "node",
+      "description": "ToggleGroup.Item components",
+      "required": true
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size on the one track: xs 24, sm 28, md 32, lg 40. Defaults to the nearest ComponentDefaultsProvider controlSize.",
+      "default": "md",
+      "required": false,
+      "values": ["xs", "sm", "md", "lg"]
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "description": "Stretch the track to its container; segments share the width",
+      "default": "false",
+      "required": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable every option",
+      "default": "false",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Switching between mutually exclusive views or modes",
+      "Choosing one of two to five options",
+      "View switchers, segmented filters and the colour-mode control",
+      "A short row of formatting toggles (multiple)"
+    ],
+    "whenNot": [
+      "More than five options — use Select or RadioGroup",
+      "Moving between pages or panels — use Tabs",
+      "A single on/off — use Switch or a toggle IconButton",
+      "A form field the user submits — use RadioGroup or a Checkbox group"
+    ],
+    "guidelines": [
+      "Two to five items",
+      "Labels short enough to scan in one pass",
+      "Icons work for well-known modes like grid and list; an icon beside a label is fine",
+      "One look: the band track with the chosen segment on the lifted thumb",
+      "Name the group with aria-label or aria-labelledby",
+      "The colour-mode control is a composition: a ToggleGroup wired to useTheme, System first"
+    ],
+    "accessibility": [
+      "The group has role group; each item is a toggle button with aria-pressed",
+      "Arrow keys move between items, Tab enters and leaves the group",
+      "Icon-only items still need an aria-label",
+      "Focus is drawn by the shared focus ring on top of its neighbours"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Default",
+      "description": "One option at a time on the band track.",
+      "code": "<ToggleGroup aria-label=\"Alignment\" value={value} onValueChange={setValue}>\n  <ToggleGroup.Item value=\"left\">Left</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"center\">Center</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"right\">Right</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Uncontrolled",
+      "description": "defaultValue when nothing outside needs the selection.",
+      "code": "<ToggleGroup aria-label=\"Layout\" defaultValue=\"list\">\n  <ToggleGroup.Item value=\"grid\">Grid</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\">List</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Multiple",
+      "description": "Several toggles may stay pressed; the value is a string array.",
+      "code": "<ToggleGroup aria-label=\"Formatting\" multiple defaultValue={['bold']}>\n  <ToggleGroup.Item value=\"bold\">Bold</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"italic\">Italic</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"underline\">Underline</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Sizes",
+      "description": "xs in dense inspectors, lg where the control anchors a page.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack gap=\"md\" align=\"start\">\n  <ToggleGroup aria-label=\"Extra small\" size=\"xs\" defaultValue=\"a\">\n    <ToggleGroup.Item value=\"a\">Day</ToggleGroup.Item>\n    <ToggleGroup.Item value=\"b\">Week</ToggleGroup.Item>\n  </ToggleGroup>\n  <ToggleGroup aria-label=\"Small\" size=\"sm\" defaultValue=\"a\">\n    <ToggleGroup.Item value=\"a\">Day</ToggleGroup.Item>\n    <ToggleGroup.Item value=\"b\">Week</ToggleGroup.Item>\n  </ToggleGroup>\n  <ToggleGroup aria-label=\"Large\" size=\"lg\" defaultValue=\"a\">\n    <ToggleGroup.Item value=\"a\">Day</ToggleGroup.Item>\n    <ToggleGroup.Item value=\"b\">Week</ToggleGroup.Item>\n  </ToggleGroup>\n</Stack>"
+    },
+    {
+      "name": "View Switcher",
+      "description": "Icon-only modes, each named for screen readers.",
+      "code": "import { List, SquaresFour } from '@phosphor-icons/react';\n\n<ToggleGroup aria-label=\"View\" value={view} onValueChange={setView} size=\"sm\">\n  <ToggleGroup.Item value=\"grid\" aria-label=\"Grid view\">\n    <SquaresFour aria-hidden />\n  </ToggleGroup.Item>\n  <ToggleGroup.Item value=\"list\" aria-label=\"List view\">\n    <List aria-hidden />\n  </ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Colour Mode",
+      "description": "The colour-mode control: a ToggleGroup wired to useTheme, System first.",
+      "code": "import { Monitor, Moon, Sun } from '@phosphor-icons/react';\nimport { useTheme, type ThemeMode } from '@/components/Theme';\n\nconst { mode, setMode } = useTheme();\n\n<ToggleGroup aria-label=\"Colour mode\" size=\"sm\" value={mode} onValueChange={(next) => setMode(next as ThemeMode)}>\n  <ToggleGroup.Item value=\"system\"><Monitor aria-hidden />System</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"light\"><Sun aria-hidden />Light</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"dark\"><Moon aria-hidden />Dark</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Full Width",
+      "description": "The track fills its container and the segments share it.",
+      "code": "<ToggleGroup aria-label=\"Billing\" fullWidth defaultValue=\"monthly\">\n  <ToggleGroup.Item value=\"monthly\">Monthly</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"yearly\">Yearly</ToggleGroup.Item>\n</ToggleGroup>"
+    },
+    {
+      "name": "Disabled Item",
+      "description": "One option locked out; the rest stay reachable.",
+      "code": "<ToggleGroup aria-label=\"Tier\" value={value} onValueChange={setValue}>\n  <ToggleGroup.Item value=\"basic\">Basic</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"pro\">Pro</ToggleGroup.Item>\n  <ToggleGroup.Item value=\"enterprise\" disabled>Enterprise</ToggleGroup.Item>\n</ToggleGroup>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "RadioGroup",
+      "relationship": "alternative",
+      "note": "RadioGroup for form-style single selection"
+    },
+    {
+      "component": "Tabs",
+      "relationship": "alternative",
+      "note": "Tabs for content panel switching"
+    },
+    {
+      "component": "Switch",
+      "relationship": "sibling",
+      "note": "Switch for single on/off control"
+    },
+    {
+      "component": "Theme",
+      "relationship": "sibling",
+      "note": "The colour-mode control is a ToggleGroup wired to useTheme"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "value?: string | string[] - chosen value (string[] with multiple)",
+      "defaultValue?: string | string[] - initial value (uncontrolled)",
+      "onValueChange?: (value: string) => void, or (value: string[]) => void with multiple",
+      "multiple?: boolean - several options may stay pressed",
+      "children: ToggleGroup.Item[] - toggle items",
+      "size: xs|sm|md|lg - size on the one track",
+      "fullWidth?: boolean - segments share the container width",
+      "disabled?: boolean - disable every option"
+    ],
+    "a11yRules": ["A11Y_GROUP_ROLE", "A11Y_KEYBOARD_ACCESSIBLE"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item", "Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:19:07.233Z"
+  },
+  "cssVariables": [],
+  "attributes": []
+}

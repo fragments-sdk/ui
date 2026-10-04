@@ -1,0 +1,195 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "Chart",
+  "description": "Plots your data with tooltips, legends, and colors that track the theme.",
+  "category": "display",
+  "tags": ["chart", "graph", "data-visualization", "recharts"],
+  "status": "stable",
+  "dependencies": [
+    {
+      "name": "recharts",
+      "version": ">=2.0.0 || >=3.0.0",
+      "reason": "Optional — powers Chart.Tooltip and Chart.Legend. Without it the container shows the data table, or a 'Chart unavailable' state."
+    }
+  ],
+  "sourcePath": "src/components/Chart/index.tsx",
+  "exportName": "ChartContainer",
+  "propsSummary": [
+    "config: object (required)",
+    "children: element (required)",
+    "summary: string",
+    "dataTable: node",
+    "loading: boolean",
+    "empty: node",
+    "emptyDescription: node",
+    "emptyAction: node",
+    "error: node",
+    "onRetry: function",
+    "retryLabel: string"
+  ],
+  "props": {
+    "config": {
+      "type": "object",
+      "description": "ChartConfig mapping each data key to a label and a series index 1–6 (reads --fui-chart-N), with an optional legend icon",
+      "required": true
+    },
+    "children": {
+      "type": "element",
+      "description": "A recharts chart component (LineChart, BarChart, etc.)",
+      "required": true
+    },
+    "summary": {
+      "type": "string",
+      "description": "Non-visual summary announced to assistive technology users",
+      "required": false
+    },
+    "dataTable": {
+      "type": "node",
+      "description": "Accessible data table or textual fallback; shown visibly when recharts is missing",
+      "required": false
+    },
+    "loading": {
+      "type": "boolean",
+      "description": "Draws a skeleton at the chart's height while the data loads",
+      "default": false,
+      "required": false
+    },
+    "empty": {
+      "type": "node",
+      "description": "The empty state's title, shown when the chart child's data is an empty array",
+      "default": "No data to show",
+      "required": false
+    },
+    "emptyDescription": {
+      "type": "node",
+      "description": "The empty state's copy under the title: why there is nothing yet",
+      "required": false
+    },
+    "emptyAction": {
+      "type": "node",
+      "description": "The empty state's one way forward (a Button)",
+      "required": false
+    },
+    "error": {
+      "type": "node",
+      "description": "When set, replaces the chart with an error box (danger glyph, this message, retry)",
+      "required": false
+    },
+    "onRetry": {
+      "type": "function",
+      "description": "Retry the failed load; shows a retry button in the error box",
+      "required": false
+    },
+    "retryLabel": {
+      "type": "string",
+      "description": "Label for the retry button",
+      "default": "Retry",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "A trend over time is the point",
+      "Categories need comparing side by side",
+      "A whole splits into parts worth seeing"
+    ],
+    "whenNot": [
+      "One number tells the story (use Text or Badge)",
+      "Distance to a goal (use Progress)",
+      "Readers need exact values (use Table)"
+    ],
+    "guidelines": [
+      "Wrap every recharts chart in ChartContainer",
+      "Map each data key to a label and a series index; draw the series with var(--fui-chart-N)",
+      "Never colour a series with a status hue — status colours mean status",
+      "Pair with ChartTooltip and ChartLegend rather than recharts' own",
+      "Give the container a real height — recharts cannot measure zero; loading, empty and error keep that height",
+      "A failed load passes error with words that say what to do and onRetry for the way out; an empty chart passes empty, emptyDescription and one emptyAction"
+    ],
+    "accessibility": [
+      "The frame is role img with an aria-label; pass summary for the takeaway",
+      "ChartConfig labels are what the tooltip and legend read",
+      "Pass dataTable to offer the same numbers as text",
+      "Loading sets aria-busy; empty and error render as a labelled group with words, not colour; the error box is an alert"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Line Chart",
+      "description": "Two series share one scale; a dashed target line reads as a goal, not data.",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    aria-label=\"Revenue and target by month\"\n    config={{\n      revenue: { label: 'Revenue', series: 1 },\n      target: { label: 'Target', series: 6 },\n    }}\n  >\n    <LineChart data={monthlyData}>\n      <CartesianGrid strokeDasharray=\"3 3\" vertical={false} />\n      <XAxis dataKey=\"month\" />\n      <YAxis />\n      <ChartTooltip />\n      <ChartLegend />\n      <Line dataKey=\"revenue\" stroke=\"var(--fui-chart-1)\" strokeWidth={2} dot={false} />\n      <Line dataKey=\"target\" stroke=\"var(--fui-chart-6)\" strokeDasharray=\"4 4\" strokeWidth={2} dot={false} />\n    </LineChart>\n  </ChartContainer>\n</div>"
+    },
+    {
+      "name": "Bar Chart",
+      "description": "Fixed categories, compared by height — the safest default.",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    aria-label=\"Sessions by device\"\n    config={{ sessions: { label: 'Sessions', series: 1 } }}\n  >\n    <BarChart data={deviceData}>\n      <CartesianGrid strokeDasharray=\"3 3\" vertical={false} />\n      <XAxis dataKey=\"device\" />\n      <YAxis />\n      <ChartTooltip />\n      <Bar dataKey=\"sessions\" fill=\"var(--fui-chart-1)\" />\n    </BarChart>\n  </ChartContainer>\n</div>"
+    },
+    {
+      "name": "Area Chart",
+      "description": "The fill under the line stresses volume, not just direction.",
+      "code": "<div style={{ width: '100%', height: 300 }}>\n  <ChartContainer\n    aria-label=\"Revenue by month\"\n    config={{ revenue: { label: 'Revenue', series: 3 } }}\n  >\n    <AreaChart data={monthlyData}>\n      <CartesianGrid strokeDasharray=\"3 3\" vertical={false} />\n      <XAxis dataKey=\"month\" />\n      <YAxis />\n      <ChartTooltip />\n      <Area dataKey=\"revenue\" stroke=\"var(--fui-chart-3)\" fill=\"var(--fui-chart-3)\" fillOpacity={0.15} strokeWidth={2} />\n    </AreaChart>\n  </ChartContainer>\n</div>"
+    },
+    {
+      "name": "States",
+      "description": "Loading, empty and error stay in the chart's own box.",
+      "code": "import { type ChartConfig } from \"@/components/Chart\";\n\nconst config: ChartConfig = { revenue: { label: \"Revenue\", series: 1 } };\nconst data = [{ month: \"Jan\", revenue: 4200 }, { month: \"Feb\", revenue: 4800 }];\n\n<>\n  <ChartContainer config={config} loading aria-label=\"Revenue\">\n    <LineChart data={data} />\n  </ChartContainer>\n  <ChartContainer config={config} empty=\"No revenue in this range\" aria-label=\"Revenue\">\n    <LineChart data={[]} />\n  </ChartContainer>\n  <ChartContainer config={config} error=\"Couldn't load revenue\" aria-label=\"Revenue\">\n    <LineChart data={data} />\n  </ChartContainer>\n</>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Card",
+      "relationship": "parent",
+      "note": "Charts are typically placed inside Cards"
+    },
+    {
+      "component": "Progress",
+      "relationship": "alternative",
+      "note": "Use Progress for single-value completion"
+    },
+    {
+      "component": "Table",
+      "relationship": "sibling",
+      "note": "Combine with Table for full data views"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "config: ChartConfig - maps data keys to labels and series indexes (--fui-chart-1..6)",
+      "children: ReactElement - recharts chart component",
+      "loading / empty / error - states drawn in the chart's own box",
+      "Chart.Tooltip / Chart.Legend support custom content renderers for advanced overlays"
+    ],
+    "a11yRules": ["A11Y_CHART_LABEL"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:52.043Z"
+  },
+  "cssVariables": [
+    "--fui-bg-hover",
+    "--fui-border",
+    "--fui-border-strong",
+    "--fui-chart-marker-stroke",
+    "--fui-control-height-lg",
+    "--fui-font-sans",
+    "--fui-font-weight-semibold",
+    "--fui-icon-xs",
+    "--fui-radius-full",
+    "--fui-raw-space-12",
+    "--fui-raw-space-2",
+    "--fui-raw-space-4",
+    "--fui-raw-space-8",
+    "--fui-text-primary",
+    "--fui-text-secondary",
+    "--fui-type-caption-size"
+  ],
+  "attributes": [
+    {
+      "name": "data-state",
+      "value": "ready",
+      "fixture": "populated"
+    }
+  ]
+}

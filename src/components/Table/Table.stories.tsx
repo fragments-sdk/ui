@@ -1,7 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Link } from '../Link';
-import { Stack } from '../Stack';
-import { Table } from '.';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Link } from "../Link";
+import { Stack } from "../Stack";
+import { EmptyState } from "../EmptyState";
+import { Table } from ".";
 
 /**
  * Table is the canonical semantic-HTML table primitive. Reach for it whenever
@@ -10,34 +11,24 @@ import { Table } from '.';
  * hand-rolling `<table>` markup. For sorting and selection, use DataTable.
  */
 const meta = {
-  title: 'Display/Table',
+  title: "Display/Table",
   component: Table,
-  tags: ['autodocs', 'canonical'],
+  tags: ["autodocs", "canonical"],
   parameters: {
     docs: {
       description: {
         component:
-          'Semantic HTML table with a compound API. Prefer this over a raw <table>; use DataTable when you need sorting or selection.',
+          "Semantic HTML table with a compound API. Prefer this over a raw <table>; use DataTable when you need sorting or selection.",
       },
     },
   },
   argTypes: {
-    density: {
-      control: 'select',
-      options: ['compact', 'regular', 'relaxed'],
-      description: 'Canonical row density',
+    bordered: {
+      control: "boolean",
+      description: "Draw the sheet: surface plane, hairline border, surface radius",
     },
-    size: {
-      control: 'select',
-      options: ['sm', 'md'],
-      description: 'Deprecated density alias',
-    },
-    striped: { control: 'boolean', description: 'Show alternating row backgrounds' },
-    bordered: { control: 'boolean', description: 'Wrap table in a bordered container' },
   },
   args: {
-    density: 'regular',
-    striped: false,
     bordered: false,
   },
 } satisfies Meta<typeof Table>;
@@ -71,38 +62,6 @@ export const Default: Story = {
           <Table.Cell>Carol Williams</Table.Cell>
           <Table.Cell>PM</Table.Cell>
           <Table.Cell>Away</Table.Cell>
-        </Table.Row>
-      </Table.Body>
-    </Table>
-  ),
-};
-
-export const Striped: Story = {
-  args: { striped: true },
-  render: (args) => (
-    <Table {...args} aria-label="Inventory">
-      <Table.Head>
-        <Table.Row>
-          <Table.HeaderCell>Item</Table.HeaderCell>
-          <Table.HeaderCell>Category</Table.HeaderCell>
-          <Table.HeaderCell>Qty</Table.HeaderCell>
-        </Table.Row>
-      </Table.Head>
-      <Table.Body>
-        <Table.Row>
-          <Table.Cell>Widget A</Table.Cell>
-          <Table.Cell>Hardware</Table.Cell>
-          <Table.Cell>120</Table.Cell>
-        </Table.Row>
-        <Table.Row>
-          <Table.Cell>Widget B</Table.Cell>
-          <Table.Cell>Software</Table.Cell>
-          <Table.Cell>85</Table.Cell>
-        </Table.Row>
-        <Table.Row>
-          <Table.Cell>Widget C</Table.Cell>
-          <Table.Cell>Hardware</Table.Cell>
-          <Table.Cell>200</Table.Cell>
         </Table.Row>
       </Table.Body>
     </Table>
@@ -177,34 +136,6 @@ export const BorderedEdgeCases: Story = {
   ),
 };
 
-export const Compact: Story = {
-  args: { size: 'sm' },
-  render: (args) => (
-    <Table {...args} aria-label="Shortcuts">
-      <Table.Head>
-        <Table.Row>
-          <Table.HeaderCell>Key</Table.HeaderCell>
-          <Table.HeaderCell>Action</Table.HeaderCell>
-        </Table.Row>
-      </Table.Head>
-      <Table.Body>
-        <Table.Row>
-          <Table.Cell>Ctrl+S</Table.Cell>
-          <Table.Cell>Save</Table.Cell>
-        </Table.Row>
-        <Table.Row>
-          <Table.Cell>Ctrl+Z</Table.Cell>
-          <Table.Cell>Undo</Table.Cell>
-        </Table.Row>
-        <Table.Row>
-          <Table.Cell>Ctrl+C</Table.Cell>
-          <Table.Cell>Copy</Table.Cell>
-        </Table.Row>
-      </Table.Body>
-    </Table>
-  ),
-};
-
 export const WithCaption: Story = {
   render: (args) => (
     <Table {...args} aria-label="Q1 results">
@@ -262,6 +193,99 @@ export const WithFooter: Story = {
           <Table.Cell>$65,000</Table.Cell>
         </Table.Row>
       </Table.Footer>
+    </Table>
+  ),
+};
+
+export const SelectedRow: Story = {
+  render: (args) => (
+    <Table {...args} aria-label="Repositories">
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Repository</Table.HeaderCell>
+          <Table.HeaderCell>Findings</Table.HeaderCell>
+          <Table.HeaderCell>Verdict</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>web</Table.Cell>
+          <Table.Cell tabularNums>12</Table.Cell>
+          <Table.Cell>Blocked</Table.Cell>
+        </Table.Row>
+        <Table.Row selected>
+          <Table.Cell>api</Table.Cell>
+          <Table.Cell tabularNums>3</Table.Cell>
+          <Table.Cell>Passing</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>docs</Table.Cell>
+          <Table.Cell tabularNums>0</Table.Cell>
+          <Table.Cell>Passing</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table>
+  ),
+};
+
+export const StickyHead: Story = {
+  render: (args) => (
+    <Table {...args} maxHeight={200} aria-label="Repositories">
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Repository</Table.HeaderCell>
+          <Table.HeaderCell>Findings</Table.HeaderCell>
+          <Table.HeaderCell>Verdict</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
+        {Array.from({ length: 16 }, (_, index) => (
+          <Table.Row key={index}>
+            <Table.Cell>repo-{index + 1}</Table.Cell>
+            <Table.Cell tabularNums>{index % 5}</Table.Cell>
+            <Table.Cell>{index % 5 === 0 ? "Passing" : "Blocked"}</Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table>
+  ),
+};
+
+export const Empty: Story = {
+  render: (args) => (
+    <Table {...args} aria-label="Repositories">
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Repository</Table.HeaderCell>
+          <Table.HeaderCell>Findings</Table.HeaderCell>
+          <Table.HeaderCell>Verdict</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
+        <Table.Empty colSpan={3}>
+          <EmptyState.Title>No repositories yet</EmptyState.Title>
+          <EmptyState.Description>
+            Connect a repository to see its findings here.
+          </EmptyState.Description>
+        </Table.Empty>
+      </Table.Body>
+    </Table>
+  ),
+};
+
+export const Loading: Story = {
+  render: (args) => (
+    <Table {...args} aria-label="Repositories">
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Repository</Table.HeaderCell>
+          <Table.HeaderCell>Findings</Table.HeaderCell>
+          <Table.HeaderCell>Verdict</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body aria-busy="true">
+        <Table.Loading columns={3} rows={4} />
+      </Table.Body>
     </Table>
   ),
 };

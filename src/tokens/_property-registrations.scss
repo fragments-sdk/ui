@@ -11,6 +11,7 @@
 // Usage: @include fui-property-registrations; (before fui-css-variables)
 // ============================================
 
+@use "seeds";
 @use "variables" as *;
 
 // ============================================
@@ -59,6 +60,7 @@
   // Runtime derivation via relative color syntax operates in OKLCH space.
   // ------------------------------------------
   @include register-color("seed-brand", $fui-color-accent);
+  @include register-color("seed-neutral", seeds.$fui-neutral-color);
   @include register-color("seed-danger", $fui-color-danger);
   @include register-color("seed-success", $fui-color-success);
   @include register-color("seed-warning", $fui-color-warning);
@@ -68,6 +70,7 @@
   // Colors — Accent (animatable for theme transitions)
   // ------------------------------------------
   @include register-color("color-accent", $fui-color-accent);
+  @include register-color("color-on-accent", $fui-color-on-accent);
   @include register-color("color-accent-hover", $fui-color-accent-hover);
   @include register-color("color-accent-active", $fui-color-accent-active);
 
@@ -98,19 +101,30 @@
   @include register-color("color-success-text", $fui-color-success-text);
   @include register-color("color-warning-text", $fui-color-warning-text);
   @include register-color("color-info-text", $fui-color-info-text);
+  @include register-color("color-danger-on-fill", $fui-color-danger-on-fill);
+  @include register-color("color-success-on-fill", $fui-color-success-on-fill);
+  @include register-color("color-warning-on-fill", $fui-color-warning-on-fill);
+  @include register-color("color-info-on-fill", $fui-color-info-on-fill);
+  @include register-color("color-danger-fill-hover", $fui-color-danger-fill-hover);
+  @include register-color("color-danger-fill-active", $fui-color-danger-fill-active);
+  @include register-color("color-success-fill-hover", $fui-color-success-fill-hover);
+  @include register-color("color-success-fill-active", $fui-color-success-fill-active);
+  @include register-color("color-warning-fill-hover", $fui-color-warning-fill-hover);
+  @include register-color("color-warning-fill-active", $fui-color-warning-fill-active);
+  @include register-color("color-info-fill-hover", $fui-color-info-fill-hover);
+  @include register-color("color-info-fill-active", $fui-color-info-fill-active);
 
   // ------------------------------------------
   // Colors — Surfaces
   // ------------------------------------------
   @include register-color("bg-primary", $fui-bg-primary);
   @include register-color("bg-secondary", $fui-bg-secondary);
-  @include register-color("bg-tertiary", $fui-bg-tertiary);
   @include register-color("bg-elevated", $fui-bg-elevated);
-  @include register-color("bg-subtle", $fui-bg-subtle);
   @include register-color("bg-hover", $fui-bg-hover);
   @include register-color("bg-active", $fui-bg-active);
   @include register-color("body-bg", $fui-body-bg);
-  @include register-color("main-bg", $fui-main-bg);
+  @include register-color("field-bg", $fui-field-bg);
+  @include register-color("backdrop", $fui-backdrop);
 
   // ------------------------------------------
   // Colors — Text
@@ -124,13 +138,21 @@
   // Colors — Borders
   // ------------------------------------------
   @include register-color("border", $fui-border);
-  @include register-color("border-default", $fui-border-default);
   @include register-color("border-strong", $fui-border-strong);
+  @include register-color("field-border", $fui-field-border);
 
   // ------------------------------------------
-  // Colors — Focus
+  // Colors — Selection and checked controls
   // ------------------------------------------
-  @include register-color("focus-ring-color", $fui-focus-ring-color);
+  @include register-color("control-checked-bg", $fui-control-checked-bg);
+  @include register-color("control-checked-bg-hover", $fui-control-checked-bg-hover);
+  @include register-color("control-checked-color", $fui-control-checked-color);
+  @include register-color("link-ink", $fui-link-ink);
+
+  // `--fui-focus-ring-color` is deliberately not registered (UIR-D121): a
+  // registered <color> resolves `Highlight` to a fixed colour, which forced
+  // colours then overrides. The ring is never transitioned, so typing it buys
+  // nothing.
 
   // ------------------------------------------
   // Colors — Scrollbar
@@ -140,46 +162,19 @@
   @include register-color("scrollbar-thumb-hover", $fui-scrollbar-thumb-hover);
 
   // ------------------------------------------
-  // Spacing — Lengths
-  // ------------------------------------------
-  @include register-length("space-px", $fui-space-px);
-  @include register-length("space-0-5", $fui-space-0-5);
-  @include register-length("space-0-75", $fui-space-0-75);
-  @include register-length("space-1", $fui-space-1);
-  @include register-length("space-2", $fui-space-2);
-  @include register-length("space-3", $fui-space-3);
-  @include register-length("space-4", $fui-space-4);
-  @include register-length("space-5", $fui-space-5);
-  @include register-length("space-6", $fui-space-6);
-  @include register-length("space-8", $fui-space-8);
-  @include register-length("space-10", $fui-space-10);
-  @include register-length("space-12", $fui-space-12);
-
-  // ------------------------------------------
   // Border Radius — Lengths
   // ------------------------------------------
-  @include register-length("radius-sm", $fui-radius-sm);
-  @include register-length("radius-md", $fui-radius-md);
-  @include register-length("radius-lg", $fui-radius-lg);
-  @include register-length("radius-xl", $fui-radius-xl);
   @include register-length("radius-full", $fui-radius-full);
   @include register-length("radius-none", $fui-radius-none);
-
-  // ------------------------------------------
-  // Component Heights — Lengths
-  // ------------------------------------------
-  @include register-length("control-height-xs", $fui-control-height-xs);
-  @include register-length("control-height-sm", $fui-control-height-sm);
-  @include register-length("control-height-md", $fui-control-height-md);
-  @include register-length("control-height-lg", $fui-control-height-lg);
-  @include register-length("button-height-xs", $fui-button-height-xs);
-  @include register-length("button-height-sm", $fui-button-height-sm);
-  @include register-length("button-height-md", $fui-button-height-md);
-  @include register-length("button-height-lg", $fui-button-height-lg);
-  @include register-length("input-height", $fui-input-height);
-  @include register-length("input-height-sm", $fui-input-height-sm);
-  @include register-length("input-height-lg", $fui-input-height-lg);
-  @include register-length("target-size-min", $fui-target-size-min);
+  @include register-length("radius", $fui-radius);
+  @include register-length("radius-control", $fui-radius-control);
+  @include register-length("radius-indicator", $fui-radius-indicator);
+  @include register-length("radius-popup", $fui-radius-popup);
+  @include register-length("radius-surface", $fui-radius-surface);
+  @include register-length("radius-overlay", $fui-radius-overlay);
+  @include register-length("radius-row", $fui-radius-row);
+  @include register-length("radius-tooltip", $fui-radius-tooltip);
+  @include register-length("radius-segment", $fui-radius-segment);
 
   // ------------------------------------------
   // Focus Ring — Lengths
@@ -192,9 +187,7 @@
   // Typography — Numbers (unitless, animatable)
   // ------------------------------------------
   @include register-number("font-weight-normal", $fui-font-weight-normal);
-  @include register-number("font-weight-medium", $fui-font-weight-medium);
   @include register-number("font-weight-semibold", $fui-font-weight-semibold);
-  @include register-number("font-weight-bold", $fui-font-weight-bold);
   @include register-number("line-height-tight", $fui-line-height-tight);
   @include register-number("line-height-normal", $fui-line-height-normal);
   @include register-number("line-height-relaxed", $fui-line-height-relaxed);
@@ -202,26 +195,15 @@
   @include register-number("line-height-prose", $fui-line-height-prose);
 
   // ------------------------------------------
-  // Typography — Font Sizes (lengths)
-  // ------------------------------------------
-  @include register-length("font-size-2xs", $fui-font-size-2xs);
-  @include register-length("font-size-xs", $fui-font-size-xs);
-  @include register-length("font-size-sm", $fui-font-size-sm);
-  @include register-length("font-size-base", $fui-font-size-base);
-  @include register-length("font-size-md", $fui-font-size-md);
-  @include register-length("font-size-lg", $fui-font-size-lg);
-  @include register-length("font-size-xl", $fui-font-size-xl);
-  @include register-length("font-size-2xl", $fui-font-size-2xl);
-  @include register-length("font-size-3xl", $fui-font-size-3xl);
-  @include register-length("font-size-4xl", $fui-font-size-4xl);
-
-  // ------------------------------------------
   // Note: The following tokens are NOT registered because @property
   // syntax doesn't support their complex types:
   //   --fui-font-sans, --fui-font-mono (font family lists)
-  //   --fui-shadow-sm/md/lg (shadow lists)
-  //   --fui-transition-fast/normal (shorthand timing)
-  //   --fui-backdrop, --fui-dark-backdrop (rgba — registered above as <color>)
+  //   --fui-shadow-popup, --fui-shadow-sm (shadow lists)
+  //   --fui-ease-standard (a timing function)
+  // The motion durations stay unregistered too: a registered time would
+  // compute where it is declared, and they have no animatable use.
+  // Nor are rem lengths (type, space, control heights, the target minimum): an
+  // initial value must not depend on the root font size.
   // ------------------------------------------
 
   // ------------------------------------------

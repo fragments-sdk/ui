@@ -2,119 +2,244 @@
 @use "../../tokens/mixins" as *;
 @use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action" as action;
-@use "../../recipes/field" as field;
+@use "../../recipes/field";
+@use "../../recipes/overlay" as overlay;
 @use "../../recipes/popup" as popup;
 @use "../../recipes/typography" as typography;
+@use "../../recipes/focus";
 
-.command {
-  @include popup.container;
+@layer fui.tokens, fui.base, fui.components;
 
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  @include high-contrast-outline;
-}
-
-// Hosted: the surrounding surface is the frame; the pick list keeps only its
-// own inset.
-.hosted {
-  background: transparent;
-  border: 0;
-  border-radius: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  box-shadow: none;
-}
-
-.inputWrapper {
-  @include field.size("md");
-  @include field.shell;
-
-  display: flex;
-  align-items: center;
-  gap: var(--fui-popup-row-content-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  margin-block-end: var(--fui-popup-container-inset, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
-
-  &:focus-within {
-    @include field.focus-state;
+// Frameless: Command sits in whatever holds it. The search is a band field on
+// the 32 track, inset like the rows, with the focus ring on the field; the list
+// has no inner lines, and the active row is the hover tint, instant. Only
+// Command.Dialog floats: a scrim and the raised panel on the popup shadow, no
+// edge.
+@layer fui.components {
+  .command {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 
-  svg {
-    inline-size: action.icon-size("md");
-    block-size: action.icon-size("md");
+  .search {
+    @include field.size("md", $typed: false);
+    @include field.shell;
+    @include field.hover-state;
+
+    display: flex;
     flex: 0 0 auto;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    margin-block-start: var(
+      --fui-popup-container-inset,
+      var(--fui-raw-space-4, #{measurements.raw-space(4)})
+    );
+    margin-inline: var(
+      --fui-popup-container-inset,
+      var(--fui-raw-space-4, #{measurements.raw-space(4)})
+    );
+
+    // The ring is the field's, drawn for keyboard focus inside it.
+    &:has(.input:focus-visible) {
+      @include field.focus-state;
+    }
+
+    svg {
+      inline-size: action.icon-size("md");
+      block-size: action.icon-size("md");
+      flex: 0 0 auto;
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+  }
+
+  .input {
+    font: inherit;
+
+    @include typography.role("body-compact");
+    // 16px typed text under a coarse pointer, so a phone does not zoom in.
+    @include field.coarse-typed-text;
+    // The search field around it draws the ring.
+    @include focus.delegated;
+
+    flex: 1;
+    min-inline-size: 0;
+    padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
+    border: none;
+    color: var(--fui-text-primary, $fui-text-primary);
+    background: transparent;
+
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+  }
+
+  .list {
+    @include popup.viewport;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-popup-row-gap, #{$fui-popup-row-gap});
+    padding: var(--fui-popup-container-inset, var(--fui-raw-space-4, #{measurements.raw-space(4)}));
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fui-popup-row-gap, #{$fui-popup-row-gap});
+  }
+
+  .item {
+    @include popup.row;
+
+    flex: 0 0 auto;
+    text-align: start;
+
+    &[data-active] {
+      @include popup.highlight-state;
+    }
+
+    &[data-disabled] {
+      @include popup.disabled-state;
+    }
+
+    > svg {
+      inline-size: var(
+        --fui-popup-indicator-box,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      );
+      block-size: var(
+        --fui-popup-indicator-box,
+        var(--fui-raw-space-16, #{measurements.raw-space(16)})
+      );
+      flex: 0 0 auto;
+    }
+  }
+
+  .groupHeading {
+    @include popup.group-label;
+  }
+
+  // Empty and Searching… rows: plain secondary words, no option role.
+  .note {
+    @include typography.role("body-compact");
+
+    order: 9999;
+    padding-block: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
     color: var(--fui-text-secondary, $fui-text-secondary);
   }
-}
 
-.input {
-  flex: 1;
-  min-inline-size: 0;
-  padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
-  border: none;
-  outline: none;
-  color: var(--fui-text-primary, $fui-text-primary);
-  background: transparent;
-  font: inherit;
-  letter-spacing: inherit;
+  // The loading row: a row-32 spinner row in ink 3, after the quiet second.
+  .loading {
+    @include typography.role("body-compact");
 
-  &::placeholder {
+    display: flex;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    align-items: center;
+    order: 9999;
+    min-block-size: var(--fui-control-height-md, #{$fui-control-height-md});
+    padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
     color: var(--fui-text-tertiary, $fui-text-tertiary);
   }
 
-  &:focus,
-  &:focus-visible {
-    outline: none;
-    box-shadow: none;
-  }
-}
+  .error {
+    @include typography.role("body-compact");
 
-.list {
-  @include popup.viewport;
-}
-
-.item {
-  @include popup.row;
-
-  text-align: start;
-
-  &:hover {
-    @include popup.highlight-state;
+    display: flex;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    align-items: center;
+    order: 9999;
+    min-block-size: var(--fui-control-height-md, #{$fui-control-height-md});
+    padding-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    padding-inline: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    color: var(--fui-text-primary, $fui-text-primary);
   }
 
-  > svg {
-    inline-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
-    block-size: var(--fui-popup-indicator-box, var(--fui-raw-space-16, #{measurements.raw-space(16)}));
+  .errorIcon {
+    display: inline-flex;
     flex: 0 0 auto;
+    color: var(--fui-color-danger-text, $fui-color-danger-text);
+
+    svg {
+      inline-size: action.icon-size("md");
+      block-size: action.icon-size("md");
+    }
   }
-}
 
-.itemActive {
-  @include popup.highlight-state;
-}
+  .errorWords {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
 
-.itemDisabled {
-  @include popup.disabled-state;
-}
+  // Space between groups, never a line.
+  .separator {
+    flex: 0 0 auto;
+    block-size: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
 
-.group:not(:first-child)::before {
-  @include popup.group-separator;
+  // ============================================
+  // Command.Dialog
+  // ============================================
 
-  content: "";
-  display: block;
-}
+  .backdrop {
+    @include overlay.backdrop;
+    @include overlay.motion;
+  }
 
-.groupHeading {
-  @include popup.group-label;
-}
+  .dialogViewport {
+    @include overlay.safe-viewport;
 
-.empty {
-  @include typography.role("body-compact");
+    position: fixed;
+    z-index: var(--fui-overlay-layer-modal, #{$fui-overlay-layer-modal});
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--fui-raw-space-16, #{measurements.raw-space(16)});
 
-  padding-block: var(--fui-popup-row-block-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  padding-inline: var(--fui-popup-row-inline-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
-  color: var(--fui-text-secondary, $fui-text-secondary);
-  text-align: center;
-}
+    // The palette hangs about a seventh of the way down, and gives that room
+    // back on a short window.
+    &::before {
+      content: "";
+      flex: 0 1 14%;
+    }
+  }
 
-.separator {
-  @include popup.group-separator;
+  .dialog {
+    @include overlay.surface;
+    @include overlay.motion;
+
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    inline-size: 100%;
+    max-inline-size: overlay.dialog-max("md");
+    min-block-size: 0;
+    overflow: hidden;
+
+    .command {
+      flex: 1 1 auto;
+    }
+  }
+
+  .footer {
+    @include typography.role("caption");
+
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    justify-content: flex-end;
+    padding-block: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    padding-inline: var(--fui-raw-space-12, #{measurements.raw-space(12)});
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+  }
+
+  .hint {
+    display: inline-flex;
+    gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    align-items: center;
+  }
 }

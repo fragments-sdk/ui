@@ -1,132 +1,118 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import { fireEvent } from "@testing-library/react";
+import { compiledModuleRules } from "../../test/compiled-css";
 import { render, screen, expectNoA11yViolations } from "../../test/utils";
 import { Message } from "./index";
 
-const messageStyles = readFileSync(
-  resolve(process.cwd(), "src/components/Message/Message.module.scss"),
-  "utf8"
-);
+const cssText = compiledModuleRules("src/components/Message/Message.module.scss")
+  .map((rule) => rule.cssText)
+  .join("\n");
 
 describe("Message", () => {
-  it("renders with data-role attribute", () => {
+  it("marks who wrote it with data-from", () => {
     const { container } = render(
-      <Message role="user">
+      <Message from="user">
         <Message.Content>Hello</Message.Content>
       </Message>
     );
-    expect(container.firstElementChild).toHaveAttribute("data-role", "user");
+    expect(container.firstElementChild).toHaveAttribute("data-from", "user");
   });
 
-  it("renders content text", () => {
-    render(
-      <Message role="assistant">
-        <Message.Content>Response text</Message.Content>
-      </Message>
-    );
-    expect(screen.getByText("Response text")).toBeInTheDocument();
-  });
-
-  it("renders default avatar based on role", () => {
-    const { container } = render(
-      <Message role="user">
+  it("draws no avatar by default and shows an opt-in one", () => {
+    const { container, rerender } = render(
+      <Message from="assistant">
         <Message.Content>Hi</Message.Content>
       </Message>
     );
-    // Default avatar renders an SVG
-    expect(container.querySelector("svg")).toBeInTheDocument();
-    expect(container.querySelector('[class*="avatar"]')).toHaveClass("sm");
-  });
-
-  it("uses the public avatar image fallback seam when an image fails", () => {
-    const { container } = render(
-      <Message role="assistant">
-        <Message.Avatar src="/missing.png" alt="Assistant" />
+    expect(container.querySelector("img, svg")).toBeNull();
+    rerender(
+      <Message from="assistant" avatar={<Message.Avatar src="/a.png" alt="Assistant" />}>
         <Message.Content>Hi</Message.Content>
       </Message>
     );
-
-    expect(container.querySelector("img")).toHaveAttribute("alt", "Assistant");
-    expect(container.querySelector('[class*="avatar"]')).toHaveClass("sm");
+    expect(screen.getByRole("img", { name: "Assistant" })).toBeInTheDocument();
   });
 
-  it("marks avatarless assistant and user messages for compact role-aware spacing", () => {
-    const { container } = render(
-      <>
-        <Message role="assistant" avatar={null}>
-          <Message.Content>Avatarless assistant</Message.Content>
-        </Message>
-        <Message role="user" avatar={null}>
-          <Message.Content>Avatarless user</Message.Content>
-        </Message>
-      </>
-    );
-
-    expect(container.querySelector("svg")).not.toBeInTheDocument();
-    expect(container.querySelector('[data-role="assistant"]')).toHaveClass("withoutAvatar");
-    expect(container.querySelector('[data-role="user"]')).toHaveClass("withoutAvatar");
-  });
-
-  it("caps only the user bubble width", () => {
-    // The cap belongs on .user (measured against the conversation width), not
-    // on .user .content — nested, the percentage resolves against an already
-    // shrink-wrapped parent and squeezes short messages until they break
-    // mid-word.
-    const userBlock = messageStyles.match(/\.user\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
-    expect(userBlock).toMatch(/max-inline-size:\s*80%;/);
-    const nestedContent = userBlock.match(/\.content\s*\{[\s\S]*?\}/)?.[0] ?? "";
-    expect(nestedContent).not.toMatch(/max-inline-size:\s*80%;/);
-    expect(messageStyles.match(/max-inline-size:\s*80%;/g)).toHaveLength(1);
-  });
-
-  it("uses neutral message chrome instead of brand accent", () => {
-    expect(messageStyles).toContain("background-color: var(--fui-bg-tertiary, $fui-bg-tertiary);");
-    expect(messageStyles).toContain("color: var(--fui-text-primary, $fui-text-primary);");
-    expect(messageStyles).not.toContain("--fui-color-accent");
-    expect(messageStyles).not.toContain("--fui-color-on-accent");
-  });
-
-  it("sets data-status attribute", () => {
-    const { container } = render(
-      <Message role="assistant" status="streaming">
-        <Message.Content>Streaming...</Message.Content>
-      </Message>
-    );
-    expect(container.firstElementChild).toHaveAttribute("data-status", "streaming");
-  });
-
-  it("renders timestamp sub-component", () => {
-    const date = new Date("2025-01-15T10:00:00");
+  it("keeps the user's line breaks", () => {
     render(
-      <Message role="user" timestamp={date}>
-        <Message.Content>Timed</Message.Content>
-        <Message.Timestamp />
+      <Message from="user">
+        <Message.Content>{"one\ntwo"}</Message.Content>
       </Message>
     );
-    // Timestamp renders a formatted date string in a span with class "timestamp"
-    const timestampEl = document.querySelector(".timestamp");
-    expect(timestampEl).toBeInTheDocument();
-    expect(timestampEl!.textContent).toBeTruthy();
+    expect(screen.getByText(/one/).className).toMatch(/text/);
   });
 
-  it("renders actions sub-component", () => {
+  it("says Sending… in the time slot while pending", () => {
     render(
-      <Message role="assistant">
-        <Message.Content>Done</Message.Content>
-        <Message.Actions>
-          <button>Copy</button>
-        </Message.Actions>
+      <Message from="user" status="pending">
+        <Message.Content>Hello</Message.Content>
       </Message>
     );
-    expect(screen.getByRole("button", { name: "Copy" })).toBeInTheDocument();
+    expect(screen.getByText("Sending…")).toBeInTheDocument();
+  });
+
+  it("renders the timestamp as a time element", () => {
+    const date = new Date("2026-10-03T10:00:00Z");
+    const { container } = render(
+      <Message from="assistant" timestamp={date}>
+        <Message.Content>Hello</Message.Content>
+      </Message>
+    );
+    expect(container.querySelector("time")).toHaveAttribute("datetime", date.toISOString());
+  });
+
+  it("is busy with a caret while streaming", () => {
+    const { container } = render(
+      <Message from="assistant" status="streaming">
+        <Message.Content>
+          <span>Partial</span>
+        </Message.Content>
+      </Message>
+    );
+    expect(container.firstElementChild).toHaveAttribute("aria-busy", "true");
+    expect(container.querySelector('[class*="caret"]')).not.toBeNull();
+  });
+
+  it("shows the failure block with Try again, never a tinted bubble", () => {
+    const onRetry = vi.fn();
+    render(
+      <Message from="user" status="error" onRetry={onRetry}>
+        <Message.Content>Hello</Message.Content>
+      </Message>
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Not sent.");
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    expect(onRetry).toHaveBeenCalledOnce();
+    expect(cssText).not.toMatch(/data-status="error"\][^{]*\.content/);
+  });
+
+  it("takes a custom failure block with extra actions", () => {
+    render(
+      <Message from="assistant" status="error">
+        <Message.Content>Half a reply</Message.Content>
+        <Message.Error onRetry={() => {}} actions={<button type="button">Ask differently</button>}>
+          The model stopped.
+        </Message.Error>
+      </Message>
+    );
+    expect(screen.getAllByRole("alert")).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Ask differently" })).toBeInTheDocument();
+  });
+
+  it("gates actions behind hover only where a pointer hovers", () => {
+    expect(cssText).toMatch(/@media \(hover: hover\)[\s\S]*\.actions/);
   });
 
   it("has no accessibility violations", async () => {
     const { container } = render(
-      <Message role="user">
-        <Message.Content>Accessible message</Message.Content>
-      </Message>
+      <div>
+        <Message from="user" timestamp={new Date()}>
+          <Message.Content>What changed?</Message.Content>
+        </Message>
+        <Message from="assistant">
+          <Message.Content>Two files.</Message.Content>
+        </Message>
+      </div>
     );
     await expectNoA11yViolations(container);
   });

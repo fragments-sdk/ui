@@ -1,0 +1,158 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "List",
+  "description": "Stacks items down the page with bullets, numbers or icons, or as interactive 32px rows.",
+  "category": "display",
+  "tags": ["list", "items", "bullet", "ordered", "unordered", "row", "navigation"],
+  "status": "stable",
+  "sourcePath": "src/components/List/index.tsx",
+  "exportName": "List",
+  "propsSummary": [
+    "children: node (required)",
+    "as: ul|ol (default: ul)",
+    "marker: none|disc|icon (default: disc on ul, numbers on ol)",
+    "gap: none|xs|sm (default: sm)",
+    "style: object"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "List.Item or List.Row components",
+      "required": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "List element. An ol numbers its items; a ul draws a bullet.",
+      "default": "ul",
+      "required": false,
+      "values": ["ul", "ol"]
+    },
+    "marker": {
+      "type": "enum",
+      "description": "Marker before each item, when it is not the default for `as`",
+      "required": false,
+      "values": ["none", "disc", "icon"]
+    },
+    "gap": {
+      "type": "enum",
+      "description": "Space between items: 0, 4 or 8",
+      "default": "sm",
+      "required": false,
+      "values": ["none", "xs", "sm"]
+    },
+    "style": {
+      "type": "object",
+      "description": "",
+      "required": false
+    }
+  },
+  "usage": {
+    "when": [
+      "Steps, instructions, or anything with an order",
+      "Feature and benefit lists",
+      "A stack of pages, files or settings to pick from (List.Row)"
+    ],
+    "whenNot": [
+      "Items open a menu of choices for a field (use Select or Combobox)",
+      "Items have columns (use Table)",
+      "Items need their own surface (use Card in a Grid)"
+    ],
+    "guidelines": [
+      "Order matters? Use as=\"ol\": the numbers come with it",
+      "Rows go in a List with marker=\"none\" and gap=\"none\"; one row per choice, the chosen one `selected`",
+      "Row meta is a short fact (a count, a path, a time); it sits in ink 3 at the end of the row",
+      "Keep one icon meaning per list — mixing icons reads as noise",
+      "Write items in parallel grammar; scanning depends on it",
+      "Stop nesting at two levels"
+    ],
+    "accessibility": [
+      "Real ul/ol markup means screen readers announce the item count",
+      "Icons are decorative — the text has to carry the meaning",
+      "A selected row carries aria-current (or your own aria-current/aria-pressed), never colour alone",
+      "List.Row renders a button; pass render={<a href />} for navigation"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Bullet List",
+      "description": "The default marker — reach for it when order does not matter.",
+      "code": "<List>\n  <List.Item>First item</List.Item>\n  <List.Item>Second item</List.Item>\n  <List.Item>Third item</List.Item>\n</List>"
+    },
+    {
+      "name": "Numbered List",
+      "description": "as=\"ol\" makes the sequence real and draws the numbers.",
+      "code": "<List as=\"ol\">\n  <List.Item>Create your account</List.Item>\n  <List.Item>Configure your settings</List.Item>\n  <List.Item>Start building</List.Item>\n</List>"
+    },
+    {
+      "name": "Icon List",
+      "description": "Each item takes its own glyph in the marker column, in ink 3.",
+      "code": "<List marker=\"icon\">\n  <List.Item icon={<Check weight=\"bold\" />}>Unlimited projects</List.Item>\n  <List.Item icon={<Check weight=\"bold\" />}>Priority support</List.Item>\n  <List.Item icon={<Check weight=\"bold\" />}>Advanced analytics</List.Item>\n</List>"
+    },
+    {
+      "name": "Rows",
+      "description": "Interactive 32px rows: a leading glyph, the label, trailing meta, the chosen row marked.",
+      "code": "import { House, Gear, CreditCard } from \"@phosphor-icons/react\";\n\n<List marker=\"none\" gap=\"none\" aria-label=\"Pages\">\n  <List.Row icon={<House />} meta=\"/\" selected>\n    Home\n  </List.Row>\n  <List.Row icon={<Gear />} meta=\"/settings\">\n    Settings\n  </List.Row>\n  <List.Row icon={<CreditCard />} meta=\"/billing\">\n    Billing\n  </List.Row>\n</List>"
+    },
+    {
+      "name": "Link Rows",
+      "description": "Navigation rows render links through `render`.",
+      "code": "<List marker=\"none\" gap=\"none\" aria-label=\"Docs\">\n  <List.Row render={<a href=\"/docs/start\" />} aria-current=\"page\" selected>\n    Getting started\n  </List.Row>\n  <List.Row render={<a href=\"/docs/theming\" />}>Theming</List.Row>\n</List>"
+    },
+    {
+      "name": "No Style",
+      "description": "No markers: a plain stack of items.",
+      "code": "<List marker=\"none\">\n  <List.Item>Dashboard</List.Item>\n  <List.Item>Settings</List.Item>\n  <List.Item>Profile</List.Item>\n</List>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Icon",
+      "relationship": "child",
+      "note": "Use Icon as List.Item or List.Row icon"
+    },
+    {
+      "component": "Stack",
+      "relationship": "alternative",
+      "note": "Use Stack for non-semantic vertical lists and larger rhythm"
+    },
+    {
+      "component": "Sidebar",
+      "relationship": "alternative",
+      "note": "Use Sidebar.Item for the app's own navigation"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: List.Item[] | List.Row[] - list items (required)",
+      "as: ul|ol - list element; ol numbers its items",
+      "marker: none|disc|icon - marker before each item",
+      "gap: none|xs|sm - item spacing",
+      "List.Row: icon, meta, selected, render, disabled - an interactive 32px row"
+    ],
+    "a11yRules": ["A11Y_LIST_SEMANTIC", "A11Y_LIST_NESTING"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Item", "Row", "Root"]
+  },
+  "provenance": {
+    "source": "migrated",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-03-13T23:18:59.915Z"
+  },
+  "cssVariables": [
+    "--fui-bg-active",
+    "--fui-control-height-md",
+    "--fui-hit-area",
+    "--fui-icon-md",
+    "--fui-icon-xs",
+    "--fui-radius-control",
+    "--fui-raw-space-0",
+    "--fui-raw-space-12",
+    "--fui-raw-space-8",
+    "--fui-text-primary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

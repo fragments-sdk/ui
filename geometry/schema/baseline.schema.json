@@ -25,6 +25,10 @@
       "type": "string",
       "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
     },
+    "packageFilePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9@._/-]+$"
+    },
     "identity": {
       "type": "object",
       "required": ["provider", "userId", "login"],
@@ -80,7 +84,7 @@
             "type": "object",
             "required": ["path", "sha256"],
             "properties": {
-              "path": { "$ref": "#/$defs/repositoryPath" },
+              "path": { "$ref": "#/$defs/packageFilePath" },
               "sha256": { "$ref": "#/$defs/sha256" }
             },
             "additionalProperties": false
@@ -167,7 +171,6 @@
         "storybookTreeSha256": { "$ref": "#/$defs/sha256" },
         "runnerTreeSha256": { "$ref": "#/$defs/sha256" },
         "schemaSetSha256": { "$ref": "#/$defs/sha256" },
-        "catalogMapSha256": { "$ref": "#/$defs/sha256" },
         "caseSchemaVersion": { "type": "integer", "const": 1 },
         "runnerVersion": { "type": "integer", "const": 1 },
         "environment": { "$ref": "#/$defs/environment" },
@@ -182,21 +185,6 @@
           "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/approval" }]
         }
       },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "caseId": { "type": "string", "pattern": "/catalog-smoke-1440$" }
-            },
-            "required": ["caseId"]
-          },
-          "then": {
-            "properties": { "catalogMapSha256": { "$ref": "#/$defs/sha256" } },
-            "required": ["catalogMapSha256"]
-          },
-          "else": { "properties": { "catalogMapSha256": false } }
-        }
-      ],
       "additionalProperties": false
     }
   }

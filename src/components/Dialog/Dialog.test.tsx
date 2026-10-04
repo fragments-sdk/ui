@@ -1,7 +1,15 @@
 import * as React from "react";
-import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen, userEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { Dialog } from "./index";
+import styles from "./Dialog.module.scss";
+
+const overlayRecipeSource = readFileSync(
+  resolve(process.cwd(), "src/recipes/_overlay.scss"),
+  "utf8"
+);
 
 function renderDialog(props: Partial<React.ComponentProps<typeof Dialog>> = {}) {
   return render(
@@ -17,9 +25,7 @@ function renderDialog(props: Partial<React.ComponentProps<typeof Dialog>> = {}) 
           <p>Body content</p>
         </Dialog.Body>
         <Dialog.Footer>
-          <Dialog.Close asChild>
-            <button>Cancel</button>
-          </Dialog.Close>
+          <Dialog.Close render={<button type="button" />}>Cancel</Dialog.Close>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog>
@@ -114,17 +120,103 @@ describe("Dialog", () => {
       </Dialog>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("Large Dialog")).toBeInTheDocument();
-    });
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveAttribute("data-width", "lg");
+    expect(dialog).toHaveClass(styles.lg);
   });
 
-  it("renders as modal by default", async () => {
+  it("is always modal: a scrim sits behind the sheet", async () => {
     renderDialog({ defaultOpen: true });
 
-    await waitFor(() => {
-      expect(screen.getByText("Dialog Title")).toBeInTheDocument();
-    });
+    await screen.findByRole("dialog");
+    expect(document.querySelector(`.${styles.backdrop}`)).toBeInTheDocument();
+  });
+
+  it("moves focus to the element an initialFocus ref names", async () => {
+    function WithRef() {
+      const ref = React.useRef<HTMLInputElement>(null);
+      return (
+        <Dialog defaultOpen>
+          <Dialog.Content initialFocus={ref}>
+            <Dialog.Title>Rename</Dialog.Title>
+            <button type="button">First</button>
+            <input ref={ref} aria-label="Name" />
+          </Dialog.Content>
+        </Dialog>
+      );
+    }
+    render(<WithRef />);
+
+    await waitFor(() => expect(screen.getByLabelText("Name")).toHaveFocus());
+  });
+
+  it("renders a library control as the trigger through render", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <Dialog.Trigger render={<button type="button" data-testid="custom-trigger" />}>
+          Rename
+        </Dialog.Trigger>
+        <Dialog.Content>
+          <Dialog.Title>Rename the branch</Dialog.Title>
+        </Dialog.Content>
+      </Dialog>
+    );
+
+    await user.click(screen.getByTestId("custom-trigger"));
+    expect(await screen.findByText("Rename the branch")).toBeInTheDocument();
+  });
+
+  it("keeps a short body out of the tab order", async () => {
+    renderDialog({ defaultOpen: true });
+
+    const body = (await screen.findByText("Body content")).parentElement as HTMLElement;
+    expect(body).toHaveClass(styles.body);
+    expect(body).not.toHaveAttribute("tabindex");
+    expect(body).not.toHaveAttribute("data-fui-overflowing");
+  });
+
+  it("marks a body that overflows, which draws the footer's scroll edge", async () => {
+    // jsdom lays nothing out: the sheet body reports a scroll height past its client height.
+    const overflowing = (element: HTMLElement) => element.classList.contains(styles.body);
+    const scroll = vi
+      .spyOn(HTMLElement.prototype, "scrollHeight", "get")
+      .mockImplementation(function (this: HTMLElement) {
+        return overflowing(this) ? 600 : 0;
+      });
+    const client = vi
+      .spyOn(HTMLElement.prototype, "clientHeight", "get")
+      .mockImplementation(function (this: HTMLElement) {
+        return overflowing(this) ? 300 : 0;
+      });
+    try {
+      renderDialog({ defaultOpen: true });
+
+      const body = (await screen.findByText("Body content")).parentElement as HTMLElement;
+      expect(body).toHaveAttribute("data-fui-overflowing");
+      expect(body).toHaveAttribute("tabindex", "0");
+      const footer = screen.getByRole("button", { name: /cancel/i }).parentElement;
+      expect(footer).toHaveClass(styles.footer);
+      expect(body.nextElementSibling).toBe(footer);
+    } finally {
+      scroll.mockRestore();
+      client.mockRestore();
+    }
+  });
+
+  it("draws the footer's hairline only after an overflowing body, and fades it without motion", () => {
+    const footer = overlayRecipeSource.slice(
+      overlayRecipeSource.indexOf("@mixin footer"),
+      overlayRecipeSource.indexOf("@mixin anchored-title")
+    );
+
+    // A border on a pseudo-element, hidden at rest: never a band, never a shadow.
+    expect(footer).toMatch(
+      /&::before\s*\{[^}]*border-block-start: var\(--fui-stroke-hairline, #\{tokens\.\$fui-stroke-hairline\}\) solid\s+var\(--fui-border, #\{tokens\.\$fui-border\}\);[^}]*opacity: 0;/s
+    );
+    expect(footer).toMatch(/\[data-fui-overflowing\] ~ &::before\s*\{\s*opacity: 1;\s*\}/);
+    expect(footer).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*transition: none;/);
+    expect(footer).not.toMatch(/box-shadow|background/);
   });
 
   it("has no accessibility violations when open", async () => {
@@ -173,33 +265,6 @@ describe("Dialog", () => {
       await waitFor(() => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
         expect(opener).toHaveFocus();
-      });
-    });
-
-    it("closes a non-modal dialog when keyboard focus moves outside", async () => {
-      const user = userEvent.setup();
-      render(
-        <>
-          <Dialog modal={false}>
-            <Dialog.Trigger>Open non-modal dialog</Dialog.Trigger>
-            <Dialog.Content>
-              <Dialog.Title>Non-modal dialog</Dialog.Title>
-              <button type="button">Inside control</button>
-            </Dialog.Content>
-          </Dialog>
-          <button type="button">Outside control</button>
-        </>
-      );
-
-      await user.click(screen.getByRole("button", { name: "Open non-modal dialog" }));
-      const inside = await screen.findByRole("button", { name: "Inside control" });
-      await waitFor(() => expect(inside).toHaveFocus());
-
-      await user.tab();
-
-      await waitFor(() => {
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Outside control" })).toHaveFocus();
       });
     });
 

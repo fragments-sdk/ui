@@ -5,7 +5,7 @@ import { axe } from 'vitest-axe';
 
 const DEFAULT_DISABLED_RULES = ['page-has-heading-one', 'region'] as const;
 
-type AxeRules = NonNullable<Parameters<typeof axe>[1]>['rules'];
+type AxeRules = NonNullable<NonNullable<Parameters<typeof axe>[1]>['rules']>;
 
 export interface A11yAssertOptions {
   /**

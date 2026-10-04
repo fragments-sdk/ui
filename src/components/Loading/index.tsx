@@ -1,231 +1,137 @@
 "use client";
 
 import * as React from "react";
-import symbol from "../../assets/fragments-symbol.json";
+import { LOADING_DELAY_MS } from "../../recipes/loading";
 import styles from "./Loading.module.scss";
 
 // ============================================
 // Types
 // ============================================
 
-export type LoadingSize = "sm" | "md" | "lg" | "xl";
-export type LoadingKind = "spinner" | "dots" | "pulse" | "fragments";
-
-export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Size of the loading indicator */
-  size?: LoadingSize;
-  /** Which animation plays. Not chrome, so it is `kind`, not `variant`.
-   * @default "spinner" */
-  kind?: LoadingKind;
-  /** Accessible label for screen readers */
+export interface LoadingProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, "children"> {
+  /** What is loading, read by screen readers. @default "Loading…" */
   label?: string;
-  /** Whether to center the loading indicator in its container */
-  centered?: boolean;
-  /** Whether to fill the parent container */
+  /** Size the spinner to the surrounding text (1em) so it sits inside a line. */
+  inline?: boolean;
+  /** Fill the parent and centre the spinner in it. */
   fill?: boolean;
-  /** Whether to show the loading indicator with a backdrop overlay */
-  overlay?: boolean;
-  /** Colour. `accent` by default; `current` inherits the surrounding text colour */
-  color?: "accent" | "current" | "muted";
+  /**
+   * Milliseconds of quiet before the spinner shows. Work that finishes sooner
+   * shows nothing. Pass 0 when the caller already waited.
+   * @default 1000
+   */
+  delay?: number;
 }
 
-export interface LoadingInlineProps extends React.HTMLAttributes<HTMLSpanElement> {
-  /** Size of the loading indicator */
-  size?: "sm" | "md";
-  /** Accessible label */
+export interface LoadingScreenProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  /** What is loading. @default "Loading…" */
   label?: string;
-}
-
-export interface LoadingScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Loading indicator size */
-  size?: LoadingSize;
-  /** Which animation plays */
-  kind?: LoadingKind;
-  /** Optional label text to display */
-  label?: string;
-  /** Whether to show the label text visually */
+  /** Show the label under the spinner as well as reading it. */
   showLabel?: boolean;
-  /** Uses the same theme color choices as Loading. */
-  color?: LoadingProps["color"];
+  /** Milliseconds of quiet before the spinner shows. @default 1000 */
+  delay?: number;
 }
 
+export const LOADING_LABEL = "Loading…";
+
 // ============================================
-// Icons/Animations
+// Spinner
 // ============================================
 
-function SpinnerIcon({ className }: { className?: string }) {
+function Spinner({ className }: { className?: string }) {
   return (
     <svg
       className={className}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
+      viewBox="0 0 16 16"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.5"
+      strokeWidth="1.75"
       strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-    </svg>
-  );
-}
-
-function DotsAnimation({ className }: { className?: string }) {
-  return (
-    <span className={className} aria-hidden="true">
-      <span className={styles.dot} />
-      <span className={styles.dot} />
-      <span className={styles.dot} />
-    </span>
-  );
-}
-
-function PulseAnimation({ className }: { className?: string }) {
-  return (
-    <span className={className} aria-hidden="true">
-      <span className={styles.pulseRing} />
-      <span className={styles.pulseDot} />
-    </span>
-  );
-}
-
-// ============================================
-// Components
-// ============================================
-
-function FragmentsAnimation({ size }: { size: LoadingSize }) {
-  const compact = size === "sm" || size === "md";
-  const paths = symbol.paths;
-  return (
-    <svg
-      className={styles.fragmentsIcon}
-      viewBox={symbol.viewBox}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={compact ? 16 : 12}
-      strokeLinecap="round"
-      strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
     >
-      <g className={styles.fragmentsTrack}>
-        {paths.map((d) => (
-          <path key={d} d={d} />
-        ))}
-      </g>
-      <g className={styles.fragmentsDrawing}>
-        {paths.map((d) => (
-          <path key={d} d={d} pathLength="1" />
-        ))}
-      </g>
+      <path d="M14 8a6 6 0 1 1-4.15-5.71" />
     </svg>
   );
 }
 
-const LoadingRoot = React.forwardRef<HTMLDivElement, LoadingProps>(function LoadingRoot(
+/** False for the first `delay` ms after mount, then true (the loading recipe's quiet phase). */
+export function useLoadingDelay(delay: number = LOADING_DELAY_MS): boolean {
+  const [shown, setShown] = React.useState(delay <= 0);
+  const [lastDelay, setLastDelay] = React.useState(delay);
+  if (lastDelay !== delay) {
+    setLastDelay(delay);
+    setShown(delay <= 0);
+  }
+  React.useEffect(() => {
+    if (delay <= 0) return;
+    const handle = setTimeout(() => setShown(true), delay);
+    return () => clearTimeout(handle);
+  }, [delay]);
+  return shown;
+}
+
+// ============================================
+// Loading
+// ============================================
+
+const LoadingRoot = React.forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
-    size = "md",
-    kind = "spinner",
-    label = "Loading...",
-    centered = false,
+    label = LOADING_LABEL,
+    inline = false,
     fill = false,
-    overlay = false,
-    color = "accent",
+    delay = LOADING_DELAY_MS,
     className,
     ...htmlProps
   },
   ref
 ) {
-  const classes = [
-    styles.loading,
-    styles[size],
-    styles[kind],
-    styles[`color-${color}`],
-    centered && styles.centered,
-    fill && styles.fill,
-    overlay && styles.overlay,
-    className,
-  ]
+  const shown = useLoadingDelay(delay);
+  const classes = [styles.loading, inline && styles.inline, fill && styles.fill, className]
     .filter(Boolean)
     .join(" ");
 
-  const animation =
-    kind === "fragments" ? (
-      <FragmentsAnimation size={size} />
-    ) : kind === "dots" ? (
-      <DotsAnimation className={styles.dotsTrack} />
-    ) : kind === "pulse" ? (
-      <PulseAnimation className={styles.pulseTrack} />
-    ) : (
-      <SpinnerIcon className={styles.spinnerIcon} />
-    );
-
-  const content = (
-    <div
+  return (
+    <span
       ref={ref}
-      className={classes}
       role="status"
       aria-label={label}
-      aria-live="polite"
       {...htmlProps}
+      className={classes}
+      data-shown={shown || undefined}
     >
-      {animation}
-    </div>
+      {shown && (
+        <>
+          <Spinner className={styles.spinner} />
+          <span className={styles.label}>{label}</span>
+        </>
+      )}
+    </span>
   );
-
-  if (overlay) {
-    return <div className={styles.overlayBackdrop}>{content}</div>;
-  }
-
-  return content;
 });
 
 // ============================================
-// Loading.Inline - Inline text loading indicator
-// ============================================
-
-function LoadingInline({
-  size = "sm",
-  label = "Loading...",
-  className,
-  ...htmlProps
-}: LoadingInlineProps) {
-  const classes = [styles.inline, styles[`inline-${size}`], className].filter(Boolean).join(" ");
-
-  return (
-    <span className={classes} role="status" aria-label={label} {...htmlProps}>
-      <SpinnerIcon className={styles.inlineSpinner} />
-    </span>
-  );
-}
-
-// ============================================
-// Loading.Screen - Full-screen loading state
+// Loading.Screen — the whole view is waiting
 // ============================================
 
 function LoadingScreen({
-  size = "lg",
-  kind = "spinner",
-  label = "Loading...",
+  label = LOADING_LABEL,
   showLabel = false,
-  color = "accent",
+  delay = LOADING_DELAY_MS,
   className,
   ...htmlProps
 }: LoadingScreenProps) {
+  const shown = useLoadingDelay(delay);
   const classes = [styles.screen, className].filter(Boolean).join(" ");
 
   return (
-    <div className={classes} role="status" aria-label={label} aria-live="polite" {...htmlProps}>
-      <LoadingRoot
-        size={size}
-        kind={kind}
-        color={color}
-        role="presentation"
-        aria-hidden="true"
-        aria-live="off"
-      />
-      {showLabel && <span className={styles.screenLabel}>{label}</span>}
+    <div role="status" aria-label={label} {...htmlProps} className={classes}>
+      {shown && (
+        <>
+          <Spinner className={styles.screenSpinner} />
+          <span className={showLabel ? styles.screenLabel : styles.label}>{label}</span>
+        </>
+      )}
     </div>
   );
 }
@@ -235,9 +141,5 @@ function LoadingScreen({
 // ============================================
 
 export const Loading = Object.assign(LoadingRoot, {
-  Inline: LoadingInline,
   Screen: LoadingScreen,
 });
-
-// Re-export individual components for tree-shaking
-export { LoadingRoot, LoadingInline, LoadingScreen };

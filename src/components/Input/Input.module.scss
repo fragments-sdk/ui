@@ -1,194 +1,253 @@
 @use "../../tokens/variables" as *;
 @use "../../tokens/mixins" as *;
+@use "../../tokens/measurements.generated" as measurements;
 @use "../../recipes/action";
 @use "../../recipes/field";
+@use "../../recipes/focus";
+@use "../../recipes/target";
 @use "../../recipes/typography";
 
-.wrapper {
-  @include field.wrapper;
-}
+// What an adorned shell checks on its input: the shell carries none of the
+// input's own attributes, so its states read them through :has().
+$_inner-disabled: ":has(> .inner:disabled)";
+$_inner-readonly: ":has(> .inner[readonly])";
+$_inner-invalid: ':has(> .inner:is([aria-invalid="true"], [data-invalid]))';
 
-.label {
-  @include field.label;
-}
+@layer fui.tokens, fui.base, fui.components;
 
-.required {
-  margin-inline-start: var(--fui-raw-space-2, 2px);
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
+@layer fui.components {
+  // ============================================
+  // The shell: one field box, drawn by the input itself when bare and by the
+  // wrapper when adorned. Band fill, the 3:1 field edge, the control radius,
+  // the shared track. Sizes are set once, here, from data-size.
+  // ============================================
 
-.helper {
-  @include field.helper;
-}
+  .shell {
+    // Inherit first, so the size's type role below wins over it.
+    font: inherit;
 
-.helperError,
-.errorMessage {
-  @include field.error;
-}
-
-.input {
-  @include interactive-base;
-  @include field.shell;
-
-  display: block;
-  width: 100%;
-
-  &::placeholder {
-    color: var(--fui-text-tertiary, $fui-text-tertiary);
-  }
-
-  &:focus-visible {
-    @include field.focus-state;
-  }
-
-  @include high-contrast-outline;
-}
-
-// Size variants — shared control-size + field-padding path
-.sm {
-  @include field.size("sm");
-}
-
-.md {
-  @include field.size("md");
-}
-
-.lg {
-  @include field.size("lg");
-}
-
-// Error state via :has() — detects aria-invalid on the input element.
-// Replaces JS class toggle: `error && styles.error`
-// The .error class is kept as a fallback for direct usage.
-.error,
-.input[aria-invalid] {
-  @include field.invalid-state;
-
-  &:focus-visible {
-    @include field.invalid-focus-state;
-  }
-}
-
-// Auto-detect error state via :has() — applies error color to helper when sibling has aria-invalid
-.wrapper:has([aria-invalid]) .helper {
-  color: var(--fui-color-danger-text, $fui-color-danger-text);
-}
-
-// ============================================
-// Input with adornments or shortcut indicator
-// ============================================
-
-.inputContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-// Adornments and shortcuts share one painted shell. The input remains the
-// semantic control while every sibling participates intrinsically in layout.
-.hasAdornment,
-.inputContainer:has(> .shortcut) {
-  @include field.size("md");
-  @include field.shell;
-
-  gap: action.gap("md");
-
-  &:has(.sm) {
-    @include field.size("sm");
-
-    gap: action.gap("sm");
-  }
-
-  &:has(.md) {
+    @include interactive-base;
     @include field.size("md");
+    @include field.shell;
+
+    box-sizing: border-box;
+    width: 100%;
+
+    &[data-size="xs"] {
+      @include field.size-xs;
+    }
+
+    &[data-size="sm"] {
+      @include field.size("sm");
+    }
+
+    &[data-size="lg"] {
+      @include field.size("lg");
+    }
+
+    @include high-contrast-outline;
   }
 
-  &:has(.lg) {
-    @include field.size("lg");
-
-    gap: action.gap("lg");
+  // Bare: the wrapper draws no box, so the input is the field and a layout
+  // parent (a Stack, a Grid cell) sees the input itself.
+  .passthrough {
+    display: contents;
   }
 
-  &:focus-within {
-    @include field.focus-state;
+  .control {
+    &::placeholder {
+      color: var(--fui-text-tertiary, $fui-text-tertiary);
+    }
+
+    // The browser's own search glyphs: the field draws its own clear button.
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button {
+      appearance: none;
+    }
   }
 
-  // Strip the input's own shell when inside adornment container
-  .input {
-    min-height: 0;
-    height: 100%;
-    border: none;
-    background: transparent;
-    padding-inline: 0;
-    box-shadow: none;
+  // Bare input states: the input draws the edge, so it carries every state.
+  input.shell {
+    display: block;
+
+    @include field.hover-state;
+
+    &[readonly] {
+      @include field.readonly-state;
+    }
 
     &:focus-visible {
-      outline: none;
-      box-shadow: none;
+      @include field.focus-state;
+    }
+
+    &:is([aria-invalid="true"], [data-invalid]) {
+      @include field.invalid-state;
+
+      &:focus-visible {
+        @include field.invalid-focus-state;
+      }
     }
   }
 
-  // Error state on adornment container
-  &:has(.error) {
-    @include field.invalid-state;
+  // ============================================
+  // Adorned: the wrapper is the shell and the input inside draws nothing.
+  // ============================================
 
-    &:focus-within {
-      @include field.invalid-focus-state;
+  div.shell {
+    display: flex;
+    align-items: center;
+    gap: action.gap("md");
+    cursor: text;
+
+    &:is([data-size="xs"], [data-size="sm"]) {
+      gap: action.gap("sm");
+    }
+
+    &[data-size="lg"] {
+      gap: action.gap("lg");
+    }
+
+    @media (hover: hover) {
+      &:hover:not(#{$_inner-disabled}, #{$_inner-readonly}, #{$_inner-invalid}) {
+        border-color: color-mix(
+          in oklab,
+          var(--fui-text-primary, #{$fui-text-primary}) 55%,
+          var(--fui-field-border, #{$fui-field-border})
+        );
+      }
+    }
+
+    // The ring is the shell's, drawn for keyboard focus inside it only.
+    &:has(> .inner:focus-visible) {
+      @include field.focus-state;
+    }
+
+    &#{$_inner-readonly} {
+      @include field.readonly-state;
+    }
+
+    &#{$_inner-invalid} {
+      @include field.invalid-state;
+
+      &:has(> .inner:focus-visible) {
+        @include field.invalid-focus-state;
+      }
+    }
+
+    // Dimmed once, on the box; the input inside reads opacity 1.
+    &#{$_inner-disabled} {
+      @include field.disabled-state;
     }
   }
-}
 
-.adornment {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  color: var(--fui-text-secondary, $fui-text-secondary);
+  .inner {
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    @include field.coarse-typed-text;
 
-  svg {
-    @include action.glyph("md");
+    // The shell draws the ring through :has(:focus-visible).
+    &:focus-visible {
+      @include focus.delegated;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
-}
 
-.hasAdornment:has(.sm) .adornment svg {
-  @include action.glyph("sm");
-}
+  .adornment {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    color: var(--fui-text-secondary, $fui-text-secondary);
 
-.hasAdornment:has(.lg) .adornment svg {
-  @include action.glyph("lg");
-}
+    svg {
+      @include action.glyph("md");
+    }
 
-.shortcut {
-  @include typography.role("caption");
+    [data-size="xs"] > & svg {
+      @include action.glyph("micro");
+    }
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  gap: var(--fui-raw-space-2, 2px);
-  min-inline-size: var(--fui-raw-space-24, 24px);
-  block-size: var(--fui-raw-space-20, 20px);
-  margin-inline-start: auto;
-  padding-inline: var(--fui-raw-space-4, 4px);
-  font-family: var(--fui-font-mono, $fui-font-mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--fui-kbd-color, var(--fui-text-tertiary, #{$fui-text-tertiary}));
-  background: var(--fui-kbd-bg, var(--fui-bg-elevated, #{$fui-bg-elevated}));
-  border: var(--fui-stroke-hairline, 1px) solid
-    var(--fui-kbd-border, var(--fui-border, #{$fui-border}));
-  border-radius: var(--fui-kbd-radius, var(--fui-radius-sm, #{$fui-radius-sm}));
-  box-shadow: var(--fui-kbd-shadow, none);
-  pointer-events: none;
-  white-space: nowrap;
-  user-select: none;
-}
+    [data-size="sm"] > & svg {
+      @include action.glyph("sm");
+    }
 
-// ============================================
-// Accessibility: Reduced Motion
-// ============================================
+    [data-size="lg"] > & svg {
+      @include action.glyph("lg");
+    }
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .input {
-    transition: none;
+  // ============================================
+  // End slots: count, shortcut hint, clear
+  // ============================================
+
+  // How many match: ink 3, the caption size, figures that line up.
+  .count {
+    @include typography.role("caption");
+
+    flex: 0 0 auto;
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  // The keycap is the Kbd primitive; the field only places it at the end of
+  // the row and keeps it out of the pointer's way.
+  .shortcut {
+    margin-inline-start: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // Clear: a quiet 24px icon button at the end, 4 from the edge, with a 24/44
+  // hit area. Hover is gated to pointers that hover.
+  .clear {
+    @include button-reset;
+    @include action.motion;
+    @include action.icon-only("micro");
+    @include target.hit-area("micro");
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    margin-inline-end: calc(
+      var(--fui-raw-space-4, #{measurements.raw-space(4)}) - var(
+          --_fui-field-inline-inset,
+          #{field.inline-inset("md")}
+        )
+    );
+    border-radius: var(--fui-radius-control, $fui-radius-control);
+    color: var(--fui-text-secondary, $fui-text-secondary);
+
+    svg {
+      @include action.glyph("micro");
+    }
+
+    @include action.hover {
+      background-color: var(--fui-bg-hover, $fui-bg-hover);
+      color: var(--fui-text-primary, $fui-text-primary);
+    }
+
+    @include action.press(false) {
+      background-color: var(--fui-bg-active, $fui-bg-active);
+    }
+
+    &:focus-visible {
+      @include focus.ring;
+    }
   }
 }

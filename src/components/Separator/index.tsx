@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Separator as BaseSeparator } from "@base-ui/react/separator";
 import styles from "./Separator.module.scss";
@@ -8,97 +6,59 @@ import styles from "./Separator.module.scss";
 // Types
 // ============================================
 
-export type SeparatorGap = "none" | "xs" | "sm" | "md" | "lg" | "xl";
+export type SeparatorOrientation = "horizontal" | "vertical";
+
+/**
+ * How far a vertical rule runs. `full` stretches across the parent's cross
+ * axis; `control` stops at the compact control height with a small margin on
+ * each side, the toolbar divider.
+ */
+export type SeparatorLength = "full" | "control";
 
 export interface SeparatorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
-  /** Orientation of the separator */
-  orientation?: "horizontal" | "vertical";
-  /** Breathing room around the rule
-   * @default "none" */
-  gap?: SeparatorGap;
-  /** Softer visual appearance */
-  soft?: boolean;
-  /** Optional label text (creates a labeled divider) */
-  label?: string;
+  /** Direction of the rule
+   * @default "horizontal" */
+  orientation?: SeparatorOrientation;
+  /** How far a vertical rule runs; ignored on horizontal rules
+   * @default "full" */
+  length?: SeparatorLength;
+  /** Words that sit between two horizontal rules. The label is a sibling of
+   * the rule, never inside it. */
+  label?: React.ReactNode;
 }
-
-// ============================================
-// Gap class map
-// ============================================
-
-const GAP_CLASS: Record<SeparatorGap, string> = {
-  none: styles.gapNone,
-  xs: styles.gapXs,
-  sm: styles.gapSm,
-  md: styles.gapMd,
-  lg: styles.gapLg,
-  xl: styles.gapXl,
-};
 
 // ============================================
 // Component
 // ============================================
 
 const SeparatorRoot = React.forwardRef<HTMLDivElement, SeparatorProps>(function Separator(
-  {
-    orientation = "horizontal",
-    gap = "none",
-    soft = false,
-    label,
-    className,
-    style,
-    ...htmlProps
-  },
+  { orientation = "horizontal", length = "full", label, className, ...htmlProps },
   ref
 ) {
-  // Labeled separator (horizontal only)
-  if (label && orientation === "horizontal") {
-    const classes = [
-      styles.separator,
-      styles.withLabel,
-      GAP_CLASS[gap],
-      soft && styles.soft,
-      className,
-    ]
-      .filter(Boolean)
-      .join(" ");
-
+  if (label != null && label !== false && orientation === "horizontal") {
     return (
       <div
         ref={ref}
-        role="separator"
-        aria-orientation="horizontal"
-        className={classes}
-        style={style}
+        className={[styles.labelled, className].filter(Boolean).join(" ")}
         {...htmlProps}
       >
+        <BaseSeparator orientation="horizontal" className={styles.rule} />
         <span className={styles.label}>{label}</span>
+        <span className={styles.rule} aria-hidden="true" />
       </div>
     );
   }
 
-  // Standard separator
   const classes = [
-    styles.separator,
-    orientation === "horizontal" ? styles.horizontal : styles.vertical,
-    GAP_CLASS[gap],
-    soft && styles.soft,
+    styles.rule,
+    orientation === "vertical" ? styles.vertical : styles.horizontal,
+    orientation === "vertical" && length === "control" && styles.control,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
-  return (
-    <BaseSeparator
-      ref={ref}
-      orientation={orientation}
-      className={classes}
-      style={style}
-      {...htmlProps}
-    >
-      <span className={styles.line} aria-hidden="true" />
-    </BaseSeparator>
-  );
+  return <BaseSeparator ref={ref} orientation={orientation} className={classes} {...htmlProps} />;
 });
 
 export const Separator = Object.assign(SeparatorRoot, {
