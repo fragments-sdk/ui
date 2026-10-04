@@ -1,5 +1,11 @@
 # AppShell — UI notes
 
+## 2026-10-04 — Aside on the ground
+
+- **What changed** — the docked `AppShell.Aside` paints `--fui-app-canvas-bg` (the shell's `$_canvas`), like the Sidebar rail, header and main; its `border-inline-start` hairline (block-start below lg) is the only separation. It painted `--fui-bg-primary`, so the left and right rails could never match without a consumer repaint. Sheets on the ground stay `Card` (`--fui-bg-primary`).
+- **What works** — the style-contract test pins canvas on the docked aside and forbids `--fui-bg-primary` there; `AppShell.states.tsx` `aside` renders in chromium and webkit; headless before/after shots (light + dark) show the right rail matching the left.
+- **Candidates** — a floating aside variant (popup grammar: `--fui-bg-elevated`, border 0, popup shadow) if an overlaid inspector is ever needed; a resizable aside.
+
 ## 2026-10-03 — Glass: review and browser fixes
 
 - **What changed** — the frame and the main pane carry `data-slot="app-shell"` and `data-slot="app-shell-main"`, which Header's scroll hairline reads. The populated fixtures put `Header.Trigger` in the bar, and `lifecycleMobileOpen` renders the drawer open.

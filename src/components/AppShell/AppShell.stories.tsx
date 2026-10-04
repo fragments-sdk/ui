@@ -150,7 +150,7 @@ export const SidebarLayout: Story = {
   ),
 };
 
-/** The aside is the surface plane at the wide sidebar width; below lg it drops under main. */
+/** The aside sits on the canvas like the rail, at the wide sidebar width; below lg it drops under main. */
 export const WithAside: Story = {
   render: () => (
     <AppShell style={{ blockSize: 480 }}>

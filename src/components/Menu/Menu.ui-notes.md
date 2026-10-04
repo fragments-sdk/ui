@@ -1,5 +1,11 @@
 # Menu — UI notes
 
+## 2026-10-04 — maxVisibleItems
+
+- **What changed** — `Menu.Content` takes `maxVisibleItems`, resolved by `resolvePopupViewportRows` (`recipes/popup.ts`) into an inline `--fui-popup-viewport-rows` on the popup, exactly as `Select.Content` and `Combobox.Content` do: n rows plus half of the next as the scroll hint. Omitted (or non-positive / non-finite), the popup keeps the recipe default of 4.5 rows. A consumer `style` merges after it. Consumers no longer need to set `--fui-popup-viewport-rows` in CSS.
+- **What works** — unit tests pin the inline `8.5` for `maxVisibleItems={8}`, no inline property when omitted, the 4.5 fallback for `0`, and a merged consumer style. `Menu.states.tsx` `overflowMaxVisibleItems` (eight rows, cap eight) passes in chromium and webkit: all eight rows show with no scroll (256px in 256px; the default cap shows 156px of 256px).
+- **Candidates** — a "no cap" value if a menu ever needs to grow to the viewport (the resolver turns non-finite values back into the default today); past a dozen rows the guideline still points at Command.
+
 ## 2026-10-03 — Glass v4 review fixes
 
 - **What changed** — `loading` on `Menu.Content`: the popup is `aria-busy` at once, and after a second a disabled spinner row (“Loading…”) shows below the rows it already has. Story triggers are Buttons through `render`, copy is sentence case, and the virtual-anchor story has a visible trigger.

@@ -176,9 +176,12 @@ describe("AppShell styles", () => {
     expect(shellStyles).not.toContain("--appshell-");
   });
 
-  it("puts the aside on the surface plane at the wide token width", () => {
+  it("puts the aside on the canvas, like the rail, at the wide token width", () => {
     const aside = shellStyles.slice(shellStyles.indexOf(".aside {"));
-    expect(aside.slice(0, aside.indexOf("@include below-lg"))).toContain("var(--fui-bg-primary");
+    const docked = aside.slice(0, aside.indexOf("@include below-lg"));
+    expect(docked).toContain("background-color: $_canvas");
+    expect(docked).not.toContain("--fui-bg-primary");
+    expect(shellStyles).toContain("$_canvas: var(--fui-app-canvas-bg");
     expect(shellStyles).toContain("var(--fui-appshell-sidebar-width-wide");
   });
 

@@ -23,6 +23,49 @@ function renderMenu(props: Partial<React.ComponentProps<typeof Menu>> = {}) {
 }
 
 describe("Menu", () => {
+  it("caps the viewport at maxVisibleItems rows plus a half-row hint", () => {
+    render(
+      <Menu defaultOpen>
+        <Menu.Trigger>Open Menu</Menu.Trigger>
+        <Menu.Content maxVisibleItems={8} style={{ minInlineSize: 200 }}>
+          {Array.from({ length: 8 }, (_, index) => (
+            <Menu.Item key={index}>Item {index + 1}</Menu.Item>
+          ))}
+        </Menu.Content>
+      </Menu>
+    );
+    const menu = screen.getByRole("menu");
+    expect(menu.style.getPropertyValue("--fui-popup-viewport-rows")).toBe("8.5");
+    // A consumer style still merges with the row cap.
+    expect(menu.style.minInlineSize).toBe("200px");
+  });
+
+  it("leaves the popup on the recipe default rows when maxVisibleItems is omitted", () => {
+    render(
+      <Menu defaultOpen>
+        <Menu.Trigger>Open Menu</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Item>Edit</Menu.Item>
+        </Menu.Content>
+      </Menu>
+    );
+    const menu = screen.getByRole("menu");
+    expect(menu.style.getPropertyValue("--fui-popup-viewport-rows")).toBe("");
+  });
+
+  it("falls back to the default rows for a non-positive maxVisibleItems", () => {
+    render(
+      <Menu defaultOpen>
+        <Menu.Trigger>Open Menu</Menu.Trigger>
+        <Menu.Content maxVisibleItems={0}>
+          <Menu.Item>Edit</Menu.Item>
+        </Menu.Content>
+      </Menu>
+    );
+    const menu = screen.getByRole("menu");
+    expect(menu.style.getPropertyValue("--fui-popup-viewport-rows")).toBe("4.5");
+  });
+
   it("is busy at once and shows the loading row after a second", async () => {
     render(
       <Menu defaultOpen>

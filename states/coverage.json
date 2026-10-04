@@ -988,7 +988,8 @@
         ],
         "error": "n/a: A menu holds actions only; an action that fails reports where it ran.",
         "overflow": [
-          "overflow"
+          "overflow",
+          "overflowMaxVisibleItems"
         ],
         "lifecycle": [
           "lifecycleDismiss"

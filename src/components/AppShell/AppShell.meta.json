@@ -90,7 +90,7 @@
       "Put a Main inside AppShell.Main: Main owns the 16 gutter and the <main> landmark; the slot adds neither",
       "AppShell is the Sidebar.Provider: set sidebar state here, not on AppShell.Sidebar",
       "Columns follow the slots' own token widths, so collapsing is instant and an absent slot takes no room",
-      "Every plane is canvas except the aside, which is the surface plane",
+      "Every region is canvas, the aside included; hairlines separate them",
       "Header.Trigger shows on small screens and when the rail is off the canvas",
       "The aside drops under main below lg"
     ],
@@ -114,7 +114,7 @@
     },
     {
       "name": "With Aside Panel",
-      "description": "A complementary panel on the surface plane at the wide sidebar width.",
+      "description": "A complementary panel on the canvas, like the rail, at the wide sidebar width.",
       "code": "import { AppShell } from '@/components/AppShell';\nimport { Main } from '@/components/Main';\n\nconst page = <Main.Content><p>Select a finding to review its details.</p></Main.Content>;\nconst details = <Main.Content><p>The selected finding is ready for review.</p></Main.Content>;\n\n<AppShell>\n  <AppShell.Main>\n    <Main>{page}</Main>\n  </AppShell.Main>\n  <AppShell.Aside aria-label=\"Details\">\n    <Main as=\"div\">{details}</Main>\n  </AppShell.Aside>\n</AppShell>"
     },
     {
@@ -162,7 +162,6 @@
   "cssVariables": [
     "--fui-app-canvas-bg",
     "--fui-appshell-sidebar-width-wide",
-    "--fui-bg-primary",
     "--fui-border",
     "--fui-header-z-index",
     "--fui-stroke-hairline",

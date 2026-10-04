@@ -60,6 +60,7 @@
       "Show the keyboard shortcut where one exists",
       "Mark destructive actions with tone=\"danger\": the label turns danger ink, the highlight stays neutral",
       "A chosen state is a Menu.CheckboxItem or a Menu.RadioItem, never a plain item with a mark",
+      "Raise the row cap with Menu.Content maxVisibleItems, never by setting --fui-popup-viewport-rows in CSS",
       "Past a dozen rows, reach for Command instead",
       "Nest at most one level of submenu",
       "Pass render={<Button />} to Menu.Trigger to use a library control"
@@ -128,6 +129,7 @@
       "modal: boolean - blocks page interaction while open (default: true)",
       "Menu.Trigger render: element - render a library control or a link as the trigger",
       "Menu.Content side: top|bottom|left|right (default: bottom); align: start|center|end (default: start); loading: boolean - busy at once, a spinner row after a second (default: false)",
+      "Menu.Content maxVisibleItems: number - max visible rows before scrolling, half of the next row shows as a scroll hint (default 4)",
       "Menu.Item onSelect: (event) => void - selection callback receives the click event",
       "Menu.Item tone: neutral|danger - danger colours the ink only (default: neutral)",
       "Menu.Item icon: node; shortcut: string - leading icon and trailing shortcut (tabular figures)",

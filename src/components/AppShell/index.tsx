@@ -96,8 +96,8 @@ function AppShellFrame({
 
 /**
  * The application frame: header, sidebar, main and an optional aside on one
- * grid, filling the viewport. Every plane is canvas except the aside, which is
- * the surface plane. The sidebar column follows the rail's own width, so
+ * grid, filling the viewport. Every region, the aside included, is one canvas
+ * separated by hairlines. The sidebar column follows the rail's own width, so
  * collapsing is instant. AppShell holds the sidebar state (it is a
  * Sidebar.Provider); `Header.Trigger` and `useSidebar` read it.
  * @see https://usefragments.com/components/app-shell
@@ -152,7 +152,7 @@ function AppShellMain({ children, className, ...htmlProps }: AppShellMainProps) 
   );
 }
 
-/** The aside slot: a complementary panel on the surface plane, at the wide sidebar width. */
+/** The aside slot: a complementary panel on the canvas, like the rail, at the wide sidebar width. */
 function AppShellAside({ children, visible = true, className, ...htmlProps }: AppShellAsideProps) {
   if (!visible) return null;
 

@@ -29,12 +29,23 @@ function Actions({
   count = 3,
   long = false,
   loading = false,
+  maxVisibleItems,
 }: {
   count?: number;
   long?: boolean;
   loading?: boolean;
+  maxVisibleItems?: number;
 }) {
-  const names = ["Rename", "Duplicate", "Move to group", "Copy link", "Archive", "Export", "Pin"];
+  const names = [
+    "Rename",
+    "Duplicate",
+    "Move to group",
+    "Copy link",
+    "Archive",
+    "Export",
+    "Pin",
+    "Share",
+  ];
   return (
     <Menu defaultOpen>
       <Menu.Trigger
@@ -44,7 +55,7 @@ function Actions({
           </Button>
         }
       />
-      <Menu.Content loading={loading}>
+      <Menu.Content loading={loading} maxVisibleItems={maxVisibleItems}>
         {names.slice(0, count).map((name) => (
           <Menu.Item key={name} shortcut={name === "Rename" ? "R" : undefined}>
             {long && name === "Move to group"
@@ -105,6 +116,35 @@ export function overflow() {
   return (
     <TokenChecks title="Long menu" check={checkOverflow}>
       <Actions count={7} long />
+    </TokenChecks>
+  );
+}
+
+async function checkMaxVisible(host: HTMLElement): Promise<Check[]> {
+  const checks = await checkOpen(host);
+  const menu = popup();
+  const viewport = menu?.firstElementChild as HTMLElement | null;
+  if (!menu || !viewport) return checks;
+  const rows = menu.querySelectorAll('[role="menuitem"]').length;
+  const fits = viewport.scrollHeight <= viewport.clientHeight;
+  checks.push({
+    label: "maxVisibleItems={8} shows all eight rows without scrolling",
+    actual: `${rows} rows, ${viewport.scrollHeight}px in ${viewport.clientHeight}px`,
+    pass: rows === 8 && fits,
+  });
+  const cap = menu.style.getPropertyValue("--fui-popup-viewport-rows");
+  checks.push({
+    label: "The popup carries the row cap inline",
+    actual: cap || "not set",
+    pass: cap === "8.5",
+  });
+  return checks;
+}
+
+export function overflowMaxVisibleItems() {
+  return (
+    <TokenChecks title="Eight rows, no scroll" check={checkMaxVisible}>
+      <Actions count={8} maxVisibleItems={8} />
     </TokenChecks>
   );
 }

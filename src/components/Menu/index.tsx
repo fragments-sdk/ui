@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
-import { POPUP_COLLISION_PADDING_PX, POPUP_OFFSET_PX } from "../../recipes/popup";
+import {
+  POPUP_COLLISION_PADDING_PX,
+  POPUP_OFFSET_PX,
+  resolvePopupViewportRows,
+} from "../../recipes/popup";
 import { useLoadingPhase } from "../../recipes/loading";
 import styles from "./Menu.module.scss";
 import { useThemePortalProps } from "../Theme/context";
@@ -41,6 +45,8 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
    * second a spinner row ("Loading…") shows below the rows it already has.
    * @default false */
   loading?: boolean;
+  /** Maximum number of visible rows before scrolling. Shows half of the next row as a scroll hint. @default 4 */
+  maxVisibleItems?: number;
 }
 
 export type MenuItemTone = "neutral" | "danger";
@@ -187,11 +193,20 @@ function MenuContent({
   side = "bottom",
   align = "start",
   loading = false,
+  maxVisibleItems,
   ...htmlProps
 }: MenuContentProps) {
   const portalProps = useThemePortalProps();
   const phase = useLoadingPhase(loading);
   const showRow = loading && (phase === "loading" || phase === "slow");
+
+  const popupStyle =
+    maxVisibleItems != null
+      ? ({
+          "--fui-popup-viewport-rows": resolvePopupViewportRows(maxVisibleItems),
+          ...htmlProps.style,
+        } as React.CSSProperties)
+      : htmlProps.style;
 
   return (
     <BaseMenu.Portal {...portalProps}>
@@ -206,6 +221,7 @@ function MenuContent({
           {...htmlProps}
           aria-busy={loading || undefined}
           className={classes(styles.popup, className)}
+          style={popupStyle}
         >
           <BaseMenu.Viewport className={styles.viewport}>
             {children}
