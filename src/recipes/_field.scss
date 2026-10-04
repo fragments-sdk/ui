@@ -165,7 +165,8 @@ $_message-gap: measurements.raw-space(4);
   @include _ring;
 }
 
-/// Read-only: the band fill and a dashed edge. Still focusable; no hover.
+/// Read-only: the field fill (a sheet in light, the band in dark) and a dashed
+/// edge. Still focusable; no hover.
 @mixin readonly-state {
   border-style: dashed;
   background: var(--fui-field-bg, #{tokens.$fui-field-bg});

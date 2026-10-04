@@ -98,8 +98,9 @@ $_inert: "[data-disabled], [data-readonly]";
       background-color: $_on;
     }
 
-    // Read-only: an unchecked track takes the band with a dashed field edge,
-    // drawn as an outline so the thumb does not move. Focus replaces it.
+    // Read-only: an unchecked track takes the field fill (a sheet in light,
+    // the band in dark) with a dashed field edge, drawn as an outline so the
+    // thumb does not move. Focus replaces it.
     &[data-readonly] {
       cursor: default;
     }
