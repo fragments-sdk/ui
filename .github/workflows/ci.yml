@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    # Marking a draft PR ready triggers CI; draft iteration stays free.
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+concurrency:
+  # A newer push cancels the superseded run. Draft events cannot cancel the ready run,
+  # even when delivered out of order.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.draft }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Typecheck, lint, build & test
+    # Draft PRs skip CI. Mark the PR ready (gh pr ready) to run it.
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      # Pinned here because package.json has no packageManager field yet. Once it does,
+      # drop `version` and the action reads it from there.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.0
+
+      # The release workflow's Node.
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint
+
+      # The packaging tests read dist/, so the build runs before them.
+      - name: Build
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm run test
+
+  # Browser lanes that check only the library. They run on ready pull requests, not on
+  # pushes to main, as they did before the library had its own repository.
+  ui-lanes:
+    name: UI lanes
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Install browsers
+        run: pnpm exec playwright install --with-deps chromium webkit firefox
+
+      - name: State fixtures (three engines and touch)
+        run: |
+          pnpm run test:states:types
+          pnpm run test:states
+
+      - name: Server components (Next App Router)
+        run: pnpm run test:rsc
+
+      # Fails only on a pair that is not in contrast/baseline.json, or on a listed failure
+      # that now passes; the report is uploaded either way.
+      - name: Contrast (three engines, both modes)
+        run: |
+          pnpm run test:contrast:types
+          pnpm run test:contrast
+
+      # The geometry runner builds the library. GEOMETRY_RUNNER_LABEL stays unset: numeric
+      # assertions gate, screenshots are advisory.
+      - name: Geometry
+        run: |
+          pnpm run test:geometry:types
+          pnpm run test:geometry:self
+          pnpm run test:geometry
+
+      # Both reuse the geometry build: tokens.css must equal the runtime in Chromium and
+      # WebKit, and the size budgets must hold.
+      - name: Token snapshot and size budgets
+        run: |
+          pnpm run check:tokens-css
+          node --test scripts/__tests__/check-budgets.test.mjs
+
+      - name: Upload contrast report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-contrast
+          path: |
+            contrast/.output/report.json
+            contrast/.output/summary.md
+            contrast/.output/summary.html
+          if-no-files-found: ignore
+          # Every output folder is .output; upload-artifact skips hidden paths by default.
+          include-hidden-files: true
+          retention-days: 7
+
+      # Always: a known failure (states/baseline.json) passes the job, and its evidence
+      # still matters.
+      - name: Upload state screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-states
+          path: states/.output/
+          if-no-files-found: ignore
+          include-hidden-files: true
+          retention-days: 7
+
+      - name: Upload geometry results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-geometry
+          path: |
+            geometry/.output/
+            !geometry/.output/storybook-static/
+          if-no-files-found: ignore
+          include-hidden-files: true
+          retention-days: 7
