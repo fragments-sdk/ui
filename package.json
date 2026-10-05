@@ -197,7 +197,6 @@
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json && pnpm run typecheck:tests",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
     "check:measurements": "node scripts/generate-measurements.mjs --check && node scripts/check-measurement-parity.mjs",
-    "check:ledger": "node scripts/check-ledger.mjs",
     "build": "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && node ./scripts/check-layers.mjs && node ./scripts/check-budgets.mjs && tsc -p tsconfig.build.json && pnpm run typecheck:fragments",
     "typecheck:fragments": "tsc -p tsconfig.fragments.json",
     "lint": "eslint src geometry states fixtures contrast --ignore-pattern '**/.output/**' --ignore-pattern '**/.next/**' && pnpm run lint:styles",

@@ -174,16 +174,6 @@ describe("field type (rule R6)", () => {
   });
 });
 
-describe("rule map", () => {
-  it("marks exactly the implemented rules live in RULE-CHECKS.md", () => {
-    const ledger = readFileSync(join(PACKAGE_ROOT, "RULE-CHECKS.md"), "utf8");
-    const live = [...ledger.matchAll(/^\|\s*`(fui\/[\w-]+\/[\w-]+)`\s*\|.*\|\s*live\s*\|\s*$/gm)]
-      .map((match) => match[1])
-      .sort();
-    expect(live).toEqual(LIVE_RULE_IDS);
-  });
-});
-
 describe("lint:styles lane and its baseline", () => {
   let root: string | undefined;
 

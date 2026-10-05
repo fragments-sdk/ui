@@ -26,7 +26,7 @@ const STYLE_DISABLE_RULES = {
   "--report-descriptionless-disables": "fui/conventions/disable-reason",
 };
 
-/** Every rule ID the lane can report. `RULE-CHECKS.md` marks exactly these `live`. */
+/** Every rule ID the lane can report. */
 export const LIVE_RULE_IDS = [
   ...new Set([...STYLE_RULE_IDS, ...ESLINT_RULE_IDS, ...Object.values(STYLE_DISABLE_RULES)]),
 ].sort();

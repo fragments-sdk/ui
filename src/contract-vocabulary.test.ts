@@ -32,26 +32,26 @@ const FORBIDDEN_PROPS = ["severity", "appearance"];
 
 /**
  * Example attributes that name a real kit API outside the ruled vocabulary.
- * Each row is a tracked Wave 1/2 finding (UIR-D31 in DECISIONS.md); the
- * gate fails if a row stops matching so the list cannot rot.
+ * Each row is a known exception, with the reason it stays; the gate fails if
+ * a row stops matching so the list cannot rot.
  */
 const EXAMPLE_DEVIATIONS: ReadonlyArray<{
   component: string;
   prop: string;
   value: string;
-  brief: string;
+  reason: string;
 }> = [
   {
     component: "Editor",
     prop: "status",
     value: "saving",
-    brief: "Wave 2 AI surfaces: save status is not the lifecycle axis",
+    reason: "save status is not the lifecycle axis",
   },
   {
     component: "Editor",
     prop: "status",
     value: "saved",
-    brief: "Wave 2 AI surfaces: save status is not the lifecycle axis",
+    reason: "save status is not the lifecycle axis",
   },
 ];
 

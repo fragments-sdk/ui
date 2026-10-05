@@ -1,6 +1,6 @@
 /**
  * Source lint for the library's doctrine: copy rules (rule R7 Plain-Type) and client directives.
- * Rule IDs are `fui/<category>/<rule>`; `RULE-CHECKS.md` maps each one to the rule it enforces.
+ * Rule IDs are `fui/<category>/<rule>`.
  */
 
 import { readFileSync } from "node:fs";
