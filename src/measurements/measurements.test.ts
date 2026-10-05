@@ -64,7 +64,7 @@ describe("measurement generation", () => {
     }
   });
 
-  it("exposes exactly the nine four-property typography records", () => {
+  it("exposes exactly the four-property typography records", () => {
     expect(MEASUREMENT_PROFILES.typography).toEqual(source.typography);
 
     for (const record of Object.values(MEASUREMENT_PROFILES.typography)) {

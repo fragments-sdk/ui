@@ -171,6 +171,12 @@
       "weight": 400,
       "tracking": "0.005em"
     },
+    "body-standard": {
+      "size": "13px",
+      "line": "20px",
+      "weight": 400,
+      "tracking": "0.005em"
+    },
     "body-relaxed": {
       "size": "16px",
       "line": "24px",

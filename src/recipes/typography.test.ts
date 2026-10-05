@@ -30,7 +30,8 @@ describe("typography recipe", () => {
       const body = ruleBody(css, role);
       const declarations = body.match(/^[ ]{2}[\w-]+:/gm) ?? [];
       const wrapsTitle = role === "title-sm" || role === "title-md" || role === "title-lg";
-      const wrapsBody = role === "body-compact" || role === "body-relaxed";
+      const wrapsBody =
+        role === "body-compact" || role === "body-standard" || role === "body-relaxed";
       expect(declarations, role).toHaveLength(wrapsTitle || wrapsBody ? 6 : 5);
       expect(body).toContain(`font-size: var(--fui-type-${role}-size, ${values.size})`);
       expect(body).toContain(`line-height: var(--fui-type-${role}-line, ${values.line})`);

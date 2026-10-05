@@ -1344,6 +1344,164 @@
   },
   {
     "schemaVersion": 1,
+    "caseId": "geometry/foundations/typography/default/body-standard/dark/rest-1440",
+    "storyId": "foundations-measurement-targets--target-lineup",
+    "ownerBrief": "03",
+    "executionMode": "automated",
+    "selectors": {
+      "root": {
+        "attribute": "data-geometry-id",
+        "value": "target-typography-body-standard",
+        "kind": "element"
+      }
+    },
+    "scenario": {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "dark",
+      "direction": "ltr",
+      "pointer": "fine",
+      "forcedColors": "none",
+      "reducedMotion": "no-preference",
+      "initialState": "rest",
+      "actions": [],
+      "assertions": [
+        {
+          "op": "box",
+          "target": "root",
+          "metric": "height",
+          "expected": 20,
+          "tolerance": 0.5,
+          "unit": "css-px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "font-size",
+          "expected": "13px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "line-height",
+          "expected": "20px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "font-weight",
+          "expected": "400"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "letter-spacing",
+          "expected": "0.065px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "font-family",
+          "expected": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif"
+        },
+        {
+          "op": "attribute",
+          "target": "root",
+          "name": "data-state",
+          "expected": null
+        },
+        {
+          "op": "screenshot",
+          "target": "root"
+        }
+      ]
+    },
+    "transfer": null
+  },
+  {
+    "schemaVersion": 1,
+    "caseId": "geometry/foundations/typography/default/body-standard/light/rest-1440",
+    "storyId": "foundations-measurement-targets--target-lineup",
+    "ownerBrief": "03",
+    "executionMode": "automated",
+    "selectors": {
+      "root": {
+        "attribute": "data-geometry-id",
+        "value": "target-typography-body-standard",
+        "kind": "element"
+      }
+    },
+    "scenario": {
+      "engine": "chromium",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "direction": "ltr",
+      "pointer": "fine",
+      "forcedColors": "none",
+      "reducedMotion": "no-preference",
+      "initialState": "rest",
+      "actions": [],
+      "assertions": [
+        {
+          "op": "box",
+          "target": "root",
+          "metric": "height",
+          "expected": 20,
+          "tolerance": 0.5,
+          "unit": "css-px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "font-size",
+          "expected": "13px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "line-height",
+          "expected": "20px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "font-weight",
+          "expected": "400"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "letter-spacing",
+          "expected": "0.065px"
+        },
+        {
+          "op": "style",
+          "target": "root",
+          "property": "font-family",
+          "expected": "system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif"
+        },
+        {
+          "op": "attribute",
+          "target": "root",
+          "name": "data-state",
+          "expected": null
+        },
+        {
+          "op": "screenshot",
+          "target": "root"
+        }
+      ]
+    },
+    "transfer": null
+  },
+  {
+    "schemaVersion": 1,
     "caseId": "geometry/foundations/typography/default/caption/dark/rest-1440",
     "storyId": "foundations-measurement-targets--target-lineup",
     "ownerBrief": "03",
