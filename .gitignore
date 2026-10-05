@@ -1,3 +1,19 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+
+# Playwright reports
+playwright-report/
+test-results/
+
+# Local files
+.DS_Store
+*.log
+.env
+.env.*
+
 storybook-static/
 
 # State harness and server-component fixture output

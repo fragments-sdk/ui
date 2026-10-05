@@ -348,5 +348,6 @@
   ],
   "bugs": {
     "url": "https://github.com/fragments-sdk/ui/issues"
-  }
+  },
+  "packageManager": "pnpm@9.15.0"
 }

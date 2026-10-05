@@ -1,0 +1,171 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Enter "publish versioned public packages" exactly.
+        required: true
+        type: string
+
+concurrency:
+  group: npm-production-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # npm trusted publishing: npm exchanges this job's OIDC token for a short-lived publish
+  # credential. No npm token exists anywhere.
+  id-token: write
+
+jobs:
+  release:
+    if: github.repository == 'fragments-sdk/ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: npm-production
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.sha }}
+
+      # The pnpm version comes from package.json `packageManager`.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      # Trusted publishing covers `npm dist-tag` from npm 11.21.0, and every npm write in
+      # this job (the dist-tag preflight, publish, promotion) goes over it.
+      - run: npm install -g npm@11.21.0
+
+      - run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Require the exact current main commit and confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$GITHUB_REF" = 'refs/heads/main'
+          test "$CONFIRMATION" = 'publish versioned public packages'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$GITHUB_SHA"
+
+      - name: Prove trusted publishing can move the dist-tag before publishing anything
+        run: |
+          # Promotion moves `latest` with `npm dist-tag` over the same trusted publishing as
+          # the publish, so the trusted publisher must allow npm dist-tag (off by default).
+          # Prove it here: everything after the publish is irreversible, and a refused
+          # dist-tag strands the version on `next`. Adding and removing a throwaway tag
+          # exercises both commands that promotion and its rollback use.
+          name="$(node -p 'require("./package.json").name')"
+          fail() { echo "::error::$name: $1"; exit 1; }
+          latest="$(npm view "$name" dist-tags.latest)" || fail "npm view failed."
+          # A cancelled run can leave the tag behind, and npm skips an add that changes nothing.
+          npm dist-tag rm "$name" release-preflight > /dev/null 2>&1 || true
+          npm dist-tag add "$name@$latest" release-preflight ||
+            fail "npm refused the dist-tag. Its trusted publisher on npmjs.com must allow npm dist-tag and name release.yml and npm-production."
+          npm dist-tag rm "$name" release-preflight ||
+            fail "npm refused to remove the release-preflight dist-tag."
+          # The publish step snapshots dist-tags for promotion: wait until reads drop the tag.
+          for attempt in $(seq 24); do
+            tags="$(npm view "$name" dist-tags --json)" || fail "npm view failed."
+            case "$tags" in *'"release-preflight"'*) ;; *) break ;; esac
+            [ "$attempt" -lt 24 ] || fail "the release-preflight dist-tag still shows after two minutes."
+            sleep 5
+          done
+
+      - name: Build and pack the release candidate once
+        env:
+          FRAGMENTS_EXPECTED_SOURCE_COMMIT: ${{ github.sha }}
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          pnpm run build
+          node scripts/release/pack.mjs \
+            --pack-destination "$RUNNER_TEMP/candidate" \
+            --output "$RUNNER_TEMP/release-candidate.json"
+
+      - name: Prove the packed tarball in a fresh consumer before public next
+        run: >-
+          node scripts/release/smoke.mjs
+          --candidate "$RUNNER_TEMP/release-candidate.json"
+          --source local
+          --output "$RUNNER_TEMP/cohort-local.json"
+
+      - name: Publish immutable exact bytes to next and save the release state
+        env:
+          FRAGMENTS_PUBLIC_RELEASE_CONFIRM: ${{ inputs.confirmation }}
+          FRAGMENTS_EXPECTED_SOURCE_COMMIT: ${{ github.sha }}
+          RELEASE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          # The source repository is public, so npm publishes a Sigstore provenance
+          # attestation with the version.
+          NPM_CONFIG_PROVENANCE: "true"
+        run: >-
+          node scripts/release/publish.mjs
+          --apply
+          --candidate "$RUNNER_TEMP/release-candidate.json"
+          --run-url "$RELEASE_RUN_URL"
+          --state "$RUNNER_TEMP/release-state.json"
+          --output "$RUNNER_TEMP/release-result.json"
+
+      # No registry URL: no step uses an npm token.
+      - name: Public cohort smoke — Node 22 (pnpm)
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Run the Node 22 public cohort
+        run: |
+          corepack enable
+          node scripts/release/smoke.mjs \
+            --candidate "$RUNNER_TEMP/release-candidate.json" \
+            --state "$RUNNER_TEMP/release-state.json" \
+            --source next \
+            --output "$RUNNER_TEMP/cohort-next.json"
+
+      - name: Reconfirm exact main before promotion
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$GITHUB_REF" = 'refs/heads/main'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$GITHUB_SHA"
+
+      - name: Return to Node 24 for promotion
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      # setup-node reuses the Node 24 the first pin upgraded, so this is normally an offline
+      # check; it reinstalls only if the runner resolved a different Node 24.
+      - run: test "$(npm --version)" = 11.21.0 || npm install -g npm@11.21.0
+
+      - name: Promote the evidence-bound next version to latest
+        env:
+          FRAGMENTS_PUBLIC_RELEASE_CONFIRM: ${{ inputs.confirmation }}
+          FRAGMENTS_EXPECTED_SOURCE_COMMIT: ${{ github.sha }}
+        run: >-
+          node scripts/release/promote.mjs
+          --apply
+          --state "$RUNNER_TEMP/release-state.json"
+          --cohort-run "$RUNNER_TEMP/cohort-next.json"
+          --output "$RUNNER_TEMP/release-promotion.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/release-candidate.json
+            ${{ runner.temp }}/release-result.json
+            ${{ runner.temp }}/release-state.json
+            ${{ runner.temp }}/cohort-*.json
+            ${{ runner.temp }}/release-promotion.json
+          if-no-files-found: warn
+          retention-days: 90
