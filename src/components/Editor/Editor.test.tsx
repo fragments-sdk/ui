@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { useLayoutEffect } from "react";
 import * as sass from "sass";
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import { render, screen, expectNoA11yViolations, act, userEvent } from "../../test/utils";
@@ -194,6 +195,37 @@ describe("Editor", () => {
       expect(input).toHaveAttribute("contenteditable", "false");
       expect(input).toHaveAttribute("aria-disabled", "true");
     }
+  });
+
+  it("says the rich text box is disabled from its first paint, before effects run", () => {
+    let painted: string | null | undefined;
+    // A layout effect runs after the text box is inserted and before any
+    // passive effect, so it reads what the first paint exposes.
+    function FirstPaint() {
+      useLayoutEffect(() => {
+        if (painted === undefined) {
+          painted = document.querySelector("[contenteditable]")?.getAttribute("aria-disabled");
+        }
+      }, []);
+      return null;
+    }
+    render(
+      <Editor label="Post" defaultValue="Keep me" disabled>
+        <Editor.Content />
+        <FirstPaint />
+      </Editor>
+    );
+    expect(painted).toBe("true");
+  });
+
+  it("drops aria-disabled when the field is enabled again", () => {
+    const { rerender } = render(<Editor label="Post" defaultValue="Keep me" disabled />);
+    expect(getEditorInput()).toHaveAttribute("aria-disabled", "true");
+    rerender(<Editor label="Post" defaultValue="Keep me" />);
+    expect(getEditorInput()).not.toHaveAttribute("aria-disabled");
+    expect(getEditorInput()).toHaveAttribute("contenteditable", "true");
+    rerender(<Editor label="Post" defaultValue="Keep me" disabled />);
+    expect(getEditorInput()).toHaveAttribute("aria-disabled", "true");
   });
 
   it("hides the toolbar when read-only", () => {

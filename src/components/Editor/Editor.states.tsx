@@ -7,6 +7,11 @@
 import { Editor } from ".";
 import { Separator } from "../Separator";
 
+// The rich editor resolves TipTap with a lazy import that can land after the harness reports
+// ready. Waiting here, before any fixture renders, makes the rich editor the first paint, so a
+// check never reads the markdown stand-in or the swap between the two.
+await Editor.preload();
+
 export function populated() {
   return (
     <Editor

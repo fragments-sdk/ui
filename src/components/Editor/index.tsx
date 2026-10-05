@@ -513,6 +513,10 @@ function EditorImpl({
               "aria-multiline": "true",
               ...textboxProps,
               "aria-invalid": textboxProps["aria-invalid"] ? "true" : undefined,
+              // Disabled stays selectable, so the textbox says so with
+              // aria-disabled. As an editor attribute it is on the text box
+              // from its first paint, not set by an effect after it.
+              "aria-disabled": disabled ? "true" : undefined,
             }).filter(([, entry]) => entry !== undefined)
           ),
         },
@@ -535,15 +539,9 @@ function EditorImpl({
     }
   }, [controlledValue, tiptapEditor]);
 
-  // Update editable state. Disabled stays selectable, so the textbox says so
-  // with aria-disabled rather than leaving the reader to infer it.
+  // Update editable state. aria-disabled is in the editor attributes above.
   React.useEffect(() => {
-    if (tiptapEditor) {
-      tiptapEditor.setEditable(!disabled && !readOnly);
-      const dom: HTMLElement | undefined = tiptapEditor.view?.dom;
-      if (disabled) dom?.setAttribute("aria-disabled", "true");
-      else dom?.removeAttribute("aria-disabled");
-    }
+    if (tiptapEditor) tiptapEditor.setEditable(!disabled && !readOnly);
   }, [tiptapEditor, disabled, readOnly]);
 
   // Auto-save
