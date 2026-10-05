@@ -329,7 +329,6 @@
   "files": [
     "src",
     "!src/**/.fragments/**",
-    "!src/**/.impeccable/**",
     "!src/**/*.test.ts",
     "!src/**/*.test.tsx",
     "!src/test/",
@@ -338,7 +337,6 @@
     "!src/blocks/",
     "!src/**/*.stories.tsx",
     "!src/**/*.states.tsx",
-    "!src/**/*.ui-notes.md",
     "!src/vocabulary.json",
     "!src/vocabulary.ts",
     "!src/storybook/",

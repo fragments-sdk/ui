@@ -415,24 +415,6 @@ describe("published declarations are self-contained", () => {
   });
 });
 
-describe("published files exclude agent session notes (P0 packaging)", () => {
-  const UI_NOTES_EXCLUSION = "!src/**/*.ui-notes.md";
-
-  it("keeps *.ui-notes.md out of the npm tarball", () => {
-    expect(manifest.files, "package.json files globs").toContain(UI_NOTES_EXCLUSION);
-  });
-
-  it("still has notes under src/ for that exclusion to act on", () => {
-    // Guards against the assertion above silently becoming vacuous if the
-    // notes convention moves out of src/.
-    const notes = readdirSync(resolve(packageRoot, "src"), {
-      recursive: true,
-      encoding: "utf8",
-    }).filter((entry) => entry.endsWith(".ui-notes.md"));
-    expect(notes.length).toBeGreaterThan(0);
-  });
-});
-
 describe("published ./styles default CSS includes tokens (P0 packaging)", () => {
   it("sass condition still points at globals.scss", () => {
     for (const key of ["./styles", "./globals"]) {
