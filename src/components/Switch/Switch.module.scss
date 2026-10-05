@@ -14,7 +14,7 @@
 // × 0.75). Off fills the strong field line, on fills the selection colour; no
 // border, no sheen. The thumb is a round of the accent's ink (white on the
 // default brand, in both modes) with the small shadow (one of the two thumbs
-// that take a shadow), inset 2 (UIR-D149). Track colour changes in the micro
+// that take a shadow), inset 2. Track colour changes in the micro
 // role; the thumb moves instantly.
 
 $_base: var(--fui-control-height-xs, #{measurements.target-value("controlTrack", "micro")});

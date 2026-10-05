@@ -115,7 +115,7 @@ export function durationsOf(list: string) {
 
 /**
  * A small popup at rest (menu, select list, popover, tooltip, picker): drawn in 0ms, fully
- * opaque, with no scale, no travel and no animation (UIR-D132).
+ * opaque, with no scale, no travel and no animation.
  */
 export function stillPopupChecks(label: string, popup: HTMLElement): Check[] {
   const { checks, add } = recorder();
@@ -212,7 +212,7 @@ export function oncePerHost(run: (host: HTMLElement) => Promise<Check[]>) {
 
 /**
  * An overlay panel (dialog, drawer) at rest after its fade: opaque, with no transform, entered
- * over 200ms on the standard easing (UIR-D133).
+ * over 200ms on the standard easing.
  */
 export function overlayAtRestChecks(label: string, panel: HTMLElement): Check[] {
   const { checks, add } = recorder();

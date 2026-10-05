@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Doctrine lint violations that predate the gate, counted per file and rule. Fixing one fails the lane until `pnpm run lint:styles --prune` shrinks this file; never raise a count by hand.",
+  "note": "Lint violations that predate the gate, counted per file and rule. Fixing one fails the lane until `pnpm run lint:styles --prune` shrinks this file; never raise a count by hand.",
   "violations": {
     "src/measurements/MeasurementTargets.module.scss": {
       "fui/elevation/shadow-allowlist": 1

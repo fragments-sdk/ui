@@ -5,10 +5,9 @@
  * iterate the globals; the Storybook toolbar exposes the same globals for
  * manual review.
  *
- * Density is not a render state: Conan ruled DELETE on the density axis
- * (UIR-D33, superseding UIR-D32 and UIR-D29). Runtime size adaptation is
- * `--fui-scale`, which scales the spacing scale and every measurement-catalog
- * length (UIR-D27).
+ * Density is not a render state: the density axis is deleted. Runtime size
+ * adaptation is `--fui-scale`, which scales the spacing scale and every
+ * measurement-catalog length.
  */
 export const RENDER_STATES = {
   light: { theme: "light" },

@@ -10,7 +10,6 @@
 // - disabled dims once, on the card, through the component's disabled state.
 //
 // The box inside keeps its own checked fill; the card only says which one.
-// UIR-D142.
 
 @use "../tokens/variables" as tokens;
 @use "action";

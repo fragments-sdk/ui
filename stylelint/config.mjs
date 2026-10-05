@@ -1,6 +1,6 @@
 import postcssScss from "postcss-scss";
 
-import { doctrineStylePlugins } from "./plugin.mjs";
+import { fuiStylePlugins } from "./plugin.mjs";
 import { TOKEN_FILES } from "./rules/utils.mjs";
 
 /** Text-entry classes that do not name their element, by module. `fui/target/field-font` reads it. */
@@ -16,10 +16,10 @@ export const TEXT_ENTRY = [
 
 const literal = { exempt: TOKEN_FILES };
 
-/** The doctrine stylelint config. Token sources are exempt from the literal rules. */
-export const doctrineStyleConfig = {
+/** The library's stylelint config. Token sources are exempt from the literal rules. */
+export const fuiStyleConfig = {
   customSyntax: postcssScss,
-  plugins: doctrineStylePlugins,
+  plugins: fuiStylePlugins,
   reportNeedlessDisables: true,
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,

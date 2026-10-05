@@ -11,8 +11,8 @@ import { stateRules } from "./rules/state.mjs";
 import { targetRules } from "./rules/target.mjs";
 import { typographyRules } from "./rules/typography.mjs";
 
-/** Every doctrine style rule, one stylelint plugin each. */
-export const doctrineStylePlugins = [
+/** Every style rule, one stylelint plugin each. */
+export const fuiStylePlugins = [
   ...colorRules,
   ...shapeRules,
   ...legacyRules,
@@ -28,4 +28,4 @@ export const doctrineStylePlugins = [
 ];
 
 /** Every rule ID the style plugins implement, as `fui/<category>/<rule>`. */
-export const STYLE_RULE_IDS = doctrineStylePlugins.map((plugin) => plugin.ruleName);
+export const STYLE_RULE_IDS = fuiStylePlugins.map((plugin) => plugin.ruleName);

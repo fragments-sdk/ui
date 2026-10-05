@@ -14,7 +14,7 @@
 }
 
 /// The one static surface (cards, panels, in-flow lists): the surface plane, an
-/// opaque hairline and the surface corner. It casts no shadow (UIR-D145);
+/// opaque hairline and the surface corner. It casts no shadow;
 /// only floating things do, through `overlay.surface`.
 @mixin plane {
   box-sizing: border-box;

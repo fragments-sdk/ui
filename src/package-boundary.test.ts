@@ -204,9 +204,9 @@ describe("public boundary regression checks", () => {
     });
   });
 
-  it("allows public decisions, public dependencies and pinned CLI commands", () => {
+  it("allows public text, public dependencies and pinned CLI commands", () => {
     withFixture((root) => {
-      writeFileSync(join(root, "README.md"), "UIR-D123: public decision.");
+      writeFileSync(join(root, "README.md"), "A public note about the library.");
       writeFileSync(
         join(root, "package.json"),
         JSON.stringify({

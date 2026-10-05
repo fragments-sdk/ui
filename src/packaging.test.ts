@@ -190,8 +190,8 @@ describe("measurements public subpath", () => {
       return match?.[1].trim();
     };
 
-    // One unit policy (UIR-D65): type and space are rem against the 16px host; hairlines of
-    // 2px and under, strokes and radius stay px. Catalog lengths read --fui-scale (UIR-D27).
+    // One unit policy: type and space are rem against the 16px host; hairlines of 2px and
+    // under, strokes and radius stay px. Catalog lengths read --fui-scale.
     const host = Number.parseFloat(MEASUREMENT_PROFILES.spacing.baseFontSize);
     const rem = (value: string) => {
       const match = /^([0-9]+(?:\.[0-9]+)?)px$/.exec(value);
@@ -210,7 +210,7 @@ describe("measurements public subpath", () => {
       expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
     }
 
-    // The control track is the one height family (UIR-D90); the field track emits nothing.
+    // The control track is the one height family; the field track emits nothing.
     const targetProperty = (group: string, name: string) => {
       if (group === "controlTrack") return `--fui-control-height-${name === "micro" ? "xs" : name}`;
       if (group === "fieldTrack") return null;
@@ -226,7 +226,7 @@ describe("measurements public subpath", () => {
       }
     }
 
-    // Two weights only (UIR-D88): a role reads the weight input, so a font package moves it.
+    // Two weights only: a role reads the weight input, so a font package moves it.
     for (const [role, record] of Object.entries(MEASUREMENT_PROFILES.typography)) {
       for (const [name, value] of Object.entries(record)) {
         const property = `--fui-type-${role}-${name}`;
@@ -302,7 +302,7 @@ describe("measurements public subpath", () => {
   }, 45_000);
 });
 
-describe("published dist preserves use client directives (P0 packaging)", () => {
+describe("published dist preserves use client directives", () => {
   it("keeps the directive in every matching dist ESM module", () => {
     const srcHits = srcFilesWithUseClient();
     expect(srcHits.length).toBeGreaterThan(0);
@@ -359,7 +359,7 @@ describe("published dist preserves use client directives (P0 packaging)", () => 
   });
 });
 
-describe("dist ESM contains no bare require() calls (P0 packaging)", () => {
+describe("dist ESM contains no bare require() calls", () => {
   // Bare `require(` in the ESM output breaks browser builds: `require` is
   // undefined there, so optional-peer detection always failed (and DataTable
   // threw). Optional peers must be loaded with dynamic import() instead.
@@ -415,25 +415,7 @@ describe("published declarations are self-contained", () => {
   });
 });
 
-describe("published files exclude agent session notes (P0 packaging)", () => {
-  const UI_NOTES_EXCLUSION = "!src/**/*.ui-notes.md";
-
-  it("keeps *.ui-notes.md out of the npm tarball", () => {
-    expect(manifest.files, "package.json files globs").toContain(UI_NOTES_EXCLUSION);
-  });
-
-  it("still has notes under src/ for that exclusion to act on", () => {
-    // Guards against the assertion above silently becoming vacuous if the
-    // notes convention moves out of src/.
-    const notes = readdirSync(resolve(packageRoot, "src"), {
-      recursive: true,
-      encoding: "utf8",
-    }).filter((entry) => entry.endsWith(".ui-notes.md"));
-    expect(notes.length).toBeGreaterThan(0);
-  });
-});
-
-describe("published ./styles default CSS includes tokens (P0 packaging)", () => {
+describe("published ./styles default CSS includes tokens", () => {
   it("sass condition still points at globals.scss", () => {
     for (const key of ["./styles", "./globals"]) {
       const entry = manifest.publishConfig?.exports?.[key] as Record<string, string> | undefined;

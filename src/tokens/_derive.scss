@@ -43,7 +43,7 @@ $plane-floor-light: 0.82;
 $plane-ceiling-dark: 0.02;
 
 /// Solve targets, a little above the WCAG bars so 8-bit rounding in the
-/// painted colour never drops a pair under them (UIR-D108).
+/// painted colour never drops a pair under them.
 $target-text: 4.6;
 $target-indicator: 3.1;
 

@@ -14,7 +14,7 @@ interface LintEntry {
   rule: string;
 }
 
-describe("banned copy words (rule R7)", () => {
+describe("banned copy words", () => {
   let root: string | undefined;
 
   afterEach(() => {

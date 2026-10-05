@@ -29,7 +29,7 @@ export default tseslint.config(
     ],
   },
   {
-    // Deliberately broken inputs for the doctrine lint, which lints them itself.
+    // Deliberately broken inputs for the library's own style and copy lint, which lints them itself.
     ignores: ["eslint/__fixtures__/**"],
   },
   js.configs.recommended,

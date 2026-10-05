@@ -54,7 +54,7 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveClass("link");
   });
 
-  it("defaults the tone per variant (UIR-D17)", () => {
+  it("defaults the tone per variant", () => {
     const { rerender } = render(<Button variant="link">Btn</Button>);
     expect(screen.getByRole("button")).toHaveClass("toneAccent");
 

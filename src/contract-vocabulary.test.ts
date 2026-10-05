@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { PROP_VOCABULARY } from "./vocabulary";
 
 /**
- * Vocabulary schema gate (UIR-D31). The ruled words live in `src/vocabulary.json` (typed by
+ * Vocabulary schema gate. The ruled words live in `src/vocabulary.json` (typed by
  * `src/vocabulary.ts`), which the source lint (`eslint/plugin.mjs`) reads too.
  *
  * Every authored metadata file (`*.meta.json`) and every compiled entry in
@@ -32,26 +32,26 @@ const FORBIDDEN_PROPS = ["severity", "appearance"];
 
 /**
  * Example attributes that name a real kit API outside the ruled vocabulary.
- * Each row is a tracked Wave 1/2 finding (UIR-D31 in DECISIONS.md); the
- * gate fails if a row stops matching so the list cannot rot.
+ * Each row is a known exception, with the reason it stays; the gate fails if
+ * a row stops matching so the list cannot rot.
  */
 const EXAMPLE_DEVIATIONS: ReadonlyArray<{
   component: string;
   prop: string;
   value: string;
-  brief: string;
+  reason: string;
 }> = [
   {
     component: "Editor",
     prop: "status",
     value: "saving",
-    brief: "Wave 2 AI surfaces: save status is not the lifecycle axis",
+    reason: "save status is not the lifecycle axis",
   },
   {
     component: "Editor",
     prop: "status",
     value: "saved",
-    brief: "Wave 2 AI surfaces: save status is not the lifecycle axis",
+    reason: "save status is not the lifecycle axis",
   },
 ];
 
@@ -116,7 +116,7 @@ function loadSurface(): EnumProp[] {
     if (!entry) {
       throw new Error(
         `${name}.fragment.tsx has no entry in fragments.json; run ` +
-          `\`node packages/cli/dist/bin.js build --config libs/ui/fragments.config.ts\``
+          `\`npx @usefragments/cli build --config fragments.config.ts\``
       );
     }
     surface.push(...collectEnumProps(name, `fragments.json#${name}`, entry));

@@ -24,9 +24,9 @@ describe("fragmentsCanonicalStampProps", () => {
   });
 
   it("still emits when `process` is undefined (browser runtime)", () => {
-    // Regression for the `typeof process === "undefined"` guard, which disabled
-    // the stamp in every browser — the exact env where Inspect needs it. Node
-    // tests cannot otherwise reach this path because `process` always exists.
+    // Regression for a `typeof process === "undefined"` guard, which disabled
+    // the stamp in every browser, the runtime where it is read. Node tests
+    // cannot otherwise reach this path because `process` always exists.
     const saved = globalThis.process;
     try {
       // @ts-expect-error deliberately simulate a browser with no `process`

@@ -452,7 +452,7 @@ async function main(argv) {
       );
     }
   }
-  if (!failed) console.log("tokens.css matches the runtime (P5).");
+  if (!failed) console.log("tokens.css matches the runtime.");
   return failed ? 1 : 0;
 }
 

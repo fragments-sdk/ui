@@ -57,7 +57,7 @@ export function populated() {
         <Text as="p" data-role="body">
           Two token files changed in{" "}
           <Text color="accent" data-role="accent">
-            fragments-sdk/fragments
+            fragments-sdk/ui
           </Text>{" "}
           since the last approval.
         </Text>

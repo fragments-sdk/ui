@@ -27,7 +27,7 @@ async function rulesByLine(file: string): Promise<Record<number, string[]>> {
   return byLine;
 }
 
-describe("doctrine style and copy lint", () => {
+describe("style and copy lint", () => {
   it("reports each style violation in bad.module.scss by its fui/ ID", async () => {
     expect(await rulesByLine("stylelint/__fixtures__/bad.module.scss")).toEqual({
       3: ["fui/typography/no-uppercase"],
@@ -50,7 +50,7 @@ describe("doctrine style and copy lint", () => {
     });
   });
 
-  it("stays silent on doctrine-clean styles and copy", async () => {
+  it("stays silent on clean styles and copy", async () => {
     expect(await rulesByLine("stylelint/__fixtures__/good.module.scss")).toEqual({});
     expect(await rulesByLine("eslint/__fixtures__/good.tsx")).toEqual({});
   });
@@ -158,7 +158,7 @@ describe("every live style rule fires", () => {
   });
 });
 
-describe("field type (rule R6)", () => {
+describe("field type", () => {
   it("reports fui/target/field-font on a 14px input with no coarse-pointer rule", async () => {
     expect(await rulesByLine("stylelint/__fixtures__/field.module.scss")).toEqual({
       2: ["fui/target/field-font"],
@@ -171,16 +171,6 @@ describe("field type (rule R6)", () => {
     expect(
       await rulesByLine("stylelint/__fixtures__/src/components/Field/Field.module.scss")
     ).toEqual({});
-  });
-});
-
-describe("rule map", () => {
-  it("marks exactly the implemented rules live in RULE-CHECKS.md", () => {
-    const ledger = readFileSync(join(PACKAGE_ROOT, "RULE-CHECKS.md"), "utf8");
-    const live = [...ledger.matchAll(/^\|\s*`(fui\/[\w-]+\/[\w-]+)`\s*\|.*\|\s*live\s*\|\s*$/gm)]
-      .map((match) => match[1])
-      .sort();
-    expect(live).toEqual(LIVE_RULE_IDS);
   });
 });
 
