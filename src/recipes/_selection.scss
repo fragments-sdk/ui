@@ -2,10 +2,12 @@
 
 // The markings for "this one". A component names one of
 // them and never invents another:
-// - `selected`: anything chosen in a list, table, chip row or card, and the
-//   current nav item (`current`). The selection wash plus a 1px inset ring in
-//   the selection colour, at the item's own weight. Menus mark the chosen item
-//   with a check only, so they do not include it.
+// - `selected`: anything chosen in a list, table, chip row or card. The
+//   selection wash plus a 1px inset ring in the strong field edge, a neutral
+//   line at 3:1 or better, at the item's own weight. Selected is not focus:
+//   the accent ring belongs to focus alone (UIR-D152). Menus mark the chosen
+//   item with a check only, so they do not include it.
+// - `current`: the current nav item. The selection wash alone, no ring.
 // - `thumb`: the selected segment. A surface-coloured thumb with a hairline
 //   ring and the small shadow, on a band track.
 // Hover adds `hover-tint` on top as a background image, so it never replaces
@@ -104,11 +106,18 @@ $_ring-color: var(--fui-control-selected-border, #{tokens.$fui-control-selected-
   }
 }
 
-/// The current nav item (`aria-current`): the same wash and ring as a selected
-/// row, at the item's own regular weight. It names the nav case so a nav
-/// module reads as what it means; it never draws a second look (UIR-D142).
-@mixin current {
-  @include selected;
+/// The current nav item (`aria-current`): the selection wash alone, ink 1, at
+/// the item's own regular weight. Where you are is not what you chose, so it
+/// takes no ring (UIR-D152). `$wash` lets a nav read its own hook first.
+@mixin current($wash: _wash()) {
+  background-color: $wash;
+  color: var(--fui-text-primary, #{tokens.$fui-text-primary});
+
+  // Forced colours remove the wash; the inset outline keeps the item distinct.
+  @media (forced-colors: active) {
+    outline: $_stroke solid CanvasText;
+    outline-offset: calc(-1 * #{$_stroke});
+  }
 }
 
 /// The selected segment: the surface fill on the band track, a hairline ring

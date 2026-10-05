@@ -92,7 +92,7 @@
       "collapsible=\"icon\" shrinks to the glyph rail; \"offcanvas\" takes it off the canvas, and Header.Trigger brings it back",
       "Sidebar.Header shows collapsedContent alone while the rail is collapsed; give it the brand mark so a full brand never clips",
       "Set state on Sidebar when it stands alone; wrap in Sidebar.Provider (or AppShell) when a header trigger or other code must drive it, and set state there",
-      "The current item takes the selection wash and ring at the regular weight; mark it with active",
+      "The current item takes the selection wash at the regular weight, no ring; mark it with active",
       "Sidebar.Item and Sidebar.SubItem take render for router links",
       "Sidebar rows also work outside a Sidebar, for example in a Drawer for a header's mobile navigation",
       "Use Sidebar.MenuSkeleton inside a Section while navigation data loads"
@@ -216,7 +216,6 @@
     "--fui-bg-hover",
     "--fui-border",
     "--fui-control-selected-bg",
-    "--fui-control-selected-border",
     "--fui-font-weight-normal",
     "--fui-font-weight-semibold",
     "--fui-navigation-content-gap",

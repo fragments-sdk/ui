@@ -28,6 +28,7 @@ const TYPOGRAPHY_CLASSES: Record<TypographyRole, string> = {
   "ui-compact": styles.uiCompact,
   "ui-standard": styles.uiStandard,
   "body-compact": styles.bodyCompact,
+  "body-standard": styles.bodyStandard,
   "body-relaxed": styles.bodyRelaxed,
   "title-sm": styles.titleSm,
   "title-md": styles.titleMd,

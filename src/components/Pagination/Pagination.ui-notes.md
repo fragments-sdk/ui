@@ -1,5 +1,12 @@
 # Pagination — UI notes
 
+## 2026-10-05 — current page is the wash alone
+
+- **What changed** — The current page takes the selection wash with no ring (`selection.current`, UIR-D152). The high-contrast outline stays.
+- **What works** — the Pagination state fixtures pass in Chromium, light and dark.
+- **What doesn't** — The wash alone is about 1.2:1 against the ground.
+- **Candidates** — none.
+
 ## 2026-10-03 — interaction recipes: action, focus, target, selection
 
 - **What changed** — the current page is the nav marking (UIR-D126): `--fui-bg-active`, ink 1, the semibold weight, no ring (was the selection wash). Hover paints the hover tint over an item, only where the pointer can hover, so the current page keeps its fill.

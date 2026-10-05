@@ -1081,10 +1081,12 @@ $_chart-series: (
     --fui-selection-color: var(--fui-text-primary);
 
     // Persistent selection for navigation, segmented controls, fields and
-    // rows: the selection colour at 12%, ringed in the selection colour. Keep
-    // it separate from --fui-bg-active, the brief pointer-down state.
+    // rows: the selection colour at 12%, ringed in the strong field edge, a
+    // neutral line that reaches 3:1 on every plane. Selected is not focus: the
+    // accent ring is focus's alone (UIR-D152). Keep the wash separate from
+    // --fui-bg-active, the brief pointer-down state.
     --fui-control-selected-bg: color-mix(in oklab, var(--fui-control-checked-bg) 12%, transparent);
-    --fui-control-selected-border: var(--fui-control-checked-bg);
+    --fui-control-selected-border: var(--fui-field-border);
 
     // Checked/value controls carry product meaning, so they follow the
     // selection colour rather than button chrome.
@@ -1158,15 +1160,15 @@ $_chart-series: (
     --fui-main-description-max-inline: #{$fui-main-description-max-inline};
 
     // Navigation and table hooks: inks and state tints only. Planes and edges
-    // are read from the plane and line roles directly. The current item and a
-    // selected row are the selection: the wash plus its ring (UIR-D142).
+    // are read from the plane and line roles directly. A selected row is the
+    // wash plus its ring; the current nav item is the wash alone (UIR-D152).
     --fui-sidebar-item-color: var(--fui-text-secondary);
     --fui-sidebar-item-icon-color: var(--fui-text-tertiary);
     --fui-sidebar-section-label-size: var(--fui-type-caption-size);
     --fui-sidebar-item-hover-bg: var(--fui-bg-hover);
     --fui-sidebar-item-hover-color: var(--fui-text-primary);
     --fui-sidebar-item-active-bg: var(--fui-control-selected-bg);
-    --fui-sidebar-item-active-border: var(--fui-control-selected-border);
+    --fui-sidebar-item-active-border: transparent;
     --fui-sidebar-item-active-color: var(--fui-text-primary);
     --fui-table-row-hover-bg: var(--fui-bg-hover);
     --fui-table-row-active-bg: var(--fui-bg-active);

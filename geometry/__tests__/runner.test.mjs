@@ -346,14 +346,14 @@ test("production data validates without coercion, defaults, or property removal"
   );
 });
 
-test("the independently derived finite matrix is exactly the frozen 42-case set", () => {
+test("the independently derived finite matrix is exactly the frozen 44-case set", () => {
   const expected = deriveExpectedCaseIds({ measurements: repository.measurements });
-  assert.equal(expected.foundation.length, 34);
+  assert.equal(expected.foundation.length, 36);
   assert.equal(expected.viewport.length, 6);
-  assert.equal(expected.automated.length, 40);
+  assert.equal(expected.automated.length, 42);
   assert.equal(expected.manual.length, 2);
-  assert.equal(expected.all.length, 42);
-  assert.equal(new Set(expected.all).size, 42);
+  assert.equal(expected.all.length, 44);
+  assert.equal(new Set(expected.all).size, 44);
   assert.deepEqual(
     repository.cases.map((geometryCase) => geometryCase.caseId).sort(),
     expected.all

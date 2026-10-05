@@ -1,5 +1,12 @@
 # List — UI notes
 
+## 2026-10-05 — current rows take the wash alone
+
+- **What changed** — A row the consumer marks `aria-current` (a nav link) takes `selection.current`: the wash alone, no ring (UIR-D152). `selected` and `aria-pressed` rows keep the wash and the ring, which is now the neutral field edge. A `selected` row also sets `aria-current`; it keeps its ring.
+- **What works** — `List.test.tsx` pins both rules; the List state fixtures pass in Chromium, light and dark.
+- **What doesn't** — nothing new.
+- **Candidates** — none.
+
 ## 2026-10-03 — Glass: review and browser fixes
 
 - **What changed** — `List.Row` rings focus outside the row: the inset ring sat on the chosen row's own inset selection ring, so focus hid the selection. The flat part exports (`ListRoot`, `ListItem`, `ListRow`) are cut; `List.Root`, `List.Item` and `List.Row` are the one form (MIGRATION-v4). The state fixtures moved to the tables family.

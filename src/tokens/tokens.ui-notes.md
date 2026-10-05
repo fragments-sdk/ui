@@ -30,6 +30,7 @@ Planes are lightness steps of the neutral: `oklch(from var(--fui-seed-neutral) L
 - `--fui-bg-hover` is ink (`--fui-text-primary`) at 6% light / 4.5% dark. `--fui-bg-active` is 11% light / 8% dark. High contrast: 18% / 26%.
 - Dark hover on the canvas lands about 0.043 L above the canvas and about 0.02 below the band, so hover never reads as the band.
 - `--fui-control-selected-bg` is 12% of `--fui-control-checked-bg` in both themes, distinct from hover. `--fui-sidebar-item-active-bg` points at it.
+- `--fui-control-selected-border`, the selection ring, is `--fui-field-border`: neutral, 3:1 or better on every plane (measured in the `SelectionRecipe` fixture: light 3.15 band, 3.34 canvas, 3.62 sheet and popup; dark 3.06 popup, 3.25 band, 3.54 sheet, 3.78 canvas). The accent ring is focus's alone (UIR-D152). `--fui-sidebar-item-active-border` defaults to `transparent`: the current nav item is the wash alone.
 
 ## Tones
 
@@ -91,4 +92,5 @@ Planes are lightness steps of the neutral: `oklch(from var(--fui-seed-neutral) L
 
 ## Log
 
+- **2026-10-05 — selected is not focus.** `--fui-control-selected-border` moves from the selection colour (`--fui-control-checked-bg`) to `--fui-field-border`; the twins follow (#3d5ae8 → #8b857d light, #587cff → #746f68 dark). `--fui-border-strong` was the first candidate and fails 3:1 (1.2 to 1.5:1), so the ring takes the field edge (UIR-D146). The wash is unchanged. `--fui-sidebar-item-active-border` defaults to `transparent` (UIR-D152).
 - **2026-10-04 — light ladder re-tuned.** Light canvas 0.94 → 0.97 (chroma ×0.5 → ×0.35), band 0.953 → 0.95, sheets and popups 0.985 → 0.998 (chroma ×0.25 → ×0.1), tint surface 0.985 → 0.998. Fields are white sheets in light. Dark is unchanged. Why: the light canvas read grey and muddy, sheets barely lifted off it, and band-filled fields looked recessed.

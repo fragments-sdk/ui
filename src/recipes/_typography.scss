@@ -42,7 +42,7 @@
   // only wastes space.
   @if $role == "title-sm" or $role == "title-md" or $role == "title-lg" {
     text-wrap: balance;
-  } @else if $role == "body-compact" or $role == "body-relaxed" {
+  } @else if $role == "body-compact" or $role == "body-standard" or $role == "body-relaxed" {
     text-wrap: pretty;
   }
 }

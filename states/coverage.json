@@ -980,7 +980,9 @@
       "file": "src/components/Menu/Menu.states.tsx",
       "columns": {
         "populated": [
-          "populated"
+          "populated",
+          "populatedNote",
+          "populatedNoteIcons"
         ],
         "empty": "n/a: A menu renders the actions it is given; with no actions there is no menu to open.",
         "loading": [

@@ -1,5 +1,12 @@
 # Header / AppShell — UI notes
 
+## 2026-10-05 — current is the wash alone
+
+- **What changed** — `selection.current` no longer draws the ring: the current nav item, the current NavMenu row and the current mobile link take the selection wash alone at the regular weight (UIR-D152).
+- **What works** — `Header.test.tsx` still asserts `@include selection.current`; the Header state fixtures pass in Chromium, light and dark.
+- **What doesn't** — The wash alone is about 1.2:1 against the header plane; the current item relies on the wash, ink 1 and `aria-current`.
+- **Candidates** — none.
+
 ## 2026-10-03 — Glass: review and browser fixes
 
 - **What changed** — `Header.SkipLink` composes `VisuallyHidden focusable`, so focus reveals it as the floating chip (it used to stay clipped to 1px). `Header.Trigger` beside a sidebar is in the markup from the first paint, server render included, and hides from md up by CSS; a rail collapsed off the canvas brings it back. `elevatedOnScroll` reads the AppShell main pane when there is one, else the nearest scrolling ancestor, else the window: inside AppShell the window never scrolls, so the hairline never showed. The NavMenu chevron takes the micro glyph role.

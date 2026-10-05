@@ -117,6 +117,16 @@
       "resultManifestPath": null
     },
     {
+      "caseId": "geometry/foundations/typography/default/body-standard/dark/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
+      "caseId": "geometry/foundations/typography/default/body-standard/light/rest-1440",
+      "status": "pending",
+      "resultManifestPath": null
+    },
+    {
       "caseId": "geometry/foundations/typography/default/caption/dark/rest-1440",
       "status": "pending",
       "resultManifestPath": null

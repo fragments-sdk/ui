@@ -210,6 +210,10 @@
     @include typography.role("body-compact");
   }
 
+  .bodyStandard {
+    @include typography.role("body-standard");
+  }
+
   .bodyRelaxed {
     @include typography.role("body-relaxed");
   }

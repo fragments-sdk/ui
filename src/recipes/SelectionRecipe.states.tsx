@@ -1,9 +1,10 @@
 /**
  * The selection markings, read back from the browser: a selected row is the wash plus a 1px inset
- * ring (hover keeps the ring); the current nav item and a chosen card take the
- * same wash and ring (a card's hairline turns into the ring); the selected segment is a lifted
- * thumb at the strong weight on a band track, the same track for ToggleGroup and soft Tabs. None
- * differs from its neighbours by text colour alone.
+ * ring in the strong field edge, neutral and at 3:1 on every plane (hover keeps the ring); a chosen
+ * card takes the same wash and ring (its hairline turns into the ring); the current nav item takes
+ * the wash alone (UIR-D152); the selected segment is a lifted thumb at the strong weight on a band
+ * track, the same track for ToggleGroup and soft Tabs. None differs from its neighbours by text
+ * colour alone.
  *
  * @family:foundations
  * @tag:recipe-selection
@@ -15,8 +16,11 @@ import { Table } from "../components/Table";
 import { Tabs } from "../components/Tabs";
 import { TableOfContents } from "../components/TableOfContents";
 import { ToggleGroup } from "../components/ToggleGroup";
-import { colorAs, computedAs, find, recorder } from "../test/recipe-checks";
-import { TokenChecks, type Check, type InteractionCheck } from "../test/token-probe";
+import { colorAs, colorOf, computedAs, find, recorder, surfaceBehind } from "../test/recipe-checks";
+import { TokenChecks, contrast, type Check, type InteractionCheck } from "../test/token-probe";
+
+/** The four planes a selected item can sit on. */
+const PLANES = ["--fui-body-bg", "--fui-bg-primary", "--fui-bg-secondary", "--fui-bg-elevated"];
 
 /** The properties that can mark "this one" without colour: fill, edge, weight. */
 function marking(element: Element) {
@@ -56,6 +60,25 @@ function checkSelectedRow(host: HTMLElement, add: (l: string, a: string, p: bool
     style.boxShadow,
     style.boxShadow === ring
   );
+  // Selected is not focus: the ring is the neutral strong edge, never the accent (UIR-D152).
+  const edge = colorAs(host, "var(--fui-control-selected-border)");
+  add(
+    "Selected row: the ring is the strong field edge, not the accent",
+    edge,
+    edge === colorAs(host, "var(--fui-field-border)") &&
+      edge !== colorAs(host, "var(--fui-color-accent)") &&
+      edge !== colorAs(host, "var(--fui-focus-ring-color)")
+  );
+  const onGround = contrast(colorOf(edge), surfaceBehind(list));
+  const onPlanes = PLANES.map((plane) =>
+    contrast(colorOf(edge), colorOf(colorAs(host, `var(${plane})`)))
+  );
+  const lowest = Math.min(onGround, ...onPlanes);
+  add(
+    "Selected row: the ring reaches 3:1 on its ground and on every plane",
+    `${onGround.toFixed(2)}:1 here; ${onPlanes.map((value) => value.toFixed(2)).join(" / ")} on canvas / sheet / band / popup`,
+    lowest >= 3
+  );
   add(
     "Selected row: differs from its neighbour by more than text colour",
     `${marking(selected).fill} / ${marking(neighbour).fill}`,
@@ -69,18 +92,13 @@ function checkCurrentNav(host: HTMLElement, add: (l: string, a: string, p: boole
   const neighbour = find(nav, "a:not([aria-current])");
   const style = getComputedStyle(current);
   const wash = colorAs(host, "var(--fui-control-selected-bg)");
-  const ring = computedAs(
-    host,
-    "box-shadow",
-    "inset 0 0 0 var(--fui-stroke-hairline) var(--fui-control-selected-border)"
-  );
   const ink = computedAs(host, "color", "var(--fui-text-primary)");
   add(
     "Current nav item: the --fui-control-selected-bg wash",
     style.backgroundColor,
     style.backgroundColor === wash
   );
-  add("Current nav item: the 1px selection ring", style.boxShadow, style.boxShadow === ring);
+  add("Current nav item: the wash alone, no ring", style.boxShadow, style.boxShadow === "none");
   add("Current nav item: ink 1", style.color, style.color === ink);
   add(
     "Current nav item: its neighbours' regular weight",

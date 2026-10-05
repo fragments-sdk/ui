@@ -15,7 +15,7 @@ import { RENDER_STATES } from "../../storybook/render-states";
 
 /**
  * Sidebar is the navigation rail: canvas with one hairline edge, 32px rows, the
- * current item marked with the selection wash and ring. On desktop it collapses
+ * current item marked with the selection wash. On desktop it collapses
  * to its glyphs (or off the canvas); below md it is a modal panel. Put it in a
  * Sidebar.Provider (or AppShell) when a header trigger needs to drive it.
  */

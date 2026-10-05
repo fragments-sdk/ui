@@ -106,6 +106,16 @@ export interface MenuGroupLabelProps extends React.HTMLAttributes<HTMLElement> {
 
 export type MenuSeparatorProps = React.HTMLAttributes<HTMLElement>;
 
+/**
+ * A line of muted text in the menu, such as "Larger would not fit the stage."
+ * It sits in the item text column, wraps, never takes focus and is skipped by
+ * the arrow keys; the menu is described by it, so a screen reader reads it
+ * when the menu opens.
+ */
+export interface MenuNoteProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
 export interface MenuSubmenuProps {
   children: React.ReactNode;
   open?: boolean;
@@ -165,6 +175,22 @@ function Shortcut({ value }: { value?: string }) {
   return value ? <kbd className={styles.itemShortcut}>{value}</kbd> : null;
 }
 
+// The open menu's notes, by id: Menu.Content describes its popup by them.
+type NoteRegistry = (id: string) => () => void;
+const NoteRegistryContext = React.createContext<NoteRegistry | null>(null);
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
+
+function useNoteIds(): [string[], NoteRegistry] {
+  const [ids, setIds] = React.useState<string[]>([]);
+  const register = React.useCallback<NoteRegistry>((id) => {
+    setIds((current) => (current.includes(id) ? current : [...current, id]));
+    return () => setIds((current) => current.filter((entry) => entry !== id));
+  }, []);
+  return [ids, register];
+}
+
 // ============================================
 // Components
 // ============================================
@@ -199,6 +225,9 @@ function MenuContent({
   const portalProps = useThemePortalProps();
   const phase = useLoadingPhase(loading);
   const showRow = loading && (phase === "loading" || phase === "slow");
+  const [noteIds, registerNote] = useNoteIds();
+  const describedBy =
+    [htmlProps["aria-describedby"], ...noteIds].filter(Boolean).join(" ") || undefined;
 
   const popupStyle =
     maxVisibleItems != null
@@ -220,11 +249,14 @@ function MenuContent({
         <BaseMenu.Popup
           {...htmlProps}
           aria-busy={loading || undefined}
+          aria-describedby={describedBy}
           className={classes(styles.popup, className)}
           style={popupStyle}
         >
           <BaseMenu.Viewport className={styles.viewport}>
-            {children}
+            <NoteRegistryContext.Provider value={registerNote}>
+              {children}
+            </NoteRegistryContext.Provider>
             {showRow && (
               // A disabled row, so the menu's own semantics hold: it is read
               // in turn with the items and never takes a press.
@@ -373,6 +405,23 @@ function MenuSeparator({ className, ...htmlProps }: MenuSeparatorProps) {
   return <BaseMenu.Separator {...htmlProps} className={classes(styles.separator, className)} />;
 }
 
+function MenuNote({ children, className, id, ...htmlProps }: MenuNoteProps) {
+  const generatedId = React.useId();
+  const noteId = id ?? generatedId;
+  const register = React.useContext(NoteRegistryContext);
+
+  // Registered before paint, so the menu is described by the note as it opens.
+  useIsomorphicLayoutEffect(() => register?.(noteId), [register, noteId]);
+
+  // A plain block, not an item: the menu never lists it among its rows, so
+  // the arrow keys and type-ahead pass over it and it never takes focus.
+  return (
+    <div {...htmlProps} id={noteId} data-menu-note="" className={classes(styles.note, className)}>
+      {children}
+    </div>
+  );
+}
+
 function MenuSubmenu({ children, open, defaultOpen, onOpenChange }: MenuSubmenuProps) {
   return (
     <BaseMenu.SubmenuRoot open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
@@ -417,6 +466,7 @@ export const Menu = Object.assign(MenuRoot, {
   Group: MenuGroup,
   GroupLabel: MenuGroupLabel,
   Separator: MenuSeparator,
+  Note: MenuNote,
   Submenu: MenuSubmenu,
   SubmenuTrigger: MenuSubmenuTrigger,
 });
@@ -433,6 +483,7 @@ export {
   MenuGroup,
   MenuGroupLabel,
   MenuSeparator,
+  MenuNote,
   MenuSubmenu,
   MenuSubmenuTrigger,
 };

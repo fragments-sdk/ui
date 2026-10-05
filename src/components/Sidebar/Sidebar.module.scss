@@ -18,10 +18,9 @@ $_current-wash: var(
   --fui-sidebar-item-active-bg,
   var(--fui-control-selected-bg, #{$fui-control-selected-bg})
 );
-$_current-ring: var(
-  --fui-sidebar-item-active-border,
-  var(--fui-control-selected-border, #{$fui-control-selected-border})
-);
+// No ring by default: the current page is the wash alone (UIR-D152). The hook
+// still draws one where a product sets it.
+$_current-ring: var(--fui-sidebar-item-active-border, transparent);
 $_hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
 
 // The rail and the mobile panel share these reads of the public
@@ -324,10 +323,10 @@ $_hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover
       background-color: var(--fui-bg-active, #{$fui-bg-active});
     }
 
-    // The current page is chosen: the selection wash and ring, ink 1, regular
-    // weight. Hover tints on top and keeps the ring.
+    // The current page: the selection wash, ink 1, regular weight, no ring.
+    // Hover tints on top and keeps the wash.
     &[data-active] {
-      @include selection.selected($_current-wash);
+      @include selection.current($_current-wash);
 
       box-shadow: inset 0 0 0 $_hairline $_current-ring;
       color: var(--_fui-sidebar-current-ink);

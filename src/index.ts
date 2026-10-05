@@ -156,6 +156,7 @@ export {
   type MenuGroupProps,
   type MenuGroupLabelProps,
   type MenuSeparatorProps,
+  type MenuNoteProps,
 } from "./components/Menu";
 
 // Popover

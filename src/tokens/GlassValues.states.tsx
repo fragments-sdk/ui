@@ -74,8 +74,13 @@ function checkGlass(host: HTMLElement): Check[] {
     hex(wash),
     sameColor({ ...wash, alpha: 1 }, selection, 2.5) && near(wash.alpha, 0.12, 0.006)
   );
+  // Selected is not focus: the ring is the neutral strong field edge (UIR-D152).
   const ring = token("--fui-control-selected-border");
-  add("Selected ring is the selection colour", hex(ring), sameColor(ring, selection));
+  add(
+    "Selected ring is the strong field edge",
+    hex(ring),
+    sameColor(ring, token("--fui-field-border"))
+  );
   return checks;
 }
 

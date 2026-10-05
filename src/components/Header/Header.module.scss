@@ -153,8 +153,8 @@ $_track: action.track("md");
     }
   }
 
-  // The current nav item: the wash and ring every chosen thing takes, at the
-  // item's regular weight. Hover tints over it.
+  // The current nav item: the selection wash alone, at the item's regular
+  // weight. Hover tints over it.
   .navItemActive {
     @include selection.current;
 
@@ -226,7 +226,7 @@ $_track: action.track("md");
   .navMenuItemActive {
     @include selection.current;
 
-    // The highlight tints over the current wash; the ring stays.
+    // The highlight tints over the current wash.
     &[data-highlighted] {
       @include selection.hover-tint;
     }

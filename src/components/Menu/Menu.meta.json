@@ -60,6 +60,7 @@
       "Show the keyboard shortcut where one exists",
       "Mark destructive actions with tone=\"danger\": the label turns danger ink, the highlight stays neutral",
       "A chosen state is a Menu.CheckboxItem or a Menu.RadioItem, never a plain item with a mark",
+      "Say why a choice is missing or held back with Menu.Note, never with a disabled item that only carries text",
       "Raise the row cap with Menu.Content maxVisibleItems, never by setting --fui-popup-viewport-rows in CSS",
       "Past a dozen rows, reach for Command instead",
       "Nest at most one level of submenu",
@@ -70,7 +71,8 @@
       "Type-ahead search for items",
       "Focus returns to trigger on close",
       "Proper ARIA menu roles",
-      "ArrowRight opens submenus, ArrowLeft closes them"
+      "ArrowRight opens submenus, ArrowLeft closes them",
+      "Menu.Note is not an item: the arrow keys and type-ahead skip it, and the menu is described by it (aria-describedby)"
     ]
   },
   "examples": [
@@ -98,6 +100,11 @@
       "name": "With Radio Items",
       "description": "A choice of one: the chosen row carries the check and the other rows keep its column.",
       "code": "<Menu>\n  <Menu.Trigger render={<Button variant=\"soft\" />}>Sort</Menu.Trigger>\n  <Menu.Content>\n    <Menu.RadioGroup defaultValue=\"updated\">\n      <Menu.RadioItem value=\"updated\">Last updated</Menu.RadioItem>\n      <Menu.RadioItem value=\"name\">Name</Menu.RadioItem>\n    </Menu.RadioGroup>\n    <Menu.Separator />\n    <Menu.Item>Reset view</Menu.Item>\n  </Menu.Content>\n</Menu>"
+    },
+    {
+      "name": "With Note",
+      "description": "A note says why a choice is missing; it sits in the label column and wraps.",
+      "code": "<Menu>\n  <Menu.Trigger render={<Button variant=\"soft\" />}>Size</Menu.Trigger>\n  <Menu.Content>\n    <Menu.RadioGroup defaultValue=\"md\">\n      <Menu.RadioItem value=\"sm\">Small</Menu.RadioItem>\n      <Menu.RadioItem value=\"md\">Medium</Menu.RadioItem>\n    </Menu.RadioGroup>\n    <Menu.Note>Larger would not fit the stage.</Menu.Note>\n  </Menu.Content>\n</Menu>"
     },
     {
       "name": "With Submenu",
@@ -136,6 +143,7 @@
       "Menu.CheckboxItem checked/defaultChecked/onCheckedChange - a toggle row with a check",
       "Menu.RadioGroup value/defaultValue/onValueChange + Menu.RadioItem value - a choice of one with a check",
       "Checkable rows make every row reserve the indicator column",
+      "Menu.Note: children - muted compact text in the item label column (after the check or icon column); wraps, never focusable, skipped by the arrow keys, describes the menu",
       "Menu.Submenu + Menu.SubmenuTrigger - one level of nesting, chevron caret"
     ],
     "a11yRules": ["A11Y_MENU_KEYBOARD", "A11Y_MENU_ROLE"]
@@ -152,6 +160,7 @@
       "Group",
       "GroupLabel",
       "Separator",
+      "Note",
       "Submenu",
       "SubmenuTrigger"
     ],
@@ -168,10 +177,10 @@
   },
   "cssVariables": [
     "--fui-color-danger-text",
-    "--fui-control-selected-border",
     "--fui-icon-sm",
     "--fui-overlay-layer-anchored",
     "--fui-popup-indicator-box",
+    "--fui-popup-row-block-inset",
     "--fui-popup-row-content-gap",
     "--fui-popup-row-inline-inset",
     "--fui-raw-space-0",

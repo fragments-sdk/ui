@@ -472,9 +472,10 @@ describe("Sidebar", () => {
       expect(sidebarStyles).not.toMatch(/\b(left|right):|margin-left|text-align:\s*left/);
     });
 
-    it("marks the current row with the selection wash and ring at the regular weight", () => {
+    it("marks the current row with the selection wash at the regular weight, no ring", () => {
+      // The ring is a hook only: its default is transparent (UIR-D152).
       const current = compiledValues(".item[data-active]", "box-shadow");
-      expect(current.join(" ")).toContain("--fui-sidebar-item-active-border");
+      expect(current.join(" ")).toContain("var(--fui-sidebar-item-active-border, transparent)");
       expect(compiledValues(".item", "font-weight").join(" ")).toContain(
         "--fui-font-weight-normal"
       );

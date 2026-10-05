@@ -18,6 +18,7 @@
   );
   $_inset: var(--fui-popup-row-inline-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
   $_gap: var(--fui-popup-row-content-gap, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
+  $_block: var(--fui-popup-row-block-inset, var(--fui-raw-space-8, #{measurements.raw-space(8)}));
 
   .positioner {
     z-index: var(--fui-overlay-layer-anchored, #{$fui-overlay-layer-anchored});
@@ -79,9 +80,31 @@
 
   .viewport:has([data-menu-checkable]) {
     .item:not([data-menu-checkable]),
-    .groupLabel {
+    .groupLabel,
+    .note {
       padding-inline-start: calc(#{$_inset} + #{$_indicator} + #{$_gap});
     }
+  }
+
+  // A note: muted compact text in the item text column. It is not a row, so
+  // it never highlights, and a one-line note keeps the row pitch. It wraps
+  // inside the width the rows set and never widens the menu itself.
+  .note {
+    @include typography.role("ui-compact");
+
+    box-sizing: border-box;
+    contain: inline-size;
+    padding-block: $_block;
+    padding-inline: $_inset;
+    color: var(--fui-text-secondary, $fui-text-secondary);
+    overflow-wrap: break-word;
+    cursor: default;
+    user-select: none;
+  }
+
+  // Rows with a leading icon move the label column; the note follows it.
+  .viewport:has(.item > .itemIcon) .note {
+    padding-inline-start: calc(#{$_inset} + #{$_indicator} + #{$_gap});
   }
 
   .itemIcon,
@@ -108,9 +131,9 @@
     }
   }
 
+  // The check takes the label's ink: a chosen row is not focus, so no accent.
   .check {
     display: flex;
-    color: var(--fui-control-selected-border, $fui-control-selected-border);
   }
 
   .itemLabel {
