@@ -177,7 +177,6 @@
   },
   "cssVariables": [
     "--fui-color-danger-text",
-    "--fui-control-selected-border",
     "--fui-icon-sm",
     "--fui-overlay-layer-anchored",
     "--fui-popup-indicator-box",

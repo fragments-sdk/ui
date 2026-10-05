@@ -131,9 +131,9 @@
     }
   }
 
+  // The check takes the label's ink: a chosen row is not focus, so no accent.
   .check {
     display: flex;
-    color: var(--fui-control-selected-border, $fui-control-selected-border);
   }
 
   .itemLabel {

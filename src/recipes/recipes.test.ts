@@ -499,14 +499,17 @@ describe("motion and feedback recipes", () => {
     expect(block(css, ".lg")).toContain("padding: var(--fui-field-inline-inset-lg, ");
   });
 
-  it("marks the current nav item like a selected row: wash and ring, regular weight", () => {
+  it("marks the current nav item with the selection wash alone: no ring, regular weight", () => {
     const css = compile(`
       @use "recipes/selection";
       .current { @include selection.current; }
       .selected { @include selection.selected; }
     `);
-    expect(block(css, ".current")).toBe(block(css, ".selected"));
     expect(block(css, ".current")).toContain("background-color: var(--fui-control-selected-bg, ");
+    expect(block(css, ".current")).not.toContain("box-shadow");
+    expect(block(css, ".selected")).toContain(
+      "box-shadow: inset 0 0 0 var(--fui-stroke-hairline, 1px) var(--fui-control-selected-border, "
+    );
     expect(block(css, ".current")).not.toContain("font-weight");
     expect(block(css, ".current")).not.toContain("--fui-bg-active");
   });

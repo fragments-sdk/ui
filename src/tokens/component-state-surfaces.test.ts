@@ -120,8 +120,8 @@ describe("component state surface contract", () => {
     for (const token of ["--fui-field-selection-bg", "--fui-table-row-selected-bg"]) {
       expect(variables).toContain(`${token}: var(--fui-control-selected-bg)`);
     }
-    // The table ring is the selection ring; the sidebar's current row is chosen, so it takes
-    // the selection wash too (UIR-D142).
+    // The table ring is the selection ring; the sidebar's current row takes the selection
+    // wash, with no ring (UIR-D152).
     expect(variables).toContain(
       "--fui-table-row-selected-border: var(--fui-control-selected-border)"
     );

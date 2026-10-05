@@ -1,5 +1,12 @@
 # TableOfContents — UI notes
 
+## 2026-10-05 — current entry is the wash alone
+
+- **What changed** — The section in view takes the selection wash with no ring (`selection.current`, UIR-D152).
+- **What works** — `SelectionRecipe` `markings` asserts it (no box-shadow, the wash, ink 1, regular weight) in all four projects, light and dark.
+- **What doesn't** — The wash alone is about 1.2:1 against the ground.
+- **Candidates** — none.
+
 ## 2026-10-03 — Glass: review and browser fixes
 
 - **What changed** — a group name reads at the section label role, 11/550 (caption size, semibold), the same as a Sidebar section: the weight now lives in the shared `navigation.section-row` recipe both use, so the two cannot drift.

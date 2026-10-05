@@ -126,12 +126,14 @@ describe("default Fragments surface tokens", () => {
     expect(themed).toMatch(
       /--fui-control-selected-bg: color-mix\(\s*in oklab,\s*var\(--fui-control-checked-bg\) 12%,\s*transparent\s*\)/
     );
-    expect(themed).toContain("--fui-control-selected-border: var(--fui-control-checked-bg)");
+    // A neutral ring at 3:1: the accent ring is focus's alone (UIR-D152).
+    expect(themed).toContain("--fui-control-selected-border: var(--fui-field-border)");
     expect(themed).toContain("--fui-opacity-disabled: 0.45");
     expect(css).not.toContain("--fui-header-search-bg:");
     expect(themed).toContain("--fui-field-selection-bg: var(--fui-control-selected-bg)");
-    // The sidebar's current row is chosen, so it takes the selection wash (UIR-D142).
+    // The sidebar's current row takes the selection wash and no ring (UIR-D152).
     expect(themed).toContain("--fui-sidebar-item-active-bg: var(--fui-control-selected-bg)");
+    expect(themed).toContain("--fui-sidebar-item-active-border: transparent");
     expect(themed).toContain("--fui-table-row-selected-border: var(--fui-control-selected-border)");
     expect(themed).toContain("--fui-table-row-selected-bg: var(--fui-control-selected-bg)");
     expect(themed).toContain("--fui-link-ink: var(--fui-color-accent-text)");

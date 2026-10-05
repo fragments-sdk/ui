@@ -231,8 +231,14 @@ describe("List.Row", () => {
       /\.row:active:not\(:disabled, \[aria-disabled=true\]\) \{ background-image:/
     );
     expect(css).toMatch(
-      /\.row\[data-selected\], \.row\[aria-current\]:not\(\[aria-current=false\]\), \.row\[aria-pressed=true\] \{ background-color: var\(--fui-control-selected-bg[^}]*box-shadow: inset 0 0 0/
+      /\.row\[data-selected\], \.row\[aria-pressed=true\] \{ background-color: var\(--fui-control-selected-bg[^}]*box-shadow: inset 0 0 0/
     );
+  });
+
+  it("marks a current row with the wash alone (UIR-D152)", () => {
+    const current = css.match(/\.row\[aria-current\]:not\(\[aria-current=false\]\) \{[^}]*\}/)?.[0];
+    expect(current).toContain("background-color: var(--fui-control-selected-bg");
+    expect(current).not.toContain("box-shadow");
   });
 
   it("has no accessibility violations", async () => {

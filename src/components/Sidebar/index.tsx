@@ -75,7 +75,7 @@ export interface SidebarItemProps extends Omit<React.HTMLAttributes<HTMLElement>
   children: React.ReactNode;
   /** The leading glyph. A collapsed rail shows only this. */
   icon?: React.ReactNode;
-  /** The current page: wash and ring, `aria-current="page"`. */
+  /** The current page: the selection wash, `aria-current="page"`. */
   active?: boolean;
   /** The row cannot be used. */
   disabled?: boolean;

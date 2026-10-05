@@ -1,5 +1,12 @@
 # Menu — UI notes
 
+## 2026-10-05 — the check takes the row's ink
+
+- **What changed** — A chosen row's check reads the row's ink (it inherits), not `--fui-control-selected-border`. That token is now the neutral selection ring (UIR-D152), and a grey check would read as disabled.
+- **What works** — the Menu fixtures pass in all four projects, light and dark; in `populatedNote` the check on Medium is ink 1 (looked at in both themes).
+- **What doesn't** — nothing new.
+- **Candidates** — none.
+
 ## 2026-10-05 — Menu.Note
 
 - **What changed** — `Menu.Note` is a line of muted text in the menu ("Larger would not fit the stage."): the `ui-compact` role in ink 2 (`--fui-text-secondary`), padded like a row (a one-line note keeps the 32px pitch) and inset to the item label column. With a checkable row in the menu it takes the indicator gutter, the same `:has([data-menu-checkable])` rule that moves plain rows and group labels; with a leading icon on any row it takes the icon column. It is a plain block, not an item, so it never highlights, takes no focus, and the arrow keys and type-ahead pass over it. `contain: inline-size` keeps a long note from widening the menu: it wraps inside the width the rows set. `Menu.Content` describes its popup by its notes (`aria-describedby`, merged after any consumer value), so a screen reader reads the note with the menu. The Menu size budget is re-based on the build with the note (CSS 9153, JS 12988 raw bytes; limits +5%): the note adds about 1.1 KB of CSS and 1.3 KB of JS, and the JS was already past its 4.0.0 limit after `maxVisibleItems`.

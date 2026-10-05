@@ -149,9 +149,17 @@
     }
 
     &[data-selected],
-    &[aria-current]:not([aria-current="false"]),
     &[aria-pressed="true"] {
       @include selection.selected;
+
+      .rowIcon {
+        color: var(--fui-text-primary, #{$fui-text-primary});
+      }
+    }
+
+    // Where you are is not what you chose: the wash alone (UIR-D152).
+    &[aria-current]:not([aria-current="false"]) {
+      @include selection.current;
 
       .rowIcon {
         color: var(--fui-text-primary, #{$fui-text-primary});

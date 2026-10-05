@@ -1,5 +1,12 @@
 # Sidebar — UI notes
 
+## 2026-10-05 — current is the wash alone
+
+- **What changed** — The current row takes `selection.current($_current-wash)`: the selection wash, ink 1, regular weight, no ring (UIR-D152). `--fui-sidebar-item-active-border` still draws an inset ring, but its default is `transparent`; a product that wants the ring back sets it.
+- **What works** — `Sidebar.test.tsx` asserts that the ring reads the hook with a transparent fallback; the Sidebar state fixtures pass in Chromium, light and dark.
+- **What doesn't** — The wash alone is about 1.2:1 against the canvas, so the current row is marked mostly by ink 1 against ink 2 and by `aria-current`.
+- **Candidates** — none.
+
 ## 2026-10-03 — Glass: review and browser fixes
 
 - **What changed** — the mobile panel carries a visible close (the modal close, the header making room beside it); before, only Escape and the scrim closed it. The collapsed header shows `collapsedContent` alone, so a full brand no longer clips in the rail. The section chevron takes the micro glyph role, and the collapsible section label carries the 24 pointer hit area (44 coarse). The states fixtures render the mobile drawer closed (trigger focus) and open; the general sub-item is no longer marked current twice.

@@ -82,7 +82,7 @@
     },
     {
       "name": "With Active Item",
-      "description": "The section in view takes the selection wash and ring.",
+      "description": "The section in view takes the selection wash.",
       "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"setup\" active>Setup</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"props\">Props</TableOfContents.Item>\n</TableOfContents>"
     },
     {
@@ -118,7 +118,7 @@
       "title: node - visible heading (default \"On this page\"); null shows none",
       "label: string - aria-label for nav landmark",
       "TableOfContents.Item targetId: string - heading id to scroll to",
-      "TableOfContents.Item active: boolean - the section in view (selection wash and ring)",
+      "TableOfContents.Item active: boolean - the section in view (selection wash)",
       "TableOfContents.Item leading/trailing: node - optional adornments before/after the label",
       "TableOfContents.Group label: node - header text for the group; its items nest one level deeper",
       "TableOfContents.Group defaultOpen / open / onOpenChange - uncontrolled or controlled open state (default open)",

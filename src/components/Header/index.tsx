@@ -48,7 +48,7 @@ export interface HeaderNavProps extends React.HTMLAttributes<HTMLElement> {
 
 export interface HeaderNavItemProps extends Omit<React.HTMLAttributes<HTMLElement>, "onClick"> {
   children: React.ReactNode;
-  /** The current page: wash and ring, `aria-current="page"`. */
+  /** The current page: the selection wash, `aria-current="page"`. */
   active?: boolean;
   /** The item cannot be used. */
   disabled?: boolean;
