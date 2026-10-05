@@ -1,5 +1,13 @@
 # Editor — UI notes
 
+## 2026-10-05 — disabled text box from the first paint
+
+- **What changed** — the rich text box takes `aria-disabled` from TipTap's editor attributes, so it is there when the text box is inserted; an effect used to set it 10–65ms later. `Editor.states.tsx` awaits `Editor.preload()`, so every fixture paints the rich editor first, which makes its `@na:loading` argument true.
+- **Why** — `lifecycleDisabled` failed axe colour contrast now and then (Firefox, WebKit). TipTap often landed after the harness said ready (WebKit 35/40, Firefox 20/40 loads), and when axe started in the gap before the effect it judged the dimmed text as enabled text. In WebKit, 22/40 axe runs read the markdown stand-in, not the rich editor.
+- **What works** — a unit test reads the attribute from a layout effect, before passive effects run, and fails on the old effect. Probe over 40 loads per engine: 0 contrast failures, rich editor at ready every time. `lifecycleDisabled` passes 60/60 in Firefox, WebKit and Chromium; every Editor fixture passes ×3 on all four projects.
+- **What doesn't** — outside the harness the markdown textarea still stands in until TipTap resolves; it carries `aria-disabled` from its first paint too.
+- **Candidates** — none.
+
 ## 2026-10-03 — Glass: review and browser fixes
 
 - **What changed** — a disabled Editor shows the not-allowed cursor every disabled field shows (it overrode it to the default arrow); scroll and selection still work. The flat part exports (`EditorRoot`, `EditorToolbar`, `EditorToolbarGroup`, `EditorToolbarButton`, `EditorStatusIndicator`, `EditorContentArea`, `EditorStatusBar`) are cut from the root and `./editor` entries; the dot parts are the one form (MIGRATION-v4). The controllable-state hook moved to the shared util Sidebar and Prompt use, and each lint disable now carries its reason. The label already reads the field label role (12/600) at this head.
