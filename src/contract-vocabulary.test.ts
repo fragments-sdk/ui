@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { PROP_VOCABULARY } from "./vocabulary";
 
 /**
- * Vocabulary schema gate (UIR-D31). The ruled words live in `src/vocabulary.json` (typed by
+ * Vocabulary schema gate. The ruled words live in `src/vocabulary.json` (typed by
  * `src/vocabulary.ts`), which the source lint (`eslint/plugin.mjs`) reads too.
  *
  * Every authored metadata file (`*.meta.json`) and every compiled entry in

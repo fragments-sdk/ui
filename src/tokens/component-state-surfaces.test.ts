@@ -47,7 +47,7 @@ describe("component state surface contract", () => {
     const css = sass.compile(resolve(process.cwd(), "src/components/Chip/Chip.module.scss"), {
       silenceDeprecations: ["if-function"],
     }).css;
-    // v4 (UIR-D75): Chip has one look; selected is the wash with a border edge.
+    // v4: Chip has one look; selected is the wash with a border edge.
     expect(css).not.toMatch(/\.(tone[A-Z]\w*|outline|soft|solid)\b/);
     let edge = "";
     for (const [, selector, declarations] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
@@ -78,7 +78,7 @@ describe("component state surface contract", () => {
     expect(block).not.toContain("--fui-color-accent");
   });
 
-  // The ghost Select is cut (UIR-D75): an open trigger is a field holding its
+  // The ghost Select is cut: an open trigger is a field holding its
   // hover edge, not a selected item, so it never takes the selection wash.
   it("holds the hover edge, not the selection wash, while a Select owns an open popup", () => {
     const openTrigger = extractBlock(
@@ -121,7 +121,7 @@ describe("component state surface contract", () => {
       expect(variables).toContain(`${token}: var(--fui-control-selected-bg)`);
     }
     // The table ring is the selection ring; the sidebar's current row is chosen, so it takes
-    // the selection wash too (UIR-D142).
+    // the selection wash too.
     expect(variables).toContain(
       "--fui-table-row-selected-border: var(--fui-control-selected-border)"
     );

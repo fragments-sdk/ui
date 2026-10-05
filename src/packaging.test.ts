@@ -190,8 +190,8 @@ describe("measurements public subpath", () => {
       return match?.[1].trim();
     };
 
-    // One unit policy (UIR-D65): type and space are rem against the 16px host; hairlines of
-    // 2px and under, strokes and radius stay px. Catalog lengths read --fui-scale (UIR-D27).
+    // One unit policy: type and space are rem against the 16px host; hairlines of 2px and
+    // under, strokes and radius stay px. Catalog lengths read --fui-scale.
     const host = Number.parseFloat(MEASUREMENT_PROFILES.spacing.baseFontSize);
     const rem = (value: string) => {
       const match = /^([0-9]+(?:\.[0-9]+)?)px$/.exec(value);
@@ -210,7 +210,7 @@ describe("measurements public subpath", () => {
       expect(css).not.toMatch(new RegExp(`@property ${property}\\s*\\{`));
     }
 
-    // The control track is the one height family (UIR-D90); the field track emits nothing.
+    // The control track is the one height family; the field track emits nothing.
     const targetProperty = (group: string, name: string) => {
       if (group === "controlTrack") return `--fui-control-height-${name === "micro" ? "xs" : name}`;
       if (group === "fieldTrack") return null;
@@ -226,7 +226,7 @@ describe("measurements public subpath", () => {
       }
     }
 
-    // Two weights only (UIR-D88): a role reads the weight input, so a font package moves it.
+    // Two weights only: a role reads the weight input, so a font package moves it.
     for (const [role, record] of Object.entries(MEASUREMENT_PROFILES.typography)) {
       for (const [name, value] of Object.entries(record)) {
         const property = `--fui-type-${role}-${name}`;

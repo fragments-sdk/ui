@@ -3,8 +3,8 @@ import { join, relative, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-// One unit policy, one spacing scale, one type scale (UIR-D65, UIR-D88 to UIR-D90, UIR-D113,
-// UIR-D114), read from the built stylesheet. Run `pnpm run build` first.
+// One unit policy, one spacing scale, one type scale, read from the built stylesheet. Run
+// `pnpm run build` first.
 
 const packageRoot = process.cwd();
 const css = readFileSync(resolve(packageRoot, "dist/assets/ui.css"), "utf8");

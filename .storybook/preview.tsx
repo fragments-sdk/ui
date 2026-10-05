@@ -54,8 +54,8 @@ function StorybookThemeProvider({
     else root.setAttribute("data-fui-radius-style", radius);
   }, [radius]);
 
-  // `--fui-scale` multiplies the spacing scale and measurement-catalog lengths
-  // (UIR-D27). "1" means the root override is absent.
+  // `--fui-scale` multiplies the spacing scale and measurement-catalog lengths.
+  // "1" means the root override is absent.
   useEffect(() => {
     const root = document.documentElement;
     if (scale === "1") root.style.removeProperty("--fui-scale");

@@ -157,7 +157,7 @@ $fui-popup-item-padding-inline: measurements.rem-length(measurements.raw-space(1
 // --------------------------------------------
 // Border radius
 // --------------------------------------------
-// The radius input (L0) and the roles derived from it (UIR-D115). Each role is a
+// The radius input (L0) and the roles derived from it. Each role is a
 // formula of the input, so a scoped `--fui-radius` re-derives every corner
 // below it. A floor never exceeds the input, so a radius of 0 squares every
 // role. Nested and pill corners are recipe formulas (recipes/_radius.scss).
@@ -217,7 +217,7 @@ $fui-scale: 1 !default;
 $fui-press-scale: 0.985 !default;
 
 // --------------------------------------------
-// Motion (UIR-D116)
+// Motion
 // --------------------------------------------
 // Small floating things appear and leave at once; only large overlays move.
 // One easing serves both directions.
@@ -360,7 +360,7 @@ $fui-border: _twin("border") !default;
 $fui-border-strong: _twin("border-strong") !default;
 $fui-field-border: _twin("field-border") !default;
 
-// Shadows (light). Surfaces carry no shadow (UIR-D117): only floating things cast
+// Shadows (light). Surfaces carry no shadow: only floating things cast
 // the popup shadow, and the two thumbs on a track keep the small one.
 $fui-shadow-sm: computed.$computed-shadow-sm !default;
 $fui-shadow-popup:
@@ -503,7 +503,7 @@ $fui-target-size-min: measurements.spacing-px-to-rem(
 ) !default;
 $fui-target-size-comfortable: $fui-touch-md !default;
 
-// The hit-area floor the target mixin draws with `::after` (UIR-D120): 24px for
+// The hit-area floor the target mixin draws with `::after`: 24px for
 // a pointer, 44px under a coarse pointer. Px, not rem × scale: a smaller scale
 // must never shrink a target below the floor.
 $fui-hit-area: 24px !default;
@@ -523,7 +523,7 @@ $fui-duration-spin: 700ms !default; // Busy indicators
 $fui-duration-pulse: 1500ms !default; // Breathing / attention loops
 $fui-duration-shimmer: 1600ms !default; // Placeholder shimmer
 /// Where an agent works: the sweep across the working wash, and the sheen
-/// across working words (UIR-D131).
+/// across working words.
 $fui-working-sweep-duration: 1800ms !default;
 $fui-working-sheen-duration: 2400ms !default;
 
@@ -549,19 +549,19 @@ $fui-appshell-sidebar-width-wide: measurements.rem-length(
   measurements.target-value("appshell", "sidebar-width-wide")
 ) !default;
 
-// Floating placement (UIR-D119): the gap to the anchor and the viewport inset.
+// Floating placement: the gap to the anchor and the viewport inset.
 $fui-popup-offset: measurements.rem-length(measurements.target-value("popup", "offset")) !default;
 $fui-popup-collision-padding: measurements.rem-length(
   measurements.target-value("popup", "collision-padding")
 ) !default;
 
-// Reading measures (UIR-D119): an empty state's copy wraps at 40 characters at
+// Reading measures: an empty state's copy wraps at 40 characters at
 // every size; the size sets padding only.
 $fui-feedback-empty-max-inline: 40ch !default;
 // A page description (Main.Description) wraps at 68 characters.
 $fui-main-description-max-inline: 68ch !default;
 
-// The gap between text and its link underline (UIR-D119): 3px at every
+// The gap between text and its link underline: 3px at every
 // size, shared by Link, Button link and prose links.
 $fui-link-underline-offset: 3px !default;
 $fui-header-z-index: 40 !default;
@@ -598,7 +598,7 @@ $fui-dark-code-token-variable: #f0ede9 !default;
 $fui-link-ink: _twin("link-ink") !default;
 $fui-dark-link-ink: _twin("link-ink", "dark") !default;
 
-// Working (UIR-D118): the brand wash, edge and sweep while an agent works.
+// Working: the brand wash, edge and sweep while an agent works.
 $fui-working-from: _twin("working-from") !default;
 $fui-working-to: _twin("working-to") !default;
 $fui-working-wash: _twin("working-wash") !default;
@@ -608,7 +608,7 @@ $fui-dark-working-to: _twin("working-to", "dark") !default;
 $fui-dark-working-wash: _twin("working-wash", "dark") !default;
 $fui-dark-working-edge: _twin("working-edge", "dark") !default;
 
-// Chart series (UIR-D118): the brand and the neutral, never a status seed.
+// Chart series: the brand and the neutral, never a status seed.
 $fui-chart-1: _twin("chart-1") !default;
 $fui-chart-2: _twin("chart-2") !default;
 $fui-chart-3: _twin("chart-3") !default;
@@ -954,7 +954,7 @@ $_chart-series: (
     --fui-popup-item-padding-block: #{$fui-popup-item-padding-block};
     --fui-popup-item-padding-inline: #{$fui-popup-item-padding-inline};
 
-    // Radius roles from the `--fui-radius` input (UIR-D115). A control never rounds
+    // Radius roles from the `--fui-radius` input. A control never rounds
     // past a pill; popups and surfaces are rounder, to a ceiling; a row sits
     // concentric inside its popup; every floor is capped by the input.
     --fui-radius-control: min(var(--fui-radius), var(--fui-control-height-md) / 2);
@@ -975,7 +975,7 @@ $_chart-series: (
     --fui-opacity-muted: #{$fui-opacity-muted};
     --fui-opacity-faint: #{$fui-opacity-faint};
 
-    // Motion roles (UIR-D116). Press scale is an input on `:root`.
+    // Motion roles. Press scale is an input on `:root`.
     --fui-duration-micro: #{$fui-duration-micro};
     --fui-duration-enter: #{$fui-duration-enter};
     --fui-duration-exit: #{$fui-duration-exit};
@@ -1141,25 +1141,25 @@ $_chart-series: (
     --fui-link-ink: var(--fui-color-accent-text);
     --fui-link-underline-offset: #{$fui-link-underline-offset};
 
-    // Working (UIR-D118): the selection as a wash, an edge and the sweep's near
+    // Working: the selection as a wash, an edge and the sweep's near
     // stop; the far stop is an engine role.
     --fui-working-from: color-mix(in oklab, var(--fui-control-checked-bg) 30%, transparent);
     --fui-working-wash: color-mix(in oklab, var(--fui-control-checked-bg) 9%, transparent);
     --fui-working-edge: color-mix(in oklab, var(--fui-control-checked-bg) 24%, transparent);
 
-    // Chart series (UIR-D118): the selection, four turns of the brand (engine
+    // Chart series: the selection, four turns of the brand (engine
     // roles) and ink 3. No series reads a status seed.
     --fui-chart-1: var(--fui-control-checked-bg);
     --fui-chart-6: var(--fui-text-tertiary);
 
-    // Reading measures (UIR-D119).
+    // Reading measures.
     --fui-feedback-empty-max-inline-sm: #{$fui-feedback-empty-max-inline};
     --fui-feedback-empty-max-inline-md: #{$fui-feedback-empty-max-inline};
     --fui-main-description-max-inline: #{$fui-main-description-max-inline};
 
     // Navigation and table hooks: inks and state tints only. Planes and edges
     // are read from the plane and line roles directly. The current item and a
-    // selected row are the selection: the wash plus its ring (UIR-D142).
+    // selected row are the selection: the wash plus its ring.
     --fui-sidebar-item-color: var(--fui-text-secondary);
     --fui-sidebar-item-icon-color: var(--fui-text-tertiary);
     --fui-sidebar-section-label-size: var(--fui-type-caption-size);
@@ -1204,7 +1204,7 @@ $_chart-series: (
   }
 
   // A coarse pointer raises the hit-area floor; stacked rows read it as their
-  // height, so a touch row is the target (UIR-D120).
+  // height, so a touch row is the target.
   @media (pointer: coarse) {
     :where(:root, [data-fui-theme]) {
       --fui-hit-area: #{$fui-hit-area-coarse};
@@ -1295,7 +1295,7 @@ $_chart-series: (
     @include _fui-high-contrast-tokens;
   }
 
-  // Forced colours (UIR-D121): the boundary and focus roles take system
+  // Forced colours: the boundary and focus roles take system
   // colours, so an engine that does not force them paints what one that does
   // would. It comes after high contrast and matches its selectors, so it wins
   // when both apply.

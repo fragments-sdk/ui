@@ -1,8 +1,8 @@
 /**
  * The library's words, kept in one place: `vocabulary.json`, typed here.
  *
- * `PROP_VOCABULARY` is the ruled value set for the shared prop axes (UIR-D31): `variant` is chrome
- * only, `tone` is colour, `size` is control height, `gap` is spacing, `status` is lifecycle.
+ * `PROP_VOCABULARY` is the ruled value set for the shared prop axes: `variant` is chrome only,
+ * `tone` is colour, `size` is control height, `gap` is spacing, `status` is lifecycle.
  * `src/contract-vocabulary.test.ts` holds all component metadata to it.
  *
  * `BANNED_COPY_WORDS` are words the library's shipped strings never use: the library says

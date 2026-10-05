@@ -58,7 +58,7 @@ const config: FragmentsConfig = {
       {
         // Recipe mixins declare the component-scoped hooks their consumers
         // read (`--fui-action-*`, `--fui-field-*`, ...). They are scan inputs
-        // for the undefined-token gate, not public catalog entries (UIR-D8).
+        // for the undefined-token gate, not public catalog entries.
         path: "src/recipes/*.scss",
         format: "scss",
       },

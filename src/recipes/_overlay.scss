@@ -169,7 +169,7 @@
 
 /// Every floating panel (modal, drawer, popover, popup list, toast) is the
 /// same object: the raised plane, the popup shadow and its corner, no edge
-/// (UIR-D145: the shadow's own hairline ring is the boundary). `$radius`
+/// (the shadow's own hairline ring is the boundary). `$radius`
 /// names the corner role: `popup` for anchored panels, `overlay` for modals and
 /// drawers. Forced colours drop the shadow, so an outline keeps the shape.
 @mixin surface($radius: popup) {

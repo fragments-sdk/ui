@@ -90,7 +90,7 @@
   }
 
   // Pressed is a persistent toggle selection, not the pointer-down state:
-  // the wash and the ring (UIR-D142).
+  // the wash and the ring.
   .pressed {
     @include selection.selected;
   }

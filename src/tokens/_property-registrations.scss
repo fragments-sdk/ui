@@ -149,7 +149,7 @@
   @include register-color("control-checked-color", $fui-control-checked-color);
   @include register-color("link-ink", $fui-link-ink);
 
-  // `--fui-focus-ring-color` is deliberately not registered (UIR-D121): a
+  // `--fui-focus-ring-color` is deliberately not registered: a
   // registered <color> resolves `Highlight` to a fixed colour, which forced
   // colours then overrides. The ring is never transitioned, so typing it buys
   // nothing.

@@ -106,7 +106,7 @@ $_ring-color: var(--fui-control-selected-border, #{tokens.$fui-control-selected-
 
 /// The current nav item (`aria-current`): the same wash and ring as a selected
 /// row, at the item's own regular weight. It names the nav case so a nav
-/// module reads as what it means; it never draws a second look (UIR-D142).
+/// module reads as what it means; it never draws a second look.
 @mixin current {
   @include selected;
 }
