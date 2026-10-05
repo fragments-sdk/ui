@@ -24,7 +24,7 @@
   - **Glass, on every component.** Four planes, one hairline between them, opaque lines that reach 3:1, colour only where it carries state, and one focus ring. Light and dark come from the same seeds.
   - **A hard cut.** Weak variants, duplicate props and deprecated token aliases are removed with no shims. `NavigationMenu`, `DashboardLayout` and `BentoGrid` are gone: use `Header.NavItem` and `Header.NavMenu`, `AppShell`, and `Grid`.
   - **Stylesheets you can build anywhere.** Every rule sits in a `fui.*` cascade layer, so your unlayered classes win. Module selectors stay pure for CSS-modules pure mode, and the CSS is the same on every Sass version.
-  - **Every removal has a row** in `MIGRATION-v4.md`, with what replaces it. The upgrade guide at https://usefragments.com/components/upgrade lists them all.
+  - **Every removal has a row** in the [v4 migration guide](docs/migration-v4.md), with what replaces it. The upgrade guide at https://usefragments.com/components/upgrade lists them all.
 
 ### Patch Changes
 

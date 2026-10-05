@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as ui from "./index";
 
 // Compounds ship one form: the dot parts on the root, with `.Root` beside them. Flat part
-// exports are cut (MIGRATION-v4); this holds the last ones that shipped.
+// exports are cut (docs/migration-v4.md); this holds the last ones that shipped.
 const CUT_FLAT_PARTS = [
   "ListRoot",
   "ListItem",

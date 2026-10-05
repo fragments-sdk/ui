@@ -56,8 +56,8 @@ function px(value: string): number {
   return Number(match[1]) * (match[2] === "rem" ? HOST_PX : 1);
 }
 
-// Every name v4 removed (MIGRATION-v4.md). A read of one, in the stylesheet or a module, fails;
-// so does a declaration of one in the stylesheet.
+// Every name v4 removed (docs/migration-v4.md). A read of one, in the stylesheet or a module,
+// fails; so does a declaration of one in the stylesheet.
 const REMOVED = [
   "space-(?:px|\\d[\\d-]*)",
   "font-size-[a-z0-9]+",
