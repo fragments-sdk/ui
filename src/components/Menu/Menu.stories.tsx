@@ -127,6 +127,24 @@ export const WithRadioGroup: Story = {
   ),
 };
 
+/** A note says why a choice is missing or held back. It sits in the label column and wraps. */
+export const WithNote: Story = {
+  render: (args) => (
+    <Menu {...args}>
+      <Menu.Trigger render={<Button variant="soft" />}>Size</Menu.Trigger>
+      <Menu.Content>
+        <Menu.RadioGroup defaultValue="md">
+          <Menu.RadioItem value="sm">Small</Menu.RadioItem>
+          <Menu.RadioItem value="md">Medium</Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.Note>Larger would not fit the stage.</Menu.Note>
+        <Menu.Separator />
+        <Menu.Item onSelect={() => {}}>Reset size</Menu.Item>
+      </Menu.Content>
+    </Menu>
+  ),
+};
+
 export const WithSubmenu: Story = {
   render: (args) => (
     <Menu {...args}>

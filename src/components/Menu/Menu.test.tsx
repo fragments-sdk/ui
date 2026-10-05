@@ -232,6 +232,77 @@ describe("Menu", () => {
     expect(screen.getByText("Actions")).toHaveAttribute("aria-hidden", "true");
   });
 
+  describe("note", () => {
+    function renderNote(
+      contentProps: Omit<React.ComponentProps<typeof Menu.Content>, "children"> = {}
+    ) {
+      return render(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content {...contentProps}>
+            <Menu.RadioGroup defaultValue="md">
+              <Menu.RadioItem value="sm">Small</Menu.RadioItem>
+              <Menu.RadioItem value="md">Medium</Menu.RadioItem>
+            </Menu.RadioGroup>
+            <Menu.Note>Larger would not fit the stage.</Menu.Note>
+            <Menu.Item>Reset size</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+    }
+
+    it("describes the menu, so a screen reader reads it with the menu", async () => {
+      renderNote({ "aria-describedby": "own-hint" });
+      const note = await screen.findByText("Larger would not fit the stage.");
+      expect(note.id).not.toBe("");
+      expect(screen.getByRole("menu")).toHaveAttribute("aria-describedby", `own-hint ${note.id}`);
+      expect(screen.getByRole("menu")).toHaveAccessibleDescription(
+        "Larger would not fit the stage."
+      );
+    });
+
+    it("is not a row: no item role, no focus stop, skipped by the arrow keys", async () => {
+      renderNote();
+      const note = await screen.findByText("Larger would not fit the stage.");
+      expect(note).not.toHaveAttribute("role");
+      expect(note).not.toHaveAttribute("tabindex");
+      expect(screen.getAllByRole("menuitemradio")).toHaveLength(2);
+
+      const menu = screen.getByRole("menu");
+      const highlighted = () => menu.querySelector("[data-highlighted]")?.textContent;
+      fireEvent.keyDown(menu, { key: "ArrowDown" });
+      fireEvent.keyDown(menu, { key: "ArrowDown" });
+      await waitFor(() => expect(highlighted()).toContain("Medium"));
+      fireEvent.keyDown(menu, { key: "ArrowDown" });
+      await waitFor(() => expect(highlighted()).toContain("Reset size"));
+    });
+
+    it("drops its description when it unmounts", async () => {
+      const { rerender } = renderNote();
+      await screen.findByText("Larger would not fit the stage.");
+      rerender(
+        <Menu defaultOpen>
+          <Menu.Trigger>Open</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item>Reset size</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+      await waitFor(() =>
+        expect(screen.getByRole("menu")).not.toHaveAttribute("aria-describedby")
+      );
+    });
+
+    it("has no accessibility violations inside the menu", async () => {
+      renderNote();
+      await screen.findByText("Larger would not fit the stage.");
+      await expectNoA11yViolations(document.body, {
+        // Base UI focus guard spans have role="button" without labels.
+        disabledRules: ["aria-command-name"],
+      });
+    });
+  });
+
   it("has no accessibility violations when open", async () => {
     const { container } = renderMenu({ defaultOpen: true });
 
