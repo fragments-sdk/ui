@@ -2,12 +2,9 @@ import type { FragmentsConfig } from "@usefragments/core";
 import catalogJson from "./fragments.json";
 
 /**
- * The public component vocabulary, read from the canonical workspace catalog.
- * The import is static so the governance closure stays verifiable for pending
- * (unsaved) sources: a missing catalog fails module resolution, and an empty
- * one leaves the npm canonical source inert, which Doctor reports. Consumers
- * share this loader so every scan points `components/prefer-library` at the
- * same vocabulary.
+ * The public component names, read from fragments.json. The import is static,
+ * so a missing catalog fails module resolution instead of passing silently, and
+ * every scan points `components/prefer-library` at the same names.
  */
 const catalog = catalogJson as { fragments?: Record<string, unknown> };
 

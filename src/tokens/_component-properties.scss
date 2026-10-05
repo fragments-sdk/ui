@@ -3,7 +3,7 @@
 // These properties are authored on component instances from public props or
 // measured Base UI state. The mixin is intentionally not emitted at :root:
 // doing so would override each component's fallback/inheritance behavior.
-// Governance reads this file as the explicit vocabulary for dynamic values.
+// Token scans read this file as the list of these dynamic properties.
 @mixin fui-component-property-contract {
   --fui-chart-marker-stroke: var(--fui-raw-space-2);
   --fui-checkbox-radius: var(--fui-radius-indicator);
