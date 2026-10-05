@@ -233,7 +233,7 @@ describe("TableOfContents", () => {
     expect(tableOfContentsStyles).not.toContain("--toc-rail");
     expect(tableOfContentsStyles).toContain("@include navigation.row;");
     expect(tableOfContentsStyles).toContain("@include navigation.section-row;");
-    // The `--fui-toc-*` host hooks were deleted in Wave 0: rows read the shared
+    // The `--fui-toc-*` host hooks are deleted: rows read the shared
     // navigation hooks directly and nothing outside the kit set them.
     expect(tableOfContentsStyles).not.toContain("--fui-toc-");
   });

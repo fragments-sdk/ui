@@ -43,7 +43,7 @@ export function overflow() {
       <Field>
         <Field.Label>Repository URL for the design system contract source</Field.Label>
         <Input
-          defaultValue="https://github.com/acme/web-platform-design-system-monorepo"
+          defaultValue="https://github.com/acme/web-platform-design-system-workspace"
           endAdornment="git"
         />
       </Field>

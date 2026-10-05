@@ -42,7 +42,7 @@ export function unlayer(css: string): string {
   return out;
 }
 
-/** A module under `libs/ui`, compiled, unlayered and parsed by the DOM's own CSS parser. */
+/** A module of this package, by path from its root, compiled, unlayered and parsed by the DOM's own CSS parser. */
 export function compiledModuleRules(path: string): CSSRule[] {
   const style = document.createElement("style");
   style.textContent = unlayer(sass.compile(resolve(process.cwd(), path)).css);

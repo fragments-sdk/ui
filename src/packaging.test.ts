@@ -302,7 +302,7 @@ describe("measurements public subpath", () => {
   }, 45_000);
 });
 
-describe("published dist preserves use client directives (P0 packaging)", () => {
+describe("published dist preserves use client directives", () => {
   it("keeps the directive in every matching dist ESM module", () => {
     const srcHits = srcFilesWithUseClient();
     expect(srcHits.length).toBeGreaterThan(0);
@@ -359,7 +359,7 @@ describe("published dist preserves use client directives (P0 packaging)", () => 
   });
 });
 
-describe("dist ESM contains no bare require() calls (P0 packaging)", () => {
+describe("dist ESM contains no bare require() calls", () => {
   // Bare `require(` in the ESM output breaks browser builds: `require` is
   // undefined there, so optional-peer detection always failed (and DataTable
   // threw). Optional peers must be loaded with dynamic import() instead.
@@ -415,7 +415,7 @@ describe("published declarations are self-contained", () => {
   });
 });
 
-describe("published ./styles default CSS includes tokens (P0 packaging)", () => {
+describe("published ./styles default CSS includes tokens", () => {
   it("sass condition still points at globals.scss", () => {
     for (const key of ["./styles", "./globals"]) {
       const entry = manifest.publishConfig?.exports?.[key] as Record<string, string> | undefined;

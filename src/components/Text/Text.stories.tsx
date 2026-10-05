@@ -66,7 +66,7 @@ export const Ladder: Story = {
         Checked 2 minutes ago
       </Text>
       <Text type="control">Repository</Text>
-      <Text type="code">fragments-sdk/fragments@c46ff42</Text>
+      <Text type="code">fragments-sdk/ui@c46ff42</Text>
       <Text as="p" type="section-label">
         On this page
       </Text>
@@ -85,7 +85,7 @@ export const Inks: Story = {
       <Text color="secondary">Secondary ink</Text>
       <Text color="tertiary">Tertiary ink</Text>
       <Text>
-        Checked <Text color="accent">fragments-sdk/fragments</Text> today.
+        Checked <Text color="accent">fragments-sdk/ui</Text> today.
       </Text>
       <Text color="success">All checks pass</Text>
       <Text color="warning">91% of context used</Text>

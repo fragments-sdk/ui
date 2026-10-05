@@ -116,7 +116,7 @@ function loadSurface(): EnumProp[] {
     if (!entry) {
       throw new Error(
         `${name}.fragment.tsx has no entry in fragments.json; run ` +
-          `\`node packages/cli/dist/bin.js build --config libs/ui/fragments.config.ts\``
+          `\`npx @usefragments/cli build --config fragments.config.ts\``
       );
     }
     surface.push(...collectEnumProps(name, `fragments.json#${name}`, entry));

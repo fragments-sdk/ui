@@ -110,7 +110,7 @@ export function loading() {
 const WIDE = [
   "| Repository | Findings | Owner | Last checked | Contract |",
   "| --- | --- | --- | --- | --- |",
-  "| fragments-sdk/fragments | 12 | design-systems | 2026-10-03 14:02 | Active |",
+  "| fragments-sdk/ui | 12 | design-systems | 2026-10-03 14:02 | Active |",
   "| fragments-sdk/cloud | 3 | platform | 2026-10-03 13:40 | Active |",
   "",
   "See https://example.com/reports/contract/drift/2026-10-03/pull-requests/1234/files/src/components/Save.tsx",

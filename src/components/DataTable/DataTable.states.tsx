@@ -114,7 +114,7 @@ export function populatedTree() {
       verdict: "Blocked",
       children: [
         { id: "apps/web", name: "web", findings: 12, verdict: "Blocked" },
-        { id: "apps/docs", name: "docs", findings: 3, verdict: "Passing" },
+        { id: "apps/marketing", name: "marketing", findings: 3, verdict: "Passing" },
       ],
     },
     { id: "cli", name: "cli", findings: 7, verdict: "Blocked" },

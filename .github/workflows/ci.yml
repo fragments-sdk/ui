@@ -54,7 +54,7 @@ jobs:
         run: pnpm run test
 
   # Browser lanes that check only the library. They run on ready pull requests, not on
-  # pushes to main, as they did before the library had its own repository.
+  # pushes to main.
   ui-lanes:
     name: UI lanes
     if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
