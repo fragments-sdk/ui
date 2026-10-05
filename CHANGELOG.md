@@ -1,5 +1,21 @@
 # @usefragments/ui
 
+## 4.1.0
+
+### Minor Changes
+
+- `Menu.Content` takes `maxVisibleItems`, like `Select.Content` and `Combobox.Content`: the popup shows that many rows (plus half of the next as a scroll hint) before it scrolls, so a longer menu no longer needs `--fui-popup-viewport-rows` set in CSS. The docked `AppShell.Aside` now paints `--fui-app-canvas-bg` like the sidebar rail, header and main, separated by its hairline; it painted `--fui-bg-primary`, so the two rails could never match.
+
+### Patch Changes
+
+- Avatar: `sm` groups no longer overlap, so a wide pair of initials (CW) stays clear of the next tile's ring in Linux's wider fallback font. `md` and `lg` keep their overlap.
+
+- A nested `Theme` with its own `storageKey` no longer paints its default mode for a frame before the stored one. `ScrollArea` no longer counts a control in a disabled `fieldset` as a keyboard stop, so its viewport stays reachable.
+
+- Order the dark planes and calm dark hover. Dark now runs canvas, surface, band, raised (`--fui-bg-elevated` L 0.268 sits above `--fui-bg-secondary` L 0.248), so a menu over a field or code well lifts instead of sinking. Dark `--fui-bg-hover` and `--fui-bg-active` drop to 4.5% and 8% of ink, in step with light, so a hovered row on the canvas stays visible without matching the band. The Message user bubble gains the `--fui-border` hairline CodeBlock uses, so it reads on the canvas in light.
+
+- Light theme: brighter canvas, near-white sheets and popups, and fields drawn as sheets; dark is unchanged.
+
 ## 4.0.0
 
 ### Major Changes
