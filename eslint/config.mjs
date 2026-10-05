@@ -1,13 +1,13 @@
 import tseslint from "typescript-eslint";
 
-import { doctrineEslintPlugin } from "./plugin.mjs";
+import { fuiEslintPlugin } from "./plugin.mjs";
 
 /**
- * Flat config for the doctrine source rules, self-contained so the lane never depends on a
+ * Flat config for the library's source rules, self-contained so the lane never depends on a
  * repository-level ESLint config. Unused `fui/` disables surface as
  * `fui/conventions/needless-disable` (the lane maps ESLint's unused-directive report).
  */
-export const doctrineEslintConfig = [
+export const fuiEslintConfig = [
   {
     files: ["**/*.{ts,tsx,mts,cts}"],
     languageOptions: {
@@ -15,9 +15,9 @@ export const doctrineEslintConfig = [
       parserOptions: { ecmaFeatures: { jsx: true }, sourceType: "module" },
     },
     linterOptions: { reportUnusedDisableDirectives: "error" },
-    plugins: { fui: doctrineEslintPlugin },
+    plugins: { fui: fuiEslintPlugin },
     rules: Object.fromEntries(
-      Object.keys(doctrineEslintPlugin.rules).map((name) => [`fui/${name}`, "error"])
+      Object.keys(fuiEslintPlugin.rules).map((name) => [`fui/${name}`, "error"])
     ),
   },
 ];

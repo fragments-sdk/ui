@@ -1,5 +1,5 @@
 /**
- * Shared helpers for the doctrine style rules (`fui/<category>/<rule>`).
+ * Shared helpers for the style rules (`fui/<category>/<rule>`).
  *
  * Every rule is a stylelint plugin built with `defineRule`, which handles the
  * primary option, the per-rule `exempt` globs and reporting. Value helpers work
@@ -19,7 +19,7 @@ const {
 export const TOKEN_FILES = ["**/src/tokens/**"];
 
 /**
- * Builds a stylelint plugin for one doctrine rule.
+ * Builds a stylelint plugin for one rule.
  *
  * `check(root, context)` walks the file; `context.report(node, message, extra)` records a finding
  * (stylelint appends the rule ID to the message).
