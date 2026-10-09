@@ -65,7 +65,7 @@ export const noSeedRead = defineRule({
   },
 });
 
-// Cascade layers (UIR-D122): every rule the library ships sits in `fui.components`, below any
+// Cascade layers: every rule the library ships sits in `fui.components`, below any
 // consumer style, and each module declares the library order before its block so the order holds
 // whichever stylesheet loads first.
 export const LAYER_ORDER = "fui.tokens, fui.base, fui.components";

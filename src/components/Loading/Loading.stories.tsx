@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Loading } from ".";
 
 /**
- * One 16px spinner in the surrounding ink. Nothing shows for the first second
- * (`delay`); the stories pass `delay={0}` so the spinner is visible at once.
+ * A 16px wait in the surrounding ink: a spinner by default, or dots, a pulse,
+ * bars, a matrix or a shimmering label (`kind`). Nothing shows for the first second
+ * (`delay`); the stories pass `delay={0}` so it is visible at once.
  */
 const meta = {
   title: "Feedback/Loading",
@@ -12,11 +13,16 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: "One spinner, shown after a second of quiet, in the ink it sits in.",
+        component:
+          "A spinner, dots, a pulse, bars, a matrix or a shimmering label, shown after a second of quiet, in the ink it sits in.",
       },
     },
   },
   argTypes: {
+    kind: {
+      control: "select",
+      options: ["spinner", "dots", "pulse", "bars", "matrix", "shimmer"],
+    },
     inline: { control: "boolean" },
     fill: { control: "boolean" },
     delay: { control: "number" },
@@ -32,6 +38,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const Kinds: Story = {
+  render: (args) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+      <Loading {...args} label="Loading findings" />
+      <Loading {...args} kind="dots" label="Writing a reply" />
+      <Loading {...args} kind="pulse" label="Listening" />
+      <Loading {...args} kind="bars" label="Receiving audio" />
+      <Loading {...args} kind="matrix" label="Building the preview" />
+      <Loading {...args} kind="shimmer" label="Thinking…" />
+    </div>
+  ),
+};
 
 export const AfterTheDelay: Story = {
   args: { delay: 1000 },

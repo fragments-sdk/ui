@@ -71,8 +71,7 @@ $_valid-radii: measurements.$radius-profile-names;
 // Status seeds
 // --------------------------------------------
 // Each tone's fill is the seed verbatim; its text, tint and on-fill derive
-// from it at runtime. Danger, success and warning are the Glass values
-// (UIR-D92); info is too (UIR-D107).
+// from it at runtime. Danger, success, warning and info are the Glass values.
 
 /// Danger/error colour.
 /// @type Color

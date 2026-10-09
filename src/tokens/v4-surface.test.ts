@@ -3,8 +3,8 @@ import { join, relative, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-// One unit policy, one spacing scale, one type scale (UIR-D65, UIR-D88 to UIR-D90, UIR-D113,
-// UIR-D114), read from the built stylesheet. Run `pnpm run build` first.
+// One unit policy, one spacing scale, one type scale, read from the built stylesheet. Run
+// `pnpm run build` first.
 
 const packageRoot = process.cwd();
 const css = readFileSync(resolve(packageRoot, "dist/assets/ui.css"), "utf8");
@@ -56,8 +56,8 @@ function px(value: string): number {
   return Number(match[1]) * (match[2] === "rem" ? HOST_PX : 1);
 }
 
-// Every name v4 removed (MIGRATION-v4.md). A read of one, in the stylesheet or a module, fails;
-// so does a declaration of one in the stylesheet.
+// Every name v4 removed (docs/migration-v4.md). A read of one, in the stylesheet or a module,
+// fails; so does a declaration of one in the stylesheet.
 const REMOVED = [
   "space-(?:px|\\d[\\d-]*)",
   "font-size-[a-z0-9]+",

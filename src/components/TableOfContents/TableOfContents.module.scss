@@ -4,36 +4,40 @@
 @use "../../recipes/action";
 @use "../../recipes/focus";
 @use "../../recipes/navigation";
-@use "../../recipes/selection";
 @use "../../recipes/typography";
 
 @layer fui.tokens, fui.base, fui.components;
 
 @layer fui.components {
+  // A page index: one hairline track down the start edge, rows of ink 2 beside
+  // it, and the reader's place marked on the track. Where you are is
+  // a location, not a choice, so no row takes the selection wash or ring.
   .root {
     @include navigation.properties;
-    @include typography.role("body-compact");
+    @include typography.role("ui-compact");
+
+    --_fui-toc-inset: var(--fui-raw-space-12, #{measurements.raw-space(12)});
 
     color: var(--fui-text-secondary, $fui-text-secondary);
   }
 
+  // The title stands on the track's edge, the rows step in from it.
   .title {
-    @include navigation.properties;
-
-    margin: 0 0 var(--fui-raw-space-12, #{measurements.raw-space(12)});
-    // Same inline inset as `.link` (navigation.row) so the title and the index
-    // share one start edge.
-    padding-inline: var(--fui-navigation-inline-inset, #{navigation.gutter()});
+    margin: 0 0 var(--fui-raw-space-8, #{measurements.raw-space(8)});
   }
 
-  // The quiet index is flush; links and group headers share the title inset.
   .list {
     display: flex;
     flex-direction: column;
-    gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});
     margin: var(--fui-raw-space-0, #{measurements.raw-space(0)});
     padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});
     list-style: none;
+  }
+
+  // The track. Nested lists sit inside it, so every depth shares the one line.
+  .root > .list {
+    border-inline-start: var(--fui-stroke-hairline, $fui-stroke-hairline) solid
+      var(--fui-border, $fui-border);
   }
 
   // The group's items show and hide at once: no height motion.
@@ -51,43 +55,80 @@
   // ============================================
 
   .link {
-    @include navigation.row;
     @include action.motion;
 
+    position: relative;
     display: flex;
     align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+    box-sizing: border-box;
+    // A stacked target: under a coarse pointer the row takes the hit-area floor.
+    min-block-size: max(
+      var(--fui-control-height-sm, #{$fui-control-height-sm}),
+      var(--fui-hit-area, #{$fui-hit-area})
+    );
+    padding-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    padding-inline: var(--_fui-toc-inset, #{measurements.raw-space(12)})
+      var(--fui-raw-space-4, #{measurements.raw-space(4)});
     border-radius: var(--fui-radius-control, $fui-radius-control);
     color: var(--fui-text-secondary, $fui-text-secondary);
     text-decoration: none;
 
-    // Hover paints over the item, so the current item keeps its wash.
     @include action.hover {
-      @include selection.hover-tint;
-
       color: var(--fui-text-primary, $fui-text-primary);
     }
 
     @include focus.visible;
+
+    // The marker: a 2px segment in the row's ink (ink 1 once current), laid
+    // over the track beside the current row.
+    &::before {
+      position: absolute;
+      inset-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+      inset-inline-start: calc(
+        (
+            var(--fui-stroke-hairline, #{$fui-stroke-hairline}) +
+              var(--fui-raw-space-2, #{measurements.raw-space(2)})
+          ) /
+          -2
+      );
+      inline-size: var(--fui-raw-space-2, #{measurements.raw-space(2)});
+      border-radius: var(--fui-radius-full, $fui-radius-full);
+      background-color: currentColor;
+      content: "";
+      opacity: 0;
+      transition: opacity var(--fui-duration-micro, $fui-duration-micro)
+        var(--fui-ease-standard, $fui-ease-standard);
+
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+
+      @media (forced-colors: active) {
+        background-color: CanvasText;
+        forced-color-adjust: none;
+      }
+    }
   }
 
-  // Nesting indents the row's start inset one step per level.
+  // Nesting steps the row's start inset in from the track, one step per level.
   [data-depth="1"] > :is(.link, .groupHeader) {
     padding-inline-start: calc(
-      var(--fui-navigation-inline-inset, #{navigation.gutter()}) +
+      var(--_fui-toc-inset, #{measurements.raw-space(12)}) +
         var(--fui-raw-space-12, #{measurements.raw-space(12)})
     );
   }
 
   [data-depth="2"] > :is(.link, .groupHeader) {
     padding-inline-start: calc(
-      var(--fui-navigation-inline-inset, #{navigation.gutter()}) +
+      var(--_fui-toc-inset, #{measurements.raw-space(12)}) +
         var(--fui-raw-space-24, #{measurements.raw-space(24)})
     );
   }
 
   [data-depth="3"] > :is(.link, .groupHeader) {
     padding-inline-start: calc(
-      var(--fui-navigation-inline-inset, #{navigation.gutter()}) +
+      var(--_fui-toc-inset, #{measurements.raw-space(12)}) +
         var(--fui-raw-space-32, #{measurements.raw-space(32)})
     );
   }
@@ -118,9 +159,13 @@
     font-variant-numeric: tabular-nums;
   }
 
-  // The current item: the nav marking.
+  // The current entry: ink 1 and the marker on the track.
   .active {
-    @include selection.current;
+    color: var(--fui-text-primary, $fui-text-primary);
+
+    &::before {
+      opacity: 1;
+    }
   }
 
   // ============================================
@@ -130,11 +175,20 @@
   // The header row: a button when the group folds, a plain label when not.
   .groupHeader {
     @include button-reset;
-    @include navigation.section-row;
+    @include typography.role("ui-compact");
 
     display: flex;
     align-items: center;
+    gap: var(--fui-raw-space-6, #{measurements.raw-space(6)});
+    box-sizing: border-box;
     inline-size: 100%;
+    min-block-size: max(
+      var(--fui-control-height-sm, #{$fui-control-height-sm}),
+      var(--fui-hit-area, #{$fui-hit-area})
+    );
+    padding-block: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+    padding-inline: var(--_fui-toc-inset, #{measurements.raw-space(12)})
+      var(--fui-raw-space-4, #{measurements.raw-space(4)});
     border-radius: var(--fui-radius-control, $fui-radius-control);
     color: var(--fui-text-tertiary, $fui-text-tertiary);
     text-align: start;
@@ -147,9 +201,7 @@
     cursor: pointer;
 
     @include action.hover {
-      @include selection.hover-tint;
-
-      color: var(--fui-text-secondary, $fui-text-secondary);
+      color: var(--fui-text-primary, $fui-text-primary);
     }
 
     @include focus.visible;

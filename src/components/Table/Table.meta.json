@@ -58,7 +58,8 @@
       "Set maxHeight when the head must stay in view: the rows scroll inside the table and the head sticks; without it the page scrolls the rows and the head with them",
       "The first column starts 12 in and every other cell pads 8, so content never meets a selected row's ring",
       "Show an empty result with Table.Empty and a load with Table.Loading so the header stays real",
-      "Narrow viewports scroll the table sideways — keep column count low"
+      "Narrow viewports scroll the table sideways — keep column count low",
+      "Numeric columns: align=\"end\" on the Table.HeaderCell and each Table.Cell, with tabularNums on the cells"
     ],
     "accessibility": [
       "Semantic HTML table elements (thead, tbody, tfoot, th, td)",
@@ -121,8 +122,8 @@
       "bordered: boolean - the sheet (surface plane, hairline, surface radius)",
       "Table.Head, Table.Body, Table.Footer - section wrappers; the head is sticky and opaque",
       "Table.Row - table row with optional selected prop (wash + inset ring)",
-      "Table.HeaderCell - th with scope=\"col\"",
-      "Table.Cell - td element; tabularNums aligns digits",
+      "Table.HeaderCell - th with scope=\"col\"; align=\"end\" over a numeric column",
+      "Table.Cell - td element; tabularNums aligns digits, align=\"end\" right-aligns a number",
       "Table.Empty - full-width row with a compact EmptyState (colSpan required)",
       "Table.Loading - placeholder rows, one bar per cell (columns, rows)",
       "wrapperClassName/wrapperProps - customize outer scroll wrapper",
@@ -159,6 +160,7 @@
     "--fui-bg-primary",
     "--fui-border",
     "--fui-raw-space-4",
+    "--fui-raw-space-48",
     "--fui-stroke-hairline",
     "--fui-table-divider-size",
     "--fui-table-row-hover-bg"

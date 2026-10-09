@@ -7,22 +7,15 @@ export type FragmentsCanonicalStampProps = {
 };
 
 /**
- * Dev-only governance stamps consumed by Fragments Inspect. They mark a DOM
- * element as the rendered output of a canonical design-system component so the
- * Inspect host can grade it green ("source-bound canonical stamp") instead of
- * falling back to advisory. The `source:` contract prefix is what earns
- * `source_bound` trust on the host (see `stampTrustForSourceBackedHost`).
+ * Development-only attributes that mark a DOM element as the rendered output of
+ * a library component, for inspection tools: the component name, the slot, and
+ * a `source:@usefragments/ui#<Name>` contract that ties it to this package.
  *
- * The stamp is emitted unless we can PROVE we are in a production build. We read
- * `process.env.NODE_ENV` directly so bundlers (Vite/Next/webpack) statically
- * replace it and tree-shake the stamp out of production, while tolerating
- * runtimes where `process` is genuinely undefined (an unbundled browser) by
- * emitting.
- *
- * NOTE: an earlier guard `typeof process === "undefined" || ...` silently
- * disabled the stamp in EVERY browser runtime — `process` is undefined in the
- * browser, so it short-circuited to no stamp, which is the opposite of intent.
- * Detect production affirmatively instead.
+ * The stamp is emitted unless the build is a production build. `process.env.NODE_ENV`
+ * is read directly so bundlers replace it statically and tree-shake the stamp out
+ * of production. Where `process` is undefined (an unbundled browser) the stamp is
+ * still emitted, so production is detected affirmatively rather than assumed from
+ * a missing `process`.
  */
 export function fragmentsCanonicalStampProps(
   component: string,

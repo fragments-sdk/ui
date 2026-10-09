@@ -35,7 +35,7 @@ export const noRemovedWeight = defineLegacyRule({
   replacement: "use the regular or strong weight role",
 });
 
-// Every other name v4 removed (MIGRATION-v4.md): the old scales, the translucent planes and lines,
+// Every other name v4 removed (docs/migration-v4.md): the old scales, the translucent planes and lines,
 // the per-component plane, line, radius and shadow tokens, and the transition shorthands.
 const REMOVED_V4 = new RegExp(
   `^fui-(?:${[
@@ -71,7 +71,7 @@ export const noRemovedToken = defineLegacyRule({
   ruleName: "fui/legacy/no-removed-token",
   description: "v4 is a hard cut: a removed token has no alias, so a read of one renders nothing.",
   pattern: REMOVED_V4,
-  replacement: "read its replacement in MIGRATION-v4.md",
+  replacement: "read its replacement in docs/migration-v4.md",
 });
 
 export const legacyRules = [noSecondHeightFamily, noRemovedWeight, noRemovedToken];

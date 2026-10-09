@@ -76,7 +76,7 @@
 @mixin compact-action {
   @include action.base;
   @include action.size("sm");
-  // The one action is a button, and buttons take the strong weight (UIR-D141).
+  // The one action is a button, and buttons take the strong weight.
   @include action.weight("strong");
   @include target.hit-area("compact");
 }

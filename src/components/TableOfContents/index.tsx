@@ -32,7 +32,7 @@ export interface TableOfContentsItemProps extends Omit<
   /** The id of the heading this item scrolls to. The link points at `#targetId`
    * unless `href` is given. */
   targetId?: string;
-  /** The section in view: the selection wash and ring, and `aria-current="location"`. */
+  /** The section in view: ink 1 and the marker on the track, and `aria-current="location"`. */
   active?: boolean;
   /** A leading element (icon, dot), before the label. */
   leading?: React.ReactNode;

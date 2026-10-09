@@ -105,21 +105,21 @@ async function checkRows(host: HTMLElement): Promise<Check[]> {
     getComputedStyle(plain).backgroundColor === "rgba(0, 0, 0, 0)"
   );
   add(
-    "The chosen row carries the selection wash",
+    "The current row carries the neutral current fill",
     getComputedStyle(chosen).backgroundColor,
-    getComputedStyle(chosen).backgroundColor === colorAs(host, "var(--fui-control-selected-bg)")
+    getComputedStyle(chosen).backgroundColor === colorAs(host, "var(--fui-bg-active)")
   );
   add(
-    "The chosen row carries the inset ring",
+    "The current row has no selection ring",
     getComputedStyle(chosen).boxShadow,
-    /inset/.test(getComputedStyle(chosen).boxShadow)
+    !/inset/.test(getComputedStyle(chosen).boxShadow)
   );
   const ink3 = colorAs(host, "var(--fui-text-tertiary)");
   const ink1 = colorAs(host, "var(--fui-text-primary)");
   const chosenIcon = find(chosen, "span[aria-hidden]");
   const plainIcon = find(plain, "span[aria-hidden]");
   add(
-    "A leading glyph is ink 3, ink 1 on the chosen row",
+    "A leading glyph is ink 3, ink 1 on the current row",
     `${getComputedStyle(plainIcon).color} / ${getComputedStyle(chosenIcon).color}`,
     getComputedStyle(plainIcon).color === ink3 && getComputedStyle(chosenIcon).color === ink1
   );
@@ -161,7 +161,7 @@ export function overflow() {
   );
 }
 
-// Hover paints over the wash and keeps the ring; a plain row takes the tint.
+// Hover paints over the current fill; a plain row takes the tint.
 export function lifecycleHover() {
   return <Rows hoverOn="settings" />;
 }
@@ -170,8 +170,8 @@ export function lifecycleSelectedHover() {
   return <Rows hoverOn="home" />;
 }
 
-// Focus on the chosen row: the ring sits outside the row, so the row's own
-// inset selection ring and wash stay in view under it.
+// Focus on the current row: the ring sits outside the row, so the row's
+// current fill stays in view under it.
 const ringOutside: InteractionCheck = (interaction, element) => {
   if (interaction !== "focus") return [];
   const style = getComputedStyle(element);
@@ -182,9 +182,10 @@ const ringOutside: InteractionCheck = (interaction, element) => {
       pass: parseFloat(style.outlineOffset) > 0,
     },
     {
-      label: "The chosen row keeps its inset selection ring under focus",
-      actual: style.boxShadow,
-      pass: /inset/.test(style.boxShadow),
+      label: "The current row keeps its current fill under focus",
+      actual: style.backgroundColor,
+      pass:
+        style.backgroundColor === colorAs(element.parentElement ?? element, "var(--fui-bg-active)"),
     },
   ];
 };
@@ -193,7 +194,7 @@ const noChecksAtRest = () => [];
 
 export function lifecycleSelectedFocus() {
   return (
-    <TokenChecks title="Focus on the chosen row" check={noChecksAtRest} interact={ringOutside}>
+    <TokenChecks title="Focus on the current row" check={noChecksAtRest} interact={ringOutside}>
       <Rows focusOn="home" />
     </TokenChecks>
   );

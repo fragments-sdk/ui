@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Every rule the library ships sits in an `fui.*` cascade layer, so any unlayered consumer style
-// wins over it (UIR-D122). Reads the built stylesheet:
+// wins over it. Reads the built stylesheet:
 //
 //   node scripts/check-layers.mjs   fail unless dist/assets/ui.css opens with the library layer
 //                                   order and holds nothing outside an `fui.*` layer block

@@ -1,4 +1,4 @@
-// Doctrine-clean copy: the lint must stay silent here (eslint/directives.test.ts).
+// Clean copy: the lint must stay silent here (eslint/directives.test.ts).
 const API_PATH = "/v1/items";
 
 export const statusLabels = {

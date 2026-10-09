@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * The `lint:styles` lane: doctrine style and source lint over `src`, held to a committed baseline.
+ * The `lint:styles` lane: the style and source lint over `src`, held to a committed baseline.
  *
  *   node stylelint/run.mjs                    fail on any violation the baseline does not hold,
  *                                             and on baseline entries that no longer occur
@@ -24,7 +24,7 @@ import {
 } from "./engine.mjs";
 
 const BASELINE_NOTE =
-  "Doctrine lint violations that predate the gate, counted per file and rule. Fixing one fails the lane until `pnpm run lint:styles --prune` shrinks this file; never raise a count by hand.";
+  "Lint violations that predate the gate, counted per file and rule. Fixing one fails the lane until `pnpm run lint:styles --prune` shrinks this file; never raise a count by hand.";
 
 function parseArgs(argv) {
   const options = { prune: false, update: false, root: PACKAGE_ROOT };

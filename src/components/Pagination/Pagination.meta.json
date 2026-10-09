@@ -77,7 +77,7 @@
     "guidelines": [
       "Sit it directly below what it pages",
       "The first and last page always show; siblingCount sets how many neighbours show",
-      "The current page takes the selection wash and ring, not the brand accent",
+      "The current page takes the neutral current fill and ink 1, not the selection colour or the brand accent",
       "Pass renderLink when each page has its own URL",
       "The root forwards id, aria-*, data-*, and handlers to <nav>",
       "A step's onClick runs first — call preventDefault() to stop the change"

@@ -109,11 +109,16 @@ export function useScrollEdges(
       attributeFilter: FOCUSABLE_ATTRIBUTES,
     });
     scroller.addEventListener("scroll", schedule, { passive: true });
+    // A child that moves without resizing (a tab indicator sliding on a transform) changes the
+    // overflow without a resize notification, so a settled transition or animation reads again.
+    const SETTLE_EVENTS = ["transitionend", "transitioncancel", "animationend"] as const;
+    SETTLE_EVENTS.forEach((type) => scroller.addEventListener(type, schedule));
     schedule();
 
     return () => {
       if (frame !== null) cancelAnimationFrame(frame);
       scroller.removeEventListener("scroll", schedule);
+      SETTLE_EVENTS.forEach((type) => scroller.removeEventListener(type, schedule));
       resizeObserver?.disconnect();
       mutationObserver.disconnect();
       observedChildren.clear();

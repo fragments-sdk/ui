@@ -464,6 +464,14 @@ function SidebarSectionAction({ children, className, ...htmlProps }: SidebarSect
   );
 }
 
+/** Below md the sidebar is a drawer over the page: choosing a destination closes it, so the page it opened is in view. */
+function useCloseDrawer() {
+  const { context } = useSidebarParts();
+  return () => {
+    if (context?.isMobile) context.setOpen(false);
+  };
+}
+
 function SidebarItem({
   children,
   icon,
@@ -482,6 +490,7 @@ function SidebarItem({
   ...rest
 }: SidebarItemProps) {
   const { collapsed } = useSidebarParts();
+  const closeDrawer = useCloseDrawer();
   const [expanded, setExpanded] = useControllableState(
     controlledExpanded,
     defaultExpanded,
@@ -499,6 +508,7 @@ function SidebarItem({
       setExpanded(!expanded);
     }
     onClick?.(event);
+    if (!hasSubmenu && !event.defaultPrevented) closeDrawer();
   };
 
   const isButton = !render && !href;
@@ -563,6 +573,7 @@ function SidebarSubItem({
   ...rest
 }: SidebarSubItemProps) {
   const { collapsed } = useSidebarParts();
+  const closeDrawer = useCloseDrawer();
 
   const element = useRender({
     render,
@@ -578,6 +589,7 @@ function SidebarSubItem({
           return;
         }
         onClick?.(event);
+        if (!event.defaultPrevented) closeDrawer();
       },
       "aria-current": active ? ("page" as const) : undefined,
       "aria-disabled": disabled || undefined,

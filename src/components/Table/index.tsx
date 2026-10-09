@@ -5,6 +5,7 @@ import { EmptyState } from "../EmptyState";
 import { Skeleton } from "../Skeleton";
 import styles from "./Table.module.scss";
 import { useOverflowFocusable } from "../../utils/overflow-focusable";
+import { useScrollEdges } from "../ScrollArea/use-scroll-edges";
 
 // ============================================
 // Types
@@ -12,15 +13,16 @@ import { useOverflowFocusable } from "../../utils/overflow-focusable";
 
 export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   /** Draw the sheet: the surface plane, a hairline border and the surface
-   * radius. Without it the table sits flush in the surface around it. */
+   * radius, framing the scrolling wrapper. Without it the table sits flush in
+   * the surface around it. */
   bordered?: boolean;
   /** Bound the table's height. The wrapper then scrolls on both axes and the
    * head sticks to its top; without it the page scrolls the rows and the head
    * scrolls with them. */
   maxHeight?: number | string;
-  /** Class applied to the outer wrapper element */
+  /** Class applied to the wrapper element that scrolls a wide table */
   wrapperClassName?: string;
-  /** Props applied to the outer wrapper element */
+  /** Props applied to the wrapper element that scrolls a wide table */
   wrapperProps?: React.HTMLAttributes<HTMLDivElement>;
   children?: React.ReactNode;
 }
@@ -31,16 +33,29 @@ export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement>
   children?: React.ReactNode;
 }
 
-export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+/** A column's alignment: `end` for numbers, so digits and their header line up on the right. */
+export type TableCellAlign = "start" | "center" | "end";
+
+export interface TableCellProps extends Omit<
+  React.TdHTMLAttributes<HTMLTableCellElement>,
+  "align"
+> {
   /** Use tabular (fixed-width) numerals so digits align in columns. Ideal
    * for numeric columns that update — counts, timestamps, currency. */
   tabularNums?: boolean;
+  /** Align the cell's content; give the column's Table.HeaderCell the same. */
+  align?: TableCellAlign;
   children?: React.ReactNode;
 }
 
-export interface TableHeaderCellProps extends React.ThHTMLAttributes<HTMLTableHeaderCellElement> {
+export interface TableHeaderCellProps extends Omit<
+  React.ThHTMLAttributes<HTMLTableHeaderCellElement>,
+  "align"
+> {
   /** Scope for the header cell */
   scope?: string;
+  /** Align the header with its column: `end` over numbers. */
+  align?: TableCellAlign;
   children?: React.ReactNode;
 }
 
@@ -128,17 +143,32 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(function T
   );
 });
 
-function TableCell({ className, tabularNums, children, ...props }: TableCellProps) {
+function TableCell({ className, tabularNums, align, children, ...props }: TableCellProps) {
   return (
-    <td className={cx(styles.td, tabularNums && styles.tabular, className)} {...props}>
+    <td
+      className={cx(styles.td, tabularNums && styles.tabular, className)}
+      data-align={align === "start" ? undefined : align}
+      {...props}
+    >
       {children}
     </td>
   );
 }
 
-function TableHeaderCell({ className, scope = "col", children, ...props }: TableHeaderCellProps) {
+function TableHeaderCell({
+  className,
+  scope = "col",
+  align,
+  children,
+  ...props
+}: TableHeaderCellProps) {
   return (
-    <th className={cx(styles.th, className)} scope={scope} {...props}>
+    <th
+      className={cx(styles.th, className)}
+      scope={scope}
+      data-align={align === "start" ? undefined : align}
+      {...props}
+    >
       <div className={styles.headerContent}>{children}</div>
     </th>
   );
@@ -212,8 +242,14 @@ const TableRoot = React.forwardRef<HTMLTableElement, TableProps>(function TableR
   ref
 ) {
   // The wrapper scrolls a wide table; while it overflows it takes a tab stop,
-  // so rows with nothing focusable can still be scrolled by keyboard.
-  const wrapperRef = useOverflowFocusable<HTMLDivElement>();
+  // so rows with nothing focusable can still be scrolled by keyboard, and the
+  // edge that still hides columns fades out.
+  // The scrolling node is state, so the edge reading follows it when `bordered`
+  // toggles and the wrapper remounts inside (or out of) the sheet.
+  const [scroller, setScroller] = React.useState<HTMLDivElement | null>(null);
+  const scrollRef = React.useMemo(() => ({ current: scroller }), [scroller]);
+  const wrapperRef = useOverflowFocusable<HTMLDivElement>(setScroller);
+  const edges = useScrollEdges(scrollRef, { orientation: "horizontal" });
   const bounded = maxHeight !== undefined;
   const { onScroll, style, ...wrapperRest } = wrapperProps ?? {};
   // A bounded table marks itself once its rows scroll under the head, so the
@@ -224,15 +260,15 @@ const TableRoot = React.forwardRef<HTMLTableElement, TableProps>(function TableR
     const wrapper = event.currentTarget;
     wrapper.toggleAttribute("data-scrolled", wrapper.scrollTop > 0);
   };
-  return (
+  const wrapper = (
     <div
       {...wrapperRest}
       ref={wrapperRef}
       onScroll={bounded || onScroll ? handleScroll : undefined}
       style={bounded ? { ...style, maxBlockSize: maxHeight } : style}
+      data-scroll-x={edges.x}
       className={cx(
         styles.wrapper,
-        bordered && styles.bordered,
         bounded && styles.bounded,
         wrapperProps?.className,
         wrapperClassName
@@ -243,6 +279,7 @@ const TableRoot = React.forwardRef<HTMLTableElement, TableProps>(function TableR
       </table>
     </div>
   );
+  return bordered ? <div className={styles.bordered}>{wrapper}</div> : wrapper;
 });
 
 // ============================================

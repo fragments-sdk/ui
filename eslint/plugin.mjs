@@ -1,6 +1,6 @@
 /**
- * Source lint for the library's doctrine: copy rules (rule R7 Plain-Type) and client directives.
- * Rule IDs are `fui/<category>/<rule>`; `RULE-CHECKS.md` maps each one to the rule it enforces.
+ * Source lint for the library's conventions: copy rules and client directives.
+ * Rule IDs are `fui/<category>/<rule>`.
  */
 
 import { readFileSync } from "node:fs";
@@ -342,7 +342,7 @@ const RULES = {
 export const ESLINT_RULE_IDS = Object.keys(RULES);
 
 /** The ESLint plugin, registered as `fui`; its rule names drop the `fui/` prefix. */
-export const doctrineEslintPlugin = {
+export const fuiEslintPlugin = {
   meta: { name: "fui" },
   rules: Object.fromEntries(
     Object.entries(RULES).map(([id, rule]) => [id.slice("fui/".length), rule])

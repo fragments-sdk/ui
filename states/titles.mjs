@@ -1,5 +1,5 @@
 // How the state harness names its tests. playwright.config.ts and states.spec.ts build the tests
-// from these, and scripts/check-ledger.mjs reads them to know what a `--grep` case selects.
+// from these, and the `--grep` helpers below say what a `--grep` value selects.
 
 /** The Playwright projects, in run order; playwright.config.ts gives each its browser. */
 export const PROJECTS = /** @type {const} */ (["chromium", "webkit", "firefox", "coarse"]);

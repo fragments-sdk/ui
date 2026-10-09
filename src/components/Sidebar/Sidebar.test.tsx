@@ -346,6 +346,28 @@ describe("Sidebar", () => {
     await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
   });
 
+  it("closes the modal panel when a destination is chosen, and not for a submenu", async () => {
+    mockMatchMedia(true);
+    const onOpenChange = vi.fn();
+    render(
+      <Sidebar.Provider defaultOpen onOpenChange={onOpenChange}>
+        <Sidebar aria-label="Workspace">
+          <Sidebar.Nav>
+            <Sidebar.Section>
+              <Sidebar.Item hasSubmenu>Projects</Sidebar.Item>
+              <Sidebar.Item href="#home">Home</Sidebar.Item>
+            </Sidebar.Section>
+          </Sidebar.Nav>
+        </Sidebar>
+      </Sidebar.Provider>
+    );
+    await screen.findByRole("dialog", { name: "Workspace" });
+    await userEvent.click(screen.getByText("Projects"));
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+    await userEvent.click(screen.getByRole("link", { name: "Home" }));
+    await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
+  });
+
   it("gives the modal panel a visible close that closes it", async () => {
     mockMatchMedia(true);
     const onOpenChange = vi.fn();
@@ -472,7 +494,7 @@ describe("Sidebar", () => {
       expect(sidebarStyles).not.toMatch(/\b(left|right):|margin-left|text-align:\s*left/);
     });
 
-    it("marks the current row with the selection wash and ring at the regular weight", () => {
+    it("marks the current row with the neutral fill, no ring by default, at the regular weight", () => {
       const current = compiledValues(".item[data-active]", "box-shadow");
       expect(current.join(" ")).toContain("--fui-sidebar-item-active-border");
       expect(compiledValues(".item", "font-weight").join(" ")).toContain(

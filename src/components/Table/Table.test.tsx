@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import * as React from "react";
 import * as sass from "sass";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent, expectNoA11yViolations } from "../../test/utils";
+import { render, screen, fireEvent, waitFor, expectNoA11yViolations } from "../../test/utils";
 import { EmptyState } from "../EmptyState";
 import { Table } from "./index";
 
@@ -109,6 +109,33 @@ describe("Table", () => {
     const caption = screen.getByText("Hidden Caption");
     expect(caption).toBeInTheDocument();
     expect(caption.className).toContain("captionHidden");
+  });
+
+  it("aligns a numeric column's header and cells together", () => {
+    render(
+      <Table>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell align="end">Amount</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell align="end" tabularNums>
+              $1,200
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+    expect(screen.getByRole("columnheader", { name: "Amount" })).toHaveAttribute(
+      "data-align",
+      "end"
+    );
+    expect(screen.getByRole("cell", { name: "$1,200" })).toHaveAttribute("data-align", "end");
+    expect(compiledStyles).toMatch(
+      /\.th\[data-align="?end"?\] > \.headerContent \{\s*justify-content: flex-end;/
+    );
   });
 
   it("applies bordered class", () => {
@@ -345,6 +372,58 @@ describe("Table", () => {
     const wrapper = container.firstElementChild as HTMLDivElement;
     expect(wrapper).not.toHaveClass("bounded");
     expect(wrapper.style.maxBlockSize).toBe("");
+  });
+
+  it("fades the edge that still hides columns, outside the bordered sheet's hairline", async () => {
+    const { container } = render(
+      <Table bordered aria-label="Wide">
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>A</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+    const sheet = container.firstElementChild as HTMLElement;
+    const wrapper = sheet.firstElementChild as HTMLElement;
+    expect(sheet).toHaveClass("bordered");
+    expect(wrapper).toHaveClass("wrapper");
+    expect(wrapper).toHaveAttribute("data-scroll-x", "none");
+
+    for (const [property, value] of Object.entries({ clientWidth: 300, scrollWidth: 900 })) {
+      Object.defineProperty(wrapper, property, { configurable: true, value });
+    }
+    wrapper.scrollLeft = 0;
+    fireEvent.scroll(wrapper);
+    await waitFor(() => expect(wrapper).toHaveAttribute("data-scroll-x", "end"));
+
+    const flat = compiledStyles.replace(/\s+/g, " ");
+    expect(flat).toContain(
+      "@media (forced-colors: none) { .wrapper:not([data-scroll-x=none]):not(:focus-visible) { mask-image: var(--_fui-table-mask);"
+    );
+    expect(flat).toContain(
+      ".wrapper:not([data-scroll-x=none]) { scroll-padding-inline: var(--fui-raw-space-48, 48px); }"
+    );
+  });
+
+  it("keeps reading the scrolling wrapper after bordered toggles", async () => {
+    const table = (bordered: boolean) => (
+      <Table bordered={bordered} aria-label="Toggled">
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>A</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+    const { container, rerender } = render(table(false));
+    rerender(table(true));
+    const wrapper = container.querySelector(".bordered > .wrapper") as HTMLElement;
+    for (const [property, value] of Object.entries({ clientWidth: 300, scrollWidth: 900 })) {
+      Object.defineProperty(wrapper, property, { configurable: true, value });
+    }
+    fireEvent.scroll(wrapper);
+    await waitFor(() => expect(wrapper).toHaveAttribute("data-scroll-x", "end"));
   });
 
   it("draws the bordered sheet as the static surface", () => {

@@ -10,7 +10,7 @@
 // - `glyph($size)`: the icon inside a segment.
 //
 // `rail($size)` and `item($size)` are the bare geometry under that look, for a
-// row of options that is not segmented (the ghost tab row). UIR-D143.
+// row of options that is not segmented (the ghost tab row).
 
 @use "../tokens/measurements.generated" as measurements;
 @use "../tokens/variables" as tokens;

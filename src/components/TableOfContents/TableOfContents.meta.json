@@ -72,8 +72,8 @@
   "examples": [
     {
       "name": "Default",
-      "description": "Top-level sections, with one group nested a level deeper.",
-      "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"introduction\">Introduction</TableOfContents.Item>\n  <TableOfContents.Group label=\"Getting started\" collapsible={false}>\n    <TableOfContents.Item targetId=\"installation\">Installation</TableOfContents.Item>\n    <TableOfContents.Item targetId=\"configuration\">Configuration</TableOfContents.Item>\n  </TableOfContents.Group>\n  <TableOfContents.Item targetId=\"api-reference\">API reference</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"examples\">Examples</TableOfContents.Item>\n</TableOfContents>"
+      "description": "A docs page's index: the section in view is ink 1, marked on the track.",
+      "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"installation\" active>Installation</TableOfContents.Item>\n  <TableOfContents.Group label=\"Usage\" collapsible={false}>\n    <TableOfContents.Item targetId=\"controlled\">Controlled</TableOfContents.Item>\n    <TableOfContents.Item targetId=\"with-a-form\">With a form</TableOfContents.Item>\n  </TableOfContents.Group>\n  <TableOfContents.Item targetId=\"api-reference\">API reference</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"accessibility\">Accessibility</TableOfContents.Item>\n</TableOfContents>"
     },
     {
       "name": "Nested Groups",
@@ -82,13 +82,13 @@
     },
     {
       "name": "With Active Item",
-      "description": "The section in view takes the selection wash and ring.",
-      "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"setup\" active>Setup</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"props\">Props</TableOfContents.Item>\n</TableOfContents>"
+      "description": "Deep in a nested section: the marker stays on the one track.",
+      "code": "<TableOfContents>\n  <TableOfContents.Item targetId=\"overview\">Overview</TableOfContents.Item>\n  <TableOfContents.Group label=\"Guides\" collapsible={false}>\n    <TableOfContents.Item targetId=\"theming\">Theming</TableOfContents.Item>\n    <TableOfContents.Group label=\"Forms\" collapsible={false}>\n      <TableOfContents.Item targetId=\"validation\" active>Validation</TableOfContents.Item>\n      <TableOfContents.Item targetId=\"submission\">Submission</TableOfContents.Item>\n    </TableOfContents.Group>\n  </TableOfContents.Group>\n  <TableOfContents.Item targetId=\"faq\">FAQ</TableOfContents.Item>\n</TableOfContents>"
     },
     {
       "name": "Custom Title",
       "description": "Renames the title above the list.",
-      "code": "<TableOfContents title=\"Contents\">\n  <TableOfContents.Item targetId=\"chapter-1\">Chapter 1: The beginning</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"chapter-2\">Chapter 2: The middle</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"chapter-3\">Chapter 3: The end</TableOfContents.Item>\n</TableOfContents>"
+      "code": "<TableOfContents title=\"Contents\">\n  <TableOfContents.Item targetId=\"chapter-1\">Chapter 1: The beginning</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"chapter-2\" active>Chapter 2: The middle</TableOfContents.Item>\n  <TableOfContents.Item targetId=\"chapter-3\">Chapter 3: The end</TableOfContents.Item>\n</TableOfContents>"
     },
     {
       "name": "No Title",
@@ -118,7 +118,7 @@
       "title: node - visible heading (default \"On this page\"); null shows none",
       "label: string - aria-label for nav landmark",
       "TableOfContents.Item targetId: string - heading id to scroll to",
-      "TableOfContents.Item active: boolean - the section in view (selection wash and ring)",
+      "TableOfContents.Item active: boolean - the section in view (ink 1 and the track marker)",
       "TableOfContents.Item leading/trailing: node - optional adornments before/after the label",
       "TableOfContents.Group label: node - header text for the group; its items nest one level deeper",
       "TableOfContents.Group defaultOpen / open / onOpenChange - uncontrolled or controlled open state (default open)",
@@ -144,16 +144,23 @@
     "extractedAt": "2026-03-13T23:19:04.685Z"
   },
   "cssVariables": [
+    "--fui-border",
+    "--fui-control-height-sm",
     "--fui-duration-micro",
     "--fui-ease-standard",
+    "--fui-hit-area",
     "--fui-icon-xs",
-    "--fui-navigation-inline-inset",
     "--fui-radius-control",
+    "--fui-radius-full",
     "--fui-raw-space-0",
     "--fui-raw-space-12",
     "--fui-raw-space-2",
     "--fui-raw-space-24",
     "--fui-raw-space-32",
+    "--fui-raw-space-4",
+    "--fui-raw-space-6",
+    "--fui-raw-space-8",
+    "--fui-stroke-hairline",
     "--fui-text-primary",
     "--fui-text-secondary",
     "--fui-text-tertiary"

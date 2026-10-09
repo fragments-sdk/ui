@@ -183,47 +183,47 @@
     {
       "name": "Default",
       "description": "The toolbar you get with no configuration; no status bar until there is a limit or a save.",
-      "code": "<Editor label=\"Post\" placeholder=\"Start typing your post\" />"
+      "code": "<Editor\n  label=\"Release note\"\n  defaultValue=\"<p>Version 4 checks every pull request against <strong>one source of truth</strong>: the components and tokens your product is built from.</p><ul><li>Each finding points at one line and one rule</li><li>Fixes open as their own pull request</li></ul>\"\n/>"
     },
     {
       "name": "With Auto-Save and Publish",
       "description": "Save state sits next to the primary action in the toolbar.",
-      "code": "<Editor\n  label=\"Post\" placeholder=\"Start typing your post\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Actions\">\n      <Editor.StatusIndicator status=\"saved\" />\n      <Button variant=\"solid\" tone=\"accent\" size=\"sm\">\n        Publish\n      </Button>\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+      "code": "<Editor\n  label=\"Post\"\n  placeholder=\"Start typing your post\"\n  defaultValue=\"<p>We moved every screen onto the new tokens this week. The checkout flow was the last holdout: <em>three</em> raw colours and a spacing value nobody could trace.</p>\"\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Actions\">\n      <Editor.StatusIndicator status=\"saved\" />\n      <Button variant=\"solid\" tone=\"accent\" size=\"sm\">\n        Publish\n      </Button>\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "Save Failed",
       "description": "A failed autosave says Couldn’t save in the danger ink, with an icon.",
-      "code": "<Editor label=\"Draft\" defaultValue=\"This draft could not be saved.\">\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"error\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+      "code": "<Editor\n  label=\"Draft\"\n  defaultValue=\"<p>Notes from the design review: the empty states need one shared illustration size, and the settings page still uses the old toggle.</p>\"\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"error\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "Invalid",
       "description": "The danger edge on the field and the reason below it.",
-      "code": "<Editor label=\"Post\" invalid errorMessage=\"Write at least one line\" />"
+      "code": "<Editor\n  label=\"Summary\"\n  placeholder=\"Say what changed and why\"\n  rows={4}\n  invalid\n  errorMessage=\"Write at least one line\"\n/>"
     },
     {
       "name": "Disabled",
       "description": "Dimmed and not editable, but the text stays selectable.",
-      "code": "<Editor\n  label=\"Post\"\n  defaultValue=\"This content cannot be edited.\"\n  disabled\n/>"
+      "code": "<Editor\n  label=\"Post\"\n  defaultValue=\"<p>This post is scheduled. Editing opens again once it is published on <strong>Monday at 9:00</strong>.</p>\"\n  rows={4}\n  disabled\n/>"
     },
     {
       "name": "Read Only",
       "description": "No toolbar and a dashed edge; text can be selected and copied, but never changed.",
-      "code": "<Editor\n  label=\"Post\"\n  defaultValue=\"This content is read-only. You can select and copy text but cannot change it.\"\n  readOnly\n/>"
+      "code": "<Editor\n  label=\"Published post\"\n  defaultValue=\"<p>Our design system now ships as one package: the components and tokens every screen is built from. Select and copy any of this text; it cannot be changed here.</p>\"\n  rows={4}\n  readOnly\n/>"
     },
     {
       "name": "Custom Toolbar",
       "description": "A vertical Separator splits the controls into labelled clusters.",
-      "code": "<Editor\n  label=\"Blog post\" placeholder=\"Write your blog post\"\n  onValueChange={(v) => console.log(v)}\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Basic formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Structure\">\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"saving\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+      "code": "<Editor\n  label=\"Blog post\"\n  placeholder=\"Write your blog post\"\n  defaultValue=\"<p>An inconsistent interface is rarely one big mistake. It is a <strong>hundred small ones</strong>: a hex code pasted in a hurry, a margin nudged by two pixels, a button rebuilt because the real one was hard to find.</p>\"\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"Basic formatting\">\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Structure\">\n      <Editor.ToolbarButton format=\"link\" />\n      <Editor.ToolbarButton format=\"code\" />\n      <Editor.ToolbarButton format=\"bulletList\" />\n    </Editor.ToolbarGroup>\n    <Editor.ToolbarGroup aria-label=\"Status\">\n      <Editor.StatusIndicator status=\"saving\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "Full Formatting",
       "description": "Every opt-in format switched on, with a taller writing area.",
-      "code": "<Editor label=\"Article\" placeholder=\"Write an article\" rows={16}>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"History\">\n      <Editor.ToolbarButton format=\"undo\" />\n      <Editor.ToolbarButton format=\"redo\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"heading\" />\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"code\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Block formatting\">\n      <Editor.ToolbarButton format=\"bulletList\" />\n      <Editor.ToolbarButton format=\"orderedList\" />\n      <Editor.ToolbarButton format=\"blockquote\" />\n      <Editor.ToolbarButton format=\"link\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
+      "code": "<Editor\n  label=\"Article\"\n  placeholder=\"Write an article\"\n  rows={14}\n  defaultValue=\"<h2>Adopting tokens</h2><p>Start with colour, then spacing. Replace each raw value with the token that already matches it, for example <code>--fui-text-primary</code>.</p><ol><li>Run a check to list every raw value</li><li>Accept the fixes that match a token exactly</li><li>Review the rest by hand</li></ol><blockquote><p>Most teams clear their colour findings in a single afternoon.</p></blockquote>\"\n>\n  <Editor.Toolbar>\n    <Editor.ToolbarGroup aria-label=\"History\">\n      <Editor.ToolbarButton format=\"undo\" />\n      <Editor.ToolbarButton format=\"redo\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Text formatting\">\n      <Editor.ToolbarButton format=\"heading\" />\n      <Editor.ToolbarButton format=\"bold\" />\n      <Editor.ToolbarButton format=\"italic\" />\n      <Editor.ToolbarButton format=\"strikethrough\" />\n      <Editor.ToolbarButton format=\"code\" />\n    </Editor.ToolbarGroup>\n    <Separator orientation=\"vertical\" length=\"control\" />\n    <Editor.ToolbarGroup aria-label=\"Block formatting\">\n      <Editor.ToolbarButton format=\"bulletList\" />\n      <Editor.ToolbarButton format=\"orderedList\" />\n      <Editor.ToolbarButton format=\"blockquote\" />\n      <Editor.ToolbarButton format=\"link\" />\n    </Editor.ToolbarGroup>\n  </Editor.Toolbar>\n  <Editor.Content />\n  <Editor.StatusBar showWordCount showCharCount />\n</Editor>"
     },
     {
       "name": "With Character Limit",
       "description": "The counter warns near 280 characters and says how many over past it.",
-      "code": "<Editor\n  label=\"Bio\"\n  placeholder=\"Say who you are in a sentence or two\"\n  maxLength={280}\n  rows={4}\n  formats={['bold', 'italic', 'link']}\n/>"
+      "code": "<Editor\n  label=\"Bio\"\n  placeholder=\"Say who you are in a sentence or two\"\n  defaultValue=\"<p>Design engineer on the checkout team. I look after our component library, our tokens and the standards every screen is checked against, and I spend most Fridays turning the week’s findings into small fixes long before any of them can ever reach a customer release.</p>\"\n  maxLength={280}\n  rows={4}\n  formats={['bold', 'italic', 'link']}\n/>"
     }
   ],
   "relations": [

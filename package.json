@@ -1,6 +1,6 @@
 {
   "name": "@usefragments/ui",
-  "version": "4.1.0",
+  "version": "4.4.0",
   "license": "MIT",
   "description": "Customizable UI components built on Base UI headless primitives",
   "author": "Conan McNicholl",
@@ -197,7 +197,6 @@
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json && pnpm run typecheck:tests",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
     "check:measurements": "node scripts/generate-measurements.mjs --check && node scripts/check-measurement-parity.mjs",
-    "check:ledger": "node scripts/check-ledger.mjs",
     "build": "pnpm run check:measurements && vite build && node ./scripts/emit-complete-styles.mjs && node ./scripts/check-layers.mjs && node ./scripts/check-budgets.mjs && tsc -p tsconfig.build.json && pnpm run typecheck:fragments",
     "typecheck:fragments": "tsc -p tsconfig.fragments.json",
     "lint": "eslint src geometry states fixtures contrast --ignore-pattern '**/.output/**' --ignore-pattern '**/.next/**' && pnpm run lint:styles",
@@ -329,7 +328,6 @@
   "files": [
     "src",
     "!src/**/.fragments/**",
-    "!src/**/.impeccable/**",
     "!src/**/*.test.ts",
     "!src/**/*.test.tsx",
     "!src/test/",
@@ -338,7 +336,6 @@
     "!src/blocks/",
     "!src/**/*.stories.tsx",
     "!src/**/*.states.tsx",
-    "!src/**/*.ui-notes.md",
     "!src/vocabulary.json",
     "!src/vocabulary.ts",
     "!src/storybook/",
@@ -348,5 +345,6 @@
   ],
   "bugs": {
     "url": "https://github.com/fragments-sdk/ui/issues"
-  }
+  },
+  "packageManager": "pnpm@9.15.0"
 }

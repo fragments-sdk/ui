@@ -103,14 +103,16 @@ $_message-gap: measurements.raw-space(4);
 @mixin helper {
   @include typography.role("caption");
 
-  margin-block-start: var(--fui-field-message-gap, #{$_message-gap});
+  // Helper and error text render as paragraphs: zero the end margin too, or a
+  // browser's default paragraph margin opens a gap under every described field.
+  margin-block: var(--fui-field-message-gap, #{$_message-gap}) 0;
   color: var(--fui-text-secondary, #{tokens.$fui-text-secondary});
 }
 
 @mixin error {
   @include typography.role("caption");
 
-  margin-block-start: var(--fui-field-message-gap, #{$_message-gap});
+  margin-block: var(--fui-field-message-gap, #{$_message-gap}) 0;
   color: var(--fui-color-danger-text, #{tokens.$fui-color-danger-text});
 }
 

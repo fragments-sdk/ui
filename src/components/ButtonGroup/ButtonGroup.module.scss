@@ -5,7 +5,7 @@
 // The fused group (split button): children touch, the outer corners keep the
 // control radius, the inner corners go square, and one opaque hairline divides
 // every pair whatever the child's variant, so two soft or ghost halves never
-// read as one blob. UIR-D146.
+// read as one blob.
 
 $_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 

@@ -69,6 +69,29 @@ describe("Loading", () => {
     expect(declared("screen", "background-color").join(" ")).toContain("--fui-app-canvas-bg");
   });
 
+  it("draws each kind as hidden pieces and reads its label once", () => {
+    const pieces = { dots: 3, pulse: 1, bars: 4, matrix: 9 } as const;
+    for (const [kind, count] of Object.entries(pieces)) {
+      const { container, unmount } = render(
+        <Loading kind={kind as keyof typeof pieces} delay={0} label="Writing a reply" />
+      );
+      const glyph = container.querySelector(`[data-kind="${kind}"] > [aria-hidden="true"]`);
+      expect(glyph?.children).toHaveLength(count);
+      expect(screen.getByRole("status", { name: "Writing a reply" })).toHaveTextContent(
+        "Writing a reply"
+      );
+      unmount();
+    }
+  });
+
+  it("shimmer shows its label as the work, with the working sheen", () => {
+    const { container } = render(<Loading kind="shimmer" delay={0} label="Thinking…" />);
+    const status = screen.getByRole("status", { name: "Thinking…" });
+    expect(status).toHaveTextContent(/^Thinking…$/);
+    expect(container.querySelector("svg")).toBeNull();
+    expect(declared("shimmer", "animation").join(" ")).toContain("fui-working-sheen");
+  });
+
   it("has no accessibility violations", async () => {
     const { container } = render(<Loading delay={0} label="Loading findings" />);
     await expectNoA11yViolations(container);

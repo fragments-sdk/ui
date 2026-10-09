@@ -3,12 +3,15 @@
 @use "../../recipes/loading" as loading;
 @use "../../recipes/representation" as representation;
 @use "../../recipes/typography" as typography;
+@use "../../recipes/working" as working;
 
 @layer fui.tokens, fui.base, fui.components;
 
 @layer fui.components {
-  // One spinner, 16px, in the surrounding ink. It turns at a constant speed
-  // and keeps turning under reduced motion (essential progress).
+  // Every kind is 16px in the surrounding ink. The spinner turns at a constant
+  // speed and keeps turning under reduced motion (essential progress); the
+  // dots, the pulse and the bars stop moving there and only fade in turn, and
+  // the matrix, which only fades, runs as it is.
   .loading {
     --_fui-loading-size: #{representation.icon-size("md")};
 
@@ -45,6 +48,224 @@
   }
 
   @include loading.keyframes;
+  @include working.keyframes;
+
+  // ============================================
+  // Dots, pulse and bars: pieces in a 16px box
+  // ============================================
+
+  .dots,
+  .bars {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--_fui-loading-size) / 8);
+    inline-size: var(--_fui-loading-size);
+    block-size: var(--_fui-loading-size);
+  }
+
+  .piece {
+    flex: 0 0 auto;
+    background-color: currentColor;
+    animation-duration: var(--fui-duration-pulse, #{$fui-duration-pulse});
+    animation-timing-function: var(--fui-ease-standard, #{$fui-ease-standard});
+    animation-iteration-count: infinite;
+    // A staggered piece waits in its first frame, not at full height.
+    animation-fill-mode: backwards;
+  }
+
+  .piece:nth-child(2) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 8);
+  }
+
+  .piece:nth-child(3) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 4);
+  }
+
+  .piece:nth-child(4) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) * 3 / 8);
+  }
+
+  // Three dots rise and brighten in turn: a reply being written.
+  .dots > .piece {
+    inline-size: calc(var(--_fui-loading-size) / 4);
+    block-size: calc(var(--_fui-loading-size) / 4);
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    animation-name: fui-loading-dot;
+  }
+
+  // Four bars rise and fall in a wave: a stream or a voice coming in.
+  .bars > .piece {
+    inline-size: calc(var(--_fui-loading-size) / 8);
+    block-size: 100%;
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    animation-name: fui-loading-bar;
+  }
+
+  // One dot with a ring that widens and fades from it: live, listening.
+  .pulse {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--_fui-loading-size);
+    block-size: var(--_fui-loading-size);
+
+    &::before {
+      content: "";
+      grid-area: 1 / 1;
+      inline-size: 50%;
+      block-size: 50%;
+      border-radius: var(--fui-radius-full, $fui-radius-full);
+      background-color: currentColor;
+      animation: fui-loading-ring var(--fui-duration-pulse, #{$fui-duration-pulse})
+        var(--fui-ease-standard, #{$fui-ease-standard}) infinite;
+    }
+  }
+
+  .pulse > .piece {
+    grid-area: 1 / 1;
+    inline-size: 50%;
+    block-size: 50%;
+    border-radius: var(--fui-radius-full, $fui-radius-full);
+    animation: none;
+  }
+
+  // Nine squares on a 3 × 3 grid (4px squares, 2px apart at 16px), dim at
+  // rest. Light crosses them corner to corner, one diagonal after the next,
+  // and never stops: work being assembled. It only changes opacity, so it
+  // runs the same under reduced motion.
+  .matrix {
+    display: inline-grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--_fui-loading-size) / 8);
+    inline-size: var(--_fui-loading-size);
+    block-size: var(--_fui-loading-size);
+  }
+
+  .matrix > .piece {
+    border-radius: calc(var(--_fui-loading-size) / 16);
+    animation-name: fui-loading-cell;
+  }
+
+  // The five diagonals share the loop, a fifth apart, so the last one is still
+  // dimming as the first lights again.
+  .matrix > .piece:is(:nth-child(2), :nth-child(4)) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) / 5);
+  }
+
+  .matrix > .piece:is(:nth-child(3), :nth-child(5), :nth-child(7)) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) * 2 / 5);
+  }
+
+  .matrix > .piece:is(:nth-child(6), :nth-child(8)) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) * 3 / 5);
+  }
+
+  .matrix > .piece:nth-child(9) {
+    animation-delay: calc(var(--fui-duration-pulse, #{$fui-duration-pulse}) * 4 / 5);
+  }
+
+  // Under reduced motion nothing rises, falls or widens: the pieces fade in
+  // turn, so the wait still reads as alive.
+  @media (prefers-reduced-motion: reduce) {
+    .dots > .piece,
+    .bars > .piece,
+    .pulse > .piece {
+      animation-name: fui-loading-fade;
+      animation-duration: var(--fui-duration-pulse, #{$fui-duration-pulse});
+      animation-timing-function: var(--fui-ease-standard, #{$fui-ease-standard});
+      animation-iteration-count: infinite;
+    }
+
+    .bars > .piece {
+      block-size: 50%;
+    }
+
+    .pulse::before {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
+  @keyframes fui-loading-dot {
+    0%,
+    60%,
+    100% {
+      opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
+      translate: 0 0;
+    }
+
+    30% {
+      opacity: 1;
+      translate: 0 calc(var(--_fui-loading-size) / -8);
+    }
+  }
+
+  @keyframes fui-loading-bar {
+    0%,
+    100% {
+      scale: 1 0.3;
+      opacity: var(--fui-opacity-muted, #{$fui-opacity-muted});
+    }
+
+    40% {
+      scale: 1 1;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fui-loading-ring {
+    from {
+      scale: 1;
+      opacity: var(--fui-opacity-disabled, #{$fui-opacity-disabled});
+    }
+
+    to {
+      scale: 2;
+      opacity: 0;
+    }
+  }
+
+  // A square lights fast and dims slowly, so the light leaves a short trail.
+  @keyframes fui-loading-cell {
+    0%,
+    50%,
+    100% {
+      opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
+    }
+
+    12% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fui-loading-fade {
+    0%,
+    100% {
+      opacity: var(--fui-opacity-faint, #{$fui-opacity-faint});
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  // ============================================
+  // Shimmer: the words of the work, with the working sheen
+  // ============================================
+
+  // The label shows: the sheen passes over it (ink 3 to ink 1), and under
+  // reduced motion it holds still in ink 3 (the working recipe).
+  .shimmer {
+    @include typography.role("body-compact");
+    @include working.text;
+
+    white-space: nowrap;
+  }
+
+  // Inside a line of text the words take the line's own type.
+  .inline > .shimmer {
+    font: inherit;
+  }
 
   // The label is read, not shown.
   .label {

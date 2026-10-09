@@ -228,6 +228,7 @@ export {
 export {
   Loading,
   useLoadingDelay,
+  type LoadingKind,
   type LoadingProps,
   type LoadingScreenProps,
 } from "./components/Loading";
@@ -312,6 +313,14 @@ export {
   type FieldsetLegendProps,
   type FieldsetDescriptionProps,
 } from "./components/Fieldset";
+
+// FilterBar
+export {
+  FilterBar,
+  type FilterBarProps,
+  type FilterBarItemProps,
+  type FilterBarCollapse,
+} from "./components/FilterBar";
 
 // Form
 export { Form, type FormActionsProps, type FormProps } from "./components/Form";

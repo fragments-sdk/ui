@@ -9,10 +9,10 @@
     "lifecycle"
   ],
   "summary": {
-    "components": 73,
-    "withFixtures": 73,
-    "covered": 280,
-    "na": 158,
+    "components": 74,
+    "withFixtures": 74,
+    "covered": 283,
+    "na": 161,
     "missing": 0
   },
   "components": {
@@ -658,6 +658,25 @@
         ],
         "lifecycle": [
           "lifecycleDisabled"
+        ]
+      },
+      "extras": []
+    },
+    "FilterBar": {
+      "family": "pickers",
+      "file": "src/components/FilterBar/FilterBar.states.tsx",
+      "columns": {
+        "populated": [
+          "populated"
+        ],
+        "empty": "n/a: A bar holds the filters it is given; with none there is no bar to show.",
+        "loading": "n/a: Filters render the options they are given; the surface that fetches them shows loading.",
+        "error": "n/a: A filter's choice cannot be invalid; errors belong to the results it narrows.",
+        "overflow": [
+          "overflow"
+        ],
+        "lifecycle": [
+          "lifecycle"
         ]
       },
       "extras": []

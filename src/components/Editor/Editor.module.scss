@@ -204,12 +204,26 @@ $_floor: calc(
       cursor: pointer;
     }
 
+    // Lists at the editor's own size, so the marker and its text share a line.
     ul {
       @include prose.list("disc");
+      @include typography.role("body-compact");
     }
 
     ol {
       @include prose.list("decimal");
+      @include typography.role("body-compact");
+    }
+
+    // TipTap wraps each item's text in a paragraph: its margin is the list's
+    // business, not the browser's.
+    li > p {
+      margin-block: 0;
+    }
+
+    // The list mixin zeroes its margins, so the flow's gap is restated after it.
+    > * + :is(ul, ol) {
+      margin-block-start: var(--fui-raw-space-12, #{measurements.raw-space(12)});
     }
 
     s {

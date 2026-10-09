@@ -97,11 +97,13 @@ const TONE_CLASS: Record<ButtonTone, string> = {
   danger: styles.toneDanger,
 };
 
-/** A `<button>`, or a component without an `href`, renders a native button. */
+/** A `<button>`, or a component without an `href` or a router's `to`, renders a native button. */
 function rendersNativeButton(render: useRender.RenderProp | undefined): boolean {
   if (!React.isValidElement(render)) return true;
   if (typeof render.type === "string") return render.type === "button";
-  return (render.props as Record<string, unknown>).href == null;
+  const props = render.props as Record<string, unknown>;
+  // A router's link takes `to` (React Router, TanStack Router) where a plain link takes `href`.
+  return props.href == null && props.to == null;
 }
 
 const ButtonRoot = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {

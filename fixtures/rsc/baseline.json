@@ -25,6 +25,7 @@
   "Editor": "HTTP 500: undefined in a server component: Editor.Root, Editor.preload, Editor.Toolbar, Editor.ToolbarGroup, Editor.ToolbarButton, Editor.StatusIndicator, Editor.Content, Editor.StatusBar",
   "Field": "HTTP 500: undefined in a server component: Field.Label, Field.Control, Field.Description, Field.Error, Field.Validity, Field.Required",
   "Fieldset": "HTTP 500: undefined in a server component: Fieldset.Legend, Fieldset.Description",
+  "FilterBar": "HTTP 500: undefined in a server component: FilterBar.Root, FilterBar.Item",
   "Form": "HTTP 500: undefined in a server component: Form.Actions",
   "Header": "HTTP 500: undefined in a server component: Header.Brand, Header.Nav, Header.NavItem, Header.NavMenu, Header.NavMenuItem, Header.Search, Header.Actions, Header.Trigger, Header.SkipLink",
   "IconButton": "HTTP 500: undefined in a server component: IconButton.Root",

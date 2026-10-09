@@ -14,14 +14,9 @@ $_gutter: navigation.gutter();
 $_leading-box: navigation.leading-box();
 $_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 $_line: $_hairline solid var(--fui-border, #{$fui-border});
-$_current-wash: var(
-  --fui-sidebar-item-active-bg,
-  var(--fui-control-selected-bg, #{$fui-control-selected-bg})
-);
-$_current-ring: var(
-  --fui-sidebar-item-active-border,
-  var(--fui-control-selected-border, #{$fui-control-selected-border})
-);
+$_current-fill: var(--fui-sidebar-item-active-bg, var(--fui-bg-active, #{$fui-bg-active}));
+// No ring by default; a theme can draw one through the hook.
+$_current-ring: var(--fui-sidebar-item-active-border, transparent);
 $_hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover}));
 
 // The rail and the mobile panel share these reads of the public
@@ -324,10 +319,11 @@ $_hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover
       background-color: var(--fui-bg-active, #{$fui-bg-active});
     }
 
-    // The current page is chosen: the selection wash and ring, ink 1, regular
-    // weight. Hover tints on top and keeps the ring.
+    // The current page is where you are, not a choice: the neutral current
+    // fill and ink 1 at the regular weight, no ring. Hover tints on
+    // top of the fill.
     &[data-active] {
-      @include selection.selected($_current-wash);
+      @include selection.current($_current-fill);
 
       box-shadow: inset 0 0 0 $_hairline $_current-ring;
       color: var(--_fui-sidebar-current-ink);
@@ -339,7 +335,7 @@ $_hover-bg: var(--fui-sidebar-item-hover-bg, var(--fui-bg-hover, #{$fui-bg-hover
       @include action.hover {
         @include selection.hover-tint;
 
-        background-color: $_current-wash;
+        background-color: $_current-fill;
         color: var(--_fui-sidebar-current-ink);
       }
     }

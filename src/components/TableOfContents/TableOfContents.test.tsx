@@ -219,21 +219,21 @@ describe("TableOfContents", () => {
     expect(container.querySelector("nav")).not.toBeInTheDocument();
   });
 
-  it("keeps the index flush and contains no unreachable rail implementation", () => {
+  it("draws one hairline track, steps rows in from it and keeps no rail implementation", () => {
     const list = classDeclarations(tableOfContentsStyles, "list");
-    const title = classDeclarations(tableOfContentsStyles, "title");
+    const link = classDeclarations(tableOfContentsStyles, "link");
 
     expect(list).toContain("padding: var(--fui-raw-space-0, #{measurements.raw-space(0)});");
     expect(list).not.toContain("padding-left:");
-    expect(list).toContain("gap: var(--fui-raw-space-2, #{measurements.raw-space(2)});");
-    expect(title).toContain(
-      "padding-inline: var(--fui-navigation-inline-inset, #{navigation.gutter()});"
+    expect(tableOfContentsStyles).toMatch(
+      /\.root > \.list \{\s*border-inline-start: var\(--fui-stroke-hairline[^;]*var\(--fui-border/
     );
+    // Rows sit on the 28px control track and carry no selection recipe.
+    expect(link).toContain("var(--fui-control-height-sm, #{$fui-control-height-sm})");
+    expect(tableOfContentsStyles).not.toContain("selection.");
     expect(tableOfContentsStyles).not.toContain("$rail-");
     expect(tableOfContentsStyles).not.toContain("--toc-rail");
-    expect(tableOfContentsStyles).toContain("@include navigation.row;");
-    expect(tableOfContentsStyles).toContain("@include navigation.section-row;");
-    // The `--fui-toc-*` host hooks were deleted in Wave 0: rows read the shared
+    // The `--fui-toc-*` host hooks are deleted: rows read the shared
     // navigation hooks directly and nothing outside the kit set them.
     expect(tableOfContentsStyles).not.toContain("--fui-toc-");
   });
@@ -425,9 +425,9 @@ describe("TableOfContents group label styles", () => {
     })
     .css.replace(/\s+/g, " ");
 
-  it("sets a group name at the section label role: caption size, semibold", () => {
+  it("sets a group name in the entries' own type, in ink 3, on the entries' row", () => {
     expect(css).toMatch(
-      /\.groupHeader \{[^}]*font-size: var\(--fui-type-caption-size[^}]*font-weight: var\(--fui-font-weight-semibold/
+      /\.groupHeader \{[^}]*font-size: var\(--fui-type-ui-compact-size[^}]*min-block-size: max\(var\(--fui-control-height-sm[^}]*color: var\(--fui-text-tertiary/
     );
   });
 });

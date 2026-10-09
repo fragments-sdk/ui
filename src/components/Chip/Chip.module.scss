@@ -8,10 +8,10 @@
 
 @layer fui.tokens, fui.base, fui.components;
 
-// One look (UIR-D146): the micro track (24), the control radius, the band fill
+// One look: the micro track (24), the control radius, the band fill
 // with one opaque hairline, the compact label in ink 2, truncated. Colour is
-// never decorative: a chip is never toned. Selected is the selection
-// (UIR-D142): the wash with the ring as its edge, at rest.
+// never decorative: a chip is never toned. Selected is the selection:
+// the wash with the ring as its edge, at rest.
 
 $_hairline: var(--fui-stroke-hairline, #{$fui-stroke-hairline});
 $_pad: var(--fui-raw-space-2, #{measurements.raw-space(2)});

@@ -54,7 +54,7 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveClass("link");
   });
 
-  it("defaults the tone per variant (UIR-D17)", () => {
+  it("defaults the tone per variant", () => {
     const { rerender } = render(<Button variant="link">Btn</Button>);
     expect(screen.getByRole("button")).toHaveClass("toneAccent");
 
@@ -215,6 +215,23 @@ describe("Button", () => {
     expect(link).not.toHaveAttribute("type");
     expect(link).toHaveClass("button", "solid", "toneAccent");
     expect(link).toHaveAttribute("data-fc-canonical", "Button");
+  });
+
+  it("renders a router's link (to, not href) as a link, not a native button", () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    // The shape of React Router's and TanStack Router's Link: a component that takes `to`.
+    const RouterLink = React.forwardRef<
+      HTMLAnchorElement,
+      { to: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>
+    >(function RouterLink({ to, ...props }, ref) {
+      return <a ref={ref} href={to} {...props} />;
+    });
+    render(<Button render={<RouterLink to="/companies" />}>Companies</Button>);
+    const link = screen.getByRole("link", { name: "Companies" });
+    expect(link).toHaveAttribute("href", "/companies");
+    expect(link).not.toHaveAttribute("type");
+    expect(errors.mock.calls.flat().join(" ")).not.toMatch(/nativeButton/);
+    errors.mockRestore();
   });
 
   it("renders a native button through render", () => {

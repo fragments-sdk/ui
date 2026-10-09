@@ -99,7 +99,7 @@ export function overflow() {
     <div style={{ inlineSize: 240 }}>
       <ThinkingIndicator
         showElapsed
-        label="Reading every changed file in the monorepo and comparing it to the contract…"
+        label="Reading every changed file in the repository and comparing it to the contract…"
       >
         <ThinkingIndicator.Steps>
           <ThinkingIndicator.Step

@@ -255,6 +255,26 @@ describe("ScrollArea", () => {
     expect(frameCallbacks.size).toBe(0);
   });
 
+  it("reads again when a child's transition settles", () => {
+    const { container } = render(
+      <ScrollArea orientation="horizontal" showFades>
+        <div data-testid="sliding">Sliding child</div>
+      </ScrollArea>
+    );
+    const element = viewport(container);
+    // Mid-slide the child pokes past the edge; no resize follows when it settles.
+    setMetrics(element, { clientWidth: 180, scrollWidth: 186, scrollLeft: 0 });
+    flushFrame();
+    expect(element).toHaveAttribute("data-scroll-x", "end");
+
+    setMetrics(element, { scrollWidth: 180 });
+    act(() => {
+      screen.getByTestId("sliding").dispatchEvent(new Event("transitionend", { bubbles: true }));
+    });
+    flushFrame();
+    expect(element).toHaveAttribute("data-scroll-x", "none");
+  });
+
   it("resubscribes direct children after nested mutations", () => {
     const { container, rerender } = render(
       <ScrollArea showFades>

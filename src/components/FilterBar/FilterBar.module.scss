@@ -1,0 +1,73 @@
+@use "../../tokens/variables" as *;
+@use "../../tokens/measurements.generated" as measurements;
+@use "../../recipes/typography";
+
+@layer fui.tokens, fui.base, fui.components;
+
+@layer fui.components {
+  // The bar takes the room its parent gives it (a toolbar row or a panel) and
+  // reads that room, never the viewport, to decide whether the filters fit.
+  .root {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  // One line at its natural width, never wrapped: where it would wrap, the bar
+  // folds behind its button instead.
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+    inline-size: max-content;
+  }
+
+  // In the sheet the filters stack, one per row, each control full width.
+  .stack {
+    display: grid;
+    gap: var(--fui-raw-space-16, #{measurements.raw-space(16)});
+  }
+
+  // The bottom sheet fits its filters instead of a fixed share of the screen,
+  // up to the safe height, where its body scrolls.
+  .sheet[data-side="bottom"][data-size] {
+    block-size: auto;
+    max-block-size: var(
+      --_fui-overlay-safe-block,
+      calc(100dvh - var(--fui-raw-space-32, #{measurements.raw-space(32)}))
+    );
+  }
+
+  // On the line the label sits before its control in ink 2, quieter than a
+  // form label; in the sheet the item is a plain Field, label above.
+  // Nothing on the line shrinks: a control sized to fill its field (a Select
+  // trigger) takes its own width here, so the line's natural width is honest
+  // and the bar folds rather than squeezing a label onto two lines.
+  .item[data-layout="inline"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--fui-raw-space-8, #{measurements.raw-space(8)});
+
+    > .label {
+      @include typography.role("body-compact");
+
+      flex: none;
+      margin-block-end: 0;
+      font-weight: var(--fui-font-weight-normal, $fui-font-weight-normal);
+      color: var(--fui-text-secondary, $fui-text-secondary);
+      white-space: nowrap;
+    }
+
+    > :not(.label) {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  // The folded button's count: tabular, in ink 3, like a tab's count.
+  .count {
+    color: var(--fui-text-tertiary, $fui-text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+}

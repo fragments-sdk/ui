@@ -38,7 +38,7 @@ describe("default Fragments surface tokens", () => {
   const engine = block(css, ENGINE);
 
   it("declares the L0 inputs once, on :root, at the Glass default", () => {
-    // The library never sets the root font size (UIR-D65).
+    // The library never sets the root font size.
     expect(root).not.toMatch(/^\s*font-size:/m);
     expect(root).toContain("--fui-seed-brand: #3d5ae8;");
     expect(root).toContain("--fui-seed-neutral: oklch(50% 0.012 80deg);");
@@ -130,8 +130,8 @@ describe("default Fragments surface tokens", () => {
     expect(themed).toContain("--fui-opacity-disabled: 0.45");
     expect(css).not.toContain("--fui-header-search-bg:");
     expect(themed).toContain("--fui-field-selection-bg: var(--fui-control-selected-bg)");
-    // The sidebar's current row is chosen, so it takes the selection wash (UIR-D142).
-    expect(themed).toContain("--fui-sidebar-item-active-bg: var(--fui-control-selected-bg)");
+    // The sidebar's current row is a location, not a choice: the neutral fill.
+    expect(themed).toContain("--fui-sidebar-item-active-bg: var(--fui-bg-active)");
     expect(themed).toContain("--fui-table-row-selected-border: var(--fui-control-selected-border)");
     expect(themed).toContain("--fui-table-row-selected-bg: var(--fui-control-selected-bg)");
     expect(themed).toContain("--fui-link-ink: var(--fui-color-accent-text)");

@@ -59,7 +59,7 @@
     ],
     "guidelines": [
       "Order matters? Use as=\"ol\": the numbers come with it",
-      "Rows go in a List with marker=\"none\" and gap=\"none\"; one row per choice, the chosen one `selected`",
+      "Rows go in a List with marker=\"none\" and gap=\"none\"; one row per destination, the one you are on `selected`",
       "Row meta is a short fact (a count, a path, a time); it sits in ink 3 at the end of the row",
       "Keep one icon meaning per list — mixing icons reads as noise",
       "Write items in parallel grammar; scanning depends on it",
@@ -90,7 +90,7 @@
     },
     {
       "name": "Rows",
-      "description": "Interactive 32px rows: a leading glyph, the label, trailing meta, the chosen row marked.",
+      "description": "Interactive 32px rows: a leading glyph, the label, trailing meta, the current row marked.",
       "code": "import { House, Gear, CreditCard } from \"@phosphor-icons/react\";\n\n<List marker=\"none\" gap=\"none\" aria-label=\"Pages\">\n  <List.Row icon={<House />} meta=\"/\" selected>\n    Home\n  </List.Row>\n  <List.Row icon={<Gear />} meta=\"/settings\">\n    Settings\n  </List.Row>\n  <List.Row icon={<CreditCard />} meta=\"/billing\">\n    Billing\n  </List.Row>\n</List>"
     },
     {

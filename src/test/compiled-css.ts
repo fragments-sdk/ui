@@ -5,7 +5,7 @@ import * as sass from "sass";
  * Drop the cascade layers from compiled CSS so the test DOM can parse it: the layer order
  * statement goes, and each `@layer name { … }` block is unwrapped in place. The rules inside keep
  * their order and any `@media` or `@keyframes` around them. The test DOM rejects a stylesheet that
- * holds a layer, and every library module ships in one (UIR-D122).
+ * holds a layer, and every library module ships in one.
  */
 export function unlayer(css: string): string {
   let out = "";
@@ -42,7 +42,7 @@ export function unlayer(css: string): string {
   return out;
 }
 
-/** A module under `libs/ui`, compiled, unlayered and parsed by the DOM's own CSS parser. */
+/** A module of this package, by path from its root, compiled, unlayered and parsed by the DOM's own CSS parser. */
 export function compiledModuleRules(path: string): CSSRule[] {
   const style = document.createElement("style");
   style.textContent = unlayer(sass.compile(resolve(process.cwd(), path)).css);

@@ -2,10 +2,10 @@
  * Seed Derivation System
  *
  * Canonical TypeScript implementation of the seed-based token derivation system.
- * This is the single source of truth — the SCSS derivation in
- * libs/ui/src/tokens/_derive.scss mirrors this logic.
+ * This is the single source of truth: the SCSS derivation in
+ * src/tokens/_derive.scss mirrors this logic.
  *
- * Consumers (the docs app and configureTheme) should import from here or via
+ * Consumers (configureTheme among them) should import from here or via
  * the @usefragments/ui barrel export.
  */
 

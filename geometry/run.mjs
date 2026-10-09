@@ -369,7 +369,7 @@ export function validateStorybookTreeExclusions(exclusions) {
   return { valid: true, errors: [] };
 }
 
-/** Hash every regular member below a tree using the brief's canonical manifest. */
+/** Hash every regular member below a tree using a canonical manifest. */
 export async function hashTree(root, options = {}) {
   const exclusions = options.exclude ?? options.exclusions ?? [];
   const explicitFiles = options.files ?? null;

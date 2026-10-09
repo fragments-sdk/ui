@@ -1,7 +1,9 @@
 /**
  * The selection markings, read back from the browser: a selected row is the wash plus a 1px inset
- * ring (hover keeps the ring); the current nav item and a chosen card take the
- * same wash and ring (a card's hairline turns into the ring); the selected segment is a lifted
+ * ring (hover keeps the ring); a chosen card takes the same wash and ring (a card's hairline
+ * turns into the ring); the current nav item is a location, not a choice: the neutral active fill
+ * and ink 1 with no ring; a page index marks the reader's location with ink 1 and a marker
+ * on its track, no fill; the selected segment is a lifted
  * thumb at the strong weight on a band track, the same track for ToggleGroup and soft Tabs. None
  * differs from its neighbours by text colour alone.
  *
@@ -63,34 +65,28 @@ function checkSelectedRow(host: HTMLElement, add: (l: string, a: string, p: bool
   );
 }
 
-function checkCurrentNav(host: HTMLElement, add: (l: string, a: string, p: boolean) => void) {
+function checkCurrentLocation(host: HTMLElement, add: (l: string, a: string, p: boolean) => void) {
   const nav = find(host, "nav");
   const current = find(nav, '[aria-current="location"]');
   const neighbour = find(nav, "a:not([aria-current])");
   const style = getComputedStyle(current);
-  const wash = colorAs(host, "var(--fui-control-selected-bg)");
-  const ring = computedAs(
-    host,
-    "box-shadow",
-    "inset 0 0 0 var(--fui-stroke-hairline) var(--fui-control-selected-border)"
-  );
+  const marker = getComputedStyle(current, "::before");
   const ink = computedAs(host, "color", "var(--fui-text-primary)");
+  add("Current index entry: ink 1", style.color, style.color === ink);
   add(
-    "Current nav item: the --fui-control-selected-bg wash",
-    style.backgroundColor,
-    style.backgroundColor === wash
+    "Current index entry: no selection wash or ring (a location, not a choice)",
+    `${style.backgroundColor} / ${style.boxShadow}`,
+    style.backgroundColor === "rgba(0, 0, 0, 0)" && style.boxShadow === "none"
   );
-  add("Current nav item: the 1px selection ring", style.boxShadow, style.boxShadow === ring);
-  add("Current nav item: ink 1", style.color, style.color === ink);
   add(
-    "Current nav item: its neighbours' regular weight",
+    "Current index entry: the marker shows on the track, its neighbour's does not",
+    `${marker.opacity} / ${getComputedStyle(neighbour, "::before").opacity}`,
+    marker.opacity === "1" && getComputedStyle(neighbour, "::before").opacity === "0"
+  );
+  add(
+    "Current index entry: its neighbours' regular weight",
     `${style.fontWeight} / ${getComputedStyle(neighbour).fontWeight}`,
     style.fontWeight === getComputedStyle(neighbour).fontWeight
-  );
-  add(
-    "Current nav item: differs from its neighbour by more than text colour",
-    `${marking(current).fill} / ${marking(neighbour).fill}`,
-    differsBeyondInk(current, neighbour)
   );
 }
 
@@ -228,7 +224,7 @@ function checkTableRow(host: HTMLElement, add: (l: string, a: string, p: boolean
 function checkMarkings(host: HTMLElement): Check[] {
   const { checks, add } = recorder();
   checkSelectedRow(host, add);
-  checkCurrentNav(host, add);
+  checkCurrentLocation(host, add);
   checkThumb(host, add);
   checkChoiceCard(host, add);
   checkTableRow(host, add);

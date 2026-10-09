@@ -418,8 +418,8 @@ function scssValue(value, indent = 0) {
   fail(`cannot render Sass value ${String(value)}`);
 }
 
-// `--fui-scale` multiplies every spacing step and measurement-catalog length
-// (UIR-D27). Hairlines (2px and under) are strokes and stay fixed, as do
+// `--fui-scale` multiplies every spacing step and measurement-catalog length.
+// Hairlines (2px and under) are strokes and stay fixed, as do
 // radius, stroke and typography values, which never pass through here.
 const SCALE_HAIRLINE_PX = 2;
 

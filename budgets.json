@@ -201,18 +201,18 @@
     },
     "Drawer": {
       "baseline": {
-        "cssBytes": 12735,
+        "cssBytes": 13443,
         "jsBytes": 8207
       },
-      "cssBytes": 13372,
+      "cssBytes": 14116,
       "jsBytes": 8618
     },
     "Editor": {
       "baseline": {
-        "cssBytes": 16589,
+        "cssBytes": 17598,
         "jsBytes": 27487
       },
-      "cssBytes": 17419,
+      "cssBytes": 18478,
       "jsBytes": 28862
     },
     "EmptyState": {
@@ -238,6 +238,14 @@
       },
       "cssBytes": 2108,
       "jsBytes": 3513
+    },
+    "FilterBar": {
+      "baseline": {
+        "cssBytes": 1519,
+        "jsBytes": 7292
+      },
+      "cssBytes": 1595,
+      "jsBytes": 7657
     },
     "Form": {
       "baseline": {
@@ -329,11 +337,11 @@
     },
     "Loading": {
       "baseline": {
-        "cssBytes": 2168,
-        "jsBytes": 4347
+        "cssBytes": 8123,
+        "jsBytes": 6758
       },
-      "cssBytes": 2277,
-      "jsBytes": 4565
+      "cssBytes": 8530,
+      "jsBytes": 7096
     },
     "Main": {
       "baseline": {
@@ -481,11 +489,11 @@
     },
     "Table": {
       "baseline": {
-        "cssBytes": 9422,
-        "jsBytes": 6927
+        "cssBytes": 10708,
+        "jsBytes": 7284
       },
-      "cssBytes": 9894,
-      "jsBytes": 7274
+      "cssBytes": 11244,
+      "jsBytes": 7649
     },
     "TableOfContents": {
       "baseline": {

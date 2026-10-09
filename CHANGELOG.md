@@ -1,5 +1,33 @@
 # @usefragments/ui
 
+## 4.4.0
+
+### Minor Changes
+
+- `Loading` takes a `kind`, additive: `spinner` (the default, unchanged), `dots` while a reply is written, `pulse` while something live listens, `bars` while a stream or a voice comes in, `matrix` (nine squares on a 3 × 3 grid, lit one diagonal after the next) while work is assembled, and `shimmer`, the label itself with the working sheen. Every kind is one size in the surrounding ink and waits out the one-second quiet; the root carries `data-kind`. `Loading.Screen` keeps the one spinner.
+
+## 4.3.0
+
+### Minor Changes
+
+- `Table.HeaderCell` and `Table.Cell` take `align` (`start`, `center`, `end`), so a numeric column lines its header up with its figures without a class of its own.
+
+### Patch Changes
+
+- `Button` and `IconButton` with `render={<Link to="…" />}` from a router (React Router, TanStack Router) render as a link, as they already did with an `href`: they treated the router's link as a native button, putting `type="button"` on the anchor and logging a `nativeButton` warning.
+- `Sidebar.Item` and `Sidebar.SubItem` close the drawer below `md` when they navigate, so the page they open is in view instead of under the sidebar.
+- Field helper and error text no longer leave a gap under the field: they render as paragraphs and kept the browser's bottom margin. Applies to every field-shaped control (Field, Checkbox, Switch, RadioGroup, Slider, DatePicker, ColorPicker, Editor).
+
+## 4.2.0
+
+### Minor Changes
+
+- Add `FilterBar`: labelled filters on one line that fold behind one button when the line no longer fits the room it is given. The folded filters open in a Popover from `sm` up and in a bottom sheet below it, with Reset and a Done action that can say the result ("Show 14 companies"). `FilterBar.Item` is a Field, so each label names its control; `activeCount` shows on the folded button; `collapse` fixes the fold (`auto`, `always`, `never`).
+
+### Patch Changes
+
+- `Table` fades the edge that still hides columns while a wide table scrolls inline, the way `Tabs` and `ScrollArea` do; the fade drops while the wrapper has keyboard focus so its ring stays whole, keyboard focus scrolls a control clear of it, and forced colours never fade. A `bordered` table now frames its scrolling wrapper in the sheet, so the fade never fades the hairline. `Tabs` no longer keeps an edge fade after the indicator slides back to an earlier tab: the scroll-edge reading now runs again when a transition or animation settles.
+
 ## 4.1.0
 
 ### Minor Changes
@@ -24,11 +52,11 @@
   - **Glass, on every component.** Four planes, one hairline between them, opaque lines that reach 3:1, colour only where it carries state, and one focus ring. Light and dark come from the same seeds.
   - **A hard cut.** Weak variants, duplicate props and deprecated token aliases are removed with no shims. `NavigationMenu`, `DashboardLayout` and `BentoGrid` are gone: use `Header.NavItem` and `Header.NavMenu`, `AppShell`, and `Grid`.
   - **Stylesheets you can build anywhere.** Every rule sits in a `fui.*` cascade layer, so your unlayered classes win. Module selectors stay pure for CSS-modules pure mode, and the CSS is the same on every Sass version.
-  - **Every removal has a row** in `MIGRATION-v4.md`, with what replaces it. The upgrade guide at https://usefragments.com/components/upgrade lists them all.
+  - **Every removal has a row** in the [v4 migration guide](docs/migration-v4.md), with what replaces it. The upgrade guide at https://usefragments.com/components/upgrade lists them all.
 
 ### Patch Changes
 
-- #739 `c401d6e` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Enter no longer submits, selects or activates while an input method is composing text. The Enter that commits a candidate (reported as `isComposing`, or as `keyCode` 229 in Safari) is left to the input method in `Prompt`, `Command`, `Listbox`, `Card`, `Button`, `Collapsible`, `DataTable` and `matchesShortcut`; the next Enter acts as before.
+- Enter no longer submits, selects or activates while an input method is composing text. The Enter that commits a candidate (reported as `isComposing`, or as `keyCode` 229 in Safari) is left to the input method in `Prompt`, `Command`, `Listbox`, `Card`, `Button`, `Collapsible`, `DataTable` and `matchesShortcut`; the next Enter acts as before.
 
   Also fixed:
   - `Skeleton.Text` lines shimmer like `Skeleton` (they referenced an animation that did not exist) and hold still under reduced motion.
@@ -41,7 +69,7 @@
 
 ### Patch Changes
 
-- #726 `494c2b4` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Refresh the shipped component catalog with current compiler evidence and Core metadata so consumers receive a consistent package artifact.
+- Refresh the shipped component catalog with current compiler evidence and Core metadata so consumers receive a consistent package artifact.
 
 ## 3.1.1
 
@@ -53,15 +81,15 @@
 
 ### Minor Changes
 
-- #705 `0dd550d` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add `FragmentsBrand`, the symbol + wordmark lockup that collapses to the symbol below the md breakpoint, export the wordmark artwork (`fragmentsWordmarkSvg`, `fragmentsWordmarkAspect`, `fragmentsWordmarkSymbol`), add `Loading` kind `fragments`, and expose the `./recipes/navigation` SCSS recipe.
+- Add `FragmentsBrand`, the symbol + wordmark lockup that collapses to the symbol below the md breakpoint, export the wordmark artwork (`fragmentsWordmarkSvg`, `fragmentsWordmarkAspect`, `fragmentsWordmarkSymbol`), add `Loading` kind `fragments`, and expose the `./recipes/navigation` SCSS recipe.
 
-- #714 `673e7f9` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Export the canonical `fragmentsSymbol` geometry so brand animations can reuse the same paths and view boxes as `FragmentsLogo`.
+- Export the canonical `fragmentsSymbol` geometry so brand animations can reuse the same paths and view boxes as `FragmentsLogo`.
 
 ## 3.0.0
 
 ### Major Changes
 
-- #640 `946f96d` Thanks [@ConanMcN](https://github.com/ConanMcN)! - One tone ramp, one recipe, one interaction ladder.
+- One tone ramp, one recipe, one interaction ladder.
   - The semantic background tokens `--fui-color-{danger,success,warning,info}-bg` (and their `$fui-` / `$fui-dark-` Sass twins) are deleted. Every tone, accent included, now emits `-tint` (compact soft surface), `-wash` (panel surface), `-text`, `-border`, `-fill-hover`, `-fill-active`, `-tint-hover`, `-tint-active`, `-wash-active` and `-on-fill`, derived from the seed at runtime with `color-mix`.
   - `recipes/_tone.scss` publishes the ramp as `--_fui-tone-*` channels. Badge, Chip, Button, Alert and Toast include it; a tone paints the same in every component.
   - Chip: `variant` is `soft` (default) or `outline`; `solid` is removed. New `tone` prop (`neutral · accent · info · success · warning · danger`).
@@ -71,7 +99,7 @@
 
 ### Patch Changes
 
-- #646 `5d2eda8` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Render the Fragments wordmark with Fragments Sans vector outlines. The logo retains its accessible name, height/class props and theme color without requiring a font download; its width follows the new lettering’s proportions.
+- Render the Fragments wordmark with Fragments Sans vector outlines. The logo retains its accessible name, height/class props and theme color without requiring a font download; its width follows the new lettering’s proportions.
 
 ## 2.0.4
 
@@ -101,7 +129,7 @@
 
 ### Major Changes
 
-- #607 `8af07f2` Thanks [@ConanMcN](https://github.com/ConanMcN)! - The density axis is deleted, not deprecated. `--fui-scale` replaces it: density profiles moved only `--fui-space-*`, while `--fui-scale` multiplies the spacing scale and every measurement-catalog length.
+- The density axis is deleted, not deprecated. `--fui-scale` replaces it: density profiles moved only `--fui-space-*`, while `--fui-scale` multiplies the spacing scale and every measurement-catalog length.
 
   Removed public surface:
   - `@usefragments/ui` — the `DensityPreset` and `MeasurementDensity` types, `configureTheme({ density })`, the `$fui-density` build seed, the `data-fui-density` runtime profiles it emitted, and the `Density` Storybook global.
@@ -110,13 +138,13 @@
 
   **This breaks existing theme files.** The CLI's theme schema is `.strict()`, so a `fragments.theme.json` (or seed config) that still carries a `density` key now fails validation with an unrecognized-key error rather than ignoring it. Delete the key; if you were using it to size an interface, set `--fui-scale` instead, which reaches measurements density never touched.
 
-- #607 `8af07f2` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Field controls share one chrome grammar. Keyboard focus, an open popup and focus-within all render the field recipe's accent edge and 34% ring on Input, Textarea, Select, Combobox, DatePicker, the ColorPicker swatch, Checkbox, RadioGroup, Switch and Editor. Invalid renders the `--fui-color-danger` edge everywhere (Select and the ColorPicker swatch had none), and invalid-while-focused keeps that edge and takes a danger ring — previously only Input and Textarea did, so the other five drew a danger edge inside an accent ring. Every control that accepts `error` now also sets `aria-invalid` on the element that takes focus, so the state a screen reader reports matches the state the border paints. Switch no longer draws a second ring around its label root.
+- Field controls share one chrome grammar. Keyboard focus, an open popup and focus-within all render the field recipe's accent edge and 34% ring on Input, Textarea, Select, Combobox, DatePicker, the ColorPicker swatch, Checkbox, RadioGroup, Switch and Editor. Invalid renders the `--fui-color-danger` edge everywhere (Select and the ColorPicker swatch had none), and invalid-while-focused keeps that edge and takes a danger ring — previously only Input and Textarea did, so the other five drew a danger edge inside an accent ring. Every control that accepts `error` now also sets `aria-invalid` on the element that takes focus, so the state a screen reader reports matches the state the border paints. Switch no longer draws a second ring around its label root.
 
   The `--fui-field-bg`, `--fui-field-bg-disabled`, `--fui-field-border`, `--fui-field-border-hover` and `--fui-field-border-focus` custom properties are removed: the recipe never read them, so overriding them changed nothing. The `success` prop on Input and Textarea is removed.
 
   **Breaking:** passing `success`, or overriding any of the five removed custom properties, no longer compiles or has any effect — use `data-invalid` for the only state the field grammar renders.
 
-- #602 `e9f084c` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Rule the component vocabulary and delete the aliases. `variant` is now
+- Rule the component vocabulary and delete the aliases. `variant` is now
   `solid | soft | outline | ghost | link` and `tone` is
   `neutral | accent | info | success | warning | danger` on every component
   that carries chrome; `outlined`, `quiet`, `subtle`, `plain`, `icon` and
@@ -139,7 +167,7 @@
 
 ### Minor Changes
 
-- #602 `e9f084c` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Removed the `density` render state from the visual contract: `RENDER_STATES` is
+- Removed the `density` render state from the visual contract: `RENDER_STATES` is
   now light, dark, sharp and pill, and the Storybook `Density` toolbar global and
   its `data-fui-density` decorator are gone. Use `--fui-scale` for runtime size
   adaptation — it multiplies the spacing scale and every measurement-catalog
@@ -149,21 +177,21 @@
   on those two components, not a theme axis. Everything else density-shaped is
   deleted; see the separate changeset for the removed public surface.
 
-- #607 `8af07f2` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Navigation shares the overlay drawer. NavigationMenu's and Header's mobile navigation panels render the same inset floating surface as Drawer — `overlay.side-panel` over `overlay.backdrop` — instead of each hand-rolling a flush sheet with its own backdrop and widths. Sidebar's mobile panel stays a flush shell surface but moves onto the same layer scale. Every navigation z-index that stacks against the overlay world now reads an `--fui-overlay-layer-*` custom property — no raw 20/30/50/51/52/98/99/100 left; the skip link sits on the tooltip layer so it always wins. Stacking that is purely internal to a shell (Sidebar's and AppShell's local 1/2) stays a raw local value, because it orders siblings inside one component rather than placing that component in the overlay scale. Mobile navigation links take `navigation.link-states` / `navigation.link-active`, Breadcrumbs truncate at a layout measure instead of a raw 200px, and `AppShell`'s `headerHeight` default reads `--fui-appshell-header-height`.
+- Navigation shares the overlay drawer. NavigationMenu's and Header's mobile navigation panels render the same inset floating surface as Drawer — `overlay.side-panel` over `overlay.backdrop` — instead of each hand-rolling a flush sheet with its own backdrop and widths. Sidebar's mobile panel stays a flush shell surface but moves onto the same layer scale. Every navigation z-index that stacks against the overlay world now reads an `--fui-overlay-layer-*` custom property — no raw 20/30/50/51/52/98/99/100 left; the skip link sits on the tooltip layer so it always wins. Stacking that is purely internal to a shell (Sidebar's and AppShell's local 1/2) stays a raw local value, because it orders siblings inside one component rather than placing that component in the overlay scale. Mobile navigation links take `navigation.link-states` / `navigation.link-active`, Breadcrumbs truncate at a layout measure instead of a raw 200px, and `AppShell`'s `headerHeight` default reads `--fui-appshell-header-height`.
 
-- #607 `8af07f2` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Floating surfaces share one chrome grammar. Dialog, Drawer, Popover, Menu, Select, Combobox, Command, ColorPicker, DatePicker and the Header nav popup all render the overlay recipe's elevated fill, hairline edge, `--fui-radius-l1` corner and `--fui-shadow-md`; popup rows round to `--fui-radius-l2`; Tooltip keeps its inverse fill on the same recipe. Overlay close buttons, dialog and drawer footers now take their chrome from the recipe. Toast stacks on the new `--fui-overlay-layer-toast` custom property (55) instead of doubling the header z-index.
+- Floating surfaces share one chrome grammar. Dialog, Drawer, Popover, Menu, Select, Combobox, Command, ColorPicker, DatePicker and the Header nav popup all render the overlay recipe's elevated fill, hairline edge, `--fui-radius-l1` corner and `--fui-shadow-md`; popup rows round to `--fui-radius-l2`; Tooltip keeps its inverse fill on the same recipe. Overlay close buttons, dialog and drawer footers now take their chrome from the recipe. Toast stacks on the new `--fui-overlay-layer-toast` custom property (55) instead of doubling the header z-index.
 
 ### Patch Changes
 
-- #626 `4880f54` Thanks [@ConanMcN](https://github.com/ConanMcN)! - `EmptyState.Title` accepts `as` (`h2` | `h3` | `h4` | `p`) so a page-level empty state can sit at the right heading level instead of always rendering an `h3`.
+- `EmptyState.Title` accepts `as` (`h2` | `h3` | `h4` | `p`) so a page-level empty state can sit at the right heading level instead of always rendering an `h3`.
 
-- #624 `c6dc618` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Interface refinements from the vendored interface skills: `ThemeProvider` suppresses transitions for one frame on a theme switch (no colour smear), `Button`/`IconButton` press to `scale(0.96)` under `prefers-reduced-motion: no-preference`, title type roles get `text-wrap: balance` and body roles `text-wrap: pretty` (prose resets to `auto`), and `EmptyState` no longer sets font-smoothing.
+- Interface refinements from the vendored interface skills: `ThemeProvider` suppresses transitions for one frame on a theme switch (no colour smear), `Button`/`IconButton` press to `scale(0.96)` under `prefers-reduced-motion: no-preference`, title type roles get `text-wrap: balance` and body roles `text-wrap: pretty` (prose resets to `auto`), and `EmptyState` no longer sets font-smoothing.
 
 ## 1.7.0
 
 ### Minor Changes
 
-- #493 `242ee09` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add an opt-in compact hierarchy to `TableOfContents`, improved `ScrollArea`
+- Add an opt-in compact hierarchy to `TableOfContents`, improved `ScrollArea`
   edge fades, configurable `NavigationMenu` mobile breakpoints, a compact icon
   appearance for `ThemeToggle`, and a dotted underline treatment for inline
   `Link` components. Introduce semantic surface roles and refresh the baseline
@@ -172,27 +200,27 @@
 
 ### Patch Changes
 
-- #587 `7e5fc77` Thanks [@ConanMcN](https://github.com/ConanMcN)! - `CodeBlock` accepts `collapseAction`: `"lines"` keeps “Show N more lines”,
+- `CodeBlock` accepts `collapseAction`: `"lines"` keeps “Show N more lines”,
   `"expand"` is one right-aligned Expand / Collapse control. JSX/TSX tags map
   onto `--fui-code-token-function` so usage blocks highlight in both themes.
 
-- #493 `fe1314d` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Keep in-repo agent `*.ui-notes.md` session logs out of the published
-  `@usefragments/ui` tarball. They are working notes, not a consumer contract.
+- Keep the repository's working notes out of the published
+  `@usefragments/ui` tarball. They are not a consumer contract.
 
-- #530 `9de0c55` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Keep the canonical cell inset on bordered Tables so headers, rows, empty
+- Keep the canonical cell inset on bordered Tables so headers, rows, empty
   content, and hover states no longer sit against the component frame. Unbordered
   card ledgers retain their flush leading edge.
 
-- #493 `a9b030f` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Restore the SCSS build-time half of the design-token contract in Switch and
+- Restore the SCSS build-time half of the design-token contract in Switch and
   Editor, so their surfaces still resolve when a consumer loads component CSS
   without the token layer or ships a partial theme. Switch previously derived
   every off-state surface from bare `var()` references inside `color-mix()`,
   which made the whole declaration invalid and rendered the control fully
   transparent — its off state was indistinguishable from its on state.
 
-- #584 `4ab157b` Thanks [@ConanMcN](https://github.com/ConanMcN)! - `TableOfContents.Item` now honours an explicit `href`. Pass it to list sibling pages beside the in-page index; the item renders a plain route link and leaves navigation to the browser or a wrapping router link instead of scrolling to an anchor.
+- `TableOfContents.Item` now honours an explicit `href`. Pass it to list sibling pages beside the in-page index; the item renders a plain route link and leaves navigation to the browser or a wrapping router link instead of scrolling to an anchor.
 
-- #581 `74b6a2a` Thanks [@ConanMcN](https://github.com/ConanMcN)! - `Header.NavItem` and `Header.MobileNavLink` accept `target` and `rel`, so a nav
+- `Header.NavItem` and `Header.MobileNavLink` accept `target` and `rel`, so a nav
   row can open an external destination in a new tab without wrapping a second
   anchor inside the item.
 
@@ -200,7 +228,7 @@
 
 ### Minor Changes
 
-- `07300f6` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Standardize component geometry, density, spacing, optical alignment, action treatments, form composition, overlays, navigation, feedback, and responsive containment across the UI library. Add the public measurement-target export and preserve the legacy toggle import through a compatibility alias.
+- Standardize component geometry, density, spacing, optical alignment, action treatments, form composition, overlays, navigation, feedback, and responsive containment across the UI library. Add the public measurement-target export and preserve the legacy toggle import through a compatibility alias.
 
   Harden SCSS token serialization and improve governance scanning, repository identity reporting, local canonical discovery, agent-worktree containment, and hook round-trip diagnosis.
 
@@ -208,7 +236,7 @@
 
 ### Patch Changes
 
-- #460 `a1f2967` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Republish with no source changes so the release cohort stays byte-verifiable while publisher preflight still requires a full public cohort (#457).
+- Republish with no source changes so the release cohort stays byte-verifiable while publisher preflight still requires a full public cohort (#457).
 
 ## 1.5.3
 
@@ -238,14 +266,14 @@
 
 ### Minor Changes
 
-- #410 `d89d4d1` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add a neutral `Progress` meter treatment, semantic heading selection for
+- Add a neutral `Progress` meter treatment, semantic heading selection for
   `Card.Title`, and the compound `Chart` export to the package root.
 
 ## 1.4.0
 
 ### Minor Changes
 
-- #406 `dc6d0ba` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Agent-composer primitives, and fixes found building one.
+- Agent-composer primitives, and fixes found building one.
 
   **`Prompt` gains an `appearance` axis.** `appearance="seamless"` makes the whole card one writing surface: the toolbar stops painting a filled footer over it, the rule between the two goes, the border and the animated beam go with them, and the textarea takes the room a first line of prose deserves. One gutter runs down the card, so the placeholder, the first glyph in the toolbar and any attachment chip all sit on the same line. Its controls share the dense 32px token scale with body-sized labels and standard glyphs, keeping selects, attach and submit affordances optically aligned without making the composer feel like a form. Secondary controls keep their hit areas but not visible button boxes across hover, open and pointer-focus states; keyboard focus uses a restrained baseline, while Submit remains the one persistent shape. Submit mirrors the Attach glyph's ink gutter at the opposite edge, balancing the two visible affordances across the toolbar. `appearance="panel"` is the default and is exactly today's look, so nothing changes for existing consumers. The axis is separate from `variant`, which stays about positioning.
 
@@ -275,7 +303,7 @@
   - `ConversationList.TypingIndicator` put its accessible label on a generic `div`, where current ARIA rules prohibit it. The indicator now carries `role="status"`, matching the live state it communicates.
   - Conversation chrome, user messages and Pagination's current page no longer spend the brand accent on passive surfaces. ConversationList pins inherited prose to the body foreground, Message uses neutral user surfaces and text (including its default user avatar), and Pagination uses body text over the neutral active surface while retaining semantic focus, error and info colors.
 
-- #406 `6cd94c1` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Dropdown and menu items step down to 12px.
+- Dropdown and menu items step down to 12px.
 
   Every popup list — `Menu`, `Select`, `Combobox`, `Listbox`, `Command`, `DatePicker`, `NavigationMenu` — shared the body text size through the `popup-item` mixin, which put an open list a size above the compact trigger that opened it. A popup is a dense list scanned against its trigger, so it now sits one step below chrome text at `--fui-font-size-xs`.
 
@@ -285,7 +313,7 @@
 
 ### Patch Changes
 
-- #406 `f7e8072` Thanks [@ConanMcN](https://github.com/ConanMcN)! - `Select`, `Combobox` and `Listbox` show the number of rows they claim to.
+- `Select`, `Combobox` and `Listbox` show the number of rows they claim to.
 
   Each of the three computed its scroll viewport from a row height it worked out
   longhand, and all three charged `$fui-space-2` of vertical padding for a row
@@ -306,7 +334,7 @@
   and shorter than five, with the fifth clipped in half. Restyling the popup scale
   through the new properties moves that boundary correctly.
 
-- #408 `3cf2bcd` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix optional peer detection in browser ESM builds. DataTable, Chart, DatePicker, ColorPicker, Editor, and Markdown loaded their optional peers with `require()`, which is undefined in browser ESM bundles — so an installed peer was never picked up, and DataTable crashed the page outright. All six now resolve their peers with a dynamic `import()`.
+- Fix optional peer detection in browser ESM builds. DataTable, Chart, DatePicker, ColorPicker, Editor, and Markdown loaded their optional peers with `require()`, which is undefined in browser ESM bundles — so an installed peer was never picked up, and DataTable crashed the page outright. All six now resolve their peers with a dynamic `import()`.
   - DataTable never throws again when `@tanstack/react-table` is absent: it renders skeleton rows while the peer resolves, and a static, non-interactive table when it is not installed.
   - Chart tooltips and legends, the DatePicker calendar, the ColorPicker surface, Editor rich-text mode, and Markdown parsing now activate once their peer resolves, and keep their existing graceful fallbacks when it is missing.
   - Each of these components gains an optional `preload()` helper to resolve its peer before first render and skip the brief fallback frame.
@@ -318,19 +346,19 @@
 
 ### Patch Changes
 
-- #402 `19a7c9b` Thanks [@ConanMcN](https://github.com/ConanMcN)! - `CodeBlock` no longer strips an indentation level from YAML, JSON and Python samples.
+- `CodeBlock` no longer strips an indentation level from YAML, JSON and Python samples.
 
   Indentation is normalized before highlighting, and that step deliberately excludes the first line from the common-indent calculation so an inline JSX snippet whose body carries the surrounding file's indentation still renders flush. But the code is trimmed first, which puts the first line at column 0 every time — so for any block with a single root and an indented body, one real level was removed. A published YAML job rendered its keys as siblings of the job name instead of children, which is not a cosmetic difference: copying the block gave you an invalid file.
 
   Languages where whitespace carries meaning (`yaml`, `yml`, `json`, `python`, `py`) now count the first line like any other. JSX and TypeScript blocks are unchanged, and both behaviours are covered by tests.
 
-- `1707b18` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Keep data tables inside their horizontal scroll container on narrow layouts.
+- Keep data tables inside their horizontal scroll container on narrow layouts.
 
 ## 1.3.2
 
 ### Patch Changes
 
-- #374 `8b78551` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix the published package install floor for Next.js App Router and theming:
+- Fix the published package install floor for Next.js App Router and theming:
   - Preserve `"use client"` / `'use client'` directives in the Vite `preserveModules` build (via `rollup-plugin-preserve-directives`) so App Router consumers no longer hit server-component errors on client primitives.
   - Make `import '@usefragments/ui/styles'` include default-seed token definitions (`:root`, `--fui-*`, dark mode) by compiling `globals.scss` into the shipped `dist/assets/ui.css`. The `sass` export condition still resolves to `globals.scss` for seed overrides.
   - Correct the package README: only `react` and `react-dom` are required peers; heavy peers remain optional.
@@ -339,7 +367,7 @@
 
 ### Patch Changes
 
-- `baec848` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Stop `DatePicker` from breaking consumer builds that never use it.
+- Stop `DatePicker` from breaking consumer builds that never use it.
 
   `DatePicker` statically imported its optional peers (`react-day-picker` and `date-fns`), and the package barrel re-exports `DatePicker` — so importing _anything_ from `@usefragments/ui` dragged both peers into the consumer's build graph. A production `vite build` (Rolldown) then failed with `MISSING_EXPORT` for any project that had not installed them, including a freshly scaffolded app whose demo does not use the calendar at all.
 
@@ -349,7 +377,7 @@
 
 ### Minor Changes
 
-- #370 `8cb7390` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Vite / TypeScript 6 developer experience (cold-start friction P0 sweep):
+- Vite / TypeScript 6 developer experience (cold-start friction P0 sweep):
   - Heavy peer dependencies (recharts, `@tanstack/*`, tiptap, react-day-picker, …) are now declared **optional** via `peerDependenciesMeta`, so an app that only uses a few primitives no longer errors on install for packages it does not use.
   - `DataTable` now lazy-loads `@tanstack/react-table` (matching `Chart`/`Editor`), removing the static `@tanstack` import edge that broke Button-only Vite builds. It throws a clear "install @tanstack/react-table" message at render time if the peer is absent.
   - Added type declarations for the `./styles` and `./globals` side-effect imports, fixing `TS2882` under `tsc` on TypeScript 6.
@@ -368,22 +396,22 @@
 
 ### Minor Changes
 
-- #354 `149666d` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add the canonical `Main` page-composition primitive and refine Checkbox radius
+- Add the canonical `Main` page-composition primitive and refine Checkbox radius
   overrides, static Combobox filtering, selected Chip surfaces, and
   TableOfContents alignment. Exclude local design-tool caches from the published
   UI package.
 
 ### Patch Changes
 
-- `4f15c8c` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Increase vertical padding on `Table` and `DataTable` body cells for easier scanning, and add background and surface fallbacks so rows and selected states render correctly without a theme provider.
+- Increase vertical padding on `Table` and `DataTable` body cells for easier scanning, and add background and surface fallbacks so rows and selected states render correctly without a theme provider.
 
-- `4f15c8c` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Stop shipping Storybook stories and internal Cloud dashboard prototypes inside the published package. The tarball now carries only the documented component surface, which cuts install size.
+- Stop shipping Storybook stories and internal Cloud dashboard prototypes inside the published package. The tarball now carries only the documented component surface, which cuts install size.
 
 ## 1.1.1
 
 ### Patch Changes
 
-- #347 `fc000ff` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Engine warnings now say where. Tailwind v4 theme-conflict warnings carry
+- Engine warnings now say where. Tailwind v4 theme-conflict warnings carry
   `file:line:column`, and token-definition conflicts gained an optional
   location on `TokenDefinitionFact` populated from the design-token source
   (locations are ignored when comparing logical definitions, so identical
@@ -397,11 +425,11 @@
 
 ### Minor Changes
 
-- #324 `824a306` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add polymorphic Header brand composition, scroll elevation, centered page-width navigation, and mobile action layout.
+- Add polymorphic Header brand composition, scroll elevation, centered page-width navigation, and mobile action layout.
 
-- #331 `0888488` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add FragmentsWordmark asset and refresh token palettes/seeds/variables plus Alert, Button, CodeBlock, Popover, TableOfContents, Toast, and ToggleGroup styles for the promoted docs/landing skin.
+- Add FragmentsWordmark asset and refresh token palettes/seeds/variables plus Alert, Button, CodeBlock, Popover, TableOfContents, Toast, and ToggleGroup styles for the promoted docs/landing skin.
 
-- #334 `8c4e9d5` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Upgrade the canonical component implementation to Base UI 1.6. Forward the
+- Upgrade the canonical component implementation to Base UI 1.6. Forward the
   supported Base control props through `Field`, restore form, focus, swipe,
   find-in-page, AppShell, DataTable, and Menu behavior, and add public Button and
   CodeBlock theme hooks. Add `RadioGroup.groupId` for the Base 1.6 group-ID path
@@ -412,7 +440,7 @@
 
 ### Patch Changes
 
-- #336 `7e621c7` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Make first-run governance activation truthful and reproducible: install and
+- Make first-run governance activation truthful and reproducible: install and
   verify the exact local CLI before hooks, gate Ready on Doctor, pin generated
   workflows and hook fallbacks, keep Cloud policy authoritative for connected
   scans, and limit automatic component rewrites to confirmed mappings with
@@ -445,7 +473,7 @@
 
 ### Minor Changes
 
-- #261 `6367c82` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add cloud-contract aware governance scanning, canonical source helpers, and inspect overlay support.
+- Add cloud-contract aware governance scanning, canonical source helpers, and inspect overlay support.
 
   The CLI now fails CI scans when a required Cloud policy cannot be fetched, persists served policy metadata for hook enforcement, and surfaces hook stderr. Core and extract gain the canonical source and raw markup resolution helpers used by the inspect workflow. UI primitives now emit canonical stamp metadata and expose popover anchoring options needed by host overlays.
 
@@ -453,14 +481,14 @@
 
 ### Patch Changes
 
-- #145 `8bde5c6` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix `NavigationMenu` click toggling so a pending hover-open timer cannot reopen
+- Fix `NavigationMenu` click toggling so a pending hover-open timer cannot reopen
   content after the user clicks an open trigger to close it.
 
 ## 0.21.0
 
 ### Minor Changes
 
-- `e2b0d0a` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Align form-control primitives with Base UI ownership APIs and improve
+- Align form-control primitives with Base UI ownership APIs and improve
   accessibility/state coverage across Accordion, Checkbox, Combobox, Drawer,
   RadioGroup, Select, Slider, Tabs, and Toggle.
 
@@ -468,7 +496,7 @@
   values, and related hidden-input plumbing where applicable, backed by expanded
   component tests.
 
-- #90 `07711a8` Thanks [@ConanMcN](https://github.com/ConanMcN)! - Design-system consistency pass and new theming tokens.
+- Design-system consistency pass and new theming tokens.
 
   New tokens: `--fui-bg-inverse` (theme-flipping inverse surface, used by Tooltip),
   the full `--fui-icon-{xs,sm,md,lg,xl,2xl}` scale exported as CSS variables,
@@ -507,7 +535,7 @@
 
 ### Minor Changes
 
-- [#6](https://github.com/ConanMcN/fragments/pull/6) [`3b9dfbb`](https://github.com/ConanMcN/fragments/commit/3b9dfbb0245d088b1a921b74c098be7cf0bf0298) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Evolve design tokens toward Linear/OpenAI design language
+- Evolve design tokens toward Linear/OpenAI design language
 
   **Token changes:**
   - Font scale compressed: `base`/`md` = 14px (1rem), `xl` = 20px, `2xl` = 24px
@@ -537,7 +565,7 @@
 
 ### Patch Changes
 
-- [#5](https://github.com/ConanMcN/fragments/pull/5) [`97cd4c5`](https://github.com/ConanMcN/fragments/commit/97cd4c5b74bbb66a8fc984fbdeb534806f42160a) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Extract @fragments-sdk/compiler from CLI to break build dependency cycle
+- Extract @fragments-sdk/compiler from CLI to break build dependency cycle
 
   The fragment compilation logic (build, freshness checking, discovery, parsing) has been extracted from `@fragments-sdk/cli` into a new `@fragments-sdk/compiler` package. This eliminates the `cli → viewer → ui` dependency cycle that required runtime workarounds.
   - **@fragments-sdk/compiler**: New package — fragment build, freshness check, and core compilation utilities. Depends only on `core` + `context`.
@@ -564,7 +592,7 @@
 
 ### Minor Changes
 
-- [`55eaed6`](https://github.com/ConanMcN/fragments/commit/55eaed6ba53b70f1d511104c2952c5e18601e1ed) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Redesign semantic styles across Alert, Toast, Badge, and Button. Add success state and adornments to Input, character counter to Textarea, Fieldset.Description sub-component. Fix theme toggle dark-to-light switching. Improve kbd shortcut hint styling.
+- Redesign semantic styles across Alert, Toast, Badge, and Button. Add success state and adornments to Input, character counter to Textarea, Fieldset.Description sub-component. Fix theme toggle dark-to-light switching. Improve kbd shortcut hint styling.
 
 ## 0.16.1
 
@@ -576,7 +604,7 @@
 
 ### Minor Changes
 
-- [`6f4ef32`](https://github.com/ConanMcN/fragments/commit/6f4ef32171104504a6cf6379bea5787a17516a4d) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Decompose AppShell layout into orthogonal props and add per-slot bg prop
+- Decompose AppShell layout into orthogonal props and add per-slot bg prop
   - `layout` controls grid structure (`default` | `sidebar`)
   - Per-slot `variant` controls floating treatment (`default` | `floating`)
   - Per-slot `bg` accepts any CSS color to override background independently
@@ -594,7 +622,7 @@
 
 ### Minor Changes
 
-- [`dff9ede`](https://github.com/ConanMcN/fragments/commit/dff9ede9e7205f3b1f7b26539df1c3430fd628dd) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add seed-derivation and theme-presets utilities. Refine palette derivation for improved contrast and consistency across neutral palettes.
+- Add seed-derivation and theme-presets utilities. Refine palette derivation for improved contrast and consistency across neutral palettes.
 
 ## 0.14.0
 
@@ -625,7 +653,7 @@
 
 ### Minor Changes
 
-- [`5b6a7d7`](https://github.com/ConanMcN/fragments/commit/5b6a7d739733f16cc41586a427759c5bfe9f1ab8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - DX improvements from code review feedback:
+- DX improvements from code review feedback:
   - Add `variant="outline"` alias for Button, Card, Chip, and Badge (Radix/Shadcn convention)
   - Add `asChild` prop for Button to compose with Next.js Link and other elements
   - Add `onCheckedChange` alias for Switch, `onValueChange` alias for Slider and ToggleGroup
@@ -670,7 +698,7 @@
 
 ### Minor Changes
 
-- [`db4f057`](https://github.com/ConanMcN/fragments/commit/db4f057954902c04c862cd9f3d3c5faf1c48bea9) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: Editor component and centralized keyboard shortcuts
+- feat: Editor component and centralized keyboard shortcuts
   - Editor compound component with TipTap rich text support (optional peer dep) and textarea fallback
   - Centralized keyboard shortcuts registry with `matchesShortcut()`, `configureShortcuts()`, and `useKeyboardShortcut()` hook
   - Global shortcuts (e.g. Ctrl+B sidebar toggle) automatically yield to editable elements
@@ -682,7 +710,7 @@
 
 ### Minor Changes
 
-- [`c5f0b0a`](https://github.com/ConanMcN/fragments/commit/c5f0b0a28e39c20c37f232e87bd873ab10a39359) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: DX improvements — configureTheme API, doctor command, seed validation, deprecate defaultTheme
+- feat: DX improvements — configureTheme API, doctor command, seed validation, deprecate defaultTheme
 
   **@fragments-sdk/ui**
   - Add `configureTheme()` JS API for runtime theme seed configuration without SCSS
@@ -709,7 +737,7 @@
 
 ### Patch Changes
 
-- [`284ec11`](https://github.com/ConanMcN/fragments/commit/284ec113727cbda339c531abfecbea89b17beb5b) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Achieve 100/100 react-doctor score: fix conditional hooks, cascading setState, add keyboard handlers, extract helper functions, and configure false positive exclusions
+- Achieve 100/100 react-doctor score: fix conditional hooks, cascading setState, add keyboard handlers, extract helper functions, and configure false positive exclusions
 
 ## 0.9.6
 
@@ -721,43 +749,43 @@
 
 ### Patch Changes
 
-- [`fe18004`](https://github.com/ConanMcN/fragments/commit/fe18004a81b938064b84d86b5a235cca49394de0) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add DataTable component, improve Table, clean up dead code, and update viewer components
+- Add DataTable component, improve Table, clean up dead code, and update viewer components
 
 ## 0.9.2
 
 ### Patch Changes
 
-- [`e87cdc1`](https://github.com/ConanMcN/fragments/commit/e87cdc1ff55b202716614eb96d002ed0ff185777) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix Loading.Screen and Sidebar component previews breaking the docs app: contain fixed-position Loading.Screen within its preview container, and isolate Sidebar preview state from the docs app's SidebarProvider
+- Fix Loading.Screen and Sidebar component previews breaking the docs app: contain fixed-position Loading.Screen within its preview container, and isolate Sidebar preview state from the docs app's SidebarProvider
 
 ## 0.9.1
 
 ### Patch Changes
 
-- [`c99d41c`](https://github.com/ConanMcN/fragments/commit/c99d41cbb6542ab022166f352ab1167558f4a0a7) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add light mode colored card headers to landing page feature grid, add Vite build pipeline for UI dist output, and update publishConfig for npm publishing
+- Add light mode colored card headers to landing page feature grid, add Vite build pipeline for UI dist output, and update publishConfig for npm publishing
 
 ## 0.9.0
 
 ### Minor Changes
 
-- [`2487cb2`](https://github.com/ConanMcN/fragments/commit/2487cb215bb659d2f32ca59adc1d72a23b1ce201) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add BentoGrid component, enhance Avatar with customSize/imageStyle props, add NavigationMenu MobileBrand slot. Update docs landing page with AI-native positioning, redesign blog listing, and improve CLI viewer stability.
+- Add BentoGrid component, enhance Avatar with customSize/imageStyle props, add NavigationMenu MobileBrand slot. Update docs landing page with AI-native positioning, redesign blog listing, and improve CLI viewer stability.
 
 ## 0.8.9
 
 ### Patch Changes
 
-- [`30ffa79`](https://github.com/ConanMcN/fragments/commit/30ffa7928ed84cc700382d8a4f757c4ff052cf43) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add per-component `'use client'` directives for RSC compatibility. Moves the directive from the barrel export to 22 individual component files that need it, keeping 10 layout primitives (Box, Stack, Grid, Text, etc.) server-safe. Converts homepage, /components, and /getting-started doc pages to server components. Removes playground feature.
+- Add per-component `'use client'` directives for RSC compatibility. Moves the directive from the barrel export to 22 individual component files that need it, keeping 10 layout primitives (Box, Stack, Grid, Text, etc.) server-safe. Converts homepage, /components, and /getting-started doc pages to server components. Removes playground feature.
 
 ## 0.8.8
 
 ### Patch Changes
 
-- [`04e5019`](https://github.com/ConanMcN/fragments/commit/04e5019d628bcced01a2cbbd067d3be7b7a39d99) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add Command, Drawer, and Pagination components plus docs/viewer updates.
+- Add Command, Drawer, and Pagination components plus docs/viewer updates.
 
 ## 0.8.7
 
 ### Patch Changes
 
-- [`b61b8d5`](https://github.com/ConanMcN/fragments/commit/b61b8d5bb28a66620542a437c0ffbdebf1aec815) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add Menu submenu support, consolidate viewer toolbar, and center component previews
+- Add Menu submenu support, consolidate viewer toolbar, and center component previews
   - Menu: Add `checked` prop to `Menu.Item` for lightweight check indicators
   - Menu: Add `Menu.Submenu` and `Menu.SubmenuTrigger` for nested menu support
   - Menu: Fix `CheckboxItem` to use check icon instead of embedded Checkbox component
@@ -769,31 +797,31 @@
 
 ### Patch Changes
 
-- [`8dea512`](https://github.com/ConanMcN/fragments/commit/8dea5128a36f6f1c32475e639960883a818593b6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix SSR/hydration issues: add missing 'use client' directives to 13 components (Avatar, Chip, ColorPicker, Combobox, DatePicker, Input, Listbox, ScrollArea, Select, Sidebar, Slider, Table, Toast). Fix Avatar onError not firing for cached images. Fix Image onLoad not firing for cached images during hydration. Fix usePrefersReducedMotion and usePrefersContrast hydration mismatch. Add SSR guard to NavigationMenu createPortal. Fix Listbox CSS.escape fallback consistency. Fix PageAside hydration mismatch with window.location.href.
+- Fix SSR/hydration issues: add missing 'use client' directives to 13 components (Avatar, Chip, ColorPicker, Combobox, DatePicker, Input, Listbox, ScrollArea, Select, Sidebar, Slider, Table, Toast). Fix Avatar onError not firing for cached images. Fix Image onLoad not firing for cached images during hydration. Fix usePrefersReducedMotion and usePrefersContrast hydration mismatch. Add SSR guard to NavigationMenu createPortal. Fix Listbox CSS.escape fallback consistency. Fix PageAside hydration mismatch with window.location.href.
 
 ## 0.8.5
 
 ### Patch Changes
 
-- [`1fe960d`](https://github.com/ConanMcN/fragments/commit/1fe960d7361aabf295e2d2a411c9fa4259a4bd9e) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add NavigationMenu component and NavigationHeader block. Enhance Chart, CodeBlock, ColorPicker, DatePicker, Header, Link, Table components with improved props and fragment metadata. Update docs site header, layout, theme builder, and blog posts. Update CLI viewer, parser, schema types, and build config.
+- Add NavigationMenu component and NavigationHeader block. Enhance Chart, CodeBlock, ColorPicker, DatePicker, Header, Link, Table components with improved props and fragment metadata. Update docs site header, layout, theme builder, and blog posts. Update CLI viewer, parser, schema types, and build config.
 
 ## 0.8.4
 
 ### Patch Changes
 
-- [`979ab44`](https://github.com/ConanMcN/fragments/commit/979ab44b642bb52bdbac29e6020907a3172dc5ed) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Launch week blog posts, OG image fix, and AppShell layout updates
+- Launch week blog posts, OG image fix, and AppShell layout updates
 
 ## 0.8.3
 
 ### Patch Changes
 
-- [`66d9ea1`](https://github.com/ConanMcN/fragments/commit/66d9ea1d1f37722936d13deab007d20c2dadbb74) Thanks [@ConanMcN](https://github.com/ConanMcN)! - SCSS token compliance: replace hardcoded CSS values with design tokens, add per-package LICENSE files and author metadata
+- SCSS token compliance: replace hardcoded CSS values with design tokens, add per-package LICENSE files and author metadata
 
 ## 0.8.2
 
 ### Patch Changes
 
-- [`52348b2`](https://github.com/ConanMcN/fragments/commit/52348b28ec1b3471b9d6f31e807e8d0f0d9fd7a8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix Menu bullet points, add shared FragmentsLogo component, flatten viewer sidebar, and make Input shortcut prop functional
+- Fix Menu bullet points, add shared FragmentsLogo component, flatten viewer sidebar, and make Input shortcut prop functional
   - **Menu**: Add `list-style: none` and `margin: 0` to `.popup` to fix bullet points and overflow in dropdown menus
   - **FragmentsLogo**: New shared logo component exported from `@fragments-sdk/ui`, used by the viewer sidebar
   - **Sidebar**: Remove category grouping — render all components as a flat alphabetical list matching docs pattern
@@ -803,19 +831,19 @@
 
 ### Patch Changes
 
-- [`06bbba0`](https://github.com/ConanMcN/fragments/commit/06bbba0dad17f19ba69518f671b2f2a320bab61f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Rename defineSegment to defineFragment across codebase, improve docs pages (Getting Started, CLI, MCP) for new users, and fix CodeBlock header rendering
+- Rename defineSegment to defineFragment across codebase, improve docs pages (Getting Started, CLI, MCP) for new users, and fix CodeBlock header rendering
 
 ## 0.8.0
 
 ### Minor Changes
 
-- [`1f07312`](https://github.com/ConanMcN/fragments/commit/1f07312b3d2e1a9410164d49a1c1434b9d536421) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add component graph intelligence layer with structural relationship analysis, auto-detection of compound component metadata, and graph-augmented hybrid search. New `fragments graph` CLI command and `fragments_graph` MCP tool enable dependency, impact, composition, and alternatives queries. Add DatePicker and TableOfContents components. Add blog system to docs site.
+- Add component graph intelligence layer with structural relationship analysis, auto-detection of compound component metadata, and graph-augmented hybrid search. New `fragments graph` CLI command and `fragments_graph` MCP tool enable dependency, impact, composition, and alternatives queries. Add DatePicker and TableOfContents components. Add blog system to docs site.
 
 ## 0.7.5
 
 ### Patch Changes
 
-- [`160bc1d`](https://github.com/ConanMcN/fragments/commit/160bc1d98a3a67ded3f96833be70baec421c4bf3) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Improve accessibility quality and audit coverage for the UI library.
+- Improve accessibility quality and audit coverage for the UI library.
   - Add an accessible name to the `ColorPicker` popup dialog.
   - Stabilize `ToggleGroup` fragment variants by moving hook state into React components.
   - Expand and modularize accessibility testing with reusable Playwright auditor modules and stronger keyboard-flow coverage.
@@ -825,19 +853,19 @@
 
 ### Patch Changes
 
-- [#1](https://github.com/ConanMcN/fragments/pull/1) [`bd42d13`](https://github.com/ConanMcN/fragments/commit/bd42d13045df88e37ae10ca0db69ac3bf90b4a1d) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Fix P0/P1/P2 accessibility issues across core UI components, including dialog focus/escape behavior, listbox keyboard model, table/togglegroup semantics, labeling pathways, and related a11y interaction improvements.
+- Fix P0/P1/P2 accessibility issues across core UI components, including dialog focus/escape behavior, listbox keyboard model, table/togglegroup semantics, labeling pathways, and related a11y interaction improvements.
 
 ## 0.7.3
 
 ### Patch Changes
 
-- [`4ca9bdd`](https://github.com/ConanMcN/fragments/commit/4ca9bddf2ce5c8f34d76d8eaf423012922b0a61a) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Standardize interactive item heights to consistent 35px ceiling using item-xs vertical padding across Tabs, Select, Combobox, Listbox, Accordion, Table, Collapsible, and Dialog components
+- Standardize interactive item heights to consistent 35px ceiling using item-xs vertical padding across Tabs, Select, Combobox, Listbox, Accordion, Table, Collapsible, and Dialog components
 
 ## 0.7.2
 
 ### Patch Changes
 
-- [`10cb616`](https://github.com/ConanMcN/fragments/commit/10cb616002699a7f49ae9fe77ef036804ad252f0) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Consolidate shared types, context generation, and citations into @fragments-sdk/context
+- Consolidate shared types, context generation, and citations into @fragments-sdk/context
   - Add `types`, `generate`, and `citations` subpath exports to @fragments-sdk/context
   - New citations module: `buildCitationDocuments()` and `resolveCitations()` for Anthropic-compatible RAG citation workflows
   - MCP and CLI now import compiled types and context generation from @fragments-sdk/context instead of maintaining local copies
@@ -847,13 +875,13 @@
 
 ### Patch Changes
 
-- [`9ffb7fe`](https://github.com/ConanMcN/fragments/commit/9ffb7fe3b91b6bf8926564f69ffa5f0e3815a3a6) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Polish Table component: reduce row padding, strengthen header background, add striped and bordered props, fix selected style bug, replace hardcoded media query with breakpoint mixin
+- Polish Table component: reduce row padding, strengthen header background, add striped and bordered props, fix selected style bug, replace hardcoded media query with breakpoint mixin
 
 ## 0.7.0
 
 ### Minor Changes
 
-- [`eadecc6`](https://github.com/ConanMcN/fragments/commit/eadecc6696074bb8c1e90deeba92f8588d1e5a54) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(docs,cli): fix component categories, add preview tabs, render markdown
+- feat(docs,cli): fix component categories, add preview tabs, render markdown
   - Move Chip to "forms" and Markdown to "display" categories
   - Add preview tabs for Chip, Markdown, and Breadcrumbs components
   - Install react-markdown and remark-gfm for proper markdown rendering in docs
@@ -864,7 +892,7 @@
 
 ### Patch Changes
 
-- [`35e1df9`](https://github.com/ConanMcN/fragments/commit/35e1df98fb850897d7bb1e350b41b82a46b51e75) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): Message component CSS tweaks
+- fix(ui): Message component CSS tweaks
   - Remove max-width constraint from user and assistant messages
   - Remove white-space: pre-wrap from message content to allow natural text flow
 
@@ -872,7 +900,7 @@
 
 ### Patch Changes
 
-- [`6273fc6`](https://github.com/ConanMcN/fragments/commit/6273fc6a0bd7545f2514c65006f5d560790be254) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): overlay z-index, Select/Combobox maxVisibleItems, SelectItem render loop
+- fix(ui): overlay z-index, Select/Combobox maxVisibleItems, SelectItem render loop
   - Fix Select, Combobox, Popover, Menu z-index (50→52) to render above Dialog (51)
   - Add maxVisibleItems prop to Select.Content and Combobox.Content with half-peek scroll hint
   - Fix SelectItem infinite render loop by destructuring stable refs from context
@@ -889,20 +917,20 @@
 
 ### Patch Changes
 
-- [`6c6ae31`](https://github.com/ConanMcN/fragments/commit/6c6ae3143ed2f648de904d08ead2b9ea0ab99335) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix(ui): default Text component color to themed token for dark mode support
+- fix(ui): default Text component color to themed token for dark mode support
   fix(cli): use Node.js module resolution for fragments.json discovery
 
 ## 0.6.2
 
 ### Patch Changes
 
-- [`1397be2`](https://github.com/ConanMcN/fragments/commit/1397be23a24a2236a4664e764b9c5f9117b7cd48) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Stabilize linting and warning handling across the monorepo, including stricter package lint targets and cleanup of lint-triggering code paths.
+- Stabilize linting and warning handling across the monorepo, including stricter package lint targets and cleanup of lint-triggering code paths.
 
 ## 0.6.1
 
 ### Patch Changes
 
-- [`3380e86`](https://github.com/ConanMcN/fragments/commit/3380e86e9b575e23412a6b609fa36644007933a5) Thanks [@ConanMcN](https://github.com/ConanMcN)! - fix: mobile layout bugs - horizontal scrollbar, missing nav links, aside visibility
+- fix: mobile layout bugs - horizontal scrollbar, missing nav links, aside visibility
   - Fix horizontal scrollbar on mobile when AppShell uses inset layout by removing margin and using width: 100%
   - Add header navigation links (Docs, Components, Blocks, Themes, Accessibility) to mobile sidebar menu
   - Stack AppShell.Aside below main content on mobile instead of hiding it
@@ -911,7 +939,7 @@
 
 ### Minor Changes
 
-- [`5fde1d0`](https://github.com/ConanMcN/fragments/commit/5fde1d0127ef554eb6f7879cb6ff71a99466a1ca) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat: add Combobox component with single and multi-select support
+- feat: add Combobox component with single and multi-select support
 
   New searchable select component built on Base UI's combobox primitive. Supports:
   - Type-ahead filtering of options
@@ -924,13 +952,13 @@
 
 ### Minor Changes
 
-- [`dbd8978`](https://github.com/ConanMcN/fragments/commit/dbd897818e14b798f8b4070798b1ec49c84480d3) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add Chart component (ChartContainer, ChartTooltip, ChartLegend) as thin recharts wrapper with design token integration. Add compact and persistentCopy props to CodeBlock.
+- Add Chart component (ChartContainer, ChartTooltip, ChartLegend) as thin recharts wrapper with design token integration. Add compact and persistentCopy props to CodeBlock.
 
 ## 0.4.0
 
 ### Minor Changes
 
-- [`d462050`](https://github.com/ConanMcN/fragments/commit/d4620501ccfd8362b4db166be27f1d630a5e04c8) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Initial public release of Fragments UI
+- Initial public release of Fragments UI
   - 40+ accessible, themeable React components
   - Full HTML prop passthrough on all components
   - Improved accessibility with aria-hidden on decorative icons
@@ -940,7 +968,7 @@
 
 ### Minor Changes
 
-- [`17046a1`](https://github.com/ConanMcN/fragments/commit/17046a1e214c651fc9626f5bcea31a092eb8ccaf) Thanks [@ConanMcN](https://github.com/ConanMcN)! - feat(Sidebar): Add shadcn-inspired patterns for improved flexibility and DX
+- feat(Sidebar): Add shadcn-inspired patterns for improved flexibility and DX
   - Add `SidebarProvider` component for wrapping app layouts with shared state
   - Add `useSidebar` hook for accessing sidebar state from any child component
   - Add Cmd/Ctrl+B keyboard shortcut to toggle sidebar (configurable)
@@ -957,19 +985,19 @@
 
 ### Patch Changes
 
-- [`8866838`](https://github.com/ConanMcN/fragments/commit/88668385fb14d1fcb01c232dcc160eac21c1631f) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add README documentation for MCP and UI packages
+- Add README documentation for MCP and UI packages
 
 ## 0.2.2
 
 ### Patch Changes
 
-- [`4ec7522`](https://github.com/ConanMcN/fragments/commit/4ec75225be222eec116d211dc0e5c1707e414409) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add README documentation for MCP and UI packages
+- Add README documentation for MCP and UI packages
 
 ## 0.2.1
 
 ### Patch Changes
 
-- [`f657820`](https://github.com/ConanMcN/fragments/commit/f65782058dfa773088325eef18488dd47220fa72) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Improve fragments.json discovery and optimize build output
+- Improve fragments.json discovery and optimize build output
 
   MCP server now discovers fragments.json via the "fragments" field in
   package.json dependencies instead of brute-force scanning node_modules.
@@ -980,7 +1008,7 @@
 
 ### Minor Changes
 
-- [`58bbb8b`](https://github.com/ConanMcN/fragments/commit/58bbb8bb8bb6d0be1de2b1e4505d81a392a3f378) Thanks [@ConanMcN](https://github.com/ConanMcN)! - Add composition recipes system and responsive Grid component
+- Add composition recipes system and responsive Grid component
   - New `defineRecipe()` / `compileRecipe()` API for composition patterns
   - New `fragments_recipe` MCP tool for searching recipes by name, tag, or component
   - Recipes included in `fragments_context` output
@@ -992,4 +1020,4 @@
 
 ### Patch Changes
 
-- [`8fa7a32`](https://github.com/ConanMcN/fragments/commit/8fa7a32f8f34cc39407fc25a291f7580e070fede) Thanks [@ConanMcN](https://github.com/ConanMcN)! - pipeline setup
+- pipeline setup

@@ -169,7 +169,7 @@
 
 /// Every floating panel (modal, drawer, popover, popup list, toast) is the
 /// same object: the raised plane, the popup shadow and its corner, no edge
-/// (UIR-D145: the shadow's own hairline ring is the boundary). `$radius`
+/// (the shadow's own hairline ring is the boundary). `$radius`
 /// names the corner role: `popup` for anchored panels, `overlay` for modals and
 /// drawers. Forced colours drop the shadow, so an outline keeps the shape.
 @mixin surface($radius: popup) {
@@ -252,6 +252,15 @@ $_sheet-half: _raw(8);
   padding-inline: $_sheet-pad;
   overflow: auto;
   overscroll-behavior: contain;
+
+  // The body's padding is its edge: a paragraph's own margins never add to it.
+  > :first-child {
+    margin-block-start: 0;
+  }
+
+  > :last-child {
+    margin-block-end: 0;
+  }
 
   // In the tab order only while it overflows (useOverflowFocusable).
   &:focus-visible {

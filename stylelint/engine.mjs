@@ -1,5 +1,5 @@
 /**
- * Runs the doctrine lint over a set of files: stylelint for styles, ESLint for TypeScript.
+ * Runs the style and source lint over a set of files: stylelint for styles, ESLint for TypeScript.
  * Both report in one shape, `{ file, line, column, rule, message }`, with `file` relative to the
  * package root and every rule an `fui/<category>/<rule>` ID.
  */
@@ -11,9 +11,9 @@ import { fileURLToPath } from "node:url";
 import { ESLint } from "eslint";
 import stylelint from "stylelint";
 
-import { doctrineEslintConfig } from "../eslint/config.mjs";
+import { fuiEslintConfig } from "../eslint/config.mjs";
 import { ESLINT_RULE_IDS } from "../eslint/plugin.mjs";
-import { doctrineStyleConfig } from "./config.mjs";
+import { fuiStyleConfig } from "./config.mjs";
 import { STYLE_RULE_IDS } from "./plugin.mjs";
 import { toPosix } from "./rules/utils.mjs";
 
@@ -26,7 +26,7 @@ const STYLE_DISABLE_RULES = {
   "--report-descriptionless-disables": "fui/conventions/disable-reason",
 };
 
-/** Every rule ID the lane can report. `RULE-CHECKS.md` marks exactly these `live`. */
+/** Every rule ID the lane can report. */
 export const LIVE_RULE_IDS = [
   ...new Set([...STYLE_RULE_IDS, ...ESLINT_RULE_IDS, ...Object.values(STYLE_DISABLE_RULES)]),
 ].sort();
@@ -65,7 +65,7 @@ async function lintStyles(files, root, findings, errors) {
   if (files.length === 0) return;
   const { results } = await stylelint.lint({
     files: files.map((file) => resolve(root, file)),
-    config: doctrineStyleConfig,
+    config: fuiStyleConfig,
     configBasedir: PACKAGE_ROOT,
     allowEmptyInput: true,
     cache: false,
@@ -97,7 +97,7 @@ async function lintSources(files, root, findings, errors) {
   const eslint = new ESLint({
     cwd: root,
     overrideConfigFile: true,
-    overrideConfig: doctrineEslintConfig,
+    overrideConfig: fuiEslintConfig,
     errorOnUnmatchedPattern: false,
     ignore: false,
   });

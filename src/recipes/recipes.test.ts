@@ -499,16 +499,17 @@ describe("motion and feedback recipes", () => {
     expect(block(css, ".lg")).toContain("padding: var(--fui-field-inline-inset-lg, ");
   });
 
-  it("marks the current nav item like a selected row: wash and ring, regular weight", () => {
+  it("marks the current nav item as a location: the neutral fill and ink 1, no ring, regular weight", () => {
     const css = compile(`
       @use "recipes/selection";
       .current { @include selection.current; }
-      .selected { @include selection.selected; }
     `);
-    expect(block(css, ".current")).toBe(block(css, ".selected"));
-    expect(block(css, ".current")).toContain("background-color: var(--fui-control-selected-bg, ");
-    expect(block(css, ".current")).not.toContain("font-weight");
-    expect(block(css, ".current")).not.toContain("--fui-bg-active");
+    const current = block(css, ".current");
+    expect(current).toContain("background-color: var(--fui-bg-active, ");
+    expect(current).toContain("color: var(--fui-text-primary, ");
+    expect(current).not.toContain("--fui-control-selected");
+    expect(current).not.toContain("box-shadow");
+    expect(current).not.toContain("font-weight");
   });
 
   it("works with a wash, a 1px inset edge, a 1.8s sweep and a 2.4s sheen, and keeps the wash under reduced motion", () => {

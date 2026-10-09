@@ -58,7 +58,7 @@ $fui-info: oklch(0.58 0.13 245) !default;
 // Consumer styles outside any @layer always win over layered styles.
 // Within layers: tokens < base < components (declared first = lowest priority).
 // Every component module repeats this statement before its own layer block, so
-// the order holds whichever stylesheet loads first (UIR-D122).
+// the order holds whichever stylesheet loads first.
 // Browser support: ~97% (Chrome 99+, Firefox 97+, Safari 15.4+)
 @layer fui.tokens, fui.base, fui.components;
 
@@ -182,9 +182,9 @@ $fui-info: oklch(0.58 0.13 245) !default;
 
   // Accessibility: Reduced Motion. Each recipe holds its own motion still
   // (overlays fade, the skeleton band stops, the working wash stays) and essential
-  // progress keeps turning (UIR-D102), so there is no blanket override of
+  // progress keeps turning, so there is no blanket override of
   // animation or transition timing here; it would stop the spinner and cut the
-  // overlay fade (UIR-D140). Only smooth scrolling is turned off.
+  // overlay fade. Only smooth scrolling is turned off.
   @media (prefers-reduced-motion: reduce) {
     :where(*) {
       scroll-behavior: auto !important;

@@ -48,8 +48,10 @@ export interface ListRowProps extends Omit<
   /** Trailing detail (a count, a path, a time), in ink 3 at the label size. */
   meta?: React.ReactNode;
   /**
-   * The chosen row: the selection wash and ring. Sets `aria-current` unless
-   * you pass `aria-current` or `aria-pressed` yourself.
+   * The row you are on: the neutral current fill and ink 1. Sets
+   * `aria-current` unless you pass `aria-current` or `aria-pressed` yourself;
+   * a row with `aria-pressed` is a toggled choice and takes the selection wash
+   * and ring.
    */
   selected?: boolean;
   /**

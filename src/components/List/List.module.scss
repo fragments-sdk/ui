@@ -148,11 +148,21 @@
       );
     }
 
+    // The row you are on (`selected`, `aria-current`) is a location, not a
+    // choice: the neutral current fill and ink 1. A pressed toggle
+    // row is a choice: the selection wash and ring.
+    &[data-selected],
+    &[aria-current]:not([aria-current="false"]) {
+      @include selection.current;
+    }
+
+    &[aria-pressed="true"] {
+      @include selection.selected;
+    }
+
     &[data-selected],
     &[aria-current]:not([aria-current="false"]),
     &[aria-pressed="true"] {
-      @include selection.selected;
-
       .rowIcon {
         color: var(--fui-text-primary, #{$fui-text-primary});
       }

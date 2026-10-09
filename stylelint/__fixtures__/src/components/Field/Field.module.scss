@@ -1,4 +1,4 @@
-// Rule R6 field type: the configured `.control` sets font: inherit at zero specificity, so a
+// Field type: the configured `.control` sets font: inherit at zero specificity, so a
 // composed control's own class still wins; the `:where()` rule counts as the base rule.
 @layer fui.tokens, fui.base, fui.components;
 

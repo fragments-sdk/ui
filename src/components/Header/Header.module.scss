@@ -226,7 +226,7 @@ $_track: action.track("md");
   .navMenuItemActive {
     @include selection.current;
 
-    // The highlight tints over the current wash; the ring stays.
+    // The highlight tints over the current fill.
     &[data-highlighted] {
       @include selection.hover-tint;
     }

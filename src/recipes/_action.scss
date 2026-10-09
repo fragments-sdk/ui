@@ -86,9 +86,8 @@
   padding-inline: var(--_fui-action-inline-inset, #{inline-inset("md")});
   font-size: var(--_fui-action-type-size, #{typography.font-size("ui-compact")});
   line-height: var(--_fui-action-type-line, #{typography.line-height("ui-compact")});
-  // The weight is the component's call (UIR-D141): the
-  // control role is regular, and a button or a selected segment opts into
-  // `weight("strong")`.
+  // The weight is the component's call: the control role is regular, and a
+  // button or a selected segment opts into `weight("strong")`.
   font-weight: var(--_fui-action-type-weight, #{typography.weight("ui-compact")});
   letter-spacing: var(--_fui-action-type-tracking, #{typography.tracking("ui-compact")});
   font-family: var(--_fui-action-type-family, #{typography.font-family("ui-compact")});

@@ -144,32 +144,32 @@
     {
       "name": "Default",
       "description": "Three rows that grow with the text.",
-      "code": "<Field>\n  <Field.Label>Description</Field.Label>\n  <Textarea placeholder=\"What does this change do?\" />\n</Field>"
+      "code": "<Field>\n  <Field.Label>Description</Field.Label>\n  <Textarea placeholder=\"What does this change do, and why?\" />\n  <Field.Description>Reviewers read this first.</Field.Description>\n</Field>"
     },
     {
       "name": "With counter",
       "description": "maxLength shows a live count under the field.",
-      "code": "<Field>\n  <Field.Label>Bio</Field.Label>\n  <Textarea maxLength={200} />\n  <Field.Description>Shown on your profile.</Field.Description>\n</Field>"
+      "code": "<Field>\n  <Field.Label>Bio</Field.Label>\n  <Textarea\n    maxLength={200}\n    defaultValue=\"Design engineer on the checkout team. I look after our tokens and the standards every screen is checked against.\"\n  />\n  <Field.Description>Shown on your profile.</Field.Description>\n</Field>"
     },
     {
       "name": "Invalid",
       "description": "The danger edge with the reason under the field.",
-      "code": "<Field invalid>\n  <Field.Label>Comments</Field.Label>\n  <Textarea />\n  <Field.Error match>Add a comment.</Field.Error>\n</Field>"
+      "code": "<Field invalid>\n  <Field.Label>Reason for the exception</Field.Label>\n  <Textarea placeholder=\"Why does this screen need a raw value?\" />\n  <Field.Error match>Add a reason so reviewers can approve the exception.</Field.Error>\n</Field>"
     },
     {
       "name": "Grow to a ceiling",
       "description": "Starts at one row, grows to six, then scrolls.",
-      "code": "<Field>\n  <Field.Label>Notes</Field.Label>\n  <Textarea minRows={1} maxRows={6} />\n</Field>"
+      "code": "<Field>\n  <Field.Label>Notes</Field.Label>\n  <Textarea\n    minRows={1}\n    maxRows={6}\n    defaultValue={'Checkout: three raw colours\\nCart: one spacing value\\nHeader: icon button without a label'}\n  />\n</Field>"
     },
     {
       "name": "Sizes",
       "description": "Four steps on the control ladder.",
-      "code": "<Stack gap=\"sm\">\n  <Textarea aria-label=\"Extra small\" size=\"xs\" minRows={1} />\n  <Textarea aria-label=\"Small\" size=\"sm\" minRows={1} />\n  <Textarea aria-label=\"Medium\" size=\"md\" minRows={1} />\n  <Textarea aria-label=\"Large\" size=\"lg\" minRows={1} />\n</Stack>"
+      "code": "<Stack gap=\"sm\">\n  <Textarea aria-label=\"Extra small\" placeholder=\"Extra small\" size=\"xs\" minRows={1} />\n  <Textarea aria-label=\"Small\" placeholder=\"Small\" size=\"sm\" minRows={1} />\n  <Textarea aria-label=\"Medium\" placeholder=\"Medium\" size=\"md\" minRows={1} />\n  <Textarea aria-label=\"Large\" placeholder=\"Large\" size=\"lg\" minRows={1} />\n</Stack>"
     },
     {
       "name": "Fixed height",
       "description": "resize=\"none\" removes the drag handle.",
-      "code": "<Field>\n  <Field.Label>Notes</Field.Label>\n  <Textarea resize=\"none\" />\n</Field>"
+      "code": "<Field>\n  <Field.Label>Release notes</Field.Label>\n  <Textarea\n    resize=\"none\"\n    defaultValue=\"Buttons, inputs and selects now share one control height ladder, so a row of mixed controls lines up without overrides.\"\n  />\n</Field>"
     }
   ],
   "relations": [

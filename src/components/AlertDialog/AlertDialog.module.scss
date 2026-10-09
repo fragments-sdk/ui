@@ -63,6 +63,12 @@
     @include overlay.body;
   }
 
+  // An alert's body is its message: it sits under the title at the header's
+  // own inset, not a section away.
+  .header + .body {
+    padding-block-start: 0;
+  }
+
   .footer {
     @include overlay.footer;
   }

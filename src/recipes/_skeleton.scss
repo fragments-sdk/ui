@@ -2,7 +2,6 @@
 // toward the press tint and back, with no gradient and nothing travelling. The
 // press tint is ink at an alpha, so it is laid over the band by `::after` and
 // only its opacity moves (an opacity loop, which the motion rules allow).
-// UIR-D144.
 
 @use "../tokens/variables" as tokens;
 

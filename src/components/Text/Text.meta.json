@@ -127,7 +127,7 @@
     {
       "name": "Inks",
       "description": "The ink ladder, the accent's text ink and the state inks.",
-      "code": "import { Stack } from '@/components/Stack';\n\n<Stack gap=\"xs\">\n  <Text>Primary</Text>\n  <Text color=\"secondary\">Secondary</Text>\n  <Text color=\"tertiary\">Tertiary</Text>\n  <Text color=\"accent\">fragments-sdk/fragments</Text>\n  <Text color=\"danger\">The token expired</Text>\n</Stack>"
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack gap=\"xs\">\n  <Text>Primary</Text>\n  <Text color=\"secondary\">Secondary</Text>\n  <Text color=\"tertiary\">Tertiary</Text>\n  <Text color=\"accent\">fragments-sdk/ui</Text>\n  <Text color=\"danger\">The token expired</Text>\n</Stack>"
     },
     {
       "name": "Section Label",

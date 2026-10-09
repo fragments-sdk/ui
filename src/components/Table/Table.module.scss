@@ -6,6 +6,8 @@
 @use "../../recipes/surface";
 @use "../../recipes/table-chrome" as table-chrome;
 
+$_fade: var(--fui-raw-space-48, #{measurements.raw-space(48)});
+
 @layer fui.tokens, fui.base, fui.components;
 
 @layer fui.components {
@@ -17,6 +19,48 @@
 
     // While a wide table overflows the wrapper is a tab stop; its ring sits inside the edge.
     @include focus.visible(true);
+
+    // A wide table fades out at the edge that still hides columns. The mask is
+    // set only while the table overflows, and drops while the wrapper has
+    // keyboard focus so its inset ring stays whole.
+    &[data-scroll-x="end"] {
+      --_fui-table-mask: linear-gradient(to right, black calc(100% - #{$_fade}), transparent);
+    }
+
+    &[data-scroll-x="start"] {
+      --_fui-table-mask: linear-gradient(to right, transparent, black #{$_fade});
+    }
+
+    &[data-scroll-x="both"] {
+      --_fui-table-mask: linear-gradient(
+        to right,
+        transparent,
+        black #{$_fade},
+        black calc(100% - #{$_fade}),
+        transparent
+      );
+    }
+
+    &[data-scroll-x="end"]:dir(rtl) {
+      --_fui-table-mask: linear-gradient(to right, transparent, black #{$_fade});
+    }
+
+    &[data-scroll-x="start"]:dir(rtl) {
+      --_fui-table-mask: linear-gradient(to right, black calc(100% - #{$_fade}), transparent);
+    }
+
+    // Keyboard focus scrolls a control clear of the fade. Forced colours keep
+    // every edge whole.
+    &:not([data-scroll-x="none"]) {
+      scroll-padding-inline: $_fade;
+    }
+
+    @media (forced-colors: none) {
+      &:not([data-scroll-x="none"]):not(:focus-visible) {
+        mask-image: var(--_fui-table-mask);
+        -webkit-mask-image: var(--_fui-table-mask);
+      }
+    }
   }
 
   .table {
@@ -77,6 +121,26 @@
     display: flex;
     align-items: center;
     gap: var(--fui-raw-space-4, #{measurements.raw-space(4)});
+  }
+
+  // A column aligns as one: the cells by text-align, the header's flex row by
+  // its justification, so a number's header sits over its digits.
+  .th[data-align="end"],
+  .td[data-align="end"] {
+    text-align: end;
+  }
+
+  .th[data-align="center"],
+  .td[data-align="center"] {
+    text-align: center;
+  }
+
+  .th[data-align="end"] > .headerContent {
+    justify-content: flex-end;
+  }
+
+  .th[data-align="center"] > .headerContent {
+    justify-content: center;
   }
 
   // Rows are transparent over the plane the table sits on. Hover is instant (no
@@ -151,11 +215,17 @@
     padding: 0;
   }
 
-  // The sheet: the one static surface (plane, hairline, surface corner).
+  // The sheet: the one static surface (plane, hairline, surface corner). It
+  // frames the scrolling wrapper, so the edge fade never fades its hairline.
   .bordered {
     @include surface.plane;
 
-    overflow-x: auto;
-    overflow-y: hidden;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow: hidden;
+
+    > .wrapper:not(.bounded) {
+      overflow-y: hidden;
+    }
   }
 }

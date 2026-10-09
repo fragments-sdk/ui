@@ -1,0 +1,138 @@
+{
+  "$schema": "../../component-meta.schema.json",
+  "name": "FilterBar",
+  "description": "Labelled filters on one line that fold behind one button when the line no longer fits.",
+  "category": "inputs",
+  "tags": ["filters", "toolbar", "responsive", "sheet", "select"],
+  "status": "stable",
+  "sourcePath": "src/components/FilterBar/index.tsx",
+  "exportName": "FilterBar",
+  "propsSummary": [
+    "children: FilterBar.Item nodes (required)",
+    "label: string (default \"Filters\")",
+    "activeCount: number (default 0)",
+    "onReset: () => void",
+    "doneLabel: string (default \"Done\")",
+    "collapse: auto|always|never (default: auto)",
+    "size: ButtonSize"
+  ],
+  "props": {
+    "children": {
+      "type": "node",
+      "description": "The filters: FilterBar.Item nodes, each holding one control",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "description": "Names the group, the folded button and the sheet's title",
+      "default": "Filters"
+    },
+    "activeCount": {
+      "type": "number",
+      "description": "How many filters differ from their defaults; the folded button shows it and Reset is disabled at 0",
+      "default": 0
+    },
+    "onReset": {
+      "type": "function",
+      "description": "Puts every filter back to its default; without it the sheet has no Reset"
+    },
+    "resetLabel": {
+      "type": "string",
+      "description": "The Reset action's label",
+      "default": "Reset"
+    },
+    "doneLabel": {
+      "type": "string",
+      "description": "The sheet's closing action; say what the person will see (\"Show 14 companies\")",
+      "default": "Done"
+    },
+    "collapse": {
+      "type": "enum",
+      "description": "auto folds while the filters do not fit the room the bar is given; always and never fix it",
+      "values": ["auto", "always", "never"],
+      "default": "auto"
+    },
+    "size": {
+      "type": "enum",
+      "description": "Size of the folded button and the sheet's actions; match the controls",
+      "values": ["xs", "sm", "md", "lg"]
+    }
+  },
+  "usage": {
+    "when": [
+      "Two or more filters above a table or list that must stay usable on a phone",
+      "A toolbar whose filters compete with actions for one row"
+    ],
+    "whenNot": [
+      "One filter: place the Select or SearchInput on its own",
+      "Filters that need applying as a batch: use a Dialog with a form and a submit",
+      "Switching views of the same data: use Tabs or ToggleGroup"
+    ],
+    "guidelines": [
+      "One control per FilterBar.Item; the label names it on the line and in the sheet",
+      "Filters apply as they change, so doneLabel says the result (\"Show 14 companies\")",
+      "Pass activeCount and onReset so the folded button shows how much is filtered and the sheet can undo it",
+      "Give the bar the toolbar's free room (it grows to fill a flex row) and keep actions outside it"
+    ],
+    "accessibility": [
+      "On the line the filters sit in role=\"group\" named by label",
+      "Each Item is a Field, so its label names the control",
+      "The folded button reads its label and the active count (\"Filters 2 active\"); the sheet is a dialog titled by label"
+    ]
+  },
+  "examples": [
+    {
+      "name": "Table Filters",
+      "description": "Filters beside a table's actions; they fold behind one button on narrow screens.",
+      "code": "import { Select } from '@/components/Select';\n\n<FilterBar size=\"sm\" activeCount={1} onReset={() => {}} doneLabel=\"Show 3 companies\">\n  <FilterBar.Item label=\"Owner\">\n    <Select size=\"sm\" defaultValue=\"noah\">\n      <Select.Trigger />\n      <Select.Content>\n        <Select.Item value=\"all\">All owners</Select.Item>\n        <Select.Item value=\"noah\">Noah Lee</Select.Item>\n      </Select.Content>\n    </Select>\n  </FilterBar.Item>\n  <FilterBar.Item label=\"Stage\">\n    <Select size=\"sm\" defaultValue=\"any\">\n      <Select.Trigger />\n      <Select.Content>\n        <Select.Item value=\"any\">Any</Select.Item>\n        <Select.Item value=\"pilot\">Pilot</Select.Item>\n      </Select.Content>\n    </Select>\n  </FilterBar.Item>\n</FilterBar>"
+    }
+  ],
+  "relations": [
+    {
+      "component": "Select",
+      "relationship": "child",
+      "note": "The usual control inside a FilterBar.Item"
+    },
+    {
+      "component": "Field",
+      "relationship": "composition",
+      "note": "Each FilterBar.Item is a Field, so its label names the control"
+    },
+    {
+      "component": "Drawer",
+      "relationship": "composition",
+      "note": "The folded filters open in a bottom sheet below the sm breakpoint"
+    },
+    {
+      "component": "Popover",
+      "relationship": "composition",
+      "note": "The folded filters open in a popover from sm up"
+    }
+  ],
+  "contract": {
+    "propsSummary": [
+      "children: FilterBar.Item nodes - one control each",
+      "activeCount + onReset - the count on the folded button and the sheet's Reset"
+    ],
+    "a11yRules": ["A11Y_GROUP_LABEL"]
+  },
+  "ai": {
+    "compositionPattern": "compound",
+    "subComponents": ["Root", "Item"]
+  },
+  "provenance": {
+    "source": "manual",
+    "verified": false,
+    "frameworkSupport": "native",
+    "extractedAt": "2026-10-07T00:00:00.000Z"
+  },
+  "cssVariables": [
+    "--fui-font-weight-normal",
+    "--fui-raw-space-16",
+    "--fui-raw-space-32",
+    "--fui-raw-space-8",
+    "--fui-text-secondary",
+    "--fui-text-tertiary"
+  ],
+  "attributes": []
+}

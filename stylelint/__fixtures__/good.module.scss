@@ -1,4 +1,4 @@
-// Doctrine-clean styles: the lint must stay silent here (stylelint/doctrine.test.ts).
+// Clean styles: the lint must stay silent here (stylelint/lint.test.ts).
 .good {
   color: var(--fui-text-primary, $fui-text-primary);
   padding: var(--fui-raw-space-4, $fui-raw-space-4) 0;

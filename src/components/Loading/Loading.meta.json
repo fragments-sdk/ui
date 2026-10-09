@@ -1,14 +1,25 @@
 {
   "$schema": "../../component-meta.schema.json",
   "name": "Loading",
-  "description": "Signals an indeterminate wait with a delayed spinner in the surrounding text color.",
+  "description": "Signals an indeterminate wait: a spinner, dots, a pulse, bars, a matrix or a shimmer.",
   "category": "feedback",
-  "tags": ["loading", "spinner", "progress", "feedback", "indicator", "async"],
+  "tags": [
+    "loading",
+    "spinner",
+    "progress",
+    "feedback",
+    "indicator",
+    "async",
+    "typing",
+    "thinking",
+    "agent"
+  ],
   "status": "stable",
   "sourcePath": "src/components/Loading/index.tsx",
   "exportName": "Loading",
   "propsSummary": [
     "label: string (default: Loading…)",
+    "kind: spinner | dots | pulse | bars | matrix | shimmer (default: spinner)",
     "inline: boolean (default: false)",
     "fill: boolean (default: false)",
     "delay: number (default: 1000)"
@@ -18,6 +29,13 @@
       "type": "string",
       "description": "What is loading, read by screen readers",
       "default": "Loading…",
+      "required": false
+    },
+    "kind": {
+      "type": "enum",
+      "values": ["spinner", "dots", "pulse", "bars", "matrix", "shimmer"],
+      "description": "How the wait is drawn: spinner where a result will appear, dots while a reply is written, pulse while something live listens or connects, bars while a stream or voice comes in, matrix while work is assembled, shimmer shows the label with the working sheen",
+      "default": "spinner",
       "required": false
     },
     "inline": {
@@ -43,7 +61,9 @@
     "when": [
       "Waiting on an async action where the result will appear",
       "The first paint of an app (Loading.Screen)",
-      "A short wait inside a line of text (inline)"
+      "A short wait inside a line of text (inline)",
+      "An assistant writing a reply (dots), a live session listening (pulse), audio or a stream arriving (bars), work being assembled such as a build or a generated screen (matrix)",
+      "The step an agent is on, in words: \"Searching the codebase…\" (shimmer)"
     ],
     "whenNot": [
       "You know the percentage: use Progress",
@@ -51,14 +71,16 @@
       "An assistant working on a reply: use ThinkingIndicator"
     ],
     "guidelines": [
-      "One spinner, one size; it takes the ink of whatever it sits in",
+      "One size, 16px or the line's own (inline); every kind takes the ink of whatever it sits in",
+      "Pick the kind by what is happening, not for variety: spinner by default, the others where they say more",
       "Nothing shows for the first second; work that finishes sooner shows nothing",
       "Dim the content in place rather than covering it",
       "Name the wait in the label: \"Loading findings\", not \"Loading\""
     ],
     "accessibility": [
       "role=\"status\" with the label as its name and as hidden text once the spinner shows",
-      "The spinner keeps turning under reduced motion: it is progress, not decoration"
+      "The spinner keeps turning under reduced motion: it is progress, not decoration",
+      "Under reduced motion the dots, pulse and bars stop moving and only fade in turn; the matrix only ever fades, so it runs as it is; the shimmer holds still in ink 3"
     ]
   },
   "examples": [
@@ -66,6 +88,31 @@
       "name": "Default",
       "description": "A spinner where the result will appear, after a second of quiet.",
       "code": "<Loading label=\"Loading findings\" />"
+    },
+    {
+      "name": "Kinds",
+      "description": "Six ways to draw a wait, each for a different kind of work.",
+      "code": "import { Stack } from '@/components/Stack';\n\n<Stack direction=\"row\" gap=\"xl\" align=\"center\" wrap>\n  <Loading delay={0} label=\"Loading findings\" />\n  <Loading kind=\"dots\" delay={0} label=\"Writing a reply\" />\n  <Loading kind=\"pulse\" delay={0} label=\"Listening\" />\n  <Loading kind=\"bars\" delay={0} label=\"Receiving audio\" />\n  <Loading kind=\"matrix\" delay={0} label=\"Building the preview\" />\n  <Loading kind=\"shimmer\" delay={0} label=\"Thinking…\" />\n</Stack>"
+    },
+    {
+      "name": "Agent at work",
+      "description": "The shimmer names the step; it changes as the work moves on.",
+      "code": "<Loading kind=\"shimmer\" delay={0} label=\"Searching 214 files for raw colour values…\" />"
+    },
+    {
+      "name": "Typing",
+      "description": "Dots where the reply will appear, until its first words arrive.",
+      "code": "import { Message } from '@/components/Message';\nimport { Stack } from '@/components/Stack';\n\n<Stack gap=\"md\">\n  <Message from=\"user\">\n    <Message.Content>Which screens still use raw colours?</Message.Content>\n  </Message>\n  <Message from=\"assistant\">\n    <Message.Content>\n      <Loading kind=\"dots\" delay={0} label=\"Assistant is writing a reply\" />\n    </Message.Content>\n  </Message>\n</Stack>"
+    },
+    {
+      "name": "Live session",
+      "description": "A pulse while a session listens, bars while a voice comes in. The status names the state, so the visible words are hidden from screen readers.",
+      "code": "import { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack gap=\"sm\">\n  <Stack direction=\"row\" gap=\"sm\" align=\"center\">\n    <Loading kind=\"pulse\" delay={0} label=\"Listening\" />\n    <Text color=\"secondary\" aria-hidden=\"true\">Listening</Text>\n  </Stack>\n  <Stack direction=\"row\" gap=\"sm\" align=\"center\">\n    <Loading kind=\"bars\" delay={0} label=\"Receiving audio\" />\n    <Text color=\"secondary\" aria-hidden=\"true\">Receiving audio</Text>\n  </Stack>\n</Stack>"
+    },
+    {
+      "name": "Assembling",
+      "description": "The matrix while a build or a generated screen comes together: light crosses the grid until the result replaces it.",
+      "code": "import { Stack } from '@/components/Stack';\nimport { Text } from '@/components/Text';\n\n<Stack direction=\"row\" gap=\"sm\" align=\"center\">\n  <Loading kind=\"matrix\" delay={0} label=\"Generating the settings screen\" />\n  <Text color=\"secondary\" aria-hidden=\"true\">Generating the settings screen</Text>\n</Stack>"
     },
     {
       "name": "Inline",
@@ -93,7 +140,17 @@
     "frameworkSupport": "native",
     "extractedAt": "2026-03-13T23:19:05.576Z"
   },
-  "cssVariables": ["--fui-app-canvas-bg", "--fui-overlay-layer-modal", "--fui-text-secondary"],
+  "cssVariables": [
+    "--fui-app-canvas-bg",
+    "--fui-duration-pulse",
+    "--fui-ease-standard",
+    "--fui-opacity-disabled",
+    "--fui-opacity-faint",
+    "--fui-opacity-muted",
+    "--fui-overlay-layer-modal",
+    "--fui-radius-full",
+    "--fui-text-secondary"
+  ],
   "attributes": [
     {
       "name": "data-shown",

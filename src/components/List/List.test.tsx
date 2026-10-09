@@ -223,7 +223,7 @@ describe("List.Row", () => {
     expect(css).toMatch(/\.row \{[^}]*border-radius: var\(--fui-radius-control/);
   });
 
-  it("gates hover, paints press and selection without losing the ring", () => {
+  it("gates hover, paints press, marks the current row neutral and a pressed row with the ring", () => {
     expect(css).toMatch(
       /@media \(hover: hover\) \{ \.row:hover:not\(:disabled, \[aria-disabled=true\]\) \{ background-image: linear-gradient\(var\(--fui-bg-hover/
     );
@@ -231,7 +231,10 @@ describe("List.Row", () => {
       /\.row:active:not\(:disabled, \[aria-disabled=true\]\) \{ background-image:/
     );
     expect(css).toMatch(
-      /\.row\[data-selected\], \.row\[aria-current\]:not\(\[aria-current=false\]\), \.row\[aria-pressed=true\] \{ background-color: var\(--fui-control-selected-bg[^}]*box-shadow: inset 0 0 0/
+      /\.row\[data-selected\], \.row\[aria-current\]:not\(\[aria-current=false\]\) \{ background-color: var\(--fui-bg-active[^}]*\}/
+    );
+    expect(css).toMatch(
+      /\.row\[aria-pressed=true\] \{ background-color: var\(--fui-control-selected-bg[^}]*box-shadow: inset 0 0 0/
     );
   });
 

@@ -34,20 +34,20 @@ const persistentSurfaceCases = [
   ["recipes/_popup.scss", "@mixin selected-state", "--fui-field-selection-bg"],
 ] as const;
 
-// The current nav item is the press tint, ink 1 and the strong weight, with no wash or ring.
+// The current nav item is the neutral active fill and ink 1, with no wash or ring.
 const currentNavCases = [
   ["components/Header/Header.module.scss", ".navItemActive"],
   ["components/Header/Header.module.scss", ".navMenuItemActive"],
   ["components/Pagination/Pagination.module.scss", ".itemActive"],
-  ["components/TableOfContents/TableOfContents.module.scss", ".active"],
 ] as const;
+// TableOfContents is the exception: its current section is ink 1 and a marker on the track.
 
 describe("component state surface contract", () => {
   it("draws one Chip look: the hairline edge, no tone or variant classes", () => {
     const css = sass.compile(resolve(process.cwd(), "src/components/Chip/Chip.module.scss"), {
       silenceDeprecations: ["if-function"],
     }).css;
-    // v4 (UIR-D75): Chip has one look; selected is the wash with a border edge.
+    // v4: Chip has one look; selected is the wash with a border edge.
     expect(css).not.toMatch(/\.(tone[A-Z]\w*|outline|soft|solid)\b/);
     let edge = "";
     for (const [, selector, declarations] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
@@ -78,7 +78,7 @@ describe("component state surface contract", () => {
     expect(block).not.toContain("--fui-color-accent");
   });
 
-  // The ghost Select is cut (UIR-D75): an open trigger is a field holding its
+  // The ghost Select is cut: an open trigger is a field holding its
   // hover edge, not a selected item, so it never takes the selection wash.
   it("holds the hover edge, not the selection wash, while a Select owns an open popup", () => {
     const openTrigger = extractBlock(
@@ -120,12 +120,12 @@ describe("component state surface contract", () => {
     for (const token of ["--fui-field-selection-bg", "--fui-table-row-selected-bg"]) {
       expect(variables).toContain(`${token}: var(--fui-control-selected-bg)`);
     }
-    // The table ring is the selection ring; the sidebar's current row is chosen, so it takes
-    // the selection wash too (UIR-D142).
+    // The table ring is the selection ring. The sidebar's current row is a
+    // location, not a choice: the neutral active fill.
     expect(variables).toContain(
       "--fui-table-row-selected-border: var(--fui-control-selected-border)"
     );
-    expect(variables).toContain("--fui-sidebar-item-active-bg: var(--fui-control-selected-bg)");
+    expect(variables).toContain("--fui-sidebar-item-active-bg: var(--fui-bg-active)");
 
     const aliasConsumers = [
       ["components/Sidebar/Sidebar.module.scss", "--fui-sidebar-item-active-bg"],
